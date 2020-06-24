@@ -1,0 +1,51 @@
+.background{
+    background-color: rgb(238, 238, 238);
+}
+.wrapper{
+    width: 90%;
+    margin: 0 auto;
+}
+.actionsWrapper{
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+}
+.imgEvent{
+    width: 272px;
+    margin: 0 15px 15px;
+}
+.iconsFlex{
+    display: flex;
+    width: 278px;
+    justify-content: center;
+    font-size: 34px;
+    text-align: center;
+    align-items: center;
+}
+.icon{
+    margin-left: 17px;
+}
+.icon:hover{
+    color:#007f9c;
+}
+tr{
+    font-size: 15px;
+    font-weight: 300;
+}
+td{
+    width: 450px;
+    font-weight: 300;
+}
+table{
+    margin-bottom: 30px;
+}
+.homeSlider {
+    width: 70%;
+    margin: 10px auto 50px;
+    overflow: hidden;
+}
+.sliderImg{
+    width: 100%;
+    margin-top: -20.5%;
+  }
+
