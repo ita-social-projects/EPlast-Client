@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Card, Layout } from 'antd';
-import http from '../../api/http';
+import http from '../../api/api';
 import City from '../../assets/images/city.jpg';
 
 const classes = require('./Cities.module.css');

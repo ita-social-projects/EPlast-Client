@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ActionCard from '../ActionCard/ActionCard';
-import http from '../../api/http';
+import http from '../../api/api';
 
 const classes = require('./Actions.module.css');
 

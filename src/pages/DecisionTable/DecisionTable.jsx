@@ -6,8 +6,10 @@ import DropDown from './DropDownDecision';
 import AddDecisionModal from './AddDecisionModal';
 // import DropDown from './DropDownDecision';
 // import Foo from './ShowLess';
-import http from '../../api/http';
+import http from '../../api/api';
 import classes from './Table.module.css';
+import { ApiFilled } from '@ant-design/icons';
+import decisionsApi from '../../api/decisionsApi'
 
 const { Content } = Layout;
 
@@ -24,12 +26,13 @@ const DecisionTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const res = await http.get('todos');
+
+      const res = await http.get("posts");
       setData(res.data);
       setLoading(false);
     };
     fetchData();
-  }, []);
+  },[]);
 
   const handleSearch = (event) => {
     setSearchedData(event.target.value);
