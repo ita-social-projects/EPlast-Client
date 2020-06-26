@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import EventCard from './EventCard/EventCard';
-import http from '../../../api/http';
+import http from '../../../api/api';
 
 const classes = require('./ActionEvent.module.css');
 
