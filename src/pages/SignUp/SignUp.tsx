@@ -3,6 +3,7 @@ import { Form, Input, Button } from 'antd';
 import styles from './SignUp.module.css';
 import Switcher from './Switcher/Switcher';
 import { checkEmail, checkNameSurName } from './verification';
+import authorizeApi from '../../api/authorizeApi';
 
 export default function () {
   const [form] = Form.useForm();
@@ -37,6 +38,12 @@ export default function () {
     repeatedPassword: '',
   };
 
+  const handleSubmit = () => {
+    const data = {"Email" : "andriishainoha@gmail.com", "Password" : "andrii123", "ConfirmPassword" : "andrii123",
+         "Name" : "Andrii", "SurName" : "Shainoha"};
+    authorizeApi.register(data);
+  };
+
   return (
     <div className={styles.mainContainer}>
       <Switcher page="SignUp" />
@@ -46,6 +53,7 @@ export default function () {
         form={form}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
+        onSubmitCapture={handleSubmit}
       >
         <Form.Item name="email" rules={validationSchema.email}>
           <Input className={styles.SignUpInput} placeholder="Електронна пошта" />
