@@ -1,10 +1,28 @@
-import React from 'react';
+import React,{ useEffect, useState } from 'react';
 import { Form, DatePicker, Select, Input, Upload, Button } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
+import decisionsApi from '../../api/decisionsApi';
+//import { Console } from 'console';
 const FormAddDecision = () => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState({decisionStatusTypes:[],decisionTargets:[], organization: [] });
+  const [decisionStatusTypes, setDecisionStatusTypes] = useState({text :[], value:[]});
+  const [decisionTargets, setDecisionTargets] = useState({});
+  const [organizations, setOrganizations] = useState({});
   useEffect(() => {
-
-  });
+    const fetchData = async () => {
+      setLoading(true);
+     // const response = await decisionsApi.getOnCreate();
+      await decisionsApi.getOnCreate().then(response =>{
+        const d1 = response.data.decisionStatusTypeListItems;
+        const d2 = response.data.decisionTargets;
+        const d3 = response.data.organizationListItems;
+        setData({decisionStatusTypes:d1,decisionTargets:d2, organization: d3 });
+      })
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
   const normFile = e => {
     // console.log('Upload event:', e);
 
@@ -14,12 +32,15 @@ const FormAddDecision = () => {
 
     return e && e.fileList;
   };
-  const onFinish = values => {
-    
-    console.log(values);
+  const onFinish = async values => {
+   
+   console.log(values);
   }
   return (
-    <Form
+    <div>
+    {!loading && (
+
+      <Form
       onFinish = {onFinish}
       name="basic"
       initialValues={{
@@ -42,13 +63,7 @@ const FormAddDecision = () => {
         label="Рішення органу"
         name = "organization">
         <Select>
-          <Select.Option value="0">КПР</Select.Option>
-          <Select.Option value="1">КРК</Select.Option>
-          <Select.Option value="2">КБ УПС</Select.Option>
-          <Select.Option value="3">КБ УСП</Select.Option>
-          <Select.Option value="4">КБ УПЮ</Select.Option>
-          <Select.Option value="5">КБ УПН</Select.Option>
-          <Select.Option value="6">КБ УПП</Select.Option>
+        {data.organization.map(st => ( <Select.Option value={st.value}>{st.text}</Select.Option>))}
         </Select>
       </Form.Item>
 
@@ -56,9 +71,7 @@ const FormAddDecision = () => {
        label="Тематика рішення"
        name = "target">
         <Select>
-          <Select.Option value="1">Demo 1</Select.Option>
-          <Select.Option value="2">Demo 2</Select.Option>
-          <Select.Option value="3">Demo 3</Select.Option>
+        {data.decisionTargets.map(st => ( <Select.Option value={st.id}>{st.targetName}</Select.Option>))}
         </Select>
       </Form.Item>
       <Form.Item name="date-picker" label="Дата рішення" >
@@ -69,9 +82,9 @@ const FormAddDecision = () => {
       </Form.Item>
       <Form.Item label="Статус рішення">
         <Select>
-          <Select.Option value="0">У розгляді</Select.Option>
-          <Select.Option value="1">Підтверджено</Select.Option>
-          <Select.Option value="2">Скасовано</Select.Option>
+          {console.log("select",data)}
+      { data.decisionStatusTypes.map(st => ( <Select.Option value={st.value}>{st.text}</Select.Option>))}
+       { data.decisionStatusTypes.map(st => {console.log(st.value)})}
         </Select>
         </Form.Item>
       <Form.Item label="Прикріпити">
@@ -87,7 +100,8 @@ const FormAddDecision = () => {
         <Button type="primary" htmlType="submit">
           Опублікувати
         </Button>
-    </Form>
+    </Form>)}
+    </div>
   );
 };
 

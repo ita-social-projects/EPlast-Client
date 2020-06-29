@@ -26,11 +26,11 @@ const DecisionTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const r = await decisionsApi.getAll();
+      const response = await decisionsApi.getAll();
      // const res = await http.get("posts");
-      const decisions = r.data.item2.map(d => d.decisionWrapper.decision);
-      console.log("-----decision table--");
-      console.log(decisions);
+      const decisions = response.data.item2.map(d => d.decisionWrapper.decision);
+     // console.log("-----decision table--");
+      //console.log(decisions);
       setData(decisions);
       setLoading(false);
     };
