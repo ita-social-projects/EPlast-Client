@@ -9,26 +9,26 @@ const columns = [
   },
   {
     title: 'Керівний орган',
-    dataIndex: 'address',
+    dataIndex: 'decisionStatusType',
   },
   {
     title: 'Статус',
-    dataIndex: 'completed',
+    dataIndex: 'decisionStatusType',
   },
   {
     title: 'Рішення для',
-    dataIndex: 'userId',
+    dataIndex: 'organizationName',
   },
   {
     title: 'Рішення',
-    dataIndex: 'title',
+    dataIndex: 'description',
     render: (text) => (
       text
     ),
   },
   {
     title: 'Дата',
-    dataIndex: 'address',
+    dataIndex: 'date',
   },
   {
     title: 'Додатки',

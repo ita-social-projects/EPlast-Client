@@ -1,7 +1,6 @@
 import React from 'react';
-import { Form, DatePicker, Select, Input, Upload } from 'antd';
+import { Form, DatePicker, Select, Input, Upload, Button } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-
 const FormAddDecision = () => {
 
   const normFile = e => {
@@ -13,9 +12,13 @@ const FormAddDecision = () => {
 
     return e && e.fileList;
   };
-
+  const onFinish = values => {
+    
+    console.log(values);
+  }
   return (
     <Form
+      onFinish = {onFinish}
       name="basic"
       initialValues={{
         remember: true,
@@ -64,12 +67,9 @@ const FormAddDecision = () => {
           </Upload.Dragger>
         </Form.Item>
       </Form.Item>
-
-      {/* <Form.Item>
         <Button type="primary" htmlType="submit">
           Опублікувати
         </Button>
-      </Form.Item> */}
     </Form>
   );
 };

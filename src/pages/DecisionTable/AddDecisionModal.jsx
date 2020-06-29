@@ -7,7 +7,7 @@ import classes from './Table.module.css';
 // eslint-disable-next-line react/prop-types
 const AddDecisionModal = ({ visibleModal, setVisibleModal }) => {
 
-    const handleOk = () => { };
+    const handleOk = () => { console.log("handleOk")};
 
     const handleCancel = () => setVisibleModal(false);
 

@@ -3,7 +3,12 @@ import Api from './api'
   const getById =  async (id: number) => {const response = await Api.getById("Decisions",id);
 return  response;};
     
-  const getAll =  async () =>{const response =  await Api.getAll("Decisions");
+  const getAll =  async () =>{
+  const response =  await Api.getAll("Decisions");
+  console.log(response.data.item2);
+  const  res = response.data.item2.map((d: { decisionWrapper: { decision: any; }; }) => d.decisionWrapper.decision);
+  console.log("-------------------------");
+  console.log(res);
   return response;}
 
   const post = async (data : any) => {const response = await Api.post("Decisions",data);
