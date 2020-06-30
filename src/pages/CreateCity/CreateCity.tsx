@@ -73,7 +73,7 @@ const CreateCity = () => {
   return (
       <Layout.Content className={classes.createCity}>
         <h1 className={classes.mainTitle}>Створення станиці</h1>
-        <Row justify="space-around" gutter={[0, 40]} style={{overflow: 'hidden'}}>
+        <Row justify="space-around" style={{overflow: 'hidden'}}>
           <Col>
             <Upload
                 name="avatar"
