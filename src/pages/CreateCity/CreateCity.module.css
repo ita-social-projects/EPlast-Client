@@ -1,0 +1,22 @@
+.mainTitle {
+  text-align: center;
+  font-size: 40px;
+  color: #3c5438;
+}
+
+.createCity {
+  background-color: white;
+  width: 80%;
+  margin: 0 auto;
+  padding-bottom: 15px;
+}
+
+.cityForm {
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-around;
+}
+
+.createButton {
+  width: 100%
+}

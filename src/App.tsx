@@ -18,6 +18,7 @@ import Notifications from './pages/Notifications/Notifications';
 import Actions from "./pages/Actions/Actions";
 import ActionEvent from './pages/Actions/ActionEvent/ActionEvent';
 import UserProfile from './pages/userPage/personalData/PersonalData';
+import CreateCity from "./pages/CreateCity/CreateCity";
 
 const App: FC = () => (
     <div className="App">
@@ -42,7 +43,8 @@ const App: FC = () => (
                 component={DecisionTable}
             />
             <RouteWithLayout layout={PrivateLayout} exact path="/cities" component={Cities}/>
-            <RouteWithLayout layout={PrivateLayout} path="/cities/:id" component={City}/>
+            <RouteWithLayout layout={PrivateLayout} exact path="/cities/new" component={CreateCity}/>
+            <RouteWithLayout layout={PrivateLayout} exact path="/cities/:id" component={City}/>
             <RouteWithLayout layout={PrivateLayout} exact path="/actions" component={Actions}/>
             <RouteWithLayout layout={PrivateLayout} exact path="/actions/events/:id" component={ActionEvent} />
             <RouteWithLayout layout={PrivateLayout} exact path="/actions/eventinfo/:id" component={EventInfo} />
