@@ -33,7 +33,37 @@ const FormAddDecision = () => {
     return e && e.fileList;
   };
   const onFinish = async values => {
+   const newDecision = {
+    decision: {
+      id: 0,
+      name: "string",
+      decisionStatusType: 0,
+      organization: {
+        id: 1,
+        organizationName: "КПР"
+      },
+      decisionTarget: {
+        id: 1,
+        targetName: "тема 1"
+      },
+      description: "string",
+      date: "2020-06-30T09:09:28.982Z",
+      haveFile: false
+    },
+    decisionTargets: [
+      {
+        id: 0,
+        targetName: "string"
+      }
+    ],
+    file: null,
+    filename: "string"
+   };
    
+   const r = await decisionsApi.post(JSON.stringify(newDecision));
+   console.log("------------------");
+   console.log(r);
+   console.log("-------------------------");
    console.log(values);
   }
   return (
@@ -41,7 +71,8 @@ const FormAddDecision = () => {
     {!loading && (
 
       <Form
-      onFinish = {onFinish}
+      
+      onSubmitCapture = {onFinish}
       name="basic"
       initialValues={{
         remember: true,
@@ -63,7 +94,7 @@ const FormAddDecision = () => {
         label="Рішення органу"
         name = "organization">
         <Select>
-        {data.organization.map(st => ( <Select.Option value={st.value}>{st.text}</Select.Option>))}
+        {data.organization.map(st => ( <Select.Option key={st.value}>{st.text}</Select.Option>))}
         </Select>
       </Form.Item>
 
@@ -71,7 +102,7 @@ const FormAddDecision = () => {
        label="Тематика рішення"
        name = "target">
         <Select>
-        {data.decisionTargets.map(st => ( <Select.Option value={st.id}>{st.targetName}</Select.Option>))}
+        {data.decisionTargets.map(st => ( <Select.Option key={st.id}>{st.targetName}</Select.Option>))}
         </Select>
       </Form.Item>
       <Form.Item name="date-picker" label="Дата рішення" >
@@ -83,7 +114,7 @@ const FormAddDecision = () => {
       <Form.Item label="Статус рішення">
         <Select>
           {console.log("select",data)}
-      { data.decisionStatusTypes.map(st => ( <Select.Option value={st.value}>{st.text}</Select.Option>))}
+      { data.decisionStatusTypes.map(st => ( <Select.Option key={st.value}>{st.text}</Select.Option>))}
        { data.decisionStatusTypes.map(st => {console.log(st.value)})}
         </Select>
         </Form.Item>
