@@ -1,0 +1,69 @@
+.list {
+  background-color: white;
+  height: 100%;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.listIcon {
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.list h1 {
+  font-size: 20px;
+  padding-top: 5px;
+}
+.mainInfo p {
+  font-size: 16px;
+  margin: 10px 0;
+}
+.aboutInfo{
+  padding: 10px 20px;
+}
+.contactsInfo p {
+  font-size: 16px;
+  text-align: start;
+  margin: 7px 0;
+}
+
+.mainMap {
+  display: block;
+  width: 90%;
+  height: 80%;
+  border: none;
+}
+
+.mainMap {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+}
+
+.mainMap:hover {
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.listItem {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.listItem p {
+  margin-bottom: 0;
+}
+
+.listButton {
+  width: 50%;
+  margin-top: auto;
+  margin-bottom: 20px;
+  align-self: center;
+}
+
+.profileImg {
+  margin: 0 auto;
+}
