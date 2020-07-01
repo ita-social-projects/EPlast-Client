@@ -34,7 +34,6 @@ const App: FC = () => (
             <Route path="/signup" component={SignUp}/>
             <Route path="/signin" component={SignIn}/>
             <Route path="/notification" component={Notifications} />
-
             <RouteWithLayout
                 layout={PrivateLayout}
                 path="/userpage/:specify"
@@ -55,7 +54,6 @@ const App: FC = () => (
             <RouteWithLayout layout={PrivateLayout} exact path="/actions/events/:id" component={ActionEvent} />
             <RouteWithLayout layout={PrivateLayout} exact path="/actions/eventinfo/:id" component={EventInfo} />
             <RouteWithLayout layout={PrivateLayout} exact path="/actions/eventCreate" component={EventCreate} />
-
           </Switch>
         </div>
         <FooterContainer/>

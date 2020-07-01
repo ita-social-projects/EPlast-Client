@@ -108,7 +108,7 @@ const Club = () => {
                           onExpand: typoExpand,
                           symbol: 'Більше'
                         }}>{club.description}</Typography.Paragraph>
-                    {expand && <Button type="primary" onClick={typoClose}>Скрити</Button>}
+                    {expand && <Button type="primary" onClick={typoClose}>Приховати</Button>}
                   </div>
                 </Col>
               </Row>
