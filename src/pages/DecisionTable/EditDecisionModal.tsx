@@ -3,8 +3,12 @@ import { Modal, Button } from 'antd';
 import FormEditDecision from './FormEditDecision';
 import classes from './Table.module.css';
 
-// eslint-disable-next-line react/prop-types
-const EditDecisionModal = ({ record, showModal, setShowModal }) => {
+interface Props {
+  record: { completed: boolean; title: string };
+  showModal: boolean;
+  setShowModal: (showModal: boolean) => void;
+}
+const EditDecisionModal = ({ record, showModal, setShowModal }: Props) => {
   const handleOk = () => {};
   const handleCancel = () => setShowModal(false);
 

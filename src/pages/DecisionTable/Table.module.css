@@ -1,28 +1,20 @@
-.tableDecision {
-  padding: 0 75px;
-}
-
-.addDecision {
-  background-color: #3c5438;
-  color: white;
+.titleTable {
+  text-align: center;
+  margin-bottom: 15px;
 }
 
 /* Search container */
 
 .searchContainer {
   display: flex;
-  justify-content: flex-end;
   align-items: baseline;
   margin-bottom: 12px;
+  width: 400px;
+  margin-left: auto;
 }
 
 .searchContainer>* {
   margin-left: 12px;
-}
-
-.searchInput {
-  width: 200px;
-  height: 32px;
 }
 
 /* Context menu right click */
@@ -30,25 +22,4 @@
 .menu {
   box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
   position: absolute;
-}
-
-.menuOptions {
-  list-style: none;
-  padding: 10px 0;
-}
-
-.menuOption {
-  font-weight: 500;
-  font-size: 14px;
-  padding: 10px 40px 10px 20px;
-  cursor: pointer;
-}
-
-.menuOption:hover {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.prevNextButton {
-  background-color: #3c5438;
-  color: white;
 }

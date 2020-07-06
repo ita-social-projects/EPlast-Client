@@ -4,7 +4,6 @@ import columns from './columns';
 
 import DropDown from './DropDownDecision';
 import AddDecisionModal from './AddDecisionModal';
-// import DropDown from './DropDownDecision';
 // import Foo from './ShowLess';
 import http from '../../api/api';
 import classes from './Table.module.css';
@@ -12,10 +11,15 @@ import classes from './Table.module.css';
 
 const { Content } = Layout;
 
+type Record = {
+  completed: boolean;
+  title: string;
+};
+
 const DecisionTable = () => {
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [recordObj, setRecordObj] = useState({});
+  const [recordObj, setRecordObj] = useState<any>({});
   const [data, setData] = useState([]);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
@@ -33,7 +37,7 @@ const DecisionTable = () => {
     fetchData();
   },[]);
 
-  const handleSearch = (event) => {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchedData(event.target.value);
   };
 
@@ -47,7 +51,7 @@ const DecisionTable = () => {
 
   const showModal = () => setVisibleModal(true);
 
-  const itemRender = (current, type, originalElement) => {
+  const itemRender = (current: any, type: string, originalElement: any) => {
     if (type === 'prev') {
       return <Button type="primary">Попередня</Button>;
     }
@@ -59,24 +63,14 @@ const DecisionTable = () => {
 
   return (
     <Layout>
-      <Content className={classes.tableDecision}>
-        <h1 style={{ textAlign: 'center', marginTop: '20px' }}>
-          Рішення керівних органів
-        </h1>
+      <Content>
+        <h1 className={classes.titleTable}>Рішення керівних органів</h1>
         {loading && <Table loading />}
         {!loading && (
           <>
             <div className={classes.searchContainer}>
-              <Input
-                className={classes.searchInput}
-                placeholder="Пошук"
-                onChange={handleSearch}
-              />
-              <Button
-                className={classes.addDecision}
-                type="primary"
-                onClick={showModal}
-              >
+              <Input placeholder="Пошук" onChange={handleSearch} />
+              <Button type="primary" onClick={showModal}>
                 Додати рішення
               </Button>
             </div>
@@ -101,7 +95,6 @@ const DecisionTable = () => {
               }}
               onChange={(pagination) => {
                 if (pagination) {
-                  // eslint-disable-next-line no-undef
                   window.scrollTo({
                     left: 0,
                     top: 0,

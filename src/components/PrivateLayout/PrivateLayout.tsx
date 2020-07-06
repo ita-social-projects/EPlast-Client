@@ -42,7 +42,9 @@ const PrivateLayout = ({ children }: any) => {
             Рішення
           </Menu.Item>
           <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
-            <Menu.Item key="2">Таблиця користувачів</Menu.Item>
+            <Menu.Item key="2" onClick={() => history.push('/usertable')}>
+              Таблиця користувачів
+            </Menu.Item>
             <Menu.Item onClick={() => history.push('/cities')} key="3">
               Станиці
             </Menu.Item>

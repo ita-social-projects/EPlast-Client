@@ -3,10 +3,7 @@ import { Form, DatePicker, Select, Input, Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 
 const FormAddDecision = () => {
-
-  const normFile = e => {
-    // console.log('Upload event:', e);
-
+  const normFile = (e: { fileList: any }) => {
     if (Array.isArray(e)) {
       return e;
     }
@@ -48,19 +45,26 @@ const FormAddDecision = () => {
           <Select.Option value="3">Demo 3</Select.Option>
         </Select>
       </Form.Item>
-      <Form.Item name="date-picker" label="Дата рішення" >
+      <Form.Item name="date-picker" label="Дата рішення">
         <DatePicker />
       </Form.Item>
       <Form.Item label="Текст рішення">
         <Input.TextArea allowClear />
       </Form.Item>
       <Form.Item label="Прикріпити">
-        <Form.Item name="dragger" valuePropName="fileList" getValueFromEvent={normFile} noStyle>
+        <Form.Item
+          name="dragger"
+          valuePropName="fileList"
+          getValueFromEvent={normFile}
+          noStyle
+        >
           <Upload.Dragger name="files" action="/upload.do">
             <p className="ant-upload-drag-icon">
               <InboxOutlined style={{ color: '#3c5438' }} />
             </p>
-            <p className="ant-upload-hint">Клікніть або перетягніть файл для завантаження</p>
+            <p className="ant-upload-hint">
+              Клікніть або перетягніть файл для завантаження
+            </p>
           </Upload.Dragger>
         </Form.Item>
       </Form.Item>

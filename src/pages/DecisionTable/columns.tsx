@@ -22,9 +22,7 @@ const columns = [
   {
     title: 'Рішення',
     dataIndex: 'title',
-    render: (text) => (
-      text
-    ),
+    render: (text: string) => text,
   },
   {
     title: 'Дата',
