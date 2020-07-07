@@ -5,7 +5,7 @@ import columns from './columns';
 import DropDown from './DropDownDecision';
 import AddDecisionModal from './AddDecisionModal';
 // import Foo from './ShowLess';
-import http from '../../api/api';
+import decisionsApi, {Decision} from '../../api/decisionsApi';
 import classes from './Table.module.css';
 // import decisionsApi from '../../api/decisionsApi'
 
@@ -20,7 +20,7 @@ const DecisionTable = () => {
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [recordObj, setRecordObj] = useState<any>({});
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Decision[]>([]);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [searchedData, setSearchedData] = useState('');
@@ -30,8 +30,8 @@ const DecisionTable = () => {
     const fetchData = async () => {
       setLoading(true);
 
-      const res = await http.get("posts");
-      setData(res.data);
+      const res : Decision[]= await decisionsApi.getAll();
+      setData(res);
       setLoading(false);
     };
     fetchData();
@@ -63,6 +63,7 @@ const DecisionTable = () => {
 
   return (
     <Layout>
+      {console.log(data)}
       <Content>
         <h1 className={classes.titleTable}>Рішення керівних органів</h1>
         {loading && <Table loading />}
