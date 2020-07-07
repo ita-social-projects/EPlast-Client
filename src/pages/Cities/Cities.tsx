@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Card, Layout } from 'antd';
-import http from '../../api/api';
-import City from '../../assets/images/city.jpg';
+import React, { useEffect, useState } from "react";
+import { useHistory, useRouteMatch } from "react-router-dom";
+import { Card, Layout } from "antd";
+import http from "../../api/api";
+import City from "../../assets/images/city.jpg";
 
-const classes = require('./Cities.module.css');
+const classes = require("./Cities.module.css");
 
 interface CardProps {
   title: string;
@@ -21,7 +21,7 @@ const Cities = () => {
   const [cities, setCities] = useState([]);
 
   const getCities = async () => {
-    const response = await http.get('posts');
+    const response = await http.get("posts");
     setCities(response.data.slice(0, 8));
   };
 
@@ -41,7 +41,10 @@ const Cities = () => {
             cover={<img src={City} alt="City" />}
             onClick={() => history.push(`${url}/${city.id}`)}
           >
-            <Card.Meta title={city.title || city.name} className={classes.titleText} />
+            <Card.Meta
+              title={city.title || city.name}
+              className={classes.titleText}
+            />
           </Card>
         ))}
       </div>

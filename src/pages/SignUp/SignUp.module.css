@@ -12,7 +12,8 @@
     margin-top: 45px;
 }
 
-.SignUpInput{
+.MyInput{
+    display: block;
     background: #f7f9fc !important;
     border: 0 !important;
     outline: none !important;

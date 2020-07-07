@@ -1,7 +1,7 @@
-import React from 'react';
-import { Modal, Button } from 'antd';
-import FormEditDecision from './FormEditDecision';
-import classes from './Table.module.css';
+import React from "react";
+import { Modal, Button } from "antd";
+import FormEditDecision from "./FormEditDecision";
+import classes from "./Table.module.css";
 
 // eslint-disable-next-line react/prop-types
 const EditDecisionModal = ({ record, showModal, setShowModal }) => {
