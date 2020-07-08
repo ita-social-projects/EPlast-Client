@@ -15,7 +15,7 @@ const get = async (url: string, data?: any, options: any = {}): Promise<HttpResp
 };
 
 
-const getById = async (url : string, id : number) => {const response = await axios.get(`${BASE_URL + url  }/${id}`);
+const getById = async (url : string, id : number|string|undefined) => {const response = await axios.get(`${BASE_URL + url  }/${id}`);
 
     console.log(response);
 return response ;};
