@@ -1,7 +1,13 @@
 import Api from "./api";
+import notificationLogic from '../components/Notifications/Notification';
 
 const register = async (data: any) => {
-  const response = await Api.post("Account/signup", data);
+  const response = await Api.post("Account/signup", data)
+  .catch(error => {
+    if(error.response.status == 400){
+      notificationLogic('error', error.response.data.value);
+    }
+  });
   return response;
 };
 
