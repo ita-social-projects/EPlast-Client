@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Button } from 'antd';
 import FormAddDecision from './FormAddDecision';
+import decisionsApi, {DecisionWrapper} from '../../api/decisionsApi'
 
 interface Props {
   visibleModal: boolean;
@@ -8,7 +9,10 @@ interface Props {
 }
 
 const AddDecisionModal = ({ visibleModal, setVisibleModal }: Props) => {
-  const handleOk = () => {};
+  const handleOk = async(data: DecisionWrapper) => {
+    console.log(data);
+    await decisionsApi.post(data).then( res => console.log(res));
+  };
 
   const handleCancel = () => setVisibleModal(false);
 
@@ -21,12 +25,12 @@ const AddDecisionModal = ({ visibleModal, setVisibleModal }: Props) => {
         <Button key="back" onClick={handleCancel}>
           Відміна
         </Button>,
-        <Button key="submit" type="primary" onClick={handleOk}>
+        <Button key="submit" type="primary" >
           Опублікувати
         </Button>,
       ]}
     >
-      <FormAddDecision />
+      <FormAddDecision onSubmit ={handleOk} />
     </Modal>
   );
 };

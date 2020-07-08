@@ -13,13 +13,15 @@ const get = async (url: string, data?: any, options: any = {}): Promise<HttpResp
     });
     return response;
 };
-const post = async (url: string, data?: any, options: any = {}): Promise<HttpResponse> => {
-    const response = await axios.post(BASE_URL + url, {
-        ...options,
-        params: data,
+const post = async (url: string, data: any) => {
+    const response = await axios.post(BASE_URL + url, data, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
     });
     return response;
-};
+  };
 const put = async (url: string, data?: any, options: any = {}): Promise<HttpResponse> => {
     const response = await axios.put(BASE_URL + url, {
         ...options,
