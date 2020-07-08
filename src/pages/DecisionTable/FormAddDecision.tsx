@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import { Form, DatePicker, Select, Input, Upload, Button } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import decisionsApi, {DecisionOnCreateData, DecisionWrapper, decisionStatusType} from '../../api/decisionsApi'
+import decisionsApi, {DecisionOnCreateData, decisionStatusType} from '../../api/decisionsApi'
 
 type FormAddDecisionProps ={
-   onSubmit:(data :DecisionWrapper) => void
+   setVisibleModal: (visibleModal: boolean) => void;
 }
-const FormAddDecision : React.FC<FormAddDecisionProps> = () => {
+const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
+ const  { setVisibleModal } = props;
   const normFile = (e: { fileList: any }) => {
     if (Array.isArray(e)) {
       return e;
@@ -14,31 +15,32 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = () => {
 
     return e && e.fileList;
   };
-const statusTypeParser = (statusType: decisionStatusType): number =>{
-if(statusType.value === "InReview") return 0;
-if (statusType.value === "Confirmed") return 1;
-return 2;
-};
+  const statusTypeParser = (statusType: decisionStatusType): number =>{
+    if(statusType.value === "InReview") return 0;
+    if (statusType.value === "Confirmed") return 1;
+    return 2;
+    };
  const handleSubmit = async (values : any)=>{
-    console.log("--------",values);
-    const newDecision ={
-      decision: {
-        "id": 0,
-        "name": values.name,
-        "decisionStatusType": statusTypeParser(JSON.parse(values.decisionStatusType)),
-        "organization":JSON.parse(values.organization),
-        "decisionTarget":JSON.parse(values.decisionTarget),
-        "description": values.description,
-        "date": "2020-04-15T00:00:00",
-        "haveFile": false,
-      },
-      "decisionTargets": null,
-      "file": null,
-      "filename": null,
-    }
-    console.log("--------",newDecision);
-   await decisionsApi.post(newDecision).then(res => console.log(res)).catch(error => console.log(error));
-    
+  console.log("--------",values);
+  console.log("------",  values.dragger)
+  const newDecision ={
+    decision: {
+      "id": 0,
+      "name": values.name,
+      "decisionStatusType": statusTypeParser(JSON.parse(values.decisionStatusType)),
+      "organization":JSON.parse(values.organization),
+      "decisionTarget":JSON.parse(values.decisionTarget),
+      "description": values.description,
+      "date":/* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values.datepicker._d,
+      "haveFile": false,
+    },
+    "decisionTargets": null,
+    "file": null,
+    "filename": null,
+  }
+  console.log("--------",newDecision);
+ await decisionsApi.post(newDecision).then(res => console.log(res)).catch(error => console.log(error));
+ setVisibleModal(false);
   }
   const[data, setData] = useState<DecisionOnCreateData>();
   useEffect(() => {
@@ -62,7 +64,9 @@ return 2;
         name="name"
         rules={[
           {
-            message: 'Це поле має бути заповненим',
+         
+            required: true,
+            message: 'Це поле має бути заповненим' 
           },
         ]}
       >
@@ -71,7 +75,8 @@ return 2;
 
       <Form.Item
        label="Рішення органу"
-       name = "organization">
+       name = "organization"
+       rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
         <Select>
       {data?.organizations.map(o => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{o.organizationName}</Select.Option>))}
         </Select>
@@ -79,17 +84,22 @@ return 2;
 
       <Form.Item
        label="Тематика рішення"
-       name ="decisionTarget">
+       name ="decisionTarget"
+       rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
         <Select>
         {data?.decisionTargets.map(dt => ( <Select.Option key ={dt.id }value={JSON.stringify(dt)}>{dt.targetName}</Select.Option>))}
         </Select>
       </Form.Item>
-      <Form.Item name="date-picker" label="Дата рішення">
-        <DatePicker />
+      <Form.Item 
+       name="datepicker"
+       label="Дата рішення"
+       rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
+        <DatePicker format = "YYYY-MM-DD"/>
       </Form.Item>
       <Form.Item 
        label="Текст рішення"
-       name = "description">
+       name = "description"
+       rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
         <Input.TextArea allowClear />
       </Form.Item>
       <Form.Item label="Прикріпити">
@@ -99,7 +109,7 @@ return 2;
           getValueFromEvent={normFile}
           noStyle
         >
-          <Upload.Dragger name="files" action="/upload.do">
+          <Upload.Dragger name="files">
             <p className="ant-upload-drag-icon">
               <InboxOutlined style={{ color: '#3c5438' }} />
             </p>
@@ -111,7 +121,8 @@ return 2;
       </Form.Item>
       <Form.Item
        label="Статус рішення"
-       name ="decisionStatusType">
+       name ="decisionStatusType"
+       rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
         <Select>
         {data?.decisionStatusTypeListItems.map(dst => ( <Select.Option key= {dst.value} value={JSON.stringify(dst)}>{dst.text}</Select.Option>))}
         </Select>
