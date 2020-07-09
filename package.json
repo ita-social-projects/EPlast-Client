@@ -23,7 +23,8 @@
     "react-hook-form": "^5.7.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
-    "typescript": "~3.7.2"
+    "typescript": "~3.7.2",
+    "yup": "^0.29.1"
   },
   "scripts": {
     "start": "craco start",
@@ -54,6 +55,7 @@
     ]
   },
   "devDependencies": {
+    "@types/yup": "^0.29.3",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "eslint-config-airbnb-typescript": "^7.2.1",
     "eslint-config-prettier": "^6.11.0",
