@@ -17,7 +17,7 @@ import EventCreate from "./pages/Actions/ActionEvent/EventCreate/EventCreate";
 import Notifications from "./pages/Notifications/Notifications";
 import Actions from "./pages/Actions/Actions";
 import ActionEvent from "./pages/Actions/ActionEvent/ActionEvent";
-// import UserProfile from "./pages/userPage/personalData/PersonalData";
+//import UserProfile from "./pages/userPage/personalData/PersonalData";
 
 const App: FC = () => (
   <div className="App">
@@ -28,10 +28,10 @@ const App: FC = () => (
           <Route exact path="/" component={Home} />
           <Route path="/contacts" component={Contacts} />
           <Route path="/signup" component={SignUp} />
-          {/* <Route path="/signin" component={SignIn} /> */}
+          <Route path="/signin" component={SignIn} /> 
           <Route path="/notification" component={Notifications} />
 
-          {/* <RouteWithLayout
+          { /*<RouteWithLayout
             layout={PrivateLayout}
             path="/userpage/:specify"
             component={UserProfile}

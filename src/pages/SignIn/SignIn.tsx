@@ -4,7 +4,7 @@ import Switcher from "../SignUp/Switcher/Switcher";
 import googleImg from "../../assets/images/google.png";
 import styles from "./SignIn.module.css";
 import facebookImg from "../../assets/images/facebook.png";
-// import { checkEmail } from "../SignUp/verification";
+import { checkEmail } from "../SignUp/verification";
 
 export default function () {
   const [form] = Form.useForm();
@@ -15,16 +15,16 @@ export default function () {
     remember: true,
   };
 
-  // const validationSchema = {
-  //   email: [
-  //     { required: true, message: "Поле електронна пошта є обов'язковим" },
-  //     { validator: checkEmail },
-  //   ],
-  //   password: [
-  //     { required: true, message: "Поле пароль є обов'язковим" },
-  //     { min: 6, message: "Мінімальна допустима довжина - 6 символів" },
-  //   ],
-  // };
+   const validationSchema = {
+     Email: [
+       { required: true, message: "Поле електронна пошта є обов'язковим" },
+       { validator: checkEmail },
+     ],
+     Password: [
+       { required: true, message: "Поле пароль є обов'язковим" },
+       { min: 6, message: "Мінімальна допустима довжина - 6 символів" },
+     ],
+   };
 
   const onFinish = (values: any) => {
     console.log("Success:", values);
@@ -44,13 +44,13 @@ export default function () {
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
       >
-        <Form.Item name="email" >
+        <Form.Item name="Email" rules={validationSchema.Email}>
           <Input
             className={styles.SignInInput}
             placeholder="Електронна пошта"
           />
         </Form.Item>
-        <Form.Item name="password" >
+        <Form.Item name="Password" rules={validationSchema.Password} >
           <Input.Password
             visibilityToggle={false}
             className={styles.SignInInput}
