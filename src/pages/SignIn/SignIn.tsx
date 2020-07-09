@@ -26,7 +26,7 @@ export default function () {
      ],
    };
 
-  const onFinish = (values: any) => {
+  const handleSubmit = (values: any) => {
     console.log("Success:", values);
   };
 
@@ -41,7 +41,7 @@ export default function () {
         name="SignInForm"
         initialValues={initialValues}
         form={form}
-        onFinish={onFinish}
+        onFinish={handleSubmit}
         onFinishFailed={onFinishFailed}
       >
         <Form.Item name="Email" rules={validationSchema.Email}>

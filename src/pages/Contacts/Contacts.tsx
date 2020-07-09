@@ -1,42 +1,42 @@
 import React from "react";
 import { Button, Form, Input, Layout, List, Select } from "antd";
-import {
-  EnvironmentOutlined,
-  PhoneOutlined,
-  MailOutlined,
-  InfoOutlined,
-} from "@ant-design/icons";
-import classes from "./Contacts.module.css";
+import { EnvironmentOutlined, PhoneOutlined, MailOutlined, InfoOutlined} from "@ant-design/icons";
+import styles from "./Contacts.module.css";
+import contactsApi from "../../api/contactsApi";
 
-const Contacts = () => {
+export default function () {
   const data = [
     {
       avatar: (
-        <EnvironmentOutlined
-          style={{ fontSize: "24px", marginRight: "20px" }}
-        />
+        <EnvironmentOutlined id={styles.environmentOutlined}/>
       ),
       title: "Україна",
     },
     {
       avatar: (
-        <PhoneOutlined style={{ fontSize: "24px", marginRight: "20px" }} />
+        <PhoneOutlined id={styles.environmentOutlined}/>
       ),
       title: "+38(099)-99-99-99-9",
     },
     {
       avatar: (
-        <MailOutlined style={{ fontSize: "24px", marginRight: "20px" }} />
+        <MailOutlined id={styles.environmentOutlined}/>
       ),
       title: "info@plast.ua",
     },
   ];
+
+  const handleSubmit = async (values: any) => {
+    await contactsApi.sendQuestionAdmin(values);
+  };
+
   const validateMessages = {
     required: "Це поле є обов`язковим!",
     types: {
       email: "Невалідний email!",
     },
   };
+
   const prefixSelector = (
     <Form.Item name="prefix" noStyle>
       <Select style={{ width: 80 }}>
@@ -44,11 +44,12 @@ const Contacts = () => {
       </Select>
     </Form.Item>
   );
+
   return (
-    <Layout.Content className={classes.contacts}>
-      <section className={classes.contactsList}>
+    <Layout.Content className={styles.contacts}>
+      <section className={styles.contactsList}>
         <h1>
-          <InfoOutlined style={{ fontSize: "32px" }} />
+          <InfoOutlined id={styles.InfoOut} />
           Контакти
         </h1>
         <List
@@ -62,10 +63,11 @@ const Contacts = () => {
         />
       </section>
       <Form
-        className={classes.contactsForm}
+        className={styles.contactsForm}
         layout="vertical"
         initialValues={{ prefix: "+380" }}
         validateMessages={validateMessages}
+        onFinish={handleSubmit}
       >
         <Form.Item
           name={["user", "name"]}
@@ -82,7 +84,7 @@ const Contacts = () => {
           <Input />
         </Form.Item>
         <Form.Item name={["user", "phone"]} label="Вкажіть Ваш номер телефону">
-          <Input addonBefore={prefixSelector} style={{ width: "100%" }} />
+          <Input addonBefore={prefixSelector} id={styles.addonElement} />
         </Form.Item>
         <Form.Item
           name={["user", "introduction"]}
@@ -99,5 +101,4 @@ const Contacts = () => {
       </Form>
     </Layout.Content>
   );
-};
-export default Contacts;
+}

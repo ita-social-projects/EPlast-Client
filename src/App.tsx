@@ -18,6 +18,8 @@ import Notifications from "./pages/Notifications/Notifications";
 import Actions from "./pages/Actions/Actions";
 import ActionEvent from "./pages/Actions/ActionEvent/ActionEvent";
 //import UserProfile from "./pages/userPage/personalData/PersonalData";
+import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword/ResetPassword";
 
 const App: FC = () => (
   <div className="App">
@@ -30,6 +32,8 @@ const App: FC = () => (
           <Route path="/signup" component={SignUp} />
           <Route path="/signin" component={SignIn} /> 
           <Route path="/notification" component={Notifications} />
+          <Route path="/forgotpassword" component={ForgotPassword}/>
+          <Route path="/resetPassword" component={ResetPassword}/>
 
           { /*<RouteWithLayout
             layout={PrivateLayout}
