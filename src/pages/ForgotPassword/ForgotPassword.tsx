@@ -15,8 +15,7 @@ export default function () {
     };
 
     const handleSubmit = async (values: any) => {
-        //await authorizeApi.register(values);
-        console.log(values);
+        await authorizeApi.forgotPassword(values);
       };
 
     const initialValues = {
@@ -39,7 +38,7 @@ export default function () {
 
             <Form.Item>
                 <Button htmlType="submit" id={styles.confirmButton}>
-                    Зареєструватись
+                    Надіслати
                 </Button>
             </Form.Item>
           </Form>

@@ -23,8 +23,7 @@ export default function () {
     };
 
     const handleSubmit = async (values: any) => {
-        //await authorizeApi.register(values);
-        console.log(values);
+        await authorizeApi.resetPassword(values);
     };
 
     const initialValues = {

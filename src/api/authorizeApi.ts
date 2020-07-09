@@ -14,6 +14,48 @@ const register = async (data: any) => {
   return response;
 };
 
+
+const forgotPassword = async(data : any) => {
+  const response = await Api.post("Account/forgotPassword", data)
+  .then(response =>{
+    notificationLogic('success', response.data.value);
+  })
+  .catch(error => {
+    if(error.response.status == 400){
+      notificationLogic('error', error.response.data.value);
+    }
+  });
+  return response;
+};
+
+const resetPassword = async(data : any) => {
+  const response = await Api.post("Account/resetPassword", data)
+  .then(response =>{
+    notificationLogic('success', response.data.value);
+  })
+  .catch(error => {
+    if(error.response.status == 400){
+      notificationLogic('error', error.response.data.value);
+    }
+  });
+  return response;
+};
+
+
+const changePassword = async(data : any) => {
+  const response = await Api.post("Account/changePassword", data)
+  .then(response =>{
+    notificationLogic('success', response.data.value);
+  })
+  .catch(error => {
+    if(error.response.status == 400){
+      notificationLogic('error', error.response.data.value);
+    }
+  });
+  return response;
+};
+
+
 /* const getById =  async (id: number) => {const response = await Api.getById("Decisions",id);
 return  response;};
     
@@ -29,4 +71,4 @@ return  response;};
   const remove = async (id : number) => {const response = await Api.put("Decisions",id);
   return response;} */
 
-export default { register };
+export default { register, forgotPassword, resetPassword, changePassword };

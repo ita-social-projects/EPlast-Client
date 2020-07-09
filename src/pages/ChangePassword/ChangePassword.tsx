@@ -23,8 +23,7 @@ export default function () {
     };
 
     const handleSubmit = async (values: any) => {
-        //await authorizeApi.register(values);
-        console.log(values);
+        await authorizeApi.changePassword(values);
     };
 
     const initialValues = {
@@ -59,7 +58,7 @@ export default function () {
                         },
                         ({ getFieldValue }) => ({
                             validator(rule, value) {
-                                if (!value || getFieldValue('Password') === value) {
+                                if (!value || getFieldValue('NewPassword') === value) {
                                     return Promise.resolve();
                                 }
                                 return Promise.reject(new Error('Паролі не співпадають'));
