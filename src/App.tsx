@@ -16,7 +16,7 @@ import EventInfo from "./pages/Actions/ActionEvent/EventInfo/EventInfo";
 import EventCreate from "./pages/Actions/ActionEvent/EventCreate/EventCreate";
 import Actions from "./pages/Actions/Actions";
 import ActionEvent from "./pages/Actions/ActionEvent/ActionEvent";
-//import UserProfile from "./pages/userPage/personalData/PersonalData";
+import UserProfile from "./pages/userPage/personalData/PersonalData";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
@@ -35,11 +35,11 @@ const App: FC = () => (
           <Route path="/resetPassword" component={ResetPassword}/>
           <Route path="/changePassword" component={ChangePassword} />
 
-          { /*<RouteWithLayout
+          <RouteWithLayout
             layout={PrivateLayout}
             path="/userpage/:specify"
             component={UserProfile}
-          /> */}
+          />
           <RouteWithLayout
             layout={PrivateLayout}
             path="/decisions"
