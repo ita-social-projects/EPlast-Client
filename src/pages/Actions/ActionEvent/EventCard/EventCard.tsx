@@ -1,16 +1,26 @@
 import React from 'react';
-import { useHistory } from "react-router-dom";
-import { Card} from 'antd';
-import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
+import {useHistory} from "react-router-dom";
+import {Card} from 'antd';
+import {EditOutlined, EllipsisOutlined, SettingOutlined} from '@ant-design/icons';
 
 const classes = require('./EventCard.module.css');
 
 interface CardProps {
-    title: string;
+    eventId: string;
+    eventName: string;
+    isUserEventAdmin:boolean;
+    isUserParticipant:boolean;
+    isUserApprovedParticipant:boolean;
+    isUserUndeterminedParticipant:boolean;
+    isUserRejectedParticipant:boolean;
+    isEventApproved:boolean;
+    isEventFinished:boolean;
+    isEventNotApproved:boolean;
+/*    title: string;
     name: string;
     imgUrl: string;
     userId: string;
-    id: string;
+    id: string; */
 }
 
 interface Props {
@@ -18,17 +28,17 @@ interface Props {
 }
 
 const EventCard = ({
-    item: { name, id},
-}: Props) => {
-    const { Meta } = Card;
+                       item: {eventName, eventId}
+                   }: Props) => {
+    const {Meta} = Card;
     const history = useHistory();
 
     return (
         <div className={classes.background}>
             <div className={classes.actionsWrapper}>
                 <Card
-                className={classes.cardStyles}
-                onClick={()=> history.push(`/actions/eventinfo/${id}`)}
+                    className={classes.cardStyles}
+                    onClick={() => history.push(`/actions/eventinfo/${eventId}`)}
                     cover={
                         <img
                             alt="example"
@@ -36,14 +46,16 @@ const EventCard = ({
                         />
                     }
                     actions={[
-                        <SettingOutlined key="setting" />,
-                        <EditOutlined key="edit" />,
-                        <EllipsisOutlined key="ellipsis" />,
+                        <SettingOutlined key="setting"/>,
+                        <EditOutlined key="edit"/>,
+                        <EllipsisOutlined key="ellipsis"/>,
                     ]}
                 >
                     <Meta
-                        title={name}
-                        description="This is the description"
+                        title={eventName}
+                        /*
+                                                description="This is the description"
+                        */
                     />
                 </Card>
             </div>

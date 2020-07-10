@@ -10,7 +10,7 @@ const ActionEvent = () => {
     return (
         <div className={classes.background}>
             <div className={classes.actionsWrapper}>
-                <SortedEvents userId={id} />
+                <SortedEvents eventCategoryId={id} />
             </div>
         </div>
     )

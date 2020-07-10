@@ -27,7 +27,7 @@ const Actions = () => {
         if (arr) {
             const cutArr = arr.slice(0, 48);
             return cutArr.map((item: any) => (
-                <ActionCard item={item} key={item.id} />
+                <ActionCard item={item} key={item.eventCategoryId} />
             ));
         } return null;
     };

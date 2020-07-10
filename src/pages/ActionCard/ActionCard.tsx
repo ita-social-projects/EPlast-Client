@@ -31,7 +31,7 @@ const ActionCard = ({
                 hoverable
                 className={classes.cardStyles}
                 cover={<img alt="example" src="https://eplast.azurewebsites.net/images/Events/ActionLogo.png" />}
-                onClick={()=> history.push(`/actions/events/${id}`)}
+                onClick={()=> history.push(`/actions/events/${eventCategoryId}`)}
             >
                 <Meta title={eventCategoryName} className={classes.titleText}/>
             </Card>
