@@ -6,6 +6,8 @@ import styles from "./SignIn.module.css";
 import facebookImg from "../../assets/images/facebook.png";
 import { checkEmail } from "../SignUp/verification";
 import {Link} from 'react-router-dom';
+import AuthorizeApi from '../../api/AuthorizeApi';
+let authService = new AuthorizeApi();
 
 export default function () {
   const [form] = Form.useForm();
@@ -27,8 +29,8 @@ export default function () {
      ]
    };
 
-  const handleSubmit = (values: any) => {
-    console.log("Success:", values);
+  const handleSubmit = async (values: any) => {
+    await authService.login(values);
   };
 
   return (

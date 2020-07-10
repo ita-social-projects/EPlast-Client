@@ -2,7 +2,7 @@ import {notification} from 'antd';
  
 const openNotificationWithIcon = (type, text) => {
   (notification[type] )({
-    message: 'Заголовок сповіщення',
+    message: 'Сповіщення',
     description : text
   });
   };

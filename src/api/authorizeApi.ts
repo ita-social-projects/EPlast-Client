@@ -1,11 +1,25 @@
 import Api from "./api";
 import notificationLogic from '../components/Notifications/Notification';
 import AuthStore from '../stores/Auth';
-/*isSignedIn() : boolean{
-  return !!AuthStore.getToken();
-}*/
 
 export default class AuthorizeApi{
+  static isSignedIn(): boolean {
+    return !!AuthStore.getToken();
+  }
+
+  login = async(data: any) =>{
+    const response = await Api.post("Account/signin", data)
+     .then(response =>{
+         AuthStore.setToken(response.data.token);
+         console.log(response.data.token);
+         notificationLogic('success', response.data.value);
+     })
+     .catch(error =>{
+       notificationLogic('error', error.responce.data.value);
+     })
+     return response;
+  };
+
 
   register = async (data: any) => {
   const response = await Api.post("Account/signup", data)
