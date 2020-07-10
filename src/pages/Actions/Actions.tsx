@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ActionCard from '../ActionCard/ActionCard';
-import http from '../../api/api';
+import eventsApi from "../../api/eventsApi";
 
 const classes = require('./Actions.module.css');
 
@@ -8,14 +8,20 @@ const Actions = () => {
 
     const [actions, setActions] = useState([]);
 
-    const updateActions = async () => {
-        const actionsArray = await http.get('posts');
-        setActions(actionsArray.data);
-    }
 
     useEffect(() => {
-        updateActions();
-    }, []);
+        const fetchData = async () => {
+            const response = await eventsApi.getAll();
+            console.log(response);
+            setActions(response.data)
+        };
+        fetchData();
+    },[]);
+
+
+    // useEffect(() => {
+    //     updateActions();
+    // }, []);
 
     const renderActions = (arr: any) => {
         if (arr) {

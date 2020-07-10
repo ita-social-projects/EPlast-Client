@@ -7,11 +7,10 @@ import { useHistory } from "react-router-dom";
 const classes = require('./ActionCard.module.css');
 
 interface CardProps {
-    title: string;
-    name: string;
+    eventCategoryName: string;
     imgUrl?: string;
     userId?: string;
-    id: string;
+    eventCategoryId: number;
 }
 
 interface Props {
@@ -19,8 +18,8 @@ interface Props {
 }
 
 const ActionCard = ({
-    item: { title, id , name},
-}: Props) => {
+    item: {  eventCategoryId , eventCategoryName}
+}:Props) => {
 
     const { Meta } = Card;
     const history = useHistory();
@@ -28,12 +27,13 @@ const ActionCard = ({
     return (
         <div>
             <Card
+                key={eventCategoryId}
                 hoverable
                 className={classes.cardStyles}
                 cover={<img alt="example" src="https://eplast.azurewebsites.net/images/Events/ActionLogo.png" />}
                 onClick={()=> history.push(`/actions/events/${id}`)}
             >
-                <Meta title={title || name} className={classes.titleText}/>
+                <Meta title={eventCategoryName} className={classes.titleText}/>
             </Card>
         </div>
     )
