@@ -85,6 +85,5 @@ const App: FC = () => (
       <FooterContainer />
     </Router>
   </div>
-);
-
+)
 export default App;

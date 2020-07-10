@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Input, Button } from 'antd';
 import styles from '../ChangePassword/ChangePassword.module.css';
 import { checkEmail, checkNameSurName } from '../SignUp/verification';
-import AuthorizeApi from '../../api/AuthorizeApi';
+import AuthorizeApi from '../../api/authorizeApi';
 let authService = new AuthorizeApi();
 
 export default function () {

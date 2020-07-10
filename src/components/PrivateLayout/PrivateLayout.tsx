@@ -50,7 +50,7 @@ const PrivateLayout = ({ children }: any) => {
             <Menu.Item onClick={() => history.push("/actions")} key="5">
               Акції
             </Menu.Item>
-            <Menu.Item key="6">Курені</Menu.Item>
+            <Menu.Item onClick={() => history.push('/clubs')} key="6">Курені</Menu.Item>
             <Menu.Item key="7">Відзначення</Menu.Item>
             <Menu.Item key="8">Кадра виховників</Menu.Item>
           </SubMenu>

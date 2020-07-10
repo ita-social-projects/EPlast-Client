@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
-import { Card, Layout } from "antd";
-import http from "../../api/api";
-import City from "../../assets/images/city.jpg";
+
+import React, { useEffect, useState } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+import { Card, Layout } from 'antd';
+import http from '../../api/api';
+import City from '../../assets/images/city.jpg';
+import Add from '../../assets/images/add.png';
 
 const classes = require("./Cities.module.css");
 
@@ -33,6 +35,13 @@ const Cities = () => {
     <Layout.Content>
       <h1 className={classes.mainTitle}>Станиці</h1>
       <div className={classes.wrapper}>
+        <Card hoverable
+              className={classes.cardStyles}
+              cover={<img src={Add} alt="Add" />}
+              onClick={() => history.push(`${url}/new`)}>
+          <Card.Meta className={classes.titleText} title="Створити нову станицю"/>
+        </Card>
+
         {cities.map((city: CardProps) => (
           <Card
             key={city.id}
@@ -47,6 +56,7 @@ const Cities = () => {
             />
           </Card>
         ))}
+
       </div>
     </Layout.Content>
   );

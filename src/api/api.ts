@@ -18,9 +18,8 @@ const get = async (
   return response;
 };
 
-const getById = async (url: string, id: number) => {
+const getById = async (url: string, id: number|string|undefined) => {
   const response = await axios.get(`${BASE_URL + url}/${id}`);
-
   console.log(response);
   return response;
 };

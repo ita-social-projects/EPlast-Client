@@ -3,7 +3,7 @@ import { Form, Input, Button } from 'antd';
 import styles from './SignUp.module.css';
 import Switcher from './Switcher/Switcher';
 import { checkEmail, checkNameSurName } from './verification';
-import AuthorizeApi from '../../api/AuthorizeApi';
+import AuthorizeApi from '../../api/authorizeApi';
 let authService = new AuthorizeApi();
 
 export default function () {

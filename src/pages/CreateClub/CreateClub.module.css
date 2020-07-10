@@ -1,0 +1,17 @@
+.mainTitle {
+  text-align: center;
+  font-size: 40px;
+  color: #3c5438;
+  margin-bottom: 10px;
+}
+
+.createClub {
+  background-color: white;
+  width: 80%;
+  margin: 0 auto;
+  padding-bottom: 15px;
+}
+
+.createButton {
+  width: 100%
+}
