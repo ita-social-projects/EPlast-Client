@@ -4,6 +4,8 @@ import {Button, Space, Spin} from 'antd';
 import styles from './PersonalData.module.css';
 import userApi from '../../../api/UserApi';
 import AvatarAndProgress from './AvatarAndProgress';
+import jwt from 'jwt-decode';
+import AuthStore from '../../../stores/Auth';
 
 export default function () {
   interface User {
@@ -36,7 +38,9 @@ export default function () {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
   const fetchData = async () => {
-    await userApi.getById('ed26f626-5d97-4ca7-9890-fe4caa7d9446').then(response =>{
+    const token = AuthStore.getToken() as string;
+    const user : any = jwt(token);
+    await userApi.getById(user.nameid).then(response =>{
       setData(response.data);
       setLoading(true);
     })
