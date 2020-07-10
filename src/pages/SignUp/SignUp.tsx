@@ -26,10 +26,6 @@ export default function () {
     await authorizeApi.register(values);
   };
 
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
-  };
-
   const initialValues = {
     Email: '',
     Name: '',
@@ -46,7 +42,6 @@ export default function () {
         initialValues={initialValues}
         form={form}
         onFinish={handleSubmit}
-        onFinishFailed={onFinishFailed}
       >
         <Form.Item name="Email" rules={validationSchema.Email}>
           <Input className={styles.MyInput} placeholder="Електронна пошта" />

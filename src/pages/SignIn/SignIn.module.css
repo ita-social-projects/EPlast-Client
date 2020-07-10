@@ -45,8 +45,9 @@
     color: #6f7a85;
     opacity: .95;
     cursor: pointer;
-    font-family: "SourceSansPro";
+    font-family: "SourceSansPro"; 
     margin-top: -10px;
+    margin-left:200px;
 }
 
 .GoogleFacebookLogin{

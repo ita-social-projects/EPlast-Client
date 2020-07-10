@@ -5,14 +5,15 @@ import googleImg from "../../assets/images/google.png";
 import styles from "./SignIn.module.css";
 import facebookImg from "../../assets/images/facebook.png";
 import { checkEmail } from "../SignUp/verification";
+import {Link} from 'react-router-dom';
 
 export default function () {
   const [form] = Form.useForm();
 
   const initialValues = {
-    email: "",
-    password: "",
-    remember: true,
+    Email: "",
+    Password: "",
+    RememberMe: true,
   };
 
    const validationSchema = {
@@ -23,15 +24,11 @@ export default function () {
      Password: [
        { required: true, message: "Поле пароль є обов'язковим" },
        { min: 6, message: "Мінімальна допустима довжина - 6 символів" },
-     ],
+     ]
    };
 
   const handleSubmit = (values: any) => {
     console.log("Success:", values);
-  };
-
-  const onFinishFailed = (errorInfo: any) => {
-    console.log("Failed:", errorInfo);
   };
 
   return (
@@ -42,7 +39,6 @@ export default function () {
         initialValues={initialValues}
         form={form}
         onFinish={handleSubmit}
-        onFinishFailed={onFinishFailed}
       >
         <Form.Item name="Email" rules={validationSchema.Email}>
           <Input
@@ -65,7 +61,7 @@ export default function () {
             Увійти
           </Button>
         </Form.Item>
-        <p className={styles.forgot}>Забули пароль?</p>
+        <Link className={styles.forgot} to="/forgotPassword">Забули пароль</Link>
         <div className={styles.GoogleFacebookLogin}>
           <Button id={styles.googleBtn} className={styles.socialButton}>
             <span id={styles.imgSpanGoogle}>

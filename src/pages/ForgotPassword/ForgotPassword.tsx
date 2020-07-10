@@ -29,6 +29,9 @@ export default function () {
                 initialValues={initialValues}
                 form={form}
                 onFinish={handleSubmit}>
+            <div className={styles.forgotPasswordContainer}>
+                <p>Забули пароль?  Введіть електронну пошту</p>
+            </div>
             <Form.Item name="Email" rules={validationSchema.Email}>
                 <Input
                     className={styles.ForgotPasswordInput}

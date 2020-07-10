@@ -39,7 +39,9 @@ export default function () {
                 initialValues={initialValues}
                 form={form}
                 onFinish={handleSubmit}>
-
+            <div className={styles.changePasswordContainer}>
+                <p>Зміна пароля</p>
+            </div>
                 <Form.Item name="CurrentPassword" rules={validationSchema.CurrentPassword}>
                     <Input.Password visibilityToggle={false} className={styles.ChangePasswordInput} placeholder="Поточний пароль" />
                 </Form.Item>

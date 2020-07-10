@@ -14,7 +14,6 @@ import SignUp from "./pages/SignUp/SignUp";
 import SignIn from "./pages/SignIn/SignIn";
 import EventInfo from "./pages/Actions/ActionEvent/EventInfo/EventInfo";
 import EventCreate from "./pages/Actions/ActionEvent/EventCreate/EventCreate";
-import Notifications from "./pages/Notifications/Notifications";
 import Actions from "./pages/Actions/Actions";
 import ActionEvent from "./pages/Actions/ActionEvent/ActionEvent";
 //import UserProfile from "./pages/userPage/personalData/PersonalData";
@@ -32,7 +31,6 @@ const App: FC = () => (
           <Route path="/contacts" component={Contacts} />
           <Route path="/signup" component={SignUp} />
           <Route path="/signin" component={SignIn} /> 
-          <Route path="/notification" component={Notifications} />
           <Route path="/forgotpassword" component={ForgotPassword}/>
           <Route path="/resetPassword" component={ResetPassword}/>
           <Route path="/changePassword" component={ChangePassword} />

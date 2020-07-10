@@ -40,6 +40,9 @@ export default function () {
                 form={form}
                 onFinish={handleSubmit}>
 
+            <div className={styles.resetPasswordContainer}>
+                <p>Скидування пароля.   Введіть електронну пошту</p>
+            </div>
                 <Form.Item name="Email" rules={validationSchema.Email}>
                     <Input
                         className={styles.ResetPasswordInput}
