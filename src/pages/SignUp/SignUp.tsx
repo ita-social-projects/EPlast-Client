@@ -2,8 +2,9 @@ import React from 'react';
 import { Form, Input, Button } from 'antd';
 import styles from './SignUp.module.css';
 import Switcher from './Switcher/Switcher';
-import authorizeApi from '../../api/authorizeApi';
 import { checkEmail, checkNameSurName } from './verification';
+import AuthorizeApi from '../../api/AuthorizeApi';
+let authService = new AuthorizeApi();
 
 export default function () {
   const [form] = Form.useForm();
@@ -23,7 +24,7 @@ export default function () {
   };
 
   const handleSubmit = async (values: any) => {
-    await authorizeApi.register(values);
+    await authService.register(values);
   };
 
   const initialValues = {

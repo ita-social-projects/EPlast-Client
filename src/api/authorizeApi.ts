@@ -1,7 +1,13 @@
 import Api from "./api";
 import notificationLogic from '../components/Notifications/Notification';
+import AuthStore from '../stores/Auth';
+/*isSignedIn() : boolean{
+  return !!AuthStore.getToken();
+}*/
 
-const register = async (data: any) => {
+export default class AuthorizeApi{
+
+  register = async (data: any) => {
   const response = await Api.post("Account/signup", data)
   .then(response =>{
     notificationLogic('success', response.data.value);
@@ -15,7 +21,7 @@ const register = async (data: any) => {
 };
 
 
-const forgotPassword = async(data : any) => {
+  forgotPassword = async(data : any) => {
   const response = await Api.post("Account/forgotPassword", data)
   .then(response =>{
     notificationLogic('success', response.data.value);
@@ -28,7 +34,7 @@ const forgotPassword = async(data : any) => {
   return response;
 };
 
-const resetPassword = async(data : any) => {
+ resetPassword = async(data : any) => {
   const response = await Api.post("Account/resetPassword", data)
   .then(response =>{
     notificationLogic('success', response.data.value);
@@ -42,7 +48,7 @@ const resetPassword = async(data : any) => {
 };
 
 
-const changePassword = async(data : any) => {
+ changePassword = async(data : any) => {
   const response = await Api.post("Account/changePassword", data)
   .then(response =>{
     notificationLogic('success', response.data.value);
@@ -54,21 +60,4 @@ const changePassword = async(data : any) => {
   });
   return response;
 };
-
-
-/* const getById =  async (id: number) => {const response = await Api.getById("Decisions",id);
-return  response;};
-    
-  const getAll =  async () =>{const response =  await Api.getAll("Decisions");
-  return response;}
-
-  const post = async (data : any) => {const response = await Api.post("Decisions",data);
-  return response;};
-
-  const put = async (data : any) =>{const response = await Api.put("Decisions",data);
-  return response;}
-  
-  const remove = async (id : number) => {const response = await Api.put("Decisions",id);
-  return response;} */
-
-export default { register, forgotPassword, resetPassword, changePassword };
+}

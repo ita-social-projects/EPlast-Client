@@ -1,8 +1,9 @@
 import React from 'react';
 import { Form, Input, Button } from 'antd';
 import styles from '../ChangePassword/ChangePassword.module.css';
-import authorizeApi from '../../api/authorizeApi';
 import { checkEmail, checkNameSurName } from '../SignUp/verification';
+import AuthorizeApi from '../../api/AuthorizeApi';
+let authService = new AuthorizeApi();
 
 export default function () {
     const [form] = Form.useForm();
@@ -23,7 +24,7 @@ export default function () {
     };
 
     const handleSubmit = async (values: any) => {
-        await authorizeApi.changePassword(values);
+        await authService.changePassword(values);
     };
 
     const initialValues = {
