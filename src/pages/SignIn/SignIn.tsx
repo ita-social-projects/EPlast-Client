@@ -6,7 +6,7 @@ import styles from "./SignIn.module.css";
 import facebookImg from "../../assets/images/facebook.png";
 import { checkEmail } from "../SignUp/verification";
 import {Link} from 'react-router-dom';
-import AuthorizeApi from '../../api/AuthorizeApi';
+import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
 let authService = new AuthorizeApi();
 
@@ -44,7 +44,6 @@ export default function () {
         initialValues={initialValues}
         form={form}
         onFinish={handleSubmit}
-        
       >
         <Form.Item name="Email" rules={validationSchema.Email}>
           <Input
