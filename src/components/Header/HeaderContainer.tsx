@@ -31,6 +31,16 @@ const HeaderContainer = () => {
       </Menu.Item>
       <Menu.Item className={classes.headerDropDownItem} key="6">
         <NavLink
+          to="/changePassword"
+          className={classes.headerLink}
+          activeClassName={classes.activeLink}
+        >
+          <EditOutlined className={classes.dropDownIcon} />
+          Змінити пароль
+        </NavLink>
+      </Menu.Item>
+      <Menu.Item className={classes.headerDropDownItem} key="6">
+        <NavLink
           to="/signout"
           className={classes.headerLink}
           activeClassName={classes.activeLink}

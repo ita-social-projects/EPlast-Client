@@ -7,10 +7,12 @@ import facebookImg from "../../assets/images/facebook.png";
 import { checkEmail } from "../SignUp/verification";
 import {Link} from 'react-router-dom';
 import AuthorizeApi from '../../api/AuthorizeApi';
+import { useHistory } from 'react-router-dom';
 let authService = new AuthorizeApi();
 
 export default function () {
   const [form] = Form.useForm();
+  const history = useHistory();
 
   const initialValues = {
     Email: "",
@@ -31,6 +33,7 @@ export default function () {
 
   const handleSubmit = async (values: any) => {
     await authService.login(values);
+    history.push('/userpage/main')
   };
 
   return (
@@ -41,6 +44,7 @@ export default function () {
         initialValues={initialValues}
         form={form}
         onFinish={handleSubmit}
+        
       >
         <Form.Item name="Email" rules={validationSchema.Email}>
           <Input

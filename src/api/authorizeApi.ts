@@ -12,7 +12,6 @@ export default class AuthorizeApi{
      .then(response =>{
          AuthStore.setToken(response.data.token);
          console.log(response.data.token);
-         notificationLogic('success', response.data.value);
      })
      .catch(error =>{
        notificationLogic('error', error.responce.data.value);
