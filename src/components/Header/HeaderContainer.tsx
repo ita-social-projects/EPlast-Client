@@ -11,9 +11,13 @@ import LogoImg from "../../assets/images/ePlastLogotype.png";
 import LogoText from "../../assets/images/logo_PLAST.svg";
 import User from "../../assets/images/user.jpg";
 import classes from "./Header.module.css";
+import AuthorizeApi from '../../api/authorizeApi';
+let authService = new AuthorizeApi();
 
 const HeaderContainer = () => {
-  const user = true;
+  
+  const user = AuthorizeApi.isSignedIn();   //тут ше перевірити
+
   const primaryMenu = (
     <Menu
       mode="vertical"
@@ -39,11 +43,12 @@ const HeaderContainer = () => {
           Змінити пароль
         </NavLink>
       </Menu.Item>
-      <Menu.Item className={classes.headerDropDownItem} key="6">
+      <Menu.Item className={classes.headerDropDownItem} key="6" >
         <NavLink
-          to="/signout"
           className={classes.headerLink}
           activeClassName={classes.activeLink}
+          to="/signin"
+          onSubmit={authService.logout}
         >
           <LogoutOutlined className={classes.dropDownIcon} />
           Вийти
