@@ -1,11 +1,6 @@
 import React from "react";
 import { Layout, Menu, Dropdown, Avatar } from "antd";
-import {
-  LoginOutlined,
-  LogoutOutlined,
-  BellOutlined,
-  EditOutlined,
-} from "@ant-design/icons";
+import { LoginOutlined, LogoutOutlined, BellOutlined, EditOutlined} from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import LogoImg from "../../assets/images/ePlastLogotype.png";
 import LogoText from "../../assets/images/logo_PLAST.svg";
@@ -48,7 +43,7 @@ const HeaderContainer = () => {
           className={classes.headerLink}
           activeClassName={classes.activeLink}
           to="/signin"
-          onSubmit={authService.logout}
+          onClick={authService.logout}
         >
           <LogoutOutlined className={classes.dropDownIcon} />
           Вийти

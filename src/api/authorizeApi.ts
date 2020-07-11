@@ -2,9 +2,8 @@ import Api from "./api";
 import notificationLogic from '../components/Notifications/Notification';
 import AuthStore from '../stores/Auth';
 
-
 export default class AuthorizeApi{
-  
+
   static isSignedIn(): boolean {
     return !!AuthStore.getToken();
   }
@@ -76,14 +75,6 @@ export default class AuthorizeApi{
 };
 
   logout = async() =>{
-    console.log('hello');
-   AuthStore.removeToken();
-   const response = await Api.getAll("Account/logout")
-   .then(response =>{
-       console.log(response);
-   })
-   .catch(error =>{
-     console.log(response);
-   })
+    AuthStore.removeToken();
  };
 }

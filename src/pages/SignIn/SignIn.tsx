@@ -33,6 +33,7 @@ export default function () {
 
   const handleSubmit = async (values: any) => {
     await authService.login(values);
+    
     history.push('/userpage/main')
   };
 
