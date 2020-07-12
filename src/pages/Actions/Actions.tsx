@@ -11,8 +11,8 @@ const Actions = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await eventsApi.getAll();
-            console.log(response);
+            const response = await eventsApi.getCategories();
+//            console.log(response);
             setActions(response.data)
         };
         fetchData();

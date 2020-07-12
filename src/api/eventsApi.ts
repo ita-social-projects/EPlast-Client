@@ -1,18 +1,18 @@
 import Api from './api'
 
-const getAll = async () => {
+const getCategories = async () => {
     const response = await Api.getAll("Events/types/1/categories");
     return response;
 }
 
-const getEvents = async () => {
-    const response = await Api.getAll("types/1/categories/3/events");
+const getEvents = async (typeId: number, categoryId: number) => {
+    const response = await Api.getAll(`types/${typeId}/categories/${categoryId}/events`);
     return response;
 }
 
-const getEventInfo = async () => {
-    const response = await Api.getAll("Events/1/details");
+const getEventInfo = async (id: number) => {
+    const response = await Api.getAll(`Events/${id}/details`);
     return response;
 }
 
-export default {getAll,getEvents,getEventInfo};
+export default {getCategories, getEvents, getEventInfo};

@@ -83,7 +83,7 @@ const EventInfo = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await eventsApi.getEventInfo();
+            const response = await eventsApi.getEventInfo(id);
             setEvent(response.data)
             console.log(event);
         };
