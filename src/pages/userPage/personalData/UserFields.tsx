@@ -1,6 +1,5 @@
 import React,{ useState, useEffect} from 'react';
 import {Button, Space, Spin} from 'antd';
-// import { DatePickerProps } from 'antd/lib/date-picker';
 import styles from './PersonalData.module.css';
 import userApi from '../../../api/UserApi';
 import AvatarAndProgress from './AvatarAndProgress';
