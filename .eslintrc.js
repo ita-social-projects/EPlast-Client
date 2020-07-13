@@ -1,22 +1,29 @@
 module.exports = {
   root: true,
-  parser: '@typescript-eslint/parser',
+  parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: './tsconfig.json',
+    project: "./tsconfig.json",
     ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
-    sourceType: 'module', // Allows for the use of imports
+    sourceType: "module", // Allows for the use of imports
   },
   extends: [
-    'airbnb-typescript',
-    'prettier',
-    'prettier/@typescript-eslint',
-    'prettier/react',
+    "airbnb-typescript",
+    "prettier",
+    "prettier/@typescript-eslint",
+    "prettier/react",
   ],
   rules: {
+<<<<<<< HEAD
+    "no-useless-escape": "off",
+    "react/jsx-props-no-spreading": "off",
+    "no-nested-ternary": "off",
+    "no-console": "off",
+=======
     'no-useless-escape': 'off',
     'react/jsx-props-no-spreading': 'off',
     'no-nested-ternary': 'off',
     'no-console': 'off',
     'jsx-a11y/click-events-have-key-events': 'off'
+>>>>>>> VV-UserProfileConnection
   },
 };

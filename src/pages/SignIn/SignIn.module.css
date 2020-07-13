@@ -20,6 +20,7 @@
     height: 44px !important;
     border-bottom: 1px solid #dfe7f1 !important;
     width: 100% !important;
+    text-align: left;
 }
 
 #confirmButton{
@@ -44,8 +45,9 @@
     color: #6f7a85;
     opacity: .95;
     cursor: pointer;
-    font-family: "SourceSansPro";
+    font-family: "SourceSansPro"; 
     margin-top: -10px;
+    margin-left:200px;
 }
 
 .GoogleFacebookLogin{

@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Input, Button, Layout } from 'antd';
-import columns from './columns';
+import React, { useEffect, useState } from "react";
+import { Table, Input, Button, Layout } from "antd";
+import columns from "./columns";
 
-import DropDown from './DropDownDecision';
-import AddDecisionModal from './AddDecisionModal';
+import DropDown from "./DropDownDecision";
+import AddDecisionModal from "./AddDecisionModal";
 // import DropDown from './DropDownDecision';
 // import Foo from './ShowLess';
-import http from '../../api/api';
-import classes from './Table.module.css';
-// import decisionsApi from '../../api/decisionsApi'
+import http from "../../api/api";
+import classes from "./Table.module.css";
+import { ApiFilled } from "@ant-design/icons";
+import decisionsApi from "../../api/decisionsApi";
 
 const { Content } = Layout;
 
@@ -19,7 +20,7 @@ const DecisionTable = () => {
   const [data, setData] = useState([]);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
-  const [searchedData, setSearchedData] = useState('');
+  const [searchedData, setSearchedData] = useState("");
   const [visibleModal, setVisibleModal] = useState(false);
 
   useEffect(() => {
@@ -31,7 +32,7 @@ const DecisionTable = () => {
       setLoading(false);
     };
     fetchData();
-  },[]);
+  }, []);
 
   const handleSearch = (event) => {
     setSearchedData(event.target.value);
@@ -48,10 +49,10 @@ const DecisionTable = () => {
   const showModal = () => setVisibleModal(true);
 
   const itemRender = (current, type, originalElement) => {
-    if (type === 'prev') {
+    if (type === "prev") {
       return <Button type="primary">Попередня</Button>;
     }
-    if (type === 'next') {
+    if (type === "next") {
       return <Button type="primary">Наступна</Button>;
     }
     return originalElement;
@@ -60,7 +61,7 @@ const DecisionTable = () => {
   return (
     <Layout>
       <Content className={classes.tableDecision}>
-        <h1 style={{ textAlign: 'center', marginTop: '20px' }}>
+        <h1 style={{ textAlign: "center", marginTop: "20px" }}>
           Рішення керівних органів
         </h1>
         {loading && <Table loading />}
@@ -105,13 +106,13 @@ const DecisionTable = () => {
                   window.scrollTo({
                     left: 0,
                     top: 0,
-                    behavior: 'smooth',
+                    behavior: "smooth",
                   });
                 }
               }}
               pagination={{
                 itemRender,
-                position: ['bottomRight'],
+                position: ["bottomRight"],
                 showTotal: (total, range) =>
                   `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
               }}

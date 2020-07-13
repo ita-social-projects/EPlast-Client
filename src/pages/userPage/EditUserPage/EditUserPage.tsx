@@ -3,7 +3,7 @@ import { Form, Input, Avatar, Upload, Button, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import styles from './EditUserPage.module.css';
 import { checkEmail, checkNameSurName, checkPhone } from '../../SignUp/verification';
-import { getBase64 } from './Services';
+import {getBase64} from './Services';
 import avatar from '../../../assets/images/avatar.jpg';
 
 export default function () {
