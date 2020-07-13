@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Table, Input, Row} from "antd";
 import {useParams} from "react-router-dom";
+// eslint-disable-next-line import/no-cycle
 import SortedEventInfo from './SortedEventInfo';
 import rawData from "./data";
 import Gallery from './Gallery';
@@ -12,17 +13,17 @@ const classes = require('./EventInfo.module.css');
 const baseColumns = [
     {
         title: "Користувач",
-        dataIndex: "Name",
+        dataIndex: "fullName",
         key: "user"
     },
     {
         title: "Email",
-        dataIndex: "Email",
+        dataIndex: "email",
         key: "email"
     },
     {
         title: "Поточний статус",
-        dataIndex: "Enable",
+        dataIndex: "status",
         key: "status"
     }
 ];
@@ -37,7 +38,7 @@ export interface EventDetails {
     isEventFinished: boolean;
 }
 
-interface EventInformation {
+export interface EventInformation {
     eventId: string;
     eventName: string;
     description: string;
@@ -76,16 +77,18 @@ interface EventGallery {
 
 const EventInfo = () => {
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [filterTable, setFilterTable] = useState([{}]);
     const [baseData,] = useState(rawData);
-    const [event, setEvent] = useState({})
+    // @ts-ignore
+    const [event, setEvent] = useState<EventDetails>({})
     const {id} = useParams();
 
     useEffect(() => {
         const fetchData = async () => {
             const response = await eventsApi.getEventInfo(id);
             setEvent(response.data)
-            console.log(event);
+            //           console.log(event);
         };
         fetchData();
     }, []);
@@ -105,8 +108,7 @@ const EventInfo = () => {
         <div className={classes.background}>
             <div className={classes.wrapper}>
                 <div className={classes.actionsWrapper}>
-                    <h1>ID:{id}</h1>
-                    <SortedEventInfo />
+                    <SortedEventInfo event={event}/>
                 </div>
                 <Gallery/>
                 <div>
@@ -121,7 +123,8 @@ const EventInfo = () => {
                     <Table
                         rowKey="uid"
                         columns={baseColumns}
-                        dataSource={filterTable.length < 2 ? baseData : filterTable}
+                        //                    dataSource={filterTable.length < 2 ? baseData : filterTable}
+                        dataSource={event.event?.eventParticipants}
                     />
                 </div>
 
