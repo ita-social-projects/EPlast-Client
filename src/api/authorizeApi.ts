@@ -11,10 +11,12 @@ export default class AuthorizeApi{
   login = async(data: any) =>{
     const response = await Api.post("Account/signin", data)
      .then(response =>{
-         AuthStore.setToken(response.data.token);
+        AuthStore.setToken(response.data.token);
      })
      .catch(error =>{
-       notificationLogic('error', error.responce.data.value);
+      if(error.response.status == 400){
+        notificationLogic('error', error.response.data.value);
+      }
      })
      return response;
   };
@@ -60,6 +62,13 @@ export default class AuthorizeApi{
   return response;
 };
 
+ resetPasswordGet = async() =>{
+   const response = await Api.getAll("Account/ResetPassword")
+   .then(response =>{
+     //history.push("/");
+   })
+ };
+
 
  changePassword = async(data : any) => {
   const response = await Api.post("Account/changePassword", data)
@@ -76,5 +85,10 @@ export default class AuthorizeApi{
 
   logout = async() =>{
     AuthStore.removeToken();
+ };
+
+ confirmingEmail = async() => {
+   const response = await Api.getAll("Account/confirmingEmail");
+   console.log(response.data.userId);
  };
 }
