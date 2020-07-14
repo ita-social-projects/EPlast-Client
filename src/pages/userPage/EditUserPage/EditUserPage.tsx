@@ -68,7 +68,7 @@ export default function () {
   const validationSchema = {
     name: [
       { required: true, message: "Ім'я є обов'язковим" },
-      {max:25, message:'Максимальна довжина - 25 символів'},
+      { max:25, message:'Максимальна довжина - 25 символів'},
       { validator: checkNameSurName },
     ],
     surName: [
@@ -119,14 +119,18 @@ export default function () {
   //   console.log(date, dateString);
   // };
 
-  const uploadPhotoConfig = {
+const uploadPhotoConfig = {
     name: 'file',
+    action:'https://www.mocky.io/v2/5cc8019d300000980a055e76',
     headers: {
       authorization: 'authorization-text',
     },
     onChange(info: any) {
+      console.log(info.file.status);
       if (info.file.status === 'done') {
+        
         getBase64(info.file.originFileObj, (imageUrl: any) => {
+          console.log(imageUrl);
           setUserAvatar(imageUrl);
         });
       } else if (info.file.status === 'removed') {
@@ -135,7 +139,7 @@ export default function () {
     },
   };
 
-  const { name, headers, onChange } = uploadPhotoConfig;
+  const { name,action, headers, onChange } = uploadPhotoConfig;
   
   const handleOnChangeNationality =(value:any,event:any)=>{
     if(event.key===undefined)
@@ -294,7 +298,7 @@ export default function () {
        <Form  form={form} name="basic" className={styles.formContainer} onFinish={handleSubmit}	>
         <div className={styles.avatarWrapper}>
           <Avatar size={256} src={userAvatar} className="avatarElem" />
-          <Upload name={name} headers={headers} onChange={onChange} className={styles.changeAvatar}>
+          <Upload name={name} action={action} headers={headers} onChange={onChange} className={styles.changeAvatar}>
             <Button className={styles.changeAvatarBtn}>
               <UploadOutlined /> Вибрати
             </Button>
@@ -306,7 +310,7 @@ export default function () {
             <Form.Item
               label="Ім`я"
               name="firstName"
-              rules={validationSchema.name}
+            //  rules={validationSchema.name}
               className={styles.formItem}
             >
               <Input  className={styles.dataInput}/>
@@ -314,7 +318,7 @@ export default function () {
             <Form.Item
               label="Прізвище"
               name="lastName"
-              rules={validationSchema.surName}
+            //  rules={validationSchema.surName}
               className={styles.formItem}
             >
               <Input className={styles.dataInput} />
@@ -324,7 +328,7 @@ export default function () {
             <Form.Item
               label="По-батькові"
               name="fatherName"
-              rules={validationSchema.fatherName}
+              //rules={validationSchema.fatherName}
               className={styles.formItem}
             >
               <Input  className={styles.dataInput}/>
@@ -365,7 +369,7 @@ export default function () {
             <Form.Item
               label="Національність"
               name="nationalityName"
-              rules={validationSchema.nationality}
+              //rules={validationSchema.nationality}
               className={styles.formItem}
             >
               <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangeNationality}  >
@@ -376,7 +380,7 @@ export default function () {
               label="Віровизнання"
               name="religionName"
               className={styles.formItem}
-              rules={validationSchema.religion}
+              //rules={validationSchema.religion}
             >
              <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangeReligion}  >
                 {data?.religions.map(p => ( <Select.Option  key={p.id} value={p.name}>{p.name}</Select.Option>))}
@@ -389,7 +393,7 @@ export default function () {
             <Form.Item
               label="Навчальний заклад"
               name="placeOfStudy"
-              rules={validationSchema.placeOfStudy}
+         //     rules={validationSchema.placeOfStudy}
               className={styles.formItem}
             >
              <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangePlaceOfStudy}  >
@@ -399,7 +403,7 @@ export default function () {
             <Form.Item
               label="Спеціальність"
               name="speciality"
-              rules={validationSchema.speciality}
+           //   rules={validationSchema.speciality}
               className={styles.formItem}
             >
               <AutoComplete className={styles.dataInput} filterOption={true}  onChange={handleOnChangeSpeciality}  >
@@ -411,7 +415,7 @@ export default function () {
             <Form.Item
               label="Навчальний ступінь"
               name="degreeName"
-              rules={validationSchema.degree}
+            //  rules={validationSchema.degree}
               className={styles.formItem}
             >
               <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangeDegree}  >
@@ -421,7 +425,7 @@ export default function () {
             <Form.Item
               label="Місце праці"
               name="placeOfWork"
-              rules={validationSchema.placeOfWork}
+            //  rules={validationSchema.placeOfWork}
               className={styles.formItem}
             >
              <AutoComplete className={styles.dataInput} filterOption={true}  onChange={handleOnChangePlaceOWork}  >
@@ -433,7 +437,7 @@ export default function () {
             <Form.Item
               label="Посада"
               name="positionOfWork"
-              rules={validationSchema.position}
+              //rules={validationSchema.position}
               className={styles.formItem}
             >
                <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangePosition}  >
@@ -443,7 +447,7 @@ export default function () {
             <Form.Item
               label="Адреса проживання"
               name="address"
-              rules={validationSchema.adress}
+              //rules={validationSchema.adress}
               className={styles.formItem}
             >
               <Input className={styles.dataInput} />
