@@ -33,7 +33,7 @@ const SortedEvents = ({eventCategoryId, typeId}: Props) => {
     useEffect(() => {
         const fetchData = async () => {
             const response = await eventsApi.getEvents(typeId, eventCategoryId);
-//            console.log(response);
+            console.log(response);
             setActions(response.data)
         };
         fetchData();
