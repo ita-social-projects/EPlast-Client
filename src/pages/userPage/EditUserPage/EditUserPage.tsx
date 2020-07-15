@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Avatar, Upload, Button, Select, AutoComplete,Space,Spin } from 'antd';
+import { Form, Input, Avatar, Upload, Button, Select, AutoComplete,Space,Spin,DatePicker  } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import styles from './EditUserPage.module.css';
 import { checkNameSurName, checkPhone } from '../../SignUp/verification';
-import {checkField, checkAdress} from '../EditUserPage/VerificationUserProfile';
 import { getBase64 } from './Services';
 import {Data,Nationality,Religion,Degree,Gender} from './Interface';
 import avatar from '../../../assets/images/default_user_image.png';
 import userApi from '../../../api/UserApi';
-
+import InputMask from 'react-input-mask';
+import moment, { Moment } from 'moment';
 
 export default function () {
+    const patern=/^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50})*$/;
+    const message='Дане поле повинне містити тільки літери';
     const [form] = Form.useForm();
 
     const [nationality,setNationality]=useState<Nationality>();
@@ -21,6 +23,7 @@ export default function () {
     const [specialityID,setSpecialityID]=useState<any>();
     const [placeOfWorkID,setPlaceOfWorkID]=useState<any>();
     const [positionID,setPositionID]=useState<any>();
+    const [birthday,setBirthday]=useState<Moment>();
 
     const [userAvatar, setUserAvatar] = useState<any>();
     const [loading, setLoading] = useState(false);
@@ -35,6 +38,7 @@ export default function () {
               setUserAvatar(q.data);
             })
           }
+          
           setLoading(true);
           form.setFieldsValue({
             firstName:response.data.user.firstName,
@@ -42,7 +46,6 @@ export default function () {
             fatherName:response.data.user.fatherName, 
             phoneNumber: response.data.user.phoneNumber,
             nationalityName: response.data.user.nationality.name,
-            birthday: response.data.user.birthday,
             genderName: response.data.user.gender.name,
             placeOfStudy: response.data.user.education.placeOfStudy,
             speciality: response.data.user.education.speciality,
@@ -60,6 +63,21 @@ export default function () {
           setPlaceOfWorkID(response.data.workView.placeOfWorkID);
           setPositionID(response.data.workView.positionID);
           setGender(response.data.user.gender);
+          if(response.data.user.birthday==="0001-01-01T00:00:00")
+          {
+            setBirthday(undefined);
+          }
+          else
+          {
+            setBirthday(moment(response.data.user.birthday));
+          }
+          if(response.data.user.phoneNumber===null)
+          {
+            setPhoneNumber("");
+          }
+          else{
+            setPhoneNumber(response.data.user.phoneNumber);
+          }
         })
       };
       fetchData();
@@ -68,7 +86,7 @@ export default function () {
   const validationSchema = {
     name: [
       { required: true, message: "Ім'я є обов'язковим" },
-      { max:25, message:'Максимальна довжина - 25 символів'},
+      {max:25, message:'Максимальна довжина - 25 символів'},
       { validator: checkNameSurName },
     ],
     surName: [
@@ -78,59 +96,52 @@ export default function () {
     ],
     fatherName: [
       {max:25, message:'Максимальна довжина - 25 символів'},
-      { validator: checkField },
+      { pattern: patern, message: message},
     ],
     degree: [
       {max:30, message:'Максимальна довжина - 30 символів'},
-      { validator: checkField },
+      { pattern: patern, message: message},
     ],
     placeOfStudy: [
       {max:50, message:'Максимальна довжина - 50 символів'},
-      { validator: checkField },
+      { pattern: patern, message: message},
     ],
     speciality: [
       {max:50, message:'Максимальна довжина - 50 символів'},
-      { validator: checkField },
+      { pattern: patern, message: message},
     ],
     nationality: [
       {max:25, message:'Максимальна довжина - 25 символів'},
-      { validator: checkField },
+      { pattern: patern, message: message},
     ],
     religion: [
       {max:25, message:'Максимальна довжина - 25 символів'},
-      { validator: checkField },
+      { pattern: patern, message: message},
     ],
     placeOfWork: [
       {max:30, message:'Максимальна довжина - 30 символів'},
-      { validator: checkField },
+      { pattern: patern, message: message},
     ],
     position: [
       {max:30, message:'Максимальна довжина - 30 символів'},
-      { validator: checkField },
+      { pattern: patern, message: message},
     ],
     adress: [
       {max:30, message:'Максимальна довжина - 30 символів'},
-      { validator: checkAdress },
+      { pattern: /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`0-9.-]{0,30}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`0-9.-]{0,30})*$/, message: 'Дане поле повинне містити тільки літери та цифри'},
     ],
     
     phone: [{ validator: checkPhone }],
   };
-  // const  onChangeBirthday=(date:any, dateString:any)=> {
-  //   console.log(date, dateString);
-  // };
 
-const uploadPhotoConfig = {
+  const uploadPhotoConfig = {
     name: 'file',
-    action:'https://www.mocky.io/v2/5cc8019d300000980a055e76',
     headers: {
       authorization: 'authorization-text',
     },
     onChange(info: any) {
-      console.log(info.file.status);
       if (info.file.status === 'done') {
-        
         getBase64(info.file.originFileObj, (imageUrl: any) => {
-          console.log(imageUrl);
           setUserAvatar(imageUrl);
         });
       } else if (info.file.status === 'removed') {
@@ -139,7 +150,7 @@ const uploadPhotoConfig = {
     },
   };
 
-  const { name,action, headers, onChange } = uploadPhotoConfig;
+  const { name, headers, onChange } = uploadPhotoConfig;
   
   const handleOnChangeNationality =(value:any,event:any)=>{
     if(event.key===undefined)
@@ -157,6 +168,7 @@ const uploadPhotoConfig = {
       })
     }
   };
+  const [phoneNumber,setPhoneNumber]=useState("");
   const handleOnChangeReligion =(value:any,event:any)=>{
     
     if(event.key===undefined)
@@ -233,12 +245,22 @@ const uploadPhotoConfig = {
       setPositionID(parseInt(event.key))
     }
   };
-
   const handleOnChangeGender=(value:any)=>{
     setGender(JSON.parse(value))
   };
-
-
+  const changePhoneNumber=(event:any)=>{
+    setPhoneNumber(event.target.value);
+  }
+  const handleOnChangeBirthday=(event:any,value:any)=>{
+    if(value=="")
+    {
+      setBirthday(undefined);
+    }
+    else{
+      setBirthday(moment(event?._d));
+    }
+    
+  }
   const handleSubmit = async (values : any)=>{
     const newUserProfile={
       user:{
@@ -247,8 +269,8 @@ const uploadPhotoConfig = {
         "firstName":values.firstName,
         "lastName": values.lastName,
         "fatherName": values.fatherName,
-        "phoneNumber": values.phoneNumber,
-        "birthday": values.birthday,
+        "phoneNumber": phoneNumber,
+        "birthday": birthday,
         
         "degree": {
           "id":degree?.id,
@@ -286,6 +308,7 @@ const uploadPhotoConfig = {
     await userApi.put(newUserProfile).then(res => console.log(res)).catch(error => console.log(error));
     window.location.reload(false);
   }
+
   return loading === false ? (
     <div className={styles.spaceWrapper}>
       <Space className={styles.loader} size="large">
@@ -298,7 +321,7 @@ const uploadPhotoConfig = {
        <Form  form={form} name="basic" className={styles.formContainer} onFinish={handleSubmit}	>
         <div className={styles.avatarWrapper}>
           <Avatar size={256} src={userAvatar} className="avatarElem" />
-          <Upload name={name} action={action} headers={headers} onChange={onChange} className={styles.changeAvatar}>
+          <Upload name={name} headers={headers} onChange={onChange} className={styles.changeAvatar}>
             <Button className={styles.changeAvatarBtn}>
               <UploadOutlined /> Вибрати
             </Button>
@@ -310,7 +333,7 @@ const uploadPhotoConfig = {
             <Form.Item
               label="Ім`я"
               name="firstName"
-            //  rules={validationSchema.name}
+              rules={validationSchema.name}
               className={styles.formItem}
             >
               <Input  className={styles.dataInput}/>
@@ -318,7 +341,7 @@ const uploadPhotoConfig = {
             <Form.Item
               label="Прізвище"
               name="lastName"
-            //  rules={validationSchema.surName}
+              rules={validationSchema.surName}
               className={styles.formItem}
             >
               <Input className={styles.dataInput} />
@@ -328,7 +351,7 @@ const uploadPhotoConfig = {
             <Form.Item
               label="По-батькові"
               name="fatherName"
-              //rules={validationSchema.fatherName}
+              rules={validationSchema.fatherName}
               className={styles.formItem}
             >
               <Input  className={styles.dataInput}/>
@@ -347,29 +370,25 @@ const uploadPhotoConfig = {
           <div className={styles.rowBlock}>
             <Form.Item
               label="Дата народження"
-              name="birthday"
-            //  initialValue={initialValues.birth}
               className={styles.formItem}
             >
-              {/* <DatePicker format = "YYYY-MM-DD"/> */}
-              <Input className={styles.dataInput}/>
+              <DatePicker className={styles.dataInput} value={birthday} onChange={handleOnChangeBirthday} format = "DD-MM-YYYY"/> 
+             
             </Form.Item>
-           
             <Form.Item
               label="Номер телефону"
-              name="phoneNumber"
               className={styles.formItem}
-             // rules={validationSchema.phone}
+              rules={validationSchema.phone}
             >
-              {/* <MaskedInput mask="00 00 000 00 00" className={styles.dataInput}/> */}
-               <Input className={styles.dataInput} />
+               <InputMask  value={phoneNumber} onChange={changePhoneNumber} className={styles.dataInput}  mask="+38(999)-999-99-99"/> 
             </Form.Item>
+           
           </div>
           <div className={styles.rowBlock}>
             <Form.Item
               label="Національність"
               name="nationalityName"
-              //rules={validationSchema.nationality}
+              rules={validationSchema.nationality}
               className={styles.formItem}
             >
               <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangeNationality}  >
@@ -380,7 +399,7 @@ const uploadPhotoConfig = {
               label="Віровизнання"
               name="religionName"
               className={styles.formItem}
-              //rules={validationSchema.religion}
+              rules={validationSchema.religion}
             >
              <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangeReligion}  >
                 {data?.religions.map(p => ( <Select.Option  key={p.id} value={p.name}>{p.name}</Select.Option>))}
@@ -393,7 +412,7 @@ const uploadPhotoConfig = {
             <Form.Item
               label="Навчальний заклад"
               name="placeOfStudy"
-         //     rules={validationSchema.placeOfStudy}
+              rules={validationSchema.placeOfStudy}
               className={styles.formItem}
             >
              <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangePlaceOfStudy}  >
@@ -403,7 +422,7 @@ const uploadPhotoConfig = {
             <Form.Item
               label="Спеціальність"
               name="speciality"
-           //   rules={validationSchema.speciality}
+              rules={validationSchema.speciality}
               className={styles.formItem}
             >
               <AutoComplete className={styles.dataInput} filterOption={true}  onChange={handleOnChangeSpeciality}  >
@@ -415,7 +434,7 @@ const uploadPhotoConfig = {
             <Form.Item
               label="Навчальний ступінь"
               name="degreeName"
-            //  rules={validationSchema.degree}
+              rules={validationSchema.degree}
               className={styles.formItem}
             >
               <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangeDegree}  >
@@ -425,7 +444,7 @@ const uploadPhotoConfig = {
             <Form.Item
               label="Місце праці"
               name="placeOfWork"
-            //  rules={validationSchema.placeOfWork}
+              rules={validationSchema.placeOfWork}
               className={styles.formItem}
             >
              <AutoComplete className={styles.dataInput} filterOption={true}  onChange={handleOnChangePlaceOWork}  >
@@ -437,7 +456,7 @@ const uploadPhotoConfig = {
             <Form.Item
               label="Посада"
               name="positionOfWork"
-              //rules={validationSchema.position}
+              rules={validationSchema.position}
               className={styles.formItem}
             >
                <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangePosition}  >
@@ -447,7 +466,7 @@ const uploadPhotoConfig = {
             <Form.Item
               label="Адреса проживання"
               name="address"
-              //rules={validationSchema.adress}
+              rules={validationSchema.adress}
               className={styles.formItem}
             >
               <Input className={styles.dataInput} />

@@ -55,7 +55,6 @@ export default function () {
       ) : (
         <div className={styles.userFieldsWrapper}>
       
-        {console.log(data)}
         <h2 className={styles.title}>Особистий профіль</h2>
         <div className={styles.tableWrapper}>
         <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast.days}/>

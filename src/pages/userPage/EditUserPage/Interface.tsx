@@ -1,3 +1,5 @@
+import { Moment } from "moment"
+
 export type Gender={
     id:number;
     name:string;
@@ -44,7 +46,7 @@ export type User ={
     fatherName:string;
     imagePath:string;
     address: string;
-    birthday: string;
+    birthday: Date;
     phoneNumber: string;
     gender: Gender;
     nationality: Nationality;

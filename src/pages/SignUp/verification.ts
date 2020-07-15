@@ -25,9 +25,6 @@ export const checkPhone = (role: object, value: string, callback: any) => {
   if (reg.test(value) === false) {
     return callback('Дане поле не є номером телефону');
   }
-  if (value.length === 0) {
-      return callback('');
-  }
   if (reg.test(value) === false) {
     return callback('Дане поле повинне містити тільки літери');
   }
