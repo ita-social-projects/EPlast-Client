@@ -20,6 +20,8 @@ import UserProfile from "./pages/userPage/personalData/PersonalData";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
+import Clubs from "./pages/Clubs/Clubs"
+import Club from "./pages/Club/Club"
 
 const App: FC = () => (
   <div className="App">
@@ -30,9 +32,9 @@ const App: FC = () => (
           <Route exact path="/" component={Home} />
           <Route path="/contacts" component={Contacts} />
           <Route path="/signup" component={SignUp} />
-          <Route path="/signin" component={SignIn} /> 
-          <Route path="/forgotpassword" component={ForgotPassword}/>
-          <Route path="/resetPassword" component={ResetPassword}/>
+          <Route path="/signin" component={SignIn} />
+          <Route path="/forgotpassword" component={ForgotPassword} />
+          <Route path="/resetPassword" component={ResetPassword} />
           <Route path="/changePassword" component={ChangePassword} />
 
           <RouteWithLayout
@@ -80,6 +82,8 @@ const App: FC = () => (
             path="/actions/eventCreate"
             component={EventCreate}
           />
+          <RouteWithLayout layout={PrivateLayout} exact path="/clubs" component={Clubs} />
+          <RouteWithLayout layout={PrivateLayout} exact path="/clubs/:id" component={Club} />
         </Switch>
       </div>
       <FooterContainer />
