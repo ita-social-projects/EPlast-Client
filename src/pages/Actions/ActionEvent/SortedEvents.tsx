@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 
 import EventCard from "./EventCard/EventCard";
-import http from "../../../api/api";
+//import http from "../../../api/api";
 
 const classes = require("./ActionEvent.module.css");
 
@@ -10,23 +10,23 @@ interface Props {
 }
 
 const SortedEvents = ({ userId = "" }: Props) => {
-  const [actions, setActions] = useState([]);
+  const [actions/*, setActions*/] = useState([]);
 
-  const updateActions = async (callback: Function) => {
+  /*const updateActions = async (callback: Function) => {
     const actionsArray = await http.get("comments");
     setActions(actionsArray.data);
     callback(actionsArray);
-  };
+  };*/
 
-  const filterActions = (arr: any) => {
+  /*const filterActions = (arr: any) => {
     if (userId && arr) {
       setActions(arr.data.filter((item: any) => item.postId === 1));
     }
-  };
+  };*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     updateActions(filterActions);
-  }, [userId]);
+  }, [userId]);*/
 
   const renderAction = (arr: any) => {
     if (arr) {
@@ -45,3 +45,6 @@ const SortedEvents = ({ userId = "" }: Props) => {
   );
 };
 export default SortedEvents;
+
+
+

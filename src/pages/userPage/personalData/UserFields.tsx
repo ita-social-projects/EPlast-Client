@@ -3,7 +3,6 @@ import {Button, Space, Spin} from 'antd';
 // import { DatePickerProps } from 'antd/lib/date-picker';
 import styles from './PersonalData.module.css';
 import userApi from '../../../api/UserApi';
-import AvatarAndProgress from './AvatarAndProgress';
 import jwt from 'jwt-decode';
 import AuthStore from '../../../stores/Auth';
 import {Demo} from "../../WebChat/Demo";
