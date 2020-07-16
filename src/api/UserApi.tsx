@@ -2,8 +2,13 @@ import axios from 'axios';
 import Api from './api'
 import BASE_URL from '../config';
 
+<<<<<<< HEAD
     const getById =  async (id: string|undefined) => {const response = await Api.getById("User",id);
         return  response;};
+=======
+    const getById =  async (id: number | string|undefined) => {const response = await Api.getById("User", id);
+return  response;};
+>>>>>>> nodegroup_branch
     const getImage =  async (imageName : string|undefined) => {const response = await axios.get(`${`${BASE_URL  }User/getImage`}/${imageName}`);
         return response ;};
     const edit=async (id:string)=>{const response=await axios.get(`${`${BASE_URL  }User/edit`}/${id}`);

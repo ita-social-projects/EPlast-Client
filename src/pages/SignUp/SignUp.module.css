@@ -12,7 +12,7 @@
     margin-top: 45px;
 }
 
-.SignUpInput{
+.MyInput{
     background: #f7f9fc !important;
     border: 0 !important;
     outline: none !important;
@@ -20,9 +20,11 @@
     height: 44px !important;
     border-bottom: 1px solid #dfe7f1 !important;
     width: 100% !important;
+    text-align: left;
 }
 
 #confirmButton{
+    margin-top: 15px;
     border: 0;
     color: white;
     background-color: #3c5438;
