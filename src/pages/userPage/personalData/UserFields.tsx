@@ -6,6 +6,7 @@ import userApi from '../../../api/UserApi';
 import AvatarAndProgress from './AvatarAndProgress';
 import jwt from 'jwt-decode';
 import AuthStore from '../../../stores/Auth';
+import {Demo} from "../../WebChat/Demo";
 
 export default function () {
   interface User {
@@ -61,9 +62,9 @@ export default function () {
         <div className={styles.userFieldsWrapper}>
       
         {console.log(data)}
+        <Demo/>
         <h2 className={styles.title}>Особистий профіль</h2>
         <div className={styles.tableWrapper}>
-        <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast.days}/>
           <table className={styles.table}>
             <tbody>
               <tr>
