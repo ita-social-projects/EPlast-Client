@@ -20,8 +20,8 @@ import UserProfile from "./pages/userPage/personalData/PersonalData";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
-import Clubs from "./pages/Clubs/Clubs"
-import Club from "./pages/Club/Club"
+import Clubs from "./pages/Clubs/Clubs";
+import Club from "./pages/Club/Club";
 
 const App: FC = () => (
   <div className="App">
@@ -82,12 +82,22 @@ const App: FC = () => (
             path="/actions/eventCreate"
             component={EventCreate}
           />
-          <RouteWithLayout layout={PrivateLayout} exact path="/clubs" component={Clubs} />
-          <RouteWithLayout layout={PrivateLayout} exact path="/clubs/:id" component={Club} />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs"
+            component={Clubs}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs/:id"
+            component={Club}
+          />
         </Switch>
       </div>
       <FooterContainer />
     </Router>
   </div>
-)
+);
 export default App;

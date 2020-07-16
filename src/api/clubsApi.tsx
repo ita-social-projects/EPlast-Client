@@ -1,12 +1,12 @@
 import Api from "./api";
 
 const getById = async (id: number) => {
-  const response = await Api.getById("Club", id);
+  const response = await Api.getById("Club/Get", id);
   return response;
 };
 
 const getAll = async () => {
-  const response = await Api.getAll("Club/index");
+  const response = await Api.getAll("Club/Get");
   return response;
 };
 
