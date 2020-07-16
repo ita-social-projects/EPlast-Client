@@ -36,7 +36,6 @@ const AvatarAndProgress:React.FC<AvatarAndProgressProps> = (props: AvatarAndProg
     <div className={styles.leftPartWrapper}>
       <Avatar size={256} src={imageBase64} />
       <p className={styles.statusText}>{time} дні і Василь Хартманє Пластун:)</p>
-      
       <Progress
         type="circle"
         className={styles.progressBar}

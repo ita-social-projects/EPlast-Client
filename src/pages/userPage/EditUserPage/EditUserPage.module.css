@@ -94,4 +94,6 @@ input,
 [role="spinbutton"] {
     text-align: start;
 }
->>>>>>> VV-UserProfileConnection
+.confirmBtn:hover{
+    transform: scale(1.07);
+}

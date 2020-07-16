@@ -9,6 +9,8 @@ import avatar from '../../../assets/images/default_user_image.png';
 import userApi from '../../../api/UserApi';
 import InputMask from 'react-input-mask';
 import moment, { Moment } from 'moment';
+import jwt from 'jwt-decode';
+import AuthStore from '../../../stores/Auth';
 
 export default function () {
     const patern=/^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50})*$/;
@@ -30,7 +32,9 @@ export default function () {
     const [data, setData] = useState<Data>()
     useEffect(()=>{
       const fetchData = async () => {
-        await userApi.edit('4906ff3f-c236-4b53-9924-3aa9aec63b4a').then(async response =>{
+        const token = AuthStore.getToken() as string;
+        const user : any = jwt(token);
+        await userApi.edit(user.nameid).then(async response =>{
           setData(response.data);
           if(response.data.user.imagePath!==undefined)
           {
@@ -136,6 +140,7 @@ export default function () {
 
   const uploadPhotoConfig = {
     name: 'file',
+    action:'https://www.mocky.io/v2/5cc8019d300000980a055e76',
     headers: {
       authorization: 'authorization-text',
     },
@@ -150,7 +155,7 @@ export default function () {
     },
   };
 
-  const { name, headers, onChange } = uploadPhotoConfig;
+  const { name,action, headers, onChange } = uploadPhotoConfig;
   
   const handleOnChangeNationality =(value:any,event:any)=>{
     if(event.key===undefined)
@@ -321,7 +326,7 @@ export default function () {
        <Form  form={form} name="basic" className={styles.formContainer} onFinish={handleSubmit}	>
         <div className={styles.avatarWrapper}>
           <Avatar size={256} src={userAvatar} className="avatarElem" />
-          <Upload name={name} headers={headers} onChange={onChange} className={styles.changeAvatar}>
+          <Upload name={name} action={action} headers={headers} onChange={onChange} className={styles.changeAvatar}>
             <Button className={styles.changeAvatarBtn}>
               <UploadOutlined /> Вибрати
             </Button>

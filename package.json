@@ -19,20 +19,14 @@
     "axios": "^0.19.2",
     "craco-less": "^1.17.0",
     "formik": "^2.1.4",
-<<<<<<< HEAD
     "from-antd-datepicker": "^0.2.10",
-=======
     "jwt-decode": "^2.2.0",
->>>>>>> nodegroup_branch
     "moment": "^2.27.0",
     "react": "^16.13.1",
     "react-datepicker": "^3.1.3",
     "react-dom": "^16.13.1",
-<<<<<<< HEAD
     "react-input-mask": "^2.0.4",
-=======
     "react-hook-form": "^5.7.2",
->>>>>>> nodegroup_branch
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "typescript": "~3.7.2",
@@ -67,11 +61,8 @@
     ]
   },
   "devDependencies": {
-<<<<<<< HEAD
     "@types/react-input-mask": "^2.0.5",
-=======
     "@types/yup": "^0.29.3",
->>>>>>> nodegroup_branch
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "eslint-config-airbnb-typescript": "^7.2.1",
     "eslint-config-prettier": "^6.11.0",
