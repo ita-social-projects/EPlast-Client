@@ -1,5 +1,6 @@
 import axios from 'axios';
-import BASE_URL from '../config';
+import BASE_URL from "../config";
+
 
 interface HttpResponse {
     headers: any;

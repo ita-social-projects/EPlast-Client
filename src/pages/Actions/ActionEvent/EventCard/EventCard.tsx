@@ -1,6 +1,7 @@
 import React from 'react';
 import {useHistory} from "react-router-dom";
 import {Card, Tooltip} from 'antd';
+
 import {
     EditTwoTone,
     DeleteTwoTone,
@@ -14,21 +15,13 @@ import {
     UserDeleteOutlined,
     UserAddOutlined
 } from '@ant-design/icons';
+// eslint-disable-next-line import/named
+import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirm} from "../../EventsModals";
+
+// eslint-disable-next-line import/no-cycle
+import {CardProps} from "../SortedEvents";
 
 const classes = require('./EventCard.module.css');
-
-interface CardProps {
-    eventId: string;
-    eventName: string;
-    isUserEventAdmin: boolean;
-    isUserParticipant: boolean;
-    isUserApprovedParticipant: boolean;
-    isUserUndeterminedParticipant: boolean;
-    isUserRejectedParticipant: boolean;
-    isEventApproved: boolean;
-    isEventFinished: boolean;
-    isEventNotApproved: boolean;
-}
 
 interface Props {
     item: CardProps;
@@ -54,7 +47,7 @@ const EventCard = ({
                 <EditTwoTone twoToneColor="#3c5438" key="edit"/>
             </Tooltip>)
             eventIcons.push(<Tooltip title="Видалити">
-                <DeleteTwoTone twoToneColor="#8B0000" key="delete"/>
+                <DeleteTwoTone onClick={() => showDeleteConfirm(eventName)} twoToneColor="#8B0000" key="delete"/>
             </Tooltip>)
         } else if (isUserParticipant && !isEventFinished) {
             if (isUserRejectedParticipant) {
@@ -73,12 +66,13 @@ const EventCard = ({
                     </Tooltip>)
                 }
                 eventIcons.push(<Tooltip title="Відписатися від події">
-                    <UserDeleteOutlined style={{color: "#8B0000"}} key="unsubscribe"/>
+                    <UserDeleteOutlined onClick={() => showUnsubscribeConfirm(eventName)} style={{color: "#8B0000"}} key="unsubscribe"/>
                 </Tooltip>)
             }
         } else if (!isEventFinished) {
             eventIcons.push(<Tooltip title="Зголоситись на подію">
-                <UserAddOutlined style={{color: "#3c5438"}} key="unsubscribe"/>
+                <UserAddOutlined onClick={() => showSubscribeConfirm(eventName)} style={{color: "#3c5438"}}
+                                 key="unsubscribe"/>
             </Tooltip>)
         }
         if (isEventFinished) {

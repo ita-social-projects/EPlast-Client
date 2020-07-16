@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 
+// eslint-disable-next-line import/no-cycle
 import EventCard from './EventCard/EventCard';
 import eventsApi from "../../../api/eventsApi";
 
@@ -10,9 +11,22 @@ interface Props {
     typeId: number;
 }
 
+export interface CardProps {
+    eventId: string;
+    eventName: string;
+    isUserEventAdmin: boolean;
+    isUserParticipant: boolean;
+    isUserApprovedParticipant: boolean;
+    isUserUndeterminedParticipant: boolean;
+    isUserRejectedParticipant: boolean;
+    isEventApproved: boolean;
+    isEventFinished: boolean;
+    isEventNotApproved: boolean;
+}
+
 const SortedEvents = ({eventCategoryId, typeId}: Props) => {
 
-    const [actions, setActions] = useState([]);
+    const [actions, setActions] = useState<CardProps[]>([]);
 
     /* const updateActions = async (callback:Function) => {
          const actionsArray = await http.get('comments');
@@ -39,10 +53,10 @@ const SortedEvents = ({eventCategoryId, typeId}: Props) => {
         fetchData();
     }, []);
 
-    const renderAction = (arr: any) => {
+    const renderAction = (arr: CardProps[]) => {
         if (arr) {
             // eslint-disable-next-line react/no-array-index-key
-            return arr.map((item: any, index: number) => <EventCard item={item} key={index + 1}/>);
+            return arr.map((item: CardProps, index: number) => <EventCard item={item} key={index + 1}/>);
         }
         return null;
     };
