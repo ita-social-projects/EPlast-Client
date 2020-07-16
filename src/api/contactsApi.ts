@@ -7,7 +7,7 @@ const sendQuestionAdmin = async (data: any) => {
       notificationLogic('success', response.data.value);
     })
     .catch(error => {
-      if(error.response.status == 400){
+      if(error.response.status === 400){
         notificationLogic('error', error.response.data.value);
       }
     });

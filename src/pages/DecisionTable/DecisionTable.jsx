@@ -8,8 +8,6 @@ import AddDecisionModal from "./AddDecisionModal";
 // import Foo from './ShowLess';
 import http from "../../api/api";
 import classes from "./Table.module.css";
-import { ApiFilled } from "@ant-design/icons";
-import decisionsApi from "../../api/decisionsApi";
 
 const { Content } = Layout;
 

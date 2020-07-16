@@ -2,9 +2,9 @@ import React,{ useState, useEffect} from 'react';
 import {Button, Space, Spin} from 'antd';
 import styles from './PersonalData.module.css';
 import userApi from '../../../api/UserApi';
-import AvatarAndProgress from './AvatarAndProgress';
 import jwt from 'jwt-decode';
 import AuthStore from '../../../stores/Auth';
+import {Demo} from "../../WebChat/Demo";
 import moment from 'moment';
 
 export default function () {
@@ -85,9 +85,9 @@ export default function () {
       ) : (
         <div className={styles.userFieldsWrapper}>
       
+
         <h2 className={styles.title}>Особистий профіль</h2>
         <div className={styles.tableWrapper}>
-        <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast}/>
           <table className={styles.table}>
             <tbody>
               <tr>

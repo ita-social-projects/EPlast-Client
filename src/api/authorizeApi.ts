@@ -14,7 +14,7 @@ export default class AuthorizeApi{
         AuthStore.setToken(response.data.token);
      })
      .catch(error =>{
-      if(error.response.status == 400){
+      if(error.response.status === 400){
         notificationLogic('error', error.response.data.value);
       }
      })
@@ -28,7 +28,7 @@ export default class AuthorizeApi{
     notificationLogic('success', response.data.value);
   })
   .catch(error => {
-    if(error.response.status == 400){
+    if(error.response.status === 400){
       notificationLogic('error', error.response.data.value);
     }
   });
@@ -42,7 +42,7 @@ export default class AuthorizeApi{
     notificationLogic('success', response.data.value);
   })
   .catch(error => {
-    if(error.response.status == 400){
+    if(error.response.status === 400){
       notificationLogic('error', error.response.data.value);
     }
   });
@@ -55,19 +55,19 @@ export default class AuthorizeApi{
     notificationLogic('success', response.data.value);
   })
   .catch(error => {
-    if(error.response.status == 400){
+    if(error.response.status === 400){
       notificationLogic('error', error.response.data.value);
     }
   });
   return response;
 };
 
- resetPasswordGet = async() =>{
+ /*resetPasswordGet = async() =>{
    const response = await Api.getAll("Account/ResetPassword")
    .then(response =>{
      //history.push("/");
    })
- };
+ };*/
 
 
  changePassword = async(data : any) => {
@@ -76,7 +76,7 @@ export default class AuthorizeApi{
     notificationLogic('success', response.data.value);
   })
   .catch(error => {
-    if(error.response.status == 400){
+    if(error.response.status === 400){
       notificationLogic('error', error.response.data.value);
     }
   });
