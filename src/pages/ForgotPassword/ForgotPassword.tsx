@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Input, Button } from 'antd';
 import styles from '../ForgotPassword/ForgotPassword.module.css';
-import { checkEmail, checkNameSurName } from '../SignUp/verification';
+import { checkEmail} from '../SignUp/verification';
 import AuthorizeApi from '../../api/authorizeApi';
 let authService = new AuthorizeApi();
 
