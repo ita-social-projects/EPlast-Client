@@ -20,13 +20,11 @@ const get = async (
 
 const getById = async (url: string, id: number|string|undefined) => {
   const response = await axios.get(`${BASE_URL + url}/${id}`);
-  console.log(response);
   return response;
 };
 
 const getAll = async (url: string) => {
   const response = await axios.get(BASE_URL + url);
-  console.log(response);
   return response;
 };
 

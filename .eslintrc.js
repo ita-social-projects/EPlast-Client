@@ -14,6 +14,7 @@ module.exports = {
     "no-useless-escape",
   ],
   rules: {
+    'no-useless-escape': 'off',
     'react/jsx-props-no-spreading': 'off',
     'no-nested-ternary': 'off',
     'no-console': 'off',
