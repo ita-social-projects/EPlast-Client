@@ -8,7 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-In order to run this project, you’ll need to have Node 8.10.0 and npm 6.x.x or later on your local development machine. 
+In order to run this project, you’ll need to have Node 10.19.0+ and npm 6.x.x or later on your local development machine. 
 
 ### Installing
 
