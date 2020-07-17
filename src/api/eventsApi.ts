@@ -15,4 +15,19 @@ const getEventInfo = async (id: number) => {
     return response;
 }
 
-export default {getCategories, getEvents, getEventInfo};
+const remove = async (id: number) => {
+    const response = await Api.remove(`Events`, id);
+    return response;
+};
+
+const removeParticipant = async (id: number) => {
+    const response = await Api.customRemove(`Events/${id}/participants`);
+    return response;
+};
+
+const createParticipant = async (id: number) => {
+    const response = await Api.customPost(`Events/${id}/participants`);
+    return response;
+};
+
+export default {getCategories, getEvents, getEventInfo, remove, createParticipant, removeParticipant};

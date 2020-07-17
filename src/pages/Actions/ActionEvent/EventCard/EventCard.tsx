@@ -25,6 +25,9 @@ const classes = require('./EventCard.module.css');
 
 interface Props {
     item: CardProps;
+    removeEvent: (id: number) => void
+    subscribeOnEvent: (id: number) => void
+    unsubscribeOnEvent: (id: number) => void
 }
 
 const EventCard = ({
@@ -32,7 +35,10 @@ const EventCard = ({
                            eventName, eventId, isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
                            isUserRejectedParticipant, isUserUndeterminedParticipant,
                            isEventApproved, isEventFinished, isEventNotApproved
-                       }
+                       },
+                       removeEvent,
+                       subscribeOnEvent,
+                       unsubscribeOnEvent
                    }: Props) => {
     const {Meta} = Card;
     const history = useHistory();
@@ -47,7 +53,8 @@ const EventCard = ({
                 <EditTwoTone twoToneColor="#3c5438" key="edit"/>
             </Tooltip>)
             eventIcons.push(<Tooltip title="Видалити">
-                <DeleteTwoTone onClick={() => showDeleteConfirm(eventName)} twoToneColor="#8B0000" key="delete"/>
+                <DeleteTwoTone onClick={() => showDeleteConfirm(eventId, eventName, removeEvent)} twoToneColor="#8B0000"
+                               key="delete"/>
             </Tooltip>)
         } else if (isUserParticipant && !isEventFinished) {
             if (isUserRejectedParticipant) {
@@ -66,12 +73,15 @@ const EventCard = ({
                     </Tooltip>)
                 }
                 eventIcons.push(<Tooltip title="Відписатися від події">
-                    <UserDeleteOutlined onClick={() => showUnsubscribeConfirm(eventName)} style={{color: "#8B0000"}} key="unsubscribe"/>
+                    <UserDeleteOutlined onClick={() => showUnsubscribeConfirm(eventId, eventName, unsubscribeOnEvent)}
+                                        style={{color: "#8B0000"}}
+                                        key="unsubscribe"/>
                 </Tooltip>)
             }
         } else if (!isEventFinished) {
             eventIcons.push(<Tooltip title="Зголоситись на подію">
-                <UserAddOutlined onClick={() => showSubscribeConfirm(eventName)} style={{color: "#3c5438"}}
+                <UserAddOutlined onClick={() => showSubscribeConfirm(eventId, eventName, subscribeOnEvent)}
+                                 style={{color: "#3c5438"}}
                                  key="unsubscribe"/>
             </Tooltip>)
         }
@@ -91,13 +101,6 @@ const EventCard = ({
             </Tooltip>)
         }
         return eventIcons
-        // [
-        //     <SettingOutlined key="setting"/>,
-        //     <EditTwoTone twoToneColor="#3c5438" key="edit"/>,
-        //     <Tooltip title="Деталі">
-        //         <EllipsisOutlined key="ellipsis" onClick={() => console.log("Подія:", eventName)}/>
-        //     </Tooltip>
-        // ]
     }
 
     return (
@@ -115,21 +118,12 @@ const EventCard = ({
                         />
                     }
                     actions={
-                        //     [
-                        //     <SettingOutlined key="setting"/>,
-                        //     <EditOutlined key="edit"/>,
-                        //     <Tooltip title="Деталі">
-                        //         <EllipsisOutlined key="ellipsis"/>
-                        //     </Tooltip>
-                        // ]
+
                         RenderEventsIcons()
                     }
                 >
                     <Meta
                         title={eventName}
-
-                        // description={RenderEventsIcons()}
-
                     />
                 </Card>
             </div>

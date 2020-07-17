@@ -12,7 +12,7 @@ interface Props {
 }
 
 export interface CardProps {
-    eventId: string;
+    eventId: number;
     eventName: string;
     isUserEventAdmin: boolean;
     isUserParticipant: boolean;
@@ -53,10 +53,48 @@ const SortedEvents = ({eventCategoryId, typeId}: Props) => {
         fetchData();
     }, []);
 
+    const removeEventCard = (id: number) => {
+        setActions(actions.filter(action => action.eventId !== id))
+    }
+
+    const subscribeOnEvent = (id: number) => {
+        setActions(actions.map(action => {
+            if (action.eventId === id) {
+                // eslint-disable-next-line no-param-reassign
+                action.isUserParticipant = true;
+                // eslint-disable-next-line no-param-reassign
+                action.isUserUndeterminedParticipant = true;
+            }
+            return action;
+        }))
+    }
+    const unsubscribeOnEvent = (id: number) => {
+        setActions(actions.map(action => {
+            if (action.eventId === id) {
+                // eslint-disable-next-line no-param-reassign
+                action.isUserParticipant = false;
+                if (action.isUserUndeterminedParticipant) {
+                    // eslint-disable-next-line no-param-reassign
+                    action.isUserUndeterminedParticipant = false
+                } else {
+                    // eslint-disable-next-line no-param-reassign
+                    action.isUserApprovedParticipant = false
+                }
+            }
+            return action;
+        }))
+    }
+
     const renderAction = (arr: CardProps[]) => {
         if (arr) {
             // eslint-disable-next-line react/no-array-index-key
-            return arr.map((item: CardProps, index: number) => <EventCard item={item} key={index + 1}/>);
+            return arr.map((item: CardProps) =>
+                <EventCard
+                    item={item}
+                    removeEvent={removeEventCard}
+                    subscribeOnEvent={subscribeOnEvent}
+                    unsubscribeOnEvent={unsubscribeOnEvent}
+                    key={item.eventId}/>);
         }
         return null;
     };

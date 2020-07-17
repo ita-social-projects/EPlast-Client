@@ -15,7 +15,6 @@ import {
 } from '@ant-design/icons';
 // eslint-disable-next-line import/no-cycle,import/no-duplicates
 import {EventDetails} from "./EventInfo";
-import {showDeleteConfirm, showSubscribeConfirm, showUnsubscribeConfirm} from "../../EventsModals";
 
 
 const classes = require('./EventInfo.module.css');
@@ -25,10 +24,9 @@ interface Props {
 }
 
 const RenderEventIcons = ({
-                               event,
-                               isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
-                               isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
-                           }: EventDetails): React.ReactNode[] => {
+                              isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
+                              isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
+                          }: EventDetails): React.ReactNode[] => {
     const eventIcons: React.ReactNode[] = []
     if (isUserEventAdmin) {
         eventIcons.push(<Tooltip placement="bottom" title="Ви адмін!">
@@ -38,7 +36,7 @@ const RenderEventIcons = ({
             <EditTwoTone twoToneColor="#3c5438" className={classes.icon} key="edit"/>
         </Tooltip>)
         eventIcons.push(<Tooltip placement="bottom" title="Видалити">
-            <DeleteTwoTone onClick={() => showDeleteConfirm(event?.eventName)} twoToneColor="#8B0000"
+            <DeleteTwoTone  twoToneColor="#8B0000"
                            className={classes.icon} key="delete"/>
         </Tooltip>)
     } else if (isUserParticipant && !isEventFinished) {
@@ -58,13 +56,13 @@ const RenderEventIcons = ({
                 </Tooltip>)
             }
             eventIcons.push(<Tooltip placement="bottom" title="Відписатися від події">
-                <UserDeleteOutlined onClick={() => showUnsubscribeConfirm(event?.eventName)} style={{color: "#8B0000"}}
+                <UserDeleteOutlined  style={{color: "#8B0000"}}
                                     className={classes.icon} key="unsubscribe"/>
             </Tooltip>)
         }
     } else if (!isEventFinished) {
         eventIcons.push(<Tooltip placement="bottom" title="Зголоситись на подію">
-            <UserAddOutlined onClick={() => showSubscribeConfirm(event?.eventName)} style={{color: "#3c5438"}}
+            <UserAddOutlined  style={{color: "#3c5438"}}
                              className={classes.icon} key="unsubscribe"/>
         </Tooltip>)
     }

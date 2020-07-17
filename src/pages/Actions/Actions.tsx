@@ -10,12 +10,12 @@ const Actions = () => {
 
 
     useEffect(() => {
-        const fetchData = async () => {
+        const deleteEvent = async () => {
             const response = await eventsApi.getCategories();
 //            console.log(response);
             setActions(response.data)
         };
-        fetchData();
+        deleteEvent();
     },[]);
 
 

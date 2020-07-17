@@ -39,7 +39,7 @@ export interface EventDetails {
 }
 
 export interface EventInformation {
-    eventId: string;
+    eventId: number;
     eventName: string;
     description: string;
     eventDateStart: string;
