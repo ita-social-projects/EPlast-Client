@@ -43,13 +43,18 @@ const Club = () => {
   const [expand, setExpand] = useState(false);
   const [counter, setCounter] = useState(0);
   const [club, setData] = useState<ClubData>();
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       const res = await clubsApi.getById(id);
+       await clubsApi.getImage(res.data.club.logo).then((q: { data: any; }) =>{
+        res.data.club.logo = q.data;
+      });
       setData(res.data);
     };
     fetchData();
+    setLoading(false);
   }, []);
 
   const typoExpand = () => {
@@ -79,7 +84,9 @@ const Club = () => {
         >
           <section className={classes.list}>
             <EditOutlined className={classes.listIcon} />
-            <h1>{`Курінь ${club?.club.clubName}`}</h1>
+            <h1>{`Курінь ${
+              club?.club.clubName ? club?.club.clubName : "Немає"
+            }`}</h1>
             <Row
               gutter={16}
               justify="space-around"
@@ -90,11 +97,15 @@ const Club = () => {
                   <img
                     src={club?.club.logo}
                     alt="club"
-                    style={{ width: "30%", height: "auto", maxWidth: "100%" }}
+                    style={{ width: "50%", height: "auto", maxWidth: "100%" }}
                   />
                   <p>
-                    <b>Бунчужний</b>: {club?.clubAdmin.lastName}{" "}
-                    {club?.clubAdmin.firstName}
+                    <b>Бунчужний</b>:{" "}
+                    {club?.clubAdmin
+                      ? club?.clubAdmin.lastName +
+                        " " +
+                        club?.clubAdmin.firstName
+                      : "Немає"}
                   </p>
                   <Button type="primary" className={classes.listButton}>
                     Більше
@@ -193,7 +204,7 @@ const Club = () => {
             >
               {
                 <Col
-                  key={club?.clubAdmin.id}
+                  key={club?.clubAdmin ? club?.clubAdmin.id : ""}
                   className={classes.listItem}
                   span={7}
                 >
@@ -203,7 +214,11 @@ const Club = () => {
                     className={classes.profileImg}
                   />
                   <p>
-                    {club?.clubAdmin.lastName} {club?.clubAdmin.firstName}
+                    {club?.clubAdmin
+                      ? club?.clubAdmin.lastName +
+                        " " +
+                        club?.clubAdmin.firstName
+                      : "Немає"}
                   </p>
                 </Col>
               }
@@ -278,7 +293,9 @@ const Club = () => {
                     icon={<UserOutlined />}
                     className={classes.profileImg}
                   />
-                  <p>{member.user.lastName} {member.user.lastName}</p>
+                  <p>
+                    {member.user.lastName} {member.user.lastName}
+                  </p>
                 </Col>
               ))}
             </Row>

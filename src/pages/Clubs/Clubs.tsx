@@ -17,13 +17,17 @@ const Clubs = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
   const [clubs, setData] = useState([]);
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
+
     const fetchData = async () => {
       const res = await clubsApi.getAll();
       setData(res.data);
     };
     fetchData();
+    setLoading(false);
+
   }, []);
 
   return (

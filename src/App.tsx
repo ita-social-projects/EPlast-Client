@@ -22,7 +22,7 @@ import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
 import Clubs from "./pages/Clubs/Clubs";
 import Club from "./pages/Club/Club";
-
+import CreateClub from "./pages/CreateClub/CreateClub";
 const App: FC = () => (
   <div className="App">
     <Router>
@@ -88,6 +88,12 @@ const App: FC = () => (
             path="/clubs"
             component={Clubs}
           />
+            <RouteWithLayout
+              layout={PrivateLayout}
+              exact
+              path="/clubs/new"
+              component={CreateClub}
+            />
           <RouteWithLayout
             layout={PrivateLayout}
             exact
