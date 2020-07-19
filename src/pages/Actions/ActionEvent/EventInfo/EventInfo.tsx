@@ -104,11 +104,36 @@ const EventInfo = () => {
         setFilterTable(filteredTable);
     }
 
+    const subscribeOnEvent = () => {
+        setEvent((prevState: EventDetails) => {
+            return {
+                ...prevState,
+                isUserParticipant: true,
+                isUserUndeterminedParticipant: true
+            }
+        })
+    }
+
+    const unSubscribeOnEvent = () => {
+        setEvent((prevState: EventDetails) => {
+            return {
+                ...prevState,
+                isUserParticipant: false,
+                isUserApprovedParticipant: false,
+                isUserUndeterminedParticipant: false
+            }
+        })
+    }
+
     return (
         <div className={classes.background}>
             <div className={classes.wrapper}>
                 <div className={classes.actionsWrapper}>
-                    <SortedEventInfo event={event}/>
+                    <SortedEventInfo
+                        event={event}
+                        subscribeOnEvent={subscribeOnEvent}
+                        unSubscribeOnEvent={unSubscribeOnEvent}
+                    />
                 </div>
                 <Gallery/>
                 <div>

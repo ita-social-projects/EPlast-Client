@@ -1,11 +1,11 @@
 import Api from './api'
 
   const getById =  async (id: number) => {
-    const response = await Api.getById("Decisions",id);
+    const response = await Api.get("Decisions",id);
   return  response;};
     
   const getAll =  async () =>{
-  const response =  await Api.getAll("Decisions");
+  const response =  await Api.get("Decisions");
   console.log(response.data.item2);
   const  res = response.data.item2.map((d: { decisionWrapper: { decision: any; }; }) => d.decisionWrapper.decision);
   console.log("-------------------------");

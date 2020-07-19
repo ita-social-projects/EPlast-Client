@@ -53,7 +53,12 @@ const EventCard = ({
                 <EditTwoTone twoToneColor="#3c5438" key="edit"/>
             </Tooltip>)
             eventIcons.push(<Tooltip title="Видалити">
-                <DeleteTwoTone onClick={() => showDeleteConfirm(eventId, eventName, removeEvent)} twoToneColor="#8B0000"
+                <DeleteTwoTone onClick={() => showDeleteConfirm({
+                    eventId,
+                    eventName,
+                    successCallback: removeEvent,
+                    isSingleEventInState: false
+                })} twoToneColor="#8B0000"
                                key="delete"/>
             </Tooltip>)
         } else if (isUserParticipant && !isEventFinished) {
@@ -73,14 +78,24 @@ const EventCard = ({
                     </Tooltip>)
                 }
                 eventIcons.push(<Tooltip title="Відписатися від події">
-                    <UserDeleteOutlined onClick={() => showUnsubscribeConfirm(eventId, eventName, unsubscribeOnEvent)}
+                    <UserDeleteOutlined onClick={() => showUnsubscribeConfirm({
+                        eventId,
+                        eventName,
+                        successCallback: unsubscribeOnEvent,
+                        isSingleEventInState: false
+                    })}
                                         style={{color: "#8B0000"}}
                                         key="unsubscribe"/>
                 </Tooltip>)
             }
         } else if (!isEventFinished) {
             eventIcons.push(<Tooltip title="Зголоситись на подію">
-                <UserAddOutlined onClick={() => showSubscribeConfirm(eventId, eventName, subscribeOnEvent)}
+                <UserAddOutlined onClick={() => showSubscribeConfirm({
+                    eventId,
+                    eventName,
+                    successCallback: subscribeOnEvent,
+                    isSingleEventInState: false
+                })}
                                  style={{color: "#3c5438"}}
                                  key="unsubscribe"/>
             </Tooltip>)

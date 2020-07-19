@@ -5,6 +5,17 @@ import eventsApi from "../../api/eventsApi";
 
 const {confirm} = Modal;
 
+type ParameterizedCallback = (id: number) => void
+type UnParameterizedCallback = () => void
+type EventsStateCallback = ParameterizedCallback | UnParameterizedCallback
+
+interface EventData {
+    eventId: number,
+    eventName: string,
+    successCallback: EventsStateCallback,
+    isSingleEventInState: boolean
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export const Success = (message: string) => {
     Modal.success({
@@ -20,32 +31,38 @@ export const showError = () => {
     });
 }
 
-export const showSubscribeConfirm = (eventId: number, eventName: string, successCallback: (id: number) => void) => {
+export const showSubscribeConfirm = ({eventId, eventName, successCallback, isSingleEventInState}: EventData) => {
     confirm({
         title: 'Ви впевнені, що хочете зголоситися на дану подію?',
         icon: <ExclamationCircleOutlined/>,
         content: `Подія: ${eventName}`,
         okText: 'Так, зголоситися',
         cancelText: 'Скасувати',
-        onOk() {
+        onOk () {
             const createParticipant = async () => {
                 await eventsApi.createParticipant(eventId);
             };
             createParticipant()
                 .then(() => {
                     Success('Ви успішно надіслали заявку на участь у події.')
-                    successCallback(eventId)
+                    if (isSingleEventInState) {
+                        // @ts-ignore
+                        successCallback()
+                    } else {
+                        successCallback(eventId)
+                    }
                 })
                 .catch(() => {
                     showError();
-                });        },
+                });
+        },
         onCancel() {
             console.log('Cancel');
         },
     });
 }
 
-export const showUnsubscribeConfirm = (eventId: number, eventName: string, successCallback: (id: number) => void) => {
+export const showUnsubscribeConfirm = ({eventId, eventName, successCallback, isSingleEventInState}: EventData) => {
     confirm({
         title: 'Ви впевнені, що хочете відписатися від події?',
         icon: <ExclamationCircleOutlined/>,
@@ -59,8 +76,12 @@ export const showUnsubscribeConfirm = (eventId: number, eventName: string, succe
             deleteParticipant()
                 .then(() => {
                     Success('Ви успішно відписалися від події.')
-                    successCallback(eventId)
-                })
+                    if (isSingleEventInState) {
+                        // @ts-ignore
+                        successCallback()
+                    } else {
+                        successCallback(eventId)
+                    }                })
                 .catch(() => {
                     showError();
                 });
@@ -71,7 +92,7 @@ export const showUnsubscribeConfirm = (eventId: number, eventName: string, succe
     });
 }
 
-export const showDeleteConfirm = (eventId: number, eventName: string, successCallback: (id: number) => void) => {
+export const showDeleteConfirm = ({eventId, eventName, successCallback, isSingleEventInState}: EventData) => {
     confirm({
         title: 'Ви впевнені, що хочете видалити дану подію?',
         icon: <ExclamationCircleOutlined/>,
@@ -86,8 +107,12 @@ export const showDeleteConfirm = (eventId: number, eventName: string, successCal
             deleteEvent()
                 .then(() => {
                     Success('Подія успішно видалена.')
-                    successCallback(eventId)
-                })
+                    if (isSingleEventInState) {
+                        // @ts-ignore
+                        successCallback()
+                    } else {
+                        successCallback(eventId)
+                    }                })
                 .catch(() => {
                     showError();
                 });

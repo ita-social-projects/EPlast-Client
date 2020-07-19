@@ -15,18 +15,24 @@ import {
 } from '@ant-design/icons';
 // eslint-disable-next-line import/no-cycle,import/no-duplicates
 import {EventDetails} from "./EventInfo";
-
+import {showSubscribeConfirm, showUnsubscribeConfirm} from "../../EventsModals";
 
 const classes = require('./EventInfo.module.css');
 
 interface Props {
-    event: EventDetails;
+    event: EventDetails,
+    subscribeOnEvent: () => void
+    unSubscribeOnEvent: () => void
 }
 
 const RenderEventIcons = ({
+                              event,
                               isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
                               isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
-                          }: EventDetails): React.ReactNode[] => {
+                          }: EventDetails,
+                          subscribeOnEvent: () => void,
+                          unSubscribeOnEvent: () => void
+): React.ReactNode[] => {
     const eventIcons: React.ReactNode[] = []
     if (isUserEventAdmin) {
         eventIcons.push(<Tooltip placement="bottom" title="Ви адмін!">
@@ -36,7 +42,7 @@ const RenderEventIcons = ({
             <EditTwoTone twoToneColor="#3c5438" className={classes.icon} key="edit"/>
         </Tooltip>)
         eventIcons.push(<Tooltip placement="bottom" title="Видалити">
-            <DeleteTwoTone  twoToneColor="#8B0000"
+            <DeleteTwoTone twoToneColor="#8B0000"
                            className={classes.icon} key="delete"/>
         </Tooltip>)
     } else if (isUserParticipant && !isEventFinished) {
@@ -56,14 +62,27 @@ const RenderEventIcons = ({
                 </Tooltip>)
             }
             eventIcons.push(<Tooltip placement="bottom" title="Відписатися від події">
-                <UserDeleteOutlined  style={{color: "#8B0000"}}
-                                    className={classes.icon} key="unsubscribe"/>
+                <UserDeleteOutlined
+                    onClick={() => showUnsubscribeConfirm({
+                        eventId: event?.eventId,
+                        eventName: event?.eventName,
+                        successCallback: unSubscribeOnEvent,
+                        isSingleEventInState: true
+                    })}
+                    style={{color: "#8B0000"}}
+                    className={classes.icon} key="unsubscribe"/>
             </Tooltip>)
         }
     } else if (!isEventFinished) {
-        eventIcons.push(<Tooltip placement="bottom" title="Зголоситись на подію">
-            <UserAddOutlined  style={{color: "#3c5438"}}
-                             className={classes.icon} key="unsubscribe"/>
+        eventIcons.push(<Tooltip title="Зголоситись на подію">
+            <UserAddOutlined onClick={() => showSubscribeConfirm({
+                eventId: event?.eventId,
+                eventName: event?.eventName,
+                successCallback: subscribeOnEvent,
+                isSingleEventInState: true
+            })}
+                             style={{color: "#3c5438"}}
+                             key="unsubscribe"/>
         </Tooltip>)
     }
     eventIcons.push(<Tooltip placement="bottom" title="Учасники">
@@ -78,7 +97,7 @@ const RenderEventIcons = ({
     return eventIcons
 }
 
-const SortedEventInfo = ({event}: Props) => {
+const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) => {
     //   console.log("EventInfo:",event)
     const columns = [
         {
@@ -158,7 +177,7 @@ const SortedEventInfo = ({event}: Props) => {
                         src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
                     />
                     <div className={classes.iconsFlex}>
-                        {RenderEventIcons(event)}
+                        {RenderEventIcons(event, subscribeOnEvent, unSubscribeOnEvent)}
                     </div>
                 </Col>
                 <Col span={14} pull={10}>
