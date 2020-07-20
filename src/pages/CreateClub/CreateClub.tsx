@@ -1,21 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Layout, Upload, message, Row, Col } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons/lib";
 import City from "../../assets/images/city.jpg";
 import clubsApi from "../../api/clubsApi";
 import { RcFile } from "antd/lib/upload/interface";
+import { useParams, useHistory } from "react-router-dom";
+
 const classes = require("./CreateClub.module.css");
+
 const dummyRequest = ({ onSuccess }: any) => {
   setTimeout(() => {
     onSuccess("ok");
   }, 0);
 };
-// interface Club {
-//   clubName: string;
-//   clubURL: string;
-//   description: string;
-//   logo: string;
-// }
+
+interface Club {
+  id: number;
+  clubName: string;
+  clubURL: string;
+  description: string;
+  logo: string;
+}
+
 const getBase64 = (img: Blob, callback: Function) => {
   const reader = new FileReader();
   reader.addEventListener("load", () => callback(reader.result));
@@ -36,11 +42,36 @@ const beforeUpload = (file: RcFile) => {
 
 const CreateClub = () => {
   const [loading, setLoading] = useState(false);
-  // const [clubName, setClubName] = useState("");
-  // const [clubURL, setClubURL] = useState("");
-  // const [clubDescription, setClubDescription] = useState("");
+  const [servLoading, setServLoading] = useState(false);
+  const { id } = useParams();
   const [clubLogo, setClubLogo] = useState("");
   const [form] = Form.useForm();
+  useEffect(() => {
+    if (id) {
+      getClub();
+    } else {
+      setServLoading(false);
+    }
+  }, []);
+  const getClub = async () => {
+    setServLoading(true);
+    try {
+      const res = await (await clubsApi.getById(id)).data.club;
+      await clubsApi.getImage(res.logo).then((q: { data: any }) => {
+        res.logo = q.data;
+      });
+
+      form.setFieldsValue({
+        id: res.id,
+        clubName: res.clubName,
+        clubURL: res.clubURL,
+        description: res.description,
+      });
+      setClubLogo(res.logo);
+    } finally {
+      setServLoading(false);
+    }
+  };
 
   const handleChange = (info: any, key: string) => {
     console.log(info.file.status, "status");
@@ -56,16 +87,18 @@ const CreateClub = () => {
       });
     }
   };
-  const handleSubmit = async (values:any) => {
+  const handleSubmit = async (values: any) => {
     message.loading("Створення...");
-    const newСlub={
-      "clubName": values.clubName,
-      "clubURL": values.clubURL,
-      "description": values.description,
-      "logo": clubLogo
+    const newСlub = {
+      id: id,
+      clubName: values.clubName,
+      clubURL: values.clubURL,
+      description: values.description,
+      logo: clubLogo,
     };
+
     await clubsApi
-      .post("Club/create", newСlub)
+      .post("Club/" + (id ? "edit" : "create"), newСlub)
       .then((res) => console.log(res))
       .catch((error) => console.log(error));
     message.loading("Створенно!");
@@ -83,7 +116,9 @@ const CreateClub = () => {
 
   return (
     <Layout.Content className={classes.createClub}>
-      <h1 className={classes.mainTitle}>Створення куреня</h1>
+      <h1 className={classes.mainTitle}>
+        {id ? "Редагування" : "Створення"} куреня
+      </h1>
       <Row justify="space-around" style={{ overflow: "hidden" }}>
         <Col flex="0 1 40%">
           <Form

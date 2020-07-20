@@ -88,17 +88,23 @@ const App: FC = () => (
             path="/clubs"
             component={Clubs}
           />
-            <RouteWithLayout
-              layout={PrivateLayout}
-              exact
-              path="/clubs/new"
-              component={CreateClub}
-            />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs/new"
+            component={CreateClub}
+          />
           <RouteWithLayout
             layout={PrivateLayout}
             exact
             path="/clubs/:id"
             component={Club}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs/edit/:id"
+            component={CreateClub}
           />
         </Switch>
       </div>

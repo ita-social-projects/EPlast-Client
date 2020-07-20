@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { Avatar, Row, Col, Button, Typography } from "antd";
 import {
   UserOutlined,
@@ -20,6 +20,7 @@ interface ClubData {
 }
 interface ClubAdministration {}
 interface Club {
+  id: number;
   clubName: string;
   clubURL: string;
   description: string;
@@ -39,7 +40,7 @@ interface User {
 
 const Club = () => {
   const { id } = useParams();
-
+  const history = useHistory();
   const [expand, setExpand] = useState(false);
   const [counter, setCounter] = useState(0);
   const [club, setData] = useState<ClubData>();
@@ -48,7 +49,7 @@ const Club = () => {
     setLoading(true);
     const fetchData = async () => {
       const res = await clubsApi.getById(id);
-       await clubsApi.getImage(res.data.club.logo).then((q: { data: any; }) =>{
+      await clubsApi.getImage(res.data.club.logo).then((q: { data: any }) => {
         res.data.club.logo = q.data;
       });
       setData(res.data);
@@ -83,7 +84,10 @@ const Club = () => {
           }}
         >
           <section className={classes.list}>
-            <EditOutlined className={classes.listIcon} />
+            <EditOutlined
+              className={classes.listIcon}
+              onClick={() => history.push(`/clubs/edit/${club?.club.id}`)}
+            />
             <h1>{`Курінь ${
               club?.club.clubName ? club?.club.clubName : "Немає"
             }`}</h1>
