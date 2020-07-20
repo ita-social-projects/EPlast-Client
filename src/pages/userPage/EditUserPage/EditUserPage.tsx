@@ -257,7 +257,7 @@ export default function () {
     setPhoneNumber(event.target.value);
   }
   const handleOnChangeBirthday=(event:any,value:any)=>{
-    if(value=="")
+    if(value==="")
     {
       setBirthday(undefined);
     }

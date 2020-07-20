@@ -39,6 +39,11 @@
     width: max-content;
 }
 
+.rightPartWrapper{
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+}
 .statusText{
     text-align: center;
     font-size: 15px;
@@ -61,8 +66,8 @@
 
 .userFieldsWrapper{
     display: flex;
-    flex-direction: column;
-    align-items: center;
+   
+    
     margin: 0 auto;
 }
 

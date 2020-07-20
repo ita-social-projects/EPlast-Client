@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Avatar, Layout, Menu } from "antd";
 import {
@@ -8,7 +8,9 @@ import {
   PieChartOutlined,
 } from "@ant-design/icons";
 import classes from "./PrivateLayout.module.css";
-import User from "../../assets/images/user.jpg";
+import jwt from 'jwt-decode';
+import AuthStore from '../../stores/Auth';
+import userApi from '../../api/UserApi';
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -20,6 +22,23 @@ const PrivateLayout = ({ children }: any) => {
     setCollapsed(collValue);
   };
 
+  const [imageBase64, setImageBase64] = useState<string>();
+  const fetchData = async () => {
+    const token = AuthStore.getToken() as string;
+    const user : any = jwt(token);
+    await userApi.getById(user.nameid).then(async response =>{
+        await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) =>{
+          setImageBase64(response.data);
+        })
+    })
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+ 
+
+
   const history = useHistory();
   return (
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
@@ -27,7 +46,7 @@ const PrivateLayout = ({ children }: any) => {
         <div className={classes.profilePhoto}>
           <Avatar
             size={64}
-            src={User}
+            src={imageBase64}
             alt="User"
             style={{ marginRight: "10px" }}
           />
