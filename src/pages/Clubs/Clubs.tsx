@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { Card, Layout } from "antd";
 import clubsApi from "../../api/clubsApi";
-import City from "../../assets/images/city.jpg";
 import Add from "../../assets/images/add.png";
 
 const classes = require("./Clubs.module.css");
 
 interface CardProps {
+  id:number;
   clubName: string;
-  imgUrl?: string;
-  id: string;
+  clubURL: string;
+  description: string;
+  logo: string;
 }
 
 const Clubs = () => {
@@ -51,7 +52,7 @@ const Clubs = () => {
             key={club.id}
             hoverable
             className={classes.cardStyles}
-            cover={<img src={City} alt="Club" />}
+            cover={<img src={club.logo} alt="Club" style={{height: '154.45px'}}/>}
             onClick={() => history.push(`${url}/${club.id}`)}
           >
             <Card.Meta title={club.clubName} className={classes.titleText} />
