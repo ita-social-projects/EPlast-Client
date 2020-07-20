@@ -1,32 +1,35 @@
 import React, {useEffect, useState} from 'react';
-import {Table, Input, Row} from "antd";
+import {Input, Row} from "antd";
 import {useParams} from "react-router-dom";
 // eslint-disable-next-line import/no-cycle
 import SortedEventInfo from './SortedEventInfo';
 import rawData from "./data";
 import Gallery from './Gallery';
 import eventsApi from "../../../../api/eventsApi";
+// eslint-disable-next-line import/no-cycle
+import ParticipantsTable from "./ParticipantsTable";
+
 
 const classes = require('./EventInfo.module.css');
 
-
-const baseColumns = [
-    {
-        title: "Користувач",
-        dataIndex: "fullName",
-        key: "user"
-    },
-    {
-        title: "Email",
-        dataIndex: "email",
-        key: "email"
-    },
-    {
-        title: "Поточний статус",
-        dataIndex: "status",
-        key: "status"
-    }
-];
+//
+// const baseColumns = [
+//     {
+//         title: "Користувач",
+//         dataIndex: "fullName",
+//         key: "user"
+//     },
+//     {
+//         title: "Email",
+//         dataIndex: "email",
+//         key: "email"
+//     },
+//     {
+//         title: "Поточний статус",
+//         dataIndex: "status",
+//         key: "status"
+//     }
+// ];
 
 export interface EventDetails {
     event: EventInformation;
@@ -55,7 +58,7 @@ export interface EventInformation {
     eventGallery: EventGallery[];
 }
 
-interface EventParticipant {
+export interface EventParticipant {
     participantId: number;
     fullName: string;
     email: string;
@@ -133,9 +136,10 @@ const EventInfo = () => {
                         event={event}
                         subscribeOnEvent={subscribeOnEvent}
                         unSubscribeOnEvent={unSubscribeOnEvent}
+                        key={event.event?.eventName}
                     />
                 </div>
-                <Gallery/>
+                <Gallery key={event.event?.eventLocation}/>
                 <div>
                     <Row>
                         <Input.Search
@@ -145,14 +149,12 @@ const EventInfo = () => {
                             onSearch={search}
                         />
                     </Row>
-                    <Table
-                        rowKey="uid"
-                        columns={baseColumns}
-                        //                    dataSource={filterTable.length < 2 ? baseData : filterTable}
-                        dataSource={event.event?.eventParticipants}
-                    />
                 </div>
-
+                <ParticipantsTable
+                    isUserEventAdmin={event.isUserEventAdmin}
+                    participants={event.event?.eventParticipants}
+                    key={event.event?.eventId}
+                />
             </div>
         </div>
     )

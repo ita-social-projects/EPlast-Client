@@ -82,16 +82,16 @@ const RenderEventIcons = ({
                 isSingleEventInState: true
             })}
                              style={{color: "#3c5438"}}
-                             key="unsubscribe"/>
+                             key="subscribe"/>
         </Tooltip>)
     }
-    eventIcons.push(<Tooltip placement="bottom" title="Учасники">
+    eventIcons.push(<Tooltip placement="bottom" title="Учасники" key="participants">
         <TeamOutlined style={{color: "#3c5438"}} className={classes.icon}/>
     </Tooltip>)
-    eventIcons.push(<Tooltip placement="bottom" title="Галерея">
+    eventIcons.push(<Tooltip placement="bottom" title="Галерея" key="gallery">
         <CameraOutlined style={{color: "#3c5438"}} className={classes.icon}/>
     </Tooltip>)
-    eventIcons.push(<Tooltip placement="bottom" title="Адміністратор(-и) події">
+    eventIcons.push(<Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
         <IdcardOutlined style={{color: "#3c5438"}} className={classes.icon}/>
     </Tooltip>)
     return eventIcons

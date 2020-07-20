@@ -1,0 +1,171 @@
+import React, {useState} from "react";
+import {Table, Tag, Space, Button, Divider, Typography} from 'antd';
+import {ColumnsType} from 'antd/es/table';
+import {UserAddOutlined, UserDeleteOutlined, QuestionOutlined} from "@ant-design/icons/lib";
+import {showError} from "../../EventsModals";
+// eslint-disable-next-line import/no-cycle
+import {EventParticipant} from "./EventInfo";
+import eventsApi from "../../../../api/eventsApi";
+
+const classes = require('./ParticipantsTable.module.css');
+
+const {Text} = Typography;
+
+interface Props {
+    isUserEventAdmin: boolean
+    participants: EventParticipant[]
+}
+
+const participantStatuses = {
+    Approved: 'Учасник',
+    Undetermined: 'Розглядається',
+    Rejected: 'Відмовлено'
+}
+
+const ParticipantsTable = ({isUserEventAdmin, participants}: Props) => {
+    const [Participants, setParticipant] = useState<EventParticipant[]>(participants)
+    const setTagColor = (status: string) => {
+        let color = '';
+        if (status === 'Відмовлено') {
+            color = 'red';
+        }
+        if (status === 'Учасник') {
+            color = 'green';
+        }
+        if (status === 'Розглядається') {
+            color = 'orange';
+        }
+        return color;
+    }
+
+    const changeStatus = (participantId: number, newStatus: string) => {
+        setParticipant(Participants.map((participant: EventParticipant) => {
+            if (participant.participantId === participantId) {
+                // eslint-disable-next-line no-param-reassign
+                participant.status = newStatus;
+            }
+            return participant;
+        }))
+    }
+
+    const changeStatusToApproved = (participantId: number) => {
+        const approveParticipant = async () => {
+            await eventsApi.approveParticipant(participantId);
+        };
+        approveParticipant()
+            .then(() => changeStatus(participantId, participantStatuses.Approved))
+            .catch(() => {
+                showError();
+            })
+    }
+    const changeStatusToUnderReviewed = (participantId: number) => {
+        const underRevieweParticipant = async () => {
+            await eventsApi.underReviewParticipant(participantId);
+        };
+        underRevieweParticipant()
+            .then(() => changeStatus(participantId, participantStatuses.Undetermined))
+            .catch(() => {
+                showError();
+            })
+    }
+    const changeStatusToRejected = (participantId: number) => {
+        const rejectParticipant = async () => {
+            await eventsApi.rejectParticipant(participantId);
+        };
+        rejectParticipant()
+            .then(() => changeStatus(participantId, participantStatuses.Rejected))
+            .catch(() => {
+                showError();
+            })
+    }
+
+    const columns: ColumnsType<EventParticipant> = [
+        {
+            title: "Користувач",
+            dataIndex: "fullName",
+            key: "user",
+            render: (text: any) => <Text underline strong>{text}</Text>,
+        },
+        {
+            title: "Email",
+            dataIndex: "email",
+            key: "email",
+            render: (text: any) => <Text strong>{text}</Text>,
+        },
+        {
+            title: "Поточний статус",
+            dataIndex: "status",
+            key: "status",
+            render: (status: any) => (
+                <>
+                    <Tag color={setTagColor(status)} key={status}>
+                        {status.toUpperCase()}
+                    </Tag>
+                </>
+            ),
+        }
+    ];
+
+    if (isUserEventAdmin) {
+        columns.push(
+            {
+
+                title: "Змінити статус",
+                dataIndex: "changeStatus",
+                key: "changeStatus",
+                render: (text, record) => (
+                    <Space size="small">
+                        <Button className={classes.approveButton} shape="round"
+                                icon={<UserAddOutlined className={classes.iconParticipant}/>} size='small'
+                                onClick={() => {
+                                    changeStatusToApproved(record.participantId)
+                                }}
+                        />
+                        <Divider type="vertical"/>
+                        <Button className={classes.underReviewButton} shape="round"
+                                icon={<QuestionOutlined className={classes.iconUnderReview}/>} size='small'
+                                onClick={() => {
+                                    changeStatusToUnderReviewed(record.participantId)
+                                }}
+                        />
+                        <Divider type="vertical"/>
+                        <Button className={classes.banButton} shape="round"
+                                icon={<UserDeleteOutlined className={classes.iconParticipant}/>} size='small'
+                                onClick={() => {
+                                    changeStatusToRejected(record.participantId)
+                                }}
+                        />
+                    </Space>
+                )
+            }
+        )
+    }
+
+    // const data = [
+    //     {
+    //         key: '1',
+    //         name: 'John Brown',
+    //         age: 32,
+    //         address: 'New York No. 1 Lake Park',
+    //         tags: ['Учасник'],
+    //     },
+    //     {
+    //         key: '2',
+    //         name: 'Jim Green',
+    //         age: 42,
+    //         address: 'London No. 1 Lake Park',
+    //         tags: ['Розглядається'],
+    //     },
+    //     {
+    //         key: '3',
+    //         name: 'Joe Black',
+    //         age: 32,
+    //         address: 'Sidney No. 1 Lake Park',
+    //         tags: ['Відмовлено'],
+    //     },
+    // ];
+
+    return <Table columns={columns} dataSource={Participants}/>
+}
+
+export default ParticipantsTable;

@@ -30,4 +30,29 @@ const createParticipant = async (id: number) => {
     return response;
 };
 
-export default {getCategories, getEvents, getEventInfo, remove, createParticipant, removeParticipant};
+const approveParticipant = async (id: number) => {
+    const response = await Api.put(`Events/participants/${id}/status/approved`);
+    return response;
+};
+
+const underReviewParticipant = async (id: number) => {
+    const response = await Api.put(`Events/participants/${id}/status/underReviewed`);
+    return response;
+};
+
+const rejectParticipant = async (id: number) => {
+    const response = await Api.put(`Events/participants/${id}/status/rejected`);
+    return response;
+};
+
+export default {
+    getCategories,
+    getEvents,
+    getEventInfo,
+    remove,
+    createParticipant,
+    removeParticipant,
+    approveParticipant,
+    underReviewParticipant,
+    rejectParticipant
+};
