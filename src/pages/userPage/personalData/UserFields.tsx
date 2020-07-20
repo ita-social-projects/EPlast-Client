@@ -4,8 +4,8 @@ import styles from './PersonalData.module.css';
 import userApi from '../../../api/UserApi';
 import jwt from 'jwt-decode';
 import AuthStore from '../../../stores/Auth';
-import {Demo} from "../../WebChat/Demo";
 import moment from 'moment';
+import AvatarAndProgress from './AvatarAndProgress';
 
 export default function () {
    type Gender={
@@ -83,10 +83,10 @@ export default function () {
         </div>
         
       ) : (
-        <div className={styles.userFieldsWrapper}>
-      
-
-        <h2 className={styles.title}>Особистий профіль</h2>
+      <div className={styles.userFieldsWrapper}>
+      <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast}/>
+      <div className={styles.rightPartWrapper}>
+      <h2 className={styles.title}>Особистий профіль</h2>
         <div className={styles.tableWrapper}>
           <table className={styles.table}>
             <tbody>
@@ -167,6 +167,8 @@ export default function () {
            
         </div>
         <Button className={styles.btn}>Обрати/змінити курінь</Button>
+      </div>
+        
       </div>
       );
 }
