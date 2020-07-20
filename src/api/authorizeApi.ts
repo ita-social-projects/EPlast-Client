@@ -68,7 +68,7 @@ export default class AuthorizeApi{
      //history.push("/");
    })
  };*/
-
+/*Added some changes for example*/
 
  changePassword = async(data : any) => {
   const response = await Api.post("Account/changePassword", data)
