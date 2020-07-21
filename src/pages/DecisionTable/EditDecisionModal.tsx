@@ -1,38 +1,27 @@
 import React from 'react';
-import { Modal, Button } from 'antd';
+import { Modal} from 'antd';
 import FormEditDecision from './FormEditDecision';
-import classes from './Table.module.css';
+import { DecisionPost } from '../../api/decisionsApi';
 
 interface Props {
-  record: { completed: boolean; title: string };
+  record: number;
+  decision: DecisionPost;
   showModal: boolean;
   setShowModal: (showModal: boolean) => void;
+  onEdit :(id: number, name: string, description: string) => void;
 }
-const EditDecisionModal = ({ record, showModal, setShowModal }: Props) => {
-  const handleOk = () => {};
-  const handleCancel = () => setShowModal(false);
-
+const EditDecisionModal = ({ record, showModal, setShowModal, onEdit, decision }: Props) => {
   return (
     <Modal
       title="Редагування рішення пластового проводу"
       visible={showModal}
-      onOk={handleOk}
-      onCancel={handleCancel}
-      footer={[
-        <Button key="back" onClick={handleCancel}>
-          Відміна
-        </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          className={classes.addDecision}
-          onClick={handleOk}
-        >
-          Змінити
-        </Button>,
-      ]}
+      footer = {null}
     >
-      <FormEditDecision record={record} />
+      <FormEditDecision 
+      record={record} 
+      decision = {decision}
+      setShowModal = { setShowModal}
+      onEdit = {onEdit}/>
     </Modal>
   );
 };

@@ -1,46 +1,99 @@
-import React from 'react';
-import { Form, Input } from 'antd';
+import React, {useState, useEffect} from 'react';
+import { Form, Input,Button } from 'antd';
+import decisionsApi, {DecisionPost} from '../../api/decisionsApi';
 
 interface Props {
-  record: {
-    completed: boolean;
-    title: string;
-  };
+  record: number;
+  decision: DecisionPost;
+  setShowModal: (showModal: boolean) => void;
+  onEdit :(id: number, name: string, description: string) => void;
 }
 
-const FormEditDecision = ({ record }: Props) => {
-  const { completed, title } = record;
+const FormEditDecision = ({ record,  setShowModal, onEdit, decision}: Props) => {
+  const [loading, setLoading] = useState(false);
+  const  id = record;
+  const [form] = Form.useForm();
+  console.log(id);
+  useEffect(() => {
+    setLoading(true);
+    form.setFieldsValue({
+      name : decision.name,
+      description: decision.description
+     });
+     setLoading(false);
+  },[decision],);
+  const handleCancel = () => {
+    setShowModal(false);
+  }
+  const handleFinish = async (dec : any) => {
+    const newDecision : DecisionPost = {
+    id : decision?.id,
+    name : dec.name,
+    decisionStatusType : decision?.decisionStatusType,
+    organization : decision?.organization,
+    decisionTarget : decision?.decisionTarget,
+    description : dec.description,
+    date : decision?.date,
+    fileName : decision?.fileName 
+  };
+    await decisionsApi.put(id, newDecision)
+    .catch(error => console.log(error));
+    onEdit(newDecision.id, newDecision.name, newDecision.description);
+    setShowModal(false);
+    };
 
-  console.log(title);
   return (
-    <Form
+   <div>
+    {!loading && (
+      <Form
       name="basic"
-      //   initialValues={{
-      //     remember: true,
-      //   }}
+     onFinish ={handleFinish}
+     form ={form}
     >
       <Form.Item
         label="Назва рішення"
-        name="decisionname"
-        initialValue={completed}
+        name="name"
+        
         rules={[
           {
-            message: 'Це поле має бути заповненим',
+          
+            required: true,
+            message: 'Це поле має бути заповненим' 
           },
         ]}
       >
         <Input />
       </Form.Item>
 
-      <Form.Item label="Текст рішення">
-        <Input.TextArea allowClear defaultValue={title} />
+      <Form.Item
+       label="Текст рішення"
+       name="description"
+       rules={[
+        {
+        
+          required: true,
+          message: 'Це поле має бути заповненим' 
+        },
+      ]}
+       >
+        <Input.TextArea allowClear />
       </Form.Item>
-      {/* <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Опублікувати
-          </Button>
-        </Form.Item> */}
-    </Form>
+      <Form.Item style = {{ textAlign: "right"}}>
+      <Button 
+        key="back"
+        onClick = {handleCancel}
+        >
+          Відмінити
+        </Button>
+        <Button
+         type="primary" htmlType="submit"
+        >
+          Змінити
+        </Button>
+
+      </Form.Item> 
+    </Form>)}
+    </div>
   );
 };
 

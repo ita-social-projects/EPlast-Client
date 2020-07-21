@@ -1,13 +1,15 @@
 import React from 'react';
-import { Modal, Button } from 'antd';
+import { Modal } from 'antd';
 import FormAddDecision from './FormAddDecision';
+import { Decision } from '../../api/decisionsApi';
 
 interface Props {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
+  onAdd: (decision: Decision) => void;
 }
 
-const AddDecisionModal = ({ visibleModal, setVisibleModal }: Props) => {
+const AddDecisionModal = ({ visibleModal, setVisibleModal, onAdd }: Props) => {
  
   const handleCancel = () => setVisibleModal(false);
 
@@ -16,16 +18,11 @@ const AddDecisionModal = ({ visibleModal, setVisibleModal }: Props) => {
       title="Додати рішення пластового проводу"
       visible={visibleModal}
       onCancel={handleCancel}
-      footer={[
-        <Button key="back" onClick={handleCancel}>
-          Відміна
-        </Button>,
-        <Button key="submit" type="primary" >
-          Опублікувати
-        </Button>,
-      ]}
+      footer={null}
     >
-      <FormAddDecision  setVisibleModal = {setVisibleModal} />
+      <FormAddDecision  
+        setVisibleModal = {setVisibleModal}
+        onAdd ={onAdd} />
     </Modal>
   );
 };

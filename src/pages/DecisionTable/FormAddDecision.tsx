@@ -1,48 +1,80 @@
 import React, {useEffect, useState} from 'react';
 import { Form, DatePicker, Select, Input, Upload, Button } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import decisionsApi, {DecisionOnCreateData, decisionStatusType} from '../../api/decisionsApi'
+import decisionsApi, {DecisionOnCreateData, decisionStatusType, Decision, DecisionWrapper, decisionTarget, FileWrapper, Organization} from '../../api/decisionsApi'
+import { getBase64 } from '../userPage/EditUserPage/Services';
 
 type FormAddDecisionProps ={
    setVisibleModal: (visibleModal: boolean) => void;
+   onAdd: (decision: Decision) => void;
 }
 const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
- const  { setVisibleModal } = props;
+ const  { setVisibleModal, onAdd } = props;
+ const [fileData, setFileData] = useState<FileWrapper>({FileAsBase64 : null, FileName: null});
+ const [form] = Form.useForm();
   const normFile = (e: { fileList: any }) => {
     if (Array.isArray(e)) {
+      console.log(e);
       return e;
     }
 
     return e && e.fileList;
   };
+  const handleCancel = () => {
+    setVisibleModal(false);
+  };
+  const handleUpload = (info :any) => {
+    if (info.file.status === 'done') {
+    getBase64( info.file.originFileObj,(base64: string) => {
+      setFileData({FileAsBase64 :base64.split(',')[1] ,  FileName:info.file.name});
+    });
+  }
+
+  }
   const statusTypeParser = (statusType: decisionStatusType): number =>{
     if(statusType.value === "InReview") return 0;
     if (statusType.value === "Confirmed") return 1;
     return 2;
     };
  const handleSubmit = async (values : any)=>{
-  console.log("--------",values);
-  console.log("------",  values.dragger)
-  const newDecision ={
+   console.log(fileData);
+  const newDecision  : DecisionWrapper= {
     decision: {
-      "id": 0,
-      "name": values.name,
-      "decisionStatusType": statusTypeParser(JSON.parse(values.decisionStatusType)),
-      "organization":JSON.parse(values.organization),
-      "decisionTarget":JSON.parse(values.decisionTarget),
-      "description": values.description,
-      "date":/* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values.datepicker._d,
-      "haveFile": false,
+      id: 0,
+      name: values.name,
+      decisionStatusType: statusTypeParser(JSON.parse(values.decisionStatusType)),
+      organization:JSON.parse(values.organization),
+      decisionTarget:JSON.parse(values.decisionTarget),
+      description: values.description,
+      date:/* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values.datepicker._d,
+      fileName: fileData.FileName,
     },
-    "decisionTargets": null,
-    "file": null,
-    "filename": null,
+    decisionTargets: null,
+    file: fileData.FileAsBase64
   }
-  console.log("--------",newDecision);
- await decisionsApi.post(newDecision).then(res => console.log(res)).catch(error => console.log(error));
- setVisibleModal(false);
+  console.log("new",newDecision);
+  await decisionsApi.post(newDecision)
+  .then(res => console.log(res))
+  .catch(error => console.log(error));
+  setVisibleModal(false);
+  const dst : decisionStatusType = JSON.parse(values.decisionStatusType);
+  const dt : decisionTarget = JSON.parse(values.decisionTarget);
+  console.log(dst, dt);
+  const decisionOnTable : Decision = {
+     id: 0,
+  name : newDecision.decision.name,
+  organization : newDecision.decision.organization.organizationName,
+  description : newDecision.decision.description,
+  decisionStatusType :dst.text,
+  decisionTarget: dt.targetName,
+  date: "Щойно"
+  };
+  onAdd(decisionOnTable);
+  form.resetFields();
   }
-  const[data, setData] = useState<DecisionOnCreateData>();
+  const[data, setData] = useState<DecisionOnCreateData>({organizations: Array<Organization>(),
+    decisionStatusTypeListItems: Array<decisionStatusType>(),
+    decisionTargets: Array<decisionTarget>(),});
   useEffect(() => {
     const fetchData = async () => {
       await decisionsApi.getOnCreate()
@@ -55,9 +87,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
     <Form
       name="basic"
       onFinish ={handleSubmit}
-      initialValues={{
-        remember: true,
-      }}
+      form = {form}
     >
       <Form.Item
         label="Назва рішення"
@@ -81,7 +111,6 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
       {data?.organizations.map(o => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{o.organizationName}</Select.Option>))}
         </Select>
       </Form.Item>
-
       <Form.Item
        label="Тематика рішення"
        name ="decisionTarget"
@@ -105,14 +134,19 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
       <Form.Item label="Прикріпити">
         <Form.Item
           name="dragger"
-          valuePropName="fileList"
+         valuePropName="fileList"
           getValueFromEvent={normFile}
           noStyle
         >
-          <Upload.Dragger name="files">
+          <Upload.Dragger name = "file" 
+          action = '//jsonplaceholder.typicode.com/posts/'
+           onChange = {handleUpload} multiple ={false}
+           accept=".doc,.docx,.txt, application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          headers = { { authorization: 'authorization-text'}}
+          >
             <p className="ant-upload-drag-icon">
               <InboxOutlined style={{ color: '#3c5438' }} />
-            </p>
+           </p>
             <p className="ant-upload-hint">
               Клікніть або перетягніть файл для завантаження
             </p>
@@ -124,14 +158,23 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
        name ="decisionStatusType"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
         <Select>
-        {data?.decisionStatusTypeListItems.map(dst => ( <Select.Option key= {dst.value} value={JSON.stringify(dst)}>{dst.text}</Select.Option>))}
+        {data?.decisionStatusTypeListItems.map(dst=> ( <Select.Option key= {dst.value} value={JSON.stringify(dst)}>{dst.text}</Select.Option>))}
         </Select>
       </Form.Item>
 
-       <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Опублікувати
+      <Form.Item style = {{ textAlign: "right"}}>
+      <Button 
+        key="back"
+        onClick = {handleCancel}
+        >
+          Відмінити
         </Button>
+        <Button
+         type="primary" htmlType="submit"
+        >
+         Опублікувати
+        </Button>
+
       </Form.Item> 
     </Form>
   );

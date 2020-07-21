@@ -22,7 +22,12 @@ const columns = [
   {
     title: 'Рішення',
     dataIndex: 'description',
-    render: (text: string) => text,
+    render: (text: string) => {
+      if(text.length > 50){
+        return `${text.slice(0,50) }...`;
+      }
+      return text;
+    },
   },
   {
     title: 'Дата',

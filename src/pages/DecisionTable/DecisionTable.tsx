@@ -1,35 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Input, Button, Layout } from 'antd';
 import columns from './columns';
-
 import DropDown from './DropDownDecision';
 import AddDecisionModal from './AddDecisionModal';
-// import Foo from './ShowLess';
 import decisionsApi, {Decision} from '../../api/decisionsApi';
 import classes from './Table.module.css';
-// import decisionsApi from '../../api/decisionsApi'
 
 const { Content } = Layout;
 
-type Record = {
-  completed: boolean;
-  title: string;
-};
+
 
 const DecisionTable = () => {
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [recordObj, setRecordObj] = useState<any>({});
-  const [data, setData] = useState<Decision[]>([]);
+  const [recordObj, setRecordObj] = useState<any>(0);
+  const [data, setData] = useState<Decision[]>(Array<Decision>());
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [searchedData, setSearchedData] = useState('');
   const [visibleModal, setVisibleModal] = useState(false);
-
+  const handleDelete = (id : number) =>{
+    const filteredData = data.filter(d => d.id !== id);
+    setData([...filteredData]);
+  }
+  const handleEdit = (id: number, name: string, description: string) =>{
+    /* eslint no-param-reassign: "error" */ 
+    const filteredData = data.filter(d =>{ 
+      if(d.id === id){
+        d.name = name;
+        d.description = description;
+      }
+      return d;
+    }
+  );
+    setData([...filteredData]);
+  }
+  const handleAdd = (decision: Decision) =>{
+  const lastId = data[data.length-1].id;
+  decision.id =  lastId + 1;
+  setData([...data, decision]);
+  }
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-
       const res : Decision[]= await decisionsApi.getAll();
       setData(res);
       setLoading(false);
@@ -80,6 +93,8 @@ const DecisionTable = () => {
               columns={columns}
               bordered
               rowKey="id"
+
+              
               onRow={(record) => {
                 return {
                   onClick: () => {
@@ -88,7 +103,8 @@ const DecisionTable = () => {
                   onContextMenu: (event) => {
                     event.preventDefault();
                     setShowDropdown(true);
-                    setRecordObj(record);
+                    console.log(record.id);
+                    setRecordObj(record.id);
                     setX(event.pageX);
                     setY(event.pageY);
                   },
@@ -102,6 +118,7 @@ const DecisionTable = () => {
                     behavior: 'smooth',
                   });
                 }
+                console.log("змінено")
               }}
               pagination={{
                 itemRender,
@@ -115,10 +132,13 @@ const DecisionTable = () => {
               record={recordObj}
               pageX={x}
               pageY={y}
+              onDelete = {handleDelete}
+              onEdit = {handleEdit}
             />
             <AddDecisionModal
               setVisibleModal={setVisibleModal}
               visibleModal={visibleModal}
+              onAdd = {handleAdd}
             />
           </>
         )}

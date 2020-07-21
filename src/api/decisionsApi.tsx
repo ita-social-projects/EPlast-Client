@@ -4,45 +4,50 @@ export type Decision = {
   id: number;
   name: string;
   organization: string;
-  statusType: string;
-  target : string;
+  decisionStatusType: string;
+  decisionTarget : string;
   description: string;
+  date : string;
 }
-export type DecisionOnCreateData = {
-  organizations: Organization[];
-  decisionStatusTypeListItems: decisionStatusType[];
-  decisionTargets : decisionTarget[];
+export type FileWrapper = {
+  FileAsBase64: string | null;
+  FileName : string | null;
 }
-type Organization ={
+export type Organization = {
   id : number;
   organizationName: string;
 }
-type decisionTarget ={
+export type decisionTarget ={
   id : number;
   targetName: string;
 }
- export type decisionStatusType ={
+
+export type decisionStatusType ={
   text: string;
   value: string;
 }
+export type DecisionOnCreateData = {
+  organizations: Organization[];
+  decisionStatusTypeListItems :decisionStatusType[];
+  decisionTargets : decisionTarget[];
+}
 export type DecisionWrapper = {
   decision: DecisionPost;
-  decisionTargets: null| decisionTarget[];
-  file: null|string;
-  filename: null|string;
+  decisionTargets:  decisionTarget[] | null;
+  file: string | null;
 }
-type DecisionPost ={
+export type DecisionPost  ={
   id: number;
   name: string;
   decisionStatusType: number;
-  organization: Organization;
+  organization: Organization ;
   decisionTarget: decisionTarget;
   description: string;
   date: string;
-  haveFile: boolean;
+  fileName: string | null;
 }
-  const getById =  async (id: number) => {
-    const response = await Api.get(`Decisions/${id}`);
+  const getById =  async (id: number)=> {
+    const response : DecisionPost = await (await Api.get(`Decisions/${id}`)).data;
     return  response;
   };
     
@@ -56,20 +61,34 @@ type DecisionPost ={
     console.log(data);
     return  data;
   };
+  const getPdf = async (id: number) => {
+    const data = await (await Api.get(`Decisions/createpdf/${id}`)).data;
+    const binaryString = window.atob(data);
+    const binaryLen = binaryString.length;
+    const bytes = new Uint8Array(binaryLen);
+    for (let i = 0; i < binaryLen; i += 1) {
+      const ascii = binaryString.charCodeAt(i);
+      bytes[i] = ascii;
+      };
+    const blob = new Blob([bytes], {type: "application/pdf"});
+    const link = window.URL.createObjectURL(blob);
+    return  link;
+  };
   const post = async (data : any) => {
     const response = await Api.post("Decisions",data);
     return response;
   };
 
-  const put = async (data : any) =>{
-    const response = await Api.put("Decisions",data);
+  const put = async (id: number, data : DecisionPost) =>{
+    const response = await Api.put(`Decisions/${id}`,data);
+    
     return response;
   };
   
-  const remove = async (id : number, data: any) => {
-    const response = await Api.put(`Decisions/${id}`,data);
+  const remove = async (id : number) => {
+    const response = await Api.remove(`Decisions/${id}`);
     return response;
   };
     
 
-export default {getById, getAll, getOnCreate, post, put, remove};
+export default {getById, getAll, getOnCreate,getPdf, post, put, remove};
