@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Row, Col, Button, Typography } from "antd";
+import { Avatar, Row, Col, Button, Typography, Spin, Layout } from "antd";
 import {
   UserOutlined,
   FileTextOutlined,
@@ -49,9 +49,6 @@ const Club = () => {
     setLoading(true);
     const fetchData = async () => {
       const res = await clubsApi.getById(id);
-      await clubsApi.getImage(res.data.club.logo).then((q: { data: any }) => {
-        res.data.club.logo = q.data;
-      });
       setData(res.data);
     };
     fetchData();
@@ -68,7 +65,11 @@ const Club = () => {
     setCounter(!expand ? counter : counter + 1);
   };
 
-  return (
+  return loading ? (
+    <Layout.Content className={classes.spiner}>
+      <Spin size="large" />
+    </Layout.Content>
+  ) : (
     <div>
       <Row
         justify="space-around"

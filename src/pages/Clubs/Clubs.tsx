@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { Card, Layout } from "antd";
+import { Card, Spin, Layout } from "antd";
 import clubsApi from "../../api/clubsApi";
 import Add from "../../assets/images/add.png";
 
 const classes = require("./Clubs.module.css");
 
 interface CardProps {
-  id:number;
+  id: number;
   clubName: string;
   clubURL: string;
   description: string;
@@ -28,10 +28,13 @@ const Clubs = () => {
     };
     fetchData();
     setLoading(false);
-
   }, []);
 
-  return (
+  return loading ? (
+    <Layout.Content className={classes.spiner}>
+      <Spin size="large" />
+    </Layout.Content>
+  ) : (
     <Layout.Content>
       <h1 className={classes.mainTitle}>Курені</h1>
       <div className={classes.wrapper}>
@@ -52,7 +55,9 @@ const Clubs = () => {
             key={club.id}
             hoverable
             className={classes.cardStyles}
-            cover={<img src={club.logo} alt="Club" style={{height: '154.45px'}}/>}
+            cover={
+              <img src={club.logo} alt="Club" style={{ height: "154.45px" }} />
+            }
             onClick={() => history.push(`${url}/${club.id}`)}
           >
             <Card.Meta title={club.clubName} className={classes.titleText} />

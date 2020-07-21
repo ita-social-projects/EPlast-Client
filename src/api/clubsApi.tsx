@@ -1,6 +1,6 @@
-import axios from 'axios';
-import Api from './api'
-import BASE_URL from '../config';
+import axios from "axios";
+import Api from "./api";
+import BASE_URL from "../config";
 
 const getById = async (id: number) => {
   const response = await Api.getById("Club", id);
@@ -11,8 +11,19 @@ const getAll = async () => {
   const response = await Api.getAll("Club");
   return response;
 };
-
-const post = async (url:string,data: any) => {
+const getAllMembers = async (id: number) => {
+  const response = await Api.getAll("Club/" + id + "/members");
+  return response;
+};
+const getAllFollowers = async (id: number) => {
+  const response = await Api.getAll("Club/" + id + "/followers");
+  return response;
+};
+const getAllAdmins = async (id: number) => {
+  const response = await Api.getAll("Club/" + id + "/administration");
+  return response;
+};
+const post = async (url: string, data: any) => {
   const response = await Api.post(url, data);
   return response;
 };
@@ -27,7 +38,11 @@ const remove = async (id: number) => {
   return response;
 };
 
-const getImage =  async (imageName : string|undefined) => {const response = await axios.get(`${`${BASE_URL  }Club/getImage`}/${imageName}`);
-return response ;};
+const getImage = async (imageName: string | undefined) => {
+  const response = await axios.get(
+    `${`${BASE_URL}Club/getImage`}/${imageName}`
+  );
+  return response;
+};
 
-export default { getById, getAll, post, put, remove,getImage };
+export default { getById, getAll, post, put, remove, getImage, getAllMembers,getAllFollowers,getAllAdmins };

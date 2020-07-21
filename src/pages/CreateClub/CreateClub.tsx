@@ -57,9 +57,6 @@ const CreateClub = () => {
     setServLoading(true);
     try {
       const res = await (await clubsApi.getById(id)).data.club;
-      await clubsApi.getImage(res.logo).then((q: { data: any }) => {
-        res.logo = q.data;
-      });
 
       form.setFieldsValue({
         id: res.id,
