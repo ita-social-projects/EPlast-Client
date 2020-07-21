@@ -1,7 +1,12 @@
 import Api from './api'
 
-const getCategories = async () => {
-    const response = await Api.get("Events/types/1/categories");
+const getTypes = async () => {
+    const response = await Api.get("Events/types");
+    return response;
+}
+
+const getCategories = async (typeId: number) => {
+    const response = await Api.get(`Events/types/${typeId}/categories`);
     return response;
 }
 
@@ -46,6 +51,7 @@ const rejectParticipant = async (id: number) => {
 };
 
 export default {
+    getTypes,
     getCategories,
     getEvents,
     getEventInfo,

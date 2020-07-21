@@ -9,27 +9,7 @@ import eventsApi from "../../../../api/eventsApi";
 // eslint-disable-next-line import/no-cycle
 import ParticipantsTable from "./ParticipantsTable";
 
-
 const classes = require('./EventInfo.module.css');
-
-//
-// const baseColumns = [
-//     {
-//         title: "Користувач",
-//         dataIndex: "fullName",
-//         key: "user"
-//     },
-//     {
-//         title: "Email",
-//         dataIndex: "email",
-//         key: "email"
-//     },
-//     {
-//         title: "Поточний статус",
-//         dataIndex: "status",
-//         key: "status"
-//     }
-// ];
 
 export interface EventDetails {
     event: EventInformation;

@@ -28,26 +28,10 @@ const SortedEvents = ({eventCategoryId, typeId}: Props) => {
 
     const [actions, setActions] = useState<CardProps[]>([]);
 
-    /* const updateActions = async (callback:Function) => {
-         const actionsArray = await http.get('comments');
-         setActions(actionsArray.data);
-         callback(actionsArray);
-     };
-
-     const filterActions = (arr: any) => {
-         if (eventCategoryId && arr) {
-            setActions(arr.data.filter((item: any) => item.postId === 1));
-         }
-     } */
-
-    /* useEffect(() => {
-         updateActions(filterActions);
-     }, [eventCategoryId]); */
-
     useEffect(() => {
         const fetchData = async () => {
             const response = await eventsApi.getEvents(typeId, eventCategoryId);
-            console.log(response);
+            // console.log(response);
             setActions(response.data)
         };
         fetchData();

@@ -6,11 +6,11 @@ import SortedEvents from './SortedEvents';
 const classes = require('./ActionEvent.module.css');
 
 const ActionEvent = () => {
-    const { id } = useParams();
+    const { categoryId } = useParams();
     return (
         <div className={classes.background}>
             <div className={classes.actionsWrapper}>
-                <SortedEvents eventCategoryId={id} typeId={1} />
+                <SortedEvents eventCategoryId={categoryId} typeId={1} />
             </div>
         </div>
     )

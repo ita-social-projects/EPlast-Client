@@ -47,8 +47,8 @@ const PrivateLayout = ({ children }: any) => {
               Станиці
             </Menu.Item>
             <Menu.Item key="4">Округи</Menu.Item>
-            <Menu.Item onClick={() => history.push('/actions')} key="5">
-              Акції
+            <Menu.Item onClick={() => history.push('/events/types')} key="5">
+              Події
             </Menu.Item>
             <Menu.Item key="6">Курені</Menu.Item>
             <Menu.Item key="7">Відзначення</Menu.Item>
