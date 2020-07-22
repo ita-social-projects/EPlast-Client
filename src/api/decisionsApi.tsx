@@ -94,9 +94,7 @@ return new File([u8arr], filename, {type:mime});
       notificationLogic('success', "Рішення успішно додано");
     })
     .catch(error => {
-      if(error.response.status === 400){
         notificationLogic('error', error.response.data.value);
-      }
     });
     return response;
   };
@@ -117,9 +115,7 @@ const getFileAsBase64 = async (fileName: string) =>{
       notificationLogic('success', "Рішення успішно змінено");
     })
     .catch(error => {
-      if(error.response.status === 400){
         notificationLogic('error', error.response.data.value);
-      }
     });
     
     return response;
@@ -130,9 +126,7 @@ const getFileAsBase64 = async (fileName: string) =>{
       notificationLogic('success',  "Рішення успішно видалено");
     })
     .catch(error => {
-      if(error.response.status === 400){
         notificationLogic('error', error.response.data.value);
-      }
     });
     return response;
   };
