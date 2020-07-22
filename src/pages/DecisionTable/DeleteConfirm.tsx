@@ -4,11 +4,6 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import decisionsApi from '../../api/decisionsApi';
 
 const { confirm } = Modal;
-interface Props {
-  id: number;
-
-  onDelete :()=> void
-}
 
  const DeleteConfirm = (id:number, onDelete: any) => {
 
@@ -19,9 +14,7 @@ interface Props {
     cancelText: 'Ні',
     onOk () { 
       const remove = async () => {
-       await decisionsApi.remove(id)
-       .then(res => console.log(res))
-       .catch(err => console.log(err))
+       await decisionsApi.remove(id);
       };
       remove();
       onDelete(id);
