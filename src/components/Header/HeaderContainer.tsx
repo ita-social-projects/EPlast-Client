@@ -9,17 +9,16 @@ import AuthorizeApi from '../../api/authorizeApi';
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/Auth';
 import userApi from '../../api/UserApi';
-
 let authService = new AuthorizeApi();
 
 const HeaderContainer = () => {
-  const user = AuthorizeApi.isSignedIn();   //тут ше перевірити
+
+  const user = AuthorizeApi.isSignedIn(); 
 
   const [imageBase64, setImageBase64] = useState<string>();
   const [name, setName] = useState<string>();
   const token = AuthStore.getToken() as string;
   const fetchData = async () => {
-   
     if(user)
     {
       const user : any = jwt(token);
@@ -29,7 +28,6 @@ const HeaderContainer = () => {
             setImageBase64(response.data);
           })
       })
-  
     }
   };
 

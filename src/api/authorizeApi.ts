@@ -12,7 +12,9 @@ export default class AuthorizeApi{
   login = async(data: any) =>{
     const response = await Api.post("Account/signin", data)
      .then(response =>{
+       if(response.data.token !== null){
         AuthStore.setToken(response.data.token);
+       }
      })
      .catch(error =>{
       if(error.response.status === 400){
@@ -85,6 +87,7 @@ export default class AuthorizeApi{
 };
 
   logout = async() =>{
+    window.location.reload(false);
     AuthStore.removeToken();
  };
 

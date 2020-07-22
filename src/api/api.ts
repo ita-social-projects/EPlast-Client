@@ -1,10 +1,24 @@
 import axios from "axios";
 import BASE_URL from "../config";
+import AuthStore from '../stores/Auth';
 
 interface HttpResponse {
   headers: any;
   data: any;
 }
+
+axios.interceptors.request.use(
+  config => {
+      const token = AuthStore.getToken() as string;
+      if (token) {
+          config.headers['Authorization'] = 'Bearer ' + token;
+      }
+      config.headers['Content-Type'] = 'application/json';
+      return config;
+  },
+  error => {
+      Promise.reject(error)
+  });
 
 const get = async (
   url: string,
@@ -32,7 +46,7 @@ const post = async (url: string, data: any) => {
   const response = await axios.post(BASE_URL + url, data, {
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json",
+      "Content-Type": "application/json"
     },
   });
   return response;
@@ -48,4 +62,4 @@ const remove = async (url: string, id: number) => {
   return response;
 };
 
-export default { get, getById, getAll, post, put, remove };
+export default { get, getById, getAll, post, put, remove};

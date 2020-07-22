@@ -15,4 +15,4 @@ const sendQuestionAdmin = async (data: any) => {
   };
 
 
-  export default {sendQuestionAdmin  };
+  export default {sendQuestionAdmin};
