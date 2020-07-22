@@ -178,10 +178,8 @@ export default function () {
                             </div>
                             < div className={classes.radio} >
                                 <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio}>
-                                    <Radio.Group buttonStyle="solid">
-                                        <Space size={50} >
-                                            {data?.eventTypes.map((item: any) => (<Radio.Button key={item.value} value={item.id} > {item.eventTypeName}</Radio.Button>))}
-                                        </Space>
+                                    <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup}>
+                                        {data?.eventTypes.map((item: any) => (<Radio.Button key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
                                     </Radio.Group>
                                 </Form.Item>
                             </div>
