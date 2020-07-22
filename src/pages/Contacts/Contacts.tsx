@@ -2,9 +2,12 @@ import React from "react";
 import { Button, Form, Input, Layout, List, Select } from "antd";
 import { EnvironmentOutlined, PhoneOutlined, MailOutlined, InfoOutlined} from "@ant-design/icons";
 import styles from "./Contacts.module.css";
-import contactsApi from "../../api/contactsApi";
+import AuthorizeApi from "../../api/authorizeApi";
+let authService = new AuthorizeApi();
 
 export default function () {
+  const [form] = Form.useForm();
+
   const data = [
     {
       avatar: (
@@ -27,7 +30,8 @@ export default function () {
   ];
 
   const handleSubmit = async (values: any) => {
-    await contactsApi.sendQuestionAdmin(values);
+    await authService.sendQuestionAdmin(values);
+    console.log(values);
   };
 
   const validateMessages = {
@@ -66,28 +70,29 @@ export default function () {
         className={styles.contactsForm}
         layout="vertical"
         initialValues={{ prefix: "+380" }}
+        form={form}
         validateMessages={validateMessages}
         onFinish={handleSubmit}
       >
         <Form.Item
-          name={["user", "name"]}
+          name="Name"
           label="Вкажіть Ваше ім'я"
           rules={[{ required: true }]}
         >
           <Input />
         </Form.Item>
         <Form.Item
-          name={["user", "email"]}
+          name="Email"
           label="Вкажіть Ваш email"
           rules={[{ type: "email" }]}
         >
           <Input />
         </Form.Item>
-        <Form.Item name={["user", "phone"]} label="Вкажіть Ваш номер телефону">
+        <Form.Item name="PhoneNumber" label="Вкажіть Ваш номер телефону">
           <Input addonBefore={prefixSelector} id={styles.addonElement} />
         </Form.Item>
         <Form.Item
-          name={["user", "introduction"]}
+          name="FeedBackDescription"
           label="Опишіть Ваше звернення"
           rules={[{ required: true }]}
         >
