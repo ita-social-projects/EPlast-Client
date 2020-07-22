@@ -102,7 +102,6 @@ const DecisionTable = () => {
                   onContextMenu: (event) => {
                     event.preventDefault();
                     setShowDropdown(true);
-                    console.log(record.id);
                     setRecordObj(record.id);
                     setX(event.pageX);
                     setY(event.pageY);
@@ -117,7 +116,6 @@ const DecisionTable = () => {
                     behavior: 'smooth',
                   });
                 }
-                console.log("змінено")
               }}
               pagination={{
                 itemRender,
