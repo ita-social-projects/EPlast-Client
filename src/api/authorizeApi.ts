@@ -1,6 +1,7 @@
 import Api from "./api";
 import notificationLogic from '../components/Notifications/Notification';
 import AuthStore from '../stores/Auth';
+import userApi from '../api/UserApi';
 
 export default class AuthorizeApi{
 
@@ -88,7 +89,17 @@ export default class AuthorizeApi{
  };
 
  confirmingEmail = async() => {
-   const response = await Api.getAll("Account/confirmingEmail");
-   console.log(response.data.userId);
+   const response = await Api.getAll("Account/confirmingEmail")
+   .then(response =>{
+     console.log(response);
+     
+    //редірект на юзер пейджу по айдішці
+   })
+   .catch(error =>{
+     if(error.response.status == 400){
+       notificationLogic('error', error.response.data.value);
+     }
+   });
+   
  };
 }

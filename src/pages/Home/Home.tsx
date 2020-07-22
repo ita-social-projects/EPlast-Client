@@ -4,6 +4,9 @@ import HomePict1 from "../../assets/images/homeMenuPicture.png";
 import HomePict2 from "../../assets/images/homeMenuPicture(1).jpg";
 import HomePict3 from "../../assets/images/homeMenuPicture(3).jpg";
 import classes from "./Home.module.css";
+import AuthorizeApi from '../../api/authorizeApi';
+let authService = new AuthorizeApi();
+
 
 const Home = () => {
   return (
@@ -105,5 +108,6 @@ const Home = () => {
       </div>
     </Layout.Content>
   );
+
 };
 export default Home;
