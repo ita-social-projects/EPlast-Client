@@ -1,3 +1,6 @@
+import React from 'react';
+import decisionsApi from '../../api/decisionsApi';
+
 const columns = [
   {
     title: 'ID',
@@ -36,7 +39,14 @@ const columns = [
   {
     title: 'Додатки',
     dataIndex: 'fileName',
-  },
+    render : (fileName : string |null) =>{ 
+      if( fileName != null){
+        return <button type = "button" onClick = {
+          async () =>  {
+             await decisionsApi.getFileAsBase64(fileName);}}
+             >Завантажити додаток</button>;
+      }
+      return ""; 
+  },}
 ];
-
 export default columns;

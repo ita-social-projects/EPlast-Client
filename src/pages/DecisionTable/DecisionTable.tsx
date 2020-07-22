@@ -76,7 +76,6 @@ const DecisionTable = () => {
 
   return (
     <Layout>
-      {console.log(data)}
       <Content>
         <h1 className={classes.titleTable}>Рішення керівних органів</h1>
         {loading && <Table loading />}

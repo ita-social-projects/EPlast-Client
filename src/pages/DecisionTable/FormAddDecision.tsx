@@ -26,6 +26,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
   const handleUpload = (info :any) => {
     if (info.file.status === 'done') {
     getBase64( info.file.originFileObj,(base64: string) => {
+      console.log(base64);
       setFileData({FileAsBase64 :base64.split(',')[1] ,  FileName:info.file.name});
     });
   }
@@ -50,7 +51,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
       fileName: fileData.FileName,
     },
     decisionTargets: null,
-    file: fileData.FileAsBase64
+    fileAsBase64: fileData.FileAsBase64,
   }
   console.log("new",newDecision);
   await decisionsApi.post(newDecision)
@@ -67,7 +68,8 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
   description : newDecision.decision.description,
   decisionStatusType :dst.text,
   decisionTarget: dt.targetName,
-  date: "Щойно"
+  date: "Щойно",
+  fileName : fileData.FileName
   };
   onAdd(decisionOnTable);
   form.resetFields();
@@ -141,7 +143,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
           <Upload.Dragger name = "file" 
           action = '//jsonplaceholder.typicode.com/posts/'
            onChange = {handleUpload} multiple ={false}
-           accept=".doc,.docx,.txt, application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+           accept =".doc,.docx,.png,.xls,xlsx,.png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           headers = { { authorization: 'authorization-text'}}
           >
             <p className="ant-upload-drag-icon">

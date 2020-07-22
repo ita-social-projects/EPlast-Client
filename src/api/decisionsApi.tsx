@@ -8,6 +8,7 @@ export type Decision = {
   decisionTarget : string;
   description: string;
   date : string;
+  fileName: string | null;
 }
 export type FileWrapper = {
   FileAsBase64: string | null;
@@ -34,7 +35,7 @@ export type DecisionOnCreateData = {
 export type DecisionWrapper = {
   decision: DecisionPost;
   decisionTargets:  decisionTarget[] | null;
-  file: string | null;
+  fileAsBase64: string | null;
 }
 export type DecisionPost  ={
   id: number;
@@ -45,6 +46,20 @@ export type DecisionPost  ={
   description: string;
   date: string;
   fileName: string | null;
+};
+const dataURLtoFile = (dataurl : string, filename: string)=>{
+  const arr = dataurl.split(',');
+  const mime = arr[0].match(/:(.*?);/)![1];
+  const bstr = atob(arr[1]);
+  let {length} = bstr;
+  const u8arr = new Uint8Array(length);
+
+while(length !== 0){
+  u8arr[length] = bstr.charCodeAt(length);
+  length-=1;
+}
+
+return new File([u8arr], filename, {type:mime});
 }
   const getById =  async (id: number)=> {
     const response : DecisionPost = await (await Api.get(`Decisions/${id}`)).data;
@@ -78,7 +93,18 @@ export type DecisionPost  ={
     const response = await Api.post("Decisions",data);
     return response;
   };
-
+const getFileAsBase64 = async (fileName: string) =>{
+  const response = await (await Api.get(`Decisions/downloadfile/${fileName}`)).data;
+  const file = dataURLtoFile(response, fileName);
+  const anchor = window.document.createElement('a');
+  anchor.href = window.URL.createObjectURL(file);
+  anchor.download = fileName;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  window.URL.revokeObjectURL(anchor.href);
+  return response;
+}
   const put = async (id: number, data : DecisionPost) =>{
     const response = await Api.put(`Decisions/${id}`,data);
     
@@ -91,4 +117,4 @@ export type DecisionPost  ={
   };
     
 
-export default {getById, getAll, getOnCreate,getPdf, post, put, remove};
+export default {getById, getAll, getOnCreate,getPdf,getFileAsBase64, post, put, remove};
