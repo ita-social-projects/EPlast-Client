@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Avatar, Layout, Menu } from "antd";
 import {
@@ -16,7 +16,7 @@ const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
 const PrivateLayout = ({ children }: any) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   const onCollapse = (collValue: boolean) => {
     setCollapsed(collValue);
@@ -25,18 +25,18 @@ const PrivateLayout = ({ children }: any) => {
   const [imageBase64, setImageBase64] = useState<string>();
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
-    const user : any = jwt(token);
-    await userApi.getById(user.nameid).then(async response =>{
-        await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) =>{
-          setImageBase64(response.data);
-        })
+    const user: any = jwt(token);
+    await userApi.getById(user.nameid).then(async response => {
+      await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
+        setImageBase64(response.data);
+      })
     })
   };
 
   useEffect(() => {
     fetchData();
   }, []);
- 
+
 
 
   const history = useHistory();
