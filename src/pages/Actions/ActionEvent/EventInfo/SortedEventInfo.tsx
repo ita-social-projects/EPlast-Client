@@ -35,33 +35,33 @@ const RenderEventIcons = ({
 ): React.ReactNode[] => {
     const eventIcons: React.ReactNode[] = []
     if (isUserEventAdmin) {
-        eventIcons.push(<Tooltip placement="bottom" title="Ви адмін!">
+        eventIcons.push(<Tooltip placement="bottom" title="Ви адмін!" key="setting">
             <SettingTwoTone twoToneColor="#3c5438" className={classes.icon} key="setting"/>
         </Tooltip>)
-        eventIcons.push(<Tooltip placement="bottom" title="Редагувати">
+        eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit">
             <EditTwoTone twoToneColor="#3c5438" className={classes.icon} key="edit"/>
         </Tooltip>)
-        eventIcons.push(<Tooltip placement="bottom" title="Видалити">
+        eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
             <DeleteTwoTone twoToneColor="#8B0000"
                            className={classes.icon} key="delete"/>
         </Tooltip>)
     } else if (isUserParticipant && !isEventFinished) {
         if (isUserRejectedParticipant) {
-            eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено">
+            eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено" key="banned">
                 <StopOutlined style={{color: "#8B0000"}} className={classes.icon} key="banned"/>
             </Tooltip>)
         } else {
             if (isUserApprovedParticipant) {
-                eventIcons.push(<Tooltip placement="bottom" title="Учасник">
+                eventIcons.push(<Tooltip placement="bottom" title="Учасник" key="participant">
                     <CheckCircleTwoTone twoToneColor="#73bd79" className={classes.icon} key="participant"/>
                 </Tooltip>)
             }
             if (isUserUndeterminedParticipant) {
-                eventIcons.push(<Tooltip placement="bottom" title="Ваша заявка розглядається">
+                eventIcons.push(<Tooltip placement="bottom" title="Ваша заявка розглядається" key="underReview">
                     <QuestionCircleTwoTone twoToneColor="#FF8C00" className={classes.icon} key="underReview"/>
                 </Tooltip>)
             }
-            eventIcons.push(<Tooltip placement="bottom" title="Відписатися від події">
+            eventIcons.push(<Tooltip placement="bottom" title="Відписатися від події" key="unsubscribe">
                 <UserDeleteOutlined
                     onClick={() => showUnsubscribeConfirm({
                         eventId: event?.eventId,
@@ -74,7 +74,7 @@ const RenderEventIcons = ({
             </Tooltip>)
         }
     } else if (!isEventFinished) {
-        eventIcons.push(<Tooltip title="Зголоситись на подію">
+        eventIcons.push(<Tooltip title="Зголоситись на подію" key="subscribe">
             <UserAddOutlined onClick={() => showSubscribeConfirm({
                 eventId: event?.eventId,
                 eventName: event?.eventName,

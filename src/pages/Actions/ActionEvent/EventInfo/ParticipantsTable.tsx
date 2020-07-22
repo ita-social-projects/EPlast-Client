@@ -59,10 +59,10 @@ const ParticipantsTable = ({isUserEventAdmin, participants}: Props) => {
             })
     }
     const changeStatusToUnderReviewed = (participantId: number) => {
-        const underRevieweParticipant = async () => {
+        const underReviewedParticipant = async () => {
             await eventsApi.underReviewParticipant(participantId);
         };
-        underRevieweParticipant()
+        underReviewedParticipant()
             .then(() => changeStatus(participantId, participantStatuses.Undetermined))
             .catch(() => {
                 showError();
@@ -140,30 +140,6 @@ const ParticipantsTable = ({isUserEventAdmin, participants}: Props) => {
             }
         )
     }
-
-    // const data = [
-    //     {
-    //         key: '1',
-    //         name: 'John Brown',
-    //         age: 32,
-    //         address: 'New York No. 1 Lake Park',
-    //         tags: ['Учасник'],
-    //     },
-    //     {
-    //         key: '2',
-    //         name: 'Jim Green',
-    //         age: 42,
-    //         address: 'London No. 1 Lake Park',
-    //         tags: ['Розглядається'],
-    //     },
-    //     {
-    //         key: '3',
-    //         name: 'Joe Black',
-    //         age: 32,
-    //         address: 'Sidney No. 1 Lake Park',
-    //         tags: ['Відмовлено'],
-    //     },
-    // ];
 
     return <Table columns={columns} dataSource={Participants}/>
 }

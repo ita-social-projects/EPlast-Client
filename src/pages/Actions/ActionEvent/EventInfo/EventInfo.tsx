@@ -61,7 +61,7 @@ interface EventGallery {
 const EventInfo = () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [filterTable, setFilterTable] = useState([{}]);
+    const [, setFilterTable] = useState([{}]);
     const [baseData,] = useState(rawData);
     // @ts-ignore
     const [event, setEvent] = useState<EventDetails>({})
@@ -71,7 +71,6 @@ const EventInfo = () => {
         const fetchData = async () => {
             const response = await eventsApi.getEventInfo(id);
             setEvent(response.data)
-            //           console.log(event);
         };
         fetchData();
     }, []);

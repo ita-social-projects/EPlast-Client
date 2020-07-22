@@ -11,18 +11,12 @@ const Actions = () => {
     const {typeId} = useParams();
 
     useEffect(() => {
-        const deleteEvent = async () => {
+        const getCategories = async () => {
             const response = await eventsApi.getCategories(typeId);
-//            console.log(response);
             setActions(response.data)
         };
-        deleteEvent();
+        getCategories();
     },[]);
-
-
-    // useEffect(() => {
-    //     updateActions();
-    // }, []);
 
     const renderActions = (arr: any) => {
         if (arr) {
