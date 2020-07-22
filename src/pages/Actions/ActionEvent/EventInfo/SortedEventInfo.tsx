@@ -1,123 +1,190 @@
-import React from "react";
-import { Row, Col, Table, Tooltip } from "antd";
+import React from 'react';
+import {Row, Col, Table, Tooltip} from 'antd';
 import {
-  UserDeleteOutlined,
-  TeamOutlined,
-  UserSwitchOutlined,
-  CameraOutlined,
-  IdcardOutlined,
-} from "@ant-design/icons";
+    TeamOutlined,
+    CameraOutlined,
+    IdcardOutlined,
+    EditTwoTone,
+    DeleteTwoTone,
+    StopOutlined,
+    SettingTwoTone,
+    CheckCircleTwoTone,
+    QuestionCircleTwoTone,
+    UserDeleteOutlined,
+    UserAddOutlined
+} from '@ant-design/icons';
+// eslint-disable-next-line import/no-cycle,import/no-duplicates
+import {EventDetails} from "./EventInfo";
+import {showSubscribeConfirm, showUnsubscribeConfirm} from "../../EventsModals";
 
-const classes = require("./EventInfo.module.css");
+const classes = require('./EventInfo.module.css');
 
 interface Props {
-  userId?: string;
+    event: EventDetails,
+    subscribeOnEvent: () => void
+    unSubscribeOnEvent: () => void
 }
 
-const SortedEventInfo = ({ userId = "" }: Props) => {
-  const columns = [
-    {
-      title: "Назва",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: `Крайовий пластовий з'їзд молоді`,
-      dataIndex: "desc",
-      key: "desc",
-    },
-  ];
+const RenderEventIcons = ({
+                              event,
+                              isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
+                              isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
+                          }: EventDetails,
+                          subscribeOnEvent: () => void,
+                          unSubscribeOnEvent: () => void
+): React.ReactNode[] => {
+    const eventIcons: React.ReactNode[] = []
+    if (isUserEventAdmin) {
+        eventIcons.push(<Tooltip placement="bottom" title="Ви адмін!" key="setting">
+            <SettingTwoTone twoToneColor="#3c5438" className={classes.icon} key="setting"/>
+        </Tooltip>)
+        eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit">
+            <EditTwoTone twoToneColor="#3c5438" className={classes.icon} key="edit"/>
+        </Tooltip>)
+        eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
+            <DeleteTwoTone twoToneColor="#8B0000"
+                           className={classes.icon} key="delete"/>
+        </Tooltip>)
+    } else if (isUserParticipant && !isEventFinished) {
+        if (isUserRejectedParticipant) {
+            eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено" key="banned">
+                <StopOutlined style={{color: "#8B0000"}} className={classes.icon} key="banned"/>
+            </Tooltip>)
+        } else {
+            if (isUserApprovedParticipant) {
+                eventIcons.push(<Tooltip placement="bottom" title="Учасник" key="participant">
+                    <CheckCircleTwoTone twoToneColor="#73bd79" className={classes.icon} key="participant"/>
+                </Tooltip>)
+            }
+            if (isUserUndeterminedParticipant) {
+                eventIcons.push(<Tooltip placement="bottom" title="Ваша заявка розглядається" key="underReview">
+                    <QuestionCircleTwoTone twoToneColor="#FF8C00" className={classes.icon} key="underReview"/>
+                </Tooltip>)
+            }
+            eventIcons.push(<Tooltip placement="bottom" title="Відписатися від події" key="unsubscribe">
+                <UserDeleteOutlined
+                    onClick={() => showUnsubscribeConfirm({
+                        eventId: event?.eventId,
+                        eventName: event?.eventName,
+                        successCallback: unSubscribeOnEvent,
+                        isSingleEventInState: true
+                    })}
+                    style={{color: "#8B0000"}}
+                    className={classes.icon} key="unsubscribe"/>
+            </Tooltip>)
+        }
+    } else if (!isEventFinished) {
+        eventIcons.push(<Tooltip title="Зголоситись на подію" key="subscribe">
+            <UserAddOutlined onClick={() => showSubscribeConfirm({
+                eventId: event?.eventId,
+                eventName: event?.eventName,
+                successCallback: subscribeOnEvent,
+                isSingleEventInState: true
+            })}
+                             style={{color: "#3c5438"}}
+                             key="subscribe"/>
+        </Tooltip>)
+    }
+    eventIcons.push(<Tooltip placement="bottom" title="Учасники" key="participants">
+        <TeamOutlined style={{color: "#3c5438"}} className={classes.icon}/>
+    </Tooltip>)
+    eventIcons.push(<Tooltip placement="bottom" title="Галерея" key="gallery">
+        <CameraOutlined style={{color: "#3c5438"}} className={classes.icon}/>
+    </Tooltip>)
+    eventIcons.push(<Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
+        <IdcardOutlined style={{color: "#3c5438"}} className={classes.icon}/>
+    </Tooltip>)
+    return eventIcons
+}
 
-  const data = [
-    {
-      key: "1",
-      name: "Тип:",
-      desc: "акція",
-    },
-    {
-      key: "2",
-      name: "Категорія:",
-      desc: "КПЗ",
-    },
-    {
-      key: "3",
-      name: "Дата початку:",
-      desc: "15-05-2020",
-    },
-    {
-      key: "4",
-      name: "Дата завершення:",
-      desc: "16-08-2020",
-    },
-    {
-      key: "5",
-      name: "Локація:",
-      desc: "Одеса",
-    },
-    {
-      key: "6",
-      name: "Призначений для:",
-      desc: "для молодих та активних людей",
-    },
-    {
-      key: "7",
-      name: "Форма проведення:",
-      desc: "на вулиці",
-    },
-    {
-      key: "8",
-      name: "Статус:",
-      desc: "не затверджені",
-    },
-    {
-      key: "9",
-      name: "Опис:",
-      desc:
-        "дана подія присвячена екологічним проблемам України. Метою даного заходу є пробудити почуття відповідальності у молодого покоління перед природою.",
-    },
-  ];
+const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) => {
+    //   console.log("EventInfo:",event)
+    const columns = [
+        {
+            title: 'Назва',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: event?.event?.eventName,
+            dataIndex: 'desc',
+            key: 'desc',
+        }
+    ];
 
-  return (
-    <div className={classes.background}>
-      <h1 className={classes.mainTitle}>{userId}</h1>
-      <div className={classes.actionsWrapper}>
-        <Row>
-          <Col span={10} push={14}>
-            <img
-              className={classes.imgEvent}
-              alt="example"
-              src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
-            />
-            <div className={classes.iconsFlex}>
-              <Tooltip
-                placement="bottom"
-                title="Ваша кандидатура розглядається"
-              >
-                <UserSwitchOutlined className={classes.icon} />
-              </Tooltip>
-              <Tooltip
-                placement="bottom"
-                title="Натисніть, щоб відписатись від події"
-              >
-                <UserDeleteOutlined className={classes.icon} />
-              </Tooltip>
-              <Tooltip placement="bottom" title="Учасники">
-                <TeamOutlined className={classes.icon} />
-              </Tooltip>
-              <Tooltip placement="bottom" title="Галерея">
-                <CameraOutlined className={classes.icon} />
-              </Tooltip>
-              <Tooltip placement="bottom" title="Адміністратор(-и) події">
-                <IdcardOutlined className={classes.icon} />
-              </Tooltip>
-            </div>
-          </Col>
-          <Col span={14} pull={10}>
-            <Table columns={columns} dataSource={data} pagination={false} />
-          </Col>
-        </Row>
-      </div>
+    const data = [
+        {
+            key: '1',
+            name: 'Тип:',
+            desc: event?.event?.eventType,
+        },
+        {
+            key: '2',
+            name: 'Категорія:',
+            desc: event?.event?.eventCategory,
+
+        },
+        {
+            key: '3',
+            name: 'Дата початку:',
+            desc: event?.event?.eventDateStart,
+
+        },
+        {
+            key: '4',
+            name: 'Дата завершення:',
+            desc: event?.event?.eventDateEnd,
+
+        },
+        {
+            key: '5',
+            name: 'Локація:',
+            desc: event?.event?.eventLocation,
+
+        },
+        {
+            key: '6',
+            name: 'Призначений для:',
+            desc: event?.event?.forWhom,
+
+        },
+        {
+            key: '7',
+            name: 'Форма проведення:',
+            desc: event?.event?.formOfHolding,
+
+        },
+        {
+            key: '8',
+            name: 'Статус:',
+            desc: event?.event?.eventStatus,
+
+        },
+        {
+            key: '9',
+            name: 'Опис:',
+            desc: event?.event?.description,
+        }
+    ];
+
+    return <div className={classes.background}>
+        <div className={classes.actionsWrapper}>
+            <Row>
+                <Col span={10} push={14}>
+                    <img
+                        className={classes.imgEvent}
+                        alt="example"
+                        src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
+                    />
+                    <div className={classes.iconsFlex}>
+                        {RenderEventIcons(event, subscribeOnEvent, unSubscribeOnEvent)}
+                    </div>
+                </Col>
+                <Col span={14} pull={10}>
+                    <Table columns={columns} dataSource={data} pagination={false}/>
+                </Col>
+            </Row>
+        </div>
     </div>
-  );
-};
+}
 export default SortedEventInfo;
