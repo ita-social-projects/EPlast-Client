@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import eventUserApi from '../../../../api/eventUserApi';
-import { Button, Space, Spin, Modal, Calendar } from 'antd';
+import { Button, Space, Spin, Modal } from 'antd';
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import { useHistory } from 'react-router-dom';
 import ukLocale from '@fullcalendar/core/locales/uk';
 import moment from 'moment';
 import 'moment/locale/uk';
@@ -14,36 +13,27 @@ const classes = require('./EventCalendar.module.css');
 export default function () {
 
     const [loading, setLoading] = useState(false);
-    const [events, setEvents] = useState<any>([]);
-
-
-    const [calendarData, setCalendarData] = useState<any>([{
+    const [events, setEvents] = useState<any>({
         id: 0,
-        title: events.eventName,
+        title: '',
         start: '',
         end: '',
         eventlocation: '',
-        description: ''
-    }])
+        description: '',
+        color: '#3c5438'
+    });
 
     const [eventModal, setEventModal] = useState(false);
-    const history = useHistory();
 
     useEffect(() => {
         const fetchData = async () => {
             await eventUserApi.getDataForCalendar().then(async response => {
                 setEvents(response.data);
-                setCalendarData(response.data);
-                console.log(calendarData);  
                 setLoading(true);
             })
         }
         fetchData();
     }, []);
-
-    function getEventByID() {
-
-    }
 
     return loading === false ? (
         <div className={classes.spaceWrapper}>
@@ -53,7 +43,7 @@ export default function () {
         </div>
     ) : (
             <div>
-                <div className='demo-app-main'>
+                <div>
                     <FullCalendar
                         initialView="dayGridMonth"
                         plugins={[dayGridPlugin]}
@@ -71,6 +61,7 @@ export default function () {
                         dayMaxEvents={3}
                         moreLinkClick="popover"
                         showNonCurrentDates={false}
+                        displayEventTime={false}
                     />
                     < Modal
                         title="Деталі події"
@@ -80,8 +71,9 @@ export default function () {
                         onCancel={() => setEventModal(false)}
                         footer={
                             [
-                                <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => setEventModal(false)
-                                } > Закрити </Button>
+                                <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => setEventModal(false)} >
+                                    Закрити
+                                </Button>
                             ]}
                     >
                     </Modal >

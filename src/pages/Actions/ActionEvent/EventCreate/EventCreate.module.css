@@ -129,18 +129,39 @@ input,
 }
 
 @media(max-width:767px) {
-    .actionsWrapper,
-    .card,
-    .background,
-    .radio {
+    .actionsWrapper {
+        margin: 0;
         width: 100%;
-        flex-direction: column;
+    }
+    .card {
+        margin: 0;
+        width: 100%;
+    }
+    .title {
+        text-align: center;
+        padding: 10px 0;
+    }
+    .title h2 {
+        font-size: 20px;
     }
     .row {
         width: 100%;
         flex-direction: column;
+        margin: 0;
+        padding: 0 15px
     }
-    .radio {
+    .input {
+        width: 100% !important;
+    }
+    .select {
+        width: 100% !important;
+    }
+    .button {
+        margin: auto;
+        display: block;
+    }
+    .ant-radio-group {
+        display: flex;
         flex-direction: column;
     }
 }

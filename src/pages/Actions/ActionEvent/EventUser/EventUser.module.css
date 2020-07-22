@@ -18,7 +18,6 @@
         height: 470px;
         border-radius: 10px;
         box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
-        padding-bottom: 95px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -43,6 +42,7 @@
         text-align: center;
         cursor: pointer;
         border-radius: 10px;
+        align-items: center;
     }
     
     .button:hover {

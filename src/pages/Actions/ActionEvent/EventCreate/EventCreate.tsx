@@ -89,7 +89,11 @@ export default function () {
   function onSearch(val: any) {
   }
 
-  const dateFormat = 'DD/MM/YYYY HH:mm';
+  function disabledDate(current: any) {
+    return current && current < moment().startOf('day');
+  }
+
+  const dateFormat = 'DD/MM/YYYY';
 
   return loading === false ? (
     <div className={classes.spaceWrapper}>
@@ -97,7 +101,6 @@ export default function () {
         <Spin size="large" />
       </Space>
     </div>
-
   ) : (
       <div className={classes.background} >
         <div className={classes.actionsWrapper}>
@@ -108,10 +111,8 @@ export default function () {
               </div>
               < div className={classes.radio} >
                 <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio}>
-                  <Radio.Group buttonStyle="solid">
-                    <Space size="large" >
-                      {data?.eventTypes.map((item: any) => (<Radio.Button key={item.value} value={item.id} > {item.eventTypeName}</Radio.Button>))}
-                    </Space>
+                  <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup}>
+                    {data?.eventTypes.map((item: any) => (<Radio.Button key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
                   </Radio.Group>
                 </Form.Item>
               </div>
@@ -119,7 +120,7 @@ export default function () {
                 <h3>Категорія </h3>
                 < Form.Item name="EventCategoryID" className={classes.input} rules={[{ required: true, message: 'Оберіть категорію події' }]} >
                   <Select showSearch optionFilterProp="children" onSearch={onSearch} >
-                    {data?.eventCategories.map((item: any) => (<Select.Option key={item.value} value={item.eventCategoryId} > {item.eventCategoryName} </Select.Option>))}
+                    {data?.eventCategories.map((item: any) => (<Select.Option key={item.id} value={item.eventCategoryId} > {item.eventCategoryName} </Select.Option>))}
                   </Select>
                 </ Form.Item>
               </ div>
@@ -164,13 +165,13 @@ export default function () {
               < div className={classes.row} >
                 <h3>Дата початку </h3>
                 < Form.Item name="EventDateStart" rules={[{ required: true, message: 'Оберіть дату початку події' }]} >
-                  <DatePicker locale={ukUa} showTime placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} />
+                  <DatePicker disabledDate={disabledDate} locale={ukUa} placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} />
                 </ Form.Item>
               </ div>
               < div className={classes.row} >
                 <h3>Дата завершення </h3>
                 < Form.Item name="EventDateEnd" rules={[{ required: true, message: 'Оберіть дату завершення події' }]} >
-                  <DatePicker showTime locale={ukUa} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
+                  <DatePicker disabledDate={disabledDate} locale={ukUa} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
                 </ Form.Item>
               </ div>
               < div className={classes.row} >

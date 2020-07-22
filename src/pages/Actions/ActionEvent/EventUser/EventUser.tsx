@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Avatar, Modal, Button, Typography, Badge, Space, Spin } from 'antd';
-import moment from 'moment';
 import eventUserApi from '../../../../api/eventUserApi';
 import classes from './EventUser.module.css';
 import userApi from '../../../../api/UserApi';
 import AuthStore from '../../../../stores/Auth';
 import jwt from 'jwt-decode';
-import { date } from 'yup';
 const { Title } = Typography;
 
 const EventUser = () => {
@@ -76,7 +74,6 @@ const EventUser = () => {
                 <div className={classes.wrapperImg}>
                     <Avatar size={200} src={imageBase64} />
                     <Title level={2}> {data?.user.firstName} {data?.user.lastName} </Title>
-                    < Title level={4} > Пластун прихильник </Title>
                     < div className={classes.line} />
                     <Button type="primary" className={classes.button} onClick={() => history.push('/actions/eventCreate')}>
                         Створити подію
@@ -168,7 +165,12 @@ const EventUser = () => {
                         < div className={classes.wrapper4} >
                             <Title level={2} className={classes.sectionTitle} > Заплановані події </Title>
                             < div className={classes.line} />
-                            {data.planedEvents.length === 0 && <h2>Ви ще не запланували жодної події</ h2 >}
+                            {data.planedEvents.length === 0 && <div>
+                                <h2>Ви ще не запланували жодної події</ h2 >
+                                <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => history.push('/actions')} >
+                                    Зголоситись на подію
+                                </Button>
+                            </div>}
                             {data.planedEvents.length !== 0 && <div>
                                 <Badge count={data.planedEvents.length} style={{ backgroundColor: '#3c5438' }} />
                                 <br />
@@ -186,11 +188,11 @@ const EventUser = () => {
                                 footer={
                                     [
                                         <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => history.push('/actions')} >
-                                            Запланувати нову подію
-                                 </Button>,
+                                            Зголоситись на подію
+                                        </Button>,
                                         < Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => setPlanedEventsModal(false)}>
                                             Закрити
-                                 </Button>
+                                        </Button>
                                     ]}
                             >
                                 {data.planedEvents.map((item: any) => <div>
@@ -199,7 +201,7 @@ const EventUser = () => {
                                     < h2 > Дата завершення: {item.eventDateEnd} </h2>
                                     < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/actions/eventinfo/${item.id}`)}>
                                         Деталі
-                            </Button>
+                                    </Button>
                                     < hr />
                                 </div>)}
                             </Modal>
