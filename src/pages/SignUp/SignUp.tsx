@@ -1,40 +1,38 @@
 import React from 'react';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button} from 'antd';
 import styles from './SignUp.module.css';
 import Switcher from './Switcher/Switcher';
 import { checkEmail, checkNameSurName } from './verification';
+import AuthorizeApi from '../../api/authorizeApi';
+let authService = new AuthorizeApi();
 
 export default function () {
   const [form] = Form.useForm();
 
   const validationSchema = {
-    email: [{ required: true, message: "Поле електронна пошта є обов'язковим" }, { validator: checkEmail }],
-    password: [
+    Email: [{ required: true, message: "Поле електронна пошта є обов'язковим" }, { validator: checkEmail }],
+    Password: [
       { required: true, message: "Поле пароль є обов'язковим" },
       { min: 6, message: 'Мінімальна допустима довжина - 6 символів' },
     ],
-    name: [{ required: true, message: "Поле ім'я є обов'язковим" }, { validator: checkNameSurName }],
-    surName: [{ required: true, message: "Поле прізвище є обов'язковим" }, { validator: checkNameSurName }],
-    repeatedPassword: [
+    Name: [{ required: true, message: "Поле ім'я є обов'язковим" }, { validator: checkNameSurName }],
+    SurName: [{ required: true, message: "Поле прізвище є обов'язковим" }, { validator: checkNameSurName }],
+    ConfirmPassword: [
       { required: true, message: "Дане поле є обов'язковим" },
       { min: 6, message: 'Мінімальна допустима довжина - 6 символів' },
     ],
   };
 
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
-  };
-
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
+  const handleSubmit = async (values: any) => {
+    await authService.register(values);
   };
 
   const initialValues = {
-    email: '',
-    name: '',
-    surName: '',
-    password: '',
-    repeatedPassword: '',
+    Email: '',
+    Name: '',
+    SurName: '',
+    Password: '',
+    ConfirmPassword: '',
   };
 
   return (
@@ -44,18 +42,17 @@ export default function () {
         name="SignUpForm"
         initialValues={initialValues}
         form={form}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
+        onFinish={handleSubmit}
       >
-        <Form.Item name="email" rules={validationSchema.email}>
-          <Input className={styles.SignUpInput} placeholder="Електронна пошта" />
+        <Form.Item name="Email" rules={validationSchema.Email}>
+          <Input className={styles.MyInput} placeholder="Електронна пошта" />
         </Form.Item>
-        <Form.Item name="password" rules={validationSchema.password}>
-          <Input.Password visibilityToggle={false} className={styles.SignUpInput} placeholder="Пароль" />
+        <Form.Item name="Password" rules={validationSchema.Password}>
+          <Input.Password visibilityToggle={false} className={styles.MyInput} placeholder="Пароль" />
         </Form.Item>
         <Form.Item
-          name="repeatedPassword"
-          dependencies={['password']}
+          name="ConfirmPassword"
+          dependencies={['Password']}
           rules={[
             {
               required: true,
@@ -63,7 +60,7 @@ export default function () {
             },
             ({ getFieldValue }) => ({
               validator(rule, value) {
-                if (!value || getFieldValue('password') === value) {
+                if (!value || getFieldValue('Password') === value) {
                   return Promise.resolve();
                 }
                 return Promise.reject(new Error('Паролі не співпадають'));
@@ -71,13 +68,13 @@ export default function () {
             }),
           ]}
         >
-          <Input.Password visibilityToggle={false} className={styles.SignUpInput} placeholder="Повторіть пароль" />
+          <Input.Password visibilityToggle={false} className={styles.MyInput} placeholder="Повторіть пароль" />
         </Form.Item>
-        <Form.Item name="name" rules={validationSchema.name}>
-          <Input className={styles.SignUpInput} placeholder="Ім'я" />
+        <Form.Item name="Name" rules={validationSchema.Name}>
+          <Input className={styles.MyInput} placeholder="Ім'я" />
         </Form.Item>
-        <Form.Item name="surName" rules={validationSchema.surName}>
-          <Input className={styles.SignUpInput} placeholder="Прізвище" />
+        <Form.Item name="SurName" rules={validationSchema.SurName}>
+          <Input className={styles.MyInput} placeholder="Прізвище" />
         </Form.Item>
         <Form.Item>
           <Button htmlType="submit" id={styles.confirmButton}>

@@ -1,3 +1,16 @@
+#environmentOutlined{
+  font-size: 24px; 
+  margin-right: 20px;
+}
+
+#InfoOut{
+  font-size: 32px;
+}
+
+#addonElement{
+  width: 100%;
+}
+
 .contacts {
   display: flex;
   justify-content: space-evenly;
@@ -47,3 +60,4 @@
     width: 30%;
   }
 }
+

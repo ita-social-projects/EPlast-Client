@@ -1,11 +1,10 @@
-import axios from 'axios';
-import BASE_URL from '../config';
+import axios from "axios";
+import BASE_URL from "../config";
 
 interface HttpResponse {
-    headers: any;
-    data: any;
+  headers: any;
+  data: any;
 }
-
 const get = async (url: string, data?: any): Promise<HttpResponse> => {
     const response = await axios.get(BASE_URL + url, {
         params: data,
@@ -38,3 +37,4 @@ const remove = async (url: string, data?: any, options: any = {}): Promise<HttpR
     return response;
 };
 export default { get, post, put, remove};
+
