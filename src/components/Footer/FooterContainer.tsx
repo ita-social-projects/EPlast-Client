@@ -1,9 +1,9 @@
-import React from 'react';
-import { Layout } from 'antd';
-import Facebook from '../../assets/images/facebook.svg';
-import Twitter from '../../assets/images/bird.svg';
-import Instagram from '../../assets/images/instagram.svg';
-import classes from './Footer.module.css';
+import React from "react";
+import { Layout } from "antd";
+import Facebook from "../../assets/images/facebook.svg";
+import Twitter from "../../assets/images/bird.svg";
+import Instagram from "../../assets/images/instagram.svg";
+import classes from "./Footer.module.css";
 
 const FooterContainer = () => {
   return (

@@ -1,12 +1,41 @@
-import React from 'react';
-import { Avatar, Progress } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Avatar, Progress, Spin, Space } from 'antd';
 import styles from './PersonalData.module.css';
+import userApi from '../../../api/UserApi';
 
-export default function () {
-  return (
+type AvatarAndProgressProps ={
+  imageUrl:string|undefined;
+  time:number|undefined;
+}
+
+const AvatarAndProgress:React.FC<AvatarAndProgressProps> = (props: AvatarAndProgressProps)=> {
+   const [loading, setLoading] = useState(false);
+  const {time,imageUrl}=props;
+  const [imageBase64, setImageBase64] = useState<string>();
+      useEffect(() => {
+        if(imageUrl!==undefined)
+        {
+          const fetchData = async () => {
+            await userApi.getImage(imageUrl).then((response: { data: any; }) =>{
+              setImageBase64(response.data);
+            })
+             setLoading(true);
+          };
+          fetchData();
+        }
+      }, [props]);
+
+      return loading === false ? (
+        <div className={styles.spaceWrapper}>
+          <Space className={styles.loader} size="large">
+            <Spin size="large" />
+          </Space>
+        </div>
+        
+      ) : (
     <div className={styles.leftPartWrapper}>
-      <Avatar size={256} src="https://eplast.azurewebsites.net/images/Users/374756d8-8f87-48df-ab20-b268842392be.jpg" />
-      <p className={styles.statusText}>323 дні і Василь Хартманє Пластун:)</p>
+      <Avatar size={256} src={imageBase64} />
+      <p className={styles.statusText}>{time} дні і Василь Хартманє Пластун:)</p>
       <Progress
         type="circle"
         className={styles.progressBar}
@@ -14,8 +43,9 @@ export default function () {
           '0%': '#108ee9',
           '100%': '#87d068',
         }}
-        percent={87}
+        percent={Math.round(100-(time===undefined?0:time)*100/365)}
       />
     </div>
   );
 }
+export default AvatarAndProgress;

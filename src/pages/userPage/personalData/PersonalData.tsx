@@ -1,10 +1,8 @@
 import React from 'react';
 import Menu from '../Menu/Menu';
 import styles from './PersonalData.module.css';
-import AvatarAndProgress from './AvatarAndProgress';
 import UserFields from './UserFields';
 import EditUserPage from '../EditUserPage/EditUserPage';
-import EditEvent from './EditEvent/EditEvent';
 
 export default function ({
   match: {
@@ -16,12 +14,12 @@ export default function ({
       <Menu />
       {specify === 'main' ? (
         <div className={styles.content}>
-          <AvatarAndProgress />
+          
           <UserFields />
         </div>
-      ) : specify === 'editEvent' ?(
+      ) : specify === 'edit' ?(
         <div className={styles.content}>
-          <EditEvent />
+          <EditUserPage />
         </div>
       ) : (
             <div className={styles.content}>

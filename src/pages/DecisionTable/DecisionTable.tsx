@@ -1,43 +1,56 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Input, Button, Layout } from 'antd';
 import columns from './columns';
-
 import DropDown from './DropDownDecision';
 import AddDecisionModal from './AddDecisionModal';
-// import DropDown from './DropDownDecision';
-// import Foo from './ShowLess';
-import http from '../../api/api';
+import decisionsApi, {Decision} from '../../api/decisionsApi';
 import classes from './Table.module.css';
-import { ApiFilled } from '@ant-design/icons';
-import decisionsApi from '../../api/decisionsApi'
 
 const { Content } = Layout;
+
+
 
 const DecisionTable = () => {
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [recordObj, setRecordObj] = useState({});
-  const [data, setData] = useState([]);
+  const [recordObj, setRecordObj] = useState<any>(0);
+  const [data, setData] = useState<Decision[]>(Array<Decision>());
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [searchedData, setSearchedData] = useState('');
   const [visibleModal, setVisibleModal] = useState(false);
-
+  const handleDelete = (id : number) =>{
+    const filteredData = data.filter(d => d.id !== id);
+    setData([...filteredData]);
+  }
+  const handleEdit = (id: number, name: string, description: string) =>{
+    /* eslint no-param-reassign: "error" */ 
+    const filteredData = data.filter(d =>{ 
+      if(d.id === id){
+        d.name = name;
+        d.description = description;
+      }
+      return d;
+    }
+  );
+    setData([...filteredData]);
+  }
+  const handleAdd = (decision: Decision) =>{
+  const lastId = data[data.length-1].id;
+  decision.id =  lastId + 1;
+  setData([...data, decision]);
+  }
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const response = await decisionsApi.getAll();
-     // const res = await http.get("posts");
-      const decisions = response.data.item2.map(d => d.decisionWrapper.decision);
-     // console.log("-----decision table--");
-      //console.log(decisions);
-      setData(decisions);
+      const res : Decision[]= await decisionsApi.getAll();
+      setData(res);
       setLoading(false);
     };
     fetchData();
   },[]);
 
-  const handleSearch = (event) => {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchedData(event.target.value);
   };
 
@@ -51,7 +64,7 @@ const DecisionTable = () => {
 
   const showModal = () => setVisibleModal(true);
 
-  const itemRender = (current, type, originalElement) => {
+  const itemRender = (current: any, type: string, originalElement: any) => {
     if (type === 'prev') {
       return <Button type="primary">Попередня</Button>;
     }
@@ -63,24 +76,14 @@ const DecisionTable = () => {
 
   return (
     <Layout>
-      <Content className={classes.tableDecision}>
-        <h1 style={{ textAlign: 'center', marginTop: '20px' }}>
-          Рішення керівних органів
-        </h1>
+      <Content>
+        <h1 className={classes.titleTable}>Рішення керівних органів</h1>
         {loading && <Table loading />}
         {!loading && (
           <>
             <div className={classes.searchContainer}>
-              <Input
-                className={classes.searchInput}
-                placeholder="Пошук"
-                onChange={handleSearch}
-              />
-              <Button
-                className={classes.addDecision}
-                type="primary"
-                onClick={showModal}
-              >
+              <Input placeholder="Пошук" onChange={handleSearch} />
+              <Button type="primary" onClick={showModal}>
                 Додати рішення
               </Button>
             </div>
@@ -89,6 +92,8 @@ const DecisionTable = () => {
               columns={columns}
               bordered
               rowKey="id"
+
+              
               onRow={(record) => {
                 return {
                   onClick: () => {
@@ -97,7 +102,7 @@ const DecisionTable = () => {
                   onContextMenu: (event) => {
                     event.preventDefault();
                     setShowDropdown(true);
-                    setRecordObj(record);
+                    setRecordObj(record.id);
                     setX(event.pageX);
                     setY(event.pageY);
                   },
@@ -105,7 +110,6 @@ const DecisionTable = () => {
               }}
               onChange={(pagination) => {
                 if (pagination) {
-                  // eslint-disable-next-line no-undef
                   window.scrollTo({
                     left: 0,
                     top: 0,
@@ -125,10 +129,13 @@ const DecisionTable = () => {
               record={recordObj}
               pageX={x}
               pageY={y}
+              onDelete = {handleDelete}
+              onEdit = {handleEdit}
             />
             <AddDecisionModal
               setVisibleModal={setVisibleModal}
               visibleModal={visibleModal}
+              onAdd = {handleAdd}
             />
           </>
         )}

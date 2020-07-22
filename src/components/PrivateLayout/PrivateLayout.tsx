@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Avatar, Layout, Menu } from 'antd';
+import React, { useState,useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import { Avatar, Layout, Menu } from "antd";
 import {
   SolutionOutlined,
   InfoCircleOutlined,
   SnippetsOutlined,
   PieChartOutlined,
-} from '@ant-design/icons';
-import classes from './PrivateLayout.module.css';
-import User from '../../assets/images/user.jpg';
+} from "@ant-design/icons";
+import classes from "./PrivateLayout.module.css";
+import jwt from 'jwt-decode';
+import AuthStore from '../../stores/Auth';
+import userApi from '../../api/UserApi';
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -20,37 +22,55 @@ const PrivateLayout = ({ children }: any) => {
     setCollapsed(collValue);
   };
 
+  const [imageBase64, setImageBase64] = useState<string>();
+  const fetchData = async () => {
+    const token = AuthStore.getToken() as string;
+    const user : any = jwt(token);
+    await userApi.getById(user.nameid).then(async response =>{
+        await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) =>{
+          setImageBase64(response.data);
+        })
+    })
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+
+
   const history = useHistory();
   return (
-    <Layout style={{ minHeight: 'calc(100vh-64px-82px)' }}>
+    <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
         <div className={classes.profilePhoto}>
           <Avatar
             size={64}
-            src={User}
+            src={imageBase64}
             alt="User"
-            style={{ marginRight: '10px' }}
+            style={{ marginRight: "10px" }}
           />
         </div>
         <Menu theme="dark" mode="inline" className={classes.leftMenu}>
           <Menu.Item
             key="1"
             icon={<SolutionOutlined />}
-            onClick={() => history.push('/decisions')}
-            style={{ color: 'white' }}
+            onClick={() => history.push("/decisions")}
+            style={{ color: "white" }}
           >
             Рішення
           </Menu.Item>
           <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
+
             <Menu.Item key="2">Таблиця користувачів</Menu.Item>
-            <Menu.Item onClick={() => history.push('/cities')} key="3">
+            <Menu.Item onClick={() => history.push("/cities")} key="3">
               Станиці
             </Menu.Item>
             <Menu.Item key="4">Округи</Menu.Item>
             <Menu.Item onClick={() => history.push('/events/types')} key="5">
               Події
             </Menu.Item>
-            <Menu.Item key="6">Курені</Menu.Item>
+            <Menu.Item onClick={() => history.push('/clubs')} key="6">Курені</Menu.Item>
             <Menu.Item key="7">Відзначення</Menu.Item>
             <Menu.Item key="8">Кадра виховників</Menu.Item>
           </SubMenu>
@@ -77,7 +97,7 @@ const PrivateLayout = ({ children }: any) => {
         </Menu>
       </Sider>
       <Layout className="site-layout">
-        <Content style={{ margin: '0 16px' }}>
+        <Content style={{ margin: "0 16px" }}>
           <div
             className="site-layout-background"
             style={{ padding: 24, minHeight: 360 }}

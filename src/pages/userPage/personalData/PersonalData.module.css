@@ -11,6 +11,22 @@
     margin-bottom: 45px;
 }
 
+.spaceWrapper{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    background-color: white;
+}
+.loader{
+    position: fixed !important;
+    top: 50%;
+    left: 50%;
+    transform:translateX(-50%) ;
+    
+}
 .content{
     margin-top: 30px;
     display: flex;
@@ -23,6 +39,11 @@
     width: max-content;
 }
 
+.rightPartWrapper{
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+}
 .statusText{
     text-align: center;
     font-size: 15px;
@@ -45,15 +66,16 @@
 
 .userFieldsWrapper{
     display: flex;
-    flex-direction: column;
-    align-items: center;
+   
+    
     margin: 0 auto;
 }
 
 .tableWrapper{
 /*    width: max-content; */
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+
     justify-content: center;
 }
 
