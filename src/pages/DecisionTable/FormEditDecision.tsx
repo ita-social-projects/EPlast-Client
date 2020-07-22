@@ -13,7 +13,6 @@ const FormEditDecision = ({ record,  setShowModal, onEdit, decision}: Props) => 
   const [loading, setLoading] = useState(false);
   const  id = record;
   const [form] = Form.useForm();
-  console.log(id);
   useEffect(() => {
     setLoading(true);
     form.setFieldsValue({
@@ -36,8 +35,7 @@ const FormEditDecision = ({ record,  setShowModal, onEdit, decision}: Props) => 
     date : decision?.date,
     fileName : decision?.fileName 
   };
-    await decisionsApi.put(id, newDecision)
-    .catch(error => console.log(error));
+    await decisionsApi.put(id, newDecision);
     onEdit(newDecision.id, newDecision.name, newDecision.description);
     setShowModal(false);
     };
