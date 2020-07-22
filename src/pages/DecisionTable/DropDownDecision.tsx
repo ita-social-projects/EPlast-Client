@@ -35,8 +35,7 @@ const DropDown = (props: Props) => {
   useEffect(() => {
   if(showEditModal){
     const fetchData = async () =>{
-      await decisionsApi.getById(record).then(res => {console.log(res);
-        setData(res)});
+      await decisionsApi.getById(record).then(res => setData(res));
     }
     fetchData();
   }

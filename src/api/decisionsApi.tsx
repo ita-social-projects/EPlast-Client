@@ -1,5 +1,5 @@
 import Api from "./api";
-
+import notificationLogic from '../components/Notifications/Notification';
 export type Decision = {
   id: number;
   name: string;
@@ -90,7 +90,12 @@ return new File([u8arr], filename, {type:mime});
     return  link;
   };
   const post = async (data : any) => {
-    const response = await Api.post("Decisions",data);
+    const response = await Api.post("Decisions",data).then(response =>{
+      notificationLogic('success', "Рішення успішно додано");
+    })
+    .catch(error => {
+        notificationLogic('error', error.response.data.value);
+    });
     return response;
   };
 const getFileAsBase64 = async (fileName: string) =>{
@@ -106,13 +111,23 @@ const getFileAsBase64 = async (fileName: string) =>{
   return response;
 }
   const put = async (id: number, data : DecisionPost) =>{
-    const response = await Api.put(`Decisions/${id}`,data);
+    const response = await Api.put(`Decisions/${id}`,data).then(response =>{
+      notificationLogic('success', "Рішення успішно змінено");
+    })
+    .catch(error => {
+        notificationLogic('error', error.response.data.value);
+    });
     
     return response;
   };
   
   const remove = async (id : number) => {
-    const response = await Api.remove(`Decisions/${id}`);
+    const response = await Api.remove(`Decisions/${id}`).then(response =>{
+      notificationLogic('success',  "Рішення успішно видалено");
+    })
+    .catch(error => {
+        notificationLogic('error', error.response.data.value);
+    });
     return response;
   };
     

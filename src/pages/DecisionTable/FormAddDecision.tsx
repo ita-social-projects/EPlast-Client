@@ -1,7 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import { Form, DatePicker, Select, Input, Upload, Button } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import decisionsApi, {DecisionOnCreateData, decisionStatusType, Decision, DecisionWrapper, decisionTarget, FileWrapper, Organization} from '../../api/decisionsApi'
+import decisionsApi, {
+  DecisionOnCreateData,
+  decisionStatusType,
+  Decision,
+  DecisionWrapper,
+  decisionTarget,
+  FileWrapper,
+  Organization } from '../../api/decisionsApi'
 import { getBase64 } from '../userPage/EditUserPage/Services';
 
 type FormAddDecisionProps ={
@@ -53,14 +60,10 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
     decisionTargets: null,
     fileAsBase64: fileData.FileAsBase64,
   }
-  console.log("new",newDecision);
-  await decisionsApi.post(newDecision)
-  .then(res => console.log(res))
-  .catch(error => console.log(error));
+  await decisionsApi.post(newDecision);
   setVisibleModal(false);
   const dst : decisionStatusType = JSON.parse(values.decisionStatusType);
   const dt : decisionTarget = JSON.parse(values.decisionTarget);
-  console.log(dst, dt);
   const decisionOnTable : Decision = {
      id: 0,
   name : newDecision.decision.name,
