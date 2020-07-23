@@ -87,7 +87,6 @@ const SortedEvents = ({eventCategoryId, typeId}: Props) => {
 
     return (
         <div className={classes.background}>
-            <h1 className={classes.mainTitle}>{eventCategoryId}</h1>
             <div className={classes.actionsWrapper}>{actionCard}</div>
         </div>
     )
