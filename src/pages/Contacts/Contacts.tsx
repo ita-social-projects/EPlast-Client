@@ -3,10 +3,12 @@ import { Button, Form, Input, Layout, List, Select } from "antd";
 import { EnvironmentOutlined, PhoneOutlined, MailOutlined, InfoOutlined} from "@ant-design/icons";
 import styles from "./Contacts.module.css";
 import AuthorizeApi from "../../api/authorizeApi";
+import { useHistory } from 'react-router-dom';
 let authService = new AuthorizeApi();
 
 export default function () {
   const [form] = Form.useForm();
+  const history = useHistory();
 
   const data = [
     {
@@ -31,7 +33,7 @@ export default function () {
 
   const handleSubmit = async (values: any) => {
     await authService.sendQuestionAdmin(values);
-    console.log(values);
+    history.push("/contacts");
   };
 
   const validateMessages = {

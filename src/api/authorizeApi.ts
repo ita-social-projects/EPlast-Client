@@ -37,7 +37,6 @@ export default class AuthorizeApi{
   return response;
 };
 
-
   forgotPassword = async(data : any) => {
   const response = await Api.post("Account/forgotPassword", data)
   .then(response =>{
