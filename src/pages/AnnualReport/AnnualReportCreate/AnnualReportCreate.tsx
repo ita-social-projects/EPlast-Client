@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { AxiosResponse, AxiosError } from 'axios'
 import { Typography, Modal, Form, Row, Col, Input, Button, Select, Space, Spin } from 'antd';
 import styles from './AnnualReportCreate.module.css';
@@ -11,7 +12,7 @@ const { TextArea } = Input;
 
 export const AnnualReportCreate = () => {
     const { cityId } = useParams();
-    const [form] = Form.useForm();
+    const history = useHistory();
     const [loading, setLoading] = useState(false);
     const [title, setTitle] = useState('Річний звіт станиці');
     const [cityLegalStatuses, setCityLegalStatuses] = useState<any>();
@@ -101,7 +102,6 @@ export const AnnualReportCreate = () => {
         await AnnualReportApi.post(annualReport)
             .then((response: AxiosResponse) => {
                 showSuccess(response.data.message);
-                form.resetFields();
             })
             .catch((error: AxiosError) => {
                 showError(error.response?.data.message);
@@ -110,14 +110,16 @@ export const AnnualReportCreate = () => {
 
     const showSuccess = (message: string) => {
         Modal.success({
-            content: message 
+            content: message,
+            onOk: () => { history.push('/userpage/main'); }
         });
     }
 
     const showError = (message: string) => {
         Modal.error({
             title: 'Помилка!',
-            content: message 
+            content: message,
+            onOk: () => { history.push('/userpage/main'); }
         });
     }
 
