@@ -53,7 +53,7 @@ export default function () {
                         customButtons={classes.button}
                         locale={ukLocale}
                         timeZone='Europe/Kiev'
-                        locales={[ukLocale]}
+                        // locales={[ukLocale]}
                         height={'auto'}
                         eventClick={() => setEventModal(true)}
                         initialEvents={events}
