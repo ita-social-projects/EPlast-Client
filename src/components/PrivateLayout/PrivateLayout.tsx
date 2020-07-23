@@ -25,20 +25,22 @@ const PrivateLayout = ({ children }: any) => {
   const [imageBase64, setImageBase64] = useState<string>();
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
-    const user: any = jwt(token);
-    await userApi.getById(user.nameid).then(async response => {
-      await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
-        setImageBase64(response.data);
-      })
+    if(token == null){
+      history.push("/signin");
+    }
+    else{
+    const user : any = jwt(token);
+    await userApi.getById(user.nameid).then(async response =>{
+        await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) =>{
+          setImageBase64(response.data);
+        })
     })
+   }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
-
-
-
   const history = useHistory();
   return (
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
