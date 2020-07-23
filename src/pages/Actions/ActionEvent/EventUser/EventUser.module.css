@@ -28,7 +28,8 @@
     .line {
         background: #3C5438;
         width: 100%;
-        height: 10.12px
+        height: 10.12px;
+        margin-bottom: 5px;
     }
     
     .button {
@@ -37,6 +38,20 @@
         color: white;
         border: none;
         width: 138px;
+        height: 40px;
+        outline: none;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 10px;
+        align-items: center;
+    }
+    
+    .buttonInside {
+        margin-top: 10px;
+        background: #3C5438;
+        color: white;
+        border: none;
+        width: 200px;
         height: 40px;
         outline: none;
         text-align: center;
@@ -153,6 +168,7 @@
             width: 100%;
             padding: 0;
             margin: 0 0 10px;
+            text-align: center;
         }
         .wrapperCol,
         .wrapper2,
