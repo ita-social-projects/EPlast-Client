@@ -2,10 +2,12 @@ import React from 'react';
 import { Form, Input, Button } from 'antd';
 import styles from '../ChangePassword/ChangePassword.module.css';
 import AuthorizeApi from '../../api/authorizeApi';
+import { useHistory } from 'react-router-dom';
 let authService = new AuthorizeApi();
 
 export default function () {
     const [form] = Form.useForm();
+    const history = useHistory();
 
     const validationSchema = {
         CurrentPassword: [
@@ -24,6 +26,7 @@ export default function () {
 
     const handleSubmit = async (values: any) => {
         await authService.changePassword(values);
+        history.push('/changePassword')
     };
 
     const initialValues = {
