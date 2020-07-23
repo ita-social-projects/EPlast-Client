@@ -23,8 +23,9 @@ import UserProfile from "./pages/userPage/personalData/PersonalData";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
-import {Demo} from "../src/pages/WebChat/Demo";
+import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
+
 
 const App: FC = () => (
   <div className="App">
@@ -36,8 +37,8 @@ const App: FC = () => (
           <Route path="/contacts" component={Contacts} />
           <Route path="/signup" component={SignUp} />
           <Route path="/signin" component={SignIn} />
-          <Route path="/forgotpassword" component={ForgotPassword}/>
-          <Route path="/resetPassword" component={ResetPassword}/>
+          <Route path="/forgotpassword" component={ForgotPassword} />
+          <Route path="/resetPassword" component={ResetPassword} />
           <Route path="/changePassword" component={ChangePassword} />
           <Route path="/chat" component={Demo} />
           <RouteWithLayout
@@ -63,8 +64,8 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/events/types" component={EventTypes}/>
-            <RouteWithLayout layout={PrivateLayout} exact path="/events/:typeId/categories"
+            path="/events/types" component={EventTypes} />
+          <RouteWithLayout layout={PrivateLayout} exact path="/events/:typeId/categories"
             component={Actions}
           />
           <RouteWithLayout

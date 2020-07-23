@@ -111,7 +111,7 @@ const EventUser = () => {
                                         <h1>{item.eventName} </ h1 >
                                         < h2 > Дата початку: {item.eventDateStart}</h2>
                                         < h2 > Дата завершення: {item.eventDateEnd} </h2>
-                                        < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/actions/eventinfo/${item.id}`)} >
+                                        < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${item.id}/details`)} >
                                             Деталі
                                     </Button>
                                         < hr />
@@ -149,10 +149,10 @@ const EventUser = () => {
                                         <h1>{item.eventName} </ h1 >
                                         < h2 > Дата початку: {item.eventDateStart} </h2>
                                         < h2 > Дата завершення: {item.eventDateEnd} </h2>
-                                        < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/actions/eventinfo/${item.id}`)} >
+                                        < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${item.id}/details`)} >
                                             Деталі
                                     </Button>
-                                        < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/actions/eventedit/${item.id}`)}>
+                                        < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${item.id}/details`)}>
                                             Редагувати
                                     </Button>
                                         < hr />
@@ -199,7 +199,7 @@ const EventUser = () => {
                                     <h1>{item.eventName} </ h1 >
                                     < h2 > Дата початку: {item.eventDateStart} </h2>
                                     < h2 > Дата завершення: {item.eventDateEnd} </h2>
-                                    < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/actions/eventinfo/${item.id}`)}>
+                                    < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${item.id}/details`)}>
                                         Деталі
                                     </Button>
                                     < hr />
