@@ -1,3 +1,3 @@
-const BASE_URL = "https://localhost:44350/api/";
-export default BASE_URL;
 
+const BASE_URL = "https://eplastwebapi.azurewebsites.net/api/";
+export default BASE_URL;

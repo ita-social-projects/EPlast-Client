@@ -88,18 +88,4 @@ export default class AuthorizeApi{
     AuthStore.removeToken();
  };
 
- confirmingEmail = async() => {
-   const response = await Api.getAll("Account/confirmingEmail")
-   .then(response =>{
-     console.log(response);
-     
-    //редірект на юзер пейджу по айдішці
-   })
-   .catch(error =>{
-     if(error.response.status == 400){
-       notificationLogic('error', error.response.data.value);
-     }
-   });
-   
- };
 }
