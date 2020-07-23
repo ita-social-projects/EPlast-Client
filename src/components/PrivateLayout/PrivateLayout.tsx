@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Avatar, Layout, Menu } from "antd";
 import {
@@ -16,7 +16,7 @@ const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
 const PrivateLayout = ({ children }: any) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   const onCollapse = (collValue: boolean) => {
     setCollapsed(collValue);
@@ -41,7 +41,6 @@ const PrivateLayout = ({ children }: any) => {
   useEffect(() => {
     fetchData();
   }, []);
- 
   const history = useHistory();
   return (
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
@@ -64,13 +63,14 @@ const PrivateLayout = ({ children }: any) => {
             Рішення
           </Menu.Item>
           <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
+
             <Menu.Item key="2">Таблиця користувачів</Menu.Item>
             <Menu.Item onClick={() => history.push("/cities")} key="3">
               Станиці
             </Menu.Item>
             <Menu.Item key="4">Округи</Menu.Item>
-            <Menu.Item onClick={() => history.push("/actions")} key="5">
-              Акції
+            <Menu.Item onClick={() => history.push('/events/types')} key="5">
+              Події
             </Menu.Item>
             <Menu.Item onClick={() => history.push('/clubs')} key="6">Курені</Menu.Item>
             <Menu.Item key="7">Відзначення</Menu.Item>

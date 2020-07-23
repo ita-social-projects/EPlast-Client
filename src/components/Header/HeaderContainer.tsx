@@ -1,6 +1,6 @@
-import React,{useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Menu, Dropdown, Avatar } from "antd";
-import { LoginOutlined, LogoutOutlined, BellOutlined, EditOutlined} from "@ant-design/icons";
+import { LoginOutlined, LogoutOutlined, BellOutlined, EditOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import LogoImg from "../../assets/images/ePlastLogotype.png";
 import LogoText from "../../assets/images/logo_PLAST.svg";
@@ -19,14 +19,14 @@ const HeaderContainer = () => {
   const [name, setName] = useState<string>();
   const token = AuthStore.getToken() as string;
   const fetchData = async () => {
-    if(user)
-    {
-      const user : any = jwt(token);
-      await userApi.getById(user.nameid).then(async response =>{
+
+    if (user) {
+      const user: any = jwt(token);
+      await userApi.getById(user.nameid).then(async response => {
         setName(response.data.user.firstName);
-          await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) =>{
-            setImageBase64(response.data);
-          })
+        await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
+          setImageBase64(response.data);
+        })
       })
     }
   };
@@ -34,7 +34,7 @@ const HeaderContainer = () => {
   useEffect(() => {
     fetchData();
   }, []);
- 
+
   const primaryMenu = (
     <Menu
       mode="vertical"
@@ -50,7 +50,7 @@ const HeaderContainer = () => {
           Редагувати профіль
         </NavLink>
       </Menu.Item>
-      <Menu.Item className={classes.headerDropDownItem} key="6">
+      <Menu.Item className={classes.headerDropDownItem} key="7">
         <NavLink
           to="/changePassword"
           className={classes.headerLink}
@@ -109,28 +109,28 @@ const HeaderContainer = () => {
           </Dropdown>
         </Menu>
       ) : (
-        <Menu mode="horizontal" className={classes.headerMenu}>
-          <Menu.Item className={classes.headerItem} key="2">
-            <NavLink
-              to="/contacts"
-              className={classes.headerLink}
-              activeClassName={classes.activeLink}
-            >
-              Контакти
+          <Menu mode="horizontal" className={classes.headerMenu}>
+            <Menu.Item className={classes.headerItem} key="2">
+              <NavLink
+                to="/contacts"
+                className={classes.headerLink}
+                activeClassName={classes.activeLink}
+              >
+                Контакти
             </NavLink>
-          </Menu.Item>
-          <Menu.Item className={classes.headerItem} key="3">
-            <NavLink
-              to="/signin"
-              className={classes.headerLink}
-              activeClassName={classes.activeLink}
-            >
-              Увійти
+            </Menu.Item>
+            <Menu.Item className={classes.headerItem} key="3">
+              <NavLink
+                to="/signin"
+                className={classes.headerLink}
+                activeClassName={classes.activeLink}
+              >
+                Увійти
               <LoginOutlined className={classes.headerIcon} />
-            </NavLink>
-          </Menu.Item>
-        </Menu>
-      )}
+              </NavLink>
+            </Menu.Item>
+          </Menu>
+        )}
     </Layout.Header>
   );
 };
