@@ -6,6 +6,7 @@ import classes from './EventUser.module.css';
 import userApi from '../../../../api/UserApi';
 import AuthStore from '../../../../stores/Auth';
 import jwt from 'jwt-decode';
+import { CalendarOutlined, PlusCircleOutlined } from '@ant-design/icons';
 const { Title } = Typography;
 
 const EventUser = () => {
@@ -92,7 +93,7 @@ const EventUser = () => {
                                     < Button type="primary" className={classes.button} onClick={() => setVisitedEventsModal(true)
                                     }>
                                         Список
-                                </Button>
+                                    </Button>
                                 </div>}
                             < Modal
                                 title="Відвідані події"
@@ -113,7 +114,7 @@ const EventUser = () => {
                                         < h2 > Дата завершення: {item.eventDateEnd} </h2>
                                         < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${item.id}/details`)} >
                                             Деталі
-                                    </Button>
+                                        </Button>
                                         < hr />
                                     </div>)}
                             </Modal>
@@ -141,7 +142,7 @@ const EventUser = () => {
                                     [
                                         <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => setCreatedEventsModal(false)}>
                                             Закрити
-                                    </Button>
+                                        </Button>
                                     ]}
                             >
                                 {data.createdEvents.map((item: any) =>
@@ -199,7 +200,7 @@ const EventUser = () => {
                                     <h1>{item.eventName} </ h1 >
                                     < h2 > Дата початку: {item.eventDateStart} </h2>
                                     < h2 > Дата завершення: {item.eventDateEnd} </h2>
-                                    < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${item.id}/details`)}>
+                                    < Button type="primary" className={classes.button} id={classes.button} style={{ marginLeft: 160 }} onClick={() => history.push(`/events/${item.id}/details`)}>
                                         Деталі
                                     </Button>
                                     < hr />
@@ -209,6 +210,7 @@ const EventUser = () => {
                         < div className={classes.wrapper5} >
                             <Title level={2} className={classes.sectionTitle} > Календар подій </Title>
                             < div className={classes.line} />
+                            <CalendarOutlined style={{ fontSize: '22px' }} />
                             < Button type="primary" className={classes.button} onClick={() => history.push("/actions/eventCalendar")}>
                                 Переглянути
                         </Button>
