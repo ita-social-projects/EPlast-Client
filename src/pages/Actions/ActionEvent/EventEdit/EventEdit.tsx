@@ -261,7 +261,7 @@ export default function () {
                             < div className={classes.row} >
                                 <h3>Приблизна кількість учасників </h3>
                                 < Form.Item name="NumberOfPartisipants" rules={[{ required: true, message: 'Вкажіть приблизну к-сть учасників' }]}>
-                                    <Input className={classes.input} />
+                                    <Input className={classes.input} type="number" />
                                 </Form.Item>
                             </ div>
                             < div className={classes.row} >
