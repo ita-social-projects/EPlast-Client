@@ -10,6 +10,11 @@ import RouteWithLayout from "./RouteWithLayout";
 import Contacts from "./pages/Contacts/Contacts";
 import Cities from "./pages/Cities/Cities";
 import City from "./pages/City/City";
+import CityMembers from "./pages/City/CityMembers";
+import CityAdministration from "./pages/City/CityAdministration";
+import CityDocuments from "./pages/City/CityDocuments";
+import CityFollowers from "./pages/City/CityFollowers";
+import CreateCity from "./pages/CreateCity/CreateCity";
 import SignUp from "./pages/SignUp/SignUp";
 import SignIn from "./pages/SignIn/SignIn";
 import EventInfo from "./pages/Actions/ActionEvent/EventInfo/EventInfo";
@@ -62,6 +67,43 @@ const App: FC = () => (
           />
           <RouteWithLayout
             layout={PrivateLayout}
+            exact
+            path="/cities/new"
+            component={CreateCity}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/cities/edit/:id"
+            component={CreateCity}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/cities/members/:id"
+            component={CityMembers}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/cities/administration/:id"
+            component={CityAdministration}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/cities/documents/:id"
+            component={CityDocuments}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/cities/followers/:id"
+            component={CityFollowers}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/cities/:id"
             component={City}
           />
