@@ -6,8 +6,11 @@ import jwt from 'jwt-decode';
 import AuthStore from '../../../stores/Auth';
 import moment from 'moment';
 import AvatarAndProgress from './AvatarAndProgress';
+import { useHistory } from 'react-router-dom';
 
 export default function () {
+  const history = useHistory();
+
    type Gender={
     id:number;
     name:string;
@@ -57,18 +60,25 @@ export default function () {
     timeToJoinPlast:number;
     user:User;
   }
+
   interface Datee {
-    days:number;
+    days:number; 
   }
+
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
-    const user : any = jwt(token);
-    await userApi.getById(user.nameid).then(response =>{
+    if(token == null){
+       history.push("/signin");
+    }
+    else{
+      const user : any = jwt(token);
+      await userApi.getById(user.nameid).then(response =>{
       setData(response.data);
       setLoading(true);
     })
+    }
   };
       
       useEffect(() => {
@@ -164,11 +174,9 @@ export default function () {
               </tr>
             </tbody>
           </table>
-           
         </div>
         <Button className={styles.btn}>Обрати/змінити курінь</Button>
       </div>
-        
       </div>
       );
 }

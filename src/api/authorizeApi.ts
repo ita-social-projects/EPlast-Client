@@ -1,7 +1,6 @@
 import Api from "./api";
 import notificationLogic from '../components/Notifications/Notification';
 import AuthStore from '../stores/Auth';
-import userApi from '../api/UserApi';
 
 export default class AuthorizeApi{
 
@@ -12,7 +11,9 @@ export default class AuthorizeApi{
   login = async(data: any) =>{
     const response = await Api.post("Account/signin", data)
      .then(response =>{
+       if(response.data.token !== null){
         AuthStore.setToken(response.data.token);
+       }
      })
      .catch(error =>{
       if(error.response.status === 400){
@@ -35,7 +36,6 @@ export default class AuthorizeApi{
   });
   return response;
 };
-
 
   forgotPassword = async(data : any) => {
   const response = await Api.post("Account/forgotPassword", data)
@@ -85,7 +85,21 @@ export default class AuthorizeApi{
 };
 
   logout = async() =>{
+    window.location.reload(false);
     AuthStore.removeToken();
  };
+  
+ sendQuestionAdmin = async (data: any) => {
+  const response = await Api.post("Account/sendQuestion", data)
+  .then(response =>{
+    notificationLogic('success', response.data.value);
+  })
+  .catch(error => {
+    if(error.response.status === 400){
+      notificationLogic('error', error.response.data.value);
+    }
+  });
+  return response;
+};
 
 }
