@@ -3,14 +3,18 @@ import { Avatar, Progress, Spin, Space } from 'antd';
 import styles from './PersonalData.module.css';
 import userApi from '../../../api/UserApi';
 
-type AvatarAndProgressProps ={
+class AvatarAndProgressProps {
   imageUrl:string|undefined;
   time:number|undefined;
+  firstName:string|undefined;
+  lastName:string|undefined;
 }
+
+
 
 const AvatarAndProgress:React.FC<AvatarAndProgressProps> = (props: AvatarAndProgressProps)=> {
    const [loading, setLoading] = useState(false);
-  const {time,imageUrl}=props;
+  const {time,imageUrl,firstName,lastName}=props;
   const [imageBase64, setImageBase64] = useState<string>();
       useEffect(() => {
         if(imageUrl!==undefined)
@@ -35,7 +39,7 @@ const AvatarAndProgress:React.FC<AvatarAndProgressProps> = (props: AvatarAndProg
       ) : (
     <div className={styles.leftPartWrapper}>
       <Avatar size={256} src={imageBase64} />
-      <p className={styles.statusText}>{time} дні і Василь Хартманє Пластун:)</p>
+      <p className={styles.statusText}>{time} дні і {firstName} {lastName} Пластун:)</p>
       <Progress
         type="circle"
         className={styles.progressBar}

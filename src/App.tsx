@@ -21,16 +21,19 @@ import EventInfo from "./pages/Actions/ActionEvent/EventInfo/EventInfo";
 import EventCreate from "./pages/Actions/ActionEvent/EventCreate/EventCreate";
 import EventEdit from "./pages/Actions/ActionEvent/EventEdit/EventEdit";
 import EventUser from "./pages/Actions/ActionEvent/EventUser/EventUser";
-import EventCalendar from './pages/Actions/ActionEvent/EventCalendar/EventCalendar';
+import EventCalendar from "./pages/Actions/ActionEvent/EventCalendar/EventCalendar";
 import Actions from "./pages/Actions/Actions";
 import ActionEvent from "./pages/Actions/ActionEvent/ActionEvent";
 import UserProfile from "./pages/userPage/personalData/PersonalData";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
+import Clubs from "./pages/Clubs/Clubs";
+import Club from "./pages/Club/Club";
+import CreateClub from "./pages/CreateClub/CreateClub";
 import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
-
+import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
 
 const App: FC = () => (
   <div className="App">
@@ -151,6 +154,42 @@ const App: FC = () => (
             exact
             path="/actions/eventCalendar"
             component={EventCalendar}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/create/:cityId"
+            component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs"
+            component={Clubs}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs/new"
+            component={CreateClub}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs/:id"
+            component={Club}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs/edit/:id"
+            component={CreateClub}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/create/:cityId"
+            component={AnnualReportCreate}
           />
         </Switch>
       </div>

@@ -54,9 +54,9 @@ export default function () {
             placeOfStudy: response.data.user.education.placeOfStudy,
             speciality: response.data.user.education.speciality,
             degreeName: response.data.user.degree.name,
-            placeOfWork: response.data.user.work.placeOfWork,
+            placeOfWork: response.data.user.work.placeOfwork,
             religionName: response.data.user.religion.name,
-            positionOfWork: response.data.user.work.positionOfWork,
+            positionOfWork: response.data.user.work.position,
             address:response.data.user.address
           });
           setNationality(response.data.user.nationality);
