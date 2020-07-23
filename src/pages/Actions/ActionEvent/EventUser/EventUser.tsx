@@ -152,7 +152,7 @@ const EventUser = () => {
                                         < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${item.id}/details`)} >
                                             Деталі
                                     </Button>
-                                        < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${item.id}/details`)}>
+                                        < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/actions/eventEdit/${item.id}`)}>
                                             Редагувати
                                     </Button>
                                         < hr />
