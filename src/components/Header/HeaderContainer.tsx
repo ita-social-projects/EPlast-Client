@@ -1,17 +1,39 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Menu, Dropdown, Avatar } from "antd";
-import { LoginOutlined, LogoutOutlined, BellOutlined, EditOutlined} from "@ant-design/icons";
+import { LoginOutlined, LogoutOutlined, BellOutlined, EditOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import LogoImg from "../../assets/images/ePlastLogotype.png";
 import LogoText from "../../assets/images/logo_PLAST.svg";
-import User from "../../assets/images/user.jpg";
 import classes from "./Header.module.css";
 import AuthorizeApi from '../../api/authorizeApi';
+import jwt from 'jwt-decode';
+import AuthStore from '../../stores/Auth';
+import userApi from '../../api/UserApi';
 let authService = new AuthorizeApi();
 
 const HeaderContainer = () => {
-  
-  const user = AuthorizeApi.isSignedIn();   //тут ше перевірити
+
+  const user = AuthorizeApi.isSignedIn(); 
+
+  const [imageBase64, setImageBase64] = useState<string>();
+  const [name, setName] = useState<string>();
+  const token = AuthStore.getToken() as string;
+  const fetchData = async () => {
+
+    if (user) {
+      const user: any = jwt(token);
+      await userApi.getById(user.nameid).then(async response => {
+        setName(response.data.user.firstName);
+        await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
+          setImageBase64(response.data);
+        })
+      })
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const primaryMenu = (
     <Menu
@@ -28,7 +50,7 @@ const HeaderContainer = () => {
           Редагувати профіль
         </NavLink>
       </Menu.Item>
-      <Menu.Item className={classes.headerDropDownItem} key="6">
+      <Menu.Item className={classes.headerDropDownItem} key="7">
         <NavLink
           to="/changePassword"
           className={classes.headerLink}
@@ -78,37 +100,37 @@ const HeaderContainer = () => {
             >
               <Avatar
                 size={36}
-                src={User}
+                src={imageBase64}
                 alt="User"
                 style={{ marginRight: "10px" }}
               />
-              Привіт, юзер
+              Привіт, {name}
             </NavLink>
           </Dropdown>
         </Menu>
       ) : (
-        <Menu mode="horizontal" className={classes.headerMenu}>
-          <Menu.Item className={classes.headerItem} key="2">
-            <NavLink
-              to="/contacts"
-              className={classes.headerLink}
-              activeClassName={classes.activeLink}
-            >
-              Контакти
+          <Menu mode="horizontal" className={classes.headerMenu}>
+            <Menu.Item className={classes.headerItem} key="2">
+              <NavLink
+                to="/contacts"
+                className={classes.headerLink}
+                activeClassName={classes.activeLink}
+              >
+                Контакти
             </NavLink>
-          </Menu.Item>
-          <Menu.Item className={classes.headerItem} key="3">
-            <NavLink
-              to="/signin"
-              className={classes.headerLink}
-              activeClassName={classes.activeLink}
-            >
-              Увійти
+            </Menu.Item>
+            <Menu.Item className={classes.headerItem} key="3">
+              <NavLink
+                to="/signin"
+                className={classes.headerLink}
+                activeClassName={classes.activeLink}
+              >
+                Увійти
               <LoginOutlined className={classes.headerIcon} />
-            </NavLink>
-          </Menu.Item>
-        </Menu>
-      )}
+              </NavLink>
+            </Menu.Item>
+          </Menu>
+        )}
     </Layout.Header>
   );
 };

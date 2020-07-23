@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Avatar, Layout, Menu } from "antd";
 import {
@@ -8,18 +8,39 @@ import {
   PieChartOutlined,
 } from "@ant-design/icons";
 import classes from "./PrivateLayout.module.css";
-import User from "../../assets/images/user.jpg";
+import jwt from 'jwt-decode';
+import AuthStore from '../../stores/Auth';
+import userApi from '../../api/UserApi';
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
 const PrivateLayout = ({ children }: any) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   const onCollapse = (collValue: boolean) => {
     setCollapsed(collValue);
   };
 
+  const [imageBase64, setImageBase64] = useState<string>();
+  const fetchData = async () => {
+    const token = AuthStore.getToken() as string;
+    if(token == null){
+      history.push("/signin");
+    }
+    else{
+    const user : any = jwt(token);
+    await userApi.getById(user.nameid).then(async response =>{
+        await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) =>{
+          setImageBase64(response.data);
+        })
+    })
+   }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
   const history = useHistory();
   return (
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
@@ -27,7 +48,7 @@ const PrivateLayout = ({ children }: any) => {
         <div className={classes.profilePhoto}>
           <Avatar
             size={64}
-            src={User}
+            src={imageBase64}
             alt="User"
             style={{ marginRight: "10px" }}
           />
@@ -42,13 +63,14 @@ const PrivateLayout = ({ children }: any) => {
             Рішення
           </Menu.Item>
           <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
+
             <Menu.Item key="2">Таблиця користувачів</Menu.Item>
             <Menu.Item onClick={() => history.push("/cities")} key="3">
               Станиці
             </Menu.Item>
             <Menu.Item key="4">Округи</Menu.Item>
-            <Menu.Item onClick={() => history.push("/actions")} key="5">
-              Акції
+            <Menu.Item onClick={() => history.push('/events/types')} key="5">
+              Події
             </Menu.Item>
             <Menu.Item onClick={() => history.push('/clubs')} key="6">Курені</Menu.Item>
             <Menu.Item key="7">Відзначення</Menu.Item>
@@ -56,7 +78,7 @@ const PrivateLayout = ({ children }: any) => {
           </SubMenu>
           <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Документи">
             <SubMenu key="sub2.1" title="Звіти">
-              <Menu.Item key="9">Подати річний звіт станиці</Menu.Item>
+              <Menu.Item onClick={() => history.push('/annualreport/create/1')} key="9">Подати річний звіт станиці</Menu.Item>
               <Menu.Item key="10">Річні звіти</Menu.Item>
               <Menu.Item key="11">Статистичні звіти</Menu.Item>
             </SubMenu>

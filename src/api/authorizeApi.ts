@@ -11,10 +11,12 @@ export default class AuthorizeApi{
   login = async(data: any) =>{
     const response = await Api.post("Account/signin", data)
      .then(response =>{
+       if(response.data.token !== null){
         AuthStore.setToken(response.data.token);
+       }
      })
      .catch(error =>{
-      if(error.response.status == 400){
+      if(error.response.status === 400){
         notificationLogic('error', error.response.data.value);
       }
      })
@@ -28,13 +30,12 @@ export default class AuthorizeApi{
     notificationLogic('success', response.data.value);
   })
   .catch(error => {
-    if(error.response.status == 400){
+    if(error.response.status === 400){
       notificationLogic('error', error.response.data.value);
     }
   });
   return response;
 };
-
 
   forgotPassword = async(data : any) => {
   const response = await Api.post("Account/forgotPassword", data)
@@ -42,7 +43,7 @@ export default class AuthorizeApi{
     notificationLogic('success', response.data.value);
   })
   .catch(error => {
-    if(error.response.status == 400){
+    if(error.response.status === 400){
       notificationLogic('error', error.response.data.value);
     }
   });
@@ -55,20 +56,20 @@ export default class AuthorizeApi{
     notificationLogic('success', response.data.value);
   })
   .catch(error => {
-    if(error.response.status == 400){
+    if(error.response.status === 400){
       notificationLogic('error', error.response.data.value);
     }
   });
   return response;
 };
 
- resetPasswordGet = async() =>{
+ /*resetPasswordGet = async() =>{
    const response = await Api.getAll("Account/ResetPassword")
    .then(response =>{
      //history.push("/");
    })
- };
-
+ };*/
+/*Added some changes for example*/
 
  changePassword = async(data : any) => {
   const response = await Api.post("Account/changePassword", data)
@@ -76,7 +77,7 @@ export default class AuthorizeApi{
     notificationLogic('success', response.data.value);
   })
   .catch(error => {
-    if(error.response.status == 400){
+    if(error.response.status === 400){
       notificationLogic('error', error.response.data.value);
     }
   });
@@ -84,11 +85,21 @@ export default class AuthorizeApi{
 };
 
   logout = async() =>{
+    window.location.reload(false);
     AuthStore.removeToken();
  };
+  
+ sendQuestionAdmin = async (data: any) => {
+  const response = await Api.post("Account/sendQuestion", data)
+  .then(response =>{
+    notificationLogic('success', response.data.value);
+  })
+  .catch(error => {
+    if(error.response.status === 400){
+      notificationLogic('error', error.response.data.value);
+    }
+  });
+  return response;
+};
 
- confirmingEmail = async() => {
-   const response = await Api.getAll("Account/confirmingEmail");
-   console.log(response.data.userId);
- };
 }

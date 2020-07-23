@@ -1,7 +1,8 @@
-.profilePhoto{
-  text-align: center;
-  margin: 5px 0;
+.profilePhoto {
+    text-align: center;
+    margin: 5px 0;
 }
-.profilePhoto img{
-  max-width: 80px;
+
+.profilePhoto img {
+    max-width: 80px;
 }

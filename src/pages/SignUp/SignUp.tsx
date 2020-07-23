@@ -1,13 +1,15 @@
 import React from 'react';
-import { Form, Input, Button, Space, Spin } from 'antd';
+import { Form, Input, Button} from 'antd';
 import styles from './SignUp.module.css';
 import Switcher from './Switcher/Switcher';
 import { checkEmail, checkNameSurName } from './verification';
 import AuthorizeApi from '../../api/authorizeApi';
+import { useHistory } from 'react-router-dom';
 let authService = new AuthorizeApi();
 
 export default function () {
   const [form] = Form.useForm();
+  const history = useHistory();
 
   const validationSchema = {
     Email: [{ required: true, message: "Поле електронна пошта є обов'язковим" }, { validator: checkEmail }],
@@ -25,6 +27,7 @@ export default function () {
 
   const handleSubmit = async (values: any) => {
     await authService.register(values);
+    history.push('/signup')
   };
 
   const initialValues = {
