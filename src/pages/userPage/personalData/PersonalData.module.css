@@ -79,35 +79,35 @@
     justify-content: center;
 }
 
-/*.table {*/
-/*    width: 100%;*/
-/*    border-collapse:collapse;*/
-/*    font-size: 15px;*/
-/*    margin-bottom: 37px;*/
-/*}*/
-
-/*tr:not(:first-child):nth-of-type(odd) td{*/
-/*   padding-top: 25px;*/
-/*}*/
-
-/*tr td{*/
-/*    font-family: Verdana;*/
-/*}*/
-
-/*.td{*/
-/*    width: max-content;*/
-/*    padding: 0;*/
-/*    padding: 0 65px;*/
-/*}*/
-
-/*tr:nth-of-type(even) span{*/
-/*    padding: 7px 13px;*/
-/*    border-radius: 6px;*/
-/*    background-color: rgba(210, 210, 210, 0.5);*/
-/*    display: block;*/
-/*    width: 200px;*/
-/*    text-align: center;*/
-/*}*/
+.table {
+    width: 100%;
+    border-collapse:collapse;
+    font-size: 15px;
+    margin-bottom: 37px;
+ }
+ 
+ tr:not(:first-child):nth-of-type(odd) td{
+    padding-top: 25px;
+ }
+ 
+ tr td{
+     font-family: Verdana;
+ }
+ 
+ .td{
+     width: max-content;
+     padding: 0;
+     padding: 0 65px;
+ }
+ 
+ tr:nth-of-type(even) span{
+     padding: 7px 13px;
+     border-radius: 6px;
+     background-color: rgba(210, 210, 210, 0.5);
+     display: block;
+     width: 200px;
+     text-align: center;
+ } 
 
 .btn{
     outline: none !important;

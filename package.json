@@ -23,6 +23,7 @@
     "craco-less": "^1.17.0",
     "formik": "^2.1.4",
     "from-antd-datepicker": "^0.2.10",
+    "fullcalendar": "^5.1.0",
     "jwt-decode": "^2.2.0",
     "moment": "^2.27.0",
     "react": "^16.13.1",

@@ -7,6 +7,10 @@
   flex-direction: column;
 }
 
+.title{
+  color:#3c5438;
+}
+
 .listIcon {
   position: absolute;
   top: 15px;
@@ -19,6 +23,7 @@
   font-size: 20px;
   padding-top: 5px;
 }
+
 .mainInfo p {
   font-size: 16px;
   margin: 10px 0;
@@ -46,22 +51,124 @@
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
+.contactsInfo {
+  display: flex;
+}
+
+.contactsName {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+}
+
+.contactsContent {
+  margin-left: 30px;
+}
+
 .listItem {
   display: flex;
   flex-direction: column;
   text-align: center;
 }
+
+.listItem :hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .listItem p {
   margin-bottom: 0;
 }
 
+.bottomButton {
+  margin: auto 5% 20px;
+}
+
 .listButton {
   width: 50%;
-  margin-top: auto;
-  margin-bottom: 20px;
-  align-self: center;
 }
 
 .profileImg {
   margin: 0 auto;
+}
+
+.userName {
+  overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-line-clamp: 1;
+   -webkit-box-orient: vertical;
+}
+
+.documentText {
+  overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-line-clamp: 3;
+   -webkit-box-orient: vertical;
+}
+
+.flexContainer {
+  float: right;
+  margin-left: -25px;
+  margin-right: 25px;
+}
+
+.addReportIcon {
+  font-size: 30px;
+  color: #3c5438;
+}
+
+.addReportIcon :hover {
+  color: #536150;
+  cursor: pointer;
+}
+
+.approveIcon {
+  color: #3c5438;
+  position: absolute;
+  bottom: 55px;
+  right: 5px;
+  font-size: 22px;
+}
+
+.approveIcon :hover {
+  color: #536150;
+  font-size: 28px;
+}
+
+.background {
+  background-color: rgb(238, 238, 238);
+}
+
+.mainTitle {
+  text-align: center;
+  font-size: 40px;
+  color: #3c5438;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.detailsCard {
+  margin: 15px;
+  width: 242px;
+  text-align: center;
+}
+
+.detailsMeta {
+  margin-top: 10px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.spiner{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

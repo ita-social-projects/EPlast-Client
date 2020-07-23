@@ -10,22 +10,30 @@ import RouteWithLayout from "./RouteWithLayout";
 import Contacts from "./pages/Contacts/Contacts";
 import Cities from "./pages/Cities/Cities";
 import City from "./pages/City/City";
+import CityMembers from "./pages/City/CityMembers";
+import CityAdministration from "./pages/City/CityAdministration";
+import CityDocuments from "./pages/City/CityDocuments";
+import CityFollowers from "./pages/City/CityFollowers";
+import CreateCity from "./pages/CreateCity/CreateCity";
 import SignUp from "./pages/SignUp/SignUp";
 import SignIn from "./pages/SignIn/SignIn";
 import EventInfo from "./pages/Actions/ActionEvent/EventInfo/EventInfo";
 import EventCreate from "./pages/Actions/ActionEvent/EventCreate/EventCreate";
 import EventEdit from "./pages/Actions/ActionEvent/EventEdit/EventEdit";
 import EventUser from "./pages/Actions/ActionEvent/EventUser/EventUser";
-import EventCalendar from './pages/Actions/ActionEvent/EventCalendar/EventCalendar';
+import EventCalendar from "./pages/Actions/ActionEvent/EventCalendar/EventCalendar";
 import Actions from "./pages/Actions/Actions";
 import ActionEvent from "./pages/Actions/ActionEvent/ActionEvent";
 import UserProfile from "./pages/userPage/personalData/PersonalData";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
+import Clubs from "./pages/Clubs/Clubs";
+import Club from "./pages/Club/Club";
+import CreateClub from "./pages/CreateClub/CreateClub";
 import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
-
+import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
 
 const App: FC = () => (
   <div className="App">
@@ -44,7 +52,8 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             path="/userpage/:specify"
-            component={UserProfile} />
+            component={UserProfile}
+          />
           <RouteWithLayout
             layout={PrivateLayout}
             path="/decisions"
@@ -58,14 +67,56 @@ const App: FC = () => (
           />
           <RouteWithLayout
             layout={PrivateLayout}
+            exact
+            path="/cities/new"
+            component={CreateCity}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/cities/edit/:id"
+            component={CreateCity}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/cities/members/:id"
+            component={CityMembers}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/cities/administration/:id"
+            component={CityAdministration}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/cities/documents/:id"
+            component={CityDocuments}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/cities/followers/:id"
+            component={CityFollowers}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/cities/:id"
             component={City}
           />
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/events/types" component={EventTypes} />
-          <RouteWithLayout layout={PrivateLayout} exact path="/events/:typeId/categories"
+            path="/events/types"
+            component={EventTypes}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/events/:typeId/categories"
             component={Actions}
           />
           <RouteWithLayout
@@ -104,10 +155,46 @@ const App: FC = () => (
             path="/actions/eventCalendar"
             component={EventCalendar}
           />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/create/:cityId"
+            component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs"
+            component={Clubs}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs/new"
+            component={CreateClub}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs/:id"
+            component={Club}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs/edit/:id"
+            component={CreateClub}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/create/:cityId"
+            component={AnnualReportCreate}
+          />
         </Switch>
       </div>
       <FooterContainer />
     </Router>
   </div>
-)
+);
 export default App;

@@ -61,10 +61,6 @@ export default function () {
     user:User;
   }
 
-  interface Datee {
-    days:number; 
-  }
-
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
   const fetchData = async () => {
@@ -94,7 +90,7 @@ export default function () {
         
       ) : (
       <div className={styles.userFieldsWrapper}>
-      <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast}/>
+      <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName}/>
       <div className={styles.rightPartWrapper}>
       <h2 className={styles.title}>Особистий профіль</h2>
         <div className={styles.tableWrapper}>
@@ -106,10 +102,16 @@ export default function () {
               </tr>
               <tr>
                 <td className={styles.td}>
-                  <span>{data?.user.lastName}</span>
+                  {(data?.user.lastName!==null && data?.user.lastName!=="")? 
+                    (<span>{data?.user.lastName}</span>):
+                      (<span>-</span>)
+                  }
                 </td>
                 <td className={styles.td}>
-                  <span>{data?.user.firstName}</span>
+                  {data?.user.firstName!==null && data?.user.firstName!==""? 
+                    (<span>{data?.user.firstName}</span>):
+                      (<span>-</span>)
+                  }
                 </td>
               </tr>
               <tr>
@@ -118,10 +120,16 @@ export default function () {
               </tr>
               <tr>
                 <td className={styles.td}>
-                  <span>{data?.user.gender.name}</span>
+                  {data?.user.gender.name!==null && data?.user.gender.name!==""? 
+                    (<span>{data?.user.gender.name}</span>):
+                      <span>-</span>
+                  }
                 </td>
                 <td className={styles.td}>
-                  <span>{data?.user.phoneNumber}</span>
+                  {data?.user.phoneNumber!==null && data?.user.phoneNumber!==""? 
+                    (<span>{data?.user.phoneNumber}</span>):
+                      <span>-</span>
+                  }
                 </td>
               </tr>
               <tr>
@@ -130,10 +138,16 @@ export default function () {
               </tr>
               <tr>
                 <td className={styles.td}>
-                  <span>{data?.user.nationality.name}</span>
+                  {data?.user.nationality.name!==null && data?.user.nationality.name!==""? 
+                    (<span>{data?.user.nationality.name}</span>):
+                      <span>-</span>
+                  }
                 </td>
                 <td className={styles.td}>
-                  <span>{data?.user.religion.name}</span>
+                  {data?.user.religion.name!==null && data?.user.religion.name!==""? 
+                    (<span>{data?.user.religion.name}</span>):
+                      <span>-</span>
+                  }
                 </td>
               </tr>
               <tr>
@@ -145,7 +159,10 @@ export default function () {
                   <span>{moment(data?.user.birthday).format("DD-MM-YYYY")}</span>
                 </td>
                 <td className={styles.td}>
-                  <span>{data?.user.degree.name}</span>
+                  {data?.user.degree.name!==null && data?.user.degree.name!==""? 
+                    (<span>{data?.user.degree.name}</span>):
+                      <span>-</span>
+                  }
                 </td>
               </tr>
               <tr>
@@ -154,10 +171,16 @@ export default function () {
               </tr>
               <tr>
                 <td className={styles.td}>
-                  <span>{data?.user.education.placeOfStudy}</span>
+                  {data?.user.education.placeOfStudy!==null && data?.user.education.placeOfStudy!==""? 
+                    (<span>{data?.user.education.placeOfStudy}</span>):
+                      <span>-</span>
+                  }
                 </td>
                 <td className={styles.td}>
-                  <span>{data?.user.education.speciality}</span>
+                  {data?.user.education.speciality!=null && data?.user.education.speciality!=''? 
+                    (<span>{data?.user.education.speciality}</span>):
+                      <span>-</span>
+                  }
                 </td>
               </tr>
               <tr>
@@ -166,10 +189,16 @@ export default function () {
               </tr>
               <tr>
               <td className={styles.td}>
-                  <span>{data?.user.work.position}</span>
+                  {data?.user.work.position!==null && data?.user.work.position!==""? 
+                    (<span>{data?.user.work.position}</span>):
+                      <span>-</span>
+                  }
                 </td>
                 <td className={styles.td}>
-                  <span>{data?.user.work.placeOfwork}</span>
+                  {data?.user.work.placeOfwork!==null && data?.user.work.placeOfwork!==""? 
+                    (<span>{data?.user.work.placeOfwork}</span>):
+                      <span>-</span>
+                  }
                 </td>
               </tr>
             </tbody>
