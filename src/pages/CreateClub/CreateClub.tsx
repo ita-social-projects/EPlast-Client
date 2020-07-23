@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Layout, Upload, message, Row, Col } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons/lib";
-import City from "../../assets/images/city.jpg";
+import City from "../../assets/images/default_city_image.jpg";
 import clubsApi from "../../api/clubsApi";
 import { RcFile } from "antd/lib/upload/interface";
 import { useParams, useHistory } from "react-router-dom";
