@@ -14,14 +14,18 @@ import SignUp from "./pages/SignUp/SignUp";
 import SignIn from "./pages/SignIn/SignIn";
 import EventInfo from "./pages/Actions/ActionEvent/EventInfo/EventInfo";
 import EventCreate from "./pages/Actions/ActionEvent/EventCreate/EventCreate";
+import EventEdit from "./pages/Actions/ActionEvent/EventEdit/EventEdit";
+import EventUser from "./pages/Actions/ActionEvent/EventUser/EventUser";
+import EventCalendar from './pages/Actions/ActionEvent/EventCalendar/EventCalendar';
 import Actions from "./pages/Actions/Actions";
 import ActionEvent from "./pages/Actions/ActionEvent/ActionEvent";
 import UserProfile from "./pages/userPage/personalData/PersonalData";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
-import {Demo} from "../src/pages/WebChat/Demo";
+import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
+
 
 const App: FC = () => (
   <div className="App">
@@ -33,16 +37,14 @@ const App: FC = () => (
           <Route path="/contacts" component={Contacts} />
           <Route path="/signup" component={SignUp} />
           <Route path="/signin" component={SignIn} />
-          <Route path="/forgotpassword" component={ForgotPassword}/>
-          <Route path="/resetPassword" component={ResetPassword}/>
+          <Route path="/forgotpassword" component={ForgotPassword} />
+          <Route path="/resetPassword" component={ResetPassword} />
           <Route path="/changePassword" component={ChangePassword} />
           <Route path="/chat" component={Demo} />
-
           <RouteWithLayout
             layout={PrivateLayout}
             path="/userpage/:specify"
-            component={UserProfile}
-          />
+            component={UserProfile} />
           <RouteWithLayout
             layout={PrivateLayout}
             path="/decisions"
@@ -62,8 +64,8 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/events/types" component={EventTypes}/>
-            <RouteWithLayout layout={PrivateLayout} exact path="/events/:typeId/categories"
+            path="/events/types" component={EventTypes} />
+          <RouteWithLayout layout={PrivateLayout} exact path="/events/:typeId/categories"
             component={Actions}
           />
           <RouteWithLayout
@@ -83,6 +85,24 @@ const App: FC = () => (
             exact
             path="/actions/eventCreate"
             component={EventCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/actions/eventEdit/:id"
+            component={EventEdit}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/actions/eventUser"
+            component={EventUser}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/actions/eventCalendar"
+            component={EventCalendar}
           />
         </Switch>
       </div>

@@ -13,7 +13,9 @@ export default function () {
         </Menu.Item>
         <Menu.Item key="Membership">Дійсне членство</Menu.Item>
         <Menu.Item key="second">Діловодства</Menu.Item>
-        <Menu.Item key="Events">Події</Menu.Item>
+        <Menu.Item key="Events" onClick={() => history.push("/actions/eventuser")}>
+          Події
+          </Menu.Item>
         <Menu.Item key="Congresses">З`їзди</Menu.Item>
         <Menu.Item key="Blanks">Бланки</Menu.Item>
         <Menu.Item key="Authorization">Поручення</Menu.Item>
