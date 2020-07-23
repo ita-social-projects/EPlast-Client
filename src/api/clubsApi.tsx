@@ -3,24 +3,24 @@ import Api from "./api";
 import BASE_URL from "../config";
 
 const getById = async (id: number) => {
-  const response = await Api.getById("Club", id);
+  const response = await Api.get("Club", id);
   return response;
 };
 
 const getAll = async () => {
-  const response = await Api.getAll("Club");
+  const response = await Api.get("Club");
   return response;
 };
 const getAllMembers = async (id: number) => {
-  const response = await Api.getAll("Club/" + id + "/members");
+  const response = await Api.get("Club/" + id + "/members");
   return response;
 };
 const getAllFollowers = async (id: number) => {
-  const response = await Api.getAll("Club/" + id + "/followers");
+  const response = await Api.get("Club/" + id + "/followers");
   return response;
 };
 const getAllAdmins = async (id: number) => {
-  const response = await Api.getAll("Club/" + id + "/administration");
+  const response = await Api.get("Club/" + id + "/administration");
   return response;
 };
 const post = async (url: string, data: any) => {
@@ -45,4 +45,14 @@ const getImage = async (imageName: string | undefined) => {
   return response;
 };
 
-export default { getById, getAll, post, put, remove, getImage, getAllMembers,getAllFollowers,getAllAdmins };
+export default {
+  getById,
+  getAll,
+  post,
+  put,
+  remove,
+  getImage,
+  getAllMembers,
+  getAllFollowers,
+  getAllAdmins,
+};
