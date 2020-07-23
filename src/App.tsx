@@ -25,7 +25,7 @@ import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
 import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
-
+import AnnualReportCreate from './pages/AnnualReport/AnnualReportCreate/AnnualReportCreate';
 
 const App: FC = () => (
   <div className="App">
@@ -103,6 +103,11 @@ const App: FC = () => (
             exact
             path="/actions/eventCalendar"
             component={EventCalendar}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact path="/annualreport/create/:cityId"
+            component={AnnualReportCreate}
           />
         </Switch>
       </div>
