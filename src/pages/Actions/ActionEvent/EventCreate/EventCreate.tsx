@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
 import eventUserApi from '../../../../api/eventUserApi';
 import notificationLogic from '../../../../components/Notifications/Notification';
-import ukUa from 'antd/es/date-picker/locale/uk_UA';
 import moment from 'moment';
 import 'moment/locale/uk';
 moment.locale('uk-ua');
@@ -165,13 +164,13 @@ export default function () {
               < div className={classes.row} >
                 <h3>Дата початку </h3>
                 < Form.Item name="EventDateStart" rules={[{ required: true, message: 'Оберіть дату початку події' }]} >
-                  <DatePicker disabledDate={disabledDate} locale={ukUa} placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} />
+                  <DatePicker disabledDate={disabledDate} placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} />
                 </ Form.Item>
               </ div>
               < div className={classes.row} >
                 <h3>Дата завершення </h3>
                 < Form.Item name="EventDateEnd" rules={[{ required: true, message: 'Оберіть дату завершення події' }]} >
-                  <DatePicker disabledDate={disabledDate} locale={ukUa} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
+                  <DatePicker disabledDate={disabledDate} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
                 </ Form.Item>
               </ div>
               < div className={classes.row} >
