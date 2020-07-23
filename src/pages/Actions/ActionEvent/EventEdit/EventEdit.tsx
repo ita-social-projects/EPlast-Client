@@ -7,7 +7,6 @@ import Title from 'antd/lib/typography/Title';
 // import { EventCreationData } from '../../../../models/EventCreationData.model';
 import eventUserApi from '../../../../api/eventUserApi';
 import notificationLogic from '../../../../components/Notifications/Notification';
-import ukUa from 'antd/es/date-picker/locale/uk_UA';
 import moment from 'moment';
 import 'moment/locale/uk';
 moment.locale('uk-ua');
