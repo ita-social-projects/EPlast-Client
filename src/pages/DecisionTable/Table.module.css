@@ -1,0 +1,30 @@
+.titleTable {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* Search container */
+
+.searchContainer {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 12px;
+  width: 400px;
+  margin-left: auto;
+}
+
+.searchContainer>* {
+  margin-left: 12px;
+}
+
+/* Context menu right click */
+
+.menu {
+  box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
+  position: absolute;
+}
+.submitButtons{
+  width:100%;
+  display:flex;
+   justify-content:space-between
+}
