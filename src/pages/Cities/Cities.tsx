@@ -5,18 +5,13 @@ import Add from "../../assets/images/add.png";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import { getCitiesByPage, getLogo } from "../../api/citiesApi";
 import classes from "./Cities.module.css";
-
-interface CardProps {
-  id: number;
-  name: string;
-  logo: string;
-}
+import City from './../../models/City/City';
 
 const Cities = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
 
-  const [cities, setCities] = useState([]);
+  const [cities, setCities] = useState<City[]>([]);
   const [canCreate, setCanCreate] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -73,7 +68,7 @@ const Cities = () => {
           </Card>
         ) : null}
         {!loading
-          ? cities.map((city: CardProps) => (
+          ? cities.map((city: City) => (
               <Card
                 key={city.id}
                 hoverable
