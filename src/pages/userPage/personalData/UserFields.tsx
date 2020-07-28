@@ -7,74 +7,19 @@ import AuthStore from '../../../stores/Auth';
 import moment from 'moment';
 import AvatarAndProgress from './AvatarAndProgress';
 import { useHistory } from 'react-router-dom';
-
+import { Data } from '../Interface/Interface';
+import {useParams} from 'react-router-dom';
 export default function () {
   const history = useHistory();
-
-   type Gender={
-    id:number;
-    name:string;
-}
- type Work={
-    id:number;
-    placeOfwork: string;
-    position: string;
-}
- type Education={
-    id:number;
-    placeOfStudy: string;
-    speciality: string;
-}
- type Degree={
-    id:number;
-    name:string;
-}
- type Religion={
-    id:number;
-    name:string;
-}
-   type Nationality={
-    id:number;
-    name:string;
-}
- type User ={
-    id:any;
-    userProfileID:any;
-    firstName: string;
-    lastName: string;
-    fatherName:string;
-    imagePath:string;
-    address: string;
-    birthday: Date;
-    phoneNumber: string;
-    gender: Gender;
-    nationality: Nationality;
-    religion: Religion;
-    education: Education;
-    degree: Degree;
-    work: Work;
-}
-
-  interface Data {
-    isUserPlastun:boolean;
-    timeToJoinPlast:number;
-    user:User;
-  }
-
+  const {userId}=useParams(); 
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
   const fetchData = async () => {
-    const token = AuthStore.getToken() as string;
-    if(token == null){
-       history.push("/signin");
-    }
-    else{
-      const user : any = jwt(token);
-      await userApi.getById(user.nameid).then(response =>{
+  const token = AuthStore.getToken() as string;
+    await userApi.getById(userId).then(response =>{
       setData(response.data);
       setLoading(true);
     })
-    }
   };
       
       useEffect(() => {
