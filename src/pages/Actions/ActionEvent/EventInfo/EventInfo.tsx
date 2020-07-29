@@ -113,7 +113,7 @@ const EventInfo = () => {
     }
 
     return loading === false ? (
-        <div className={spinClasses.spaceWrapper}>
+        <div className={spinClasses.spaceWrapper} key='1'>
             <Space className={spinClasses.loader} size="large">
                 <Spin size="large"/>
             </Space>
@@ -122,7 +122,7 @@ const EventInfo = () => {
     ) : (
         <div className={classes.background}>
             <div className={classes.wrapper}>
-                <div className={classes.actionsWrapper}>
+                <div className={classes.actionsWrapper} key={'1'}>
                     <SortedEventInfo
                         event={event}
                         subscribeOnEvent={subscribeOnEvent}
@@ -131,7 +131,7 @@ const EventInfo = () => {
                     />
                 </div>
                 <Gallery key={event.event?.eventLocation} eventId={event.event?.eventId}/>
-                <div>
+                <div key={'2'}>
                     <Row>
                         <Input.Search
                             style={{width: "400px", margin: "0 0 10px 0"}}

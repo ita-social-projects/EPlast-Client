@@ -176,7 +176,7 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) =
     return <div className={classes.background}>
         <div className={classes.actionsWrapper}>
             <Row>
-                <Col span={10} push={14}>
+                <Col span={10} push={14} key={'1'}>
                     <img
                         className={classes.imgEvent}
                         alt="example"
@@ -186,7 +186,7 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) =
                         {RenderEventIcons(event, subscribeOnEvent, unSubscribeOnEvent)}
                     </div>
                 </Col>
-                <Col span={14} pull={10}>
+                <Col span={14} pull={10} key={'2'}>
                     <Table columns={columns} dataSource={data} pagination={false}/>
                 </Col>
             </Row>
