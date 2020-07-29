@@ -4,19 +4,19 @@ import { InboxOutlined } from '@ant-design/icons';
 import decisionsApi, {
   DecisionOnCreateData,
   decisionStatusType,
-  Decision,
   DecisionWrapper,
   decisionTarget,
   FileWrapper,
-  Organization } from '../../api/decisionsApi'
+  Organization,
+  statusTypePostParser } from '../../api/decisionsApi'
 import { getBase64 } from '../userPage/EditUserPage/Services';
 import notificationLogic from '../../components/Notifications/Notification';
-import classes from './Table.module.css';
 type FormAddDecisionProps ={
    setVisibleModal: (visibleModal: boolean) => void;
-   onAdd: (decision: Decision) => void;
+   onAdd: () => void;
 }
 const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
+ const classes = require('./Table.module.css');
  const  { setVisibleModal, onAdd } = props;
  const [fileData, setFileData] = useState<FileWrapper>({FileAsBase64 : null, FileName: null});
  const [form] = Form.useForm();
@@ -50,18 +50,14 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
     }
 
   }
-  const statusTypeParser = (statusType: decisionStatusType): number =>{
-    if(statusType.value === "InReview") return 0;
-    if (statusType.value === "Confirmed") return 1;
-    return 2;
-    };
+  
  const handleSubmit = async (values : any)=>{
    console.log(fileData);
   const newDecision  : DecisionWrapper= {
     decision: {
       id: 0,
       name: values.name,
-      decisionStatusType: statusTypeParser(JSON.parse(values.decisionStatusType)),
+      decisionStatusType: statusTypePostParser(JSON.parse(values.decisionStatusType)),
       organization:JSON.parse(values.organization),
       decisionTarget:JSON.parse(values.decisionTarget),
       description: values.description,
@@ -74,17 +70,8 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
   setVisibleModal(false);
   const dst : decisionStatusType = JSON.parse(values.decisionStatusType);
   const dt : decisionTarget = JSON.parse(values.decisionTarget);
-  const decisionOnTable : Decision = {
-     id: 0,
-  name : newDecision.decision.name,
-  organization : newDecision.decision.organization.organizationName,
-  description : newDecision.decision.description,
-  decisionStatusType :dst.text,
-  decisionTarget: dt.targetName,
-  date: "Щойно",
-  fileName : fileData.FileName
-  };
-  onAdd(decisionOnTable);
+ 
+  onAdd();
   form.resetFields();
   }
   const[data, setData] = useState<DecisionOnCreateData>({organizations: Array<Organization>(),
