@@ -17,6 +17,7 @@ const HeaderContainer = () => {
 
   const [imageBase64, setImageBase64] = useState<string>();
   const [name, setName] = useState<string>();
+  const [id, setId] = useState<string>();
   const token = AuthStore.getToken() as string;
   const fetchData = async () => {
 
@@ -24,6 +25,7 @@ const HeaderContainer = () => {
       const user: any = jwt(token);
       await userApi.getById(user.nameid).then(async response => {
         setName(response.data.user.firstName);
+        setId(response.data.user.id);
         await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
         })
@@ -42,7 +44,7 @@ const HeaderContainer = () => {
     >
       <Menu.Item className={classes.headerDropDownItem} key="5">
         <NavLink
-          to="/edit-profile"
+          to={`/userpage/edit/${id}`}
           className={classes.headerLink}
           activeClassName={classes.activeLink}
         >
@@ -94,7 +96,7 @@ const HeaderContainer = () => {
           />
           <Dropdown overlay={primaryMenu}>
             <NavLink
-              to="/userpage/main"
+              to={`/userpage/main/${id}`}
               className={classes.userMenu}
               activeClassName={classes.activeLink}
             >

@@ -34,6 +34,7 @@ import CreateClub from "./pages/CreateClub/CreateClub";
 import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
 import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
+import UserFields from "./pages/userPage/personalData/UserFields";
 
 const App: FC = () => (
   <div className="App">
@@ -51,7 +52,7 @@ const App: FC = () => (
           <Route path="/chat" component={Demo} />
           <RouteWithLayout
             layout={PrivateLayout}
-            path="/userpage/:specify"
+            path="/userpage/:specify/:userId"
             component={UserProfile}
           />
           <RouteWithLayout
