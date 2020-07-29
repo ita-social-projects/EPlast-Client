@@ -10,7 +10,8 @@ import decisionsApi, {
   FileWrapper,
   Organization } from '../../api/decisionsApi'
 import { getBase64 } from '../userPage/EditUserPage/Services';
-
+import notificationLogic from '../../components/Notifications/Notification';
+import classes from './Table.module.css';
 type FormAddDecisionProps ={
    setVisibleModal: (visibleModal: boolean) => void;
    onAdd: (decision: Decision) => void;
@@ -31,12 +32,15 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
     setVisibleModal(false);
   };
   const handleUpload = (info :any) => {
-    if (info.file.status === 'done') {
-    getBase64( info.file.originFileObj,(base64: string) => {
-      console.log(base64);
-      setFileData({FileAsBase64 :base64.split(',')[1] ,  FileName:info.file.name});
-    });
-  }
+    if(info.file !== null){
+      getBase64( info.file,(base64: string) => {
+        setFileData({FileAsBase64 :base64.split(',')[1] ,  FileName:info.file.name});
+      });
+      notificationLogic('success', "Файл завантажено");
+    }
+    else{
+      notificationLogic('error', "Проблема з завантаженням файлу");
+    }
 
   }
   const statusTypeParser = (statusType: decisionStatusType): number =>{
@@ -116,7 +120,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
         </Select>
       </Form.Item>
       <Form.Item
-       label="Тематика рішення"
+       label="Тема рішення"
        name ="decisionTarget"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
         <Select>
@@ -143,10 +147,11 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
           noStyle
         >
           <Upload.Dragger name = "file" 
-          action = '//jsonplaceholder.typicode.com/posts/'
-           onChange = {handleUpload} multiple ={false}
-           accept =".doc,.docx,.png,.xls,xlsx,.png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          headers = { { authorization: 'authorization-text'}}
+            customRequest = {handleUpload}
+            multiple ={false}
+            showUploadList ={false}
+            accept =".doc,.docx,.png,.xls,xlsx,.png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            headers = { { authorization: 'authorization-text'}}
           >
             <p className="ant-upload-drag-icon">
               <InboxOutlined style={{ color: '#3c5438' }} />
@@ -155,7 +160,11 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
               Клікніть або перетягніть файл для завантаження
             </p>
           </Upload.Dragger>
-        </Form.Item>
+        </Form.Item>  
+      {fileData.FileAsBase64 !== null &&<div><div>{fileData.FileName}</div> <Button className = {classes.cardButton} onClick= {()=>{
+        setFileData({FileAsBase64 : null, FileName: null});
+        notificationLogic('success', "Файл видалено");
+      }}> Видалити файл</Button></div>}
       </Form.Item>
       <Form.Item
        label="Статус рішення"

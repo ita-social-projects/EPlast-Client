@@ -97,6 +97,15 @@ return new File([u8arr], filename, {type:mime});
     });
     return response;
   };
+  const postForCheckFile = async (data : any) => {
+    const response = await Api.post("Decisions/CheckFile",data).then(response =>{
+      notificationLogic('success', "Рішення успішно додано");
+    })
+    .catch(error => {
+        notificationLogic('error', error.response.data.value);
+    });
+    return response;
+  };
 const getFileAsBase64 = async (fileName: string) =>{
   const response = await (await Api.get(`Decisions/downloadfile/${fileName}`)).data;
   const file = dataURLtoFile(response, fileName);
@@ -131,4 +140,4 @@ const getFileAsBase64 = async (fileName: string) =>{
   };
     
 
-export default {getById, getAll, getOnCreate,getPdf,getFileAsBase64, post, put, remove};
+export default {getById, getAll, getOnCreate,getPdf,getFileAsBase64, post,postForCheckFile, put, remove};
