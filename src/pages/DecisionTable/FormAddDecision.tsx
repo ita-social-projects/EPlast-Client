@@ -57,7 +57,6 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
       date:/* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values.datepicker._d,
       fileName: fileData.FileName,
     },
-    decisionTargets: null,
     fileAsBase64: fileData.FileAsBase64,
   }
   await decisionsApi.post(newDecision);

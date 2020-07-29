@@ -34,7 +34,6 @@ export type DecisionOnCreateData = {
 }
 export type DecisionWrapper = {
   decision: DecisionPost;
-  decisionTargets:  decisionTarget[] | null;
   fileAsBase64: string | null;
 }
 export type DecisionPost  ={
