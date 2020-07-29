@@ -13,6 +13,16 @@
 .cardStyles{
     margin: 15px;
     width: 177px;
+    background: transparent;
+}
+.cardBody{
+    padding: 0;
+}
+.cardButton{
+    inline-size: -webkit-fill-available;
+    margin-top: 7px;
+    color:#3c5438;
+    border-color: #3c5438;
 }
 .titleText{
     text-align: center;

@@ -2,20 +2,15 @@ import React,{ useState, useEffect} from 'react';
 import {Button, Space, Spin} from 'antd';
 import styles from './PersonalData.module.css';
 import userApi from '../../../api/UserApi';
-import jwt from 'jwt-decode';
-import AuthStore from '../../../stores/Auth';
 import moment from 'moment';
 import AvatarAndProgress from './AvatarAndProgress';
-import { useHistory } from 'react-router-dom';
 import { Data } from '../Interface/Interface';
 import {useParams} from 'react-router-dom';
 export default function () {
-  const history = useHistory();
   const {userId}=useParams(); 
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
   const fetchData = async () => {
-  const token = AuthStore.getToken() as string;
     await userApi.getById(userId).then(response =>{
       setData(response.data);
       setLoading(true);
@@ -24,7 +19,7 @@ export default function () {
       
       useEffect(() => {
         fetchData();
-      }, []);
+      }, [userId]);
       
       return loading === false ? (
         <div className={styles.spaceWrapper}>

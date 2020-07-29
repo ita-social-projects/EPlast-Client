@@ -4,15 +4,19 @@ import styles from './PersonalData.module.css';
 import UserFields from './UserFields';
 import EditUserPage from '../EditUserPage/EditUserPage';
 import Approvers from '../Approvers/Approvers';
+import {useParams} from 'react-router-dom';
 
-export default function ({
+
+export default function (
+  {
   match: {
     params: { specify },
   },
 }: any) {
+  const {userId}=useParams(); 
   return (
     <div className={styles.mainContainer}>
-      <Menu />
+      <Menu id={userId}/>
       {specify === 'main' ? (
         <div className={styles.content}>
           <UserFields />

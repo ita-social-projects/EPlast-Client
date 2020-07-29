@@ -3,15 +3,17 @@ import {useParams} from 'react-router-dom';
 import { Card, Space, Spin, Button } from 'antd';
 import classes from './Approvers.module.css';
 import AvatarAndProgress from '../../../../src/pages/userPage/personalData/AvatarAndProgress';
-import NoAvatar from "../../../assets/images/no-avatar.png";
+import AddUser from "../../../assets/images/user_add.png";
 import { ApproversData } from '../Interface/Interface';
 import jwt from 'jwt-decode';
 import AuthStore from '../../../stores/Auth';
 import userApi from '../../../api/UserApi';
 import { Link } from 'react-router-dom';
 import moment from 'antd/node_modules/moment';
+import { useHistory } from 'react-router-dom';
 
 const Assignments = () => {
+  const history = useHistory();
   const {userId}=useParams();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ApproversData>();
@@ -25,7 +27,7 @@ const Assignments = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [data]);
 
   const handleClick=async (event:number)=>{
     await userApi.deleteApprove(event);
@@ -62,11 +64,11 @@ const Assignments = () => {
                           className={classes.cardStyles}
                           cover={<img alt="example"  src={p.approver.user.imagePath} className={classes.avatar}/>}
                         >
-                          <Meta title={p.approver.user.firstName+" "+p.approver.user.lastName} className={classes.titleText}/>
-                          <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className={classes.titleText}/>
-                          <button onClick={()=>handleClick(p.id)} value={p.id}>
-                              Відкликати поручення
-                          </button>
+                            <Meta title={p.approver.user.firstName+" "+p.approver.user.lastName} className={classes.titleText}/>
+                            <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className={classes.titleText}/>
+                            <Button className={classes.cardButton} danger onClick={()=>handleClick(p.id)}>
+                                Відкликати
+                            </Button>
                         </Card>
                       </div>
                       )
@@ -74,15 +76,17 @@ const Assignments = () => {
             else{
                   return (
                     <div key={p.id}>
-                      <Card
-                        key={p.id}
-                        hoverable
-                        className={classes.cardStyles}
-                        cover={<img alt="example"  src={p.approver.user.imagePath} className={classes.avatar}/>}
-                      >
-                        <Meta title={p.approver.user.firstName+" "+p.approver.user.lastName} className={classes.titleText}/>
-                        <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className={classes.titleText}/>
-                      </Card>
+                      <Link to="#" onClick={()=>history.push(`/userpage/main/${p.approver.userID}`)}>
+                        <Card
+                          key={p.id}
+                          hoverable
+                          className={classes.cardStyles}
+                          cover={<img alt="example"  src={p.approver.user.imagePath} className={classes.avatar}/>}
+                        >
+                          <Meta title={p.approver.user.firstName+" "+p.approver.user.lastName} className={classes.titleText}/>
+                          <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className={classes.titleText}/>
+                        </Card>
+                      </Link>
                     </div>
                     )
               }
@@ -95,9 +99,8 @@ const Assignments = () => {
                       <Card
                       hoverable
                       className={classes.cardStyles}
-                      cover={<img alt="example" src={NoAvatar} className={classes.avatar}/>}
+                      cover={<img alt="example" src={AddUser} className={classes.avatar}/>}
                     >
-                      <Meta title="Поручитись"/>
                     </Card>
                   </Link>
                 </div>
@@ -118,33 +121,34 @@ const Assignments = () => {
         <div className={classes.displayFlex}>
           {(data?.clubApprover!=null) ? (
              <div>
-             <Card
-               hoverable
-               className={classes.cardStyles}
-               cover={<img alt="example"  src={data.clubApprover.approver.user.imagePath} className={classes.avatar}/>}
-             >
-               <Meta title={data.clubApprover.approver.user.firstName+" "+data.clubApprover.approver.user.lastName} className={classes.titleText}/>
-               <Meta title={moment(data.clubApprover.confirmDate).format("DD-MM-YYYY")} className={classes.titleText}/>
-               {data.clubApprover.approver.userID==data.currentUserId && (
-                  <Button onClick={()=>handleClick(data.clubApprover.id)} value={data.clubApprover.id}>
-                      Відкликати поручення
-                  </Button>
-               )}
-             </Card>
+               <Link to="#" onClick={()=>history.push(`/userpage/main/${data.clubApprover.approver.userID}`)}>
+                  <Card
+                  hoverable
+                  className={classes.cardStyles}
+                  cover={<img alt="example"  src={data.clubApprover.approver.user.imagePath} className={classes.avatar}/>}
+                >
+                    <Meta title={data.clubApprover.approver.user.firstName+" "+data.clubApprover.approver.user.lastName} className={classes.titleText}/>
+                    <Meta title={moment(data.clubApprover.confirmDate).format("DD-MM-YYYY")} className={classes.titleText}/>
+                    {data.clubApprover.approver.userID==data.currentUserId && (
+                        <Button className={classes.cardButton} danger onClick={()=>handleClick(data.clubApprover.id)} value={data.clubApprover.id}>
+                            Відкликати
+                        </Button>
+                    )}
+                  </Card>
+               </Link>
            </div>
           ):((data?.clubApprover==null && data?.currentUserId!=data?.user.id && data?.isUserHeadOfClub)?
           (
             <div>
-             <Card
-               hoverable
-               className={classes.cardStyles}
-               cover={<img alt="example"  src={NoAvatar} className={classes.avatar}/>}
-             >
-                 <button onClick={()=>approveClick(data.user.id,true)} value={data.user.id}>
-                     Поручитись як курінний
-                 </button>
-             </Card>
-          </div>
+                  <Link to="#" onClick={()=>approveClick(data.user.id,true)}>
+                      <Card
+                      hoverable
+                      className={classes.cardStyles}
+                      cover={<img alt="example" src={AddUser} className={classes.avatar}/>}
+                    >
+                    </Card>
+                  </Link>
+            </div>
          ):(
           <div>
           <br />
@@ -160,32 +164,33 @@ const Assignments = () => {
         <div className={classes.displayFlex}>
         {(data?.cityApprover!=null) ? (
              <div>
-             <Card
-               hoverable
-               className={classes.cardStyles}
-               cover={<img alt="example"  src={data.cityApprover.approver.user.imagePath} className={classes.avatar}/>}
-             >
-               <Meta title={data.cityApprover.approver.user.firstName+" "+data.cityApprover.approver.user.lastName} className={classes.titleText}/>
-               <Meta title={moment(data.cityApprover.confirmDate).format("DD-MM-YYYY")} className={classes.titleText}/>
-               {data.cityApprover.approver.userID==data.currentUserId && (
-                  <button onClick={()=>handleClick(data.cityApprover.id)} value={data.cityApprover.id}>
-                      Відкликати поручення
-                  </button>
-               )}
-             </Card>
+               <Link to="#" onClick={()=>history.push(`/userpage/main/${data.cityApprover.approver.userID}`)}>
+                  <Card
+                    hoverable
+                    className={classes.cardStyles}
+                    cover={<img alt="example"  src={data.cityApprover.approver.user.imagePath} className={classes.avatar}/>}
+                  >
+                    <Meta title={data.cityApprover.approver.user.firstName+" "+data.cityApprover.approver.user.lastName} className={classes.titleText}/>
+                    <Meta title={moment(data.cityApprover.confirmDate).format("DD-MM-YYYY")} className={classes.titleText}/>
+                    {data.cityApprover.approver.userID==data.currentUserId && (
+                        <Button className={classes.cardButton} danger onClick={()=>handleClick(data.cityApprover.id)} value={data.cityApprover.id}>
+                            Відкликати
+                        </Button>
+                    )}
+                  </Card>
+               </Link>
            </div>
           ):((data?.cityApprover==null && data?.currentUserId!=data?.user.id && (data?.isUserHeadOfRegion||data?.isUserHeadOfCity)) ?
           (
             <div>
-             <Card
-               hoverable
-               className={classes.cardStyles}
-               cover={<img alt="example"  src={NoAvatar} className={classes.avatar}/>}
-             >
-                 <button onClick={()=>approveClick(data.user.id,false,true)} value={data.user.id}>
-                     Поручитись як станичний
-                 </button>
-             </Card>
+            <Link to="#" onClick={()=>approveClick(data.user.id,false,true)}>
+                <Card
+                hoverable
+                className={classes.cardStyles}
+                cover={<img alt="example" src={AddUser} className={classes.avatar}/>}
+              >
+              </Card>
+            </Link>
           </div>
          ):(
           <div>
