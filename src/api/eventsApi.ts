@@ -20,6 +20,11 @@ const getEventInfo = async (id: number) => {
     return response;
 }
 
+const getPictures = async (eventId: number) => {
+    const response = await Api.get(`Events/${eventId}/pictures`);
+    return response;
+}
+
 const remove = async (id: number) => {
     const response = await Api.remove(`Events/${id}`);
     return response;
@@ -55,6 +60,7 @@ export default {
     getCategories,
     getEvents,
     getEventInfo,
+    getPictures,
     remove,
     createParticipant,
     removeParticipant,

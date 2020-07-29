@@ -15,7 +15,7 @@ import {
 } from '@ant-design/icons';
 // eslint-disable-next-line import/no-cycle,import/no-duplicates
 import {EventDetails} from "./EventInfo";
-import {showSubscribeConfirm, showUnsubscribeConfirm} from "../../EventsModals";
+import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirmForSingleEvent} from "../../EventsModals";
 
 const classes = require('./EventInfo.module.css');
 
@@ -43,6 +43,12 @@ const RenderEventIcons = ({
         </Tooltip>)
         eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
             <DeleteTwoTone twoToneColor="#8B0000"
+                           onClick={() => showDeleteConfirmForSingleEvent({
+                               eventId: event?.eventId,
+                               eventName: event?.eventName,
+                               eventTypeId: event?.eventTypeId,
+                               eventCategoryId: event?.eventCategoryId
+                           })}
                            className={classes.icon} key="delete"/>
         </Tooltip>)
     } else if (isUserParticipant && !isEventFinished) {

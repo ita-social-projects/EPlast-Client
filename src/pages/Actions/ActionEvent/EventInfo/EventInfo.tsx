@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Input, Row} from "antd";
+import {Input, Row, Space, Spin} from "antd";
 import {useParams} from "react-router-dom";
 // eslint-disable-next-line import/no-cycle
 import SortedEventInfo from './SortedEventInfo';
@@ -8,6 +8,7 @@ import Gallery from './Gallery';
 import eventsApi from "../../../../api/eventsApi";
 // eslint-disable-next-line import/no-cycle
 import ParticipantsTable from "./ParticipantsTable";
+import spinClasses from "../EventUser/EventUser.module.css";
 
 const classes = require('./EventInfo.module.css');
 
@@ -28,7 +29,9 @@ export interface EventInformation {
     eventDateStart: string;
     eventDateEnd: string;
     eventLocation: string;
+    eventTypeId: number;
     eventType: string;
+    eventCategoryId: number;
     eventCategory: string;
     eventStatus: string;
     formOfHolding: string;
@@ -53,7 +56,7 @@ interface EventAdmin {
     email: string;
 }
 
-interface EventGallery {
+export interface EventGallery {
     galleryId: number;
     fileName: string;
 }
@@ -61,6 +64,7 @@ interface EventGallery {
 const EventInfo = () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [loading, setLoading] = useState(false);
     const [, setFilterTable] = useState([{}]);
     const [baseData,] = useState(rawData);
     // @ts-ignore
@@ -70,7 +74,8 @@ const EventInfo = () => {
     useEffect(() => {
         const fetchData = async () => {
             const response = await eventsApi.getEventInfo(id);
-            setEvent(response.data)
+            setEvent(response.data);
+            setLoading(true);
         };
         fetchData();
     }, []);
@@ -107,7 +112,14 @@ const EventInfo = () => {
         })
     }
 
-    return (
+    return loading === false ? (
+        <div className={spinClasses.spaceWrapper}>
+            <Space className={spinClasses.loader} size="large">
+                <Spin size="large"/>
+            </Space>
+        </div>
+
+    ) : (
         <div className={classes.background}>
             <div className={classes.wrapper}>
                 <div className={classes.actionsWrapper}>
@@ -118,7 +130,7 @@ const EventInfo = () => {
                         key={event.event?.eventName}
                     />
                 </div>
-                <Gallery key={event.event?.eventLocation}/>
+                <Gallery key={event.event?.eventLocation} eventId={event.event?.eventId}/>
                 <div>
                     <Row>
                         <Input.Search
