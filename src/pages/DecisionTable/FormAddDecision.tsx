@@ -32,11 +32,18 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
     setVisibleModal(false);
   };
   const handleUpload = (info :any) => {
+    console.log(info.file);
     if(info.file !== null){
-      getBase64( info.file,(base64: string) => {
-        setFileData({FileAsBase64 :base64.split(',')[1] ,  FileName:info.file.name});
-      });
-      notificationLogic('success', "Файл завантажено");
+      if(info.file.size <= 3145728){
+        getBase64( info.file,(base64: string) => {
+          setFileData({FileAsBase64 :base64.split(',')[1] ,  FileName:info.file.name});
+        });
+        notificationLogic('success', "Файл завантажено");
+      }
+      else{
+        notificationLogic('error', "Розмір файлу перевищує 3 Мб");
+      }
+   
     }
     else{
       notificationLogic('error', "Проблема з завантаженням файлу");
