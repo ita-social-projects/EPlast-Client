@@ -9,7 +9,7 @@ import jwt from 'jwt-decode';
 import AuthStore from '../../../stores/Auth';
 import userApi from '../../../api/UserApi';
 import { Link } from 'react-router-dom';
-import moment from 'antd/node_modules/moment';
+import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 
 const Assignments = () => {
