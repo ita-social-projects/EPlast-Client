@@ -6,7 +6,7 @@ import { Decision } from '../../api/decisionsApi';
 interface Props {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: (decision: Decision) => void;
+  onAdd: () => void;
 }
 
 const AddDecisionModal = ({ visibleModal, setVisibleModal, onAdd }: Props) => {

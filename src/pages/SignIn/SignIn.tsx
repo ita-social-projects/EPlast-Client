@@ -8,8 +8,11 @@ import { checkEmail } from "../SignUp/verification";
 import {Link} from 'react-router-dom';
 import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
-let authService = new AuthorizeApi();
+import jwt from 'jwt-decode';
+import AuthStore from '../../stores/Auth';
 
+let authService = new AuthorizeApi();
+let user:any;
 export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
@@ -19,7 +22,7 @@ export default function () {
     Password: "",
     RememberMe: true,
   };
-
+  
    const validationSchema = {
      Email: [
        { required: true, message: "Поле електронна пошта є обов'язковим" },
@@ -33,7 +36,14 @@ export default function () {
 
   const handleSubmit = async (values: any) => {
     await authService.login(values);
-    history.push('/userpage/main')
+    const token = AuthStore.getToken() as string;
+    if(token == null){
+      history.push("/signin");
+    }
+    else {
+      user  = jwt(token);
+      history.push(`/userpage/main/${user.nameid}`);
+    }
   };
 
   return (
