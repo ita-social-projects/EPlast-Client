@@ -7,7 +7,7 @@ import LogoText from "../../assets/images/logo_PLAST.svg";
 import classes from "./Header.module.css";
 import AuthorizeApi from '../../api/authorizeApi';
 import jwt from 'jwt-decode';
-import AuthStore from '../../stores/Auth';
+import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
 let authService = new AuthorizeApi();
 

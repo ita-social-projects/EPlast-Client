@@ -9,7 +9,7 @@ import {Link} from 'react-router-dom';
 import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
 import jwt from 'jwt-decode';
-import AuthStore from '../../stores/Auth';
+import AuthStore from '../../stores/AuthStore';
 
 let authService = new AuthorizeApi();
 let user:any;

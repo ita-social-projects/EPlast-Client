@@ -1,6 +1,6 @@
 import Api from "./api";
 import notificationLogic from '../components/Notifications/Notification';
-import AuthStore from '../stores/Auth';
+import AuthStore from '../stores/AuthStore';
 
 export default class AuthorizeApi{
 
