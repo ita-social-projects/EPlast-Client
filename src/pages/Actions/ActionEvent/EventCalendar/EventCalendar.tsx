@@ -1,39 +1,65 @@
 import React, { useEffect, useState } from 'react';
 import eventUserApi from '../../../../api/eventUserApi';
 import { Button, Space, Spin, Modal } from 'antd';
-import FullCalendar from '@fullcalendar/react'
+import FullCalendar, { CalendarData, CalendarApi } from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
+import listPlugin from '@fullcalendar/list'
 import ukLocale from '@fullcalendar/core/locales/uk';
-import moment from 'moment';
-import 'moment/locale/uk';
-moment.locale('uk-ua');
+import { calendarFormat } from 'moment';
 
 const classes = require('./EventCalendar.module.css');
 
 export default function () {
 
     const [loading, setLoading] = useState(false);
-    const [events, setEvents] = useState<any>({
-        id: 0,
-        title: '',
-        start: '',
-        end: '',
-        eventlocation: '',
-        description: '',
-        color: '#3c5438'
-    });
+
+    const [actions, setActions] = useState<any>([]);
+    const [educations, setEducations] = useState<any>([]);
+    const [camps, setCamps] = useState<any>([]);
 
     const [eventModal, setEventModal] = useState(false);
 
+    const eventsColors: string[] = ['#6f8ab5', '#fdcb02', '#c01111'];
+
+    function getConcatedEvents(): Array<any> {
+        (actions as Array<any>).forEach(event => {
+            Object.assign(event, { color: eventsColors[0] })
+        });
+        (educations as Array<any>).forEach(event => {
+            Object.assign(event, { color: eventsColors[1] })
+        });
+        (camps as Array<any>).forEach(event => {
+            Object.assign(event, { color: eventsColors[2] })
+        });
+
+        return (actions as Array<any>).concat(educations as Array<any>).concat(camps as Array<any>);
+    }
+
     useEffect(() => {
         const fetchData = async () => {
-            await eventUserApi.getDataForCalendar().then(async response => {
-                setEvents(response.data);
-                setLoading(true);
+            await eventUserApi.getActionsForCalendar().then(async response => {
+                setActions(response.data);
+
+                await eventUserApi.getEducationsForCalendar().then(async response => {
+                    setEducations(response.data);
+
+                    await eventUserApi.getCampsForCalendar().then(async response => {
+                        setCamps(response.data);
+                    })
+                })
             })
+            setLoading(true);
         }
         fetchData();
     }, []);
+
+
+    function handleEventClick(event: any) {
+        console.log(event);
+        setEventModal(true);
+    }
+
+
 
     return loading === false ? (
         <div className={classes.spaceWrapper}>
@@ -44,23 +70,46 @@ export default function () {
     ) : (
             <div>
                 <div>
+                    <div className={classes.legend}>
+                        <div className={classes.legendItem}>
+                            Акція
+                            <div className={classes.legendCircle} style={{ background: eventsColors[0] }}></div>
+                        </div>
+
+                        <div className={classes.legendItem}>
+                            Вишкіл
+                            <div className={classes.legendCircle} style={{ background: eventsColors[1] }}></div>
+                        </div>
+
+                        <div className={classes.legendItem}>
+                            Табір
+                            <div className={classes.legendCircle} style={{ background: eventsColors[2] }}></div>
+                        </div>
+                    </div>
                     <FullCalendar
+                        plugins={[dayGridPlugin, listPlugin]}
                         initialView="dayGridMonth"
-                        plugins={[dayGridPlugin]}
-                        themeSystem='Cosmo'
-                        eventColor='#3c5438'
-                        displayEventEnd={false}
-                        customButtons={classes.button}
+                        headerToolbar={{
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,listMonth'
+                        }}
+                        views={{
+                            listMonth: { buttonText: 'Список' },
+                        }}
+                        displayEventEnd={true}
                         locale={ukLocale}
-                        timeZone='Europe/Kiev'
+                        timeZone={'Europe/Kiev'}
                         height={'auto'}
-                        eventClick={() => setEventModal(true)}
-                        initialEvents={events}
+                        eventClick={event => handleEventClick(event)}
+                        initialEvents={getConcatedEvents()}
                         dayMaxEventRows={3}
                         dayMaxEvents={3}
                         moreLinkClick="popover"
                         showNonCurrentDates={false}
                         displayEventTime={false}
+                        defaultAllDay={true}
+                        forceEventDuration={true}
                     />
                     < Modal
                         title="Деталі події"

@@ -6,7 +6,7 @@ import classes from './EventUser.module.css';
 import userApi from '../../../../api/UserApi';
 import AuthStore from '../../../../stores/Auth';
 import jwt from 'jwt-decode';
-import { CalendarOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { CalendarOutlined } from '@ant-design/icons';
 const { Title } = Typography;
 
 const EventUser = () => {
@@ -168,7 +168,7 @@ const EventUser = () => {
                             < div className={classes.line} />
                             {data.planedEvents.length === 0 && <div>
                                 <h2>Ви ще не запланували жодної події</ h2 >
-                                <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => history.push('/actions')} >
+                                <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => history.push('/events/types')} >
                                     Зголоситись на подію
                                 </Button>
                             </div>}
@@ -188,7 +188,7 @@ const EventUser = () => {
                                 onCancel={() => setPlanedEventsModal(false)}
                                 footer={
                                     [
-                                        <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => history.push('/actions')} >
+                                        <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => history.push('/events/types')} >
                                             Зголоситись на подію
                                         </Button>,
                                         < Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => setPlanedEventsModal(false)}>

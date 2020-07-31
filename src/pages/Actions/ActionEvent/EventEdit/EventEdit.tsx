@@ -9,6 +9,7 @@ import eventUserApi from '../../../../api/eventUserApi';
 import notificationLogic from '../../../../components/Notifications/Notification';
 import moment from 'moment';
 import 'moment/locale/uk';
+import eventsApi from '../../../../api/eventsApi';
 moment.locale('uk-ua');
 
 const classes = require('./EventEdit.module.css');
@@ -19,6 +20,9 @@ export default function () {
     const [form] = Form.useForm();
     const history = useHistory();
     const [loading, setLoading] = useState(false);
+    const [administators, setAdministators] = useState<any>([]);
+    const [selectedUsers, setSelectedUsers] = useState<string[]>(['', '', '', '']);
+    const [categories, setCategories] = useState<any>([]);
 
     const [editedEvent, setEvent] = useState<any>({
         event: {
@@ -37,7 +41,7 @@ export default function () {
             questions: ''
         },
         commandant: {
-            userId: ''
+            userId: '',
         },
         alternate: {
             userId: ''
@@ -73,6 +77,9 @@ export default function () {
                     bunchuzhnyiId: response.data.bunchuzhnyi?.userId,
                     pysarId: response.data.pysar?.userId,
                 });
+                await eventsApi.getCategories(response.data.event.eventTypeID).then(async response => {
+                    setCategories([...response.data]);
+                })
                 setLoading(true);
             })
         }
@@ -92,7 +99,8 @@ export default function () {
             id: '',
             firstName: '',
             lastName: '',
-            userName: ''
+            userName: '',
+            isSelected: true,
         }]
     });
 
@@ -101,11 +109,17 @@ export default function () {
             await eventUserApi.getDataForNewEvent().then(async response => {
                 const { eventCategories, eventTypes, users } = response.data;
                 setData({ eventCategories, eventTypes, users });
+                setAdministators(users);
+                setCategories(categories);
                 setLoading(true);
             })
         }
         fetchData();
     }, []);
+
+    useEffect(() => {
+        resetUsers()
+    }, selectedUsers);
 
     const handleFinish = async (values: any) => {
         const newEvent = {
@@ -156,6 +170,31 @@ export default function () {
         return current && current < moment().startOf('day');
     }
 
+    const onChange = async (e: any) => {
+        await eventsApi.getCategories(e.target.value).then(async response => {
+            setCategories([...response.data]);
+        })
+    }
+
+    const handleSelectChange = (dropdownIndex: number, selectedId: string) => {
+        const tempSelectedUsers: string[] = [...selectedUsers];
+        tempSelectedUsers[dropdownIndex] = selectedId;
+
+        setSelectedUsers([...tempSelectedUsers]);
+    }
+
+    function resetUsers(): void {
+        const updatedUsers: any[] = administators;
+
+        updatedUsers.forEach(user => {
+            const userId = user.id;
+            user.isSelected = selectedUsers.some(selectedUserId => selectedUserId === userId);
+            console.log(user);
+        });
+
+        setAdministators([...updatedUsers]);
+    }
+
     const dateFormat = 'DD/MM/YYYY';
 
     return loading === false ? (
@@ -177,16 +216,16 @@ export default function () {
                             </div>
                             < div className={classes.radio} >
                                 <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio}>
-                                    <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup}>
-                                        {data?.eventTypes.map((item: any) => (<Radio.Button key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
+                                    <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup} onChange={onChange} >
+                                        {data?.eventTypes.map((item: any) => (<Radio.Button defaultChecked={true} key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
                                     </Radio.Group>
                                 </Form.Item>
                             </div>
                             < div className={classes.row} >
                                 <h3>Категорія </h3>
                                 < Form.Item name="EventCategoryID" className={classes.input} rules={[{ required: true, message: 'Оберіть категорію події' }]} >
-                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} >
-                                        {data?.eventCategories.map((item: any) => (<Select.Option key={item.value} value={item.eventCategoryId} > {item.eventCategoryName} </Select.Option>))}
+                                    <Select showSearch optionFilterProp="children" onSearch={onSearch}>
+                                        {categories?.map((item: any) => (<Select.Option key={item.id} value={item.eventCategoryId}> {item.eventCategoryName} </Select.Option>))}
                                     </Select>
                                 </ Form.Item>
                             </ div>
@@ -199,32 +238,32 @@ export default function () {
                             < div className={classes.row} >
                                 <h3>Комендант </h3>
                                 < Form.Item name="commandantId" className={classes.select} rules={[{ required: true, message: 'Оберіть коменданта' }]} >
-                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} >
-                                        {data?.users.map((item: any) => (<Select.Option key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
+                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)}  >
+                                        {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
                                     </Select>
                                 </ Form.Item>
                             </ div>
                             < div className={classes.row} >
                                 <h3>Заступник коменданта </h3>
                                 < Form.Item name="alternateId" className={classes.select} rules={[{ required: true, message: 'Оберіть заступника коменданта' }]} >
-                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} >
-                                        {data?.users.map((item: any) => (<Select.Option key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
+                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)}  >
+                                        {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
                                     </Select>
                                 </Form.Item>
                             </ div>
                             < div className={classes.row} >
                                 <h3>Бунчужний </h3>
                                 < Form.Item name="bunchuzhnyiId" className={classes.select} rules={[{ required: true, message: 'Оберіть бунчужного' }]} >
-                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} >
-                                        {data?.users.map((item: any) => (<Select.Option key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
+                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)} >
+                                        {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
                                     </Select>
                                 </Form.Item>
                             </ div>
                             < div className={classes.row} >
                                 <h3>Писар </h3>
                                 < Form.Item name="pysarId" className={classes.select} rules={[{ required: true, message: 'Оберіть писаря' }]} >
-                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} >
-                                        {data?.users.map((item: any) => (<Select.Option key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
+                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)} >
+                                        {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
                                     </Select>
                                 </Form.Item>
                             </ div>
