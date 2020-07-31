@@ -12,7 +12,7 @@ moment.tz.setDefault("Europe/Kiev");
 const classes = require('./EventCreate.module.css');
 
 export default function () {
-  
+
   const [form] = Form.useForm();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
@@ -60,8 +60,8 @@ export default function () {
         eventName: values.EventName,
         description: values.Description,
         questions: values.Questions,
-        eventDateStart: moment().utc(values.EventDateStart),
-        eventDateEnd: moment().utc(values.EventDateEnd),
+        eventDateStart: moment(values.EventDateStart).add(3, "hours"),
+        eventDateEnd: moment(values.EventDateEnd).add(3, "hours"),
         eventlocation: values.Eventlocation,
         eventTypeID: values.EventTypeID,
         eventCategoryID: values.EventCategoryID,
@@ -90,7 +90,6 @@ export default function () {
       if (error.response?.status === 400) {
         notificationLogic('error', 'Спробуйте ще раз');
       }
-      console.log(newEvent);
     });;
   }
 
@@ -120,7 +119,6 @@ export default function () {
     updatedUsers.forEach(user => {
       const userId = user.id;
       user.isSelected = selectedUsers.some(selectedUserId => selectedUserId === userId);
-      console.log(user);
     });
 
     setAdministators([...updatedUsers]);

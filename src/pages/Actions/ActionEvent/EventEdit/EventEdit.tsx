@@ -128,8 +128,8 @@ export default function () {
                 eventName: values.EventName,
                 description: values.Description,
                 questions: values.Questions,
-                eventDateStart: moment(values.EventDateStart),
-                eventDateEnd: moment(values.EventDateEnd),
+                eventDateStart: moment(values.EventDateStart).add(3, "hours"),
+                eventDateEnd: moment(values.EventDateEnd).add(3, "hours"),
                 eventlocation: values.Eventlocation,
                 eventTypeID: values.EventTypeID,
                 eventCategoryID: values.EventCategoryID,
@@ -195,7 +195,7 @@ export default function () {
         setAdministators([...updatedUsers]);
     }
 
-    const dateFormat = 'DD/MM/YYYY';
+    const dateFormat = 'DD/MM/YYYY HH:mm';
 
     return loading === false ? (
         <div className={classes.spaceWrapper}>
@@ -270,13 +270,13 @@ export default function () {
                             < div className={classes.row} >
                                 <h3>Дата початку </h3>
                                 < Form.Item name="EventDateStart" rules={[{ required: true, message: 'Оберіть дату початку події' }]} >
-                                    <DatePicker disabledDate={disabledDate} placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} />
+                                    <DatePicker showTime disabledDate={disabledDate} placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} />
                                 </ Form.Item>
                             </ div>
                             < div className={classes.row} >
                                 <h3>Дата завершення </h3>
                                 < Form.Item name="EventDateEnd" rules={[{ required: true, message: 'Оберіть дату завершення події' }]} >
-                                    <DatePicker disabledDate={disabledDate} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
+                                    <DatePicker showTime disabledDate={disabledDate} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
                                 </ Form.Item>
                             </ div>
                             < div className={classes.row} >
