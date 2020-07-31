@@ -1,4 +1,4 @@
-.mainContainerSignUp{
+.mainContainer{
     margin: 40px 0;
     background-color: white;
     width: 590px;
@@ -38,67 +38,4 @@
     cursor: pointer;
     padding-top: 7px;
     padding-bottom: 32px;
-}
-
-@media(max-width: 700px){
-    .mainContainerSignUp{
-        width: 520px;
-    }
-    .MyInput{
-        height:42px;
-    }
-    .forgot{
-        font-size: 15px;
-    }
-}
-
-@media(max-width: 600px){
-    .mainContainerSignUp{
-        width: 450px;
-    }
-    .MyInput{
-        height:40px;
-    }
-    .forgot{
-        font-size: 14px;
-    }
-}
-
-@media(max-width: 480px){
-    .mainContainerSignUp{
-        width: 380px;
-    }
-    .MyInput{
-        height:36px;
-    }
-    .forgot{
-        font-size: 13px;
-    }
-}
-
-@media(max-width: 410px){
-    .mainContainerSignUp{
-        width: 350px;
-    }
-    .forgot{
-        font-size: 12px;
-    }
-}
-
-@media(max-width: 370px){
-    .mainContainerSignUp{
-        width: 320px;
-    }
-    .forgot{
-        font-size: 11px;
-    }
-}
-
-@media(max-width: 350px){
-    .mainContainerSignUp{
-        width: 280px;
-    }
-    .forgot{
-        font-size: 10px;
-    }
 }

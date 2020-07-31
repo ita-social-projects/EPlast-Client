@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, Button} from 'antd';
-import styles from "./SignUp.module.css";
+import styles from './SignUp.module.css';
 import Switcher from './Switcher/Switcher';
 import { checkEmail, checkNameSurName } from './verification';
 import AuthorizeApi from '../../api/authorizeApi';
@@ -39,7 +39,7 @@ export default function () {
   };
 
   return (
-    <div className={styles.mainContainerSignUp}>
+    <div className={styles.mainContainer}>
       <Switcher page="SignUp" />
       <Form
         name="SignUpForm"
