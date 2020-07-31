@@ -27,13 +27,15 @@ const Assignments = () => {
   };
   useEffect(() => {
     fetchData();
-  }, [data]);
+  }, []);
 
   const handleClick=async (event:number)=>{
     await userApi.deleteApprove(event);
+    fetchData();
   }
   const approveClick=async (userId:string, isClubAdmin:boolean=false, isCityAdmin:boolean=false)=>{
     await userApi.approveUser(userId,isClubAdmin,isCityAdmin);
+    fetchData();
   }
 
   const { Meta } = Card;

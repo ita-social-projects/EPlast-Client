@@ -480,7 +480,7 @@ export default function () {
             </Form.Item>
           </div>
           <Button className={styles.confirmBtn} htmlType="submit">
-            Підтердити
+            Підтвердити
           </Button>
         </div>
       </Form>
