@@ -92,7 +92,7 @@ export default function () {
               </tr>
               <tr>
                 <td className={styles.td}>Дата народження:</td>
-                <td className={styles.td}>Ступінь:</td>
+                <td className={styles.td}>Науковий ступінь:</td>
               </tr>
               <tr>
                 <td className={styles.td}>
