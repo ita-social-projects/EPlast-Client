@@ -59,8 +59,7 @@ export const AnnualReportCreate = () => {
         await AnnualReportApi.getCityInfo(cityId)
             .then(response => {
                 let cityName = response.data.name;
-                let regionName = response.data.region.regionName;
-                setTitle(title.concat(' ', cityName, ' (', regionName, ' регіон)'))
+                setTitle(title.concat(' ', cityName))
                 setMembers(response.data.members);
             })
             .catch((error: AxiosError) => {
