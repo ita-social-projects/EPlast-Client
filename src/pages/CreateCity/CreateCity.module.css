@@ -31,6 +31,10 @@
   flex-direction: column;
 }
 
+.selectField {
+  text-align: left;
+}
+
 .createButton {
   width: 100%
 }

@@ -4,22 +4,12 @@ import {Avatar, Card, Layout} from 'antd';
 import {UserOutlined, SettingOutlined, CloseOutlined} from '@ant-design/icons';
 import {getAllAdmins} from "../../api/citiesApi";
 import classes from './City.module.css';
-
-interface MemberProps {
-    id: string;
-    user: {
-        firstName: string;
-        lastName: string;
-    }
-    adminType: {
-        adminTypeName: string;
-    }
-}
+import CityAdmin from './../../models/City/CityAdmin';
 
 const CityAdministration = () => {
     const {id} = useParams();
 
-    const [administration, setAdministration] = useState([]);
+    const [administration, setAdministration] = useState<CityAdmin[]>([]);
 
     const getAdministration = async () => {
         const response = await getAllAdmins(id);
@@ -34,7 +24,7 @@ const CityAdministration = () => {
         <Layout.Content>
             <h1 className={classes.mainTitle}>Діловоди станиці</h1>
             <div className={classes.wrapper}>
-                {administration.map((member: MemberProps) => (
+                {administration.map((member: CityAdmin) => (
                     <Card
                         key={member.id}
                         className={classes.detailsCard}

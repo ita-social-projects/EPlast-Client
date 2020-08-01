@@ -2,10 +2,10 @@ import CityMember from "./CityMember";
 import CityAdmin from './CityAdmin';
 import CityDocument from './CityDocument';
 
-export default class City {
+export default class CityProfile {
   id: number;
   name: string;
-  logo: string;
+  logo: string | null;
   description: string;
   cityURL: string;
   phoneNumber: string;

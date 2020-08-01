@@ -4,18 +4,12 @@ import {Avatar, Card, Layout} from 'antd';
 import {FileTextOutlined, SettingOutlined, CloseOutlined} from '@ant-design/icons';
 import {getAllDocuments} from "../../api/citiesApi";
 import classes from './City.module.css';
-
-interface DocumentProps {
-    id: string,
-    cityDocumentType: {
-        name: string;
-    }
-}
+import CityDocument from './../../models/City/CityDocument';
 
 const CityDocuments = () => {
     const {id} = useParams();
 
-    const [documents, setDocuments] = useState([]);
+    const [documents, setDocuments] = useState<CityDocument[]>([]);
 
     const getDocuments = async () => {
         const response = await getAllDocuments(id);
@@ -30,7 +24,7 @@ const CityDocuments = () => {
         <Layout.Content>
             <h1 className={classes.mainTitle}>Документи станиці</h1>
             <div className={classes.wrapper}>
-                {documents.map((document: DocumentProps) => (
+                {documents.map((document: CityDocument) => (
                     <Card
                         key={document.id}
                         className={classes.detailsCard}

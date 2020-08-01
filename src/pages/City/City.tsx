@@ -13,132 +13,21 @@ import moment from "moment";
 import { addFollower, getCityById, getLogo, toggleMemberStatus } from "../../api/citiesApi";
 import classes from "./City.module.css";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
-
-interface CityProps {
-  id: number;
-  name: string;
-  logo: string;
-  description: string;
-  cityURL: string;
-  phoneNumber: string;
-  email: string;
-  region: string;
-  street: string;
-  houseNumber: string;
-  officeNumber: string;
-  postIndex: string;
-  members: MemberProps[];
-  followers: MemberProps[];
-  administration: AdminProps[];
-  documents: DocumentProps[];
-  head: AdminProps;
-}
-
-interface AdminProps {
-  id: number;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  };
-  adminType: {
-    adminTypeName: string;
-  };
-  startDate: string;
-  endDate: string;
-}
-
-interface MemberProps {
-  id: number;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  };
-}
-
-interface DocumentProps {
-  id: number;
-  cityDocumentType: {
-    name: string;
-  };
-}
+import CityProfile from "../../models/City/CityProfile";
+import CityMember from '../../models/City/CityMember';
+import CityAdmin from '../../models/City/CityAdmin';
+import CityDocument from '../../models/City/CityDocument';
 
 const City = () => {
   const history = useHistory();
   const { id } = useParams();
 
   const [loading, setLoading] = useState(false);
-  const [city, setCity] = useState<CityProps>({
-    id: 0,
-    name: "",
-    logo: "",
-    description: "",
-    cityURL: "",
-    phoneNumber: "",
-    email: "",
-    region: "",
-    street: "",
-    houseNumber: "",
-    officeNumber: "",
-    postIndex: "",
-    members: [
-      {
-        id: 0,
-        user: {
-          id: "",
-          firstName: "",
-          lastName: "",
-        },
-      },
-    ],
-    followers: [
-      {
-        id: 0,
-        user: {
-          id: "",
-          firstName: "",
-          lastName: "",
-        },
-      },
-    ],
-    administration: [
-      {
-        id: 0,
-        user: {
-          id: "",
-          firstName: "",
-          lastName: "",
-        },
-        adminType: {
-          adminTypeName: "",
-        },
-        startDate: "1000-10-10",
-        endDate: "1000-10-10",
-      },
-    ],
-    documents: [
-      {
-        id: 0,
-        cityDocumentType: {
-          name: "",
-        },
-      },
-    ],
-    head: {
-      id: 0,
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-      },
-      adminType: {
-        adminTypeName: "",
-      },
-      startDate: "1000-10-10",
-      endDate: "1000-10-10",
-    },
-  });
+  const [city, setCity] = useState<CityProfile>(new CityProfile());
+  const [admins, setAdmins] = useState<CityAdmin[]>([]);
+  const [members, setMembers] = useState<CityMember[]>([]);
+  const [followers, setFollowers] = useState<CityMember[]>([]);
+  const [documents, setDocuments] = useState<CityDocument[]>([]);
   const [canEdit, setCanEdit] = useState(false);
   const [canJoin, setCanJoin] = useState(false);
   const [canApprove, setCanApprove] = useState(false);
@@ -148,18 +37,18 @@ const City = () => {
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
     
-    if (city.members.length < 6) {
-      city.members = [...city.members, member.data];
+    if (members.length < 6) {
+      setMembers([...city.members, member.data]);
     }
 
-    city.followers = city.followers.filter(f => f.id !== memberId);
+    setFollowers(followers.filter(f => f.id !== memberId));
   };
 
   const addMember = async (cityId: number) => {
     const follower = await addFollower(cityId);
 
-    if (city.followers.length < 6) {
-      city.followers = [...city.followers, follower.data];
+    if (followers.length < 6) {
+      setFollowers([...followers, follower.data]);
     }
 
     setCanJoin(!canJoin);
@@ -179,6 +68,10 @@ const City = () => {
       }
 
       setCity(response.data);
+      setAdmins(response.data.administration);
+      setMembers(response.data.members);
+      setFollowers(response.data.followers);
+      setDocuments(response.data.documents);
       setCanEdit(response.data.canEdit);
       setCanJoin(response.data.canJoin);
       setCanApprove(response.data.canApprove);
@@ -191,7 +84,7 @@ const City = () => {
 
   useEffect(() => {
     getCity();
-  }, [id, city]);
+  }, []);
 
   return loading ? (
     <Layout.Content className={classes.spiner}>
@@ -228,7 +121,7 @@ const City = () => {
               <Col flex="1" offset={1}>
                 <div className={classes.mainInfo}>
                   <img
-                    src={city.logo}
+                    src={city.logo || undefined}
                     alt="City"
                     style={{ width: "100%", height: "auto", maxWidth: "100%" }}
                   />
@@ -297,8 +190,8 @@ const City = () => {
                 marginTop: "20px",
               }}
             >
-              {city.members.length !== 0 ? (
-                city.members.map((member: MemberProps) => (
+              {members.length !== 0 ? (
+                members.map((member) => (
                   <Col className={classes.listItem} key={member.id} span={7}>
                     <div>
                       <Avatar
@@ -357,8 +250,8 @@ const City = () => {
                 maxHeight: "70%",
               }}
             >
-              {city.administration.length !== 0 ? (
-                city.administration.map((member: MemberProps) => (
+              {admins.length !== 0 ? (
+                admins.map((member) => (
                   <Col className={classes.listItem} key={member.id} span={7}>
                     <div>
                       <Avatar
@@ -414,8 +307,8 @@ const City = () => {
                   maxHeight: "70%",
                 }}
               >
-                {city.documents.length !== 0 ? (
-                  city.documents.map((document: DocumentProps) => (
+                {documents.length !== 0 ? (
+                  documents.map((document) => (
                     <Col
                       className={classes.listItem}
                       key={document.id}
@@ -493,8 +386,8 @@ const City = () => {
                   </div>
                 </Col>
               ) : null}
-              {city.followers.length !== 0 ? (
-                city.followers.map((member: MemberProps) => (
+              {followers.length !== 0 ? (
+                followers.map((member) => (
                   <Col className={classes.listItem} key={member.id} span={7}>
                     <div>
                       <Avatar
@@ -516,7 +409,10 @@ const City = () => {
                   </Col>
                 ))
               ) : (
+                <>
+                  <br />
                   <h2>Ще немає прихильників станиці</h2>
+                </>
               )}
             </Row>
             <div className={classes.bottomButton}>

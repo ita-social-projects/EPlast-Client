@@ -4,21 +4,12 @@ import {Avatar, Card, Layout} from 'antd';
 import {UserOutlined, CloseOutlined, PlusOutlined} from '@ant-design/icons';
 import {getAllFollowers, removeFollower, toggleMemberStatus} from "../../api/citiesApi";
 import classes from './City.module.css';
-
-interface MemberProps {
-    id: number;
-    user: {
-        firstName: string;
-        lastName: string;
-    }
-}
+import CityMember from './../../models/City/CityMember';
 
 const CityFollowers = () => {
     const {id} = useParams();
 
-    const [followers, setFollowers] = useState<MemberProps[]>([
-        { id: 0, user: { firstName: "", lastName: "" } },
-      ]);
+    const [followers, setFollowers] = useState<CityMember[]>([]);
 
     const getFollowers = async () => {
         const response = await getAllFollowers(id);
@@ -43,7 +34,7 @@ const CityFollowers = () => {
         <Layout.Content>
             <h1 className={classes.mainTitle}>Прихильники станиці</h1>
             <div className={classes.wrapper}>
-                {followers.map((follower: MemberProps) => (
+                {followers.map((follower: CityMember) => (
                     <Card
                         key={follower.id}
                         className={classes.detailsCard}
