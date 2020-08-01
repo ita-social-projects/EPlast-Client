@@ -34,7 +34,6 @@ export type DecisionOnCreateData = {
 }
 export type DecisionWrapper = {
   decision: DecisionPost;
-  decisionTargets:  decisionTarget[] | null;
   fileAsBase64: string | null;
 }
 export type DecisionPost  ={
@@ -47,6 +46,17 @@ export type DecisionPost  ={
   date: string;
   fileName: string | null;
 };
+ export const statusTypePostParser = (statusType: decisionStatusType): number =>{
+  if(statusType.value === "InReview") return 0;
+  if (statusType.value === "Confirmed") return 1;
+  return 2;
+  };
+  export const statusTypeGetParser = (statusType: number): string =>{
+    if(statusType === 0) return "У розгляді";
+    if (statusType === 1) return "Підтверджено";
+    if (statusType === 2) return "Скасовано";
+    return "Не визначено";
+    };
 const dataURLtoFile = (dataurl : string, filename: string)=>{
   const arr = dataurl.split(',');
   const mime = arr[0].match(/:(.*?);/)![1];
@@ -98,6 +108,13 @@ return new File([u8arr], filename, {type:mime});
     });
     return response;
   };
+  const postForCheckFile = async (data : any) => {
+    const response = await Api.post("Decisions/CheckFile",data)
+    .catch(error => {
+        notificationLogic('error', error.response.data.value);
+    });
+    return response;
+  };
 const getFileAsBase64 = async (fileName: string) =>{
   const response = await (await Api.get(`Decisions/downloadfile/${fileName}`)).data;
   const file = dataURLtoFile(response, fileName);
@@ -132,4 +149,4 @@ const getFileAsBase64 = async (fileName: string) =>{
   };
     
 
-export default {getById, getAll, getOnCreate,getPdf,getFileAsBase64, post, put, remove};
+export default {getById, getAll, getOnCreate,getPdf,getFileAsBase64, post,postForCheckFile, put, remove};
