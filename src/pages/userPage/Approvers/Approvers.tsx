@@ -6,7 +6,7 @@ import AvatarAndProgress from '../../../../src/pages/userPage/personalData/Avata
 import AddUser from "../../../assets/images/user_add.png";
 import { ApproversData } from '../Interface/Interface';
 import jwt from 'jwt-decode';
-import AuthStore from '../../../stores/Auth';
+import AuthStore from '../../../stores/AuthStore';
 import userApi from '../../../api/UserApi';
 import { Link } from 'react-router-dom';
 import moment from 'moment';

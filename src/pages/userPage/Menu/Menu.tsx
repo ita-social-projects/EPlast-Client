@@ -3,7 +3,7 @@ import { Menu } from 'antd';
 import styles from './Menu.module.css';
 import { useHistory } from 'react-router-dom';
 import jwt from 'jwt-decode';
-import AuthStore from '../../../stores/Auth';
+import AuthStore from '../../../stores/AuthStore';
 
 type CustomMenuProps={
   id:string;

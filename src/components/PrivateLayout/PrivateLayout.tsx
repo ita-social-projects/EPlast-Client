@@ -9,7 +9,7 @@ import {
 } from "@ant-design/icons";
 import classes from "./PrivateLayout.module.css";
 import jwt from 'jwt-decode';
-import AuthStore from '../../stores/Auth';
+import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
 
 const { Content, Sider } = Layout;
