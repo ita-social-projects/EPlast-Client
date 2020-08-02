@@ -26,6 +26,12 @@ export const updateCity = async (id: number, data: any) => {
   });
 };
 
+export const removeCity = async (id: number) => {
+  return api.remove(`Cities/RemoveCity/${id}`, id).catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export const getLogo = async (logoName: string) => {
   return api.get("Cities/LogoBase64", { logoName }).catch((error) => {
     throw new Error(error);
@@ -76,6 +82,18 @@ export const removeFollower = async (followerId: number) => {
 
 export const addAdministrator = async (cityId: number, data: any) => {
   return api.post(`Cities/AddAdmin/${cityId}`, data).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+export const removeAdministrator = async (adminId: number) => {
+  return api.remove(`Cities/RemoveAdmin/${adminId}`, adminId).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+export const editAdministrator = async (adminId: number, data: any) => {
+  return api.put(`Cities/EditAdmin/${adminId}`, data).catch((error) => {
     throw new Error(error);
   });
 }

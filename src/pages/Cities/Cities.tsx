@@ -34,7 +34,8 @@ const Cities = () => {
       }
       
       setCities(response.data.cities);
-      setCanCreate(response.data.canCreate);
+      // setCanCreate(response.data.canCreate);
+      setCanCreate(true);
       setTotal(response.data.total);
     }
     finally {
@@ -59,7 +60,7 @@ const Cities = () => {
     <Layout.Content>
       <h1 className={classes.mainTitle}>Станиці</h1>
       <div className={classes.wrapper}>
-        {!loading && canCreate ? (
+        {!loading && canCreate && page === 1 ? (
           <Card
             hoverable
             className={`${classes.addCity} ${classes.cardStyles}`}

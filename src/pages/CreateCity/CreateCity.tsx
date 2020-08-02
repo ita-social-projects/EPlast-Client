@@ -51,6 +51,9 @@ const CreateCity = () => {
   const [servLoading, setServLoading] = useState(false);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
   const [regions, setRegions] = useState<RegionProfile[]>([]);
+  const [admins, setAdmins] = useState<CityAdmin[]>([]);
+  const [members, setMembers] = useState<CityMember[]>([]);
+  const [followers, setFollowers] = useState<CityMember[]>([]);
 
   function onSearch(val: any) {
   }
@@ -69,6 +72,9 @@ const CreateCity = () => {
       }
 
       setCity(response.data);
+      setAdmins(response.data.administration);
+      setMembers(response.data.members);
+      setFollowers(response.data.followers);
     } finally {
       setServLoading(false);
     }
@@ -86,8 +92,8 @@ const CreateCity = () => {
   }
 
   const getTableAdmins = (city: CityProfile) => {
-    if (city.administration.length > 0 || city.head != null) {
-      return [...city.administration, city.head].map((member: CityAdmin) => ({
+    if (admins.length > 0 || city.head != null) {
+      return [...admins, city.head].map((member: CityAdmin) => ({
         key: member.id,
         name: `${member.user.firstName} ${member.user.lastName}`,
         status: member.adminType ? "Адміністратор" : "",
@@ -104,8 +110,8 @@ const CreateCity = () => {
   };
 
   const getTableMembers = (city: CityProfile) => {
-    const arr = city.members.filter((member: CityMember) => {
-      return ![...city.administration, city.head].find((admin: CityAdmin) => {
+    const arr = members.filter((member: CityMember) => {
+      return ![...admins, city.head].find((admin: CityAdmin) => {
         return admin?.user.id === member.user.id;
       });
     });
@@ -118,7 +124,7 @@ const CreateCity = () => {
   };
 
   const getTableFollowers = (city: CityProfile) => {
-    return city.followers.map((member: CityMember) => ({
+    return followers.map((member: CityMember) => ({
       key: member.id,
       name: `${member.user.firstName} ${member.user.lastName}`,
       status: "Прихильник станиці",
@@ -400,7 +406,7 @@ const CreateCity = () => {
                     showSearch
                     optionFilterProp="children"
                     onSearch={onSearch}
-                    onChange={(event) => setCity({ ...city, ["region"]: event as string })} // look here if can change
+                    onChange={(event) => setCity({ ...city, ["region"]: event as string })}
                     className={classes.selectField}
                   >
                     {regions.map((item: RegionProfile) => (

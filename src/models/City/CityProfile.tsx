@@ -16,10 +16,6 @@ export default class CityProfile {
   officeNumber: string;
   postIndex: string;
   head: CityAdmin;
-  administration: CityAdmin[];
-  members: CityMember[];
-  followers: CityMember[];
-  documents: CityDocument[];
 
   constructor() {
     this.id = 0;
@@ -35,9 +31,5 @@ export default class CityProfile {
     this.officeNumber = "";
     this.postIndex = "";
     this.head = new CityAdmin();
-    this.administration = [];
-    this.members = [];
-    this.followers = [];
-    this.documents = [];
   }
 }

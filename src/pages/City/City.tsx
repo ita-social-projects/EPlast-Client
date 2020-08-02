@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Avatar, Row, Col, Button, Spin, Layout } from "antd";
-import {
-  UserOutlined,
-  FileTextOutlined,
-  EditOutlined,
-  PlusSquareFilled,
-  UserAddOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, CloseOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getCityById, getLogo, toggleMemberStatus } from "../../api/citiesApi";
+import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../api/citiesApi";
 import classes from "./City.module.css";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import CityProfile from "../../models/City/CityProfile";
@@ -20,7 +13,7 @@ import CityDocument from '../../models/City/CityDocument';
 
 const City = () => {
   const history = useHistory();
-  const { id } = useParams();
+  const {id} = useParams();
 
   const [loading, setLoading] = useState(false);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
@@ -38,7 +31,7 @@ const City = () => {
     const member = await toggleMemberStatus(memberId);
     
     if (members.length < 6) {
-      setMembers([...city.members, member.data]);
+      setMembers([...members, member.data]);
     }
 
     setFollowers(followers.filter(f => f.id !== memberId));
@@ -53,6 +46,12 @@ const City = () => {
 
     setCanJoin(!canJoin);
   };
+
+  const deleteCity = async () => {
+    history.push('/cities');
+
+    await removeCity(+id);
+  }
 
   const getCity = async () => {
     setLoading(true);
@@ -108,9 +107,15 @@ const City = () => {
           <section className={classes.list}>
             {canEdit ? (
               <EditOutlined
-                className={classes.listIcon}
+                className={classes.editIcon}
                 onClick={() => history.push(`/cities/edit/${city.id}`)}
               />
+            ) : null}
+            {canEdit ? (
+              <CloseOutlined
+                className={classes.removeIcon}
+                onClick={() => deleteCity()}
+            />
             ) : null}
             <h1 className={classes.title}>{`Станиця ${city.name}`}</h1>
             <Row
@@ -409,10 +414,7 @@ const City = () => {
                   </Col>
                 ))
               ) : (
-                <>
-                  <br />
                   <h2>Ще немає прихильників станиці</h2>
-                </>
               )}
             </Row>
             <div className={classes.bottomButton}>
