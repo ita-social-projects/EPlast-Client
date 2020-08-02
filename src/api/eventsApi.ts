@@ -55,6 +55,11 @@ const rejectParticipant = async (id: number) => {
     return response;
 };
 
+const uploadPictures = async (id: number, data: any) => {
+    const response = await Api.post(`Events/${id}/eventGallery`, data);
+    return response;
+};
+
 export default {
     getTypes,
     getCategories,
@@ -66,5 +71,6 @@ export default {
     removeParticipant,
     approveParticipant,
     underReviewParticipant,
-    rejectParticipant
+    rejectParticipant,
+    uploadPictures
 };

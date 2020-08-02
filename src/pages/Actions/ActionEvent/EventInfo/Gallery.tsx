@@ -7,6 +7,7 @@ import EventPict3 from "../../../../assets/images/EventGallary(3).jpg";
 import eventsApi from "../../../../api/eventsApi";
 import spinClasses from "../EventUser/EventUser.module.css";
 import {UserOutlined} from "@ant-design/icons";
+import Demo from "./FormAddPictures";
 
 const classes = require("./EventInfo.module.css");
 
@@ -50,6 +51,8 @@ const Gallery = ({eventId}: Props) => {
     // @ts-ignore
     const [pictures, setPictures] = useState<EventGallery[]>([])
 
+    const addPictures = (uploadedPictures: EventGallery[]) => setPictures(pictures.concat(uploadedPictures))
+
     useEffect(() => {
         const fetchData = async () => {
             const response = await eventsApi.getPictures(eventId);
@@ -62,6 +65,7 @@ const Gallery = ({eventId}: Props) => {
         <div>
             <h1 className={classes.mainTitle}>Галерея</h1>
             {FillGallery(pictures)}
+            <Demo eventId={eventId} updateGallery={addPictures} picturesCount={pictures.length}/>
         </div>
     );
 };
