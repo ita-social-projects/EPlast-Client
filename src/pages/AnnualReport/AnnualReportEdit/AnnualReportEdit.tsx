@@ -2,66 +2,52 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import { AxiosError } from 'axios'
-import { Form, Button, Modal } from 'antd';
-import styles from './AnnualReportCreate.module.css';
+import { Form, Button, Modal, Input } from 'antd';
+import styles from './AnnualReportEdit.module.css';
 import AnnualReportForm from '../AnnualReportForm/AnnualReportForm';
 import AnnualReportApi from '../../../api/AnnualReportApi';
+import AnnualReport from '../Interfaces/AnnualReport';
 import User from '../Interfaces/User';
-import City from '../Interfaces/City';
 
-export const AnnualReportCreate = () => {
-    const { cityId } = useParams();
+const AnnualReportEdit = () => {
+    const { id } = useParams();
     const history = useHistory();
     const [title, setTitle] = useState<string>('Річний звіт станиці');
-    const [id, setId] = useState<number>();
     const [cityMembers, setCityMembers] = useState<any>();
     const [cityLegalStatuses, setCityLegalStatuses] = useState<any>();
+    const [annualReport, setAnnualReport] = useState<AnnualReport>()
     const [form] = Form.useForm();
 
+    let cityId: number;
+
     useEffect(() => {
-        if (cityId === undefined)
-        {
-            AnnualReportApi.getCities()
-                .then(response => {
-                    let cities = response.data.cities as City[];
-                    setId(cities[0].id)
-                    checkCreated(cities[0].id);
-                })
-                .catch((error: AxiosError) => {
-                    showError(error.response?.data.message);
-                });
-        }
-        else {
-            setId(cityId);
-            checkCreated(cityId);
-        }
+        fetchData();
     }, [])
 
-    const checkCreated = async (id: number) => {
-        await AnnualReportApi.checkCreated(id)
-            .then(response => {
-                if (response.data.hasCreated === false) {
-                    fetchData(id);
-                }
-                else {
-                    showError(response.data.message);
-                }
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            });
-    }
-
-    const fetchData = async (id: number) => {
-        await fetchCityInfo(id);
+    const fetchData = async () => {
+        await fetchAnnualReport();
+        await fetchCityInfo();
         await fetchLegalStatuses();
     }
 
-    const fetchCityInfo = async (id: number) => {
-        await AnnualReportApi.getCityInfo(id)
+    const fetchAnnualReport = async () => {
+        await AnnualReportApi.getById(id)
+            .then(response => {
+                response.data.annualreport.city = null;
+                cityId = response.data.annualreport.cityId;
+                setAnnualReport(response.data.annualreport);
+                form.setFieldsValue(response.data.annualreport);
+            })
+            .catch((error: AxiosError) => {
+                showError(error.response?.data.message);
+            })
+    }
+
+    const fetchCityInfo = async () => {
+        await AnnualReportApi.getCityInfo(cityId)
             .then(response => {
                 let cityName = response.data.name;
-                setTitle(title.concat(' ', cityName));
+                setTitle(title.concat(' ', cityName))
                 setMembers(response.data.members);
             })
             .catch((error: AxiosError) => {
@@ -94,21 +80,25 @@ export const AnnualReportCreate = () => {
     }
 
     const handleFinish = async (obj: any) => {
-        obj.cityId = id;
-        await AnnualReportApi.create(obj)
-            .then((response) => {
+        let membersStatistic = Object.assign(annualReport?.membersStatistic, obj.membersStatistic);
+        let cityManagement = Object.assign(annualReport?.cityManagement, obj.cityManagement);
+        let annualReportEdited: AnnualReport = Object.assign(annualReport, obj);
+        annualReportEdited.membersStatistic = membersStatistic;
+        annualReportEdited.cityManagement = cityManagement;
+        await AnnualReportApi.edit(annualReportEdited)
+            .then(response => {
                 form.resetFields();
                 showSuccess(response.data.message);
             })
             .catch((error: AxiosError) => {
                 showError(error.response?.data.message);
-            })
+            });
     }
 
     const showSuccess = (message: string) => {
         Modal.success({
             content: message,
-            onOk: () => { history.push('/userpage/main'); }
+            onOk: () => { history.goBack(); }
         });
     }
 
@@ -116,7 +106,7 @@ export const AnnualReportCreate = () => {
         Modal.error({
             title: 'Помилка!',
             content: message,
-            onOk: () => { history.push('/userpage/main'); }
+            onOk: () => { history.goBack(); }
         });
     }
 
@@ -132,10 +122,10 @@ export const AnnualReportCreate = () => {
             <Button
                 type='primary'
                 htmlType='submit'>
-                Подати річний звіт
+                Редагувати
             </Button>
         </Form>
     );
 }
 
-export default AnnualReportCreate;
+export default AnnualReportEdit;

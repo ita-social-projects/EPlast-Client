@@ -78,8 +78,8 @@ const PrivateLayout = ({ children }: any) => {
           </SubMenu>
           <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Документи">
             <SubMenu key="sub2.1" title="Звіти">
-              <Menu.Item onClick={() => history.push('/annualreport/create/5')} key="9">Подати річний звіт станиці</Menu.Item>
-              <Menu.Item key="10">Річні звіти</Menu.Item>
+              <Menu.Item onClick={() => history.push('/annualreport/create')} key="9">Подати річний звіт станиці</Menu.Item>
+              <Menu.Item onClick={() => history.push('/annualreport/table')} key="10">Річні звіти</Menu.Item>
               <Menu.Item key="11">Статистичні звіти</Menu.Item>
             </SubMenu>
             <SubMenu
