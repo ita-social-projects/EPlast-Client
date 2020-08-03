@@ -88,12 +88,8 @@ const CityMembers = () => {
     admin.adminType.adminTypeName = event.target.value;
   }
 
-  function disabledDate(current: any) {
-    return current && current < moment().startOf("day");
-  }
-
   function disabledEndDate(current: any) {
-    return current < date;
+    return current && current < date;
   }
 
   const dateFormat = "DD.MM.YYYY";
@@ -174,7 +170,6 @@ const CityMembers = () => {
           <Row>
             <Col span={11}>
               <DatePicker
-                disabledDate={disabledDate}
                 placeholder="Початок адміністрування"
                 format={dateFormat}
                 className={classes.select}
