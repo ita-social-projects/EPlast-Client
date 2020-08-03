@@ -14,7 +14,7 @@ const CityFollowers = () => {
 
     const getFollowers = async () => {
         const response = await getAllFollowers(id);
-        setFollowers(response.data.followers);
+        setFollowers(response.data);
     };
 
     const addMember = async (followerId: number) => {

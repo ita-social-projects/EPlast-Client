@@ -14,7 +14,7 @@ const CityDocuments = () => {
 
     const getDocuments = async () => {
         const response = await getAllDocuments(id);
-        setDocuments(response.data.documents);
+        setDocuments(response.data);
     };
 
     useEffect(() => {

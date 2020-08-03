@@ -24,8 +24,7 @@ const City = () => {
   const [canEdit, setCanEdit] = useState(false);
   const [canJoin, setCanJoin] = useState(false);
   const [canApprove, setCanApprove] = useState(false);
-  const [canSeeReports, setCanSeeReports] = useState(false);
-  const [canAddReports, setCanAddReports] = useState(true);
+  const [canAddReports, setCanAddReports] = useState(false);
 
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
@@ -74,7 +73,6 @@ const City = () => {
       setCanEdit(response.data.canEdit);
       setCanJoin(response.data.canJoin);
       setCanApprove(response.data.canApprove);
-      setCanSeeReports(response.data.canSeeReports);
       setCanAddReports(response.data.canAddReports);
     } finally {
       setLoading(false);
@@ -115,7 +113,7 @@ const City = () => {
               <CloseOutlined
                 className={classes.removeIcon}
                 onClick={() => deleteCity()}
-            />
+              />
             ) : null}
             <h1 className={classes.title}>{`Станиця ${city.name}`}</h1>
             <Row
@@ -289,68 +287,62 @@ const City = () => {
           </section>
         </Col>
 
-        {canSeeReports ? (
-          <Col
-            flex="0 1 30%"
-            style={{
-              minHeight: "180px",
-              marginLeft: "1.5%",
-              marginRight: "1.5%",
-            }}
-          >
-            <section className={classes.list}>
-              <h1 className={classes.title}>Документообіг станиці</h1>
-              <Row
-                justify="space-around"
-                gutter={[0, 16]}
-                style={{
-                  paddingRight: "5px",
-                  paddingLeft: "5px",
-                  paddingTop: "20px",
-                  paddingBottom: "20px",
-                  overflow: "hidden",
-                  maxHeight: "70%",
-                }}
+        <Col
+          flex="0 1 30%"
+          style={{
+            minHeight: "180px",
+            marginLeft: "1.5%",
+            marginRight: "1.5%",
+          }}
+        >
+          <section className={classes.list}>
+            <h1 className={classes.title}>Документообіг станиці</h1>
+            <Row
+              justify="space-around"
+              gutter={[0, 16]}
+              style={{
+                paddingRight: "5px",
+                paddingLeft: "5px",
+                paddingTop: "20px",
+                paddingBottom: "20px",
+                overflow: "hidden",
+                maxHeight: "70%",
+              }}
+            >
+              {documents.length !== 0 ? (
+                documents.map((document) => (
+                  <Col className={classes.listItem} key={document.id} span={7}>
+                    <div>
+                      <FileTextOutlined
+                        style={{ fontSize: "60px" }}
+                        className={classes.profileImg}
+                      />
+                      <p className={classes.documentText}>
+                        {document.cityDocumentType.name}
+                      </p>
+                    </div>
+                  </Col>
+                ))
+              ) : (
+                <h2>Ще немає документів станиці</h2>
+              )}
+            </Row>
+            <div className={classes.bottomButton}>
+              <Button
+                type="primary"
+                className={classes.listButton}
+                onClick={() => history.push(`/cities/documents/${city.id}`)}
               >
-                {documents.length !== 0 ? (
-                  documents.map((document) => (
-                    <Col
-                      className={classes.listItem}
-                      key={document.id}
-                      span={7}
-                    >
-                      <div>
-                        <FileTextOutlined
-                          style={{ fontSize: "60px" }}
-                          className={classes.profileImg}
-                        />
-                        <p className={classes.documentText}>
-                          {document.cityDocumentType.name}
-                        </p>
-                      </div>
-                    </Col>
-                  ))
-                ) : (
-                  <h2>Ще немає документів станиці</h2>
-                )}
-              </Row>
-              <div className={classes.bottomButton}>
-                <Button
-                  type="primary"
-                  className={classes.listButton}
-                  onClick={() => history.push(`/cities/documents/${city.id}`)}
-                >
-                  Деталі
-                </Button>
-                {canAddReports ? (
-                  <div className={classes.flexContainer}>
-                    <PlusSquareFilled className={classes.addReportIcon} />
-                  </div>
-                ) : null}
-              </div>
-            </section>
-          </Col>
-        ) : null}
+                Деталі
+              </Button>
+              {canAddReports ? (
+                <div className={classes.flexContainer}>
+                  <PlusSquareFilled className={classes.addReportIcon} />
+                </div>
+              ) : null}
+            </div>
+          </section>
+        </Col>
 
         <Col
           flex="0 1 30%"
@@ -413,10 +405,11 @@ const City = () => {
                     </div>
                   </Col>
                 ))
-              ) : (
-                  <h2>Ще немає прихильників станиці</h2>
+              ) : canJoin ? null : (
+                <h2>Ще немає прихильників станиці</h2>
               )}
             </Row>
+
             <div className={classes.bottomButton}>
               <Button
                 type="primary"

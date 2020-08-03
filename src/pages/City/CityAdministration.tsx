@@ -19,7 +19,6 @@ const CityAdministration = () => {
     const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
     const [date, setDate] = useState<any>();
 
-
     const getAdministration = async () => {
         const response = await getAllAdmins(id);
         setAdministration(response.data.administration);

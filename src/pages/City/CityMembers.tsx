@@ -24,7 +24,7 @@ const CityMembers = () => {
 
   const getMembers = async () => {
     const responseMembers = await getAllMembers(id);
-    setMembers(responseMembers.data.members);
+    setMembers(responseMembers.data);
 
     const responseAdmins = await getAllAdmins(id);
     setAdmins(responseAdmins.data.administration);
