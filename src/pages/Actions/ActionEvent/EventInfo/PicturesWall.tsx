@@ -44,11 +44,11 @@ const PicturesWall = ({pictures, removePicture}: Props) => {
     }
 
     return (
-        <Row justify="center">
+        <Row justify="center" style={{marginBottom:'15px'}}>
             <Col span={16} style={{maxHeight: '400px', overflow: 'auto'}}>
                 <Row justify="center" gutter={[16, 8]}>
                     {
-                        pictures.map(picture => <Col xs={24} md={12} lg={6}>
+                        pictures.map(picture => <Col xs={24} md={12} lg={6} key={picture.galleryId}>
                             <Card
                                 hoverable
                                 cover={<img style={{height: '130px'}} alt="example"

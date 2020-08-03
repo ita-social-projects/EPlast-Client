@@ -27,19 +27,19 @@ const formItemLayout = {
 };
 
 const normFile = (e: any) => {
-    // console.log('Upload event:', e);
     if (Array.isArray(e)) {
         return e;
     }
     return e && e.fileList;
 };
 
-const handleUpload = async (info: any) => {
-    // await eventsApi.uploadPictures(4, data);
-}
+const dummyRequest = ({ file, onSuccess }:any) => {
+    setTimeout(() => {
+        onSuccess("ok");
+    }, 0);
+};
 
-
-const Demo = ({eventId, updateGallery, picturesCount}: Props) => {
+const FormAddPictures = ({eventId, updateGallery, picturesCount}: Props) => {
     const [form] = Form.useForm();
     const MaxPicturesCount: number = 15;
     const addPictures = async (eventId: number, data: FormData) => {
@@ -99,8 +99,15 @@ const Demo = ({eventId, updateGallery, picturesCount}: Props) => {
                 label="Завантажити"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
+                style={{maxHeight: '400px', overflow: 'auto'}}
             >
-                <Upload name="gallery" listType="picture" multiple={true} accept=".jpg,.jpeg,.png">
+                <Upload
+                    name="gallery"
+                    listType="picture"
+                    multiple={true}
+                    accept=".jpg,.jpeg,.png"
+                    customRequest={dummyRequest}
+                >
                     <Button>
                         <UploadOutlined/> Додати фотографії
                     </Button>
@@ -116,4 +123,4 @@ const Demo = ({eventId, updateGallery, picturesCount}: Props) => {
     );
 };
 
-export default Demo;
+export default FormAddPictures;

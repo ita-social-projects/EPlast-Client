@@ -1,16 +1,13 @@
 import React, {useEffect, useState} from "react";
-import {Carousel, Space, Spin, Avatar, Pagination, Alert, Empty} from "antd";
+import {Carousel, Spin, Avatar, Typography , Alert, Empty} from "antd";
 import {EventGallery} from "./EventInfo";
-import EventPict1 from "../../../../assets/images/EventGallary(1).jpg";
-import EventPict2 from "../../../../assets/images/EventGallary(2).jpg";
-import EventPict3 from "../../../../assets/images/EventGallary(3).jpg";
 import eventsApi from "../../../../api/eventsApi";
-import spinClasses from "../EventUser/EventUser.module.css";
-import {UserOutlined} from "@ant-design/icons";
-import Demo from "./FormAddPictures";
+import FormAddPictures from "./FormAddPictures";
 import PicturesWall from "./PicturesWall";
 
 const classes = require("./EventInfo.module.css");
+
+const { Title } = Typography;
 
 interface Props {
     eventId: number;
@@ -19,7 +16,7 @@ interface Props {
 
 const GallerySpinner = () => (
     <div>
-        <h1 className={classes.mainTitle}>Галерея</h1>
+        <Title level={2} style={{color:'#3c5438'}}>Галерея</Title>
         <Carousel autoplay={false} className={classes.homeSlider}
         >
             <Spin tip="Завантаження...">
@@ -37,8 +34,6 @@ const FillGallery = (pictures: EventGallery[]) => {
         return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='Галерея події порожня'/>
     }
     return (<Carousel autoplay={false} className={classes.homeSlider}
-                      afterChange={currentSlide => console.log(currentSlide)}
-                      beforeChange={(from, to) => console.log(`From:${from},To:${to}`)}
     >
         {
             pictures.map(picture => {
@@ -58,9 +53,9 @@ const Gallery = ({eventId, isUserEventAdmin}: Props) => {
     const GalleryAdministration = (): React.ReactNode[] => {
         if (isUserEventAdmin) {
             return [
-                <h1 className={classes.mainTitle}>Адміністрування галереї</h1>,
-                <Demo eventId={eventId} updateGallery={addPictures} picturesCount={pictures.length}/>,
-                <PicturesWall pictures={pictures} removePicture={removePicture}/>
+                <Title level={2} style={{color:'#3c5438'}} key='spinnerTitle'>Адміністрування галереї</Title>,
+                <FormAddPictures eventId={eventId} updateGallery={addPictures} picturesCount={pictures.length} key='addPictures'/>,
+                <PicturesWall pictures={pictures} removePicture={removePicture}  key='removePictures'/>
             ];
         } else return [];
     }
@@ -75,7 +70,7 @@ const Gallery = ({eventId, isUserEventAdmin}: Props) => {
     }, []);
     return loading === false ? GallerySpinner() : (
         <div>
-            <h1 className={classes.mainTitle}>Галерея</h1>
+            <Title level={2} style={{color:'#3c5438'}} >Галерея</Title>
             {FillGallery(pictures)}
             {GalleryAdministration()}
         </div>

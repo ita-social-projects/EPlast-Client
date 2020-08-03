@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Input, Row, Space, Spin} from "antd";
+import {Input, Row, Space, Spin, Typography} from "antd";
 import {useParams} from "react-router-dom";
 // eslint-disable-next-line import/no-cycle
 import SortedEventInfo from './SortedEventInfo';
@@ -11,6 +11,8 @@ import ParticipantsTable from "./ParticipantsTable";
 import spinClasses from "../EventUser/EventUser.module.css";
 
 const classes = require('./EventInfo.module.css');
+
+const {Title}=Typography;
 
 export interface EventDetails {
     event: EventInformation;
@@ -133,6 +135,7 @@ const EventInfo = () => {
                 <Gallery key={event.event?.eventLocation} eventId={event.event?.eventId}
                          isUserEventAdmin={event.isUserEventAdmin}/>
                 <div key={'2'}>
+                    <Title level={2} style={{color:'#3c5438'}}>Таблиця користувачів</Title>,
                     <Row>
                         <Input.Search
                             style={{width: "400px", margin: "0 0 10px 0"}}

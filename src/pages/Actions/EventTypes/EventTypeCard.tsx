@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card } from 'antd';
+import EvenTypeLogo from '../../../assets/images/ActionLogo.png'
 
 import { useHistory } from "react-router-dom";
 
@@ -28,7 +29,7 @@ const EventTypeCard = ({
                 key={id}
                 hoverable
                 className={classes.cardStyles}
-                cover={<img alt="example" src="https://eplast.azurewebsites.net/images/Events/ActionLogo.png" />}
+                cover={<img alt="example" src={EvenTypeLogo}/>}
                 onClick={()=> history.push(`/events/${id}/categories`)}
             >
                 <Meta title={eventTypeName} className={classes.titleText}/>

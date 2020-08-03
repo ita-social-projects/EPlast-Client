@@ -1,6 +1,7 @@
 import React from 'react';
 import {useHistory} from "react-router-dom";
 import {Card, Tooltip} from 'antd';
+import EventLogo from '../../../../assets/images/handshake.png'
 
 import {
     EditTwoTone,
@@ -129,7 +130,7 @@ const EventCard = ({
                         <img
                             onClick={() => history.push(`/events/${eventId}/details`)}
                             alt="example"
-                            src="https://www.nicepng.com/png/detail/75-750003_handshake-comments-shaking-hands-icon.png"
+                            src={EventLogo}
                         />
                     }
                     actions={
