@@ -1,55 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { Button, Form, Input, Layout, Upload, notification, Row, Col, Spin, Table } from "antd";
+import { Button, Form, Input, Layout, Upload, notification, Row, Col, Spin, Table, Select } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons/lib";
 import ReactInputMask from "react-input-mask";
 import moment from "moment";
 import { RcFile } from "antd/lib/upload/interface";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import { createCity, getCityById, getLogo, updateCity } from "../../api/citiesApi";
+import { GetAllRegions } from './../../api/regionsApi';
 import classes from "./CreateCity.module.css";
-
-interface CityProps {
-  id: number;
-  name: string;
-  logo: string | null;
-  description: string;
-  cityURL: string;
-  phoneNumber: string;
-  email: string;
-  region: string;
-  street: string;
-  houseNumber: string;
-  officeNumber: string;
-  postIndex: string;
-  members: MemberProps[];
-  followers: MemberProps[];
-  administration: AdminProps[];
-  head: AdminProps;
-}
-
-interface MemberProps {
-  id: number;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  };
-}
-
-interface AdminProps {
-  id: number;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  };
-  adminType: {
-    adminTypeName: string;
-  };
-  startDate: string;
-  endDate: string;
-}
+import CityProfile from './../../models/City/CityProfile';
+import CityAdmin from './../../models/City/CityAdmin';
+import CityMember from './../../models/City/CityMember';
+import RegionProfile from './../../models/Region/RegionProfile';
 
 const dummyRequest = ({ onSuccess }: any) => {
   setTimeout(() => {
@@ -82,78 +45,25 @@ const beforeUpload = (file: RcFile) => {
 };
 
 const CreateCity = () => {
-  const { id } = useParams();
+  const {id} = useParams();
   const history = useHistory();
 
   const [servLoading, setServLoading] = useState(false);
-  const [city, setCity] = useState<CityProps>({
-    id: 0,
-    name: "",
-    logo: "",
-    description: "",
-    cityURL: "",
-    phoneNumber: "",
-    email: "",
-    region: "",
-    street: "",
-    houseNumber: "",
-    officeNumber: "",
-    postIndex: "",
-    members: [
-      {
-        id: 0,
-        user: {
-          id: "",
-          firstName: "",
-          lastName: "",
-        },
-      },
-    ],
-    followers: [
-      {
-        id: 0,
-        user: {
-          id: "",
-          firstName: "",
-          lastName: "",
-        },
-      },
-    ],
-    administration: [
-      {
-        id: 0,
-        user: {
-          id: "",
-          firstName: "",
-          lastName: "",
-        },
-        adminType: {
-          adminTypeName: "",
-        },
-        startDate: "1000-10-10",
-        endDate: "1000-10-10",
-      },
-    ],
-    head: {
-      id: 0,
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-      },
-      adminType: {
-        adminTypeName: "",
-      },
-      startDate: "1000-10-10",
-      endDate: "1000-10-10",
-    },
-  });
+  const [city, setCity] = useState<CityProfile>(new CityProfile());
+  const [regions, setRegions] = useState<RegionProfile[]>([]);
+  const [admins, setAdmins] = useState<CityAdmin[]>([]);
+  const [members, setMembers] = useState<CityMember[]>([]);
+  const [followers, setFollowers] = useState<CityMember[]>([]);
+
+  function onSearch(val: any) {
+  }
 
   const getCity = async () => {
     setServLoading(true);
+    
     try {
       const response = await getCityById(+id);
-
+      
       if (response.data.logo === null) {
         response.data.logo = CityDefaultLogo;
       } else {
@@ -162,14 +72,28 @@ const CreateCity = () => {
       }
 
       setCity(response.data);
+      setAdmins(response.data.administration);
+      setMembers(response.data.members);
+      setFollowers(response.data.followers);
     } finally {
       setServLoading(false);
     }
   };
 
-  const getTableAdmins = (city: CityProps) => {
-    if ([...city.administration, city.head].length > 0) {
-      return [...city.administration, city.head].map((member: AdminProps) => ({
+  const getRegions = async () => {
+    setServLoading(true);
+
+    try {
+      const response = await GetAllRegions();
+      setRegions(response.data);
+    } finally {
+      setServLoading(false);
+    }
+  }
+
+  const getTableAdmins = (city: CityProfile) => {
+    if (admins.length > 0 || city.head != null) {
+      return [...admins, city.head].map((member: CityAdmin) => ({
         key: member.id,
         name: `${member.user.firstName} ${member.user.lastName}`,
         status: member.adminType ? "Адміністратор" : "",
@@ -185,22 +109,22 @@ const CreateCity = () => {
     return [];
   };
 
-  const getTableMembers = (city: CityProps) => {
-    const arr = city.members.filter((member: MemberProps) => {
-      return ![...city.administration, city.head].find((admin: AdminProps) => {
+  const getTableMembers = (city: CityProfile) => {
+    const arr = members.filter((member: CityMember) => {
+      return ![...admins, city.head].find((admin: CityAdmin) => {
         return admin?.user.id === member.user.id;
       });
     });
 
-    return arr.map((member: MemberProps) => ({
+    return arr.map((member: CityMember) => ({
       key: member.id,
       name: `${member.user.firstName} ${member.user.lastName}`,
       status: "Член станиці",
     }));
   };
 
-  const getTableFollowers = (city: CityProps) => {
-    return city.followers.map((member: MemberProps) => ({
+  const getTableFollowers = (city: CityProfile) => {
+    return followers.map((member: CityMember) => ({
       key: member.id,
       name: `${member.user.firstName} ${member.user.lastName}`,
       status: "Прихильник станиці",
@@ -249,9 +173,11 @@ const CreateCity = () => {
 
   useEffect(() => {
     if (id) {
-      getCity();
-    } else {
-      setServLoading(false);
+      getCity()
+      .then(() => getRegions())
+    }
+    else {
+      getRegions();
     }
   }, [id]);
 
@@ -294,7 +220,7 @@ const CreateCity = () => {
 
     const responsePromise = createCity(JSON.stringify(city));
     const response = await responsePromise;
-    city.id = response.data.id;
+    city.id = response.data;
 
     return responsePromise
       .then(() => {
@@ -331,7 +257,7 @@ const CreateCity = () => {
   };
 
   const handleSubmit = () => {
-    if (city.logo != null && city.logo.indexOf("default_city_image") !== -1) {
+    if (city.logo?.indexOf("default_city_image") !== -1) {
       city.logo = null;
     }
 
@@ -396,6 +322,7 @@ const CreateCity = () => {
                 <Form.Item
                   name={["city", "name"]}
                   label="Назва"
+                  labelAlign="left"
                   rules={[{ required: true }]}
                   className={classes.formField}
                   initialValue={city.name}
@@ -410,6 +337,7 @@ const CreateCity = () => {
                 <Form.Item
                   name={["city", "description"]}
                   label="Опис"
+                  labelAlign="left"
                   className={classes.formField}
                   initialValue={city.description}
                 >
@@ -423,6 +351,7 @@ const CreateCity = () => {
                 <Form.Item
                   name={["city", "cityURL"]}
                   label="Посилання"
+                  labelAlign="left"
                   className={classes.formField}
                   initialValue={city.cityURL}
                 >
@@ -436,6 +365,7 @@ const CreateCity = () => {
                 <Form.Item
                   name={["city", "phoneNumber"]}
                   label="Номер телефону"
+                  labelAlign="left"
                   className={classes.formField}
                   initialValue={city.phoneNumber}
                 >
@@ -452,6 +382,7 @@ const CreateCity = () => {
                 <Form.Item
                   name={["city", "email"]}
                   label="Електронна пошта"
+                  labelAlign="left"
                   rules={[{ type: "email" }]}
                   className={classes.formField}
                   initialValue={city.email}
@@ -466,20 +397,31 @@ const CreateCity = () => {
                 <Form.Item
                   name={["city", "region"]}
                   label="Округ"
+                  labelAlign="left"
                   rules={[{ required: true }]}
                   className={classes.formField}
                   initialValue={city.region}
                 >
-                  <Input
-                    value={city.region}
-                    onChange={(event) => onChange(event, "region")}
-                  />
+                  <Select
+                    showSearch
+                    optionFilterProp="children"
+                    onSearch={onSearch}
+                    onChange={(event) => setCity({ ...city, ["region"]: event as string })}
+                    className={classes.selectField}
+                  >
+                    {regions.map((item: RegionProfile) => (
+                      <Select.Option key={item.id} value={item.regionName}>
+                        {item.regionName}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Col>
               <Col span={9}>
                 <Form.Item
                   name={["city", "street"]}
                   label="Вулиця"
+                  labelAlign="left"
                   rules={[{ required: true }]}
                   className={classes.formField}
                   initialValue={city.street}
@@ -494,6 +436,7 @@ const CreateCity = () => {
                 <Form.Item
                   name={["city", "houseNumber"]}
                   label="Номер будинку"
+                  labelAlign="left"
                   rules={[{ required: true }]}
                   className={classes.formField}
                   initialValue={city.houseNumber}
@@ -508,6 +451,7 @@ const CreateCity = () => {
                 <Form.Item
                   name={["city", "officeNumber"]}
                   label="Номер офісу/квартири"
+                  labelAlign="left"
                   className={classes.formField}
                   initialValue={city.officeNumber}
                 >
@@ -521,6 +465,7 @@ const CreateCity = () => {
                 <Form.Item
                   name={["city", "postIndex"]}
                   label="Поштовий індекс"
+                  labelAlign="left"
                   className={classes.formField}
                   initialValue={city.postIndex}
                 >
