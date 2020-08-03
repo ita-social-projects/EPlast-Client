@@ -1,6 +1,6 @@
 import axios from "axios";
 import BASE_URL from "../config";
-import AuthStore from '../stores/Auth';
+import AuthStore from '../stores/AuthStore';
 
 interface HttpResponse {
   headers: any;

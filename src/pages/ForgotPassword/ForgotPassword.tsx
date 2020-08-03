@@ -27,7 +27,7 @@ export default function () {
       };
 
     return (
-        <div className={styles.mainContainer}>
+        <div className={styles.mainContainerForgot}>
             <Form
                 name="ForgotPasswordForm"
                 initialValues={initialValues}

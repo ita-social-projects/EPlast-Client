@@ -1,169 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Avatar, Row, Col, Button, Spin, Layout } from "antd";
-import {
-  UserOutlined,
-  FileTextOutlined,
-  EditOutlined,
-  PlusSquareFilled,
-  UserAddOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, CloseOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getCityById, getLogo, toggleMemberStatus } from "../../api/citiesApi";
+import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../api/citiesApi";
 import classes from "./City.module.css";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
-
-interface CityProps {
-  id: number;
-  name: string;
-  logo: string;
-  description: string;
-  cityURL: string;
-  phoneNumber: string;
-  email: string;
-  region: string;
-  street: string;
-  houseNumber: string;
-  officeNumber: string;
-  postIndex: string;
-  members: MemberProps[];
-  followers: MemberProps[];
-  administration: AdminProps[];
-  documents: DocumentProps[];
-  head: AdminProps;
-}
-
-interface AdminProps {
-  id: number;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  };
-  adminType: {
-    adminTypeName: string;
-  };
-  startDate: string;
-  endDate: string;
-}
-
-interface MemberProps {
-  id: number;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  };
-}
-
-interface DocumentProps {
-  id: number;
-  cityDocumentType: {
-    name: string;
-  };
-}
+import CityProfile from "../../models/City/CityProfile";
+import CityMember from '../../models/City/CityMember';
+import CityAdmin from '../../models/City/CityAdmin';
+import CityDocument from '../../models/City/CityDocument';
 
 const City = () => {
   const history = useHistory();
-  const { id } = useParams();
+  const {id} = useParams();
 
   const [loading, setLoading] = useState(false);
-  const [city, setCity] = useState<CityProps>({
-    id: 0,
-    name: "",
-    logo: "",
-    description: "",
-    cityURL: "",
-    phoneNumber: "",
-    email: "",
-    region: "",
-    street: "",
-    houseNumber: "",
-    officeNumber: "",
-    postIndex: "",
-    members: [
-      {
-        id: 0,
-        user: {
-          id: "",
-          firstName: "",
-          lastName: "",
-        },
-      },
-    ],
-    followers: [
-      {
-        id: 0,
-        user: {
-          id: "",
-          firstName: "",
-          lastName: "",
-        },
-      },
-    ],
-    administration: [
-      {
-        id: 0,
-        user: {
-          id: "",
-          firstName: "",
-          lastName: "",
-        },
-        adminType: {
-          adminTypeName: "",
-        },
-        startDate: "1000-10-10",
-        endDate: "1000-10-10",
-      },
-    ],
-    documents: [
-      {
-        id: 0,
-        cityDocumentType: {
-          name: "",
-        },
-      },
-    ],
-    head: {
-      id: 0,
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-      },
-      adminType: {
-        adminTypeName: "",
-      },
-      startDate: "1000-10-10",
-      endDate: "1000-10-10",
-    },
-  });
+  const [city, setCity] = useState<CityProfile>(new CityProfile());
+  const [admins, setAdmins] = useState<CityAdmin[]>([]);
+  const [members, setMembers] = useState<CityMember[]>([]);
+  const [followers, setFollowers] = useState<CityMember[]>([]);
+  const [documents, setDocuments] = useState<CityDocument[]>([]);
   const [canEdit, setCanEdit] = useState(false);
   const [canJoin, setCanJoin] = useState(false);
   const [canApprove, setCanApprove] = useState(false);
-  const [canSeeReports, setCanSeeReports] = useState(false);
-  const [canAddReports, setCanAddReports] = useState(true);
+  const [canAddReports, setCanAddReports] = useState(false);
 
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
     
-    if (city.members.length < 6) {
-      city.members = [...city.members, member.data];
+    if (members.length < 6) {
+      setMembers([...members, member.data]);
     }
 
-    city.followers = city.followers.filter(f => f.id !== memberId);
+    setFollowers(followers.filter(f => f.id !== memberId));
   };
 
   const addMember = async (cityId: number) => {
     const follower = await addFollower(cityId);
 
-    if (city.followers.length < 6) {
-      city.followers = [...city.followers, follower.data];
+    if (followers.length < 6) {
+      setFollowers([...followers, follower.data]);
     }
 
     setCanJoin(!canJoin);
   };
+
+  const deleteCity = async () => {
+    history.push('/cities');
+
+    await removeCity(+id);
+  }
 
   const getCity = async () => {
     setLoading(true);
@@ -179,10 +66,13 @@ const City = () => {
       }
 
       setCity(response.data);
+      setAdmins(response.data.administration);
+      setMembers(response.data.members);
+      setFollowers(response.data.followers);
+      setDocuments(response.data.documents);
       setCanEdit(response.data.canEdit);
       setCanJoin(response.data.canJoin);
       setCanApprove(response.data.canApprove);
-      setCanSeeReports(response.data.canSeeReports);
       setCanAddReports(response.data.canAddReports);
     } finally {
       setLoading(false);
@@ -191,7 +81,7 @@ const City = () => {
 
   useEffect(() => {
     getCity();
-  }, [id, city]);
+  }, []);
 
   return loading ? (
     <Layout.Content className={classes.spiner}>
@@ -215,8 +105,14 @@ const City = () => {
           <section className={classes.list}>
             {canEdit ? (
               <EditOutlined
-                className={classes.listIcon}
+                className={classes.editIcon}
                 onClick={() => history.push(`/cities/edit/${city.id}`)}
+              />
+            ) : null}
+            {canEdit ? (
+              <CloseOutlined
+                className={classes.removeIcon}
+                onClick={() => deleteCity()}
               />
             ) : null}
             <h1 className={classes.title}>{`Станиця ${city.name}`}</h1>
@@ -228,7 +124,7 @@ const City = () => {
               <Col flex="1" offset={1}>
                 <div className={classes.mainInfo}>
                   <img
-                    src={city.logo}
+                    src={city.logo || undefined}
                     alt="City"
                     style={{ width: "100%", height: "auto", maxWidth: "100%" }}
                   />
@@ -297,8 +193,8 @@ const City = () => {
                 marginTop: "20px",
               }}
             >
-              {city.members.length !== 0 ? (
-                city.members.map((member: MemberProps) => (
+              {members.length !== 0 ? (
+                members.map((member) => (
                   <Col className={classes.listItem} key={member.id} span={7}>
                     <div>
                       <Avatar
@@ -357,8 +253,8 @@ const City = () => {
                 maxHeight: "70%",
               }}
             >
-              {city.administration.length !== 0 ? (
-                city.administration.map((member: MemberProps) => (
+              {admins.length !== 0 ? (
+                admins.map((member) => (
                   <Col className={classes.listItem} key={member.id} span={7}>
                     <div>
                       <Avatar
@@ -391,68 +287,62 @@ const City = () => {
           </section>
         </Col>
 
-        {canSeeReports ? (
-          <Col
-            flex="0 1 30%"
-            style={{
-              minHeight: "180px",
-              marginLeft: "1.5%",
-              marginRight: "1.5%",
-            }}
-          >
-            <section className={classes.list}>
-              <h1 className={classes.title}>Документообіг станиці</h1>
-              <Row
-                justify="space-around"
-                gutter={[0, 16]}
-                style={{
-                  paddingRight: "5px",
-                  paddingLeft: "5px",
-                  paddingTop: "20px",
-                  paddingBottom: "20px",
-                  overflow: "hidden",
-                  maxHeight: "70%",
-                }}
+        <Col
+          flex="0 1 30%"
+          style={{
+            minHeight: "180px",
+            marginLeft: "1.5%",
+            marginRight: "1.5%",
+          }}
+        >
+          <section className={classes.list}>
+            <h1 className={classes.title}>Документообіг станиці</h1>
+            <Row
+              justify="space-around"
+              gutter={[0, 16]}
+              style={{
+                paddingRight: "5px",
+                paddingLeft: "5px",
+                paddingTop: "20px",
+                paddingBottom: "20px",
+                overflow: "hidden",
+                maxHeight: "70%",
+              }}
+            >
+              {documents.length !== 0 ? (
+                documents.map((document) => (
+                  <Col className={classes.listItem} key={document.id} span={7}>
+                    <div>
+                      <FileTextOutlined
+                        style={{ fontSize: "60px" }}
+                        className={classes.profileImg}
+                      />
+                      <p className={classes.documentText}>
+                        {document.cityDocumentType.name}
+                      </p>
+                    </div>
+                  </Col>
+                ))
+              ) : (
+                <h2>Ще немає документів станиці</h2>
+              )}
+            </Row>
+            <div className={classes.bottomButton}>
+              <Button
+                type="primary"
+                className={classes.listButton}
+                onClick={() => history.push(`/cities/documents/${city.id}`)}
               >
-                {city.documents.length !== 0 ? (
-                  city.documents.map((document: DocumentProps) => (
-                    <Col
-                      className={classes.listItem}
-                      key={document.id}
-                      span={7}
-                    >
-                      <div>
-                        <FileTextOutlined
-                          style={{ fontSize: "60px" }}
-                          className={classes.profileImg}
-                        />
-                        <p className={classes.documentText}>
-                          {document.cityDocumentType.name}
-                        </p>
-                      </div>
-                    </Col>
-                  ))
-                ) : (
-                  <h2>Ще немає документів станиці</h2>
-                )}
-              </Row>
-              <div className={classes.bottomButton}>
-                <Button
-                  type="primary"
-                  className={classes.listButton}
-                  onClick={() => history.push(`/cities/documents/${city.id}`)}
-                >
-                  Деталі
-                </Button>
-                {canAddReports ? (
-                  <div className={classes.flexContainer}>
-                    <PlusSquareFilled className={classes.addReportIcon} />
-                  </div>
-                ) : null}
-              </div>
-            </section>
-          </Col>
-        ) : null}
+                Деталі
+              </Button>
+              {canAddReports ? (
+                <div className={classes.flexContainer}>
+                  <PlusSquareFilled className={classes.addReportIcon} />
+                </div>
+              ) : null}
+            </div>
+          </section>
+        </Col>
 
         <Col
           flex="0 1 30%"
@@ -493,8 +383,8 @@ const City = () => {
                   </div>
                 </Col>
               ) : null}
-              {city.followers.length !== 0 ? (
-                city.followers.map((member: MemberProps) => (
+              {followers.length !== 0 ? (
+                followers.map((member) => (
                   <Col className={classes.listItem} key={member.id} span={7}>
                     <div>
                       <Avatar
@@ -515,10 +405,11 @@ const City = () => {
                     </div>
                   </Col>
                 ))
-              ) : (
-                  <h2>Ще немає прихильників станиці</h2>
+              ) : canJoin ? null : (
+                <h2>Ще немає прихильників станиці</h2>
               )}
             </Row>
+
             <div className={classes.bottomButton}>
               <Button
                 type="primary"

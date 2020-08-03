@@ -10,7 +10,7 @@ import userApi from '../../../api/UserApi';
 import InputMask from 'react-input-mask';
 import moment, { Moment } from 'moment';
 import jwt from 'jwt-decode';
-import AuthStore from '../../../stores/Auth';
+import AuthStore from '../../../stores/AuthStore';
 import {useParams} from 'react-router-dom';
 
 export default function () {
@@ -480,7 +480,7 @@ export default function () {
             </Form.Item>
           </div>
           <Button className={styles.confirmBtn} htmlType="submit">
-            Підтердити
+            Підтвердити
           </Button>
         </div>
       </Form>

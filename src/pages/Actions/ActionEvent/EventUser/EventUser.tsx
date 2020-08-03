@@ -4,7 +4,7 @@ import { Avatar, Modal, Button, Typography, Badge, Space, Spin } from 'antd';
 import eventUserApi from '../../../../api/eventUserApi';
 import classes from './EventUser.module.css';
 import userApi from '../../../../api/UserApi';
-import AuthStore from '../../../../stores/Auth';
+import AuthStore from '../../../../stores/AuthStore';
 import jwt from 'jwt-decode';
 import { CalendarOutlined, PlusCircleOutlined } from '@ant-design/icons';
 const { Title } = Typography;

@@ -35,6 +35,8 @@ import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
 import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
 import UserFields from "./pages/userPage/personalData/UserFields";
+import AnnualReportTable from './pages/AnnualReport/AnnualReportTable/AnnualReportTable';
+import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
 
 const App: FC = () => (
   <div className="App">
@@ -159,8 +161,32 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+            path="/annualreport/create"
+            component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/annualreport/create/:cityId"
             component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/edit/:id"
+            component={AnnualReportEdit}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/edit/:cityId"
+            component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/table"
+            component={AnnualReportTable}
           />
           <RouteWithLayout
             layout={PrivateLayout}

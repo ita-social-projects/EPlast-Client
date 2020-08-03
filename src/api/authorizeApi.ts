@@ -1,6 +1,6 @@
 import Api from "./api";
 import notificationLogic from '../components/Notifications/Notification';
-import AuthStore from '../stores/Auth';
+import AuthStore from '../stores/AuthStore';
 
 export default class AuthorizeApi{
 
@@ -63,13 +63,6 @@ export default class AuthorizeApi{
   return response;
 };
 
- /*resetPasswordGet = async() =>{
-   const response = await Api.getAll("Account/ResetPassword")
-   .then(response =>{
-     //history.push("/");
-   })
- };*/
-/*Added some changes for example*/
 
  changePassword = async(data : any) => {
   const response = await Api.post("Auth/changePassword", data)

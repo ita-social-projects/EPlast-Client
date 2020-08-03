@@ -34,7 +34,7 @@ export default function () {
     };
 
     return (
-        <div className={styles.mainContainer}>
+        <div className={styles.mainContainerReset}>
             <Form
                 name="ResetPasswordForm"
                 initialValues={initialValues}
