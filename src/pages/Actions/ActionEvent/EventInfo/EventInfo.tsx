@@ -40,7 +40,6 @@ export interface EventInformation {
     forWhom: string;
     eventAdmins: EventAdmin[];
     eventParticipants: EventParticipant[];
-    eventGallery: EventGallery[];
 }
 
 export interface EventParticipant {
