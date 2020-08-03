@@ -122,6 +122,7 @@ const EventCard = ({
         <div className={classes.background}>
             <div className={classes.actionsWrapper}>
                 <Card
+                    hoverable
                     className={classes.cardStyles}
                     cover={
                         // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/click-events-have-key-events
@@ -132,7 +133,6 @@ const EventCard = ({
                         />
                     }
                     actions={
-
                         RenderEventsIcons()
                     }
                 >

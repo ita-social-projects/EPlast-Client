@@ -55,3 +55,19 @@ td {
     width: 100%;
     margin-top: -20.5%;
 }
+
+.eyeDetails {
+    color: #3c5438 !important;
+}
+
+.eyeDetails:hover {
+    color: #73bd79 !important;
+}
+
+.deletePicture {
+    color: #8B0000 !important;
+}
+
+.deletePicture:hover {
+    color: #FF0000 !important;
+}

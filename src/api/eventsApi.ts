@@ -60,6 +60,11 @@ const uploadPictures = async (id: number, data: any) => {
     return response;
 };
 
+const removePicture = async (id: number) => {
+    const response = await Api.remove(`Events/pictures/${id}`);
+    return response;
+};
+
 export default {
     getTypes,
     getCategories,
@@ -72,5 +77,6 @@ export default {
     approveParticipant,
     underReviewParticipant,
     rejectParticipant,
-    uploadPictures
+    uploadPictures,
+    removePicture
 };

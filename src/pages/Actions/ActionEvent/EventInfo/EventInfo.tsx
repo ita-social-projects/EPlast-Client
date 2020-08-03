@@ -130,7 +130,8 @@ const EventInfo = () => {
                         key={event.event?.eventName}
                     />
                 </div>
-                <Gallery key={event.event?.eventLocation} eventId={event.event?.eventId}/>
+                <Gallery key={event.event?.eventLocation} eventId={event.event?.eventId}
+                         isUserEventAdmin={event.isUserEventAdmin}/>
                 <div key={'2'}>
                     <Row>
                         <Input.Search

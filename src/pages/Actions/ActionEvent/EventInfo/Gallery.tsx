@@ -8,11 +8,13 @@ import eventsApi from "../../../../api/eventsApi";
 import spinClasses from "../EventUser/EventUser.module.css";
 import {UserOutlined} from "@ant-design/icons";
 import Demo from "./FormAddPictures";
+import PicturesWall from "./PicturesWall";
 
 const classes = require("./EventInfo.module.css");
 
 interface Props {
     eventId: number;
+    isUserEventAdmin: boolean;
 }
 
 const GallerySpinner = () => (
@@ -46,12 +48,22 @@ const FillGallery = (pictures: EventGallery[]) => {
     </Carousel>)
 }
 
-const Gallery = ({eventId}: Props) => {
+const Gallery = ({eventId, isUserEventAdmin}: Props) => {
     const [loading, setLoading] = useState(false);
     // @ts-ignore
     const [pictures, setPictures] = useState<EventGallery[]>([])
 
-    const addPictures = (uploadedPictures: EventGallery[]) => setPictures(pictures.concat(uploadedPictures))
+    const addPictures = (uploadedPictures: EventGallery[]) => setPictures(pictures.concat(uploadedPictures));
+    const removePicture = (pictureId: number) => setPictures(pictures.filter(picture => picture.galleryId !== pictureId))
+    const GalleryAdministration = (): React.ReactNode[] => {
+        if (isUserEventAdmin) {
+            return [
+                <h1 className={classes.mainTitle}>Адміністрування галереї</h1>,
+                <Demo eventId={eventId} updateGallery={addPictures} picturesCount={pictures.length}/>,
+                <PicturesWall pictures={pictures} removePicture={removePicture}/>
+            ];
+        } else return [];
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -65,7 +77,7 @@ const Gallery = ({eventId}: Props) => {
         <div>
             <h1 className={classes.mainTitle}>Галерея</h1>
             {FillGallery(pictures)}
-            <Demo eventId={eventId} updateGallery={addPictures} picturesCount={pictures.length}/>
+            {GalleryAdministration()}
         </div>
     );
 };

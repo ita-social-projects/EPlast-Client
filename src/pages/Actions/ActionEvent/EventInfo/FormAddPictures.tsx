@@ -96,7 +96,7 @@ const Demo = ({eventId, updateGallery, picturesCount}: Props) => {
 
             <Form.Item
                 name="upload"
-                label="Upload"
+                label="Завантажити"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
             >
@@ -106,7 +106,6 @@ const Demo = ({eventId, updateGallery, picturesCount}: Props) => {
                     </Button>
                 </Upload>
             </Form.Item>
-
 
             <Form.Item wrapperCol={{span: 12, offset: 6}}>
                 <Button type="primary" htmlType="submit">
