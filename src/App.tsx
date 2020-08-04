@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import DecisionTable from "./pages/DecisionTable/DecisionTable";
 import "./App.less";
 import HeaderContainer from "./components/Header/HeaderContainer";
@@ -34,6 +34,7 @@ import CreateClub from "./pages/CreateClub/CreateClub";
 import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
 import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
+import NotFound from "./pages/Errors/NotFound";
 
 const App: FC = () => (
   <div className="App">
@@ -190,6 +191,12 @@ const App: FC = () => (
             exact
             path="/annualreport/create/:cityId"
             component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="*"
+            component={NotFound}
           />
         </Switch>
       </div>
