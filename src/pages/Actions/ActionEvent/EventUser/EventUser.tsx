@@ -70,7 +70,6 @@ const EventUser = () => {
                 <Spin size="large" />
             </Space>
         </div>
-
     ) : (
             <div className={classes.wrapper} >
                 <div className={classes.wrapperImg}>
@@ -111,8 +110,8 @@ const EventUser = () => {
                                 {data.visitedEvents.map((item: any) =>
                                     <div>
                                         <h1>{item.eventName} </ h1 >
-                                        < h2 > Дата початку: {item.eventDateStart}</h2>
-                                        < h2 > Дата завершення: {item.eventDateEnd} </h2>
+                                        < h2 > Дата початку: {moment(item.eventDateStart).format("DD-MM-YYYY HH:mm")} </h2>
+                                        < h2 > Дата завершення: {moment(item.eventDateEnd).format("DD-MM-YYYY HH:mm")} </h2>
                                         < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${item.id}/details`)} >
                                             Деталі
                                         </Button>
@@ -199,8 +198,8 @@ const EventUser = () => {
                             >
                                 {data.planedEvents.map((item: any) => <div>
                                     <h1>{item.eventName} </ h1 >
-                                    < h2 > Дата початку: {item.eventDateStart} </h2>
-                                    < h2 > Дата завершення: {item.eventDateEnd} </h2>
+                                    < h2 > Дата початку: {moment(item.eventDateStart).format("DD-MM-YYYY HH:mm")} </h2>
+                                    < h2 > Дата завершення: {moment(item.eventDateEnd).format("DD-MM-YYYY HH:mm")} </h2>
                                     < Button type="primary" className={classes.button} id={classes.button} style={{ marginLeft: 160 }} onClick={() => history.push(`/events/${item.id}/details`)}>
                                         Деталі
                                     </Button>
