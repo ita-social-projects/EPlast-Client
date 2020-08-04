@@ -46,12 +46,28 @@ td {
 }
 
 .homeSlider {
-    width: 70%;
-    margin: 10px auto 50px;
+    width: 60%;
+    margin: 0px auto 10px;
     overflow: hidden;
 }
 
 .sliderImg {
     width: 100%;
     margin-top: -20.5%;
+}
+
+.eyeDetails {
+    color: #3c5438 !important;
+}
+
+.eyeDetails:hover {
+    color: #73bd79 !important;
+}
+
+.deletePicture {
+    color: #8B0000 !important;
+}
+
+.deletePicture:hover {
+    color: #FF0000 !important;
 }
