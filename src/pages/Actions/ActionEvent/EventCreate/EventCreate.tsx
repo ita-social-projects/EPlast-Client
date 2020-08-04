@@ -6,8 +6,7 @@ import Title from 'antd/lib/typography/Title';
 import eventUserApi from '../../../../api/eventUserApi';
 import eventsApi from "../../../../api/eventsApi";
 import notificationLogic from '../../../../components/Notifications/Notification';
-import moment from 'moment-timezone';
-moment.tz.setDefault("Europe/Kiev");
+import moment from 'moment';
 
 const classes = require('./EventCreate.module.css');
 
