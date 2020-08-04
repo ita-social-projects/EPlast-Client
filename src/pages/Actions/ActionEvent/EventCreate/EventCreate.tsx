@@ -16,7 +16,7 @@ export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<any>([]);
   const [administators, setAdministators] = useState<any>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>(['', '', '', '']);
   const dateFormat = 'MM/DD/YYYY HH:mm';
@@ -90,7 +90,7 @@ export default function () {
       if (error.response?.status === 400) {
         notificationLogic('error', 'Спробуйте ще раз');
       }
-    });;
+    });
   }
 
   function onSearch(val: any) {
@@ -141,7 +141,7 @@ export default function () {
                 < Title level={2} > Створення події</ Title>
               </div>
               < div className={classes.radio} >
-                <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio}>
+                <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio} >
                   <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup} onChange={onChange} value={categories}>
                     {data?.eventTypes.map((item: any) => (<Radio.Button key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
                   </Radio.Group>

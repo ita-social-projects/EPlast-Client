@@ -3,8 +3,6 @@ import React, { useEffect, useState } from 'react';
 import TextArea from 'antd/lib/input/TextArea';
 import { useParams, useHistory } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
-// import { NewEvent } from '../../../../models/NewEvent.model';
-// import { EventCreationData } from '../../../../models/EventCreationData.model';
 import eventUserApi from '../../../../api/eventUserApi';
 import notificationLogic from '../../../../components/Notifications/Notification';
 import moment from 'moment';
@@ -23,6 +21,7 @@ export default function () {
     const [administators, setAdministators] = useState<any>([]);
     const [selectedUsers, setSelectedUsers] = useState<string[]>(['', '', '', '']);
     const [categories, setCategories] = useState<any>([]);
+    const dateFormat = 'DD/MM/YYYY HH:mm';
 
     const [editedEvent, setEvent] = useState<any>({
         event: {
@@ -79,8 +78,8 @@ export default function () {
                 });
                 await eventsApi.getCategories(response.data.event.eventTypeID).then(async response => {
                     setCategories([...response.data]);
+                    setLoading(true);
                 })
-                setLoading(true);
             })
         }
         fetchEvent();
@@ -100,7 +99,6 @@ export default function () {
             firstName: '',
             lastName: '',
             userName: '',
-            isSelected: true,
         }]
     });
 
@@ -160,7 +158,6 @@ export default function () {
                 notificationLogic('error', 'Спробуйте ще раз');
             }
         });;
-        console.log(newEvent);
     }
 
     function onSearch(val: any) {
@@ -189,13 +186,9 @@ export default function () {
         updatedUsers.forEach(user => {
             const userId = user.id;
             user.isSelected = selectedUsers.some(selectedUserId => selectedUserId === userId);
-            console.log(user);
         });
-
         setAdministators([...updatedUsers]);
     }
-
-    const dateFormat = 'DD/MM/YYYY HH:mm';
 
     return loading === false ? (
         <div className={classes.spaceWrapper}>
