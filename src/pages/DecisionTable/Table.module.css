@@ -12,7 +12,16 @@
   width: 400px;
   margin-left: auto;
 }
+<<<<<<< HEAD
 
+=======
+.cardButton{
+  inline-size: -webkit-fill-available;
+  margin-top: 7px;
+  color:#3c5438;
+  border-color: #3c5438;
+}
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 .searchContainer>* {
   margin-left: 12px;
 }

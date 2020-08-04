@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 import { MembersStatistic } from './MembersStatistic';
 import { CityManagement } from './CityManagement';
 import { User } from './User';
 import { City } from './City';
 
 export class AnnualReport {
+=======
+import MembersStatistic from './MembersStatistic';
+import CityManagement from './CityManagement';
+import User from './User';
+import City from './City';
+
+interface AnnualReport {
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
     id: number;
     date: Date;
     status: number;
@@ -25,6 +34,7 @@ export class AnnualReport {
     improvementNeeds: string;
     membersStatistic: MembersStatistic;
     cityManagement: CityManagement;
+<<<<<<< HEAD
     userId: string = '';
     user: User | null = null;
     cityId: number = 0;
@@ -58,3 +68,12 @@ export class AnnualReport {
         this.city = null;
     }
 }
+=======
+    userId: string;
+    user: User | null;
+    cityId: number;
+    city: City | null;
+}
+
+export default AnnualReport;
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544

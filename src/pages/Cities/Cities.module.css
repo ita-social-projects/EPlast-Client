@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .background{
   background-color: rgb(238, 238, 238);
 }
@@ -43,4 +44,51 @@
 
 .pagination{
   text-align: center;
+=======
+.background{
+  background-color: rgb(238, 238, 238);
+}
+
+.mainTitle{
+  text-align: center;
+  font-size: 40px;
+  color:#3c5438;
+}
+
+.wrapper{
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cardStyles{
+  margin: 15px;
+  width: 242px;
+  height: 221.45px;
+}
+
+.addCity{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.addCity img{
+  margin-top: 15px;
+}
+
+.titleText{
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.titleText:hover{
+  text-decoration: underline;
+}
+
+.pagination{
+  text-align: center;
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 }

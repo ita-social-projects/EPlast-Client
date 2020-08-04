@@ -13,6 +13,7 @@
     top: 50%;
     left: 50%;
     transform: translateX(-50%);
+<<<<<<< HEAD
 }
 
 .topCalendar {
@@ -69,4 +70,6 @@
 
 .eventHover:hover {
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+=======
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 }

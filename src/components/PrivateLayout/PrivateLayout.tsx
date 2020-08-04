@@ -9,7 +9,11 @@ import {
 } from "@ant-design/icons";
 import classes from "./PrivateLayout.module.css";
 import jwt from 'jwt-decode';
+<<<<<<< HEAD
 import AuthStore from '../../stores/Auth';
+=======
+import AuthStore from '../../stores/AuthStore';
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 import userApi from '../../api/UserApi';
 
 const { Content, Sider } = Layout;
@@ -25,6 +29,7 @@ const PrivateLayout = ({ children }: any) => {
   const [imageBase64, setImageBase64] = useState<string>();
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
+<<<<<<< HEAD
     if (token == null) {
       history.push("/signin");
     }
@@ -36,6 +41,19 @@ const PrivateLayout = ({ children }: any) => {
         })
       })
     }
+=======
+    if(token == null){
+      history.push("/signin");
+    }
+    else{
+    const user : any = jwt(token);
+    await userApi.getById(user.nameid).then(async response =>{
+        await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) =>{
+          setImageBase64(response.data);
+        })
+    })
+   }
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
   };
 
   useEffect(() => {
@@ -44,12 +62,16 @@ const PrivateLayout = ({ children }: any) => {
   const history = useHistory();
   return (
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
+<<<<<<< HEAD
       <Sider collapsible
         collapsed={collapsed}
         onCollapse={onCollapse}
         className={classes.sidebar}
         breakpoint="xxl"
         collapsedWidth="0">
+=======
+      <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
         <div className={classes.profilePhoto}>
           <Avatar
             size={64}
@@ -83,8 +105,13 @@ const PrivateLayout = ({ children }: any) => {
           </SubMenu>
           <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Документи">
             <SubMenu key="sub2.1" title="Звіти">
+<<<<<<< HEAD
               <Menu.Item onClick={() => history.push('/annualreport/create/5')} key="9">Подати річний звіт станиці</Menu.Item>
               <Menu.Item key="10">Річні звіти</Menu.Item>
+=======
+              <Menu.Item onClick={() => history.push('/annualreport/create')} key="9">Подати річний звіт станиці</Menu.Item>
+              <Menu.Item onClick={() => history.push('/annualreport/table')} key="10">Річні звіти</Menu.Item>
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
               <Menu.Item key="11">Статистичні звіти</Menu.Item>
             </SubMenu>
             <SubMenu

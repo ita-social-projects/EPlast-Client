@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
+<<<<<<< HEAD
 import { AxiosResponse, AxiosError } from 'axios'
 import { Typography, Modal, Form, Row, Col, Input, Button, Select, Space, Spin } from 'antd';
 import styles from './AnnualReportCreate.module.css';
@@ -9,10 +10,20 @@ import AnnualReportApi from '../../../api/AnnualReportApi';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
+=======
+import { AxiosError } from 'axios'
+import { Form, Button, Modal } from 'antd';
+import styles from './AnnualReportCreate.module.css';
+import AnnualReportForm from '../AnnualReportForm/AnnualReportForm';
+import AnnualReportApi from '../../../api/AnnualReportApi';
+import User from '../Interfaces/User';
+import City from '../Interfaces/City';
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 
 export const AnnualReportCreate = () => {
     const { cityId } = useParams();
     const history = useHistory();
+<<<<<<< HEAD
     const [loading, setLoading] = useState(false);
     const [title, setTitle] = useState('Річний звіт станиці');
     const [cityLegalStatuses, setCityLegalStatuses] = useState<any>();
@@ -39,16 +50,52 @@ export const AnnualReportCreate = () => {
                 console.log(response.data);
                 if (response.data.hasCreated === false) {
                     fetchData();
+=======
+    const [title, setTitle] = useState<string>('Річний звіт станиці');
+    const [id, setId] = useState<number>();
+    const [cityMembers, setCityMembers] = useState<any>();
+    const [cityLegalStatuses, setCityLegalStatuses] = useState<any>();
+    const [form] = Form.useForm();
+
+    useEffect(() => {
+        if (cityId === undefined)
+        {
+            AnnualReportApi.getCities()
+                .then(response => {
+                    let cities = response.data.cities as City[];
+                    setId(cities[0].id)
+                    checkCreated(cities[0].id);
+                })
+                .catch((error: AxiosError) => {
+                    showError(error.response?.data.message);
+                });
+        }
+        else {
+            setId(cityId);
+            checkCreated(cityId);
+        }
+    }, [])
+
+    const checkCreated = async (id: number) => {
+        await AnnualReportApi.checkCreated(id)
+            .then(response => {
+                if (response.data.hasCreated === false) {
+                    fetchData(id);
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                 }
                 else {
                     showError(response.data.message);
                 }
+<<<<<<< HEAD
                 console.log(response.data)
+=======
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
             })
             .catch((error: AxiosError) => {
                 showError(error.response?.data.message);
             });
     }
+<<<<<<< HEAD
     
     const fetchData = async () => {
         await fetchCityInfo();
@@ -75,6 +122,31 @@ export const AnnualReportCreate = () => {
             return {
                 label: firstName.concat(' ', lastName),
                 value: member.user.id
+=======
+
+    const fetchData = async (id: number) => {
+        await fetchCityInfo(id);
+        await fetchLegalStatuses();
+    }
+
+    const fetchCityInfo = async (id: number) => {
+        await AnnualReportApi.getCityInfo(id)
+            .then(response => {
+                let cityName = response.data.name;
+                setTitle(title.concat(' ', cityName));
+                setMembers(response.data.members);
+            })
+            .catch((error: AxiosError) => {
+                showError(error.response?.data.message);
+            })
+    }
+
+    const setMembers = (members: User[]) => {
+        setCityMembers(members.map(item => {
+            return {
+                label: String.prototype.concat(item.firstName, ' ', item.lastName),
+                value: item.id
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
             }
         }));
     }
@@ -82,8 +154,12 @@ export const AnnualReportCreate = () => {
     const fetchLegalStatuses = async () => {
         await AnnualReportApi.getCityLegalStatuses()
             .then(response => {
+<<<<<<< HEAD
                 let legalStatuses = response.data.legalStatuses as [];
                 setCityLegalStatuses(legalStatuses.map((item, index) => {
+=======
+                setCityLegalStatuses((response.data.legalStatuses as []).map((item, index) => {
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                     return {
                         label: item,
                         value: index
@@ -91,15 +167,26 @@ export const AnnualReportCreate = () => {
                 }));
             })
             .catch((error: AxiosError) => {
+<<<<<<< HEAD
                 console.log(error.toJSON);
+=======
+                showError(error.response?.data.message);
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
             })
     }
 
     const handleFinish = async (obj: any) => {
+<<<<<<< HEAD
         let annualReport = new AnnualReport(obj);
         annualReport.cityId = cityId;
         await AnnualReportApi.post(annualReport)
             .then((response: AxiosResponse) => {
+=======
+        obj.cityId = id;
+        await AnnualReportApi.create(obj)
+            .then((response) => {
+                form.resetFields();
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                 showSuccess(response.data.message);
             })
             .catch((error: AxiosError) => {
@@ -122,6 +209,7 @@ export const AnnualReportCreate = () => {
         });
     }
 
+<<<<<<< HEAD
     return loading === false ? (
         <div className={styles.spaceWrapper}>
           <Space className={styles.loader} size="large">
@@ -507,6 +595,17 @@ export const AnnualReportCreate = () => {
                     </Col>
                 </Row>
             </div>
+=======
+    return (
+        <Form
+            onFinish={handleFinish}
+            className={styles.form}
+            form={form} >
+            <AnnualReportForm
+                title={title}
+                cityMembers={cityMembers}
+                cityLegalStatuses={cityLegalStatuses} />
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
             <Button
                 type='primary'
                 htmlType='submit'>

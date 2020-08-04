@@ -2,6 +2,7 @@ import React,{ useState, useEffect} from 'react';
 import {Button, Space, Spin} from 'antd';
 import styles from './PersonalData.module.css';
 import userApi from '../../../api/UserApi';
+<<<<<<< HEAD
 import jwt from 'jwt-decode';
 import AuthStore from '../../../stores/Auth';
 import moment from 'moment';
@@ -75,11 +76,30 @@ export default function () {
       setLoading(true);
     })
     }
+=======
+import moment from 'moment';
+import AvatarAndProgress from './AvatarAndProgress';
+import { Data } from '../Interface/Interface';
+import {useParams} from 'react-router-dom';
+export default function () {
+  const {userId}=useParams(); 
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<Data>();
+  const fetchData = async () => {
+    await userApi.getById(userId).then(response =>{
+      setData(response.data);
+      setLoading(true);
+    })
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
   };
       
       useEffect(() => {
         fetchData();
+<<<<<<< HEAD
       }, []);
+=======
+      }, [userId]);
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
       
       return loading === false ? (
         <div className={styles.spaceWrapper}>
@@ -152,7 +172,11 @@ export default function () {
               </tr>
               <tr>
                 <td className={styles.td}>Дата народження:</td>
+<<<<<<< HEAD
                 <td className={styles.td}>Ступінь:</td>
+=======
+                <td className={styles.td}>Науковий ступінь:</td>
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
               </tr>
               <tr>
                 <td className={styles.td}>

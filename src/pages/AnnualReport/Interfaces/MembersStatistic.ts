@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 export class MembersStatistic {
+=======
+interface MembersStatistic {
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
     id: number;
     numberOfPtashata: number;
     numberOfNovatstva: number;
@@ -12,6 +16,7 @@ export class MembersStatistic {
     numberOfSeigneurSupporters: number;
     numberOfSeigneurMembers: number;
     annualReportId: number;
+<<<<<<< HEAD
 
     constructor(obj: any) {
         this.id = 0;
@@ -29,3 +34,8 @@ export class MembersStatistic {
         this.annualReportId = 0;
     }
 }
+=======
+}
+
+export default MembersStatistic;
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544

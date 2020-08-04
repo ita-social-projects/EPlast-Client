@@ -7,7 +7,10 @@
     "@craco/craco": "^5.6.4",
     "@fullcalendar/core": "^5.1.0",
     "@fullcalendar/daygrid": "^5.1.0",
+<<<<<<< HEAD
     "@fullcalendar/list": "^5.1.0",
+=======
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
     "@fullcalendar/react": "^5.1.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -27,7 +30,10 @@
     "fullcalendar": "^5.1.0",
     "jwt-decode": "^2.2.0",
     "moment": "^2.27.0",
+<<<<<<< HEAD
     "moment-timezone": "^0.5.31",
+=======
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
     "react": "^16.13.1",
     "react-chat-window": "^1.2.1",
     "react-datepicker": "^3.1.3",

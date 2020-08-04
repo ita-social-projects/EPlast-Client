@@ -3,11 +3,19 @@ import React, { useEffect, useState } from 'react';
 import TextArea from 'antd/lib/input/TextArea';
 import { useParams, useHistory } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
+<<<<<<< HEAD
+=======
+// import { NewEvent } from '../../../../models/NewEvent.model';
+// import { EventCreationData } from '../../../../models/EventCreationData.model';
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 import eventUserApi from '../../../../api/eventUserApi';
 import notificationLogic from '../../../../components/Notifications/Notification';
 import moment from 'moment';
 import 'moment/locale/uk';
+<<<<<<< HEAD
 import eventsApi from '../../../../api/eventsApi';
+=======
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 moment.locale('uk-ua');
 
 const classes = require('./EventEdit.module.css');
@@ -18,10 +26,13 @@ export default function () {
     const [form] = Form.useForm();
     const history = useHistory();
     const [loading, setLoading] = useState(false);
+<<<<<<< HEAD
     const [administators, setAdministators] = useState<any>([]);
     const [selectedUsers, setSelectedUsers] = useState<string[]>(['', '', '', '']);
     const [categories, setCategories] = useState<any>([]);
     const dateFormat = 'DD/MM/YYYY HH:mm';
+=======
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 
     const [editedEvent, setEvent] = useState<any>({
         event: {
@@ -40,7 +51,11 @@ export default function () {
             questions: ''
         },
         commandant: {
+<<<<<<< HEAD
             userId: '',
+=======
+            userId: ''
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
         },
         alternate: {
             userId: ''
@@ -76,10 +91,14 @@ export default function () {
                     bunchuzhnyiId: response.data.bunchuzhnyi?.userId,
                     pysarId: response.data.pysar?.userId,
                 });
+<<<<<<< HEAD
                 await eventsApi.getCategories(response.data.event.eventTypeID).then(async response => {
                     setCategories([...response.data]);
                     setLoading(true);
                 })
+=======
+                setLoading(true);
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
             })
         }
         fetchEvent();
@@ -98,7 +117,11 @@ export default function () {
             id: '',
             firstName: '',
             lastName: '',
+<<<<<<< HEAD
             userName: '',
+=======
+            userName: ''
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
         }]
     });
 
@@ -107,18 +130,24 @@ export default function () {
             await eventUserApi.getDataForNewEvent().then(async response => {
                 const { eventCategories, eventTypes, users } = response.data;
                 setData({ eventCategories, eventTypes, users });
+<<<<<<< HEAD
                 setAdministators(users);
                 setCategories(categories);
+=======
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                 setLoading(true);
             })
         }
         fetchData();
     }, []);
 
+<<<<<<< HEAD
     useEffect(() => {
         resetUsers()
     }, selectedUsers);
 
+=======
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
     const handleFinish = async (values: any) => {
         const newEvent = {
             event: {
@@ -126,8 +155,13 @@ export default function () {
                 eventName: values.EventName,
                 description: values.Description,
                 questions: values.Questions,
+<<<<<<< HEAD
                 eventDateStart: moment(values.EventDateStart).add(3, "hours"),
                 eventDateEnd: moment(values.EventDateEnd).add(3, "hours"),
+=======
+                eventDateStart: moment(values.EventDateStart),
+                eventDateEnd: moment(values.EventDateEnd),
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                 eventlocation: values.Eventlocation,
                 eventTypeID: values.EventTypeID,
                 eventCategoryID: values.EventCategoryID,
@@ -158,6 +192,10 @@ export default function () {
                 notificationLogic('error', 'Спробуйте ще раз');
             }
         });;
+<<<<<<< HEAD
+=======
+        console.log(newEvent);
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
     }
 
     function onSearch(val: any) {
@@ -167,6 +205,7 @@ export default function () {
         return current && current < moment().startOf('day');
     }
 
+<<<<<<< HEAD
     const onChange = async (e: any) => {
         await eventsApi.getCategories(e.target.value).then(async response => {
             setCategories([...response.data]);
@@ -189,6 +228,9 @@ export default function () {
         });
         setAdministators([...updatedUsers]);
     }
+=======
+    const dateFormat = 'DD/MM/YYYY';
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 
     return loading === false ? (
         <div className={classes.spaceWrapper}>
@@ -209,16 +251,26 @@ export default function () {
                             </div>
                             < div className={classes.radio} >
                                 <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio}>
+<<<<<<< HEAD
                                     <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup} onChange={onChange} >
                                         {data?.eventTypes.map((item: any) => (<Radio.Button defaultChecked={true} key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
+=======
+                                    <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup}>
+                                        {data?.eventTypes.map((item: any) => (<Radio.Button key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                                     </Radio.Group>
                                 </Form.Item>
                             </div>
                             < div className={classes.row} >
                                 <h3>Категорія </h3>
                                 < Form.Item name="EventCategoryID" className={classes.input} rules={[{ required: true, message: 'Оберіть категорію події' }]} >
+<<<<<<< HEAD
                                     <Select showSearch optionFilterProp="children" onSearch={onSearch}>
                                         {categories?.map((item: any) => (<Select.Option key={item.id} value={item.eventCategoryId}> {item.eventCategoryName} </Select.Option>))}
+=======
+                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} >
+                                        {data?.eventCategories.map((item: any) => (<Select.Option key={item.value} value={item.eventCategoryId} > {item.eventCategoryName} </Select.Option>))}
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                                     </Select>
                                 </ Form.Item>
                             </ div>
@@ -231,45 +283,73 @@ export default function () {
                             < div className={classes.row} >
                                 <h3>Комендант </h3>
                                 < Form.Item name="commandantId" className={classes.select} rules={[{ required: true, message: 'Оберіть коменданта' }]} >
+<<<<<<< HEAD
                                     <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)}  >
                                         {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
+=======
+                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} >
+                                        {data?.users.map((item: any) => (<Select.Option key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                                     </Select>
                                 </ Form.Item>
                             </ div>
                             < div className={classes.row} >
                                 <h3>Заступник коменданта </h3>
                                 < Form.Item name="alternateId" className={classes.select} rules={[{ required: true, message: 'Оберіть заступника коменданта' }]} >
+<<<<<<< HEAD
                                     <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)}  >
                                         {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
+=======
+                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} >
+                                        {data?.users.map((item: any) => (<Select.Option key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                                     </Select>
                                 </Form.Item>
                             </ div>
                             < div className={classes.row} >
                                 <h3>Бунчужний </h3>
                                 < Form.Item name="bunchuzhnyiId" className={classes.select} rules={[{ required: true, message: 'Оберіть бунчужного' }]} >
+<<<<<<< HEAD
                                     <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)} >
                                         {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
+=======
+                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} >
+                                        {data?.users.map((item: any) => (<Select.Option key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                                     </Select>
                                 </Form.Item>
                             </ div>
                             < div className={classes.row} >
                                 <h3>Писар </h3>
                                 < Form.Item name="pysarId" className={classes.select} rules={[{ required: true, message: 'Оберіть писаря' }]} >
+<<<<<<< HEAD
                                     <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)} >
                                         {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
+=======
+                                    <Select showSearch optionFilterProp="children" onSearch={onSearch} >
+                                        {data?.users.map((item: any) => (<Select.Option key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                                     </Select>
                                 </Form.Item>
                             </ div>
                             < div className={classes.row} >
                                 <h3>Дата початку </h3>
                                 < Form.Item name="EventDateStart" rules={[{ required: true, message: 'Оберіть дату початку події' }]} >
+<<<<<<< HEAD
                                     <DatePicker showTime disabledDate={disabledDate} placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} />
+=======
+                                    <DatePicker disabledDate={disabledDate} placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} />
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                                 </ Form.Item>
                             </ div>
                             < div className={classes.row} >
                                 <h3>Дата завершення </h3>
                                 < Form.Item name="EventDateEnd" rules={[{ required: true, message: 'Оберіть дату завершення події' }]} >
+<<<<<<< HEAD
                                     <DatePicker showTime disabledDate={disabledDate} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
+=======
+                                    <DatePicker disabledDate={disabledDate} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                                 </ Form.Item>
                             </ div>
                             < div className={classes.row} >

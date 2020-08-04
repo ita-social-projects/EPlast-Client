@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .wrapper{
     width:max-content;
     display: flex;
@@ -7,4 +8,15 @@
 .menu{
     background-color: rgb(240, 245, 240);
     border-bottom: 1px solid #dee2e6;
+=======
+.wrapper{
+    width:max-content;
+    display: flex;
+    align-self: center;
+}
+
+.menu{
+    background-color: rgb(240, 245, 240);
+    border-bottom: 1px solid #dee2e6;
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 }

@@ -1,5 +1,9 @@
 import React, { FC } from "react";
+<<<<<<< HEAD
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+=======
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 import DecisionTable from "./pages/DecisionTable/DecisionTable";
 import "./App.less";
 import HeaderContainer from "./components/Header/HeaderContainer";
@@ -34,7 +38,13 @@ import CreateClub from "./pages/CreateClub/CreateClub";
 import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
 import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
+<<<<<<< HEAD
 import NotFound from "./pages/Errors/NotFound";
+=======
+import UserFields from "./pages/userPage/personalData/UserFields";
+import AnnualReportTable from './pages/AnnualReport/AnnualReportTable/AnnualReportTable';
+import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 
 const App: FC = () => (
   <div className="App">
@@ -52,7 +62,11 @@ const App: FC = () => (
           <Route path="/chat" component={Demo} />
           <RouteWithLayout
             layout={PrivateLayout}
+<<<<<<< HEAD
             path="/userpage/:specify"
+=======
+            path="/userpage/:specify/:userId"
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
             component={UserProfile}
           />
           <RouteWithLayout
@@ -159,12 +173,42 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+<<<<<<< HEAD
+=======
+            path="/annualreport/create"
+            component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
             path="/annualreport/create/:cityId"
             component={AnnualReportCreate}
           />
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+<<<<<<< HEAD
+=======
+            path="/annualreport/edit/:id"
+            component={AnnualReportEdit}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/edit/:cityId"
+            component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/table"
+            component={AnnualReportTable}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
             path="/clubs"
             component={Clubs}
           />
@@ -192,12 +236,15 @@ const App: FC = () => (
             path="/annualreport/create/:cityId"
             component={AnnualReportCreate}
           />
+<<<<<<< HEAD
           <RouteWithLayout
             layout={PrivateLayout}
             exact
             path="*"
             component={NotFound}
           />
+=======
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
         </Switch>
       </div>
       <FooterContainer />

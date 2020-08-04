@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .background {
     background-color: rgb(238, 238, 238);
 }
@@ -164,4 +165,172 @@ input,
         display: flex;
         flex-direction: column;
     }
+=======
+.background {
+    background-color: rgb(238, 238, 238);
+}
+
+.actionsWrapper {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.card {
+    background-color: #fff;
+    margin-top: 40px;
+    width: 600px;
+    height: auto;
+    box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+form {
+    width: 100%;
+}
+
+.label {
+    background-color: #3c5438;
+    color: #f0f8ff;
+    margin: 17px;
+    border-radius: 3px;
+    padding: 8px;
+    text-align: center;
+    width: 150px;
+}
+
+[type='radio'] {
+    margin-right: 20px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin: 0px 45px;
+}
+
+.select:hover,
+.select:focus,
+input:hover,
+.select1:hover {
+    outline: 0;
+    border-color: #3c5438 !important;
+}
+
+.input {
+    width: 235px !important;
+    text-align: start;
+}
+
+td,
+tr {
+    padding: 14px;
+}
+
+.select {
+    width: 235px !important;
+    text-align: start;
+}
+
+input,
+[role="spinbutton"] {
+    text-align: left;
+}
+
+[role="spinbutton"] {
+    margin-left: -20px;
+}
+
+.button {
+    margin-top: 10px;
+    color: white;
+    border: none;
+    width: auto;
+    height: 40px;
+    outline: none;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-left: 235px;
+    margin-bottom: 15px;
+}
+
+.button:hover {
+    border: none;
+    outline: none;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.radio {
+    justify-content: center;
+    display: flex;
+}
+
+.title {
+    justify-content: center;
+    display: flex;
+}
+
+.spaceWrapper {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    background-color: white;
+}
+
+.loader {
+    position: fixed !important;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+@media(max-width:767px) {
+    .actionsWrapper {
+        margin: 0;
+        width: 100%;
+    }
+    .card {
+        margin: 0;
+        width: 100%;
+    }
+    .title {
+        text-align: center;
+        padding: 10px 0;
+    }
+    .title h2 {
+        font-size: 20px;
+    }
+    .row {
+        width: 100%;
+        flex-direction: column;
+        margin: 0;
+        padding: 0 15px
+    }
+    .input {
+        width: 100% !important;
+    }
+    .select {
+        width: 100% !important;
+    }
+    .button {
+        margin: auto;
+        display: block;
+    }
+    .ant-radio-group {
+        display: flex;
+        flex-direction: column;
+    }
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 }

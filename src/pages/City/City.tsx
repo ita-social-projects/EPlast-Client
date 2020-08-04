@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Avatar, Row, Col, Button, Spin, Layout } from "antd";
+<<<<<<< HEAD
 import {
   UserOutlined,
   FileTextOutlined,
@@ -144,27 +145,75 @@ const City = () => {
   const [canApprove, setCanApprove] = useState(false);
   const [canSeeReports, setCanSeeReports] = useState(false);
   const [canAddReports, setCanAddReports] = useState(true);
+=======
+import { UserOutlined, FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, CloseOutlined } from "@ant-design/icons";
+import moment from "moment";
+import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../api/citiesApi";
+import classes from "./City.module.css";
+import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
+import CityProfile from "../../models/City/CityProfile";
+import CityMember from '../../models/City/CityMember';
+import CityAdmin from '../../models/City/CityAdmin';
+import CityDocument from '../../models/City/CityDocument';
+
+const City = () => {
+  const history = useHistory();
+  const {id} = useParams();
+
+  const [loading, setLoading] = useState(false);
+  const [city, setCity] = useState<CityProfile>(new CityProfile());
+  const [admins, setAdmins] = useState<CityAdmin[]>([]);
+  const [members, setMembers] = useState<CityMember[]>([]);
+  const [followers, setFollowers] = useState<CityMember[]>([]);
+  const [documents, setDocuments] = useState<CityDocument[]>([]);
+  const [canEdit, setCanEdit] = useState(false);
+  const [canJoin, setCanJoin] = useState(false);
+  const [canApprove, setCanApprove] = useState(false);
+  const [canAddReports, setCanAddReports] = useState(false);
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
     
+<<<<<<< HEAD
     if (city.members.length < 6) {
       city.members = [...city.members, member.data];
     }
 
     city.followers = city.followers.filter(f => f.id !== memberId);
+=======
+    if (members.length < 6) {
+      setMembers([...members, member.data]);
+    }
+
+    setFollowers(followers.filter(f => f.id !== memberId));
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
   };
 
   const addMember = async (cityId: number) => {
     const follower = await addFollower(cityId);
 
+<<<<<<< HEAD
     if (city.followers.length < 6) {
       city.followers = [...city.followers, follower.data];
+=======
+    if (followers.length < 6) {
+      setFollowers([...followers, follower.data]);
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
     }
 
     setCanJoin(!canJoin);
   };
 
+<<<<<<< HEAD
+=======
+  const deleteCity = async () => {
+    history.push('/cities');
+
+    await removeCity(+id);
+  }
+
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
   const getCity = async () => {
     setLoading(true);
 
@@ -179,10 +228,20 @@ const City = () => {
       }
 
       setCity(response.data);
+<<<<<<< HEAD
       setCanEdit(response.data.canEdit);
       setCanJoin(response.data.canJoin);
       setCanApprove(response.data.canApprove);
       setCanSeeReports(response.data.canSeeReports);
+=======
+      setAdmins(response.data.administration);
+      setMembers(response.data.members);
+      setFollowers(response.data.followers);
+      setDocuments(response.data.documents);
+      setCanEdit(response.data.canEdit);
+      setCanJoin(response.data.canJoin);
+      setCanApprove(response.data.canApprove);
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
       setCanAddReports(response.data.canAddReports);
     } finally {
       setLoading(false);
@@ -191,7 +250,11 @@ const City = () => {
 
   useEffect(() => {
     getCity();
+<<<<<<< HEAD
   }, [id, city]);
+=======
+  }, []);
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 
   return loading ? (
     <Layout.Content className={classes.spiner}>
@@ -215,10 +278,23 @@ const City = () => {
           <section className={classes.list}>
             {canEdit ? (
               <EditOutlined
+<<<<<<< HEAD
                 className={classes.listIcon}
                 onClick={() => history.push(`/cities/edit/${city.id}`)}
               />
             ) : null}
+=======
+                className={classes.editIcon}
+                onClick={() => history.push(`/cities/edit/${city.id}`)}
+              />
+            ) : null}
+            {canEdit ? (
+              <CloseOutlined
+                className={classes.removeIcon}
+                onClick={() => deleteCity()}
+              />
+            ) : null}
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
             <h1 className={classes.title}>{`Станиця ${city.name}`}</h1>
             <Row
               gutter={16}
@@ -228,7 +304,11 @@ const City = () => {
               <Col flex="1" offset={1}>
                 <div className={classes.mainInfo}>
                   <img
+<<<<<<< HEAD
                     src={city.logo}
+=======
+                    src={city.logo || undefined}
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                     alt="City"
                     style={{ width: "100%", height: "auto", maxWidth: "100%" }}
                   />
@@ -297,8 +377,13 @@ const City = () => {
                 marginTop: "20px",
               }}
             >
+<<<<<<< HEAD
               {city.members.length !== 0 ? (
                 city.members.map((member: MemberProps) => (
+=======
+              {members.length !== 0 ? (
+                members.map((member) => (
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                   <Col className={classes.listItem} key={member.id} span={7}>
                     <div>
                       <Avatar
@@ -357,8 +442,13 @@ const City = () => {
                 maxHeight: "70%",
               }}
             >
+<<<<<<< HEAD
               {city.administration.length !== 0 ? (
                 city.administration.map((member: MemberProps) => (
+=======
+              {admins.length !== 0 ? (
+                admins.map((member) => (
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                   <Col className={classes.listItem} key={member.id} span={7}>
                     <div>
                       <Avatar
@@ -391,6 +481,7 @@ const City = () => {
           </section>
         </Col>
 
+<<<<<<< HEAD
         {canSeeReports ? (
           <Col
             flex="0 1 30%"
@@ -453,6 +544,64 @@ const City = () => {
             </section>
           </Col>
         ) : null}
+=======
+        <Col
+          flex="0 1 30%"
+          style={{
+            minHeight: "180px",
+            marginLeft: "1.5%",
+            marginRight: "1.5%",
+          }}
+        >
+          <section className={classes.list}>
+            <h1 className={classes.title}>Документообіг станиці</h1>
+            <Row
+              justify="space-around"
+              gutter={[0, 16]}
+              style={{
+                paddingRight: "5px",
+                paddingLeft: "5px",
+                paddingTop: "20px",
+                paddingBottom: "20px",
+                overflow: "hidden",
+                maxHeight: "70%",
+              }}
+            >
+              {documents.length !== 0 ? (
+                documents.map((document) => (
+                  <Col className={classes.listItem} key={document.id} span={7}>
+                    <div>
+                      <FileTextOutlined
+                        style={{ fontSize: "60px" }}
+                        className={classes.profileImg}
+                      />
+                      <p className={classes.documentText}>
+                        {document.cityDocumentType.name}
+                      </p>
+                    </div>
+                  </Col>
+                ))
+              ) : (
+                <h2>Ще немає документів станиці</h2>
+              )}
+            </Row>
+            <div className={classes.bottomButton}>
+              <Button
+                type="primary"
+                className={classes.listButton}
+                onClick={() => history.push(`/cities/documents/${city.id}`)}
+              >
+                Деталі
+              </Button>
+              {canAddReports ? (
+                <div className={classes.flexContainer}>
+                  <PlusSquareFilled className={classes.addReportIcon} />
+                </div>
+              ) : null}
+            </div>
+          </section>
+        </Col>
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 
         <Col
           flex="0 1 30%"
@@ -493,8 +642,13 @@ const City = () => {
                   </div>
                 </Col>
               ) : null}
+<<<<<<< HEAD
               {city.followers.length !== 0 ? (
                 city.followers.map((member: MemberProps) => (
+=======
+              {followers.length !== 0 ? (
+                followers.map((member) => (
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
                   <Col className={classes.listItem} key={member.id} span={7}>
                     <div>
                       <Avatar
@@ -515,10 +669,18 @@ const City = () => {
                     </div>
                   </Col>
                 ))
+<<<<<<< HEAD
               ) : (
                   <h2>Ще немає прихильників станиці</h2>
               )}
             </Row>
+=======
+              ) : canJoin ? null : (
+                <h2>Ще немає прихильників станиці</h2>
+              )}
+            </Row>
+
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
             <div className={classes.bottomButton}>
               <Button
                 type="primary"

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .background{
     background-color: rgb(238, 238, 238);
 }
@@ -12,4 +13,20 @@
     flex-wrap: wrap;
     width: 90%;
     margin: 0 auto;
+=======
+.background{
+    background-color: rgb(238, 238, 238);
+}
+.mainTitle{
+    text-align: center;
+    font-size: 65px;
+    color:#3c5438;
+}
+.actionsWrapper{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 90%;
+    margin: 0 auto;
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 }

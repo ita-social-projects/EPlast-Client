@@ -34,7 +34,10 @@ export type DecisionOnCreateData = {
 }
 export type DecisionWrapper = {
   decision: DecisionPost;
+<<<<<<< HEAD
   decisionTargets:  decisionTarget[] | null;
+=======
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
   fileAsBase64: string | null;
 }
 export type DecisionPost  ={
@@ -47,6 +50,20 @@ export type DecisionPost  ={
   date: string;
   fileName: string | null;
 };
+<<<<<<< HEAD
+=======
+ export const statusTypePostParser = (statusType: decisionStatusType): number =>{
+  if(statusType.value === "InReview") return 0;
+  if (statusType.value === "Confirmed") return 1;
+  return 2;
+  };
+  export const statusTypeGetParser = (statusType: number): string =>{
+    if(statusType === 0) return "У розгляді";
+    if (statusType === 1) return "Підтверджено";
+    if (statusType === 2) return "Скасовано";
+    return "Не визначено";
+    };
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 const dataURLtoFile = (dataurl : string, filename: string)=>{
   const arr = dataurl.split(',');
   const mime = arr[0].match(/:(.*?);/)![1];
@@ -98,6 +115,16 @@ return new File([u8arr], filename, {type:mime});
     });
     return response;
   };
+<<<<<<< HEAD
+=======
+  const postForCheckFile = async (data : any) => {
+    const response = await Api.post("Decisions/CheckFile",data)
+    .catch(error => {
+        notificationLogic('error', error.response.data.value);
+    });
+    return response;
+  };
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
 const getFileAsBase64 = async (fileName: string) =>{
   const response = await (await Api.get(`Decisions/downloadfile/${fileName}`)).data;
   const file = dataURLtoFile(response, fileName);
@@ -132,4 +159,8 @@ const getFileAsBase64 = async (fileName: string) =>{
   };
     
 
+<<<<<<< HEAD
 export default {getById, getAll, getOnCreate,getPdf,getFileAsBase64, post, put, remove};
+=======
+export default {getById, getAll, getOnCreate,getPdf,getFileAsBase64, post,postForCheckFile, put, remove};
+>>>>>>> 5f13343c48a83b4427c8b26e0f4ee86ad7bf0544
