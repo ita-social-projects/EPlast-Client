@@ -5,18 +5,13 @@ import Add from "../../assets/images/add.png";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import { getCitiesByPage, getLogo } from "../../api/citiesApi";
 import classes from "./Cities.module.css";
-
-interface CardProps {
-  id: number;
-  name: string;
-  logo: string;
-}
+import CityProfile from '../../models/City/CityProfile';
 
 const Cities = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
 
-  const [cities, setCities] = useState([]);
+  const [cities, setCities] = useState<CityProfile[]>([]);
   const [canCreate, setCanCreate] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -25,21 +20,27 @@ const Cities = () => {
 
   const getCities = async () => {
     setLoading(true);
-    const response = await getCitiesByPage(page, pageSize);
 
-    for await (const city of response.data.cities) {
-      if (city.logo === null) {
-        city.logo = CityDefaultLogo;
-      } else {
-        const logo = await getLogo(city.logo);
-        city.logo = logo.data;
+    try {
+      const response = await getCitiesByPage(page, pageSize);
+      
+      for await (const city of response.data.cities) {
+        if (city.logo === null) {
+          city.logo = CityDefaultLogo;
+        } else {
+          const logo = await getLogo(city.logo);
+          city.logo = logo.data;
+        }
       }
+      
+      setCities(response.data.cities);
+      // setCanCreate(response.data.canCreate);
+      setCanCreate(true);
+      setTotal(response.data.total);
     }
-
-    setCities(response.data.cities);
-    setCanCreate(true);
-    setTotal(response.data.total);
-    setLoading(false);
+    finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (page: number) => {
@@ -59,7 +60,7 @@ const Cities = () => {
     <Layout.Content>
       <h1 className={classes.mainTitle}>Станиці</h1>
       <div className={classes.wrapper}>
-        {!loading && canCreate ? (
+        {!loading && canCreate && page === 1 ? (
           <Card
             hoverable
             className={`${classes.addCity} ${classes.cardStyles}`}
@@ -73,14 +74,14 @@ const Cities = () => {
           </Card>
         ) : null}
         {!loading
-          ? cities.map((city: CardProps) => (
+          ? cities.map((city: CityProfile) => (
               <Card
                 key={city.id}
                 hoverable
                 className={classes.cardStyles}
                 cover={
                   <img
-                    src={city.logo}
+                    src={city.logo || undefined}
                     alt="City"
                     style={{ height: "154.45px" }}
                   />

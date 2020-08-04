@@ -6,11 +6,3 @@
 .profilePhoto img {
     max-width: 80px;
 }
-
-.sidebar {
-    position: fixed;
-    height: 100vh;
-    z-index: 200;
-    top: 0;
-    box-shadow: 2px 0 5px 2px #00000066;
-}

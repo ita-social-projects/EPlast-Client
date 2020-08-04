@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import DecisionTable from "./pages/DecisionTable/DecisionTable";
 import "./App.less";
 import HeaderContainer from "./components/Header/HeaderContainer";
@@ -34,7 +34,9 @@ import CreateClub from "./pages/CreateClub/CreateClub";
 import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
 import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
-import NotFound from "./pages/Errors/NotFound";
+import UserFields from "./pages/userPage/personalData/UserFields";
+import AnnualReportTable from './pages/AnnualReport/AnnualReportTable/AnnualReportTable';
+import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
 
 const App: FC = () => (
   <div className="App">
@@ -52,7 +54,7 @@ const App: FC = () => (
           <Route path="/chat" component={Demo} />
           <RouteWithLayout
             layout={PrivateLayout}
-            path="/userpage/:specify"
+            path="/userpage/:specify/:userId"
             component={UserProfile}
           />
           <RouteWithLayout
@@ -159,8 +161,32 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+            path="/annualreport/create"
+            component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/annualreport/create/:cityId"
             component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/edit/:id"
+            component={AnnualReportEdit}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/edit/:cityId"
+            component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/table"
+            component={AnnualReportTable}
           />
           <RouteWithLayout
             layout={PrivateLayout}
@@ -191,12 +217,6 @@ const App: FC = () => (
             exact
             path="/annualreport/create/:cityId"
             component={AnnualReportCreate}
-          />
-          <RouteWithLayout
-            layout={PrivateLayout}
-            exact
-            path="*"
-            component={NotFound}
           />
         </Switch>
       </div>

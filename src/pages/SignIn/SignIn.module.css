@@ -102,3 +102,66 @@
 .btnText{
     margin-left: 7px;
 }
+
+@media(max-width: 700px){
+    .mainContainer{
+        width: 520px;
+    }
+    .SignInInput{
+        height:42px;
+    }
+    .forgot{
+        font-size: 15px;
+    }
+}
+
+@media(max-width: 600px){
+    .mainContainer{
+        width: 450px;
+    }
+    .SignInInput{
+        height:40px;
+    }
+    .forgot{
+        font-size: 14px;
+    }
+}
+
+@media(max-width: 480px){
+    .mainContainer{
+        width: 380px;
+    }
+    .SignInInput{
+        height:36px;
+    }
+    .forgot{
+        font-size: 13px;
+    }
+}
+
+@media(max-width: 410px){
+    .mainContainer{
+        width: 350px;
+    }
+    .forgot{
+        font-size: 12px;
+    }
+}
+
+@media(max-width: 370px){
+    .mainContainer{
+        width: 320px;
+    }
+    .forgot{
+        font-size: 11px;
+    }
+}
+
+@media(max-width: 350px){
+    .mainContainer{
+        width: 280px;
+    }
+    .forgot{
+        font-size: 10px;
+    }
+}

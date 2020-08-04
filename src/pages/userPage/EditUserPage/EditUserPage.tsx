@@ -10,7 +10,8 @@ import userApi from '../../../api/UserApi';
 import InputMask from 'react-input-mask';
 import moment, { Moment } from 'moment';
 import jwt from 'jwt-decode';
-import AuthStore from '../../../stores/Auth';
+import AuthStore from '../../../stores/AuthStore';
+import {useParams} from 'react-router-dom';
 
 export default function () {
     const patern=/^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50})*$/;
@@ -313,6 +314,7 @@ export default function () {
     await userApi.put(newUserProfile).then(res => console.log(res)).catch(error => console.log(error));
     window.location.reload(false);
   }
+  const {userId}=useParams(); 
 
   return loading === false ? (
     <div className={styles.spaceWrapper}>
@@ -478,7 +480,7 @@ export default function () {
             </Form.Item>
           </div>
           <Button className={styles.confirmBtn} htmlType="submit">
-            Підтердити
+            Підтвердити
           </Button>
         </div>
       </Form>

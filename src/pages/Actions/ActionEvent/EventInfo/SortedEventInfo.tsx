@@ -15,7 +15,7 @@ import {
 } from '@ant-design/icons';
 // eslint-disable-next-line import/no-cycle,import/no-duplicates
 import {EventDetails} from "./EventInfo";
-import {showSubscribeConfirm, showUnsubscribeConfirm} from "../../EventsModals";
+import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirmForSingleEvent} from "../../EventsModals";
 
 const classes = require('./EventInfo.module.css');
 
@@ -43,6 +43,12 @@ const RenderEventIcons = ({
         </Tooltip>)
         eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
             <DeleteTwoTone twoToneColor="#8B0000"
+                           onClick={() => showDeleteConfirmForSingleEvent({
+                               eventId: event?.eventId,
+                               eventName: event?.eventName,
+                               eventTypeId: event?.eventTypeId,
+                               eventCategoryId: event?.eventCategoryId
+                           })}
                            className={classes.icon} key="delete"/>
         </Tooltip>)
     } else if (isUserParticipant && !isEventFinished) {
@@ -170,7 +176,7 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) =
     return <div className={classes.background}>
         <div className={classes.actionsWrapper}>
             <Row>
-                <Col span={10} push={14}>
+                <Col span={10} push={14} key={'1'}>
                     <img
                         className={classes.imgEvent}
                         alt="example"
@@ -180,7 +186,7 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) =
                         {RenderEventIcons(event, subscribeOnEvent, unSubscribeOnEvent)}
                     </div>
                 </Col>
-                <Col span={14} pull={10}>
+                <Col span={14} pull={10} key={'2'}>
                     <Table columns={columns} dataSource={data} pagination={false}/>
                 </Col>
             </Row>

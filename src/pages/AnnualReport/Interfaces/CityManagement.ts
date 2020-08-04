@@ -1,21 +1,13 @@
-import { User } from './User';
+import User from './User';
 
-export class CityManagement {
+interface CityManagement {
     id: number;
     cityLegalStatusNew: number;
     cityLegalStatusOldId: number | null;
-    userId: string;
+    userId: string | null;
     cityAdminNew: User | null;
     cityAdminOldId: number | null;
     annualReportId: number;
-
-    constructor(obj: any) {
-        this.id = 0;
-        this.cityLegalStatusNew = obj.cityLegalStatusNew;
-        this.cityLegalStatusOldId = null;
-        this.userId = obj.userId;
-        this.cityAdminNew = null;
-        this.cityAdminOldId = null;
-        this.annualReportId = 0;
-    }
 }
+
+export default CityManagement;

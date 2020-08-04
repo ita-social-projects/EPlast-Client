@@ -3,6 +3,8 @@ import React, {useState, useEffect} from 'react';
 // eslint-disable-next-line import/no-cycle
 import EventCard from './EventCard/EventCard';
 import eventsApi from "../../../api/eventsApi";
+import {Space, Spin} from "antd";
+import spinClasses from "./EventUser/EventUser.module.css";
 
 const classes = require('./ActionEvent.module.css');
 
@@ -26,13 +28,14 @@ export interface CardProps {
 
 const SortedEvents = ({eventCategoryId, typeId}: Props) => {
 
+    const [loading, setLoading] = useState(false);
     const [actions, setActions] = useState<CardProps[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
             const response = await eventsApi.getEvents(typeId, eventCategoryId);
-            // console.log(response);
             setActions(response.data)
+            setLoading(true);
         };
         fetchData();
     }, []);
@@ -85,7 +88,14 @@ const SortedEvents = ({eventCategoryId, typeId}: Props) => {
 
     const actionCard = renderAction(actions);
 
-    return (
+    return loading === false ? (
+        <div className={spinClasses.spaceWrapper}>
+            <Space className={spinClasses.loader} size="large">
+                <Spin size="large"/>
+            </Space>
+        </div>
+
+    ) : (
         <div className={classes.background}>
             <div className={classes.actionsWrapper}>{actionCard}</div>
         </div>

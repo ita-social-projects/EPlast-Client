@@ -39,7 +39,7 @@ export default function () {
   };
 
   return (
-    <div className={styles.mainContainer}>
+    <div className={styles.mainContainerSignUp}>
       <Switcher page="SignUp" />
       <Form
         name="SignUpForm"

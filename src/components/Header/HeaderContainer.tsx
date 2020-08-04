@@ -7,23 +7,23 @@ import LogoText from "../../assets/images/logo_PLAST.svg";
 import classes from "./Header.module.css";
 import AuthorizeApi from '../../api/authorizeApi';
 import jwt from 'jwt-decode';
-import AuthStore from '../../stores/Auth';
+import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
 let authService = new AuthorizeApi();
 
 const HeaderContainer = () => {
-
   const user = AuthorizeApi.isSignedIn(); 
-
   const [imageBase64, setImageBase64] = useState<string>();
   const [name, setName] = useState<string>();
+  const [id, setId] = useState<string>();
   const token = AuthStore.getToken() as string;
+  const signedIn = AuthorizeApi.isSignedIn();
   const fetchData = async () => {
-
     if (user) {
       const user: any = jwt(token);
       await userApi.getById(user.nameid).then(async response => {
         setName(response.data.user.firstName);
+        setId(response.data.user.id);
         await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
         })
@@ -42,7 +42,7 @@ const HeaderContainer = () => {
     >
       <Menu.Item className={classes.headerDropDownItem} key="5">
         <NavLink
-          to="/edit-profile"
+          to={`/userpage/edit/${id}`}
           className={classes.headerLink}
           activeClassName={classes.activeLink}
         >
@@ -85,7 +85,7 @@ const HeaderContainer = () => {
           </div>
         </Menu.Item>
       </Menu>
-      {user ? (
+      {signedIn ? (
         <Menu mode="horizontal" className={classes.headerMenu}>
           <Menu.Item
             className={classes.headerItem}
@@ -94,7 +94,7 @@ const HeaderContainer = () => {
           />
           <Dropdown overlay={primaryMenu}>
             <NavLink
-              to="/userpage/main"
+              to={`/userpage/main/${id}`}
               className={classes.userMenu}
               activeClassName={classes.activeLink}
             >

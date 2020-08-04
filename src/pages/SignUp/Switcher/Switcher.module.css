@@ -110,3 +110,68 @@
 .registerText:hover, .loginText:hover {
     color: rgb(255, 255, 255);
 }
+
+@media(max-width:700px){
+    .loginText{
+        font-size:22px;
+    }
+
+    .registerText{
+        font-size:22px;
+    }
+    .orSwitcher{
+        font-size:30px;
+    }
+}
+
+@media(max-width: 600px){
+    .loginText{
+        font-size:16px;
+    }
+
+    .registerText{
+        font-size:16px;
+    }
+    .orSwitcher{
+        font-size:28px;
+    }
+}
+
+@media(max-width: 480px){
+    .loginText{
+        font-size:11px;
+    }
+
+    .registerText{
+        font-size:11px;
+    }
+    .orSwitcher{
+        font-size:25px;
+    }
+}
+
+@media(max-width: 370px){
+    .loginText{
+        font-size:9px;
+    }
+
+    .registerText{
+        font-size: 9px;
+    }
+    .orSwitcher{
+        font-size:22px;
+    }
+}
+
+@media(max-width: 350px){
+    .loginText{
+        font-size:8px;
+    }
+
+    .registerText{
+        font-size: 8px;
+    }
+    .orSwitcher{
+        font-size:20px;
+    }
+}
