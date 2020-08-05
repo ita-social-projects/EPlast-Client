@@ -35,6 +35,10 @@ import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
 import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
 import UserFields from "./pages/userPage/personalData/UserFields";
+import ClubMembers from "./pages/Club/ClubMembers";
+import ClubAdministration from "./pages/Club/ClubAdministration";
+import ClubDocuments from "./pages/Club/ClubDocuments";
+import ClubFollowers from "./pages/Club/ClubFollowers";
 
 const App: FC = () => (
   <div className="App">
@@ -185,6 +189,30 @@ const App: FC = () => (
             exact
             path="/clubs/edit/:id"
             component={CreateClub}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/club/members/:id"
+            component={ClubMembers}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/club/administration/:id"
+            component={ClubAdministration}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/club/documents/:id"
+            component={ClubDocuments}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/club/followers/:id"
+            component={ClubFollowers}
           />
           <RouteWithLayout
             layout={PrivateLayout}

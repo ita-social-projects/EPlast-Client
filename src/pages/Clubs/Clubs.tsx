@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { Card, Spin, Layout } from "antd";
+import { Card, Layout, Spin } from "antd";
 import clubsApi from "../../api/clubsApi";
 import Add from "../../assets/images/add.png";
-
-const classes = require("./Clubs.module.css");
+import classes from "./Clubs.module.css";
 
 interface CardProps {
   id: number;
@@ -19,50 +18,61 @@ const Clubs = () => {
   const { url } = useRouteMatch();
   const [clubs, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
+  const getClubs = async () => {
     setLoading(true);
 
     const fetchData = async () => {
       const res = await clubsApi.getAll();
       setData(res.data);
+      setLoading(false);
     };
     fetchData();
-    setLoading(false);
+  };
+  useEffect(() => {
+    getClubs();
   }, []);
 
-  return loading ? (
-    <Layout.Content className={classes.spiner}>
-      <Spin size="large" />
-    </Layout.Content>
-  ) : (
+  return (
     <Layout.Content>
       <h1 className={classes.mainTitle}>Курені</h1>
-      <div className={classes.wrapper}>
-        <Card
-          hoverable
-          className={classes.cardStyles}
-          cover={<img src={Add} alt="Add" />}
-          onClick={() => history.push(`${url}/new`)}
-        >
-          <Card.Meta
-            className={classes.titleText}
-            title="Створити новий курінь"
-          />
-        </Card>
 
-        {clubs.map((club: CardProps) => (
+      <div className={classes.wrapper}>
+        {loading ? <Spin className={classes.mainTitle} size="large" /> : null}
+        {!loading ? (
           <Card
-            key={club.id}
             hoverable
             className={classes.cardStyles}
-            cover={
-              <img src={club.logo} alt="Club" style={{ height: "154.45px" }} />
-            }
-            onClick={() => history.push(`${url}/${club.id}`)}
+            cover={<img src={Add} alt="Add" />}
+            onClick={() => history.push(`${url}/new`)}
           >
-            <Card.Meta title={club.clubName} className={classes.titleText} />
+            <Card.Meta
+              className={classes.titleText}
+              title="Створити новий курінь"
+            />
           </Card>
-        ))}
+        ) : null}
+        {!loading
+          ? clubs.map((club: CardProps) => (
+              <Card
+                key={club.id}
+                hoverable
+                className={classes.cardStyles}
+                cover={
+                  <img
+                    src={club.logo}
+                    alt="Club"
+                    style={{ height: "154.45px" }}
+                  />
+                }
+                onClick={() => history.push(`${url}/${club.id}`)}
+              >
+                <Card.Meta
+                  title={club.clubName}
+                  className={classes.titleText}
+                />
+              </Card>
+            ))
+          : null}
       </div>
     </Layout.Content>
   );

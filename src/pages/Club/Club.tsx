@@ -15,7 +15,7 @@ interface ClubData {
   clubAdmin: User;
   clubAdministration: ClubAdministration;
   members: Members[];
-  documents: object;
+  documents: object[];
   followers: Members[];
 }
 interface ClubAdministration {}
@@ -50,9 +50,9 @@ const Club = () => {
     const fetchData = async () => {
       const res = await clubsApi.getById(id);
       setData(res.data);
+      setLoading(false);
     };
     fetchData();
-    setLoading(false);
   }, []);
 
   const typoExpand = () => {
@@ -90,7 +90,7 @@ const Club = () => {
               onClick={() => history.push(`/clubs/edit/${club?.club.id}`)}
             />
             <h1>{`Курінь ${
-              club?.club.clubName ? club?.club.clubName : "Немає"
+              club?.club.clubName !== undefined ? club?.club.clubName : "Немає"
             }`}</h1>
             <Row
               gutter={16}
@@ -173,13 +173,16 @@ const Club = () => {
                 </Col>
               ))}
             </Row>
-            <Button type="primary" className={classes.listButton}>
+            <Button
+              type="primary"
+              className={classes.listButton}
+              onClick={() => history.push(`/club/members/${club?.club.id}`)}
+            >
               Більше
             </Button>
           </section>
         </Col>
       </Row>
-
       <Row
         justify="space-around"
         gutter={[0, 40]}
@@ -228,7 +231,9 @@ const Club = () => {
                 </Col>
               }
             </Row>
-            <Button type="primary" className={classes.listButton}>
+            <Button type="primary" className={classes.listButton}
+              onClick={() => history.push(`/club/administration/${club?.club.id}`)}
+              >
               Деталі
             </Button>
           </section>
@@ -257,11 +262,11 @@ const Club = () => {
               }}
             >
               {/* {club?.documents.map((document: any) => (
-                    <Col key={document.id} className={classes.listItem} span={7}>
-                      <FileTextOutlined style={{fontSize: '60px'}} className={classes.profileImg}/>
-                      <p>{document.name}</p>
-                    </Col>
-                ))} */}
+                <Col key={document.id} className={classes.listItem} span={7}>
+                  <FileTextOutlined style={{fontSize: '60px'}} className={classes.profileImg}/>
+                  <p>{document.name}</p>
+                </Col>
+            ))} */}
             </Row>
             <Button type="primary" className={classes.listButton}>
               Деталі
@@ -304,7 +309,11 @@ const Club = () => {
                 </Col>
               ))}
             </Row>
-            <Button type="primary" className={classes.listButton}>
+            <Button
+              type="primary"
+              className={classes.listButton}
+              onClick={() => history.push(`/club/followers/${club?.club.id}`)}
+            >
               Більше
             </Button>
           </section>

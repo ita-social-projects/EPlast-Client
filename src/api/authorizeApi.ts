@@ -9,7 +9,7 @@ export default class AuthorizeApi{
   }
 
   login = async(data: any) =>{
-    const response = await Api.post("Account/signin", data)
+    const response = await Api.post("Auth/signin", data)
      .then(response =>{
        if(response.data.token !== null){
         AuthStore.setToken(response.data.token);
@@ -25,7 +25,7 @@ export default class AuthorizeApi{
 
 
   register = async (data: any) => {
-  const response = await Api.post("Account/signup", data)
+  const response = await Api.post("Auth/signup", data)
   .then(response =>{
     notificationLogic('success', response.data.value);
   })
@@ -38,7 +38,7 @@ export default class AuthorizeApi{
 };
 
   forgotPassword = async(data : any) => {
-  const response = await Api.post("Account/forgotPassword", data)
+  const response = await Api.post("Auth/forgotPassword", data)
   .then(response =>{
     notificationLogic('success', response.data.value);
   })
@@ -51,7 +51,7 @@ export default class AuthorizeApi{
 };
 
  resetPassword = async(data : any) => {
-  const response = await Api.post("Account/resetPassword", data)
+  const response = await Api.post("Auth/resetPassword", data)
   .then(response =>{
     notificationLogic('success', response.data.value);
   })
@@ -64,7 +64,7 @@ export default class AuthorizeApi{
 };
 
  /*resetPasswordGet = async() =>{
-   const response = await Api.getAll("Account/ResetPassword")
+   const response = await Api.getAll("Auth/ResetPassword")
    .then(response =>{
      //history.push("/");
    })
@@ -72,7 +72,7 @@ export default class AuthorizeApi{
 /*Added some changes for example*/
 
  changePassword = async(data : any) => {
-  const response = await Api.post("Account/changePassword", data)
+  const response = await Api.post("Auth/changePassword", data)
   .then(response =>{
     notificationLogic('success', response.data.value);
   })
@@ -90,7 +90,7 @@ export default class AuthorizeApi{
  };
   
  sendQuestionAdmin = async (data: any) => {
-  const response = await Api.post("Account/sendQuestion", data)
+  const response = await Api.post("Auth/sendQuestion", data)
   .then(response =>{
     notificationLogic('success', response.data.value);
   })
