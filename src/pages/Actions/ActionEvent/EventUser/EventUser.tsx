@@ -4,10 +4,16 @@ import { Avatar, Modal, Button, Typography, Badge, Space, Spin } from 'antd';
 import eventUserApi from '../../../../api/eventUserApi';
 import classes from './EventUser.module.css';
 import userApi from '../../../../api/UserApi';
+<<<<<<< HEAD
 import AuthStore from '../../../../stores/Auth';
 import jwt from 'jwt-decode';
 import { CalendarOutlined } from '@ant-design/icons';
 import moment from 'moment';
+=======
+import AuthStore from '../../../../stores/AuthStore';
+import jwt from 'jwt-decode';
+import { CalendarOutlined, PlusCircleOutlined } from '@ant-design/icons';
+>>>>>>> origin
 const { Title } = Typography;
 
 const EventUser = () => {
@@ -70,6 +76,10 @@ const EventUser = () => {
                 <Spin size="large" />
             </Space>
         </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin
     ) : (
             <div className={classes.wrapper} >
                 <div className={classes.wrapperImg}>
@@ -110,8 +120,13 @@ const EventUser = () => {
                                 {data.visitedEvents.map((item: any) =>
                                     <div>
                                         <h1>{item.eventName} </ h1 >
+<<<<<<< HEAD
                                         < h2 > Дата початку: {moment(item.eventDateStart).format("DD-MM-YYYY HH:mm")} </h2>
                                         < h2 > Дата завершення: {moment(item.eventDateEnd).format("DD-MM-YYYY HH:mm")} </h2>
+=======
+                                        < h2 > Дата початку: {item.eventDateStart}</h2>
+                                        < h2 > Дата завершення: {item.eventDateEnd} </h2>
+>>>>>>> origin
                                         < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${item.id}/details`)} >
                                             Деталі
                                         </Button>
@@ -148,8 +163,13 @@ const EventUser = () => {
                                 {data.createdEvents.map((item: any) =>
                                     <div>
                                         <h1>{item.eventName} </ h1 >
+<<<<<<< HEAD
                                         < h2 > Дата початку: {moment(item.eventDateStart).format("DD-MM-YYYY HH:mm")} </h2>
                                         < h2 > Дата завершення: {moment(item.eventDateEnd).format("DD-MM-YYYY HH:mm")} </h2>
+=======
+                                        < h2 > Дата початку: {item.eventDateStart} </h2>
+                                        < h2 > Дата завершення: {item.eventDateEnd} </h2>
+>>>>>>> origin
                                         < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${item.id}/details`)} >
                                             Деталі
                                     </Button>
@@ -168,7 +188,11 @@ const EventUser = () => {
                             < div className={classes.line} />
                             {data.planedEvents.length === 0 && <div>
                                 <h2>Ви ще не запланували жодної події</ h2 >
+<<<<<<< HEAD
                                 <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => history.push('/events/types')} >
+=======
+                                <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => history.push('/actions')} >
+>>>>>>> origin
                                     Зголоситись на подію
                                 </Button>
                             </div>}
@@ -188,7 +212,11 @@ const EventUser = () => {
                                 onCancel={() => setPlanedEventsModal(false)}
                                 footer={
                                     [
+<<<<<<< HEAD
                                         <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => history.push('/events/types')} >
+=======
+                                        <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => history.push('/actions')} >
+>>>>>>> origin
                                             Зголоситись на подію
                                         </Button>,
                                         < Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => setPlanedEventsModal(false)}>
@@ -198,8 +226,13 @@ const EventUser = () => {
                             >
                                 {data.planedEvents.map((item: any) => <div>
                                     <h1>{item.eventName} </ h1 >
+<<<<<<< HEAD
                                     < h2 > Дата початку: {moment(item.eventDateStart).format("DD-MM-YYYY HH:mm")} </h2>
                                     < h2 > Дата завершення: {moment(item.eventDateEnd).format("DD-MM-YYYY HH:mm")} </h2>
+=======
+                                    < h2 > Дата початку: {item.eventDateStart} </h2>
+                                    < h2 > Дата завершення: {item.eventDateEnd} </h2>
+>>>>>>> origin
                                     < Button type="primary" className={classes.button} id={classes.button} style={{ marginLeft: 160 }} onClick={() => history.push(`/events/${item.id}/details`)}>
                                         Деталі
                                     </Button>

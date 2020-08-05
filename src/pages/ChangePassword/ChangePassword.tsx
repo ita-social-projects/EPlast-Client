@@ -36,7 +36,11 @@ export default function () {
     };
 
     return (
+<<<<<<< HEAD
         <div className={styles.mainContainer}>
+=======
+        <div className={styles.mainContainerChange}>
+>>>>>>> origin
             <Form
                 name="ChangePasswordForm"
                 initialValues={initialValues}

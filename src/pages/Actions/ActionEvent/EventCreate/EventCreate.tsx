@@ -4,9 +4,16 @@ import TextArea from 'antd/lib/input/TextArea';
 import { useHistory } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
 import eventUserApi from '../../../../api/eventUserApi';
+<<<<<<< HEAD
 import eventsApi from "../../../../api/eventsApi";
 import notificationLogic from '../../../../components/Notifications/Notification';
 import moment from 'moment';
+=======
+import notificationLogic from '../../../../components/Notifications/Notification';
+import moment from 'moment';
+import 'moment/locale/uk';
+moment.locale('uk-ua');
+>>>>>>> origin
 
 const classes = require('./EventCreate.module.css');
 
@@ -15,10 +22,13 @@ export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
+<<<<<<< HEAD
   const [categories, setCategories] = useState<any>([]);
   const [administators, setAdministators] = useState<any>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>(['', '', '', '']);
   const dateFormat = 'MM/DD/YYYY HH:mm';
+=======
+>>>>>>> origin
 
   const [data, setData] = useState<any>({
     eventCategories: [{
@@ -33,7 +43,11 @@ export default function () {
       id: '',
       firstName: '',
       lastName: '',
+<<<<<<< HEAD
       userName: '',
+=======
+      userName: ''
+>>>>>>> origin
     }]
   });
 
@@ -42,25 +56,36 @@ export default function () {
       await eventUserApi.getDataForNewEvent().then(async response => {
         const { eventCategories, eventTypes, users } = response.data;
         setData({ eventCategories, eventTypes, users });
+<<<<<<< HEAD
         setAdministators(users);
+=======
+>>>>>>> origin
         setLoading(true);
       })
     }
     fetchData();
   }, []);
 
+<<<<<<< HEAD
   useEffect(() => {
     resetUsers()
   }, selectedUsers);
 
+=======
+>>>>>>> origin
   const handleFinish = async (values: any) => {
     const newEvent = {
       event: {
         eventName: values.EventName,
         description: values.Description,
         questions: values.Questions,
+<<<<<<< HEAD
         eventDateStart: moment(values.EventDateStart).add(3, "hours"),
         eventDateEnd: moment(values.EventDateEnd).add(3, "hours"),
+=======
+        eventDateStart: values.EventDateStart._d,
+        eventDateEnd: values.EventDateEnd._d,
+>>>>>>> origin
         eventlocation: values.Eventlocation,
         eventTypeID: values.EventTypeID,
         eventCategoryID: values.EventCategoryID,
@@ -89,7 +114,12 @@ export default function () {
       if (error.response?.status === 400) {
         notificationLogic('error', 'Спробуйте ще раз');
       }
+<<<<<<< HEAD
     });
+=======
+    });;
+    console.log(newEvent);
+>>>>>>> origin
   }
 
   function onSearch(val: any) {
@@ -99,6 +129,7 @@ export default function () {
     return current && current < moment().startOf('day');
   }
 
+<<<<<<< HEAD
   function onChange(e: any) {
     eventsApi.getCategories(e.target.value).then(async response => {
       setCategories(response.data);
@@ -122,6 +153,9 @@ export default function () {
 
     setAdministators([...updatedUsers]);
   }
+=======
+  const dateFormat = 'DD/MM/YYYY';
+>>>>>>> origin
 
   return loading === false ? (
     <div className={classes.spaceWrapper}>
@@ -133,15 +167,24 @@ export default function () {
       <div className={classes.background} >
         <div className={classes.actionsWrapper}>
           <div className={classes.card}>
+<<<<<<< HEAD
             <Form name="basic"
               form={form}
               onFinish={handleFinish}>
+=======
+            <Form name="basic" form={form} onFinish={handleFinish}>
+>>>>>>> origin
               <div className={classes.title} >
                 < Title level={2} > Створення події</ Title>
               </div>
               < div className={classes.radio} >
+<<<<<<< HEAD
                 <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio} >
                   <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup} onChange={onChange} value={categories}>
+=======
+                <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio}>
+                  <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup}>
+>>>>>>> origin
                     {data?.eventTypes.map((item: any) => (<Radio.Button key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
                   </Radio.Group>
                 </Form.Item>
@@ -149,8 +192,13 @@ export default function () {
               < div className={classes.row} >
                 <h3>Категорія </h3>
                 < Form.Item name="EventCategoryID" className={classes.input} rules={[{ required: true, message: 'Оберіть категорію події' }]} >
+<<<<<<< HEAD
                   <Select showSearch optionFilterProp="children" onSearch={onSearch}  >
                     {categories.map((item: any) => (<Select.Option key={item.eventCategoryId} value={item.eventCategoryId} > {item.eventCategoryName} </Select.Option>))}
+=======
+                  <Select showSearch optionFilterProp="children" onSearch={onSearch} >
+                    {data?.eventCategories.map((item: any) => (<Select.Option key={item.id} value={item.eventCategoryId} > {item.eventCategoryName} </Select.Option>))}
+>>>>>>> origin
                   </Select>
                 </ Form.Item>
               </ div>
@@ -163,45 +211,73 @@ export default function () {
               < div className={classes.row} >
                 <h3>Комендант </h3>
                 < Form.Item name="commandantId" className={classes.select} rules={[{ required: true, message: 'Оберіть коменданта' }]} >
+<<<<<<< HEAD
                   <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)}  >
                     {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.id} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
+=======
+                  <Select showSearch optionFilterProp="children" onSearch={onSearch}>
+                    {data?.users.map((item: any) => (<Select.Option key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
+>>>>>>> origin
                   </Select>
                 </ Form.Item>
               </ div>
               < div className={classes.row} >
                 <h3>Заступник коменданта </h3>
                 < Form.Item name="alternateId" className={classes.select} rules={[{ required: true, message: 'Оберіть заступника коменданта' }]} >
+<<<<<<< HEAD
                   <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(1, e)} >
                     {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
+=======
+                  <Select showSearch optionFilterProp="children" onSearch={onSearch} >
+                    {data?.users.map((item: any) => (<Select.Option key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
+>>>>>>> origin
                   </Select>
                 </Form.Item>
               </ div>
               < div className={classes.row} >
                 <h3>Бунчужний </h3>
                 < Form.Item name="bunchuzhnyiId" className={classes.select} rules={[{ required: true, message: 'Оберіть бунчужного' }]} >
+<<<<<<< HEAD
                   <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(2, e)}>
                     {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
+=======
+                  <Select showSearch optionFilterProp="children" onSearch={onSearch} >
+                    {data?.users.map((item: any) => (<Select.Option key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
+>>>>>>> origin
                   </Select>
                 </Form.Item>
               </ div>
               < div className={classes.row} >
                 <h3>Писар </h3>
                 < Form.Item name="pysarId" className={classes.select} rules={[{ required: true, message: 'Оберіть писаря' }]} >
+<<<<<<< HEAD
                   <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(3, e)}>
                     {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
+=======
+                  <Select showSearch optionFilterProp="children" onSearch={onSearch} >
+                    {data?.users.map((item: any) => (<Select.Option key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
+>>>>>>> origin
                   </Select>
                 </Form.Item>
               </ div>
               < div className={classes.row} >
                 <h3>Дата початку </h3>
                 < Form.Item name="EventDateStart" rules={[{ required: true, message: 'Оберіть дату початку події' }]} >
+<<<<<<< HEAD
                   <DatePicker showTime disabledDate={disabledDate} placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} />
+=======
+                  <DatePicker disabledDate={disabledDate} placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} />
+>>>>>>> origin
                 </ Form.Item>
               </ div>
               < div className={classes.row} >
                 <h3>Дата завершення </h3>
                 < Form.Item name="EventDateEnd" rules={[{ required: true, message: 'Оберіть дату завершення події' }]} >
+<<<<<<< HEAD
                   <DatePicker showTime disabledDate={disabledDate} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
+=======
+                  <DatePicker disabledDate={disabledDate} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
+>>>>>>> origin
                 </ Form.Item>
               </ div>
               < div className={classes.row} >

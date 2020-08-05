@@ -2,6 +2,10 @@ import React from 'react';
 import {Modal} from 'antd';
 import {ExclamationCircleOutlined} from '@ant-design/icons';
 import eventsApi from "../../api/eventsApi";
+<<<<<<< HEAD
+=======
+import {useHistory} from "react-router-dom";
+>>>>>>> origin
 
 const {confirm} = Modal;
 
@@ -10,10 +14,24 @@ type UnParameterizedCallback = () => void
 type EventsStateCallback = ParameterizedCallback | UnParameterizedCallback
 
 interface EventData {
+<<<<<<< HEAD
     eventId: number,
     eventName: string,
     successCallback: EventsStateCallback,
     isSingleEventInState: boolean
+=======
+    eventId: number;
+    eventName: string;
+    successCallback: EventsStateCallback;
+    isSingleEventInState: boolean;
+}
+
+interface EventDataForDeleting {
+    eventId: number;
+    eventName: string;
+    eventTypeId: number;
+    eventCategoryId: number;
+>>>>>>> origin
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -38,7 +56,11 @@ export const showSubscribeConfirm = ({eventId, eventName, successCallback, isSin
         content: `Подія: ${eventName}`,
         okText: 'Так, зголоситися',
         cancelText: 'Скасувати',
+<<<<<<< HEAD
         onOk () {
+=======
+        onOk() {
+>>>>>>> origin
             const createParticipant = async () => {
                 await eventsApi.createParticipant(eventId);
             };
@@ -81,7 +103,12 @@ export const showUnsubscribeConfirm = ({eventId, eventName, successCallback, isS
                         successCallback()
                     } else {
                         successCallback(eventId)
+<<<<<<< HEAD
                     }                })
+=======
+                    }
+                })
+>>>>>>> origin
                 .catch(() => {
                     showError();
                 });
@@ -112,7 +139,38 @@ export const showDeleteConfirm = ({eventId, eventName, successCallback, isSingle
                         successCallback()
                     } else {
                         successCallback(eventId)
+<<<<<<< HEAD
                     }                })
+=======
+                    }
+                })
+                .catch(() => {
+                    showError();
+                });
+        },
+        onCancel() {
+            console.log('Cancel Delete');
+        },
+    });
+}
+
+export const showDeleteConfirmForSingleEvent = ({eventId, eventName, eventTypeId, eventCategoryId}: EventDataForDeleting) => {
+    confirm({
+        title: 'Ви впевнені, що хочете видалити дану подію?',
+        icon: <ExclamationCircleOutlined/>,
+        content: `Подія: ${eventName}`,
+        okText: 'Так, видалити',
+        okType: 'danger',
+        cancelText: 'Скасувати',
+        onOk() {
+            const deleteEvent = async () => {
+                await eventsApi.remove(eventId);
+            };
+            deleteEvent()
+                .then(() => {
+                    window.location.replace(`/types/${eventTypeId}/categories/${eventCategoryId}/events`)
+                })
+>>>>>>> origin
                 .catch(() => {
                     showError();
                 });

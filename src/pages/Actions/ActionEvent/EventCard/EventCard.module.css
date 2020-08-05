@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .background{
     background-color: rgb(238, 238, 238);
 }
@@ -12,4 +13,20 @@
     width: 180px;
     margin: 15px;
     text-align: center;
+=======
+.background{
+    background-color: rgb(238, 238, 238);
+}
+.actionsWrapper{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 90%;
+    margin: 0 auto;
+}
+.cardStyles{
+    width: 180px;
+    margin: 15px;
+    text-align: center;
+>>>>>>> origin
 }

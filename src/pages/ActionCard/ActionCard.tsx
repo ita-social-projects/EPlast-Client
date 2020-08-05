@@ -1,5 +1,9 @@
 import React from 'react';
 import {Card} from 'antd';
+<<<<<<< HEAD
+=======
+import ActionLogo from '../../assets/images/ActionLogo.png'
+>>>>>>> origin
 
 import {useHistory} from "react-router-dom";
 
@@ -30,7 +34,11 @@ const ActionCard = ({
                 key={eventCategoryId}
                 hoverable
                 className={classes.cardStyles}
+<<<<<<< HEAD
                 cover={<img alt="example" src="https://eplast.azurewebsites.net/images/Events/ActionLogo.png"/>}
+=======
+                cover={<img alt="example" src={ActionLogo}/>}
+>>>>>>> origin
                 onClick={() => history.push(`/types/${eventTypeId}/categories/${eventCategoryId}/events`)}
             >
                 <Meta title={eventCategoryName} className={classes.titleText}/>

@@ -21,6 +21,7 @@ const getEditedEvent = async (id: number) => {
 
 const getDataForCalendar = async () => {
     const response = await Api.get(`EventsCalendar/eventsForCalendar`);
+<<<<<<< HEAD
 
     return response;
 }
@@ -40,6 +41,9 @@ const getEducationsForCalendar = async () => {
 const getCampsForCalendar = async () => {
     const response = await Api.get(`EventsCalendar/campsForCalendar`);
 
+=======
+    console.log(response);
+>>>>>>> origin
     return response;
 }
 
@@ -55,6 +59,7 @@ const put = async (data: any) => {
     return response;
 }
 
+<<<<<<< HEAD
 export default {
     getEventsUser,
     getDataForNewEvent,
@@ -66,3 +71,6 @@ export default {
     post,
     put
 };
+=======
+export default { getEventsUser, getDataForNewEvent, getEditedEvent, getDataForCalendar, post, put };
+>>>>>>> origin

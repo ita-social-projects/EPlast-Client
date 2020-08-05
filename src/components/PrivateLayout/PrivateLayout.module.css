@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .profilePhoto {
     text-align: center;
     margin: 5px 0;
@@ -13,4 +14,13 @@
     z-index: 200;
     top: 0;
     box-shadow: 2px 0 5px 2px #00000066;
+=======
+.profilePhoto {
+    text-align: center;
+    margin: 5px 0;
+}
+
+.profilePhoto img {
+    max-width: 80px;
+>>>>>>> origin
 }

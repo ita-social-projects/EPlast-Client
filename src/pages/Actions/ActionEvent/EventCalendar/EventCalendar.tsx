@@ -3,16 +3,24 @@ import eventUserApi from '../../../../api/eventUserApi';
 import { Button, Space, Spin, Modal } from 'antd';
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
+<<<<<<< HEAD
 import listPlugin from '@fullcalendar/list'
 import ukLocale from '@fullcalendar/core/locales/uk';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
+=======
+import ukLocale from '@fullcalendar/core/locales/uk';
+import moment from 'moment';
+import 'moment/locale/uk';
+moment.locale('uk-ua');
+>>>>>>> origin
 
 const classes = require('./EventCalendar.module.css');
 
 export default function () {
 
     const [loading, setLoading] = useState(false);
+<<<<<<< HEAD
     const [actions, setActions] = useState<any>([]);
     const [educations, setEducations] = useState<any>([]);
     const [camps, setCamps] = useState<any>([]);
@@ -35,10 +43,31 @@ export default function () {
                 })
             })
             setLoading(true);
+=======
+    const [events, setEvents] = useState<any>({
+        id: 0,
+        title: '',
+        start: '',
+        end: '',
+        eventlocation: '',
+        description: '',
+        color: '#3c5438'
+    });
+
+    const [eventModal, setEventModal] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            await eventUserApi.getDataForCalendar().then(async response => {
+                setEvents(response.data);
+                setLoading(true);
+            })
+>>>>>>> origin
         }
         fetchData();
     }, []);
 
+<<<<<<< HEAD
     function getConcatedEvents(): Array<any> {
         (actions as Array<any>).forEach(event => {
             Object.assign(event, { color: eventsColors[0] })
@@ -58,6 +87,8 @@ export default function () {
         setEventInfo(clickInfo);
     }
 
+=======
+>>>>>>> origin
     return loading === false ? (
         <div className={classes.spaceWrapper}>
             <Space className={classes.loader} size="large">
@@ -67,6 +98,7 @@ export default function () {
     ) : (
             <div>
                 <div>
+<<<<<<< HEAD
                     <div className={classes.legend}>
                         <div className={classes.legendItem}>
                             Акція
@@ -100,13 +132,30 @@ export default function () {
                         height={'auto'}
                         eventClick={event => handleEventClick(event)}
                         initialEvents={getConcatedEvents()}
+=======
+                    <FullCalendar
+                        initialView="dayGridMonth"
+                        plugins={[dayGridPlugin]}
+                        themeSystem='Cosmo'
+                        eventColor='#3c5438'
+                        displayEventEnd={false}
+                        customButtons={classes.button}
+                        locale={ukLocale}
+                        timeZone='Europe/Kiev'
+                        height={'auto'}
+                        eventClick={() => setEventModal(true)}
+                        initialEvents={events}
+>>>>>>> origin
                         dayMaxEventRows={3}
                         dayMaxEvents={3}
                         moreLinkClick="popover"
                         showNonCurrentDates={false}
                         displayEventTime={false}
+<<<<<<< HEAD
                         defaultAllDay={true}
                         forceEventDuration={true}
+=======
+>>>>>>> origin
                     />
                     < Modal
                         title="Деталі події"
@@ -121,6 +170,7 @@ export default function () {
                                 </Button>
                             ]}
                     >
+<<<<<<< HEAD
                         <h1>{eventInfo?.event?.title}</h1>
                         <h2>Дата початку: {moment(eventInfo?.event?.start).format("DD-MM-YYYY HH:mm")}</h2>
                         <h2>Дата завершення: {moment(eventInfo?.event?.end).format("DD-MM-YYYY HH:mm")}</h2>
@@ -129,6 +179,8 @@ export default function () {
                         < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${eventInfo?.event?.id}/details`)} >
                             Деталі
                         </Button>
+=======
+>>>>>>> origin
                     </Modal >
                 </div>
             </div>

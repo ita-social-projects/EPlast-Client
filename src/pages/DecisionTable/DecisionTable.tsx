@@ -3,8 +3,13 @@ import { Table, Input, Button, Layout } from 'antd';
 import columns from './columns';
 import DropDown from './DropDownDecision';
 import AddDecisionModal from './AddDecisionModal';
+<<<<<<< HEAD
 import decisionsApi, { Decision } from '../../api/decisionsApi';
 // import classes from './Table.module.css';
+=======
+import decisionsApi, { Decision, statusTypeGetParser } from '../../api/decisionsApi';
+import notificationLogic from '../../components/Notifications/Notification';
+>>>>>>> origin
 const classes = require('./Table.module.css');
 
 const { Content } = Layout;
@@ -36,10 +41,33 @@ const DecisionTable = () => {
     );
     setData([...filteredData]);
   }
+<<<<<<< HEAD
   const handleAdd = (decision: Decision) => {
     const lastId = data[data.length - 1].id;
     decision.id = lastId + 1;
     setData([...data, decision]);
+=======
+  const handleAdd =async () => {
+    const lastId = data[data.length - 1].id;
+    await decisionsApi.getById(lastId+1).then(res =>{
+      const dec : Decision = {
+        id :res.id,
+        name: res.name,
+        organization : res.organization.organizationName,
+        decisionStatusType:statusTypeGetParser(res.decisionStatusType),
+        decisionTarget: res.decisionTarget.targetName,
+        description : res.description,
+        fileName: res.fileName,
+        date:"Щойно" };
+        setData([...data, dec]);
+        notificationLogic('success', "Рішення успішно додано");
+   })
+   .catch(() =>{
+    notificationLogic('success', "Рішення не існує");
+   });
+  
+
+>>>>>>> origin
   }
   useEffect(() => {
     const fetchData = async () => {

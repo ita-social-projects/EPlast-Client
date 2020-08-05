@@ -1,6 +1,10 @@
 import axios from "axios";
 import BASE_URL from "../config";
+<<<<<<< HEAD
 import AuthStore from '../stores/Auth';
+=======
+import AuthStore from '../stores/AuthStore';
+>>>>>>> origin
 
 interface HttpResponse {
   headers: any;
