@@ -25,17 +25,17 @@ const PrivateLayout = ({ children }: any) => {
   const [imageBase64, setImageBase64] = useState<string>();
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
-    if(token == null){
+    if (token == null) {
       history.push("/signin");
     }
-    else{
-    const user : any = jwt(token);
-    await userApi.getById(user.nameid).then(async response =>{
-        await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) =>{
+    else {
+      const user: any = jwt(token);
+      await userApi.getById(user.nameid).then(async response => {
+        await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
         })
-    })
-   }
+      })
+    }
   };
 
   useEffect(() => {
@@ -44,7 +44,12 @@ const PrivateLayout = ({ children }: any) => {
   const history = useHistory();
   return (
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
-      <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
+      <Sider collapsible
+        collapsed={collapsed}
+        onCollapse={onCollapse}
+        className={classes.sidebar}
+        breakpoint="xxl"
+        collapsedWidth="0">
         <div className={classes.profilePhoto}>
           <Avatar
             size={64}
@@ -78,8 +83,8 @@ const PrivateLayout = ({ children }: any) => {
           </SubMenu>
           <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Документи">
             <SubMenu key="sub2.1" title="Звіти">
-              <Menu.Item onClick={() => history.push('/annualreport/create')} key="9">Подати річний звіт станиці</Menu.Item>
-              <Menu.Item onClick={() => history.push('/annualreport/table')} key="10">Річні звіти</Menu.Item>
+              <Menu.Item onClick={() => history.push('/annualreport/create/5')} key="9">Подати річний звіт станиці</Menu.Item>
+              <Menu.Item key="10">Річні звіти</Menu.Item>
               <Menu.Item key="11">Статистичні звіти</Menu.Item>
             </SubMenu>
             <SubMenu
