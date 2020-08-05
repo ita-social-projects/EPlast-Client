@@ -53,8 +53,6 @@ export default function () {
         return (actions as Array<any>).concat(educations as Array<any>).concat(camps as Array<any>);
     }
 
-
-
     const handleEventClick = (clickInfo: any) => {
         setEventModal(true);
         setEventInfo(clickInfo);
