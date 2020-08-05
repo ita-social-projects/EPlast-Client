@@ -4,8 +4,8 @@ import { Avatar, Button, Card, Col, DatePicker, Form, Input, Layout, Modal, Row,
 import { UserOutlined, SettingOutlined, CloseOutlined, RollbackOutlined } from "@ant-design/icons";
 import { addAdministrator, removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus, editAdministrator } from "../../../api/citiesApi";
 import classes from "./City.module.css";
-import CityMember from "./../../../models/City/CityMember";
-import CityAdmin from "./../../../models/City/CityAdmin";
+import CityMember from "../../../models/City/CityMember";
+import CityAdmin from "../../../models/City/CityAdmin";
 import moment from "moment";
 import "moment/locale/uk";
 moment.locale("uk-ua");
