@@ -37,6 +37,7 @@ import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualRe
 import UserFields from "./pages/userPage/personalData/UserFields";
 import AnnualReportTable from './pages/AnnualReport/AnnualReportTable/AnnualReportTable';
 import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
+import NotFound from "./pages/Error/NotFound";
 
 const App: FC = () => (
   <div className="App">
@@ -217,6 +218,12 @@ const App: FC = () => (
             exact
             path="/annualreport/create/:cityId"
             component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="*"
+            component={NotFound}
           />
         </Switch>
       </div>

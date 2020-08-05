@@ -48,7 +48,7 @@ const DropDown = (props: Props) => {
         break;
       case '2':{
         const pdf = await decisionsApi.getPdf(record);
-        window.open(pdf,"_blank");
+        window.open(pdf);
         break;
       }
       case '3':
