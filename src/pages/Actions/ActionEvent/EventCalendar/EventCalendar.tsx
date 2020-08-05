@@ -3,7 +3,6 @@ import eventUserApi from '../../../../api/eventUserApi';
 import { Button, Space, Spin, Modal } from 'antd';
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import listPlugin from '@fullcalendar/list'
 import ukLocale from '@fullcalendar/core/locales/uk';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
@@ -86,7 +85,7 @@ export default function () {
                         </div>
                     </div>
                     <FullCalendar
-                        plugins={[dayGridPlugin, listPlugin]}
+                        plugins={[dayGridPlugin]}
                         initialView="dayGridMonth"
                         headerToolbar={{
                             left: 'prev,next today',
