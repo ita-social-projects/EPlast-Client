@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout} from 'antd';
 import {UserOutlined, CloseOutlined, PlusOutlined, RollbackOutlined} from '@ant-design/icons';
-import {getAllFollowers, removeFollower, toggleMemberStatus} from "../../api/citiesApi";
+import {getAllFollowers, removeFollower, toggleMemberStatus} from "../../../api/citiesApi";
 import classes from './City.module.css';
-import CityMember from './../../models/City/CityMember';
+import CityMember from './../../../models/City/CityMember';
 
 const CityFollowers = () => {
     const {id} = useParams();

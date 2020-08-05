@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { Card, Layout, Pagination, Spin } from "antd";
-import Add from "../../assets/images/add.png";
-import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
-import { getCitiesByPage, getLogo } from "../../api/citiesApi";
+import Add from "../../../assets/images/add.png";
+import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
+import { getCitiesByPage, getLogo } from "../../../api/citiesApi";
 import classes from "./Cities.module.css";
-import CityProfile from '../../models/City/CityProfile';
+import CityProfile from '../../../models/City/CityProfile';
 
 const Cities = () => {
   const history = useHistory();
@@ -34,8 +34,7 @@ const Cities = () => {
       }
       
       setCities(response.data.cities);
-      // setCanCreate(response.data.canCreate);
-      setCanCreate(true);
+      setCanCreate(response.data.canCreate);
       setTotal(response.data.total);
     }
     finally {
