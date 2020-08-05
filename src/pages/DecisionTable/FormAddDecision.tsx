@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { Form, DatePicker, Select, Input, Upload, Button } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
+
 import decisionsApi, {
   DecisionOnCreateData,
   decisionStatusType,
@@ -11,12 +12,14 @@ import decisionsApi, {
   statusTypePostParser } from '../../api/decisionsApi'
 import { getBase64 } from '../userPage/EditUserPage/Services';
 import notificationLogic from '../../components/Notifications/Notification';
+import classes from './Table.module.css';
+import formclasses from './FormAddDecision.module.css';
 type FormAddDecisionProps ={
    setVisibleModal: (visibleModal: boolean) => void;
    onAdd: () => void;
 }
 const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
- const classes = require('./Table.module.css');
+
  const  { setVisibleModal, onAdd } = props;
  const [fileData, setFileData] = useState<FileWrapper>({FileAsBase64 : null, FileName: null});
  const [form] = Form.useForm();
@@ -25,14 +28,12 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
       console.log(e);
       return e;
     }
-
     return e && e.fileList;
   };
   const handleCancel = () => {
     setVisibleModal(false);
   };
   const handleUpload = (info :any) => {
-    console.log(info.file);
     if(info.file !== null){
       if(info.file.size <= 3145728){
         getBase64( info.file,(base64: string) => {
@@ -52,7 +53,6 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
   }
   
  const handleSubmit = async (values : any)=>{
-   console.log(fileData);
   const newDecision  : DecisionWrapper= {
     decision: {
       id: 0,
@@ -92,49 +92,70 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
       form = {form}
     >
       <Form.Item
+      className={formclasses.formField}
         label="Назва рішення"
         name="name"
+       
         rules={[
           {
-         
             required: true,
             message: 'Це поле має бути заповненим' 
           },
         ]}
       >
-        <Input />
+        <Input  
+        className={formclasses.inputField}/>
       </Form.Item>
 
       <Form.Item
+      className={formclasses.formField}
        label="Рішення органу"
        name = "organization"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
-        <Select>
+        <Select
+         className={formclasses.selectField}
+         >
       {data?.organizations.map(o => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{o.organizationName}</Select.Option>))}
         </Select>
       </Form.Item>
+    
       <Form.Item
+      className={formclasses.formField}
        label="Тема рішення"
        name ="decisionTarget"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
-        <Select>
+
+        <Select
+        showSearch
+        optionFilterProp="children"
+        className={formclasses.selectField}
+        >
         {data?.decisionTargets.map(dt => ( <Select.Option key ={dt.id }value={JSON.stringify(dt)}>{dt.targetName}</Select.Option>))}
         </Select>
+        
       </Form.Item>
+
+
       <Form.Item 
+      className={formclasses.formField}
        name="datepicker"
        label="Дата рішення"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
-        <DatePicker format = "YYYY-MM-DD"/>
+        <DatePicker format = "YYYY-MM-DD"
+        className={formclasses.selectField}
+        />
       </Form.Item>
       <Form.Item 
+      className={formclasses.formField}
        label="Текст рішення"
        name = "description"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
-        <Input.TextArea allowClear />
+        <Input.TextArea allowClear 
+         className={formclasses.inputField}/>
       </Form.Item>
       <Form.Item label="Прикріпити">
         <Form.Item
+        className={formclasses.formField}
           name="dragger"
          valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -142,6 +163,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
         >
           <Upload.Dragger name = "file" 
             customRequest = {handleUpload}
+            className={formclasses.inputField}
             multiple ={false}
             showUploadList ={false}
             accept =".doc,.docx,.png,.xls,xlsx,.png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -161,10 +183,14 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
       }}> Видалити файл</Button></div>}
       </Form.Item>
       <Form.Item
+      className={formclasses.formField}
        label="Статус рішення"
        name ="decisionStatusType"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
-        <Select>
+        <Select
+        
+         className={formclasses.selectField}
+         >
         {data?.decisionStatusTypeListItems.map(dst=> ( <Select.Option key= {dst.value} value={JSON.stringify(dst)}>{dst.text}</Select.Option>))}
         </Select>
       </Form.Item>
