@@ -1,6 +1,6 @@
 import React from 'react';
 import Menu from '../Menu/Menu';
-import styles from './PersonalData.module.css';
+import './PersonalData.less';
 import UserFields from './UserFields';
 import EditUserPage from '../EditUserPage/EditUserPage';
 import Approvers from '../Approvers/Approvers';
@@ -15,22 +15,22 @@ export default function (
 }: any) {
   const {userId}=useParams(); 
   return (
-    <div className={styles.mainContainer}>
+    <div className="mainContainer">
       <Menu id={userId}/>
       {specify === 'main' ? (
-        <div className={styles.content}>
+        <div className="content">
           <UserFields />
         </div>
       ) : specify === 'edit' ?(
-        <div className={styles.content}>
+        <div className="content">
           <EditUserPage />
         </div>
       ) : specify === 'approvers' ?(
-        <div className={styles.content}>
+        <div className="content">
           <Approvers />
         </div>
       ) : (
-            <div className={styles.content}>
+            <div className="content">
               <EditUserPage />
             </div>
           )}

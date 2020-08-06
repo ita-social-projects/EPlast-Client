@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {useParams} from 'react-router-dom';
 import { Card, Space, Spin, Button } from 'antd';
-import classes from './Approvers.module.css';
+import './Approvers.less';
 import AvatarAndProgress from '../../../../src/pages/userPage/personalData/AvatarAndProgress';
 import AddUser from "../../../assets/images/user_add.png";
 import { ApproversData } from '../Interface/Interface';
@@ -40,21 +40,21 @@ const Assignments = () => {
 
   const { Meta } = Card;
   return loading === false ? (
-    <div className={classes.spaceWrapper}>
-      <Space className={classes.loader} size="large">
+    <div className="spaceWrapper">
+      <Space className="loader" size="large">
         <Spin size="large" />
       </Space>
     </div>
     
   ) : (
-    <div className={classes.wrapper}>
-      <div className={classes.displayFlex}>
+    <div className="wrapper">
+      <div className="displayFlex">
       <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast}  firstName={data?.user.firstName} lastName={data?.user.lastName}/>
-      <div className={classes.content}>
+      <div className="approversContent">
       <h1>{data?.user.firstName} {data?.user.lastName}</h1>
         <hr/>
         <h1>Поручення дійсних членів</h1>
-        <div className={classes.displayFlex}>
+        <div className="approversCard">
           {data?.confirmedUsers.map(p=>
           {
             if(p.approver.userID==data?.currentUserId){
@@ -63,12 +63,12 @@ const Assignments = () => {
                         <Card
                           key={p.id}
                           hoverable
-                          className={classes.cardStyles}
-                          cover={<img alt="example"  src={p.approver.user.imagePath} className={classes.avatar}/>}
+                          className="cardStyles"
+                          cover={<img alt="example"  src={p.approver.user.imagePath} className="avatar"/>}
                         >
-                            <Meta title={p.approver.user.firstName+" "+p.approver.user.lastName} className={classes.titleText}/>
-                            <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className={classes.titleText}/>
-                            <Button className={classes.cardButton} danger onClick={()=>handleClick(p.id)}>
+                            <Meta title={p.approver.user.firstName+" "+p.approver.user.lastName} className="titleText"/>
+                            <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className="titleText"/>
+                            <Button className="cardButton" danger onClick={()=>handleClick(p.id)}>
                                 Відкликати
                             </Button>
                         </Card>
@@ -82,11 +82,11 @@ const Assignments = () => {
                         <Card
                           key={p.id}
                           hoverable
-                          className={classes.cardStyles}
-                          cover={<img alt="example"  src={p.approver.user.imagePath} className={classes.avatar}/>}
+                          className="cardStyles"
+                          cover={<img alt="example"  src={p.approver.user.imagePath} className="avatar"/>}
                         >
-                          <Meta title={p.approver.user.firstName+" "+p.approver.user.lastName} className={classes.titleText}/>
-                          <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className={classes.titleText}/>
+                          <Meta title={p.approver.user.firstName+" "+p.approver.user.lastName} className="titleText"/>
+                          <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className="titleText"/>
                         </Card>
                       </Link>
                     </div>
@@ -100,8 +100,8 @@ const Assignments = () => {
                   <Link to="#" onClick={()=>approveClick(data?.user.id)}>
                       <Card
                       hoverable
-                      className={classes.cardStyles}
-                      cover={<img alt="example" src={AddUser} className={classes.avatar}/>}
+                      className="cardStyles"
+                      cover={<img alt="example" src={AddUser} className="avatar"/>}
                     >
                     </Card>
                   </Link>
@@ -120,19 +120,19 @@ const Assignments = () => {
           
         </div>
         <h1>Поручення куреня УСП/УПС</h1>
-        <div className={classes.displayFlex}>
+        <div className="approversCard">
           {(data?.clubApprover!=null) ? (
              <div>
                <Link to="#" onClick={()=>history.push(`/userpage/main/${data.clubApprover.approver.userID}`)}>
                   <Card
                   hoverable
-                  className={classes.cardStyles}
-                  cover={<img alt="example"  src={data.clubApprover.approver.user.imagePath} className={classes.avatar}/>}
+                  className="cardStyles"
+                  cover={<img alt="example"  src={data.clubApprover.approver.user.imagePath} className="avatar"/>}
                 >
-                    <Meta title={data.clubApprover.approver.user.firstName+" "+data.clubApprover.approver.user.lastName} className={classes.titleText}/>
-                    <Meta title={moment(data.clubApprover.confirmDate).format("DD-MM-YYYY")} className={classes.titleText}/>
+                    <Meta title={data.clubApprover.approver.user.firstName+" "+data.clubApprover.approver.user.lastName} className="titleText"/>
+                    <Meta title={moment(data.clubApprover.confirmDate).format("DD-MM-YYYY")} className="titleText"/>
                     {data.clubApprover.approver.userID==data.currentUserId && (
-                        <Button className={classes.cardButton} danger onClick={()=>handleClick(data.clubApprover.id)} value={data.clubApprover.id}>
+                        <Button className="cardButton" danger onClick={()=>handleClick(data.clubApprover.id)} value={data.clubApprover.id}>
                             Відкликати
                         </Button>
                     )}
@@ -145,8 +145,8 @@ const Assignments = () => {
                   <Link to="#" onClick={()=>approveClick(data.user.id,true)}>
                       <Card
                       hoverable
-                      className={classes.cardStyles}
-                      cover={<img alt="example" src={AddUser} className={classes.avatar}/>}
+                      className="cardStyles"
+                      cover={<img alt="example" src={AddUser} className="avatar"/>}
                     >
                     </Card>
                   </Link>
@@ -163,19 +163,19 @@ const Assignments = () => {
           )}
         </div>
         <h1>Поручення Голови осередку/Осередкового УСП/УПС</h1>
-        <div className={classes.displayFlex}>
+        <div className="approversCard">
         {(data?.cityApprover!=null) ? (
              <div>
                <Link to="#" onClick={()=>history.push(`/userpage/main/${data.cityApprover.approver.userID}`)}>
                   <Card
                     hoverable
-                    className={classes.cardStyles}
-                    cover={<img alt="example"  src={data.cityApprover.approver.user.imagePath} className={classes.avatar}/>}
+                    className="cardStyles"
+                    cover={<img alt="example"  src={data.cityApprover.approver.user.imagePath} className="avatar"/>}
                   >
-                    <Meta title={data.cityApprover.approver.user.firstName+" "+data.cityApprover.approver.user.lastName} className={classes.titleText}/>
-                    <Meta title={moment(data.cityApprover.confirmDate).format("DD-MM-YYYY")} className={classes.titleText}/>
+                    <Meta title={data.cityApprover.approver.user.firstName+" "+data.cityApprover.approver.user.lastName} className="titleText"/>
+                    <Meta title={moment(data.cityApprover.confirmDate).format("DD-MM-YYYY")} className="titleText"/>
                     {data.cityApprover.approver.userID==data.currentUserId && (
-                        <Button className={classes.cardButton} danger onClick={()=>handleClick(data.cityApprover.id)} value={data.cityApprover.id}>
+                        <Button className="cardButton" danger onClick={()=>handleClick(data.cityApprover.id)} value={data.cityApprover.id}>
                             Відкликати
                         </Button>
                     )}
@@ -188,8 +188,8 @@ const Assignments = () => {
             <Link to="#" onClick={()=>approveClick(data.user.id,false,true)}>
                 <Card
                 hoverable
-                className={classes.cardStyles}
-                cover={<img alt="example" src={AddUser} className={classes.avatar}/>}
+                className="cardStyles"
+                cover={<img alt="example" src={AddUser} className="avatar"/>}
               >
               </Card>
             </Link>
