@@ -5,14 +5,14 @@ import { LoadingOutlined, PlusOutlined } from "@ant-design/icons/lib";
 import ReactInputMask from "react-input-mask";
 import moment from "moment";
 import { RcFile } from "antd/lib/upload/interface";
-import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
-import { createCity, getCityById, getLogo, updateCity } from "../../api/citiesApi";
-import { GetAllRegions } from './../../api/regionsApi';
+import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
+import { createCity, getCityById, getLogo, updateCity } from "../../../api/citiesApi";
+import { GetAllRegions } from '../../../api/regionsApi';
 import classes from "./CreateCity.module.css";
-import CityProfile from './../../models/City/CityProfile';
-import CityAdmin from './../../models/City/CityAdmin';
-import CityMember from './../../models/City/CityMember';
-import RegionProfile from './../../models/Region/RegionProfile';
+import CityProfile from '../../../models/City/CityProfile';
+import CityAdmin from '../../../models/City/CityAdmin';
+import CityMember from '../../../models/City/CityMember';
+import RegionProfile from '../../../models/Region/RegionProfile';
 
 const dummyRequest = ({ onSuccess }: any) => {
   setTimeout(() => {

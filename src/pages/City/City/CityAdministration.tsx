@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Col, DatePicker, Form, Input, Layout, Modal, Row} from 'antd';
 import {UserOutlined, SettingOutlined, CloseOutlined, RollbackOutlined} from '@ant-design/icons';
-import {editAdministrator, getAllAdmins, removeAdministrator} from "../../api/citiesApi";
+import {editAdministrator, getAllAdmins, removeAdministrator} from "../../../api/citiesApi";
 import classes from './City.module.css';
-import CityAdmin from './../../models/City/CityAdmin';
+import CityAdmin from '../../../models/City/CityAdmin';
 import moment from "moment";
 import "moment/locale/uk";
 moment.locale("uk-ua");
@@ -64,7 +64,7 @@ const CityAdministration = () => {
       if (key.indexOf("startDate") !== -1) {
         setDate(date);
       }
-  
+
       setAdmin({ ...admin, [key]: date?._d });
     }
 
@@ -145,7 +145,7 @@ const CityAdministration = () => {
                   format={dateFormat}
                   className={classes.select}
                   onChange={(event) => handleChange(event, "startDate")}
-                  value={moment(admin.startDate)}
+                  value={admin.startDate ? moment(admin.startDate) : undefined}
                 />
               </Col>
               <Col span={11} offset={2}>
@@ -155,7 +155,7 @@ const CityAdministration = () => {
                   format={dateFormat}
                   className={classes.select}
                   onChange={(event) => handleChange(event, "endDate")}
-                  value={moment(admin.endDate)}
+                  value={admin.endDate ? moment(admin.endDate) : undefined}
                 />
               </Col>
             </Row>

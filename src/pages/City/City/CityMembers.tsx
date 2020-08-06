@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Avatar, Button, Card, Col, DatePicker, Form, Input, Layout, Modal, Row, } from "antd";
 import { UserOutlined, SettingOutlined, CloseOutlined, RollbackOutlined } from "@ant-design/icons";
-import { addAdministrator, removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus, } from "../../api/citiesApi";
+import { addAdministrator, removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus, editAdministrator } from "../../../api/citiesApi";
 import classes from "./City.module.css";
-import CityMember from "./../../models/City/CityMember";
-import CityAdmin from "./../../models/City/CityAdmin";
+import CityMember from "../../../models/City/CityMember";
+import CityAdmin from "../../../models/City/CityAdmin";
 import moment from "moment";
 import "moment/locale/uk";
 moment.locale("uk-ua");
@@ -34,7 +34,7 @@ const CityMembers = () => {
   const removeMember = async (member: CityMember) => {
     await toggleMemberStatus(member.id);
 
-    const existingAdmin = [head, ...admins].find((a) => a.userId === member.userId);
+    const existingAdmin = [head, ...admins].find((a) => a?.userId === member.userId);
     
     if (existingAdmin !== undefined) {
       await removeAdministrator(existingAdmin?.id || 0);
@@ -44,13 +44,19 @@ const CityMembers = () => {
   };
 
   const showModal = (member: CityMember) => {
-    setAdmin(new CityAdmin());
-    setAdmin({
-      ...admin,
-      ["userId"]: member.user.id,
-      ["user"]: member.user,
-      ["cityId"]: member.cityId,
-    });
+    const existingAdmin = [head, ...admins].find((a) => a?.userId === member.userId);
+    
+    if (existingAdmin !== undefined) {
+      setAdmin(existingAdmin);      
+    }
+    else {
+      setAdmin({
+        ...(new CityAdmin()),
+        ["userId"]: member.user.id,
+        ["user"]: member.user,
+        ["cityId"]: member.cityId,
+      })
+    }
 
     setVisibleModal(true);
   };
@@ -59,7 +65,12 @@ const CityMembers = () => {
     setLoading(true);
 
     try {
+      if (admin.id === 0) {
         await addAdministrator(admin.cityId, admin);
+      } else {
+        await editAdministrator(admin.cityId, admin);
+      }
+
     } finally {
       setVisibleModal(false);
       setLoading(false);
@@ -78,12 +89,6 @@ const CityMembers = () => {
     setAdmin({ ...admin, [key]: date?._d });
   }
 
-  function isAdminActive(userId: string) {
-    const admin = admins.find(a => a.userId === userId);
-    return moment(admin?.endDate) > moment();
-
-  }
-  
   function handleChangeType(event: any) {
     admin.adminType.adminTypeName = event.target.value;
   }
@@ -96,7 +101,7 @@ const CityMembers = () => {
 
   useEffect(() => {
     getMembers();
-  }, [admin]);
+  }, []);
 
   return (
     <Layout.Content>
@@ -109,12 +114,7 @@ const CityMembers = () => {
               className={classes.detailsCard}
               actions={[
                 <SettingOutlined
-                  onClick={
-                    admins.some((a) => a.userId === member.userId) &&
-                    isAdminActive(member.userId)
-                      ? undefined
-                      : () => showModal(member)
-                  }
+                  onClick={() => showModal(member)}
                 />,
                 <CloseOutlined
                   onClick={() => removeMember(member)}
@@ -148,7 +148,7 @@ const CityMembers = () => {
         </Button>
       </div>
       <Modal
-        title="Додати в провід станиці"
+        title={admin.id === 0 ? "Додати в провід станиці" : "Редагувати адміністратора"}
         visible={visibleModal}
         confirmLoading={loading}
         onOk={handleOk}
@@ -174,6 +174,7 @@ const CityMembers = () => {
                 format={dateFormat}
                 className={classes.select}
                 onChange={(event) => handleChange(event, "startDate")}
+                value={admin.startDate ? moment(admin.startDate) : undefined}
               />
             </Col>
             <Col span={11} offset={2}>
@@ -183,6 +184,7 @@ const CityMembers = () => {
                 format={dateFormat}
                 className={classes.select}
                 onChange={(event) => handleChange(event, "endDate")}
+                value={admin.endDate ? moment(admin.endDate) : undefined}
               />
             </Col>
           </Row>
