@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, Progress, Spin, Space } from 'antd';
-import styles from './PersonalData.module.css';
+import './PersonalData.less';
 import userApi from '../../../api/UserApi';
 
 class AvatarAndProgressProps {
@@ -30,19 +30,19 @@ const AvatarAndProgress:React.FC<AvatarAndProgressProps> = (props: AvatarAndProg
       }, [props]);
 
       return loading === false ? (
-        <div className={styles.spaceWrapper}>
-          <Space className={styles.loader} size="large">
+        <div className="spaceWrapper">
+          <Space className="loader" size="large">
             <Spin size="large" />
           </Space>
         </div>
         
       ) : (
-    <div className={styles.leftPartWrapper}>
-      <Avatar size={256} src={imageBase64} />
-      <p className={styles.statusText}>{time} дні і {firstName} {lastName} Пластун:)</p>
+    <div className="leftPartWrapper">
+      <Avatar size={256} src={imageBase64} className="img"/>
+      <p className="statusText">{time} дні і {firstName} {lastName} Пластун:)</p>
       <Progress
         type="circle"
-        className={styles.progressBar}
+        className="progressBar"
         strokeColor={{
           '0%': '#108ee9',
           '100%': '#87d068',
