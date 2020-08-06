@@ -10,6 +10,12 @@
     justify-content: center;
     align-items: end;
 }
+.approversCard{
+    display: flex;
+    justify-content: center;
+    align-items: end;
+
+}
 .cardStyles{
     margin: 15px;
     width: 177px;
@@ -35,8 +41,8 @@
 .avatar{
     height: 168px;
 }
-.content{
-    margin-left: 100px;
+.approversContent{
+    margin-left: 5%;
 }
 .spaceWrapper{
     position: fixed;
@@ -54,3 +60,29 @@
     transform:translateX(-50%) ;
     
 }
+@media(max-width: 1000px){
+    .content{
+        margin-left: 0;
+    }
+}
+@media(max-width: 824px){
+    .displayFlex{
+        display: block;
+    }
+    .content{
+        margin-left: 0;
+    }
+}
+@media(max-width: 586px){
+    .approversCard{
+        display: block;
+    }
+}
+/* @media(min-width: 500px){
+    .displayFlex{
+        display: block;
+    }
+    .content{
+        margin-left: 0;
+    }
+} */
