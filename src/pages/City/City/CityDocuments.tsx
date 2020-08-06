@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout} from 'antd';
 import {FileTextOutlined, SettingOutlined, CloseOutlined, RollbackOutlined} from '@ant-design/icons';
-import {getAllDocuments} from "../../api/citiesApi";
+import {getAllDocuments} from "../../../api/citiesApi";
 import classes from './City.module.css';
-import CityDocument from './../../models/City/CityDocument';
+import CityDocument from '../../../models/City/CityDocument';
 
 const CityDocuments = () => {
     const {id} = useParams();

@@ -8,13 +8,13 @@ import FooterContainer from "./components/Footer/FooterContainer";
 import PrivateLayout from "./components/PrivateLayout/PrivateLayout";
 import RouteWithLayout from "./RouteWithLayout";
 import Contacts from "./pages/Contacts/Contacts";
-import Cities from "./pages/Cities/Cities";
-import City from "./pages/City/City";
-import CityMembers from "./pages/City/CityMembers";
-import CityAdministration from "./pages/City/CityAdministration";
-import CityDocuments from "./pages/City/CityDocuments";
-import CityFollowers from "./pages/City/CityFollowers";
-import CreateCity from "./pages/CreateCity/CreateCity";
+import Cities from "./pages/City/Cities/Cities";
+import City from "./pages/City/City/City";
+import CityMembers from "./pages/City/City/CityMembers";
+import CityAdministration from "./pages/City/City/CityAdministration";
+import CityDocuments from "./pages/City/City/CityDocuments";
+import CityFollowers from "./pages/City/City/CityFollowers";
+import CreateCity from "./pages/City/CreateCity/CreateCity";
 import SignUp from "./pages/SignUp/SignUp";
 import SignIn from "./pages/SignIn/SignIn";
 import EventInfo from "./pages/Actions/ActionEvent/EventInfo/EventInfo";
@@ -37,6 +37,7 @@ import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualRe
 import UserFields from "./pages/userPage/personalData/UserFields";
 import AnnualReportTable from './pages/AnnualReport/AnnualReportTable/AnnualReportTable';
 import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
+import NotFound from "./pages/Error/NotFound";
 
 const App: FC = () => (
   <div className="App">
@@ -217,6 +218,12 @@ const App: FC = () => (
             exact
             path="/annualreport/create/:cityId"
             component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="*"
+            component={NotFound}
           />
         </Switch>
       </div>

@@ -1,0 +1,20 @@
+.button {
+    margin-top: 10px;
+    padding-top: 5px;
+    color: white;
+    border: none;
+    width: 138px;
+    height: 40px;
+    outline: none;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 10px;
+    align-items: center;
+}
+
+.button:hover {
+    border: none;
+    outline: none;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
