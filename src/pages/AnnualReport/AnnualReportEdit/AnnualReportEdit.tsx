@@ -34,6 +34,7 @@ const AnnualReportEdit = () => {
         await AnnualReportApi.getById(id)
             .then(response => {
                 response.data.annualreport.city = null;
+                response.data.annualreport.cityManagement.cityAdminNew = null;
                 cityId = response.data.annualreport.cityId;
                 setAnnualReport(response.data.annualreport);
                 form.setFieldsValue(response.data.annualreport);
@@ -47,8 +48,8 @@ const AnnualReportEdit = () => {
         await AnnualReportApi.getCityInfo(cityId)
             .then(response => {
                 let cityName = response.data.name;
-                setTitle(title.concat(' ', cityName))
-                setMembers(response.data.members);
+                setTitle(title.concat(' ', cityName));
+                setMembers((response.data.members as []).map((item: any) => item.user));
             })
             .catch((error: AxiosError) => {
                 showError(error.response?.data.message);
