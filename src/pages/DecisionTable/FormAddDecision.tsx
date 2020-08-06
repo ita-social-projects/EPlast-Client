@@ -153,6 +153,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
          className={formclasses.inputField}/>
       </Form.Item>
       <Form.Item label="Прикріпити">
+        
         <Form.Item
         className={formclasses.formField}
           name="dragger"
@@ -174,13 +175,21 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
             <p className="ant-upload-hint">
               Клікніть або перетягніть файл для завантаження
             </p>
+
+            {fileData.FileAsBase64 !== null &&<div><div>{fileData.FileName}</div> </div>}
           </Upload.Dragger>
-        </Form.Item>  
-      {fileData.FileAsBase64 !== null &&<div><div>{fileData.FileName}</div> <Button className = {classes.cardButton} onClick= {()=>{
+         
+          {fileData.FileAsBase64 !== null &&<div><Button className = {formclasses.cardButton} onClick= {()=>{
         setFileData({FileAsBase64 : null, FileName: null});
         notificationLogic('success', "Файл видалено");
-      }}> Видалити файл</Button></div>}
+      }}> Видалити файл</Button> </div>}
+          
+
+        </Form.Item>  
+        
+       
       </Form.Item>
+      
       <Form.Item
       className={formclasses.formField}
        label="Статус рішення"
