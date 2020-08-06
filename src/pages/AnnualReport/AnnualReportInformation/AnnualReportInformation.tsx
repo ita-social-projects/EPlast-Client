@@ -18,8 +18,9 @@ const AnnualReportInformation = (props: Props) => {
 
     return (
         <Modal
-            onOk={handleOk}
-            visible={visibleModal} >
+            onCancel={handleOk}
+            visible={visibleModal}
+            footer={null} >
             <Title
                 className={styles.textCenter}
                 level={3} >
