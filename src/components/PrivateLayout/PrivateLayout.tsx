@@ -49,6 +49,7 @@ const PrivateLayout = ({ children }: any) => {
         onCollapse={onCollapse}
         className={classes.sidebar}
         breakpoint="xxl"
+        width="250"
         collapsedWidth="0">
         <div className={classes.profilePhoto}>
           <Avatar
