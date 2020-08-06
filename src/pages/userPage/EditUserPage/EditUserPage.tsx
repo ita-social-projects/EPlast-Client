@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Avatar, Upload, Button, Select, AutoComplete,Space,Spin,DatePicker  } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import styles from './EditUserPage.module.css';
+import './EditUserPage.less';
 import { checkNameSurName, checkPhone } from '../../SignUp/verification';
 import { getBase64 } from './Services';
 import {Data,Nationality,Religion,Degree,Gender} from './Interface';
@@ -317,77 +317,77 @@ export default function () {
   const {userId}=useParams(); 
 
   return loading === false ? (
-    <div className={styles.spaceWrapper}>
-      <Space className={styles.loader} size="large">
+    <div className="spaceWrapper">
+      <Space className="loader" size="large">
         <Spin size="large" />
       </Space>
     </div>
     
   ) : ( 
-    <div className={styles.mainContainer}>
-       <Form  form={form} name="basic" className={styles.formContainer} onFinish={handleSubmit}	>
-        <div className={styles.avatarWrapper}>
+    <div className="mainContainer">
+       <Form  form={form} name="basic" className="formContainer" onFinish={handleSubmit}	>
+        <div className="avatarWrapper">
           <Avatar size={256} src={userAvatar} className="avatarElem" />
-          <Upload name={name} action={action} headers={headers} onChange={onChange} className={styles.changeAvatar}>
-            <Button className={styles.changeAvatarBtn}>
+          <Upload name={name} action={action} headers={headers} onChange={onChange} className="changeAvatar">
+            <Button className="changeAvatarBtn">
               <UploadOutlined /> Вибрати
             </Button>
           </Upload>
         </div>
-        <div className={styles.allFields}>
-          <h2 className={styles.title}>Редагування профілю</h2>
-          <div className={styles.rowBlock}>
+        <div className="allFields">
+          <h2 className="title">Редагування профілю</h2>
+          <div className="rowBlock">
             <Form.Item
               label="Ім`я"
               name="firstName"
               rules={validationSchema.name}
-              className={styles.formItem}
+              className="formItem"
             >
-              <Input  className={styles.dataInput}/>
+              <Input  className="dataInput"/>
             </Form.Item>
             <Form.Item
               label="Прізвище"
               name="lastName"
               rules={validationSchema.surName}
-              className={styles.formItem}
+              className="formItem"
             >
-              <Input className={styles.dataInput} />
+              <Input className="dataInput" />
             </Form.Item>
           </div>
-          <div className={styles.rowBlock}>
+          <div className="rowBlock">
             <Form.Item
               label="По-батькові"
               name="fatherName"
               rules={validationSchema.fatherName}
-              className={styles.formItem}
+              className="formItem"
             >
-              <Input  className={styles.dataInput}/>
+              <Input  className="dataInput"/>
             </Form.Item>
             <Form.Item 
               label="Стать" 
               name="genderName"  
-              className={styles.formItem}
+              className="formItem"
               >
-              <Select className={styles.dataInput} onChange={handleOnChangeGender}>
+              <Select className="dataInput" onChange={handleOnChangeGender}>
                 {data?.genders.map(p => ( <Select.Option  key={p.id} value={JSON.stringify(p)}>{p.name}</Select.Option>))}
               </Select>
             </Form.Item>
           </div>
          
-          <div className={styles.rowBlock}>
+          <div className="rowBlock">
             <Form.Item
               label="Дата народження"
-              className={styles.formItem}
+              className="formItem"
             >
-              <DatePicker className={styles.dataInput} value={birthday} onChange={handleOnChangeBirthday} format = "DD-MM-YYYY"/> 
+              <DatePicker className="dataInput" value={birthday} onChange={handleOnChangeBirthday} format = "DD-MM-YYYY"/> 
              
             </Form.Item>
             <Form.Item
               label="Номер телефону"
-              className={styles.formItem}
+              className="formItem"
               rules={validationSchema.phone}
             >
-               <InputMask  value={phoneNumber} onChange={changePhoneNumber} className={styles.dataInput}  mask="+38(999)-999-99-99"/> 
+               <InputMask  value={phoneNumber} onChange={changePhoneNumber} className="dataInput"  mask="+38(999)-999-99-99"/> 
             </Form.Item>
            
           </div>
@@ -396,16 +396,16 @@ export default function () {
               label="Національність"
               name="nationalityName"
               rules={validationSchema.nationality}
-              className={styles.formItem}
+              className="formItem"
             >
-              <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangeNationality}  >
+              <AutoComplete className="dataInput" filterOption={true} onChange={handleOnChangeNationality}  >
                 {data?.nationalities.map(p => ( <Select.Option  key={p.id} value={p.name}>{p.name}</Select.Option>))}
               </AutoComplete>
             </Form.Item>
             <Form.Item
               label="Віровизнання"
               name="religionName"
-              className={styles.formItem}
+              className="formItem"
               rules={validationSchema.religion}
             >
              <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangeReligion}  >
@@ -415,14 +415,14 @@ export default function () {
            
           </div>
           
-          <div className={styles.rowBlock}>
+          <div className="rowBlock">
             <Form.Item
               label="Навчальний заклад"
               name="placeOfStudy"
               rules={validationSchema.placeOfStudy}
-              className={styles.formItem}
+              className="formItem"
             >
-             <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangePlaceOfStudy}  >
+             <AutoComplete className="dataInput" filterOption={true} onChange={handleOnChangePlaceOfStudy}  >
                 {data?.educationView.placeOfStudyList.map(p => ( <Select.Option  key={p.id} value={p.placeOfStudy}>{p.placeOfStudy}</Select.Option>))}
               </AutoComplete>
             </Form.Item>
@@ -430,21 +430,21 @@ export default function () {
               label="Спеціальність"
               name="speciality"
               rules={validationSchema.speciality}
-              className={styles.formItem}
+              className="formItem"
             >
-              <AutoComplete className={styles.dataInput} filterOption={true}  onChange={handleOnChangeSpeciality}  >
+              <AutoComplete className="dataInput" filterOption={true}  onChange={handleOnChangeSpeciality}  >
                 {data?.educationView.specialityList.map(p => ( <Select.Option  key={p.id} value={p.speciality}>{p.speciality}</Select.Option>))}
               </AutoComplete>
             </Form.Item>
           </div>
-          <div className={styles.rowBlock}>
+          <div className="rowBlock">
             <Form.Item
               label="Навчальний ступінь"
               name="degreeName"
               rules={validationSchema.degree}
-              className={styles.formItem}
+              className="formItem"
             >
-              <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangeDegree}  >
+              <AutoComplete className="dataInput" filterOption={true} onChange={handleOnChangeDegree}  >
                 {data?.degrees.map(p => ( <Select.Option  key={p.id} value={p.name}>{p.name}</Select.Option>))}
               </AutoComplete>
             </Form.Item>
@@ -452,21 +452,21 @@ export default function () {
               label="Місце праці"
               name="placeOfWork"
               rules={validationSchema.placeOfWork}
-              className={styles.formItem}
+              className="formItem"
             >
-             <AutoComplete className={styles.dataInput} filterOption={true}  onChange={handleOnChangePlaceOWork}  >
+             <AutoComplete className="dataInput" filterOption={true}  onChange={handleOnChangePlaceOWork}  >
                 {data?.workView.placeOfWorkList.map(p => ( <Select.Option  key={p.id} value={p.placeOfwork}>{p.placeOfwork}</Select.Option>))}
               </AutoComplete>
             </Form.Item>
           </div>
-          <div className={styles.rowBlock}>
+          <div className="rowBlock">
             <Form.Item
               label="Посада"
               name="positionOfWork"
               rules={validationSchema.position}
-              className={styles.formItem}
+              className="formItem"
             >
-               <AutoComplete className={styles.dataInput} filterOption={true} onChange={handleOnChangePosition}  >
+               <AutoComplete className="dataInput" filterOption={true} onChange={handleOnChangePosition}  >
                 {data?.workView.positionList.map(p => ( <Select.Option  key={p.id} value={p.position}>{p.position}</Select.Option>))}
               </AutoComplete>
             </Form.Item>
@@ -474,12 +474,12 @@ export default function () {
               label="Адреса проживання"
               name="address"
               rules={validationSchema.adress}
-              className={styles.formItem}
+              className="formItem"
             >
-              <Input className={styles.dataInput} />
+              <Input className="dataInput" />
             </Form.Item>
           </div>
-          <Button className={styles.confirmBtn} htmlType="submit">
+          <Button className="confirmBtn" htmlType="submit">
             Підтвердити
           </Button>
         </div>
