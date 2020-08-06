@@ -90,7 +90,7 @@ export default function () {
                         headerToolbar={{
                             left: 'prev,next today',
                             center: 'title',
-                            right: 'dayGridMonth,listMonth'
+                            right: ''
                         }}
                         views={{
                             listMonth: { buttonText: 'Список' },
