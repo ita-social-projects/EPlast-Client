@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Row, Col, Button, Spin, Layout } from "antd";
+import { Avatar, Row, Col, Button, Spin, Layout, Modal } from "antd";
 import { UserOutlined, FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, CloseOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../api/citiesApi";
+import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../../api/citiesApi";
 import classes from "./City.module.css";
-import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
-import CityProfile from "../../models/City/CityProfile";
-import CityMember from '../../models/City/CityMember';
-import CityAdmin from '../../models/City/CityAdmin';
-import CityDocument from '../../models/City/CityDocument';
+import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
+import CityProfile from "../../../models/City/CityProfile";
+import CityMember from '../../../models/City/CityMember';
+import CityAdmin from '../../../models/City/CityAdmin';
+import CityDocument from '../../../models/City/CityDocument';
 
 const City = () => {
   const history = useHistory();
@@ -21,6 +21,7 @@ const City = () => {
   const [members, setMembers] = useState<CityMember[]>([]);
   const [followers, setFollowers] = useState<CityMember[]>([]);
   const [documents, setDocuments] = useState<CityDocument[]>([]);
+  const [canCreate, setCanCreate] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const [canJoin, setCanJoin] = useState(false);
   const [canApprove, setCanApprove] = useState(false);
@@ -70,6 +71,7 @@ const City = () => {
       setMembers(response.data.members);
       setFollowers(response.data.followers);
       setDocuments(response.data.documents);
+      setCanCreate(response.data.canCreate);
       setCanEdit(response.data.canEdit);
       setCanJoin(response.data.canJoin);
       setCanApprove(response.data.canApprove);
@@ -88,7 +90,7 @@ const City = () => {
       <Spin size="large" />
     </Layout.Content>
   ) : city.id !== 0 && !loading ? (
-    <div>
+    <Layout.Content>
       <Row
         justify="space-around"
         gutter={[0, 40]}
@@ -109,7 +111,7 @@ const City = () => {
                 onClick={() => history.push(`/cities/edit/${city.id}`)}
               />
             ) : null}
-            {canEdit ? (
+            {canCreate ? (
               <CloseOutlined
                 className={classes.removeIcon}
                 onClick={() => deleteCity()}
@@ -422,7 +424,7 @@ const City = () => {
           </section>
         </Col>
       </Row>
-    </div>
+    </Layout.Content>
   ) : (
     <h1 className={classes.title}>Місто не знайдено</h1>
   );
