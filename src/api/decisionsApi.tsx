@@ -78,12 +78,12 @@ return new File([u8arr], filename, {type:mime});
     
   const getAll =  async() =>{
     const {data} = await Api.get("Decisions");
-    console.log(data)
+    
     return data;
   };
   const getOnCreate = async () => {
     const data : DecisionOnCreateData = await (await Api.get(`Decisions/NewDecision`)).data;
-    console.log(data);
+   
     return  data;
   };
   const getPdf = async (id: number) => {
