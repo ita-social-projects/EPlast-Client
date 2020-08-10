@@ -140,7 +140,7 @@ export default function () {
                 < Title level={2} > Створення події</ Title>
               </div>
               < div className={classes.radio} >
-                <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio} >
+                <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio}>
                   <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup} onChange={onChange} value={categories}>
                     {data?.eventTypes.map((item: any) => (<Radio.Button key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
                   </Radio.Group>
@@ -149,7 +149,7 @@ export default function () {
               < div className={classes.row} >
                 <h3>Категорія </h3>
                 < Form.Item name="EventCategoryID" className={classes.input} rules={[{ required: true, message: 'Оберіть категорію події' }]} >
-                  <Select showSearch optionFilterProp="children" onSearch={onSearch}  >
+                  <Select notFoundContent="Спочатку оберіть тип події" showSearch optionFilterProp="children" onSearch={onSearch} >
                     {categories.map((item: any) => (<Select.Option key={item.eventCategoryId} value={item.eventCategoryId} > {item.eventCategoryName} </Select.Option>))}
                   </Select>
                 </ Form.Item>
