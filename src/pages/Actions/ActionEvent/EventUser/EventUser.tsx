@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Avatar, Modal, Button, Typography, Badge, Space, Spin } from 'antd';
+import { Avatar, Modal, Button, Typography, Badge, Space, Spin, Checkbox, Tooltip } from 'antd';
 import eventUserApi from '../../../../api/eventUserApi';
 import classes from './EventUser.module.css';
 import userApi from '../../../../api/UserApi';
 import AuthStore from '../../../../stores/AuthStore';
 import jwt from 'jwt-decode';
-import { CalendarOutlined } from '@ant-design/icons';
+import { CalendarOutlined, FlagTwoTone, NotificationTwoTone, ToolTwoTone } from '@ant-design/icons';
 import moment from 'moment';
 const { Title } = Typography;
 
@@ -15,6 +15,26 @@ const EventUser = () => {
     const history = useHistory();
 
     const [loading, setLoading] = useState(false);
+    const [imageBase64, setImageBase64] = useState<string>();
+    const [createdEventsModal, setCreatedEventsModal] = useState(false);
+    const [planedEventsModal, setPlanedEventsModal] = useState(false);
+    const [visitedEventsModal, setVisitedEventsModal] = useState(false);
+    const [checked, setChecked] = useState(false);
+    const [createdEvents, setCreatedEvents] = useState<any>({
+        user: {
+            id: '',
+            firstName: '',
+            lastName: '',
+        },
+        createdEvents: [{
+            id: 0,
+            eventName: '',
+            eventDateStart: '',
+            eventDateEnd: '',
+            eventStatusID: ''
+        }],
+    });
+
     const [data, setData] = useState<any>({
         user: {
             id: '',
@@ -31,7 +51,8 @@ const EventUser = () => {
             id: 0,
             eventName: '',
             eventDateStart: '',
-            eventDateEnd: ''
+            eventDateEnd: '',
+            eventStatusID: ''
         }],
         visitedEvents: [{
             id: 0,
@@ -41,18 +62,14 @@ const EventUser = () => {
         }]
     });
 
-    const [imageBase64, setImageBase64] = useState<string>();
-    const [createdEventsModal, setCreatedEventsModal] = useState(false);
-    const [planedEventsModal, setPlanedEventsModal] = useState(false);
-    const [visitedEventsModal, setVisitedEventsModal] = useState(false);
-
     useEffect(() => {
         const fetchData = async () => {
             const token = AuthStore.getToken() as string;
             const user: any = jwt(token);
             await eventUserApi.getEventsUser(user.nameid).then(async response => {
                 const { user, planedEvents, createdEvents, visitedEvents } = response.data;
-                setData({ user, planedEvents, createdEvents, visitedEvents });
+                setData({ user, planedEvents, visitedEvents });
+                setCreatedEvents({ user, createdEvents });
                 await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
                     setImageBase64(response.data);
                 })
@@ -62,6 +79,24 @@ const EventUser = () => {
         fetchData();
     }, []);
 
+    async function renderArchiveEvents(e: any) {
+        setChecked(e.target.checked);
+        const token = AuthStore.getToken() as string;
+        const user: any = jwt(token);
+        if (checked === false) {
+            await eventUserApi.getCreatedArchivedEvents(user.nameid).then(async response => {
+                const { user, createdEvents } = response.data;
+                setCreatedEvents({ user, createdEvents });
+            })
+        }
+        else {
+            await eventUserApi.getEventsUser(user.nameid).then(async response => {
+                const { user, planedEvents, createdEvents, visitedEvents } = response.data;
+                setData({ user, planedEvents, visitedEvents });
+                setCreatedEvents({ user, createdEvents });
+            })
+        }
+    };
 
     const newLocal = '#3c5438';
     return loading === false ? (
@@ -103,7 +138,7 @@ const EventUser = () => {
                                 onCancel={() => setVisitedEventsModal(false)}
                                 footer={
                                     [
-                                        <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => setVisitedEventsModal(false)
+                                        <Button type="primary" key='submit' className={classes.button} onClick={() => setVisitedEventsModal(false)
                                         } > Закрити </Button>
                                     ]}
                             >
@@ -122,16 +157,16 @@ const EventUser = () => {
                         < div className={classes.wrapper3} >
                             <Title level={2}> Створені події </Title>
                             < div className={classes.line} />
-                            {data.createdEvents.length !== 0 &&
+                            {createdEvents.createdEvents.length !== 0 &&
                                 <div>
-                                    <Badge count={data.createdEvents.length} style={{ backgroundColor: '#3c5438' }} />
+                                    <Badge count={createdEvents.createdEvents.length} style={{ backgroundColor: '#3c5438' }} />
                                     <br />
                                     < Button type="primary" className={classes.button} onClick={() => setCreatedEventsModal(true)
                                     } >
                                         Список
                                 </Button>
                                 </div>}
-                            {data.createdEvents.length === 0 && <h2>Ви ще не створили жодної події </h2>}
+                            {createdEvents.createdEvents.length === 0 && <h2>Ви ще не створили жодної події </h2>}
                             < Modal
                                 title="Створені події"
                                 centered
@@ -140,22 +175,38 @@ const EventUser = () => {
                                 onCancel={() => setCreatedEventsModal(false)}
                                 footer={
                                     [
-                                        <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => setCreatedEventsModal(false)}>
+                                        <Checkbox checked={checked} onChange={(checked: any) => renderArchiveEvents(checked)}>
+                                            Показати завершені події
+                                       </Checkbox>,
+                                        <Button type="primary" key='submit' className={classes.button} onClick={() => setCreatedEventsModal(false)}>
                                             Закрити
                                         </Button>
                                     ]}
                             >
-                                {data.createdEvents.map((item: any) =>
+                                {createdEvents.createdEvents.map((item: any) =>
                                     <div>
-                                        <h1>{item.eventName} </ h1 >
+                                        {item.eventStatusID === 3 ?
+                                            <div >
+                                                <h1>{item.eventName} </ h1 >
+                                                <Tooltip title="Затверджено">
+                                                    <NotificationTwoTone className={classes.icon} twoToneColor={newLocal} key="approved" />
+                                                </Tooltip>
+                                            </div> :
+                                            <div>
+                                                <h1>{item.eventName} </ h1 >
+                                                <Tooltip title="Не затверджено">
+                                                    <ToolTwoTone className={classes.icon} twoToneColor={newLocal} key="notApproved" />
+                                                </Tooltip>
+                                            </div>}
                                         < h2 > Дата початку: {moment(item.eventDateStart).format("DD-MM-YYYY HH:mm")} </h2>
                                         < h2 > Дата завершення: {moment(item.eventDateEnd).format("DD-MM-YYYY HH:mm")} </h2>
                                         < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${item.id}/details`)} >
                                             Деталі
-                                    </Button>
-                                        < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/actions/eventEdit/${item.id}`)}>
-                                            Редагувати
-                                    </Button>
+                                        </Button>
+                                        {item.eventStatusID !== 1 &&
+                                            < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/actions/eventEdit/${item.id}`)}>
+                                                Редагувати
+                                            </Button>}
                                         < hr />
                                     </div>)}
                             </Modal>
@@ -188,10 +239,10 @@ const EventUser = () => {
                                 onCancel={() => setPlanedEventsModal(false)}
                                 footer={
                                     [
-                                        <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => history.push('/events/types')} >
+                                        <Button type="primary" key='submit' className={classes.button} onClick={() => history.push('/events/types')} >
                                             Зголоситись на подію
                                         </Button>,
-                                        < Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => setPlanedEventsModal(false)}>
+                                        < Button type="primary" key='submit' className={classes.button} onClick={() => setPlanedEventsModal(false)}>
                                             Закрити
                                         </Button>
                                     ]}
