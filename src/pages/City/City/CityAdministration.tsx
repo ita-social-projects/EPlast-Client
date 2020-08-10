@@ -84,23 +84,24 @@ const CityAdministration = () => {
                 title={`${member.adminType.adminTypeName}`}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                 actions={[
-                  <SettingOutlined
-                    onClick={() => showModal(member)}  
-                  />,
-                  <CloseOutlined
-                    onClick={() => removeAdmin(member.id)}
-                  />,
+                  <SettingOutlined onClick={() => showModal(member)} />,
+                  <CloseOutlined onClick={() => removeAdmin(member.id)} />,
                 ]}
               >
-                <Avatar
-                  size={86}
-                  icon={<UserOutlined />}
-                  className={classes.detailsIcon}
-                />
-                <Card.Meta
-                  className={classes.detailsMeta}
-                  title={`${member.user.firstName} ${member.user.lastName}`}
-                />
+                <div
+                  onClick={() =>history.push(`/userpage/main/${member.userId}`)}
+                  className={classes.cityMember}
+                >
+                  <Avatar
+                    size={86}
+                    icon={<UserOutlined />}
+                    className={classes.detailsIcon}
+                  />
+                  <Card.Meta
+                    className={classes.detailsMeta}
+                    title={`${member.user.firstName} ${member.user.lastName}`}
+                  />
+                </div>
               </Card>
             ))
           ) : (

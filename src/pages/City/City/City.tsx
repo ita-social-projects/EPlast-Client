@@ -198,7 +198,11 @@ const City = () => {
               {members.length !== 0 ? (
                 members.map((member) => (
                   <Col className={classes.listItem} key={member.id} span={7}>
-                    <div>
+                    <div
+                      onClick={() =>
+                        history.push(`/userpage/main/${member.userId}`)
+                      }
+                    >
                       <Avatar
                         size={64}
                         icon={<UserOutlined />}
@@ -258,7 +262,11 @@ const City = () => {
               {admins.length !== 0 ? (
                 admins.map((member) => (
                   <Col className={classes.listItem} key={member.id} span={7}>
-                    <div>
+                    <div
+                      onClick={() =>
+                        history.push(`/userpage/main/${member.userId}`)
+                      }
+                    >
                       <Avatar
                         size={64}
                         icon={<UserOutlined />}
@@ -389,21 +397,29 @@ const City = () => {
                 followers.map((member) => (
                   <Col className={classes.listItem} key={member.id} span={7}>
                     <div>
-                      <Avatar
-                        size={64}
-                        icon={<UserOutlined />}
-                        className={classes.profileImg}
-                      />
+                      <div
+                        onClick={() =>
+                          history.push(`/userpage/main/${member.userId}`)
+                        }
+                      >
+                        <Avatar
+                          size={64}
+                          icon={<UserOutlined />}
+                          className={classes.profileImg}
+                        />
+                        <p className={classes.userName}>
+                          {member.user.firstName}
+                        </p>
+                        <p className={classes.userName}>
+                          {member.user.lastName}
+                        </p>
+                      </div>
                       {canApprove ? (
                         <PlusOutlined
                           className={classes.approveIcon}
                           onClick={() => changeApproveStatus(member.id)}
                         />
                       ) : null}
-                      <p className={classes.userName}>
-                        {member.user.firstName}
-                      </p>
-                      <p className={classes.userName}>{member.user.lastName}</p>
                     </div>
                   </Col>
                 ))

@@ -52,9 +52,9 @@ const CityMembers = () => {
     else {
       setAdmin({
         ...(new CityAdmin()),
-        ["userId"]: member.user.id,
-        ["user"]: member.user,
-        ["cityId"]: member.cityId,
+        userId: member.user.id,
+        user: member.user,
+        cityId: member.cityId,
       })
     }
 
@@ -113,23 +113,24 @@ const CityMembers = () => {
               key={member.id}
               className={classes.detailsCard}
               actions={[
-                <SettingOutlined
-                  onClick={() => showModal(member)}
-                />,
-                <CloseOutlined
-                  onClick={() => removeMember(member)}
-                />,
+                <SettingOutlined onClick={() => showModal(member)} />,
+                <CloseOutlined onClick={() => removeMember(member)} />,
               ]}
             >
-              <Avatar
-                size={86}
-                icon={<UserOutlined />}
-                className={classes.detailsIcon}
-              />
-              <Card.Meta
-                className={classes.detailsMeta}
-                title={`${member.user.firstName} ${member.user.lastName}`}
-              />
+              <div
+                onClick={() => history.push(`/userpage/main/${member.userId}`)}
+                className={classes.cityMember}
+              >
+                <Avatar
+                  size={86}
+                  icon={<UserOutlined />}
+                  className={classes.detailsIcon}
+                />
+                <Card.Meta
+                  className={classes.detailsMeta}
+                  title={`${member.user.firstName} ${member.user.lastName}`}
+                />
+              </div>
             </Card>
           ))
         ) : (
@@ -148,7 +149,11 @@ const CityMembers = () => {
         </Button>
       </div>
       <Modal
-        title={admin.id === 0 ? "Додати в провід станиці" : "Редагувати адміністратора"}
+        title={
+          admin.id === 0
+            ? "Додати в провід станиці"
+            : "Редагувати адміністратора"
+        }
         visible={visibleModal}
         confirmLoading={loading}
         onOk={handleOk}

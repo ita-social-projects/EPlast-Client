@@ -41,23 +41,24 @@ const CityFollowers = () => {
                 key={follower.id}
                 className={classes.detailsCard}
                 actions={[
-                  <PlusOutlined
-                    onClick={() => addMember(follower.id)}
-                  />,
-                  <CloseOutlined
-                    onClick={() => removeMember(follower.id)}
-                  />,
+                  <PlusOutlined onClick={() => addMember(follower.id)} />,
+                  <CloseOutlined onClick={() => removeMember(follower.id)} />,
                 ]}
               >
-                <Avatar
-                  size={86}
-                  icon={<UserOutlined />}
-                  className={classes.detailsIcon}
-                />
-                <Card.Meta
-                  className={classes.detailsMeta}
-                  title={`${follower.user.firstName} ${follower.user.lastName}`}
-                />
+                <div
+                  onClick={() => history.push(`/userpage/main/${follower.userId}`)}
+                  className={classes.cityMember}
+                >
+                  <Avatar
+                    size={86}
+                    icon={<UserOutlined />}
+                    className={classes.detailsIcon}
+                  />
+                  <Card.Meta
+                    className={classes.detailsMeta}
+                    title={`${follower.user.firstName} ${follower.user.lastName}`}
+                  />
+                </div>
               </Card>
             ))
           ) : (
