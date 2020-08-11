@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Col, DatePicker, Form, Input, Layout, Modal, Row} from 'antd';
-import {UserOutlined, SettingOutlined, CloseOutlined, RollbackOutlined} from '@ant-design/icons';
+import {SettingOutlined, CloseOutlined, RollbackOutlined} from '@ant-design/icons';
 import {editAdministrator, getAllAdmins, removeAdministrator} from "../../../api/citiesApi";
+import userApi from "../../../api/UserApi";
 import classes from './City.module.css';
 import CityAdmin from '../../../models/City/CityAdmin';
 import moment from "moment";
@@ -21,6 +22,8 @@ const CityAdministration = () => {
 
     const getAdministration = async () => {
         const response = await getAllAdmins(id);
+
+        await setPhotos(response.data.administration);
         setAdministration(response.data.administration);
     };
 
@@ -49,7 +52,7 @@ const CityAdministration = () => {
       setLoading(true);
   
       try {
-          await editAdministrator(admin.cityId, admin);
+        await editAdministrator(admin.cityId, admin);
       } finally {
         setVisibleModal(false);
         setLoading(false);
@@ -66,6 +69,12 @@ const CityAdministration = () => {
       }
 
       setAdmin({ ...admin, [key]: date?._d });
+    }
+
+    const setPhotos = async (members: CityAdmin[]) => {
+      for (let i = 0; i < members.length; i++) {
+        members[i].user.imagePath = (await userApi.getImage(members[i].user.imagePath)).data;
+      }
     }
 
     useEffect(() => {
@@ -89,18 +98,22 @@ const CityAdministration = () => {
                 ]}
               >
                 <div
-                  onClick={() =>history.push(`/userpage/main/${member.userId}`)}
+                  onClick={() =>
+                    history.push(`/userpage/main/${member.userId}`)
+                  }
                   className={classes.cityMember}
                 >
-                  <Avatar
-                    size={86}
-                    icon={<UserOutlined />}
-                    className={classes.detailsIcon}
-                  />
-                  <Card.Meta
-                    className={classes.detailsMeta}
-                    title={`${member.user.firstName} ${member.user.lastName}`}
-                  />
+                  <div>
+                    <Avatar
+                      size={86}
+                      src={member.user.imagePath}
+                      className={classes.detailsIcon}
+                    />
+                    <Card.Meta
+                      className={classes.detailsMeta}
+                      title={`${member.user.firstName} ${member.user.lastName}`}
+                    />
+                  </div>
                 </div>
               </Card>
             ))

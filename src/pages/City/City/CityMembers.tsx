@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Avatar, Button, Card, Col, DatePicker, Form, Input, Layout, Modal, Row, } from "antd";
-import { UserOutlined, SettingOutlined, CloseOutlined, RollbackOutlined } from "@ant-design/icons";
+import { SettingOutlined, CloseOutlined, RollbackOutlined } from "@ant-design/icons";
 import { addAdministrator, removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus, editAdministrator } from "../../../api/citiesApi";
+import userApi from "../../../api/UserApi";
 import classes from "./City.module.css";
 import CityMember from "../../../models/City/CityMember";
 import CityAdmin from "../../../models/City/CityAdmin";
@@ -24,6 +25,8 @@ const CityMembers = () => {
 
   const getMembers = async () => {
     const responseMembers = await getAllMembers(id);
+
+    await setPhotos(responseMembers.data);
     setMembers(responseMembers.data);
 
     const responseAdmins = await getAllAdmins(id);
@@ -99,6 +102,12 @@ const CityMembers = () => {
 
   const dateFormat = "DD.MM.YYYY";
 
+  const setPhotos = async (members: CityMember[]) => {
+    for (let i = 0; i < members.length; i++) {
+      members[i].user.imagePath = (await userApi.getImage(members[i].user.imagePath)).data;
+    }
+  }
+
   useEffect(() => {
     getMembers();
   }, []);
@@ -123,7 +132,7 @@ const CityMembers = () => {
               >
                 <Avatar
                   size={86}
-                  icon={<UserOutlined />}
+                  src={member.user.imagePath}
                   className={classes.detailsIcon}
                 />
                 <Card.Meta

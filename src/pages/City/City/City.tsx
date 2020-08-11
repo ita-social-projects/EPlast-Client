@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Avatar, Row, Col, Button, Spin, Layout, Modal } from "antd";
-import { UserOutlined, FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, CloseOutlined } from "@ant-design/icons";
+import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, CloseOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../../api/citiesApi";
+import userApi from "../../../api/UserApi";
 import classes from "./City.module.css";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import CityProfile from "../../../models/City/CityProfile";
@@ -53,6 +54,23 @@ const City = () => {
     await removeCity(+id);
   }
 
+  const setPhotos = async (members: CityMember[]) => {
+    for (let i = 0; i < members.length; i++) {
+      members[i].user.imagePath = (await userApi.getImage(members[i].user.imagePath)).data;
+    }
+  }
+
+  function seeModal () {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете видалити дану станицю?",
+      icon: <ExclamationCircleOutlined/>,
+      okText: 'Так, видалити',
+      okType: 'danger',
+      cancelText: 'Скасувати',
+      onOk() { deleteCity()}
+    });
+  }
+
   const getCity = async () => {
     setLoading(true);
 
@@ -66,6 +84,12 @@ const City = () => {
         response.data.logo = logo.data;
       }
 
+      await setPhotos([
+        ...response.data.administration,
+        ...response.data.members,
+        ...response.data.followers,
+      ]);
+      
       setCity(response.data);
       setAdmins(response.data.administration);
       setMembers(response.data.members);
@@ -114,7 +138,7 @@ const City = () => {
             {canCreate ? (
               <CloseOutlined
                 className={classes.removeIcon}
-                onClick={() => deleteCity()}
+                onClick={() => seeModal()}
               />
             ) : null}
             <h1 className={classes.title}>{`Станиця ${city.name}`}</h1>
@@ -154,6 +178,17 @@ const City = () => {
                         : null}
                     </b>
                   </p>
+                  {canEdit ? (
+                    <div className={classes.bottomButton}>
+                      <Button
+                        type="primary"
+                        className={classes.listButton}
+                        onClick={() => history.push(`/cities/${city.id}`)}
+                      >
+                        Річні звіти
+                      </Button>
+                    </div>
+                  ) : null}
                 </div>
               </Col>
               <Col flex="1" offset={1}>
@@ -205,7 +240,7 @@ const City = () => {
                     >
                       <Avatar
                         size={64}
-                        icon={<UserOutlined />}
+                        src={member.user.imagePath}
                         className={classes.profileImg}
                       />
                       <p className={classes.userName}>
@@ -269,7 +304,7 @@ const City = () => {
                     >
                       <Avatar
                         size={64}
-                        icon={<UserOutlined />}
+                        src={member.user.imagePath}
                         className={classes.profileImg}
                       />
                       <p className={classes.userName}>
@@ -404,7 +439,7 @@ const City = () => {
                       >
                         <Avatar
                           size={64}
-                          icon={<UserOutlined />}
+                          src={member.user.imagePath}
                           className={classes.profileImg}
                         />
                         <p className={classes.userName}>
