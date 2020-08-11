@@ -53,7 +53,8 @@ const RenderEventIcons = ({
         </Tooltip>)
     } else if (isUserParticipant && !isEventFinished) {
         if (isUserRejectedParticipant) {
-            eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено" key="banned">
+            eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено"
+                                     key="banned">
                 <StopOutlined style={{color: "#8B0000"}} className={classes.icon} key="banned"/>
             </Tooltip>)
         } else {
@@ -173,24 +174,17 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) =
         }
     ];
 
-    return <div className={classes.background}>
-        <div className={classes.actionsWrapper}>
-            <Row>
-                <Col span={10} push={14} key={'1'}>
-                    <img
-                        className={classes.imgEvent}
-                        alt="example"
-                        src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
-                    />
-                    <div className={classes.iconsFlex}>
-                        {RenderEventIcons(event, subscribeOnEvent, unSubscribeOnEvent)}
-                    </div>
-                </Col>
-                <Col span={14} pull={10} key={'2'}>
-                    <Table columns={columns} dataSource={data} pagination={false}/>
-                </Col>
-            </Row>
-        </div>
-    </div>
+    return <Row justify="center">
+        <Col>
+            <img
+                className={classes.imgEvent}
+                alt="example"
+                src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
+            />
+            <div className={classes.iconsFlex}>
+                {RenderEventIcons(event, subscribeOnEvent, unSubscribeOnEvent)}
+            </div>
+        </Col>
+    </Row>
 }
 export default SortedEventInfo;

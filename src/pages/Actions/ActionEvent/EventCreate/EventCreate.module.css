@@ -61,10 +61,6 @@ input:hover,
     text-align: start;
 }
 
-td,
-tr {
-    padding: 14px;
-}
 
 .select {
     width: 235px !important;

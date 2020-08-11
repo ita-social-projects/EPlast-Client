@@ -1,18 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {Input, Row, Space, Spin, Typography} from "antd";
+import {Col, Input, Row, Space, Spin, Typography} from "antd";
 import {useParams} from "react-router-dom";
 // eslint-disable-next-line import/no-cycle
 import SortedEventInfo from './SortedEventInfo';
 import rawData from "./data";
 import Gallery from './Gallery';
 import eventsApi from "../../../../api/eventsApi";
+import EventDetailsHeader from "./EventDetailsHeader";
 // eslint-disable-next-line import/no-cycle
 import ParticipantsTable from "./ParticipantsTable";
 import spinClasses from "../EventUser/EventUser.module.css";
 
 const classes = require('./EventInfo.module.css');
 
-const {Title}=Typography;
+const {Title} = Typography;
 
 export interface EventDetails {
     event: EventInformation;
@@ -122,19 +123,24 @@ const EventInfo = () => {
 
     ) : (
         <div className={classes.background}>
-            <div className={classes.wrapper}>
-                <div className={classes.actionsWrapper} key={'1'}>
+            <Row justify="space-between" >
+                <Col xs={24} sm={24} md={24} lg={8}>
                     <SortedEventInfo
                         event={event}
                         subscribeOnEvent={subscribeOnEvent}
                         unSubscribeOnEvent={unSubscribeOnEvent}
                         key={event.event?.eventName}
                     />
-                </div>
+                </Col>
+                    <Col xs={24} sm={{span:24,offset:1}} md={{span:24,offset:3}} lg={{span:16,offset:0}} >
+                        <EventDetailsHeader/>
+                    </Col>
+            </Row>
+            <div className={classes.wrapper}>
                 <Gallery key={event.event?.eventLocation} eventId={event.event?.eventId}
                          isUserEventAdmin={event.isUserEventAdmin}/>
                 <div key={'2'}>
-                    <Title level={2} style={{color:'#3c5438'}}>Таблиця користувачів</Title>,
+                    <Title level={2} style={{color: '#3c5438'}}>Таблиця користувачів</Title>,
                     <Row>
                         <Input.Search
                             style={{width: "400px", margin: "0 0 10px 0"}}
