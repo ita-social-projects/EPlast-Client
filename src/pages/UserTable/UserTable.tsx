@@ -9,7 +9,6 @@ import Search from 'antd/lib/input/Search';
 const classes = require('./UserTable.module.css');
 
 const UserTable = () => {
-    const history = useHistory();
     const [recordObj, setRecordObj] = useState<any>(0);
     const [showDropdown, setShowDropdown] = useState(false);
     const [x, setX] = useState(0);
@@ -75,8 +74,7 @@ const UserTable = () => {
                 d.userRoles = userRoles;
             }
             return d;
-        }
-        );
+        });
     }
 
     return loading === false ? (
