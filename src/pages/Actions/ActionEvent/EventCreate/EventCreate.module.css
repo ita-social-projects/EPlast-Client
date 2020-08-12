@@ -20,7 +20,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
     margin-bottom: 30px;
 }
 
@@ -32,7 +31,6 @@ form {
     background-color: #3c5438;
     color: #f0f8ff;
     margin: 17px;
-    border-radius: 3px;
     padding: 8px;
     text-align: center;
     width: 150px;
@@ -89,7 +87,6 @@ input,
     outline: none;
     text-align: center;
     cursor: pointer;
-    border-radius: 10px;
     margin-left: 235px;
     margin-bottom: 15px;
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
