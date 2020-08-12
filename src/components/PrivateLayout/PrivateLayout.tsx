@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Avatar, Layout, Menu } from "antd";
+import ClickAwayListener from 'react-click-away-listener';
+
 import {
   SolutionOutlined,
   InfoCircleOutlined,
@@ -15,11 +17,18 @@ import userApi from '../../api/UserApi';
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
+
+
 const PrivateLayout = ({ children }: any) => {
   const [collapsed, setCollapsed] = useState(true);
 
   const onCollapse = (collValue: boolean) => {
     setCollapsed(collValue);
+  };
+
+  const handleClickAway = () => {
+    setCollapsed(true);
+    console.log('Just closed the sider');
   };
 
   const [imageBase64, setImageBase64] = useState<string>();
@@ -43,9 +52,10 @@ const PrivateLayout = ({ children }: any) => {
   }, []);
   const history = useHistory();
   return (
+   
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
-      <Sider
-        collapsible
+       <ClickAwayListener onClickAway={handleClickAway}>
+      <Sider collapsible
         collapsed={collapsed}
         onCollapse={onCollapse}
         className={classes.sidebar}
@@ -70,7 +80,8 @@ const PrivateLayout = ({ children }: any) => {
             Рішення
           </Menu.Item>
           <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
-            <Menu.Item onClick={() => history.push("/user/table")} key="2">Таблиця користувачів</Menu.Item>
+
+            <Menu.Item key="2">Таблиця користувачів</Menu.Item>
             <Menu.Item onClick={() => history.push("/cities")} key="3">
               Станиці
             </Menu.Item>
@@ -104,6 +115,8 @@ const PrivateLayout = ({ children }: any) => {
           </SubMenu>
         </Menu>
       </Sider>
+      </ClickAwayListener>
+      
       <Layout className="site-layout">
         <Content style={{ margin: "0 16px" }}>
           <div
@@ -114,7 +127,9 @@ const PrivateLayout = ({ children }: any) => {
           </div>
         </Content>
       </Layout>
+      
     </Layout>
+    
   );
 };
 
