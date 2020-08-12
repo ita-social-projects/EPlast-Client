@@ -44,7 +44,8 @@ const PrivateLayout = ({ children }: any) => {
   const history = useHistory();
   return (
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
-      <Sider collapsible
+      <Sider
+        collapsible
         collapsed={collapsed}
         onCollapse={onCollapse}
         className={classes.sidebar}
@@ -69,8 +70,7 @@ const PrivateLayout = ({ children }: any) => {
             Рішення
           </Menu.Item>
           <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
-
-            <Menu.Item key="2">Таблиця користувачів</Menu.Item>
+            <Menu.Item onClick={() => history.push("/user/table")} key="2">Таблиця користувачів</Menu.Item>
             <Menu.Item onClick={() => history.push("/cities")} key="3">
               Станиці
             </Menu.Item>
