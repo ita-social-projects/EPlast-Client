@@ -5,15 +5,15 @@ import { useHistory } from 'react-router-dom';
 import jwt from 'jwt-decode';
 import AuthStore from '../../../stores/AuthStore';
 
-type CustomMenuProps={
-  id:string;
+type CustomMenuProps = {
+  id: string;
 }
-const CustomMenu:React.FC<CustomMenuProps>=(props:CustomMenuProps)=>{
-  let user:any;
+const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
+  let user: any;
   const history = useHistory();
   const token = AuthStore.getToken() as string;
-  if(token != null){
-    user  = jwt(token);
+  if (token != null) {
+    user = jwt(token);
   }
   return (
     <div className="wrapperMenu">
@@ -23,18 +23,18 @@ const CustomMenu:React.FC<CustomMenuProps>=(props:CustomMenuProps)=>{
         </Menu.Item>
         <Menu.Item className="menuItem" key="Membership">Дійсне членство</Menu.Item>
         <Menu.Item className="menuItem" key="second">Діловодства</Menu.Item>
-        <Menu.Item className="menuItem" key="Events" onClick={() => history.push(`/actions/eventuser`)}>
+        <Menu.Item className="menuItem" key="eventuser" onClick={() => history.push(`/userpage/eventuser/${props.id}`)}>
           Події
         </Menu.Item>
         <Menu.Item className="menuItem" key="Congresses">З`їзди</Menu.Item>
         <Menu.Item className="menuItem" key="Blanks">Бланки</Menu.Item>
         <Menu.Item className="menuItem" key="Authorization" onClick={() => history.push(`/userpage/approvers/${props.id}`)}>Поручення</Menu.Item>
-        {props.id==user.nameid && 
+        {props.id == user.nameid &&
           <Menu.Item className="menuItem" key="edit" onClick={() => history.push(`/userpage/edit/${props.id}`)}>
-          Редагувати профіль
+            Редагувати профіль
         </Menu.Item>
         }
-        
+
       </Menu>
     </div>
   );

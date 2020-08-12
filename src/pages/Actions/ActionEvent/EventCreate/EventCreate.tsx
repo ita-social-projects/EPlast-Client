@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Form, DatePicker, Select, Input, Space, Button, Radio, Spin } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
+import jwt from 'jwt-decode';
 import eventUserApi from '../../../../api/eventUserApi';
 import eventsApi from "../../../../api/eventsApi";
 import notificationLogic from '../../../../components/Notifications/Notification';
 import moment from 'moment';
+import AuthStore from '../../../../stores/AuthStore';
 
 const classes = require('./EventCreate.module.css');
 
@@ -82,8 +84,10 @@ export default function () {
         userId: values.pysarId,
       }
     }
+    const token = AuthStore.getToken() as string;
+    const user: any = jwt(token);
     await eventUserApi.post(newEvent).then(response => {
-      history.push(`/actions/eventuser`);
+      history.push(`/actions/eventuser/${user.nameid}`);
       notificationLogic('success', 'Подія ' + values.EventName + ' успішно створена');
     }).catch(error => {
       if (error.response?.status === 400) {
