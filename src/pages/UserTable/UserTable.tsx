@@ -38,7 +38,7 @@ const UserTable = () => {
             setLoading(true);
         }
         fetchData();
-    }, [users])
+    }, [])
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchedData(event.target.value);
