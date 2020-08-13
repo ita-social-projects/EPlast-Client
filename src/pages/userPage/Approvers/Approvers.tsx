@@ -11,6 +11,7 @@ import userApi from '../../../api/UserApi';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
+import notificationLogic from '../../../components/Notifications/Notification';
 
 const Assignments = () => {
   const history = useHistory();
@@ -23,18 +24,21 @@ const Assignments = () => {
     await userApi.getApprovers(userId,user.nameid).then(response =>{
       setData(response.data);
       setLoading(true);
-    })
+    }).catch(()=>{notificationLogic('error', "Не вдалося завантажити дані")});
   };
   useEffect(() => {
     fetchData();
   }, []);
 
-  const handleClick=async (event:number)=>{
-    await userApi.deleteApprove(event);
+  const deleteApprove=async (event:number)=>{
+    await userApi.deleteApprove(event).
+      then(()=>{notificationLogic('success', "Поручення успішно видалине")}).
+      catch(()=>{notificationLogic('error', "Не вдалося видалити поручення")});
     fetchData();
   }
   const approveClick=async (userId:string, isClubAdmin:boolean=false, isCityAdmin:boolean=false)=>{
-    await userApi.approveUser(userId,isClubAdmin,isCityAdmin);
+    await userApi.approveUser(userId,isClubAdmin,isCityAdmin).
+      catch(()=>{notificationLogic('error', "Не вдалося поручитися")});
     fetchData();
   }
 
@@ -49,7 +53,7 @@ const Assignments = () => {
   ) : (
     <div className="wrapper">
       <div className="displayFlex">
-      <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast}  firstName={data?.user.firstName} lastName={data?.user.lastName}/>
+      <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast}  firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun}/>
       <div className="approversContent">
       <h1>{data?.user.firstName} {data?.user.lastName}</h1>
         <hr/>
@@ -68,7 +72,7 @@ const Assignments = () => {
                         >
                             <Meta title={p.approver.user.firstName+" "+p.approver.user.lastName} className="titleText"/>
                             <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className="titleText"/>
-                            <Button className="cardButton" danger onClick={()=>handleClick(p.id)}>
+                            <Button className="cardButton" danger onClick={()=>deleteApprove(p.id)}>
                                 Відкликати
                             </Button>
                         </Card>
@@ -87,6 +91,7 @@ const Assignments = () => {
                         >
                           <Meta title={p.approver.user.firstName+" "+p.approver.user.lastName} className="titleText"/>
                           <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className="titleText"/>
+                          <p className="cardP"/>
                         </Card>
                       </Link>
                     </div>
@@ -103,11 +108,12 @@ const Assignments = () => {
                       className="cardStyles"
                       cover={<img alt="example" src={AddUser} className="avatar"/>}
                     >
+                       <Meta className="cardBodyEmpty"/>
                     </Card>
                   </Link>
                 </div>
               )}
-              {data?.confirmedUsers.length==0 && (
+              {data?.confirmedUsers.length==0 && !data?.canApprove && (
                 <div>
                   <br />
                   <br />
@@ -122,8 +128,10 @@ const Assignments = () => {
         <h1>Поручення куреня УСП/УПС</h1>
         <div className="approversCard">
           {(data?.clubApprover!=null) ? (
+           
              <div>
-               <Link to="#" onClick={()=>history.push(`/userpage/main/${data.clubApprover.approver.userID}`)}>
+                {(data.clubApprover.approver.userID==data.currentUserId) ? 
+                (
                   <Card
                   hoverable
                   className="cardStyles"
@@ -131,13 +139,23 @@ const Assignments = () => {
                 >
                     <Meta title={data.clubApprover.approver.user.firstName+" "+data.clubApprover.approver.user.lastName} className="titleText"/>
                     <Meta title={moment(data.clubApprover.confirmDate).format("DD-MM-YYYY")} className="titleText"/>
-                    {data.clubApprover.approver.userID==data.currentUserId && (
-                        <Button className="cardButton" danger onClick={()=>handleClick(data.clubApprover.id)} value={data.clubApprover.id}>
-                            Відкликати
-                        </Button>
-                    )}
+                    <Button className="cardButton" danger onClick={()=>deleteApprove(data.clubApprover.id)} value={data.clubApprover.id}>
+                      Відкликати
+                    </Button>
+                  </Card>
+                ):(
+                  <Link to="#" onClick={()=>history.push(`/userpage/main/${data.clubApprover.approver.userID}`)}>
+                  <Card
+                  hoverable
+                  className="cardStyles"
+                  cover={<img alt="example"  src={data.clubApprover.approver.user.imagePath} className="avatar"/>}
+                >
+                    <Meta title={data.clubApprover.approver.user.firstName+" "+data.clubApprover.approver.user.lastName} className="titleText"/>
+                    <Meta title={moment(data.clubApprover.confirmDate).format("DD-MM-YYYY")} className="titleText"/>
                   </Card>
                </Link>
+                ) }
+               
            </div>
           ):((data?.clubApprover==null && data?.currentUserId!=data?.user.id && data?.isUserHeadOfClub)?
           (
@@ -166,7 +184,7 @@ const Assignments = () => {
         <div className="approversCard">
         {(data?.cityApprover!=null) ? (
              <div>
-               <Link to="#" onClick={()=>history.push(`/userpage/main/${data.cityApprover.approver.userID}`)}>
+               {(data.cityApprover.approver.userID==data.currentUserId) ? (
                   <Card
                     hoverable
                     className="cardStyles"
@@ -174,13 +192,23 @@ const Assignments = () => {
                   >
                     <Meta title={data.cityApprover.approver.user.firstName+" "+data.cityApprover.approver.user.lastName} className="titleText"/>
                     <Meta title={moment(data.cityApprover.confirmDate).format("DD-MM-YYYY")} className="titleText"/>
-                    {data.cityApprover.approver.userID==data.currentUserId && (
-                        <Button className="cardButton" danger onClick={()=>handleClick(data.cityApprover.id)} value={data.cityApprover.id}>
+                    <Button className="cardButton" danger onClick={()=>deleteApprove(data.cityApprover.id)} value={data.cityApprover.id}>
                             Відкликати
-                        </Button>
-                    )}
+                    </Button>
                   </Card>
-               </Link>
+               ):(
+                <Link to="#" onClick={()=>history.push(`/userpage/main/${data.cityApprover.approver.userID}`)}>
+                <Card
+                  hoverable
+                  className="cardStyles"
+                  cover={<img alt="example"  src={data.cityApprover.approver.user.imagePath} className="avatar"/>}
+                >
+                  <Meta title={data.cityApprover.approver.user.firstName+" "+data.cityApprover.approver.user.lastName} className="titleText"/>
+                  <Meta title={moment(data.cityApprover.confirmDate).format("DD-MM-YYYY")} className="titleText"/>
+                </Card>
+             </Link>
+               ) }
+              
            </div>
           ):((data?.cityApprover==null && data?.currentUserId!=data?.user.id && (data?.isUserHeadOfRegion||data?.isUserHeadOfCity)) ?
           (
