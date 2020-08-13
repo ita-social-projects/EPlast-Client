@@ -55,7 +55,8 @@ const PrivateLayout = ({ children }: any) => {
    
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
        <ClickAwayListener onClickAway={handleClickAway}>
-      <Sider collapsible
+       <Sider
+        collapsible
         collapsed={collapsed}
         onCollapse={onCollapse}
         className={classes.sidebar}
@@ -74,29 +75,29 @@ const PrivateLayout = ({ children }: any) => {
           <Menu.Item
             key="1"
             icon={<SolutionOutlined />}
-            onClick={() => history.push("/decisions")}
+            onClick={() =>{handleClickAway() ; history.push("/decisions");}}
+            
             style={{ color: "white" }}
           >
             Рішення
           </Menu.Item>
           <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
-
-          <Menu.Item onClick={() => history.push("/user/table")} key="2">Таблиця користувачів</Menu.Item>
-            <Menu.Item onClick={() => history.push("/cities")} key="3">
+            <Menu.Item onClick={() =>{handleClickAway(); history.push("/user/table");}} key="2">Таблиця користувачів</Menu.Item>
+            <Menu.Item onClick={() =>{handleClickAway(); history.push("/cities");}} key="3">
               Станиці
             </Menu.Item>
-            <Menu.Item key="4">Округи</Menu.Item>
-            <Menu.Item onClick={() => history.push('/events/types')} key="5">
+            <Menu.Item onClick={() =>{handleClickAway();}} key="4">Округи</Menu.Item>
+            <Menu.Item onClick={() =>{handleClickAway(); history.push('/events/types');}} key="5">
               Події
             </Menu.Item>
-            <Menu.Item onClick={() => history.push('/clubs')} key="6">Курені</Menu.Item>
-            <Menu.Item key="7">Відзначення</Menu.Item>
-            <Menu.Item key="8">Кадра виховників</Menu.Item>
+            <Menu.Item onClick={() =>{handleClickAway(); history.push('/clubs');}} key="6">Курені</Menu.Item>
+            <Menu.Item onClick={() =>{handleClickAway();}} key="7">Відзначення</Menu.Item>
+            <Menu.Item onClick={() =>{handleClickAway();}} key="8">Кадра виховників</Menu.Item>
           </SubMenu>
           <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Документи">
             <SubMenu key="sub2.1" title="Звіти">
-              <Menu.Item onClick={() => history.push('/annualreport/create')} key="9">Подати річний звіт станиці</Menu.Item>
-              <Menu.Item onClick={() => history.push('/annualreport/table')} key="10">Річні звіти</Menu.Item>
+              <Menu.Item onClick={() =>{handleClickAway(); history.push('/annualreport/create');}} key="9">Подати річний звіт станиці</Menu.Item>
+              <Menu.Item onClick={() =>{handleClickAway(); history.push('/annualreport/table');}} key="10">Річні звіти</Menu.Item>
               <Menu.Item key="11">Статистичні звіти</Menu.Item>
             </SubMenu>
             <SubMenu
@@ -104,13 +105,13 @@ const PrivateLayout = ({ children }: any) => {
               icon={<PieChartOutlined />}
               title="Статистика"
             >
-              <Menu.Item key="12">Геостатистика</Menu.Item>
-              <Menu.Item key="13">Статистика по роках</Menu.Item>
-              <Menu.Item key="14">Статистика(періоди)</Menu.Item>
+              <Menu.Item onClick={() =>{handleClickAway();}} key="12">Геостатистика</Menu.Item>
+              <Menu.Item onClick={() =>{handleClickAway();}} key="13">Статистика по роках</Menu.Item>
+              <Menu.Item onClick={() =>{handleClickAway();}} key="14">Статистика(періоди)</Menu.Item>
             </SubMenu>
             <SubMenu key="sub2.3" title="Осередки">
-              <Menu.Item key="15">Осередки та адміни</Menu.Item>
-              <Menu.Item key="16">Порівняти осередки</Menu.Item>
+              <Menu.Item onClick={() =>{handleClickAway();}} key="15">Осередки та адміни</Menu.Item>
+              <Menu.Item onClick={() =>{handleClickAway();}} key="16">Порівняти осередки</Menu.Item>
             </SubMenu>
           </SubMenu>
         </Menu>
