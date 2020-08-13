@@ -12,6 +12,7 @@ import moment, { Moment } from 'moment';
 import jwt from 'jwt-decode';
 import AuthStore from '../../../stores/AuthStore';
 import {useParams} from 'react-router-dom';
+import notificationLogic from '../../../components/Notifications/Notification';
 
 export default function () {
     const patern=/^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50})*$/;
@@ -30,61 +31,66 @@ export default function () {
 
     const [userAvatar, setUserAvatar] = useState<any>();
     const [loading, setLoading] = useState(false);
-    const [data, setData] = useState<Data>()
+    const [data, setData] = useState<Data>();
+
+    const fetchData = async () => {
+      const token = AuthStore.getToken() as string;
+      const user : any = jwt(token);
+      await userApi.edit(user.nameid).then(async response =>{
+        setData(response.data);
+        if(response.data.user.imagePath!==undefined)
+        {
+          await userApi.getImage(response.data.user.imagePath).then((q: { data: any; }) =>{
+            setUserAvatar(q.data);
+          }).catch(()=>{ notificationLogic('error', "Проблема з завантаженням фото")});
+        }
+        else{
+          notificationLogic('error', "Проблема з завантаженням даних");
+        }
+        
+        setLoading(true);
+        form.setFieldsValue({
+          firstName:response.data.user.firstName,
+          lastName:response.data.user.lastName,
+          fatherName:response.data.user.fatherName, 
+          phoneNumber: response.data.user.phoneNumber,
+          nationalityName: response.data.user.nationality.name,
+          genderName: response.data.user.gender.name,
+          placeOfStudy: response.data.user.education.placeOfStudy,
+          speciality: response.data.user.education.speciality,
+          degreeName: response.data.user.degree.name,
+          placeOfWork: response.data.user.work.placeOfwork,
+          religionName: response.data.user.religion.name,
+          positionOfWork: response.data.user.work.position,
+          address:response.data.user.address
+        });
+        setNationality(response.data.user.nationality);
+        setReligion(response.data.user.religion);
+        setDegree(response.data.user.degree);
+        setPlaceOfStudyID(response.data.educationView.placeOfStudyID);
+        setSpecialityID(response.data.educationView.specialityID);
+        setPlaceOfWorkID(response.data.workView.placeOfWorkID);
+        setPositionID(response.data.workView.positionID);
+        setGender(response.data.user.gender);
+        if(response.data.user.birthday==="0001-01-01T00:00:00")
+        {
+          setBirthday(undefined);
+        }
+        else
+        {
+          setBirthday(moment(response.data.user.birthday));
+        }
+        if(response.data.user.phoneNumber===null)
+        {
+          setPhoneNumber("");
+        }
+        else{
+          setPhoneNumber(response.data.user.phoneNumber);
+        }
+      }).catch(()=>{ notificationLogic('error', "Щось пішло не так")});
+    };
+
     useEffect(()=>{
-      const fetchData = async () => {
-        const token = AuthStore.getToken() as string;
-        const user : any = jwt(token);
-        await userApi.edit(user.nameid).then(async response =>{
-          setData(response.data);
-          if(response.data.user.imagePath!==undefined)
-          {
-            await userApi.getImage(response.data.user.imagePath).then((q: { data: any; }) =>{
-              setUserAvatar(q.data);
-            })
-          }
-          
-          setLoading(true);
-          form.setFieldsValue({
-            firstName:response.data.user.firstName,
-            lastName:response.data.user.lastName,
-            fatherName:response.data.user.fatherName, 
-            phoneNumber: response.data.user.phoneNumber,
-            nationalityName: response.data.user.nationality.name,
-            genderName: response.data.user.gender.name,
-            placeOfStudy: response.data.user.education.placeOfStudy,
-            speciality: response.data.user.education.speciality,
-            degreeName: response.data.user.degree.name,
-            placeOfWork: response.data.user.work.placeOfwork,
-            religionName: response.data.user.religion.name,
-            positionOfWork: response.data.user.work.position,
-            address:response.data.user.address
-          });
-          setNationality(response.data.user.nationality);
-          setReligion(response.data.user.religion);
-          setDegree(response.data.user.degree);
-          setPlaceOfStudyID(response.data.educationView.placeOfStudyID);
-          setSpecialityID(response.data.educationView.specialityID);
-          setPlaceOfWorkID(response.data.workView.placeOfWorkID);
-          setPositionID(response.data.workView.positionID);
-          setGender(response.data.user.gender);
-          if(response.data.user.birthday==="0001-01-01T00:00:00")
-          {
-            setBirthday(undefined);
-          }
-          else
-          {
-            setBirthday(moment(response.data.user.birthday));
-          }
-          if(response.data.user.phoneNumber===null)
-          {
-            setPhoneNumber("");
-          }
-          else{
-            setPhoneNumber(response.data.user.phoneNumber);
-          }
-        })
-      };
       fetchData();
     },[form]);
 
@@ -108,11 +114,11 @@ export default function () {
       { pattern: patern, message: message},
     ],
     placeOfStudy: [
-      {max:50, message:'Максимальна довжина - 50 символів'},
+      {max:30, message:'Максимальна довжина - 30 символів'},
       { pattern: patern, message: message},
     ],
     speciality: [
-      {max:50, message:'Максимальна довжина - 50 символів'},
+      {max:30, message:'Максимальна довжина - 30 символів'},
       { pattern: patern, message: message},
     ],
     nationality: [
@@ -241,7 +247,6 @@ export default function () {
     }
   };
   const handleOnChangePosition =(value:any,event:any)=>{
-    console.log(value,event);
     if(event.key===undefined)
     {
       setPositionID(null);
@@ -311,8 +316,9 @@ export default function () {
         "positionID":positionID,
       },
    }
-    await userApi.put(newUserProfile).then(res => console.log(res)).catch(error => console.log(error));
-    window.location.reload(false);
+    await userApi.put(newUserProfile).then(()=>{notificationLogic('success', "Дані успішно змінено")}).catch(()=>{notificationLogic('error', "Щось пішло не так")});
+    fetchData();
+    //window.location.reload(false);
   }
   const {userId}=useParams(); 
 
