@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button, Checkbox, Select } from 'antd';
 import adminApi from '../../api/adminApi';
+import { AxiosError } from 'axios';
 
 interface Props {
     record: string;
@@ -8,28 +9,25 @@ interface Props {
     onChange: (id: string, userRoles: string[]) => void;
 }
 
-const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
-    const [loading, setLoading] = useState(false);
+const ChangeUserRoleForm = ({ record, setShowModal }: Props) => {
     const id = record;
     const [form] = Form.useForm();
 
-    const [roles, setRoles] = useState<any>([{
+    const [roles, setRoles] = useState<any>({
         userID: '',
         userEmail: '',
         allRoles: [{
             id: '',
             name: ''
         }],
-        userRoles: []
-    }])
-
+        userRoles: ''
+    })
 
     useEffect(() => {
         const fetchData = async () => {
             await adminApi.getRolesForEdit(id).then(response => {
                 setRoles(response.data);
             })
-            setLoading(true);
         }
         fetchData();
     }, [])
@@ -37,41 +35,43 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
     const handleCancel = () => {
         setShowModal(false);
     }
-    const handleFinish = async (dec: any) => {
-        const newRoles: any = {
-
-        };
-        await adminApi.putEditedRoles(id);
-        onChange(newRoles.id, newRoles.userRoles);
+    const handleFinish = async (value: any) => {
+        const newRoles: any[] = [{
+            userRoles: value.userRole
+        }];
+        await adminApi.putEditedRoles(id, newRoles);
         setShowModal(false);
     };
 
     return (
         <div>
-            {!loading && (
-                <Form
-                    name="basic"
-                    onFinish={handleFinish}
-                    form={form}
-                >
-                    <Form.Item>
-                        {/* {(roles?.allRoles).map((item: any) => (<Checkbox> {item.name}</Checkbox>))} */}
-                    </Form.Item>
-                    <Form.Item style={{ textAlign: "right" }}>
-                        <Button
-                            key="back"
-                            onClick={handleCancel}
-                        >
-                            Відмінити
+            <Form
+                name="basic"
+                onFinish={handleFinish}
+                form={form}
+            >
+                <Form.Item name="userRole">
+                    <Select mode='multiple' >
+                        {roles?.allRoles.map((item: any) => (<Select.Option key={item.id} value={item.name} >
+                            {item.name}
+                        </Select.Option>))}
+                    </Select>
+                </Form.Item>
+                <Form.Item style={{ textAlign: "right" }}>
+                    <Button
+                        key="back"
+                        onClick={handleCancel}
+                    >
+                        Відмінити
                         </Button>
-                        <Button
-                            type="primary" htmlType="submit"
-                        >
-                            Змінити
+                    <Button
+                        type="primary" htmlType="submit"
+                    >
+                        Змінити
                         </Button>
 
-                    </Form.Item>
-                </Form>)}
+                </Form.Item>
+            </Form>
         </div>
     );
 };

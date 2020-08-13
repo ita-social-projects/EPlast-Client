@@ -55,6 +55,7 @@ export default function () {
     resetUsers()
   }, selectedUsers);
 
+
   const handleFinish = async (values: any) => {
     const newEvent = {
       event: {
@@ -106,6 +107,9 @@ export default function () {
   function onChange(e: any) {
     eventsApi.getCategories(e.target.value).then(async response => {
       setCategories(response.data);
+      form.setFieldsValue({
+        EventCategoryID: '',
+      });
     })
   };
 
@@ -139,7 +143,8 @@ export default function () {
           <div className={classes.card}>
             <Form name="basic"
               form={form}
-              onFinish={handleFinish}>
+              onFinish={handleFinish}
+            >
               <div className={classes.title} >
                 < Title level={2} > Створення події</ Title>
               </div>

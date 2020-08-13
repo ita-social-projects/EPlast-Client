@@ -9,7 +9,6 @@ import Search from 'antd/lib/input/Search';
 const classes = require('./UserTable.module.css');
 
 const UserTable = () => {
-    const history = useHistory();
     const [recordObj, setRecordObj] = useState<any>(0);
     const [showDropdown, setShowDropdown] = useState(false);
     const [x, setX] = useState(0);
@@ -38,7 +37,7 @@ const UserTable = () => {
             setLoading(true);
         }
         fetchData();
-    }, [users])
+    }, [])
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchedData(event.target.value);
@@ -74,9 +73,8 @@ const UserTable = () => {
             if (d.id === id) {
                 d.userRoles = userRoles;
             }
-            return d;
-        }
-        );
+            setUsers([...filteredData]);
+        });
     }
 
     return loading === false ? (

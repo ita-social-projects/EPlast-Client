@@ -174,6 +174,9 @@ export default function () {
     const onChange = async (e: any) => {
         await eventsApi.getCategories(e.target.value).then(async response => {
             setCategories([...response.data]);
+            form.setFieldsValue({
+                EventCategoryID: '',
+            });
         })
     }
 

@@ -110,7 +110,7 @@ const EventUser = () => {
     ) : (
             <div className={classes.wrapper} >
                 <div className={classes.wrapperImg}>
-                    <Avatar size={200} src={imageBase64} />
+                    <Avatar size={250} src={imageBase64} />
                     <Title level={2}> {data?.user.firstName} {data?.user.lastName} </Title>
                     < div className={classes.line} />
                     {data?.user.userPlastDegreeName}

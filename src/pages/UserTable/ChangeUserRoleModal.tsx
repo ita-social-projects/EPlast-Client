@@ -4,7 +4,7 @@ import ChangeUserRoleForm from './ChangeUserRoleForm';
 
 interface Props {
     record: string;
-    showModal: any;
+    showModal: boolean;
     setShowModal: (showModal: any) => void;
     onChange: (id: string, userRoles: string[]) => void;
 }
@@ -14,6 +14,7 @@ const ChangeUserRoleModal = ({ record, showModal, setShowModal, onChange }: Prop
             title="Редагування прав доступу користувача"
             visible={showModal}
             footer={null}
+            onCancel={() => setShowModal(false)}
         >
             <ChangeUserRoleForm
                 record={record}
