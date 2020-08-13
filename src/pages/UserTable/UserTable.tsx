@@ -73,7 +73,7 @@ const UserTable = () => {
             if (d.id === id) {
                 d.userRoles = userRoles;
             }
-            return d;
+            setUsers([...filteredData]);
         });
     }
 
