@@ -11,7 +11,8 @@ import InputMask from 'react-input-mask';
 import moment, { Moment } from 'moment';
 import jwt from 'jwt-decode';
 import AuthStore from '../../../stores/AuthStore';
-import { useParams } from 'react-router-dom';
+import {useParams} from 'react-router-dom';
+import notificationLogic from '../../../components/Notifications/Notification';
 import { useHistory } from 'react-router-dom';
 
 export default function () {
@@ -29,26 +30,30 @@ export default function () {
   const [positionID, setPositionID] = useState<any>();
   const [birthday, setBirthday] = useState<Moment>();
 
-  const [userAvatar, setUserAvatar] = useState<any>();
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<Data>()
-  useEffect(() => {
+    const [userAvatar, setUserAvatar] = useState<any>();
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState<Data>();
+
     const fetchData = async () => {
       const token = AuthStore.getToken() as string;
-      const user: any = jwt(token);
-      await userApi.edit(user.nameid).then(async response => {
+      const user : any = jwt(token);
+      await userApi.edit(user.nameid).then(async response =>{
         setData(response.data);
-        if (response.data.user.imagePath !== undefined) {
-          await userApi.getImage(response.data.user.imagePath).then((q: { data: any; }) => {
+        if(response.data.user.imagePath!==undefined)
+        {
+          await userApi.getImage(response.data.user.imagePath).then((q: { data: any; }) =>{
             setUserAvatar(q.data);
-          })
+          }).catch(()=>{ notificationLogic('error', "Проблема з завантаженням фото")});
         }
-
+        else{
+          notificationLogic('error', "Проблема з завантаженням даних");
+        }
+        
         setLoading(true);
         form.setFieldsValue({
-          firstName: response.data.user.firstName,
-          lastName: response.data.user.lastName,
-          fatherName: response.data.user.fatherName,
+          firstName:response.data.user.firstName,
+          lastName:response.data.user.lastName,
+          fatherName:response.data.user.fatherName, 
           phoneNumber: response.data.user.phoneNumber,
           nationalityName: response.data.user.nationality.name,
           genderName: response.data.user.gender.name,
@@ -58,7 +63,8 @@ export default function () {
           placeOfWork: response.data.user.work.placeOfwork,
           religionName: response.data.user.religion.name,
           positionOfWork: response.data.user.work.position,
-          address: response.data.user.address
+          address:response.data.user.address
+
         });
         setNationality(response.data.user.nationality);
         setReligion(response.data.user.religion);
@@ -68,22 +74,28 @@ export default function () {
         setPlaceOfWorkID(response.data.workView.placeOfWorkID);
         setPositionID(response.data.workView.positionID);
         setGender(response.data.user.gender);
-        if (response.data.user.birthday === "0001-01-01T00:00:00") {
+        if(response.data.user.birthday==="0001-01-01T00:00:00")
+        {
           setBirthday(undefined);
         }
-        else {
+        else
+        {
           setBirthday(moment(response.data.user.birthday));
         }
-        if (response.data.user.phoneNumber === null) {
+        if(response.data.user.phoneNumber===null)
+        {
           setPhoneNumber("");
         }
-        else {
+        else{
           setPhoneNumber(response.data.user.phoneNumber);
         }
-      })
+      }).catch(()=>{ notificationLogic('error', "Щось пішло не так")});
     };
-    fetchData();
-  }, [form]);
+
+    useEffect(()=>{
+      fetchData();
+    },[form]);
+
 
   const validationSchema = {
     name: [
@@ -105,12 +117,13 @@ export default function () {
       { pattern: patern, message: message },
     ],
     placeOfStudy: [
-      { max: 50, message: 'Максимальна довжина - 50 символів' },
-      { pattern: patern, message: message },
+      {max:30, message:'Максимальна довжина - 30 символів'},
+      { pattern: patern, message: message},
     ],
     speciality: [
-      { max: 50, message: 'Максимальна довжина - 50 символів' },
-      { pattern: patern, message: message },
+      {max:30, message:'Максимальна довжина - 30 символів'},
+      { pattern: patern, message: message},
+
     ],
     nationality: [
       { max: 25, message: 'Максимальна довжина - 25 символів' },
@@ -225,9 +238,10 @@ export default function () {
       setPlaceOfWorkID(parseInt(event.key))
     }
   };
-  const handleOnChangePosition = (value: any, event: any) => {
-    console.log(value, event);
-    if (event.key === undefined) {
+  const handleOnChangePosition =(value:any,event:any)=>{
+    if(event.key===undefined)
+    {
+
       setPositionID(null);
     }
     else {
@@ -292,9 +306,9 @@ export default function () {
         "placeOfWorkID": placeOfWorkID,
         "positionID": positionID,
       },
-    }
-    await userApi.put(newUserProfile).then(res => console.log(res)).catch(error => console.log(error));
-    window.location.reload(false);
+   }
+    await userApi.put(newUserProfile).then(()=>{notificationLogic('success', "Дані успішно змінено")}).catch(()=>{notificationLogic('error', "Щось пішло не так")});
+    fetchData();
   }
   const { userId } = useParams();
 

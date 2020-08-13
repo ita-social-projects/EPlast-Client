@@ -8,13 +8,14 @@ class AvatarAndProgressProps {
   time:number|undefined;
   firstName:string|undefined;
   lastName:string|undefined;
+  isUserPlastun:boolean|undefined;
 }
 
 
 
 const AvatarAndProgress:React.FC<AvatarAndProgressProps> = (props: AvatarAndProgressProps)=> {
-   const [loading, setLoading] = useState(false);
-  const {time,imageUrl,firstName,lastName}=props;
+  const [loading, setLoading] = useState(false);
+  const {time,imageUrl,firstName,lastName,isUserPlastun}=props;
   const [imageBase64, setImageBase64] = useState<string>();
       useEffect(() => {
         if(imageUrl!==undefined)
@@ -22,7 +23,7 @@ const AvatarAndProgress:React.FC<AvatarAndProgressProps> = (props: AvatarAndProg
           const fetchData = async () => {
             await userApi.getImage(imageUrl).then((response: { data: any; }) =>{
               setImageBase64(response.data);
-            })
+            });
              setLoading(true);
           };
           fetchData();
@@ -39,16 +40,22 @@ const AvatarAndProgress:React.FC<AvatarAndProgressProps> = (props: AvatarAndProg
       ) : (
     <div className="leftPartWrapper">
       <Avatar size={256} src={imageBase64} className="img"/>
-      <p className="statusText">{time} дні і {firstName} {lastName} Пластун:)</p>
-      <Progress
-        type="circle"
-        className="progressBar"
-        strokeColor={{
-          '0%': '#108ee9',
-          '100%': '#87d068',
-        }}
-        percent={Math.round(100-(time===undefined?0:time)*100/365)}
-      />
+      
+      {!isUserPlastun && 
+         <div className="progress">
+              <p className="statusText">{time} дні і {firstName} {lastName} Пластун:)</p>
+              <Progress
+              type="circle"
+              className="progressBar"
+              strokeColor={{
+                '0%': '#108ee9',
+                '100%': '#87d068',
+              }}
+              percent={Math.round(100-(time===undefined?0:time)*100/365)}
+            />
+        </div>
+         
+      }
     </div>
   );
 }

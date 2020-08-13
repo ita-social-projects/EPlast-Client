@@ -76,6 +76,14 @@ input,
 [role="spinbutton"] {
     text-align: start;
 }
+.title{
+    width: max-content;
+    display: flex;
+    align-self: center;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
 @media(max-width: 1174px){
     .container{
         padding: 0 10px;
