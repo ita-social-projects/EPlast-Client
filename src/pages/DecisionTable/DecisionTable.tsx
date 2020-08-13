@@ -9,8 +9,6 @@ const classes = require('./Table.module.css');
 
 const { Content } = Layout;
 
-
-
 const DecisionTable = () => {
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
