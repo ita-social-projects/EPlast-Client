@@ -3,7 +3,6 @@
     align-items: flex-start;
     justify-content: space-between;
     width: 100%;
-    margin: 0 0 0 0px;
 }
 
 .wrapperCol {
@@ -15,24 +14,27 @@
 
 .wrapperImg {
     width:  calc(60% - 30px);
-    height: 540px;
+    height: 521px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 20px 0;
 }
 
 .line {
     background: #3C5438;
     width: 100%;
-    height: 10.12px;
+    height: 10px;
     margin-bottom: 5px;
 }
 
+#line{
+    margin-bottom: 125px;
+}
+
 .button {
-    margin-top: 10px;
+    margin-top: 30px;
     background: #3C5438;
     justify-content: center;
     color: white;
@@ -59,6 +61,10 @@
     cursor: pointer;
     align-items: center;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+#subcribeButton{
+    width: auto;
 }
 
 .button:hover,
@@ -94,7 +100,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding-top: 40px;
+    padding-top: 20px;
 }
 
 .wrapper4,
@@ -106,7 +112,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding-top: 40px;
+    padding-top: 20px;
 }
 
 .wrapper2:hover,
@@ -130,7 +136,7 @@
 .wrapper3,
 .wrapper4,
 .wrapper5 {
-    margin: 20px 0px 20px 20px;
+    margin: 0px 0px 20px 20px;
 }
 
 .modal {
