@@ -6,6 +6,7 @@ import DropDownUserTable from './DropDownUserTable';
 import Title from 'antd/lib/typography/Title';
 import ColumnsForUserTable from './ColumnsForUserTable';
 import Search from 'antd/lib/input/Search';
+import ClickAwayListener from 'react-click-away-listener';
 const classes = require('./UserTable.module.css');
 
 const UserTable = () => {
@@ -61,21 +62,24 @@ const UserTable = () => {
         })
         : users;
 
-
     const handleDelete = (id: string) => {
         const filteredData = users.filter((d: any) => d.id !== id);
         setUsers([...filteredData]);
-        setShowDropdown(false);
     }
 
-    const handleChange = (id: string, userRoles: string[]) => {
+    const handleChange = (id: string, userRoles: string) => {
         const filteredData = users.filter((d: any) => {
             if (d.id === id) {
                 d.userRoles = userRoles;
             }
-            setUsers([...filteredData]);
+            return d;
         });
+        setUsers([...filteredData]);
     }
+
+    const handleClickAway = () => {
+        setShowDropdown(false);
+    };
 
     return loading === false ? (
         <div className={classes.spaceWrapper}>
@@ -84,7 +88,10 @@ const UserTable = () => {
             </Space>
         </div>
     ) : (
-            <Layout.Content>
+            <Layout.Content
+                onClick={() => { setShowDropdown(false) }}
+            >
+                <ClickAwayListener onClickAway={handleClickAway}></ClickAwayListener>
                 <Title level={2}>Таблиця користувачів</Title>
                 <Row
                     gutter={16}>

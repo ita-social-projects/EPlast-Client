@@ -21,7 +21,7 @@ const getRolesForEdit = async (userId: string) => {
     return response;
 };
 
-const putEditedRoles = async (userId: string, userRoles: any[]) => {
+const putEditedRoles = async (userId: string, userRoles: any) => {
     const response = await Api.put(`Admin/editedRole/${userId}`, userRoles);
 
     return response;

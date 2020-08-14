@@ -112,7 +112,7 @@ const EventUser = () => {
                 <div className={classes.wrapperImg}>
                     <Avatar size={250} src={imageBase64} />
                     <Title level={2}> {data?.user.firstName} {data?.user.lastName} </Title>
-                    < div className={classes.line} />
+                    < div className={classes.line} id={classes.line} />
                     {data?.user.userPlastDegreeName}
                     {userToken.nameid === userId && createdEvents?.createdEvents.length !== 0 &&
                         < Button type="primary" className={classes.button} onClick={() => history.push('/actions/eventCreate')} >
@@ -128,7 +128,7 @@ const EventUser = () => {
                                 <h2>{data?.user.firstName} {data?.user.lastName} ще не відвідав(ла) жодної події</ h2 >
                             }
                             {data.visitedEvents.length === 0 && userToken.nameid === userId &&
-                                <h2>ви ще не відвідали жодної події</ h2 >
+                                <h2>Ви ще не відвідали жодної події</ h2 >
                             }
                             {data.visitedEvents.length !== 0 &&
                                 <div>
@@ -240,7 +240,7 @@ const EventUser = () => {
                             {data.planedEvents.length === 0 && userToken.nameid === userId ?
                                 <div>
                                     <h2>Ви ще не запланували жодної події</ h2 >
-                                    <Button type="primary" key='submit' className={classes.buttonCansel} onClick={() => history.push('/events/types')} >
+                                    <Button type="primary" key='submit' className={classes.button} id={classes.subcribeButton} onClick={() => history.push('/events/types')} >
                                         Зголоситись на подію
                                 </Button>
                                 </div> :
@@ -284,7 +284,7 @@ const EventUser = () => {
                         < div className={classes.wrapper5} >
                             <Title level={2} className={classes.sectionTitle} > Календар подій </Title>
                             < div className={classes.line} />
-                            <CalendarOutlined style={{ fontSize: '22px' }} />
+                            <CalendarOutlined style={{ fontSize: '23px', marginBottom: "7.5px" }} />
                             < Button type="primary" className={classes.button} onClick={() => history.push("/actions/eventCalendar")}>
                                 Переглянути
                         </Button>

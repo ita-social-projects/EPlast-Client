@@ -7,10 +7,9 @@ import {
 } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import classes from './UserTable.module.css';
-import userApi from '../../api/UserApi';
 import userDeleteCofirm from './UserDeleteConfirm';
-import changeUserRoleModal from './ChangeUserRoleModal';
 import ChangeUserRoleModal from './ChangeUserRoleModal';
+import adminApi from '../../api/adminApi';
 
 interface Props {
     record: string;
@@ -18,32 +17,32 @@ interface Props {
     pageY: number;
     showDropdown: boolean;
     onDelete: (id: string) => void;
-    onChange: (id: string, userRoles: string[]) => void;
+    onChange: (id: string, userRoles: string) => void;
 }
 
 const DropDown = (props: Props) => {
     const history = useHistory();
     const { record, pageX, pageY, showDropdown, onDelete, onChange } = props;
     const [showEditModal, setShowEditModal] = useState(false);
-    const [data, setData] = useState<any>({
-        user: {
+    const [userRole, setUser] = useState({
+        userID: '',
+        userEmail: '',
+        allRoles: [{
             id: '',
-            firstName: '',
-            lastName: '',
-            birthday: '',
-        },
-        regionName: '',
-        cityName: '',
-        clubName: '',
-        userPlastDegreeName: '',
-        userRoles: ''
-    });
+            name: ''
+        }],
+        userRoles: ['']
+    })
+
     useEffect(() => {
-        const fetchData = async () => {
-            await userApi.getById(record).then(res => setData(res));
+        const fetchUser = async () => {
+            await adminApi.getRolesForEdit(record).then(response => {
+                setUser(response.data);
+            })
         }
-        fetchData();
-    }, [showEditModal]);
+        fetchUser();
+    }, []);
+
     const handleItemClick = async (item: any) => {
         switch (item.key) {
             case '1':
@@ -78,10 +77,12 @@ const DropDown = (props: Props) => {
                     <FileSearchOutlined />
                         Переглянути профіль
                 </Menu.Item>
-                <Menu.Item key="2">
-                    <DeleteOutlined />
+                {(userRole?.userRoles as string[]).some(role => role !== 'Admin') &&
+                    <Menu.Item key="2">
+                        <DeleteOutlined />
                         Видалити
                 </Menu.Item>
+                }
                 <Menu.Item key="3">
                     <EditOutlined />
                         Змінити права доступу

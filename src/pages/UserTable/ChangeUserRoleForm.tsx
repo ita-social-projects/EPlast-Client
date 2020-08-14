@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Checkbox, Select } from 'antd';
+import { Form, Input, Button, Select, Typography } from 'antd';
 import adminApi from '../../api/adminApi';
-import { AxiosError } from 'axios';
+import { useParams } from 'react-router-dom';
+import { userInfo } from 'os';
+const { Title } = Typography;
 
 interface Props {
     record: string;
     setShowModal: (showModal: boolean) => void;
-    onChange: (id: string, userRoles: string[]) => void;
+    onChange: (id: string, userRoles: string) => void;
 }
 
-const ChangeUserRoleForm = ({ record, setShowModal }: Props) => {
+const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
     const id = record;
     const [form] = Form.useForm();
 
@@ -20,13 +22,17 @@ const ChangeUserRoleForm = ({ record, setShowModal }: Props) => {
             id: '',
             name: ''
         }],
-        userRoles: ''
+        userRoles: ['']
     })
 
     useEffect(() => {
         const fetchData = async () => {
             await adminApi.getRolesForEdit(id).then(response => {
-                setRoles(response.data);
+                const { allRoles, userRoles } = response.data;
+                setRoles({ allRoles, userRoles });
+                form.setFieldsValue({
+                    userRoles: roles.userRoles
+                });
             })
         }
         fetchData();
@@ -36,10 +42,18 @@ const ChangeUserRoleForm = ({ record, setShowModal }: Props) => {
         setShowModal(false);
     }
     const handleFinish = async (value: any) => {
-        const newRoles: any[] = [{
-            userRoles: value.userRole
-        }];
-        await adminApi.putEditedRoles(id, newRoles);
+        const rolesParam = JSON.stringify(value.userRole);
+        await adminApi.putEditedRoles(id, rolesParam);
+        const newRoles: any = {
+            userID: roles.userID,
+            userEmail: roles.userEmail,
+            allRoles: [{
+                id: roles.allRoles.id,
+                name: roles.allRoles.name,
+            }],
+            userRoles: rolesParam
+        };
+        onChange(id, newRoles);
         setShowModal(false);
     };
 
@@ -50,6 +64,7 @@ const ChangeUserRoleForm = ({ record, setShowModal }: Props) => {
                 onFinish={handleFinish}
                 form={form}
             >
+                <h4>Оберіть одну або декілька ролей</h4>
                 <Form.Item name="userRole">
                     <Select mode='multiple' >
                         {roles?.allRoles.map((item: any) => (<Select.Option key={item.id} value={item.name} >

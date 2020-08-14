@@ -13,14 +13,24 @@ import classes from "./PrivateLayout.module.css";
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
+import adminApi from "../../api/adminApi";
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
-
-
 const PrivateLayout = ({ children }: any) => {
   const [collapsed, setCollapsed] = useState(true);
+  const history = useHistory();
+  const [userRole, setUser] = useState({
+    userID: '',
+    userEmail: '',
+    allRoles: [{
+      id: '',
+      name: ''
+    }],
+    userRoles: ['']
+  })
+
 
   const onCollapse = (collValue: boolean) => {
     setCollapsed(collValue);
@@ -28,7 +38,6 @@ const PrivateLayout = ({ children }: any) => {
 
   const handleClickAway = () => {
     setCollapsed(true);
-    console.log('Just closed the sider');
   };
 
   const [imageBase64, setImageBase64] = useState<string>();
@@ -47,10 +56,19 @@ const PrivateLayout = ({ children }: any) => {
     }
   };
 
+  const fetchUser = async () => {
+    const token = AuthStore.getToken() as string;
+    const user: any = jwt(token);
+    await adminApi.getRolesForEdit(user.nameid).then(response => {
+      setUser(response.data);
+    })
+  }
+
   useEffect(() => {
     fetchData();
+    fetchUser();
   }, []);
-  const history = useHistory();
+
   return (
 
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
@@ -62,7 +80,8 @@ const PrivateLayout = ({ children }: any) => {
           className={classes.sidebar}
           breakpoint="xxl"
           width="250"
-          collapsedWidth="0">
+          collapsedWidth="0"
+          >
           <div className={classes.profilePhoto}>
             <Avatar
               size={64}
@@ -82,7 +101,11 @@ const PrivateLayout = ({ children }: any) => {
               Рішення
           </Menu.Item>
             <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
-              <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">Таблиця користувачів</Menu.Item>
+              {(userRole.userRoles as string[]).some(role => role === 'Admin') &&
+                <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
+                  Таблиця користувачів
+                </Menu.Item>
+              }
               <Menu.Item onClick={() => { handleClickAway(); history.push("/cities"); }} key="3">
                 Станиці
             </Menu.Item>
@@ -122,7 +145,7 @@ const PrivateLayout = ({ children }: any) => {
         <Content style={{ margin: "0 16px" }}>
           <div
             className="site-layout-background"
-            style={{ padding: 24, minHeight: 360 }}
+            style={{ padding:20, minHeight: 360 }}
           >
             {children}
           </div>
