@@ -123,7 +123,7 @@ const EventInfo = () => {
 
     ) : (
         <div className="event-info-background">
-            <Row justify="space-between" >
+            <Row justify="space-between">
                 <Col xs={24} sm={24} md={24} lg={8}>
                     <SortedEventInfo
                         event={event}
@@ -132,9 +132,9 @@ const EventInfo = () => {
                         key={event.event?.eventName}
                     />
                 </Col>
-                    <Col xs={24} sm={{span:24,offset:1}} md={{span:24,offset:3}} lg={{span:16,offset:0}} >
-                        <EventDetailsHeader eventInfo={event.event}/>
-                    </Col>
+                <Col xs={24} sm={{span: 24, offset: 1}} md={{span: 24, offset: 3}} lg={{span: 16, offset: 0}}>
+                    <EventDetailsHeader eventInfo={event.event}/>
+                </Col>
             </Row>
             <div className="event-info-wrapper">
                 <Gallery key={event.event?.eventLocation} eventId={event.event?.eventId}

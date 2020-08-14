@@ -1,28 +1,29 @@
-.event-data-input{
+.generalLabel{
     border-radius: 6px;
     border: 0 !important;
     padding: 5px 0 5px 7px;
-    font-size: 17px;
     box-shadow: 0 0 0 !important;
     background-color: rgba(210, 210, 210, 0.5);
-    width: 200px;
     display: block;
-    text-align: center;
     font-weight: bold;
 }
 
+.event-data-input{
+    .generalLabel();
+    width: 200px;
+  font-size: 17px;
+  text-align: center;
+}
+
 .dataDescription{
-    border-radius: 6px;
-    border: 0 !important;
-    padding: 5px 0 5px 7px;
-    font-size: 14px;
-    box-shadow: 0 0 0 !important;
-    background-color: rgba(210, 210, 210, 0.5);
-    width: 400px;
-    display: block;
-    text-align: start;
-    font-weight: bold;
-    font-style: italic;
+  .generalLabel();
+  min-width: 200px;
+  max-width: 420px;
+  max-height: 100px;
+  overflow: auto;
+  font-size: 14px;
+  text-align: center;
+  font-style: italic;
 }
 
 .eventLabel{
