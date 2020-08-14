@@ -17,7 +17,7 @@ import {
 import {EventDetails} from "./EventInfo";
 import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirmForSingleEvent} from "../../EventsModals";
 
-const classes = require('./EventInfo.module.css');
+import './EventInfo.less';
 
 interface Props {
     event: EventDetails,
@@ -36,10 +36,10 @@ const RenderEventIcons = ({
     const eventIcons: React.ReactNode[] = []
     if (isUserEventAdmin) {
         eventIcons.push(<Tooltip placement="bottom" title="Ви адмін!" key="setting">
-            <SettingTwoTone twoToneColor="#3c5438" className={classes.icon} key="setting"/>
+            <SettingTwoTone twoToneColor="#3c5438" className="icon" key="setting"/>
         </Tooltip>)
         eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit">
-            <EditTwoTone twoToneColor="#3c5438" className={classes.icon} key="edit"/>
+            <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"/>
         </Tooltip>)
         eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
             <DeleteTwoTone twoToneColor="#8B0000"
@@ -49,23 +49,23 @@ const RenderEventIcons = ({
                                eventTypeId: event?.eventTypeId,
                                eventCategoryId: event?.eventCategoryId
                            })}
-                           className={classes.icon} key="delete"/>
+                           className="icon" key="delete"/>
         </Tooltip>)
     } else if (isUserParticipant && !isEventFinished) {
         if (isUserRejectedParticipant) {
             eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено"
                                      key="banned">
-                <StopOutlined style={{color: "#8B0000"}} className={classes.icon} key="banned"/>
+                <StopOutlined style={{color: "#8B0000"}} className="icon" key="banned"/>
             </Tooltip>)
         } else {
             if (isUserApprovedParticipant) {
                 eventIcons.push(<Tooltip placement="bottom" title="Учасник" key="participant">
-                    <CheckCircleTwoTone twoToneColor="#73bd79" className={classes.icon} key="participant"/>
+                    <CheckCircleTwoTone twoToneColor="#73bd79" className="icon" key="participant"/>
                 </Tooltip>)
             }
             if (isUserUndeterminedParticipant) {
                 eventIcons.push(<Tooltip placement="bottom" title="Ваша заявка розглядається" key="underReview">
-                    <QuestionCircleTwoTone twoToneColor="#FF8C00" className={classes.icon} key="underReview"/>
+                    <QuestionCircleTwoTone twoToneColor="#FF8C00" className="icon" key="underReview"/>
                 </Tooltip>)
             }
             eventIcons.push(<Tooltip placement="bottom" title="Відписатися від події" key="unsubscribe">
@@ -77,7 +77,7 @@ const RenderEventIcons = ({
                         isSingleEventInState: true
                     })}
                     style={{color: "#8B0000"}}
-                    className={classes.icon} key="unsubscribe"/>
+                    className="icon" key="unsubscribe"/>
             </Tooltip>)
         }
     } else if (!isEventFinished) {
@@ -93,95 +93,26 @@ const RenderEventIcons = ({
         </Tooltip>)
     }
     eventIcons.push(<Tooltip placement="bottom" title="Учасники" key="participants">
-        <TeamOutlined style={{color: "#3c5438"}} className={classes.icon}/>
+        <TeamOutlined style={{color: "#3c5438"}} className="icon"/>
     </Tooltip>)
     eventIcons.push(<Tooltip placement="bottom" title="Галерея" key="gallery">
-        <CameraOutlined style={{color: "#3c5438"}} className={classes.icon}/>
+        <CameraOutlined style={{color: "#3c5438"}} className="icon"/>
     </Tooltip>)
     eventIcons.push(<Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
-        <IdcardOutlined style={{color: "#3c5438"}} className={classes.icon}/>
+        <IdcardOutlined style={{color: "#3c5438",fontSize: "30px"}} className="icon"/>
     </Tooltip>)
     return eventIcons
 }
 
 const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) => {
-    //   console.log("EventInfo:",event)
-    const columns = [
-        {
-            title: 'Назва',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: event?.event?.eventName,
-            dataIndex: 'desc',
-            key: 'desc',
-        }
-    ];
-
-    const data = [
-        {
-            key: '1',
-            name: 'Тип:',
-            desc: event?.event?.eventType,
-        },
-        {
-            key: '2',
-            name: 'Категорія:',
-            desc: event?.event?.eventCategory,
-
-        },
-        {
-            key: '3',
-            name: 'Дата початку:',
-            desc: event?.event?.eventDateStart,
-
-        },
-        {
-            key: '4',
-            name: 'Дата завершення:',
-            desc: event?.event?.eventDateEnd,
-
-        },
-        {
-            key: '5',
-            name: 'Локація:',
-            desc: event?.event?.eventLocation,
-
-        },
-        {
-            key: '6',
-            name: 'Призначений для:',
-            desc: event?.event?.forWhom,
-
-        },
-        {
-            key: '7',
-            name: 'Форма проведення:',
-            desc: event?.event?.formOfHolding,
-
-        },
-        {
-            key: '8',
-            name: 'Статус:',
-            desc: event?.event?.eventStatus,
-
-        },
-        {
-            key: '9',
-            name: 'Опис:',
-            desc: event?.event?.description,
-        }
-    ];
-
     return <Row justify="center">
         <Col>
             <img
-                className={classes.imgEvent}
+                className="imgEvent"
                 alt="example"
                 src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
             />
-            <div className={classes.iconsFlex}>
+            <div className="iconsFlex">
                 {RenderEventIcons(event, subscribeOnEvent, unSubscribeOnEvent)}
             </div>
         </Col>

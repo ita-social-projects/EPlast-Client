@@ -1,0 +1,103 @@
+@plast-color: #3c5438;
+@plast-color-hover: #73bd79;
+@cancelation-color: #8B0000;
+@cancelation-color-hover: #FF0000;
+
+.event-info-background {
+  background-color: rgb(238, 238, 238);
+}
+
+.event-info-wrapper {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.actionsWrapper {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.imgEvent {
+  @media(max-width: 320px){
+    width: 230px;
+  }
+  @media(max-width: 280px){
+    width: 190px;
+  }
+  @media (min-width: 360px) {
+    width: 272px;
+  }
+  margin: 0 15px 15px 6px;
+}
+
+.iconsFlexBase {
+  display: flex;
+  justify-content: space-around;
+  font-size: 34px;
+  text-align: center;
+  align-items: center;
+}
+
+  .iconsFlex {
+    .iconsFlexBase();
+    @media(max-width: 320px){
+      width: 240px;
+    }
+    @media(max-width: 280px){
+      width: 200px;
+    }
+    @media (min-width: 360px) {
+      width: 278px;
+    }
+  }
+
+.icon {
+  @media(max-width: 300px){
+    font-size: 25px !important;
+  }
+  @media (min-width: 320px) {
+    font-size: 30px !important;
+  }
+}
+
+.icon:hover {
+  color: @plast-color-hover;
+}
+
+tr {
+  font-size: 15px;
+  font-weight: 300;
+}
+
+td {
+  /* width: 450px; */
+  font-weight: 300;
+}
+
+.homeSlider {
+  width: 60%;
+  margin: 0px auto 10px;
+  overflow: hidden;
+}
+
+.sliderImg {
+  width: 100%;
+  margin-top: -20.5%;
+}
+
+.eyeDetails {
+  color: @plast-color !important;
+
+  &:hover {
+    color: @plast-color-hover !important;;
+  }
+}
+
+.deletePicture {
+  color: @cancelation-color !important;
+
+  &:hover {
+    color: @cancelation-color-hover !important;
+  }
+}

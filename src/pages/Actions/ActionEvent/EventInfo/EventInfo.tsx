@@ -11,7 +11,7 @@ import EventDetailsHeader from "./EventDetailsHeader";
 import ParticipantsTable from "./ParticipantsTable";
 import spinClasses from "../EventUser/EventUser.module.css";
 
-const classes = require('./EventInfo.module.css');
+import './EventInfo.less';
 
 const {Title} = Typography;
 
@@ -122,7 +122,7 @@ const EventInfo = () => {
         </div>
 
     ) : (
-        <div className={classes.background}>
+        <div className="event-info-background">
             <Row justify="space-between" >
                 <Col xs={24} sm={24} md={24} lg={8}>
                     <SortedEventInfo
@@ -133,10 +133,10 @@ const EventInfo = () => {
                     />
                 </Col>
                     <Col xs={24} sm={{span:24,offset:1}} md={{span:24,offset:3}} lg={{span:16,offset:0}} >
-                        <EventDetailsHeader/>
+                        <EventDetailsHeader eventInfo={event.event}/>
                     </Col>
             </Row>
-            <div className={classes.wrapper}>
+            <div className="event-info-wrapper">
                 <Gallery key={event.event?.eventLocation} eventId={event.event?.eventId}
                          isUserEventAdmin={event.isUserEventAdmin}/>
                 <div key={'2'}>

@@ -5,7 +5,7 @@ import eventsApi from "../../../../api/eventsApi";
 import FormAddPictures from "./FormAddPictures";
 import PicturesWall from "./PicturesWall";
 
-const classes = require("./EventInfo.module.css");
+import  './EventInfo.less';
 
 const { Title } = Typography;
 
@@ -17,7 +17,7 @@ interface Props {
 const GallerySpinner = () => (
     <div>
         <Title level={2} style={{color:'#3c5438'}}>Галерея</Title>
-        <Carousel autoplay={false} className={classes.homeSlider}
+        <Carousel autoplay={false} className="homeSlider"
         >
             <Spin tip="Завантаження...">
                 <Alert
@@ -33,7 +33,7 @@ const FillGallery = (pictures: EventGallery[]) => {
     if (pictures.length === 0) {
         return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='Галерея події порожня'/>
     }
-    return (<Carousel autoplay={false} className={classes.homeSlider}
+    return (<Carousel autoplay={false} className="homeSlider"
     >
         {
             pictures.map(picture => {
