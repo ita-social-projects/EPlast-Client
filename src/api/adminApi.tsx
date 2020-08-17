@@ -27,4 +27,10 @@ const putEditedRoles = async (userId: string, userRoles: any) => {
     return response;
 };
 
-export default { getUsersForTable, deleteUser, getRolesForEdit, putEditedRoles };
+const putExpiredRole = async (userId: string) => {
+    const response = await Api.put(`Admin/changeRole/${userId}`);
+
+    return response;
+};
+
+export default { getUsersForTable, deleteUser, getRolesForEdit, putEditedRoles, putExpiredRole };

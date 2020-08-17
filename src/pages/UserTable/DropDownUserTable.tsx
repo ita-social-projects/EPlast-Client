@@ -4,6 +4,7 @@ import {
     FileSearchOutlined,
     DeleteOutlined,
     EditOutlined,
+    ScissorOutlined,
 } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import classes from './UserTable.module.css';
@@ -54,6 +55,9 @@ const DropDown = (props: Props) => {
             case '3':
                 await setShowEditModal(true);
                 break;
+            case '4':
+                await adminApi.putExpiredRole(record);
+                break;
             default:
                 break;
         }
@@ -86,6 +90,10 @@ const DropDown = (props: Props) => {
                 <Menu.Item key="3">
                     <EditOutlined />
                         Змінити права доступу
+                </Menu.Item>
+                <Menu.Item key="4">
+                    <ScissorOutlined />
+                        Заархівувати користувача
                 </Menu.Item>
                 <ChangeUserRoleModal
                     record={record}
