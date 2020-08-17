@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Select, Typography } from 'antd';
 import adminApi from '../../api/adminApi';
-import { useParams } from 'react-router-dom';
-import { userInfo } from 'os';
+import { useHistory } from 'react-router-dom';
 const { Title } = Typography;
 
 interface Props {
@@ -14,6 +13,7 @@ interface Props {
 const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
     const id = record;
     const [form] = Form.useForm();
+    const  history  = useHistory();
 
     const [roles, setRoles] = useState<any>({
         userID: '',

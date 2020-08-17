@@ -5,8 +5,6 @@ import adminApi from '../../api/adminApi';
 import DropDownUserTable from './DropDownUserTable';
 import Title from 'antd/lib/typography/Title';
 import ColumnsForUserTable from './ColumnsForUserTable';
-import Search from 'antd/lib/input/Search';
-import ClickAwayListener from 'react-click-away-listener';
 const classes = require('./UserTable.module.css');
 
 const UserTable = () => {
@@ -29,6 +27,7 @@ const UserTable = () => {
         userPlastDegreeName: '',
         userRoles: ''
     }])
+    const [updatedUser, setUpdatedUser] = useState(users);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,9 +37,9 @@ const UserTable = () => {
             setLoading(true);
         }
         fetchData();
-    }, [])
+    }, [users])
 
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearch = (event: any) => {
         setSearchedData(event.target.value);
     };
 
@@ -57,7 +56,7 @@ const UserTable = () => {
     const filteredData = searchedData
         ? users.filter((item: any) => {
             return Object.values(item).find((element) => {
-                return String(element).includes(searchedData);
+                return String(element).toLowerCase().includes(searchedData.toLowerCase());
             });
         })
         : users;
@@ -65,6 +64,7 @@ const UserTable = () => {
     const handleDelete = (id: string) => {
         const filteredData = users.filter((d: any) => d.id !== id);
         setUsers([...filteredData]);
+        setUpdatedUser([...filteredData]);
     }
 
     const handleChange = (id: string, userRoles: string) => {
@@ -75,11 +75,8 @@ const UserTable = () => {
             return d;
         });
         setUsers([...filteredData]);
+        setUpdatedUser([...filteredData]);
     }
-
-    const handleClickAway = () => {
-        setShowDropdown(false);
-    };
 
     return loading === false ? (
         <div className={classes.spaceWrapper}>
@@ -91,12 +88,11 @@ const UserTable = () => {
             <Layout.Content
                 onClick={() => { setShowDropdown(false) }}
             >
-                <ClickAwayListener onClickAway={handleClickAway}></ClickAwayListener>
                 <Title level={2}>Таблиця користувачів</Title>
                 <Row
                     gutter={16}>
                     <Col span={4}>
-                        <Search placeholder='Пошук' onChange={handleSearch} enterButton="Пошук" />
+                        <Input.Search placeholder="Пошук" onChange={handleSearch} />
                     </Col>
                 </Row>
                 <Table

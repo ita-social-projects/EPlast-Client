@@ -6,7 +6,7 @@ import classes from './EventUser.module.css';
 import userApi from '../../../../api/UserApi';
 import AuthStore from '../../../../stores/AuthStore';
 import jwt from 'jwt-decode';
-import { CalendarOutlined, FlagTwoTone, NotificationTwoTone, ToolTwoTone } from '@ant-design/icons';
+import { CalendarOutlined, NotificationTwoTone, ToolTwoTone } from '@ant-design/icons';
 import moment from 'moment';
 const { Title } = Typography;
 
@@ -44,6 +44,7 @@ const EventUser = () => {
             firstName: '',
             lastName: '',
         },
+        userRoles: [''],
         planedEvents: [{
             id: 0,
             eventName: '',
@@ -70,9 +71,9 @@ const EventUser = () => {
             const token = AuthStore.getToken() as string;
             setUserToken(jwt(token));
             await eventUserApi.getEventsUser(userId).then(async response => {
-                const { user, planedEvents, createdEvents, visitedEvents } = response.data;
+                const { user, userRoles, planedEvents, createdEvents, visitedEvents } = response.data;
                 console.log(response.data);
-                setData({ user, planedEvents, visitedEvents });
+                setData({ user, userRoles, planedEvents, visitedEvents });
                 setCreatedEvents({ user, createdEvents });
                 await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
                     setImageBase64(response.data);
@@ -112,12 +113,16 @@ const EventUser = () => {
                 <div className={classes.wrapperImg}>
                     <Avatar size={250} src={imageBase64} />
                     <Title level={2}> {data?.user.firstName} {data?.user.lastName} </Title>
-                    < div className={classes.line} id={classes.line} />
-                    {data?.user.userPlastDegreeName}
+                    {/* <div className={classes.roles}>
+                        {data?.userRoles.map((item: any) =>
+                            <h4>{item} </h4>
+                        )}
+                    </div> */}
+                    < div className={classes.line} />
                     {userToken.nameid === userId && createdEvents?.createdEvents.length !== 0 &&
                         < Button type="primary" className={classes.button} onClick={() => history.push('/actions/eventCreate')} >
                             Створити подію
-                 </Button>}
+                        </Button>}
                 </div>
                 < div className={classes.wrapperCol} >
                     <div className={classes.wrapper}>

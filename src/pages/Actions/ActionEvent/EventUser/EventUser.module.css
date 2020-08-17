@@ -173,6 +173,11 @@
     transform: translateX(-50%);
 }
 
+.roles{
+    justify-content: center;
+    display: flex;
+}
+
 h1 {
     color: rgba(0, 0, 0, 0.65);
     font-weight: 600;
