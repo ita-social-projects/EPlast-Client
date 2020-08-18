@@ -25,8 +25,6 @@ const City = () => {
   const [canCreate, setCanCreate] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const [canJoin, setCanJoin] = useState(false);
-  const [canApprove, setCanApprove] = useState(false);
-  const [canAddReports, setCanAddReports] = useState(false);
 
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
@@ -98,8 +96,6 @@ const City = () => {
       setCanCreate(response.data.canCreate);
       setCanEdit(response.data.canEdit);
       setCanJoin(response.data.canJoin);
-      setCanApprove(response.data.canApprove);
-      setCanAddReports(response.data.canAddReports);
     } finally {
       setLoading(false);
     }
@@ -380,7 +376,7 @@ const City = () => {
               >
                 Деталі
               </Button>
-              {canAddReports ? (
+              {canEdit ? (
                 <div className={classes.flexContainer}>
                   <PlusSquareFilled className={classes.addReportIcon} />
                 </div>
@@ -449,7 +445,7 @@ const City = () => {
                           {member.user.lastName}
                         </p>
                       </div>
-                      {canApprove ? (
+                      {canEdit ? (
                         <PlusOutlined
                           className={classes.approveIcon}
                           onClick={() => changeApproveStatus(member.id)}

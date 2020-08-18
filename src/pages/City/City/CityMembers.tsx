@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Col, DatePicker, Form, Input, Layout, Modal, Row, } from "antd";
+import { Avatar, Button, Card, Layout, Row, } from "antd";
 import { SettingOutlined, CloseOutlined, RollbackOutlined } from "@ant-design/icons";
-import { addAdministrator, removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus, editAdministrator } from "../../../api/citiesApi";
+import { removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import classes from "./City.module.css";
 import CityMember from "../../../models/City/CityMember";
 import CityAdmin from "../../../models/City/CityAdmin";
+import AddAdministratorModal from "../AddAdministratorModal/AddAdministratorModal";
+import AdminType from './../../../models/Admin/AdminType';
 import moment from "moment";
 import "moment/locale/uk";
 moment.locale("uk-ua");
@@ -19,10 +21,9 @@ const CityMembers = () => {
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
   const [head, setHead] = useState<CityAdmin>(new CityAdmin());
   const [visibleModal, setVisibleModal] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
-  const [date, setDate] = useState<any>();
-
+  const [adminType, setAdminType] = useState<AdminType>(new AdminType());
+ 
   const getMembers = async () => {
     const responseMembers = await getAllMembers(id);
 
@@ -50,7 +51,8 @@ const CityMembers = () => {
     const existingAdmin = [head, ...admins].find((a) => a?.userId === member.userId);
     
     if (existingAdmin !== undefined) {
-      setAdmin(existingAdmin);      
+      setAdmin(existingAdmin);
+      setAdminType(existingAdmin.adminType);
     }
     else {
       setAdmin({
@@ -58,49 +60,11 @@ const CityMembers = () => {
         userId: member.user.id,
         user: member.user,
         cityId: member.cityId,
-      })
+      });
     }
 
     setVisibleModal(true);
   };
-
-  const handleOk = async () => {
-    setLoading(true);
-
-    try {
-      if (admin.id === 0) {
-        await addAdministrator(admin.cityId, admin);
-      } else {
-        await editAdministrator(admin.cityId, admin);
-      }
-
-    } finally {
-      setVisibleModal(false);
-      setLoading(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setVisibleModal(false);
-  };
-
-  function handleChange(date: any, key: string) {
-    if (key.indexOf("startDate") !== -1) {
-      setDate(date);
-    }
-
-    setAdmin({ ...admin, [key]: date?._d });
-  }
-
-  function handleChangeType(event: any) {
-    admin.adminType.adminTypeName = event.target.value;
-  }
-
-  function disabledEndDate(current: any) {
-    return current && current < date;
-  }
-
-  const dateFormat = "DD.MM.YYYY";
 
   const setPhotos = async (members: CityMember[]) => {
     for (let i = 0; i < members.length; i++) {
@@ -157,54 +121,16 @@ const CityMembers = () => {
           Назад
         </Button>
       </div>
-      <Modal
-        title={
-          admin.id === 0
-            ? "Додати в провід станиці"
-            : "Редагувати адміністратора"
-        }
-        visible={visibleModal}
-        confirmLoading={loading}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <Form>
-          <Form.Item
-            name={["members", "adminType"]}
-            label="Тип адміністрування"
-            rules={[{ required: true }]}
-            className={classes.formField}
-            initialValue={admin.adminType.adminTypeName}
-          >
-            <Input
-              value={admin.adminType.adminTypeName}
-              onChange={handleChangeType}
-            />
-          </Form.Item>
-          <Row>
-            <Col span={11}>
-              <DatePicker
-                placeholder="Початок адміністрування"
-                format={dateFormat}
-                className={classes.select}
-                onChange={(event) => handleChange(event, "startDate")}
-                value={admin.startDate ? moment(admin.startDate) : undefined}
-              />
-            </Col>
-            <Col span={11} offset={2}>
-              <DatePicker
-                disabledDate={disabledEndDate}
-                placeholder="Кінець адміністрування"
-                format={dateFormat}
-                className={classes.select}
-                onChange={(event) => handleChange(event, "endDate")}
-                value={admin.endDate ? moment(admin.endDate) : undefined}
-              />
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
+      <AddAdministratorModal
+        admin={admin}
+        setAdmin={setAdmin}
+        visibleModal={visibleModal}
+        setVisibleModal={setVisibleModal}
+        adminType={adminType}
+        setAdminType={setAdminType}
+      ></AddAdministratorModal>
     </Layout.Content>
   );
 };
+
 export default CityMembers;
