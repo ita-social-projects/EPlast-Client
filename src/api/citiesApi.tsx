@@ -87,7 +87,7 @@ export const addAdministrator = async (cityId: number, data: any) => {
 }
 
 export const removeAdministrator = async (adminId: number) => {
-  return api.remove(`Cities/RemoveAdmin/${adminId}`, adminId).catch((error) => {
+  return api.put(`Cities/RemoveAdmin/${adminId}`, adminId).catch((error) => {
     throw new Error(error);
   });
 }

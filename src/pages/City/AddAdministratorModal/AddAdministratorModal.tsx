@@ -13,8 +13,8 @@ interface Props {
   setVisibleModal: (visibleModal: boolean) => void;
   admin: CityAdmin;
   setAdmin: (admin: CityAdmin) => void;
-  adminType: AdminType;
-  setAdminType: (adminType: AdminType) => void;
+  //adminType: AdminType;
+  //setAdminType: (adminType: AdminType) => void;
 }
 
 const AddAdministratorModal = (props: Props) => {
@@ -37,7 +37,7 @@ const AddAdministratorModal = (props: Props) => {
       ...props.admin,
       adminType: { ...new AdminType(), adminTypeName: adminTypeName },
     });
-    props.setAdminType({ ...props.adminType, adminTypeName: adminTypeName });
+    //props.setAdminType({ ...props.adminType, adminTypeName: adminTypeName });
   };
 
   const disabledEndDate = (current: any) => {
@@ -87,8 +87,9 @@ const AddAdministratorModal = (props: Props) => {
         >
         </Form.Item> */}
         <Input
+          required
           onChange={(event) => handleChangeType(event.target.value)}
-          value={props.adminType.adminTypeName}
+          value={props.admin.adminType.adminTypeName}
         />
         <Row>
           <Col span={11}>

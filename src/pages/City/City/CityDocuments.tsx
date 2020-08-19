@@ -11,10 +11,13 @@ const CityDocuments = () => {
     const history = useHistory();
 
     const [documents, setDocuments] = useState<CityDocument[]>([]);
+    const [canEdit, setCanEdit] = useState<Boolean>(false);
 
     const getDocuments = async () => {
         const response = await getAllDocuments(id);
-        setDocuments(response.data);
+
+        setDocuments(response.data.documents);
+        setCanEdit(response.data.canEdit)
     };
 
     useEffect(() => {

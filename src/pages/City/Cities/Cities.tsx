@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { Card, Layout, Pagination, Spin } from "antd";
+import { Card, Layout, Pagination, Skeleton, Spin } from "antd";
 import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import { getCitiesByPage, getLogo } from "../../../api/citiesApi";
@@ -17,6 +17,20 @@ const Cities = () => {
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
+  const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+
+  const setPhotos = async (cities: CityProfile[]) => {
+    for await (const city of cities) {
+      if (city.logo === null) {
+        city.logo = CityDefaultLogo;
+      } else {
+        const logo = await getLogo(city.logo);
+        city.logo = logo.data;
+      }
+    }
+
+    setPhotosLoading(false);
+  };
 
   const getCities = async () => {
     setLoading(true);
@@ -24,15 +38,9 @@ const Cities = () => {
     try {
       const response = await getCitiesByPage(page, pageSize);
       
-      for await (const city of response.data.cities) {
-        if (city.logo === null) {
-          city.logo = CityDefaultLogo;
-        } else {
-          const logo = await getLogo(city.logo);
-          city.logo = logo.data;
-        }
-      }
-      
+      setPhotosLoading(true);
+      setPhotos(response.data.cities);
+
       setCities(response.data.cities);
       setCanCreate(response.data.canCreate);
       setTotal(response.data.total);
@@ -79,11 +87,26 @@ const Cities = () => {
                 hoverable
                 className={classes.cardStyles}
                 cover={
-                  <img
-                    src={city.logo || undefined}
-                    alt="City"
-                    style={{ height: "154.45px" }}
-                  />
+                  photosLoading ? (
+                    <div
+                      style={{
+                        textAlign: "center",
+                      }}
+                    >
+                      <Skeleton.Avatar
+                        shape="square"
+                        active
+                        size={128}
+                        style={{marginTop: "5px"}}
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      src={city.logo || undefined}
+                      alt="City"
+                      style={{ height: "154.45px" }}
+                    />
+                  )
                 }
                 onClick={() => history.push(`${url}/${city.id}`)}
               >

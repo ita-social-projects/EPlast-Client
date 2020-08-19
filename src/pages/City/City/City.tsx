@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Row, Col, Button, Spin, Layout, Modal } from "antd";
+import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton } from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, CloseOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../../api/citiesApi";
@@ -18,6 +18,7 @@ const City = () => {
 
   const [loading, setLoading] = useState(false);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
+  const [cityLogo64, setCityLogo64] = useState<string>("");
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
   const [members, setMembers] = useState<CityMember[]>([]);
   const [followers, setFollowers] = useState<CityMember[]>([]);
@@ -25,6 +26,8 @@ const City = () => {
   const [canCreate, setCanCreate] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const [canJoin, setCanJoin] = useState(false);
+  const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+  const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
 
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
@@ -52,11 +55,22 @@ const City = () => {
     await removeCity(+id);
   }
 
-  const setPhotos = async (members: CityMember[]) => {
+  const setPhotos = async (members: CityMember[], logo: string) => {
     for (let i = 0; i < members.length; i++) {
-      members[i].user.imagePath = (await userApi.getImage(members[i].user.imagePath)).data;
+      members[i].user.imagePath = (
+        await userApi.getImage(members[i].user.imagePath)
+      ).data;
     }
-  }
+    setPhotosLoading(false);
+
+    if (logo === null) {
+      setCityLogo64(CityDefaultLogo);
+    } else {
+      const response = await getLogo(logo);    
+      setCityLogo64(response.data);
+    }
+    setCityLogoLoading(false);
+  };
 
   function seeModal () {
     return Modal.confirm({
@@ -75,18 +89,13 @@ const City = () => {
     try {
       const response = await getCityById(+id);
 
-      if (response.data.logo === null) {
-        response.data.logo = CityDefaultLogo;
-      } else {
-        const logo = await getLogo(response.data.logo);
-        response.data.logo = logo.data;
-      }
-
-      await setPhotos([
+      setPhotosLoading(true);
+      setCityLogoLoading(true);
+      setPhotos([
         ...response.data.administration,
         ...response.data.members,
         ...response.data.followers,
-      ]);
+      ], response.data.logo);
       
       setCity(response.data);
       setAdmins(response.data.administration);
@@ -145,11 +154,19 @@ const City = () => {
             >
               <Col flex="1" offset={1}>
                 <div className={classes.mainInfo}>
-                  <img
-                    src={city.logo || undefined}
-                    alt="City"
-                    style={{ width: "100%", height: "auto", maxWidth: "100%" }}
-                  />
+                  {cityLogoLoading ? (
+                    <Skeleton.Avatar active shape={"square"} size={172}/>
+                  ) : (
+                    <img
+                      src={cityLogo64}
+                      alt="City"
+                      style={{
+                        width: "100%",
+                        height: "auto",
+                        maxWidth: "100%",
+                      }}
+                    />
+                  )}
                   <p>
                     <b>Станичний</b>:{" "}
                     {city.head
@@ -234,11 +251,15 @@ const City = () => {
                         history.push(`/userpage/main/${member.userId}`)
                       }
                     >
-                      <Avatar
-                        size={64}
-                        src={member.user.imagePath}
-                        className={classes.profileImg}
-                      />
+                      {photosLoading ? (
+                        <Skeleton.Avatar active size={86}></Skeleton.Avatar>
+                      ) : (
+                        <Avatar
+                          size={86}
+                          src={member.user.imagePath}
+                          className={classes.detailsIcon}
+                        />
+                      )}
                       <p className={classes.userName}>
                         {member.user.firstName}
                       </p>
@@ -298,11 +319,15 @@ const City = () => {
                         history.push(`/userpage/main/${member.userId}`)
                       }
                     >
-                      <Avatar
-                        size={64}
-                        src={member.user.imagePath}
-                        className={classes.profileImg}
-                      />
+                      {photosLoading ? (
+                        <Skeleton.Avatar active size={86}></Skeleton.Avatar>
+                      ) : (
+                        <Avatar
+                          size={86}
+                          src={member.user.imagePath}
+                          className={classes.detailsIcon}
+                        />
+                      )}
                       <p className={classes.userName}>
                         {member.user.firstName}
                       </p>
@@ -433,11 +458,15 @@ const City = () => {
                           history.push(`/userpage/main/${member.userId}`)
                         }
                       >
-                        <Avatar
-                          size={64}
-                          src={member.user.imagePath}
-                          className={classes.profileImg}
-                        />
+                        {photosLoading ? (
+                          <Skeleton.Avatar active size={86}></Skeleton.Avatar>
+                        ) : (
+                          <Avatar
+                            size={86}
+                            src={member.user.imagePath}
+                            className={classes.detailsIcon}
+                          />
+                        )}
                         <p className={classes.userName}>
                           {member.user.firstName}
                         </p>
