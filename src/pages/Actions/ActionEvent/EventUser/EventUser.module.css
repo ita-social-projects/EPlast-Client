@@ -3,7 +3,6 @@
     align-items: flex-start;
     justify-content: space-between;
     width: 100%;
-    margin: 0 0 0 0px;
 }
 
 .wrapperCol {
@@ -14,26 +13,28 @@
 }
 
 .wrapperImg {
-    width: 41%;
-    height: 470px;
-    border-radius: 10px;
+    width:  calc(60% - 30px);
+    height: 521px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 20px 0;
 }
 
 .line {
     background: #3C5438;
     width: 100%;
-    height: 10.12px;
+    height: 10px;
     margin-bottom: 5px;
 }
 
+#line{
+    margin-bottom: 125px;
+}
+
 .button {
-    margin-top: 10px;
+    margin-top: 30px;
     background: #3C5438;
     justify-content: center;
     color: white;
@@ -43,7 +44,6 @@
     outline: none;
     text-align: center;
     cursor: pointer;
-    border-radius: 10px;
     align-items: center;
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
@@ -59,9 +59,12 @@
     outline: none;
     text-align: center;
     cursor: pointer;
-    border-radius: 10px;
     align-items: center;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+#subcribeButton{
+    width: auto;
 }
 
 .button:hover,
@@ -83,7 +86,6 @@
     outline: none;
     text-align: center;
     cursor: pointer;
-    border-radius: 10px;
     align-items: center;
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
@@ -92,27 +94,25 @@
 .wrapper2,
 .wrapper3 {
     width: calc(50% - 30px);
-    height: 200px;
-    border-radius: 10px;
+    height: 250px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding-top: 40px;
+    padding-top: 20px;
 }
 
 .wrapper4,
 .wrapper5 {
     width: calc(50% - 30px);
-    height: 229px;
-    border-radius: 10px;
+    height: 250px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding-top: 40px;
+    padding-top: 20px;
 }
 
 .wrapper2:hover,
@@ -136,7 +136,7 @@
 .wrapper3,
 .wrapper4,
 .wrapper5 {
-    margin: 20px 0px 20px 20px;
+    margin: 0px 0px 20px 20px;
 }
 
 .modal {
@@ -171,6 +171,11 @@
     top: 50%;
     left: 50%;
     transform: translateX(-50%);
+}
+
+.roles{
+    justify-content: center;
+    display: flex;
 }
 
 h1 {

@@ -9,6 +9,7 @@
     display: flex;
     justify-content: center;
     //align-items: flex-end;
+    margin-right: auto;
 }
 .approversCard{
     display: flex;
@@ -30,6 +31,12 @@
     color:#3c5438;
     border-color: #3c5438;
 }
+.cardBodyEmpty{
+    height: 70px;
+}
+.cardP{
+    height: 25px;
+}
 .titleText{
     text-align: center;
     font-size: 20px;
@@ -42,7 +49,7 @@
     height: 168px;
 }
 .approversContent{
-    margin-left: 5%;
+    margin-left: 200px;
 }
 .spaceWrapper{
     position: fixed;
@@ -60,9 +67,17 @@
     transform:translateX(-50%) ;
     
 }
+@media(max-width: 1174px){
+    .approversContent{
+        margin-left: 0;
+    }
+}
 @media(max-width: 1000px){
     .content{
         margin-left: 0;
+    }
+    .approversCard{
+        display: block;
     }
 }
 @media(max-width: 824px){

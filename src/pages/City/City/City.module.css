@@ -89,12 +89,16 @@
   margin-bottom: 0;
 }
 
+.cityMember :hover{
+  cursor: pointer;
+}
+
 .bottomButton {
   margin: auto 5% 20px;
 }
 
 .listButton {
-  width: 50%;
+  width: 160px;
 }
 
 .profileImg {

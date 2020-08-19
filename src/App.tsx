@@ -38,6 +38,7 @@ import UserFields from "./pages/userPage/personalData/UserFields";
 import AnnualReportTable from './pages/AnnualReport/AnnualReportTable/AnnualReportTable';
 import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
 import NotFound from "./pages/Error/NotFound";
+import UserTable from "./pages/UserTable/UserTable";
 
 const App: FC = () => (
   <div className="App">
@@ -137,6 +138,11 @@ const App: FC = () => (
           />
           <RouteWithLayout
             layout={PrivateLayout}
+            path="/actions/eventUsers/:userId"
+            component={EventUser}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
             exact
             path="/actions/eventCreate"
             component={EventCreate}
@@ -146,12 +152,6 @@ const App: FC = () => (
             exact
             path="/actions/eventEdit/:id"
             component={EventEdit}
-          />
-          <RouteWithLayout
-            layout={PrivateLayout}
-            exact
-            path="/actions/eventUser"
-            component={EventUser}
           />
           <RouteWithLayout
             layout={PrivateLayout}
@@ -218,6 +218,12 @@ const App: FC = () => (
             exact
             path="/annualreport/create/:cityId"
             component={AnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/user/table"
+            component={UserTable}
           />
           <RouteWithLayout
             layout={PrivateLayout}

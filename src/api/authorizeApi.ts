@@ -78,7 +78,6 @@ export default class AuthorizeApi{
 };
 
   logout = async() =>{
-    window.location.reload(false);
     AuthStore.removeToken();
  };
   

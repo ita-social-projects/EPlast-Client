@@ -1,5 +1,4 @@
 import Api from './api';
-// import { NewEvent } from '../models/NewEvent.model';
 
 const getEventsUser = async (id: string | undefined) => {
     const response = await Api.get(`EventsUsers/eventsUsers/${id}`);
