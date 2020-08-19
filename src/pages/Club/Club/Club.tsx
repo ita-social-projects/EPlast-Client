@@ -7,8 +7,7 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import clubsApi from "../../../api/clubsApi";
-
-const classes = require("./Club.module.css");
+import classes from "./Club.module.css";
 
 interface ClubData {
   club: Club;
@@ -45,14 +44,15 @@ const Club = () => {
   const [counter, setCounter] = useState(0);
   const [club, setData] = useState<ClubData>();
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    setLoading(true);
     const fetchData = async () => {
+      setLoading(true);
       const res = await clubsApi.getById(id);
       setData(res.data);
+      setLoading(false);
     };
     fetchData();
-    setLoading(false);
   }, []);
 
   const typoExpand = () => {
@@ -87,7 +87,7 @@ const Club = () => {
           <section className={classes.list}>
             <EditOutlined
               className={classes.listIcon}
-              onClick={() => history.push(`/clubs/edit/${club?.club.id}`)}
+              onClick={() => history.push(`${club?.club.id}`)}
             />
             <h1>{`Курінь ${
               club?.club.clubName ? club?.club.clubName : "Немає"
