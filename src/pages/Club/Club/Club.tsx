@@ -6,7 +6,7 @@ import {
   FileTextOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import clubsApi from "../../api/clubsApi";
+import clubsApi from "../../../api/clubsApi";
 
 const classes = require("./Club.module.css");
 

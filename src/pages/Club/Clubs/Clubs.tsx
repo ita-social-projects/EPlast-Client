@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { Card, Spin, Layout } from "antd";
-import clubsApi from "../../api/clubsApi";
-import Add from "../../assets/images/add.png";
+import clubsApi from "../../../api/clubsApi";
+import Add from "../../../assets/images/add.png";
 
 const classes = require("./Clubs.module.css");
 
@@ -19,25 +19,30 @@ const Clubs = () => {
   const { url } = useRouteMatch();
   const [clubs, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    setLoading(true);
 
+  const getClubs = async () => {
     const fetchData = async () => {
-      const res = await clubsApi.getAll();
-      setData(res.data);
-    };
-    fetchData();
-    setLoading(false);
+        setLoading(true);
+        const res = await clubsApi.getAll();
+        setData(res.data);
+        setLoading(false);
+      };
+      fetchData();
+  };
+
+  useEffect(() => {
+    getClubs();
   }, []);
 
-  return loading ? (
-    <Layout.Content className={classes.spiner}>
-      <Spin size="large" />
-    </Layout.Content>
-  ) : (
+  return (
     <Layout.Content>
       <h1 className={classes.mainTitle}>Курені</h1>
-      <div className={classes.wrapper}>
+      {loading ? ( 
+        <div className={classes.spiner}>
+          <Spin size="large" />
+        </div>
+      ) : (
+        <div className={classes.wrapper}>
         <Card
           hoverable
           className={classes.cardStyles}
@@ -63,8 +68,9 @@ const Clubs = () => {
             <Card.Meta title={club.clubName} className={classes.titleText} />
           </Card>
         ))}
-      </div>
+      </div> ) }
     </Layout.Content>
   );
+
 };
 export default Clubs;
