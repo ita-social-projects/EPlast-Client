@@ -101,7 +101,6 @@ const CreateClub = () => {
     await clubsApi
       .post("Club/" + (id ? "edit" : "create"), newСlub)
       .then((res) => {
-        console.log(res);
         notification.success({
           message: "Курінь успішно створено",
           icon: <LoadingOutlined />,
@@ -110,13 +109,11 @@ const CreateClub = () => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 422) {
-          console.log(error);
           notification.error({
             message: "Не вдалося створити курінь (Курінь з таким ім'ям вже існує)",
           });
         }
         else {
-          console.log(error);
           notification.error({
             message: "Не вдалося створити курінь",
           });
