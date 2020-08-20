@@ -5,8 +5,7 @@ import City from "../../../assets/images/default_city_image.jpg";
 import clubsApi from "../../../api/clubsApi";
 import { RcFile } from "antd/lib/upload/interface";
 import { useParams, useHistory } from "react-router-dom";
-
-const classes = require("./CreateClub.module.css");
+import classes from "./CreateClub.module.css";
 
 const dummyRequest = ({ onSuccess }: any) => {
   setTimeout(() => {
@@ -104,7 +103,7 @@ const CreateClub = () => {
       .then((res) => {
         console.log(res);
         notification.success({
-          message: "Станицю успішно створено",
+          message: "Курінь успішно створено",
           icon: <LoadingOutlined />,
         });
         history.push(`${newСlub.id}`);
