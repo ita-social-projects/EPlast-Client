@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import {Avatar, Card, Layout} from 'antd';
 import {FileTextOutlined, SettingOutlined, CloseOutlined} from '@ant-design/icons';
-import clubsApi from "../../api/clubsApi";
+import clubsApi from "../../../api/clubsApi";
 import classes from './Club.module.css';
 
 interface DocumentProps {

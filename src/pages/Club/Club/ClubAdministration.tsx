@@ -6,7 +6,7 @@ import {
   SettingOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import clubsApi from "../../api/clubsApi";
+import clubsApi from "../../../api/clubsApi";
 import classes from "./Club.module.css";
 
 interface MemberProps {
