@@ -88,7 +88,7 @@ export default function () {
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
     await eventUserApi.post(newEvent).then(response => {
-      history.push(`/actions/eventuser/${user.nameid}`);
+      history.push(`/userpage/eventuser/${user.nameid}`);
       notificationLogic('success', 'Подія ' + values.EventName + ' успішно створена');
     }).catch(error => {
       if (error.response?.status === 400) {
