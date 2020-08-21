@@ -116,9 +116,12 @@ input,
 @media(max-width: 768px){
     .avatarWrapper{
         width: 100%;
+        padding-top:5px;
+        padding-bottom: 5px; 
     }
     .allFields{
         width: 100%;
+        padding:5px;
     }
     .formItem{
         width: 100%;

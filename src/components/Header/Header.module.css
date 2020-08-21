@@ -20,7 +20,7 @@
 }
 
 .headerDropDownItem {
-    margin: 5px 0;
+    margin: 0px 0;
 }
 
 .headerItem,
@@ -37,6 +37,7 @@
 
 .headerLink {
     color: white !important;
+    padding-top: 5px;
 }
 
 .headerLink:hover {
@@ -48,7 +49,7 @@
 }
 
 .headerIcon {
-    margin-left: 5px;
+    margin-left: 0px;
     font-size: 16px !important;
 }
 

@@ -206,6 +206,9 @@ h2 {
     .wrapperImg {
         width: 100%;
         padding: 0;
+        height: auto;
+        padding-bottom: 5px;
+        padding-top: 5px;
         margin: 0 0 10px;
         text-align: center;
     }
@@ -222,5 +225,9 @@ h2 {
     .wrapper4,
     .wrapper5 {
         margin: 10px 0;
+    }
+    .avatar{
+        height: 200px !important;
+        width: 200px !important;
     }
 }
