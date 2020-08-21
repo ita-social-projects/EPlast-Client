@@ -331,7 +331,6 @@ export default function () {
             </Upload>
           </div>
           <div className={styles.allFields}>
-            <h2 className={styles.title}>Редагування профілю</h2>
             <div className={styles.rowBlock}>
               <Form.Item
                 label="Ім`я"
