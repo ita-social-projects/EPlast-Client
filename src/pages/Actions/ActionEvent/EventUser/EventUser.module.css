@@ -147,8 +147,7 @@
 #button {
     align-items: center;
     margin: 10px auto;
-    display: inline-block;
-    margin: 10px 0 0 65px;
+    display: inherit;
     flex-grow: 1;
 }
 
