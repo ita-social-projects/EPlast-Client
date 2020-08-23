@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Select, Typography } from 'antd';
+import { Form, Input, Button, Select, Typography, Radio } from 'antd';
 import adminApi from '../../api/adminApi';
 import { useHistory } from 'react-router-dom';
 const { Title } = Typography;
@@ -13,7 +13,7 @@ interface Props {
 const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
     const id = record;
     const [form] = Form.useForm();
-    const  history  = useHistory();
+    const history = useHistory();
 
     const [roles, setRoles] = useState<any>({
         userID: '',
@@ -67,9 +67,9 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
                 <h4>Оберіть одну або декілька ролей</h4>
                 <Form.Item name="userRole">
                     <Select mode='multiple' >
-                        {roles?.allRoles.map((item: any) => (<Select.Option key={item.id} value={item.name} >
+                        {roles?.allRoles.map((item: any) => (<Radio.Button key={item.id} value={item.name} >
                             {item.name}
-                        </Select.Option>))}
+                        </Radio.Button>))}
                     </Select>
                 </Form.Item>
                 <Form.Item style={{ textAlign: "right" }}>

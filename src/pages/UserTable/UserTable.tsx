@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { Table, Input, Layout, Row, Col, Space, Spin, Typography, Button } from 'antd';
 import adminApi from '../../api/adminApi';
 import DropDownUserTable from './DropDownUserTable';
@@ -27,7 +26,20 @@ const UserTable = () => {
         userPlastDegreeName: '',
         userRoles: ''
     }])
-    const [updatedUser, setUpdatedUser] = useState(users);
+
+    const [updatedUser, setUpdatedUser] = useState([{
+        user: {
+            id: '',
+            firstName: '',
+            lastName: '',
+            birthday: '',
+        },
+        regionName: '',
+        cityName: '',
+        clubName: '',
+        userPlastDegreeName: '',
+        userRoles: ''
+    }]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,7 +49,7 @@ const UserTable = () => {
             setLoading(true);
         }
         fetchData();
-    }, [users])
+    }, [updatedUser])
 
     const handleSearch = (event: any) => {
         setSearchedData(event.target.value);
@@ -64,7 +76,11 @@ const UserTable = () => {
     const handleDelete = (id: string) => {
         const filteredData = users.filter((d: any) => d.id !== id);
         setUsers([...filteredData]);
-        setUpdatedUser([...filteredData]);
+    }
+
+    const updateItems = () => {
+        const newItems = users.push(updatedUser);
+        setUpdatedUser([...newItems]);
     }
 
     const handleChange = (id: string, userRoles: string) => {
@@ -74,8 +90,8 @@ const UserTable = () => {
             }
             return d;
         });
-        setUsers([...filteredData]);
         setUpdatedUser([...filteredData]);
+        setUsers([...filteredData]);
     }
 
     return loading === false ? (
