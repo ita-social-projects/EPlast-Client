@@ -41,10 +41,11 @@ const beforeUpload = (file: RcFile) => {
 };
 
 const CreateClub = () => {
-  const [loading, setLoading] = useState(false);
-  const history = useHistory();
-  const [servLoading, setServLoading] = useState(false);
   const { id } = useParams();
+  const history = useHistory();
+
+  const [loading, setLoading] = useState(false);
+  const [servLoading, setServLoading] = useState(false);
   const [clubLogo, setClubLogo] = useState("");
   const [form] = Form.useForm();
   useEffect(() => {
@@ -87,7 +88,7 @@ const CreateClub = () => {
   };
   const handleSubmit = async (values: any) => {
     notification.info({
-      message: "Створення...",
+      message: id ? "Збереження..." : "Створення...",
       icon: <LoadingOutlined />,
     });
 
@@ -102,22 +103,20 @@ const CreateClub = () => {
     await clubsApi
       .post("Club/" + (id ? "edit" : "create"), newСlub)
       .then((res) => {
-        console.log(res);
+        newСlub.id = res.data.id;
         notification.success({
-          message: "Станицю успішно створено",
+          message: id ? "Курінь успішно оновлено" : "Курінь успішно створено",
           icon: <LoadingOutlined />,
         });
-        history.push(`${newСlub.id}`);
+        id ? history.goBack() : history.push( `${newСlub.id}`);
       })
       .catch((error) => {
         if (error.response && error.response.status === 422) {
-          console.log(error);
           notification.error({
             message: "Не вдалося створити курінь (Курінь з таким ім'ям вже існує)",
           });
         }
         else {
-          console.log(error);
           notification.error({
             message: "Не вдалося створити курінь",
           });
@@ -135,18 +134,6 @@ const CreateClub = () => {
   const validateMessages = {
     required: "Це поле є обов`язковим!",
   };
-
-  const { Option } = Select;
-
-  const selectBefore = (
-    <Select 
-      defaultValue="https://" 
-      className="select-before"
-    >
-      <Option value="http://">http://</Option>
-      <Option value="https://">https://</Option>
-    </Select>
-  );
 
   return (
     <Layout.Content className={classes.createClub}>
@@ -170,7 +157,7 @@ const CreateClub = () => {
               <Input />
             </Form.Item>
             <Form.Item name="clubURL" label="Посилання">
-              <Input addonBefore={selectBefore} />
+              <Input />
             </Form.Item>
             <Form.Item name="description" label="Опис">
               <Input.TextArea rows={5} />
@@ -181,7 +168,7 @@ const CreateClub = () => {
                 type="primary"
                 className={classes.createButton}
               >
-                Створити
+                Зберегти
               </Button>
             </Form.Item>
           </Form>
