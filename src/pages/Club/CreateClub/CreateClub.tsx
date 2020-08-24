@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Layout, Upload, message, Row, Col, Select, notification } from "antd";
+import { Button, Form, Input, Layout, Upload, message, Row, Col, Spin, notification } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons/lib";
 import City from "../../../assets/images/default_city_image.jpg";
 import clubsApi from "../../../api/clubsApi";
@@ -135,8 +135,11 @@ const CreateClub = () => {
     required: "Це поле є обов`язковим!",
   };
 
-  return (
-    <Layout.Content className={classes.createClub}>
+  return ( servLoading ? 
+    (<Layout.Content className={classes.spiner}>
+      <Spin size="large" />
+    </Layout.Content>) :
+    (<Layout.Content className={classes.createClub}>
       <h1 className={classes.mainTitle}>
         {id ? "Редагування" : "Створення"} куреня
       </h1>
@@ -191,7 +194,7 @@ const CreateClub = () => {
           </Upload>
         </Col>
       </Row>
-    </Layout.Content>
+    </Layout.Content> )
   );
 };
 
