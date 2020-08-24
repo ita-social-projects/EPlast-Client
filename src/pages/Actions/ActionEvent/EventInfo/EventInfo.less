@@ -76,15 +76,21 @@ td {
 }
 
 .homeSlider {
-  width: 60%;
+  @media(max-width: 767px){
+    width: 100%;
+    height: 300px;
+  }
+  @media (min-width: 768px) {
+    width: 60%;
+  }
   margin: 0px auto 10px;
   overflow: hidden;
 }
 
-.sliderImg {
-  width: 100%;
-  margin-top: -20.5%;
-}
+//.sliderImg {
+//  width: 100%;
+//  margin-top: -20.5%;
+//}
 
 .eyeDetails {
   color: @plast-color !important;
@@ -99,5 +105,26 @@ td {
 
   &:hover {
     color: @cancelation-color-hover !important;
+  }
+}
+
+.event-admin-card{
+  .ant-card-head-title {
+    display: inline-block;
+    flex: 1 1;
+    padding: 16px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: center;
+  }
+  .ant-card-body {
+    font-size: 16px;
+    color: black;
+    text-align: center;
+    &:hover{
+      color: @plast-color;
+      text-decoration: underline;
+    }
   }
 }

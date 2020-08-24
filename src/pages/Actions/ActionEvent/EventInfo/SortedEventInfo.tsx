@@ -1,5 +1,5 @@
-import React from 'react';
-import {Row, Col, Table, Tooltip} from 'antd';
+import React, {useState} from 'react';
+import {Row, Col, Table, Tooltip, Modal, Card, List} from 'antd';
 import {
     TeamOutlined,
     CameraOutlined,
@@ -14,9 +14,10 @@ import {
     UserAddOutlined
 } from '@ant-design/icons';
 // eslint-disable-next-line import/no-cycle,import/no-duplicates
-import {EventDetails} from "./EventInfo";
+import {EventDetails, EventAdmin} from "./EventInfo";
+import { useHistory } from "react-router-dom";
 import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirmForSingleEvent} from "../../EventsModals";
-
+import EventAdminLogo from "../../../../assets/images/EventAdmin.png"
 import './EventInfo.less';
 
 interface Props {
@@ -31,7 +32,8 @@ const RenderEventIcons = ({
                               isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
                           }: EventDetails,
                           subscribeOnEvent: () => void,
-                          unSubscribeOnEvent: () => void
+                          unSubscribeOnEvent: () => void,
+                          setAdminsVisibility: (flag: boolean) => void
 ): React.ReactNode[] => {
     const eventIcons: React.ReactNode[] = []
     if (isUserEventAdmin) {
@@ -99,12 +101,44 @@ const RenderEventIcons = ({
         <CameraOutlined style={{color: "#3c5438"}} className="icon"/>
     </Tooltip>)
     eventIcons.push(<Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
-        <IdcardOutlined style={{color: "#3c5438",fontSize: "30px"}} className="icon"/>
+        <IdcardOutlined style={{color: "#3c5438", fontSize: "30px"}} className="icon"
+                        onClick={() => setAdminsVisibility(true)}
+        />
     </Tooltip>)
     return eventIcons
 }
 
+const RenderAdminCards = (eventAdmins: EventAdmin[]) => {
+    const history = useHistory();
+    return <List className="event-admin-card"
+        grid={{
+            gutter: 16,
+            xs: 2,
+            sm: 2,
+            md: 2,
+            lg: 2,
+            xl: 2,
+            xxl: 2,
+        }}
+        dataSource={eventAdmins}
+        renderItem={item => (
+            <List.Item>
+                <Card
+                    hoverable
+                    title={item.adminType}
+                    cover={<img alt="example" src={EventAdminLogo}/>}
+                >
+                    <div onClick={()=> history.push(`/userpage/main/${item.userId}`)}>
+                        {item.fullName}
+                    </div>
+                </Card>
+            </List.Item>
+        )}
+    />
+}
+
 const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) => {
+    const [adminsVisible, setAdminsVisibility] = useState(false);
     return <Row justify="center">
         <Col>
             <img
@@ -113,9 +147,17 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) =
                 src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
             />
             <div className="iconsFlex">
-                {RenderEventIcons(event, subscribeOnEvent, unSubscribeOnEvent)}
+                {RenderEventIcons(event, subscribeOnEvent, unSubscribeOnEvent, setAdminsVisibility)}
             </div>
         </Col>
+        <Modal
+            visible={adminsVisible}
+            title='Адміністрація події.'
+            footer={null}
+            onCancel={() => setAdminsVisibility(false)}
+        >
+            {RenderAdminCards(event.event.eventAdmins)}
+        </Modal>
     </Row>
 }
 export default SortedEventInfo;

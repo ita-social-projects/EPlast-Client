@@ -34,10 +34,8 @@ const EventDetailsHeader = ({
             <Descriptions.Item label={renderLabel("Статус")}>{renderContent(eventStatus)}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Кількість учасників")}>{renderContent("65")}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Опис")}>
-                {/*{renderDescription("tsCuKG9cwpK0DNXu0VEM4PJkclp3qpmUpsD1fW8d5Fto4iO3AK1hUQ6W3PGE9WUHIa5fQo\n" +*/}
-                {/*    "Zeb5X0gRPOvogzis0TAnYrOeCfuyQSKn81DMEm23Fh9og\n" +*/}
-                {/*    "39viFIGXGqxBEZlKI7KW2rjPW58scKZVEwhWiVDIDCpLPSuGpr2L046j3Qtp0PMdID0WPV6Ma8DEvmMVlBYbj\n")}*/}
-                {renderDescription("Метою даного заходу є пробудження національного духу молоді. Виховання її як свідомих громадян. Метою даного заходу є пробудження національного духу молоді. Виховання її як свідомих громадян. Метою да")}
+                {renderDescription(description)}
+                {/*{renderDescription("Метою даного заходу є пробудження національного духу молоді. Виховання її як свідомих громадян. Метою даного заходу є пробудження національного духу молоді. Виховання її як свідомих громадян. Метою да")}*/}
             </Descriptions.Item>
         </Descriptions>
     )

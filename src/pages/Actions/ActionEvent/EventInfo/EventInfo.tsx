@@ -52,10 +52,10 @@ export interface EventParticipant {
     status: string;
 }
 
-interface EventAdmin {
+export interface EventAdmin {
     userId: string;
     fullName: string;
-    email: string;
+    adminType: string;
 }
 
 export interface EventGallery {
