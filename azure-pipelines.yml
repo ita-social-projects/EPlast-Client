@@ -43,10 +43,11 @@ stages:
     steps:
     - bash: |
         # Write your commands here
-        cat > src\config.ts << EOF
+        cat > src/config.ts << EOF
         const BASE_URL = "http://eplast-api.westeurope.cloudapp.azure.com:5000/api/";
         export default BASE_URL;
         EOF
+        cat src/config.ts
       displayName: 'Update API URL'
     - task: Docker@2
       displayName: Build and push an image to container registry
