@@ -1,0 +1,21 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: eplastweb
+  labels:
+    app: eplastweb  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eplastweb
+  template:
+    metadata:
+      labels:
+        app: eplastweb 
+    spec:
+      containers:
+        - name: eplastweb 
+          image: eplast.azurecr.io/eplastweb
+          ports:
+          - containerPort: 80
