@@ -3,8 +3,7 @@ import { useHistory, useRouteMatch } from "react-router-dom";
 import { Card, Spin, Layout } from "antd";
 import clubsApi from "../../../api/clubsApi";
 import Add from "../../../assets/images/add.png";
-
-const classes = require("./Clubs.module.css");
+import classes from "./Clubs.module.css";
 
 interface CardProps {
   id: number;

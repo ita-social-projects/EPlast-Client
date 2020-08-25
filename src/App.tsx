@@ -138,7 +138,7 @@ const App: FC = () => (
           />
           <RouteWithLayout
             layout={PrivateLayout}
-            path="/actions/eventUsers/:userId"
+            path="/userpage/eventUsers/:userId"
             component={EventUser}
           />
           <RouteWithLayout

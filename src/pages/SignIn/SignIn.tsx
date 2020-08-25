@@ -5,14 +5,15 @@ import googleImg from "../../assets/images/google.png";
 import styles from "./SignIn.module.css";
 import facebookImg from "../../assets/images/facebook.png";
 import { checkEmail } from "../SignUp/verification";
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
+import HeaderContainer from "../../components/Header/HeaderContainer";
 
 let authService = new AuthorizeApi();
-let user:any;
+let user: any;
 export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
@@ -22,27 +23,28 @@ export default function () {
     Password: "",
     RememberMe: true,
   };
-  
-   const validationSchema = {
-     Email: [
-       { required: true, message: "Поле електронна пошта є обов'язковим" },
-       { validator: checkEmail },
-     ],
-     Password: [
-       { required: true, message: "Поле пароль є обов'язковим" },
-       { min: 6, message: "Мінімальна допустима довжина - 6 символів" },
-     ]
-   };
+
+  const validationSchema = {
+    Email: [
+      { required: true, message: "Поле електронна пошта є обов'язковим" },
+      { validator: checkEmail },
+    ],
+    Password: [
+      { required: true, message: "Поле пароль є обов'язковим" },
+      { min: 6, message: "Мінімальна допустима довжина - 6 символів" },
+    ]
+  };
 
   const handleSubmit = async (values: any) => {
     await authService.login(values);
     const token = AuthStore.getToken() as string;
-    if(token == null){
+    if (token == null) {
       history.push("/signin");
     }
     else {
-      user  = jwt(token);
+      user = jwt(token);
       history.push(`/userpage/main/${user.nameid}`);
+      window.location.reload();
     }
   };
 
