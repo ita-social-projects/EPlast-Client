@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Col, Input, Row, Space, Spin, Typography} from "antd";
+import {Col, Input, notification, Row, Space, Spin, Table, Typography} from "antd";
 import {useParams} from "react-router-dom";
 // eslint-disable-next-line import/no-cycle
 import SortedEventInfo from './SortedEventInfo';
@@ -17,6 +17,7 @@ const {Title} = Typography;
 
 export interface EventDetails {
     event: EventInformation;
+    participantAssessment: number;
     isUserEventAdmin: boolean;
     isUserParticipant: boolean;
     isUserApprovedParticipant: boolean;
@@ -65,8 +66,24 @@ export interface EventGallery {
     fileName: string;
 }
 
-const EventInfo = () => {
+const estimateNotification = () => {
+    notification.info(
+        {
+            message: "Оцінювання події є доступним протягом 3 днів після її завершення!",
+            placement: "topRight",
+            duration: 7,
+            key: "estimation"
+        }
+    );
+};
 
+const CheckEventForEstimation=({canEstimate,isEventFinished}:EventDetails)=>{
+    if(canEstimate && isEventFinished){
+        estimateNotification();
+    }
+}
+
+const EventInfo = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [loading, setLoading] = useState(false);
     const [, setFilterTable] = useState([{}]);
@@ -125,7 +142,8 @@ const EventInfo = () => {
 
     ) : (
         <div className="event-info-background">
-            <Row justify="space-between">
+            {CheckEventForEstimation(event)}
+            <Row justify="space-around">
                 <Col xs={24} sm={24} md={24} lg={8}>
                     <SortedEventInfo
                         event={event}
@@ -142,7 +160,7 @@ const EventInfo = () => {
                 <Gallery key={event.event?.eventLocation} eventId={event.event?.eventId}
                          isUserEventAdmin={event.isUserEventAdmin}/>
                 <div key={'2'}>
-                    <Title level={2} style={{color: '#3c5438'}}>Таблиця користувачів</Title>,
+                    <Title level={2} style={{color: '#3c5438'}}>Таблиця користувачів</Title>
                     <Row>
                         <Input.Search
                             style={{width: "400px", margin: "0 0 10px 0"}}
@@ -152,11 +170,13 @@ const EventInfo = () => {
                         />
                     </Row>
                 </div>
-                <ParticipantsTable
-                    isUserEventAdmin={event.isUserEventAdmin}
-                    participants={event.event?.eventParticipants}
-                    key={event.event?.eventId}
-                />
+                <div className="participant-table">
+                    <ParticipantsTable
+                        isUserEventAdmin={event.isUserEventAdmin}
+                        participants={event.event?.eventParticipants}
+                        key={event.event?.eventId}
+                    />
+                </div>
             </div>
         </div>
     )

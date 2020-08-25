@@ -19,10 +19,10 @@
 }
 
 .imgEvent {
-  @media(max-width: 320px){
+  @media (max-width: 320px) {
     width: 230px;
   }
-  @media(max-width: 280px){
+  @media (max-width: 280px) {
     width: 190px;
   }
   @media (min-width: 360px) {
@@ -39,31 +39,31 @@
   align-items: center;
 }
 
-  .iconsFlex {
-    .iconsFlexBase();
-    @media(max-width: 320px){
-      width: 240px;
-    }
-    @media(max-width: 280px){
-      width: 200px;
-    }
-    @media (min-width: 360px) {
-      width: 278px;
-    }
+.iconsFlex {
+  .iconsFlexBase();
+  @media (max-width: 320px) {
+    width: 240px;
   }
+  @media (max-width: 280px) {
+    width: 200px;
+  }
+  @media (min-width: 360px) {
+    width: 278px;
+  }
+}
 
-  .rateFlex{
-    .iconsFlexBase();
-    border-radius: 6px;
-    border-color: black !important;
-    box-shadow: 0 0 0 !important;
-    background-color: rgba(210, 210, 210, 0.5);
-    margin-top: 7px;
-    padding-bottom: 6px;
-  }
+.rateFlex {
+  .iconsFlexBase();
+  border-radius: 6px;
+  border-color: black !important;
+  box-shadow: 0 0 0 !important;
+  background-color: rgba(210, 210, 210, 0.5);
+  margin-top: 7px;
+  padding-bottom: 6px;
+}
 
 .icon {
-  @media(max-width: 300px){
+  @media (max-width: 300px) {
     font-size: 25px !important;
   }
   @media (min-width: 320px) {
@@ -86,7 +86,7 @@ td {
 }
 
 .homeSlider {
-  @media(max-width: 767px){
+  @media (max-width: 767px) {
     width: 100%;
     height: 300px;
   }
@@ -96,11 +96,6 @@ td {
   margin: 0px auto 10px;
   overflow: hidden;
 }
-
-//.sliderImg {
-//  width: 100%;
-//  margin-top: -20.5%;
-//}
 
 .eyeDetails {
   color: @plast-color !important;
@@ -118,7 +113,7 @@ td {
   }
 }
 
-.event-admin-card{
+.event-admin-card {
   .ant-card-head-title {
     display: inline-block;
     flex: 1 1;
@@ -128,13 +123,26 @@ td {
     text-overflow: ellipsis;
     text-align: center;
   }
+
   .ant-card-body {
     font-size: 16px;
     color: black;
     text-align: center;
-    &:hover{
+
+    &:hover {
       color: @plast-color;
       text-decoration: underline;
     }
+  }
+}
+
+.participant-table {
+  overflow: auto;
+
+  .ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td {
+    position: relative;
+    padding: 16px 16px;
+    overflow-wrap: break-word;
+    background: #fafafa;
   }
 }

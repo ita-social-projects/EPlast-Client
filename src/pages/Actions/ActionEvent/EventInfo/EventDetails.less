@@ -1,23 +1,29 @@
-.generalLabel{
-    border-radius: 6px;
-    border: 0 !important;
-    padding: 5px 0 5px 7px;
-    box-shadow: 0 0 0 !important;
-    background-color: rgba(210, 210, 210, 0.5);
-    display: block;
-    font-weight: bold;
+.generalLabel {
+  border-radius: 6px;
+  border: 0 !important;
+  padding: 5px 0 5px 7px;
+  box-shadow: 0 0 0 !important;
+  background-color: rgba(210, 210, 210, 0.5);
+  display: block;
+  font-weight: bold;
 }
 
-.event-data-input{
-    .generalLabel();
+.event-data-input {
+  .generalLabel();
+  @media (max-width: 280px) {
     width: 200px;
+  }
+  width: 275px;
   font-size: 17px;
   text-align: center;
 }
 
-.dataDescription{
+.dataDescription {
   .generalLabel();
-  min-width: 200px;
+  @media (max-width: 280px) {
+    min-width: 200px;
+  }
+  min-width: 275px;
   max-width: 420px;
   max-height: 100px;
   overflow: auto;
@@ -26,8 +32,8 @@
   font-style: italic;
 }
 
-.eventLabel{
-    font-size: 20px;
-    color: #3c5438;
-    font-weight: bold;
+.eventLabel {
+  font-size: 20px;
+  color: #3c5438;
+  font-weight: bold;
 }

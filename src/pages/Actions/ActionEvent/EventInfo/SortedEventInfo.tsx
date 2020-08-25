@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Row, Col, Table, Tooltip, Modal, Card, List, Rate} from 'antd';
+import {Row, Col, Table, Tooltip, Modal, Card, List, Rate, notification} from 'antd';
 import {
     TeamOutlined,
     CameraOutlined,
@@ -19,7 +19,6 @@ import {useHistory} from "react-router-dom";
 import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirmForSingleEvent} from "../../EventsModals";
 import EventAdminLogo from "../../../../assets/images/EventAdmin.png"
 import './EventInfo.less';
-import {number} from "yup";
 import eventsApi from "../../../../api/eventsApi";
 
 interface Props {
@@ -96,12 +95,12 @@ const RenderEventIcons = ({
                              key="subscribe"/>
         </Tooltip>)
     }
-    eventIcons.push(<Tooltip placement="bottom" title="Учасники" key="participants">
-        <TeamOutlined style={{color: "#3c5438"}} className="icon"/>
-    </Tooltip>)
-    eventIcons.push(<Tooltip placement="bottom" title="Галерея" key="gallery">
-        <CameraOutlined style={{color: "#3c5438"}} className="icon"/>
-    </Tooltip>)
+    // eventIcons.push(<Tooltip placement="bottom" title="Учасники" key="participants">
+    //     <TeamOutlined style={{color: "#3c5438"}} className="icon"/>
+    // </Tooltip>)
+    // eventIcons.push(<Tooltip placement="bottom" title="Галерея" key="gallery">
+    //     <CameraOutlined style={{color: "#3c5438"}} className="icon"/>
+    // </Tooltip>)
     eventIcons.push(<Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
         <IdcardOutlined style={{color: "#3c5438", fontSize: "30px"}} className="icon"
                         onClick={() => setAdminsVisibility(true)}
@@ -111,11 +110,11 @@ const RenderEventIcons = ({
 }
 
 const RenderRatingSystem = ({
-                                event, canEstimate, isEventFinished
+                                event, canEstimate, isEventFinished, participantAssessment
                             }: EventDetails
 ): React.ReactNode => {
     if (isEventFinished && canEstimate) {
-        return <Rate allowHalf defaultValue={0}
+        return <Rate allowHalf defaultValue={participantAssessment}
                      onChange={async (value) => await eventsApi.estimateEvent(event.eventId,value)}
         />
     } else {
@@ -172,7 +171,9 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) =
             visible={adminsVisible}
             title='Адміністрація події.'
             footer={null}
-            onCancel={() => setAdminsVisibility(false)}
+            onCancel={() => {
+                setAdminsVisibility(false);
+            }}
         >
             {RenderAdminCards(event.event.eventAdmins)}
         </Modal>

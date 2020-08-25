@@ -35,7 +35,6 @@ const EventDetailsHeader = ({
             <Descriptions.Item label={renderLabel("Кількість учасників")}>{renderContent("65")}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Опис")}>
                 {renderDescription(description)}
-                {/*{renderDescription("Метою даного заходу є пробудження національного духу молоді. Виховання її як свідомих громадян. Метою даного заходу є пробудження національного духу молоді. Виховання її як свідомих громадян. Метою да")}*/}
             </Descriptions.Item>
         </Descriptions>
     )
