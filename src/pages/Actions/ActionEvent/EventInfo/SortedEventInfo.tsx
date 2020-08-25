@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Row, Col, Table, Tooltip, Modal, Card, List} from 'antd';
+import {Row, Col, Table, Tooltip, Modal, Card, List, Rate} from 'antd';
 import {
     TeamOutlined,
     CameraOutlined,
@@ -15,15 +15,17 @@ import {
 } from '@ant-design/icons';
 // eslint-disable-next-line import/no-cycle,import/no-duplicates
 import {EventDetails, EventAdmin} from "./EventInfo";
-import { useHistory } from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirmForSingleEvent} from "../../EventsModals";
 import EventAdminLogo from "../../../../assets/images/EventAdmin.png"
 import './EventInfo.less';
+import {number} from "yup";
+import eventsApi from "../../../../api/eventsApi";
 
 interface Props {
-    event: EventDetails,
-    subscribeOnEvent: () => void
-    unSubscribeOnEvent: () => void
+    event: EventDetails;
+    subscribeOnEvent: () => void;
+    unSubscribeOnEvent: () => void;
 }
 
 const RenderEventIcons = ({
@@ -108,32 +110,45 @@ const RenderEventIcons = ({
     return eventIcons
 }
 
+const RenderRatingSystem = ({
+                                event, canEstimate, isEventFinished
+                            }: EventDetails
+): React.ReactNode => {
+    if (isEventFinished && canEstimate) {
+        return <Rate allowHalf defaultValue={0}
+                     onChange={async (value) => await eventsApi.estimateEvent(event.eventId,value)}
+        />
+    } else {
+        return <Rate allowHalf disabled defaultValue={event.rating} onChange={(value) => console.log(value)}/>
+    }
+}
+
 const RenderAdminCards = (eventAdmins: EventAdmin[]) => {
     const history = useHistory();
     return <List className="event-admin-card"
-        grid={{
-            gutter: 16,
-            xs: 2,
-            sm: 2,
-            md: 2,
-            lg: 2,
-            xl: 2,
-            xxl: 2,
-        }}
-        dataSource={eventAdmins}
-        renderItem={item => (
-            <List.Item>
-                <Card
-                    hoverable
-                    title={item.adminType}
-                    cover={<img alt="example" src={EventAdminLogo}/>}
-                >
-                    <div onClick={()=> history.push(`/userpage/main/${item.userId}`)}>
-                        {item.fullName}
-                    </div>
-                </Card>
-            </List.Item>
-        )}
+                 grid={{
+                     gutter: 16,
+                     xs: 2,
+                     sm: 2,
+                     md: 2,
+                     lg: 2,
+                     xl: 2,
+                     xxl: 2,
+                 }}
+                 dataSource={eventAdmins}
+                 renderItem={item => (
+                     <List.Item>
+                         <Card
+                             hoverable
+                             title={item.adminType}
+                             cover={<img alt="example" src={EventAdminLogo}/>}
+                         >
+                             <div onClick={() => history.push(`/userpage/main/${item.userId}`)}>
+                                 {item.fullName}
+                             </div>
+                         </Card>
+                     </List.Item>
+                 )}
     />
 }
 
@@ -148,6 +163,9 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) =
             />
             <div className="iconsFlex">
                 {RenderEventIcons(event, subscribeOnEvent, unSubscribeOnEvent, setAdminsVisibility)}
+            </div>
+            <div className="rateFlex">
+                {RenderRatingSystem(event)}
             </div>
         </Col>
         <Modal

@@ -40,6 +40,11 @@ const createParticipant = async (id: number) => {
     return response;
 };
 
+const estimateEvent = async (id: number,estimate:number) => {
+    const response = await Api.put(`Events/${id}/estimate/${estimate}`);
+    return response;
+};
+
 const approveParticipant = async (id: number) => {
     const response = await Api.put(`Events/participants/${id}/status/approved`);
     return response;
@@ -72,6 +77,7 @@ export default {
     getEventInfo,
     getPictures,
     remove,
+    estimateEvent,
     createParticipant,
     removeParticipant,
     approveParticipant,

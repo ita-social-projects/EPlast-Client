@@ -23,6 +23,7 @@ export interface EventDetails {
     isUserUndeterminedParticipant: boolean;
     isUserRejectedParticipant: boolean;
     isEventFinished: boolean;
+    canEstimate: boolean;
 }
 
 export interface EventInformation {
@@ -39,6 +40,7 @@ export interface EventInformation {
     eventStatus: string;
     formOfHolding: string;
     forWhom: string;
+    rating: number;
     eventAdmins: EventAdmin[];
     eventParticipants: EventParticipant[];
 }
