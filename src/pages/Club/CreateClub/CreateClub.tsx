@@ -102,14 +102,9 @@ const CreateClub = () => {
     await clubsApi
       .post("Club/" + (id ? "edit" : "create"), newСlub)
       .then((res) => {
-<<<<<<< HEAD
         newСlub.id = res.data.id;
         notification.success({
           message: id ? "Курінь успішно оновлено" : "Курінь успішно створено",
-=======
-        notification.success({
-          message: "Курінь успішно створено",
->>>>>>> master
           icon: <LoadingOutlined />,
         });
         id ? history.goBack() : history.push( `${newСlub.id}`);
