@@ -39,6 +39,7 @@ import AnnualReportTable from './pages/AnnualReport/AnnualReportTable/AnnualRepo
 import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
 import NotFound from "./pages/Error/NotFound";
 import UserTable from "./pages/UserTable/UserTable";
+import KadrasTable from "./pages/KadraVykhovnykiv/KadrasPage"
 
 const App: FC = () => (
   <div className="App">
@@ -201,6 +202,7 @@ const App: FC = () => (
             path="/clubs/new"
             component={CreateClub}
           />
+          
           <RouteWithLayout
             layout={PrivateLayout}
             exact
@@ -225,12 +227,20 @@ const App: FC = () => (
             path="/user/table"
             component={UserTable}
           />
+           <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/kadra"
+            component={KadrasTable}
+          />
           <RouteWithLayout
             layout={PrivateLayout}
             exact
             path="*"
             component={NotFound}
           />
+         
+          
         </Switch>
       </div>
       <FooterContainer />
