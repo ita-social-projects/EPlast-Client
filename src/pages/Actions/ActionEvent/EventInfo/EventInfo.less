@@ -1,0 +1,148 @@
+@plast-color: #3c5438;
+@plast-color-hover: #73bd79;
+@cancelation-color: #8B0000;
+@cancelation-color-hover: #FF0000;
+
+.event-info-background {
+  background-color: rgb(238, 238, 238);
+}
+
+.event-info-wrapper {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.actionsWrapper {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.imgEvent {
+  @media (max-width: 320px) {
+    width: 230px;
+  }
+  @media (max-width: 280px) {
+    width: 190px;
+  }
+  @media (min-width: 360px) {
+    width: 272px;
+  }
+  margin: 0 15px 15px 6px;
+}
+
+.iconsFlexBase {
+  display: flex;
+  justify-content: space-around;
+  font-size: 34px;
+  text-align: center;
+  align-items: center;
+}
+
+.iconsFlex {
+  .iconsFlexBase();
+  @media (max-width: 320px) {
+    width: 240px;
+  }
+  @media (max-width: 280px) {
+    width: 200px;
+  }
+  @media (min-width: 360px) {
+    width: 278px;
+  }
+}
+
+.rateFlex {
+  .iconsFlexBase();
+  border-radius: 6px;
+  border-color: black !important;
+  box-shadow: 0 0 0 !important;
+  background-color: rgba(210, 210, 210, 0.5);
+  margin-top: 7px;
+  padding-bottom: 6px;
+}
+
+.icon {
+  @media (max-width: 300px) {
+    font-size: 25px !important;
+  }
+  @media (min-width: 320px) {
+    font-size: 30px !important;
+  }
+}
+
+.icon:hover {
+  color: @plast-color-hover;
+}
+
+tr {
+  font-size: 15px;
+  font-weight: 300;
+}
+
+td {
+  /* width: 450px; */
+  font-weight: 300;
+}
+
+.homeSlider {
+  @media (max-width: 767px) {
+    width: 100%;
+    height: 300px;
+  }
+  @media (min-width: 768px) {
+    width: 60%;
+  }
+  margin: 0px auto 10px;
+  overflow: hidden;
+}
+
+.eyeDetails {
+  color: @plast-color !important;
+
+  &:hover {
+    color: @plast-color-hover !important;;
+  }
+}
+
+.deletePicture {
+  color: @cancelation-color !important;
+
+  &:hover {
+    color: @cancelation-color-hover !important;
+  }
+}
+
+.event-admin-card {
+  .ant-card-head-title {
+    display: inline-block;
+    flex: 1 1;
+    padding: 16px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: center;
+  }
+
+  .ant-card-body {
+    font-size: 16px;
+    color: black;
+    text-align: center;
+
+    &:hover {
+      color: @plast-color;
+      text-decoration: underline;
+    }
+  }
+}
+
+.participant-table {
+  overflow: auto;
+
+  .ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td {
+    position: relative;
+    padding: 16px 16px;
+    overflow-wrap: break-word;
+    background: #fafafa;
+  }
+}

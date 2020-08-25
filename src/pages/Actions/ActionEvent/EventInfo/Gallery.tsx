@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from "react";
-import {Carousel, Spin, Avatar, Typography , Alert, Empty} from "antd";
+import {Carousel, Spin, Avatar, Typography, Alert, Empty} from "antd";
 import {EventGallery} from "./EventInfo";
 import eventsApi from "../../../../api/eventsApi";
 import FormAddPictures from "./FormAddPictures";
 import PicturesWall from "./PicturesWall";
 
-const classes = require("./EventInfo.module.css");
+import './EventInfo.less';
 
-const { Title } = Typography;
+const {Title} = Typography;
 
 interface Props {
     eventId: number;
@@ -16,8 +16,8 @@ interface Props {
 
 const GallerySpinner = () => (
     <div>
-        <Title level={2} style={{color:'#3c5438'}}>Галерея</Title>
-        <Carousel autoplay={false} className={classes.homeSlider}
+        <Title level={2} style={{color: '#3c5438'}}>Галерея</Title>
+        <Carousel autoplay={false} className="homeSlider"
         >
             <Spin tip="Завантаження...">
                 <Alert
@@ -33,7 +33,7 @@ const FillGallery = (pictures: EventGallery[]) => {
     if (pictures.length === 0) {
         return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='Галерея події порожня'/>
     }
-    return (<Carousel autoplay={false} className={classes.homeSlider}
+    return (<Carousel autoplay={true} className="homeSlider"
     >
         {
             pictures.map(picture => {
@@ -53,9 +53,10 @@ const Gallery = ({eventId, isUserEventAdmin}: Props) => {
     const GalleryAdministration = (): React.ReactNode[] => {
         if (isUserEventAdmin) {
             return [
-                <Title level={2} style={{color:'#3c5438'}} key='spinnerTitle'>Адміністрування галереї</Title>,
-                <FormAddPictures eventId={eventId} updateGallery={addPictures} picturesCount={pictures.length} key='addPictures'/>,
-                <PicturesWall pictures={pictures} removePicture={removePicture}  key='removePictures'/>
+                <Title level={2} style={{color: '#3c5438'}} key='spinnerTitle'>Адміністрування галереї</Title>,
+                <FormAddPictures eventId={eventId} updateGallery={addPictures} picturesCount={pictures.length}
+                                 key='addPictures'/>,
+                <PicturesWall pictures={pictures} removePicture={removePicture} key='removePictures'/>
             ];
         } else return [];
     }
@@ -70,7 +71,7 @@ const Gallery = ({eventId, isUserEventAdmin}: Props) => {
     }, []);
     return loading === false ? GallerySpinner() : (
         <div>
-            <Title level={2} style={{color:'#3c5438'}} >Галерея</Title>
+            <Title level={2} style={{color: '#3c5438'}}>Галерея</Title>
             {FillGallery(pictures)}
             {GalleryAdministration()}
         </div>

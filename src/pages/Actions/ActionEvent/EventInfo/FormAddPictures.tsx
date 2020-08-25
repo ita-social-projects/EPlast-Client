@@ -2,7 +2,7 @@ import React from "react";
 import {
     Form,
     Button,
-    Upload, notification,
+    Upload, notification, Tooltip,
 } from 'antd';
 import {UploadOutlined, InboxOutlined} from '@ant-design/icons';
 import eventsApi from "../../../../api/eventsApi";
@@ -33,7 +33,7 @@ const normFile = (e: any) => {
     return e && e.fileList;
 };
 
-const dummyRequest = ({ file, onSuccess }:any) => {
+const dummyRequest = ({file, onSuccess}: any) => {
     setTimeout(() => {
         onSuccess("ok");
     }, 0);
@@ -53,7 +53,7 @@ const FormAddPictures = ({eventId, updateGallery, picturesCount}: Props) => {
                 limitNotification("Досягнуто ліміту фотографій у галереї подій!",
                     `Максимальна кількість фотографій у галереї повинна не перевищувати ${MaxPicturesCount} штук.`);
             } else {
-                if (values.upload.length > MaxPicturesCount || values.upload.length>(MaxPicturesCount-picturesCount)) {
+                if (values.upload.length > MaxPicturesCount || values.upload.length > (MaxPicturesCount - picturesCount)) {
                     limitNotification("Перевищено ліміт фотографій для завантаження!",
                         "Зменшіть кількість вибраних фотографій для завантаження.");
                 } else {
@@ -108,9 +108,11 @@ const FormAddPictures = ({eventId, updateGallery, picturesCount}: Props) => {
                     accept=".jpg,.jpeg,.png"
                     customRequest={dummyRequest}
                 >
-                    <Button>
-                        <UploadOutlined/> Додати фотографії
-                    </Button>
+                    <Tooltip placement="right" title={`Ліміт фотографій у галереї становить ${MaxPicturesCount} штук.`}>
+                        <Button>
+                            <UploadOutlined/> Додати фотографії
+                        </Button>
+                    </Tooltip>
                 </Upload>
             </Form.Item>
 

@@ -1,5 +1,5 @@
-import React from 'react';
-import {Row, Col, Table, Tooltip} from 'antd';
+import React, {useState} from 'react';
+import {Row, Col, Table, Tooltip, Modal, Card, List, Rate, notification} from 'antd';
 import {
     TeamOutlined,
     CameraOutlined,
@@ -14,15 +14,17 @@ import {
     UserAddOutlined
 } from '@ant-design/icons';
 // eslint-disable-next-line import/no-cycle,import/no-duplicates
-import {EventDetails} from "./EventInfo";
+import {EventDetails, EventAdmin} from "./EventInfo";
+import {useHistory} from "react-router-dom";
 import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirmForSingleEvent} from "../../EventsModals";
-
-const classes = require('./EventInfo.module.css');
+import EventAdminLogo from "../../../../assets/images/EventAdmin.png"
+import './EventInfo.less';
+import eventsApi from "../../../../api/eventsApi";
 
 interface Props {
-    event: EventDetails,
-    subscribeOnEvent: () => void
-    unSubscribeOnEvent: () => void
+    event: EventDetails;
+    subscribeOnEvent: () => void;
+    unSubscribeOnEvent: () => void;
 }
 
 const RenderEventIcons = ({
@@ -31,15 +33,16 @@ const RenderEventIcons = ({
                               isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
                           }: EventDetails,
                           subscribeOnEvent: () => void,
-                          unSubscribeOnEvent: () => void
+                          unSubscribeOnEvent: () => void,
+                          setAdminsVisibility: (flag: boolean) => void
 ): React.ReactNode[] => {
     const eventIcons: React.ReactNode[] = []
     if (isUserEventAdmin) {
         eventIcons.push(<Tooltip placement="bottom" title="Ви адмін!" key="setting">
-            <SettingTwoTone twoToneColor="#3c5438" className={classes.icon} key="setting"/>
+            <SettingTwoTone twoToneColor="#3c5438" className="icon" key="setting"/>
         </Tooltip>)
         eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit">
-            <EditTwoTone twoToneColor="#3c5438" className={classes.icon} key="edit"/>
+            <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"/>
         </Tooltip>)
         eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
             <DeleteTwoTone twoToneColor="#8B0000"
@@ -49,22 +52,23 @@ const RenderEventIcons = ({
                                eventTypeId: event?.eventTypeId,
                                eventCategoryId: event?.eventCategoryId
                            })}
-                           className={classes.icon} key="delete"/>
+                           className="icon" key="delete"/>
         </Tooltip>)
     } else if (isUserParticipant && !isEventFinished) {
         if (isUserRejectedParticipant) {
-            eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено" key="banned">
-                <StopOutlined style={{color: "#8B0000"}} className={classes.icon} key="banned"/>
+            eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено"
+                                     key="banned">
+                <StopOutlined style={{color: "#8B0000"}} className="icon" key="banned"/>
             </Tooltip>)
         } else {
             if (isUserApprovedParticipant) {
                 eventIcons.push(<Tooltip placement="bottom" title="Учасник" key="participant">
-                    <CheckCircleTwoTone twoToneColor="#73bd79" className={classes.icon} key="participant"/>
+                    <CheckCircleTwoTone twoToneColor="#73bd79" className="icon" key="participant"/>
                 </Tooltip>)
             }
             if (isUserUndeterminedParticipant) {
                 eventIcons.push(<Tooltip placement="bottom" title="Ваша заявка розглядається" key="underReview">
-                    <QuestionCircleTwoTone twoToneColor="#FF8C00" className={classes.icon} key="underReview"/>
+                    <QuestionCircleTwoTone twoToneColor="#FF8C00" className="icon" key="underReview"/>
                 </Tooltip>)
             }
             eventIcons.push(<Tooltip placement="bottom" title="Відписатися від події" key="unsubscribe">
@@ -76,7 +80,7 @@ const RenderEventIcons = ({
                         isSingleEventInState: true
                     })}
                     style={{color: "#8B0000"}}
-                    className={classes.icon} key="unsubscribe"/>
+                    className="icon" key="unsubscribe"/>
             </Tooltip>)
         }
     } else if (!isEventFinished) {
@@ -91,106 +95,88 @@ const RenderEventIcons = ({
                              key="subscribe"/>
         </Tooltip>)
     }
-    eventIcons.push(<Tooltip placement="bottom" title="Учасники" key="participants">
-        <TeamOutlined style={{color: "#3c5438"}} className={classes.icon}/>
-    </Tooltip>)
-    eventIcons.push(<Tooltip placement="bottom" title="Галерея" key="gallery">
-        <CameraOutlined style={{color: "#3c5438"}} className={classes.icon}/>
-    </Tooltip>)
+    // eventIcons.push(<Tooltip placement="bottom" title="Учасники" key="participants">
+    //     <TeamOutlined style={{color: "#3c5438"}} className="icon"/>
+    // </Tooltip>)
+    // eventIcons.push(<Tooltip placement="bottom" title="Галерея" key="gallery">
+    //     <CameraOutlined style={{color: "#3c5438"}} className="icon"/>
+    // </Tooltip>)
     eventIcons.push(<Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
-        <IdcardOutlined style={{color: "#3c5438"}} className={classes.icon}/>
+        <IdcardOutlined style={{color: "#3c5438", fontSize: "30px"}} className="icon"
+                        onClick={() => setAdminsVisibility(true)}
+        />
     </Tooltip>)
     return eventIcons
 }
 
+const RenderRatingSystem = ({
+                                event, canEstimate, isEventFinished, participantAssessment
+                            }: EventDetails
+): React.ReactNode => {
+    if (isEventFinished && canEstimate) {
+        return <Rate allowHalf defaultValue={participantAssessment}
+                     onChange={async (value) => await eventsApi.estimateEvent(event.eventId,value)}
+        />
+    } else {
+        return <Rate allowHalf disabled defaultValue={event.rating} onChange={(value) => console.log(value)}/>
+    }
+}
+
+const RenderAdminCards = (eventAdmins: EventAdmin[]) => {
+    const history = useHistory();
+    return <List className="event-admin-card"
+                 grid={{
+                     gutter: 16,
+                     xs: 2,
+                     sm: 2,
+                     md: 2,
+                     lg: 2,
+                     xl: 2,
+                     xxl: 2,
+                 }}
+                 dataSource={eventAdmins}
+                 renderItem={item => (
+                     <List.Item>
+                         <Card
+                             hoverable
+                             title={item.adminType}
+                             cover={<img alt="example" src={EventAdminLogo}/>}
+                         >
+                             <div onClick={() => history.push(`/userpage/main/${item.userId}`)}>
+                                 {item.fullName}
+                             </div>
+                         </Card>
+                     </List.Item>
+                 )}
+    />
+}
+
 const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) => {
-    //   console.log("EventInfo:",event)
-    const columns = [
-        {
-            title: 'Назва',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: event?.event?.eventName,
-            dataIndex: 'desc',
-            key: 'desc',
-        }
-    ];
-
-    const data = [
-        {
-            key: '1',
-            name: 'Тип:',
-            desc: event?.event?.eventType,
-        },
-        {
-            key: '2',
-            name: 'Категорія:',
-            desc: event?.event?.eventCategory,
-
-        },
-        {
-            key: '3',
-            name: 'Дата початку:',
-            desc: event?.event?.eventDateStart,
-
-        },
-        {
-            key: '4',
-            name: 'Дата завершення:',
-            desc: event?.event?.eventDateEnd,
-
-        },
-        {
-            key: '5',
-            name: 'Локація:',
-            desc: event?.event?.eventLocation,
-
-        },
-        {
-            key: '6',
-            name: 'Призначений для:',
-            desc: event?.event?.forWhom,
-
-        },
-        {
-            key: '7',
-            name: 'Форма проведення:',
-            desc: event?.event?.formOfHolding,
-
-        },
-        {
-            key: '8',
-            name: 'Статус:',
-            desc: event?.event?.eventStatus,
-
-        },
-        {
-            key: '9',
-            name: 'Опис:',
-            desc: event?.event?.description,
-        }
-    ];
-
-    return <div className={classes.background}>
-        <div className={classes.actionsWrapper}>
-            <Row>
-                <Col span={10} push={14} key={'1'}>
-                    <img
-                        className={classes.imgEvent}
-                        alt="example"
-                        src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
-                    />
-                    <div className={classes.iconsFlex}>
-                        {RenderEventIcons(event, subscribeOnEvent, unSubscribeOnEvent)}
-                    </div>
-                </Col>
-                <Col span={14} pull={10} key={'2'}>
-                    <Table columns={columns} dataSource={data} pagination={false}/>
-                </Col>
-            </Row>
-        </div>
-    </div>
+    const [adminsVisible, setAdminsVisibility] = useState(false);
+    return <Row justify="center">
+        <Col>
+            <img
+                className="imgEvent"
+                alt="example"
+                src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
+            />
+            <div className="iconsFlex">
+                {RenderEventIcons(event, subscribeOnEvent, unSubscribeOnEvent, setAdminsVisibility)}
+            </div>
+            <div className="rateFlex">
+                {RenderRatingSystem(event)}
+            </div>
+        </Col>
+        <Modal
+            visible={adminsVisible}
+            title='Адміністрація події.'
+            footer={null}
+            onCancel={() => {
+                setAdminsVisibility(false);
+            }}
+        >
+            {RenderAdminCards(event.event.eventAdmins)}
+        </Modal>
+    </Row>
 }
 export default SortedEventInfo;
