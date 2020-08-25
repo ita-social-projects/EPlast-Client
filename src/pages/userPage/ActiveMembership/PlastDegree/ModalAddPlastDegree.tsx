@@ -36,7 +36,8 @@ useEffect(()=>{
     fetchData();
 },[]);
 return <Modal 
-visible={visibleModal}>
+        visible={visibleModal}
+        footer ={null}>
     <FormAddPlastDegree 
         setVisibleModal ={setVisibleModal}
         availablePlastDegree ={availablePlastDegree}/>
