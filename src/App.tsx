@@ -28,9 +28,9 @@ import UserProfile from "./pages/userPage/personalData/PersonalData";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
-import Clubs from "./pages/Clubs/Clubs";
-import Club from "./pages/Club/Club";
-import CreateClub from "./pages/CreateClub/CreateClub";
+import Clubs from "./pages/Club/Clubs/Clubs";
+import Club from "./pages/Club/Club/Club";
+import CreateClub from "./pages/Club/CreateClub/CreateClub";
 import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
 import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
@@ -39,6 +39,7 @@ import AnnualReportTable from './pages/AnnualReport/AnnualReportTable/AnnualRepo
 import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
 import NotFound from "./pages/Error/NotFound";
 import UserTable from "./pages/UserTable/UserTable";
+import KadrasTable from "./pages/KadraVykhovnykiv/KadrasPage"
 
 const App: FC = () => (
   <div className="App">
@@ -138,7 +139,7 @@ const App: FC = () => (
           />
           <RouteWithLayout
             layout={PrivateLayout}
-            path="/actions/eventUsers/:userId"
+            path="/userpage/eventUsers/:userId"
             component={EventUser}
           />
           <RouteWithLayout
@@ -201,6 +202,7 @@ const App: FC = () => (
             path="/clubs/new"
             component={CreateClub}
           />
+          
           <RouteWithLayout
             layout={PrivateLayout}
             exact
@@ -225,12 +227,20 @@ const App: FC = () => (
             path="/user/table"
             component={UserTable}
           />
+           <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/kadra"
+            component={KadrasTable}
+          />
           <RouteWithLayout
             layout={PrivateLayout}
             exact
             path="*"
             component={NotFound}
           />
+         
+          
         </Switch>
       </div>
       <FooterContainer />

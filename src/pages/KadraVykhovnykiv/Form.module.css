@@ -1,0 +1,30 @@
+
+
+.inputField{
+    float: right;
+    text-align: left;
+    max-width: 320px;
+    min-width: 320px;
+  }
+  
+  .selectField {
+    float: right;
+    text-align: left;
+    max-width: 320px;
+    min-width: 320px;
+  }
+  
+  
+  .formField {
+    width: 100%;
+  }
+
+  .cardButton{
+    float: right;
+    inline-size: -webkit-fill-available;
+    margin-top: 7px;
+    color:#3c5438;
+    border-color: #3c5438;
+    max-width: 320px;
+    min-width: 320px;
+  }

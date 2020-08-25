@@ -6,8 +6,8 @@ import {showError} from "../../EventsModals";
 // eslint-disable-next-line import/no-cycle
 import {EventParticipant} from "./EventInfo";
 import eventsApi from "../../../../api/eventsApi";
-
-const classes = require('./ParticipantsTable.module.css');
+import './ParticipantsTable.less';
+import {useHistory} from "react-router-dom";
 
 const {Text} = Typography;
 
@@ -24,6 +24,7 @@ const participantStatuses = {
 
 const ParticipantsTable = ({isUserEventAdmin, participants}: Props) => {
     const [Participants, setParticipant] = useState<EventParticipant[]>(participants)
+    const history = useHistory();
     const setTagColor = (status: string) => {
         let color = '';
         if (status === 'Відмовлено') {
@@ -84,7 +85,8 @@ const ParticipantsTable = ({isUserEventAdmin, participants}: Props) => {
             title: "Користувач",
             dataIndex: "fullName",
             key: "user",
-            render: (text: any) => <Text underline strong>{text}</Text>,
+            render: (text: any, record) => <div onClick={() => history.push(`/userpage/main/${record.userId}`)}><Text
+                className="participant-table-fullName" strong>{text}</Text></div>,
         },
         {
             title: "Email",
@@ -115,22 +117,22 @@ const ParticipantsTable = ({isUserEventAdmin, participants}: Props) => {
                 key: "changeStatus",
                 render: (text, record) => (
                     <Space size="small">
-                        <Button className={classes.approveButton} shape="round"
-                                icon={<UserAddOutlined className={classes.iconParticipant}/>} size='small'
+                        <Button className="approveButton" shape="round"
+                                icon={<UserAddOutlined className="iconParticipant"/>} size='small'
                                 onClick={() => {
                                     changeStatusToApproved(record.participantId)
                                 }}
                         />
                         <Divider type="vertical"/>
-                        <Button className={classes.underReviewButton} shape="round"
-                                icon={<QuestionOutlined className={classes.iconUnderReview}/>} size='small'
+                        <Button className="underReviewButton" shape="round"
+                                icon={<QuestionOutlined className="iconUnderReview"/>} size='small'
                                 onClick={() => {
                                     changeStatusToUnderReviewed(record.participantId)
                                 }}
                         />
                         <Divider type="vertical"/>
-                        <Button className={classes.banButton} shape="round"
-                                icon={<UserDeleteOutlined className={classes.iconParticipant}/>} size='small'
+                        <Button className="banButton" shape="round"
+                                icon={<UserDeleteOutlined className="iconParticipant"/>} size='small'
                                 onClick={() => {
                                     changeStatusToRejected(record.participantId)
                                 }}

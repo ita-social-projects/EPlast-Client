@@ -12,17 +12,22 @@ import userApi from '../../api/UserApi';
 let authService = new AuthorizeApi();
 
 const HeaderContainer = () => {
-  const user = AuthorizeApi.isSignedIn(); 
+  const user = AuthorizeApi.isSignedIn();
   const [imageBase64, setImageBase64] = useState<string>();
   const [name, setName] = useState<string>();
   const [id, setId] = useState<string>();
   const token = AuthStore.getToken() as string;
   const signedIn = AuthorizeApi.isSignedIn();
+  const [userState, setUserState] = useState(signedIn);
+  
   const fetchData = async () => {
     if (user) {
       const user: any = jwt(token);
       await userApi.getById(user.nameid).then(async response => {
         setName(response.data.user.firstName);
+        if(name !== undefined){
+          setUserState(true);
+        }
         setId(response.data.user.id);
         await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
@@ -30,10 +35,15 @@ const HeaderContainer = () => {
       })
     }
   };
-
+  
   useEffect(() => {
     fetchData();
   }, []);
+
+  const onLogoutClick = async () => {
+    await authService.logout();
+    setUserState(false);
+  }
 
   const primaryMenu = (
     <Menu
@@ -65,7 +75,7 @@ const HeaderContainer = () => {
           className={classes.headerLink}
           activeClassName={classes.activeLink}
           to="/signin"
-          onClick={authService.logout}
+          onClick={onLogoutClick}
         >
           <LogoutOutlined className={classes.dropDownIcon} />
           Вийти
@@ -85,7 +95,7 @@ const HeaderContainer = () => {
           </div>
         </Menu.Item>
       </Menu>
-      {signedIn ? (
+      {signedIn && userState ? (
         <Menu mode="horizontal" className={classes.headerMenu}>
           <Menu.Item
             className={classes.headerItem}

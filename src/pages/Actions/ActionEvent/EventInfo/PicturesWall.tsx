@@ -4,7 +4,7 @@ import {EventGallery} from "./EventInfo";
 import {DeleteOutlined, EyeOutlined} from "@ant-design/icons/lib";
 import eventsApi from "../../../../api/eventsApi";
 
-const classes = require('./EventInfo.module.css');
+import './EventInfo.less';
 
 interface Props {
     pictures: EventGallery[];
@@ -21,7 +21,7 @@ const PicturesWall = ({pictures, removePicture}: Props) => {
         const pictureActions: React.ReactNode[] = []
         pictureActions.push(
             <EyeOutlined
-                className={classes.eyeDetails}
+                className="eyeDetails"
                 key="details"
                 onClick={()=>{
                     setPreviewImage(pictureInBase64);
@@ -31,7 +31,7 @@ const PicturesWall = ({pictures, removePicture}: Props) => {
         );
         pictureActions.push(
             <DeleteOutlined
-                className={classes.deletePicture}
+                className="deletePicture"
                 key="deletePicture"
                 onClick={() => deletePicture(id)
                     .then(() => removePicture(id))
