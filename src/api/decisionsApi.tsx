@@ -109,7 +109,7 @@ return new File([u8arr], filename, {type:mime});
     return response;
   };
   const postForCheckFile = async (data : any) => {
-    const response = await Api.post("Decisions/CheckFile",data)
+    const response = await Api.post("Decisions/CheckFile", data)
     .catch(error => {
         notificationLogic('error', error.response.data.value);
     });

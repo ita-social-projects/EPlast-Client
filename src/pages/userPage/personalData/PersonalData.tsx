@@ -4,6 +4,7 @@ import './PersonalData.less';
 import UserFields from './UserFields';
 import EditUserPage from '../EditUserPage/EditUserPage';
 import Approvers from '../Approvers/Approvers';
+import ActiveMembership from '../ActiveMembership/ActiveMembership'
 import EventUser from '../../Actions/ActionEvent/EventUser/EventUser';
 import { useParams } from 'react-router-dom';
 
@@ -25,6 +26,10 @@ export default function (
       ) : specify === 'edit' ? (
         <div className="content">
           <EditUserPage />
+        </div>
+      ): specify === 'activeMembership' ? (
+        <div className="content">
+          <ActiveMembership />
         </div>
       ) : specify === 'eventuser' ? (
         <div className="content">

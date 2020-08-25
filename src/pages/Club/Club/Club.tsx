@@ -87,7 +87,7 @@ const Club = () => {
           <section className={classes.list}>
             <EditOutlined
               className={classes.listIcon}
-              onClick={() => history.push(`${club?.club.id}`)}
+              onClick={() => history.push(`/clubs/edit/${club?.club.id}`)}
             />
             <h1>{`Курінь ${
               club?.club.clubName ? club?.club.clubName : "Немає"
