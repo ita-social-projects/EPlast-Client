@@ -19,7 +19,6 @@ const CityAdministration = () => {
     const [administration, setAdministration] = useState<CityAdmin[]>([]);
     const [visibleModal, setVisibleModal] = useState(false);
     const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
-    //const [adminType, setAdminType] = useState<AdminType>(new AdminType());
     const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
 
@@ -39,7 +38,6 @@ const CityAdministration = () => {
 
     const showModal = (member: CityAdmin) => {
       setAdmin(member);
-      //setAdminType(member.adminType);
 
       setVisibleModal(true);
     };
@@ -119,15 +117,16 @@ const CityAdministration = () => {
             Назад
           </Button>
         </div>
-        <AddAdministratorModal
-          admin={admin}
-          setAdmin={setAdmin}
-          visibleModal={visibleModal}
-          setVisibleModal={setVisibleModal}
-          //adminType={adminType}
-          //setAdminType={setAdminType}
-        ></AddAdministratorModal>
+        {canEdit ? (
+          <AddAdministratorModal
+            admin={admin}
+            setAdmin={setAdmin}
+            visibleModal={visibleModal}
+            setVisibleModal={setVisibleModal}
+          ></AddAdministratorModal>
+        ) : null}
       </Layout.Content>
     );
 };
+
 export default CityAdministration;

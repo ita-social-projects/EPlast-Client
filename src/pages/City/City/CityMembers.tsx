@@ -8,10 +8,8 @@ import classes from "./City.module.css";
 import CityMember from "../../../models/City/CityMember";
 import CityAdmin from "../../../models/City/CityAdmin";
 import AddAdministratorModal from "../AddAdministratorModal/AddAdministratorModal";
-//import AdminType from './../../../models/Admin/AdminType';
 import moment from "moment";
 import "moment/locale/uk";
-import SkeletonAvatar from "antd/lib/skeleton/Avatar";
 moment.locale("uk-ua");
 
 const CityMembers = () => {
@@ -23,7 +21,6 @@ const CityMembers = () => {
   const [head, setHead] = useState<CityAdmin>(new CityAdmin());
   const [visibleModal, setVisibleModal] = useState(false);
   const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
-  //const [adminType, setAdminType] = useState<AdminType>(new AdminType());
   const [canEdit, setCanEdit] = useState<Boolean>(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
 
@@ -44,10 +41,10 @@ const CityMembers = () => {
     await toggleMemberStatus(member.id);
 
     const existingAdmin = [head, ...admins].filter(
-      (a) => a?.userId === member.userId
+      (a) => a?.userId === member.userId && moment(a?.endDate).isAfter(moment())
     );
 
-    for (let i = 0; i < members.length; i++) {
+    for (let i = 0; i < existingAdmin.length; i++) {
       await removeAdministrator(existingAdmin[i].id);
     }
 
@@ -59,13 +56,11 @@ const CityMembers = () => {
     
     if (existingAdmin !== undefined) {
       setAdmin(existingAdmin);
-      //setAdminType(existingAdmin.adminType);
     }
     else {
       setAdmin({
         ...(new CityAdmin()),
         userId: member.user.id,
-        user: member.user,
         cityId: member.cityId,
       });
     }
@@ -140,14 +135,14 @@ const CityMembers = () => {
           Назад
         </Button>
       </div>
-      <AddAdministratorModal
-        admin={admin}
-        setAdmin={setAdmin}
-        visibleModal={visibleModal}
-        setVisibleModal={setVisibleModal}
-        //adminType={adminType}
-        //setAdminType={setAdminType}
-      ></AddAdministratorModal>
+      {canEdit ? (
+        <AddAdministratorModal
+          admin={admin}
+          setAdmin={setAdmin}
+          visibleModal={visibleModal}
+          setVisibleModal={setVisibleModal}
+        ></AddAdministratorModal>
+      ) : null}
     </Layout.Content>
   );
 };

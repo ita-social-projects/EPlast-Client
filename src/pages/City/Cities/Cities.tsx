@@ -96,8 +96,7 @@ const Cities = () => {
                       <Skeleton.Avatar
                         shape="square"
                         active
-                        size={128}
-                        style={{marginTop: "5px"}}
+                        size={154}
                       />
                     </div>
                   ) : (

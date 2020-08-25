@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Col, DatePicker, Form, Input, Modal, Row } from "antd";
+import { AutoComplete, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import classes from "./AddAdministrationModal.module.css";
 import CityAdmin from "./../../../models/City/CityAdmin";
 import AdminType from './../../../models/Admin/AdminType';
@@ -13,8 +13,6 @@ interface Props {
   setVisibleModal: (visibleModal: boolean) => void;
   admin: CityAdmin;
   setAdmin: (admin: CityAdmin) => void;
-  //adminType: AdminType;
-  //setAdminType: (adminType: AdminType) => void;
 }
 
 const AddAdministratorModal = (props: Props) => {
@@ -37,7 +35,6 @@ const AddAdministratorModal = (props: Props) => {
       ...props.admin,
       adminType: { ...new AdminType(), adminTypeName: adminTypeName },
     });
-    //props.setAdminType({ ...props.adminType, adminTypeName: adminTypeName });
   };
 
   const disabledEndDate = (current: any) => {
@@ -78,19 +75,22 @@ const AddAdministratorModal = (props: Props) => {
       onCancel={handleCancel}
     >
       <Form>
-        {/* <Form.Item
-          name="adminType"
-          label="Тип адміністрування"
-          rules={[{ required: true }]}
-          className={classes.formField}
-          initialValue={props.adminType.adminTypeName}
-        >
-        </Form.Item> */}
-        <Input
-          required
-          onChange={(event) => handleChangeType(event.target.value)}
+        <AutoComplete
           value={props.admin.adminType.adminTypeName}
-        />
+          style={{ width: "100%", marginBottom: "10px" }}
+          options={[
+            { value: "Голова Станиці" },
+            { value: "Адміністратор" },
+            { value: "Писар" },
+            { value: "Скарбник" },
+            { value: "Бунчужний" },
+          ]}
+          filterOption={(inputValue, option) =>
+            option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+          }
+          onChange={handleChangeType}
+          placeholder={"Тип адміністрування"}
+        ></AutoComplete>
         <Row>
           <Col span={11}>
             <DatePicker

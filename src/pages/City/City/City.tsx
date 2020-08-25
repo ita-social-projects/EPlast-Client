@@ -11,6 +11,7 @@ import CityProfile from "../../../models/City/CityProfile";
 import CityMember from '../../../models/City/CityMember';
 import CityAdmin from '../../../models/City/CityAdmin';
 import CityDocument from '../../../models/City/CityDocument';
+import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
 
 const City = () => {
   const history = useHistory();
@@ -19,6 +20,7 @@ const City = () => {
   const [loading, setLoading] = useState(false);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
   const [cityLogo64, setCityLogo64] = useState<string>("");
+  const [visibleModal, setVisibleModal] = useState(false);
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
   const [members, setMembers] = useState<CityMember[]>([]);
   const [followers, setFollowers] = useState<CityMember[]>([]);
@@ -28,15 +30,19 @@ const City = () => {
   const [canJoin, setCanJoin] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
+  const [document, setDocument] = useState<CityDocument>(new CityDocument());
 
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
-    
+    member.data.user.imagePath = (
+      await userApi.getImage(member.data.user.imagePath)
+    ).data;
+
     if (members.length < 6) {
       setMembers([...members, member.data]);
     }
 
-    setFollowers(followers.filter(f => f.id !== memberId));
+    setFollowers(followers.filter((f) => f.id !== memberId));
   };
 
   const addMember = async (cityId: number) => {
@@ -71,6 +77,12 @@ const City = () => {
     }
     setCityLogoLoading(false);
   };
+
+  const onAdd = (newDocument: CityDocument) => {
+    if (documents.length < 6) {
+      setDocuments([...documents, newDocument]);
+    }
+  }
 
   function seeModal () {
     return Modal.confirm({
@@ -155,7 +167,7 @@ const City = () => {
               <Col flex="1" offset={1}>
                 <div className={classes.mainInfo}>
                   {cityLogoLoading ? (
-                    <Skeleton.Avatar active shape={"square"} size={172}/>
+                    <Skeleton.Avatar active shape={"square"} size={172} />
                   ) : (
                     <img
                       src={cityLogo64}
@@ -252,10 +264,10 @@ const City = () => {
                       }
                     >
                       {photosLoading ? (
-                        <Skeleton.Avatar active size={86}></Skeleton.Avatar>
+                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
                         <Avatar
-                          size={86}
+                          size={64}
                           src={member.user.imagePath}
                           className={classes.detailsIcon}
                         />
@@ -320,10 +332,10 @@ const City = () => {
                       }
                     >
                       {photosLoading ? (
-                        <Skeleton.Avatar active size={86}></Skeleton.Avatar>
+                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
                         <Avatar
-                          size={86}
+                          size={64}
                           src={member.user.imagePath}
                           className={classes.detailsIcon}
                         />
@@ -403,7 +415,10 @@ const City = () => {
               </Button>
               {canEdit ? (
                 <div className={classes.flexContainer}>
-                  <PlusSquareFilled className={classes.addReportIcon} />
+                  <PlusSquareFilled
+                    className={classes.addReportIcon}
+                    onClick={() => setVisibleModal(true)}
+                  />
                 </div>
               ) : null}
             </div>
@@ -459,10 +474,10 @@ const City = () => {
                         }
                       >
                         {photosLoading ? (
-                          <Skeleton.Avatar active size={86}></Skeleton.Avatar>
+                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                         ) : (
                           <Avatar
-                            size={86}
+                            size={64}
                             src={member.user.imagePath}
                             className={classes.detailsIcon}
                           />
@@ -500,6 +515,17 @@ const City = () => {
           </section>
         </Col>
       </Row>
+
+      {canEdit ? (
+        <AddDocumentModal
+          cityId={+id}
+          document={document}
+          setDocument={setDocument}
+          visibleModal={visibleModal}
+          setVisibleModal={setVisibleModal}
+          onAdd={onAdd}
+        ></AddDocumentModal>
+      ) : null}
     </Layout.Content>
   ) : (
     <h1 className={classes.title}>Місто не знайдено</h1>
