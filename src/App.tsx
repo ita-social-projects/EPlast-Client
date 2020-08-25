@@ -39,7 +39,8 @@ import AnnualReportTable from './pages/AnnualReport/AnnualReportTable/AnnualRepo
 import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
 import NotFound from "./pages/Error/NotFound";
 import UserTable from "./pages/UserTable/UserTable";
-import KadrasTable from "./pages/KadraVykhovnykiv/KadrasPage"
+import UserDistinctions from "./pages/Distinction/DistinctionTable/DistinctionTable";
+import KadrasTable from "./pages/KadraVykhovnykiv/KadrasPage";
 
 const App: FC = () => (
   <div className="App">
@@ -232,6 +233,12 @@ const App: FC = () => (
             exact
             path="/kadra"
             component={KadrasTable}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/distinctions"
+            component={UserDistinctions}
           />
           <RouteWithLayout
             layout={PrivateLayout}
