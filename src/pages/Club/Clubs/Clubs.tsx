@@ -16,14 +16,14 @@ interface CardProps {
 const Clubs = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
-  const [clubs, setData] = useState([]);
+  const [clubs, setClubs] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const getClubs = async () => {
     const fetchData = async () => {
         setLoading(true);
         const res = await clubsApi.getAll();
-        setData(res.data);
+        setClubs(res.data);
         setLoading(false);
       };
       fetchData();
