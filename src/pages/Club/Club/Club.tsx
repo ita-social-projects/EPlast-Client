@@ -6,9 +6,8 @@ import {
   FileTextOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import clubsApi from "../../api/clubsApi";
-
-const classes = require("./Club.module.css");
+import clubsApi from "../../../api/clubsApi";
+import classes from "./Club.module.css";
 
 interface ClubData {
   club: Club;
@@ -45,14 +44,15 @@ const Club = () => {
   const [counter, setCounter] = useState(0);
   const [club, setData] = useState<ClubData>();
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    setLoading(true);
     const fetchData = async () => {
+      setLoading(true);
       const res = await clubsApi.getById(id);
       setData(res.data);
+      setLoading(false);
     };
     fetchData();
-    setLoading(false);
   }, []);
 
   const typoExpand = () => {

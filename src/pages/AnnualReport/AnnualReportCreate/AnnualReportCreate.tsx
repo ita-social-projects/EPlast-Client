@@ -62,7 +62,7 @@ export const AnnualReportCreate = () => {
             .then(response => {
                 let cityName = response.data.name;
                 setTitle(title.concat(' ', cityName));
-                setMembers(response.data.members);
+                setMembers((response.data.members as []).map((item: any) => item.user));
             })
             .catch((error: AxiosError) => {
                 showError(error.response?.data.message);
@@ -108,7 +108,7 @@ export const AnnualReportCreate = () => {
     const showSuccess = (message: string) => {
         Modal.success({
             content: message,
-            onOk: () => { history.push('/userpage/main'); }
+            onOk: () => { history.goBack(); }
         });
     }
 
@@ -116,7 +116,7 @@ export const AnnualReportCreate = () => {
         Modal.error({
             title: 'Помилка!',
             content: message,
-            onOk: () => { history.push('/userpage/main'); }
+            onOk: () => { history.goBack(); }
         });
     }
 

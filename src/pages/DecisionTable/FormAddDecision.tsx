@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Form, DatePicker, Select, Input, Upload, Button } from 'antd';
+import { Form, DatePicker, Select, Input, Upload, Button, AutoComplete } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 
 import decisionsApi, {
@@ -58,7 +58,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
       name: values.name,
       decisionStatusType: statusTypePostParser(JSON.parse(values.decisionStatusType)),
       organization:JSON.parse(values.organization),
-      decisionTarget:JSON.parse(values.decisionTarget),
+      decisionTarget:{id:0, targetName:values.decisionTarget},
       description: values.description,
       date:/* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values.datepicker._d,
       fileName: fileData.FileName,
@@ -67,9 +67,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
   }
   await decisionsApi.post(newDecision);
   setVisibleModal(false);
-  const dst : decisionStatusType = JSON.parse(values.decisionStatusType);
-  const dt : decisionTarget = JSON.parse(values.decisionTarget);
- 
+
   onAdd();
   form.resetFields();
   }
@@ -124,13 +122,12 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
        name ="decisionTarget"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
 
-        <Select
-        showSearch
-        optionFilterProp="children"
+        <AutoComplete
+        filterOption={true}
         className={formclasses.selectField}
         >
-        {data?.decisionTargets.map(dt => ( <Select.Option key ={dt.id }value={JSON.stringify(dt)}>{dt.targetName}</Select.Option>))}
-        </Select>
+        {data?.decisionTargets.map(dt => ( <Select.Option key ={dt.id }value={dt.targetName}>{dt.targetName}</Select.Option>))}
+        </AutoComplete>
         
       </Form.Item>
 
@@ -153,6 +150,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
          className={formclasses.inputField}/>
       </Form.Item>
       <Form.Item label="Прикріпити">
+        
         <Form.Item
         className={formclasses.formField}
           name="dragger"
@@ -174,13 +172,21 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
             <p className="ant-upload-hint">
               Клікніть або перетягніть файл для завантаження
             </p>
+
+            {fileData.FileAsBase64 !== null &&<div><div>{fileData.FileName}</div> </div>}
           </Upload.Dragger>
-        </Form.Item>  
-      {fileData.FileAsBase64 !== null &&<div><div>{fileData.FileName}</div> <Button className = {classes.cardButton} onClick= {()=>{
+         
+          {fileData.FileAsBase64 !== null &&<div><Button className = {formclasses.cardButton} onClick= {()=>{
         setFileData({FileAsBase64 : null, FileName: null});
         notificationLogic('success', "Файл видалено");
-      }}> Видалити файл</Button></div>}
+      }}> Видалити файл</Button> </div>}
+          
+
+        </Form.Item>  
+        
+       
       </Form.Item>
+      
       <Form.Item
       className={formclasses.formField}
        label="Статус рішення"

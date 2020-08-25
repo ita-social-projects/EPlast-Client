@@ -6,6 +6,7 @@ import moment from 'moment';
 import AvatarAndProgress from './AvatarAndProgress';
 import { Data } from '../Interface/Interface';
 import {useParams} from 'react-router-dom';
+import notificationLogic from '../../../components/Notifications/Notification';
 
 export default function () {
   const {userId}=useParams(); 
@@ -15,7 +16,7 @@ export default function () {
     await userApi.getById(userId).then(response =>{
       setData(response.data);
       setLoading(true);
-    })
+    }).catch(()=>{notificationLogic('error', "Щось пішло не так")})
   };
       
       useEffect(() => {
@@ -24,7 +25,7 @@ export default function () {
       
       return loading === false ? (
         <div className="spaceWrapper">
-          <Space className="styles.loader" size="large">
+          <Space className="loader" size="large">
             <Spin size="large" />
           </Space>
         </div>
@@ -33,10 +34,9 @@ export default function () {
         <div className="container">
          <Form name="basic" className="formContainer">
         <div className="avatarWrapper">
-          <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName}/>
+          <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun}/>
         </div>
         <div className="allFields">
-          <h2 className="title">Особистий профіль</h2>
           <div className="rowBlock">
             <Form.Item
               label="Ім`я"
@@ -191,237 +191,5 @@ export default function () {
       </Form>
      
     </div>
-
-      // <div className="userFieldsWrapper">
-      // <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName}/>
-      // <div >
-        
-      // <div className={styles.allFields}>
-      //   <h2 className="title">Особистий профіль</h2>
-      //     <div className={styles.rowBlock}>
-      //       <Form.Item
-      //         label="Ім`я"
-      //         className={styles.formItem}
-      //       >
-      //         {data?.user.firstName!==null && data?.user.firstName!==""? 
-      //               (<Input readOnly className={styles.dataInput} value={data?.user.firstName}/>):
-      //                 (<span>-</span>)
-      //             }
-      //       </Form.Item>
-      //       <Form.Item
-      //         label="Прізвище"
-      //         className={styles.formItem}
-      //       >
-      //         {(data?.user.lastName!==null && data?.user.lastName!=="")? 
-      //               (<Input readOnly className={styles.dataInput} value={data?.user.lastName} />):
-      //                 (<span>-</span>)
-      //             }
-      //       </Form.Item>
-      //     </div>
-      //     <div className={styles.rowBlock}>
-      //       <Form.Item
-      //         label="По-батькові"
-      //         className={styles.formItem}
-      //       >
-      //         <Input disabled  className={styles.dataInput}/>
-      //       </Form.Item>
-      //       <Form.Item 
-      //         label="Стать" 
-      //         className={styles.formItem}
-      //         >
-      //          <Input disabled className={styles.dataInput} />
-      //       </Form.Item>
-      //     </div>
-         
-      //     <div className={styles.rowBlock}>
-      //       <Form.Item
-      //         label="Дата народження"
-      //         className={styles.formItem}
-      //       >
-      //          <Input disabled className={styles.dataInput} /> 
-             
-      //       </Form.Item>
-      //       <Form.Item
-      //         label="Номер телефону"
-      //         className={styles.formItem}
-      //       >
-      //           <Input disabled className={styles.dataInput} />
-      //       </Form.Item>
-           
-      //     </div>
-      //     <div className={styles.rowBlock}>
-      //       <Form.Item
-      //         label="Національність"
-      //         className={styles.formItem}
-      //       >
-      //          <Input disabled className={styles.dataInput} />
-      //       </Form.Item>
-      //       <Form.Item
-      //         label="Віровизнання"
-      //         className={styles.formItem}
-      //       >
-      //        <Input disabled className={styles.dataInput} />
-      //       </Form.Item>
-           
-      //     </div>
-          
-      //     <div className={styles.rowBlock}>
-      //       <Form.Item
-      //         label="Навчальний заклад"
-      //         className={styles.formItem}
-      //       >
-      //         <Input disabled className={styles.dataInput} />
-      //       </Form.Item>
-      //       <Form.Item
-      //         label="Спеціальність"
-      //         className={styles.formItem}
-      //       >
-      //          <Input disabled className={styles.dataInput} />
-      //       </Form.Item>
-      //     </div>
-      //     <div className={styles.rowBlock}>
-      //       <Form.Item
-      //         label="Навчальний ступінь"
-      //         className={styles.formItem}
-      //       >
-      //          <Input disabled className={styles.dataInput} />
-      //       </Form.Item>
-      //       <Form.Item
-      //         label="Місце праці"
-      //         className={styles.formItem}
-      //       >
-      //        <Input disabled className={styles.dataInput} />
-      //       </Form.Item>
-      //     </div>
-      //     <div className={styles.rowBlock}>
-      //       <Form.Item
-      //         label="Посада"
-      //         className={styles.formItem}
-      //       >
-      //         <Input disabled className={styles.dataInput} />
-      //       </Form.Item>
-      //       <Form.Item
-      //         label="Адреса проживання"
-      //         className={styles.formItem}
-      //       >
-      //         <Input disabled className={styles.dataInput} />
-      //       </Form.Item>
-      //     </div>
-      //   </div>
-      
-      //   {/* <div className="tableWrapper">
-      //     <table className="table">
-      //       <tbody>
-      //         <tr>
-      //           <td className="td">Прізвище:</td>
-      //           <td className="td">Ім`я:</td>
-      //         </tr>
-      //         <tr>
-      //           <td className="td">
-      //             {(data?.user.lastName!==null && data?.user.lastName!=="")? 
-      //               (<span>{data?.user.lastName}</span>):
-      //                 (<span>-</span>)
-      //             }
-      //           </td>
-      //           <td className="td">
-      //             {data?.user.firstName!==null && data?.user.firstName!==""? 
-      //               (<span>{data?.user.firstName}</span>):
-      //                 (<span>-</span>)
-      //             }
-      //           </td>
-      //         </tr>
-      //         <tr>
-      //         <td className="td">Стать:</td>
-      //           <td className="td">Номер телефону:</td>
-      //         </tr>
-      //         <tr>
-      //           <td className="td">
-      //             {data?.user.gender.name!==null && data?.user.gender.name!==""? 
-      //               (<span>{data?.user.gender.name}</span>):
-      //                 <span>-</span>
-      //             }
-      //           </td>
-      //           <td className="td">
-      //             {data?.user.phoneNumber!==null && data?.user.phoneNumber!==""? 
-      //               (<span>{data?.user.phoneNumber}</span>):
-      //                 <span>-</span>
-      //             }
-      //           </td>
-      //         </tr>
-      //         <tr>
-      //           <td className="td">Національність:</td>
-      //           <td className="td">Віровизнання:</td>
-      //         </tr>
-      //         <tr>
-      //           <td className="td">
-      //             {data?.user.nationality.name!==null && data?.user.nationality.name!==""? 
-      //               (<span>{data?.user.nationality.name}</span>):
-      //                 <span>-</span>
-      //             }
-      //           </td>
-      //           <td className="td">
-      //             {data?.user.religion.name!==null && data?.user.religion.name!==""? 
-      //               (<span>{data?.user.religion.name}</span>):
-      //                 <span>-</span>
-      //             }
-      //           </td>
-      //         </tr>
-      //         <tr>
-      //           <td className="td">Дата народження:</td>
-      //           <td className="td">Науковий ступінь:</td>
-      //         </tr>
-      //         <tr>
-      //           <td className="td">
-      //             <span>{moment(data?.user.birthday).format("DD-MM-YYYY")}</span>
-      //           </td>
-      //           <td className="td">
-      //             {data?.user.degree.name!==null && data?.user.degree.name!==""? 
-      //               (<span>{data?.user.degree.name}</span>):
-      //                 <span>-</span>
-      //             }
-      //           </td>
-      //         </tr>
-      //         <tr>
-      //           <td className="td">Місце навчання:</td>
-      //           <td className="td">Спецальність:</td>
-      //         </tr>
-      //         <tr>
-      //           <td className="td">
-      //             {data?.user.education.placeOfStudy!==null && data?.user.education.placeOfStudy!==""? 
-      //               (<span>{data?.user.education.placeOfStudy}</span>):
-      //                 <span>-</span>
-      //             }
-      //           </td>
-      //           <td className="td">
-      //             {data?.user.education.speciality!=null && data?.user.education.speciality!=''? 
-      //               (<span>{data?.user.education.speciality}</span>):
-      //                 <span>-</span>
-      //             }
-      //           </td>
-      //         </tr>
-      //         <tr>
-      //           <td className="td">Посада:</td>
-      //           <td className="td">Місце роботи:</td>
-      //         </tr>
-      //         <tr>
-      //         <td className="td">
-      //             {data?.user.work.position!==null && data?.user.work.position!==""? 
-      //               (<span>{data?.user.work.position}</span>):
-      //                 <span>-</span>
-      //             }
-      //           </td>
-      //           <td className="td">
-      //             {data?.user.work.placeOfwork!==null && data?.user.work.placeOfwork!==""? 
-      //               (<span>{data?.user.work.placeOfwork}</span>):
-      //                 <span>-</span>
-      //             }
-      //           </td>
-      //         </tr>
-      //       </tbody>
-      //     </table>
-      //   </div> */}
-      //   <Button className="btn">Обрати/змінити курінь</Button>
-      // </div>
-      // </div>
       );
 }

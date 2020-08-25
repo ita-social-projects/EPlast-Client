@@ -1,19 +1,22 @@
-.wrapper{
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    width: 100%;
-    margin: 0 0 0 20px;
-}
 .displayFlex{
     display: flex;
+}
+
+.avatarWrapper{
+    width:  calc(80% - 30px);
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    align-items: end;
+    margin:0 40px 20px 0;
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 .approversCard{
     display: flex;
     justify-content: center;
-    align-items: end;
+    align-items: flex-end;
 
 }
 .cardStyles{
@@ -30,6 +33,12 @@
     color:#3c5438;
     border-color: #3c5438;
 }
+.cardBodyEmpty{
+    height: 70px;
+}
+.cardP{
+    height: 25px;
+}
 .titleText{
     text-align: center;
     font-size: 20px;
@@ -42,7 +51,19 @@
     height: 168px;
 }
 .approversContent{
-    margin-left: 5%;
+    width:  calc(80% - 30px);
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin:0 40px 20px 0;
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+}
+
+.approversContent:hover{
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 .spaceWrapper{
     position: fixed;
@@ -60,29 +81,34 @@
     transform:translateX(-50%) ;
     
 }
-@media(max-width: 1000px){
-    .content{
-        margin-left: 0;
-    }
-}
-@media(max-width: 824px){
+
+@media(max-width:767px){
     .displayFlex{
-        display: block;
+        flex-direction: column;
     }
-    .content{
-        margin-left: 0;
-    }
-}
-@media(max-width: 586px){
-    .approversCard{
-        display: block;
+    .approversContent{
+        width: 100%;
+        flex-direction: column;
     }
 }
-/* @media(min-width: 500px){
-    .displayFlex{
-        display: block;
-    }
-    .content{
-        margin-left: 0;
-    }
-} */
+// @media(max-width: 1174px){
+//     .approversContent{
+//         margin-left: 0;
+//     }
+// }
+// @media(max-width: 1000px){
+  
+//     .approversCard{
+//         display: block;
+//     }
+// }
+// @media(max-width: 824px){
+//     .displayFlex{
+//         display: block;
+//     }
+// }
+// @media(max-width: 586px){
+//     .approversCard{
+//         display: block;
+//     }
+// }

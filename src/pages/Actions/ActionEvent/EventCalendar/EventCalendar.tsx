@@ -52,8 +52,6 @@ export default function () {
         return (actions as Array<any>).concat(educations as Array<any>).concat(camps as Array<any>);
     }
 
-
-
     const handleEventClick = (clickInfo: any) => {
         setEventModal(true);
         setEventInfo(clickInfo);
@@ -90,7 +88,7 @@ export default function () {
                         headerToolbar={{
                             left: 'prev,next today',
                             center: 'title',
-                            right: 'dayGridMonth,listMonth'
+                            right: ''
                         }}
                         views={{
                             listMonth: { buttonText: 'Список' },

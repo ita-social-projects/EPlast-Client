@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react';
 import TextArea from 'antd/lib/input/TextArea';
 import { useParams, useHistory } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
+import jwt from 'jwt-decode';
 import eventUserApi from '../../../../api/eventUserApi';
 import notificationLogic from '../../../../components/Notifications/Notification';
 import moment from 'moment';
 import 'moment/locale/uk';
 import eventsApi from '../../../../api/eventsApi';
+import AuthStore from '../../../../stores/AuthStore';
 moment.locale('uk-ua');
 
 const classes = require('./EventEdit.module.css');
@@ -149,8 +151,10 @@ export default function () {
                 userId: values.pysarId,
             }
         }
+        const token = AuthStore.getToken() as string;
+        const user: any = jwt(token);
         await eventUserApi.put(newEvent).then(response => {
-            history.push(`/actions/eventuser`);
+            history.push(`/userpage/eventuser/${user.nameid}`);
             notificationLogic('success', 'Подія ' + values.EventName + ' успішно змінена');
 
         }).catch(error => {
@@ -170,6 +174,9 @@ export default function () {
     const onChange = async (e: any) => {
         await eventsApi.getCategories(e.target.value).then(async response => {
             setCategories([...response.data]);
+            form.setFieldsValue({
+                EventCategoryID: '',
+            });
         })
     }
 

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Form, DatePicker, Select, Input, Space, Button, Radio, Spin } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
+import jwt from 'jwt-decode';
 import eventUserApi from '../../../../api/eventUserApi';
 import eventsApi from "../../../../api/eventsApi";
 import notificationLogic from '../../../../components/Notifications/Notification';
 import moment from 'moment';
+import AuthStore from '../../../../stores/AuthStore';
 
 const classes = require('./EventCreate.module.css');
 
@@ -53,6 +55,7 @@ export default function () {
     resetUsers()
   }, selectedUsers);
 
+
   const handleFinish = async (values: any) => {
     const newEvent = {
       event: {
@@ -82,8 +85,10 @@ export default function () {
         userId: values.pysarId,
       }
     }
+    const token = AuthStore.getToken() as string;
+    const user: any = jwt(token);
     await eventUserApi.post(newEvent).then(response => {
-      history.push(`/actions/eventuser`);
+      history.push(`/userpage/eventuser/${user.nameid}`);
       notificationLogic('success', 'Подія ' + values.EventName + ' успішно створена');
     }).catch(error => {
       if (error.response?.status === 400) {
@@ -102,6 +107,9 @@ export default function () {
   function onChange(e: any) {
     eventsApi.getCategories(e.target.value).then(async response => {
       setCategories(response.data);
+      form.setFieldsValue({
+        EventCategoryID: '',
+      });
     })
   };
 
@@ -135,12 +143,13 @@ export default function () {
           <div className={classes.card}>
             <Form name="basic"
               form={form}
-              onFinish={handleFinish}>
+              onFinish={handleFinish}
+            >
               <div className={classes.title} >
                 < Title level={2} > Створення події</ Title>
               </div>
               < div className={classes.radio} >
-                <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio} >
+                <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio}>
                   <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup} onChange={onChange} value={categories}>
                     {data?.eventTypes.map((item: any) => (<Radio.Button key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
                   </Radio.Group>
@@ -149,7 +158,7 @@ export default function () {
               < div className={classes.row} >
                 <h3>Категорія </h3>
                 < Form.Item name="EventCategoryID" className={classes.input} rules={[{ required: true, message: 'Оберіть категорію події' }]} >
-                  <Select showSearch optionFilterProp="children" onSearch={onSearch}  >
+                  <Select notFoundContent="Спочатку оберіть тип події" showSearch optionFilterProp="children" onSearch={onSearch} >
                     {categories.map((item: any) => (<Select.Option key={item.eventCategoryId} value={item.eventCategoryId} > {item.eventCategoryName} </Select.Option>))}
                   </Select>
                 </ Form.Item>
@@ -236,7 +245,7 @@ export default function () {
                 </Form.Item>
               </div>
               < div className={classes.row} >
-                <h3>Які впроваджено зміни / додатки ? </h3>
+                <h3>Опис події</h3>
                 < Form.Item name="Description" rules={[{ required: true, message: 'Вкажіть, які впроваджено зміни' },
                 { max: 50, message: 'Поле не може перевищувати 200 символів' }]}>
                   <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />

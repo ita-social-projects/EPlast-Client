@@ -1,8 +1,13 @@
 import Api from './api';
-// import { NewEvent } from '../models/NewEvent.model';
 
 const getEventsUser = async (id: string | undefined) => {
     const response = await Api.get(`EventsUsers/eventsUsers/${id}`);
+
+    return response;
+};
+
+const getCreatedArchivedEvents = async (id: string | undefined) => {
+    const response = await Api.get(`EventsUsers/createArchivedEvents/${id}`);
 
     return response;
 };
@@ -57,6 +62,7 @@ const put = async (data: any) => {
 
 export default {
     getEventsUser,
+    getCreatedArchivedEvents,
     getDataForNewEvent,
     getEditedEvent,
     getDataForCalendar,
