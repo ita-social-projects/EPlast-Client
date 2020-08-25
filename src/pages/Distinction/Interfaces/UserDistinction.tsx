@@ -1,6 +1,6 @@
 import distinction from './Distinction'
 import { User } from '../../userPage/EditUserPage/Interface';
- interface UserDistinction {
+ type UserDistinction = {
      id: number;
      distinctionId: number;
      distinction: distinction;

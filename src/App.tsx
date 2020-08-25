@@ -39,6 +39,7 @@ import AnnualReportTable from './pages/AnnualReport/AnnualReportTable/AnnualRepo
 import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
 import NotFound from "./pages/Error/NotFound";
 import UserTable from "./pages/UserTable/UserTable";
+import UserDistinctions from "./pages/Distinction/DistinctionTable/DistinctionTable";
 
 const App: FC = () => (
   <div className="App">
@@ -224,6 +225,12 @@ const App: FC = () => (
             exact
             path="/user/table"
             component={UserTable}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/distinctions"
+            component={UserDistinctions}
           />
           <RouteWithLayout
             layout={PrivateLayout}
