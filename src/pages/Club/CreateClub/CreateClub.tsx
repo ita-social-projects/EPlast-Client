@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Layout, Upload, message, Row, Col, Select, notification } from "antd";
+import { Button, Form, Input, Layout, Upload, message, Row, Col, Spin, notification } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons/lib";
 import City from "../../../assets/images/default_city_image.jpg";
 import clubsApi from "../../../api/clubsApi";
@@ -40,10 +40,11 @@ const beforeUpload = (file: RcFile) => {
 };
 
 const CreateClub = () => {
-  const [loading, setLoading] = useState(false);
-  const history = useHistory();
-  const [servLoading, setServLoading] = useState(false);
   const { id } = useParams();
+  const history = useHistory();
+
+  const [loading, setLoading] = useState(false);
+  const [servLoading, setServLoading] = useState(false);
   const [clubLogo, setClubLogo] = useState("");
   const [form] = Form.useForm();
   useEffect(() => {
@@ -86,7 +87,7 @@ const CreateClub = () => {
   };
   const handleSubmit = async (values: any) => {
     notification.info({
-      message: "Створення...",
+      message: id ? "Збереження..." : "Створення...",
       icon: <LoadingOutlined />,
     });
 
@@ -101,11 +102,12 @@ const CreateClub = () => {
     await clubsApi
       .post("Club/" + (id ? "edit" : "create"), newСlub)
       .then((res) => {
+        newСlub.id = res.data.id;
         notification.success({
-          message: "Курінь успішно створено",
+          message: id ? "Курінь успішно оновлено" : "Курінь успішно створено",
           icon: <LoadingOutlined />,
         });
-        history.push(`${newСlub.id}`);
+        id ? history.goBack() : history.push( `${newСlub.id}`);
       })
       .catch((error) => {
         if (error.response && error.response.status === 422) {
@@ -132,20 +134,11 @@ const CreateClub = () => {
     required: "Це поле є обов`язковим!",
   };
 
-  const { Option } = Select;
-
-  const selectBefore = (
-    <Select 
-      defaultValue="https://" 
-      className="select-before"
-    >
-      <Option value="http://">http://</Option>
-      <Option value="https://">https://</Option>
-    </Select>
-  );
-
-  return (
-    <Layout.Content className={classes.createClub}>
+  return ( servLoading ? 
+    (<Layout.Content className={classes.spiner}>
+      <Spin size="large" />
+    </Layout.Content>) :
+    (<Layout.Content className={classes.createClub}>
       <h1 className={classes.mainTitle}>
         {id ? "Редагування" : "Створення"} куреня
       </h1>
@@ -166,7 +159,7 @@ const CreateClub = () => {
               <Input />
             </Form.Item>
             <Form.Item name="clubURL" label="Посилання">
-              <Input addonBefore={selectBefore} />
+              <Input />
             </Form.Item>
             <Form.Item name="description" label="Опис">
               <Input.TextArea rows={5} />
@@ -177,7 +170,7 @@ const CreateClub = () => {
                 type="primary"
                 className={classes.createButton}
               >
-                Створити
+                Зберегти
               </Button>
             </Form.Item>
           </Form>
@@ -200,7 +193,7 @@ const CreateClub = () => {
           </Upload>
         </Col>
       </Row>
-    </Layout.Content>
+    </Layout.Content> )
   );
 };
 
