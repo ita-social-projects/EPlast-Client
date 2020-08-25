@@ -37,7 +37,6 @@ export default function () {
           <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun}/>
         </div>
         <div className="allFields">
-          <h2 className="title">Особистий профіль</h2>
           <div className="rowBlock">
             <Form.Item
               label="Ім`я"

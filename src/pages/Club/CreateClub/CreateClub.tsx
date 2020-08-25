@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Layout, Upload, message, Row, Col } from "antd";
+import { Button, Form, Input, Layout, Upload, message, Row, Col, Spin, notification } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons/lib";
-import City from "../../assets/images/default_city_image.jpg";
-import clubsApi from "../../api/clubsApi";
+import City from "../../../assets/images/default_city_image.jpg";
+import clubsApi from "../../../api/clubsApi";
 import { RcFile } from "antd/lib/upload/interface";
 import { useParams, useHistory } from "react-router-dom";
-
-const classes = require("./CreateClub.module.css");
+import classes from "./CreateClub.module.css";
 
 const dummyRequest = ({ onSuccess }: any) => {
   setTimeout(() => {
@@ -41,9 +40,11 @@ const beforeUpload = (file: RcFile) => {
 };
 
 const CreateClub = () => {
+  const { id } = useParams();
+  const history = useHistory();
+
   const [loading, setLoading] = useState(false);
   const [servLoading, setServLoading] = useState(false);
-  const { id } = useParams();
   const [clubLogo, setClubLogo] = useState("");
   const [form] = Form.useForm();
   useEffect(() => {
@@ -85,7 +86,11 @@ const CreateClub = () => {
     }
   };
   const handleSubmit = async (values: any) => {
-    message.loading("Створення...");
+    notification.info({
+      message: id ? "Збереження..." : "Створення...",
+      icon: <LoadingOutlined />,
+    });
+
     const newСlub = {
       id: id,
       clubName: values.clubName,
@@ -93,13 +98,31 @@ const CreateClub = () => {
       description: values.description,
       logo: clubLogo,
     };
-
+    
     await clubsApi
       .post("Club/" + (id ? "edit" : "create"), newСlub)
-      .then((res) => console.log(res))
-      .catch((error) => console.log(error));
-    message.loading("Створенно!");
+      .then((res) => {
+        newСlub.id = res.data.id;
+        notification.success({
+          message: id ? "Курінь успішно оновлено" : "Курінь успішно створено",
+          icon: <LoadingOutlined />,
+        });
+        id ? history.goBack() : history.push( `${newСlub.id}`);
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 422) {
+          notification.error({
+            message: "Не вдалося створити курінь (Курінь з таким ім'ям вже існує)",
+          });
+        }
+        else {
+          notification.error({
+            message: "Не вдалося створити курінь",
+          });
+        }
+      });
   };
+
   const uploadButton = (
     <div>
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -111,8 +134,11 @@ const CreateClub = () => {
     required: "Це поле є обов`язковим!",
   };
 
-  return (
-    <Layout.Content className={classes.createClub}>
+  return ( servLoading ? 
+    (<Layout.Content className={classes.spiner}>
+      <Spin size="large" />
+    </Layout.Content>) :
+    (<Layout.Content className={classes.createClub}>
       <h1 className={classes.mainTitle}>
         {id ? "Редагування" : "Створення"} куреня
       </h1>
@@ -144,7 +170,7 @@ const CreateClub = () => {
                 type="primary"
                 className={classes.createButton}
               >
-                Створити
+                Зберегти
               </Button>
             </Form.Item>
           </Form>
@@ -167,7 +193,7 @@ const CreateClub = () => {
           </Upload>
         </Col>
       </Row>
-    </Layout.Content>
+    </Layout.Content> )
   );
 };
 

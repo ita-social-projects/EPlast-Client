@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { Avatar, Modal, Button, Typography, Badge, Space, Spin, Checkbox, Tooltip, Skeleton } from 'antd';
+import { Avatar, Modal, Button, Typography, Badge, Space, Spin, Checkbox, Tooltip, Skeleton, Switch } from 'antd';
 import eventUserApi from '../../../../api/eventUserApi';
 import classes from './EventUser.module.css';
 import userApi from '../../../../api/UserApi';
 import AuthStore from '../../../../stores/AuthStore';
 import jwt from 'jwt-decode';
-import { CalendarOutlined, FlagTwoTone, NotificationTwoTone, ToolTwoTone } from '@ant-design/icons';
+import { CalendarOutlined, NotificationTwoTone, ToolTwoTone } from '@ant-design/icons';
 import moment from 'moment';
 const { Title } = Typography;
 
@@ -44,6 +44,7 @@ const EventUser = () => {
             firstName: '',
             lastName: '',
         },
+        userRoles: [''],
         planedEvents: [{
             id: 0,
             eventName: '',
@@ -70,9 +71,9 @@ const EventUser = () => {
             const token = AuthStore.getToken() as string;
             setUserToken(jwt(token));
             await eventUserApi.getEventsUser(userId).then(async response => {
-                const { user, planedEvents, createdEvents, visitedEvents } = response.data;
+                const { user, userRoles, planedEvents, createdEvents, visitedEvents } = response.data;
                 console.log(response.data);
-                setData({ user, planedEvents, visitedEvents });
+                setData({ user, userRoles, planedEvents, visitedEvents });
                 setCreatedEvents({ user, createdEvents });
                 await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
                     setImageBase64(response.data);
@@ -83,9 +84,9 @@ const EventUser = () => {
         fetchData();
     }, []);
 
-    async function renderArchiveEvents(e: any) {
-        setChecked(e.target.checked);
-        if (checked === false) {
+    async function renderArchiveEvents(checked: any) {
+        setChecked(checked);
+        if (checked === true) {
             await eventUserApi.getCreatedArchivedEvents(userId).then(async response => {
                 const { user, createdEvents } = response.data;
                 setCreatedEvents({ user, createdEvents });
@@ -110,14 +111,13 @@ const EventUser = () => {
     ) : (
             <div className={classes.wrapper} >
                 <div className={classes.wrapperImg}>
-                    <Avatar size={250} src={imageBase64} />
+                    <Avatar className={classes.avatar} size={250} src={imageBase64} />
                     <Title level={2}> {data?.user.firstName} {data?.user.lastName} </Title>
-                    < div className={classes.line} id={classes.line} />
-                    {data?.user.userPlastDegreeName}
+                    < div className={classes.line} />
                     {userToken.nameid === userId && createdEvents?.createdEvents.length !== 0 &&
                         < Button type="primary" className={classes.button} onClick={() => history.push('/actions/eventCreate')} >
                             Створити подію
-                 </Button>}
+                        </Button>}
                 </div>
                 < div className={classes.wrapperCol} >
                     <div className={classes.wrapper}>
@@ -195,12 +195,12 @@ const EventUser = () => {
                                 onCancel={() => setCreatedEventsModal(false)}
                                 footer={
                                     [
-                                        <Checkbox checked={checked} onChange={(checked: any) => renderArchiveEvents(checked)}>
-                                            Показати завершені події
-                                       </Checkbox>,
+                                        <div className={classes.modalFooter}>
+                                        <Switch size="default" unCheckedChildren="Архів" checked={checked} onChange={(checked: any) => renderArchiveEvents(checked)}/>
                                         <Button type="primary" key='submit' className={classes.button} onClick={() => setCreatedEventsModal(false)}>
                                             Закрити
                                         </Button>
+                                        </div>
                                     ]}
                             >
                                 {createdEvents.createdEvents.map((item: any) =>

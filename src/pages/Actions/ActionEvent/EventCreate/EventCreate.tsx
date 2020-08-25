@@ -88,7 +88,7 @@ export default function () {
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
     await eventUserApi.post(newEvent).then(response => {
-      history.push(`/actions/eventuser/${user.nameid}`);
+      history.push(`/userpage/eventuser/${user.nameid}`);
       notificationLogic('success', 'Подія ' + values.EventName + ' успішно створена');
     }).catch(error => {
       if (error.response?.status === 400) {
@@ -245,7 +245,7 @@ export default function () {
                 </Form.Item>
               </div>
               < div className={classes.row} >
-                <h3>Які впроваджено зміни / додатки ? </h3>
+                <h3>Опис події</h3>
                 < Form.Item name="Description" rules={[{ required: true, message: 'Вкажіть, які впроваджено зміни' },
                 { max: 50, message: 'Поле не може перевищувати 200 символів' }]}>
                   <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />

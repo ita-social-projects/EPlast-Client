@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { Table, Input, Layout, Row, Col, Space, Spin, Typography, Button } from 'antd';
 import adminApi from '../../api/adminApi';
 import DropDownUserTable from './DropDownUserTable';
 import Title from 'antd/lib/typography/Title';
 import ColumnsForUserTable from './ColumnsForUserTable';
-import Search from 'antd/lib/input/Search';
-import ClickAwayListener from 'react-click-away-listener';
 const classes = require('./UserTable.module.css');
 
 const UserTable = () => {
@@ -30,6 +27,20 @@ const UserTable = () => {
         userRoles: ''
     }])
 
+    const [updatedUser, setUpdatedUser] = useState([{
+        user: {
+            id: '',
+            firstName: '',
+            lastName: '',
+            birthday: '',
+        },
+        regionName: '',
+        cityName: '',
+        clubName: '',
+        userPlastDegreeName: '',
+        userRoles: ''
+    }]);
+
     useEffect(() => {
         const fetchData = async () => {
             await adminApi.getUsersForTable().then(response => {
@@ -38,9 +49,9 @@ const UserTable = () => {
             setLoading(true);
         }
         fetchData();
-    }, [])
+    }, [updatedUser])
 
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearch = (event: any) => {
         setSearchedData(event.target.value);
     };
 
@@ -57,7 +68,7 @@ const UserTable = () => {
     const filteredData = searchedData
         ? users.filter((item: any) => {
             return Object.values(item).find((element) => {
-                return String(element).includes(searchedData);
+                return String(element).toLowerCase().includes(searchedData.toLowerCase());
             });
         })
         : users;
@@ -67,6 +78,11 @@ const UserTable = () => {
         setUsers([...filteredData]);
     }
 
+    const updateItems = () => {
+        const newItems = users.push(updatedUser);
+        setUpdatedUser([...newItems]);
+    }
+
     const handleChange = (id: string, userRoles: string) => {
         const filteredData = users.filter((d: any) => {
             if (d.id === id) {
@@ -74,12 +90,9 @@ const UserTable = () => {
             }
             return d;
         });
+        setUpdatedUser([...filteredData]);
         setUsers([...filteredData]);
     }
-
-    const handleClickAway = () => {
-        setShowDropdown(false);
-    };
 
     return loading === false ? (
         <div className={classes.spaceWrapper}>
@@ -91,12 +104,11 @@ const UserTable = () => {
             <Layout.Content
                 onClick={() => { setShowDropdown(false) }}
             >
-                <ClickAwayListener onClickAway={handleClickAway}></ClickAwayListener>
                 <Title level={2}>Таблиця користувачів</Title>
                 <Row
                     gutter={16}>
                     <Col span={4}>
-                        <Search placeholder='Пошук' onChange={handleSearch} enterButton="Пошук" />
+                        <Input.Search placeholder="Пошук" onChange={handleSearch} />
                     </Col>
                 </Row>
                 <Table

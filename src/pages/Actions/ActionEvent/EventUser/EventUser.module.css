@@ -147,8 +147,7 @@
 #button {
     align-items: center;
     margin: 10px auto;
-    display: inline-block;
-    margin: 10px 0 0 65px;
+    display: inherit;
     flex-grow: 1;
 }
 
@@ -171,6 +170,11 @@
     top: 50%;
     left: 50%;
     transform: translateX(-50%);
+}
+
+.roles{
+    justify-content: center;
+    display: flex;
 }
 
 h1 {
@@ -202,6 +206,9 @@ h2 {
     .wrapperImg {
         width: 100%;
         padding: 0;
+        height: auto;
+        padding-bottom: 5px;
+        padding-top: 5px;
         margin: 0 0 10px;
         text-align: center;
     }
@@ -218,5 +225,9 @@ h2 {
     .wrapper4,
     .wrapper5 {
         margin: 10px 0;
+    }
+    .avatar{
+        height: 200px !important;
+        width: 200px !important;
     }
 }

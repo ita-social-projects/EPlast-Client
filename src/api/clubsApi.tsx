@@ -3,7 +3,7 @@ import Api from "./api";
 import BASE_URL from "../config";
 
 const getById = async (id: number) => {
-  const response = await Api.get("Club", id);
+  const response = await Api.get("Club/" + id);
   return response;
 };
 
