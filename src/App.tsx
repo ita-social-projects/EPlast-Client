@@ -40,6 +40,7 @@ import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReport
 import NotFound from "./pages/Error/NotFound";
 import UserTable from "./pages/UserTable/UserTable";
 import UserDistinctions from "./pages/Distinction/DistinctionTable/DistinctionTable";
+import KadrasTable from "./pages/KadraVykhovnykiv/KadrasPage";
 
 const App: FC = () => (
   <div className="App">
@@ -202,6 +203,7 @@ const App: FC = () => (
             path="/clubs/new"
             component={CreateClub}
           />
+          
           <RouteWithLayout
             layout={PrivateLayout}
             exact
@@ -226,6 +228,12 @@ const App: FC = () => (
             path="/user/table"
             component={UserTable}
           />
+           <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/kadra"
+            component={KadrasTable}
+          />
           <RouteWithLayout
             layout={PrivateLayout}
             exact
@@ -238,6 +246,8 @@ const App: FC = () => (
             path="*"
             component={NotFound}
           />
+         
+          
         </Switch>
       </div>
       <FooterContainer />
