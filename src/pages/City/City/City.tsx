@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Row, Col, Button, Spin, Layout, Modal } from "antd";
+import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton } from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, CloseOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../../api/citiesApi";
@@ -11,6 +11,7 @@ import CityProfile from "../../../models/City/CityProfile";
 import CityMember from '../../../models/City/CityMember';
 import CityAdmin from '../../../models/City/CityAdmin';
 import CityDocument from '../../../models/City/CityDocument';
+import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
 
 const City = () => {
   const history = useHistory();
@@ -18,6 +19,8 @@ const City = () => {
 
   const [loading, setLoading] = useState(false);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
+  const [cityLogo64, setCityLogo64] = useState<string>("");
+  const [visibleModal, setVisibleModal] = useState(false);
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
   const [members, setMembers] = useState<CityMember[]>([]);
   const [followers, setFollowers] = useState<CityMember[]>([]);
@@ -25,17 +28,21 @@ const City = () => {
   const [canCreate, setCanCreate] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const [canJoin, setCanJoin] = useState(false);
-  const [canApprove, setCanApprove] = useState(false);
-  const [canAddReports, setCanAddReports] = useState(false);
+  const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+  const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
+  const [document, setDocument] = useState<CityDocument>(new CityDocument());
 
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
-    
+    member.data.user.imagePath = (
+      await userApi.getImage(member.data.user.imagePath)
+    ).data;
+
     if (members.length < 6) {
       setMembers([...members, member.data]);
     }
 
-    setFollowers(followers.filter(f => f.id !== memberId));
+    setFollowers(followers.filter((f) => f.id !== memberId));
   };
 
   const addMember = async (cityId: number) => {
@@ -54,9 +61,26 @@ const City = () => {
     await removeCity(+id);
   }
 
-  const setPhotos = async (members: CityMember[]) => {
+  const setPhotos = async (members: CityMember[], logo: string) => {
     for (let i = 0; i < members.length; i++) {
-      members[i].user.imagePath = (await userApi.getImage(members[i].user.imagePath)).data;
+      members[i].user.imagePath = (
+        await userApi.getImage(members[i].user.imagePath)
+      ).data;
+    }
+    setPhotosLoading(false);
+
+    if (logo === null) {
+      setCityLogo64(CityDefaultLogo);
+    } else {
+      const response = await getLogo(logo);    
+      setCityLogo64(response.data);
+    }
+    setCityLogoLoading(false);
+  };
+
+  const onAdd = (newDocument: CityDocument) => {
+    if (documents.length < 6) {
+      setDocuments([...documents, newDocument]);
     }
   }
 
@@ -77,18 +101,13 @@ const City = () => {
     try {
       const response = await getCityById(+id);
 
-      if (response.data.logo === null) {
-        response.data.logo = CityDefaultLogo;
-      } else {
-        const logo = await getLogo(response.data.logo);
-        response.data.logo = logo.data;
-      }
-
-      await setPhotos([
+      setPhotosLoading(true);
+      setCityLogoLoading(true);
+      setPhotos([
         ...response.data.administration,
         ...response.data.members,
         ...response.data.followers,
-      ]);
+      ], response.data.logo);
       
       setCity(response.data);
       setAdmins(response.data.administration);
@@ -98,8 +117,6 @@ const City = () => {
       setCanCreate(response.data.canCreate);
       setCanEdit(response.data.canEdit);
       setCanJoin(response.data.canJoin);
-      setCanApprove(response.data.canApprove);
-      setCanAddReports(response.data.canAddReports);
     } finally {
       setLoading(false);
     }
@@ -149,11 +166,19 @@ const City = () => {
             >
               <Col flex="1" offset={1}>
                 <div className={classes.mainInfo}>
-                  <img
-                    src={city.logo || undefined}
-                    alt="City"
-                    style={{ width: "100%", height: "auto", maxWidth: "100%" }}
-                  />
+                  {cityLogoLoading ? (
+                    <Skeleton.Avatar active shape={"square"} size={172} />
+                  ) : (
+                    <img
+                      src={cityLogo64}
+                      alt="City"
+                      style={{
+                        width: "100%",
+                        height: "auto",
+                        maxWidth: "100%",
+                      }}
+                    />
+                  )}
                   <p>
                     <b>Станичний</b>:{" "}
                     {city.head
@@ -238,11 +263,15 @@ const City = () => {
                         history.push(`/userpage/main/${member.userId}`)
                       }
                     >
-                      <Avatar
-                        size={64}
-                        src={member.user.imagePath}
-                        className={classes.profileImg}
-                      />
+                      {photosLoading ? (
+                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                      ) : (
+                        <Avatar
+                          size={64}
+                          src={member.user.imagePath}
+                          className={classes.detailsIcon}
+                        />
+                      )}
                       <p className={classes.userName}>
                         {member.user.firstName}
                       </p>
@@ -302,11 +331,15 @@ const City = () => {
                         history.push(`/userpage/main/${member.userId}`)
                       }
                     >
-                      <Avatar
-                        size={64}
-                        src={member.user.imagePath}
-                        className={classes.profileImg}
-                      />
+                      {photosLoading ? (
+                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                      ) : (
+                        <Avatar
+                          size={64}
+                          src={member.user.imagePath}
+                          className={classes.detailsIcon}
+                        />
+                      )}
                       <p className={classes.userName}>
                         {member.user.firstName}
                       </p>
@@ -380,9 +413,12 @@ const City = () => {
               >
                 Деталі
               </Button>
-              {canAddReports ? (
+              {canEdit ? (
                 <div className={classes.flexContainer}>
-                  <PlusSquareFilled className={classes.addReportIcon} />
+                  <PlusSquareFilled
+                    className={classes.addReportIcon}
+                    onClick={() => setVisibleModal(true)}
+                  />
                 </div>
               ) : null}
             </div>
@@ -437,11 +473,15 @@ const City = () => {
                           history.push(`/userpage/main/${member.userId}`)
                         }
                       >
-                        <Avatar
-                          size={64}
-                          src={member.user.imagePath}
-                          className={classes.profileImg}
-                        />
+                        {photosLoading ? (
+                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        ) : (
+                          <Avatar
+                            size={64}
+                            src={member.user.imagePath}
+                            className={classes.detailsIcon}
+                          />
+                        )}
                         <p className={classes.userName}>
                           {member.user.firstName}
                         </p>
@@ -449,7 +489,7 @@ const City = () => {
                           {member.user.lastName}
                         </p>
                       </div>
-                      {canApprove ? (
+                      {canEdit ? (
                         <PlusOutlined
                           className={classes.approveIcon}
                           onClick={() => changeApproveStatus(member.id)}
@@ -475,6 +515,17 @@ const City = () => {
           </section>
         </Col>
       </Row>
+
+      {canEdit ? (
+        <AddDocumentModal
+          cityId={+id}
+          document={document}
+          setDocument={setDocument}
+          visibleModal={visibleModal}
+          setVisibleModal={setVisibleModal}
+          onAdd={onAdd}
+        ></AddDocumentModal>
+      ) : null}
     </Layout.Content>
   ) : (
     <h1 className={classes.title}>Місто не знайдено</h1>
