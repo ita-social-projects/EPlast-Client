@@ -6,6 +6,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import ukLocale from '@fullcalendar/core/locales/uk';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
+import notificationLogic from '../../../../components/Notifications/Notification';
 
 const classes = require('./EventCalendar.module.css');
 
@@ -19,6 +20,7 @@ export default function () {
     const eventsColors: string[] = ['#6f8ab5', '#fdcb02', '#c01111'];
     const [eventInfo, setEventInfo] = useState<any>();
     const history = useHistory();
+    const [windowSize , setWindowSize] = useState<any>();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -34,10 +36,14 @@ export default function () {
                 })
             })
             setLoading(true);
+            setWindowSize(window.innerWidth);
+            if(window.innerWidth < 768){
+                notificationLogic('info', "Для кращого користувацького досвіду поверніть девайс на 90 градусів");
+            }
         }
         fetchData();
     }, []);
-
+    
     function getConcatedEvents(): Array<any> {
         (actions as Array<any>).forEach(event => {
             Object.assign(event, { color: eventsColors[0] })
@@ -95,7 +101,6 @@ export default function () {
                         }}
                         displayEventEnd={true}
                         locale={ukLocale}
-                        timeZone={'Europe/Kiev'}
                         height={'auto'}
                         eventClick={event => handleEventClick(event)}
                         initialEvents={getConcatedEvents()}
