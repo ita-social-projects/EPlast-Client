@@ -9,6 +9,8 @@ import {
 import clubsApi from "../../../api/clubsApi";
 import classes from "./Club.module.css";
 
+const { Title, Paragraph } = Typography;
+
 interface ClubData {
   club: Club;
   clubAdmin: User;
@@ -112,23 +114,40 @@ const Club = () => {
                         club?.clubAdmin.firstName
                       : "Немає"}
                   </p>
-                  <Button type="primary" className={classes.listButton}>
-                    Більше
-                  </Button>
                 </div>
               </Col>
-              <Col flex="1" offset={1}>
+              <Col flex="1" >
                 <div className={classes.aboutInfo} key={counter}>
-                  <Typography.Paragraph
-                    ellipsis={{
-                      rows: 11,
-                      expandable: true,
-                      onExpand: typoExpand,
-                      symbol: "Більше",
-                    }}
-                  >
-                    {club?.club.description}
-                  </Typography.Paragraph>
+                  <Typography>
+                    <Title level={4}>Опис</Title>
+                    <Paragraph
+                      ellipsis={{
+                        rows: 11,
+                        expandable: true,
+                        onExpand: typoExpand,
+                        symbol: "Більше",
+                      }}
+                    >
+                      { club?.club.description ?
+                        club?.club.description :
+                        "Відсутній" }
+                    </Paragraph>
+                    <Title level={4}>Web-адреса</Title>
+                    <Paragraph
+                      ellipsis={{
+                        rows: 2,
+                        expandable: true,
+                        onExpand: typoExpand,
+                        symbol: "Більше",
+                      }}
+                    >
+                      { club?.club.clubURL ?
+                      <a href={club?.club.clubURL} target="_blank" rel="noopener noreferrer">
+                        {club?.club.clubURL}
+                      </a> :
+                      "Відсутня" }
+                    </Paragraph>
+                  </Typography>
                   {expand && (
                     <Button type="primary" onClick={typoClose}>
                       Приховати
