@@ -1,4 +1,4 @@
-export default class Admintype {
+export default class AdminType {
     id: number;
     adminTypeName: string;
 
