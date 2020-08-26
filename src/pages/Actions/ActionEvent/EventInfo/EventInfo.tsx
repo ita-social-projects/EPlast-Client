@@ -1,27 +1,30 @@
 import React, {useEffect, useState} from 'react';
-import {Input, Row, Space, Spin, Typography} from "antd";
+import {Col, Input, notification, Row, Space, Spin, Table, Typography} from "antd";
 import {useParams} from "react-router-dom";
 // eslint-disable-next-line import/no-cycle
 import SortedEventInfo from './SortedEventInfo';
 import rawData from "./data";
 import Gallery from './Gallery';
 import eventsApi from "../../../../api/eventsApi";
+import EventDetailsHeader from "./EventDetailsHeader";
 // eslint-disable-next-line import/no-cycle
 import ParticipantsTable from "./ParticipantsTable";
 import spinClasses from "../EventUser/EventUser.module.css";
 
-const classes = require('./EventInfo.module.css');
+import './EventInfo.less';
 
-const {Title}=Typography;
+const {Title} = Typography;
 
 export interface EventDetails {
     event: EventInformation;
+    participantAssessment: number;
     isUserEventAdmin: boolean;
     isUserParticipant: boolean;
     isUserApprovedParticipant: boolean;
     isUserUndeterminedParticipant: boolean;
     isUserRejectedParticipant: boolean;
     isEventFinished: boolean;
+    canEstimate: boolean;
 }
 
 export interface EventInformation {
@@ -38,6 +41,7 @@ export interface EventInformation {
     eventStatus: string;
     formOfHolding: string;
     forWhom: string;
+    rating: number;
     eventAdmins: EventAdmin[];
     eventParticipants: EventParticipant[];
 }
@@ -51,10 +55,10 @@ export interface EventParticipant {
     status: string;
 }
 
-interface EventAdmin {
+export interface EventAdmin {
     userId: string;
     fullName: string;
-    email: string;
+    adminType: string;
 }
 
 export interface EventGallery {
@@ -62,8 +66,24 @@ export interface EventGallery {
     fileName: string;
 }
 
-const EventInfo = () => {
+const estimateNotification = () => {
+    notification.info(
+        {
+            message: "Оцінювання події є доступним протягом 3 днів після її завершення!",
+            placement: "topRight",
+            duration: 7,
+            key: "estimation"
+        }
+    );
+};
 
+const CheckEventForEstimation=({canEstimate,isEventFinished}:EventDetails)=>{
+    if(canEstimate && isEventFinished){
+        estimateNotification();
+    }
+}
+
+const EventInfo = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [loading, setLoading] = useState(false);
     const [, setFilterTable] = useState([{}]);
@@ -121,20 +141,26 @@ const EventInfo = () => {
         </div>
 
     ) : (
-        <div className={classes.background}>
-            <div className={classes.wrapper}>
-                <div className={classes.actionsWrapper} key={'1'}>
+        <div className="event-info-background">
+            {CheckEventForEstimation(event)}
+            <Row justify="space-around">
+                <Col xs={24} sm={24} md={24} lg={8}>
                     <SortedEventInfo
                         event={event}
                         subscribeOnEvent={subscribeOnEvent}
                         unSubscribeOnEvent={unSubscribeOnEvent}
                         key={event.event?.eventName}
                     />
-                </div>
+                </Col>
+                <Col xs={24} sm={{span: 24, offset: 1}} md={{span: 24, offset: 3}} lg={{span: 16, offset: 0}}>
+                    <EventDetailsHeader eventInfo={event.event}/>
+                </Col>
+            </Row>
+            <div className="event-info-wrapper">
                 <Gallery key={event.event?.eventLocation} eventId={event.event?.eventId}
                          isUserEventAdmin={event.isUserEventAdmin}/>
                 <div key={'2'}>
-                    <Title level={2} style={{color:'#3c5438'}}>Таблиця користувачів</Title>,
+                    <Title level={2} style={{color: '#3c5438'}}>Таблиця користувачів</Title>
                     <Row>
                         <Input.Search
                             style={{width: "400px", margin: "0 0 10px 0"}}
@@ -144,11 +170,13 @@ const EventInfo = () => {
                         />
                     </Row>
                 </div>
-                <ParticipantsTable
-                    isUserEventAdmin={event.isUserEventAdmin}
-                    participants={event.event?.eventParticipants}
-                    key={event.event?.eventId}
-                />
+                <div className="participant-table">
+                    <ParticipantsTable
+                        isUserEventAdmin={event.isUserEventAdmin}
+                        participants={event.event?.eventParticipants}
+                        key={event.event?.eventId}
+                    />
+                </div>
             </div>
         </div>
     )

@@ -186,10 +186,6 @@
   transform: translate(-50%, -50%);
 }
 
-.select {
-  width: 100%;
-}
-
 .backButton {
   width: 180px;
   background-color: #3c5438;

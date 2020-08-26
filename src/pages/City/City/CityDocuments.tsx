@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout} from 'antd';
-import {FileTextOutlined, SettingOutlined, CloseOutlined, RollbackOutlined} from '@ant-design/icons';
-import {getAllDocuments} from "../../../api/citiesApi";
+import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined} from '@ant-design/icons';
+import {getAllDocuments, getFile, removeDocument} from "../../../api/citiesApi";
 import classes from './City.module.css';
 import CityDocument from '../../../models/City/CityDocument';
 
@@ -11,10 +11,23 @@ const CityDocuments = () => {
     const history = useHistory();
 
     const [documents, setDocuments] = useState<CityDocument[]>([]);
+    const [canEdit, setCanEdit] = useState<Boolean>(false);
 
     const getDocuments = async () => {
-        const response = await getAllDocuments(id);
-        setDocuments(response.data);
+      const response = await getAllDocuments(id);
+
+      setDocuments(response.data.documents);
+      setCanEdit(response.data.canEdit);
+    };
+
+    const downloadDocument = async (fileBlob: string, fileName: string) => {
+      await getFile(fileBlob, fileName);
+    }
+
+    const removeDocumentById = async (documentId: number) => {
+      await removeDocument(documentId);
+
+      setDocuments(documents.filter((d) => d.id !== documentId));
     };
 
     useEffect(() => {
@@ -31,8 +44,16 @@ const CityDocuments = () => {
                 key={document.id}
                 className={classes.detailsCard}
                 actions={[
-                  <SettingOutlined key="setting" />,
-                  <CloseOutlined key="close" />,
+                  <DownloadOutlined
+                    key="download"
+                    onClick={() =>
+                      downloadDocument(document.blobName, document.fileName)
+                    }
+                  />,
+                  <CloseOutlined
+                    key="close"
+                    onClick={() => removeDocumentById(document.id)}
+                  />,
                 ]}
               >
                 <Avatar
