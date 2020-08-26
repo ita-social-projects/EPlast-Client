@@ -118,7 +118,7 @@ const RenderRatingSystem = ({
                      onChange={async (value) => await eventsApi.estimateEvent(event.eventId,value)}
         />
     } else {
-        return <Rate allowHalf disabled defaultValue={event.rating} onChange={(value) => console.log(value)}/>
+        return <Rate allowHalf disabled defaultValue={Math.round(event.rating)}/>
     }
 }
 
