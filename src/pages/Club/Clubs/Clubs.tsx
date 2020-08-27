@@ -60,7 +60,7 @@ const Clubs = () => {
             hoverable
             className={classes.cardStyles}
             cover={
-              <img src={club.logo} alt="Club" style={{ height: "154.45px" }} />
+              <img src={club.logo} alt="Club" className={classes.cardCoverStyles} />
             }
             onClick={() => history.push(`${url}/${club.id}`)}
           >
