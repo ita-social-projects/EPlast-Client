@@ -3,37 +3,37 @@ import UserDistinction from "../pages/Distinction/Interfaces/UserDistinction";
 import Distinction from "../pages/Distinction/Interfaces/Distinction";
 
 const getUserDistinctionById = async (id:number) => {
-    return await api.get(`UserDistinction/${id}`,id)
+    return await api.get(`Distinction/UserDistinction/${id}`,id)
 };
 const getUserDistinctions = async () => {
-    return await api.get(`UserDistinctions`)
+    return (await api.get(`Distinction/UserDistinctions`)).data
 };
 const getDistinctionById = async (id:number) => {
     return await api.get(`${id}`,id)
 };
 const getDistinctions = async () => {
-    return await api.get(`Distinctions`)
+    return await api.get(`Distinction/Distinctions`)
 };
 const getDistinctionOfGivenUser = async (id:string) => {
-    return await api.get(`User/Distinctions/${id}`,id)
+    return await api.get(`Distinction/User/Distinctions/${id}`,id)
 };
 const deleteDistinction = async (id:number) => {
-    return await api.remove(`Distinction/Delete/${id}`, id)
+    return await api.remove(`Distinction/Distinction/Delete/${id}`, id)
 };
 const deleteUserDistinction = async (id:number) => {
-    return await api.remove(`UserDistinction/Delete/${id}`,id)
+    return await api.remove(`Distinction/UserDistinction/Delete/${id}`,id)
 };
 const addUserDistinction = async (data: UserDistinction) => {
-    return await api.post(`UserDistinction/Create/${data.userId}`, data.userId)
+    return await api.post(`Distinction/UserDistinction/Create/${data.userId}`, data.userId)
 };
 const addDistinction = async (data: Distinction) => {
-    return await api.post(`Create`, data)
+    return await api.post(`Distinction/Create`, data)
 };
 const editUserDistinction = async (data: UserDistinction) => {
-    return await api.put(`UserDistinction/Edit/${data.distinctionId}`, data.distinctionId)
+    return await api.put(`Distinction/UserDistinction/Edit/${data.distinctionId}`, data.distinctionId)
 };
 const editDistinction = async (data: Distinction) => {
-    return await api.put(`Edit/${data.id}`, data.id)
+    return await api.put(`Distinction/Edit/${data.id}`, data.id)
 };
 
 export default { getUserDistinctionById, getUserDistinctions,
