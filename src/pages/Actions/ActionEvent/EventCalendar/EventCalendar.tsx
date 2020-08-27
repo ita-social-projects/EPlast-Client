@@ -59,7 +59,6 @@ export default function () {
     const handleEventClick = (clickInfo: any) => {
         setEventModal(true);
         setEventInfo(clickInfo);
-        console.log(clickInfo);
     }
 
     return loading === false ? (
