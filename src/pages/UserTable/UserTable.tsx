@@ -7,6 +7,7 @@ import ColumnsForUserTable from './ColumnsForUserTable';
 const classes = require('./UserTable.module.css');
 
 const UserTable = () => {
+
     const [recordObj, setRecordObj] = useState<any>(0);
     const [showDropdown, setShowDropdown] = useState(false);
     const [x, setX] = useState(0);
@@ -33,6 +34,9 @@ const UserTable = () => {
             firstName: '',
             lastName: '',
             birthday: '',
+            gender:[{
+                name:'',
+            }],
         },
         regionName: '',
         cityName: '',
@@ -42,14 +46,15 @@ const UserTable = () => {
     }]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            await adminApi.getUsersForTable().then(response => {
-                setUsers(response.data);
-            })
-            setLoading(true);
-        }
         fetchData();
     }, [updatedUser])
+
+    const fetchData = async () => {
+        await adminApi.getUsersForTable().then(response => {
+            setUsers(response.data);
+        })
+        setLoading(true);
+    }
 
     const handleSearch = (event: any) => {
         setSearchedData(event.target.value);
@@ -74,6 +79,7 @@ const UserTable = () => {
         : users;
 
     const handleDelete = (id: string) => {
+        fetchData();
         const filteredData = users.filter((d: any) => d.id !== id);
         setUsers([...filteredData]);
     }
@@ -106,7 +112,8 @@ const UserTable = () => {
             >
                 <Title level={2}>Таблиця користувачів</Title>
                 <Row
-                    gutter={16}>
+                    gutter={16}
+                >
                     <Col span={4}>
                         <Input.Search placeholder="Пошук" onChange={handleSearch} />
                     </Col>

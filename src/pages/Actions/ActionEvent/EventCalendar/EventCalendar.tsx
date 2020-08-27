@@ -20,7 +20,6 @@ export default function () {
     const eventsColors: string[] = ['#6f8ab5', '#fdcb02', '#c01111'];
     const [eventInfo, setEventInfo] = useState<any>();
     const history = useHistory();
-    const [windowSize , setWindowSize] = useState<any>();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -36,7 +35,6 @@ export default function () {
                 })
             })
             setLoading(true);
-            setWindowSize(window.innerWidth);
             if(window.innerWidth < 768){
                 notificationLogic('info', "Для кращого користувацького досвіду поверніть девайс на 90 градусів");
             }
@@ -61,6 +59,7 @@ export default function () {
     const handleEventClick = (clickInfo: any) => {
         setEventModal(true);
         setEventInfo(clickInfo);
+        console.log(clickInfo);
     }
 
     return loading === false ? (
@@ -95,9 +94,6 @@ export default function () {
                             left: 'prev,next today',
                             center: 'title',
                             right: ''
-                        }}
-                        views={{
-                            listMonth: { buttonText: 'Список' },
                         }}
                         displayEventEnd={true}
                         locale={ukLocale}

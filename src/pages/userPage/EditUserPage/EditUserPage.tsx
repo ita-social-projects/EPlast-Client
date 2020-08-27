@@ -323,7 +323,7 @@ export default function () {
       <div className={styles.mainContainer}>
         <Form form={form} name="basic" className={styles.formContainer} onFinish={handleSubmit}	>
           <div className={styles.avatarWrapper}>
-            <Avatar size={256} src={userAvatar} className="avatarElem" />
+            <Avatar size={300} src={userAvatar} className="avatarElem" />
             < div className="line" />
             <Upload name={name} action={action} headers={headers} onChange={onChange} className={styles.changeAvatar}>
               <Button className={styles.changeAvatarBtn}>

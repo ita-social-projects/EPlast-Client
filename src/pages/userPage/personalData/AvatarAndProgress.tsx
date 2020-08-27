@@ -39,7 +39,7 @@ const AvatarAndProgress:React.FC<AvatarAndProgressProps> = (props: AvatarAndProg
         
       ) : (
     <div className="leftPartWrapper">
-      <Avatar size={256} src={imageBase64} className="img"/>
+      <Avatar size={300} src={imageBase64} className="img"/>
       {!isUserPlastun && 
          <div className="progress">
               <p className="statusText">{time} дні і {firstName} {lastName} Пластун:)</p>
