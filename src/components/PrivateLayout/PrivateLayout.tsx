@@ -114,7 +114,7 @@ const PrivateLayout = ({ children }: any) => {
                 Події
             </Menu.Item>
               <Menu.Item onClick={() => { handleClickAway(); history.push('/clubs'); }} key="6">Курені</Menu.Item>
-              <Menu.Item onClick={() => { handleClickAway(); }} key="7">Відзначення</Menu.Item>
+              <Menu.Item onClick={() => { handleClickAway(); history.push('/distinctions'); }} key="7">Відзначення</Menu.Item>
               <Menu.Item onClick={() => { handleClickAway(); history.push('/kadra'); }} key="8">Кадра виховників</Menu.Item>
             </SubMenu>
             <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Документи">
