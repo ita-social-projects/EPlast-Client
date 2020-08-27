@@ -5,8 +5,6 @@ import UserDistinction from '../Interfaces/UserDistinction';
 import DropDownDistinctionTable from './DropDownDistinctionTable';
 import distinctionApi from '../../../api/distinctionApi';
 import userApi from '../../../api/UserApi';
-import Item from 'antd/lib/list/Item';
-import { User } from '../../userPage/Interface/Interface';
 
 const classes = require('../../DecisionTable/Table.module.css');
 

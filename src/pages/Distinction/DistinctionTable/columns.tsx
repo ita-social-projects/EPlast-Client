@@ -5,6 +5,8 @@ import UserDistinction from '../Interfaces/UserDistinction';
 import { User } from '../../userPage/Interface/Interface';
 import UserApi from '../../../api/UserApi';
 import distinctionApi from '../../../api/distinctionApi';
+import CityUser from '../../../models/City/CityUser';
+import Distinction from '../Interfaces/Distinction';
 const columns = [
     {
         title: 'ID',
@@ -12,11 +14,17 @@ const columns = [
     },
     {
         title: 'Відзначення',
-        dataIndex: 'distinctionId',
+        dataIndex: 'distinction',
+        render: (distinction: Distinction) => {
+            return distinction.name
+        }
     },
     {
         title: 'Ім\'я',
-        dataIndex: 'userId',
+        dataIndex: 'user',
+        render: (user: CityUser) => {
+            return user.firstName + " " + user.lastName
+        }
     },
     {
         title: 'Дата затвердження',
