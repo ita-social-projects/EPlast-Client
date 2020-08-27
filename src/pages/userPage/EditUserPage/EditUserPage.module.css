@@ -113,6 +113,13 @@ input,
     font-size: 1.5em;
 }
 
+.line {
+    background: #3C5438;
+    width: 100%;
+    height: 10px;
+    margin-bottom: 5px;
+}
+
 @media(max-width: 768px){
     .avatarWrapper{
         width: 100%;
