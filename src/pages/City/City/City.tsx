@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton } from "antd";
+import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card } from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, CloseOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import classes from "./City.module.css";
+import "./City.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import CityProfile from "../../../models/City/CityProfile";
 import CityMember from '../../../models/City/CityMember';
 import CityAdmin from '../../../models/City/CityAdmin';
 import CityDocument from '../../../models/City/CityDocument';
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
+import Title from "antd/lib/typography/Title";
+import Paragraph from "antd/lib/typography/Paragraph";
 
 const City = () => {
   const history = useHistory();
@@ -131,7 +134,70 @@ const City = () => {
       <Spin size="large" />
     </Layout.Content>
   ) : city.id !== 0 && !loading ? (
-    <Layout.Content>
+    <Layout.Content className="cityProfile">
+      <Row gutter={[0, 48]}>
+        <Col xl={15} sm={24} xs={24}>
+          <Card hoverable className="cityCard">
+            <Title level={4} className="cityTitle">
+              Станиця
+            </Title>
+            <Row>
+              <Col md={12} sm={24} xs={24}>
+                Фото
+                <Paragraph>Станичний:</Paragraph>
+                <Paragraph>Роки правління</Paragraph>
+              </Col>
+              <Col md={12} sm={24} xs={24}>
+                Карта
+                <Paragraph>Контакти:</Paragraph>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+
+        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+          <Card hoverable className="cityCard">
+            <Title level={4} className="cityTitle">
+              Члени станиці
+            </Title>
+          </Card>
+        </Col>
+
+        <Col
+          xl={{ span: 7, offset: 0 }}
+          md={{ span: 11, offset: 2 }}
+          sm={24}
+          xs={24}
+        >
+          <Card hoverable className="cityCard">
+            <Title level={4} className="cityTitle">
+              Провід станиці
+            </Title>
+          </Card>
+        </Col>
+
+        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+          <Card hoverable className="cityCard">
+            <Title level={4} className="cityTitle">
+              Документообіг станиці
+            </Title>
+          </Card>
+        </Col>
+
+        <Col
+          xl={{ span: 7, offset: 1 }}
+          md={{ span: 11, offset: 2 }}
+          sm={24}
+          xs={24}
+        >
+          <Card hoverable className="cityCard">
+            <Title level={4} className="cityTitle">
+              Прихильники станиці
+            </Title>
+          </Card>
+        </Col>
+      </Row>
+      <Divider> CITY VIEW </Divider>
       <Row
         justify="space-around"
         gutter={[0, 40]}
