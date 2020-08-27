@@ -1,6 +1,12 @@
 import React from 'react';
 import decisionsApi from '../../../api/distinctionApi';
-
+import moment from 'moment'
+import UserDistinction from '../Interfaces/UserDistinction';
+import { User } from '../../userPage/Interface/Interface';
+import UserApi from '../../../api/UserApi';
+import distinctionApi from '../../../api/distinctionApi';
+import CityUser from '../../../models/City/CityUser';
+import Distinction from '../Interfaces/Distinction';
 const columns = [
     {
         title: 'ID',
@@ -9,14 +15,23 @@ const columns = [
     {
         title: 'Відзначення',
         dataIndex: 'distinction',
+        render: (distinction: Distinction) => {
+            return distinction.name
+        }
     },
     {
         title: 'Ім\'я',
-        dataIndex: 'name',
+        dataIndex: 'user',
+        render: (user: CityUser) => {
+            return user.firstName + " " + user.lastName
+        }
     },
     {
         title: 'Дата затвердження',
         dataIndex: 'date',
+        render: (date: Date) => {
+            return moment(date.toLocaleString()).format('DD-MM-YYYY');
+        }
     },
     {
         title: 'Подання від',

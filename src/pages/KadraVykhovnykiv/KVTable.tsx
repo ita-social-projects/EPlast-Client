@@ -14,22 +14,22 @@ export const KVTable = ({current}:props)=>{
  
 
 const [kadras, setkadras] = useState<any>([{
-    id: 0,
+    id: '',
     userId: '',
-    kvTypesID: 0,
+    kvTypesID: '',
     dateOfGranting: '',
-    numberInRegister: 0,
+    numberInRegister: '',
     basisOfGranting: '',
     link: '',
   }])
   
   
   const [updatedKadra, setUpdatedKadra] = useState([{
-    id: 0,
+    id: '',
     userId: '',
-    kvTypesID: 0,
+    kvTypesID: '',
     dateOfGranting: '',
-    numberInRegister: 0,
+    numberInRegister: '',
     basisOfGranting: '',
     link: '',
 }]);
