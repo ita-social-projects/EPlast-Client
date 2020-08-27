@@ -3,11 +3,13 @@ import activeMembershipApi,{ PlastDegree, UserPlastDegree } from '../../../../ap
 import { Modal } from 'antd';
 import FormAddPlastDegree from './FormAddPlastDegree';
 type ModalAddPlastDegreeProps ={
-userId : string;
-visibleModal: boolean;
-setVisibleModal: (visibleModal: boolean) => void;
+    userId : string;
+    visibleModal: boolean;
+    setVisibleModal: (visibleModal: boolean) => void;
+    handleDeleteUserPlastDegree : (plastDegreeId : number) => void;
+    handleAddDegree : () => void;
 }
-const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, userId }: ModalAddPlastDegreeProps) =>{
+const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, userId, handleDeleteUserPlastDegree,handleAddDegree   }: ModalAddPlastDegreeProps) =>{
     const [availablePlastDegree, setAvailablePlastDegree] = useState<Array<PlastDegree>>([]);
     const getAvailablePlastDegree = (allDegrees : Array<PlastDegree>, userPlastDegrees : Array<UserPlastDegree>): Array<PlastDegree>=> {
         
@@ -39,6 +41,9 @@ return <Modal
         visible={visibleModal}
         footer ={null}>
     <FormAddPlastDegree 
+        handleAddDegree = {handleAddDegree}
+        handleDeleteUserPlastDegree = {handleDeleteUserPlastDegree}
+        userId = {userId}
         setVisibleModal ={setVisibleModal}
         availablePlastDegree ={availablePlastDegree}/>
 </Modal>;
