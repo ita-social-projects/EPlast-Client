@@ -65,9 +65,7 @@ return <div className={classes.wrapper} >
         <div className={classes.wrapper2}>
 
              </div>
-        </div>
-        <div className={classes.wrapper}>
-        <div className={classes.wrapper2}> 
+             <div className={classes.wrapper2}> 
         <Title level={2}> Рівні доступу користувача </Title>      
              <div className={classes.line} />
             <List
