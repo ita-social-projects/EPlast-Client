@@ -23,7 +23,7 @@ const beforeUpload = (file: RcFile) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
   if (!isJpgOrPng) {
     notification.error({
-      message: "Можна завантажити зображення лише у JPEG/PNG форматі"
+      message: "Можна завантажити зображення лише у JPG/JPEG/PNG форматі"
     });
   }
   const isLt2M = file.size / 1024 / 1024 < 5;
@@ -101,7 +101,6 @@ const CreateClub = () => {
         newСlub.id = res.data.id;
         notification.success({
           message: id ? "Курінь успішно відредаговано" : "Курінь успішно створено",
-          icon: <LoadingOutlined />,
         });
         id ? history.goBack() : history.push( `${newСlub.id}`);
       })
@@ -171,7 +170,7 @@ const CreateClub = () => {
               label="Опис"
               rules={[
                 { max: 1000, 
-                  message: 'Назва куреня не може перевищувати 1000 символів' }]} >
+                  message: 'Опис куреня не може перевищувати 1000 символів' }]} >
               <Input.TextArea rows={5} />
             </Form.Item>
             <Form.Item>

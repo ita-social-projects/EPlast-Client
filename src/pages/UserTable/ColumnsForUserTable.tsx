@@ -1,6 +1,9 @@
 import React from 'react';
 import moment from 'moment';
 import { Typography, Tooltip, List, Tag } from 'antd';
+import generateCalendar from 'antd/lib/calendar/generateCalendar';
+import { WomanOutlined, ManOutlined, QuestionOutlined } from '@ant-design/icons';
+import Title from 'antd/lib/typography/Title';
 const { Text } = Typography;
 
 const setTagColor = (userRoles: string) => {
@@ -45,6 +48,36 @@ const ColumnsForUserTable: any = [
                 return moment(date).format('DD-MM-YYYY')
             }
         }
+    },
+    {
+        title: 'Стать',
+        dataIndex: ['user', 'gender'],
+        render: (gender: any) => {
+            if (gender === null) {
+                return <h4>Не вказано</h4>
+            }
+            else if (gender.name === 'Жінка') {
+                return (
+                    <Tooltip title="Жінка">
+                        <WomanOutlined />
+                    </Tooltip>
+                )
+            }
+            else if (gender.name === 'Чоловік') {
+                return (
+                    <Tooltip title="Чоловік">
+                        <ManOutlined />
+                    </Tooltip>
+                )
+            }
+            else {
+                return (
+                    <Tooltip title="Інша">
+                        <QuestionOutlined />
+                    </Tooltip>
+                )
+            }
+        },
     },
     {
         title: 'Округ',
@@ -97,10 +130,10 @@ const ColumnsForUserTable: any = [
         sorter: (a: any, b: any) => a.userRoles.localeCompare(b.userRoles),
         sortDirections: ['descend', 'ascend'],
         render: (userRoles: any) => {
-            if (userRoles.length > 50) {
+            if (userRoles.length > 19) {
                 return <Tag color={setTagColor(userRoles)} key={userRoles}>
                     <Tooltip placement="topLeft" title={userRoles}>
-                        {userRoles.slice(0, 50).toUpperCase()}
+                        {userRoles.slice(0, 19).toUpperCase()}  
                     </Tooltip>
                 </Tag>
             }
