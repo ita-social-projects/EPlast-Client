@@ -26,7 +26,8 @@ const ActiveMembership = () => {
         }); 
     }
     const handleDeleteUserPlastDegree = (plastDegreeId : number)=>{
-        setPlastDegrees(plastDegrees.filter(pd => pd.plastDegree.id == plastDegreeId))
+        setPlastDegrees(plastDegrees.filter(pd => pd.plastDegree.id !== plastDegreeId));
+        fetchData();
     }
     const fetchData  =  async () =>{
         const token = AuthStore.getToken() as string;
@@ -78,14 +79,37 @@ return <div className={classes.wrapper} >
         <div className={classes.wrapperPlastDegree}>
         <Title level={2}> Ступені користувача </Title>      
              <div className={classes.line} />
-            <List
-            className="demo-loadmore-list"
-            dataSource = {plastDegrees}
-            renderItem={item => (<List.Item actions={[<a onClick ={()=>{
-                handleDelete(item);
-            }} key="list-loadmore-delete">Видалити</a>]}>
-                <List.Item.Meta  style ={ {fontSize : "20px"} }title = {item.plastDegree.name} description = {`Дата надання ступеню ${item.dateStart}`}></List.Item.Meta></List.Item>) }
-            itemLayout="horizontal" />
+                {plastDegrees.map(pd => (<React.Fragment>
+            <div className={classes.textFieldsMain}>
+                {pd.plastDegree.name}
+            </div>
+            <div className={classes.textFieldsOthers}>
+               Дата початку ступеню {pd.dateStart}
+            </div>
+            {pd.dateFinish !== null &&  <div className={classes.textFieldsOthers}>
+               Дата завершення ступеню {pd.dateFinish}
+            </div>}
+            <div className={classes.buttons}>  <button onClick ={()=>{
+                handleDelete(pd);
+            }
+            }
+            className = {classes.button}
+            >Видалити</button>
+             <button onClick ={()=>{
+            
+            }
+            }
+            className = {classes.button}
+            >Надати дату завершення</button>
+            {!pd.isCurrent && <button onClick ={()=>{
+            
+        }
+        }
+        className = {classes.button}
+        >Обрати поточним</button>}
+            </div>
+          
+            </React.Fragment>))}
             
              </div>
         </div>

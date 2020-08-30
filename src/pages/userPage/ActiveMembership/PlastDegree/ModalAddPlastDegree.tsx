@@ -45,7 +45,8 @@ return <Modal
         handleDeleteUserPlastDegree = {handleDeleteUserPlastDegree}
         userId = {userId}
         setVisibleModal ={setVisibleModal}
-        availablePlastDegree ={availablePlastDegree}/>
+        availablePlastDegree ={availablePlastDegree}
+        resetAvailablePlastDegree = {fetchData}/>
 </Modal>;
 };
 

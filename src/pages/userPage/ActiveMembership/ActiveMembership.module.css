@@ -34,13 +34,16 @@
 }
 
 .button {
-    margin-top: 30px;
+    margin-top: 20px;
+    margin-left: 10px;
     background: #3C5438;
     justify-content: center;
+    display: flex;
+    flex-direction: column;
     color: white;
     border: none;
-    width: 138px;
-    height: 40px;
+    width: 200px;
+    height: 30px;
     outline: none;
     text-align: center;
     cursor: pointer;
@@ -48,7 +51,10 @@
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
-
+.buttons{
+    display : flex;
+    justify-content : flex-start;
+}
 .buttonInside {
     margin-top: 10px;
     background: #3C5438;
@@ -62,7 +68,18 @@
     align-items: center;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
-
+.textFieldsMain,
+.textFieldsOthers
+{
+    text-align : left;
+    margin-left : 10px;
+}
+.textFieldsMain{
+    font-size : 20px;
+}
+.textFieldsOthers{
+    font-size : 15px;
+}
 #subcribeButton{
     width: auto;
 }
@@ -104,7 +121,8 @@
 }
 .wrapperPlastDegree{
     width: 900px;
-    height: 250px;
+    height: 450px;
+    max-height: 700px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
     display: flex;
     flex-direction: column;

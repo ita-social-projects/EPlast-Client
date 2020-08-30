@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Select, Button,DatePicker } from 'antd';
+import { Form, Select, Button, DatePicker, Checkbox } from 'antd';
 import activeMembershipApi,{ PlastDegree, UserPlastDegreePost, UserPlastDegree } from '../../../../api/activeMembershipApi';
 import classes from "./FormAddPlastDegree.module.css"
 type FormAddPlastDegreeProps = {
@@ -7,22 +7,31 @@ type FormAddPlastDegreeProps = {
     setVisibleModal: (visibleModal: boolean) => void;
     handleDeleteUserPlastDegree : (plastDegreeId : number) => void;
     handleAddDegree : () => void;
+    resetAvailablePlastDegree :() => Promise<void>;
     userId : string;
 };
 
-const FormAddPlastDegree = ({setVisibleModal, userId, availablePlastDegree,handleDeleteUserPlastDegree,handleAddDegree}: FormAddPlastDegreeProps)=>{
+const FormAddPlastDegree = ({
+    setVisibleModal,
+    userId,
+    availablePlastDegree,
+    handleDeleteUserPlastDegree,
+    handleAddDegree,
+    resetAvailablePlastDegree}: FormAddPlastDegreeProps)=>{
     const [form] = Form.useForm();
     const handleFinish = async (info: any) =>{
        const userPlastDegreePost :UserPlastDegreePost ={
         plastDegreeId : info.plastDegree,
         dateStart : info.datepickerStart._d,
         dateFinish: null,
+        isCurrent :false,
         userId : userId
        };
        await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
        setVisibleModal(false);
        handleAddDegree();
        form.resetFields();
+       resetAvailablePlastDegree();
     }
     return <Form
     name="basic"
@@ -43,6 +52,9 @@ const FormAddPlastDegree = ({setVisibleModal, userId, availablePlastDegree,handl
         className={classes.selectField}
         />
       </Form.Item>
+      <Form.Item
+      name ="isCurrent">
+          < Checkbox onChange ={()=>{}}>Обрати поточним</Checkbox></Form.Item>
         <Button
          type="primary" htmlType="submit"
         >

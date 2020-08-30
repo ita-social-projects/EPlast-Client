@@ -15,6 +15,7 @@ export type UserPlastDegreePost ={
     plastDegreeId : number;
     dateStart : string;
     dateFinish: string | null;
+    isCurrent: boolean;
     userId : string;
 }
 const getAccessLevelById = async (id : string) => {
