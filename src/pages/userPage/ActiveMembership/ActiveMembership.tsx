@@ -79,7 +79,7 @@ return <div className={classes.wrapper} >
         <div className={classes.wrapperPlastDegree}>
         <Title level={2}> Ступені користувача </Title>      
              <div className={classes.line} />
-                {plastDegrees.map(pd => (<React.Fragment>
+                {plastDegrees.map(pd => (<React.Fragment key = {pd.id}>
             <div className={classes.textFieldsMain}>
                 {pd.plastDegree.name}
             </div>
