@@ -3,7 +3,7 @@ import Api from "./api";
 import BASE_URL from "../config";
 
 const getById = async (id: number) => {
-  const response = await Api.get("Club/" + id);
+  const response = await Api.get("Club/" + id, {id});
   return response;
 };
 
@@ -11,6 +11,17 @@ const getAll = async () => {
   const response = await Api.get("Club");
   return response;
 };
+
+const getClubsByPage = async (pageNumber: number, pageSize: number) => {
+  const response = await Api.get("Club/page/" + pageNumber, {pageNumber, pageSize});
+  return response;
+}
+
+const getClubsCount = async () => {
+  const response = await Api.get("Club/count");
+  return response;
+}
+
 const getAllMembers = async (id: number) => {
   const response = await Api.get("Club/" + id + "/members");
   return response;
@@ -48,6 +59,8 @@ const getImage = async (imageName: string | undefined) => {
 export default {
   getById,
   getAll,
+  getClubsByPage,
+  getClubsCount,
   post,
   put,
   remove,
