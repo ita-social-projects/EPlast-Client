@@ -164,12 +164,6 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/annualreport/create"
-            component={AnnualReportCreate}
-          />
-          <RouteWithLayout
-            layout={PrivateLayout}
-            exact
             path="/annualreport/create/:cityId"
             component={AnnualReportCreate}
           />
@@ -178,12 +172,6 @@ const App: FC = () => (
             exact
             path="/annualreport/edit/:id"
             component={AnnualReportEdit}
-          />
-          <RouteWithLayout
-            layout={PrivateLayout}
-            exact
-            path="/annualreport/edit/:cityId"
-            component={AnnualReportCreate}
           />
           <RouteWithLayout
             layout={PrivateLayout}
