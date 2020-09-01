@@ -4,19 +4,8 @@ import columns from './columns';
 import UserDistinction from '../Interfaces/UserDistinction';
 import DropDownDistinctionTable from './DropDownDistinctionTable';
 import distinctionApi from '../../../api/distinctionApi';
-import userApi from '../../../api/UserApi';
 
 const classes = require('../../DecisionTable/Table.module.css');
-
-
-type UserDistTable = {
-  id: number,
-  dist: string,
-  name: string,
-  date: string,
-  reason: string,
-  reporter: string
-}
 
 const { Content } = Layout;
 const DecisionTable = () => {
@@ -28,12 +17,9 @@ const DecisionTable = () => {
     const [UserDistinctions, setData] = useState<UserDistinction[]>();
 
     useEffect(() => {
-      const user = async (userId: string) => (await userApi.getById(userId)).data
       const fetchData = async () => {
         setLoading(true);
         const res: UserDistinction[] = await distinctionApi.getUserDistinctions();
-
-        console.log(res);
         setData(res);
         setLoading(false);
       };
@@ -85,5 +71,5 @@ return (
 
     </Layout>
   );
-        }
+}
 export default DecisionTable;
