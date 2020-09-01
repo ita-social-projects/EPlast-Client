@@ -153,8 +153,8 @@ const RenderAdminCards = (eventAdmins: EventAdmin[]) => {
 
 const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) => {
     const [adminsVisible, setAdminsVisibility] = useState(false);
-    return <Row justify="center">
-        <Col>
+    return <Row >
+        <Col className="eventActions">
             <img
                 className="imgEvent"
                 alt="example"
