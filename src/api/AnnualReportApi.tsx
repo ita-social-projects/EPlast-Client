@@ -1,52 +1,89 @@
 import Api from './api';
 import AnnualReport from '../pages/AnnualReport/Interfaces/AnnualReport';
+import { AxiosError } from 'axios';
 
 const getCities = async () => {
-    return await Api.get('Cities');
+    return await Api.get('Cities')
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
 }
 
 const getCityInfo = async (cityId: number) => {
-    return await Api.get(`Cities/Profile/${cityId}`);
+    return await Api.get(`Cities/Profile/${cityId}`)
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
 }
 
 const getCityLegalStatuses = async () => {
-    return await Api.get('Cities/getLegalStatuses');
+    return await Api.get('Cities/getLegalStatuses')
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
 }
 
 const getAnnualReportStatuses = async () => {
-    return await Api.get('AnnualReport/getStatuses');
+    return await Api.get('AnnualReport/getStatuses')
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
 }
 
 const checkCreated = async (cityId: number) => {
-    return await Api.get(`AnnualReport/checkCreated/${cityId}`);
+    return await Api.get(`AnnualReport/checkCreated/${cityId}`)
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
 }
 
 const getById = async (id: number) => {
-    return await Api.get(`AnnualReport/${id}`);
+    return await Api.get(`AnnualReport/${id}`)
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
 }
 
 const getAll = async () => {
-    return await Api.get('AnnualReport');
+    return await Api.get('AnnualReport')
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
 }
 
 const create = async (data: AnnualReport) => {
-    return await Api.post('AnnualReport', data);
+    return await Api.post('AnnualReport', data)
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
 }
 
 const edit = async (data: AnnualReport) => {
-    return await Api.put('AnnualReport', data);
+    return await Api.put('AnnualReport', data)
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
 }
 
 const confirm = async (id: number) => {
-    return await Api.put(`AnnualReport/confirm/${id}`);
+    return await Api.put(`AnnualReport/confirm/${id}`)
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
 }
 
 const cancel = async (id: number) => {
-    return await Api.put(`AnnualReport/cancel/${id}`);
+    return await Api.put(`AnnualReport/cancel/${id}`)
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
 }
 
 const remove = async (id: number) => {
-    return await Api.remove(`AnnualReport/${id}`);
+    return await Api.remove(`AnnualReport/${id}`)
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
 }
 
 export default {

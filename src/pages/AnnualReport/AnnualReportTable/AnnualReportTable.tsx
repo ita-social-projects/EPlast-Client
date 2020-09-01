@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { AxiosError } from 'axios';
 import { Table, Button, Layout, Modal, Input, Row, Col, Typography, Select } from 'antd';
 import moment from 'moment';
 import AnnualReportApi from '../../../api/AnnualReportApi';
@@ -8,12 +7,15 @@ import AnnualReport from '../Interfaces/AnnualReport';
 import User from '../Interfaces/User';
 import City from '../Interfaces/City';
 import Region from '../Interfaces/Region';
-import AnnualReportInformation from '../AnnualReportInformation/AnnualReportInformation';
+import AnnualReportInformation from './AnnualReportInformation/AnnualReportInformation';
 import UnconfirmedDropdown from './Dropdowns/UnconfirmedDropdown/UnconfirmedDropdown';
 import ConfirmedDropdown from './Dropdowns/ConfirmedDropdown/ConfirmedDropdown';
 import SavedDropdown from './Dropdowns/SavedDropdown/SavedDropdown';
 import Filters from './Filters';
-import styles from './AnnualReportTable.module.css';
+import './AnnualReportTable.less';
+import AuthStore from '../../../stores/AuthStore';
+import jwt_decode from 'jwt-decode';
+import CitySelectModal from './CitySelectModal/CitySelectModal';
 
 const { Title } = Typography;
 
@@ -21,8 +23,6 @@ const AnnualReportTable = () => {
     const history = useHistory();
     const [annualReport, setAnnualReport] = useState<AnnualReport>(Object);
     const [reportStatusNames, setReportStatusNames] = useState<string[]>(Array());
-    const [cityLegalStatuses, setCityLegalStatuses] = useState<string[]>(Array());
-    const [cityOptions, setCityOptions] = useState<any>();
     const [annualReports, setAnnualReports] = useState<AnnualReport[]>(Array());
     const [searchedData, setSearchedData] = useState('');
     const [x, setX] = useState(0);
@@ -31,71 +31,54 @@ const AnnualReportTable = () => {
     const [showConfirmedDropdown, setShowConfirmedDropdown] = useState<boolean>(false);
     const [showSavedDropdown, setShowSavedDropdown] = useState<boolean>(false);
     const [showAnnualReportModal, setShowAnnualReportModal] = useState<boolean>(false);
+    const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(false);
+    const [canManage, setCanManage] = useState<boolean>(false);
     const { idFilter, userFilter, cityFilter, regionFilter, dateFilter, statusFilter } = Filters;
 
     useEffect(() => {
-        fetchCityLegalStatuses();
         fetchAnnualReportStatuses();
-        fetchCities();
         fetchAnnualReports();
+        checkAccessToManage();
     }, [])
 
-    const fetchCityLegalStatuses = async () => {
-        await AnnualReportApi.getCityLegalStatuses()
-            .then(response => {
-                setCityLegalStatuses(response.data.legalStatuses);
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            })
+    const checkAccessToManage = () => {
+        let jwt = AuthStore.getToken() as string;
+        let decodedJwt = jwt_decode(jwt) as any;
+        let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+        console.log(roles);
+        setCanManage(roles.includes('Admin') || roles.includes('Голова Регіону'));
     }
 
     const fetchAnnualReportStatuses = async () => {
-        await AnnualReportApi.getAnnualReportStatuses()
-            .then(response => {
-                setReportStatusNames(response.data.statuses);
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            });
-    }
-
-    const fetchCities = async () => {
-        await AnnualReportApi.getCities()
-            .then(response => {
-                let cities = response.data.cities as City[];
-                setCityOptions(cities.map(item => {
-                    return {
-                        label: item.name,
-                        value: item.id
-                    }
-                }));
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            });
+        try {
+            let response = await AnnualReportApi.getAnnualReportStatuses();
+            setReportStatusNames(response.data.statuses);
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const fetchAnnualReports = async () => {
-        await AnnualReportApi.getAll()
-            .then(response => {
-                setAnnualReports(response.data.annualReports);
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            });
+        try {
+            let response = await AnnualReportApi.getAll();
+            setAnnualReports(response.data.annualReports);
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const handleView = async (id: number) => {
         hideDropdowns();
-        await AnnualReportApi.getById(id)
-            .then(response => {
-                setAnnualReport(response.data.annualreport);
-                setShowAnnualReportModal(true);
-            })
-            .catch((error: AxiosError) => {
-
-            })
+        try {
+            let response = await AnnualReportApi.getById(id);
+            setAnnualReport(response.data.annualreport);
+            setShowAnnualReportModal(true);
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const handleEdit = (id: number) => {
@@ -105,50 +88,50 @@ const AnnualReportTable = () => {
 
     const handleConfirm = async (id: number) => {
         hideDropdowns();
-        await AnnualReportApi.confirm(id)
-            .then(response => {
-                let cityId = annualReports.find(item => item.id == id)?.cityId;
-                setAnnualReports(annualReports.map(item => {
-                    if (item.id === id ||
-                        (item.id !== id && item.cityId === cityId && item.status === 1)) {
-                        item.status++;
-                    }
-                    return item;
-                }));
-                showSuccess(response.data.message);
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            });
+        try {
+            let response = await AnnualReportApi.confirm(id);
+            let cityId = annualReports.find(item => item.id == id)?.cityId;
+            setAnnualReports(annualReports.map(item => {
+                if (item.id === id ||
+                    (item.id !== id && item.cityId === cityId && item.status === 1)) {
+                    item.status++;
+                }
+                return item;
+            }));
+            showSuccess(response.data.message);
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const handleCancel = async (id: number) => {
         hideDropdowns();
-        await AnnualReportApi.cancel(id)
-            .then(response => {
-                setAnnualReports(annualReports.map(item => {
-                    if (item.id === id) {
-                        item.status--;
-                    }
-                    return item;
-                }));
-                showSuccess(response.data.message);
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            });
+        try {
+            let response = await AnnualReportApi.cancel(id);
+            setAnnualReports(annualReports.map(item => {
+                if (item.id === id) {
+                    item.status--;
+                }
+                return item;
+            }));
+            showSuccess(response.data.message);
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const handleRemove = async (id: number) => {
         hideDropdowns();
-        await AnnualReportApi.remove(id)
-            .then(response => {
-                setAnnualReports(annualReports?.filter(item => item.id !== id));
-                showSuccess(response.data.message);
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            });
+        try {
+            let response = await AnnualReportApi.remove(id);
+            setAnnualReports(annualReports?.filter(item => item.id !== id));
+            showSuccess(response.data.message);
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const itemRender = (current: any, type: string, originalElement: any) => {
@@ -165,10 +148,6 @@ const AnnualReportTable = () => {
         setShowUnconfirmedDropdown(false);
         setShowConfirmedDropdown(false);
         setShowSavedDropdown(false);
-    }
-
-    const hideAnnualReport = () => {
-        setShowAnnualReportModal(false);
     }
 
     const showDropdown = (annualReportStatus: number) => {
@@ -192,7 +171,7 @@ const AnnualReportTable = () => {
 
     const filteredData = searchedData !== ''
         ? annualReports.filter(item =>
-            idFilter(item.id, searchedData) || userFilter(item.user as User, searchedData) ||
+            idFilter(item.id, searchedData) || userFilter(item.creator as User, searchedData) ||
             cityFilter(item.city as City, searchedData) || dateFilter(item.date, searchedData) ||
             regionFilter(item.city?.region as Region, searchedData) ||
             statusFilter(item.status, reportStatusNames, searchedData))
@@ -218,9 +197,9 @@ const AnnualReportTable = () => {
         },
         {
             title: 'Подавач',
-            dataIndex: 'user',
-            render: (user: User) => {
-                return `${user.firstName} ${user.lastName}`;
+            dataIndex: 'creator',
+            render: (creator: User) => {
+                return `${creator.firstName} ${creator.lastName}`;
             }
         },
         {
@@ -248,25 +227,23 @@ const AnnualReportTable = () => {
     ]
 
     return (
-        <Layout.Content>
+        <Layout.Content
+            className='annualreport-table' >
             <Title
                 level={2}>Річні звіти станиць</Title>
             <Row
-                className={styles.searchContainer}
+                className='searchContainer'
                 gutter={16}>
                 <Col span={4}>
                     <Input placeholder='Пошук' onChange={handleSearch} />
                 </Col>
                 <Col span={4}>
-                    <Select
-                        showSearch
-                        className={styles.select}
-                        options={cityOptions}
-                        placeholder='Подати річний звіт'
-                        filterOption={(input, option) =>
-                            (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        }
-                        onSelect={(value) => history.push(`/annualreport/create/${value}`)} />
+                    <Button
+                        type='primary'
+                        htmlType='button'
+                        onClick={() => setShowCitySelectModal(true)} >
+                        Подати річний звіт
+                </Button>
                 </Col>
             </Row>
             <Table
@@ -308,6 +285,7 @@ const AnnualReportTable = () => {
                 record={annualReport}
                 pageX={x}
                 pageY={y}
+                canManage={canManage}
                 onView={handleView}
                 onEdit={handleEdit}
                 onConfirm={handleConfirm}
@@ -317,6 +295,7 @@ const AnnualReportTable = () => {
                 record={annualReport}
                 pageX={x}
                 pageY={y}
+                canManage={canManage}
                 onView={handleView}
                 onCancel={handleCancel} />
             <SavedDropdown
@@ -328,8 +307,11 @@ const AnnualReportTable = () => {
             <AnnualReportInformation
                 visibleModal={showAnnualReportModal}
                 annualReport={annualReport}
-                cityLegalStatuses={cityLegalStatuses}
-                handleOk={hideAnnualReport} />
+                showError={showError}
+                handleOk={() => setShowAnnualReportModal(false)} />
+            <CitySelectModal
+                visibleModal={showCitySelectModal}
+                handleOk={() => setShowCitySelectModal(false)} />
         </Layout.Content >
     );
 }

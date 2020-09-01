@@ -1,49 +1,66 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, Card, Modal, Space } from 'antd';
-import AnnualReport from '../Interfaces/AnnualReport';
+import AnnualReport from '../../Interfaces/AnnualReport';
 import moment from 'moment';
-import styles from './AnnualReportInformation.module.css';
+import './AnnualReportInformation.less';
+import AnnualReportApi from '../../../../api/AnnualReportApi';
 
 const { Title, Text } = Typography;
 
 interface Props {
     visibleModal: boolean,
     annualReport: AnnualReport,
-    cityLegalStatuses: string[],
-    handleOk: () => void
+    handleOk: () => void,
+    showError: (message: string) => void
 }
 
 const AnnualReportInformation = (props: Props) => {
-    const { visibleModal, annualReport, cityLegalStatuses, handleOk } = props;
+    const { visibleModal, annualReport, handleOk, showError } = props;
+    const [cityLegalStatuses, setCityLegalStatuses] = useState<string[]>(Array());
+
+    useEffect(() => {
+        fetchCityLegalStatuses();
+    }, [])
+
+    const fetchCityLegalStatuses = async () => {
+        try {
+            let response = await AnnualReportApi.getCityLegalStatuses();
+            setCityLegalStatuses(response.data.legalStatuses);
+        }
+        catch (error) {
+            showError(error.message)
+        }
+    }
 
     return (
         <Modal
             onCancel={handleOk}
             visible={visibleModal}
-            footer={null} >
+            footer={null}
+            className='annualreport-modal' >
             <Title
-                className={styles.textCenter}
+                className='textCenter'
                 level={3} >
                 {`Річний звіт станиці ${annualReport.city?.name} за 
                     ${moment(annualReport.date).year()} рік`}</Title>
             <Card>
                 <Card.Grid
-                    className={styles.container} >
+                    className='container' >
                     <Title
                         level={4}>Голова новообраної старшини</Title>
                     <Text>
-                        {annualReport.cityManagement?.cityAdminNew === null ? 'Відсутній' :
-                            `${annualReport.cityManagement?.cityAdminNew?.firstName} 
-                    ${annualReport.cityManagement?.cityAdminNew?.lastName}`}</Text>
+                        {annualReport?.newCityAdmin == null ? 'Відсутній' :
+                            `${annualReport.newCityAdmin.firstName} 
+                    ${annualReport.newCityAdmin.lastName}`}</Text>
                 </Card.Grid>
                 <Card.Grid
-                    className={styles.container}>
+                    className='container'>
                     <Title
                         level={4}>Правовий статус осередку</Title>
-                    <Text>{cityLegalStatuses[annualReport.cityManagement?.cityLegalStatusNew]}</Text>
+                    <Text>{cityLegalStatuses[annualReport.newCityLegalStatusType]}</Text>
                 </Card.Grid>
                 <Card.Grid
-                    className={styles.container}>
+                    className='container'>
                     <Title
                         level={4}>УПП</Title>
                     <Space direction='vertical'>
@@ -54,7 +71,7 @@ const AnnualReportInformation = (props: Props) => {
                     </Space>
                 </Card.Grid>
                 <Card.Grid
-                    className={styles.container}>
+                    className='container'>
                     <Title
                         level={4}>УПН</Title>
                     <Space direction='vertical'>
@@ -65,7 +82,7 @@ const AnnualReportInformation = (props: Props) => {
                     </Space>
                 </Card.Grid>
                 <Card.Grid
-                    className={styles.container}>
+                    className='container'>
                     <Title
                         level={4}>УПЮ</Title>
                     <Space direction='vertical'>
@@ -86,7 +103,7 @@ const AnnualReportInformation = (props: Props) => {
                     </Space>
                 </Card.Grid>
                 <Card.Grid
-                    className={styles.container}>
+                    className='container'>
                     <Title
                         level={4}>УСП</Title>
                     <Space direction='vertical'>
@@ -97,7 +114,7 @@ const AnnualReportInformation = (props: Props) => {
                     </Space>
                 </Card.Grid>
                 <Card.Grid
-                    className={styles.container}>
+                    className='container'>
                     <Title
                         level={4}>УПС</Title>
                     <Space direction='vertical'>
@@ -108,7 +125,7 @@ const AnnualReportInformation = (props: Props) => {
                     </Space>
                 </Card.Grid>
                 <Card.Grid
-                    className={styles.container}>
+                    className='container'>
                     <Title
                         level={4}>Адміністрування та виховництво</Title>
                     <Space direction='vertical'>
@@ -121,7 +138,7 @@ const AnnualReportInformation = (props: Props) => {
                     </Space>
                 </Card.Grid>
                 <Card.Grid
-                    className={styles.container}>
+                    className='container'>
                     <Title
                         level={4}>Пластприят</Title>
                     <Space direction='vertical'>
@@ -134,7 +151,7 @@ const AnnualReportInformation = (props: Props) => {
                     </Space>
                 </Card.Grid>
                 <Card.Grid
-                    className={styles.container}>
+                    className='container'>
                     <Title
                         level={4}>Залучені кошти</Title>
                     <Space direction='vertical'>
@@ -149,7 +166,7 @@ const AnnualReportInformation = (props: Props) => {
                     </Space>
                 </Card.Grid>
                 <Card.Grid
-                    className={styles.container}>
+                    className='container'>
                     <Title
                         level={4}>Вкажіть, що вам допоможе ефективніше залучати волонтерів
                             та створювати виховні частини (гнізда, курені)</Title>
@@ -159,7 +176,7 @@ const AnnualReportInformation = (props: Props) => {
                     </Space>
                 </Card.Grid>
                 <Card.Grid
-                    className={styles.container}>
+                    className='container'>
                     <Title
                         level={4}>Вкажіть перелік майна, що є в станиці</Title>
                     <Space direction='vertical'>
