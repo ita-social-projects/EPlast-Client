@@ -5,7 +5,7 @@ import Props from './ConfirmedDropdownProps';
 import styles from '../Dropdown.module.css';
 
 const ConfirmedDropdown = (props: Props) => {
-    const { record, pageX, pageY, showDropdown, onView, onCancel } = props;
+    const { record, pageX, pageY, showDropdown, canManage, onView, onCancel } = props;
 
     const handleClick = (item: any) => {
         switch (item.key) {
@@ -13,7 +13,9 @@ const ConfirmedDropdown = (props: Props) => {
                 onView(record.id);
                 break;
             case '2':
-                onCancel(record.id);
+                if (canManage) {
+                    onCancel(record.id);
+                }
                 break;
             default:
                 break;
@@ -34,10 +36,12 @@ const ConfirmedDropdown = (props: Props) => {
                     key='1' >
                     <FileSearchOutlined />Переглянути
                 </Menu.Item>
-                <Menu.Item
-                    key='2' >
-                    <FileExcelOutlined />Скасувати
-                </Menu.Item>
+                {canManage ? (
+                    <Menu.Item
+                        key='2' >
+                        <FileExcelOutlined />Скасувати
+                    </Menu.Item>
+                ) : null}
             </Menu>
         </>
     );

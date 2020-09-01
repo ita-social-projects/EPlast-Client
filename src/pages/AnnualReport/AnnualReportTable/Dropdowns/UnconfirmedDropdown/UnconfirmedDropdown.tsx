@@ -5,7 +5,7 @@ import Props from './UnconfirmedDropdownProps';
 import styles from '../Dropdown.module.css';
 
 const UnconfirmedDropdown = (props: Props) => {
-    const { record, pageX, pageY, showDropdown, onView, onEdit, onConfirm, onRemove } = props;
+    const { record, pageX, pageY, showDropdown, canManage, onView, onEdit, onConfirm, onRemove } = props;
 
     const handleClick = (item: any) => {
         switch (item.key) {
@@ -16,10 +16,14 @@ const UnconfirmedDropdown = (props: Props) => {
                 onEdit(record.id);
                 break;
             case '3':
-                onConfirm(record.id);
+                if (canManage) {
+                    onConfirm(record.id);
+                }
                 break;
             case '4':
-                onRemove(record.id);
+                if (canManage) {
+                    onRemove(record.id);
+                }
                 break;
             default:
                 break;
@@ -44,14 +48,18 @@ const UnconfirmedDropdown = (props: Props) => {
                     key='2' >
                     <FileSyncOutlined />Редагувати
                 </Menu.Item>
-                <Menu.Item
-                    key='3' >
-                    <FileDoneOutlined />Підтвердити
-                </Menu.Item>
-                <Menu.Item
-                    key='4' >
-                    <DeleteOutlined />Видалити
-                </Menu.Item>
+                {canManage ? (
+                    <Menu.Item
+                        key='3' >
+                        <FileDoneOutlined />Підтвердити
+                    </Menu.Item>
+                ) : null}
+                {canManage ? (
+                    <Menu.Item
+                        key='4' >
+                        <DeleteOutlined />Видалити
+                    </Menu.Item>
+                ) : null}
             </Menu>
         </>
     );
