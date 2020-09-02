@@ -19,6 +19,7 @@ const EventUser = () => {
     const [planedEventsModal, setPlanedEventsModal] = useState(false);
     const [visitedEventsModal, setVisitedEventsModal] = useState(false);
     const [checked, setChecked] = useState(false);
+    debugger
     const { userId } = useParams();
     const [userToken, setUserToken] = useState<any>([{
         nameid: ''
