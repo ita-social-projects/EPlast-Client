@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Form, Select, Button, DatePicker, Checkbox } from 'antd';
+import { Form, Select, Button, DatePicker, Checkbox, Switch } from 'antd';
 import activeMembershipApi,{ PlastDegree, UserPlastDegreePost, UserPlastDegree } from '../../../../api/activeMembershipApi';
 import classes from "./FormAddPlastDegree.module.css"
 type FormAddPlastDegreeProps = {
@@ -34,9 +34,7 @@ const FormAddPlastDegree = ({
        form.resetFields();
        resetAvailablePlastDegree();
     }
-    const onChange = (e: any)=> {
-        setIsChecked(e.target.checked);
-    }  
+    const handleSwitchChange = (e: boolean) => setIsChecked(e);
     return <Form
     name="basic"
     onFinish ={handleFinish}
@@ -59,10 +57,9 @@ const FormAddPlastDegree = ({
         />
       </Form.Item>
      
-
-      <Form.Item
-      name ="isCurrent">
-          <Checkbox onChange ={onChange} value = "">Обрати поточним</Checkbox></Form.Item>
+      <Form.Item name="isCurrent" label="Обрати поточним" valuePropName="checked">
+  <Switch onChange ={handleSwitchChange}/>
+</Form.Item>
            <Form.Item>
         <Button
         className={classes.cardButton}
