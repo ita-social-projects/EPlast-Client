@@ -1,6 +1,5 @@
 import React from 'react';
 import { Modal } from 'antd';
-import UserDistinction from '../../../api/distinctionApi';
 import FormAddDistinction from './FormAddDistinction';
 
 interface Props {
@@ -15,7 +14,7 @@ const AddDistinctionModal = ({ visibleModal, setVisibleModal, onAdd }: Props) =>
   
     return (
         <Modal
-            title="Додати рішення пластового проводу"
+            title="Додати відзначення"
             visible={visibleModal}
             onCancel={handleCancel}
             footer={null}

@@ -5,6 +5,7 @@ import UserDistinction from '../Interfaces/UserDistinction';
 import DropDownDistinctionTable from './DropDownDistinctionTable';
 import distinctionApi from '../../../api/distinctionApi';
 import AddDistinctionModal from '../DistinctionTable/AddDistinctionModal';
+import EditDistinctionTypesModal from './EditDistinctionTypesModal';
 
 const classes = require('../../DecisionTable/Table.module.css');
 
@@ -13,6 +14,7 @@ const DecisionTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
+  const [visibleModalEditDist, setVisibleModalEditDist] = useState(false);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -39,6 +41,10 @@ const DecisionTable = () => {
      
     };
 
+    const showModalEditTypes = () => {
+      setVisibleModalEditDist(true);
+    }
+
 return (
     <Layout>
       <Content onClick={() => { setShowDropdown(false) }} >
@@ -50,6 +56,9 @@ return (
               <Input placeholder="Пошук" />
               <Button type="primary" onClick = {showModal}>
                 Додати відзначення
+              </Button>
+              <Button type="primary" onClick = {showModalEditTypes}>
+                Додати тип відзначення
               </Button>
             </div>
             <Table
@@ -83,6 +92,9 @@ return (
                   visibleModal={visibleModal}
                   onAdd={handleAdd}
               />
+              <EditDistinctionTypesModal 
+              setVisibleModal = {setVisibleModalEditDist}
+              visibleModal = {visibleModalEditDist}/>
           </>
         )}
       </Content>

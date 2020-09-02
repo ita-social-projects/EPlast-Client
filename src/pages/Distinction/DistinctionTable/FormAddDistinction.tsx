@@ -1,17 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import { Form, DatePicker, Select, Input, Upload, Button, AutoComplete } from 'antd';
-import { InboxOutlined } from '@ant-design/icons';
-import decisionsApi from '../../../api/distinctionApi';
-import notificationLogic from '../../../components/Notifications/Notification';
+import { Form, DatePicker, Select, Input, Button, AutoComplete } from 'antd';
 import Distinction from '../Interfaces/Distinction';
 import UserDistinction from '../Interfaces/UserDistinction';
 import distinctionApi from '../../../api/distinctionApi';
-import { User } from '../../userPage/EditUserPage/Interface';
 import adminApi from '../../../api/adminApi';
-import UserApi from '../../../api/UserApi';
+
 
 import formclasses from '../../KadraVykhovnykiv/Form.module.css';
-import { string, number } from 'yup';
 
 
 type FormAddDistinctionProps = {
