@@ -20,15 +20,27 @@ const ActiveMembership = () => {
     const [userToken, setUserToken] = useState<any>([{
         nameid: ''
     }]);
+    const [endDateVisibleModal,setEndDateVisibleModal] = useState<boolean>(false);
     const handleAddDegree = async() =>{
         await activeMembershipApi.getUserPlastDegrees(userId).then(response =>{
             setPlastDegrees(response);
         }); 
     }
     const handleDeleteUserPlastDegree = (plastDegreeId : number)=>{
-        setPlastDegrees(plastDegrees.filter(pd => pd.plastDegree.id !== plastDegreeId));
-        fetchData();
-    }
+        
+    };
+    const handleChangeAsCurrent = (plastDegreeIdToSetAsCurrent: number) =>{
+          const upd : Array<UserPlastDegree>=  plastDegrees.map((pd)=>{
+                if(pd.isCurrent){
+                    pd.isCurrent = !pd.isCurrent;
+                }
+                if(pd.plastDegree.id === plastDegreeIdToSetAsCurrent){
+                    pd.isCurrent = !pd.isCurrent;
+                }
+                return pd;
+            });
+            setPlastDegrees(upd);
+    };
     const fetchData  =  async () =>{
         const token = AuthStore.getToken() as string;
             setUserToken(jwt(token));
@@ -46,7 +58,9 @@ const ActiveMembership = () => {
     };
     const handleDelete = async (userPlastDegree : UserPlastDegree) =>{
        await activeMembershipApi.removeUserPlastDegree(userId, userPlastDegree.plastDegree.id);  
-      handleDeleteUserPlastDegree(userPlastDegree.plastDegree.id);
+       await activeMembershipApi.getUserPlastDegrees(userId).then(response =>{
+        setPlastDegrees(response);
+    });
     }
     const showModal = () => setVisibleModal(true);
     useEffect(()=>{
@@ -77,7 +91,7 @@ return <div className={classes.wrapper} >
         </div>
         <div className={classes.wrapper}>
         <div className={classes.wrapperPlastDegree}>
-        <Title level={2}> Ступені користувача </Title>      
+         <Title level={2}> Ступені користувача </Title>      
              <div className={classes.line} />
                 {plastDegrees.map(pd => (<React.Fragment key = {pd.id}>
             <div className={classes.textFieldsMain}>
@@ -96,13 +110,15 @@ return <div className={classes.wrapper} >
             className = {classes.button}
             >Видалити</button>
              <button onClick ={()=>{
-            
+                 
             }
             }
             className = {classes.button}
             >Надати дату завершення</button>
-            {!pd.isCurrent && <button onClick ={()=>{
-            
+            {!pd.isCurrent && <button onClick ={ async ()=>{
+            await activeMembershipApi.setPlastDegreeAsCurrent(userId, pd.plastDegree.id).then(()=>{
+                handleChangeAsCurrent(pd.plastDegree.id);
+            });
         }
         }
         className = {classes.button}

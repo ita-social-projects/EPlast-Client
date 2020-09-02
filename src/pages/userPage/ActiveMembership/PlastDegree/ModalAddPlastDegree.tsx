@@ -39,6 +39,7 @@ useEffect(()=>{
 },[]);
 return <Modal 
         visible={visibleModal}
+        title = "Надання пластового ступеня"
         footer ={null}>
     <FormAddPlastDegree 
         handleAddDegree = {handleAddDegree}

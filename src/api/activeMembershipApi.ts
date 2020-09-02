@@ -47,4 +47,17 @@ const getAllPlastDegrees = async () : Promise<Array<PlastDegree>>=> {
        
     return response.data;
 };
-export default{ getAccessLevelById, getAllPlastDegrees, getUserPlastDegrees, postUserPlastDegree, removeUserPlastDegree };
+const setPlastDegreeAsCurrent = async (userId : string, userPlastDegreeId: number)=>{
+    const response = await Api.put(`ActiveMembership/degree/setAsCurrent/${userId}/${userPlastDegreeId}`);
+       
+    return response.data;
+}
+export default
+{ 
+    getAccessLevelById,
+    getAllPlastDegrees,
+    getUserPlastDegrees,
+    postUserPlastDegree,
+    removeUserPlastDegree,
+    setPlastDegreeAsCurrent
+};
