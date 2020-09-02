@@ -11,6 +11,7 @@ type ModalAddPlastDegreeProps ={
 }
 const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, userId, handleDeleteUserPlastDegree,handleAddDegree   }: ModalAddPlastDegreeProps) =>{
     const [availablePlastDegree, setAvailablePlastDegree] = useState<Array<PlastDegree>>([]);
+    const handleCancel = () => setVisibleModal(false);
     const getAvailablePlastDegree = (allDegrees : Array<PlastDegree>, userPlastDegrees : Array<UserPlastDegree>): Array<PlastDegree>=> {
         
         const aupd : Array<PlastDegree> = [];
@@ -39,6 +40,7 @@ useEffect(()=>{
 },[]);
 return <Modal 
         visible={visibleModal}
+        onCancel ={handleCancel}
         title = "Надання пластового ступеня"
         footer ={null}>
     <FormAddPlastDegree 
@@ -48,6 +50,7 @@ return <Modal
         setVisibleModal ={setVisibleModal}
         availablePlastDegree ={availablePlastDegree}
         resetAvailablePlastDegree = {fetchData}/>
+        
 </Modal>;
 };
 

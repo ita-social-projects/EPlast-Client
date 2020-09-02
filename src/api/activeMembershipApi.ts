@@ -18,6 +18,11 @@ export type UserPlastDegreePost ={
     isCurrent: boolean;
     userId : string;
 }
+export type UserPlastDegreePut ={
+    userId : string;
+    plastDegreeId : number;
+    endDate : string;
+}
 const getAccessLevelById = async (id : string) => {
     const response = await Api.get(`ActiveMembership/accessLevel/${id}`);
 
@@ -52,6 +57,11 @@ const setPlastDegreeAsCurrent = async (userId : string, userPlastDegreeId: numbe
        
     return response.data;
 }
+const addEndDateForUserPlastDegree = async (userPlastDegreePut: UserPlastDegreePut) =>{
+    const response = await Api.put(`ActiveMembership/degree/endDate`, userPlastDegreePut);
+       
+    return response.data;
+}
 export default
 { 
     getAccessLevelById,
@@ -59,5 +69,6 @@ export default
     getUserPlastDegrees,
     postUserPlastDegree,
     removeUserPlastDegree,
-    setPlastDegreeAsCurrent
+    setPlastDegreeAsCurrent,
+    addEndDateForUserPlastDegree
 };

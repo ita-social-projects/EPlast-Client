@@ -8,6 +8,7 @@ import userApi from '../../../api/UserApi';
 import AuthStore from '../../../stores/AuthStore';
 import jwt from 'jwt-decode';
 import ModalAddPlastDegree from './PlastDegree/ModalAddPlastDegree';
+import ModalAddEndDatePlastDegree from './PlastDegree/ModalAddEndDatePlastDegree';
 const { Title } = Typography;
 
 const ActiveMembership = () => {
@@ -17,10 +18,9 @@ const ActiveMembership = () => {
     const [user, setUser] = useState<any>({});
     const [plastDegrees, setPlastDegrees] = useState<Array<UserPlastDegree>>([]);
     const [visibleModal, setVisibleModal] = useState<boolean>(false);
-    const [userToken, setUserToken] = useState<any>([{
-        nameid: ''
-    }]);
+    const [userToken, setUserToken] = useState<any>([{ nameid: '' }]);
     const [endDateVisibleModal,setEndDateVisibleModal] = useState<boolean>(false);
+    const [plastDegreeIdToAddEndDate, setPlastDegreeIdToAddEndDate] = useState<number>(0);
     const handleAddDegree = async() =>{
         await activeMembershipApi.getUserPlastDegrees(userId).then(response =>{
             setPlastDegrees(response);
@@ -110,7 +110,8 @@ return <div className={classes.wrapper} >
             className = {classes.button}
             >Видалити</button>
              <button onClick ={()=>{
-                 
+                 setPlastDegreeIdToAddEndDate(pd.plastDegree.id);
+                 setEndDateVisibleModal(true);
             }
             }
             className = {classes.button}
@@ -136,6 +137,11 @@ return <div className={classes.wrapper} >
         userId = {userId} 
         visibleModal = {visibleModal}
         setVisibleModal ={setVisibleModal}/>
+        <ModalAddEndDatePlastDegree 
+        userId = {userId}
+        plastDegreeId = {plastDegreeIdToAddEndDate}
+        endDateVisibleModal = {endDateVisibleModal}
+        setEndDateVisibleModal = {setEndDateVisibleModal}/>
 </div>;
 }
 export default ActiveMembership;

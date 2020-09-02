@@ -36,7 +36,6 @@ const FormAddPlastDegree = ({
     }
     const onChange = (e: any)=> {
         setIsChecked(e.target.checked);
-        console.log(isChecked);
     }  
     return <Form
     name="basic"
