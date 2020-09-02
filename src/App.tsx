@@ -38,7 +38,7 @@ import UserFields from "./pages/userPage/personalData/UserFields";
 import AnnualReportTable from './pages/AnnualReport/AnnualReportTable/AnnualReportTable';
 import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
 import NotFound from "./pages/Error/NotFound";
-import UserTable from "./pages/UserTable/UserTable";
+import UsersTable from "./pages/UserTable/UserTable";
 import UserDistinctions from "./pages/Distinction/DistinctionTable/DistinctionTable";
 import KadrasTable from "./pages/KadraVykhovnykiv/KadrasPage";
 
@@ -214,7 +214,7 @@ const App: FC = () => (
             layout={PrivateLayout}
             exact
             path="/user/table"
-            component={UserTable}
+            component={UsersTable}
           />
            <RouteWithLayout
             layout={PrivateLayout}

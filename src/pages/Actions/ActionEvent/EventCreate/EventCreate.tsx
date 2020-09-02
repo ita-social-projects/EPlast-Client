@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Form, DatePicker, Select, Input, Space, Button, Radio, Spin } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
 import { useHistory, useParams } from 'react-router-dom';
+import { Form, DatePicker, Select, Input, Space, Button, Radio, Spin } from 'antd';
+import moment from 'moment';
+import TextArea from 'antd/lib/input/TextArea';
 import Title from 'antd/lib/typography/Title';
 import jwt from 'jwt-decode';
 import eventUserApi from '../../../../api/eventUserApi';
 import eventsApi from "../../../../api/eventsApi";
-import notificationLogic from '../../../../components/Notifications/Notification';
-import moment from 'moment';
 import AuthStore from '../../../../stores/AuthStore';
+import notificationLogic from '../../../../components/Notifications/Notification';
+import EventCategories from '../../../../models/EventCreate/EventCategories';
+import Users from '../../../../models/EventCreate/Users';
+import EventTypes from '../../../../models/EventCreate/EventTypes';
 
 const classes = require('./EventCreate.module.css');
 
@@ -17,33 +20,17 @@ export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState<any>([]);
-  const [administators, setAdministators] = useState<any>([]);
+  const [categories, setCategories] = useState<EventCategories[]>([]);
+  const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
+  const [administators, setAdministators] = useState<Users[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>(['', '', '', '']);
   const dateFormat = 'MM/DD/YYYY HH:mm';
-
-  const [data, setData] = useState<any>({
-    eventCategories: [{
-      eventCategoryId: 0,
-      eventCategoryName: '',
-    }],
-    eventTypes: [{
-      id: 0,
-      eventTypeName: '',
-    }],
-    users: [{
-      id: '',
-      firstName: '',
-      lastName: '',
-      userName: '',
-    }]
-  });
 
   useEffect(() => {
     const fetchData = async () => {
       await eventUserApi.getDataForNewEvent().then(async response => {
-        const { eventCategories, eventTypes, users } = response.data;
-        setData({ eventCategories, eventTypes, users });
+        const { users, eventTypes } = response.data;
+        setEventTypes(eventTypes);
         setAdministators(users);
         setLoading(true);
       })
@@ -151,7 +138,7 @@ export default function () {
               < div className={classes.radio} >
                 <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio}>
                   <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup} onChange={onChange} value={categories}>
-                    {data?.eventTypes.map((item: any) => (<Radio.Button key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
+                    {eventTypes.map((item: any) => (<Radio.Button key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
                   </Radio.Group>
                 </Form.Item>
               </div>

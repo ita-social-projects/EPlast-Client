@@ -70,13 +70,6 @@ const ColumnsForUserTable: any = [
                     </Tooltip>
                 )
             }
-            else {
-                return (
-                    <Tooltip title="Інша">
-                        <QuestionOutlined />
-                    </Tooltip>
-                )
-            }
         },
     },
     {

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { Avatar, Modal, Button, Typography, Badge, Space, Spin, Checkbox, Tooltip, Skeleton, Switch } from 'antd';
+import { Avatar, Modal, Button, Typography, Badge, Space, Spin, Tooltip, Switch } from 'antd';
 import eventUserApi from '../../../../api/eventUserApi';
+import EventsUser from '../../../../models/EventUser/EventUser';
+import CreatedArchivedEvents from '../../../../models/EventUser/CreatedArchivedEvents';
 import classes from './EventUser.module.css';
 import userApi from '../../../../api/UserApi';
 import AuthStore from '../../../../stores/AuthStore';
@@ -16,74 +18,33 @@ const EventUser = () => {
     const [loading, setLoading] = useState(false);
     const [imageBase64, setImageBase64] = useState<string>();
     const [createdEventsModal, setCreatedEventsModal] = useState(false);
-    const [planedEventsModal, setPlanedEventsModal] = useState(false);
+    const [plannedEventsModal, setPlannedEventsModal] = useState(false);
     const [visitedEventsModal, setVisitedEventsModal] = useState(false);
     const [checked, setChecked] = useState(false);
-    debugger
     const { userId } = useParams();
+    const [createdEvents, setCreatedEvents] = useState<CreatedArchivedEvents>(new CreatedArchivedEvents());
+    const [allEvents, setAllEvents] = useState<EventsUser>(new EventsUser());
     const [userToken, setUserToken] = useState<any>([{
         nameid: ''
     }]);
-    const [createdEvents, setCreatedEvents] = useState<any>({
-        user: {
-            id: '',
-            firstName: '',
-            lastName: '',
-        },
-        createdEvents: [{
-            id: 0,
-            eventName: '',
-            eventDateStart: '',
-            eventDateEnd: '',
-            eventStatusID: ''
-        }],
-    });
-
-    const [data, setData] = useState<any>({
-        user: {
-            id: '',
-            firstName: '',
-            lastName: '',
-        },
-        userRoles: [''],
-        planedEvents: [{
-            id: 0,
-            eventName: '',
-            eventDateStart: '',
-            eventDateEnd: ''
-        }],
-        createdEvents: [{
-            id: 0,
-            eventName: '',
-            eventDateStart: '',
-            eventDateEnd: '',
-            eventStatusID: ''
-        }],
-        visitedEvents: [{
-            id: 0,
-            eventName: '',
-            eventDateStart: '',
-            eventDateEnd: ''
-        }]
-    });
 
     useEffect(() => {
-        const fetchData = async () => {
-            const token = AuthStore.getToken() as string;
-            setUserToken(jwt(token));
-            await eventUserApi.getEventsUser(userId).then(async response => {
-                const { user, userRoles, planedEvents, createdEvents, visitedEvents } = response.data;
-                console.log(response.data);
-                setData({ user, userRoles, planedEvents, visitedEvents });
-                setCreatedEvents({ user, createdEvents });
-                await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
-                    setImageBase64(response.data);
-                })
-                setLoading(true);
-            })
-        }
         fetchData();
     }, []);
+
+    const fetchData = async () => {
+        const token = AuthStore.getToken() as string;
+        setUserToken(jwt(token));
+        await eventUserApi.getEventsUser(userId).then(async response => {
+            const { user, createdEvents } = response.data;
+            setAllEvents(response.data);
+            setCreatedEvents({ user, createdEvents });
+            await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
+                setImageBase64(response.data);
+            })
+            setLoading(true);
+        })
+    }
 
     async function renderArchiveEvents(checked: any) {
         setChecked(checked);
@@ -94,11 +55,7 @@ const EventUser = () => {
             })
         }
         else {
-            await eventUserApi.getEventsUser(userId).then(async response => {
-                const { user, planedEvents, createdEvents, visitedEvents } = response.data;
-                setData({ user, planedEvents, visitedEvents });
-                setCreatedEvents({ user, createdEvents });
-            })
+            await fetchData();
         }
     };
 
@@ -113,7 +70,7 @@ const EventUser = () => {
             <div className={classes.wrapper} >
                 <div className={classes.wrapperImg}>
                     <Avatar className={classes.avatar} size={300} src={imageBase64} />
-                    <Title level={2}> {data?.user.firstName} {data?.user.lastName} </Title>
+                    <Title level={2}> {allEvents?.user.firstName} {allEvents?.user.lastName} </Title>
                     < div className={classes.line} />
                     {userToken.nameid === userId && createdEvents?.createdEvents.length !== 0 &&
                         < Button type="primary" className={classes.button} onClick={() => history.push('/actions/eventCreate')} >
@@ -125,15 +82,15 @@ const EventUser = () => {
                         <div className={classes.wrapper2}>
                             <Title level={2}> Відвідані події </Title>
                             < div className={classes.line} />
-                            {data.visitedEvents.length === 0 && userToken.nameid !== userId &&
-                                <h2>{data?.user.firstName} {data?.user.lastName} ще не відвідав(ла) жодної події</ h2 >
+                            {allEvents.visitedEvents?.length === 0 && userToken.nameid !== userId &&
+                                <h2>{allEvents?.user.firstName} {allEvents?.user.lastName} ще не відвідав(ла) жодної події</ h2 >
                             }
-                            {data.visitedEvents.length === 0 && userToken.nameid === userId &&
+                            {allEvents?.visitedEvents?.length === 0 && userToken.nameid === userId &&
                                 <h2>Ви ще не відвідали жодної події</ h2 >
                             }
-                            {data.visitedEvents.length !== 0 &&
+                            {allEvents?.visitedEvents?.length !== 0 &&
                                 <div>
-                                    <Badge count={data.visitedEvents.length} style={{ backgroundColor: newLocal }} />
+                                    <Badge count={allEvents?.visitedEvents?.length} style={{ backgroundColor: newLocal }} />
                                     <br />
                                     < Button type="primary" className={classes.button} onClick={() => setVisitedEventsModal(true)
                                     }>
@@ -152,7 +109,7 @@ const EventUser = () => {
                                         } > Закрити </Button>
                                     ]}
                             >
-                                {data.visitedEvents.map((item: any) =>
+                                {allEvents?.visitedEvents?.map((item: any) =>
                                     <div>
                                         <h1>{item.eventName} </ h1 >
                                         < h2 > Дата початку: {moment(item.eventDateStart).format("DD-MM-YYYY HH:mm")} </h2>
@@ -185,7 +142,7 @@ const EventUser = () => {
                                 </div>}
                             {userToken.nameid !== userId && createdEvents.createdEvents.length === 0 &&
                                 < div >
-                                    <h2>{data?.user.firstName} {data?.user.lastName} ще не створив(ла) жодної події</ h2 >
+                                    <h2>{allEvents?.user.firstName} {allEvents?.user.lastName} ще не створив(ла) жодної події</ h2 >
                                 </div>
                             }
                             < Modal
@@ -197,9 +154,9 @@ const EventUser = () => {
                                 footer={
                                     [
                                         <div className={classes.modalFooter}>
-                                        <Switch size="default" unCheckedChildren="Архів" checked={checked} onChange={(checked: any) => renderArchiveEvents(checked)}/>
-                                        <Button type="primary" key='submit' className={classes.button} onClick={() => setCreatedEventsModal(false)}>
-                                            Закрити
+                                            <Switch size="default" unCheckedChildren="Архів" checked={checked} onChange={(checked: any) => renderArchiveEvents(checked)} />
+                                            <Button type="primary" key='submit' className={classes.button} onClick={() => setCreatedEventsModal(false)}>
+                                                Закрити
                                         </Button>
                                         </div>
                                     ]}
@@ -238,19 +195,19 @@ const EventUser = () => {
                         < div className={classes.wrapper4} >
                             <Title level={2} className={classes.sectionTitle} > Заплановані події </Title>
                             < div className={classes.line} />
-                            {data.planedEvents.length === 0 && userToken.nameid === userId ?
+                            {allEvents?.planedEvents?.length === 0 && userToken.nameid === userId &&
                                 <div>
                                     <h2>Ви ще не запланували жодної події</ h2 >
                                     <Button type="primary" key='submit' className={classes.button} id={classes.subcribeButton} onClick={() => history.push('/events/types')} >
                                         Зголоситись на подію
                                 </Button>
-                                </div> :
-                                <h2>{data?.user.firstName} {data?.user.lastName} ще не запланував(ла) жодної події</ h2 >
-                            }
-                            {data.planedEvents.length !== 0 && <div>
-                                <Badge count={data.planedEvents.length} style={{ backgroundColor: '#3c5438' }} />
+                                </div>}
+                                {allEvents?.planedEvents?.length === 0 && userToken.nameid !== userId &&
+                                <h2>{allEvents?.user.firstName} {allEvents?.user.lastName} ще не запланував(ла) жодної події</ h2 >}
+                            {allEvents?.planedEvents?.length !== 0 && <div>
+                                <Badge count={allEvents?.planedEvents?.length} style={{ backgroundColor: '#3c5438' }} />
                                 <br />
-                                < Button type="primary" className={classes.button} onClick={() => setPlanedEventsModal(true)
+                                < Button type="primary" className={classes.button} onClick={() => setPlannedEventsModal(true)
                                 }>
                                     Список
                                 </Button>
@@ -258,20 +215,20 @@ const EventUser = () => {
                             < Modal
                                 title="Заплановані події"
                                 centered
-                                visible={planedEventsModal}
+                                visible={plannedEventsModal}
                                 className={classes.modal}
-                                onCancel={() => setPlanedEventsModal(false)}
+                                onCancel={() => setPlannedEventsModal(false)}
                                 footer={
                                     [
-                                        <Button type="primary" key='submit' className={classes.button} onClick={() => history.push('/events/types')} >
+                                        <Button type="primary" key='submit' className={classes.button} id={classes.subcribeButton} onClick={() => history.push('/events/types')} >
                                             Зголоситись на подію
                                         </Button>,
-                                        < Button type="primary" key='submit' className={classes.button} onClick={() => setPlanedEventsModal(false)}>
+                                        < Button type="primary" key='submit' className={classes.button} onClick={() => setPlannedEventsModal(false)}>
                                             Закрити
                                         </Button>
                                     ]}
                             >
-                                {data.planedEvents.map((item: any) => <div>
+                                {allEvents?.planedEvents?.map((item: any) => <div>
                                     <h1>{item.eventName} </ h1 >
                                     < h2 > Дата початку: {moment(item.eventDateStart).format("DD-MM-YYYY HH:mm")} </h2>
                                     < h2 > Дата завершення: {moment(item.eventDateEnd).format("DD-MM-YYYY HH:mm")} </h2>
@@ -288,7 +245,7 @@ const EventUser = () => {
                             <CalendarOutlined style={{ fontSize: '23px', marginBottom: "7.5px" }} />
                             < Button type="primary" className={classes.button} onClick={() => history.push("/actions/eventCalendar")}>
                                 Переглянути
-                        </Button>
+                            </Button>
                         </div>
                     </div>
                 </div>
