@@ -1,22 +1,28 @@
-import React,{useState, useEffect} from 'react';
+import React from 'react';
 import { Form, Select, Button,DatePicker } from 'antd';
-import { type } from 'os';
-import { PlastDegree, UserPlastDegreePost } from '../../../../api/activeMembershipApi';
+import activeMembershipApi,{ PlastDegree, UserPlastDegreePost, UserPlastDegree } from '../../../../api/activeMembershipApi';
 import classes from "./FormAddPlastDegree.module.css"
 type FormAddPlastDegreeProps = {
     availablePlastDegree:  Array<PlastDegree>;
     setVisibleModal: (visibleModal: boolean) => void;
-}
+    handleDeleteUserPlastDegree : (plastDegreeId : number) => void;
+    handleAddDegree : () => void;
+    userId : string;
+};
 
-const FormAddPlastDegree = ({setVisibleModal, availablePlastDegree}: FormAddPlastDegreeProps)=>{
+const FormAddPlastDegree = ({setVisibleModal, userId, availablePlastDegree,handleDeleteUserPlastDegree,handleAddDegree}: FormAddPlastDegreeProps)=>{
     const [form] = Form.useForm();
-    const handleFinish = (info: any) =>{
+    const handleFinish = async (info: any) =>{
        const userPlastDegreePost :UserPlastDegreePost ={
         plastDegreeId : info.plastDegree,
         dateStart : info.datepickerStart._d,
-        dateFinish: info.datepickerEnd._d,
-        userId : "string"
-       }
+        dateFinish: null,
+        userId : userId
+       };
+       await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
+       setVisibleModal(false);
+       handleAddDegree();
+       form.resetFields();
     }
     return <Form
     name="basic"
@@ -33,14 +39,6 @@ const FormAddPlastDegree = ({setVisibleModal, availablePlastDegree}: FormAddPlas
        name="datepickerStart"
        label="Дата  надання"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
-        <DatePicker format = "YYYY-MM-DD"
-        className={classes.selectField}
-        />
-      </Form.Item>
-      <Form.Item 
-      className={classes.formField}
-       name="datepickerEnd"
-       label="Дата кінця">
         <DatePicker format = "YYYY-MM-DD"
         className={classes.selectField}
         />

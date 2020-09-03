@@ -208,7 +208,7 @@ const City = () => {
                       <Button
                         type="primary"
                         className={classes.listButton}
-                        onClick={() => history.push(`/cities/${city.id}`)}
+                        onClick={() => history.push(`/annualreport/table`)}
                       >
                         Річні звіти
                       </Button>

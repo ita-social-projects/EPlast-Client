@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Input, Button } from 'antd';
 import styles from '../ResetPassword/ResetPassword.module.css';
 import AuthorizeApi from '../../api/authorizeApi';
-import { checkEmail} from '../SignUp/verification';
+import { checkEmail } from '../SignUp/verification';
+import { useParams, useLocation, useHistory } from 'react-router-dom';
+import jwt from 'jwt-decode';
 let authService = new AuthorizeApi();
 
 export default function () {
     const [form] = Form.useForm();
+    const history = useHistory();
+
+    function useQuery() {
+        return new URLSearchParams(useLocation().search);
+    }
+    let query = useQuery();
 
     const validationSchema = {
         Email: [
@@ -24,13 +32,21 @@ export default function () {
     };
 
     const handleSubmit = async (values: any) => {
-        await authService.resetPassword(values);
+        const newPassword = {
+            email: values.Email,
+            password: values.Password,
+            confirmPassword: values.ConfirmPassword,
+            code: query.get("token"),
+        }
+        await authService.resetPassword(newPassword);
+        history.push("/signin");
     };
 
     const initialValues = {
         Email: '',
         Password: '',
-        ConfirmPassword: ''
+        ConfirmPassword: '',
+        Code: ''
     };
 
     return (
@@ -41,9 +57,9 @@ export default function () {
                 form={form}
                 onFinish={handleSubmit}>
 
-            <div className={styles.resetPasswordContainer}>
-                <p>Скидування пароля.   Введіть електронну пошту</p>
-            </div>
+                <div className={styles.resetPasswordContainer}>
+                    <p>Скидування пароля. Введіть електронну пошту</p>
+                </div>
                 <Form.Item name="Email" rules={validationSchema.Email}>
                     <Input
                         className={styles.ResetPasswordInput}

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { AxiosError } from 'axios'
-import { Form, Button, Modal } from 'antd';
-import styles from './AnnualReportCreate.module.css';
+import { Form, Button, Modal, Row, Col } from 'antd';
+import './AnnualReportCreate.less';
 import AnnualReportForm from '../AnnualReportForm/AnnualReportForm';
 import AnnualReportApi from '../../../api/AnnualReportApi';
 import User from '../Interfaces/User';
@@ -19,17 +18,8 @@ export const AnnualReportCreate = () => {
     const [form] = Form.useForm();
 
     useEffect(() => {
-        if (cityId === undefined)
-        {
-            AnnualReportApi.getCities()
-                .then(response => {
-                    let cities = response.data.cities as City[];
-                    setId(cities[0].id)
-                    checkCreated(cities[0].id);
-                })
-                .catch((error: AxiosError) => {
-                    showError(error.response?.data.message);
-                });
+        if (cityId === undefined) {
+            fetchCity();
         }
         else {
             setId(cityId);
@@ -37,19 +27,31 @@ export const AnnualReportCreate = () => {
         }
     }, [])
 
+    const fetchCity = async () => {
+        try {
+            let response = await AnnualReportApi.getCities();
+            let cities = response.data.cities as City[];
+            setId(cities[0].id)
+            checkCreated(cities[0].id);
+        }
+        catch (error) {
+            showError(error.message)
+        }
+    }
+
     const checkCreated = async (id: number) => {
-        await AnnualReportApi.checkCreated(id)
-            .then(response => {
-                if (response.data.hasCreated === false) {
-                    fetchData(id);
-                }
-                else {
-                    showError(response.data.message);
-                }
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            });
+        try {
+            let response = await AnnualReportApi.checkCreated(id);
+            if (response.data.hasCreated === false) {
+                fetchData(id);
+            }
+            else {
+                showError(response.data.message);
+            }
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const fetchData = async (id: number) => {
@@ -58,15 +60,15 @@ export const AnnualReportCreate = () => {
     }
 
     const fetchCityInfo = async (id: number) => {
-        await AnnualReportApi.getCityInfo(id)
-            .then(response => {
-                let cityName = response.data.name;
-                setTitle(title.concat(' ', cityName));
-                setMembers((response.data.members as []).map((item: any) => item.user));
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            })
+        try {
+            let response = await AnnualReportApi.getCityInfo(id);
+            let cityName = response.data.name;
+            setTitle(title.concat(' ', cityName));
+            setMembers((response.data.members as []).map((item: any) => item.user));
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const setMembers = (members: User[]) => {
@@ -79,30 +81,30 @@ export const AnnualReportCreate = () => {
     }
 
     const fetchLegalStatuses = async () => {
-        await AnnualReportApi.getCityLegalStatuses()
-            .then(response => {
-                setCityLegalStatuses((response.data.legalStatuses as []).map((item, index) => {
-                    return {
-                        label: item,
-                        value: index
-                    }
-                }));
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            })
+        try {
+            let response = await AnnualReportApi.getCityLegalStatuses();
+            setCityLegalStatuses((response.data.legalStatuses as []).map((item, index) => {
+                return {
+                    label: item,
+                    value: index
+                }
+            }));
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const handleFinish = async (obj: any) => {
         obj.cityId = id;
-        await AnnualReportApi.create(obj)
-            .then((response) => {
-                form.resetFields();
-                showSuccess(response.data.message);
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            })
+        try {
+            let response = await AnnualReportApi.create(obj);
+            form.resetFields();
+            showSuccess(response.data.message);
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const showSuccess = (message: string) => {
@@ -123,17 +125,22 @@ export const AnnualReportCreate = () => {
     return (
         <Form
             onFinish={handleFinish}
-            className={styles.form}
+            className='annualreport-form'
             form={form} >
             <AnnualReportForm
                 title={title}
                 cityMembers={cityMembers}
                 cityLegalStatuses={cityLegalStatuses} />
-            <Button
-                type='primary'
-                htmlType='submit'>
-                Подати річний звіт
-            </Button>
+            <Row
+                justify='center' >
+                <Col>
+                    <Button
+                        type='primary'
+                        htmlType='submit'>
+                        Подати річний звіт
+                    </Button>
+                </Col>
+            </Row>
         </Form>
     );
 }

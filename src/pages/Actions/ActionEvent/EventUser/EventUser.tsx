@@ -19,6 +19,7 @@ const EventUser = () => {
     const [planedEventsModal, setPlanedEventsModal] = useState(false);
     const [visitedEventsModal, setVisitedEventsModal] = useState(false);
     const [checked, setChecked] = useState(false);
+    debugger
     const { userId } = useParams();
     const [userToken, setUserToken] = useState<any>([{
         nameid: ''
@@ -111,7 +112,7 @@ const EventUser = () => {
     ) : (
             <div className={classes.wrapper} >
                 <div className={classes.wrapperImg}>
-                    <Avatar className={classes.avatar} size={250} src={imageBase64} />
+                    <Avatar className={classes.avatar} size={300} src={imageBase64} />
                     <Title level={2}> {data?.user.firstName} {data?.user.lastName} </Title>
                     < div className={classes.line} />
                     {userToken.nameid === userId && createdEvents?.createdEvents.length !== 0 &&

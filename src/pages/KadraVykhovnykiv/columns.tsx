@@ -4,31 +4,31 @@ import Api from '../../api/KadraVykhovnykivApi';
 
 const columns = [
   {
-    title: 'id',
+    title: 'ID',
     dataIndex: 'id',
   },
   {
-    title: 'userId',
+    title: 'ID користувача',
     dataIndex: 'userId',
   },
   {
-    title: 'kvTypesID',
+    title: 'Тип кадри',
     dataIndex: 'kvTypesID',
   },
   {
-    title: 'dateOfGranting',
+    title: 'Дата надання',
     dataIndex: 'dateOfGranting',
   },
   {
-    title: 'numberInRegister',
+    title: 'Номер в реєстрі',
     dataIndex: 'numberInRegister',
   },
   {
-    title: 'basisOfGranting',
+    title: 'Причина вручення',
     dataIndex: 'basisOfGranting',
   },
   {
-    title: 'link',
+    title: 'Лінк',
     dataIndex: 'link'
 },
     

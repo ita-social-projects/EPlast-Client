@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import {Col, Input, notification, Row, Space, Spin, Table, Typography} from "antd";
-import {useParams} from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { Col, Input, notification, Row, Space, Spin, Table, Typography } from "antd";
+import { useParams } from "react-router-dom";
 // eslint-disable-next-line import/no-cycle
 import SortedEventInfo from './SortedEventInfo';
 import rawData from "./data";
@@ -13,7 +13,7 @@ import spinClasses from "../EventUser/EventUser.module.css";
 
 import './EventInfo.less';
 
-const {Title} = Typography;
+const { Title } = Typography;
 
 export interface EventDetails {
     event: EventInformation;
@@ -77,8 +77,8 @@ const estimateNotification = () => {
     );
 };
 
-const CheckEventForEstimation=({canEstimate,isEventFinished}:EventDetails)=>{
-    if(canEstimate && isEventFinished){
+const CheckEventForEstimation = ({ canEstimate, isEventFinished }: EventDetails) => {
+    if (canEstimate && isEventFinished) {
         estimateNotification();
     }
 }
@@ -90,7 +90,7 @@ const EventInfo = () => {
     const [baseData,] = useState(rawData);
     // @ts-ignore
     const [event, setEvent] = useState<EventDetails>({})
-    const {id} = useParams();
+    const { id } = useParams();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -136,49 +136,55 @@ const EventInfo = () => {
     return loading === false ? (
         <div className={spinClasses.spaceWrapper} key='1'>
             <Space className={spinClasses.loader} size="large">
-                <Spin size="large"/>
+                <Spin size="large" />
             </Space>
         </div>
 
     ) : (
-        <div className="event-info-background">
-            {CheckEventForEstimation(event)}
-            <Row justify="space-around">
-                <Col xs={24} sm={24} md={24} lg={8}>
-                    <SortedEventInfo
-                        event={event}
-                        subscribeOnEvent={subscribeOnEvent}
-                        unSubscribeOnEvent={unSubscribeOnEvent}
-                        key={event.event?.eventName}
-                    />
-                </Col>
-                <Col xs={24} sm={{span: 24, offset: 1}} md={{span: 24, offset: 3}} lg={{span: 16, offset: 0}}>
-                    <EventDetailsHeader eventInfo={event.event}/>
-                </Col>
-            </Row>
-            <div className="event-info-wrapper">
-                <Gallery key={event.event?.eventLocation} eventId={event.event?.eventId}
-                         isUserEventAdmin={event.isUserEventAdmin}/>
-                <div key={'2'}>
-                    <Title level={2} style={{color: '#3c5438'}}>Таблиця користувачів</Title>
-                    <Row>
-                        <Input.Search
-                            style={{width: "400px", margin: "0 0 10px 0"}}
-                            placeholder="Search by..."
-                            enterButton
-                            onSearch={search}
+            <div className="event-info-background">
+                {CheckEventForEstimation(event)}
+                <Row>
+                    <Col xs={24} sm={24} md={24} lg={8}>
+                        <SortedEventInfo
+                            event={event}
+                            subscribeOnEvent={subscribeOnEvent}
+                            unSubscribeOnEvent={unSubscribeOnEvent}
+                            key={event.event?.eventName}
                         />
-                    </Row>
-                </div>
-                <div className="participant-table">
-                    <ParticipantsTable
-                        isUserEventAdmin={event.isUserEventAdmin}
-                        participants={event.event?.eventParticipants}
-                        key={event.event?.eventId}
-                    />
+                    </Col>
+                    <Col xs={24} sm={{ span: 24, offset: 1 }} md={{ span: 24, offset: 3 }} lg={{ span: 16, offset: 0 }}>
+                        <EventDetailsHeader eventInfo={event.event} />
+                    </Col>
+                </Row>
+                <div className="event-info-wrapper">
+                    <div className="eventGallary">
+
+                        <Gallery key={event.event?.eventLocation} eventId={event.event?.eventId}
+                            isUserEventAdmin={event.isUserEventAdmin} />
+                    </div>
+                    <div className="participantsTable">
+
+                        <div key={'2'}>
+                            <Title level={2} style={{ color: '#3c5438' }}>Таблиця користувачів</Title>
+                            <Row>
+                                <Input.Search
+                                    style={{ width: "400px", margin: "0 0 10px 0" }}
+                                    placeholder="Пошук"
+                                    enterButton
+                                    onSearch={search}
+                                />
+                            </Row>
+                        </div>
+                        <div className="participant-table">
+                            <ParticipantsTable
+                                isUserEventAdmin={event.isUserEventAdmin}
+                                participants={event.event?.eventParticipants}
+                                key={event.event?.eventId}
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    )
+        )
 }
 export default EventInfo;

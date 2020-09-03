@@ -1,5 +1,4 @@
 import MembersStatistic from './MembersStatistic';
-import CityManagement from './CityManagement';
 import User from './User';
 import City from './City';
 
@@ -24,9 +23,11 @@ interface AnnualReport {
     listProperty: string;
     improvementNeeds: string;
     membersStatistic: MembersStatistic;
-    cityManagement: CityManagement;
-    userId: string;
-    user: User | null;
+    creatorId: string;
+    creator: User | null;
+    newCityAdminId: string;
+    newCityAdmin: User | null;
+    newCityLegalStatusType: number;
     cityId: number;
     city: City | null;
 }

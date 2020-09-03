@@ -65,7 +65,7 @@ export default function () {
         </Form.Item>
         <Form.Item name="Password" rules={validationSchema.Password} >
           <Input.Password
-            visibilityToggle={false}
+            visibilityToggle={true}
             className={styles.SignInInput}
             placeholder="Пароль"
           />

@@ -1,5 +1,4 @@
 import Api from './api';
-import { type } from 'os';
 
 export type PlastDegree = {
     id: number;
@@ -15,7 +14,7 @@ export type UserPlastDegree ={
 export type UserPlastDegreePost ={
     plastDegreeId : number;
     dateStart : string;
-    dateFinish: string;
+    dateFinish: string | null;
     userId : string;
 }
 const getAccessLevelById = async (id : string) => {
@@ -29,9 +28,22 @@ const getAllPlastDegrees = async () : Promise<Array<PlastDegree>>=> {
 
     return response.data;
 };
+
  const getUserPlastDegrees = async (id : string) :Promise<Array<UserPlastDegree>>=> {
     const response = await Api.get(`ActiveMembership/dergee/${id}`);
 
     return response.data;
- }
-export default{ getAccessLevelById, getAllPlastDegrees, getUserPlastDegrees };
+ };
+
+ const postUserPlastDegree = async (userPlastDegree : UserPlastDegreePost) =>{
+     const response = await Api.post(`ActiveMembership/dergee`, userPlastDegree);
+        
+     return response.data;
+ };
+
+ const removeUserPlastDegree = async (userId : string, userPlastDegreeId: number) =>{
+    const response = await Api.remove(`ActiveMembership/dergee/${userId}/${userPlastDegreeId}`);
+       
+    return response.data;
+};
+export default{ getAccessLevelById, getAllPlastDegrees, getUserPlastDegrees, postUserPlastDegree, removeUserPlastDegree };
