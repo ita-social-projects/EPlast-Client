@@ -75,10 +75,10 @@
     margin-left : 30px;
 }
 .textFieldsMain{
-    font-size : 20px;
+    font-size : 25px;
 }
 .textFieldsOthers{
-    font-size : 15px;
+    font-size : 20px;
 }
 #subcribeButton{
     width: auto;
@@ -121,7 +121,7 @@
 }
 .wrapperPlastDegree{
     width: 900px;
-    height: 450px;
+    height: 550px;
     max-height: 700px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
     display: flex;

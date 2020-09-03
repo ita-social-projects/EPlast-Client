@@ -37,7 +37,7 @@ const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, userId, handleDele
     }
 useEffect(()=>{
     fetchData();
-},[]);
+},[,handleCancel]);
 return <Modal 
         visible={visibleModal}
         onCancel ={handleCancel}

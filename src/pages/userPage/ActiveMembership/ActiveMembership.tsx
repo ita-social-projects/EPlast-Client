@@ -1,14 +1,15 @@
 import React,{useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
-//import classes from "../../Actions/ActionEvent/EventUser/EventUser.module.css";
 import classes from './ActiveMembership.module.css'
 import { Avatar, Typography, List, Button } from 'antd';
-import activeMembershipApi, { PlastDegree, UserPlastDegree } from '../../../api/activeMembershipApi';
+import activeMembershipApi, { UserPlastDegree } from '../../../api/activeMembershipApi';
 import userApi from '../../../api/UserApi';
 import AuthStore from '../../../stores/AuthStore';
 import jwt from 'jwt-decode';
 import ModalAddPlastDegree from './PlastDegree/ModalAddPlastDegree';
+import moment from 'moment'
 import ModalAddEndDatePlastDegree from './PlastDegree/ModalAddEndDatePlastDegree';
+import DeleteDegreeConfirm from './PlastDegree/DeleteDegreeConfirm';
 const { Title } = Typography;
 
 const ActiveMembership = () => {
@@ -56,11 +57,11 @@ const ActiveMembership = () => {
            setPlastDegrees(response);
        }) 
     };
-    const handleDelete = async (userPlastDegree : UserPlastDegree) =>{
-       await activeMembershipApi.removeUserPlastDegree(userId, userPlastDegree.plastDegree.id);  
-       await activeMembershipApi.getUserPlastDegrees(userId).then(response =>{
-        setPlastDegrees(response);
-    });
+    const handleDelete = async () =>{ 
+        fetchData();
+    }
+    const handleAddEndDate = async () =>{
+        fetchData();
     }
     const showModal = () => setVisibleModal(true);
     useEffect(()=>{
@@ -98,13 +99,13 @@ return <div className={classes.wrapper} >
                 {pd.plastDegree.name}
             </div>
             <div className={classes.textFieldsOthers}>
-               Дата початку ступеню {pd.dateStart}
+               Дата початку ступеню: { moment(pd.dateStart).format("YYYY-MM-DD")}
             </div>
             {pd.dateFinish !== null &&  <div className={classes.textFieldsOthers}>
-               Дата завершення ступеню {pd.dateFinish}
+               Дата завершення ступеню: { moment(pd.dateFinish).format("YYYY-MM-DD")}
             </div>}
             <div className={classes.buttons}>  <button onClick ={()=>{
-                handleDelete(pd);
+                DeleteDegreeConfirm(userId, pd.plastDegree.id, handleDelete);
             }
             }
             className = {classes.button}
@@ -141,7 +142,8 @@ return <div className={classes.wrapper} >
         userId = {userId}
         plastDegreeId = {plastDegreeIdToAddEndDate}
         endDateVisibleModal = {endDateVisibleModal}
-        setEndDateVisibleModal = {setEndDateVisibleModal}/>
+        setEndDateVisibleModal = {setEndDateVisibleModal}
+        handleAddEndDate = {handleAddEndDate}/>
 </div>;
 }
 export default ActiveMembership;

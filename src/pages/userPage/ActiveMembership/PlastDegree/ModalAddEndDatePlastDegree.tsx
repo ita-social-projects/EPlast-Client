@@ -7,12 +7,14 @@ type props = {
     plastDegreeId : number;
     endDateVisibleModal : boolean;
     setEndDateVisibleModal: (visibleModal: boolean) => void;
+    handleAddEndDate :() => void;
 }
 const ModalAddEndDatePlastDegree = ({
     userId,
     plastDegreeId,
     endDateVisibleModal,
-    setEndDateVisibleModal
+    setEndDateVisibleModal,
+    handleAddEndDate
     }: props) =>{
     const [form] = Form.useForm();
     const handleCancel = () => setEndDateVisibleModal(false);
@@ -23,6 +25,7 @@ const ModalAddEndDatePlastDegree = ({
             endDate: info.datepickerEnd._d
         };
         await activeMembershipApi.addEndDateForUserPlastDegree(userPlastDegreePut);
+        handleAddEndDate();
         form.resetFields();
         setEndDateVisibleModal(false);
         };
