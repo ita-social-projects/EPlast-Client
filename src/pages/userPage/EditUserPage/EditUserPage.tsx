@@ -318,13 +318,11 @@ export default function () {
         <Spin size="large" />
       </Space>
     </div>
-
   ) : (
       <div className={styles.mainContainer}>
         <Form form={form} name="basic" className={styles.formContainer} onFinish={handleSubmit}	>
           <div className={styles.avatarWrapper}>
             <Avatar size={300} src={userAvatar} className="avatarElem" />
-            < div className="line" />
             <Upload name={name} action={action} headers={headers} onChange={onChange} className={styles.changeAvatar}>
               <Button className={styles.changeAvatarBtn}>
                 <UploadOutlined /> Вибрати
