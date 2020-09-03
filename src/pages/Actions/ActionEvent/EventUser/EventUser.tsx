@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { Avatar, Modal, Button, Typography, Badge, Space, Spin, Tooltip, Switch } from 'antd';
+import { Avatar, Modal, Button, Typography, Badge, Space, Spin, Tooltip, Switch, Drawer, Tag } from 'antd';
 import eventUserApi from '../../../../api/eventUserApi';
 import EventsUser from '../../../../models/EventUser/EventUser';
 import CreatedArchivedEvents from '../../../../models/EventUser/CreatedArchivedEvents';
@@ -10,6 +10,8 @@ import AuthStore from '../../../../stores/AuthStore';
 import jwt from 'jwt-decode';
 import { CalendarOutlined, NotificationTwoTone, ToolTwoTone } from '@ant-design/icons';
 import moment from 'moment';
+import EventCreateDrawer from '../EventCreate/EventCreateDrawer';
+import EventEditDrawer from '../EventEdit/EventEditDrawer';
 const { Title } = Typography;
 
 const EventUser = () => {
@@ -24,6 +26,9 @@ const EventUser = () => {
     const { userId } = useParams();
     const [createdEvents, setCreatedEvents] = useState<CreatedArchivedEvents>(new CreatedArchivedEvents());
     const [allEvents, setAllEvents] = useState<EventsUser>(new EventsUser());
+    const [showEventCreateDrawer, setShowEventCreateDrawer] = useState(false);
+    const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
+    const [eventId, setEventId] = useState<number>();
     const [userToken, setUserToken] = useState<any>([{
         nameid: ''
     }]);
@@ -73,7 +78,7 @@ const EventUser = () => {
                     <Title level={2}> {allEvents?.user.firstName} {allEvents?.user.lastName} </Title>
                     < div className={classes.line} />
                     {userToken.nameid === userId && createdEvents?.createdEvents.length !== 0 &&
-                        < Button type="primary" className={classes.button} onClick={() => history.push('/actions/eventCreate')} >
+                        < Button type="primary" className={classes.button} onClick={() => setShowEventCreateDrawer(true)} >
                             Створити подію
                         </Button>}
                 </div>
@@ -136,10 +141,17 @@ const EventUser = () => {
                             {userToken.nameid === userId && createdEvents.createdEvents.length === 0 &&
                                 <div>
                                     <h2>Ви ще не створили жодної події</ h2 >
-                                    < Button type="primary" className={classes.button} onClick={() => history.push('/actions/eventCreate')} >
+                                    < Button type="primary" className={classes.button} onClick={() => setShowEventCreateDrawer(true)} >
                                         Створити подію
                                     </Button>
                                 </div>}
+
+                            <EventCreateDrawer
+                                visibleEventCreateDrawer={showEventCreateDrawer}
+                                setShowEventCreateDrawer={setShowEventCreateDrawer}
+                                onCreate={fetchData}
+                            />
+
                             {userToken.nameid !== userId && createdEvents.createdEvents.length === 0 &&
                                 < div >
                                     <h2>{allEvents?.user.firstName} {allEvents?.user.lastName} ще не створив(ла) жодної події</ h2 >
@@ -163,6 +175,7 @@ const EventUser = () => {
                             >
                                 {createdEvents.createdEvents.map((item: any) =>
                                     <div>
+                                        {/* <Tag color="red">azaza</Tag> */}
                                         {item.eventStatusID === 3 ?
                                             <div >
                                                 <h1>{item.eventName} </ h1 >
@@ -182,15 +195,19 @@ const EventUser = () => {
                                             Деталі
                                         </Button>
                                         {item.eventStatusID !== 1 && userToken.nameid === userId &&
-                                            < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/actions/eventEdit/${item.id}`)}>
+                                            < Button type="primary" className={classes.button} id={classes.button} onClick={() => { setShowEventEditDrawer(true); setEventId(item.id); }}>
                                                 Редагувати
                                             </Button>}
                                         < hr />
                                     </div>)}
+                                <EventEditDrawer
+                                    id={eventId!}
+                                    visibleEventEditDrawer={showEventEditDrawer}
+                                    setShowEventEditDrawer={setShowEventEditDrawer}
+                                    onEdit={fetchData} />
                             </Modal>
                         </div>
                     </div>
-
                     <div className={classes.wrapper}>
                         < div className={classes.wrapper4} >
                             <Title level={2} className={classes.sectionTitle} > Заплановані події </Title>
@@ -202,7 +219,7 @@ const EventUser = () => {
                                         Зголоситись на подію
                                 </Button>
                                 </div>}
-                                {allEvents?.planedEvents?.length === 0 && userToken.nameid !== userId &&
+                            {allEvents?.planedEvents?.length === 0 && userToken.nameid !== userId &&
                                 <h2>{allEvents?.user.firstName} {allEvents?.user.lastName} ще не запланував(ла) жодної події</ h2 >}
                             {allEvents?.planedEvents?.length !== 0 && <div>
                                 <Badge count={allEvents?.planedEvents?.length} style={{ backgroundColor: '#3c5438' }} />
@@ -250,6 +267,7 @@ const EventUser = () => {
                     </div>
                 </div>
             </div >
+
         );
 }
 

@@ -318,7 +318,6 @@ export default function () {
         <Spin size="large" />
       </Space>
     </div>
-
   ) : (
       <div className={styles.mainContainer}>
         <Form form={form} name="basic" className={styles.formContainer} onFinish={handleSubmit}	>

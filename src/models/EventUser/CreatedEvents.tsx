@@ -4,6 +4,7 @@ export default class CreatedEvents {
     eventDateStart?: Date;
     eventDateEnd?: Date;
     eventStatusID: number;
+    eventTypeID: number;
 
     constructor() {
         this.id = 0;
@@ -11,5 +12,6 @@ export default class CreatedEvents {
         this.eventDateStart = undefined;
         this.eventDateEnd = undefined;
         this.eventStatusID = 0;
+        this.eventTypeID = 0;
     }
 }
