@@ -1,4 +1,4 @@
-interface Distinction {
+type Distinction = {
     id: number;
     name: string;
 }
