@@ -18,8 +18,6 @@ import CreateCity from "./pages/City/CreateCity/CreateCity";
 import SignUp from "./pages/SignUp/SignUp";
 import SignIn from "./pages/SignIn/SignIn";
 import EventInfo from "./pages/Actions/ActionEvent/EventInfo/EventInfo";
-import EventCreate from "./pages/Actions/ActionEvent/EventCreate/EventCreate";
-import EventEdit from "./pages/Actions/ActionEvent/EventEdit/EventEdit";
 import EventUser from "./pages/Actions/ActionEvent/EventUser/EventUser";
 import EventCalendar from "./pages/Actions/ActionEvent/EventCalendar/EventCalendar";
 import Actions from "./pages/Actions/Actions";
@@ -34,11 +32,10 @@ import CreateClub from "./pages/Club/CreateClub/CreateClub";
 import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
 import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
-import UserFields from "./pages/userPage/personalData/UserFields";
 import AnnualReportTable from './pages/AnnualReport/AnnualReportTable/AnnualReportTable';
 import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
 import NotFound from "./pages/Error/NotFound";
-import UserTable from "./pages/UserTable/UserTable";
+import UsersTable from "./pages/UserTable/UserTable";
 import UserDistinctions from "./pages/Distinction/DistinctionTable/DistinctionTable";
 import KadrasTable from "./pages/KadraVykhovnykiv/KadrasPage";
 
@@ -146,18 +143,6 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/actions/eventCreate"
-            component={EventCreate}
-          />
-          <RouteWithLayout
-            layout={PrivateLayout}
-            exact
-            path="/actions/eventEdit/:id"
-            component={EventEdit}
-          />
-          <RouteWithLayout
-            layout={PrivateLayout}
-            exact
             path="/actions/eventCalendar"
             component={EventCalendar}
           />
@@ -214,7 +199,7 @@ const App: FC = () => (
             layout={PrivateLayout}
             exact
             path="/user/table"
-            component={UserTable}
+            component={UsersTable}
           />
            <RouteWithLayout
             layout={PrivateLayout}

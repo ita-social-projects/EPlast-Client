@@ -4,9 +4,10 @@ import adminApi from '../../api/adminApi';
 import DropDownUserTable from './DropDownUserTable';
 import Title from 'antd/lib/typography/Title';
 import ColumnsForUserTable from './ColumnsForUserTable';
+import UserTable from '../../models/UserTable/UserTable';
 const classes = require('./UserTable.module.css');
 
-const UserTable = () => {
+const UsersTable = () => {
 
     const [recordObj, setRecordObj] = useState<any>(0);
     const [showDropdown, setShowDropdown] = useState(false);
@@ -14,36 +15,8 @@ const UserTable = () => {
     const [y, setY] = useState(0);
     const [loading, setLoading] = useState(false);
     const [searchedData, setSearchedData] = useState('');
-    const [users, setUsers] = useState<any>([{
-        user: {
-            id: '',
-            firstName: '',
-            lastName: '',
-            birthday: '',
-        },
-        regionName: '',
-        cityName: '',
-        clubName: '',
-        userPlastDegreeName: '',
-        userRoles: ''
-    }])
-
-    const [updatedUser, setUpdatedUser] = useState([{
-        user: {
-            id: '',
-            firstName: '',
-            lastName: '',
-            birthday: '',
-            gender:[{
-                name:'',
-            }],
-        },
-        regionName: '',
-        cityName: '',
-        clubName: '',
-        userPlastDegreeName: '',
-        userRoles: ''
-    }]);
+    const [users, setUsers] = useState<UserTable[]>([]);
+    const [updatedUser, setUpdatedUser] = useState<UserTable[]>([]);
 
     useEffect(() => {
         fetchData();
@@ -71,7 +44,7 @@ const UserTable = () => {
     }
 
     const filteredData = searchedData
-        ? users.filter((item: any) => {
+        ? users?.filter((item: any) => {
             return Object.values(item).find((element) => {
                 return String(element).toLowerCase().includes(searchedData.toLowerCase());
             });
@@ -82,11 +55,6 @@ const UserTable = () => {
         fetchData();
         const filteredData = users.filter((d: any) => d.id !== id);
         setUsers([...filteredData]);
-    }
-
-    const updateItems = () => {
-        const newItems = users.push(updatedUser);
-        setUpdatedUser([...newItems]);
     }
 
     const handleChange = (id: string, userRoles: string) => {
@@ -166,4 +134,4 @@ const UserTable = () => {
         );
 
 }
-export default UserTable;
+export default UsersTable;
