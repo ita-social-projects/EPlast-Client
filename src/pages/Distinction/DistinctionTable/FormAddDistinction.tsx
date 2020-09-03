@@ -46,16 +46,17 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
       };
 
     const handleSubmit = async (values : any) => {
-        const newDistinction : UserDistinction = {
+        const newDistinction: UserDistinction = {
                 id: 0,
-                distinctionId: 0,
+                distinctionId: JSON.parse(values.distinction).id,
                 distinction: JSON.parse(values.distinction),
-                user: values.user,
-                userId: '',
-                date:/* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values.datepicker._d,
+                user: JSON.parse(values.user),
+                userId: JSON.parse(values.user).id,
+                date:/* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values.date,
                 reporter: values.reporter,
                 reason: values.reason,
             }
+            console.log(newDistinction);
             await distinctionApi.addUserDistinction(newDistinction);
             setVisibleModal(false);
 
@@ -95,7 +96,7 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
                 <Select
                  className={formclasses.selectField}
                  >
-                {userData?.map((o) => ( <Select.Option key={o.user.id} value={JSON.stringify(o)}>{ o.user.firstName + " " + o.user.lastName }</Select.Option>))}
+                {userData?.map((o) => ( <Select.Option key={o.user.id} value={JSON.stringify(o.user)}>{ o.user.firstName + " " + o.user.lastName }</Select.Option>))}
                 </Select>
               </Form.Item>
             
