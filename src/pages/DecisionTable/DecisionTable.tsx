@@ -23,7 +23,7 @@ const DecisionTable = () => {
     setData([...filteredData]);
   }
   const handleEdit = (id: number, name: string, description: string) => {
-    /* eslint no-param-reassign: "error" */
+    
     const filteredData = data.filter(d => {
       if (d.id === id) {
         d.name = name;

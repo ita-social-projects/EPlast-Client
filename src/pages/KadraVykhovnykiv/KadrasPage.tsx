@@ -1,13 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {Modal, Input,  Button, Card } from 'antd';
+import {Modal, Input,  Button, Card, Spin } from 'antd';
 
 import {KVTable} from './KVTable';
 
 import AddNewKadraForm from './AddNewKadraForm';
 
-
 const classes = require('./Table.module.css');
-
 
 const tabListNoTitle = [
     {
@@ -38,8 +36,10 @@ export const KadrasTable = ()=>{
     KV2U: <><div><KVTable current={4}/></div></>
   };
 
+ 
+
    const [visible, setvisible]= useState<boolean>(false) ;
-  
+   
    const [noTitleKey, setKey] = useState<string>('KV1N');
 
    const showModal = () => {
@@ -60,6 +60,10 @@ export const KadrasTable = ()=>{
   };
 
        
+
+
+ 
+
 
        const onTabChange =  (key:string) => {
          console.log(noTitleKey)
@@ -87,18 +91,21 @@ export const KadrasTable = ()=>{
             
           }}
         >
+          
           {contentListNoTitle[noTitleKey ]}
         </Card>
 
+       
+            
         <Modal
           title="Надати кадру виховників"
           visible={visible}
           onOk={handleOk}
           onCancel={handleCancel}
+          footer={null}
         >
-          <AddNewKadraForm></AddNewKadraForm>
+          <AddNewKadraForm onAdd={handleCancel}></AddNewKadraForm>
         </Modal>
-            
       </>
     )
         

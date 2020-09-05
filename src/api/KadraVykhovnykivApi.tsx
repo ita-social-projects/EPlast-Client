@@ -1,6 +1,5 @@
 import Api from "./api";
 
-
 const getAllKVs = async () => {
     const response = await Api.get("KadraVykhovnykiv/kadras");
     return response;
@@ -12,6 +11,11 @@ const getAllKVs = async () => {
     return response;
   };
 
+
+const getTypeIdofKadra= async (name:string)=>{
+  const response = await Api.get("KadraVykhovnykiv/getid/"+name);
+  return response;
+}
 
   const getAllKVswithGivenTypes = async (id: number) => {
     const response = await Api.get("KadraVykhovnykiv/"+id);
@@ -39,7 +43,7 @@ const getAllKVs = async () => {
   
 
   const createKadra = async (data: any) => {
-    const response = await Api.put("KadraVykhovnykiv/CreateKadra", data);
+    const response = await Api.post("KadraVykhovnykiv/CreateKadra", data);
     return response;
   };
 
@@ -47,6 +51,7 @@ const getAllKVs = async () => {
   
   export default {
     createKadra,
+    getTypeIdofKadra,
     deleteKadra,
     putUpdateKadra,
     getAllKVsOfGivenUser,

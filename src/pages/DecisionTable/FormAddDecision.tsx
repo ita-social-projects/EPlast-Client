@@ -136,7 +136,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
       className={formclasses.formField}
        name="datepicker"
        label="Дата рішення"
-       rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
+       rules={[{ required: true,  message: 'Це поле має бути заповненим'}]}>
         <DatePicker format = "YYYY-MM-DD"
         className={formclasses.selectField}
         />
