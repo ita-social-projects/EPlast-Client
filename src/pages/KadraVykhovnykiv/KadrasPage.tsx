@@ -36,8 +36,6 @@ export const KadrasTable = ()=>{
     KV2U: <><div><KVTable current={4}/></div></>
   };
 
- 
-
    const [visible, setvisible]= useState<boolean>(false) ;
    
    const [noTitleKey, setKey] = useState<string>('KV1N');
