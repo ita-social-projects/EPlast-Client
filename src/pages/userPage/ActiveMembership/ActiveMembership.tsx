@@ -10,7 +10,7 @@ import ModalAddPlastDegree from './PlastDegree/ModalAddPlastDegree';
 import moment from 'moment';
 import ModalAddEndDatePlastDegree from './PlastDegree/ModalAddEndDatePlastDegree';
 import DeleteDegreeConfirm from './PlastDegree/DeleteDegreeConfirm';
-import { boolean } from 'yup';
+
 const { Title } = Typography;
 
 const ActiveMembership = () => {
@@ -25,11 +25,23 @@ const ActiveMembership = () => {
     const [plastDegreeIdToAddEndDate, setPlastDegreeIdToAddEndDate] = useState<number>(0);
     const userAdminTypeRoles = ["Admin", "Голова Пласту","Адміністратор подій", "Голова Куреня","Діловод Куреня",
     "Голова Округу","Діловод Округу","Голова Станиці","Діловод Станиці"];
+    const userGenders = ["Чоловік","Жінка"];
     const handleAddDegree = async() =>{
         await activeMembershipApi.getUserPlastDegrees(userId).then(response =>{
             setPlastDegrees(response);
         }); 
     }
+    const getAppropriateToGenderDegree = (plastDegreeName: string) : string =>{
+        if(userGenders[0] === user.gender.name){
+         return  plastDegreeName.split("/")[0];
+        }
+        else if(userGenders[1] === user.gender.name){
+            return  plastDegreeName.split("/")[1];
+        }
+        else
+            return plastDegreeName;
+    };
+    
     const handleChangeAsCurrent = (plastDegreeIdToSetAsCurrent: number) =>{
           const upd : Array<UserPlastDegree>=  plastDegrees.map((pd)=>{
                 if(pd.isCurrent){
@@ -65,7 +77,6 @@ const ActiveMembership = () => {
         userAdminTypeRoles.forEach((role: string )=>{
                 if(userRoles.includes(role)){
                     IsUserHasAnyAdminRole = true;
-                    
                 }
             })
         return IsUserHasAnyAdminRole;
@@ -81,7 +92,6 @@ const ActiveMembership = () => {
         fetchData();
     },[]);
 return <div className={classes.wrapper} >
-    {    }
                 <div className={classes.wrapperImg}>
                     <Avatar size={250} src={imageBase64} />
                     <Title level={2}> {user.firstName} {user.lastName} </Title>
@@ -114,7 +124,7 @@ return <div className={classes.wrapper} >
              <div className={classes.line} />
                 {plastDegrees.map(pd => (<React.Fragment key = {pd.id}>
             <div className={classes.textFieldsMain}>
-                {pd.plastDegree.name}
+                {getAppropriateToGenderDegree(pd.plastDegree.name)}
             </div>
             <div className={classes.textFieldsOthers}>
                Дата початку ступеню: { moment(pd.dateStart).format("YYYY-MM-DD")}
