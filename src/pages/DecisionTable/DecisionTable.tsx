@@ -5,6 +5,7 @@ import DropDown from './DropDownDecision';
 import AddDecisionModal from './AddDecisionModal';
 import decisionsApi, { Decision, statusTypeGetParser } from '../../api/decisionsApi';
 import notificationLogic from '../../components/Notifications/Notification';
+import ClickAwayListener from 'react-click-away-listener';
 const classes = require('./Table.module.css');
 
 const { Content } = Layout;
@@ -77,6 +78,11 @@ const DecisionTable = () => {
     })
     : data;
 
+   const  handleClickAway=()=>{
+    setShowDropdown(false);
+   }
+
+
   const showModal = () => setVisibleModal(true);
 
   const itemRender = (current: any, type: string, originalElement: any) => {
@@ -139,6 +145,7 @@ const DecisionTable = () => {
                   `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
               }}
             />
+            <ClickAwayListener onClickAway={handleClickAway}>
             <DropDown
               showDropdown={showDropdown}
               record={recordObj}
@@ -147,6 +154,7 @@ const DecisionTable = () => {
               onDelete={handleDelete}
               onEdit={handleEdit}
             />
+            </ClickAwayListener>
             <AddDecisionModal
               setVisibleModal={setVisibleModal}
               visibleModal={visibleModal}

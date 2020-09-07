@@ -4,6 +4,7 @@ import columns from './columns';
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import DropDown from './KadraDropDown';
 import { findAllByDisplayValue } from '@testing-library/react';
+import ClickAwayListener from 'react-click-away-listener';
 
 
 
@@ -44,6 +45,11 @@ const onEdit = () => {
  fetchData()
 }
 
+const handleClickAway = ()=>{
+  setShowDropdown(false);
+}
+
+
 
 const fetchData = async () => {
   setLoading(true);
@@ -79,6 +85,7 @@ onRow={(record) => {
   };
 }}
 />
+<ClickAwayListener onClickAway={handleClickAway}>
 <DropDown
 showDropdown={showDropdown}
 record={recordObj}
@@ -87,7 +94,8 @@ setShowDropdown={setShowDropdown}
 pageX={x}
 pageY={y}
 onEdit={onEdit}
-/>  
+/>
+</ClickAwayListener>  
 </div>
 
 

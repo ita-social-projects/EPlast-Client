@@ -5,6 +5,7 @@ import DropDownUserTable from './DropDownUserTable';
 import Title from 'antd/lib/typography/Title';
 import ColumnsForUserTable from './ColumnsForUserTable';
 import UserTable from '../../models/UserTable/UserTable';
+import ClickAwayListener from 'react-click-away-listener';
 const classes = require('./UserTable.module.css');
 
 const UsersTable = () => {
@@ -55,6 +56,11 @@ const UsersTable = () => {
         fetchData();
         const filteredData = users.filter((d: any) => d.id !== id);
         setUsers([...filteredData]);
+    }
+
+
+    const handleClickAway = ()=>{
+        setShowDropdown(false);
     }
 
     const handleChange = (id: string, userRoles: string) => {
@@ -122,6 +128,7 @@ const UsersTable = () => {
                             `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
                     }}
                 />
+                <ClickAwayListener onClickAway={handleClickAway}>
                 <DropDownUserTable
                     showDropdown={showDropdown}
                     record={recordObj}
@@ -130,6 +137,7 @@ const UsersTable = () => {
                     onDelete={handleDelete}
                     onChange={handleChange}
                 />
+                </ClickAwayListener>
             </Layout.Content >
         );
 

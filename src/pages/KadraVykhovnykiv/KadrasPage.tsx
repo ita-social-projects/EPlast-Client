@@ -60,9 +60,6 @@ export const KadrasTable = ()=>{
        
 
 
- 
-
-
        const onTabChange =  (key:string) => {
          console.log(noTitleKey)
          setKey(key);

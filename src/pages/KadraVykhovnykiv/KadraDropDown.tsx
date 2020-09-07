@@ -11,6 +11,7 @@ import classes from './Table.module.css'
 import deleteConfirm from './DeleteConfirm';
 
 import UpdateKadraForm from './UpdateKadraForm';
+import ClickAwayListener from 'react-click-away-listener';
 
 
 
@@ -54,6 +55,11 @@ const DropDown = (props: Props) => {
       setvisibleEdit(false);
     };
 
+    const handleClickAway = ()=>{
+      setShowDropdown(false);
+    }
+
+
 
     const handleItemClick =async (item: any) => {
         switch (item.key) {
@@ -75,7 +81,8 @@ const DropDown = (props: Props) => {
 
 
     return (
-        <>
+     
+        <> 
             <Menu
                 onClick={handleItemClick}
                 className = {classes.menu}
@@ -105,10 +112,12 @@ const DropDown = (props: Props) => {
           onOk={handleOkEdit}
           onCancel={handleCancelEdit}
           footer={null}
+
         >
           <UpdateKadraForm record={record} onAdd={handleCancelEdit} onEdit={onEdit}></UpdateKadraForm>
         </Modal>
         </>
+      
     );
 };
 
