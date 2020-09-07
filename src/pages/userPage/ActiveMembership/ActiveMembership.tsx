@@ -7,9 +7,10 @@ import userApi from '../../../api/UserApi';
 import AuthStore from '../../../stores/AuthStore';
 import jwt from 'jwt-decode';
 import ModalAddPlastDegree from './PlastDegree/ModalAddPlastDegree';
-import moment from 'moment'
+import moment from 'moment';
 import ModalAddEndDatePlastDegree from './PlastDegree/ModalAddEndDatePlastDegree';
 import DeleteDegreeConfirm from './PlastDegree/DeleteDegreeConfirm';
+import { boolean } from 'yup';
 const { Title } = Typography;
 
 const ActiveMembership = () => {
@@ -22,14 +23,13 @@ const ActiveMembership = () => {
     const [userToken, setUserToken] = useState<any>([{ nameid: '' }]);
     const [endDateVisibleModal,setEndDateVisibleModal] = useState<boolean>(false);
     const [plastDegreeIdToAddEndDate, setPlastDegreeIdToAddEndDate] = useState<number>(0);
+    const userAdminTypeRoles = ["Admin", "Голова Пласту","Адміністратор подій", "Голова Куреня","Діловод Куреня",
+    "Голова Округу","Діловод Округу","Голова Станиці","Діловод Станиці"];
     const handleAddDegree = async() =>{
         await activeMembershipApi.getUserPlastDegrees(userId).then(response =>{
             setPlastDegrees(response);
         }); 
     }
-    const handleDeleteUserPlastDegree = (plastDegreeId : number)=>{
-        
-    };
     const handleChangeAsCurrent = (plastDegreeIdToSetAsCurrent: number) =>{
           const upd : Array<UserPlastDegree>=  plastDegrees.map((pd)=>{
                 if(pd.isCurrent){
@@ -45,6 +45,7 @@ const ActiveMembership = () => {
     const fetchData  =  async () =>{
         const token = AuthStore.getToken() as string;
             setUserToken(jwt(token));
+         
         setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
         await userApi.getById(userId).then(async response => {
             setUser(response.data.user)
@@ -55,8 +56,20 @@ const ActiveMembership = () => {
         });
        await activeMembershipApi.getUserPlastDegrees(userId).then(response =>{
            setPlastDegrees(response);
-       }) 
+       });
     };
+    const IsUserHasAnyAdminTypeRoles = (userRoles: Array<string>): boolean => {
+        let IsUserHasAnyAdminRole = false;
+        if(userRoles === null || userRoles === undefined)
+            return IsUserHasAnyAdminRole;
+        userAdminTypeRoles.forEach((role: string )=>{
+                if(userRoles.includes(role)){
+                    IsUserHasAnyAdminRole = true;
+                    
+                }
+            })
+        return IsUserHasAnyAdminRole;
+    }
     const handleDelete = async () =>{ 
         fetchData();
     }
@@ -68,14 +81,19 @@ const ActiveMembership = () => {
         fetchData();
     },[]);
 return <div className={classes.wrapper} >
+    {    }
                 <div className={classes.wrapperImg}>
                     <Avatar size={250} src={imageBase64} />
                     <Title level={2}> {user.firstName} {user.lastName} </Title>
-                < div className={classes.line} id={classes.line} />
+               < div className={classes.line} id={classes.line} />
+               {IsUserHasAnyAdminTypeRoles(userToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
+                &&
                 <Button type="primary" onClick={showModal}>
                 Додати ступінь
               </Button>
-                </div>
+}
+                </div>)
+
         <div className={classes.wrapperCol} >
         <div className={classes.wrapper}>
         <div className={classes.wrapper2}>
@@ -104,7 +122,10 @@ return <div className={classes.wrapper} >
             {pd.dateFinish !== null &&  <div className={classes.textFieldsOthers}>
                Дата завершення ступеню: { moment(pd.dateFinish).format("YYYY-MM-DD")}
             </div>}
-            <div className={classes.buttons}>  <button onClick ={()=>{
+            {IsUserHasAnyAdminTypeRoles(userToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
+                &&
+            <div className={classes.buttons}>  
+            <button onClick ={()=>{
                 DeleteDegreeConfirm(userId, pd.plastDegree.id, handleDelete);
             }
             }
@@ -126,15 +147,14 @@ return <div className={classes.wrapper} >
         className = {classes.button}
         >Обрати поточним</button>}
             </div>
-          
+            }
             </React.Fragment>))}
-            
+                
              </div>
         </div>
         </div>
         <ModalAddPlastDegree 
         handleAddDegree = {handleAddDegree}
-        handleDeleteUserPlastDegree ={handleDeleteUserPlastDegree}
         userId = {userId} 
         visibleModal = {visibleModal}
         setVisibleModal ={setVisibleModal}/>

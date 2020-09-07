@@ -6,10 +6,9 @@ type ModalAddPlastDegreeProps ={
     userId : string;
     visibleModal: boolean;
     setVisibleModal: (visibleModal: boolean) => void;
-    handleDeleteUserPlastDegree : (plastDegreeId : number) => void;
     handleAddDegree : () => void;
 }
-const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, userId, handleDeleteUserPlastDegree,handleAddDegree   }: ModalAddPlastDegreeProps) =>{
+const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, userId, handleAddDegree   }: ModalAddPlastDegreeProps) =>{
     const [availablePlastDegree, setAvailablePlastDegree] = useState<Array<PlastDegree>>([]);
     const handleCancel = () => setVisibleModal(false);
     const getAvailablePlastDegree = (allDegrees : Array<PlastDegree>, userPlastDegrees : Array<UserPlastDegree>): Array<PlastDegree>=> {
@@ -45,7 +44,6 @@ return <Modal
         footer ={null}>
     <FormAddPlastDegree 
         handleAddDegree = {handleAddDegree}
-        handleDeleteUserPlastDegree = {handleDeleteUserPlastDegree}
         userId = {userId}
         setVisibleModal ={setVisibleModal}
         availablePlastDegree ={availablePlastDegree}

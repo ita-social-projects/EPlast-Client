@@ -5,7 +5,6 @@ import classes from "./FormAddPlastDegree.module.css"
 type FormAddPlastDegreeProps = {
     availablePlastDegree:  Array<PlastDegree>;
     setVisibleModal: (visibleModal: boolean) => void;
-    handleDeleteUserPlastDegree : (plastDegreeId : number) => void;
     handleAddDegree : () => void;
     resetAvailablePlastDegree :() => Promise<void>;
     userId : string;
@@ -15,7 +14,6 @@ const FormAddPlastDegree = ({
     setVisibleModal,
     userId,
     availablePlastDegree,
-    handleDeleteUserPlastDegree,
     handleAddDegree,
     resetAvailablePlastDegree}: FormAddPlastDegreeProps)=>{ 
     const [form] = Form.useForm();
