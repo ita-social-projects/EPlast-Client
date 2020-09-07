@@ -10,6 +10,7 @@ import ModalAddPlastDegree from './PlastDegree/ModalAddPlastDegree';
 import moment from 'moment';
 import ModalAddEndDatePlastDegree from './PlastDegree/ModalAddEndDatePlastDegree';
 import DeleteDegreeConfirm from './PlastDegree/DeleteDegreeConfirm';
+import { SafetyCertificateOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 
@@ -41,7 +42,7 @@ const ActiveMembership = () => {
         else
             return plastDegreeName;
     };
-    
+
     const handleChangeAsCurrent = (plastDegreeIdToSetAsCurrent: number) =>{
           const upd : Array<UserPlastDegree>=  plastDegrees.map((pd)=>{
                 if(pd.isCurrent){
@@ -124,7 +125,7 @@ return <div className={classes.wrapper} >
              <div className={classes.line} />
                 {plastDegrees.map(pd => (<React.Fragment key = {pd.id}>
             <div className={classes.textFieldsMain}>
-                {getAppropriateToGenderDegree(pd.plastDegree.name)}
+                {pd.isCurrent && <SafetyCertificateOutlined /> }  {getAppropriateToGenderDegree(pd.plastDegree.name)}
             </div>
             <div className={classes.textFieldsOthers}>
                Дата початку ступеню: { moment(pd.dateStart).format("YYYY-MM-DD")}
