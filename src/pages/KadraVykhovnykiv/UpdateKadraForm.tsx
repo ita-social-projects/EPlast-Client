@@ -2,45 +2,31 @@ import React, { useState, useEffect } from 'react';
 import classes from './Form.module.css'
 import { Form, Input, DatePicker, AutoComplete, Select, Button } from 'antd';
 import kadrasApi from "../../api/KadraVykhovnykivApi";
-import adminApi from "../../api/adminApi";
 
-type FormAddKadraProps = {
+
+type FormUpdateKadraProps = {
     onAdd: () => void;
+    record:number;
+    onEdit:()=>void;
 }
 
 
 
- const AddNewKadraForm: React.FC<FormAddKadraProps> = (props: any)=>{
-    const  { onAdd } = props;
+ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any)=>{
+    const  { onAdd, record , onEdit } = props;
     const [form] = Form.useForm();
-    const [users, setUsers] = useState<any[]>([{
-        user:{
-            id: '',
-            firstName: '',
-            lastName:'',
-            birthday:''
-        },
-        regionName:'',
-        cityName:'',
-        clubName:'',
-        userPlastDegreeName:'',
-        userRoles:''
-        
-      }])
-
+   
 
     const [types, setTypes] = useState<any[]>([{
         id: '',
         name: '',
       }])
-
      
 
       const handleSubmit = async (values : any)=>{
         const newKadra  : any= {
-            id: 0,
 
-            userId: JSON.parse(values.userId).user.id,
+            id: record,
 
             KadraVykhovnykivTypeId:JSON.parse(values.KadraVykhovnykivType).id,
 
@@ -53,9 +39,10 @@ type FormAddKadraProps = {
             link: values.link,
   
         }
-        await kadrasApi.createKadra(newKadra)
+        await kadrasApi.putUpdateKadra(newKadra)
         form.resetFields();
         onAdd();
+        onEdit();
         }
 
 
@@ -65,9 +52,7 @@ type FormAddKadraProps = {
             await kadrasApi.getAllKVTypes().then(response => {
                 setTypes(response.data);
             })
-            await adminApi.getUsersForTable().then(response =>{
-                setUsers(response.data);
-            } )
+           
         }
         fetchData();
       }, [])
@@ -79,28 +64,7 @@ type FormAddKadraProps = {
          onFinish={handleSubmit}
          form = {form}
      >
-         <Form.Item
-             className={classes.formField}
-             label="Користувач"
-             name="userId"
-
-             rules={[
-                 {
-                     required: true,
-                     message: 'Це поле має бути заповненим'
-                 },
-             ]}
-         >
-            <Select
-        showSearch
-        className={classes.inputField}
-        >
-           
-        {users?.map((o) => ( <Select.Option key={o.user.id} value={JSON.stringify(o)}>{o.user.firstName +" "+ o.user.lastName}</Select.Option>))}
-        </Select>
-             
-         </Form.Item>
-
+       
          <Form.Item
              className={classes.formField}
              label="Тип кадри"
@@ -182,4 +146,4 @@ type FormAddKadraProps = {
 
 }
 
-export default AddNewKadraForm;
+export default UpdateKadraForm;
