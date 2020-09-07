@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Skeleton} from 'antd';
+import {Avatar, Button, Card, Layout, Skeleton, Spin} from 'antd';
 import {CloseOutlined, PlusOutlined, RollbackOutlined} from '@ant-design/icons';
 import {getAllFollowers, removeFollower, toggleMemberStatus} from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
-import classes from './City.module.css';
+import "./City.less";
 import CityMember from '../../../models/City/CityMember';
+import Title from 'antd/lib/typography/Title';
 
 const CityFollowers = () => {
     const {id} = useParams();
@@ -14,14 +15,17 @@ const CityFollowers = () => {
     const [followers, setFollowers] = useState<CityMember[]>([]);
     const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const getFollowers = async () => {
-        const response = await getAllFollowers(id);
+      setLoading(true);
+      const response = await getAllFollowers(id);
 
-        setPhotosLoading(true);
-        setPhotos(response.data.followers);
-        setFollowers(response.data.followers);
-        setCanEdit(response.data.canEdit);
+      setPhotosLoading(true);
+      setPhotos(response.data.followers);
+      setFollowers(response.data.followers);
+      setCanEdit(response.data.canEdit);
+      setLoading(false);
     };
 
     const addMember = async (followerId: number) => {
@@ -35,8 +39,8 @@ const CityFollowers = () => {
     }
 
     const setPhotos = async (members: CityMember[]) => {
-      for (let i = 0; i < members.length; i++) {
-        members[i].user.imagePath = (await userApi.getImage(members[i].user.imagePath)).data;
+      for (let i of members) {
+        i.user.imagePath = (await userApi.getImage(i.user.imagePath)).data;
       }
       
       setPhotosLoading(false);
@@ -48,53 +52,61 @@ const CityFollowers = () => {
 
     return (
       <Layout.Content>
-        <h1 className={classes.mainTitle}>Прихильники станиці</h1>
-        <div className={classes.wrapper}>
-          {followers.length > 0 ? (
-            followers.map((follower: CityMember) => (
-              <Card
-                key={follower.id}
-                className={classes.detailsCard}
-                actions={
-                  canEdit
-                    ? [
-                        <PlusOutlined onClick={() => addMember(follower.id)} />,
-                        <CloseOutlined
-                          onClick={() => removeMember(follower.id)}
-                        />,
-                      ]
-                    : undefined
-                }
-              >
-                <div
-                  onClick={() =>
-                    history.push(`/userpage/main/${follower.userId}`)
+        <Title level={2}>Прихильники станиці</Title>
+        {loading ? (
+          <Layout.Content className="spiner">
+            <Spin size="large" />
+          </Layout.Content>
+        ) : (
+          <div className="cityMoreItems">
+            {followers.length > 0 ? (
+              followers.map((follower: CityMember) => (
+                <Card
+                  key={follower.id}
+                  className="detailsCard"
+                  actions={
+                    canEdit
+                      ? [
+                          <PlusOutlined
+                            onClick={() => addMember(follower.id)}
+                          />,
+                          <CloseOutlined
+                            onClick={() => removeMember(follower.id)}
+                          />,
+                        ]
+                      : undefined
                   }
-                  className={classes.cityMember}
                 >
-                  {photosLoading ? (
-                    <Skeleton.Avatar active size={86}></Skeleton.Avatar>
-                  ) : (
-                    <Avatar
-                      size={86}
-                      src={follower.user.imagePath}
-                      className={classes.detailsIcon}
+                  <div
+                    onClick={() =>
+                      history.push(`/userpage/main/${follower.userId}`)
+                    }
+                    className="cityMember"
+                  >
+                    {photosLoading ? (
+                      <Skeleton.Avatar active size={86}></Skeleton.Avatar>
+                    ) : (
+                      <Avatar
+                        size={86}
+                        src={follower.user.imagePath}
+                        className="detailsIcon"
+                      />
+                    )}
+                    <Card.Meta
+                      className="detailsMeta"
+                      title={`${follower.user.firstName} ${follower.user.lastName}`}
                     />
-                  )}
-                  <Card.Meta
-                    className={classes.detailsMeta}
-                    title={`${follower.user.firstName} ${follower.user.lastName}`}
-                  />
-                </div>
-              </Card>
-            ))
-          ) : (
-            <h1>Ще немає прихильників станиці</h1>
-          )}
-        </div>
-        <div className={classes.wrapper}>
+                  </div>
+                </Card>
+              ))
+            ) : (
+              <Title level={4}>Ще немає прихильників станиці</Title>
+            )}
+          </div>
+        )}
+        <div className="cityMoreItems">
           <Button
-            className={classes.backButton}
+            className="backButton"
             icon={<RollbackOutlined />}
             size={"large"}
             onClick={() => history.goBack()}
@@ -106,4 +118,5 @@ const CityFollowers = () => {
       </Layout.Content>
     );
 };
+
 export default CityFollowers;

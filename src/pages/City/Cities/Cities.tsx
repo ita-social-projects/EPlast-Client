@@ -4,8 +4,9 @@ import { Card, Layout, Pagination, Skeleton, Spin } from "antd";
 import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import { getCitiesByPage, getLogo } from "../../../api/citiesApi";
-import classes from "./Cities.module.css";
+import "./Cities.less";
 import CityProfile from '../../../models/City/CityProfile';
+import Title from "antd/lib/typography/Title";
 
 const Cities = () => {
   const history = useHistory();
@@ -64,70 +65,58 @@ const Cities = () => {
   }, [page, pageSize]);
 
   return (
-    <Layout.Content>
-      <h1 className={classes.mainTitle}>Станиці</h1>
-      <div className={classes.wrapper}>
-        {!loading && canCreate && page === 1 ? (
-          <Card
-            hoverable
-            className={`${classes.addCity} ${classes.cardStyles}`}
-            cover={<img src={Add} alt="AddCity" />}
-            onClick={() => history.push(`${url}/new`)}
-          >
-            <Card.Meta
-              className={classes.titleText}
-              title="Створити нову станицю"
-            />
-          </Card>
-        ) : null}
-        {!loading
-          ? cities.map((city: CityProfile) => (
+    <Layout.Content className="cities">
+      <Title level={1}>Станиці</Title>
+      {loading ? (
+        <Layout.Content className="spiner">
+          <Spin size="large" />
+        </Layout.Content>
+      ) : (
+        <div>
+          <div className="cityWrapper">
+            {canCreate && page === 1 ? (
+              <Card
+                hoverable
+                className="cardStyles addCity"
+                cover={<img src={Add} alt="AddCity" />}
+                onClick={() => history.push(`${url}/new`)}
+              >
+                <Card.Meta
+                  className="titleText"
+                  title="Створити нову станицю"
+                />
+              </Card>
+            ) : null}
+            {cities.map((city: CityProfile) => (
               <Card
                 key={city.id}
                 hoverable
-                className={classes.cardStyles}
+                className="cardStyles"
                 cover={
                   photosLoading ? (
-                    <div
-                      style={{
-                        textAlign: "center",
-                      }}
-                    >
-                      <Skeleton.Avatar
-                        shape="square"
-                        active
-                        size={154}
-                      />
-                    </div>
+                    <Skeleton.Avatar shape="square" active />
                   ) : (
-                    <img
-                      src={city.logo || undefined}
-                      alt="City"
-                      style={{ height: "154.45px" }}
-                    />
+                    <img src={city.logo || undefined} alt="City" />
                   )
                 }
                 onClick={() => history.push(`${url}/${city.id}`)}
               >
-                <Card.Meta title={city.name} className={classes.titleText} />
+                <Card.Meta title={city.name} className="titleText" />
               </Card>
-            ))
-          : null}
-      </div>
-      <div className={classes.pagination}>
-        {!loading ? (
-          <Pagination
-            current={page}
-            pageSize={pageSize}
-            total={total}
-            showSizeChanger
-            onChange={(page) => handleChange(page)}
-            onShowSizeChange={(page, size) => handleSizeChange(page, size)}
-          />
-        ) : (
-          <Spin size="large" />
-        )}
-      </div>
+            ))}
+          </div>
+          <div className="pagination">
+            <Pagination
+              current={page}
+              pageSize={pageSize}
+              total={total}
+              showSizeChanger
+              onChange={(page) => handleChange(page)}
+              onShowSizeChange={(page, size) => handleSizeChange(page, size)}
+            />
+          </div>
+        </div>
+      )}
     </Layout.Content>
   );
 };

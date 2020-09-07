@@ -80,10 +80,11 @@ const AddAdministratorModal = (props: Props) => {
           style={{ width: "100%", marginBottom: "10px" }}
           options={[
             { value: "Голова Станиці" },
-            { value: "Адміністратор" },
+            { value: "Голова СПС"},
             { value: "Писар" },
             { value: "Скарбник" },
-            { value: "Бунчужний" },
+            { value: "Домівкар"},
+            { value: "Член СПР"},
           ]}
           filterOption={(inputValue, option) =>
             option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1

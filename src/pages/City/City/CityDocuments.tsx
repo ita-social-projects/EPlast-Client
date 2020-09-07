@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout} from 'antd';
+import {Avatar, Button, Card, Layout, Spin} from 'antd';
 import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined} from '@ant-design/icons';
 import {getAllDocuments, getFile, removeDocument} from "../../../api/citiesApi";
-import classes from './City.module.css';
+import "./City.less";
 import CityDocument from '../../../models/City/CityDocument';
+import Title from 'antd/lib/typography/Title';
+import moment from "moment";
 
 const CityDocuments = () => {
     const {id} = useParams();
@@ -12,12 +14,15 @@ const CityDocuments = () => {
 
     const [documents, setDocuments] = useState<CityDocument[]>([]);
     const [canEdit, setCanEdit] = useState<Boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const getDocuments = async () => {
+      setLoading(true);
       const response = await getAllDocuments(id);
 
       setDocuments(response.data.documents);
       setCanEdit(response.data.canEdit);
+      setLoading(false);
     };
 
     const downloadDocument = async (fileBlob: string, fileName: string) => {
@@ -36,44 +41,69 @@ const CityDocuments = () => {
 
     return (
       <Layout.Content>
-        <h1 className={classes.mainTitle}>Документи станиці</h1>
-        <div className={classes.wrapper}>
-          {documents.length > 0 ? (
-            documents.map((document: CityDocument) => (
-              <Card
-                key={document.id}
-                className={classes.detailsCard}
-                actions={[
-                  <DownloadOutlined
-                    key="download"
-                    onClick={() =>
-                      downloadDocument(document.blobName, document.fileName)
-                    }
-                  />,
-                  <CloseOutlined
-                    key="close"
-                    onClick={() => removeDocumentById(document.id)}
-                  />,
-                ]}
-              >
-                <Avatar
-                  size={86}
-                  icon={<FileTextOutlined />}
-                  className={classes.detailsIcon}
-                />
-                <Card.Meta
-                  className={classes.detailsMeta}
-                  title={`${document.cityDocumentType.name}`}
-                />
-              </Card>
-            ))
-          ) : (
-            <h1>Ще немає документів станиці</h1>
-          )}
-        </div>
-        <div className={classes.wrapper}>
+        <Title level={2}>Документообіг станиці</Title>
+        {loading ? (
+          <Layout.Content className="spiner">
+            <Spin size="large" />
+          </Layout.Content>
+        ) : (
+          <div className="cityMoreItems">
+            {documents.length > 0 ? (
+              documents.map((document: CityDocument) => (
+                <Card
+                  key={document.id}
+                  className="detailsCard"
+                  title={
+                    document.submitDate
+                      ? moment(document.submitDate).format("DD.MM.YYYY")
+                      : "Немає дати"
+                  }
+                  headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
+                  actions={
+                    canEdit
+                      ? [
+                          <DownloadOutlined
+                            key="download"
+                            onClick={() =>
+                              downloadDocument(
+                                document.blobName,
+                                document.fileName
+                              )
+                            }
+                          />,
+                          <CloseOutlined
+                            key="close"
+                            onClick={() => removeDocumentById(document.id)}
+                          />,
+                        ]
+                      : [
+                          <DownloadOutlined
+                            key="download"
+                            onClick={() =>
+                              downloadDocument(
+                                document.blobName,
+                                document.fileName
+                              )
+                            }
+                          />,
+                        ]
+                  }
+                >
+                  <Avatar size={86} icon={<FileTextOutlined />} />
+                  <Card.Meta
+                    className="detailsMeta"
+                    title={document.cityDocumentType.name}
+                  />
+                </Card>
+              ))
+            ) : (
+              <Title level={4}>Ще немає документів станиці</Title>
+            )}
+          </div>
+        )}
+        <div className="cityMoreItems">
           <Button
-            className={classes.backButton}
+            className="backButton"
             icon={<RollbackOutlined />}
             size={"large"}
             onClick={() => history.goBack()}
@@ -85,4 +115,5 @@ const CityDocuments = () => {
       </Layout.Content>
     );
 };
+
 export default CityDocuments;

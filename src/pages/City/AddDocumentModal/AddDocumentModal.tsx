@@ -42,28 +42,34 @@ const AddDocumentModal = (props: Props) => {
 
     const handleUpload = (info: any) => {
       if (info.file !== null) {
-        if (info.file.size <= 3145728) {
-          const extension = info.file.name.split('.').reverse()[0];
-          
-          if (
-            extension.indexOf("docx") !== -1
-            || extension.indexOf("pdf") !== -1
-            || extension.indexOf("doc") !== -1
-          ) {
+        if (checkFile(info.file.size, info.file.name)) {
             getBase64(info.file, (base64: string) => {
               props.setDocument({...props.document, blobName: base64});
               setFileName(info.file.name);
             });
-            notificationLogic("success", "Файл завантажено");
-          } else {
-            notificationLogic("error", "Можливі розширення файлів: pdf, doc, docx");  
-          }
-        } else {
-          notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+            notificationLogic("success", "Файл завантажено");    
         }
       } else {
         notificationLogic("error", "Проблема з завантаженням файлу");
       }
+    };
+
+    const checkFile = (fileSize: number, fileName: string): boolean => {
+      const extension = fileName.split(".").reverse()[0];
+      const isCorrectExtension =
+        extension.indexOf("pdf") !== -1 ||
+        extension.indexOf("doc") !== -1 ||
+        extension.indexOf("docx") !== -1;
+      if (!isCorrectExtension) {
+        notificationLogic("error", "Можливі розширення файлів: pdf, doc, docx");
+      }
+      
+      const isSmaller3mb = fileSize < 3145728;
+      if (!isSmaller3mb) {
+        notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+      }
+
+      return isSmaller3mb && isCorrectExtension;
     };
 
     const handleSubmit = async (values: any) => {
@@ -119,6 +125,7 @@ const AddDocumentModal = (props: Props) => {
               optionFilterProp="children"
               onSearch={onSearch}
               className="formSelect"
+              placeholder="Оберіть тип документу"
             >
               {documentTypes.map((dt) => (
                 <Select.Option key={dt.id} value={dt.name}>
@@ -128,10 +135,7 @@ const AddDocumentModal = (props: Props) => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name="datepicker"
-            label="Дата документу"
-          >
+          <Form.Item name="datepicker" label="Дата документу">
             <DatePicker format="YYYY-MM-DD" className="formSelect" />
           </Form.Item>
 
@@ -163,7 +167,7 @@ const AddDocumentModal = (props: Props) => {
                 <Button
                   className="cardButton"
                   onClick={() => {
-                    props.setDocument({...props.document, blobName: ""})
+                    props.setDocument({ ...props.document, blobName: "" });
                     setFileName("");
                     notificationLogic("success", "Файл видалено");
                   }}
@@ -175,13 +179,13 @@ const AddDocumentModal = (props: Props) => {
           </Form.Item>
 
           <Form.Item className="cancelConfirmButtons">
-            <Row>
-              <Col offset={12}>
+            <Row justify="end">
+              <Col xs={11} sm={5}>
                 <Button key="back" onClick={handleCancel}>
                   Відмінити
                 </Button>
               </Col>
-              <Col offset={1}>
+              <Col className="publishButton" xs={{ span: 11, offset: 2 }} sm={{ span: 6, offset: 1 }}>
                 <Button type="primary" htmlType="submit">
                   Опублікувати
                 </Button>

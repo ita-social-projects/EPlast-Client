@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Row, Skeleton, } from "antd";
+import { Avatar, Button, Card, Layout, Row, Skeleton, Spin, } from "antd";
 import { SettingOutlined, CloseOutlined, RollbackOutlined } from "@ant-design/icons";
 import { removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
-import classes from "./City.module.css";
+import "./City.less";
 import CityMember from "../../../models/City/CityMember";
 import CityAdmin from "../../../models/City/CityAdmin";
 import AddAdministratorModal from "../AddAdministratorModal/AddAdministratorModal";
 import moment from "moment";
 import "moment/locale/uk";
+import Title from "antd/lib/typography/Title";
 moment.locale("uk-ua");
 
 const CityMembers = () => {
@@ -23,8 +24,10 @@ const CityMembers = () => {
   const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
   const [canEdit, setCanEdit] = useState<Boolean>(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const getMembers = async () => {
+    setLoading(true);
     const responseMembers = await getAllMembers(id);
 
     setPhotosLoading(true);
@@ -35,17 +38,20 @@ const CityMembers = () => {
     const responseAdmins = await getAllAdmins(id);
     setAdmins(responseAdmins.data.administration);
     setHead(responseAdmins.data.head);
+    setLoading(false);
   };
 
   const removeMember = async (member: CityMember) => {
     await toggleMemberStatus(member.id);
 
     const existingAdmin = [head, ...admins].filter(
-      (a) => a?.userId === member.userId && moment(a?.endDate).isAfter(moment())
+      (a) =>
+        a?.userId === member.userId &&
+        (moment(a?.endDate).isAfter(moment()) || a?.endDate === null)
     );
 
-    for (let i = 0; i < existingAdmin.length; i++) {
-      await removeAdministrator(existingAdmin[i].id);
+    for (let i of existingAdmin) {
+      await removeAdministrator(i.id);
     }
 
     setMembers(members.filter((u) => u.id !== member.id));
@@ -69,10 +75,8 @@ const CityMembers = () => {
   };
 
   const setPhotos = async (members: CityMember[]) => {
-    for (let i = 0; i < members.length; i++) {
-      members[i].user.imagePath = (
-        await userApi.getImage(members[i].user.imagePath)
-      ).data;
+    for (let i of members) {
+      i.user.imagePath = (await userApi.getImage(i.user.imagePath)).data;
     }
 
     setPhotosLoading(false);
@@ -84,13 +88,20 @@ const CityMembers = () => {
 
   return (
     <Layout.Content>
-      <h1 className={classes.mainTitle}>Члени станиці</h1>
-      <div className={classes.wrapper}>
+      <Title level={2}>
+        Члени станиці
+      </Title>
+      {loading ? (
+          <Layout.Content className="spiner">
+            <Spin size="large" />
+          </Layout.Content>
+        ) : (
+      <div className="cityMoreItems">
         {members.length > 0 ? (
           members.map((member: CityMember) => (
             <Card
               key={member.id}
-              className={classes.detailsCard}
+              className="detailsCard"
               actions={
                 canEdit
                   ? [
@@ -102,7 +113,7 @@ const CityMembers = () => {
             >
               <div
                 onClick={() => history.push(`/userpage/main/${member.userId}`)}
-                className={classes.cityMember}
+                className="cityMember"
               >
                 {photosLoading ? (
                   <Skeleton.Avatar active size={86}></Skeleton.Avatar>
@@ -110,23 +121,25 @@ const CityMembers = () => {
                   <Avatar
                     size={86}
                     src={member.user.imagePath}
-                    className={classes.detailsIcon}
+                    className="detailsIcon"
                   />
                 )}
                 <Card.Meta
-                  className={classes.detailsMeta}
+                  className="detailsMeta"
                   title={`${member.user.firstName} ${member.user.lastName}`}
                 />
               </div>
             </Card>
           ))
         ) : (
-          <h1>Ще немає членів станиці</h1>
+          <Title level={4}>
+            Ще немає членів станиці
+          </Title>
         )}
-      </div>
-      <div className={classes.wrapper}>
+      </div>)}
+      <div className="cityMoreItems">
         <Button
-          className={classes.backButton}
+          className="backButton"
           icon={<RollbackOutlined />}
           size={"large"}
           onClick={() => history.goBack()}
