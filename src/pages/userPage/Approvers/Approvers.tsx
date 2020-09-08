@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import notificationLogic from '../../../components/Notifications/Notification';
+import Spinner from '../../Spinner/Spinner';
 import classes from '*.module.css';
 
 const Assignments = () => {
@@ -45,12 +46,7 @@ const Assignments = () => {
 
   const { Meta } = Card;
   return loading === false ? (
-    <div className="spaceWrapper">
-      <Space className="loader" size="large">
-        <Spin size="large" />
-      </Space>
-    </div>
-
+    <Spinner />
   ) : (
       <div className="wrapper">
         <div className="displayFlex">

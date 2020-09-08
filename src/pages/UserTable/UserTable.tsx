@@ -5,6 +5,7 @@ import DropDownUserTable from './DropDownUserTable';
 import Title from 'antd/lib/typography/Title';
 import ColumnsForUserTable from './ColumnsForUserTable';
 import UserTable from '../../models/UserTable/UserTable';
+import Spinner from '../Spinner/Spinner';
 const classes = require('./UserTable.module.css');
 
 const UsersTable = () => {
@@ -69,11 +70,7 @@ const UsersTable = () => {
     }
 
     return loading === false ? (
-        <div className={classes.spaceWrapper}>
-            <Space className={classes.loader} size="large">
-                <Spin size="large" />
-            </Space>
-        </div>
+        <Spinner />
     ) : (
             <Layout.Content
                 onClick={() => { setShowDropdown(false) }}
