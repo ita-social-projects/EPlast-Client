@@ -1,0 +1,46 @@
+.editIcon {
+    font-size: 24px;
+    color:#3c5438;
+  }
+.editIcon :hover {
+  color: #536150;
+  cursor: pointer;
+}
+.addIcon {
+    font-size: 36px;
+    color:#3c5438;
+}
+.addIcon :hover{
+    color: #536150;
+    cursor: pointer;
+}
+.deleteIcon {
+    font-size: 24px;
+    color: #910202;
+}
+.deleteIcon :hover{
+    color: #690606;
+    cursor: pointer;
+}
+.addDiv{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px;
+    margin: 10px;
+}
+.list {
+    font-size: 18px;
+    display: flex;
+}
+.inputField {
+    inline-size: -webkit-fill-available;
+    margin-right: 75px;
+    float: right;
+    text-align: left;
+    max-width: 320px;
+    min-width: 320px;
+  }
+
+
+

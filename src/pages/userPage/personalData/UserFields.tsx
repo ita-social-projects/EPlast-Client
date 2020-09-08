@@ -36,7 +36,6 @@ export default function () {
          <Form name="basic" className="formContainer">
         <div className="avatarWrapper">
           <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun}/>
-        < div className="line" />
         </div>
         <div className="allFields">
           <div className="rowBlock">

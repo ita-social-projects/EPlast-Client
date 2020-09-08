@@ -1,16 +1,88 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import classes from './Form.module.css'
-import { Form, Input, DatePicker } from 'antd';
+import { Form, Input, DatePicker, AutoComplete, Select, Button } from 'antd';
+import kadrasApi from "../../api/KadraVykhovnykivApi";
+import adminApi from "../../api/adminApi";
 
- const AddNewKadraForm : React.FC = ()=>{
+type FormAddKadraProps = {
+    onAdd: () => void;
+}
+
+
+
+ const AddNewKadraForm: React.FC<FormAddKadraProps> = (props: any)=>{
+    const  { onAdd } = props;
+    const [form] = Form.useForm();
+    const [users, setUsers] = useState<any[]>([{
+        user:{
+            id: '',
+            firstName: '',
+            lastName:'',
+            birthday:''
+        },
+        regionName:'',
+        cityName:'',
+        clubName:'',
+        userPlastDegreeName:'',
+        userRoles:''
+        
+      }])
+
+
+    const [types, setTypes] = useState<any[]>([{
+        id: '',
+        name: '',
+      }])
+
+     
+
+      const handleSubmit = async (values : any)=>{
+        const newKadra  : any= {
+            id: 0,
+
+            userId: JSON.parse(values.userId).user.id,
+
+            KadraVykhovnykivTypeId:JSON.parse(values.KadraVykhovnykivType).id,
+
+            dateOfGranting: values.dateOfGranting,
+
+            numberInRegister: values.numberInRegister,
+
+            basisOfGranting:values.basisOfGranting,
+
+            link: values.link,
+  
+        }
+        await kadrasApi.createKadra(newKadra)
+        form.resetFields();
+        onAdd();
+        }
+
+
+        
+      useEffect(() => {
+        const fetchData = async () => {
+            await kadrasApi.getAllKVTypes().then(response => {
+                setTypes(response.data);
+            })
+            await adminApi.getUsersForTable().then(response =>{
+                setUsers(response.data);
+            } )
+        }
+        fetchData();
+      }, [])
+
+
 
     return <Form
          name="basic"
+         onFinish={handleSubmit}
+         form = {form}
      >
          <Form.Item
              className={classes.formField}
              label="Користувач"
-             name="name"
+             name="userId"
 
              rules={[
                  {
@@ -19,14 +91,20 @@ import { Form, Input, DatePicker } from 'antd';
                  },
              ]}
          >
-             <Input
-                 className={classes.inputField} />
+            <Select
+        showSearch
+        className={classes.inputField}
+        >
+           
+        {users?.map((o) => ( <Select.Option key={o.user.id} value={JSON.stringify(o)}>{o.user.firstName +" "+ o.user.lastName}</Select.Option>))}
+        </Select>
+             
          </Form.Item>
 
          <Form.Item
              className={classes.formField}
              label="Тип кадри"
-             name="kvTypesID"
+             name="KadraVykhovnykivType"
 
              rules={[
                  {
@@ -35,8 +113,14 @@ import { Form, Input, DatePicker } from 'antd';
                  },
              ]}
          >
-             <Input
-                 className={classes.inputField} />
+             <Select
+        filterOption={false}
+        className={classes.inputField}
+        >
+             {types?.map((o) => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{ o.name }</Select.Option>))}
+            
+        
+        </Select>
          </Form.Item>
 
          <Form.Item
@@ -83,7 +167,16 @@ import { Form, Input, DatePicker } from 'antd';
              <Input
                  className={classes.inputField} />
          </Form.Item>
+         <Form.Item style = {{ textAlign: "right"}}>
+      
+        <Button
+         type="primary" htmlType="submit" 
+        >
+         Опублікувати
+        </Button>
 
+      </Form.Item> 
+        
      </Form>;
 
 

@@ -39,7 +39,7 @@ const getAllKVs = async () => {
   
 
   const createKadra = async (data: any) => {
-    const response = await Api.put("KadraVykhovnykiv/CreateKadra", data);
+    const response = await Api.post("KadraVykhovnykiv/CreateKadra", data);
     return response;
   };
 

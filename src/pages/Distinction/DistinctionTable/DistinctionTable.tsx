@@ -1,44 +1,55 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Input, Button, Layout } from 'antd';
+import { Table, Input, Button, Layout, Modal } from 'antd';
 import columns from './columns';
 import UserDistinction from '../Interfaces/UserDistinction';
 import DropDownDistinctionTable from './DropDownDistinctionTable';
 import distinctionApi from '../../../api/distinctionApi';
-import userApi from '../../../api/UserApi';
+import AddDistinctionModal from '../DistinctionTable/AddDistinctionModal';
+import EditDistinctionTypesModal from './EditDistinctionTypesModal';
+import ClickAwayListener from 'react-click-away-listener';
 
 const classes = require('../../DecisionTable/Table.module.css');
-
-
-type UserDistTable = {
-  id: number,
-  dist: string,
-  name: string,
-  date: string,
-  reason: string,
-  reporter: string
-}
 
 const { Content } = Layout;
 const DecisionTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [visibleModal, setVisibleModal] = useState(false);
+  const [visibleModalEditDist, setVisibleModalEditDist] = useState(false);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
     const [loading, setLoading] = useState(false);
     const [UserDistinctions, setData] = useState<UserDistinction[]>();
 
     useEffect(() => {
-      const user = async (userId: string) => (await userApi.getById(userId)).data
       const fetchData = async () => {
         setLoading(true);
         const res: UserDistinction[] = await distinctionApi.getUserDistinctions();
-
-        console.log(res);
         setData(res);
         setLoading(false);
       };
       fetchData();
     }, []);
+
+    const showModal = () => {
+    
+      setVisibleModal(true);
+    };
+
+    const handleAdd = () => {
+    
+      setVisibleModal(false);
+     
+    };
+
+    const showModalEditTypes = () => {
+      setVisibleModalEditDist(true);
+    }
+
+
+    const handleClickAway=()=>{
+      setShowDropdown(false);
+    }
 
 return (
     <Layout>
@@ -49,8 +60,11 @@ return (
           <>
             <div className={classes.searchContainer}>
               <Input placeholder="Пошук" />
-              <Button type="primary" >
+              <Button type="primary" onClick = {showModal}>
                 Додати відзначення
+              </Button>
+              <Button type="primary" onClick = {showModalEditTypes}>
+                Додати тип відзначення
               </Button>
             </div>
             <Table
@@ -73,17 +87,28 @@ return (
               bordered
               rowKey="id"
             />
+            <ClickAwayListener onClickAway={handleClickAway}>
                   <DropDownDistinctionTable
                     showDropdown={showDropdown}
                     record={recordObj}
                     pageX={x}
                     pageY={y}
                 />
+                </ClickAwayListener>
+
+                <AddDistinctionModal 
+                  setVisibleModal={setVisibleModal}
+                  visibleModal={visibleModal}
+                  onAdd={handleAdd}
+              />
+              <EditDistinctionTypesModal 
+              setVisibleModal = {setVisibleModalEditDist}
+              visibleModal = {visibleModalEditDist}/>
           </>
         )}
       </Content>
 
     </Layout>
   );
-        }
+}
 export default DecisionTable;
