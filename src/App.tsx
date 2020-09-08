@@ -29,6 +29,9 @@ import ChangePassword from "./pages/ChangePassword/ChangePassword";
 import Clubs from "./pages/Club/Clubs/Clubs";
 import Club from "./pages/Club/Club/Club";
 import CreateClub from "./pages/Club/CreateClub/CreateClub";
+import ClubMembers from "./pages/Club/Club/ClubMembers";
+import ClubFollowers from "./pages/Club/Club/ClubFollowers";
+import ClubAdministration from "./pages/Club/Club/ClubAdministration";
 import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
 import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
@@ -188,6 +191,24 @@ const App: FC = () => (
             exact
             path="/clubs/edit/:id"
             component={CreateClub}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs/members/:id"
+            component={ClubMembers}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs/followers/:id"
+            component={ClubFollowers}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/clubs/administration/:id"
+            component={ClubAdministration}
           />
           <RouteWithLayout
             layout={PrivateLayout}
