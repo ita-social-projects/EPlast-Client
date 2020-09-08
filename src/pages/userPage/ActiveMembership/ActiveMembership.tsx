@@ -128,10 +128,10 @@ return <div className={classes.wrapper} >
                 {pd.isCurrent && <SafetyCertificateOutlined /> }  {getAppropriateToGenderDegree(pd.plastDegree.name)}
             </div>
             <div className={classes.textFieldsOthers}>
-               Дата початку ступеню: { moment(pd.dateStart).format("YYYY-MM-DD")}
+               Дата початку ступеню: { moment(pd.dateStart).format("DD-MM-YYYY")}
             </div>
             {pd.dateFinish !== null &&  <div className={classes.textFieldsOthers}>
-               Дата завершення ступеню: { moment(pd.dateFinish).format("YYYY-MM-DD")}
+               Дата завершення ступеню: { moment(pd.dateFinish).format("DD-MM-YYYY")}
             </div>}
             {IsUserHasAnyAdminTypeRoles(userToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
                 &&
