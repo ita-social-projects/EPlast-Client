@@ -5,11 +5,12 @@ import userApi from '../../../api/UserApi';
 import moment from 'moment';
 import AvatarAndProgress from './AvatarAndProgress';
 import { Data } from '../Interface/Interface';
-import {useParams} from 'react-router-dom';
+import {useParams, useHistory} from 'react-router-dom';
 import notificationLogic from '../../../components/Notifications/Notification';
 
 export default function () {
-  const {userId}=useParams(); 
+  const {userId}=useParams();
+  const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
   const fetchData = async () => {
@@ -184,7 +185,12 @@ export default function () {
                    }
             </Form.Item>
           </div>
-          <Button className="confirmBtn">
+          <Button 
+            className="confirmBtn"
+            onClick={() =>
+              history.push(`/clubs`)
+            }
+          >
             Обрати/змінити курінь
           </Button>
         </div>

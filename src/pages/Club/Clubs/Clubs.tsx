@@ -15,6 +15,7 @@ const Clubs = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [clubsCount, setClubsCount] = useState(0);
+  const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState<boolean>(false);
 
   const getClubs = async () => {
     const fetchData = async () => {
@@ -23,7 +24,6 @@ const Clubs = () => {
         const responseCount = await clubsApi.getClubsCount();
         setClubsCount(responseCount.data);
         const response = await clubsApi.getClubsByPage(pageNumber, pageSize);
-        console.log(response);
         setClubs(response.data);
 
         setLoading(false);
