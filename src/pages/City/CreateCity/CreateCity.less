@@ -29,6 +29,10 @@
   .cityMembersCard {
     width: 80%;
     margin: 40px auto 0;
+
+    .ant-table-wrapper {
+      border-bottom: 2px solid rgb(60, 84, 56);
+    }
   }
 
   @media (max-width: 575px) {
@@ -54,6 +58,12 @@
 
     .cityMembersCard {
       width: 100%;
+    }
+  }
+
+  @media (max-width: 784px) {
+    .table {
+      overflow-x: scroll;
     }
   }
 }

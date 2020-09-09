@@ -70,8 +70,10 @@ const AddAdministratorModal = (props: Props) => {
           : "Редагувати адміністратора"
       }
       visible={props.visibleModal}
+      footer={null}
       confirmLoading={loading}
-      onOk={handleOk}
+      //onOk={handleOk}
+      className="addAdministrationModal"
       onCancel={handleCancel}
     >
       <Form>
