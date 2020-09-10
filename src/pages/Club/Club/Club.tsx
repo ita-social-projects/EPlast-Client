@@ -1,61 +1,109 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Row, Col, Button, Typography, Spin, Layout } from "antd";
+import { Avatar, Row, Col, Button, Typography, Spin, Layout, Skeleton } from "antd";
 import {
-  UserOutlined,
-  FileTextOutlined,
   EditOutlined,
+  UserAddOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
+import jwt from 'jwt-decode';
+import AuthStore from '../../../stores/AuthStore';
+import userApi from "../../../api/UserApi";
 import clubsApi from "../../../api/clubsApi";
 import classes from "./Club.module.css";
+import ClubAdmin from "../../../models/Club/ClubAdmin";
+import ClubMember from "../../../models/Club/ClubMember";
+import ClubProfile from "../../../models/Club/ClubProfile";
 
 const { Title, Paragraph } = Typography;
-
-interface ClubData {
-  club: Club;
-  clubAdmin: User;
-  clubAdministration: ClubAdministration;
-  members: Members[];
-  documents: object;
-  followers: Members[];
-}
-interface ClubAdministration {}
-interface Club {
-  id: number;
-  clubName: string;
-  clubURL: string;
-  description: string;
-  logo: string;
-}
-interface Members {
-  id: number;
-  user: User;
-}
-interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  fatherName: string;
-  imagePath: string;
-}
 
 const Club = () => {
   const { id } = useParams();
   const history = useHistory();
   const [expand, setExpand] = useState(false);
   const [counter, setCounter] = useState(0);
-  const [club, setData] = useState<ClubData>();
   const [loading, setLoading] = useState(false);
 
+  const [clubM, setClub] = useState<ClubProfile>(new ClubProfile());
+  const [admins, setAdmins] = useState<ClubAdmin[]>([]);
+  const [members, setMembers] = useState<ClubMember[]>([]);
+  const [followers, setFollowers] = useState<ClubMember[]>([]);
+  const [isCurrentUserAdmin, setIsAdmin] = useState(false);
+  const [isCurrentUserClubAdmin, setIsClubAdmin] = useState(false);
+  const [canCurrentUserJoin, setCanJoin] = useState(false);
+  const [photosLoading, setPhotosLoading] = useState(false);
+
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const res = await clubsApi.getById(id);
-      setData(res.data);
-      setLoading(false);
-    };
-    fetchData();
+    getClub();
   }, []);
+
+  const getClub = async () => {
+    setLoading(true);
+
+    const response = await clubsApi.getById(id);
+
+    setPhotosLoading(true);
+    setMembersPhotos([
+      ...response.data.members,
+      ...response.data.followers,
+    ], [ ...response.data.clubAdministration ]);
+
+    setClub(response.data);
+    
+    setAdmins(response.data.clubAdministration);
+    setMembers(response.data.members);
+    setFollowers(response.data.followers);
+    setIsAdmin(response.data.isCurrentUserAdmin);
+    setIsClubAdmin(response.data.isCurrentUserClubAdmin);
+    setCanJoin(response.data.canJoin);
+
+    setLoading(false);
+  };
+
+  const setMembersPhotos = async (members: ClubMember[], admins: ClubAdmin[]) => {
+    for (let i = 0; i < members.length; i++) {
+      members[i].user.imagePath = (
+        await userApi.getImage(members[i].user.imagePath)
+      ).data;
+    }
+
+    for (let i = 0; i < admins.length; i++) {
+      admins[i].clubMembers.user.imagePath = (
+        await userApi.getImage(admins[i].clubMembers.user.imagePath)
+      ).data;
+    }
+
+    setPhotosLoading(false);
+  }
+
+  const changeApproveStatus = async (clubId: number, memberId: number) => {
+    const member = await clubsApi.toggleMemberStatus(clubId, memberId);
+    member.data.user.imagePath = (
+      await userApi.getImage(member.data.user.imagePath)
+    ).data;
+
+    if (members.length < 6) {
+      setMembers([...members, member.data]);
+    }
+
+    setFollowers(followers.filter((f) => f.id !== memberId));
+  };
+
+  const addMember = async (clubId: number) => {
+    const token = AuthStore.getToken() as string;
+    const user: any = jwt(token);
+
+    const follower = await clubsApi.addFollower(clubId, user.nameid);
+    follower.data.user.imagePath = (
+      await userApi.getImage(follower.data.user.imagePath)
+    ).data;
+
+    if (followers.length < 6) {
+      setFollowers([...followers, follower.data]);
+    }
+
+    setCanJoin(!canCurrentUserJoin);
+  };
 
   const typoExpand = () => {
     setExpand(true);
@@ -89,10 +137,10 @@ const Club = () => {
           <section className={classes.list}>
             <EditOutlined
               className={classes.listIcon}
-              onClick={() => history.push(`/clubs/edit/${club?.club.id}`)}
+              onClick={() => history.push(`/clubs/edit/${clubM?.club.id}`)}
             />
             <h1>{`Курінь ${
-              club?.club.clubName ? club?.club.clubName : "Немає"
+              clubM?.club.clubName ? clubM?.club.clubName : "Немає"
             }`}</h1>
             <Row
               gutter={16}
@@ -102,16 +150,16 @@ const Club = () => {
               <Col flex="1" offset={1}>
                 <div className={classes.mainInfo}>
                   <img
-                    src={club?.club.logo}
+                    src={clubM?.club.logo}
                     alt="club"
                     style={{ width: "50%", height: "auto", maxWidth: "100%" }}
                   />
                   <p>
-                    <b>Бунчужний</b>:{" "}
-                    {club?.clubAdmin
-                      ? club?.clubAdmin.lastName +
+                    <b>Курінний</b>:{" "}
+                    {clubM?.clubAdmin
+                      ? clubM?.clubAdmin.clubMembers.user.lastName +
                         " " +
-                        club?.clubAdmin.firstName
+                        clubM?.clubAdmin.clubMembers.user.firstName
                       : "Немає"}
                   </p>
                 </div>
@@ -128,8 +176,8 @@ const Club = () => {
                         symbol: "Більше",
                       }}
                     >
-                      { club?.club.description ?
-                        club?.club.description :
+                      { clubM?.club.description ?
+                        clubM?.club.description :
                         "Відсутній" }
                     </Paragraph>
                     <Title level={4}>Web-адреса</Title>
@@ -141,9 +189,9 @@ const Club = () => {
                         symbol: "Більше",
                       }}
                     >
-                      { club?.club.clubURL ?
-                      <a href={club?.club.clubURL} target="_blank" rel="noopener noreferrer">
-                        {club?.club.clubURL}
+                      { clubM?.club.clubURL ?
+                      <a href={clubM?.club.clubURL} target="_blank" rel="noopener noreferrer">
+                        {clubM?.club.clubURL}
                       </a> :
                       "Відсутня" }
                     </Paragraph>
@@ -179,20 +227,35 @@ const Club = () => {
                 marginTop: "20px",
               }}
             >
-              {club?.members.map((member: Members) => (
-                <Col key={member.id} className={classes.listItem} span={7}>
-                  <Avatar
-                    size={64}
-                    icon={<UserOutlined />}
-                    className={classes.profileImg}
-                  />
-                  <p>
-                    {member.user.lastName} {member.user.firstName}
-                  </p>
-                </Col>
-              ))}
+              { members.length !== 0 ? (
+                members.map((member: ClubMember) => (
+                  <Col key={member.id} className={classes.listItem} span={7}>
+                    <div
+                      onClick={() =>
+                        history.push(`/userpage/main/${member.userId}`)
+                      }
+                    >
+                      <Avatar
+                        size={64}
+                        //icon={<UserOutlined />}
+                        src={member.user.imagePath}
+                        className={classes.profileImg}
+                      />
+                      <p>
+                        {member.user.lastName} {member.user.firstName}
+                      </p>
+                    </div>
+                  </Col>
+                ))
+              ) : (
+                <h2>Ще немає членів куреня</h2> 
+              )}
             </Row>
-            <Button type="primary" className={classes.listButton}>
+            <Button 
+              type="primary" 
+              className={classes.listButton}
+              onClick={() => history.push(`/clubs/members/${clubM.club.id}`)}
+            >
               Більше
             </Button>
           </section>
@@ -226,29 +289,42 @@ const Club = () => {
                 maxHeight: "70%",
               }}
             >
-              {
-                <Col
-                  key={club?.clubAdmin ? club?.clubAdmin.id : ""}
-                  className={classes.listItem}
-                  span={7}
-                >
-                  <Avatar
-                    size={64}
-                    icon={<UserOutlined />}
-                    className={classes.profileImg}
-                  />
-                  <p>
-                    {club?.clubAdmin
-                      ? club?.clubAdmin.lastName +
-                        " " +
-                        club?.clubAdmin.firstName
-                      : "Немає"}
-                  </p>
-                </Col>
-              }
+              { admins.length !== 0 ? (
+                admins.map((admin) => (
+                  <Col
+                    key={admin.id}
+                    className={classes.listItem}
+                    span={7}
+                  >
+                    <div
+                      onClick={() =>
+                        history.push(`/userpage/main/${admin.clubMembers.userId}`)
+                      }
+                    >
+                      <Avatar
+                        size={64}
+                        //icon={<UserOutlined />}
+                        src={ admin.clubMembers.user.imagePath }
+                        className={classes.profileImg}
+                      />
+                      <p>
+                            {admin.clubMembers.user.lastName} {admin.clubMembers.user.firstName}
+                      </p>
+                    </div>
+                  </Col>
+                ))
+              ) : (
+                <h2>Ще немає діловодів куреня</h2>
+              )}
             </Row>
-            <Button type="primary" className={classes.listButton}>
-              Деталі
+            <Button 
+              type="primary" 
+              className={classes.listButton}
+              onClick={() =>
+                history.push(`/clubs/administration/${clubM.club.id}`)
+              }
+            >
+              Більше
             </Button>
           </section>
         </Col>
@@ -275,12 +351,7 @@ const Club = () => {
                 maxHeight: "70%",
               }}
             >
-              {/* {club?.documents.map((document: any) => (
-                    <Col key={document.id} className={classes.listItem} span={7}>
-                      <FileTextOutlined style={{fontSize: '60px'}} className={classes.profileImg}/>
-                      <p>{document.name}</p>
-                    </Col>
-                ))} */}
+              {}
             </Row>
             <Button type="primary" className={classes.listButton}>
               Деталі
@@ -310,20 +381,67 @@ const Club = () => {
                 maxHeight: "70%",
               }}
             >
-              {club?.followers.map((member: Members) => (
-                <Col key={member.id} className={classes.listItem} span={7}>
-                  <Avatar
-                    size={64}
-                    icon={<UserOutlined />}
-                    className={classes.profileImg}
-                  />
-                  <p>
-                    {member.user.lastName} {member.user.lastName}
-                  </p>
+              { canCurrentUserJoin ? (
+                <Col
+                  className={classes.listItem}
+                  span={7}
+                  onClick={() => addMember(clubM.club.id)}
+                >
+                  <div>
+                    <Avatar
+                      style={{ color: "#3c5438" }}
+                      size={64}
+                      icon={<UserAddOutlined />}
+                      className={classes.addFollower}
+                    />
+                    <p>Приєднатися</p>
+                  </div>
                 </Col>
-              ))}
+              ) : null }
+              { followers.length !== 0 ? (
+                followers.map((member: ClubMember) => (
+                  <Col 
+                    key={member.id} 
+                    className={classes.listItem} 
+                    span={7}
+                  >
+                    <div>
+                      <div
+                        onClick={() =>
+                          history.push(`/userpage/main/${member.userId}`)
+                      }
+                      >
+                        {photosLoading ? (
+                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        ) : (
+                        <Avatar
+                          size={64}
+                          src={member.user.imagePath}
+                          className={classes.profileImg}
+                        />
+                        )}
+                        <p>
+                          {member.user.lastName} {member.user.firstName}
+                        </p>
+                      </div>
+                      { (isCurrentUserClubAdmin || isCurrentUserAdmin) ? (
+                        <PlusOutlined
+                          className={classes.approveIcon}
+                          onClick={() => changeApproveStatus(clubM.club.id, member.id)}
+                        />
+                      ) : null}
+                    </div>
+                  </Col>
+                ))
+              ) : canCurrentUserJoin ? null : (
+                <h2>Ще немає прихильників куреня</h2>
+              )}
             </Row>
-            <Button type="primary" className={classes.listButton}>
+            <Button 
+              type="primary" 
+              className={classes.listButton}
+              onClick={() => history.push(`/clubs/followers/${clubM.club.id}`)}
+            >
               Більше
             </Button>
           </section>

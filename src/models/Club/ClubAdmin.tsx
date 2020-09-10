@@ -1,20 +1,18 @@
-import Admintype from '../Admin/AdminType';
-import ClubUser from './ClubUser';
+import AdminType from '../Admin/AdminType';
+import ClubMember from './ClubMember';
 
 export default class ClubAdmin {
   id: number;
-  userId: string;
-  user: ClubUser;
-  adminType: Admintype;
-  clubId: number;
+  adminType: AdminType;
   startDate?: string;
   endDate?: string;
+  clubId: number;
+  clubMembers: ClubMember;
 
   constructor() {
     this.id = 0;
-    this.userId = "";
-    this.user = new ClubUser();
-    this.adminType = new Admintype();
+    this.clubMembers = new ClubMember();
+    this.adminType = new AdminType();
     this.clubId = 0;
     this.startDate = undefined;
     this.endDate = undefined;
