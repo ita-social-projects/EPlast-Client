@@ -149,7 +149,7 @@ return <div className={classes.wrapper} >
             }
             className = {classes.button}
             >Надати дату завершення</button>
-            {!pd.isCurrent && <button onClick ={ async ()=>{
+            {!pd.isCurrent && pd.dateFinish === null && <button onClick ={ async ()=>{
             await activeMembershipApi.setPlastDegreeAsCurrent(userId, pd.plastDegree.id).then(()=>{
                 handleChangeAsCurrent(pd.plastDegree.id);
             });

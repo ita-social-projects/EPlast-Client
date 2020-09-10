@@ -30,25 +30,25 @@ const getAccessLevelById = async (id : string) => {
 };
 
 const getAllPlastDegrees = async () : Promise<Array<PlastDegree>>=> {
-    const response = await Api.get(`ActiveMembership/dergee`);
+    const response = await Api.get(`ActiveMembership/degree`);
 
     return response.data;
 };
 
  const getUserPlastDegrees = async (id : string) :Promise<Array<UserPlastDegree>>=> {
-    const response = await Api.get(`ActiveMembership/dergee/${id}`);
+    const response = await Api.get(`ActiveMembership/degree/${id}`);
 
     return response.data;
  };
 
  const postUserPlastDegree = async (userPlastDegree : UserPlastDegreePost) =>{
-     const response = await Api.post(`ActiveMembership/dergee`, userPlastDegree);
+     const response = await Api.post(`ActiveMembership/degree`, userPlastDegree);
         
      return response.data;
  };
 
  const removeUserPlastDegree = async (userId : string, userPlastDegreeId: number) =>{
-    const response = await Api.remove(`ActiveMembership/dergee/${userId}/${userPlastDegreeId}`);
+    const response = await Api.remove(`ActiveMembership/degree/${userId}/${userPlastDegreeId}`);
        
     return response.data;
 };
