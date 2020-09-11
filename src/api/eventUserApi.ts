@@ -6,12 +6,6 @@ const getEventsUser = async (id: string | undefined) => {
     return response;
 };
 
-const getCreatedArchivedEvents = async (id: string | undefined) => {
-    const response = await Api.get(`EventsUsers/createArchivedEvents/${id}`);
-
-    return response;
-};
-
 const getDataForNewEvent = async () => {
     const response = await Api.get(`EventsUsers/dataForNewEvent`);
 
@@ -62,7 +56,6 @@ const put = async (data: any) => {
 
 export default {
     getEventsUser,
-    getCreatedArchivedEvents,
     getDataForNewEvent,
     getEditedEvent,
     getDataForCalendar,

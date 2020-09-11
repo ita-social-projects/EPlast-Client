@@ -1,18 +1,20 @@
 import Gender from "./Gender";
+import User from "../UserTable/User";
 
 export default class UserTable {
-    [x: string]: any;
-    id: string;
-    firstName: string;
-    lastName: string;
-    birthday?: Date;
-    gender: Gender;
+    user: User;
+    regionName: string;
+    cityName: string;
+    clubName: string;
+    userPlastDegreeName: string;
+    userRoles: string;
 
     constructor() {
-        this.id = '';
-        this.firstName = '';
-        this.lastName = '';
-        this.birthday = undefined;
-        this.gender = new Gender();
+        this.user = new User();
+        this.regionName = '';
+        this.cityName = '';
+        this.clubName = '';
+        this.userPlastDegreeName = '';
+        this.userRoles = '';
     }
 }
