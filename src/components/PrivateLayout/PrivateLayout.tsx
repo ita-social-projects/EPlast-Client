@@ -92,11 +92,11 @@ const PrivateLayout = ({ children }: any) => {
               Рішення
           </Menu.Item>
             <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
-              {userRole?.some(role => role === 'Admin') &&
+              {/* {userRole?.some(role => role === 'Admin') && */}
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
                   Таблиця користувачів
                 </Menu.Item>
-              }
+              {/* } */}
               <Menu.Item onClick={() => { handleClickAway(); history.push("/cities"); }} key="3">
                 Станиці
             </Menu.Item>
