@@ -47,8 +47,8 @@ const City = () => {
     setFollowers(followers.filter((f) => f.id !== memberId));
   };
 
-  const addMember = async (cityId: number) => {
-    const follower = await addFollower(cityId);
+  const addMember = async () => {
+    const follower = await addFollower(+id);
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
@@ -89,14 +89,27 @@ const City = () => {
     }
   }
 
-  function seeModal () {
+  function seeDeleteModal () {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити дану станицю?",
       icon: <ExclamationCircleOutlined/>,
       okText: 'Так, видалити',
       okType: 'danger',
       cancelText: 'Скасувати',
-      onOk() { deleteCity()}
+      maskClosable: true,
+      onOk() {deleteCity()}
+    });
+  }
+
+  function seeJoinModal () {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете долучитися до даної станиці?",
+      icon: <ExclamationCircleOutlined/>,
+      okText: 'Так, долучитися',
+      okType: 'primary',
+      cancelText: 'Скасувати',
+      maskClosable: true,
+      onOk() {addMember()}
     });
   }
 
@@ -140,9 +153,7 @@ const City = () => {
       <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={3}>
-              Станиця {city.name}
-            </Title>
+            <Title level={3}>Станиця {city.name}</Title>
             <Row className="cityPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
                 {cityLogoLoading ? (
@@ -229,7 +240,7 @@ const City = () => {
                   <Button
                     type="primary"
                     className="cityInfoButton"
-                    //onClick={}
+                    onClick={() => history.push(`/annualreport/table`)}
                   >
                     Річні звіти
                   </Button>
@@ -255,7 +266,7 @@ const City = () => {
                       <Col offset={1}>
                         <DeleteOutlined
                           className="cityInfoIcon"
-                          onClick={() => seeModal()}
+                          onClick={() => seeDeleteModal()}
                         />
                       </Col>
                     ) : null}
@@ -268,9 +279,7 @@ const City = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={4}>
-              Члени станиці
-            </Title>
+            <Title level={4}>Члени станиці</Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {members.length !== 0 ? (
                 members.map((member) => (
@@ -318,9 +327,7 @@ const City = () => {
           xs={24}
         >
           <Card hoverable className="cityCard">
-            <Title level={4}>
-              Провід станиці
-            </Title>
+            <Title level={4}>Провід станиці</Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {admins.length !== 0 ? (
                 admins.map((admin) => (
@@ -360,9 +367,7 @@ const City = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={4}>
-              Документообіг станиці
-            </Title>
+            <Title level={4}>Документообіг станиці</Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
                 documents.map((document) => (
@@ -409,16 +414,14 @@ const City = () => {
           xs={24}
         >
           <Card hoverable className="cityCard">
-            <Title level={4}>
-              Прихильники станиці
-            </Title>
+            <Title level={4}>Прихильники станиці</Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {canJoin ? (
                 <Col
                   className="cityMemberItem"
                   xs={12}
                   sm={8}
-                  onClick={() => addMember(city.id)}
+                  onClick={() => seeJoinModal()}
                 >
                   <div>
                     <Avatar
@@ -490,9 +493,7 @@ const City = () => {
       ) : null}
     </Layout.Content>
   ) : (
-    <Title level={2}>
-      Місто не знайдено
-    </Title>
+    <Title level={2}>Місто не знайдено</Title>
   );
 };
 
