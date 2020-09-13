@@ -6,6 +6,7 @@ import DropDownDistinctionTable from './DropDownDistinctionTable';
 import distinctionApi from '../../../api/distinctionApi';
 import AddDistinctionModal from '../DistinctionTable/AddDistinctionModal';
 import EditDistinctionTypesModal from './EditDistinctionTypesModal';
+import ClickAwayListener from 'react-click-away-listener';
 
 const classes = require('../../DecisionTable/Table.module.css');
 
@@ -45,6 +46,11 @@ const DecisionTable = () => {
       setVisibleModalEditDist(true);
     }
 
+
+    const handleClickAway=()=>{
+      setShowDropdown(false);
+    }
+
 return (
     <Layout>
       <Content onClick={() => { setShowDropdown(false) }} >
@@ -81,12 +87,15 @@ return (
               bordered
               rowKey="id"
             />
+            <ClickAwayListener onClickAway={handleClickAway}>
                   <DropDownDistinctionTable
                     showDropdown={showDropdown}
                     record={recordObj}
                     pageX={x}
                     pageY={y}
                 />
+                </ClickAwayListener>
+
                 <AddDistinctionModal 
                   setVisibleModal={setVisibleModal}
                   visibleModal={visibleModal}

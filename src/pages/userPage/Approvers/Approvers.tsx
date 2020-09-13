@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import notificationLogic from '../../../components/Notifications/Notification';
+import Spinner from '../../Spinner/Spinner';
 import classes from '*.module.css';
 
 const Assignments = () => {
@@ -45,18 +46,12 @@ const Assignments = () => {
 
   const { Meta } = Card;
   return loading === false ? (
-    <div className="spaceWrapper">
-      <Space className="loader" size="large">
-        <Spin size="large" />
-      </Space>
-    </div>
-
+    <Spinner />
   ) : (
       <div className="wrapper">
         <div className="displayFlex">
           <div className="avatarWrapper">
             <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} />
-            < div className="line" />
           </div>
           <div className="approversContent">
             <h1>{data?.user.firstName} {data?.user.lastName}</h1>
