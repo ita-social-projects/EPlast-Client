@@ -1,12 +1,13 @@
 import distinction from './Distinction'
-import { User } from '../../userPage/EditUserPage/Interface';
+import { Moment } from 'moment';
+import User from './User'
  type UserDistinction = {
      id: number;
      distinctionId: number;
      distinction: distinction;
      reporter: string;
      reason: string;
-     date: string;
+     date: Date;
      userId: string;
      user: User
  }

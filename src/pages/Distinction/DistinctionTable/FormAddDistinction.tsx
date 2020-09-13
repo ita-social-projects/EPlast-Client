@@ -7,6 +7,7 @@ import adminApi from '../../../api/adminApi';
 
 
 import formclasses from '../../KadraVykhovnykiv/Form.module.css';
+import moment from 'moment';
 
 
 type FormAddDistinctionProps = {
@@ -30,6 +31,7 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
         name: '',
         id: 0
     }])
+    const dateFormat = 'MM/DD/YYYY HH:mm';
 
     useEffect( () => {
         const fetchData = async () => {
@@ -52,11 +54,11 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
                 distinction: JSON.parse(values.distinction),
                 user: JSON.parse(values.user),
                 userId: JSON.parse(values.user).id,
-                date:/* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values.date,
+                date: values.date,
                 reporter: values.reporter,
                 reason: values.reason,
             }
-            console.log(newDistinction);
+            console.log(JSON.stringify(newDistinction));
             await distinctionApi.addUserDistinction(newDistinction);
             setVisibleModal(false);
 
@@ -119,7 +121,7 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
                name="date"
                label="Дата затвердження"
                rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
-                <DatePicker format = "YYYY-MM-DD"
+                <DatePicker format={dateFormat} 
                 className={formclasses.selectField}
                 />
               </Form.Item>
