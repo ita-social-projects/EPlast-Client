@@ -25,7 +25,7 @@ const CityMembers = () => {
   const [canEdit, setCanEdit] = useState<Boolean>(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-
+  
   const getMembers = async () => {
     setLoading(true);
     const responseMembers = await getAllMembers(id);
@@ -57,7 +57,13 @@ const CityMembers = () => {
     setMembers(members.filter((u) => u.id !== member.id));
   };
 
-  const showModal = (member: CityMember) => {
+  const onAdd = async () => {
+    const responseAdmins = await getAllAdmins(id);
+    setAdmins(responseAdmins.data.administration);
+    setHead(responseAdmins.data.head);
+  }
+
+  const showModal = (member: CityMember) => {    
     const existingAdmin = [head, ...admins].find((a) => a?.userId === member.userId);
     
     if (existingAdmin !== undefined) {
@@ -154,6 +160,8 @@ const CityMembers = () => {
           setAdmin={setAdmin}
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
+          cityId={+id}
+          onAdd={onAdd}
         ></AddAdministratorModal>
       ) : null}
     </Layout.Content>

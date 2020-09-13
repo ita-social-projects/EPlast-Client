@@ -1,23 +1,31 @@
 .addDocumentModal {
-    .ant-form-horizontal .ant-form-item-label {
-        width: 25%;
-    }
+  .ant-form-horizontal .ant-form-item-label {
+    width: 25%;
+  }
 
-    .formSelect {
-        width: 100%;
+  .formSelect {
+    width: 100%;
+  }
+
+  .cancelConfirmButtons {
+    margin-bottom: 0px;
+  }
+
+  .cardButton {
+    margin-bottom: 1.2rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .addDocumentModal {
+    .ant-form-horizontal .ant-form-item-label {
+        padding: 0;
     }
 
     .cancelConfirmButtons {
-        margin-bottom: 0px;
-
-        @media (max-width: 575px) {
-            .publishButton {
-                text-align: end;
-            }
-        }
+      .publishButton {
+        text-align: end;
+      }
     }
-
-    .cardButton {
-        margin-bottom: 1.2rem;
-    }
+  }
 }

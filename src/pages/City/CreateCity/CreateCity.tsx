@@ -7,7 +7,6 @@ import { RcCustomRequestOptions, RcFile } from "antd/lib/upload/interface";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import { createCity, getCityById, getLogo, updateCity } from "../../../api/citiesApi";
 import { GetAllRegions } from '../../../api/regionsApi';
-import classes from "./CreateCity.module.css";
 import "./CreateCity.less"
 import CityProfile from '../../../models/City/CityProfile';
 import CityAdmin from '../../../models/City/CityAdmin';
@@ -44,7 +43,7 @@ const CreateCity = () => {
       notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
     }
   
-    const isSmaller2mb =  size < 2097152;
+    const isSmaller2mb =  size <= 2097152;
     if (!isSmaller2mb) {
       notificationLogic("error", "Розмір файлу перевищує 3 Мб");
     }
@@ -105,10 +104,12 @@ const CreateCity = () => {
 
   useEffect(() => {
     if (+id) {
-      getCity();
+      getCity()
+        .then(() => getRegions());
     }
-
-    getRegions();
+    else {
+      getRegions();
+    }
   }, [id]);
 
   const handleSubmit = async (values: any) => {
@@ -128,15 +129,10 @@ const CreateCity = () => {
       street: values.street,
     }
 
-    console.log("values:");
-    console.log(values);
-    console.log("newCity:");
-    console.log(newCity);
-
     if (!city.id) {
-      //CreateCity(newCity);
+      CreateCity(newCity);
     } else {
-      //EditCity(newCity);
+      EditCity(newCity);
     }
   };
 
@@ -170,7 +166,7 @@ const CreateCity = () => {
   };
 
   return loading && city ? (
-    <Layout.Content className={classes.spiner}>
+    <Layout.Content>
       <Spin size="large" />
     </Layout.Content>
   ) : (
@@ -258,9 +254,7 @@ const CreateCity = () => {
                 initialValue={city.email}
                 rules={[
                   {
-                    pattern: new RegExp(
-                      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/
-                    ),
+                    pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
                     message: "Неправильна пошта",
                   },
                 ]}

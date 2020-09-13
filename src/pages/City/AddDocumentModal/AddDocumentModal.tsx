@@ -107,7 +107,7 @@ const AddDocumentModal = (props: Props) => {
 
     return (
       <Modal
-        title={"Додати документ"}
+        title="Додати документ"
         visible={props.visibleModal}
         footer={null}
         confirmLoading={loading}
@@ -143,7 +143,7 @@ const AddDocumentModal = (props: Props) => {
             name="dragger"
             valuePropName="fileList"
             getValueFromEvent={normFile}
-            noStyle
+            rules={[{ required: true, message: "Потрібно завантажити файл" }]}
           >
             <Upload.Dragger
               name="file"
@@ -161,22 +161,21 @@ const AddDocumentModal = (props: Props) => {
 
               {props.document.blobName !== null && <div>{fileName}</div>}
             </Upload.Dragger>
-
-            {props.document.blobName !== null && (
-              <div>
-                <Button
-                  className="cardButton"
-                  onClick={() => {
-                    props.setDocument({ ...props.document, blobName: "" });
-                    setFileName("");
-                    notificationLogic("success", "Файл видалено");
-                  }}
-                >
-                  Видалити файл
-                </Button>
-              </div>
-            )}
           </Form.Item>
+          {props.document.blobName ? (
+            <div>
+              <Button
+                className="cardButton"
+                onClick={() => {
+                  props.setDocument({ ...props.document, blobName: "" });
+                  setFileName("");
+                  notificationLogic("success", "Файл видалено");
+                }}
+              >
+                Видалити файл
+              </Button>
+            </div>
+          ) : null}
 
           <Form.Item className="cancelConfirmButtons">
             <Row justify="end">
@@ -185,7 +184,11 @@ const AddDocumentModal = (props: Props) => {
                   Відмінити
                 </Button>
               </Col>
-              <Col className="publishButton" xs={{ span: 11, offset: 2 }} sm={{ span: 6, offset: 1 }}>
+              <Col
+                className="publishButton"
+                xs={{ span: 11, offset: 2 }}
+                sm={{ span: 6, offset: 1 }}
+              >
                 <Button type="primary" htmlType="submit">
                   Опублікувати
                 </Button>
