@@ -25,25 +25,7 @@ const DropDown = (props: Props) => {
     const history = useHistory();
     const { record, pageX, pageY, showDropdown, onDelete, onChange } = props;
     const [showEditModal, setShowEditModal] = useState(false);
-    const [userRole, setUser] = useState({
-        userID: '',
-        userEmail: '',
-        allRoles: [{
-            id: '',
-            name: ''
-        }],
-        userRoles: ['']
-    })
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            await adminApi.getRolesForEdit(record).then(response => {
-                setUser(response.data);
-            })
-        }
-        fetchUser();
-    }, []);
-
+  
     const handleItemClick = async (item: any) => {
         switch (item.key) {
             case '1':
@@ -81,12 +63,10 @@ const DropDown = (props: Props) => {
                     <FileSearchOutlined />
                         Переглянути профіль
                 </Menu.Item>
-                {(userRole?.userRoles as string[]).some(role => role !== 'Admin') &&
                     <Menu.Item key="2">
                         <DeleteOutlined />
                         Видалити
                 </Menu.Item>
-                }
                 <Menu.Item key="3">
                     <EditOutlined />
                         Змінити права доступу

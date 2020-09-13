@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { AxiosError } from 'axios'
-import { Form, Button, Modal, Input } from 'antd';
-import styles from './AnnualReportEdit.module.css';
+import { Form, Button, Modal, Row, Col } from 'antd';
+import './AnnualReportEdit.less';
 import AnnualReportForm from '../AnnualReportForm/AnnualReportForm';
 import AnnualReportApi from '../../../api/AnnualReportApi';
 import AnnualReport from '../Interfaces/AnnualReport';
@@ -31,29 +30,29 @@ const AnnualReportEdit = () => {
     }
 
     const fetchAnnualReport = async () => {
-        await AnnualReportApi.getById(id)
-            .then(response => {
-                response.data.annualreport.city = null;
-                response.data.annualreport.cityManagement.cityAdminNew = null;
-                cityId = response.data.annualreport.cityId;
-                setAnnualReport(response.data.annualreport);
-                form.setFieldsValue(response.data.annualreport);
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            })
+        try {
+            let response = await AnnualReportApi.getById(id);
+            response.data.annualreport.city = null;
+            response.data.annualreport.newCityAdmin = null;
+            cityId = response.data.annualreport.cityId;
+            setAnnualReport(response.data.annualreport);
+            form.setFieldsValue(response.data.annualreport);
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const fetchCityInfo = async () => {
-        await AnnualReportApi.getCityInfo(cityId)
-            .then(response => {
-                let cityName = response.data.name;
-                setTitle(title.concat(' ', cityName));
-                setMembers((response.data.members as []).map((item: any) => item.user));
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            })
+        try {
+            let response = await AnnualReportApi.getCityInfo(cityId);
+            let cityName = response.data.name;
+            setTitle(title.concat(' ', cityName));
+            setMembers((response.data.members as []).map((item: any) => item.user));
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const setMembers = (members: User[]) => {
@@ -66,34 +65,32 @@ const AnnualReportEdit = () => {
     }
 
     const fetchLegalStatuses = async () => {
-        await AnnualReportApi.getCityLegalStatuses()
-            .then(response => {
-                setCityLegalStatuses((response.data.legalStatuses as []).map((item, index) => {
-                    return {
-                        label: item,
-                        value: index
-                    }
-                }));
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            })
+        try {
+            let response = await AnnualReportApi.getCityLegalStatuses();
+            setCityLegalStatuses((response.data.legalStatuses as []).map((item, index) => {
+                return {
+                    label: item,
+                    value: index
+                }
+            }));
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const handleFinish = async (obj: any) => {
         let membersStatistic = Object.assign(annualReport?.membersStatistic, obj.membersStatistic);
-        let cityManagement = Object.assign(annualReport?.cityManagement, obj.cityManagement);
         let annualReportEdited: AnnualReport = Object.assign(annualReport, obj);
         annualReportEdited.membersStatistic = membersStatistic;
-        annualReportEdited.cityManagement = cityManagement;
-        await AnnualReportApi.edit(annualReportEdited)
-            .then(response => {
-                form.resetFields();
-                showSuccess(response.data.message);
-            })
-            .catch((error: AxiosError) => {
-                showError(error.response?.data.message);
-            });
+        try {
+            let response = await AnnualReportApi.edit(annualReportEdited);
+            form.resetFields();
+            showSuccess(response.data.message);
+        }
+        catch (error) {
+            showError(error.message)
+        }
     }
 
     const showSuccess = (message: string) => {
@@ -114,17 +111,21 @@ const AnnualReportEdit = () => {
     return (
         <Form
             onFinish={handleFinish}
-            className={styles.form}
+            className='annualreport-form'
             form={form} >
             <AnnualReportForm
                 title={title}
                 cityMembers={cityMembers}
                 cityLegalStatuses={cityLegalStatuses} />
-            <Button
-                type='primary'
-                htmlType='submit'>
-                Редагувати
-            </Button>
+            <Row justify='center'>
+                <Col>
+                    <Button
+                        type='primary'
+                        htmlType='submit'>
+                        Редагувати
+                    </Button>
+                </Col>
+            </Row>
         </Form>
     );
 }

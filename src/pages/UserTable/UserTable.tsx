@@ -4,52 +4,32 @@ import adminApi from '../../api/adminApi';
 import DropDownUserTable from './DropDownUserTable';
 import Title from 'antd/lib/typography/Title';
 import ColumnsForUserTable from './ColumnsForUserTable';
+import UserTable from '../../models/UserTable/UserTable';
+import Spinner from '../Spinner/Spinner';
+import ClickAwayListener from 'react-click-away-listener';
 const classes = require('./UserTable.module.css');
 
-const UserTable = () => {
+const UsersTable = () => {
+
     const [recordObj, setRecordObj] = useState<any>(0);
     const [showDropdown, setShowDropdown] = useState(false);
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
     const [loading, setLoading] = useState(false);
     const [searchedData, setSearchedData] = useState('');
-    const [users, setUsers] = useState<any>([{
-        user: {
-            id: '',
-            firstName: '',
-            lastName: '',
-            birthday: '',
-        },
-        regionName: '',
-        cityName: '',
-        clubName: '',
-        userPlastDegreeName: '',
-        userRoles: ''
-    }])
-
-    const [updatedUser, setUpdatedUser] = useState([{
-        user: {
-            id: '',
-            firstName: '',
-            lastName: '',
-            birthday: '',
-        },
-        regionName: '',
-        cityName: '',
-        clubName: '',
-        userPlastDegreeName: '',
-        userRoles: ''
-    }]);
+    const [users, setUsers] = useState<UserTable[]>([]);
+    const [updatedUser, setUpdatedUser] = useState<UserTable[]>([]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            await adminApi.getUsersForTable().then(response => {
-                setUsers(response.data);
-            })
-            setLoading(true);
-        }
         fetchData();
     }, [updatedUser])
+
+    const fetchData = async () => {
+        await adminApi.getUsersForTable().then(response => {
+            setUsers(response.data);
+        })
+        setLoading(true);
+    }
 
     const handleSearch = (event: any) => {
         setSearchedData(event.target.value);
@@ -66,7 +46,7 @@ const UserTable = () => {
     }
 
     const filteredData = searchedData
-        ? users.filter((item: any) => {
+        ? users?.filter((item: any) => {
             return Object.values(item).find((element) => {
                 return String(element).toLowerCase().includes(searchedData.toLowerCase());
             });
@@ -74,13 +54,14 @@ const UserTable = () => {
         : users;
 
     const handleDelete = (id: string) => {
+        fetchData();
         const filteredData = users.filter((d: any) => d.id !== id);
         setUsers([...filteredData]);
     }
 
-    const updateItems = () => {
-        const newItems = users.push(updatedUser);
-        setUpdatedUser([...newItems]);
+
+    const handleClickAway = ()=>{
+        setShowDropdown(false);
     }
 
     const handleChange = (id: string, userRoles: string) => {
@@ -95,18 +76,15 @@ const UserTable = () => {
     }
 
     return loading === false ? (
-        <div className={classes.spaceWrapper}>
-            <Space className={classes.loader} size="large">
-                <Spin size="large" />
-            </Space>
-        </div>
+        <Spinner />
     ) : (
             <Layout.Content
                 onClick={() => { setShowDropdown(false) }}
             >
                 <Title level={2}>Таблиця користувачів</Title>
                 <Row
-                    gutter={16}>
+                    gutter={16}
+                >
                     <Col span={4}>
                         <Input.Search placeholder="Пошук" onChange={handleSearch} />
                     </Col>
@@ -147,6 +125,7 @@ const UserTable = () => {
                             `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
                     }}
                 />
+                <ClickAwayListener onClickAway={handleClickAway}>
                 <DropDownUserTable
                     showDropdown={showDropdown}
                     record={recordObj}
@@ -155,8 +134,9 @@ const UserTable = () => {
                     onDelete={handleDelete}
                     onChange={handleChange}
                 />
+                </ClickAwayListener>
             </Layout.Content >
         );
 
 }
-export default UserTable;
+export default UsersTable;

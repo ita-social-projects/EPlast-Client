@@ -20,6 +20,14 @@ const ActiveMembership = () => {
     const [userToken, setUserToken] = useState<any>([{
         nameid: ''
     }]);
+    const handleAddDegree = async() =>{
+        await activeMembershipApi.getUserPlastDegrees(userId).then(response =>{
+            setPlastDegrees(response);
+        }); 
+    }
+    const handleDeleteUserPlastDegree = (plastDegreeId : number)=>{
+        setPlastDegrees(plastDegrees.filter(pd => pd.plastDegree.id == plastDegreeId))
+    }
     const fetchData  =  async () =>{
         const token = AuthStore.getToken() as string;
             setUserToken(jwt(token));
@@ -34,7 +42,11 @@ const ActiveMembership = () => {
        await activeMembershipApi.getUserPlastDegrees(userId).then(response =>{
            setPlastDegrees(response);
        }) 
-    } 
+    };
+    const handleDelete = async (userPlastDegree : UserPlastDegree) =>{
+       await activeMembershipApi.removeUserPlastDegree(userId, userPlastDegree.plastDegree.id);  
+      handleDeleteUserPlastDegree(userPlastDegree.plastDegree.id);
+    }
     const showModal = () => setVisibleModal(true);
     useEffect(()=>{
         fetchData();
@@ -44,6 +56,9 @@ return <div className={classes.wrapper} >
                     <Avatar size={250} src={imageBase64} />
                     <Title level={2}> {user.firstName} {user.lastName} </Title>
                 < div className={classes.line} id={classes.line} />
+                <Button type="primary" onClick={showModal}>
+                Додати ступінь
+              </Button>
                 </div>
         <div className={classes.wrapperCol} >
         <div className={classes.wrapper}>
@@ -68,17 +83,21 @@ return <div className={classes.wrapper} >
             <List
             className="demo-loadmore-list"
             dataSource = {plastDegrees}
-            renderItem={item => (<List.Item >
+            renderItem={item => (<List.Item actions={[<a onClick ={()=>{
+                handleDelete(item);
+            }} key="list-loadmore-delete">Видалити</a>]}>
                 <List.Item.Meta  style ={ {fontSize : "20px"} }title = {item.plastDegree.name} description = {`Дата надання ступеню ${item.dateStart}`}></List.Item.Meta></List.Item>) }
             itemLayout="horizontal" />
             
              </div>
         </div>
         </div>
-        <Button type="primary" onClick={showModal}>
-                Додати ступінь
-              </Button>
-        <ModalAddPlastDegree userId = {userId} visibleModal = {visibleModal} setVisibleModal ={setVisibleModal}/>
+        <ModalAddPlastDegree 
+        handleAddDegree = {handleAddDegree}
+        handleDeleteUserPlastDegree ={handleDeleteUserPlastDegree}
+        userId = {userId} 
+        visibleModal = {visibleModal}
+        setVisibleModal ={setVisibleModal}/>
 </div>;
 }
 export default ActiveMembership;

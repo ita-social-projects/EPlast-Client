@@ -1,13 +1,11 @@
-import React, {useState} from 'react';
-import {Modal, Input,  Button, Card } from 'antd';
+import React, {useState, useEffect} from 'react';
+import {Modal, Input,  Button, Card, Spin } from 'antd';
 
 import {KVTable} from './KVTable';
 
 import AddNewKadraForm from './AddNewKadraForm';
 
-
 const classes = require('./Table.module.css');
-
 
 const tabListNoTitle = [
     {
@@ -28,21 +26,20 @@ const tabListNoTitle = [
       },
   ];
 
-  const contentListNoTitle = {
-    KV1N: <KVTable current={1}/>,
-    KV1U: <KVTable current={2}/>,
-    KV2N: <KVTable current={3}/>,
-    KV2U: <KVTable current={4}/>
-  };
-
 
 export const KadrasTable = ()=>{
 
+  const contentListNoTitle: { [key: string]: any } = {
+    KV1N: <div><div><div><KVTable current={1}/></div></div></div>,
+    KV1U: <><KVTable current={2}/></>,
+    KV2N: <div><div><KVTable current={3}></KVTable></div></div>,
+    KV2U: <><div><KVTable current={4}/></div></>
+  };
+
    const [visible, setvisible]= useState<boolean>(false) ;
-  
+   
    const [noTitleKey, setKey] = useState<string>('KV1N');
 
-   
    const showModal = () => {
     
       setvisible(true);
@@ -62,14 +59,16 @@ export const KadrasTable = ()=>{
 
        
 
-       const onTabChange = (key:string) => {
+
+       const onTabChange =  (key:string) => {
          console.log(noTitleKey)
-        setKey(key);
+         setKey(key);
         
         console.log(noTitleKey)
+        
       };
      
-     
+
     return(
     <>
         <h1 className={classes.titleTable}>Кадра виховників</h1>
@@ -87,24 +86,23 @@ export const KadrasTable = ()=>{
             
           }}
         >
-          {contentListNoTitle['KV1U']}
+          
+          {contentListNoTitle[noTitleKey ]}
         </Card>
 
+       
+            
         <Modal
           title="Надати кадру виховників"
           visible={visible}
           onOk={handleOk}
           onCancel={handleCancel}
+          footer={null}
         >
-          <AddNewKadraForm></AddNewKadraForm>
+          <AddNewKadraForm onAdd={handleCancel}></AddNewKadraForm>
         </Modal>
-            
       </>
     )
         
 }
-
-
-
-
 export default KadrasTable;

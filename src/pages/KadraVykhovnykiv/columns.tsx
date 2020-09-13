@@ -1,34 +1,38 @@
 import React from 'react';
 import Api from '../../api/KadraVykhovnykivApi';
+import CityUser from '../../models/City/CityUser';
+import moment from 'moment';
 
 
 const columns = [
   {
-    title: 'id',
+    title: 'ID',
     dataIndex: 'id',
   },
   {
-    title: 'userId',
-    dataIndex: 'userId',
+    title: 'Користувач',
+    dataIndex: 'user',
+    render: (user: CityUser) => {
+      return user.firstName + " " + user.lastName
+  }
   },
   {
-    title: 'kvTypesID',
-    dataIndex: 'kvTypesID',
-  },
-  {
-    title: 'dateOfGranting',
+    title: 'Дата надання',
     dataIndex: 'dateOfGranting',
+    render:(dateOfGranting:Date)=>{
+        return moment(dateOfGranting).format("DD-MM-YYYY")
+    }
   },
   {
-    title: 'numberInRegister',
+    title: 'Номер в реєстрі',
     dataIndex: 'numberInRegister',
   },
   {
-    title: 'basisOfGranting',
+    title: 'Причина вручення',
     dataIndex: 'basisOfGranting',
   },
   {
-    title: 'link',
+    title: 'Лінк',
     dataIndex: 'link'
 },
     

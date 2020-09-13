@@ -39,3 +39,12 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+.cardCoverStyles{
+  object-fit: contain;
+  width: 242px;
+  height: 154.45px;
+}
+
+.pagination{
+  text-align: center;
+}

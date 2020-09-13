@@ -1,5 +1,6 @@
 .footerContainer{
     text-align: center;
+    padding: 10px 0px 10px;
 }
 .footerContacts{
     display: flex;
@@ -15,5 +16,5 @@
     transform: scale(1.3);
 }
 .footerCopyright{
-    margin: 15px 0 0;
+    margin: 10px 0 0;
 }

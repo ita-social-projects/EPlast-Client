@@ -14,6 +14,7 @@ import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
 import adminApi from "../../api/adminApi";
+import jwt_decode from "jwt-decode";
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -21,16 +22,7 @@ const { SubMenu } = Menu;
 const PrivateLayout = ({ children }: any) => {
   const [collapsed, setCollapsed] = useState(true);
   const history = useHistory();
-  const [userRole, setUser] = useState({
-    userID: '',
-    userEmail: '',
-    allRoles: [{
-      id: '',
-      name: ''
-    }],
-    userRoles: ['']
-  })
-
+  const [userRole, setUser] = useState<string[]>();
 
   const onCollapse = (collValue: boolean) => {
     setCollapsed(collValue);
@@ -57,11 +49,10 @@ const PrivateLayout = ({ children }: any) => {
   };
 
   const fetchUser = async () => {
-    const token = AuthStore.getToken() as string;
-    const user: any = jwt(token);
-    await adminApi.getRolesForEdit(user.nameid).then(response => {
-      setUser(response.data);
-    })
+    let jwt = AuthStore.getToken() as string;
+    let decodedJwt = jwt_decode(jwt) as any;
+    let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+    setUser(roles);
   }
 
   useEffect(() => {
@@ -81,7 +72,7 @@ const PrivateLayout = ({ children }: any) => {
           breakpoint="xxl"
           width="250"
           collapsedWidth="0"
-          >
+        >
           <div className={classes.profilePhoto}>
             <Avatar
               size={64}
@@ -101,11 +92,11 @@ const PrivateLayout = ({ children }: any) => {
               Рішення
           </Menu.Item>
             <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
-              {(userRole.userRoles as string[]).some(role => role === 'Admin') &&
+              {/* {userRole?.some(role => role === 'Admin') && */}
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
                   Таблиця користувачів
                 </Menu.Item>
-              }
+              {/* } */}
               <Menu.Item onClick={() => { handleClickAway(); history.push("/cities"); }} key="3">
                 Станиці
             </Menu.Item>
@@ -114,27 +105,26 @@ const PrivateLayout = ({ children }: any) => {
                 Події
             </Menu.Item>
               <Menu.Item onClick={() => { handleClickAway(); history.push('/clubs'); }} key="6">Курені</Menu.Item>
-              <Menu.Item onClick={() => { handleClickAway(); }} key="7">Відзначення</Menu.Item>
+              <Menu.Item onClick={() => { handleClickAway(); history.push('/distinctions'); }} key="7">Відзначення</Menu.Item>
               <Menu.Item onClick={() => { handleClickAway(); history.push('/kadra'); }} key="8">Кадра виховників</Menu.Item>
             </SubMenu>
             <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Документи">
               <SubMenu key="sub2.1" title="Звіти">
-                <Menu.Item onClick={() => { handleClickAway(); history.push('/annualreport/create'); }} key="9">Подати річний звіт станиці</Menu.Item>
-                <Menu.Item onClick={() => { handleClickAway(); history.push('/annualreport/table'); }} key="10">Річні звіти</Menu.Item>
-                <Menu.Item key="11">Статистичні звіти</Menu.Item>
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/annualreport/table'); }} key="9">Річні звіти</Menu.Item>
+                <Menu.Item key="10">Статистичні звіти</Menu.Item>
               </SubMenu>
               <SubMenu
                 key="sub2.2"
                 icon={<PieChartOutlined />}
                 title="Статистика"
               >
-                <Menu.Item onClick={() => { handleClickAway(); }} key="12">Геостатистика</Menu.Item>
-                <Menu.Item onClick={() => { handleClickAway(); }} key="13">Статистика по роках</Menu.Item>
-                <Menu.Item onClick={() => { handleClickAway(); }} key="14">Статистика(періоди)</Menu.Item>
+                <Menu.Item onClick={() => { handleClickAway(); }} key="11">Геостатистика</Menu.Item>
+                <Menu.Item onClick={() => { handleClickAway(); }} key="12">Статистика по роках</Menu.Item>
+                <Menu.Item onClick={() => { handleClickAway(); }} key="13">Статистика(періоди)</Menu.Item>
               </SubMenu>
               <SubMenu key="sub2.3" title="Осередки">
-                <Menu.Item onClick={() => { handleClickAway(); }} key="15">Осередки та адміни</Menu.Item>
-                <Menu.Item onClick={() => { handleClickAway(); }} key="16">Порівняти осередки</Menu.Item>
+                <Menu.Item onClick={() => { handleClickAway(); }} key="14">Осередки та адміни</Menu.Item>
+                <Menu.Item onClick={() => { handleClickAway(); }} key="15">Порівняти осередки</Menu.Item>
               </SubMenu>
             </SubMenu>
           </Menu>
@@ -145,7 +135,7 @@ const PrivateLayout = ({ children }: any) => {
         <Content style={{ margin: "0 16px" }}>
           <div
             className="site-layout-background"
-            style={{ padding:20, minHeight: 360 }}
+            style={{ padding: 20, minHeight: 360 }}
           >
             {children}
           </div>

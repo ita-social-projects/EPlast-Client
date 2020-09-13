@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import Switcher from "../SignUp/Switcher/Switcher";
 import googleImg from "../../assets/images/google.png";
@@ -10,7 +10,6 @@ import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
-import HeaderContainer from "../../components/Header/HeaderContainer";
 
 let authService = new AuthorizeApi();
 let user: any;
@@ -38,15 +37,11 @@ export default function () {
   const handleSubmit = async (values: any) => {
     await authService.login(values);
     const token = AuthStore.getToken() as string;
-    if (token == null) {
-      history.push("/signin");
-    }
-    else {
-      user = jwt(token);
-      history.push(`/userpage/main/${user.nameid}`);
-      window.location.reload();
-    }
+    user = jwt(token);
+    history.push(`/userpage/main/${user.nameid}`);
+    window.location.reload();
   };
+
 
   return (
     <div className={styles.mainContainer}>
@@ -65,7 +60,7 @@ export default function () {
         </Form.Item>
         <Form.Item name="Password" rules={validationSchema.Password} >
           <Input.Password
-            visibilityToggle={false}
+            visibilityToggle={true}
             className={styles.SignInInput}
             placeholder="Пароль"
           />

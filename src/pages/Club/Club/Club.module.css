@@ -21,10 +21,11 @@
 }
 .mainInfo p {
   font-size: 16px;
-  margin: 10px 0;
+  margin: 20px 0;
 }
 .aboutInfo{
   padding: 10px 20px;
+  text-align: justify;
 }
 .contactsInfo p {
   font-size: 16px;
@@ -53,6 +54,10 @@
   flex-direction: column;
   text-align: center;
 }
+.listItem :hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
 .listItem p {
   margin-bottom: 0;
 }
@@ -72,4 +77,33 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+.approveIcon {
+  color: #3c5438;
+  position: absolute;
+  bottom: 55px;
+  right: 5px;
+  font-size: 22px;
+}
+.approveIcon :hover {
+  color: #536150;
+  font-size: 28px;
+}
+.detailsCard {
+  margin: 15px;
+  width: 242px;
+  text-align: center;
+}
+.clubMember :hover{
+  cursor: pointer;
+}
+.backButton {
+  width: 180px;
+  background-color: #3c5438;
+  color: white;
+}
+.wrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }

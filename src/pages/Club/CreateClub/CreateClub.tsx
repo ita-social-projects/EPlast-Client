@@ -13,14 +13,6 @@ const dummyRequest = ({ onSuccess }: any) => {
   }, 0);
 };
 
-interface Club {
-  id: number;
-  clubName: string;
-  clubURL: string;
-  description: string;
-  logo: string;
-}
-
 const getBase64 = (img: Blob, callback: Function) => {
   const reader = new FileReader();
   reader.addEventListener("load", () => callback(reader.result));
@@ -30,11 +22,15 @@ const getBase64 = (img: Blob, callback: Function) => {
 const beforeUpload = (file: RcFile) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
   if (!isJpgOrPng) {
-    message.error("You can only upload JPG/PNG file!");
+    notification.error({
+      message: "Можна завантажити зображення лише у JPG/JPEG/PNG форматі"
+    });
   }
-  const isLt2M = file.size / 1024 / 1024 < 2;
+  const isLt2M = file.size / 1024 / 1024 < 5;
   if (!isLt2M) {
-    message.error("Image must smaller than 2MB!");
+    notification.error({
+      message: "Розмір зображення має бути менший 5MB"
+    });
   }
   return isJpgOrPng && isLt2M;
 };
@@ -104,20 +100,21 @@ const CreateClub = () => {
       .then((res) => {
         newСlub.id = res.data.id;
         notification.success({
-          message: id ? "Курінь успішно оновлено" : "Курінь успішно створено",
-          icon: <LoadingOutlined />,
+          message: id ? "Курінь успішно відредаговано" : "Курінь успішно створено",
         });
         id ? history.goBack() : history.push( `${newСlub.id}`);
       })
       .catch((error) => {
         if (error.response && error.response.status === 422) {
           notification.error({
-            message: "Не вдалося створити курінь (Курінь з таким ім'ям вже існує)",
+            message: id ? 
+            "Не вдалося відредагувати курінь (Курінь з таким ім'ям вже існує)" 
+            : "Не вдалося створити курінь (Курінь з таким ім'ям вже існує)",
           });
         }
         else {
           notification.error({
-            message: "Не вдалося створити курінь",
+            message: id ? "Не вдалося відредагувати курінь" : "Не вдалося створити курінь",
           });
         }
       });
@@ -146,7 +143,6 @@ const CreateClub = () => {
         <Col flex="0 1 40%">
           <Form
             className={classes.clubForm}
-            validateMessages={validateMessages}
             layout="vertical"
             onFinish={handleSubmit}
             form={form}
@@ -154,22 +150,34 @@ const CreateClub = () => {
             <Form.Item
               name="clubName"
               label="Назва"
-              rules={[{ required: true }]}
-            >
+              rules={[
+                { required: true, 
+                  message: 'Вкажіть назву куреня' }, 
+                { max: 50, 
+                  message: 'Назва куреня не може перевищувати 50 символів' }
+                ]}>
               <Input />
             </Form.Item>
-            <Form.Item name="clubURL" label="Посилання">
-              <Input />
+            <Form.Item 
+              name="clubURL" 
+              label="Посилання" >
+              <Input 
+              type="url"
+              placeholder="https://www.example.com" />
             </Form.Item>
-            <Form.Item name="description" label="Опис">
+            <Form.Item 
+              name="description" 
+              label="Опис"
+              rules={[
+                { max: 1000, 
+                  message: 'Опис куреня не може перевищувати 1000 символів' }]} >
               <Input.TextArea rows={5} />
             </Form.Item>
             <Form.Item>
               <Button
                 htmlType="submit"
                 type="primary"
-                className={classes.createButton}
-              >
+                className={classes.createButton} >
                 Зберегти
               </Button>
             </Form.Item>
