@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Input, Button, Layout, Modal } from 'antd';
 import columns from './columns';
+import notificationLogic from '../../../components/Notifications/Notification';
 import UserDistinction from '../Interfaces/UserDistinction';
 import DropDownDistinctionTable from './DropDownDistinctionTable';
 import distinctionApi from '../../../api/distinctionApi';
 import AddDistinctionModal from '../DistinctionTable/AddDistinctionModal';
 import EditDistinctionTypesModal from './EditDistinctionTypesModal';
 import ClickAwayListener from 'react-click-away-listener';
+import User from '../../../models/UserTable/User';
 
-const classes = require('../../DecisionTable/Table.module.css');
+const classes = require('./Table.module.css');
 
 const { Content } = Layout;
 const DecisionTable = () => {
@@ -19,7 +21,18 @@ const DecisionTable = () => {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [UserDistinctions, setData] = useState<UserDistinction[]>();
+    const [UserDistinctions, setData] = useState<UserDistinction[]>([{
+      id: 0,
+      distinction: 
+        {id: 0,
+        name: ''},
+        distinctionId: 0,
+        userId: '',
+        reporter: '',
+        reason: '',
+        date: new Date(),
+        user: new User
+    }]);
 
     useEffect(() => {
       const fetchData = async () => {
@@ -51,6 +64,12 @@ const DecisionTable = () => {
       setShowDropdown(false);
     }
 
+    const handleDelete = (id: number) => {
+      const filteredData = UserDistinctions.filter((d: { id: number; }) => d.id !== id);
+      setData([...filteredData]);
+      notificationLogic('success', "Відзначення успішно видалено!");
+    }
+
 return (
     <Layout>
       <Content onClick={() => { setShowDropdown(false) }} >
@@ -64,7 +83,7 @@ return (
                 Додати відзначення
               </Button>
               <Button type="primary" onClick = {showModalEditTypes}>
-                Додати тип відзначення
+                Редагування типів відзначень
               </Button>
             </div>
             <Table
@@ -90,6 +109,7 @@ return (
             <ClickAwayListener onClickAway={handleClickAway}>
                   <DropDownDistinctionTable
                     showDropdown={showDropdown}
+                    onDelete={handleDelete}
                     record={recordObj}
                     pageX={x}
                     pageY={y}

@@ -7,20 +7,22 @@ import {
     ScissorOutlined,
 } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
+import deleteConfirm from './DeleteConfirm';
 import classes from '../../DecisionTable/Table.module.css';
 
 
 interface Props {
-    record: string;
+    record: number;
     pageX: number;
     pageY: number;
     showDropdown: boolean;
+    onDelete :(id: number)=> void;
 
 }
 
 const DropDown = (props: Props) => {
     const history = useHistory();
-    const { record, pageX, pageY, showDropdown} = props;
+    const { record, pageX, pageY, showDropdown, onDelete} = props;
     const [showEditModal, setShowEditModal] = useState(false);
     const [userRole, setUser] = useState({
         userID: '',
@@ -32,9 +34,22 @@ const DropDown = (props: Props) => {
         userRoles: ['']
     })
 
+    
+    const handleItemClick =async (item: any) => {
+        switch (item.key) {
+          case '2':
+            deleteConfirm(record, onDelete);
+            setShowEditModal(false);
+            break;
+          default:
+            break;
+        }
+    }
+
     return (
         <>
             <Menu
+                onClick = {handleItemClick}
                 theme="dark"
                 className={classes.menu}
                 style={{

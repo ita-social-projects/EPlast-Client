@@ -3,10 +3,12 @@ import {List, Divider, Row, Col, Input, Tooltip } from 'antd';
 import Distinction from '../Interfaces/Distinction';
 import distinctionApi from '../../../api/distinctionApi';
 import { EditOutlined, DeleteOutlined, PlusOutlined, PlusSquareFilled } from '@ant-design/icons';
+import notificationLogic from '../../../components/Notifications/Notification';
 import Button from 'antd/es/button';
 import classes from './FormEdit.module.css';
 import { render } from '@testing-library/react';
 import Item from 'antd/lib/list/Item';
+import DeleteTypeConfirm from './DeleteTypeConfirm';
 
 type FormEditDistinctionTypesProps = {
     setVisibleModal: (visibleModal: boolean) => void;
@@ -27,6 +29,13 @@ const FormEditDistinctionTypes : React.FC<FormEditDistinctionTypesProps> = (prop
         };
         fetchData();
       }, []);
+
+      const handleDelete = (id: number) => {
+        const filteredData = distData.filter((d: { id: number; }) => d.id !== id);
+        setDistData([...filteredData]);
+        notificationLogic("success","Тип відзначення успішно видалено!")
+      }
+
       return (
           <div>
             <List
@@ -38,8 +47,12 @@ const FormEditDistinctionTypes : React.FC<FormEditDistinctionTypesProps> = (prop
             renderItem={item => 
                 <List.Item
                     actions={[
-                        <Tooltip title="Редагувати відзначення"><EditOutlined className = {classes.editIcon}/></Tooltip>, 
-                        <Tooltip title ="Видалити відзначення"><DeleteOutlined className = {classes.deleteIcon}/></Tooltip>]}
+                        <Tooltip title="Редагувати відзначення">
+                            <EditOutlined className = {classes.editIcon} />
+                        </Tooltip>, 
+                        <Tooltip title ="Видалити відзначення">
+                            <DeleteOutlined className = {classes.deleteIcon} onClick ={() => DeleteTypeConfirm(item.id, handleDelete)} />
+                        </Tooltip>]}
                 >
                     {item.name}
                     </List.Item>
