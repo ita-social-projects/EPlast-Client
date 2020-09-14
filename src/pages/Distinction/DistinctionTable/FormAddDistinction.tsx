@@ -21,24 +21,30 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
     const  { setVisibleModal, onAdd } = props;
     const [form] = Form.useForm();
     const [userData, setUserData] = useState<any[]>([{
-        user: {
-            id: '',
-            firstName: '',
-            lastName: ''
-        }
+      user:{
+          id: '',
+          firstName: '',
+          lastName:'',
+          birthday:''
+      },
+      regionName:'',
+      cityName:'',
+      clubName:'',
+      userPlastDegreeName:'',
+      userRoles:''
+      
     }]);
-    const [distData, setDistData] = useState<Distinction[]>([{
-        name: '',
-        id: 0
-    }])
-    const dateFormat = 'MM/DD/YYYY HH:mm';
+    const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
+    const dateFormat = 'MM/DD/YYYY';
 
     useEffect( () => {
         const fetchData = async () => {
-            const userData = ((await adminApi.getUsersForTable()).data)
-            setUserData(userData);
-            const distData = (await distinctionApi.getDistinctions()).data
-            setDistData(distData);
+            await distinctionApi.getDistinctions().then(response =>{
+              setDistData(response.data)
+            })
+            await adminApi.getUsersForTable().then(response => { 
+              setUserData(response.data)
+            })
         };
         fetchData();
       }, []);
@@ -61,9 +67,9 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
             console.log(JSON.stringify(newDistinction));
             await distinctionApi.addUserDistinction(newDistinction);
             setVisibleModal(false);
-
-            onAdd();
             form.resetFields();
+            onAdd();
+            
         }
         return (
             <Form
