@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton } from "antd";
-import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, CloseOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card } from "antd";
+import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
-import classes from "./City.module.css";
+import "./City.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import CityProfile from "../../../models/City/CityProfile";
 import CityMember from '../../../models/City/CityMember';
 import CityAdmin from '../../../models/City/CityAdmin';
 import CityDocument from '../../../models/City/CityDocument';
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
+import Title from "antd/lib/typography/Title";
+import Paragraph from "antd/lib/typography/Paragraph";
+import Spinner from "../../Spinner/Spinner";
+import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 
 const City = () => {
   const history = useHistory();
@@ -21,6 +25,7 @@ const City = () => {
   const [city, setCity] = useState<CityProfile>(new CityProfile());
   const [cityLogo64, setCityLogo64] = useState<string>("");
   const [visibleModal, setVisibleModal] = useState(false);
+  const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
   const [members, setMembers] = useState<CityMember[]>([]);
   const [followers, setFollowers] = useState<CityMember[]>([]);
@@ -45,14 +50,17 @@ const City = () => {
     setFollowers(followers.filter((f) => f.id !== memberId));
   };
 
-  const addMember = async (cityId: number) => {
-    const follower = await addFollower(cityId);
+  const addMember = async () => {
+    const follower = await addFollower(+id);
+    follower.data.user.imagePath = (
+      await userApi.getImage(follower.data.user.imagePath)
+    ).data;
 
     if (followers.length < 6) {
       setFollowers([...followers, follower.data]);
     }
 
-    setCanJoin(!canJoin);
+    setCanJoin(false);
   };
 
   const deleteCity = async () => {
@@ -84,14 +92,27 @@ const City = () => {
     }
   }
 
-  function seeModal () {
+  function seeDeleteModal () {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити дану станицю?",
       icon: <ExclamationCircleOutlined/>,
       okText: 'Так, видалити',
       okType: 'danger',
       cancelText: 'Скасувати',
-      onOk() { deleteCity()}
+      maskClosable: true,
+      onOk() {deleteCity()}
+    });
+  }
+
+  function seeJoinModal () {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете долучитися до даної станиці?",
+      icon: <ExclamationCircleOutlined/>,
+      okText: 'Так, долучитися',
+      okType: 'primary',
+      cancelText: 'Скасувати',
+      maskClosable: true,
+      onOk() {addMember()}
     });
   }
 
@@ -127,137 +148,148 @@ const City = () => {
   }, []);
 
   return loading ? (
-    <Layout.Content className={classes.spiner}>
-      <Spin size="large" />
-    </Layout.Content>
-  ) : city.id !== 0 && !loading ? (
-    <Layout.Content>
-      <Row
-        justify="space-around"
-        gutter={[0, 40]}
-        style={{ overflow: "hidden" }}
-      >
-        <Col
-          flex="0 1 63%"
-          style={{
-            minHeight: "180px",
-            marginLeft: "1.5%",
-            marginRight: "1.5%",
-          }}
-        >
-          <section className={classes.list}>
-            {canEdit ? (
-              <EditOutlined
-                className={classes.editIcon}
-                onClick={() => history.push(`/cities/edit/${city.id}`)}
-              />
-            ) : null}
-            {canCreate ? (
-              <CloseOutlined
-                className={classes.removeIcon}
-                onClick={() => seeModal()}
-              />
-            ) : null}
-            <h1 className={classes.title}>{`Станиця ${city.name}`}</h1>
-            <Row
-              gutter={16}
-              justify="space-around"
-              style={{ marginTop: "20px", marginBottom: "10px" }}
-            >
-              <Col flex="1" offset={1}>
-                <div className={classes.mainInfo}>
-                  {cityLogoLoading ? (
-                    <Skeleton.Avatar active shape={"square"} size={172} />
-                  ) : (
-                    <img
-                      src={cityLogo64}
-                      alt="City"
-                      style={{
-                        width: "100%",
-                        height: "auto",
-                        maxWidth: "100%",
-                      }}
-                    />
-                  )}
-                  <p>
-                    <b>Станичний</b>:{" "}
-                    {city.head
-                      ? `${city.head.user.firstName} ${city.head.user.lastName}`
-                      : "-"}
-                  </p>
-                  <p>
-                    <b>
-                      {city.head
-                        ? city.head.startDate
-                          ? `${moment(city.head.startDate).format(
-                              "DD.MM.YYYY"
-                            )}`
-                          : "-"
-                        : null}
-                      {city.head
-                        ? city.head.endDate
-                          ? ` - ${moment(city.head.endDate).format(
-                              "DD.MM.YYYY"
-                            )}`
-                          : null
-                        : null}
-                    </b>
-                  </p>
-                  {canEdit ? (
-                    <div className={classes.bottomButton}>
-                      <Button
-                        type="primary"
-                        className={classes.listButton}
-                        onClick={() => history.push(`/annualreport/table`)}
-                      >
-                        Річні звіти
-                      </Button>
-                    </div>
-                  ) : null}
-                </div>
+    <Spinner />
+  ) : city.id !== 0 ? (
+    <Layout.Content className="cityProfile">
+      <Row gutter={[0, 48]}>
+        <Col xl={15} sm={24} xs={24}>
+          <Card hoverable className="cityCard">
+            <Title level={3}>Станиця {city.name}</Title>
+            <Row className="cityPhotos" gutter={[0, 12]}>
+              <Col md={13} sm={24} xs={24}>
+                {cityLogoLoading ? (
+                  <Skeleton.Avatar active shape={"square"} size={172} />
+                ) : (
+                  <img src={cityLogo64} alt="City" className="cityLogo" />
+                )}
               </Col>
-              <Col flex="1" offset={1}>
+              <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
                 <iframe
                   src=""
                   title="map"
                   aria-hidden="false"
-                  className={classes.mainMap}
+                  className="mainMap"
                 />
-                <div className={classes.contactsInfo}>
-                  <b className={classes.contactsName}>Контакти:</b>
-                  <div className={classes.contactsContent}>
-                    <p>{city.email}</p>
-                    <p>{city.cityURL}</p>
-                  </div>
-                </div>
               </Col>
             </Row>
-          </section>
+            <Row className="cityInfo">
+              <Col md={13} sm={24} xs={24}>
+                {city.head ? (
+                  <div>
+                    <Paragraph>
+                      <b>Станичний:</b> {city.head.user.firstName}{" "}
+                      {city.head.user.lastName}
+                    </Paragraph>
+                    <Paragraph>
+                      <b>
+                        {moment(city.head.startDate).format("DD.MM.YYYY")}
+                        {city.head.endDate
+                          ? ` - ${moment(city.head.endDate).format(
+                              "DD.MM.YYYY"
+                            )}`
+                          : ""}
+                      </b>
+                    </Paragraph>
+                  </div>
+                ) : (
+                  <Paragraph>
+                    <b>Немає голови станиці</b>
+                  </Paragraph>
+                )}
+              </Col>
+              <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
+                {city.cityURL || city.email || city.phoneNumber ? (
+                  <div>
+                    {city.cityURL ? (
+                      <Paragraph>
+                        <b>Посилання:</b>{" "}
+                        <a href={city.cityURL} target="_blank">
+                          {city.cityURL}
+                        </a>
+                      </Paragraph>
+                    ) : null}
+                    {city.phoneNumber ? (
+                      <Paragraph>
+                        <b>Телефон:</b> {city.phoneNumber}
+                      </Paragraph>
+                    ) : null}
+                    {city.email ? (
+                      <Paragraph>
+                        <b>Пошта:</b> {city.email}
+                      </Paragraph>
+                    ) : null}
+                  </div>
+                ) : (
+                  <Paragraph>
+                    <b>Немає контактів</b>
+                  </Paragraph>
+                )}
+              </Col>
+            </Row>
+            <Row className="cityButtons" justify="center" gutter={[12, 0]}>
+              <Col>
+                <Button
+                  type="primary"
+                  className="cityInfoButton"
+                  onClick={() => setVisibleDrawer(true)}
+                >
+                  Деталі
+                </Button>
+              </Col>
+              {canEdit ? (
+                <Col>
+                  <Button
+                    type="primary"
+                    className="cityInfoButton"
+                    onClick={() => history.push(`/annualreport/table`)}
+                  >
+                    Річні звіти
+                  </Button>
+                </Col>
+              ) : null}
+              {canEdit ? (
+                <Col xs={24} sm={4}>
+                  <Row
+                    className="cityIcons"
+                    justify={canCreate ? "center" : "start"}
+                  >
+                    {canEdit ? (
+                      <Col>
+                        <EditOutlined
+                          className="cityInfoIcon"
+                          onClick={() =>
+                            history.push(`/cities/edit/${city.id}`)
+                          }
+                        />
+                      </Col>
+                    ) : null}
+                    {canCreate ? (
+                      <Col offset={1}>
+                        <DeleteOutlined
+                          className="cityInfoIcon"
+                          onClick={() => seeDeleteModal()}
+                        />
+                      </Col>
+                    ) : null}
+                  </Row>
+                </Col>
+              ) : null}
+            </Row>
+          </Card>
         </Col>
-        <Col
-          flex="0 1 30%"
-          style={{
-            minHeight: "180px",
-            marginLeft: "1.5%",
-            marginRight: "1.5%",
-          }}
-        >
-          <section className={classes.list}>
-            <h1 className={classes.title}>Члени станиці</h1>
-            <Row
-              justify="space-around"
-              gutter={[0, 16]}
-              style={{
-                paddingRight: "5px",
-                paddingLeft: "5px",
-                overflow: "hidden",
-                maxHeight: "70%",
-                marginTop: "20px",
-              }}
-            >
+
+        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+          <Card hoverable className="cityCard">
+            <Title level={4}>Члени станиці</Title>
+            <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {members.length !== 0 ? (
                 members.map((member) => (
-                  <Col className={classes.listItem} key={member.id} span={7}>
+                  <Col
+                    className="cityMemberItem"
+                    key={member.id}
+                    xs={12}
+                    sm={8}
+                  >
                     <div
                       onClick={() =>
                         history.push(`/userpage/main/${member.userId}`)
@@ -266,95 +298,64 @@ const City = () => {
                       {photosLoading ? (
                         <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
-                        <Avatar
-                          size={64}
-                          src={member.user.imagePath}
-                          className={classes.detailsIcon}
-                        />
+                        <Avatar size={64} src={member.user.imagePath} />
                       )}
-                      <p className={classes.userName}>
-                        {member.user.firstName}
-                      </p>
-                      <p className={classes.userName}>{member.user.lastName}</p>
+                      <p className="userName">{member.user.firstName}</p>
+                      <p className="userName">{member.user.lastName}</p>
                     </div>
                   </Col>
                 ))
               ) : (
-                <h2>Ще немає членів станиці</h2>
+                <Paragraph>Ще немає членів станиці</Paragraph>
               )}
             </Row>
-            <div className={classes.bottomButton}>
+            <div className="cityMoreButton">
               <Button
                 type="primary"
-                className={classes.listButton}
+                className="cityInfoButton"
                 onClick={() => history.push(`/cities/members/${city.id}`)}
               >
                 Більше
               </Button>
             </div>
-          </section>
+          </Card>
         </Col>
-      </Row>
 
-      <Row
-        justify="space-around"
-        gutter={[0, 40]}
-        style={{ overflow: "hidden", marginTop: "20px" }}
-      >
         <Col
-          flex="0 1 30%"
-          style={{
-            minHeight: "180px",
-            marginLeft: "1.5%",
-            marginRight: "1.5%",
-          }}
+          xl={{ span: 7, offset: 0 }}
+          md={{ span: 11, offset: 2 }}
+          sm={24}
+          xs={24}
         >
-          <section className={classes.list}>
-            <h1 className={classes.title}>Провід станиці</h1>
-            <Row
-              justify="space-around"
-              gutter={[0, 16]}
-              style={{
-                paddingRight: "5px",
-                paddingLeft: "5px",
-                paddingTop: "20px",
-                paddingBottom: "20px",
-                overflow: "hidden",
-                maxHeight: "70%",
-              }}
-            >
+          <Card hoverable className="cityCard">
+            <Title level={4}>Провід станиці</Title>
+            <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {admins.length !== 0 ? (
-                admins.map((member) => (
-                  <Col className={classes.listItem} key={member.id} span={7}>
+                admins.map((admin) => (
+                  <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                     <div
                       onClick={() =>
-                        history.push(`/userpage/main/${member.userId}`)
+                        history.push(`/userpage/main/${admin.userId}`)
                       }
                     >
                       {photosLoading ? (
                         <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
-                        <Avatar
-                          size={64}
-                          src={member.user.imagePath}
-                          className={classes.detailsIcon}
-                        />
+                        <Avatar size={64} src={admin.user.imagePath} />
                       )}
-                      <p className={classes.userName}>
-                        {member.user.firstName}
-                      </p>
-                      <p className={classes.userName}>{member.user.lastName}</p>
+                      <p className="userName">{admin.user.firstName}</p>
+                      <p className="userName">{admin.user.lastName}</p>
                     </div>
                   </Col>
                 ))
               ) : (
-                <h2>Ще немає діловодів станиці</h2>
+                <Paragraph>Ще немає діловодів станиці</Paragraph>
               )}
             </Row>
-            <div className={classes.bottomButton}>
+            <div className="cityMoreButton">
               <Button
                 type="primary"
-                className={classes.listButton}
+                className="cityInfoButton"
                 onClick={() =>
                   history.push(`/cities/administration/${city.id}`)
                 }
@@ -362,160 +363,131 @@ const City = () => {
                 Більше
               </Button>
             </div>
-          </section>
+          </Card>
         </Col>
 
-        <Col
-          flex="0 1 30%"
-          style={{
-            minHeight: "180px",
-            marginLeft: "1.5%",
-            marginRight: "1.5%",
-          }}
-        >
-          <section className={classes.list}>
-            <h1 className={classes.title}>Документообіг станиці</h1>
-            <Row
-              justify="space-around"
-              gutter={[0, 16]}
-              style={{
-                paddingRight: "5px",
-                paddingLeft: "5px",
-                paddingTop: "20px",
-                paddingBottom: "20px",
-                overflow: "hidden",
-                maxHeight: "70%",
-              }}
-            >
+        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+          <Card hoverable className="cityCard">
+            <Title level={4}>Документообіг станиці</Title>
+            <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
                 documents.map((document) => (
-                  <Col className={classes.listItem} key={document.id} span={7}>
+                  <Col
+                    className="cityMemberItem"
+                    xs={12}
+                    sm={8}
+                    key={document.id}
+                  >
                     <div>
-                      <FileTextOutlined
-                        style={{ fontSize: "60px" }}
-                        className={classes.profileImg}
-                      />
-                      <p className={classes.documentText}>
+                      <FileTextOutlined className="documentIcon" />
+                      <p className="documentText">
                         {document.cityDocumentType.name}
                       </p>
                     </div>
                   </Col>
                 ))
               ) : (
-                <h2>Ще немає документів станиці</h2>
+                <Paragraph>Ще немає документів станиці</Paragraph>
               )}
             </Row>
-            <div className={classes.bottomButton}>
+            <div className="cityMoreButton">
               <Button
                 type="primary"
-                className={classes.listButton}
+                className="cityInfoButton"
                 onClick={() => history.push(`/cities/documents/${city.id}`)}
               >
-                Деталі
+                Більше
               </Button>
               {canEdit ? (
-                <div className={classes.flexContainer}>
-                  <PlusSquareFilled
-                    className={classes.addReportIcon}
-                    onClick={() => setVisibleModal(true)}
-                  />
-                </div>
+                <PlusSquareFilled
+                  className="addReportIcon"
+                  onClick={() => setVisibleModal(true)}
+                />
               ) : null}
             </div>
-          </section>
+          </Card>
         </Col>
 
         <Col
-          flex="0 1 30%"
-          style={{
-            minHeight: "180px",
-            marginLeft: "1.5%",
-            marginRight: "1.5%",
-          }}
+          xl={{ span: 7, offset: 1 }}
+          md={{ span: 11, offset: 2 }}
+          sm={24}
+          xs={24}
         >
-          <section className={classes.list}>
-            <h1 className={classes.title}>Прихильники станиці</h1>
-            <Row
-              justify="space-around"
-              gutter={[0, 16]}
-              style={{
-                paddingRight: "5px",
-                paddingLeft: "5px",
-                paddingTop: "20px",
-                paddingBottom: "20px",
-                overflow: "hidden",
-                maxHeight: "70%",
-              }}
-            >
+          <Card hoverable className="cityCard">
+            <Title level={4}>Прихильники станиці</Title>
+            <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {canJoin ? (
                 <Col
-                  className={classes.listItem}
-                  span={7}
-                  onClick={() => addMember(city.id)}
+                  className="cityMemberItem"
+                  xs={12}
+                  sm={8}
+                  onClick={() => seeJoinModal()}
                 >
                   <div>
                     <Avatar
-                      style={{ color: "#3c5438" }}
+                      className="addFollower"
                       size={64}
                       icon={<UserAddOutlined />}
-                      className={classes.addFollower}
                     />
                     <p>Доєднатися</p>
                   </div>
                 </Col>
               ) : null}
               {followers.length !== 0 ? (
-                followers.map((member) => (
-                  <Col className={classes.listItem} key={member.id} span={7}>
+                followers.slice(0, canJoin ? 5 : 6).map((followers) => (
+                  <Col
+                    className="cityMemberItem"
+                    xs={12}
+                    sm={8}
+                    key={followers.id}
+                  >
                     <div>
                       <div
                         onClick={() =>
-                          history.push(`/userpage/main/${member.userId}`)
+                          history.push(`/userpage/main/${followers.userId}`)
                         }
                       >
                         {photosLoading ? (
                           <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                         ) : (
-                          <Avatar
-                            size={64}
-                            src={member.user.imagePath}
-                            className={classes.detailsIcon}
-                          />
+                          <Avatar size={64} src={followers.user.imagePath} />
                         )}
-                        <p className={classes.userName}>
-                          {member.user.firstName}
-                        </p>
-                        <p className={classes.userName}>
-                          {member.user.lastName}
-                        </p>
+                        <p className="userName">{followers.user.firstName}</p>
+                        <p className="userName">{followers.user.lastName}</p>
                       </div>
                       {canEdit ? (
                         <PlusOutlined
-                          className={classes.approveIcon}
-                          onClick={() => changeApproveStatus(member.id)}
+                          className="approveIcon"
+                          onClick={() => changeApproveStatus(followers.id)}
                         />
                       ) : null}
                     </div>
                   </Col>
                 ))
               ) : canJoin ? null : (
-                <h2>Ще немає прихильників станиці</h2>
+                <Paragraph>Ще немає прихильників станиці</Paragraph>
               )}
             </Row>
-
-            <div className={classes.bottomButton}>
+            <div className="cityMoreButton">
               <Button
                 type="primary"
-                className={classes.listButton}
+                className="cityInfoButton"
                 onClick={() => history.push(`/cities/followers/${city.id}`)}
               >
                 Більше
               </Button>
             </div>
-          </section>
+          </Card>
         </Col>
       </Row>
 
+      <CityDetailDrawer
+        city={city}
+        setVisibleDrawer={setVisibleDrawer}
+        visibleDrawer={visibleDrawer}
+      ></CityDetailDrawer>
+      
       {canEdit ? (
         <AddDocumentModal
           cityId={+id}
@@ -528,7 +500,7 @@ const City = () => {
       ) : null}
     </Layout.Content>
   ) : (
-    <h1 className={classes.title}>Місто не знайдено</h1>
+    <Title level={2}>Місто не знайдено</Title>
   );
 };
 
