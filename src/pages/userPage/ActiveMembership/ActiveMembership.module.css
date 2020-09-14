@@ -2,7 +2,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    width: 80%;
+    width: 100%;
 }
 
 .wrapperCol {
@@ -34,13 +34,16 @@
 }
 
 .button {
-    margin-top: 30px;
+    margin-top: 20px;
+    margin-left: 10px;
     background: #3C5438;
     justify-content: center;
+    display: flex;
+    flex-direction: column;
     color: white;
     border: none;
-    width: 138px;
-    height: 40px;
+    width: 200px;
+    height: 30px;
     outline: none;
     text-align: center;
     cursor: pointer;
@@ -48,7 +51,10 @@
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
-
+.buttons{
+    display : flex;
+    justify-content : flex-start;
+}
 .buttonInside {
     margin-top: 10px;
     background: #3C5438;
@@ -62,7 +68,18 @@
     align-items: center;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
-
+.textFieldsMain,
+.textFieldsOthers
+{
+    text-align : left;
+    margin-left : 30px;
+}
+.textFieldsMain{
+    font-size : 25px;
+}
+.textFieldsOthers{
+    font-size : 20px;
+}
 #subcribeButton{
     width: auto;
 }
@@ -93,7 +110,7 @@
 
 .wrapper2,
 .wrapper3 {
-    width: calc(100% - 10px);
+    width: 400px;
     height: 250px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
     display: flex;
@@ -102,7 +119,17 @@
     text-align: center;
     padding-top: 20px;
 }
-
+.wrapperPlastDegree{
+    width: 900px;
+    height: 550px;
+    max-height: 700px;
+    box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
+    display: flex;
+    flex-direction: column;
+    align-items: normal;
+    text-align: center;
+    padding-top: 20px;
+}
 .wrapper4,
 .wrapper5 {
     width: calc(50% - 30px);
@@ -119,6 +146,7 @@
 .wrapper3:hover,
 .wrapper4:hover,
 .wrapper5:hover,
+.wrapperPlastDegree:hover,
 .wrapperImg:hover {
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
@@ -127,6 +155,7 @@
 .wrapper3,
 .wrapper4,
 .wrapper5,
+.wrapperPlastDegree,
 .wrapperImg {
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
@@ -135,6 +164,7 @@
 .wrapper2,
 .wrapper3,
 .wrapper4,
+.wrapperPlastDegree,
 .wrapper5 {
     margin: 0px 0px 20px 20px;
 }
@@ -143,21 +173,7 @@
     text-align: center;
     align-self: center;
 }
-.wrapperPlastDegree{
-    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
-    margin: 0px 0px 20px 20px;
-    text-align: left;
-    align-self: center;
-    width: 800px;
-    height: 250px;
-    box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
-    display: flex;
-    flex-direction: column;
-    align-items: normal;
-    text-align: left;
-    padding-top: 20px;
-}
+
 #button {
     align-items: center;
     margin: 10px auto;

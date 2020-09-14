@@ -13,7 +13,7 @@ const EditDistinctionTypesModal = ({visibleModal, setVisibleModal}: Props) => {
   
     return (
         <Modal
-            title="Додати тип відзначення"
+            title="Редагування типів відзначень"
             visible={visibleModal}
             onCancel={handleCancel}
             footer={null}

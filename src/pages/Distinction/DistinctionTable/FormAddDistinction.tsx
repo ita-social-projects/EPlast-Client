@@ -7,6 +7,7 @@ import adminApi from '../../../api/adminApi';
 
 
 import formclasses from '../../KadraVykhovnykiv/Form.module.css';
+import moment from 'moment';
 
 
 type FormAddDistinctionProps = {
@@ -20,23 +21,30 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
     const  { setVisibleModal, onAdd } = props;
     const [form] = Form.useForm();
     const [userData, setUserData] = useState<any[]>([{
-        user: {
-            id: '',
-            firstName: '',
-            lastName: ''
-        }
+      user:{
+          id: '',
+          firstName: '',
+          lastName:'',
+          birthday:''
+      },
+      regionName:'',
+      cityName:'',
+      clubName:'',
+      userPlastDegreeName:'',
+      userRoles:''
+      
     }]);
-    const [distData, setDistData] = useState<Distinction[]>([{
-        name: '',
-        id: 0
-    }])
+    const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
+    const dateFormat = 'MM/DD/YYYY';
 
     useEffect( () => {
         const fetchData = async () => {
-            const userData = ((await adminApi.getUsersForTable()).data)
-            setUserData(userData);
-            const distData = (await distinctionApi.getDistinctions()).data
-            setDistData(distData);
+            await distinctionApi.getDistinctions().then(response =>{
+              setDistData(response.data)
+            })
+            await adminApi.getUsersForTable().then(response => { 
+              setUserData(response.data)
+            })
         };
         fetchData();
       }, []);
@@ -46,21 +54,22 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
       };
 
     const handleSubmit = async (values : any) => {
-        const newDistinction : UserDistinction = {
+        const newDistinction: UserDistinction = {
                 id: 0,
-                distinctionId: 0,
+                distinctionId: JSON.parse(values.distinction).id,
                 distinction: JSON.parse(values.distinction),
-                user: values.user,
-                userId: '',
-                date:/* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values.datepicker._d,
+                user: JSON.parse(values.user),
+                userId: JSON.parse(values.user).id,
+                date: values.date,
                 reporter: values.reporter,
                 reason: values.reason,
             }
+            console.log(JSON.stringify(newDistinction));
             await distinctionApi.addUserDistinction(newDistinction);
             setVisibleModal(false);
-
-            onAdd();
             form.resetFields();
+            onAdd();
+            
         }
         return (
             <Form
@@ -95,7 +104,7 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
                 <Select
                  className={formclasses.selectField}
                  >
-                {userData?.map((o) => ( <Select.Option key={o.user.id} value={JSON.stringify(o)}>{ o.user.firstName + " " + o.user.lastName }</Select.Option>))}
+                {userData?.map((o) => ( <Select.Option key={o.user.id} value={JSON.stringify(o.user)}>{ o.user.firstName + " " + o.user.lastName }</Select.Option>))}
                 </Select>
               </Form.Item>
             
@@ -118,7 +127,7 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
                name="date"
                label="Дата затвердження"
                rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
-                <DatePicker format = "YYYY-MM-DD"
+                <DatePicker format={dateFormat} 
                 className={formclasses.selectField}
                 />
               </Form.Item>
