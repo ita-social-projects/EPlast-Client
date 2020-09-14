@@ -7,6 +7,7 @@ import ukLocale from '@fullcalendar/core/locales/uk';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import notificationLogic from '../../../../components/Notifications/Notification';
+import Spinner from '../../../Spinner/Spinner';
 
 const classes = require('./EventCalendar.module.css');
 
@@ -35,13 +36,13 @@ export default function () {
                 })
             })
             setLoading(true);
-            if(window.innerWidth < 768){
+            if (window.innerWidth < 768) {
                 notificationLogic('info', "Для кращого користувацького досвіду поверніть девайс на 90 градусів");
             }
         }
         fetchData();
     }, []);
-    
+
     function getConcatedEvents(): Array<any> {
         (actions as Array<any>).forEach(event => {
             Object.assign(event, { color: eventsColors[0] })
@@ -62,11 +63,7 @@ export default function () {
     }
 
     return loading === false ? (
-        <div className={classes.spaceWrapper}>
-            <Space className={classes.loader} size="large">
-                <Spin size="large" />
-            </Space>
-        </div>
+        <Spinner />
     ) : (
             <div>
                 <div>

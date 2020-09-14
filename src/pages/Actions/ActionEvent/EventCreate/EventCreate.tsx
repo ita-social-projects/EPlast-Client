@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { Form, DatePicker, Select, Input, Space, Button, Radio, Spin } from 'antd';
+import { Form, DatePicker, Select, Input, Button, Radio } from 'antd';
 import moment from 'moment';
 import TextArea from 'antd/lib/input/TextArea';
-import Title from 'antd/lib/typography/Title';
-import jwt from 'jwt-decode';
 import eventUserApi from '../../../../api/eventUserApi';
 import eventsApi from "../../../../api/eventsApi";
-import AuthStore from '../../../../stores/AuthStore';
 import notificationLogic from '../../../../components/Notifications/Notification';
 import EventCategories from '../../../../models/EventCreate/EventCategories';
 import Users from '../../../../models/EventCreate/Users';
@@ -23,13 +19,12 @@ interface Props {
 export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
 
   const [form] = Form.useForm();
-  const history = useHistory();
-  const [categories, setCategories] = useState<EventCategories[]>([]);
-  const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
-  const [administators, setAdministators] = useState<Users[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>(['', '', '', '']);
   const [loading, setLoading] = useState(false);
   const dateFormat = 'MM/DD/YYYY HH:mm';
+  const [categories, setCategories] = useState<EventCategories[]>([]);
+  const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
+  const [administators, setAdministators] = useState<Users[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,8 +71,6 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         userId: values.pysarId,
       }
     }
-    const token = AuthStore.getToken() as string;
-    const user: any = jwt(token);
     await eventUserApi.post(newEvent).then(response => {
       notificationLogic('success', 'Подія ' + values.EventName + ' успішно створена');
     }).catch(error => {
@@ -89,9 +82,6 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
     form.resetFields();
     setLoading(false);
     setShowEventCreateDrawer(false);
-  }
-
-  function onSearch(val: any) {
   }
 
   function disabledDate(current: any) {
@@ -140,7 +130,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Категорія </h3>
         < Form.Item name="EventCategoryID" className={classes.input} rules={[{ required: true, message: 'Оберіть категорію події' }]} >
-          <Select notFoundContent="Спочатку оберіть тип події" showSearch optionFilterProp="children" onSearch={onSearch} >
+          <Select notFoundContent="Спочатку оберіть тип події" showSearch optionFilterProp="children" >
             {categories.map((item: any) => (<Select.Option key={item.eventCategoryId} value={item.eventCategoryId} > {item.eventCategoryName} </Select.Option>))}
           </Select>
         </ Form.Item>
@@ -154,7 +144,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Комендант </h3>
         < Form.Item name="commandantId" className={classes.select} rules={[{ required: true, message: 'Оберіть коменданта' }]} >
-          <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)}  >
+          <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(0, e)}  >
             {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.id} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
           </Select>
         </ Form.Item>
@@ -162,7 +152,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Заступник коменданта </h3>
         < Form.Item name="alternateId" className={classes.select} rules={[{ required: true, message: 'Оберіть заступника коменданта' }]} >
-          <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(1, e)} >
+          <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(1, e)} >
             {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
           </Select>
         </Form.Item>
@@ -170,7 +160,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Бунчужний </h3>
         < Form.Item name="bunchuzhnyiId" className={classes.select} rules={[{ required: true, message: 'Оберіть бунчужного' }]} >
-          <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(2, e)}>
+          <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(2, e)}>
             {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
           </Select>
         </Form.Item>
@@ -178,7 +168,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Писар </h3>
         < Form.Item name="pysarId" className={classes.select} rules={[{ required: true, message: 'Оберіть писаря' }]} >
-          <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(3, e)}>
+          <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(3, e)}>
             {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
           </Select>
         </Form.Item>

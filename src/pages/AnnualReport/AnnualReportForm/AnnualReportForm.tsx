@@ -24,7 +24,7 @@ const AnnualReportForm = (props: Props) => {
 
     return (
         <>
-        <Title>{title}</Title>
+            <Title>{title}</Title>
             <Row
                 gutter={16}
                 align='bottom'>
@@ -36,7 +36,10 @@ const AnnualReportForm = (props: Props) => {
                         name='newCityAdminId'
                         className='w100'>
                         <Select
-                            options={cityMembers}></Select>
+                            showSearch
+                            optionFilterProp="children"
+                            options={cityMembers}>
+                        </Select>
                     </Form.Item>
                 </Col>
                 <Col
