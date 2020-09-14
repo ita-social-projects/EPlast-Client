@@ -11,6 +11,7 @@ import AddAdministratorModal from "../AddAdministratorModal/AddAdministratorModa
 import moment from "moment";
 import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
+import Spinner from "../../Spinner/Spinner";
 moment.locale("uk-ua");
 
 const CityMembers = () => {
@@ -98,9 +99,7 @@ const CityMembers = () => {
         Члени станиці
       </Title>
       {loading ? (
-          <Layout.Content className="spiner">
-            <Spin size="large" />
-          </Layout.Content>
+          <Spinner />
         ) : (
       <div className="cityMoreItems">
         {members.length > 0 ? (

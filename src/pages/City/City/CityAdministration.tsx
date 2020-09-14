@@ -10,6 +10,7 @@ import AddAdministratorModal from '../AddAdministratorModal/AddAdministratorModa
 import moment from "moment";
 import "moment/locale/uk";
 import Title from 'antd/lib/typography/Title';
+import Spinner from '../../Spinner/Spinner';
 moment.locale("uk-ua");
 
 const CityAdministration = () => {
@@ -28,8 +29,8 @@ const CityAdministration = () => {
       const response = await getAllAdmins(id);
 
       setPhotosLoading(true);
-      setPhotos(response.data.administration);
-      setAdministration(response.data.administration);
+      setPhotos([...response.data.administration, response.data.head]);
+      setAdministration([...response.data.administration, response.data.head]);
       setCanEdit(response.data.canEdit);
       setLoading(false);
     };
@@ -68,9 +69,7 @@ const CityAdministration = () => {
       <Layout.Content>
         <Title level={2}>Провід станиці</Title>
         {loading ? (
-          <Layout.Content className="spiner">
-            <Spin size="large" />
-          </Layout.Content>
+          <Spinner />
         ) : (
           <div className="cityMoreItems">
             {administration.length > 0 ? (

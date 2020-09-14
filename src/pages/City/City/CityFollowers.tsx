@@ -7,6 +7,7 @@ import userApi from "../../../api/UserApi";
 import "./City.less";
 import CityMember from '../../../models/City/CityMember';
 import Title from 'antd/lib/typography/Title';
+import Spinner from '../../Spinner/Spinner';
 
 const CityFollowers = () => {
     const {id} = useParams();
@@ -54,9 +55,7 @@ const CityFollowers = () => {
       <Layout.Content>
         <Title level={2}>Прихильники станиці</Title>
         {loading ? (
-          <Layout.Content className="spiner">
-            <Spin size="large" />
-          </Layout.Content>
+          <Spinner />
         ) : (
           <div className="cityMoreItems">
             {followers.length > 0 ? (

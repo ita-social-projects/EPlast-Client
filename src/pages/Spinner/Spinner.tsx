@@ -1,9 +1,9 @@
 import React from "react";
-import { Drawer, Button, Space, Spin } from "antd";
-import Spinner from "./Spinner";
+import { Space, Spin } from "antd";
+import "./Spinner.less";
 import { LoadingOutlined } from "@ant-design/icons";
 
-const EventCreateDrawer = () => {
+const Spinner = () => {
     const antIcon = <LoadingOutlined style={{ fontSize: 64 }} spin />;
 
     return (
@@ -15,4 +15,4 @@ const EventCreateDrawer = () => {
     );
 }
 
-export default EventCreateDrawer;
+export default Spinner;

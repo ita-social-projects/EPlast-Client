@@ -14,6 +14,8 @@ import CityDocument from '../../../models/City/CityDocument';
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
+import Spinner from "../../Spinner/Spinner";
+import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 
 const City = () => {
   const history = useHistory();
@@ -23,6 +25,7 @@ const City = () => {
   const [city, setCity] = useState<CityProfile>(new CityProfile());
   const [cityLogo64, setCityLogo64] = useState<string>("");
   const [visibleModal, setVisibleModal] = useState(false);
+  const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
   const [members, setMembers] = useState<CityMember[]>([]);
   const [followers, setFollowers] = useState<CityMember[]>([]);
@@ -145,9 +148,7 @@ const City = () => {
   }, []);
 
   return loading ? (
-    <Layout.Content className="spiner">
-      <Spin size="large" />
-    </Layout.Content>
+    <Spinner />
   ) : city.id !== 0 ? (
     <Layout.Content className="cityProfile">
       <Row gutter={[0, 48]}>
@@ -230,7 +231,7 @@ const City = () => {
                 <Button
                   type="primary"
                   className="cityInfoButton"
-                  //onClick={}
+                  onClick={() => setVisibleDrawer(true)}
                 >
                   Деталі
                 </Button>
@@ -481,6 +482,12 @@ const City = () => {
         </Col>
       </Row>
 
+      <CityDetailDrawer
+        city={city}
+        setVisibleDrawer={setVisibleDrawer}
+        visibleDrawer={visibleDrawer}
+      ></CityDetailDrawer>
+      
       {canEdit ? (
         <AddDocumentModal
           cityId={+id}

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { Button, Form, Input, Layout, Upload, notification, Row, Col, Spin, Table, Select, Divider, Card } from "antd";
+import { Button, Form, Input, Layout, Upload, Row, Col, Table, Select, Card } from "antd";
 import { DeleteOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons/lib";
 import ReactInputMask from "react-input-mask";
-import { RcCustomRequestOptions, RcFile } from "antd/lib/upload/interface";
+import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
-import { createCity, getCityById, getLogo, updateCity } from "../../../api/citiesApi";
+import { createCity, getAllAdmins, getAllFollowers, getAllMembers, getCityById, getLogo, updateCity } from "../../../api/citiesApi";
 import { GetAllRegions } from '../../../api/regionsApi';
 import "./CreateCity.less"
 import CityProfile from '../../../models/City/CityProfile';
@@ -15,6 +15,7 @@ import RegionProfile from '../../../models/Region/RegionProfile';
 import { membersColumns, administrationsColumns, getTableAdmins, getTableMembers, getTableFollowers } from "./CityTableColumns";
 import notificationLogic from '../../../components/Notifications/Notification';
 import Title from "antd/lib/typography/Title";
+import Spinner from "../../Spinner/Spinner";
 
 const CreateCity = () => {
   const {id} = useParams();
@@ -76,7 +77,7 @@ const CreateCity = () => {
   const getCity = async () => {
     try {
       setLoading(true);
-      const response = await getCityById(+id);
+      let response = await getCityById(+id);
       
       if (response.data.logo !== null) {
         const logo = await getLogo(response.data.logo);
@@ -84,9 +85,9 @@ const CreateCity = () => {
       }
 
       setCity(response.data);
-      setAdmins(response.data.administration);
-      setMembers(response.data.members);
-      setFollowers(response.data.followers);
+      setAdmins((await getAllAdmins(+id)).data.administration);
+      setMembers((await getAllMembers(+id)).data.members);
+      setFollowers((await getAllFollowers(+id)).data.followers);
     } finally {
       setLoading(false);
     }
@@ -166,9 +167,7 @@ const CreateCity = () => {
   };
 
   return loading && city ? (
-    <Layout.Content>
-      <Spin size="large" />
-    </Layout.Content>
+    <Spinner />
   ) : (
     <Layout.Content className="createCity">
       <Card hoverable className="createCityCard">
@@ -236,7 +235,7 @@ const CreateCity = () => {
                 label="Номер телефону"
                 labelCol={{ span: 24 }}
                 initialValue={city.phoneNumber}
-                rules={[{ len: 18, message: "Неправильний телефон" }]}
+                rules={[{ min: 18, message: "Неправильний телефон" }]}
               >
                 <ReactInputMask
                   mask="+38(999)-999-99-99"

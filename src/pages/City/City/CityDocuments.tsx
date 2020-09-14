@@ -7,6 +7,7 @@ import "./City.less";
 import CityDocument from '../../../models/City/CityDocument';
 import Title from 'antd/lib/typography/Title';
 import moment from "moment";
+import Spinner from '../../Spinner/Spinner';
 
 const CityDocuments = () => {
     const {id} = useParams();
@@ -43,9 +44,7 @@ const CityDocuments = () => {
       <Layout.Content>
         <Title level={2}>Документообіг станиці</Title>
         {loading ? (
-          <Layout.Content className="spiner">
-            <Spin size="large" />
-          </Layout.Content>
+          <Spinner />
         ) : (
           <div className="cityMoreItems">
             {documents.length > 0 ? (

@@ -7,6 +7,7 @@ import { getCitiesByPage, getLogo } from "../../../api/citiesApi";
 import "./Cities.less";
 import CityProfile from '../../../models/City/CityProfile';
 import Title from "antd/lib/typography/Title";
+import Spinner from "../../Spinner/Spinner";
 
 const Cities = () => {
   const history = useHistory();
@@ -68,9 +69,7 @@ const Cities = () => {
     <Layout.Content className="cities">
       <Title level={1}>Станиці</Title>
       {loading ? (
-        <Layout.Content className="spiner">
-          <Spin size="large" />
-        </Layout.Content>
+        <Spinner />
       ) : (
         <div>
           <div className="cityWrapper">
