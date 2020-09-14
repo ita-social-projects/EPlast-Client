@@ -1,15 +1,15 @@
-import { Form, DatePicker, Select, Input, Space, Button, Radio, Spin } from 'antd';
+import { Form, DatePicker, Select, Input, Button, Radio } from 'antd';
 import React, { useEffect, useState } from 'react';
 import TextArea from 'antd/lib/input/TextArea';
-import { useParams, useHistory } from 'react-router-dom';
-import Title from 'antd/lib/typography/Title';
-import jwt from 'jwt-decode';
 import eventUserApi from '../../../../api/eventUserApi';
 import notificationLogic from '../../../../components/Notifications/Notification';
 import moment from 'moment';
 import 'moment/locale/uk';
 import eventsApi from '../../../../api/eventsApi';
-import AuthStore from '../../../../stores/AuthStore';
+import EventCategories from '../../../../models/EventCreate/EventCategories';
+import EventTypes from '../../../../models/EventCreate/EventTypes';
+import Users from '../../../../models/EventCreate/Users';
+import EventEdit from '../../../../models/EventEdit/EventEdit';
 moment.locale('uk-ua');
 
 const classes = require('./EventEdit.module.css');
@@ -21,49 +21,30 @@ interface Props {
 }
 
 export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
-
     const [form] = Form.useForm();
     const [doneLoading, setDoneLoading] = useState(false);
-    const [administators, setAdministators] = useState<any>([]);
     const [selectedUsers, setSelectedUsers] = useState<string[]>(['', '', '', '']);
-    const [categories, setCategories] = useState<any>([]);
     const dateFormat = 'DD/MM/YYYY HH:mm';
+    const [categories, setCategories] = useState<EventCategories[]>([]);
+    const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
+    const [administators, setAdministators] = useState<Users[]>([]);
+    const [editedEvent, setEvent] = useState<EventEdit>();
 
-    const [editedEvent, setEvent] = useState<any>({
-        event: {
-            description: '',
-            eventCategoryID: 0,
-            eventDateEnd: '',
-            eventDateStart: '',
-            eventName: '',
-            eventStatusID: 0,
-            eventTypeID: 0,
-            eventlocation: '',
-            forWhom: '',
-            formOfHolding: '',
-            id: 0,
-            numberOfPartisipants: 0,
-            questions: ''
-        },
-        commandant: {
-            userId: '',
-        },
-        alternate: {
-            userId: ''
-        },
-        bunchuzhnyi: {
-            userId: ''
-        },
-        pysar: {
-            userId: ''
+    useEffect(() => {
+        const fetchData = async () => {
+            await eventUserApi.getDataForNewEvent().then(async response => {
+                const { users, eventTypes } = response.data;
+                setEventTypes(eventTypes);
+                setAdministators(users);
+            })
         }
-    });
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const fetchEvent = async () => {
             await eventUserApi.getEditedEvent(id).then(async response => {
-                const { editedEvent } = response.data;
-                setEvent({ editedEvent });
+                setEvent(response.data);
                 form.setFieldsValue({
                     ID: response.data.event.id,
                     EventName: response.data.event.eventName,
@@ -87,38 +68,10 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
                 })
             })
         }
-        fetchEvent();
-        form.resetFields();
-    }, [id]);
-
-    const [data, setData] = useState<any>({
-        eventCategories: [{
-            eventCategoryId: 0,
-            eventCategoryName: '',
-        }],
-        eventTypes: [{
-            id: 0,
-            eventTypeName: '',
-        }],
-        users: [{
-            id: '',
-            firstName: '',
-            lastName: '',
-            userName: '',
-        }]
-    });
-
-    useEffect(() => {
-        const fetchData = async () => {
-            await eventUserApi.getDataForNewEvent().then(async response => {
-                const { eventCategories, eventTypes, users } = response.data;
-                setData({ eventCategories, eventTypes, users });
-                setAdministators(users);
-                setCategories(categories);
-            })
+        if (id != undefined) {
+            fetchEvent();
         }
-        fetchData();
-    }, []);
+    }, [id]);
 
     useEffect(() => {
         resetUsers()
@@ -163,13 +116,10 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
                 notificationLogic('error', 'Спробуйте ще раз');
             }
         });;
+        setShowEventEditDrawer(false);
+        setDoneLoading(false);
         onEdit();
         form.resetFields();
-        setDoneLoading(false);
-        setShowEventEditDrawer(false);
-    }
-
-    function onSearch(val: any) {
     }
 
     function disabledDate(current: any) {
@@ -210,14 +160,14 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
             < div className={classes.radio} >
                 <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio}>
                     <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup} onChange={onChange} >
-                        {data?.eventTypes.map((item: any) => (<Radio.Button defaultChecked={true} key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
+                        {eventTypes.map((item: any) => (<Radio.Button defaultChecked={true} key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
                     </Radio.Group>
                 </Form.Item>
             </div>
             < div className={classes.row} >
                 <h3>Категорія </h3>
                 < Form.Item name="EventCategoryID" className={classes.input} rules={[{ required: true, message: 'Оберіть категорію події' }]} >
-                    <Select showSearch optionFilterProp="children" onSearch={onSearch}>
+                    <Select showSearch optionFilterProp="children">
                         {categories?.map((item: any) => (<Select.Option key={item.id} value={item.eventCategoryId}> {item.eventCategoryName} </Select.Option>))}
                     </Select>
                 </ Form.Item>
@@ -231,7 +181,7 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
             < div className={classes.row} >
                 <h3>Комендант </h3>
                 < Form.Item name="commandantId" className={classes.select} rules={[{ required: true, message: 'Оберіть коменданта' }]} >
-                    <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)}  >
+                    <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(0, e)}  >
                         {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
                     </Select>
                 </ Form.Item>
@@ -239,7 +189,7 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
             < div className={classes.row} >
                 <h3>Заступник коменданта </h3>
                 < Form.Item name="alternateId" className={classes.select} rules={[{ required: true, message: 'Оберіть заступника коменданта' }]} >
-                    <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)}  >
+                    <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(0, e)}  >
                         {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
                     </Select>
                 </Form.Item>
@@ -247,7 +197,7 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
             < div className={classes.row} >
                 <h3>Бунчужний </h3>
                 < Form.Item name="bunchuzhnyiId" className={classes.select} rules={[{ required: true, message: 'Оберіть бунчужного' }]} >
-                    <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)} >
+                    <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(0, e)} >
                         {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
                     </Select>
                 </Form.Item>
@@ -255,7 +205,7 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
             < div className={classes.row} >
                 <h3>Писар </h3>
                 < Form.Item name="pysarId" className={classes.select} rules={[{ required: true, message: 'Оберіть писаря' }]} >
-                    <Select showSearch optionFilterProp="children" onSearch={onSearch} onChange={(e: any) => handleSelectChange(0, e)} >
+                    <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(0, e)} >
                         {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName} </Select.Option>))}
                     </Select>
                 </Form.Item>

@@ -14,6 +14,7 @@ import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
 import adminApi from "../../api/adminApi";
+import jwt_decode from "jwt-decode";
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -21,16 +22,7 @@ const { SubMenu } = Menu;
 const PrivateLayout = ({ children }: any) => {
   const [collapsed, setCollapsed] = useState(true);
   const history = useHistory();
-  const [userRole, setUser] = useState({
-    userID: '',
-    userEmail: '',
-    allRoles: [{
-      id: '',
-      name: ''
-    }],
-    userRoles: ['']
-  })
-
+  const [userRole, setUser] = useState<string[]>();
 
   const onCollapse = (collValue: boolean) => {
     setCollapsed(collValue);
@@ -57,11 +49,10 @@ const PrivateLayout = ({ children }: any) => {
   };
 
   const fetchUser = async () => {
-    const token = AuthStore.getToken() as string;
-    const user: any = jwt(token);
-    await adminApi.getRolesForEdit(user.nameid).then(response => {
-      setUser(response.data);
-    })
+    let jwt = AuthStore.getToken() as string;
+    let decodedJwt = jwt_decode(jwt) as any;
+    let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+    setUser(roles);
   }
 
   useEffect(() => {
@@ -81,7 +72,7 @@ const PrivateLayout = ({ children }: any) => {
           breakpoint="xxl"
           width="250"
           collapsedWidth="0"
-          >
+        >
           <div className={classes.profilePhoto}>
             <Avatar
               size={64}
@@ -101,11 +92,11 @@ const PrivateLayout = ({ children }: any) => {
               Рішення
           </Menu.Item>
             <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
-              {(userRole.userRoles as string[]).some(role => role === 'Admin') &&
+              {/* {userRole?.some(role => role === 'Admin') && */}
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
                   Таблиця користувачів
                 </Menu.Item>
-              }
+              {/* } */}
               <Menu.Item onClick={() => { handleClickAway(); history.push("/cities"); }} key="3">
                 Станиці
             </Menu.Item>
@@ -144,7 +135,7 @@ const PrivateLayout = ({ children }: any) => {
         <Content style={{ margin: "0 16px" }}>
           <div
             className="site-layout-background"
-            style={{ padding:20, minHeight: 360 }}
+            style={{ padding: 20, minHeight: 360 }}
           >
             {children}
           </div>

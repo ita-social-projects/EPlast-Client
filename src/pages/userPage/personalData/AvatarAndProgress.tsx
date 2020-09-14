@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Avatar, Progress, Spin, Space } from 'antd';
+
+import { Avatar, Progress, Spin, Space, Skeleton } from 'antd';
 import './PersonalData.less';
 import { useHistory } from "react-router-dom";
 import userApi from '../../../api/UserApi';
@@ -13,13 +14,14 @@ import HomePict3 from "../../assets/images/homeMenuPicture(3).jpg";
 import AuthStore from '../../../stores/AuthStore';
 import jwt from 'jwt-decode';
 
+import Spinner from '../../Spinner/Spinner';
 
 class AvatarAndProgressProps {
-  imageUrl:string|undefined;
-  time:number|undefined;
-  firstName:string|undefined;
-  lastName:string|undefined;
-  isUserPlastun:boolean|undefined;
+  imageUrl: string | undefined;
+  time: number | undefined;
+  firstName: string | undefined;
+  lastName: string | undefined;
+  isUserPlastun: boolean | undefined;
 }
 
 
@@ -37,7 +39,7 @@ const contentListNoTitle: { [key: number]: any } = {
 const AvatarAndProgress:React.FC<AvatarAndProgressProps> = (props: AvatarAndProgressProps)=> {
   const { userId } = useParams();
   const [loading, setLoading] = useState(false);
-  const {time,imageUrl,firstName,lastName,isUserPlastun}=props;
+  const { time, imageUrl, firstName, lastName, isUserPlastun } = props;
   const [imageBase64, setImageBase64] = useState<string>();
 
 
@@ -73,27 +75,22 @@ let arrOfKV: Array<any>=[];
         
       }, [props]);
 
-      return loading === false ? (
-        <div className="spaceWrapper">
-          <Space className="loader" size="large">
-            <Spin size="large" />
-          </Space>
-        </div>
-        
-      ) : (
-    <div className="leftPartWrapper">
-      <Avatar size={300} src={imageBase64} className="img"/>
-      {!isUserPlastun && 
-         <div className="progress">
-              <p className="statusText">{time} дні і {firstName} {lastName} Пластун:)</p>
-              <Progress
+  return loading === false ? (
+    <Skeleton.Avatar size={300} active={true} shape="circle" className="img" />
+  ) : (
+      <div className="leftPartWrapper">
+        <Avatar size={300} src={imageBase64} className="img" />
+        {!isUserPlastun &&
+          <div className="progress">
+            <p className="statusText">{time} дні і {firstName} {lastName} Пластун:)</p>
+            <Progress
               type="circle"
               className="progressBar"
               strokeColor={{
                 '0%': '#108ee9',
                 '100%': '#87d068',
               }}
-              percent={Math.round(100-(time===undefined?0:time)*100/365)}
+              percent={Math.round(100 - (time === undefined ? 0 : time) * 100 / 365)}
             />
 
 

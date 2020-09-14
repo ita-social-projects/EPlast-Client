@@ -19,7 +19,6 @@ import SignUp from "./pages/SignUp/SignUp";
 import SignIn from "./pages/SignIn/SignIn";
 import EventInfo from "./pages/Actions/ActionEvent/EventInfo/EventInfo";
 import EventUser from "./pages/Actions/ActionEvent/EventUser/EventUser";
-import EventCalendar from "./pages/Actions/ActionEvent/EventCalendar/EventCalendar";
 import Actions from "./pages/Actions/Actions";
 import ActionEvent from "./pages/Actions/ActionEvent/ActionEvent";
 import UserProfile from "./pages/userPage/personalData/PersonalData";
@@ -45,13 +44,13 @@ import KadrasTable from "./pages/KadraVykhovnykiv/KadrasPage";
 const App: FC = () => (
   <div className="App">
     <Router>
-      <HeaderContainer />
+      <HeaderContainer/>
       <div className="mainContent">
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/contacts" component={Contacts} />
-          <Route path="/signup" component={SignUp} />
           <Route path="/signin" component={SignIn} />
+          <Route path="/signup" component={SignUp} />
           <Route path="/forgotpassword" component={ForgotPassword} />
           <Route path="/resetPassword" component={ResetPassword} />
           <Route path="/changePassword" component={ChangePassword} />
@@ -146,12 +145,6 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/actions/eventCalendar"
-            component={EventCalendar}
-          />
-          <RouteWithLayout
-            layout={PrivateLayout}
-            exact
             path="/annualreport/create/:cityId"
             component={AnnualReportCreate}
           />
@@ -179,7 +172,7 @@ const App: FC = () => (
             path="/clubs/new"
             component={CreateClub}
           />
-          
+
           <RouteWithLayout
             layout={PrivateLayout}
             exact
@@ -222,7 +215,7 @@ const App: FC = () => (
             path="/user/table"
             component={UsersTable}
           />
-           <RouteWithLayout
+          <RouteWithLayout
             layout={PrivateLayout}
             exact
             path="/kadra"
@@ -240,8 +233,8 @@ const App: FC = () => (
             path="*"
             component={NotFound}
           />
-         
-          
+
+
         </Switch>
       </div>
       <FooterContainer />
