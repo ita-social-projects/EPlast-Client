@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Avatar, Progress, Spin, Space } from 'antd';
 import './PersonalData.less';
+import { useHistory } from "react-router-dom";
 import userApi from '../../../api/UserApi';
+import kadrasApi from '../../../api/KadraVykhovnykivApi';
+import KV1YPU from '../../../assets/images/KV1YPU.png';
+import KV1YPN from '../../../assets/images/KV1YPN.png';
+import KV2YPN from '../../../assets/images/KV2YPN.png';
+import KV2YPU from '../../../assets/images/KV2YPU.png';
+import HomePict3 from "../../assets/images/homeMenuPicture(3).jpg";
+import AuthStore from '../../../stores/AuthStore';
+import jwt from 'jwt-decode';
+
 
 class AvatarAndProgressProps {
   imageUrl:string|undefined;
@@ -13,21 +24,53 @@ class AvatarAndProgressProps {
 
 
 
+
+const contentListNoTitle: { [key: number]: any } = {
+  1: <div key ='1' className="edustaffPhoto">< img src={KV1YPN} alt="Picture1" /></div>,
+  2: <div key ='2' className="edustaffPhoto"><img src={KV1YPU} alt="Picture1" /></div>,
+  3: <div key ='3' className="edustaffPhoto"><img src={KV2YPN} alt="Picture1" /></div>,
+  4: <div key ='4' className="edustaffPhoto"><img src={KV2YPU} alt="Picture1" /></div>,
+};
+
+
+
 const AvatarAndProgress:React.FC<AvatarAndProgressProps> = (props: AvatarAndProgressProps)=> {
+  const { userId } = useParams();
   const [loading, setLoading] = useState(false);
   const {time,imageUrl,firstName,lastName,isUserPlastun}=props;
   const [imageBase64, setImageBase64] = useState<string>();
+
+
+
+let arrOfKV: Array<any>=[];
+
+
+  const [kadras, setkadras] = useState<any>([{
+    id: '',
+    user: '',
+    kvType: '',
+    dateOfGranting: '',
+    numberInRegister: '',
+    basisOfGranting: '',
+    link: '',
+  }])
+  
+
       useEffect(() => {
-        if(imageUrl!==undefined)
-        {
+ 
           const fetchData = async () => {
+           
+            await kadrasApi.getAllKVsOfGivenUser(userId).then(responce => {
+              setkadras(responce.data);
+            })
             await userApi.getImage(imageUrl).then((response: { data: any; }) =>{
               setImageBase64(response.data);
             });
              setLoading(true);
           };
+          
           fetchData();
-        }
+        
       }, [props]);
 
       return loading === false ? (
@@ -52,6 +95,19 @@ const AvatarAndProgress:React.FC<AvatarAndProgressProps> = (props: AvatarAndProg
               }}
               percent={Math.round(100-(time===undefined?0:time)*100/365)}
             />
+
+
+          {  kadras.forEach((element: any) => 
+              arrOfKV.push(element.kadraVykhovnykivTypeId)
+              
+            )}
+
+
+         { arrOfKV.map(element => 
+              (contentListNoTitle[element ])
+              
+            )}
+            
         </div>
          
       }

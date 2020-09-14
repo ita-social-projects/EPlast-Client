@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import classes from './Form.module.css'
 import { Form, Input, DatePicker, AutoComplete, Select, Button } from 'antd';
 import kadrasApi from "../../api/KadraVykhovnykivApi";
+import notificationLogic from '../../components/Notifications/Notification';
 
 
 type FormUpdateKadraProps = {
@@ -28,8 +29,6 @@ type FormUpdateKadraProps = {
 
             id: record,
 
-            KadraVykhovnykivTypeId:JSON.parse(values.KadraVykhovnykivType).id,
-
             dateOfGranting: values.dateOfGranting,
 
             numberInRegister: values.numberInRegister,
@@ -39,11 +38,26 @@ type FormUpdateKadraProps = {
             link: values.link,
   
         }
+        await kadrasApi.doesRegisterNumberExistEdit(newKadra.numberInRegister, newKadra.id).then(async responce=>{
+          
+
+                    if(responce.data==false){          
         await kadrasApi.putUpdateKadra(newKadra)
         form.resetFields();
         onAdd();
         onEdit();
-        }
+        notificationLogic('success', "Відзнаку успішно змінено");
+                     }
+                     else{
+                        notificationLogic('error', "Номер реєстру вже зайнятий");
+                        form.resetFields();
+                        onAdd();
+                     }
+          
+                 })
+            }
+           
+           
 
 
         
@@ -65,27 +79,7 @@ type FormUpdateKadraProps = {
          form = {form}
      >
        
-         <Form.Item
-             className={classes.formField}
-             label="Тип кадри"
-             name="KadraVykhovnykivType"
-
-             rules={[
-                 {
-                     required: true,
-                     message: 'Це поле має бути заповненим'
-                 },
-             ]}
-         >
-             <Select
-        filterOption={false}
-        className={classes.inputField}
-        >
-             {types?.map((o) => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{ o.name }</Select.Option>))}
-            
         
-        </Select>
-         </Form.Item>
 
          <Form.Item
              className={classes.formField}

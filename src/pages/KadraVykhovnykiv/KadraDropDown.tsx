@@ -36,13 +36,6 @@ const DropDown = (props: Props) => {
     const [visibleEdit, setvisibleEdit]= useState<boolean>(false) ;
     
 
-
-
-    const showModalEdit = () => {
-    
-        setvisibleEdit(true);
-      };
-    
     
     const handleOkEdit = () => {
       
@@ -54,11 +47,6 @@ const DropDown = (props: Props) => {
     
       setvisibleEdit(false);
     };
-
-    const handleClickAway = ()=>{
-      setShowDropdown(false);
-    }
-
 
 
     const handleItemClick =async (item: any) => {
