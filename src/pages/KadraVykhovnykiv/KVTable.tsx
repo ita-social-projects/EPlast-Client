@@ -5,6 +5,9 @@ import kadrasApi from "../../api/KadraVykhovnykivApi";
 import DropDown from './KadraDropDown';
 import ClickAwayListener from 'react-click-away-listener';
 
+
+const classes = require('./Table.module.css');
+
 interface props {
 
   current: number;
@@ -75,6 +78,7 @@ export const KVTable = ({ current, searchData }: props) => {
     <div>
 
       <Table
+        className={classes.table}
         loading={loading}
         columns={columns}
         dataSource={filteredData}
