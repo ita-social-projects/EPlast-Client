@@ -100,11 +100,12 @@ let arrOfKV: Array<any>=[];
             )}
 
 
+      <div className="edustaffAllPhotos">
          { arrOfKV.map(element => 
               (contentListNoTitle[element ])
               
             )}
-            
+            </div>
         </div>
          
       }
