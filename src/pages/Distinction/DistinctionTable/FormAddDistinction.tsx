@@ -63,7 +63,6 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
                 reporter: values.reporter,
                 reason: values.reason,
             }
-            console.log(newDistinction);
             await distinctionApi.addUserDistinction(newDistinction);
             setVisibleModal(false);
             form.resetFields();
