@@ -65,7 +65,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
     },
     fileAsBase64: fileData.FileAsBase64,
   }
-   decisionsApi.post(newDecision);
+  await decisionsApi.post(newDecision);
   setVisibleModal(false);
 
   onAdd();
