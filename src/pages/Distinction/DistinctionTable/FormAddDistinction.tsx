@@ -54,17 +54,16 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
       };
 
     const handleSubmit = async (values : any) => {
-        const newDistinction: UserDistinction = {
+        const newDistinction: any = {
                 id: 0,
                 distinctionId: JSON.parse(values.distinction).id,
                 distinction: JSON.parse(values.distinction),
-                user: JSON.parse(values.user),
                 userId: JSON.parse(values.user).id,
-                date: values.date,
+                date: moment(values.date).format("DD-MM-YYYY"),
                 reporter: values.reporter,
                 reason: values.reason,
             }
-            console.log(JSON.stringify(newDistinction));
+            console.log(newDistinction);
             await distinctionApi.addUserDistinction(newDistinction);
             setVisibleModal(false);
             form.resetFields();

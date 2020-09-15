@@ -24,14 +24,16 @@ const DecisionTable = () => {
     const [UserDistinctions, setData] = useState<UserDistinction[]>([{
       id: 0,
       distinction: 
-        {id: 0,
-        name: ''},
+        {
+          id: 0,
+          name: ''
+        },
         distinctionId: 0,
         userId: '',
         reporter: '',
         reason: '',
         date: new Date(),
-        user: new User
+        user: new User()
     }]);
 
     useEffect(() => {
@@ -49,9 +51,14 @@ const DecisionTable = () => {
       setVisibleModal(true);
     };
 
-    const handleAdd = () => {
+    const handleAdd = async () => {
     
       setVisibleModal(false);
+      setLoading(true);
+      const res: UserDistinction[] = await distinctionApi.getUserDistinctions();
+      setData(res);
+      setLoading(false);
+      notificationLogic('success', "Відзначення успішно додано!");
      
     };
 
