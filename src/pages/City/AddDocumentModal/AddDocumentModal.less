@@ -3,8 +3,14 @@
     width: 25%;
   }
 
-  .formSelect {
-    width: 100%;
+  .formFields {
+    .ant-form-item-control {
+      max-width: 75%;
+    }
+
+    .formSelect {
+      width: 100%;
+    }
   }
 
   .cancelConfirmButtons {
@@ -19,7 +25,7 @@
 @media (max-width: 575px) {
   .addDocumentModal {
     .ant-form-horizontal .ant-form-item-label {
-        padding: 0;
+      padding: 0;
     }
 
     .cancelConfirmButtons {
