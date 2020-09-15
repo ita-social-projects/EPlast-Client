@@ -181,9 +181,16 @@ type FormAddKadraProps = {
              className={classes.formField}
              label="Причина надання"
              name="basisOfGranting"  
+             rules={[
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
+                { max: 100, message: 'Причина надання не може перевищувати 100 символів' }
+            ]}
          >
              <Input
-                 className={classes.inputField} />
+                 className={classes.inputField}  />
          </Form.Item>
 
          <Form.Item
