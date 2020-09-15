@@ -5,6 +5,7 @@ import {KVTable} from './KVTable';
 
 import AddNewKadraForm from './AddNewKadraForm';
 
+
 const classes = require('./Table.module.css');
 
 const tabListNoTitle = [
@@ -29,16 +30,28 @@ const tabListNoTitle = [
 
 export const KadrasTable = ()=>{
 
+
+
+  const [searchedData, setSearchedData] = useState('');
+
   const contentListNoTitle: { [key: string]: any } = {
-    KV1N: <div><div><div><KVTable current={1}/></div></div></div>,
-    KV1U: <><KVTable current={2}/></>,
-    KV2N: <div><div><KVTable current={3}></KVTable></div></div>,
-    KV2U: <><div><KVTable current={4}/></div></>
+    KV1N: <div key='1'><KVTable  current={1} searchData={searchedData}/></div>,
+    KV1U: <div key='2'><KVTable current={2} searchData={searchedData}/></div>,
+    KV2N: <div key='3'><KVTable current={3} searchData={searchedData}/></div>,
+    KV2U: <div key='4'><KVTable current={4} searchData={searchedData}/></div>
   };
 
    const [visible, setvisible]= useState<boolean>(false) ;
    
+   
+
    const [noTitleKey, setKey] = useState<string>('KV1N');
+
+
+   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchedData(event.target.value);
+  };
+
 
    const showModal = () => {
     
@@ -57,7 +70,14 @@ export const KadrasTable = ()=>{
     setvisible(false);
   };
 
-       
+       const  renewPage = ()=>{
+        const key = noTitleKey;
+        
+        setKey('KV1N');
+        setKey('KV2N');
+        setKey(key);
+        setvisible(false);
+       }
 
 
        const onTabChange =  (key:string) => {
@@ -69,10 +89,14 @@ export const KadrasTable = ()=>{
       };
      
 
+
+
+
+
     return(
     <>
         <h1 className={classes.titleTable}>Кадра виховників</h1>
-        <Input.Search className={classes.searchInput} placeholder="Пошук" />
+        <Input.Search className={classes.searchInput} placeholder="Пошук"  onChange={handleSearch} />
         <br />
         <Card
           style={{ width: '100%' }}
@@ -99,7 +123,7 @@ export const KadrasTable = ()=>{
           onCancel={handleCancel}
           footer={null}
         >
-          <AddNewKadraForm onAdd={handleCancel}></AddNewKadraForm>
+          <AddNewKadraForm onAdd={renewPage}></AddNewKadraForm>
         </Modal>
       </>
     )

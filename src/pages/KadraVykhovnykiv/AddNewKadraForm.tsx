@@ -3,6 +3,9 @@ import classes from './Form.module.css'
 import { Form, Input, DatePicker, AutoComplete, Select, Button } from 'antd';
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import adminApi from "../../api/adminApi";
+import notificationLogic from '../../components/Notifications/Notification';
+import { findAllByDisplayValue } from '@testing-library/react';
+
 
 type FormAddKadraProps = {
     onAdd: () => void;
@@ -53,13 +56,37 @@ type FormAddKadraProps = {
             link: values.link,
   
         }
-        await kadrasApi.createKadra(newKadra)
-        form.resetFields();
-        onAdd();
+
+
+         kadrasApi.doesRegisterNumberExist(newKadra.numberInRegister).then(responce=>{
+            if (responce.data==false){
+                 kadrasApi.doesUserHaveStaff(newKadra.userId,newKadra.KadraVykhovnykivTypeId).then(  async response=>{
+
+                    if(response.data==false){
+                      await kadrasApi.createKadra(newKadra)
+                      form.resetFields();
+                      onAdd();
+                        
+                      notificationLogic('success', "Користувач успішно отримав відзнаку");
+                     }
+                     else{
+                      notificationLogic('error', "Користувач вже отримував цю відзнаку");
+                      form.resetFields();
+                      onAdd();
+                     }
+          
+                 })
+            }
+            else{
+                notificationLogic('error', "Номер реєстру вже зайнятий");
+                form.resetFields();
+                onAdd();
+            }
+            
+        })
+        
         }
 
-
-        
       useEffect(() => {
         const fetchData = async () => {
             await kadrasApi.getAllKVTypes().then(response => {
@@ -154,9 +181,16 @@ type FormAddKadraProps = {
              className={classes.formField}
              label="Причина надання"
              name="basisOfGranting"  
+             rules={[
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
+                { max: 100, message: 'Причина надання не може перевищувати 100 символів' }
+            ]}
          >
              <Input
-                 className={classes.inputField} />
+                 className={classes.inputField}  />
          </Form.Item>
 
          <Form.Item

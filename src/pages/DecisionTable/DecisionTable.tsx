@@ -70,6 +70,7 @@ const DecisionTable = () => {
     setSearchedData(event.target.value);
   };
 
+
   const filteredData = searchedData
     ? data.filter((item) => {
       return Object.values(item).find((element) => {
@@ -78,6 +79,7 @@ const DecisionTable = () => {
     })
     : data;
 
+    
    const  handleClickAway=()=>{
     setShowDropdown(false);
    }

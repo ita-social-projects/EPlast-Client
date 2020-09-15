@@ -2,6 +2,7 @@ import React from 'react';
 import Api from '../../api/KadraVykhovnykivApi';
 import CityUser from '../../models/City/CityUser';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 
 
 const columns = [
@@ -33,7 +34,10 @@ const columns = [
   },
   {
     title: 'Лінк',
-    dataIndex: 'link'
+    dataIndex: 'link',
+    render:(link:string)=>{
+      return <a href={link} target='_blank' >{link}</a>
+  }
 },
     
 ];
