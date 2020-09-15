@@ -84,6 +84,7 @@ const AddAdministratorModal = (props: Props) => {
     >
       <Form name="basic" onFinish={handleSubmit} form={form}>
         <Form.Item
+          className="adminTypeFormItem"
           name="adminType"
           label="Виберіть тип адміністрування"
           labelCol={{ span: 24 }}
@@ -101,8 +102,7 @@ const AddAdministratorModal = (props: Props) => {
               { value: "Член СПР" },
             ]}
             filterOption={(inputValue, option) =>
-              option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
-              -1
+              option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
             }
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}
@@ -112,7 +112,7 @@ const AddAdministratorModal = (props: Props) => {
           <Col span={11}>
             <Form.Item
               name="startDate"
-              label="Початок адміністрування"
+              label="Час початку"
               labelCol={{ span: 24 }}
               initialValue={
                 props.admin.startDate
@@ -136,7 +136,7 @@ const AddAdministratorModal = (props: Props) => {
           <Col span={11} offset={2}>
             <Form.Item
               name="endDate"
-              label="Кінець адміністрування"
+              label="Час кінця"
               labelCol={{ span: 24 }}
               initialValue={
                 props.admin.endDate ? moment(props.admin.endDate) : undefined
