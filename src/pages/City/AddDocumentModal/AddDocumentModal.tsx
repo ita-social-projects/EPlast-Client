@@ -158,24 +158,24 @@ const AddDocumentModal = (props: Props) => {
               <p className="ant-upload-hint">
                 Клікніть або перетягніть файл для завантаження
               </p>
-
               {props.document.blobName !== null && <div>{fileName}</div>}
             </Upload.Dragger>
+            
+            {props.document.blobName ? (
+              <div>
+                <Button
+                  className="cardButton"
+                  onClick={() => {
+                    props.setDocument({ ...props.document, blobName: "" });
+                    setFileName("");
+                    notificationLogic("success", "Файл видалено");
+                  }}
+                >
+                  Видалити файл
+                </Button>
+              </div>
+            ) : null}
           </Form.Item>
-          {props.document.blobName ? (
-            <div>
-              <Button
-                className="cardButton"
-                onClick={() => {
-                  props.setDocument({ ...props.document, blobName: "" });
-                  setFileName("");
-                  notificationLogic("success", "Файл видалено");
-                }}
-              >
-                Видалити файл
-              </Button>
-            </div>
-          ) : null}
 
           <Form.Item className="cancelConfirmButtons">
             <Row justify="end">
