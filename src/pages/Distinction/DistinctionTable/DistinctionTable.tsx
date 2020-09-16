@@ -20,18 +20,21 @@ const DecisionTable = () => {
   const [visibleModalEditDist, setVisibleModalEditDist] = useState(false);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [UserDistinctions, setData] = useState<UserDistinction[]>([{
+  const [loading, setLoading] = useState(false);
+  const [searchedData, setSearchedData] = useState('');
+  const [UserDistinctions, setData] = useState<UserDistinction[]>([{
       id: 0,
       distinction: 
-        {id: 0,
-        name: ''},
+      {
+        id: 0,
+        name: ''
+      },
         distinctionId: 0,
         userId: '',
         reporter: '',
         reason: '',
         date: new Date(),
-        user: new User
+        user: new User()
     }]);
 
     useEffect(() => {
@@ -44,14 +47,40 @@ const DecisionTable = () => {
       fetchData();
     }, []);
 
+    let filteredData = searchedData
+    ? UserDistinctions.filter((item: any) => {
+      return Object.values(item).find((element) => {
+        return String(element).includes(searchedData)
+      });
+    })
+    : UserDistinctions;
+
+  filteredData = filteredData.concat(
+    UserDistinctions.filter((item) => (item.user.firstName?.includes(searchedData)||
+    item.user.lastName?.includes(searchedData)) && !filteredData.includes(item)
+    )
+  )
+  filteredData = filteredData.concat(
+    UserDistinctions.filter((item) => item.distinction.name?.includes(searchedData) && !filteredData.includes(item)
+    )
+  )
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchedData(event.target.value);
+  };
+
     const showModal = () => {
     
       setVisibleModal(true);
     };
 
-    const handleAdd = () => {
+    const handleAdd = async() => {
     
       setVisibleModal(false);
+      setLoading(true);
+      const res: UserDistinction[] = await distinctionApi.getUserDistinctions();
+      setData(res);
+      setLoading(false);
+      notificationLogic('success', "Відзначення успішно додано!");
      
     };
 
@@ -78,7 +107,7 @@ return (
         {!loading && (
           <>
             <div className={classes.searchContainer}>
-              <Input placeholder="Пошук" />
+              <Input placeholder="Пошук" onChange={handleSearch} />
               <Button type="primary" onClick = {showModal}>
                 Додати відзначення
               </Button>
@@ -87,8 +116,8 @@ return (
               </Button>
             </div>
             <Table
-              dataSource={UserDistinctions}
-              columns={columns}
+              dataSource={filteredData}
+              columns={columns} 
               onRow={(record) => {
                 return {
                     onClick: () => {

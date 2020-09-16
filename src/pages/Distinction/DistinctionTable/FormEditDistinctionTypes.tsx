@@ -21,6 +21,7 @@ const FormEditDistinctionTypes : React.FC<FormEditDistinctionTypesProps> = (prop
         name: '',
         id: 0
     }])
+    const [title, setTitle] = useState('')
 
     useEffect( () => {
         const fetchData = async () => {
@@ -34,6 +35,18 @@ const FormEditDistinctionTypes : React.FC<FormEditDistinctionTypesProps> = (prop
         const filteredData = distData.filter((d: { id: number; }) => d.id !== id);
         setDistData([...filteredData]);
         notificationLogic("success","Тип відзначення успішно видалено!")
+      }
+      const handleAdd = async () => {
+
+        const newDistinction: Distinction = {
+            id: 0,
+            name: title
+        }
+        await distinctionApi.addDistinction(newDistinction);
+        const res: Distinction[] = (await distinctionApi.getDistinctions()).data;
+        setDistData(res);
+        setTitle("");
+        notificationLogic("success","Тип відзначення додано!")
       }
 
       return (
@@ -60,15 +73,23 @@ const FormEditDistinctionTypes : React.FC<FormEditDistinctionTypesProps> = (prop
             />
             <div className = {classes.addDiv}>
                 <Item>
-                    <Input className={ classes.inputField }
-                    placeholder="Назва типу відзначення"></Input> 
+                <Input className={ classes.inputField } 
+                    name = "inputName"
+                    value = {title}
+                    onChange={event => setTitle(event.target.value)}
+                    placeholder="Назва типу відзначення"
+                    maxLength={250} ></Input> 
                 </Item>
                 
-                <Button
-                 type="primary" htmlType="submit"
-                >
-                 Додати
-                </Button>
+                <Item>
+                    <Button
+                    type="primary" 
+                    htmlType="submit"
+                    onClick = {handleAdd}
+                    >
+                    Додати
+                    </Button>
+                </Item>
             </div>
         </div>
     )
