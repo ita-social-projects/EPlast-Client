@@ -4,8 +4,19 @@
   }
 
   .searchInput{
-      width: 200px;
+    width: 200px;
+    }
+    
+  @media (max-width: 391px){
+    .searchInput{
+    width: 100%;
+    }
   }
+
+
+ 
+
+  
 
 
   .menu {
@@ -13,8 +24,18 @@
     position: absolute;
   }
 
-  @media (max-width: 800px){
+  @media (max-width: 1350px){
     .table{
       overflow-x: scroll;
     }
+  }
+
+  @media (max-width: 391px){
+    .addKadraButton{
+    width: 100%;
+    }
+  }
+
+  .addKadraButton{
+    float: right;
   }
