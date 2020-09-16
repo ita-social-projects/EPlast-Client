@@ -18,13 +18,13 @@ const getDistinctionOfGivenUser = async (id:string) => {
     return await api.get(`Distinction/User/Distinctions/${id}`,id)
 };
 const deleteDistinction = async (id:number) => {
-    return await api.remove(`Distinction/Distinction/Delete/${id}`, id)
+    return await api.remove(`Distinction/Delete/${id}`, id)
 };
 const deleteUserDistinction = async (id:number) => {
     return await api.remove(`Distinction/UserDistinction/Delete/${id}`,id)
 };
 const addUserDistinction = async (data: UserDistinction) => {
-    return await api.post(`Distinction/UserDistinction/Create/${data.userId}`, data.userId)
+    return await api.post(`Distinction/UserDistinction/Create/${data.userId}`, data)
 };
 const addDistinction = async (data: Distinction) => {
     return await api.post(`Distinction/Create`, data)

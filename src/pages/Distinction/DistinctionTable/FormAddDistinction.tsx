@@ -64,7 +64,6 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
                 reporter: values.reporter,
                 reason: values.reason,
             }
-            console.log(JSON.stringify(newDistinction));
             await distinctionApi.addUserDistinction(newDistinction);
             setVisibleModal(false);
             form.resetFields();
@@ -111,13 +110,13 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
               <Form.Item
               className={formclasses.formField}
                label="Подання від"
-               name ="reporter" >
+               name ="reporter" 
+               rules = {[ { max: 100, 
+                        message: 'Поле подання не має перевищувати 100 символів!' }]} >
         
-                <AutoComplete
-                filterOption={true}
-                className={formclasses.selectField}
-                >
-                </AutoComplete>
+              <Input allowClear 
+                 className={formclasses.inputField}
+                  maxLength = {101}/>
                 
               </Form.Item>
         
@@ -135,9 +134,13 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
               <Form.Item 
               className={formclasses.formField}
                label="Обгрунтування"
-               name = "reason">
+               name = "reason"
+               rules = {[ { max: 250, 
+                message: 'Поле обгрунтування не має перевищувати 250 символів!' }]}
+                >
                 <Input.TextArea allowClear 
-                 className={formclasses.inputField}/>
+                 className={formclasses.inputField}
+                 maxLength = {151}/>
               </Form.Item>
         
               <Form.Item style = {{ textAlign: "right"}}>
