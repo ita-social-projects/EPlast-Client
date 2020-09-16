@@ -93,9 +93,15 @@ const AddDocumentModal = (props: Props) => {
       setLoading(false);
     };
 
+    const removeFile = () => {
+      props.setDocument({ ...props.document, blobName: "" });
+      setFileName("");
+    };
+
     const handleCancel = () => {
       props.setVisibleModal(false);
       form.resetFields();
+      removeFile();
     };
 
     const onSearch = (val: any) => {
@@ -115,29 +121,33 @@ const AddDocumentModal = (props: Props) => {
         onCancel={handleCancel}
       >
         <Form name="basic" onFinish={handleSubmit} form={form}>
-          <Form.Item
-            label="Тип документу"
-            name="documentType"
-            rules={[{ required: true, message: "Це поле має бути заповненим" }]}
-          >
-            <Select
-              showSearch
-              optionFilterProp="children"
-              onSearch={onSearch}
-              className="formSelect"
-              placeholder="Оберіть тип документу"
+          <div className="formFields">
+            <Form.Item
+              label="Тип документу"
+              name="documentType"
+              rules={[
+                { required: true, message: "Це поле має бути заповненим" },
+              ]}
             >
-              {documentTypes.map((dt) => (
-                <Select.Option key={dt.id} value={dt.name}>
-                  {dt.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
+              <Select
+                showSearch
+                optionFilterProp="children"
+                onSearch={onSearch}
+                className="formSelect"
+                placeholder="Оберіть тип документу"
+              >
+                {documentTypes.map((dt) => (
+                  <Select.Option key={dt.id} value={dt.name}>
+                    {dt.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
 
-          <Form.Item name="datepicker" label="Дата документу">
-            <DatePicker format="YYYY-MM-DD" className="formSelect" />
-          </Form.Item>
+            <Form.Item name="datepicker" label="Дата документу">
+              <DatePicker format="YYYY-MM-DD" className="formSelect" />
+            </Form.Item>
+          </div>
 
           <Form.Item
             name="dragger"
@@ -158,24 +168,23 @@ const AddDocumentModal = (props: Props) => {
               <p className="ant-upload-hint">
                 Клікніть або перетягніть файл для завантаження
               </p>
-
               {props.document.blobName !== null && <div>{fileName}</div>}
             </Upload.Dragger>
+
+            {props.document.blobName ? (
+              <div>
+                <Button
+                  className="cardButton"
+                  onClick={() => {
+                    removeFile();
+                    notificationLogic("success", "Файл видалено");
+                  }}
+                >
+                  Видалити файл
+                </Button>
+              </div>
+            ) : null}
           </Form.Item>
-          {props.document.blobName ? (
-            <div>
-              <Button
-                className="cardButton"
-                onClick={() => {
-                  props.setDocument({ ...props.document, blobName: "" });
-                  setFileName("");
-                  notificationLogic("success", "Файл видалено");
-                }}
-              >
-                Видалити файл
-              </Button>
-            </div>
-          ) : null}
 
           <Form.Item className="cancelConfirmButtons">
             <Row justify="end">
