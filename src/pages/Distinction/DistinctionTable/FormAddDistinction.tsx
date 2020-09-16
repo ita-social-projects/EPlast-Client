@@ -35,7 +35,7 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
       
     }]);
     const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
-    const dateFormat = 'MM/DD/YYYY';
+    const dateFormat = 'DD-MM-YYYY';
 
     useEffect( () => {
         const fetchData = async () => {
@@ -109,13 +109,13 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
               <Form.Item
               className={formclasses.formField}
                label="Подання від"
-               name ="reporter" >
-        
-                <AutoComplete
-                filterOption={true}
-                className={formclasses.selectField}
+               name ="reporter" 
+               rules = {[ { max: 250, 
+                        message: 'Поле подання не має перевищувати 250 символів!' }]}
                 >
-                </AutoComplete>
+        
+                 <Input allowClear 
+                 className={formclasses.inputField}/>
                 
               </Form.Item>
         
@@ -133,7 +133,11 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
               <Form.Item 
               className={formclasses.formField}
                label="Обгрунтування"
-               name = "reason">
+               name = "reason"
+               rules = {[ { max: 500, 
+                message: 'Поле обгрунтування не має перевищувати 500 символів!' }]}
+              >
+
                 <Input.TextArea allowClear 
                  className={formclasses.inputField}/>
               </Form.Item>

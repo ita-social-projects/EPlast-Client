@@ -73,11 +73,14 @@ const FormEditDistinctionTypes : React.FC<FormEditDistinctionTypesProps> = (prop
             <div className = {classes.addDiv}>
 
                 <Item>
-                    <Input className={ classes.inputField } 
+                    <Input
+                    maxLength={250} 
+                    className={ classes.inputField } 
                     name = "inputName"
                     value = {title}
                     onChange={event => setTitle(event.target.value)}
-                    placeholder="Назва типу відзначення"></Input> 
+                    placeholder="Назва типу відзначення"
+                    ></Input> 
                 </Item>
                 <Item>
                     <Button
