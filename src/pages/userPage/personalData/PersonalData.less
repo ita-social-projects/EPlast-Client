@@ -49,6 +49,11 @@
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
+
+.kadraWrapper{
+
+    text-align: center;
+}
 .allFields{
     width:  calc(60% - 30px);
     height: auto;
@@ -130,12 +135,26 @@
    }
 }
 
+
+
+
+
 .img{
     width: 300px;
     height: 300px;
     line-height: 256px;
     font-size: 18px;
 }
+
+@media(max-width: 390px){
+    .img{
+        width: 220px;
+        height: 220px;
+        
+    }
+}
+
+
 .content{
     margin-top: 20px;
     width: 100%;
@@ -179,11 +198,21 @@
    
 }
 
+
 .edustaffPhoto{
     display: inline;
    max-width: 100px;
     max-height: 40px;
 }
+
+
+@media(max-width: 420px){
+    .edustaffPhoto{
+    display: inline-flexbox;
+    
+    }
+}
+
 
 .edustaffAllPhotos{
     text-align: center;

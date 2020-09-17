@@ -1,17 +1,25 @@
 
 
+
 .inputField{
     float: right;
     text-align: left;
     max-width: 320px;
-    min-width: 320px;
+    width:320px;
   }
+
+  @media (max-width: 576px){
+    .inputField{
+    width: 100%;
+    }
+  }
+
   
   .selectField {
     float: right;
     text-align: left;
-    max-width: 320px;
-    min-width: 320px;
+    width:320px;
+   
   }
   
   

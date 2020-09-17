@@ -72,7 +72,7 @@ export const KVTable = ({ current, searchData }: props) => {
     })
     : data;
 
-debugger
+
   filteredData = filteredData.concat(
     data.filter((item) => (item.user.firstName?.includes(searchData)||
     item.user.lastName?.includes(searchData)) && !filteredData.includes(item)

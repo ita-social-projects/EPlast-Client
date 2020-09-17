@@ -96,15 +96,16 @@ export const KadrasTable = ()=>{
     return(
     <>
         <h1 className={classes.titleTable}>Кадра виховників</h1>
+        <Button className={classes.addKadraButton} type="primary" onClick={showModal}>
+          Додати кадру
+        </Button>
         <Input.Search className={classes.searchInput} placeholder="Пошук"  onChange={handleSearch} />
         <br />
         <Card
           style={{ width: '100%' }}
           tabList={tabListNoTitle}
           activeTabKey={noTitleKey}
-          tabBarExtraContent={<Button type="primary" onClick={showModal}>
-          Додати кадру
-        </Button>}
+         
           onTabChange={key => {
             onTabChange(key);
             
