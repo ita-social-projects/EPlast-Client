@@ -8,6 +8,7 @@ const columns = [
     {
         title: 'ID',
         dataIndex: 'id',     
+        wisth: 60
     },
     {
         title: 'Відзначення',
