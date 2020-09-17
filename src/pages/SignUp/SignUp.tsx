@@ -51,7 +51,7 @@ export default function () {
           <Input className={styles.MyInput} placeholder="Електронна пошта" />
         </Form.Item>
         <Form.Item name="Password" rules={validationSchema.Password}>
-          <Input.Password visibilityToggle={true} className={styles.MyInput} placeholder="Пароль" />
+          <Input.Password visibilityToggle={true} className={styles.MyInput} placeholder=" Пароль" />
         </Form.Item>
         <Form.Item
           name="ConfirmPassword"
@@ -71,7 +71,7 @@ export default function () {
             }),
           ]}
         >
-          <Input.Password visibilityToggle={true} className={styles.MyInput} placeholder="Повторіть пароль" />
+          <Input.Password visibilityToggle={true} className={styles.MyInput} placeholder=" Повторіть пароль" />
         </Form.Item>
         <Form.Item name="Name" rules={validationSchema.Name}>
           <Input className={styles.MyInput} placeholder="Ім'я" />

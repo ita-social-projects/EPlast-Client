@@ -15,7 +15,7 @@ export const checkEmail = (role: object, value: string, callback:any) => {
         return callback('');
       }
       if (reg.test(value) === false) {
-        return callback('Дане поле повинне містити тільки літери');
+        return callback('Дане поле повинне містити тільки літери та бути коротшим за 20 символів');
       }
       return callback();
   };
