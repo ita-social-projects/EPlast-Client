@@ -30,7 +30,7 @@ const addDistinction = async (data: Distinction) => {
     return await api.post(`Distinction/Create`, data)
 };
 const editUserDistinction = async (data: UserDistinction) => {
-    return await api.put(`Distinction/UserDistinction/Edit/${data.distinctionId}`, data.distinctionId)
+    return await api.put(`Distinction/UserDistinction/Edit/${data.id}`, data)
 };
 const editDistinction = async (data: Distinction) => {
     return await api.put(`Distinction/Edit/${data.id}`, data.id)
