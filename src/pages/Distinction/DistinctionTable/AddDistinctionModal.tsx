@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal } from 'antd';
+import { Drawer, Modal } from 'antd';
 import FormAddDistinction from './FormAddDistinction';
 
 interface Props {
@@ -13,16 +13,19 @@ const AddDistinctionModal = ({ visibleModal, setVisibleModal, onAdd }: Props) =>
     const handleCancel = () => setVisibleModal(false);
   
     return (
-        <Modal
+        <Drawer
             title="Додати відзначення"
+            placement="right"
+            width = {520}
+            height = {1000}
             visible={visibleModal}
-            onCancel={handleCancel}
+            onClose={handleCancel}
             footer={null}
         >
         <FormAddDistinction  
             setVisibleModal = {setVisibleModal}
             onAdd ={onAdd} />
-        </Modal>
+        </Drawer>
     );
 };
 

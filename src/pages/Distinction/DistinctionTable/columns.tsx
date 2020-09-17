@@ -1,5 +1,4 @@
 import React from 'react';
-import decisionsApi from '../../../api/distinctionApi';
 import moment from 'moment';
 import CityUser from '../../../models/City/CityUser';
 import Distinction from '../Interfaces/Distinction';
@@ -8,8 +7,8 @@ import { Tooltip } from 'antd';
 const columns = [
     {
         title: 'ID',
-        dataIndex: 'id',
-        width: 60        
+        dataIndex: 'id',     
+        wisth: 60
     },
     {
         title: 'Відзначення',

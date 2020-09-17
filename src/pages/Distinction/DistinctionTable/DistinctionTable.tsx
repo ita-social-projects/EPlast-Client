@@ -9,11 +9,12 @@ import AddDistinctionModal from '../DistinctionTable/AddDistinctionModal';
 import EditDistinctionTypesModal from './EditDistinctionTypesModal';
 import ClickAwayListener from 'react-click-away-listener';
 import User from '../../../models/UserTable/User';
+import Distinction from '../Interfaces/Distinction';
 
 const classes = require('./Table.module.css');
 
 const { Content } = Layout;
-const DecisionTable = () => {
+const DistinctionTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
@@ -98,24 +99,50 @@ const DecisionTable = () => {
       setData([...filteredData]);
       notificationLogic('success', "Відзначення успішно видалено!");
     }
+    const handleEdit = (id: number, 
+      distinction: Distinction, 
+      date: Date, 
+      reason: string, 
+      reporter: string, 
+      user: any, 
+      userId: string) => {
+      /* eslint no-param-reassign: "error" */
+      debugger
+      const filteredData = UserDistinctions.filter(d => {
+        if (d.id === id) {
+          d.distinction = distinction;
+          d.distinctionId = distinction.id;
+          d.date = date;
+          d.reason = reason;
+          d.reporter = reporter;
+          d.user = user;
+          d.userId = userId;
+        }
+        return d;
+      }
+      );
+      setData([...filteredData]);
+    }
 
 return (
     <Layout>
       <Content onClick={() => { setShowDropdown(false) }} >
         <h1 className={classes.titleTable}>Відзначення</h1>
-        {loading && <Table loading />}
         {!loading && (
           <>
             <div className={classes.searchContainer}>
-              <Input placeholder="Пошук" onChange={handleSearch} />
-              <Button type="primary" onClick = {showModal}>
+            <Button type="primary" onClick = {showModal}>
                 Додати відзначення
               </Button>
               <Button type="primary" onClick = {showModalEditTypes}>
                 Редагування типів відзначень
               </Button>
+              <Input placeholder="Пошук" onChange={handleSearch} />
+              
             </div>
+            <div>
             <Table
+              className={classes.table}
               dataSource={filteredData}
               columns={columns} 
               onRow={(record) => {
@@ -135,13 +162,15 @@ return (
               bordered
               rowKey="id"
             />
+            </div>
             <ClickAwayListener onClickAway={handleClickAway}>
                   <DropDownDistinctionTable
                     showDropdown={showDropdown}
-                    onDelete={handleDelete}
                     record={recordObj}
                     pageX={x}
                     pageY={y}
+                    onDelete={handleDelete}
+                    onEdit={handleEdit}
                 />
                 </ClickAwayListener>
 
@@ -160,4 +189,4 @@ return (
     </Layout>
   );
 }
-export default DecisionTable;
+export default DistinctionTable;
