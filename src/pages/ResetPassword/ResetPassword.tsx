@@ -68,7 +68,7 @@ export default function () {
                 </Form.Item>
 
                 <Form.Item name="Password" rules={validationSchema.Password}>
-                    <Input.Password visibilityToggle={false} className={styles.ResetPasswordInput} placeholder="Пароль" />
+                    <Input.Password visibilityToggle={false} className={styles.ResetPasswordInput} placeholder = " Пароль" />
                 </Form.Item>
 
                 <Form.Item
@@ -77,7 +77,7 @@ export default function () {
                     rules={[
                         {
                             required: true,
-                            message: 'Підтвердіть пароль',
+                            message: "Підтвердіть пароль",
                         },
                         ({ getFieldValue }) => ({
                             validator(rule, value) {
@@ -89,7 +89,7 @@ export default function () {
                         }),
                     ]}
                 >
-                    <Input.Password visibilityToggle={false} className={styles.ResetPasswordInput} placeholder="Повторіть пароль" />
+                    <Input.Password visibilityToggle={false} className={styles.ResetPasswordInput} placeholder = " Повторіть пароль" />
                 </Form.Item>
 
                 <Form.Item>
