@@ -10,11 +10,7 @@ import KV1YPU from '../../../assets/images/KV1YPU.png';
 import KV1YPN from '../../../assets/images/KV1YPN.png';
 import KV2YPN from '../../../assets/images/KV2YPN.png';
 import KV2YPU from '../../../assets/images/KV2YPU.png';
-import HomePict3 from "../../assets/images/homeMenuPicture(3).jpg";
-import AuthStore from '../../../stores/AuthStore';
-import jwt from 'jwt-decode';
 
-import Spinner from '../../Spinner/Spinner';
 
 class AvatarAndProgressProps {
   imageUrl: string | undefined;
@@ -76,10 +72,13 @@ let arrOfKV: Array<any>=[];
       }, [props]);
 
   return loading === false ? (
-    <Skeleton.Avatar size={300} active={true} shape="circle" className="img" />
+    <div className="kadraWrapper">
+    <Skeleton.Avatar size={220}  active={true} shape="circle" className="img" />
+    </div>
   ) : (
-      <div className="leftPartWrapper">
-        <Avatar size={300} src={imageBase64} className="img" />
+      <div className="kadraWrapper">
+        
+        <Avatar  src={imageBase64} className="img" />
         {!isUserPlastun &&
           <div className="progress">
             <p className="statusText">{time} дні і {firstName} {lastName} Пластун:)</p>
