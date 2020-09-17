@@ -64,9 +64,9 @@ const City = () => {
   };
 
   const deleteCity = async () => {
-    history.push('/cities');
+    await removeCity(city.id);
 
-    await removeCity(+id);
+    history.push('/cities');
   }
 
   const setPhotos = async (members: CityMember[], logo: string) => {
@@ -80,7 +80,7 @@ const City = () => {
     if (logo === null) {
       setCityLogo64(CityDefaultLogo);
     } else {
-      const response = await getLogo(logo);    
+      const response = await getLogo(logo);
       setCityLogo64(response.data);
     }
     setCityLogoLoading(false);
