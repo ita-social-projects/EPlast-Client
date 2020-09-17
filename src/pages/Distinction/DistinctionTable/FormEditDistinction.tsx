@@ -3,7 +3,7 @@ import { Form, Input,Button, Select, DatePicker } from 'antd';
 import distinctionApi from '../../../api/distinctionApi';
 import UserDistinction from '../Interfaces/UserDistinction';
 import userEvent from '@testing-library/user-event';
-import formclasses from '../../KadraVykhovnykiv/Form.module.css';
+import formclasses from './Form.module.css';
 import adminApi from '../../../api/adminApi';
 import Distinction from '../Interfaces/Distinction';
 import moment from "moment";
@@ -59,7 +59,6 @@ const FormEditDistinction = ({ record,  setShowModal, onEdit, distinction}: Prop
     setShowModal(false);
   }
   const handleFinish = async (dist : any) => {
-    debugger
     const newDistinction : any = {
     id : record,
     distinctionId: JSON.parse(dist?.distinction).id,
@@ -70,7 +69,6 @@ const FormEditDistinction = ({ record,  setShowModal, onEdit, distinction}: Prop
     reason: dist?.reason,
     reporter: dist?.reporter
   };
-    debugger
     await distinctionApi.editUserDistinction(newDistinction);
     setShowModal(false);
     form.resetFields();
