@@ -4,9 +4,7 @@ import Distinction from '../Interfaces/Distinction';
 import UserDistinction from '../Interfaces/UserDistinction';
 import distinctionApi from '../../../api/distinctionApi';
 import adminApi from '../../../api/adminApi';
-
-
-import formclasses from '../../KadraVykhovnykiv/Form.module.css';
+import formclasses from './Form.module.css';
 import moment from 'moment';
 
 
@@ -35,7 +33,7 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
       
     }]);
     const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
-    const dateFormat = 'MM/DD/YYYY';
+    const dateFormat = 'DD-MM-YYYY';
 
     useEffect( () => {
         const fetchData = async () => {
