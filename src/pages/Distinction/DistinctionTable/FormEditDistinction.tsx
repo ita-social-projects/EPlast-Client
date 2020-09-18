@@ -155,7 +155,7 @@ const FormEditDistinction = ({ record,  setShowModal, onEdit, distinction}: Prop
                 >
                 <Input.TextArea allowClear 
                  className={formclasses.inputField}
-                 maxLength = {151}/>
+                 maxLength = {251}/>
               </Form.Item>
         
               <Form.Item style = {{ textAlign: "right"}}>

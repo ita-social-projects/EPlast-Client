@@ -122,6 +122,7 @@ const DistinctionTable = () => {
       }
       );
       setData([...filteredData]);
+      notificationLogic('success', "Відзначення успішно змінено!");
     }
 
 return (
