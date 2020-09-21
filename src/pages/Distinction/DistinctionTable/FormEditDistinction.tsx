@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import { Form, Input,Button, Select, DatePicker } from 'antd';
 import distinctionApi from '../../../api/distinctionApi';
 import UserDistinction from '../Interfaces/UserDistinction';
-import userEvent from '@testing-library/user-event';
 import formclasses from './Form.module.css';
 import adminApi from '../../../api/adminApi';
 import Distinction from '../Interfaces/Distinction';
@@ -35,8 +34,9 @@ const FormEditDistinction = ({ record,  setShowModal, onEdit, distinction}: Prop
     
   }]);
   const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
-  const dateFormat = 'DD-MM-YYYY';;
-
+  const [distValue, setDistValue] = useState<any>();
+  const [userValue, setUserValue] = useState<any>();
+  const dateFormat = 'DD-MM-YYYY';
   useEffect(() => {
     setLoading(true);
     form.resetFields();
@@ -52,23 +52,37 @@ const FormEditDistinction = ({ record,  setShowModal, onEdit, distinction}: Prop
     };
     fetchData();
      setLoading(false);
+     setDistValue(distinction.distinction);
+     setUserValue(distinction.user);
   },[distinction]);
 
 
-  const handleCancel = () => {
-    setShowModal(false);
-  }
+
+    const handleCancel = () => {
+        setShowModal(false);
+    }
+
+    const distChange = (dist: any) => {
+        dist = JSON.parse(dist);
+        setDistValue(dist);
+}
+    const userChange = (user: any) => {
+        user = JSON.parse(user);
+        setUserValue(user);
+    }
+
   const handleFinish = async (dist : any) => {
     const newDistinction : any = {
     id : record,
-    distinctionId: JSON.parse(dist?.distinction).id,
+    distinctionId: distValue.id,
     date: dist?.date,
-    distinction: JSON.parse(dist?.distinction),
-    user: JSON.parse(dist?.user),
-    userId: JSON.parse(dist?.user).id,
+    distinction: distValue,
+    user: userValue,
+    userId: userValue.id,
     reason: dist?.reason,
     reporter: dist?.reporter
   };
+  console.log(distValue);
     await distinctionApi.editUserDistinction(newDistinction);
     setShowModal(false);
     form.resetFields();
@@ -101,6 +115,7 @@ const FormEditDistinction = ({ record,  setShowModal, onEdit, distinction}: Prop
               >
                    <Select
                         className={formclasses.selectField}
+                        onSelect = {distChange}
                     >
                         {distData?.map((o) => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{ o.name }</Select.Option>))}
                     </Select>
@@ -114,6 +129,7 @@ const FormEditDistinction = ({ record,  setShowModal, onEdit, distinction}: Prop
                rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
                 <Select
                  className={formclasses.selectField}
+                 onSelect = {userChange}
                  >
                 {userData?.map((o) => ( <Select.Option key={o.user.id} value={JSON.stringify(o.user)}>{ o.user.firstName + " " + o.user.lastName }</Select.Option>))}
                 </Select>
