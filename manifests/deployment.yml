@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: eplastweb 
-          image: eplast.azurecr.io/eplastweb
+          image: ___containerRegistry___/eplastweb
           ports:
           - containerPort: 80
