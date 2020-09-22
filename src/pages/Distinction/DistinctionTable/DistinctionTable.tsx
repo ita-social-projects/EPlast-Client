@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Input, Button, Layout, Modal } from 'antd';
+import { Table, Input, Button, Layout } from 'antd';
 import columns from './columns';
 import notificationLogic from '../../../components/Notifications/Notification';
 import UserDistinction from '../Interfaces/UserDistinction';
@@ -107,7 +107,6 @@ const DistinctionTable = () => {
       user: any, 
       userId: string) => {
       /* eslint no-param-reassign: "error" */
-      debugger
       const filteredData = UserDistinctions.filter(d => {
         if (d.id === id) {
           d.distinction = distinction;
