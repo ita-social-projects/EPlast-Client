@@ -35,10 +35,10 @@ export const KadrasTable = ()=>{
   const [searchedData, setSearchedData] = useState('');
 
   const contentListNoTitle: { [key: string]: any } = {
-    KV1N: <div key='1'><KVTable  current={1} searchData={searchedData}/></div>,
-    KV1U: <div key='2'><KVTable current={2} searchData={searchedData}/></div>,
-    KV2N: <div key='3'><KVTable current={3} searchData={searchedData}/></div>,
-    KV2U: <div key='4'><KVTable current={4} searchData={searchedData}/></div>
+    KV1N: <div key='1'><KVTable  current={5} searchData={searchedData}/></div>,
+    KV1U: <div key='2'><KVTable current={6} searchData={searchedData}/></div>,
+    KV2N: <div key='3'><KVTable current={7} searchData={searchedData}/></div>,
+    KV2U: <div key='4'><KVTable current={8} searchData={searchedData}/></div>
   };
 
    const [visible, setvisible]= useState<boolean>(false) ;

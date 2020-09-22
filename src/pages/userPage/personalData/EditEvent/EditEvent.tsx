@@ -16,7 +16,7 @@ const EditEvent = () => {
         <h2>Пластун прихильник</h2>
         <div className={classes.line} />
         <Button type="primary" className={classes.button} onClick={() => history.push('/actions/eventCreate')}>
-          Створити подію
+          Зберегти подію
         </Button>
       </div>
 

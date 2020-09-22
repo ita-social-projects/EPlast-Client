@@ -117,7 +117,9 @@ export default function () {
                                 </Button>
                             ]}
                     >
+                        <div className={classes.title}>
                         <h1>{eventInfo?.event?.title}</h1>
+                        </div>
                         <h2>Дата початку: {moment(eventInfo?.event?.start).format("DD-MM-YYYY HH:mm")}</h2>
                         <h2>Дата завершення: {moment(eventInfo?.event?.end).format("DD-MM-YYYY HH:mm")}</h2>
                         <h2>Локація: {eventInfo?.event?._def.extendedProps.eventlocation}</h2>

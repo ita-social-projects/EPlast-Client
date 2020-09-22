@@ -22,7 +22,7 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
           Персональні дані
         </Menu.Item>
         <Menu.Item className="menuItem" key="Membership" onClick={() => history.push(`/userpage/activeMembership/${props.id}`)}>Дійсне членство</Menu.Item>
-        <Menu.Item className="menuItem" key="second">Діловодства</Menu.Item>
+        <Menu.Item className="menuItem" key="second" onClick={()=>history.push(`/userpage/secretaries/${props.id}`)}>Діловодства</Menu.Item>
         <Menu.Item className="menuItem" key="eventuser" onClick={() => history.push(`/userpage/eventuser/${props.id}`)}>
           Події
         </Menu.Item>
