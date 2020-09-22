@@ -24,10 +24,10 @@ class AvatarAndProgressProps {
 
 
 const contentListNoTitle: { [key: number]: any } = {
-  1: <div key ='1' className="edustaffWrapper">< img src={KV1YPN} alt="Picture1"  className="edustaffPhoto"/></div>,
-  2: <div key ='2' className="edustaffWrapper"><img src={KV1YPU} alt="Picture1" className="edustaffPhoto"/></div>,
-  3: <div key ='3' className="edustaffWrapper"><img src={KV2YPN} alt="Picture1" className="edustaffPhoto"/></div>,
-  4: <div key ='4' className="edustaffWrapper"><img src={KV2YPU} alt="Picture1" className="edustaffPhoto"/></div>,
+  5: <div key ='1' className="edustaffWrapper">< img src={KV1YPN} alt="Picture1"  className="edustaffPhoto"/></div>,
+  6: <div key ='2' className="edustaffWrapper"><img src={KV1YPU} alt="Picture1" className="edustaffPhoto"/></div>,
+  7: <div key ='3' className="edustaffWrapper"><img src={KV2YPN} alt="Picture1" className="edustaffPhoto"/></div>,
+  8: <div key ='4' className="edustaffWrapper"><img src={KV2YPU} alt="Picture1" className="edustaffPhoto"/></div>,
 };
 
 

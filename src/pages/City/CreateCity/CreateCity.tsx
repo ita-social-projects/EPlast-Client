@@ -327,7 +327,7 @@ const CreateCity = () => {
           </Row>
           <Row className="cityButtons" justify="center" gutter={[0, 6]}>
             <Col xs={24} sm={12}>
-              <Button type="primary" onClick={() => history.goBack()}>
+              <Button type="primary" className="backButton" onClick={() => history.goBack()}>
                 Назад
               </Button>
             </Col>

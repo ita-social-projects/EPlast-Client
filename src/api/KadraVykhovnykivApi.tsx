@@ -69,7 +69,14 @@ return response;
 }
  
 
+
+const findUserByEduStaff = async (EduStaffId:number)=>{
+  const response = await Api.get(`EducatorsStaff/findUserForRedirect/${EduStaffId}`);
+  return response;
+  }
+
   export default {
+    findUserByEduStaff,
     doesRegisterNumberExistEdit,
     doesUserHaveStaffEdit,
     doesRegisterNumberExist,

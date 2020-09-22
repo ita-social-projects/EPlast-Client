@@ -7,7 +7,7 @@
     width: 200px;
     }
     
-  @media (max-width: 391px){
+  @media (max-width: 395px){
     .searchInput{
     width: 100%;
     }
@@ -30,7 +30,7 @@
     }
   }
 
-  @media (max-width: 391px){
+  @media (max-width: 395px){
     .addKadraButton{
     width: 100%;
     }

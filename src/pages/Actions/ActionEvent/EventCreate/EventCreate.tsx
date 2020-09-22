@@ -187,7 +187,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </ div>
       < div className={classes.row} >
         <h3>Форма проведення </h3>
-        < Form.Item name="FormOfHolding" rules={[{ required: true, message: 'Вкажіть форму проведення події' }]} >
+        < Form.Item name="FormOfHolding" rules={[{ required: true, message: 'Вкажіть форму проведення події' },{ max: 50, message: 'Максимальна к-сть символів - 50' }]} >
           <Input className={classes.input} />
         </Form.Item>
       </div>
@@ -199,14 +199,14 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </div>
       < div className={classes.row} >
         <h3>Призначений для </h3>
-        < Form.Item name="ForWhom" rules={[{ required: true, message: 'Вкажіть для кого призначена подія' }]}>
+        < Form.Item name="ForWhom" rules={[{ required: true, message: 'Вкажіть для кого призначена подія' },{ max: 50, message: 'Максимальна к-сть символів - 50' }]}>
           <Input className={classes.input} />
         </Form.Item>
       </div>
       < div className={classes.row} >
         <h3>Приблизна кількість учасників </h3>
-        < Form.Item name="NumberOfPartisipants" rules={[{ required: true, message: 'Вкажіть приблизну к-сть учасників' }]} >
-          <Input className={classes.input} type="number" />
+        < Form.Item name="NumberOfPartisipants" rules={[{ required: true, message: 'Вкажіть приблизну к-сть учасників' }, { min:0, message: 'Мінімальна к-сть учасників - 0'}]} >
+          <Input className={classes.input} type="number" min="0"/>
         </Form.Item>
       </ div>
       < div className={classes.row} >
@@ -225,7 +225,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </div>
       < Form.Item >
         <Button type="primary" htmlType="submit" className={classes.button} loading={loading} >
-          Створити подію
+          Зберегти подію
                </Button>
       </Form.Item>
     </Form>

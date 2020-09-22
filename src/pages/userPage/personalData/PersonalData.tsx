@@ -7,6 +7,8 @@ import Approvers from '../Approvers/Approvers';
 import ActiveMembership from '../ActiveMembership/ActiveMembership'
 import EventUser from '../../Actions/ActionEvent/EventUser/EventUser';
 import { useParams } from 'react-router-dom';
+import Secretaries from '../Secretaries/SecretariesPage';
+
 
 
 export default function (
@@ -31,6 +33,10 @@ export default function (
         <div className="content">
           <ActiveMembership />
         </div>
+         ) : specify === 'secretaries' ? (
+          <div className="content">
+            <Secretaries />
+          </div>
       ) : specify === 'eventuser' ? (
         <div className="content">
           <EventUser />
