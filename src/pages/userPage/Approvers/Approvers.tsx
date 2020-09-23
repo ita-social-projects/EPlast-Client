@@ -103,11 +103,11 @@ const Assignments = () => {
                       title="Поручитися за користувача"
                       placement="rightBottom">
                       <Link to="#" onClick={() => approveClick(data?.user.id)}>
-                          <Avatar style={{ backgroundColor: '#f0f5f0' }} 
-                            shape="square"
+                          <Avatar
                             src={AddUser}
                             alt="example" size={168}
-                            className="avatarEmpty" />
+                            className="avatarEmpty" 
+                            shape="square"/>
                           <Meta className="cardBodyEmpty" />
                       </Link>
                     </Tooltip>
@@ -135,7 +135,11 @@ const Assignments = () => {
                       <Card
                         hoverable
                         className="cardStyles"
-                        cover={<Avatar alt="example" src={data.clubApprover.approver.user.imagePath} className="avatar" />}
+                        cover={<Avatar 
+                          src={data.clubApprover.approver.user.imagePath}
+                          alt="example"
+                          className="avatar" 
+                          />}
                       >
                         <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
                         <Meta title={moment(data.clubApprover.confirmDate).format("DD-MM-YYYY")} className="titleText" />
@@ -148,7 +152,11 @@ const Assignments = () => {
                         <Card
                           hoverable
                           className="cardStyles"
-                          cover={<Avatar alt="example" src={data.clubApprover.approver.user.imagePath} className="avatar" />}
+                          cover={<Avatar 
+                            src={data.clubApprover.approver.user.imagePath}
+                            alt="example"
+                            className="avatar" 
+                            />}
                         >
                           <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
                           <Meta title={moment(data.clubApprover.confirmDate).format("DD-MM-YYYY")} className="titleText" />
@@ -160,14 +168,16 @@ const Assignments = () => {
               ) : ((data?.clubApprover == null && data?.currentUserId != data?.user.id && data?.isUserHeadOfClub) ?
                 (
                   <div>
-                    <Link to="#" onClick={() => approveClick(data.user.id, true)}>
-                      <Card
-                        hoverable
-                        className="cardStyles"
-                        cover={<Avatar alt="example" src={AddUser} className="avatar" />}
-                      >
-                      </Card>
-                    </Link>
+                    <Tooltip
+                      title="Поручитися за користувача"
+                      placement="rightBottom">
+                      <Link to="#" onClick={() => approveClick(data.user.id, true)}>
+                        <Avatar src={AddUser} 
+                          alt="example" size={168}
+                          className="avatarEmpty" 
+                          shape="square"/>
+                      </Link>
+                    </Tooltip>
                   </div>
                 ) : (
                   <div>
@@ -188,7 +198,11 @@ const Assignments = () => {
                     <Card
                       hoverable
                       className="cardStyles"
-                      cover={<Avatar alt="example" src={data.cityApprover.approver.user.imagePath} className="avatar" />}
+                      cover={<Avatar 
+                        src={data.cityApprover.approver.user.imagePath}
+                        alt="example"
+                        className="avatar" 
+                        />}
                     >
                       <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
                       <Meta title={moment(data.cityApprover.confirmDate).format("DD-MM-YYYY")} className="titleText" />
@@ -201,7 +215,11 @@ const Assignments = () => {
                         <Card
                           hoverable
                           className="cardStyles"
-                          cover={<Avatar alt="example" src={data.cityApprover.approver.user.imagePath} className="avatar" />}
+                          cover={<Avatar 
+                            src={data.cityApprover.approver.user.imagePath}
+                            alt="example"
+                            className="avatar" 
+                            />}
                         >
                           <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
                           <Meta title={moment(data.cityApprover.confirmDate).format("DD-MM-YYYY")} className="titleText" />
@@ -213,14 +231,17 @@ const Assignments = () => {
               ) : ((data?.cityApprover == null && data?.currentUserId != data?.user.id && (data?.isUserHeadOfRegion || data?.isUserHeadOfCity)) ?
                 (
                   <div>
-                    <Link to="#" onClick={() => approveClick(data.user.id, false, true)}>
-                      <Card
-                        hoverable
-                        className="cardStyles"
-                        cover={<Avatar alt="example" src={AddUser} className="avatar" />}
-                      >
-                      </Card>
-                    </Link>
+                    <Tooltip
+                      title="Поручитися за користувача"
+                      placement="rightBottom">
+                      <Link to="#" onClick={() => approveClick(data.user.id, false, true)}>
+                        <Avatar 
+                            src={AddUser}
+                            alt="example" size={168}
+                            className="avatarEmpty" 
+                            shape="square" />
+                      </Link>
+                    </Tooltip>
                   </div>
                 ) : (
                   <div>
