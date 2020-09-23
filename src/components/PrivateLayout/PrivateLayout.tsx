@@ -23,6 +23,7 @@ const PrivateLayout = ({ children }: any) => {
   const [collapsed, setCollapsed] = useState(true);
   const history = useHistory();
   const [userRole, setUser] = useState<string[]>();
+  const [canEdit, setCanEdit] = useState(false);
 
   const onCollapse = (collValue: boolean) => {
     setCollapsed(collValue);
@@ -53,6 +54,7 @@ const PrivateLayout = ({ children }: any) => {
     let decodedJwt = jwt_decode(jwt) as any;
     let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
     setUser(roles);
+    setCanEdit(roles.includes("Admin"));
   }
 
   useEffect(() => {
@@ -82,6 +84,7 @@ const PrivateLayout = ({ children }: any) => {
             />
           </div>
           <Menu theme="dark" mode="inline" className={classes.leftMenu}>
+            {(canEdit == true) ? (
             <Menu.Item
               key="1"
               icon={<SolutionOutlined />}
@@ -91,20 +94,23 @@ const PrivateLayout = ({ children }: any) => {
             >
               Рішення
           </Menu.Item>
+            ) : (<> </>)
+            }
             <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
-              {/* {userRole?.some(role => role === 'Admin') && */}
+            {(canEdit == true) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
                   Таблиця користувачів
                 </Menu.Item>
-              {/* } */}
-              <Menu.Item onClick={() => { handleClickAway(); history.push("/cities"); }} key="3">
+                ) : (<> </>)
+            }
+              <Menu.Item onClick={() => { handleClickAway(); }} key="3">Округи</Menu.Item>
+              <Menu.Item onClick={() => { handleClickAway(); history.push("/cities"); }} key="4">
                 Станиці
             </Menu.Item>
-              <Menu.Item onClick={() => { handleClickAway(); }} key="4">Округи</Menu.Item>
-              <Menu.Item onClick={() => { handleClickAway(); history.push('/events/types'); }} key="5">
+              <Menu.Item onClick={() => { handleClickAway(); history.push('/clubs'); }} key="5">Курені</Menu.Item>
+              <Menu.Item onClick={() => { handleClickAway(); history.push('/events/types'); }} key="6">
                 Події
             </Menu.Item>
-              <Menu.Item onClick={() => { handleClickAway(); history.push('/clubs'); }} key="6">Курені</Menu.Item>
               <Menu.Item onClick={() => { handleClickAway(); history.push('/distinctions'); }} key="7">Відзначення</Menu.Item>
               <Menu.Item onClick={() => { handleClickAway(); history.push('/kadra'); }} key="8">Кадра виховників</Menu.Item>
             </SubMenu>
