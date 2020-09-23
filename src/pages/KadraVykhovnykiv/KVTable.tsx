@@ -24,7 +24,6 @@ export const KVTable = ({ current, searchData }: props) => {
   const [data, setData] = useState<any[]>([{
     id: '',
     user: '',
-    kvType: '',
     dateOfGranting: '',
     numberInRegister: '',
     basisOfGranting: '',

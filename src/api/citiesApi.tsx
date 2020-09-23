@@ -143,3 +143,9 @@ export const getDocumentTypes = async () => {
     throw new Error(error);
   });
 }
+
+
+export const getUsersAdministrations = async(UserId:string)=>{
+   return api.get(`Cities/GetUserAdmins/${UserId}`);
+  
+}
