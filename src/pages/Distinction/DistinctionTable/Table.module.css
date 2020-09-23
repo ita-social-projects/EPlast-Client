@@ -15,7 +15,11 @@
     align-items: baseline;
     margin-bottom: 12px;
     width: 700px;
-    margin-left: auto;
+    margin-left: auto; 
+  }
+  .searchContainer>input{
+    max-width: 300px;
+    margin-left: auto; 
   }
   .cardButton{
     inline-size: -webkit-fill-available;

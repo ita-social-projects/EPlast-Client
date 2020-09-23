@@ -17,27 +17,20 @@ import ClickAwayListener from 'react-click-away-listener';
 
 interface Props {
     record: number;
+    userId: string;
     pageX: number;
     pageY: number;
     showDropdown: boolean;
+    canEdit: boolean;
     onDelete :(id: number)=> void;
     onEdit: (id: number, distinction: Distinction, date: Date, reason: string, reporter: string, user: any, userId: string) => void;
-
+    
 }
 
 const DropDown = (props: Props) => {
     const history = useHistory();
-    const { record, pageX, pageY, showDropdown, onDelete, onEdit} = props;
+    const { record, userId, pageX, pageY, showDropdown, canEdit, onDelete, onEdit} = props;
     const [showEditModal, setShowEditModal] = useState(false);
-    const [userRole, setUser] = useState({
-        userID: '',
-        userEmail: '',
-        allRoles: [{
-            id: '',
-            name: ''
-        }],
-        userRoles: ['']
-    })
     const [UserDistinctions, setData] = useState<UserDistinction>({
         id: 0,
         distinction: 
@@ -54,15 +47,18 @@ const DropDown = (props: Props) => {
       });
 
       useEffect(() => {
-        if(showEditModal){
+
           const fetchData = async () =>{
             await distinctionApi.getUserDistinctionById(record).then(res => setData(res.data));
-        }
           fetchData();
+          
         }
         },[showEditModal]);
-    const handleItemClick =async (item: any) => {
+    const handleItemClick = async (item: any) => {
         switch (item.key) {
+            case '1':
+                history.push(`/userpage/main/${userId}`);
+                break;   
             case '2':
                 deleteConfirm(record, onDelete);
                 break;
@@ -90,18 +86,20 @@ const DropDown = (props: Props) => {
                     <FileSearchOutlined />
                         Переглянути профіль
                 </Menu.Item>
-                {(userRole?.userRoles as string[]).some(role => role !== 'Admin') &&
-                    <Menu.Item key="2">
-                        <DeleteOutlined />
+                {(canEdit == true) ? (
+                <Menu.Item key="2">
+                    <DeleteOutlined />
                         Видалити
                 </Menu.Item>
-                }
-                {(userRole?.userRoles as string[]).some(role => role !== 'Admin') &&
+                ) : 
+                (<></>)}
+                {(canEdit == true) ? (
                 <Menu.Item key="3">
                     <EditOutlined />
                         Редагувати
                 </Menu.Item>
-                }
+                ) : 
+                (<></>)}
             </Menu>
                 <EditDistinctionModal
                 record={record}

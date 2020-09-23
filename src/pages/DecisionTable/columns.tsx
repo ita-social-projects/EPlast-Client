@@ -1,3 +1,4 @@
+import { Tooltip } from 'antd';
 import React from 'react';
 import decisionsApi from '../../api/decisionsApi';
 
@@ -25,12 +26,14 @@ const columns = [
   {
     title: 'Рішення',
     dataIndex: 'description',
-    render: (text: string) => {
-      if(text.length > 50){
-        return `${text.slice(0,50) }...`;
-      }
-      return text;
+    ellipsis: {
+      showTitle: false,
     },
+    render: (description: any) => (
+      <Tooltip placement="topLeft" title={description}>
+        {description}
+      </Tooltip>
+    ),
   },
   {
     title: 'Дата',

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Space, Spin, Button } from 'antd';
+import { Card, Button, Avatar, Tooltip } from 'antd';
 import './Approvers.less';
 import AvatarAndProgress from '../../../../src/pages/userPage/personalData/AvatarAndProgress';
 import AddUser from "../../../assets/images/user_add.png";
@@ -13,7 +13,6 @@ import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import notificationLogic from '../../../components/Notifications/Notification';
 import Spinner from '../../Spinner/Spinner';
-import classes from '*.module.css';
 
 const Assignments = () => {
   const history = useHistory();
@@ -66,7 +65,7 @@ const Assignments = () => {
                         key={p.id}
                         hoverable
                         className="cardStyles"
-                        cover={<img alt="example" src={p.approver.user.imagePath} className="avatar" />}
+                        cover={<Avatar alt="example" src={p.approver.user.imagePath} className="avatar" />}
                       >
                         <Meta title={p.approver.user.firstName + " " + p.approver.user.lastName} className="titleText" />
                         <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className="titleText" />
@@ -85,7 +84,7 @@ const Assignments = () => {
                           key={p.id}
                           hoverable
                           className="cardStyles"
-                          cover={<img alt="example" src={p.approver.user.imagePath} className="avatar" />}
+                          cover={<Avatar alt="example" src={p.approver.user.imagePath} className="avatar" />}
                         >
                           <Meta title={p.approver.user.firstName + " " + p.approver.user.lastName} className="titleText" />
                           <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className="titleText" />
@@ -100,15 +99,18 @@ const Assignments = () => {
               <div>
                 {data?.canApprove && (
                   <div>
-                    <Link to="#" onClick={() => approveClick(data?.user.id)}>
-                      <Card
-                        hoverable
-                        className="cardStyles"
-                        cover={<img alt="example" src={AddUser} className="avatar" />}
-                      >
-                        <Meta className="cardBodyEmpty" />
-                      </Card>
-                    </Link>
+                    <Tooltip
+                      title="Поручитися за користувача"
+                      placement="rightBottom">
+                      <Link to="#" onClick={() => approveClick(data?.user.id)}>
+                          <Avatar style={{ backgroundColor: '#f0f5f0' }} 
+                            shape="square"
+                            src={AddUser}
+                            alt="example" size={168}
+                            className="avatarEmpty" />
+                          <Meta className="cardBodyEmpty" />
+                      </Link>
+                    </Tooltip>
                   </div>
                 )}
                 {data?.confirmedUsers.length == 0 && !data?.canApprove && (
@@ -133,7 +135,7 @@ const Assignments = () => {
                       <Card
                         hoverable
                         className="cardStyles"
-                        cover={<img alt="example" src={data.clubApprover.approver.user.imagePath} className="avatar" />}
+                        cover={<Avatar alt="example" src={data.clubApprover.approver.user.imagePath} className="avatar" />}
                       >
                         <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
                         <Meta title={moment(data.clubApprover.confirmDate).format("DD-MM-YYYY")} className="titleText" />
@@ -146,7 +148,7 @@ const Assignments = () => {
                         <Card
                           hoverable
                           className="cardStyles"
-                          cover={<img alt="example" src={data.clubApprover.approver.user.imagePath} className="avatar" />}
+                          cover={<Avatar alt="example" src={data.clubApprover.approver.user.imagePath} className="avatar" />}
                         >
                           <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
                           <Meta title={moment(data.clubApprover.confirmDate).format("DD-MM-YYYY")} className="titleText" />
@@ -162,7 +164,7 @@ const Assignments = () => {
                       <Card
                         hoverable
                         className="cardStyles"
-                        cover={<img alt="example" src={AddUser} className="avatar" />}
+                        cover={<Avatar alt="example" src={AddUser} className="avatar" />}
                       >
                       </Card>
                     </Link>
@@ -186,7 +188,7 @@ const Assignments = () => {
                     <Card
                       hoverable
                       className="cardStyles"
-                      cover={<img alt="example" src={data.cityApprover.approver.user.imagePath} className="avatar" />}
+                      cover={<Avatar alt="example" src={data.cityApprover.approver.user.imagePath} className="avatar" />}
                     >
                       <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
                       <Meta title={moment(data.cityApprover.confirmDate).format("DD-MM-YYYY")} className="titleText" />
@@ -199,7 +201,7 @@ const Assignments = () => {
                         <Card
                           hoverable
                           className="cardStyles"
-                          cover={<img alt="example" src={data.cityApprover.approver.user.imagePath} className="avatar" />}
+                          cover={<Avatar alt="example" src={data.cityApprover.approver.user.imagePath} className="avatar" />}
                         >
                           <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
                           <Meta title={moment(data.cityApprover.confirmDate).format("DD-MM-YYYY")} className="titleText" />
@@ -215,7 +217,7 @@ const Assignments = () => {
                       <Card
                         hoverable
                         className="cardStyles"
-                        cover={<img alt="example" src={AddUser} className="avatar" />}
+                        cover={<Avatar alt="example" src={AddUser} className="avatar" />}
                       >
                       </Card>
                     </Link>
