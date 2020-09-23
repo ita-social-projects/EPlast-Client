@@ -23,11 +23,11 @@ class AvatarAndProgressProps {
 
 
 
-const contentListNoTitle: { [key: number]: any } = {
-  5: <div key ='1' className="edustaffWrapper">< img src={KV1YPN} alt="Picture1"  className="edustaffPhoto"/></div>,
-  6: <div key ='2' className="edustaffWrapper"><img src={KV1YPU} alt="Picture1" className="edustaffPhoto"/></div>,
-  7: <div key ='3' className="edustaffWrapper"><img src={KV2YPN} alt="Picture1" className="edustaffPhoto"/></div>,
-  8: <div key ='4' className="edustaffWrapper"><img src={KV2YPU} alt="Picture1" className="edustaffPhoto"/></div>,
+const contentListNoTitle: { [key: string]: any } = {
+  5: <div key ='5' className="edustaffWrapper">< img src={KV1YPN} alt="Picture1"  className="edustaffPhoto"/></div>,
+  6: <div key ='6' className="edustaffWrapper"><img src={KV1YPU} alt="Picture1" className="edustaffPhoto"/></div>,
+  7: <div key ='7' className="edustaffWrapper"><img src={KV2YPN} alt="Picture1" className="edustaffPhoto"/></div>,
+  8: <div key ='8' className="edustaffWrapper"><img src={KV2YPU} alt="Picture1" className="edustaffPhoto"/></div>,
 };
 
 
@@ -46,7 +46,7 @@ let arrOfKV: Array<any>=[];
   const [kadras, setkadras] = useState<any>([{
     id: '',
     user: '',
-    kvType: '',
+    kadraVykhovnykivTypeId: '',
     dateOfGranting: '',
     numberInRegister: '',
     basisOfGranting: '',
@@ -99,10 +99,17 @@ let arrOfKV: Array<any>=[];
             )}
 
 
+    { arrOfKV.map(element => 
+       
+       console.log(element )
+  
+     )}
+
       <div className="edustaffAllPhotos">
          { arrOfKV.map(element => 
+       
               (contentListNoTitle[element ])
-              
+         
             )}
             </div>
         </div>

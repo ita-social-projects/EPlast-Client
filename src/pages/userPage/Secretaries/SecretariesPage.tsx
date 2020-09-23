@@ -6,6 +6,7 @@ import { Data } from '../Interface/Interface';
 import notificationLogic from '../../../components/Notifications/Notification';
 import { Card, Form, Input } from 'antd';
 import './Secretaries.less'
+import {UserCitySecretaryTable} from './UserCitySecretaryTable';
 
 
 
@@ -59,7 +60,7 @@ export const Secretaries = () => {
 
      const contentListNoTitle: { [key: string]: any } = {
         1: <div key='1'>Округ</div>,
-        2: <div key='2'>Станиця</div>,
+        2: <div key='2'><UserCitySecretaryTable UserId={userId}/></div>,
         3: <div key='3'>Курінь</div>
       };
 
