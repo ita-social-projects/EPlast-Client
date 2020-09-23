@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 
 import { Avatar, Progress, Spin, Space, Skeleton } from 'antd';
 import './PersonalData.less';
-import { useHistory } from "react-router-dom";
 import userApi from '../../../api/UserApi';
 import kadrasApi from '../../../api/KadraVykhovnykivApi';
 import KV1YPU from '../../../assets/images/KV1YPU.png';
@@ -24,26 +23,21 @@ class AvatarAndProgressProps {
 
 
 const contentListNoTitle: { [key: string]: any } = {
-  5: <div key ='5' className="edustaffWrapper">< img src={KV1YPN} alt="Picture1"  className="edustaffPhoto"/></div>,
-  6: <div key ='6' className="edustaffWrapper"><img src={KV1YPU} alt="Picture1" className="edustaffPhoto"/></div>,
-  7: <div key ='7' className="edustaffWrapper"><img src={KV2YPN} alt="Picture1" className="edustaffPhoto"/></div>,
-  8: <div key ='8' className="edustaffWrapper"><img src={KV2YPU} alt="Picture1" className="edustaffPhoto"/></div>,
+  5: <div key='5' className="edustaffWrapper">< img src={KV1YPN} alt="Picture1" className="edustaffPhoto" /></div>,
+  6: <div key='6' className="edustaffWrapper"><img src={KV1YPU} alt="Picture1" className="edustaffPhoto" /></div>,
+  7: <div key='7' className="edustaffWrapper"><img src={KV2YPN} alt="Picture1" className="edustaffPhoto" /></div>,
+  8: <div key='8' className="edustaffWrapper"><img src={KV2YPU} alt="Picture1" className="edustaffPhoto" /></div>,
 };
 
 
 
-const AvatarAndProgress:React.FC<AvatarAndProgressProps> = (props: AvatarAndProgressProps)=> {
+const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndProgressProps) => {
   const { userId } = useParams();
   const [loading, setLoading] = useState(false);
   const { time, imageUrl, firstName, lastName, isUserPlastun } = props;
   const [imageBase64, setImageBase64] = useState<string>();
 
-
-
-let arrOfKV: Array<any>=[];
-
-
-  const [kadras, setkadras] = useState<any>([{
+  const [kadras, setkadras] = useState<any[]>([{
     id: '',
     user: '',
     kadraVykhovnykivTypeId: '',
@@ -52,33 +46,36 @@ let arrOfKV: Array<any>=[];
     basisOfGranting: '',
     link: '',
   }])
-  
 
-      useEffect(() => {
- 
-          const fetchData = async () => {
-           
-            await kadrasApi.getAllKVsOfGivenUser(userId).then(responce => {
-              setkadras(responce.data);
-            })
-            await userApi.getImage(imageUrl).then((response: { data: any; }) =>{
-              setImageBase64(response.data);
-            });
-             setLoading(true);
-          };
-          
-          fetchData();
-        
-      }, [props]);
+
+  useEffect(() => {
+
+    const fetchData = async () => {
+
+      await kadrasApi.getAllKVsOfGivenUser(userId).then(responce => {
+        setkadras(responce.data);
+
+
+      })
+
+      await userApi.getImage(imageUrl).then((response: { data: any; }) => {
+        setImageBase64(response.data);
+      });
+      setLoading(true);
+    };
+
+    fetchData();
+
+  }, [props]);
 
   return loading === false ? (
     <div className="kadraWrapper">
-    <Skeleton.Avatar size={220}  active={true} shape="circle" className="img" />
+      <Skeleton.Avatar size={220} active={true} shape="circle" className="img" />
     </div>
   ) : (
       <div className="kadraWrapper">
-        
-        <Avatar  src={imageBase64} className="img" />
+
+        <Avatar src={imageBase64} className="img" />
         {!isUserPlastun &&
           <div className="progress">
             <p className="statusText">{time} дні і {firstName} {lastName} Пластун:)</p>
@@ -91,31 +88,14 @@ let arrOfKV: Array<any>=[];
               }}
               percent={Math.round(100 - (time === undefined ? 0 : time) * 100 / 365)}
             />
-
-
-          {  kadras.forEach((element: any) => 
-              arrOfKV.push(element.kadraVykhovnykivTypeId)
-              
-            )}
-
-
-    { arrOfKV.map(element => 
-       
-       console.log(element )
-  
-     )}
-
-      <div className="edustaffAllPhotos">
-         { arrOfKV.map(element => 
-       
-              (contentListNoTitle[element ])
-         
-            )}
-            </div>
+          </div>
+        }
+        <div className="edustaffAllPhotos">
+          {kadras.map(element =>
+            contentListNoTitle[element.kadraVykhovnykivTypeId]
+          )}
         </div>
-         
-      }
-    </div>
-  );
+      </div>
+    );
 }
 export default AvatarAndProgress;
