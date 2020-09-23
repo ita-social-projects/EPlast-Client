@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { Card, Layout, Pagination, Skeleton, Spin } from "antd";
+import { Card, Input, Layout, Pagination, Skeleton, Spin } from "antd";
 import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import { getCitiesByPage, getLogo } from "../../../api/citiesApi";
@@ -20,6 +20,7 @@ const Cities = () => {
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+  const [searchedData, setSearchedData] = useState('');
 
   const setPhotos = async (cities: CityProfile[]) => {
     for await (const city of cities) {
@@ -64,10 +65,25 @@ const Cities = () => {
   useEffect(() => {
     getCities();
   }, [page, pageSize]);
+  
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchedData(event.target.value);
+  };
+
+  let filteredData = searchedData
+  ? cities.filter((item: any) => {
+    return Object.values(item).find((element) => {
+      return String(element).includes(searchedData)
+    });
+  })
+  : cities;
 
   return (
     <Layout.Content className="cities">
       <Title level={1}>Станиці</Title>
+      <div className="searchContainer">
+        <Input placeholder="Пошук" onChange={handleSearch} />
+      </div>
       {loading ? (
         <Spinner />
       ) : (
@@ -86,7 +102,7 @@ const Cities = () => {
                 />
               </Card>
             ) : null}
-            {cities.map((city: CityProfile) => (
+            {filteredData.map((city: CityProfile) => (
               <Card
                 key={city.id}
                 hoverable

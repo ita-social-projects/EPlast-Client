@@ -10,12 +10,21 @@ import EditDistinctionTypesModal from './EditDistinctionTypesModal';
 import ClickAwayListener from 'react-click-away-listener';
 import User from '../../../models/UserTable/User';
 import Distinction from '../Interfaces/Distinction';
+import Spinner from '../../Spinner/Spinner';
+import AuthStore from '../../../stores/AuthStore';
+import jwt from 'jwt-decode';
 
-const classes = require('./Table.module.css');
+
 
 const { Content } = Layout;
 const DistinctionTable = () => {
+  const classes = require('./Table.module.css');
+  let user: any;
+  let curToken = AuthStore.getToken() as string;
+  user = jwt(curToken);
+  let roles = user['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
   const [recordObj, setRecordObj] = useState<any>(0);
+  const [userId, setUserId] = useState<any>(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleModalEditDist, setVisibleModalEditDist] = useState(false);
@@ -23,6 +32,7 @@ const DistinctionTable = () => {
   const [y, setY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [searchedData, setSearchedData] = useState('');
+  const [canEdit, setCanEdit] = useState(roles.includes("Admin"));
   const [UserDistinctions, setData] = useState<UserDistinction[]>([{
       id: 0,
       distinction: 
@@ -40,33 +50,33 @@ const DistinctionTable = () => {
 
     useEffect(() => {
       const fetchData = async () => {
-        setLoading(true);
         const res: UserDistinction[] = await distinctionApi.getUserDistinctions();
         setData(res);
-        setLoading(false);
+        setLoading(true);
       };
       fetchData();
     }, []);
 
-    let filteredData = searchedData
+    let filteredData = searchedData 
     ? UserDistinctions.filter((item: any) => {
       return Object.values(item).find((element) => {
-        return String(element).includes(searchedData)
+        return String(element).toLowerCase().includes(searchedData)
       });
     })
     : UserDistinctions;
 
   filteredData = filteredData.concat(
-    UserDistinctions.filter((item) => (item.user.firstName?.includes(searchedData)||
-    item.user.lastName?.includes(searchedData)) && !filteredData.includes(item)
+    UserDistinctions.filter((item) => (item.user.firstName.toLowerCase()?.includes(searchedData)||
+    item.user.lastName.toLowerCase()?.includes(searchedData)) && !filteredData.includes(item)
     )
   )
   filteredData = filteredData.concat(
-    UserDistinctions.filter((item) => item.distinction.name?.includes(searchedData) && !filteredData.includes(item)
+    UserDistinctions.filter((item) => item.distinction.name.toLowerCase()?.includes(searchedData) && !filteredData.includes(item)
     )
   )
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchedData(event.target.value);
+    setSearchedData(event.target.value.toLowerCase());
+    setLoading(true);
   };
 
     const showModal = () => {
@@ -82,7 +92,7 @@ const DistinctionTable = () => {
       setData(res);
       setLoading(false);
       notificationLogic('success', "Відзначення успішно додано!");
-     
+
     };
 
     const showModalEditTypes = () => {
@@ -123,20 +133,26 @@ const DistinctionTable = () => {
       setData([...filteredData]);
       notificationLogic('success', "Відзначення успішно змінено!");
     }
-
-return (
+return loading === false ? (
+    <Spinner/>
+  ) : (
     <Layout>
       <Content onClick={() => { setShowDropdown(false) }} >
         <h1 className={classes.titleTable}>Відзначення</h1>
-        {!loading && (
+        
           <>
             <div className={classes.searchContainer}>
-            <Button type="primary" onClick = {showModal}>
-                Додати відзначення
-              </Button>
-              <Button type="primary" onClick = {showModalEditTypes}>
-                Редагування типів відзначень
-              </Button>
+              {canEdit === true ? (
+                <>
+                  <Button type="primary" onClick = {showModal}>
+                    Додати відзначення
+                  </Button>
+                  <Button type="primary" onClick = {showModalEditTypes}>
+                    Редагування типів відзначень
+                  </Button>
+                  <span/>
+                </>
+              ): (<></> )}
               <Input placeholder="Пошук" onChange={handleSearch} />
               
             </div>
@@ -154,6 +170,7 @@ return (
                         event.preventDefault();
                         setShowDropdown(true);
                         setRecordObj(record.id);
+                        setUserId(record.userId);
                         setX(event.pageX);
                         setY(event.pageY);
                     },
@@ -167,8 +184,10 @@ return (
                   <DropDownDistinctionTable
                     showDropdown={showDropdown}
                     record={recordObj}
+                    userId={userId}
                     pageX={x}
                     pageY={y}
+                    canEdit={canEdit}
                     onDelete={handleDelete}
                     onEdit={handleEdit}
                 />
@@ -183,7 +202,6 @@ return (
               setVisibleModal = {setVisibleModalEditDist}
               visibleModal = {visibleModalEditDist}/>
           </>
-        )}
       </Content>
 
     </Layout>

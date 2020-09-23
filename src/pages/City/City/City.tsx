@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card } from "antd";
+import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip } from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../../api/citiesApi";
@@ -181,14 +181,12 @@ const City = () => {
                       {city.head.user.lastName}
                     </Paragraph>
                     <Paragraph>
-                      <b>
-                        {moment(city.head.startDate).format("DD.MM.YYYY")}
+                      <b>Час правління:</b> {moment(city.head.startDate).format("DD.MM.YYYY")}
                         {city.head.endDate
                           ? ` - ${moment(city.head.endDate).format(
                               "DD.MM.YYYY"
                             )}`
-                          : ""}
-                      </b>
+                          : " "}
                     </Paragraph>
                   </div>
                 ) : (
@@ -255,20 +253,26 @@ const City = () => {
                   >
                     {canEdit ? (
                       <Col>
-                        <EditOutlined
-                          className="cityInfoIcon"
-                          onClick={() =>
-                            history.push(`/cities/edit/${city.id}`)
-                          }
-                        />
+                      <Tooltip
+                        title="Редагувати станицю">
+                          <EditOutlined
+                            className="cityInfoIcon"
+                            onClick={() =>
+                              history.push(`/cities/edit/${city.id}`)
+                            }
+                          />
+                        </Tooltip>
                       </Col>
                     ) : null}
                     {canCreate ? (
                       <Col offset={1}>
-                        <DeleteOutlined
-                          className="cityInfoIcon"
-                          onClick={() => seeDeleteModal()}
-                        />
+                        <Tooltip
+                          title="Видалити станицю">
+                            <DeleteOutlined
+                              className="cityInfoIconDelete"
+                              onClick={() => seeDeleteModal()}
+                            />
+                        </Tooltip>
                       </Col>
                     ) : null}
                   </Row>
