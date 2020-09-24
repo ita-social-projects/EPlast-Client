@@ -21,9 +21,9 @@ export const getCityById = async (id: number) => {
   });
 };
 
-export const getCitiesByPage = async (page: number, pageSize: number) => {
+export const getCitiesByPage = async (page: number, pageSize: number, cityName: string | null = null) => {
   return api
-    .get(`Cities/Profiles/${page}`, { page, pageSize })
+    .get(`Cities/Profiles/${page}`, { page, pageSize, cityName })
     .catch((error) => {
       throw new Error(error);
     });

@@ -1,5 +1,4 @@
 import distinction from './Distinction'
-import { Moment } from 'moment';
 import User from './User'
  type UserDistinction = {
      id: number;

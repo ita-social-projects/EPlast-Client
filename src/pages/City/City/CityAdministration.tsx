@@ -27,12 +27,10 @@ const CityAdministration = () => {
     const getAdministration = async () => {
       setLoading(true);
       const response = await getAllAdmins(id);
-      if(response.data.administration.length !== 0){
         setPhotosLoading(true);
-        setPhotos([...response.data.administration, response.data.head]);
-        setAdministration([...response.data.administration, response.data.head]);
+        setPhotos([...response.data.administration, response.data.head].filter(a => a != null));
+        setAdministration([...response.data.administration, response.data.head].filter(a => a != null));
         setCanEdit(response.data.canEdit);
-      }
       setLoading(false);
     };
 

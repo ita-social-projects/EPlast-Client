@@ -124,14 +124,19 @@ const City = () => {
 
       setPhotosLoading(true);
       setCityLogoLoading(true);
+      debugger
+      const admins = [...response.data.administration, response.data.head]
+      .filter(a => a !== null);
+
       setPhotos([
-        ...response.data.administration,
+        ...admins,
         ...response.data.members,
         ...response.data.followers,
+        
       ], response.data.logo);
       
       setCity(response.data);
-      setAdmins(response.data.administration);
+      setAdmins(admins);
       setMembers(response.data.members);
       setFollowers(response.data.followers);
       setDocuments(response.data.documents);
