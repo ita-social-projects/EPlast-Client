@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Avatar, Progress, Spin, Space, Skeleton } from 'antd';
+import { Avatar, Progress, Spin, Space, Skeleton, Tooltip } from 'antd';
 import './PersonalData.less';
 import userApi from '../../../api/UserApi';
 import kadrasApi from '../../../api/KadraVykhovnykivApi';
+import distinctionApi from '../../../api/distinctionApi';
 import KV1YPU from '../../../assets/images/KV1YPU.png';
 import KV1YPN from '../../../assets/images/KV1YPN.png';
 import KV2YPN from '../../../assets/images/KV2YPN.png';
 import KV2YPU from '../../../assets/images/KV2YPU.png';
+import UserDistinction from '../../Distinction/Interfaces/UserDistinction';
+import User from '../../../models/UserTable/User';
 
 
 class AvatarAndProgressProps {
@@ -36,6 +39,20 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
   const [loading, setLoading] = useState(false);
   const { time, imageUrl, firstName, lastName, isUserPlastun } = props;
   const [imageBase64, setImageBase64] = useState<string>();
+  const [UserDistinctions, setData] = useState<UserDistinction[]>([{
+    id: 0,
+    distinction: 
+    {
+      id: 0,
+      name: ''
+    },
+      distinctionId: 0,
+      userId: '',
+      reporter: '',
+      reason: '',
+      date: new Date(),
+      user: new User()
+  }]);
 
   const [kadras, setkadras] = useState<any[]>([{
     id: '',
@@ -58,6 +75,10 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
 
       })
 
+      await distinctionApi.getDistinctionOfGivenUser(userId).then(response => {
+        setData(response.data);
+      })
+
       await userApi.getImage(imageUrl).then((response: { data: any; }) => {
         setImageBase64(response.data);
       });
@@ -67,6 +88,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
     fetchData();
 
   }, [props]);
+
 
   return loading === false ? (
     <div className="kadraWrapper">
@@ -95,6 +117,14 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
             contentListNoTitle[element.kadraVykhovnykivTypeId]
           )}
         </div>
+        
+          {UserDistinctions.map(dist =>
+          <Tooltip title={dist?.reason}>
+            <div className="distinctions">
+              {dist.distinction.name}
+            </div>
+          </Tooltip>)}
+        
       </div>
     );
 }

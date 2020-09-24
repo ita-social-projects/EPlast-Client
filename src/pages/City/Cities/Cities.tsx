@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { Card, Input, Layout, Pagination, Skeleton, Spin } from "antd";
+import { Card, Layout, Pagination, Skeleton } from "antd";
 import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import { getCitiesByPage, getLogo } from "../../../api/citiesApi";
 import "./Cities.less";
-import CityProfile from '../../../models/City/CityProfile';
+import CityProfile from "../../../models/City/CityProfile";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
+import Search from "antd/lib/input/Search";
 
 const Cities = () => {
   const history = useHistory();
@@ -20,7 +21,7 @@ const Cities = () => {
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
-  const [searchedData, setSearchedData] = useState('');
+  const [searchedData, setSearchedData] = useState("");
 
   const setPhotos = async (cities: CityProfile[]) => {
     for await (const city of cities) {
@@ -39,57 +40,53 @@ const Cities = () => {
     setLoading(true);
 
     try {
-      const response = await getCitiesByPage(page, pageSize);
-      
+      const response = await getCitiesByPage(page, pageSize, searchedData);
+
       setPhotosLoading(true);
       setPhotos(response.data.cities);
-
       setCities(response.data.cities);
       setCanCreate(response.data.canCreate);
       setTotal(response.data.total);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
 
   const handleChange = (page: number) => {
     setPage(page);
-  }
+  };
 
   const handleSizeChange = (page: number, pageSize: number = 10) => {
     setPage(page);
     setPageSize(pageSize);
-  }
+  };
 
   useEffect(() => {
     getCities();
-  }, [page, pageSize]);
-  
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchedData(event.target.value);
-  };
+  }, [page, pageSize, searchedData]);
 
-  let filteredData = searchedData
-  ? cities.filter((item: any) => {
-    return Object.values(item).find((element) => {
-      return String(element).includes(searchedData)
-    });
-  })
-  : cities;
+  const handleSearch = (event: any) => {
+    setSearchedData(event);
+  };
 
   return (
     <Layout.Content className="cities">
       <Title level={1}>Станиці</Title>
       <div className="searchContainer">
-        <Input placeholder="Пошук" onChange={handleSearch} />
+        <Search
+          placeholder="Пошук"
+          enterButton
+          onSearch={handleSearch}
+          loading={photosLoading}
+          disabled={photosLoading}
+        />
       </div>
       {loading ? (
         <Spinner />
       ) : (
         <div>
           <div className="cityWrapper">
-            {canCreate && page === 1 ? (
+            {canCreate && page === 1 && searchedData.length === 0 ? (
               <Card
                 hoverable
                 className="cardStyles addCity"
@@ -102,7 +99,7 @@ const Cities = () => {
                 />
               </Card>
             ) : null}
-            {filteredData.map((city: CityProfile) => (
+            {cities.map((city: CityProfile) => (
               <Card
                 key={city.id}
                 hoverable
