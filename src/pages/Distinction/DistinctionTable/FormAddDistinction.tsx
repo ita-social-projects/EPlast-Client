@@ -33,6 +33,7 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
       
     }]);
     const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
+    const [loadingUserStatus, setLoadingUserStatus] = useState(false);
     const dateFormat = 'DD-MM-YYYY';
 
     useEffect( () => {
@@ -40,8 +41,10 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
             await distinctionApi.getDistinctions().then(response =>{
               setDistData(response.data)
             })
+            setLoadingUserStatus(true);
             await adminApi.getUsersForTable().then(response => { 
               setUserData(response.data)
+              setLoadingUserStatus(false);
             })
         };
         fetchData();
@@ -86,9 +89,9 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
                   },
                 ]}
               >
-                   <Select
-                 className={formclasses.selectField}
-                 >
+                <Select
+                  className={formclasses.selectField}
+                  showSearch>
                     {distData?.map((o) => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{ o.name }</Select.Option>))}
                 </Select>
               </Form.Item>
@@ -100,6 +103,8 @@ const FormAddDistinction : React.FC<FormAddDistinctionProps> = (props: any) => {
                rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
                 <Select
                  className={formclasses.selectField}
+                 showSearch
+                 loading = {loadingUserStatus}
                  >
                 {userData?.map((o) => ( <Select.Option key={o.user.id} value={JSON.stringify(o.user)}>{ o.user.firstName + " " + o.user.lastName }</Select.Option>))}
                 </Select>

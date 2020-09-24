@@ -47,13 +47,14 @@ const DropDown = (props: Props) => {
       });
 
       useEffect(() => {
-
+        if(showEditModal){
           const fetchData = async () =>{
             await distinctionApi.getUserDistinctionById(record).then(res => setData(res.data));
+          }
           fetchData();
-          
         }
         },[showEditModal]);
+        
     const handleItemClick = async (item: any) => {
         switch (item.key) {
             case '1':
@@ -63,7 +64,7 @@ const DropDown = (props: Props) => {
                 deleteConfirm(record, onDelete);
                 break;
             case '3':
-                setShowEditModal(true)
+                await setShowEditModal(true)
                 break;
             default:
                 break;

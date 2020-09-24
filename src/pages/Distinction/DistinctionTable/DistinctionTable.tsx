@@ -85,13 +85,12 @@ const DistinctionTable = () => {
     };
 
     const handleAdd = async() => {
-    
       setVisibleModal(false);
-      setLoading(true);
+      setLoading(false);
       const res: UserDistinction[] = await distinctionApi.getUserDistinctions();
       setData(res);
-      setLoading(false);
       notificationLogic('success', "Відзначення успішно додано!");
+      setLoading(true);
 
     };
 

@@ -34,6 +34,7 @@ const FormEditDistinction = ({ record,  setShowModal, onEdit, distinction}: Prop
     
   }]);
   const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
+  const [loadingUserStatus, setLoadingUserStatus] = useState(false);
   const [distValue, setDistValue] = useState<any>();
   const [userValue, setUserValue] = useState<any>();
   const dateFormat = 'DD-MM-YYYY';
@@ -46,9 +47,11 @@ const FormEditDistinction = ({ record,  setShowModal, onEdit, distinction}: Prop
         await distinctionApi.getDistinctions().then(response =>{
           setDistData(response.data)
         })
+        setLoadingUserStatus(true);
         await adminApi.getUsersForTable().then(response => { 
           setUserData(response.data)
         })
+        setLoadingUserStatus(false);
     };
     fetchData();
      setLoading(false);
@@ -115,6 +118,7 @@ const FormEditDistinction = ({ record,  setShowModal, onEdit, distinction}: Prop
               >
                    <Select
                         className={formclasses.selectField}
+                        showSearch
                         onSelect = {distChange}
                     >
                         {distData?.map((o) => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{ o.name }</Select.Option>))}
@@ -130,6 +134,8 @@ const FormEditDistinction = ({ record,  setShowModal, onEdit, distinction}: Prop
                 <Select
                  className={formclasses.selectField}
                  onSelect = {userChange}
+                 showSearch
+                 loading = {loadingUserStatus}
                  >
                 {userData?.map((o) => ( <Select.Option key={o.user.id} value={JSON.stringify(o.user)}>{ o.user.firstName + " " + o.user.lastName }</Select.Option>))}
                 </Select>
