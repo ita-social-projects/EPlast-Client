@@ -1,5 +1,5 @@
 import React, {ReactNode} from "react";
-import {PageHeader, Tabs, Typography, Statistic, Descriptions} from 'antd';
+import {Typography, Descriptions} from 'antd';
 import "./EventDetails.less"
 import {EventInformation} from "./EventInfo";
 
@@ -18,7 +18,7 @@ const EventDetailsHeader = ({
                                 eventInfo: {
                                     eventName, eventCategory, eventType, eventDateStart,
                                     eventDateEnd, eventStatus, eventLocation,
-                                    description, forWhom, formOfHolding
+                                    description, forWhom, formOfHolding, eventParticipants
                                 }
                             }: Props) => {
     return (
@@ -32,7 +32,7 @@ const EventDetailsHeader = ({
             <Descriptions.Item label={renderLabel("Призначений для")}>{renderContent(forWhom)}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Форма проведення")}>{renderContent(formOfHolding)}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Статус")}>{renderContent(eventStatus)}</Descriptions.Item>
-            <Descriptions.Item label={renderLabel("Кількість учасників")}>{renderContent("65")}</Descriptions.Item>
+            <Descriptions.Item label={renderLabel("Кількість учасників")}>{renderContent(eventParticipants.length.toString())}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Опис")}>
                 {renderDescription(description)}
             </Descriptions.Item>

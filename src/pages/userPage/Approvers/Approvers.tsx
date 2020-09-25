@@ -53,8 +53,7 @@ const Assignments = () => {
             <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} />
           </div>
           <div className="approversContent">
-            <h1>{data?.user.firstName} {data?.user.lastName}</h1>
-            <hr />
+            <hr/>
             <h1>Поручення дійсних членів</h1>
             <div className="approversCard">
               {data?.confirmedUsers.map(p => {

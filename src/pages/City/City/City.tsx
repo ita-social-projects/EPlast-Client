@@ -124,7 +124,6 @@ const City = () => {
 
       setPhotosLoading(true);
       setCityLogoLoading(true);
-      debugger
       const admins = [...response.data.administration, response.data.head]
       .filter(a => a !== null);
 
