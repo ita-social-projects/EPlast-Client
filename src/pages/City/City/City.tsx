@@ -124,7 +124,6 @@ const City = () => {
 
       setPhotosLoading(true);
       setCityLogoLoading(true);
-      debugger
       const admins = [...response.data.administration, response.data.head]
       .filter(a => a !== null);
 
@@ -206,9 +205,9 @@ const City = () => {
                     {city.cityURL ? (
                       <Paragraph>
                         <b>Посилання:</b>{" "}
-                        <a href={city.cityURL} target="_blank">
+                        <u><a href={city.cityURL} target="_blank">
                           {city.cityURL}
-                        </a>
+                        </a></u>
                       </Paragraph>
                     ) : null}
                     {city.phoneNumber ? (

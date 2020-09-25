@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Avatar, Progress, Spin, Space, Skeleton, Tooltip } from 'antd';
+import { Avatar, Progress, Spin, Space, Skeleton, Tooltip , Typography} from 'antd';
 import './PersonalData.less';
 import userApi from '../../../api/UserApi';
 import kadrasApi from '../../../api/KadraVykhovnykivApi';
@@ -13,6 +13,7 @@ import KV2YPU from '../../../assets/images/KV2YPU.png';
 import UserDistinction from '../../Distinction/Interfaces/UserDistinction';
 import User from '../../../models/UserTable/User';
 
+const { Title } = Typography;
 
 class AvatarAndProgressProps {
   imageUrl: string | undefined;
@@ -53,7 +54,6 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
       date: new Date(),
       user: new User()
   }]);
-
   const [kadras, setkadras] = useState<any[]>([{
     id: '',
     user: '',
@@ -96,8 +96,8 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
     </div>
   ) : (
       <div className="kadraWrapper">
-
         <Avatar src={imageBase64} className="img" />
+        <Title level={2}>{firstName} {lastName}</Title>
         {!isUserPlastun &&
           <div className="progress">
             <p className="statusText">{time} дні і {firstName} {lastName} Пластун:)</p>
@@ -119,11 +119,12 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
         </div>
         
           {UserDistinctions.map(dist =>
-          <Tooltip title={dist?.reason}>
             <div className="distinctions">
-              {dist.distinction.name}
+              <Tooltip title={dist?.reason}>
+                <h2>{dist.distinction.name}</h2>
+              </Tooltip>
             </div>
-          </Tooltip>)}
+          )}  
         
       </div>
     );

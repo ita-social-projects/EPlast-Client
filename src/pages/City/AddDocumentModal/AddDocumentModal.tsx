@@ -153,7 +153,6 @@ const AddDocumentModal = (props: Props) => {
             name="dragger"
             valuePropName="fileList"
             getValueFromEvent={normFile}
-            rules={[{ required: true, message: "Потрібно завантажити файл" }]}
           >
             <Upload.Dragger
               name="file"
