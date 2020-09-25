@@ -205,9 +205,9 @@ const City = () => {
                     {city.cityURL ? (
                       <Paragraph>
                         <b>Посилання:</b>{" "}
-                        <a href={city.cityURL} target="_blank">
+                        <u><a href={city.cityURL} target="_blank">
                           {city.cityURL}
-                        </a>
+                        </a></u>
                       </Paragraph>
                     ) : null}
                     {city.phoneNumber ? (
