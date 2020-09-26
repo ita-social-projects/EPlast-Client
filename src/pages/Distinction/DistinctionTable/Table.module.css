@@ -2,17 +2,8 @@
     text-align: center;
     margin-bottom: 15px;
   }
-  .table{
-    width: auto;
-    height: auto;
-  }
-  @media (max-width: 1350px){
-    .table{
-        overflow-x: scroll;
-      }
-    }
   /* Search container */
-  
+
   .searchContainer {
     display: flex;
     align-items: baseline;
@@ -24,6 +15,7 @@
     max-width: 300px;
     margin-left: auto; 
   }
+
   .cardButton{
     inline-size: -webkit-fill-available;
     margin-top: 7px;
@@ -35,7 +27,23 @@
   }
   
   /* Context menu right click */
-  
+  @media(max-width: 800px){
+    .searchContainer{
+      width: 100%;
+      flex-direction: column;
+      
+    }
+    .searchContainer>input{
+      max-width: 100%;
+      margin-left: auto; 
+    }
+    .searchContainer>button{
+      width: 100%;
+      margin-bottom: 10px;
+      margin-left: auto; 
+
+    }
+  }
   .menu {
     box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
     position: absolute;

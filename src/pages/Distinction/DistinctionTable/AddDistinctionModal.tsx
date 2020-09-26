@@ -1,6 +1,7 @@
 import React from "react";
-import { Drawer, Modal } from "antd";
+import { Drawer } from "antd";
 import FormAddDistinction from "./FormAddDistinction";
+import classes from "./Form.module.css";
 
 interface Props {
   visibleModal: boolean;
@@ -17,6 +18,7 @@ const AddDistinctionModal = ({
 
   return (
     <Drawer
+    className={classes.drawer}
       title="Додати відзначення"
       placement="right"
       width={520}

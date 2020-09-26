@@ -44,6 +44,7 @@ const DistinctionTable = () => {
       userId: "",
       reporter: "",
       reason: "",
+      number: 0,
       date: new Date(),
       user: new User(),
     },
@@ -120,6 +121,7 @@ const DistinctionTable = () => {
     date: Date,
     reason: string,
     reporter: string,
+    number: number,
     user: any,
     userId: string
   ) => {
@@ -131,6 +133,7 @@ const DistinctionTable = () => {
         d.date = date;
         d.reason = reason;
         d.reporter = reporter;
+        d.number = number;
         d.user = user;
         d.userId = userId;
       }
@@ -172,6 +175,7 @@ const DistinctionTable = () => {
               className={classes.table}
               dataSource={filteredData}
               columns={columns}
+              scroll={{ x: 1300 }}
               onRow={(record) => {
                 return {
                   onClick: () => {

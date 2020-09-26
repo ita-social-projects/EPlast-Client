@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Form, DatePicker, Select, Input, Button, AutoComplete } from "antd";
+import { Form, DatePicker, Select, Input, Button, notification} from "antd";
 import Distinction from "../Interfaces/Distinction";
 import UserDistinction from "../Interfaces/UserDistinction";
 import distinctionApi from "../../../api/distinctionApi";
 import adminApi from "../../../api/adminApi";
+import notificationLogic from "../../../components/Notifications/Notification";
 import formclasses from "./Form.module.css";
 
 type FormAddDistinctionProps = {
@@ -32,6 +33,13 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
   const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
   const dateFormat = "DD-MM-YYYY";
+  const openNotification = (message:string) => {
+    notification.error({
+      message: `Невдалося створити відзначення` ,
+      description:`${message}`,
+      placement: "topLeft",
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,14 +69,42 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       date: values.date,
       reporter: values.reporter,
       reason: values.reason,
+      number: values.number,
     };
-    await distinctionApi.addUserDistinction(newDistinction);
-    setVisibleModal(false);
-    form.resetFields();
-    onAdd();
+    if (
+      await distinctionApi
+        .checkNumberExisting(newDistinction.number)
+        .then((response) => response.data == true)
+    ) {
+      await distinctionApi.addUserDistinction(newDistinction);
+      setVisibleModal(false);
+      form.resetFields();
+      onAdd();
+    } else {
+      openNotification(`Номер ${values.number} вже зайнятий`);
+      form.resetFields(["number"]);
+    }
   };
   return (
     <Form name="basic" onFinish={handleSubmit} form={form}>
+      <Form.Item
+        className={formclasses.formField}
+        label="Номер в реєстрі"
+        name="number"
+        rules={[
+          {
+            required: true,
+            message: "Це поле має бути заповненим",
+          },
+        ]}
+      >
+        <Input
+          type="number"
+          min={1}
+          className={formclasses.inputField}
+          max={1000}
+        />
+      </Form.Item>
       <Form.Item
         className={formclasses.formField}
         label="Відзначення"

@@ -1,5 +1,4 @@
 
-
 .inputField{
     float: right;
     text-align: left;
@@ -27,4 +26,13 @@
     border-color: #3c5438;
     max-width: 320px;
     min-width: 320px;
+  }
+
+  .drawer{
+    width: 520px;
+  }
+  @media(max-width: 520px){
+    .drawer{
+      width: 90%;
+    }
   }
