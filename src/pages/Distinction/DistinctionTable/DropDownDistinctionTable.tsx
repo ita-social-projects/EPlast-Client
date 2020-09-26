@@ -29,6 +29,7 @@ interface Props {
     date: Date,
     reason: string,
     reporter: string,
+    number: number,
     user: any,
     userId: string
   ) => void;
@@ -57,6 +58,7 @@ const DropDown = (props: Props) => {
     userId: "",
     reporter: "",
     reason: "",
+    number: 0,
     date: new Date(),
     user: new User(),
   });

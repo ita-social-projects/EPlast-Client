@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal } from "antd";
+import { Drawer, Modal } from "antd";
 import FormEditDistinctionTypes from "./FormEditDistinctionTypes";
 
 interface Props {
@@ -14,16 +14,19 @@ const EditDistinctionTypesModal = ({
   const handleCancel = () => setVisibleModal(false);
 
   return (
-    <Modal
+    <Drawer
       title="Редагування типів відзначень"
+      placement="right"
+      width={520}
+      height={1000}
       visible={visibleModal}
-      onCancel={handleCancel}
+      onClose={handleCancel}
       footer={null}
     >
       <FormEditDistinctionTypes
         setVisibleModal={setVisibleModal}
       ></FormEditDistinctionTypes>
-    </Modal>
+    </Drawer>
   );
 };
 

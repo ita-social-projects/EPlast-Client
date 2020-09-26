@@ -51,6 +51,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
       userId: '',
       reporter: '',
       reason: '',
+      number: 0,
       date: new Date(),
       user: new User()
   }]);
@@ -121,7 +122,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
           {UserDistinctions.map(dist =>
             <div className="distinctions">
               <Tooltip title={dist?.reason}>
-                <h2>{dist.distinction.name}</h2>
+                <h2>{dist.distinction.name} №{dist.number}</h2>
               </Tooltip>
             </div>
           )}  

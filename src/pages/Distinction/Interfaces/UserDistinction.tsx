@@ -6,6 +6,7 @@ import User from './User'
      distinction: distinction;
      reporter: string;
      reason: string;
+     number: number;
      date: Date;
      userId: string;
      user: User

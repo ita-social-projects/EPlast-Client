@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal } from "antd";
+import { Drawer, Modal } from "antd";
 import FormEditDistinction from "./FormEditDistinction";
 import UserDistinction from "../Interfaces/UserDistinction";
 import Distinction from "../Interfaces/Distinction";
@@ -15,6 +15,7 @@ interface Props {
     date: Date,
     reason: string,
     reporter: string,
+    number: number,
     user: any,
     userId: string
   ) => void;
@@ -28,11 +29,14 @@ const EditDistinctionModal = ({
 }: Props) => {
   const handleCancel = () => setShowModal(false);
   return (
-    <Modal
-      title="Редагування відзначення"
+    <Drawer
+      title="Редагувати відзначення"
+      placement="right"
+      width={520}
+      height={1000}
       visible={showModal}
+      onClose={handleCancel}
       footer={null}
-      onCancel={handleCancel}
     >
       <FormEditDistinction
         record={record}
@@ -40,7 +44,7 @@ const EditDistinctionModal = ({
         setShowModal={setShowModal}
         onEdit={onEdit}
       />
-    </Modal>
+    </Drawer>
   );
 };
 

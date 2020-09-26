@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Select, DatePicker } from "antd";
+import { Form, Input, Button, Select, DatePicker, notification } from "antd";
 import distinctionApi from "../../../api/distinctionApi";
 import UserDistinction from "../Interfaces/UserDistinction";
 import formclasses from "./Form.module.css";
@@ -19,6 +19,7 @@ interface Props {
     date: Date,
     reason: string,
     reporter: string,
+    number: number,
     user: any,
     userId: string
   ) => void;
@@ -51,7 +52,15 @@ const FormEditDistinction = ({
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
   const [distValue, setDistValue] = useState<any>();
   const [userValue, setUserValue] = useState<any>();
+  const openNotification = (message: string) => {
+    notification.error({
+      message: `Невдалося редагувати відзначення`,
+      description: `${message}`,
+      placement: "topLeft",
+    });
+  };
   const dateFormat = "DD-MM-YYYY";
+
   useEffect(() => {
     setLoading(true);
     form.resetFields();
@@ -74,6 +83,7 @@ const FormEditDistinction = ({
   }, [distinction]);
 
   const handleCancel = () => {
+    form.resetFields();
     setShowModal(false);
   };
 
@@ -96,26 +106,56 @@ const FormEditDistinction = ({
       userId: userValue.id,
       reason: dist?.reason,
       reporter: dist?.reporter,
+      number: dist?.number,
     };
-    console.log(distValue);
-    await distinctionApi.editUserDistinction(newDistinction);
-    setShowModal(false);
-    form.resetFields();
-    onEdit(
-      newDistinction.id,
-      newDistinction.distinction,
-      newDistinction.date,
-      newDistinction.reason,
-      newDistinction.reporter,
-      newDistinction.user,
-      newDistinction.user.id
-    );
+    if (
+      dist.number == distinction.number ||
+      (await distinctionApi
+        .checkNumberExisting(newDistinction.number)
+        .then((response) => response.data == true))
+    ) {
+      await distinctionApi.editUserDistinction(newDistinction);
+      setShowModal(false);
+      form.resetFields();
+      onEdit(
+        newDistinction.id,
+        newDistinction.distinction,
+        newDistinction.date,
+        newDistinction.reason,
+        newDistinction.reporter,
+        newDistinction.number,
+        newDistinction.user,
+        newDistinction.user.id
+      );
+    } else {
+      openNotification(`Номер ${dist.number} вже зайнятий`);
+      form.resetFields(["number"]);
+    }
   };
 
   return (
     <div>
       {!loading && (
         <Form name="basic" onFinish={handleFinish} form={form}>
+          <Form.Item
+            initialValue={distinction.number}
+            className={formclasses.formField}
+            label="Номер в реєстрі"
+            name="number"
+            rules={[
+              {
+                required: true,
+                message: "Це поле має бути заповненим",
+              },
+            ]}
+          >
+            <Input
+              type="number"
+              min={1}
+              className={formclasses.inputField}
+              max={1000}
+            />
+          </Form.Item>
           <Form.Item
             className={formclasses.formField}
             label="Відзначення"
@@ -220,7 +260,7 @@ const FormEditDistinction = ({
               Відмінити
             </Button>
             <Button type="primary" htmlType="submit">
-              Опублікувати
+              Зберегти
             </Button>
           </Form.Item>
         </Form>
