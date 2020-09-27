@@ -38,8 +38,6 @@ const columns = [
         render: (date: Date) => {
             return moment(date.toLocaleString()).format('DD-MM-YYYY');
         },
-        defaultSortOrder: 'ascend' as SortOrder,
-        sorter: (a: any, b: any) => a.date - b.date,
     },
     {
         title: 'Подання від',
