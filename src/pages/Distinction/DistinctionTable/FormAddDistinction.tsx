@@ -71,10 +71,13 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       reason: values.reason,
       number: values.number,
     };
+    const exist = (await distinctionApi.checkNumberExisting(newDistinction.number)).data;
+    console.log(values.number);
+
     if (
       await distinctionApi
-        .checkNumberExisting(newDistinction.number)
-        .then((response) => response.data == true)
+        .checkNumberExisting(values.number)
+        .then((response) => response.data == false)
     ) {
       await distinctionApi.addUserDistinction(newDistinction);
       setVisibleModal(false);
