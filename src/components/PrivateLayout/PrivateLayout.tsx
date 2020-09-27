@@ -103,7 +103,7 @@ const PrivateLayout = ({ children }: any) => {
                 </Menu.Item>
                 ) : (<> </>)
             }
-              <Menu.Item onClick={() => { handleClickAway(); }} key="3">Округи</Menu.Item>
+              <Menu.Item onClick={() => { handleClickAway(); history.push("/regions");}} key="3">Округи</Menu.Item>
               <Menu.Item onClick={() => { handleClickAway(); history.push("/cities"); }} key="4">
                 Станиці
             </Menu.Item>
