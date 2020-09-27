@@ -196,7 +196,7 @@ const Region = () => {
                     {canCreate ? (
                       <Col offset={1}>
                         <Tooltip
-                          title="Видалити станицю">
+                          title="Видалити округ">
                             <DeleteOutlined
                               className="cityInfoIconDelete"
                               onClick={() => seeDeleteModal()}
@@ -264,7 +264,7 @@ const Region = () => {
           xs={24}
         >
           <Card hoverable className="cityCard">
-            <Title level={4}>Прихильники станиці</Title>
+            <Title level={4}>Прихильники округу</Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {canJoin ? (
                 <Col
@@ -279,7 +279,7 @@ const Region = () => {
                       size={64}
                       icon={<UserAddOutlined />}
                     />
-                    <p>Доєднати станицю</p>
+                    <p>Доєднати округ</p>
                   </div>
                 </Col>
               ) : null}

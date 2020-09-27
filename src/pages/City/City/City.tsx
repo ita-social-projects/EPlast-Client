@@ -20,6 +20,7 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 const City = () => {
   const history = useHistory();
   const {id} = useParams();
+
   const [loading, setLoading] = useState(false);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
   const [cityLogo64, setCityLogo64] = useState<string>("");
@@ -35,7 +36,6 @@ const City = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
-
 
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
@@ -86,7 +86,6 @@ const City = () => {
     setCityLogoLoading(false);
   };
 
-
   const onAdd = (newDocument: CityDocument) => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
@@ -135,7 +134,6 @@ const City = () => {
         
       ], response.data.logo);
       
-
       setCity(response.data);
       setAdmins(admins);
       setMembers(response.data.members);
@@ -425,7 +423,7 @@ const City = () => {
           xs={24}
         >
           <Card hoverable className="cityCard">
-            <Title level={4}>Прихильники округу</Title>
+            <Title level={4}>Прихильники станиці</Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {canJoin ? (
                 <Col
