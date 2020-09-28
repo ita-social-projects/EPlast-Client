@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import DecisionTable from "./pages/DecisionTable/DecisionTable";
 import "./App.less";
+import AddNewRegionForm from './pages/Regions/AddRegion';
 import HeaderContainer from "./components/Header/HeaderContainer";
 import Home from "./pages/Home/Home";
 import FooterContainer from "./components/Footer/FooterContainer";
@@ -40,6 +41,9 @@ import NotFound from "./pages/Error/NotFound";
 import UsersTable from "./pages/UserTable/UserTable";
 import UserDistinctions from "./pages/Distinction/DistinctionTable/DistinctionTable";
 import KadrasTable from "./pages/KadraVykhovnykiv/KadrasPage";
+import Regions from "./pages/Regions/RegionsPage";
+import Region from "./pages/Regions/Region";
+import AddNewRegionFormPage from "./pages/Regions/AddRegion";
 
 
 const App: FC = () => (
@@ -120,6 +124,12 @@ const App: FC = () => (
             path="/events/types"
             component={EventTypes}
           />
+           <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regions/new"
+            component={AddNewRegionFormPage}
+          />
           <RouteWithLayout
             layout={PrivateLayout}
             exact
@@ -189,6 +199,12 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+            path="/regions"
+            component={Regions}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/clubs/members/:id"
             component={ClubMembers}
           />
@@ -221,6 +237,12 @@ const App: FC = () => (
             exact
             path="/kadra"
             component={KadrasTable}
+          />
+            <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regions/:id"
+            component={Region}
           />
           <RouteWithLayout
             layout={PrivateLayout}
