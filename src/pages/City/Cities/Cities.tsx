@@ -39,7 +39,6 @@ const Cities = () => {
   const getCities = async () => {
     setLoading(true);
 
-    debugger
     try {
       const response = await getCitiesByPage(page, pageSize, searchedData);
 
