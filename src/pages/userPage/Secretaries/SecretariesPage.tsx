@@ -67,7 +67,7 @@ export const Secretaries = () => {
 
     return (
         <>
-            <h1>Діловодства</h1>
+            
             <p></p>
             <div className="container">
                 <Form name="basic" className="formContainer">
