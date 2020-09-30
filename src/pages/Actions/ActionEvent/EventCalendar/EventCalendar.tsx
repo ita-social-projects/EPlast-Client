@@ -54,15 +54,12 @@ export default function () {
             Object.assign(event, { color: eventsColors[2] })
         });
 
-        console.log(actions);
-        console.log(camps); 
         return (actions as Array<any>).concat(educations as Array<any>).concat(camps as Array<any>);
     }
 
     const handleEventClick = (clickInfo: any) => {
         setEventModal(true);
         setEventInfo(clickInfo);
-        console.log(clickInfo);
     }
 
     return loading === false ? (
