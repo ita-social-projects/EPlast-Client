@@ -118,7 +118,7 @@ export default function () {
                             ]}
                     >
                         <div className={classes.title}>
-                        <h1>{eventInfo?.event?.title}</h1>
+                        <h1 className={classes.title}>{eventInfo?.event?.title}</h1>
                         </div>
                         <h2>Дата початку: {moment(eventInfo?.event?.start).format("DD-MM-YYYY HH:mm")}</h2>
                         <h2>Дата завершення: {moment(eventInfo?.event?.end).format("DD-MM-YYYY HH:mm")}</h2>

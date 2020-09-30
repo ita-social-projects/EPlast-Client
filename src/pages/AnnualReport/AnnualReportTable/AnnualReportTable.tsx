@@ -16,6 +16,7 @@ import './AnnualReportTable.less';
 import AuthStore from '../../../stores/AuthStore';
 import jwt_decode from 'jwt-decode';
 import CitySelectModal from './CitySelectModal/CitySelectModal';
+import ClickAwayListener from 'react-click-away-listener';
 
 const { Title } = Typography;
 
@@ -40,6 +41,8 @@ const AnnualReportTable = () => {
         fetchAnnualReports();
         checkAccessToManage();
     }, [])
+
+
 
     const checkAccessToManage = () => {
         let jwt = AuthStore.getToken() as string;
@@ -164,6 +167,15 @@ const AnnualReportTable = () => {
         }
     }
 
+
+
+    const handleClickAway = () => {
+        setShowUnconfirmedDropdown(false);
+        setShowConfirmedDropdown(false);
+        setShowSavedDropdown(false);
+        setShowAnnualReportModal(false);
+      }
+
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         hideDropdowns();
         setSearchedData(event.target.value);
@@ -246,6 +258,7 @@ const AnnualReportTable = () => {
                 </Button>
                 </Col>
             </Row>
+           
             <Table
                 bordered
                 rowKey="id"
@@ -280,6 +293,8 @@ const AnnualReportTable = () => {
                     showTotal: (total, range) =>
                         `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
                 }} />
+
+<ClickAwayListener onClickAway={handleClickAway} onSelect={handleClickAway}>
             <UnconfirmedDropdown
                 showDropdown={showUnconfirmedDropdown}
                 record={annualReport}
@@ -290,6 +305,9 @@ const AnnualReportTable = () => {
                 onEdit={handleEdit}
                 onConfirm={handleConfirm}
                 onRemove={handleRemove} />
+              </ClickAwayListener>
+
+<ClickAwayListener onClickAway={handleClickAway} onSelect={handleClickAway}>
             <ConfirmedDropdown
                 showDropdown={showConfirmedDropdown}
                 record={annualReport}
@@ -298,12 +316,15 @@ const AnnualReportTable = () => {
                 canManage={canManage}
                 onView={handleView}
                 onCancel={handleCancel} />
+                </ClickAwayListener>
+<ClickAwayListener onClickAway={handleClickAway} onSelect={handleClickAway}>
             <SavedDropdown
                 showDropdown={showSavedDropdown}
                 record={annualReport}
                 pageX={x}
                 pageY={y}
                 onView={handleView} />
+                </ClickAwayListener>
             <AnnualReportInformation
                 visibleModal={showAnnualReportModal}
                 annualReport={annualReport}
