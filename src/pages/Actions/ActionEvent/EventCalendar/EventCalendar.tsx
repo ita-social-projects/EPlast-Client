@@ -54,12 +54,15 @@ export default function () {
             Object.assign(event, { color: eventsColors[2] })
         });
 
+        console.log(actions);
+        console.log(camps); 
         return (actions as Array<any>).concat(educations as Array<any>).concat(camps as Array<any>);
     }
 
     const handleEventClick = (clickInfo: any) => {
         setEventModal(true);
         setEventInfo(clickInfo);
+        console.log(clickInfo);
     }
 
     return loading === false ? (
@@ -91,17 +94,23 @@ export default function () {
                             center: 'title',
                             right: ''
                         }}
-                        displayEventEnd={true}
+                        displayEventEnd={false}
                         locale={ukLocale}
                         height={'auto'}
                         eventClick={event => handleEventClick(event)}
                         initialEvents={getConcatedEvents()}
                         dayMaxEventRows={3}
                         dayMaxEvents={3}
+                        eventTimeFormat={ {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            meridiem: 'short'
+                        }
+                        }
                         moreLinkClick="popover"
                         showNonCurrentDates={false}
                         displayEventTime={false}
-                        defaultAllDay={true}
+                        defaultAllDay={false}
                         forceEventDuration={true}
                     />
                     < Modal
@@ -120,8 +129,8 @@ export default function () {
                         <div className={classes.title}>
                         <h1>{eventInfo?.event?.title}</h1>
                         </div>
-                        <h2>Дата початку: {moment(eventInfo?.event?.start).format("DD-MM-YYYY HH:mm")}</h2>
-                        <h2>Дата завершення: {moment(eventInfo?.event?.end).format("DD-MM-YYYY HH:mm")}</h2>
+                        <h2>Дата початку: {moment(eventInfo?.event?.start).format("LLLL")}</h2>
+                        <h2>Дата завершення: {moment(eventInfo?.event?.end).format("LLLL")}</h2>
                         <h2>Локація: {eventInfo?.event?._def.extendedProps.eventlocation}</h2>
                         <h2>Опис: {eventInfo?.event?._def.extendedProps.description}</h2>
                         < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${eventInfo?.event?.id}/details`)} >
