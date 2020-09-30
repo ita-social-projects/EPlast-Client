@@ -39,7 +39,7 @@ const editDistinction = async (data: Distinction) => {
   return await api.put(`Distinction/Edit/${data.id}`, data.id);
 };
 const checkNumberExisting = async (number: number) => {
-  return await api.get(`Distinction/numberExist`, number);
+  return await api.get(`Distinction/numberExist/${number}`, number);
 };
 
 export default {

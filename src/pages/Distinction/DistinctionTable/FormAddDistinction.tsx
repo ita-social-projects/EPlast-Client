@@ -74,7 +74,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     if (
       await distinctionApi
         .checkNumberExisting(newDistinction.number)
-        .then((response) => response.data == true)
+        .then((response) => response.data == false)
     ) {
       await distinctionApi.addUserDistinction(newDistinction);
       setVisibleModal(false);
