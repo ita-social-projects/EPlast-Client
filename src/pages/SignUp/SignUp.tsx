@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, Input, Button} from 'antd';
 import styles from './SignUp.module.css';
 import Switcher from './Switcher/Switcher';
@@ -10,6 +10,7 @@ let authService = new AuthorizeApi();
 export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
+  const [available, setAvailabe] = useState(true);
 
   const validationSchema = {
     Email: [{ required: true, message: "Поле електронна пошта є обов'язковим" }, { validator: checkEmail }],
@@ -26,7 +27,9 @@ export default function () {
   };
 
   const handleSubmit = async (values: any) => {
+    setAvailabe(false);
     await authService.register(values);
+    setAvailabe(true);
     history.push('/signup')
   };
 
@@ -80,7 +83,7 @@ export default function () {
           <Input className={styles.MyInput} placeholder="Прізвище" />
         </Form.Item>
         <Form.Item>
-          <Button htmlType="submit" id={styles.confirmButton}>
+          <Button htmlType="submit" id={styles.confirmButton} disabled={!available} loading={!available}>
             Зареєструватись
           </Button>
         </Form.Item>
