@@ -11,6 +11,7 @@ const classes = require('./ActionEvent.module.css');
 interface Props {
     eventCategoryId: number;
     typeId: number;
+    switcher: boolean;
 }
 
 export interface CardProps {
@@ -26,22 +27,32 @@ export interface CardProps {
     isEventNotApproved: boolean;
 }
 
-const SortedEvents = ({eventCategoryId, typeId}: Props) => {
+const SortedEvents = ({eventCategoryId, typeId, switcher}: Props) => {
 
     const [loading, setLoading] = useState(false);
     const [actions, setActions] = useState<CardProps[]>([]);
+    const [actionsToDisplay, setActionsToDisplay]= useState<CardProps[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
             const response = await eventsApi.getEvents(typeId, eventCategoryId);
+           
             setActions(response.data)
+            setActionsToDisplay(switcher ? response.data.filter((a: CardProps) =>!a.isEventFinished) : response.data)
             setLoading(true);
         };
-        fetchData();
-    }, []);
+
+        if (actions.length === 0) {
+            fetchData();
+        }
+        else {
+            setActionsToDisplay(switcher ? actions.filter((a: CardProps) =>!a.isEventFinished) : actions)
+        }
+    }, [switcher]);
 
     const removeEventCard = (id: number) => {
         setActions(actions.filter(action => action.eventId !== id))
+        setActionsToDisplay(actionsToDisplay.filter(action => action.eventId !== id))
     }
 
     const subscribeOnEvent = (id: number) => {
@@ -86,7 +97,7 @@ const SortedEvents = ({eventCategoryId, typeId}: Props) => {
         return null;
     };
 
-    const actionCard = renderAction(actions);
+    const actionCard = renderAction(actionsToDisplay);
 
     return loading === false ? (
         <div className={spinClasses.spaceWrapper}>

@@ -15,10 +15,16 @@ const AnnualReportForm = (props: Props) => {
         ],
         number: [
             { required: true, message: "Поле є обов'язковим для заповнення" },
-            { pattern: /^\d+$/, message: "Поле повинне містити додатні цілі числа" }
+            { pattern: /^\d+$/, message: "Поле повинне містити додатні цілі числа" },
+            { max: 5, message: "Поле не повинно містити більше 5 чисел" }
         ],
         textarea: [
             { max: 2000, message: "Максимально допустима кількість символів - 2000" }
+        ],
+        money: [
+            { required: true, message: "Поле є обов'язковим для заповнення" },
+            { pattern: /^\d+$/, message: "Поле повинне містити додатні цілі числа" },
+            { max: 10, message: "Поле не повинно містити більше 10 чисел" }
         ]
     }
 
@@ -72,7 +78,9 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name='numberOfSeatsPtashat'
                                 rules={validationSchema.number} >
-                                <Input />
+                                <Input 
+                                    maxLength={6}
+                                />
                             </Form.Item>
                         </Col>
                         <Col
@@ -82,7 +90,9 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name={['membersStatistic', 'numberOfPtashata']}
                                 rules={validationSchema.number}>
-                                <Input />
+                                <Input 
+                                    maxLength={6}
+                                />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -101,7 +111,9 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name='numberOfIndependentRiy'
                                 rules={validationSchema.number}>
-                                <Input />
+                                <Input 
+                                    maxLength={6}
+                                />
                             </Form.Item>
                         </Col>
                         <Col
@@ -111,7 +123,9 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name={['membersStatistic', 'numberOfNovatstva']}
                                 rules={validationSchema.number}>
-                                <Input />
+                                <Input 
+                                    maxLength={6}
+                                />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -129,7 +143,9 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfClubs'
                             rules={validationSchema.number}>
-                            <Input />
+                            <Input 
+                                maxLength={6}
+                            />
                         </Form.Item>
                     </Col>
                     <Col
@@ -139,7 +155,9 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfIndependentGroups'
                             rules={validationSchema.number}>
-                            <Input />
+                            <Input 
+                                maxLength={6}
+                            />
                         </Form.Item>
                     </Col>
                     <Col
@@ -149,7 +167,9 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name={['membersStatistic', 'numberOfUnatstvaNoname']}
                             rules={validationSchema.number}>
-                            <Input />
+                            <Input 
+                                maxLength={6}
+                            />
                         </Form.Item>
                     </Col>
                     <Col
@@ -159,7 +179,9 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name={['membersStatistic', 'numberOfUnatstvaSupporters']}
                             rules={validationSchema.number}>
-                            <Input />
+                            <Input 
+                                maxLength={6}
+                            />
                         </Form.Item>
                     </Col>
                     <Col
@@ -169,7 +191,9 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name={['membersStatistic', 'numberOfUnatstvaMembers']}
                             rules={validationSchema.number}>
-                            <Input />
+                            <Input 
+                                maxLength={6}
+                            />
                         </Form.Item>
                     </Col>
                     <Col
@@ -179,7 +203,9 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name={['membersStatistic', 'numberOfUnatstvaProspectors']}
                             rules={validationSchema.number}>
-                            <Input />
+                            <Input 
+                                maxLength={6}
+                            />
                         </Form.Item>
                     </Col>
                     <Col
@@ -189,7 +215,9 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name={['membersStatistic', 'numberOfUnatstvaSkobVirlyts']}
                             rules={validationSchema.number}>
-                            <Input />
+                            <Input 
+                                maxLength={6}
+                            />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -211,7 +239,9 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name={['membersStatistic', 'numberOfSeniorPlastynSupporters']}
                                 rules={validationSchema.number}>
-                                <Input />
+                                <Input 
+                                    maxLength={6}
+                                />
                             </Form.Item>
                         </Col>
                         <Col
@@ -221,7 +251,9 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name={['membersStatistic', 'numberOfSeniorPlastynMembers']}
                                 rules={validationSchema.number}>
-                                <Input />
+                                <Input 
+                                    maxLength={6}
+                                />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -240,7 +272,9 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name={['membersStatistic', 'numberOfSeigneurSupporters']}
                                 rules={validationSchema.number}>
-                                <Input />
+                                <Input
+                                    maxLength={6}
+                                />
                             </Form.Item>
                         </Col>
                         <Col
@@ -250,7 +284,9 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name={['membersStatistic', 'numberOfSeigneurMembers']}
                                 rules={validationSchema.number}>
-                                <Input />
+                                <Input 
+                                    maxLength={6}
+                                />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -268,7 +304,9 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfTeachers'
                             rules={validationSchema.number}>
-                            <Input />
+                            <Input 
+                                maxLength={6}
+                            />
                         </Form.Item>
                     </Col>
                     <Col
@@ -278,7 +316,9 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfAdministrators'
                             rules={validationSchema.number}>
-                            <Input />
+                            <Input 
+                                maxLength={6}
+                            />
                         </Form.Item>
                     </Col>
                     <Col
@@ -288,7 +328,9 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfTeacherAdministrators'
                             rules={validationSchema.number}>
-                            <Input />
+                            <Input 
+                                maxLength={6}
+                            />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -305,7 +347,9 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfBeneficiaries'
                             rules={validationSchema.number}>
-                            <Input />
+                            <Input 
+                                maxLength={6}
+                            />
                         </Form.Item>
                     </Col>
                     <Col
@@ -315,7 +359,9 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfPlastpryiatMembers'
                             rules={validationSchema.number}>
-                            <Input />
+                            <Input 
+                                maxLength={6}
+                            />
                         </Form.Item>
                     </Col>
                     <Col
@@ -325,7 +371,9 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfHonoraryMembers'
                             rules={validationSchema.number}>
-                            <Input />
+                            <Input 
+                                maxLength={6}
+                            />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -341,8 +389,10 @@ const AnnualReportForm = (props: Props) => {
                         <Form.Item
                             className='w100'
                             name='publicFunds'
-                            rules={validationSchema.number}>
-                            <Input />
+                            rules={validationSchema.money}>
+                            <Input 
+                                maxLength={11}
+                            />
                         </Form.Item>
                     </Col>
                     <Col
@@ -351,8 +401,10 @@ const AnnualReportForm = (props: Props) => {
                         <Form.Item
                             className='w100'
                             name='contributionFunds'
-                            rules={validationSchema.number}>
-                            <Input />
+                            rules={validationSchema.money}>
+                            <Input 
+                                maxLength={11}
+                            />
                         </Form.Item>
                     </Col>
                     <Col
@@ -361,8 +413,10 @@ const AnnualReportForm = (props: Props) => {
                         <Form.Item
                             className='w100'
                             name='plastSalary'
-                            rules={validationSchema.number}>
-                            <Input />
+                            rules={validationSchema.money}>
+                            <Input 
+                                maxLength={11}
+                            />
                         </Form.Item>
                     </Col>
                     <Col
@@ -371,8 +425,10 @@ const AnnualReportForm = (props: Props) => {
                         <Form.Item
                             className='w100'
                             name='sponsorshipFunds'
-                            rules={validationSchema.number}>
-                            <Input />
+                            rules={validationSchema.money}>
+                            <Input 
+                                maxLength={11}
+                            />
                         </Form.Item>
                     </Col>
                 </Row>

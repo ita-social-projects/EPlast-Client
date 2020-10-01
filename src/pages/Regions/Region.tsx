@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip } from "antd";
+import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip, Input } from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getRegionById, getLogo, removeRegion } from "../../api/regionsApi";
-import userApi from "../../api/UserApi";
+import { addFollower, getRegionById, getRegionLogo, removeRegion, getRegionAdministration } from "../../api/regionsApi";
 import "./Region.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg"
 
+import {getLogo} from "../../api/citiesApi"
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../Spinner/Spinner";
+import { getBase64 } from "../userPage/EditUserPage/Services";
 //import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 
 
@@ -31,33 +32,60 @@ const Region = () => {
   const [RegionLogo64, setRegionLogo64] = useState<string>("");
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
-  const [admins, setAdmins] = useState<any[]>([]);
-  const [members, setMembers] = useState<any[]>([]);
+  const [admins, setAdmins] = useState<any[]>([{
+    id:'',
+    user:{
+      firstName:'',
+      lastName:'',
+      imagePath:'',
+    },
+    adminType:{
+      adminTypeName:''
+      },
+      startDate:'',
+      endDate:''
+  }]);
+  const [members, setMembers] = useState<any[]>([{
+    id:'',
+    name:'',
+    image:''
+  }]);
+  const [cities, setCities]=useState<any[]>([{
+    id:'',
+    name:'',
+    logo:''
+  }]);
   const [canCreate, setCanCreate] = useState(false);
-  const [followers, setFollowers] = useState<any[]>([]);
   const [canEdit, setCanEdit] = useState(false);
-  const [canJoin, setCanJoin] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
 
 
 
-  const setPhotos = async (members: any[], logo: string) => {
-    
+  const setPhotos = async (logo: string) => {
+
+   /* for (let i = 0; i < members.length; i++) {
+
+         const logo =  await getLogo(cities[i].logo)
+       
+        members[i].image = logo.data
+    }*/
     setPhotosLoading(false);
 
     if (logo === null) {
       setRegionLogo64(CityDefaultLogo);
     } else {
-      const response = await getLogo(logo);
+      const response = await getRegionLogo(logo);
       setRegionLogo64(response.data);
     }
     setRegionLogoLoading(false);
   };
 
+
+
   const deleteRegion = async () => {
     await removeRegion(region.id);
-    history.push('/cities');
+    history.push('/regions');
   }
 
 
@@ -80,27 +108,40 @@ const Region = () => {
     try {
       const response = await getRegionById(id);
 
+
+      setCities(response.data.cities);
+      setMembers(response.data.cities);
       setPhotosLoading(true);
       setRegionLogoLoading(true);
-      const admins = [...response.data.administration, response.data.head]
-      .filter(a => a !== null);
 
-      setPhotos([
-        ...admins,
-        ...response.data.cities,
-        
-      ], response.data.logo);
+      setPhotos(
+ response.data.logo);
       
       setRegion(response.data);
-      setAdmins(response.data.administration);
-      setMembers(response.data.cities);
+
     } finally {
       setLoading(false);
     }
   };
 
+
+
+const getRegionAdmin = async ()=>{
+  try{
+    const response = await getRegionAdministration(id);
+    setAdmins(response.data);
+
+  }
+  finally{
+
+  }
+}
+
+
   useEffect(() => {
+    getRegionAdmin();
     getRegion();
+    
   }, []);
 
   return loading ? (
@@ -163,7 +204,7 @@ const Region = () => {
                   Деталі
                 </Button>
               </Col>
-              {canEdit ? (
+              
                 <Col>
                   <Button
                     type="primary"
@@ -173,14 +214,14 @@ const Region = () => {
                     Річні звіти
                   </Button>
                 </Col>
-              ) : null}
-              {canEdit ? (
+            
+              
                 <Col xs={24} sm={4}>
                   <Row
                     className="cityIcons"
                     justify={canCreate ? "center" : "start"}
                   >
-                    {canEdit ? (
+                    
                       <Col>
                       <Tooltip
                         title="Редагувати округ">
@@ -192,8 +233,8 @@ const Region = () => {
                           />
                         </Tooltip>
                       </Col>
-                    ) : null}
-                    {canCreate ? (
+                   
+                   
                       <Col offset={1}>
                         <Tooltip
                           title="Видалити округ">
@@ -203,10 +244,10 @@ const Region = () => {
                             />
                         </Tooltip>
                       </Col>
-                    ) : null}
+                   
                   </Row>
                 </Col>
-              ) : null}
+            
             </Row>
           </Card>
         </Col>
@@ -257,79 +298,48 @@ const Region = () => {
           </Card>
         </Col>
 
-        <Col
-          xl={{ span: 7, offset: 1 }}
-          md={{ span: 11, offset: 2 }}
-          sm={24}
-          xs={24}
-        >
+
+
+        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={4}>Прихильники округу</Title>
+            <Title level={4}>Члени округу</Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
-              {canJoin ? (
-                <Col
-                  className="cityMemberItem"
-                  xs={12}
-                  sm={8}
-                 
-                >
-                  <div>
-                    <Avatar
-                      className="addFollower"
-                      size={64}
-                      icon={<UserAddOutlined />}
-                    />
-                    <p>Доєднати округ</p>
-                  </div>
-                </Col>
-              ) : null}
-              
-              {followers.length !== 0 ? (
-                followers.slice(0, canJoin ? 5 : 6).map((followers) => (
+              {members.length !== 0 ? (
+                members.map((member) => (
                   <Col
                     className="cityMemberItem"
+                    key={member.id}
                     xs={12}
                     sm={8}
-                    key={followers.id}
                   >
-                    <div>
-                      <div
-                        onClick={() =>
-                          history.push(`/userpage/main/${followers.userId}`)
-                        }
-                      >
-                        {photosLoading ? (
-                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
-                        ) : (
-                          <Avatar size={64} src={followers.user.imagePath} />
-                        )}
-                        <p className="userName">{followers.user.firstName}</p>
-                        <p className="userName">{followers.user.lastName}</p>
-                      </div>
-                      {canEdit ? (
-                        <PlusOutlined
-                          className="approveIcon"
-                         
-                        />
-                      ) : null}
+                    <div
+                      onClick={() =>
+                        history.push(`/cities/${member.id}`)
+                      }
+                    >
+                      {photosLoading ? (
+                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                      ) : (
+                      
+                        <Avatar size={64} src={member.image} />
+                      )}
+                      <p className="userName">{member.name}</p>
                     </div>
                   </Col>
                 ))
-              ) : canJoin ? null : (
-                <Paragraph>Ще немає прихильників округу</Paragraph>
+              ) : (
+                <Paragraph>Ще немає членів округу</Paragraph>
               )}
+
+
+              
             </Row>
-            <div className="cityMoreButton">
-              <Button
-                type="primary"
-                className="cityInfoButton"
-                onClick={() => history.push(`/regions/followers/${region.id}`)}
-              >
-                Більше
-              </Button>
-            </div>
+          
           </Card>
         </Col>
+
+       
+
       </Row>
 
       

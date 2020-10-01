@@ -13,6 +13,13 @@ const AddNewRegionFormPage = () => {
         const newRegion: any = {
             regionName: values.regionName,
             description: values.description,
+            phoneNumber: values.phoneNumber,
+            email: values.email,
+            link: values.link,
+            street: values.street, 
+            houseNumber: values.houseNumber,
+            officeNumber: values.officeNumber,
+            postIndex: values.postIndex
         }
         await RegionsApi.createRegion(newRegion)
         form.resetFields();
@@ -57,6 +64,124 @@ const AddNewRegionFormPage = () => {
            <Input
                 className={classes.inputField} />
         </Form.Item>
+
+        <Form.Item
+            className={classes.formField}
+            label="Номер телефону"
+            name="phoneNumber"
+
+            rules={[
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
+            ]}
+        >
+           <Input
+                className={classes.inputField} />
+        </Form.Item>
+
+
+        <Form.Item
+            className={classes.formField}
+            label="Email"
+            name="email"
+
+            rules={[
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
+            ]}
+        >
+           <Input
+                className={classes.inputField} />
+        </Form.Item>
+
+
+        <Form.Item
+            className={classes.formField}
+            label="Link"
+            name="link"
+
+            rules={[
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
+            ]}
+        >
+           <Input
+                className={classes.inputField} />
+        </Form.Item>
+
+
+        <Form.Item
+            className={classes.formField}
+            label="Вулиця"
+            name="street"
+
+            rules={[
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
+            ]}
+        >
+           <Input
+                className={classes.inputField} />
+        </Form.Item>
+
+
+        <Form.Item
+            className={classes.formField}
+            label="Номер будинку"
+            name="houseNumber"
+
+            rules={[
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
+            ]}
+        >
+           <Input
+                className={classes.inputField} />
+        </Form.Item>
+
+
+        <Form.Item
+            className={classes.formField}
+            label="Номер офісу/квартири"
+            name="officeNumber"
+
+            rules={[
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
+            ]}
+        >
+           <Input
+                className={classes.inputField} />
+        </Form.Item>
+
+        <Form.Item
+            className={classes.formField}
+            label="Поштовий індекс"
+            name="postIndex"
+
+            rules={[
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
+            ]}
+        >
+           <Input
+                className={classes.inputField} />
+        </Form.Item>
+
 
         <Form.Item style = {{ textAlign: "right"}}>
       
