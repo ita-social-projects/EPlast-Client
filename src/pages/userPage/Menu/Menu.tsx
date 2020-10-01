@@ -17,7 +17,7 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
   }
   return (
     <div className="wrapperMenu">
-      <Menu mode="horizontal" className="menu">
+      <Menu mode="horizontal" className="menu" defaultSelectedKeys={["main"]}>
         <Menu.Item className="menuItem" key="main" onClick={() => history.push(`/userpage/main/${props.id}`)}>
           Персональні дані
         </Menu.Item>

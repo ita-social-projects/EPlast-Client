@@ -11,10 +11,14 @@ interface Props {
   onEdit :(id: number, name: string, description: string) => void;
 }
 const EditDecisionModal = ({ record, showModal, setShowModal, onEdit, decision }: Props) => {
+
+  const handleCancel = () => setShowModal(false);
+
   return (
     <Modal
       title="Редагування рішення пластового проводу"
       visible={showModal}
+      onCancel={handleCancel}
       footer = {null}
     >
       <FormEditDecision 

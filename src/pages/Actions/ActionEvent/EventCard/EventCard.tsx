@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {useHistory} from "react-router-dom";
-import {Card, Tooltip} from 'antd';
+import {Card, Tooltip, Switch} from 'antd';
 import EventLogo from '../../../../assets/images/handshake.png'
 
 import {
@@ -21,6 +21,9 @@ import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirm} from ".
 
 // eslint-disable-next-line import/no-cycle
 import {CardProps} from "../SortedEvents";
+
+
+
 
 const classes = require('./EventCard.module.css');
 
@@ -120,9 +123,11 @@ const EventCard = ({
     }
 
     return (
+
         <div className={classes.background}>
+            
             <div className={classes.actionsWrapper}>
-                <Card
+            <Card
                     hoverable
                     className={classes.cardStyles}
                     cover={

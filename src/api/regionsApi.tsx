@@ -16,7 +16,7 @@ export const getRegionById = async (regionId: number) => {
   return response;
 };
 
-export const getLogo = async (logoName: string) => {
+export const getRegionLogo = async (logoName: string) => {
   return api.get("Regions/LogoBase64", { logoName }).catch((error) => {
     throw new Error(error);
   });
@@ -35,9 +35,19 @@ export const addFollower = async (regionId: number, cityId:number) => {
   });
 }
 
+
+
+export const getRegionAdministration = async (regionId: number)=>{
+   return api.get(`Regions/GetAdministration/${regionId}`).catch((error)=>{
+    throw new Error(error);
+  })
+}
+
+
 export default{
+  getRegionAdministration,
   removeRegion,
-  getLogo,
+  getRegionLogo,
   getRegionById,
   GetAllRegions,
   createRegion
