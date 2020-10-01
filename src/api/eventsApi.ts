@@ -15,6 +15,13 @@ const getEvents = async (typeId: number, categoryId: number) => {
     return response;
 }
 
+
+const getEventsByStatuses = async (typeId: number, categoryId: number, status:number) => {
+    const response = await Api.get(`types/${typeId}/categories/${categoryId}/events/${status}`);
+    return response;
+}
+
+
 const getEventInfo = async (id: number) => {
     const response = await Api.get(`Events/${id}/details`);
     return response;
@@ -71,6 +78,7 @@ const removePicture = async (id: number) => {
 };
 
 export default {
+    getEventsByStatuses,
     getTypes,
     getCategories,
     getEvents,

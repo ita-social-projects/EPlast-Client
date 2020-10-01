@@ -48,9 +48,7 @@ export const removeCity = async (id: number) => {
 };
 
 export const getLogo = async (logoName: string) => {
-  return api.get("Cities/LogoBase64", { logoName }).catch((error) => {
-    throw new Error(error);
-  });
+  return api.get("Cities/LogoBase64", { logoName })
 };
 
 export const getAllAdmins = async (id: number) => {

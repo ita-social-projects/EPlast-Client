@@ -249,14 +249,14 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
             < div className={classes.row} >
                 <h3>Питання / побажання до булави </h3>
                 < Form.Item name="Questions" rules={[{ required: true, message: 'Вкажіть питання' },
-                { max: 50, message: 'Питання не можуть перевищувати 200 символів' }]}>
+                { max: 50, message: 'Максимальна довжина- 50 символів' }]}>
                     <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
                 </Form.Item>
             </div>
             < div className={classes.row} >
                 <h3>Опис події </h3>
                 < Form.Item name="Description" rules={[{ required: true, message: 'Вкажіть, які впроваджено зміни' },
-                { max: 50, message: 'Поле не може перевищувати 200 символів' }]}>
+                { max: 50, message: 'Максимальна довжина- 50 символів' }]}>
                     <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
                 </Form.Item>
             </div>

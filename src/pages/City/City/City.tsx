@@ -203,7 +203,8 @@ const City = () => {
                 {city.cityURL || city.email || city.phoneNumber ? (
                   <div>
                     {city.cityURL ? (
-                      <Paragraph>
+                      <Paragraph
+                        ellipsis>
                         <b>Посилання:</b>{" "}
                         <u><a href={city.cityURL} target="_blank">
                           {city.cityURL}
