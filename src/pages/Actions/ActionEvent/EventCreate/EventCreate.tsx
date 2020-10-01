@@ -26,6 +26,9 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
   const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
   const [administators, setAdministators] = useState<Users[]>([]);
 
+
+  const [StartDate, setStartDate]= useState<any>();
+
   useEffect(() => {
     const fetchData = async () => {
       await eventUserApi.getDataForNewEvent().then(async response => {
@@ -86,6 +89,10 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
 
   function disabledDate(current: any) {
     return current && current < moment().startOf('day');
+  }
+
+  function disabledEndDate(current:any){
+    return current && current < StartDate.startOf('day');
   }
 
   function onChange(e: any) {
@@ -176,13 +183,13 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Дата початку </h3>
         < Form.Item name="EventDateStart" rules={[{ required: true, message: 'Оберіть дату початку події' }]} >
-          <DatePicker showTime disabledDate={disabledDate} placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} />
+          <DatePicker showTime disabledDate={disabledDate} placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} onChange={setStartDate}/>
         </ Form.Item>
       </ div>
       < div className={classes.row} >
         <h3>Дата завершення </h3>
         < Form.Item name="EventDateEnd" rules={[{ required: true, message: 'Оберіть дату завершення події' }]} >
-          <DatePicker showTime disabledDate={disabledDate} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
+          <DatePicker showTime disabledDate={disabledEndDate} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
         </ Form.Item>
       </ div>
       < div className={classes.row} >
@@ -212,14 +219,14 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Питання / побажання до булави </h3>
         < Form.Item name="Questions" rules={[{ required: true, message: 'Вкажіть питання' },
-        { max: 50, message: 'Питання не можуть перевищувати 200 символів' }]}>
+        { max: 50, message: 'Довжина поля менша 50 символів' }]}>
           <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>
       < div className={classes.row} >
         <h3>Опис події</h3>
         < Form.Item name="Description" rules={[{ required: true, message: 'Вкажіть, які впроваджено зміни' },
-        { max: 50, message: 'Поле не може перевищувати 200 символів' }]}>
+        { max: 50, message: 'Довжина поля менша 50 символів' }]}>
           <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>
