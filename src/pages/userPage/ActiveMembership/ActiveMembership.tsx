@@ -103,7 +103,7 @@ return <div className={classes.wrapper} >
                 Додати ступінь
               </Button>
 }
-                </div>)
+                </div>
 
         <div className={classes.wrapperCol} >
         <div className={classes.wrapper}>
