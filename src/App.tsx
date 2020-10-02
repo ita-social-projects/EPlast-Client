@@ -43,6 +43,7 @@ import UserDistinctions from "./pages/Distinction/DistinctionTable/DistinctionTa
 import KadrasTable from "./pages/KadraVykhovnykiv/KadrasPage";
 import Regions from "./pages/Regions/RegionsPage";
 import Region from "./pages/Regions/Region";
+import RegionEdit from "./pages/Regions/RegionEdit";
 import AddNewRegionFormPage from "./pages/Regions/AddRegion";
 
 
@@ -130,6 +131,13 @@ const App: FC = () => (
             path="/regions/new"
             component={AddNewRegionFormPage}
           />
+            <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regions/edit/:regionid"
+            component={RegionEdit}
+          />
+         
           <RouteWithLayout
             layout={PrivateLayout}
             exact

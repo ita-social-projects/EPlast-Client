@@ -6,6 +6,13 @@ export const GetAllRegions = async () => {
   });
 };
 
+export const EditRegion = async (regId:number, data:any) => {
+  return await api.put(`Regions/EditRegion/${regId}`, data).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+
  export const createRegion = async (data: any) => {
   const response = await api.post("Regions/AddRegion", data);
   return response;
@@ -46,6 +53,7 @@ export const getRegionAdministration = async (regionId: number)=>{
 
 export default{
   getRegionAdministration,
+  EditRegion,
   removeRegion,
   getRegionLogo,
   getRegionById,
