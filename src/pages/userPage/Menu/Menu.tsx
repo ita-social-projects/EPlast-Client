@@ -26,7 +26,6 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
         <Menu.Item className="menuItem" key="eventuser" onClick={() => history.push(`/userpage/eventuser/${props.id}`)}>
           Події
         </Menu.Item>
-        <Menu.Item className="menuItem" key="Congresses">З`їзди</Menu.Item>
         <Menu.Item className="menuItem" key="Blanks">Бланки</Menu.Item>
         <Menu.Item className="menuItem" key="Authorization" onClick={() => history.push(`/userpage/approvers/${props.id}`)}>Поручення</Menu.Item>
         {props.id == user.nameid &&
