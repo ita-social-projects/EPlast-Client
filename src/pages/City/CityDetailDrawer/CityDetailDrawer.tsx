@@ -2,6 +2,7 @@ import React from "react";
 import { Drawer, Button, Col, Row, Form, Input } from "antd";
 import "./CityDetailDrawer.less";
 import CityProfile from "./../../../models/City/CityProfile";
+import TextArea from "antd/lib/input/TextArea";
 
 interface Props {
   visibleDrawer: boolean;
@@ -12,7 +13,7 @@ interface Props {
 const CityDetailDrawer = (props: Props) => {
   return (
     <Drawer
-      title="Деталі станиці"
+      title={`Деталі станиці ${props.city.name?.length > 0 ? props.city.name : ""}`}
       onClose={() => props.setVisibleDrawer(false)}
       visible={props.visibleDrawer}
       footer={null}
@@ -21,44 +22,6 @@ const CityDetailDrawer = (props: Props) => {
       className="cityDetail"
     >
       <Form className="detailsForm">
-        <Row justify="center" gutter={[12, 0]}>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="name"
-              label="Назва"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.city.name?.length > 0 ? props.city.name : "---"
-              }
-            >
-              <Input
-                value={props.city.name?.length > 0 ? props.city.name : "---"}
-                disabled
-              />
-            </Form.Item>
-          </Col>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="description"
-              label="Опис"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.city.description?.length > 0
-                  ? props.city.description
-                  : "---"
-              }
-            >
-              <Input
-                value={
-                  props.city.description?.length > 0
-                    ? props.city.description
-                    : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
-        </Row>
         <Row justify="center" gutter={[12, 0]}>
           <Col md={12} xs={24}>
             <Form.Item
@@ -210,6 +173,30 @@ const CityDetailDrawer = (props: Props) => {
                 value={
                   props.city.postIndex?.length > 0
                     ? props.city.postIndex
+                    : "---"
+                }
+                disabled
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="center" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              name="description"
+              label="Опис"
+              labelCol={{ span: 24 }}
+              initialValue={
+                props.city.description?.length > 0
+                  ? props.city.description
+                  : "---"
+              }
+            >
+              <TextArea
+                autoSize
+                value={
+                  props.city.description?.length > 0
+                    ? props.city.description
                     : "---"
                 }
                 disabled
