@@ -8,7 +8,9 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-In order to run this project, you’ll need to have Node 10.19.0+ and npm 6.x.x or later on your local development machine. 
+In order to run this project, you’ll need to have on your local development machine:
+1. Node 10.19.0+;
+2. npm 6.x.x or later. 
 
 ### Installing
 
@@ -17,16 +19,13 @@ First of all, you'll need to complete following commands:
 git clone https://github.com/IrynaZavushchak/EPlast-Client.git
 cd EPlast-Client
 npm install
+yarn install
 ```
 These commands will download project on your file system and install
 required dependencies.
 
 
 
-
-## Prerequisites
-
-### `yarn install`
 
 ## Available Scripts
 

@@ -102,8 +102,8 @@ return <div className={classes.wrapper} >
                 <Button type="primary" onClick={showModal}>
                 Додати ступінь
               </Button>
-}
-                </div>)
+               }
+                </div>
 
         <div className={classes.wrapperCol} >
         <div className={classes.wrapper}>
