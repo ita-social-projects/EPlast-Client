@@ -12,25 +12,35 @@ import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../Spinner/Spinner";
 import { getBase64 } from "../userPage/EditUserPage/Services";
-//import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
+import AddDocumentModal from "../City/AddDocumentModal/AddDocumentModal";
+import CityDocument from "../../models/City/CityDocument";
+
 
 
 const Region = () => {
   const history = useHistory();
   const {id} = useParams();
-
+  const [visibleModal, setVisibleModal] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [document, setDocument] = useState<CityDocument>(new CityDocument());
+  const [documents, setDocuments] = useState<CityDocument[]>([]);
+
   const [region, setRegion] = useState<any>({
     id:'',
     regionName:'',
     description:'',
     logo:'',
     administration:[{}],
-    cities:[{}]
+    cities:[{}],
+    phoneNumber:'',
+    email:'',
+    link:'',
+    documents:[{}]
   });
 
   const [RegionLogo64, setRegionLogo64] = useState<string>("");
-  const [visibleModal, setVisibleModal] = useState(false);
+
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [admins, setAdmins] = useState<any[]>([{
     id:'',
@@ -50,13 +60,8 @@ const Region = () => {
     name:'',
     image:''
   }]);
-  const [cities, setCities]=useState<any[]>([{
-    id:'',
-    name:'',
-    logo:''
-  }]);
+
   const [canCreate, setCanCreate] = useState(false);
-  const [canEdit, setCanEdit] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
 
@@ -108,12 +113,10 @@ const Region = () => {
     try {
       const response = await getRegionById(id);
 
-
-      setCities(response.data.cities);
       setMembers(response.data.cities);
       setPhotosLoading(true);
       setRegionLogoLoading(true);
-
+      setDocuments(response.data.documents);
       setPhotos(
  response.data.logo);
       
@@ -124,6 +127,13 @@ const Region = () => {
     }
   };
 
+
+
+  const onAdd = (newDocument: CityDocument) => {
+    if (documents.length < 6) {
+      setDocuments([...documents, newDocument]);
+    }
+  }
 
 
 const getRegionAdmin = async ()=>{
@@ -189,6 +199,36 @@ const getRegionAdmin = async ()=>{
                 ) : (
                   <Paragraph>
                     <b>Немає голови округу</b>
+                  </Paragraph>
+                )}
+              </Col>
+
+              <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
+                {region.link || region.email || region.phoneNumber ? (
+                  <div>
+                    {region.link ? (
+                      <Paragraph
+                        ellipsis>
+                        <b>Посилання:</b>{" "}
+                        <u><a href={region.link} target="_blank">
+                          {region.link}
+                        </a></u>
+                      </Paragraph>
+                    ) : null}
+                    {region.phoneNumber ? (
+                      <Paragraph>
+                        <b>Телефон:</b> {region.phoneNumber}
+                      </Paragraph>
+                    ) : null}
+                    {region.email ? (
+                      <Paragraph>
+                        <b>Пошта:</b> {region.email}
+                      </Paragraph>
+                    ) : null}
+                  </div>
+                ) : (
+                  <Paragraph>
+                    <b>Немає контактів</b>
                   </Paragraph>
                 )}
               </Col>
@@ -299,6 +339,47 @@ const getRegionAdmin = async ()=>{
         </Col>
 
 
+        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+          <Card hoverable className="cityCard">
+            <Title level={4}>Документообіг округу</Title>
+            <Row className="cityItems" justify="center" gutter={[0, 16]}>
+              {documents.length !== 0 ? (
+                documents.map((document) => (
+                  <Col
+                    className="cityMemberItem"
+                    xs={12}
+                    sm={8}
+                    key={document.id}
+                  >
+                    <div>
+                      <FileTextOutlined className="documentIcon" />
+                      <p className="documentText">
+                        {document.cityDocumentType.name}
+                      </p>
+                    </div>
+                  </Col>
+                ))
+              ) : (
+                <Paragraph>Ще немає документів Округу</Paragraph>
+              )}
+            </Row>
+            <div className="cityMoreButton">
+              <Button
+                type="primary"
+                className="cityInfoButton"
+                onClick={() => history.push(`/cities/documents/${region.id}`)}
+              >
+                Більше
+              </Button>
+             
+                <PlusSquareFilled
+                  className="addReportIcon"
+                  onClick={() => setVisibleModal(true)}
+                />
+            </div>
+          </Card>
+        </Col>
+
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
@@ -341,6 +422,15 @@ const getRegionAdmin = async ()=>{
        
 
       </Row>
+
+        <AddDocumentModal
+          cityId={+id}
+          document={document}
+          setDocument={setDocument}
+          visibleModal={visibleModal}
+          setVisibleModal={setVisibleModal}
+          onAdd={onAdd}
+        ></AddDocumentModal>
 
       
     </Layout.Content>
