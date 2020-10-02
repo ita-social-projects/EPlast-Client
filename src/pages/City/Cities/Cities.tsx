@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { Card, Layout, Pagination, Skeleton } from "antd";
+import { Card, Layout, Pagination, Result, Skeleton } from "antd";
 import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import { getCitiesByPage, getLogo } from "../../../api/citiesApi";
@@ -40,7 +40,7 @@ const Cities = () => {
     setLoading(true);
 
     try {
-      const response = await getCitiesByPage(page, pageSize, searchedData);
+      const response = await getCitiesByPage(page, pageSize, searchedData.trim());
 
       setPhotosLoading(true);
       setPhotos(response.data.cities);
@@ -99,7 +99,8 @@ const Cities = () => {
                 />
               </Card>
             ) : null}
-            {cities.map((city: CityProfile) => (
+            
+            { cities.length !== 0 ? (cities.map((city: CityProfile) => (
               <Card
                 key={city.id}
                 hoverable
@@ -115,7 +116,12 @@ const Cities = () => {
               >
                 <Card.Meta title={city.name} className="titleText" />
               </Card>
-            ))}
+            ))) : 
+            (<Result
+              status="404"
+              title="Станицю не знайдено"
+            />)
+            }
           </div>
           <div className="pagination">
             <Pagination

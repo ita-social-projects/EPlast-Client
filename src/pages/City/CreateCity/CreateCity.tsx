@@ -385,7 +385,7 @@ const CreateCity = () => {
                   message: "Максимальна довжина - 5 символів!",
                 },]}
               >
-                <Input type="number" value={city.postIndex} max={6}/>
+                <Input type="number" value={city.postIndex}/>
               </Form.Item>
             </Col>
           </Row>

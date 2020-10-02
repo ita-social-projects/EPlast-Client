@@ -1,5 +1,5 @@
 import React from "react";
-import { Drawer, Modal } from "antd";
+import { Drawer } from "antd";
 import FormEditDistinction from "./FormEditDistinction";
 import UserDistinction from "../Interfaces/UserDistinction";
 import Distinction from "../Interfaces/Distinction";

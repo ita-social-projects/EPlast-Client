@@ -17,7 +17,7 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
   }
   return (
     <div className="wrapperMenu">
-      <Menu mode="horizontal" className="menu">
+      <Menu mode="horizontal" className="menu" defaultSelectedKeys={["main"]}>
         <Menu.Item className="menuItem" key="main" onClick={() => history.push(`/userpage/main/${props.id}`)}>
           Персональні дані
         </Menu.Item>
@@ -26,7 +26,6 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
         <Menu.Item className="menuItem" key="eventuser" onClick={() => history.push(`/userpage/eventuser/${props.id}`)}>
           Події
         </Menu.Item>
-        <Menu.Item className="menuItem" key="Congresses">З`їзди</Menu.Item>
         <Menu.Item className="menuItem" key="Blanks">Бланки</Menu.Item>
         <Menu.Item className="menuItem" key="Authorization" onClick={() => history.push(`/userpage/approvers/${props.id}`)}>Поручення</Menu.Item>
         {props.id == user.nameid &&
