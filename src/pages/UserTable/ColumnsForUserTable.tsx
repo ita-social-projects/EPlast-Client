@@ -1,10 +1,10 @@
 import React from 'react';
 import moment from 'moment';
 import { Typography, Tooltip, List, Tag } from 'antd';
-import generateCalendar from 'antd/lib/calendar/generateCalendar';
 import { WomanOutlined, ManOutlined, QuestionOutlined } from '@ant-design/icons';
-import Title from 'antd/lib/typography/Title';
+
 const { Text } = Typography;
+
 
 const setTagColor = (userRoles: string) => {
     let color = '';
@@ -22,6 +22,7 @@ const setTagColor = (userRoles: string) => {
     }
     return color;
 }
+
 
 const ColumnsForUserTable: any = [
 
@@ -108,11 +109,32 @@ const ColumnsForUserTable: any = [
     {
         title: 'Ступінь',
         dataIndex: 'userPlastDegreeName',
-        render: (userPlastDegreeName: any) => {
+        ellipsis: {
+            showTitle: false,
+        },
+        render: (userPlastDegreeName: any, record: any) => {
             if (userPlastDegreeName.length > 0) {
-                return <Tag color={'red'} key={userPlastDegreeName}>
-                    {userPlastDegreeName.toUpperCase()}
-                </Tag>
+                if (record.user.gender?.name !== null && record.user.gender?.name == "Чоловік") {
+                    return   <Tag color={'red'} key={userPlastDegreeName} >
+                            <Tooltip placement="topLeft" title={userPlastDegreeName.split("/")[0]}>
+                                {userPlastDegreeName.split("/")[0]}
+                            </Tooltip>
+                        </Tag>
+                }
+                else if (record.user.gender?.name !== null && record.user.gender?.name == "Жінка") {
+                  return  <Tag color={'red'} key={userPlastDegreeName} >
+                        <Tooltip placement="topLeft" title={userPlastDegreeName.split("/")[1]}>
+                            {userPlastDegreeName.split("/")[1]}
+                        </Tooltip>
+                    </Tag>
+                }
+                else {
+                   return <Tag color={'red'} key={userPlastDegreeName} >
+                        <Tooltip placement="topLeft" title={userPlastDegreeName}>
+                            {userPlastDegreeName.toUpperCase()}
+                        </Tooltip>
+                    </Tag>
+                }
             }
         },
     },
@@ -126,7 +148,7 @@ const ColumnsForUserTable: any = [
             if (userRoles.length > 19) {
                 return <Tag color={setTagColor(userRoles)} key={userRoles}>
                     <Tooltip placement="topLeft" title={userRoles}>
-                        {userRoles.slice(0, 19).toUpperCase()}  
+                        {userRoles.slice(0, 19).toUpperCase()}
                     </Tooltip>
                 </Tag>
             }
