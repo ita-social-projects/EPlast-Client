@@ -250,3 +250,12 @@ h2 {
         margin: 10px 0;
     }
 }
+
+
+
+
+.buttonmargins{
+    margin-top: 15px;
+    margin-bottom: 15px;
+    width:100%
+}

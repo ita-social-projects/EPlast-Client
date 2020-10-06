@@ -3,17 +3,17 @@ import { useHistory, useParams } from "react-router-dom";
 import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip, Input } from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getRegionById, getRegionLogo, removeRegion, getRegionAdministration } from "../../api/regionsApi";
+import { addFollower, getRegionById, getRegionLogo, removeRegion, getRegionAdministration, getRegionDocuments } from "../../api/regionsApi";
 import "./Region.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg"
-
-import {getLogo} from "../../api/citiesApi"
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../Spinner/Spinner";
-import { getBase64 } from "../userPage/EditUserPage/Services";
-import AddDocumentModal from "../City/AddDocumentModal/AddDocumentModal";
+import AddDocumentModal from "./AddDocModal";
 import CityDocument from "../../models/City/CityDocument";
+import AddNewSecretaryForm from "./AddRegionSecretaryForm";
+import userApi from "./../../api/UserApi";
+import { Console } from "console";
 
 
 
@@ -23,8 +23,20 @@ const Region = () => {
   const [visibleModal, setVisibleModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [document, setDocument] = useState<CityDocument>(new CityDocument());
-  const [documents, setDocuments] = useState<CityDocument[]>([]);
+  const [document, setDocument] = useState<any>({
+    ID:'',
+    SubmitDate:'',
+    BlobName:'',
+    FileName:'',
+    RegionId:''
+  });
+  const [documents, setDocuments] = useState<any[]>([{
+    id:'',
+    submitDate:'',
+    blobName:'',
+    fileName:'',
+    regionId:''
+  }]);
 
   const [region, setRegion] = useState<any>({
     id:'',
@@ -44,10 +56,14 @@ const Region = () => {
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [admins, setAdmins] = useState<any[]>([{
     id:'',
+    userId:'',
     user:{
+      id:'',
       firstName:'',
       lastName:'',
       imagePath:'',
+      email:'',
+      phoneNumber:''
     },
     adminType:{
       adminTypeName:''
@@ -58,23 +74,25 @@ const Region = () => {
   const [members, setMembers] = useState<any[]>([{
     id:'',
     name:'',
-    image:''
+    logo:''
   }]);
 
   const [canCreate, setCanCreate] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
 
+  const [visible, setvisible]= useState<boolean>(false) ;
 
 
-  const setPhotos = async (logo: string) => {
 
-   /* for (let i = 0; i < members.length; i++) {
+  const setPhotos = async (members: any[], logo: string) => {
 
-         const logo =  await getLogo(cities[i].logo)
-       
-        members[i].image = logo.data
-    }*/
+    for (let i = 0; i < members.length; i++) {
+      members[i].user.imagePath = (
+        
+        await userApi.getImage(members[i].user.imagePath)
+      ).data;
+    }
     setPhotosLoading(false);
 
     if (logo === null) {
@@ -85,7 +103,6 @@ const Region = () => {
     }
     setRegionLogoLoading(false);
   };
-
 
 
   const deleteRegion = async () => {
@@ -112,12 +129,12 @@ const Region = () => {
 
     try {
       const response = await getRegionById(id);
-
+      const response1 = await getRegionAdministration(id);
       setMembers(response.data.cities);
       setPhotosLoading(true);
+      setAdmins(response1.data);
       setRegionLogoLoading(true);
-      setDocuments(response.data.documents);
-      setPhotos(
+      setPhotos([...response1.data],
  response.data.logo);
       
       setRegion(response.data);
@@ -127,6 +144,11 @@ const Region = () => {
     }
   };
 
+  const handleOk = () => {
+    
+    setvisible(false);
+   
+  };
 
 
   const onAdd = (newDocument: CityDocument) => {
@@ -136,11 +158,12 @@ const Region = () => {
   }
 
 
-const getRegionAdmin = async ()=>{
-  try{
-    const response = await getRegionAdministration(id);
-    setAdmins(response.data);
 
+
+const setRegionDocs = async ()=>{
+  try{
+    const response = await getRegionDocuments(id);
+    setDocuments(response.data);
   }
   finally{
 
@@ -148,8 +171,9 @@ const getRegionAdmin = async ()=>{
 }
 
 
+
   useEffect(() => {
-    getRegionAdmin();
+    setRegionDocs();
     getRegion();
     
   }, []);
@@ -329,11 +353,18 @@ const getRegionAdmin = async ()=>{
                 type="primary"
                 className="cityInfoButton"
                 onClick={() =>
-                  history.push(`/regions/administration/${region.id}`)
+                 setvisible(true)
                 }
               >
-                Більше
+                Додати діловода
               </Button>
+              <Button
+              type="primary"
+              className="cityInfoButton"
+              onClick={()=>
+                history.push(`/region/administration/${region.id}`)
+              }
+              >Більше</Button>
             </div>
           </Card>
         </Col>
@@ -354,7 +385,7 @@ const getRegionAdmin = async ()=>{
                     <div>
                       <FileTextOutlined className="documentIcon" />
                       <p className="documentText">
-                        {document.cityDocumentType.name}
+                        {document.fileName}
                       </p>
                     </div>
                   </Col>
@@ -367,7 +398,7 @@ const getRegionAdmin = async ()=>{
               <Button
                 type="primary"
                 className="cityInfoButton"
-                onClick={() => history.push(`/cities/documents/${region.id}`)}
+                onClick={() => history.push(`/regions/documents/${region.id}`)}
               >
                 Більше
               </Button>
@@ -402,7 +433,7 @@ const getRegionAdmin = async ()=>{
                         <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
                       
-                        <Avatar size={64} src={member.image} />
+                        <Avatar size={64} src={member.logo} />
                       )}
                       <p className="userName">{member.name}</p>
                     </div>
@@ -412,25 +443,31 @@ const getRegionAdmin = async ()=>{
                 <Paragraph>Ще немає членів округу</Paragraph>
               )}
 
-
-              
             </Row>
           
           </Card>
-        </Col>
-
-       
-
+        </Col>І
       </Row>
 
         <AddDocumentModal
-          cityId={+id}
+          regionId={+id}
           document={document}
           setDocument={setDocument}
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
           onAdd={onAdd}
         ></AddDocumentModal>
+
+
+        <Modal
+          title="Додати діловода"
+          visible={visible}
+          onOk={handleOk}
+          onCancel={handleOk}
+          footer={null}
+        >
+          <AddNewSecretaryForm onAdd={handleOk}></AddNewSecretaryForm>
+        </Modal>
 
       
     </Layout.Content>

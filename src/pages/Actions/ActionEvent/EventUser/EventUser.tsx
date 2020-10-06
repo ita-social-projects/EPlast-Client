@@ -33,6 +33,7 @@ import EventEditDrawer from "../EventEdit/EventEditDrawer";
 import EventCalendar from "../EventCalendar/EventCalendar";
 import Spinner from "../../../Spinner/Spinner";
 import CreatedEvents from "../../../../models/EventUser/CreatedEvents";
+import AvatarAndProgress from "../../../userPage/personalData/AvatarAndProgress";
 const { Title } = Typography;
 
 const EventUser = () => {
@@ -54,6 +55,7 @@ const EventUser = () => {
   const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
     new CreatedEvents(),
   ]);
+  const [currentUser, setCurrentUser] = useState<any>({});
   const [showEventCreateDrawer, setShowEventCreateDrawer] = useState(false);
   const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
   const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
@@ -66,6 +68,8 @@ const EventUser = () => {
   ]);
 
   useEffect(() => {
+     userApi.getById(userId).then(async response => {
+      setCurrentUser(response.data.user)})
     fetchData();
   }, []);
 
@@ -80,6 +84,7 @@ const EventUser = () => {
         .then((response: { data: any }) => {
           setImageBase64(response.data);
         });
+       
       setLoading(true);
     });
   };
@@ -139,14 +144,9 @@ const EventUser = () => {
     <Spinner />
   ) : (
     <div className={classes.wrapper}>
-      <div className={classes.wrapperImg}>
-        <Avatar className={classes.avatar} size={300} src={imageBase64} />
-        <Title level={2}>
-          {" "}
-          {allEvents?.user.firstName} {allEvents?.user.lastName}{" "}
-        </Title>
-        <div className={classes.line} />
-        {userToken.nameid === userId && allEvents?.createdEvents.length !== 0 && (
+      <div className="avatarWrapper">
+                    
+ {userToken.nameid === userId && allEvents?.createdEvents.length !== 0 && (
           <Button
             type="primary"
             className={classes.button}
@@ -155,7 +155,11 @@ const EventUser = () => {
             Створити подію
           </Button>
         )}
-      </div>
+
+<AvatarAndProgress imageUrl={currentUser.imagePath} time={currentUser.timeToJoinPlast} firstName={currentUser.firstName} lastName={currentUser.lastName} isUserPlastun={true} />
+</div>
+       
+        
       <div className={classes.wrapperCol}>
         <div className={classes.wrapper}>
           <div className={classes.wrapper2}>

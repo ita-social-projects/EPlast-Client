@@ -1,9 +1,7 @@
 import React, { useEffect, useState, PropsWithRef } from 'react';
 import { Table, Spin, Input } from 'antd';
-import columns from './columnsCIties';
-import { getUsersAdministrations } from "../../../api/citiesApi";
-
-import ClickAwayListener from 'react-click-away-listener';
+import columns from './columnsregions';
+import { getUsersAdministrations } from "../../../api/regionsApi";
 
 
 interface props {
@@ -11,16 +9,23 @@ interface props {
   UserId: string;
 }
 
-export const UserCitySecretaryTable = ({  UserId }: props) => {
+export const UserRegionSecretaryTable = ({  UserId }: props) => {
 
 
   const [data, setData] = useState<any>([{
     id: '',
-    user: '',
-    adminType: '',
+    user: {
+        firstName:'',
+        lastName:''
+    },
+    adminType: {
+        adminTypeName:''
+    },
     startDate: '',
     endDate: '',
-    cityId:''
+    region:{
+        regionName:''
+    }
   }]);
 
 
