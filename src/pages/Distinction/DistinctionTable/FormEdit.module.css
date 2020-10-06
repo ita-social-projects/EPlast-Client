@@ -22,24 +22,27 @@
     color: #690606;
     cursor: pointer;
 }
-.addDiv{
+.addIcon {
+    font-size: 40px;
+}
+.editDiv{
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    border: 1px;
-    margin: 10px;
 }
 .list {
+    max-width: 100%;
     font-size: 18px;
     display: flex;
 }
 .inputField {
-    inline-size: -webkit-fill-available;
-    margin-right: 75px;
+    size: 50px;
+    margin-right: auto;
     float: right;
     text-align: left;
-    max-width: 320px;
-    min-width: 320px;
+  }
+  .list>* {
+      width: 100%
   }
 
 

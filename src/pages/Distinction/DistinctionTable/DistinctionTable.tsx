@@ -32,7 +32,7 @@ const DistinctionTable = () => {
   const [y, setY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [searchedData, setSearchedData] = useState("");
-  const [canEdit, setCanEdit] = useState(roles.includes("Admin"));
+  const [canEdit] = useState(roles.includes("Admin"));
   const [UserDistinctions, setData] = useState<UserDistinction[]>([
     {
       id: 0,
