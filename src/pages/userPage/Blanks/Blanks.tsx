@@ -5,6 +5,8 @@ import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
 import AvatarAndProgress from "../personalData/AvatarAndProgress";
 import { Form } from "antd";
+import classes from "./Blanks.module.css";
+import Title from "antd/lib/typography/Title";
 
 
 export const Blanks = () => {
@@ -26,13 +28,43 @@ export const Blanks = () => {
     return (
         <>
             <p></p>
-            <div className="container">
-                <Form name="basic" className="formContainer">
+            <div className={classes.wrapper}>
+                <div className={classes.wrapperImg}>
+                    <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} />
+                </div>
+                <div className={classes.wrapper}>
+                    <div className={classes.wrapperCol}>
+                        <div className={classes.wrapper2}>
+                            <Title level={2}>Життєпис</Title>
+                            <div className={classes.line} />
+                        </div>
 
-                    <div className="avatarWrapper">
-                        <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} />
+                        <div className={classes.wrapper4}>
+                            <Title level={2}>Сертифікати</Title>
+                            <div className={classes.line} />
+                        </div>
+                        <div className={classes.wrapper6}>
+                            <Title level={2}>Генерація</Title>
+                            <div className={classes.line} />
+                        </div>
                     </div>
-                </Form>
+                </div>
+                <div className={classes.wrapper}>
+                    <div className={classes.wrapperCol}>
+                        <div className={classes.wrapper3}>
+                            <Title level={2}>Пошук</Title>
+                            <div className={classes.line} />
+                        </div>
+
+                        <div className={classes.wrapper5}>
+                            <Title level={2}>СВУ</Title>
+                            <div className={classes.line} />
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
 
         </>
