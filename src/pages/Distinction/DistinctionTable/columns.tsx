@@ -4,12 +4,14 @@ import CityUser from '../../../models/City/CityUser';
 import Distinction from '../Interfaces/Distinction';
 import { Tooltip } from 'antd';
 import { SortOrder } from 'antd/lib/table/interface';
+import { FormLabelAlign } from 'antd/lib/form/interface';
 
 const columns = [
     {
+        align: 'right' as FormLabelAlign,
         title: '№',
         dataIndex: 'number',     
-        width: 60,
+        width: 75,
         fixed: true,
         defaultSortOrder: 'ascend' as SortOrder,
         sorter: (a: any, b: any) => a.number - b.number,

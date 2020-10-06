@@ -73,7 +73,7 @@ const CreateCity = () => {
       notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
     }
 
-    const isSmaller2mb = size <= 2097152;
+    const isSmaller2mb = size <= 3145728;
     if (!isSmaller2mb) {
       notificationLogic("error", "Розмір файлу перевищує 3 Мб");
     }
