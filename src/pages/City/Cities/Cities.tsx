@@ -40,7 +40,11 @@ const Cities = () => {
     setLoading(true);
 
     try {
-      const response = await getCitiesByPage(page, pageSize, searchedData.trim());
+      const response = await getCitiesByPage(
+        page,
+        pageSize,
+        searchedData.trim()
+      );
 
       setPhotosLoading(true);
       setPhotos(response.data.cities);
@@ -99,29 +103,30 @@ const Cities = () => {
                 />
               </Card>
             ) : null}
-            
-            { cities.length !== 0 ? (cities.map((city: CityProfile) => (
-              <Card
-                key={city.id}
-                hoverable
-                className="cardStyles"
-                cover={
-                  photosLoading ? (
-                    <Skeleton.Avatar shape="square" active />
-                  ) : (
-                    <img src={city.logo || undefined} alt="City" />
-                  )
-                }
-                onClick={() => history.push(`${url}/${city.id}`)}
-              >
-                <Card.Meta title={city.name} className="titleText" />
-              </Card>
-            ))) : 
-            (<Result
-              status="404"
-              title="Станицю не знайдено"
-            />)
-            }
+
+            {cities.length === 0 && searchedData.length !== 0 ? (
+              <div>
+                <Result status="404" title="Станицю не знайдено" />
+              </div>
+            ) : (
+              cities.map((city: CityProfile) => (
+                <Card
+                  key={city.id}
+                  hoverable
+                  className="cardStyles"
+                  cover={
+                    photosLoading ? (
+                      <Skeleton.Avatar shape="square" active />
+                    ) : (
+                      <img src={city.logo || undefined} alt="City" />
+                    )
+                  }
+                  onClick={() => history.push(`${url}/${city.id}`)}
+                >
+                  <Card.Meta title={city.name} className="titleText" />
+                </Card>
+              ))
+            )}
           </div>
           <div className="pagination">
             <Pagination
