@@ -10,7 +10,7 @@ import regionsApi from '../../api/regionsApi';
 const RegionEditFormPage = () => {
 
 
-    var currentRegion = Number(window.location.hash.substring(1)|| window.location.pathname.split('/').pop());
+    let currentRegion = Number(window.location.hash.substring(1)|| window.location.pathname.split('/').pop());
     const [form] = Form.useForm();
 
 

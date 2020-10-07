@@ -45,6 +45,8 @@ import Regions from "./pages/Regions/RegionsPage";
 import Region from "./pages/Regions/Region";
 import RegionEdit from "./pages/Regions/RegionEdit";
 import AddNewRegionFormPage from "./pages/Regions/AddRegion";
+import RegionAdministration from "./pages/Regions/RegionAdministration";
+import RegionDocuments from "./pages/Regions/RegionDocuments";
 
 
 const App: FC = () => (
@@ -100,6 +102,19 @@ const App: FC = () => (
             exact
             path="/cities/administration/:id"
             component={CityAdministration}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/region/administration/:id"
+            component={RegionAdministration}
+          />
+
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regions/documents/:id"
+            component={RegionDocuments}
           />
           <RouteWithLayout
             layout={PrivateLayout}
