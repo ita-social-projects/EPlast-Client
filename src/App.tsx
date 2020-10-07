@@ -47,6 +47,7 @@ import RegionEdit from "./pages/Regions/RegionEdit";
 import AddNewRegionFormPage from "./pages/Regions/AddRegion";
 import RegionAdministration from "./pages/Regions/RegionAdministration";
 import RegionDocuments from "./pages/Regions/RegionDocuments";
+import RegionMembers from "./../src/pages/Regions/RegionMembers";
 
 
 const App: FC = () => (
@@ -78,6 +79,12 @@ const App: FC = () => (
             exact
             path="/cities"
             component={Cities}
+          />
+           <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regions/members/:id"
+            component={RegionMembers}
           />
           <RouteWithLayout
             layout={PrivateLayout}

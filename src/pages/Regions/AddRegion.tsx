@@ -1,7 +1,8 @@
-import { Form, Input, DatePicker, AutoComplete, Select, Button } from 'antd';
+import { Form, Input, DatePicker, AutoComplete, Select, Button, Layout, Card } from 'antd';
 import React, { useState, useEffect } from 'react';
 import RegionsApi from '../../api/regionsApi'
 import classes from './Form.module.css'
+import "./CreateRegion.less"
 
 import notificationLogic from '../../components/Notifications/Notification';
 
@@ -27,7 +28,9 @@ const AddNewRegionFormPage = () => {
         notificationLogic('success', "Успішно додано округ");
     }
 
-    return <Form
+    return <Layout.Content className="createCity">
+        <Card hoverable className="createCityCard">
+    <Form
         name="basic"
         onFinish={handleSubmit}
         form={form}
@@ -194,6 +197,8 @@ const AddNewRegionFormPage = () => {
       </Form.Item> 
 
     </Form>;
+    </Card>
+    </Layout.Content>
 }
 
 
