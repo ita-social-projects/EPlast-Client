@@ -145,7 +145,8 @@ const Region = () => {
     try {
       const response = await getRegionById(id);
       const response1 = await getRegionAdministration(id);
-      setMembers(response.data.cities);
+      setSixMembers(response.data.cities, 6);
+
       setPhotosLoading(true);
       setAdmins(response1.data);
       setRegionLogoLoading(true);
@@ -164,6 +165,22 @@ const Region = () => {
     setvisible(false);
 
   };
+
+
+  const setSixMembers=(member:any[], amount:number)=>{
+    if(member.length>6){
+    for(let i=0; i<amount; i++){
+      members[i]=member[i];
+    }
+  }
+  else{
+    if(member.length!=0){
+    for(let i=0; i<member.length; i++){
+      members[i]=member[i];
+    }
+  }
+  }
+  }
 
 
   const onAdd = (newDocument: CityDocument) => {
@@ -331,6 +348,55 @@ const Region = () => {
             </Card>
           </Col>
 
+          <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+            <Card hoverable className="cityCard">
+              <Title level={4}>Члени округу</Title>
+              <Row className="cityItems" justify="center" gutter={[0, 16]}>
+                {members.length !== 0 ? (
+                  members.map((member) => (
+                    <Col
+                      className="cityMemberItem"
+                      key={member.id}
+                      xs={12}
+                      sm={8}
+                    >
+                      <div
+                        onClick={() =>
+                          history.push(`/cities/${member.id}`)
+                        }
+                      >
+                        {photosLoading ? (
+                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        ) : (
+
+                            <Avatar size={64} src={member.logo} />
+                          )}
+                        <p className="userName">{member.name}</p>
+
+                      </div>
+                    </Col>
+                  ))
+                ) : (
+                    <Paragraph>Ще немає членів округу</Paragraph>
+                  )}
+
+              </Row>
+              <div className="cityMoreButton">
+              <Button
+                type="primary"
+                className="cityInfoButton"
+                onClick={() => history.push(`/regions/members/${id}`)}
+              >
+                Більше
+              </Button>
+            </div>
+
+            </Card>
+          </Col>
+
+
+
+
 
           <Col
             xl={{ span: 7, offset: 0 }}
@@ -385,6 +451,8 @@ const Region = () => {
           </Col>
 
 
+         
+
           <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
             <Card hoverable className="cityCard">
               <Title level={4}>Документообіг округу</Title>
@@ -427,41 +495,7 @@ const Region = () => {
           </Col>
 
 
-          <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
-            <Card hoverable className="cityCard">
-              <Title level={4}>Члени округу</Title>
-              <Row className="cityItems" justify="center" gutter={[0, 16]}>
-                {members.length !== 0 ? (
-                  members.map((member) => (
-                    <Col
-                      className="cityMemberItem"
-                      key={member.id}
-                      xs={12}
-                      sm={8}
-                    >
-                      <div
-                        onClick={() =>
-                          history.push(`/cities/${member.id}`)
-                        }
-                      >
-                        {photosLoading ? (
-                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
-                        ) : (
 
-                            <Avatar size={64} src={member.logo} />
-                          )}
-                        <p className="userName">{member.name}</p>
-                      </div>
-                    </Col>
-                  ))
-                ) : (
-                    <Paragraph>Ще немає членів округу</Paragraph>
-                  )}
-
-              </Row>
-
-            </Card>
-          </Col>І
       </Row>
 
         <AddDocumentModal
