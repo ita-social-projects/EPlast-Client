@@ -9,7 +9,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-left: 30px;
+    margin-left: 20px;
 }
 .line {
     background: #3C5438;
@@ -19,7 +19,7 @@
 }
 .wrapperImg {
     width:  calc(100% - 30px);
-    height: 721px;
+    height: 791px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
     display: flex;
     flex-direction: column;
@@ -27,10 +27,30 @@
     justify-content: center;
 }
 
+.documentIcon {
+    font-size: 60px;
+}
+
+.deleteIcon{
+    margin-left: 20px;
+    font-size: 28px;
+    color: #910202;
+}
+.deleteIcon :hover{
+    color: #690606;
+    cursor: pointer;
+}
+.downloadIcon{
+    font-size: 28px;
+   color: #3C5438
+}
+.downloadIcon:hover{
+    cursor: pointer;
+   color: #273625
+}
+
 .wrapper2,
-.wrapper4,
-.wrapper6 {
-    margin: 1%;
+.wrapper4{
     width: calc(100% - 30px);
     height: 250px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
@@ -43,13 +63,86 @@
 
 .wrapper3,
 .wrapper5 {
-    margin: 5%;
     width: calc(100% - 30px);
-    height: 350px;
+    height: 250px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     padding-top: 20px;
+}
+
+.wrapper6 {
+    width: calc(100%);
+    height: 250px;
+    box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 20px;
+}
+.wrapper2:hover,
+.wrapper3:hover,
+.wrapper4:hover,
+.wrapper5:hover,
+.wrapper6:hover,
+.wrapperImg:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+ .addIcon {
+    background:#3c5438;
+    color: white;
+    top: 30px;
+    height: 40px;
+}
+.addIcon:hover{
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.wrapper2,
+.wrapper3,
+.wrapper4,
+.wrapper5,
+.wrapper6 {
+    margin: 0px 0px 20px 20px;
+}
+
+@media (max-width: 767px) {
+    .wrapper {
+        flex-direction: column;
+    }
+    .wrapperImg {
+        width: 100%;
+        padding: 0;
+        height: auto;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        margin: 0 0 10px;
+        text-align: center;
+    }
+    .wrapperCol,
+    .wrapper2,
+    .wrapper3,
+    .wrapper4,
+    .wrapper5,
+    .wrapper6 {
+        width: 100%;
+        margin: 0;
+    }
+    .wrapper2,
+    .wrapper3,
+    .wrapper4,
+    .wrapper5,
+    .wrapper6 {
+        margin: 10px 0;
+    }
+    .avatar{
+        height: 200px !important;
+        width: 200px !important;
+    }
 }
