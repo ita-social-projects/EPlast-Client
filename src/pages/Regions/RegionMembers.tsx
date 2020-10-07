@@ -36,7 +36,6 @@ const RegionMembers = () => {
   };
 
 
-
   const setPhotos = async (member: any[]) => {
 
     for(let i=0; i<member.length;++i){
