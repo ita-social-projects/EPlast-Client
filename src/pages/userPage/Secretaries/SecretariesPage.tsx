@@ -7,6 +7,7 @@ import notificationLogic from '../../../components/Notifications/Notification';
 import { Card, Form, Input } from 'antd';
 import './Secretaries.less'
 import {UserCitySecretaryTable} from './UserCitySecretaryTable';
+import { UserRegionSecretaryTable } from './UserRegionSecretaryTable';
 
 
 
@@ -29,9 +30,9 @@ const tabList = [
 
 export const Secretaries = () => {
     const { userId } = useParams();
-    const [data, setData] = useState<Data>();
+    
     const [noTitleKey, setKey] = useState<string>('1');
-
+    const [data, setData] = useState<Data>();
 
     const fetchData = async () => {
         await userApi.getById(userId).then(response => {
@@ -59,7 +60,7 @@ export const Secretaries = () => {
 
 
      const contentListNoTitle: { [key: string]: any } = {
-        1: <div key='1'>Округ</div>,
+        1: <div key='1'><UserRegionSecretaryTable UserId={userId}/></div>,
         2: <div key='2'><UserCitySecretaryTable UserId={userId}/></div>,
         3: <div key='3'>Курінь</div>
       };

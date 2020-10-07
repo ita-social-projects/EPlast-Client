@@ -11,6 +11,7 @@ import moment from 'moment';
 import ModalAddEndDatePlastDegree from './PlastDegree/ModalAddEndDatePlastDegree';
 import DeleteDegreeConfirm from './PlastDegree/DeleteDegreeConfirm';
 import { SafetyCertificateOutlined } from '@ant-design/icons';
+import AvatarAndProgress from '../personalData/AvatarAndProgress';
 
 const { Title } = Typography;
 
@@ -27,6 +28,9 @@ const ActiveMembership = () => {
     const userAdminTypeRoles = ["Admin", "Голова Пласту","Адміністратор подій", "Голова Куреня","Діловод Куреня",
     "Голова Округу","Діловод Округу","Голова Станиці","Діловод Станиці"];
     const userGenders = ["Чоловік","Жінка"];
+
+
+
     const handleAddDegree = async() =>{
         await activeMembershipApi.getUserPlastDegrees(userId).then(response =>{
             setPlastDegrees(response);
@@ -93,17 +97,13 @@ const ActiveMembership = () => {
         fetchData();
     },[]);
 return <div className={classes.wrapper} >
-                <div className={classes.wrapperImg}>
-                    <Avatar size={250} src={imageBase64} />
-                    <Title level={2}> {user.firstName} {user.lastName} </Title>
-               < div className={classes.line} id={classes.line} />
-               {IsUserHasAnyAdminTypeRoles(userToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
-                &&
-                <Button type="primary" onClick={showModal}>
+    <div className="avatarWrapper">
+    <Button className={classes.buttonmargins} type="primary" onClick={showModal}>
                 Додати ступінь
               </Button>
-               }
-                </div>
+                        <AvatarAndProgress imageUrl={user.imagePath} time={user.timeToJoinPlast} firstName={user.firstName} lastName={user.lastName} isUserPlastun={true} />
+                    </div>
+                
 
         <div className={classes.wrapperCol} >
         <div className={classes.wrapper}>
