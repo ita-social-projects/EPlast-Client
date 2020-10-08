@@ -430,15 +430,15 @@ const Region = () => {
                   )}
               </Row>
               <div className="cityMoreButton">
-                <Button
+                <PlusSquareFilled
                   type="primary"
-                  className="cityInfoButton"
+                  className="addReportIcon"
                   onClick={() =>
                     setvisible(true)
                   }
                 >
-                  Додати діловода
-              </Button>
+                  
+              </PlusSquareFilled>
                 <Button
                   type="primary"
                   className="cityInfoButton"

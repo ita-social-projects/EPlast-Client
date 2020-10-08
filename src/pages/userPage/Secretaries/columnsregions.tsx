@@ -1,7 +1,7 @@
 import React from 'react';
 
 import CityUser from '../../../models/City/CityUser';
-
+import moment from "moment";
 
 
 
@@ -27,10 +27,16 @@ const columns = [
   {
     title: 'Початок каденції',
     dataIndex: 'startDate',
+    render:(startDate:Date)=>{
+      return moment(startDate).format("DD-MM-YYYY")
+  }
   },
   {
     title: 'Кінець каденції',
     dataIndex: 'endDate',
+    render:(endDate:Date)=>{
+      return moment(endDate).format("DD-MM-YYYY")
+  }
   } ,
   {
     title: 'Округ',
