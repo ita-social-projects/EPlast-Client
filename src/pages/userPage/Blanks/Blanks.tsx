@@ -5,7 +5,7 @@ import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
 import AvatarAndProgress from "../personalData/AvatarAndProgress";
 import { getDocumentByUserId, removeDocument, getFile } from "../../../api/blankApi";
-import { Button, Col, Form } from "antd";
+import { Button, Col, Form, Tooltip } from "antd";
 import classes from "./Blanks.module.css";
 import Title from "antd/lib/typography/Title";
 import { DeleteOutlined, DownloadOutlined, FileTextOutlined } from "@ant-design/icons";
@@ -69,19 +69,20 @@ export const Blanks = () => {
                                 <Title level={2}>Життєпис</Title>
                                 <div className={classes.line} />
                                 {document.userId == userId ? (
-                                        <Col
-                                            xs={12}
-                                            sm={8}
-                                            key={document.id}
-                                        >
-                                            <div>
-                                                <FileTextOutlined className={classes.documentIcon} />
-                                                <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
-                                                    {document.fileName}
-                                                </Paragraph>
-                                            </div>
+                                    <Col
+                                        xs={12}
+                                        sm={8}
+                                        key={document.id}
+                                    >
+                                        <div>
+                                            <FileTextOutlined className={classes.documentIcon} />
+                                            <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
+                                                {document.fileName}
+                                            </Paragraph>
+                                        </div>
+                                        <Tooltip title="Завантажити">
                                             <DownloadOutlined
-                                            className={classes.downloadIcon}
+                                                className={classes.downloadIcon}
                                                 key="download"
                                                 onClick={() =>
                                                     downloadDocument(
@@ -90,16 +91,19 @@ export const Blanks = () => {
                                                     )
                                                 }
                                             />
-                                            <DeleteOutlined 
-                                            className={classes.deleteIcon}
+                                        </Tooltip>
+                                        <Tooltip title="Видалити">
+                                            <DeleteOutlined
+                                                className={classes.deleteIcon}
                                                 key="close"
                                                 onClick={() => removeDocumentById(document.id)}
                                             />
-                                        </Col>
-                                    )
-                                 : (
+                                        </Tooltip>
+                                    </Col>
+                                )
+                                    : (
                                         <Col>
-                                        <h2>Ви ще не додали Життєпис</h2>
+                                            <h2>Ви ще не додали Життєпис</h2>
                                             <div>
                                                 <Button type="primary"
                                                     className={classes.addIcon}
@@ -120,12 +124,12 @@ export const Blanks = () => {
 
                         <div className={classes.wrapper}>
                             <div className={classes.wrapper4}>
-                                <Title level={2}>Сертифікати</Title>
+                                <Title level={2}>Досягнення</Title>
                                 <div className={classes.line} />
                             </div>
 
                             <div className={classes.wrapper5}>
-                                <Title level={2}>СВУ</Title>
+                                <Title level={2}>Виписка з УПЮ</Title>
                                 <div className={classes.line} />
                             </div>
 

@@ -73,6 +73,7 @@ const AddBiographyModal = (props: Props) => {
       await addDocument(props.userId, newDocument);
       props.setVisibleModal(false);
       form.resetFields();
+      removeFile();
       setDisabled(true);
       setLoading(false);
     };
