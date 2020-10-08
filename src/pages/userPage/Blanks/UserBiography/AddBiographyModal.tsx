@@ -12,7 +12,6 @@ interface Props {
     document: BlankDocument;
     setDocument: (document: BlankDocument) => void;
     userId: number;
-    onAdd: (document: BlankDocument) => void;
 }
   
 const AddBiographyModal = (props: Props) => {
@@ -72,7 +71,6 @@ const AddBiographyModal = (props: Props) => {
       };
       
       await addDocument(props.userId, newDocument);
-      props.onAdd(newDocument);
       props.setVisibleModal(false);
       form.resetFields();
       setDisabled(true);

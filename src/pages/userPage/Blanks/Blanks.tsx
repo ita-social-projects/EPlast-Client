@@ -5,7 +5,7 @@ import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
 import AvatarAndProgress from "../personalData/AvatarAndProgress";
 import { getDocumentByUserId, removeDocument, getFile } from "../../../api/blankApi";
-import { Button, Col } from "antd";
+import { Button, Col, Form } from "antd";
 import classes from "./Blanks.module.css";
 import Title from "antd/lib/typography/Title";
 import { DeleteOutlined, DownloadOutlined, FileTextOutlined } from "@ant-design/icons";
@@ -20,8 +20,8 @@ export const Blanks = () => {
     const [data, setData] = useState<Data>();
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
     const [visibleModal, setVisibleModal] = useState(false);
-    const [documents, setDocuments] = useState<BlankDocument[]>([]);
     const [loading, setLoading] = useState(false);
+    const [form] = Form.useForm();
 
     const fetchData = async () => {
         await userApi.getById(userId).then(response => {
@@ -30,20 +30,14 @@ export const Blanks = () => {
         setLoading(true);
     };
 
-    const onAdd = (newDocument: BlankDocument) => {
-        if (documents.length < 6) {
-            setDocuments([...documents, newDocument]);
-        }
-    };
     const getDocument = async () => {
         const response = await getDocumentByUserId(userId);
-        setDocuments(response.data);
+        setDocument(response.data);
     };
     const removeDocumentById = async (documentId: number) => {
         await removeDocument(documentId);
         notificationLogic('success', "Файл успішно видалено");
-
-        setDocuments(documents.filter((d) => d.id !== documentId));
+        getDocument();
     };
 
     const downloadDocument = async (fileBlob: string, fileName: string) => {
@@ -74,8 +68,7 @@ export const Blanks = () => {
                             <div className={classes.wrapper2}>
                                 <Title level={2}>Життєпис</Title>
                                 <div className={classes.line} />
-                                {documents.length !== 0 ? (
-                                    documents.map((document) => (
+                                {document.userId == userId ? (
                                         <Col
                                             xs={12}
                                             sm={8}
@@ -87,7 +80,6 @@ export const Blanks = () => {
                                                     {document.fileName}
                                                 </Paragraph>
                                             </div>
-
                                             <DownloadOutlined
                                             className={classes.downloadIcon}
                                                 key="download"
@@ -104,8 +96,8 @@ export const Blanks = () => {
                                                 onClick={() => removeDocumentById(document.id)}
                                             />
                                         </Col>
-                                    ))
-                                ) : (
+                                    )
+                                 : (
                                         <Col>
                                         <h2>Ви ще не додали Життєпис</h2>
                                             <div>
@@ -158,7 +150,6 @@ export const Blanks = () => {
                     setDocument={setDocument}
                     visibleModal={visibleModal}
                     setVisibleModal={setVisibleModal}
-                    onAdd={onAdd}
                 ></AddBiographyModal>
             </>
 
