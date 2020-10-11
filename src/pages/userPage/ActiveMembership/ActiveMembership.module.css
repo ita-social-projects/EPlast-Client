@@ -283,3 +283,37 @@ h2 {
     justify-content: center;
 }
 
+@media (max-width: 767px) {
+    .wrapper {
+        flex-direction: column;
+    }
+    .wrapperImg {
+        width: 100%;
+        padding: 0;
+        margin: 0 0 10px;
+        text-align: center;
+    }
+    .wrapperCol,
+    .wrapper2,
+    .wrapper3,
+    .wrapper4,
+    .wrapper5 {
+        width: 100%;
+        margin: 0;
+    }
+    .wrapper2,
+    .wrapper3,
+    .wrapper4,
+    .wrapper5 {
+        margin: 10px 0;
+    }
+}
+
+
+
+
+.buttonmargins{
+    margin-top: 15px;
+    margin-bottom: 15px;
+    width:100%
+}

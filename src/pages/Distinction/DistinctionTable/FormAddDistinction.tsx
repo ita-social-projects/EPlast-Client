@@ -56,6 +56,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
   }, []);
 
   const handleCancel = () => {
+    form.resetFields();
     setVisibleModal(false);
   };
 
@@ -102,7 +103,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
           type="number"
           min={1}
           className={formclasses.inputField}
-          max={1000}
+          max={99999}
         />
       </Form.Item>
       <Form.Item

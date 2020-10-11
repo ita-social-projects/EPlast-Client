@@ -9,7 +9,7 @@ const getUserDistinctions = async () => {
   return (await api.get(`Distinction/UserDistinctions`)).data;
 };
 const getDistinctionById = async (id: number) => {
-  return await api.get(`${id}`, id);
+  return await api.get(`Distinction/${id}`, id);
 };
 const getDistinctions = async () => {
   return await api.get(`Distinction/Distinctions`);
@@ -36,7 +36,7 @@ const editUserDistinction = async (data: UserDistinction) => {
   return await api.put(`Distinction/UserDistinction/Edit/${data.id}`, data);
 };
 const editDistinction = async (data: Distinction) => {
-  return await api.put(`Distinction/Edit/${data.id}`, data.id);
+  return await api.put(`Distinction/Edit/${data.id}`, data);
 };
 const checkNumberExisting = async (number: number) => {
   return await api.get(`Distinction/numberExist/${number}`, number);

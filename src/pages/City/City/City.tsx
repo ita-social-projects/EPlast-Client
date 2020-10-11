@@ -17,6 +17,7 @@ import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
 import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 
+
 const City = () => {
   const history = useHistory();
   const {id} = useParams();
