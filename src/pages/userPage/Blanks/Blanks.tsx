@@ -4,8 +4,8 @@ import { Data } from "../Interface/Interface";
 import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
 import AvatarAndProgress from "../personalData/AvatarAndProgress";
-import { getDocumentByUserId, removeDocument, getFile } from "../../../api/blankApi";
-import { Button, Col, Form, Tooltip } from "antd";
+import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId } from "../../../api/blankApi";
+import { Badge, Button, Col, Form, Tooltip } from "antd";
 import classes from "./Blanks.module.css";
 import Title from "antd/lib/typography/Title";
 import { DeleteOutlined, DownloadOutlined, FileTextOutlined } from "@ant-design/icons";
@@ -13,13 +13,16 @@ import AddBiographyModal from "./UserBiography/AddBiographyModal";
 import BlankDocument from "../../../models/Blank/BlankDocument";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
+import AddAchievementsModal from "./UserAchievements/AddAchievementsModal";
 
 
 export const Blanks = () => {
     const { userId } = useParams();
     const [data, setData] = useState<Data>();
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
+    const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
     const [visibleModal, setVisibleModal] = useState(false);
+    const [visibleAchievementModal, setvisibleAchievementModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
 
@@ -34,6 +37,10 @@ export const Blanks = () => {
         const response = await getDocumentByUserId(userId);
         setDocument(response.data);
     };
+    const getAchievementDocumentsByUserId = async () => {
+        const response = await getAllAchievementDocumentsByUserId(userId);
+        setAchievementDoc(response.data);
+    };
     const removeDocumentById = async (documentId: number) => {
         await removeDocument(documentId);
         notificationLogic('success', "Файл успішно видалено");
@@ -47,7 +54,7 @@ export const Blanks = () => {
     useEffect(() => {
         fetchData();
         getDocument();
-
+        getAchievementDocumentsByUserId();
     }, [userId, visibleModal]);
 
     return (loading === false ? (
@@ -126,6 +133,27 @@ export const Blanks = () => {
                             <div className={classes.wrapper4}>
                                 <Title level={2}>Досягнення</Title>
                                 <div className={classes.line} />
+                                {achievementDoc.length !== 0 ? (
+                                    <Col>
+                                        <Badge
+                                            count={achievementDoc.length}
+                                            style={{ backgroundColor: "#3c5438" }}
+                                        />
+                                    </Col>
+                                ) : (
+                                        <Col>
+                                            <h2>Ви ще не додали жодного Досягнення</h2>
+                                        </Col>
+                                    )}
+                                <Col>
+                                    <div>
+                                        <Button type="primary"
+                                            className={classes.addIcon}
+                                            onClick={() => setvisibleAchievementModal(true)}>
+                                            Додати Досягнення
+                                            </Button>
+                                    </div>
+                                </Col>
                             </div>
 
                             <div className={classes.wrapper5}>
@@ -147,6 +175,14 @@ export const Blanks = () => {
 
                     </div>
                 </div>
+
+                <AddAchievementsModal
+                    userId={data?.user.id}
+                    documents={achievementDoc}
+                    setDocuments={setAchievementDoc}
+                    visibleModal={visibleAchievementModal}
+                    setVisibleModal={setvisibleAchievementModal}
+                ></AddAchievementsModal>
 
                 <AddBiographyModal
                     userId={data?.user.id}
