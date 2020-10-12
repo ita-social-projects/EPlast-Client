@@ -178,8 +178,8 @@ export const Blanks = () => {
 
                 <AddAchievementsModal
                     userId={data?.user.id}
-                    documents={achievementDoc}
-                    setDocuments={setAchievementDoc}
+                    document={document}
+                    setDocument={setDocument}
                     visibleModal={visibleAchievementModal}
                     setVisibleModal={setvisibleAchievementModal}
                 ></AddAchievementsModal>
