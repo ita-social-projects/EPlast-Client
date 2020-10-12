@@ -135,7 +135,6 @@ const ActiveMembership = () => {
           firstName={user.firstName}
           lastName={user.lastName}
           isUserPlastun={true}
-          // data.isUserPlastun}
         />
 
         {IsUserHasAnyAdminTypeRoles(
@@ -154,59 +153,64 @@ const ActiveMembership = () => {
           <div className={classes.wrapper2}>
             <Title level={2}> Загальна інформація </Title>
             <div className={classes.line} />
-            {LoadInfo ? (
-              <>
-                <div className={classes.textGeneralInfo}>
-                  Дата вступу:{" "}
-                  {dates?.dateEntry === ""
-                    ? "Не задано"
-                    : moment(dates.dateEntry).format("DD-MM-YYYY")}
-                </div>
-                <div className={classes.textGeneralInfo}>
-                  Дата присяги:{" "}
-                  {dates?.dateOath === ""
-                    ? "Без присяги"
-                    : moment(dates.dateOath).format("DD-MM-YYYY")}
-                </div>
-                <div className={classes.textGeneralInfo}>
-                  Дата завершення:{" "}
-                  {dates?.dateEnd === ""
-                    ? "Ще в Пласті"
-                    : moment(dates.dateEnd).format("DD-MM-YYYY")}
-                </div>
-                {IsUserHasAnyAdminTypeRoles(
-                  userToken[
-                    "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-                  ]
-                ) && (
-                  <Button
-                    type="primary"
-                    className={classes.buttonChange}
-                    onClick={() => {
-                      setDatesVisibleModal(true);
-                    }}
-                  >
-                    Змінити
-                  </Button>
-                )}
-              </>
-            ) : (
-              <div></div>
-            )}
+            <div className={classes.textBlock}>
+              {LoadInfo ? (
+                <>
+                  <div className={classes.textGeneralInfo}>
+                    <span className={classes.date}>Дата вступу:{" "}</span> 
+                    {dates?.dateEntry === ""
+                      ? "Не задано"
+                      : moment(dates.dateEntry).format("DD-MM-YYYY")}
+                  </div>
+                  <div className={classes.textGeneralInfo}>
+                  <span className={classes.date}>Дата присяги:{" "}</span> 
+                    {dates?.dateOath === ""
+                      ? "Без присяги"
+                      : moment(dates.dateOath).format("DD-MM-YYYY")}
+                  </div>
+                  <div className={classes.textGeneralInfo}>
+                  <span className={classes.date}>Дата завершення:{" "}</span> 
+                    {dates?.dateEnd === ""
+                      ? "Ще в Пласті"
+                      : moment(dates.dateEnd).format("DD-MM-YYYY")}
+                  </div>
+                  {IsUserHasAnyAdminTypeRoles(
+                    userToken[
+                      "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+                    ]
+                  ) && (
+                    <Button
+                      type="primary"
+                      className={classes.buttonChange}
+                      onClick={() => {
+                        setDatesVisibleModal(true);
+                      }}
+                    >
+                      Змінити
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <div></div>
+              )}
+            </div>
           </div>
-
           <div className={classes.wrapper2}>
             <Title level={2}> Рівні доступу </Title>
             <div className={classes.line} />
-            <List
-              dataSource={accessLevels}
-              renderItem={(item) => (
-                <List.Item style={{ fontSize: "16px" }}>{item}</List.Item>
-              )}
-            />
+              <div className={classes.textBlock}>
+                <List
+                  dataSource={accessLevels}
+                  renderItem={(item) => (
+                    <List.Item style={{ fontSize: "16px" }}>{item}</List.Item>
+                  )}
+                />
+              </div>
+
           </div>
         </div>
         <div className={classes.wrapper}>
+          <div className={classes.wrapperScrollDegree}>
           <div className={classes.wrapperPlastDegree}>
             <Title level={2}> Ступені користувача </Title>
             <div className={classes.line} />
@@ -271,7 +275,10 @@ const ActiveMembership = () => {
                 )}
               </React.Fragment>
             ))}
+            </div>
           </div>
+          
+        
         </div>
       </div>
       <ModalAddPlastDegree

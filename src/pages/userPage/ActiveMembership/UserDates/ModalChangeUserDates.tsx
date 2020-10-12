@@ -53,7 +53,6 @@ const ModalChangeUserDates = ({
         setDatesVisibleModal(false);
         await activeMembershipApi.postUserDates(userDatesChange);
         handleChangeDates();
-        form.resetFields();
     };
     return <Modal
         visible={datesVisibleModal}
