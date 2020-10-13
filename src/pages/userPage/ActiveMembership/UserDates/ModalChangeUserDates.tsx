@@ -67,7 +67,7 @@ const ModalChangeUserDates = ({
         <Form.Item 
         className={classes.formField}
        name="datepickerOath">
-        <DatePicker format = "YYYY-MM-DD" 
+        <DatePicker format = "DD-MM-YYYY" 
         disabledDate={(cur) => disabledDate(cur ,dates.dateEntry)}
         defaultValue = { dates.dateOath !== "" ? moment(dates.dateOath, 'YYYY-MM-DD') : undefined}
         className={classes.selectField}
@@ -79,7 +79,7 @@ const ModalChangeUserDates = ({
         <Form.Item 
         className={classes.formField}
        name="datepickerEnd">
-        <DatePicker format = "YYYY-MM-DD" 
+        <DatePicker format = "DD-MM-YYYY" 
         disabledDate={(cur) => disabledDate(cur ,dates.dateEntry)}
         defaultValue = { dates.dateEnd !== "" ? moment(dates.dateEnd, 'YYYY-MM-DD') : undefined}
         className={classes.selectField}
