@@ -98,6 +98,17 @@
     top: 30px;
     height: 40px;
 }
+.listButton{
+    background:#3c5438;
+    color: white;
+    top: 15px;
+    height: 40px;
+}
+.listButton:hover{
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
 .addIcon:hover{
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
     transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);

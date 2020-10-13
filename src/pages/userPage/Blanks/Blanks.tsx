@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { Data } from "../Interface/Interface";
 import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
@@ -14,10 +14,13 @@ import BlankDocument from "../../../models/Blank/BlankDocument";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
 import AddAchievementsModal from "./UserAchievements/AddAchievementsModal";
-
+import AuthStore from "../../../stores/AuthStore";
+import jwt from "jwt-decode";
 
 export const Blanks = () => {
+    const history = useHistory();
     const { userId } = useParams();
+
     const [data, setData] = useState<Data>();
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
     const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
@@ -25,8 +28,15 @@ export const Blanks = () => {
     const [visibleAchievementModal, setvisibleAchievementModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
+    const [userToken, setUserToken] = useState<any>([
+        {
+            nameid: "",
+        },
+    ]);
 
     const fetchData = async () => {
+        const token = AuthStore.getToken() as string;
+        setUserToken(jwt(token));
         await userApi.getById(userId).then(response => {
             setData(response.data);
         }).catch(() => { notificationLogic('error', "Щось пішло не так") })
@@ -55,7 +65,7 @@ export const Blanks = () => {
         fetchData();
         getDocument();
         getAchievementDocumentsByUserId();
-    }, [userId, visibleModal]);
+    }, [userId, visibleModal, visibleAchievementModal]);
 
     return (loading === false ? (
         <Spinner />
@@ -99,25 +109,34 @@ export const Blanks = () => {
                                                 }
                                             />
                                         </Tooltip>
-                                        <Tooltip title="Видалити">
-                                            <DeleteOutlined
-                                                className={classes.deleteIcon}
-                                                key="close"
-                                                onClick={() => removeDocumentById(document.id)}
-                                            />
-                                        </Tooltip>
+                                        {userToken.nameid === userId &&
+                                            <Tooltip title="Видалити">
+                                                <DeleteOutlined
+                                                    className={classes.deleteIcon}
+                                                    key="close"
+                                                    onClick={() => removeDocumentById(document.id)}
+                                                />
+                                            </Tooltip>
+                                        }
                                     </Col>
                                 )
                                     : (
                                         <Col>
-                                            <h2>Ви ще не додали Життєпис</h2>
-                                            <div>
-                                                <Button type="primary"
-                                                    className={classes.addIcon}
-                                                    onClick={() => setVisibleModal(true)}>
-                                                    Створити Життєпис
+                                            {userToken.nameid === userId &&
+                                                <h2>Ви ще не додали Життєпис</h2>
+                                            }
+                                            {userToken.nameid !== userId &&
+                                                <h2>Користувач ще не додав(ла) Життєпис</h2>
+                                            }
+                                            {userToken.nameid === userId &&
+                                                <div>
+                                                    <Button type="primary"
+                                                        className={classes.addIcon}
+                                                        onClick={() => setVisibleModal(true)}>
+                                                        Створити Життєпис
                                             </Button>
-                                            </div>
+                                                </div>
+                                            }
                                         </Col>
                                     )}
 
@@ -134,25 +153,42 @@ export const Blanks = () => {
                                 <Title level={2}>Досягнення</Title>
                                 <div className={classes.line} />
                                 {achievementDoc.length !== 0 ? (
-                                    <Col>
-                                        <Badge
-                                            count={achievementDoc.length}
-                                            style={{ backgroundColor: "#3c5438" }}
-                                        />
-                                    </Col>
+                                    <div>
+                                        <Col>
+                                            <Badge
+                                                count={achievementDoc.length}
+                                                style={{ backgroundColor: "#3c5438" }}
+                                            />
+
+                                        </Col>
+                                        <Col>
+                                            <Button type="primary"
+                                                className={classes.listButton}>
+                                                Список
+                                        </Button>
+                                        </Col>
+                                    </div>
                                 ) : (
                                         <Col>
-                                            <h2>Ви ще не додали жодного Досягнення</h2>
+                                            {userToken.nameid === userId &&
+                                                <h2>Ви ще не додали жодного Досягнення</h2>
+                                            }
+                                            {userToken.nameid !== userId &&
+                                                <h2> Користувач ще не додав(ла) жодного Досягнення</h2>
+                                            }
                                         </Col>
                                     )}
                                 <Col>
-                                    <div>
-                                        <Button type="primary"
-                                            className={classes.addIcon}
-                                            onClick={() => setvisibleAchievementModal(true)}>
-                                            Додати Досягнення
+
+                                    {userToken.nameid === userId &&
+                                        <div>
+                                            <Button type="primary"
+                                                className={classes.addIcon}
+                                                onClick={() => setvisibleAchievementModal(true)}>
+                                                Додати Досягнення
                                             </Button>
-                                    </div>
+                                        </div>
+                                    }
                                 </Col>
                             </div>
 
@@ -178,8 +214,6 @@ export const Blanks = () => {
 
                 <AddAchievementsModal
                     userId={data?.user.id}
-                    document={document}
-                    setDocument={setDocument}
                     visibleModal={visibleAchievementModal}
                     setVisibleModal={setvisibleAchievementModal}
                 ></AddAchievementsModal>

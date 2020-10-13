@@ -90,9 +90,6 @@ const AddBiographyModal = (props: Props) => {
       removeFile();
     };
 
-    useEffect(() => {
-    }, []);
-
     return (
       <Modal
         title="Додати життєпис"
@@ -121,6 +118,7 @@ const AddBiographyModal = (props: Props) => {
               </p>
               <p className="ant-upload-hint">
                 Клікніть або перетягніть файл для завантаження
+                (PDF*)
               </p>
               {props.document.blobName !== null && <div>{fileName}</div>}
             </Upload.Dragger>
