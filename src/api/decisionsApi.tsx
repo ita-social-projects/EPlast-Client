@@ -119,7 +119,7 @@ const getFileAsBase64 = async (fileName: string) =>{
   const response = await (await Api.get(`Decisions/downloadfile/${fileName}`)).data;
   const file = dataURLtoFile(response, fileName);
   const anchor = window.document.createElement('a');
-  anchor.href = window.URL.createObjectURL(file);
+  anchor.href = response;
   anchor.download = fileName;
   document.body.appendChild(anchor);
   anchor.click();
