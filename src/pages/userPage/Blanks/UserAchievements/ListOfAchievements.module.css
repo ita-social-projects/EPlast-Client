@@ -1,3 +1,20 @@
 .fileIcon{
     font-size: 30px;
 }
+.deleteIcon{
+    font-size: 20px;
+    color: #910202;
+}
+.deleteIcon:hover{
+    color: #690606;
+    cursor: pointer;
+}
+
+.downloadIcon{
+    font-size: 20px;
+    color: #3C5438
+ }
+ .downloadIcon:hover{
+     cursor: pointer;
+    color: #273625
+ }
