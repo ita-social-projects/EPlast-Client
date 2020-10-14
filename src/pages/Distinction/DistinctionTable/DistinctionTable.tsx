@@ -13,6 +13,7 @@ import Distinction from "../Interfaces/Distinction";
 import Spinner from "../../Spinner/Spinner";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
+import moment from "antd/node_modules/moment";
 
 const { Content } = Layout;
 const DistinctionTable = () => {
@@ -55,13 +56,19 @@ const DistinctionTable = () => {
       const res: UserDistinction[] = await distinctionApi.getUserDistinctions();
       setData(res);
       setLoading(true);
+      console.log(filteredData);
     };
     fetchData();
   }, []);
 
   let filteredData = searchedData
-    ? UserDistinctions.filter((item: any) => {
-        return Object.values(item).find((element) => {
+    ? UserDistinctions.filter((item) => {
+        return Object.values([
+          item.reporter,
+          item.reason,
+          item.number,
+          moment(item.date.toLocaleString()).format("DD-MM-YYYY"),
+        ]).find((element) => {
           return String(element).toLowerCase().includes(searchedData);
         });
       })
@@ -168,7 +175,7 @@ const DistinctionTable = () => {
             ) : (
               <></>
             )}
-            <Input placeholder="Пошук" onChange={handleSearch} />
+            <Input placeholder="Пошук" onChange={handleSearch} allowClear />
           </div>
           <div>
             <Table
