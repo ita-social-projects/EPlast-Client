@@ -35,11 +35,11 @@ const AddAchievementsModal = (props: Props) => {
           setFiles([...files]);
         });
         notificationLogic("success", `Файл "${info.file.name}" завантажено`);
+        setDisabled(false);
       }
     } else {
       notificationLogic("error", "Проблема з завантаженням файлу");
     }
-    setDisabled(false);
     form.resetFields();
   };
 
@@ -52,6 +52,7 @@ const AddAchievementsModal = (props: Props) => {
       extension.indexOf("png") !== -1
     if (!isCorrectExtension) {
       notificationLogic("error", "Можливі розширення файлів: pdf,jpg,jpeg,png");
+      setDisabled(true);
     }
     return isCorrectExtension;
   }
@@ -83,43 +84,47 @@ const AddAchievementsModal = (props: Props) => {
       visible={props.visibleModal}
       footer={null}
       confirmLoading={loading}
-      className="addDocumentModal"
       onCancel={handleCancel}
     >
       <Form name="basic" onFinish={handleSubmit} form={form}>
         <Form.Item>
-        <Dragger
-          name="file"
-          customRequest={handleUpload}
-          multiple={true}
-          showUploadList={false}
-          accept=".png,.jpg,.jpeg,.pdf"
-        >
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined style={{ color: "#3c5438" }} />
-          </p>
-          <p className="ant-upload-hint">
-            Клікніть або перетягніть файл для завантаження (PDF*,PNG*,JPG*,JPEG*)
+          <Dragger
+            name="file"
+            customRequest={handleUpload}
+            multiple={true}
+            showUploadList={false}
+            accept=".png,.jpg,.jpeg,.pdf"
+          >
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined style={{ color: "#3c5438" }} />
+            </p>
+            <p className="ant-upload-hint">
+              Клікніть або перетягніть файл для завантаження (PDF*,PNG*,JPG*,JPEG*)
                 </p>
-          {files.length !== 0 && files.map(file => (
-            <div>{file.fileName};</div>
-          ))}
-        </Dragger>
-        {files.length !== 0 ? (
-          <div>
-            <Button
-              className="cardButton"
-              onClick={() => {
-                removeFile();
-                notificationLogic("success", "Файли видалено");
-              }}
-            >
-              Видалити файли
-                </Button>
-          </div>
-        ) : null}
+            {files.length !== 0 && files.map(file => (
+              <div>{file.fileName};</div>
+            ))}
+          </Dragger>
+          {files.length !== 0 ? (
+            <div>
+              <Button
+                className="cardButton"
+                onClick={() => {
+                  removeFile();
+                  notificationLogic("success", "Файли видалено");
+                }}
+              >
+                {files.length > 1 &&
+                  <p>Видалити файли</p>
+                }
+                {files.length === 1 &&
+                  <p>Видалити файл</p>
+                }
+              </Button>
+            </div>
+          ) : null}
         </Form.Item>
-        <Form.Item className="cancelConfirmButtons">
+        <Form.Item>
           <Row justify="end">
             <Col xs={11} sm={5}>
               <Button key="back" onClick={handleCancel}>
@@ -127,7 +132,6 @@ const AddAchievementsModal = (props: Props) => {
                   </Button>
             </Col>
             <Col
-              className="publishButton"
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >

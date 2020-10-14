@@ -215,6 +215,7 @@ export const Blanks = () => {
                     </div>
                 </div>
                 <ListOfAchievementsModal
+                    userToken={userToken}
                     visibleModal={visibleListAchievementModal}
                     setVisibleModal={setVisibleListAchievementModal}
                     achievementDoc={achievementDoc}
