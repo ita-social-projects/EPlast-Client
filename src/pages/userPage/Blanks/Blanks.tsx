@@ -218,6 +218,7 @@ export const Blanks = () => {
                     visibleModal={visibleListAchievementModal}
                     setVisibleModal={setVisibleListAchievementModal}
                     achievementDoc={achievementDoc}
+                    setAchievementDoc={setAchievementDoc}
                 ></ListOfAchievementsModal>
 
                 <AddAchievementsModal

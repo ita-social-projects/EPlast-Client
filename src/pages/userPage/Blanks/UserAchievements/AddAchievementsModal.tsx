@@ -17,10 +17,10 @@ const AddAchievementsModal = (props: Props) => {
 
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
-  const [files,setFiles] = useState<BlankDocument[]>([]);
+  const [files, setFiles] = useState<BlankDocument[]>([]);
   const [disabled, setDisabled] = useState(true);
 
-  
+
   const handleUpload = (info: any) => {
     if (info.file !== null) {
       if (checkFile(info.file.name)) {
@@ -32,8 +32,9 @@ const AddAchievementsModal = (props: Props) => {
             userId: props.userId
           };
           files.push(newDocument);
+          setFiles([...files]);
         });
-        notificationLogic("success", "Файл завантажено");
+        notificationLogic("success", `Файл "${info.file.name}" завантажено`);
       }
     } else {
       notificationLogic("error", "Проблема з завантаженням файлу");
@@ -55,7 +56,7 @@ const AddAchievementsModal = (props: Props) => {
     return isCorrectExtension;
   }
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async () => {
     setLoading(true);
     await addAchievementDocuments(props.userId, files);
     props.setVisibleModal(false);
@@ -86,6 +87,7 @@ const AddAchievementsModal = (props: Props) => {
       onCancel={handleCancel}
     >
       <Form name="basic" onFinish={handleSubmit} form={form}>
+        <Form.Item>
         <Dragger
           name="file"
           customRequest={handleUpload}
@@ -102,21 +104,21 @@ const AddAchievementsModal = (props: Props) => {
           {files.length !== 0 && files.map(file => (
             <div>{file.fileName};</div>
           ))}
-        </Dragger> 
-
+        </Dragger>
         {files.length !== 0 ? (
-              <div>
-                <Button
-                  className="cardButton"
-                  onClick={() => {
-                    removeFile();
-                    notificationLogic("success", "Файли видалено");
-                  }}
-                >
-                  Видалити файли
+          <div>
+            <Button
+              className="cardButton"
+              onClick={() => {
+                removeFile();
+                notificationLogic("success", "Файли видалено");
+              }}
+            >
+              Видалити файли
                 </Button>
-              </div>
-            ) : null}
+          </div>
+        ) : null}
+        </Form.Item>
         <Form.Item className="cancelConfirmButtons">
           <Row justify="end">
             <Col xs={11} sm={5}>
