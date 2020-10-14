@@ -1,8 +1,8 @@
-import { Form, Input, DatePicker, AutoComplete, Select, Button } from 'antd';
+import { Form, Input, DatePicker, AutoComplete, Select, Button, Layout, Card } from 'antd';
 import React, { useState, useEffect } from 'react';
 import RegionsApi from '../../api/regionsApi'
 import classes from './Form.module.css'
-
+import "./CreateRegion.less"
 import notificationLogic from '../../components/Notifications/Notification';
 import { useParams } from 'react-router-dom';
 import regionsApi from '../../api/regionsApi';
@@ -10,7 +10,7 @@ import regionsApi from '../../api/regionsApi';
 const RegionEditFormPage = () => {
 
 
-    var currentRegion = Number(window.location.hash.substring(1)|| window.location.pathname.split('/').pop());
+    let currentRegion = Number(window.location.hash.substring(1)|| window.location.pathname.split('/').pop());
     const [form] = Form.useForm();
 
 
@@ -58,7 +58,10 @@ const RegionEditFormPage = () => {
         notificationLogic('success', "Успішно змінено дані округу");
     }
 
-    return <Form
+    return  <Layout.Content className="createCity">
+    <Card hoverable className="createCityCard">
+        
+    <Form
         name="basic"
         onFinish={handleSubmit}
         form={form}
@@ -236,6 +239,8 @@ const RegionEditFormPage = () => {
       </Form.Item> 
 
     </Form>;
+    </Card>
+    </Layout.Content>
 }
 
 
