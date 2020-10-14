@@ -96,7 +96,6 @@ const AddBiographyModal = (props: Props) => {
         visible={props.visibleModal}
         footer={null}
         confirmLoading={loading}
-        className="addDocumentModal"
         onCancel={handleCancel}
       >
         <Form name="basic" onFinish={handleSubmit} form={form}>

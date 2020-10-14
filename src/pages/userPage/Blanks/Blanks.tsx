@@ -16,6 +16,7 @@ import Spinner from "../../Spinner/Spinner";
 import AddAchievementsModal from "./UserAchievements/AddAchievementsModal";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
+import ListOfAchievementsModal from "./UserAchievements/ListOfAchievementsModal";
 
 export const Blanks = () => {
     const history = useHistory();
@@ -25,6 +26,7 @@ export const Blanks = () => {
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
     const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
     const [visibleModal, setVisibleModal] = useState(false);
+    const [visibleListAchievementModal, setVisibleListAchievementModal] = useState(false);
     const [visibleAchievementModal, setvisibleAchievementModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
@@ -163,7 +165,8 @@ export const Blanks = () => {
                                         </Col>
                                         <Col>
                                             <Button type="primary"
-                                                className={classes.listButton}>
+                                                className={classes.listButton}
+                                                onClick={() => setVisibleListAchievementModal(true)}>
                                                 Список
                                         </Button>
                                         </Col>
@@ -211,6 +214,11 @@ export const Blanks = () => {
 
                     </div>
                 </div>
+                <ListOfAchievementsModal
+                    visibleModal={visibleListAchievementModal}
+                    setVisibleModal={setVisibleListAchievementModal}
+                    achievementDoc={achievementDoc}
+                ></ListOfAchievementsModal>
 
                 <AddAchievementsModal
                     userId={data?.user.id}
