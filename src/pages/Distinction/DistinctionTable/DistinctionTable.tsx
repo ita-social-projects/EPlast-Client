@@ -13,7 +13,7 @@ import Distinction from "../Interfaces/Distinction";
 import Spinner from "../../Spinner/Spinner";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
-import moment from "antd/node_modules/moment";
+import moment from "moment";
 
 const { Content } = Layout;
 const DistinctionTable = () => {
