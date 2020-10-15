@@ -36,8 +36,7 @@ const Regions = () => {
       if (region.logo === null) {
         region.logo = RegionDefaultLogo;
       } else {
-        /*const logo = await getLogo(region.logo);
-        region.logo = logo.data;*/
+       
       }
     }
 
