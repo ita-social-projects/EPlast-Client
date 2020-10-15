@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Select, Typography, Radio } from 'antd';
 import adminApi from '../../api/adminApi';
 import { useHistory } from 'react-router-dom';
-import AssignUserNewOptionsModal from './AssignUserNewOptionsModal';
 const { Title } = Typography;
 
 interface Props {
@@ -11,11 +10,10 @@ interface Props {
     onChange: (id: string, userRoles: string) => void;
 }
 
-const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
+const AssignUserNewOptionsForm = ({ record, setShowModal, onChange }: Props) => {
     const id = record;
     const [form] = Form.useForm();
     const history = useHistory();
-    const [showEditOptionsModal, setShowEditOptionsModal] = useState(false);
 
     const [roles, setRoles] = useState<any>({
         userID: '',
@@ -26,10 +24,6 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
         }],
         userRoles: ['']
     })
-
-    const handleItemClick = async (item: any) => {
-        await setShowEditOptionsModal(true);
-      };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -70,12 +64,28 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
                 onFinish={handleFinish}
                 form={form}
             >
-                <h4>Оберіть одну або декілька ролей</h4>
+                <h4>Оберіть курінь</h4>
                 <Form.Item name="userRole">
                     <Select mode='multiple' >
                         {roles?.allRoles.map((item: any) => (<Radio.Button key={item.id} value={item.name} >
                             {item.name}
                         </Radio.Button>))}
+                    </Select>
+                </Form.Item>
+                <h4>Оберіть станицю</h4>
+                <Form.Item name="userRole">
+                    <Select mode='multiple' >
+                        {/* {roles?.allRoles.map((item: any) => (<Radio.Button key={item.id} value={item.name} >
+                            {item.name}
+                        </Radio.Button>))} */}
+                    </Select>
+                </Form.Item>
+                <h4>Оберіть округ</h4>
+                <Form.Item name="userRole">
+                    <Select mode='multiple' >
+                        {/* {roles?.allRoles.map((item: any) => (<Radio.Button key={item.id} value={item.name} >
+                            {item.name}
+                        </Radio.Button>))} */}
                     </Select>
                 </Form.Item>
                 <Form.Item style={{ textAlign: "right" }}>
@@ -86,23 +96,16 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
                         Відмінити
                         </Button>
                     <Button
-                        type="primary" 
-                        htmlType="submit"
-                        onClick={handleItemClick}
+                        type="primary" htmlType="submit"
                     >
                         Змінити
                         </Button>
 
                 </Form.Item>
-                <AssignUserNewOptionsModal
-                    record={record}
-                    showModal={showEditOptionsModal}
-                    setShowModal={setShowEditOptionsModal}
-                    onChange={onChange}
-                />
             </Form>
         </div>
     );
 };
 
-export default ChangeUserRoleForm;
+
+export default AssignUserNewOptionsForm;
