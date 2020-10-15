@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Select, Typography, Radio } from 'antd';
 import adminApi from '../../api/adminApi';
+import { getCitiesForEdit } from '../../api/citiesApi';
 import { useHistory } from 'react-router-dom';
 const { Title } = Typography;
 
@@ -15,23 +16,23 @@ const AssignUserNewOptionsForm = ({ record, setShowModal, onChange }: Props) => 
     const [form] = Form.useForm();
     const history = useHistory();
 
-    const [roles, setRoles] = useState<any>({
+    const [cities, setCities] = useState<any>({
         userID: '',
         userEmail: '',
-        allRoles: [{
+        allCities: [{
             id: '',
             name: ''
         }],
-        userRoles: ['']
+        userCity: ''
     })
 
     useEffect(() => {
         const fetchData = async () => {
-            await adminApi.getRolesForEdit(id).then(response => {
-                const { allRoles, userRoles } = response.data;
-                setRoles({ allRoles, userRoles });
+            await getCitiesForEdit(id).then(response => {
+                const { allCities, userCity } = response.data;
+                setCities({ allCities, userCity });
                 form.setFieldsValue({
-                    userRoles: roles.userRoles
+                    userCity: cities.userCity
                 });
             })
         }
@@ -41,35 +42,35 @@ const AssignUserNewOptionsForm = ({ record, setShowModal, onChange }: Props) => 
     const handleCancel = () => {
         setShowModal(false);
     }
-    const handleFinish = async (value: any) => {
-        const rolesParam = JSON.stringify(value.userRole);
-        await adminApi.putEditedRoles(id, rolesParam);
-        const newRoles: any = {
-            userID: roles.userID,
-            userEmail: roles.userEmail,
-            allRoles: [{
-                id: roles.allRoles.id,
-                name: roles.allRoles.name,
-            }],
-            userRoles: rolesParam
-        };
-        onChange(id, newRoles);
-        setShowModal(false);
-    };
+    // const handleFinish = async (value: any) => {
+    //     const rolesParam = JSON.stringify(value.userRole);
+    //     await adminApi.putEditedRoles(id, rolesParam);
+    //     const newRoles: any = {
+    //         userID: roles.userID,
+    //         userEmail: roles.userEmail,
+    //         allRoles: [{
+    //             id: roles.allRoles.id,
+    //             name: roles.allRoles.name,
+    //         }],
+    //         userRoles: rolesParam
+    //     };
+    //     onChange(id, newRoles);
+    //     setShowModal(false);
+    // };
 
     return (
         <div>
             <Form
                 name="basic"
-                onFinish={handleFinish}
+                // onFinish={handleFinish}
                 form={form}
             >
                 <h4>Оберіть курінь</h4>
                 <Form.Item name="userRole">
                     <Select mode='multiple' >
-                        {roles?.allRoles.map((item: any) => (<Radio.Button key={item.id} value={item.name} >
+                        {cities?.allCities.map((item: any) => (<Radio.Button key={item.id} value={item.name} >
                             {item.name}
-                        </Radio.Button>))}
+                        </Radio.Button>)) }
                     </Select>
                 </Form.Item>
                 <h4>Оберіть станицю</h4>

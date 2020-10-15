@@ -147,3 +147,7 @@ export const getUsersAdministrations = async(UserId:string)=>{
    return api.get(`Cities/GetUserAdmins/${UserId}`);
   
 }
+
+export const getCitiesForEdit = async (userId: string) => {
+  return await api.get(`Cities/editCity/${userId}`);
+};
