@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Dropdown, Avatar } from "antd";
+import { Layout, Menu, Dropdown, Avatar, Badge, Button } from "antd";
 import { LoginOutlined, LogoutOutlined, BellOutlined, EditOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import LogoImg from "../../assets/images/ePlastLogotype.png";
@@ -9,6 +9,8 @@ import AuthorizeApi from '../../api/authorizeApi';
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
+import NotificationBox from '../NotificationBox/NotificationBox';
+import NotificationBoxApi, {UserNotification } from '../../api/NotificationBoxApi';
 let authService = new AuthorizeApi();
 
 const HeaderContainer = () => {
@@ -19,6 +21,8 @@ const HeaderContainer = () => {
   const token = AuthStore.getToken() as string;
   const signedIn = AuthorizeApi.isSignedIn();
   const [userState, setUserState] = useState(signedIn);
+  const [notifications, setNotifications] = useState<Array<UserNotification>>([]);
+  const [visibleDrawer, setVisibleDrawer] = useState<boolean>(false);
   
   const fetchData = async () => {
     if (user) {
@@ -33,6 +37,17 @@ const HeaderContainer = () => {
           setImageBase64(response.data);
         })
       })
+      setNotifications([
+        { 
+          id: 2,
+          checked : false,
+          message : "Петро вступив до вашого куреня",
+          OwneruserId : id ? id : "111",
+          userName : "User",
+          userLink : "234234-234234-2-3-423-4-23-4",
+          date : "23-10-2020",
+        }
+      ])
     }
   };
   
@@ -44,6 +59,8 @@ const HeaderContainer = () => {
     await authService.logout();
     setUserState(false);
   }
+
+  const ShowNotifications = () => setVisibleDrawer(true)
 
   const primaryMenu = (
     <Menu
@@ -96,28 +113,44 @@ const HeaderContainer = () => {
         </Menu.Item>
       </Menu>
       {signedIn && userState ? (
-        <Menu mode="horizontal" className={classes.headerMenu}>
-          <Menu.Item
-            className={classes.headerItem}
-            key="4"
-            icon={<BellOutlined style={{ fontSize: "22px" }} />}
-          />
-          <Dropdown overlay={primaryMenu}>
-            <NavLink
-              to={`/userpage/main/${id}`}
-              className={classes.userMenu}
-              activeClassName={classes.activeLink}
+        <>
+          <Menu mode="horizontal" className={classes.headerMenu}>
+            <Menu.Item
+              className={classes.headerItem}
+              key="4"
             >
-              <Avatar
-                size={36}
-                src={imageBase64}
-                alt="User"
-                style={{ marginRight: "10px" }}
-              />
-              Привіт, {name}
-            </NavLink>
-          </Dropdown>
-        </Menu>
+              <Badge count={notifications.length}>
+                <Button ghost
+                  icon={<BellOutlined style={{ fontSize: "26px" }} />}
+                  onClick={ShowNotifications}
+                >
+                </Button>
+              </Badge>
+            </Menu.Item>
+            <Dropdown overlay={primaryMenu}>
+              <NavLink
+                to={`/userpage/main/${id}`}
+                className={classes.userMenu}
+                activeClassName={classes.activeLink}
+              >
+                <Avatar
+                  size={36}
+                  src={imageBase64}
+                  alt="User"
+                  style={{ marginRight: "10px" }}
+                />
+                Привіт, {name}
+              </NavLink>
+            </Dropdown>
+          </Menu>
+          <NotificationBox
+            userId={id}
+            Notifications={notifications}
+            VisibleDrawer={visibleDrawer}
+            setVisibleDrawer={setVisibleDrawer}
+            handleNotificationBox={()=>{}}
+          />
+        </>
       ) : (
           <Menu mode="horizontal" className={classes.headerMenu}>
             <Menu.Item className={classes.headerItem} key="2">
