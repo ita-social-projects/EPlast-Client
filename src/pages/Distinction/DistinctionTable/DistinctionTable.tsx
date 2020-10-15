@@ -56,7 +56,6 @@ const DistinctionTable = () => {
       const res: UserDistinction[] = await distinctionApi.getUserDistinctions();
       setData(res);
       setLoading(true);
-      console.log(filteredData);
     };
     fetchData();
   }, []);
