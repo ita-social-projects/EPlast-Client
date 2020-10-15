@@ -10,13 +10,16 @@ import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
+import GoogleLogin from 'react-google-login';
 
 let authService = new AuthorizeApi();
 let user: any;
 export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
-
+  const responseGoogle = (response:any) => {
+    console.log(response);
+  }
   const initialValues = {
     Email: "",
     Password: "",
@@ -75,16 +78,26 @@ export default function () {
         </Form.Item>
         <Link className={styles.forgot} to="/forgotPassword">Забули пароль</Link>
         <div className={styles.GoogleFacebookLogin}>
-          <Button id={styles.googleBtn} className={styles.socialButton}>
+        <GoogleLogin
+         clientId="595575738840-spdo3o49i30fuc39icvrl1n5aiureubv.apps.googleusercontent.com"
+          render={renderProps => (
+            <Button onClick={renderProps.onClick} disabled={renderProps.disabled} id={styles.googleBtn} className={styles.socialButton}>
             <span id={styles.imgSpanGoogle}>
               <img
                 alt="Google icon"
                 className={styles.socialImg}
                 src={googleImg}
-              />
-            </span>
-            <span className={styles.btnText}>Google</span>
-          </Button>
+               />
+             </span>
+              <span className={styles.btnText}>Google</span>
+            </Button>
+            )}
+            buttonText="Login"
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+            //isSignedIn={true}
+            cookiePolicy={'single_host_origin'}
+          />
           <Button id={styles.facebookBtn} className={styles.socialButton}>
             <span id={styles.imgSpanFacebook}>
               <img
