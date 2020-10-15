@@ -5,12 +5,14 @@ import {
     DeleteOutlined,
     EditOutlined,
     ScissorOutlined,
+     PlusCircleOutlined
 } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import classes from './UserTable.module.css';
 import userDeleteCofirm from './UserDeleteConfirm';
 import ChangeUserRoleModal from './ChangeUserRoleModal';
 import adminApi from '../../api/adminApi';
+import ModalAddPlastDegree from '../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree';
 
 interface Props {
     record: string;
@@ -25,6 +27,7 @@ const DropDown = (props: Props) => {
     const history = useHistory();
     const { record, pageX, pageY, showDropdown, onDelete, onChange } = props;
     const [showEditModal, setShowEditModal] = useState(false);
+    const [visibleModalDegree, setVisibleModalDegree] = useState<boolean>(false);
   
     const handleItemClick = async (item: any) => {
         switch (item.key) {
@@ -38,6 +41,9 @@ const DropDown = (props: Props) => {
                 await setShowEditModal(true);
                 break;
             case '4':
+                await setVisibleModalDegree(true);
+                break;
+            case '5':
                 await adminApi.putExpiredRole(record);
                 break;
             default:
@@ -72,6 +78,10 @@ const DropDown = (props: Props) => {
                         Змінити права доступу
                 </Menu.Item>
                 <Menu.Item key="4">
+                    <PlusCircleOutlined />
+                        Додати ступінь
+                </Menu.Item>
+                <Menu.Item key="5">
                     <ScissorOutlined />
                         Заархівувати користувача
                 </Menu.Item>
@@ -80,6 +90,12 @@ const DropDown = (props: Props) => {
                     showModal={showEditModal}
                     setShowModal={setShowEditModal}
                     onChange={onChange}
+                />
+                <ModalAddPlastDegree 
+                    handleAddDegree = {() => {}}
+                    userId = {record} 
+                    visibleModal = {visibleModalDegree}
+                    setVisibleModal ={setVisibleModalDegree}
                 />
             </Menu>
 
