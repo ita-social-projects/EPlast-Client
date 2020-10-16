@@ -4,6 +4,7 @@ import CityUser from '../../models/City/CityUser';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 
+const classes = require('./Table.module.css');
 
 const columns = [
   {
@@ -36,7 +37,7 @@ const columns = [
     title: 'Лінк',
     dataIndex: 'link',
     render:(link:string)=>{
-      return <a href={link} target='_blank' >{link}</a>
+      return <a className={classes.link} href={link} target='_blank'>{link}</a>
   }
 },
     
