@@ -1,115 +1,122 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
-import { Avatar, Card, Layout, Button, Skeleton } from "antd";
-import {
-  SettingOutlined,
-  CloseOutlined,
-  RollbackOutlined,
-} from "@ant-design/icons";
-import clubsApi from "../../../api/clubsApi";
+import React, {useEffect, useState} from 'react';
+import {useHistory, useParams} from 'react-router-dom';
+import {Avatar, Button, Card, Layout, Skeleton, Spin} from 'antd';
+import {SettingOutlined, CloseOutlined, RollbackOutlined} from '@ant-design/icons';
+import { getAllAdmins, removeAdministrator} from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
-import classes from "./Club.module.css";
+import "./Club.less";
 import ClubAdmin from '../../../models/Club/ClubAdmin';
-import AddAdministratorModal from "../AddAdministratorModal/AddAdministratorModal";
+import AddAdministratorModal from '../AddAdministratorModal/AddAdministratorModal';
+import moment from "moment";
+import "moment/locale/uk";
+import Title from 'antd/lib/typography/Title';
+import Spinner from '../../Spinner/Spinner';
+moment.locale("uk-ua");
 
 const ClubAdministration = () => {
-  const { id } = useParams();
-  const history = useHistory();
+    const {id} = useParams();
+    const history = useHistory();
 
-  const [administration, setAdministration] = useState<ClubAdmin[]>([]);
-  const [visibleModal, setVisibleModal] = useState(false);
-  const [admin, setAdmin] = useState<ClubAdmin>(new ClubAdmin());
-  const [isCurrentUserAdmin, setIsAdmin] = useState(false);
-  const [isCurrentUserClubAdmin, setIsClubAdmin] = useState(false);
-  const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+    const [administration, setAdministration] = useState<ClubAdmin[]>([]);
+    const [visibleModal, setVisibleModal] = useState(false);
+    const [admin, setAdmin] = useState<ClubAdmin>(new ClubAdmin());
+    const [canEdit, setCanEdit] = useState<Boolean>(false);
+    const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
+  
+    const getAdministration = async () => {
+      setLoading(true);
+      const response = await getAllAdmins(id);
+        setPhotosLoading(true);
+        setPhotos([...response.data.administration, response.data.head].filter(a => a != null));
+        setAdministration([...response.data.administration, response.data.head].filter(a => a != null));
+        setCanEdit(response.data.canEdit);
+      setLoading(false);
+    };
 
-  const getAdministration = async () => {
-    const response = await clubsApi.getAllAdmins(id);
-    setPhotosLoading(true);
-    setPhotos(response.data.clubAdministration);
-    setAdministration(response.data.clubAdministration);
-    setIsAdmin(response.data.isCurrentUserAdmin);
-    setIsClubAdmin(response.data.isCurrentUserClubAdmin);
-  };
+    const removeAdmin = async (adminId: number) => {
+      await removeAdministrator(adminId);
+      setAdministration(administration.filter((u) => u.id !== adminId));
+    };
 
-  useEffect(() => {
-    getAdministration();
-  }, []);
+    const showModal = (member: ClubAdmin) => {
+      setAdmin(member);
 
-  const setPhotos = async (members: ClubAdmin[]) => {
-    for (let i = 0; i < members.length; i++) {
-      members[i].clubMembers.user.imagePath = (
-        await userApi.getImage(members[i].clubMembers.user.imagePath)
-      ).data;
-    }
+      setVisibleModal(true);
+    };
 
-    setPhotosLoading(false);
-  };
+    const setPhotos = async (members: ClubAdmin[]) => {
+      for (let i of members) {
+        i.user.imagePath = (await userApi.getImage(i.user.imagePath)).data;
+      }
 
-  const removeAdmin = async (adminId: number) => {
-    await clubsApi.removeAdministrator(adminId);
-    setAdministration(administration.filter((u) => u.id !== adminId));
-  };
+      setPhotosLoading(false);
+    };
 
-  const showModal = (member: ClubAdmin) => {
-    setAdmin(member);
+    const onAdd = async (newAdmin: ClubAdmin = new ClubAdmin()) => {
+      const index = administration.findIndex((a) => a.id === admin.id);
+      administration[index] = newAdmin;
+      
+      setAdministration(administration);
+    };
 
-    setVisibleModal(true);
-  };
+    useEffect(() => {
+        getAdministration();
+    }, []);
 
-  return (
-    <Layout.Content>
-        <h1 className={classes.mainTitle}>Діловоди куреня</h1>
-        <div className={classes.wrapper}>
-          {administration.length > 0 ? (
-            administration.map((member: ClubAdmin) => (
-              <Card
-                key={member.id}
-                className={classes.detailsCard}
-                title={`${member.adminType.adminTypeName}`}
-                headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={
-                  (isCurrentUserClubAdmin || isCurrentUserAdmin)
-                    ? [
-                        <SettingOutlined onClick={() => showModal(member)} />,
-                        <CloseOutlined
-                          onClick={() => removeAdmin(member.id)}
-                        />,
-                      ]
-                    : undefined
-                }
-              >
-                <div
-                  onClick={() =>
-                    history.push(`/userpage/main/${member.clubMembers.userId}`)
+    return (
+      <Layout.Content>
+        <Title level={2}>Провід куреня</Title>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <div className="clubMoreItems">
+            {administration.length > 0 ? (
+              administration.map((member: ClubAdmin) => (
+                <Card
+                  key={member.id}
+                  className="detailsCard"
+                  title={`${member.adminType.adminTypeName}`}
+                  headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
+                  actions={
+                    canEdit
+                      ? [
+                          <SettingOutlined onClick={() => showModal(member)} />,
+                          <CloseOutlined
+                            onClick={() => removeAdmin(member.id)}
+                          />,
+                        ]
+                      : undefined
                   }
-                  className={classes.cityMember}
                 >
-                  <div>
-                    {photosLoading ? (
-                      <Skeleton.Avatar active size={86}></Skeleton.Avatar>
-                    ) : (
-                      <Avatar
-                        size={86}
-                        src={member.clubMembers.user.imagePath}
-                        className={classes.detailsIcon}
+                  <div
+                    onClick={() =>
+                      history.push(`/userpage/main/${member.userId}`)
+                    }
+                    className="ClubMember"
+                  >
+                    <div>
+                      {photosLoading ? (
+                        <Skeleton.Avatar active size={86}></Skeleton.Avatar>
+                      ) : (
+                        <Avatar size={86} src={member.user.imagePath} />
+                      )}
+                      <Card.Meta
+                        className="detailsMeta"
+                        title={`${member.user.firstName} ${member.user.lastName}`}
                       />
-                    )}
-                    <Card.Meta
-                      className={classes.detailsMeta}
-                      title={`${member.clubMembers.user.firstName} ${member.clubMembers.user.lastName}`}
-                    />
+                    </div>
                   </div>
-                </div>
-              </Card>
-            ))
-          ) : (
-            <h1>Ще немає діловодів куреня</h1>
-          )}
-        </div>
-        <div className={classes.wrapper}>
+                </Card>
+              ))
+            ) : (
+              <Title level={4}>Ще немає діловодів куреня</Title>
+            )}
+          </div>
+        )}
+        <div className="ClubMoreItems">
           <Button
-            className={classes.backButton}
+            className="backButton"
             icon={<RollbackOutlined />}
             size={"large"}
             onClick={() => history.goBack()}
@@ -118,15 +125,18 @@ const ClubAdministration = () => {
             Назад
           </Button>
         </div>
-        {(isCurrentUserClubAdmin || isCurrentUserAdmin) ? (
+        {canEdit ? (
           <AddAdministratorModal
             admin={admin}
             setAdmin={setAdmin}
             visibleModal={visibleModal}
             setVisibleModal={setVisibleModal}
+            ClubId={+id}
+            onAdd={onAdd}
           ></AddAdministratorModal>
         ) : null}
       </Layout.Content>
-  );
+    );
 };
+
 export default ClubAdministration;

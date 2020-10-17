@@ -1,207 +1,419 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Layout, Upload, message, Row, Col, Spin, notification } from "antd";
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons/lib";
-import City from "../../../assets/images/default_city_image.jpg";
-import clubsApi from "../../../api/clubsApi";
-import { RcFile } from "antd/lib/upload/interface";
 import { useParams, useHistory } from "react-router-dom";
-import classes from "./CreateClub.module.css";
-
-const dummyRequest = ({ onSuccess }: any) => {
-  setTimeout(() => {
-    onSuccess("ok");
-  }, 0);
-};
-
-const getBase64 = (img: Blob, callback: Function) => {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result));
-  reader.readAsDataURL(img);
-};
-
-const beforeUpload = (file: RcFile) => {
-  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-  if (!isJpgOrPng) {
-    notification.error({
-      message: "Можна завантажити зображення лише у JPG/JPEG/PNG форматі"
-    });
-  }
-  const isLt2M = file.size / 1024 / 1024 < 5;
-  if (!isLt2M) {
-    notification.error({
-      message: "Розмір зображення має бути менший 5MB"
-    });
-  }
-  return isJpgOrPng && isLt2M;
-};
+import {
+  Button,
+  Form,
+  Input,
+  Layout,
+  Upload,
+  Row,
+  Col,
+  Table,
+  Select,
+  Card,
+} from "antd";
+import {
+  DeleteOutlined,
+  LoadingOutlined,
+  PlusOutlined,
+} from "@ant-design/icons/lib";
+import ReactInputMask from "react-input-mask";
+import { RcCustomRequestOptions } from "antd/lib/upload/interface";
+import ClubDefaultLogo from "../../../assets/images/default_club_image.jpg";
+import {
+  createClub,
+  getAllAdmins,
+  getAllFollowers,
+  getAllMembers,
+  getClubById,
+  getLogo,
+  updateClub,
+} from "../../../api/clubsApi";
+import { GetAllRegions } from "../../../api/regionsApi";
+import "./CreateClub.less";
+import ClubProfile from "../../../models/Club/ClubProfile";
+import ClubAdmin from "../../../models/Club/ClubAdmin";
+import ClubMember from "../../../models/Club/ClubMember";
+import RegionProfile from "../../../models/Region/RegionProfile";
+import {
+  membersColumns,
+  administrationsColumns,
+  getTableAdmins,
+  getTableMembers,
+  getTableFollowers,
+} from "./ClubTableColumns";
+import notificationLogic from "../../../components/Notifications/Notification";
+import Title from "antd/lib/typography/Title";
+import Spinner from "../../Spinner/Spinner";
 
 const CreateClub = () => {
   const { id } = useParams();
   const history = useHistory();
 
   const [loading, setLoading] = useState(false);
-  const [servLoading, setServLoading] = useState(false);
-  const [clubLogo, setClubLogo] = useState("");
-  const [form] = Form.useForm();
-  useEffect(() => {
-    if (id) {
-      getClub();
+  const [Club, setClub] = useState<ClubProfile>(new ClubProfile());
+  const [regions, setRegions] = useState<RegionProfile[]>([]);
+  const [admins, setAdmins] = useState<ClubAdmin[]>([]);
+  const [members, setMembers] = useState<ClubMember[]>([]);
+  const [followers, setFollowers] = useState<ClubMember[]>([]);
+
+  const getBase64 = (img: Blob, callback: Function) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
+  const checkFile = (size: number, fileName: string) => {
+    const extension = fileName.split(".").reverse()[0];
+    const isCorrectExtension =
+      extension.indexOf("jpeg") !== -1 ||
+      extension.indexOf("jpg") !== -1 ||
+      extension.indexOf("png") !== -1;
+    if (!isCorrectExtension) {
+      notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
+    }
+
+    const isSmaller2mb = size <= 3145728;
+    if (!isSmaller2mb) {
+      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+    }
+
+    return isCorrectExtension && isSmaller2mb;
+  };
+
+  const handleUpload = (info: RcCustomRequestOptions) => {
+    if (info !== null) {
+      if (checkFile(info.file.size, info.file.name)) {
+        getBase64(info.file, (base64: string) => {
+          setClub({ ...Club, logo: base64 });
+        });
+        notificationLogic("success", "Фото завантажено");
+      }
     } else {
-      setServLoading(false);
+      notificationLogic("error", "Проблема з завантаженням фото");
     }
-  }, []);
+  };
+
+  const removeLogo = (event: any) => {
+    setClub({ ...Club, logo: null });
+    notificationLogic("success", "Фото видалено");
+    event.stopPropagation();
+  };
+
+  function onSearch(val: any) {}
+
   const getClub = async () => {
-    setServLoading(true);
     try {
-      const res = await (await clubsApi.getById(id)).data.club;
-
-      form.setFieldsValue({
-        id: res.id,
-        clubName: res.clubName,
-        clubURL: res.clubURL,
-        description: res.description,
-      });
-      setClubLogo(res.logo);
-    } finally {
-      setServLoading(false);
-    }
-  };
-
-  const handleChange = (info: any, key: string) => {
-    console.log(info.file.status, "status");
-
-    if (info.file.status === "uploading") {
       setLoading(true);
-      return;
-    }
-    if (info.file.status === "done") {
-      getBase64(info.file.originFileObj, (imageUrl: any) => {
-        setLoading(false);
-        setClubLogo(imageUrl);
-      });
+      let response = await getClubById(+id);
+
+      if (response.data.logo !== null) {
+        const logo = await getLogo(response.data.logo);
+        response.data.logo = logo.data;
+      }
+
+      setClub(response.data);
+      setAdmins((await getAllAdmins(+id)).data.administration);
+      setMembers((await getAllMembers(+id)).data.members);
+      setFollowers((await getAllFollowers(+id)).data.followers);
+    } finally {
+      setLoading(false);
     }
   };
-  const handleSubmit = async (values: any) => {
-    notification.info({
-      message: id ? "Збереження..." : "Створення...",
-      icon: <LoadingOutlined />,
-    });
 
-    const newСlub = {
-      id: id,
-      clubName: values.clubName,
+  const getRegions = async () => {
+    try {
+      setLoading(true);
+      const response = await GetAllRegions();
+      setRegions(response.data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (+id) {
+      getClub().then(() => getRegions());
+    } else {
+      getRegions();
+    }
+  }, [id]);
+
+  const handleSubmit = async (values: any) => {
+    const newClub: ClubProfile = {
       clubURL: values.clubURL,
       description: values.description,
-      logo: clubLogo,
+      email: values.email,
+      head: Club.head,
+      houseNumber: values.houseNumber,
+      id: Club.id,
+      logo: Club.logo?.length === 0 ? null : Club.logo,
+      officeNumber: values.officeNumber,
+      name: values.name,
+      phoneNumber: values.phoneNumber,
+      postIndex: values.postIndex,
+      street: values.street,
     };
-    
-    await clubsApi
-      .post("Club/" + (id ? "edit" : "create"), newСlub)
-      .then((res) => {
-        newСlub.id = res.data.id;
-        notification.success({
-          message: id ? "Курінь успішно відредаговано" : "Курінь успішно створено",
-        });
-        id ? history.goBack() : history.push( `${newСlub.id}`);
+
+    if (!Club.id) {
+      CreateClub(newClub);
+    } else {
+      EditClub(newClub);
+    }
+  };
+
+  const CreateClub = async (newClub: ClubProfile) => {
+    notificationLogic("info", "Створення...", <LoadingOutlined />);
+    const responsePromise = createClub(JSON.stringify(newClub));
+    const response = await responsePromise;
+    Club.id = response.data;
+
+    return responsePromise
+      .then(() => {
+        notificationLogic("success", "Курінь успішно створено");
+        history.push(`${Club.id}`);
       })
-      .catch((error) => {
-        if (error.response && error.response.status === 422) {
-          notification.error({
-            message: id ? 
-            "Не вдалося відредагувати курінь (Курінь з таким ім'ям вже існує)" 
-            : "Не вдалося створити курінь (Курінь з таким ім'ям вже існує)",
-          });
-        }
-        else {
-          notification.error({
-            message: id ? "Не вдалося відредагувати курінь" : "Не вдалося створити курінь",
-          });
-        }
+      .catch(() => {
+        notificationLogic("error", "Не вдалося створити курінь");
       });
   };
 
-  const uploadButton = (
-    <div>
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <img src={City} alt="Club" style={{ width: "300px" }} />
-    </div>
-  );
+  const EditClub = async (newClub: ClubProfile) => {
+    notificationLogic("info", "Оновлення...", <LoadingOutlined />);
 
-  const validateMessages = {
-    required: "Це поле є обов`язковим!",
+    return updateClub(Club.id, JSON.stringify(newClub))
+      .then(() => {
+        notificationLogic("success", "Курінь успішно оновлено");
+        history.goBack();
+      })
+      .catch(() => {
+        notificationLogic("error", "Не вдалося оновити курінь");
+      });
   };
 
-  return ( servLoading ? 
-    (<Layout.Content className={classes.spiner}>
-      <Spin size="large" />
-    </Layout.Content>) :
-    (<Layout.Content className={classes.createClub}>
-      <h1 className={classes.mainTitle}>
-        {id ? "Редагування" : "Створення"} куреня
-      </h1>
-      <Row justify="space-around" style={{ overflow: "hidden" }}>
-        <Col flex="0 1 40%">
-          <Form
-            className={classes.clubForm}
-            layout="vertical"
-            onFinish={handleSubmit}
-            form={form}
-          >
-            <Form.Item
-              name="clubName"
-              label="Назва"
-              rules={[
-                { required: true, 
-                  message: 'Вкажіть назву куреня' }, 
-                { max: 50, 
-                  message: 'Назва куреня не може перевищувати 50 символів' }
-                ]}>
-              <Input />
-            </Form.Item>
-            <Form.Item 
-              name="clubURL" 
-              label="Посилання" >
-              <Input 
-              type="url"
-              placeholder="https://www.example.com" />
-            </Form.Item>
-            <Form.Item 
-              name="description" 
-              label="Опис"
-              rules={[
-                { max: 1000, 
-                  message: 'Опис куреня не може перевищувати 1000 символів' }]} >
-              <Input.TextArea rows={5} />
-            </Form.Item>
-            <Form.Item>
+  return loading && Club ? (
+    <Spinner />
+  ) : (
+    <Layout.Content className="createClub">
+      <Card hoverable className="createClubCard">
+        {Club.id ? (
+          <Title level={2}>Редагування станиці</Title>
+        ) : (
+          <Title level={2}>Створення станиці</Title>
+        )}
+        <Form onFinish={handleSubmit}>
+          <Form.Item name="logo" initialValue={Club.logo}>
+            <Upload
+              name="avatar"
+              listType="picture-card"
+              showUploadList={false}
+              accept=".jpeg,.jpg,.png"
+              customRequest={handleUpload}
+            >
+              {Club.logo?.length! > 0 ? (
+                <DeleteOutlined onClick={removeLogo} />
+              ) : (
+                <PlusOutlined />
+              )}
+              <img
+                src={Club?.logo ? Club.logo : ClubDefaultLogo}
+                alt="Club"
+                className="ClubLogo"
+              />
+            </Upload>
+          </Form.Item>
+          <Row justify="center">
+            <Col md={11} xs={24}>
+              <Form.Item
+                name="name"
+                label="Назва"
+                labelCol={{ span: 24 }}
+                initialValue={Club.name}
+                rules={[
+                  { required: true, message: "Це поле є обов'язковим" },
+                  {
+                    max: 50,
+                    message: "Максимальна довжина - 50 символів!",
+                  },
+                ]}
+              >
+                <Input value={Club.name} maxLength={51} />
+              </Form.Item>
+            </Col>
+            <Col md={{ span: 11, offset: 2 }} xs={24}>
+              <Form.Item
+                name="description"
+                label="Опис"
+                labelCol={{ span: 24 }}
+                initialValue={Club.description}
+                rules={[
+                  {
+                    max: 1000,
+                    message: "Максимальна довжина - 1000 символів!",
+                  },
+                ]}
+              >
+                <Input value={Club.description} maxLength={1001}/>
+              </Form.Item>
+            </Col>
+            <Col md={11} xs={24}>
+              <Form.Item
+                name="clubURL"
+                label="Посилання"
+                labelCol={{ span: 24 }}
+                initialValue={Club.clubURL}
+                rules={[
+                  {
+                    max: 500,
+                    message: "Максимальна довжина - 500 символів!",
+                  },
+                ]}
+              >
+                <Input value={Club.clubURL} maxLength={501}/>
+              </Form.Item>
+            </Col>
+            <Col md={{ span: 11, offset: 2 }} xs={24}>
+              <Form.Item
+                name="phoneNumber"
+                label="Номер телефону"
+                labelCol={{ span: 24 }}
+                initialValue={Club.phoneNumber}
+                rules={[{ min: 18, message: "Неправильний телефон" }]}
+              >
+                <ReactInputMask
+                  mask="+38(999)-999-99-99"
+                  value={Club.phoneNumber}
+                >
+                  {(inputProps: any) => <Input {...inputProps} type="tel" />}
+                </ReactInputMask>
+              </Form.Item>
+            </Col>
+            <Col md={11} xs={24}>
+              <Form.Item
+                name="email"
+                label="Електронна пошта"
+                labelCol={{ span: 24 }}
+                initialValue={Club.email}
+                rules={[
+                  {
+                    pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                    message: "Неправильна пошта",
+                  },
+                  {
+                    max: 50,
+                    message: "Максимальна довжина - 50 символів!",
+                  },
+                ]}
+              >
+                <Input value={Club.email} maxLength={51}/>
+              </Form.Item>
+            </Col>
+            <Col md={11} xs={24}>
+              <Form.Item
+                name="street"
+                label="Вулиця"
+                labelCol={{ span: 24 }}
+                initialValue={Club.street}
+                rules={[{ required: true, message: "Це поле є обов'язковим" },
+                {
+                  max: 50,
+                  message: "Максимальна довжина - 50 символів!",
+                },]}
+              >
+                <Input value={Club.street} maxLength={51}/>
+              </Form.Item>
+            </Col>
+            <Col md={{ span: 11, offset: 2 }} xs={24}>
+              <Form.Item
+                name="houseNumber"
+                label="Номер будинку"
+                labelCol={{ span: 24 }}
+                initialValue={Club.houseNumber}
+                rules={[{ required: true, message: "Це поле є обов'язковим" },
+                {
+                  max: 5,
+                  message: "Максимальна довжина - 5 символів!",
+                },]}
+              >
+                <Input value={Club.houseNumber} maxLength={6}/>
+              </Form.Item>
+            </Col>
+            <Col md={11} xs={24}>
+              <Form.Item
+                name="officeNumber"
+                label="Номер офісу/квартири"
+                labelCol={{ span: 24 }}
+                initialValue={Club.officeNumber}
+                rules={[{
+                  max: 5,
+                  message: "Максимальна довжина - 5 символів!",
+                },]}
+              >
+                <Input value={Club.officeNumber} maxLength={6}/>
+              </Form.Item>
+            </Col>
+            <Col md={{ span: 11, offset: 2 }} xs={24}>
+              <Form.Item
+                name="postIndex"
+                label="Поштовий індекс"
+                labelCol={{ span: 24 }}
+                initialValue={Club.postIndex}
+                rules={[{
+                  max: 5,
+                  message: "Максимальна довжина - 5 символів!",
+                },]}
+              >
+                <Input type="number" value={Club.postIndex}/>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row className="ClubButtons" justify="center" gutter={[0, 6]}>
+            <Col xs={24} sm={12}>
               <Button
-                htmlType="submit"
                 type="primary"
-                className={classes.createButton} >
-                Зберегти
+                className="backButton"
+                onClick={() => history.goBack()}
+              >
+                Назад
               </Button>
-            </Form.Item>
-          </Form>
-        </Col>
-        <Col flex="0 1 40%">
-          <Upload
-            name="avatar"
-            listType="picture-card"
-            className="avatar-uploader"
-            showUploadList={false}
-            customRequest={dummyRequest}
-            beforeUpload={beforeUpload}
-            onChange={(event) => handleChange(event, "logo")}
-          >
-            {clubLogo ? (
-              <img src={clubLogo} alt="Club" style={{ width: "300px" }} />
-            ) : (
-              uploadButton
-            )}
-          </Upload>
-        </Col>
-      </Row>
-    </Layout.Content> )
+            </Col>
+            <Col xs={24} sm={12}>
+              <Button htmlType="submit" type="primary">
+                Підтвердити
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </Card>
+      {Club.id ? (
+        <Card hoverable className="ClubMembersCard">
+          <Row justify="space-between" gutter={[0, 12]}>
+            <Col span={24}>
+              <Table
+                dataSource={getTableAdmins(admins, Club.head)}
+                columns={administrationsColumns}
+                pagination={{ defaultPageSize: 4 }}
+                className="table"
+              />
+            </Col>
+            <Col md={10} xs={24}>
+              <Table
+                dataSource={getTableMembers(members, admins, Club.head)}
+                columns={membersColumns}
+                pagination={{ defaultPageSize: 4 }}
+              />
+            </Col>
+            <Col md={{ span: 10, offset: 2 }} xs={24}>
+              <Table
+                dataSource={getTableFollowers(followers)}
+                columns={membersColumns}
+                pagination={{ defaultPageSize: 4 }}
+              />
+            </Col>
+          </Row>
+        </Card>
+      ) : null}
+    </Layout.Content>
   );
 };
 

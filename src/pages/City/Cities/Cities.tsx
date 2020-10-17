@@ -24,6 +24,7 @@ const Cities = () => {
   const [searchedData, setSearchedData] = useState("");
 
   const setPhotos = async (cities: CityProfile[]) => {
+    console.log(cities);
     for await (const city of cities) {
       if (city.logo === null) {
         city.logo = CityDefaultLogo;

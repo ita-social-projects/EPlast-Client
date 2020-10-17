@@ -1,51 +1,118 @@
 import React, {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
-import {Avatar, Card, Layout} from 'antd';
-import {FileTextOutlined, SettingOutlined, CloseOutlined} from '@ant-design/icons';
-import clubsApi from "../../../api/clubsApi";
-import classes from './Club.module.css';
-
-interface DocumentProps {
-    id: string,
-    cityDocumentType: {
-        name: string;
-    }
-}
+import {useHistory, useParams} from 'react-router-dom';
+import {Avatar, Button, Card, Layout, Spin} from 'antd';
+import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined} from '@ant-design/icons';
+import {getAllDocuments, getFile, removeDocument} from "../../../api/clubsApi";
+import "./Club.less";
+import ClubDocument from '../../../models/Club/ClubDocument';
+import Title from 'antd/lib/typography/Title';
+import moment from "moment";
+import Spinner from '../../Spinner/Spinner';
 
 const ClubDocuments = () => {
     const {id} = useParams();
+    const history = useHistory();
 
-    const [documents, setDocuments] = useState([]);
+    const [documents, setDocuments] = useState<ClubDocument[]>([]);
+    const [canEdit, setCanEdit] = useState<Boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
-    // const getDocuments = async () => {
-    //     const response = await getAllDocuments(id);
-    //     setDocuments(response.data);
-    // };
+    const getDocuments = async () => {
+      setLoading(true);
+      const response = await getAllDocuments(id);
 
-    // useEffect(() => {
-    //     getDocuments();
-    // }, []);
+      setDocuments(response.data.documents);
+      setCanEdit(response.data.canEdit);
+      setLoading(false);
+    };
 
-    // return (
-    //     <Layout.Content>
-    //         <h1 className={classes.mainTitle}>Документи станиці</h1>
-    //         <div className={classes.wrapper}>
-    //             {documents.map((document: DocumentProps) => (
-    //                 <Card
-    //                     key={document.id}
-    //                     className={classes.detailsCard}
-    //                     actions={[
-    //                         <SettingOutlined key="setting"/>,
-    //                         <CloseOutlined key="close"/>,
-    //                     ]}
-    //                 >
-    //                     <Avatar size={86} icon={<FileTextOutlined/>} className={classes.detailsIcon}/>
-    //                     <Card.Meta className={classes.detailsMeta}
-    //                                title={`${document.cityDocumentType.name}`}/>
-    //                 </Card>
-    //             ))}
-    //         </div>
-    //     </Layout.Content>
-    // );
+    const downloadDocument = async (fileBlob: string, fileName: string) => {
+      await getFile(fileBlob, fileName);
+    }
+
+    const removeDocumentById = async (documentId: number) => {
+      await removeDocument(documentId);
+
+      setDocuments(documents.filter((d) => d.id !== documentId));
+    };
+
+    useEffect(() => {
+        getDocuments();
+    }, []);
+
+    return (
+      <Layout.Content>
+        <Title level={2}>Документообіг станиці</Title>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <div className="ClubMoreItems">
+            {documents.length > 0 ? (
+              documents.map((document: ClubDocument) => (
+                <Card
+                  key={document.id}
+                  className="detailsCard"
+                  title={
+                    document.submitDate
+                      ? moment(document.submitDate).format("DD.MM.YYYY")
+                      : "Немає дати"
+                  }
+                  headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
+                  actions={
+                    canEdit
+                      ? [
+                          <DownloadOutlined
+                            key="download"
+                            onClick={() =>
+                              downloadDocument(
+                                document.blobName,
+                                document.fileName
+                              )
+                            }
+                          />,
+                          <CloseOutlined
+                            key="close"
+                            onClick={() => removeDocumentById(document.id)}
+                          />,
+                        ]
+                      : [
+                          <DownloadOutlined
+                            key="download"
+                            onClick={() =>
+                              downloadDocument(
+                                document.blobName,
+                                document.fileName
+                              )
+                            }
+                          />,
+                        ]
+                  }
+                >
+                  <Avatar size={86} icon={<FileTextOutlined />} />
+                  <Card.Meta
+                    className="detailsMeta"
+                    title={document.ClubDocumentType.name}
+                  />
+                </Card>
+              ))
+            ) : (
+              <Title level={4}>Ще немає документів станиці</Title>
+            )}
+          </div>
+        )}
+        <div className="ClubMoreItems">
+          <Button
+            className="backButton"
+            icon={<RollbackOutlined />}
+            size={"large"}
+            onClick={() => history.goBack()}
+            type="primary"
+          >
+            Назад
+          </Button>
+        </div>
+      </Layout.Content>
+    );
 };
+
 export default ClubDocuments;
