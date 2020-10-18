@@ -93,4 +93,18 @@ export default class AuthorizeApi {
     return response;
   };
 
+  sendToken=async (token: string) => {
+    const response = await Api.post("Auth/signin/google/?googleToken="+token,null)
+      .then(response => {
+        if (response.data.token !== null) {
+          AuthStore.setToken(response.data.token);
+        }
+      })
+      .catch(error => {
+        if (error.response.status === 400) {
+          notificationLogic('error', error.response.data.value);
+        }
+      })
+    return response;
+  };
 }

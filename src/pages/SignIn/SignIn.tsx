@@ -17,8 +17,14 @@ let user: any;
 export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
-  const responseGoogle = (response:any) => {
+ 
+  const responseGoogle = async (response:any) => {
     console.log(response);
+    await authService.sendToken(response.tokenId);
+    const token = AuthStore.getToken() as string;
+    user = jwt(token);
+    history.push(`/userpage/main/${user.nameid}`);
+    window.location.reload();
   }
   const initialValues = {
     Email: "",
