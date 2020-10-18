@@ -1,6 +1,6 @@
 import { Button, Col, Form, Modal, Row, Upload } from "antd";
 import React from "react";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import notificationLogic from '../../../../components/Notifications/Notification';
 import { addAchievementDocuments } from "../../../../api/blankApi";
 import BlankDocument from "../../../../models/Blank/BlankDocument";

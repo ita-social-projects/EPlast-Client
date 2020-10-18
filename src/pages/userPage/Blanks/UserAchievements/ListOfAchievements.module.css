@@ -18,3 +18,20 @@
      cursor: pointer;
     color: #273625
  }
+ 
+.reviewIcon{
+    font-size: 20px;
+    color: #3C5438;
+ }
+
+ .demoInfiniteContainer {
+    overflow: auto; 
+    padding: 2px 6px;
+    height: 420px;
+  }
+  .demoLoadingContainer {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+  }

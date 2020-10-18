@@ -4,11 +4,11 @@ import { Data } from "../Interface/Interface";
 import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
 import AvatarAndProgress from "../personalData/AvatarAndProgress";
-import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId } from "../../../api/blankApi";
+import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId, openBiographyFile } from "../../../api/blankApi";
 import { Badge, Button, Col, Form, Tooltip } from "antd";
 import classes from "./Blanks.module.css";
 import Title from "antd/lib/typography/Title";
-import { DeleteOutlined, DownloadOutlined, FileTextOutlined } from "@ant-design/icons";
+import { DeleteOutlined, DownloadOutlined, EyeOutlined, FilePdfOutlined } from "@ant-design/icons";
 import AddBiographyModal from "./UserBiography/AddBiographyModal";
 import BlankDocument from "../../../models/Blank/BlankDocument";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -63,6 +63,10 @@ export const Blanks = () => {
         await getFile(fileBlob, fileName);
     }
 
+    const openDocument = async(fileBlob:string)=>{
+        await openBiographyFile(fileBlob);
+    }
+
     useEffect(() => {
         fetchData();
         getDocument();
@@ -86,15 +90,15 @@ export const Blanks = () => {
                         <div className={classes.wrapper}>
                             <div className={classes.wrapper2}>
                                 <Title level={2}>Життєпис</Title>
-                                <div className={classes.line} />
                                 {document.userId == userId ? (
                                     <Col
-                                        xs={12}
-                                        sm={8}
+                                        xs={18}
+                                        sm={18}
                                         key={document.id}
                                     >
                                         <div>
-                                            <FileTextOutlined className={classes.documentIcon} />
+                                            <FilePdfOutlined className={classes.documentIcon} 
+                                            />
                                             <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
                                                 {document.fileName}
                                             </Paragraph>
@@ -111,6 +115,12 @@ export const Blanks = () => {
                                                 }
                                             />
                                         </Tooltip>
+                                        <Tooltip title="Переглянути">
+                                            <EyeOutlined 
+                                            className={classes.reviewIcon}
+                                            key="review"
+                                            onClick={()=>openDocument(document.blobName)}/>
+                                            </Tooltip>
                                         {userToken.nameid === userId &&
                                             <Tooltip title="Видалити">
                                                 <DeleteOutlined
@@ -145,15 +155,13 @@ export const Blanks = () => {
                             </div>
 
                             <div className={classes.wrapper3}>
-                                <Title level={2}>Генерація</Title>
-                                <div className={classes.line} />
+                                <Title level={2}>Виписка з УПЮ</Title>
                             </div>
                         </div>
 
                         <div className={classes.wrapper}>
                             <div className={classes.wrapper4}>
                                 <Title level={2}>Досягнення</Title>
-                                <div className={classes.line} />
                                 {achievementDoc.length !== 0 ? (
                                     <div>
                                         <Col>
@@ -196,19 +204,8 @@ export const Blanks = () => {
                             </div>
 
                             <div className={classes.wrapper5}>
-                                <Title level={2}>Виписка з УПЮ</Title>
-                                <div className={classes.line} />
+                                <Title level={2}>Генерація</Title>
                             </div>
-
-                        </div>
-
-                        <div className={classes.wrapper}>
-                            <div className={classes.wrapper6}>
-                                <Title level={2}>Пошук</Title>
-                                <div className={classes.line} />
-                            </div>
-
-
 
                         </div>
 
