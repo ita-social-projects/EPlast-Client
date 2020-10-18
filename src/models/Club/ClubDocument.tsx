@@ -2,7 +2,7 @@ import ClubDocumentType from './ClubDocumentType';
 
 export default class ClubDocument {
   id: number;
-  ClubDocumentType: ClubDocumentType;
+  clubDocumentType: ClubDocumentType;
   blobName: string;
   fileName: string;
   submitDate?: string;
@@ -10,7 +10,7 @@ export default class ClubDocument {
 
   constructor() {
     this.id = 0;
-    this.ClubDocumentType = new ClubDocumentType();
+    this.clubDocumentType = new ClubDocumentType();
     this.blobName = "";
     this.fileName = "";
     this.submitDate = undefined;

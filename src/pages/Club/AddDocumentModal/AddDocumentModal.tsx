@@ -78,7 +78,7 @@ const AddDocumentModal = (props: Props) => {
         id: 0,
         blobName: props.document.blobName,
         fileName: fileName,
-        ClubDocumentType: {
+        clubDocumentType: {
           ...new ClubDocumentType(),
           name: values.documentType,
         },

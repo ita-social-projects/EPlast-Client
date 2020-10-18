@@ -46,7 +46,7 @@ const ClubDocuments = () => {
         {loading ? (
           <Spinner />
         ) : (
-          <div className="ClubMoreItems">
+          <div className="clubMoreItems">
             {documents.length > 0 ? (
               documents.map((document: ClubDocument) => (
                 <Card
@@ -91,7 +91,7 @@ const ClubDocuments = () => {
                   <Avatar size={86} icon={<FileTextOutlined />} />
                   <Card.Meta
                     className="detailsMeta"
-                    title={document.ClubDocumentType.name}
+                    title={document.clubDocumentType.name}
                   />
                 </Card>
               ))
@@ -100,7 +100,7 @@ const ClubDocuments = () => {
             )}
           </div>
         )}
-        <div className="ClubMoreItems">
+        <div className="clubMoreItems">
           <Button
             className="backButton"
             icon={<RollbackOutlined />}

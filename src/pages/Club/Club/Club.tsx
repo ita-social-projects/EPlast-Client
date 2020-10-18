@@ -391,7 +391,8 @@ const Club = () => {
                     <div>
                       <FileTextOutlined className="documentIcon" />
                       <p className="documentText">
-                        {document.ClubDocumentType.name}
+                     {console.log(document)}
+                        {document.clubDocumentType.name}
                       </p>
                     </div>
                   </Col>
