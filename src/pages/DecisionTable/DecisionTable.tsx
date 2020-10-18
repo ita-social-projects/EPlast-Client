@@ -142,12 +142,6 @@ const DecisionTable = () => {
                   });
                 }
               }}
-              pagination={{
-                itemRender,
-                position: ['bottomRight'],
-                showTotal: (total, range) =>
-                  `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
-              }}
             />
             <ClickAwayListener onClickAway={handleClickAway}>
             <DropDown
