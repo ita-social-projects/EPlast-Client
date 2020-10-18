@@ -111,7 +111,9 @@ const DecisionTable = () => {
               </Button>
             </div>
             <Table
+              className={classes.table}
               dataSource={filteredData}
+              scroll={{ x: 1300 }}
               columns={columns}
               bordered
               rowKey="id"
