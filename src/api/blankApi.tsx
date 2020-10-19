@@ -20,7 +20,7 @@ export const getAllAchievementDocumentsByUserId = async (userId: string) => {
 }
 
 export const getAchievementsByPage = async (pageNumber: number, pageSize: number, userId:string) => {
-  const response = await api.get(`Blanks/InfinityScroll/${pageNumber}`, {pageNumber, pageSize,userId});
+  const response = await api.get(`Blanks/InfinityScroll`, {pageNumber, pageSize,userId});
   return response;
 }
 
