@@ -1,29 +1,44 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { Data } from "../Interface/Interface";
 import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
 import AvatarAndProgress from "../personalData/AvatarAndProgress";
-import { getDocumentByUserId, removeDocument, getFile } from "../../../api/blankApi";
-import { Button, Col, Form, Tooltip } from "antd";
+import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId, openBiographyFile } from "../../../api/blankApi";
+import { Badge, Button, Col, Form, Tooltip } from "antd";
 import classes from "./Blanks.module.css";
 import Title from "antd/lib/typography/Title";
-import { DeleteOutlined, DownloadOutlined, FileTextOutlined } from "@ant-design/icons";
+import { DeleteOutlined, DownloadOutlined, EyeOutlined, FilePdfOutlined } from "@ant-design/icons";
 import AddBiographyModal from "./UserBiography/AddBiographyModal";
 import BlankDocument from "../../../models/Blank/BlankDocument";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
-
+import AddAchievementsModal from "./UserAchievements/AddAchievementsModal";
+import AuthStore from "../../../stores/AuthStore";
+import jwt from "jwt-decode";
+import ListOfAchievementsModal from "./UserAchievements/ListOfAchievementsModal";
 
 export const Blanks = () => {
+    const history = useHistory();
     const { userId } = useParams();
+
     const [data, setData] = useState<Data>();
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
+    const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
     const [visibleModal, setVisibleModal] = useState(false);
+    const [visibleListAchievementModal, setVisibleListAchievementModal] = useState(false);
+    const [visibleAchievementModal, setvisibleAchievementModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
+    const [userToken, setUserToken] = useState<any>([
+        {
+            nameid: "",
+        },
+    ]);
 
     const fetchData = async () => {
+        const token = AuthStore.getToken() as string;
+        setUserToken(jwt(token));
         await userApi.getById(userId).then(response => {
             setData(response.data);
         }).catch(() => { notificationLogic('error', "Щось пішло не так") })
@@ -33,6 +48,10 @@ export const Blanks = () => {
     const getDocument = async () => {
         const response = await getDocumentByUserId(userId);
         setDocument(response.data);
+    };
+    const getAchievementDocumentsByUserId = async () => {
+        const response = await getAllAchievementDocumentsByUserId(userId);
+        setAchievementDoc(response.data);
     };
     const removeDocumentById = async (documentId: number) => {
         await removeDocument(documentId);
@@ -44,11 +63,15 @@ export const Blanks = () => {
         await getFile(fileBlob, fileName);
     }
 
+    const openDocument = async(fileBlob:string)=>{
+        await openBiographyFile(fileBlob);
+    }
+
     useEffect(() => {
         fetchData();
         getDocument();
-
-    }, [userId, visibleModal]);
+        getAchievementDocumentsByUserId();
+    }, [userId, visibleModal, visibleAchievementModal]);
 
     return (loading === false ? (
         <Spinner />
@@ -67,15 +90,15 @@ export const Blanks = () => {
                         <div className={classes.wrapper}>
                             <div className={classes.wrapper2}>
                                 <Title level={2}>Життєпис</Title>
-                                <div className={classes.line} />
                                 {document.userId == userId ? (
                                     <Col
-                                        xs={12}
-                                        sm={8}
+                                        xs={18}
+                                        sm={18}
                                         key={document.id}
                                     >
                                         <div>
-                                            <FileTextOutlined className={classes.documentIcon} />
+                                            <FilePdfOutlined className={classes.documentIcon} 
+                                            />
                                             <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
                                                 {document.fileName}
                                             </Paragraph>
@@ -92,61 +115,115 @@ export const Blanks = () => {
                                                 }
                                             />
                                         </Tooltip>
-                                        <Tooltip title="Видалити">
-                                            <DeleteOutlined
-                                                className={classes.deleteIcon}
-                                                key="close"
-                                                onClick={() => removeDocumentById(document.id)}
-                                            />
-                                        </Tooltip>
+                                        <Tooltip title="Переглянути">
+                                            <EyeOutlined 
+                                            className={classes.reviewIcon}
+                                            key="review"
+                                            onClick={()=>openDocument(document.blobName)}/>
+                                            </Tooltip>
+                                        {userToken.nameid === userId &&
+                                            <Tooltip title="Видалити">
+                                                <DeleteOutlined
+                                                    className={classes.deleteIcon}
+                                                    key="close"
+                                                    onClick={() => removeDocumentById(document.id)}
+                                                />
+                                            </Tooltip>
+                                        }
                                     </Col>
                                 )
                                     : (
                                         <Col>
-                                            <h2>Ви ще не додали Життєпис</h2>
-                                            <div>
-                                                <Button type="primary"
-                                                    className={classes.addIcon}
-                                                    onClick={() => setVisibleModal(true)}>
-                                                    Створити Життєпис
+                                            {userToken.nameid === userId &&
+                                                <h2>Ви ще не додали Життєпис</h2>
+                                            }
+                                            {userToken.nameid !== userId &&
+                                                <h2>Користувач ще не додав(ла) Життєпис</h2>
+                                            }
+                                            {userToken.nameid === userId &&
+                                                <div>
+                                                    <Button type="primary"
+                                                        className={classes.addIcon}
+                                                        onClick={() => setVisibleModal(true)}>
+                                                        Створити Життєпис
                                             </Button>
-                                            </div>
+                                                </div>
+                                            }
                                         </Col>
                                     )}
 
                             </div>
 
                             <div className={classes.wrapper3}>
-                                <Title level={2}>Генерація</Title>
-                                <div className={classes.line} />
+                                <Title level={2}>Виписка з УПЮ</Title>
                             </div>
                         </div>
 
                         <div className={classes.wrapper}>
                             <div className={classes.wrapper4}>
                                 <Title level={2}>Досягнення</Title>
-                                <div className={classes.line} />
+                                {achievementDoc.length !== 0 ? (
+                                    <div>
+                                        <Col>
+                                            <Badge
+                                                count={achievementDoc.length}
+                                                style={{ backgroundColor: "#3c5438" }}
+                                            />
+
+                                        </Col>
+                                        <Col>
+                                            <Button type="primary"
+                                                className={classes.listButton}
+                                                onClick={() => setVisibleListAchievementModal(true)}>
+                                                Список
+                                        </Button>
+                                        </Col>
+                                    </div>
+                                ) : (
+                                        <Col>
+                                            {userToken.nameid === userId &&
+                                                <h2>Ви ще не додали жодного Досягнення</h2>
+                                            }
+                                            {userToken.nameid !== userId &&
+                                                <h2> Користувач ще не додав(ла) жодного Досягнення</h2>
+                                            }
+                                        </Col>
+                                    )}
+                                <Col>
+
+                                    {userToken.nameid === userId &&
+                                        <div>
+                                            <Button type="primary"
+                                                className={classes.addIcon}
+                                                onClick={() => setvisibleAchievementModal(true)}>
+                                                Додати Досягнення
+                                            </Button>
+                                        </div>
+                                    }
+                                </Col>
                             </div>
 
                             <div className={classes.wrapper5}>
-                                <Title level={2}>Виписка з УПЮ</Title>
-                                <div className={classes.line} />
+                                <Title level={2}>Генерація</Title>
                             </div>
-
-                        </div>
-
-                        <div className={classes.wrapper}>
-                            <div className={classes.wrapper6}>
-                                <Title level={2}>Пошук</Title>
-                                <div className={classes.line} />
-                            </div>
-
-
 
                         </div>
 
                     </div>
                 </div>
+                <ListOfAchievementsModal
+                    userToken={userToken}
+                    visibleModal={visibleListAchievementModal}
+                    setVisibleModal={setVisibleListAchievementModal}
+                    achievementDoc={achievementDoc}
+                    setAchievementDoc={setAchievementDoc}
+                ></ListOfAchievementsModal>
+
+                <AddAchievementsModal
+                    userId={data?.user.id}
+                    visibleModal={visibleAchievementModal}
+                    setVisibleModal={setvisibleAchievementModal}
+                ></AddAchievementsModal>
 
                 <AddBiographyModal
                     userId={data?.user.id}
