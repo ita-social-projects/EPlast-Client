@@ -51,7 +51,7 @@ const CreateClub = () => {
   const history = useHistory();
 
   const [loading, setLoading] = useState(false);
-  const [Club, setClub] = useState<ClubProfile>(new ClubProfile());
+  const [club, setClub] = useState<ClubProfile>(new ClubProfile());
   const [regions, setRegions] = useState<RegionProfile[]>([]);
   const [admins, setAdmins] = useState<ClubAdmin[]>([]);
   const [members, setMembers] = useState<ClubMember[]>([]);
@@ -85,7 +85,7 @@ const CreateClub = () => {
     if (info !== null) {
       if (checkFile(info.file.size, info.file.name)) {
         getBase64(info.file, (base64: string) => {
-          setClub({ ...Club, logo: base64 });
+          setClub({ ...club, logo: base64 });
         });
         notificationLogic("success", "Фото завантажено");
       }
@@ -95,7 +95,7 @@ const CreateClub = () => {
   };
 
   const removeLogo = (event: any) => {
-    setClub({ ...Club, logo: null });
+    setClub({ ...club, logo: null });
     notificationLogic("success", "Фото видалено");
     event.stopPropagation();
   };
@@ -144,10 +144,10 @@ const CreateClub = () => {
       clubURL: values.clubURL,
       description: values.description,
       email: values.email,
-      head: Club.head,
+      head: club.head,
       houseNumber: values.houseNumber,
-      id: Club.id,
-      logo: Club.logo?.length === 0 ? null : Club.logo,
+      id: club.id,
+      logo: club.logo?.length === 0 ? null : club.logo,
       officeNumber: values.officeNumber,
       name: values.name,
       phoneNumber: values.phoneNumber,
@@ -155,7 +155,7 @@ const CreateClub = () => {
       street: values.street,
     };
 
-    if (!Club.id) {
+    if (!club.id) {
       CreateClub(newClub);
     } else {
       EditClub(newClub);
@@ -166,12 +166,12 @@ const CreateClub = () => {
     notificationLogic("info", "Створення...", <LoadingOutlined />);
     const responsePromise = createClub(JSON.stringify(newClub));
     const response = await responsePromise;
-    Club.id = response.data;
+    club.id = response.data;
 
     return responsePromise
       .then(() => {
         notificationLogic("success", "Курінь успішно створено");
-        history.push(`${Club.id}`);
+        history.push(`${club.id}`);
       })
       .catch(() => {
         notificationLogic("error", "Не вдалося створити курінь");
@@ -181,7 +181,7 @@ const CreateClub = () => {
   const EditClub = async (newClub: ClubProfile) => {
     notificationLogic("info", "Оновлення...", <LoadingOutlined />);
 
-    return updateClub(Club.id, JSON.stringify(newClub))
+    return updateClub(club.id, JSON.stringify(newClub))
       .then(() => {
         notificationLogic("success", "Курінь успішно оновлено");
         history.goBack();
@@ -191,18 +191,18 @@ const CreateClub = () => {
       });
   };
 
-  return loading && Club ? (
+  return loading && club ? (
     <Spinner />
   ) : (
     <Layout.Content className="createClub">
       <Card hoverable className="createClubCard">
-        {Club.id ? (
-          <Title level={2}>Редагування станиці</Title>
+        {club.id ? (
+          <Title level={2}>Редагування Куреня</Title>
         ) : (
-          <Title level={2}>Створення станиці</Title>
+          <Title level={2}>Створення Куреня</Title>
         )}
         <Form onFinish={handleSubmit}>
-          <Form.Item name="logo" initialValue={Club.logo}>
+          <Form.Item name="logo" initialValue={club.logo}>
             <Upload
               name="avatar"
               listType="picture-card"
@@ -210,15 +210,15 @@ const CreateClub = () => {
               accept=".jpeg,.jpg,.png"
               customRequest={handleUpload}
             >
-              {Club.logo?.length! > 0 ? (
+              {club.logo?.length! > 0 ? (
                 <DeleteOutlined onClick={removeLogo} />
               ) : (
                 <PlusOutlined />
               )}
               <img
-                src={Club?.logo ? Club.logo : ClubDefaultLogo}
+                src={club?.logo ? club.logo : ClubDefaultLogo}
                 alt="Club"
-                className="ClubLogo"
+                className="clubLogo"
               />
             </Upload>
           </Form.Item>
@@ -228,7 +228,7 @@ const CreateClub = () => {
                 name="name"
                 label="Назва"
                 labelCol={{ span: 24 }}
-                initialValue={Club.name}
+                initialValue={club.name}
                 rules={[
                   { required: true, message: "Це поле є обов'язковим" },
                   {
@@ -237,7 +237,7 @@ const CreateClub = () => {
                   },
                 ]}
               >
-                <Input value={Club.name} maxLength={51} />
+                <Input value={club.name} maxLength={51} />
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
@@ -245,7 +245,7 @@ const CreateClub = () => {
                 name="description"
                 label="Опис"
                 labelCol={{ span: 24 }}
-                initialValue={Club.description}
+                initialValue={club.description}
                 rules={[
                   {
                     max: 1000,
@@ -253,7 +253,7 @@ const CreateClub = () => {
                   },
                 ]}
               >
-                <Input value={Club.description} maxLength={1001}/>
+                <Input value={club.description} maxLength={1001}/>
               </Form.Item>
             </Col>
             <Col md={11} xs={24}>
@@ -261,7 +261,7 @@ const CreateClub = () => {
                 name="clubURL"
                 label="Посилання"
                 labelCol={{ span: 24 }}
-                initialValue={Club.clubURL}
+                initialValue={club.clubURL}
                 rules={[
                   {
                     max: 500,
@@ -269,7 +269,7 @@ const CreateClub = () => {
                   },
                 ]}
               >
-                <Input value={Club.clubURL} maxLength={501}/>
+                <Input value={club.clubURL} maxLength={501}/>
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
@@ -277,12 +277,12 @@ const CreateClub = () => {
                 name="phoneNumber"
                 label="Номер телефону"
                 labelCol={{ span: 24 }}
-                initialValue={Club.phoneNumber}
+                initialValue={club.phoneNumber}
                 rules={[{ min: 18, message: "Неправильний телефон" }]}
               >
                 <ReactInputMask
                   mask="+38(999)-999-99-99"
-                  value={Club.phoneNumber}
+                  value={club.phoneNumber}
                 >
                   {(inputProps: any) => <Input {...inputProps} type="tel" />}
                 </ReactInputMask>
@@ -293,7 +293,7 @@ const CreateClub = () => {
                 name="email"
                 label="Електронна пошта"
                 labelCol={{ span: 24 }}
-                initialValue={Club.email}
+                initialValue={club.email}
                 rules={[
                   {
                     pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
@@ -305,7 +305,27 @@ const CreateClub = () => {
                   },
                 ]}
               >
-                <Input value={Club.email} maxLength={51}/>
+                <Input value={club.email} maxLength={51}/>
+              </Form.Item>
+            </Col>
+            <Col md={{ span: 11, offset: 2 }} xs={24}>
+              <Form.Item
+                name="region"
+                label="Для балансу"
+                labelCol={{ span: 24 }}
+                rules={[{message: "Це поле для балансу" }]}
+              >
+                <Select
+                  showSearch
+                  optionFilterProp="children"
+                  onSearch={onSearch}
+                >
+                  {regions.map((item: RegionProfile) => (
+                    <Select.Option key={item.id} value={item.regionName}>
+                      {item.regionName}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col md={11} xs={24}>
@@ -313,14 +333,14 @@ const CreateClub = () => {
                 name="street"
                 label="Вулиця"
                 labelCol={{ span: 24 }}
-                initialValue={Club.street}
+                initialValue={club.street}
                 rules={[{ required: true, message: "Це поле є обов'язковим" },
                 {
                   max: 50,
                   message: "Максимальна довжина - 50 символів!",
                 },]}
               >
-                <Input value={Club.street} maxLength={51}/>
+                <Input value={club.street} maxLength={51}/>
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
@@ -328,14 +348,14 @@ const CreateClub = () => {
                 name="houseNumber"
                 label="Номер будинку"
                 labelCol={{ span: 24 }}
-                initialValue={Club.houseNumber}
+                initialValue={club.houseNumber}
                 rules={[{ required: true, message: "Це поле є обов'язковим" },
                 {
                   max: 5,
                   message: "Максимальна довжина - 5 символів!",
                 },]}
               >
-                <Input value={Club.houseNumber} maxLength={6}/>
+                <Input value={club.houseNumber} maxLength={6}/>
               </Form.Item>
             </Col>
             <Col md={11} xs={24}>
@@ -343,13 +363,13 @@ const CreateClub = () => {
                 name="officeNumber"
                 label="Номер офісу/квартири"
                 labelCol={{ span: 24 }}
-                initialValue={Club.officeNumber}
+                initialValue={club.officeNumber}
                 rules={[{
                   max: 5,
                   message: "Максимальна довжина - 5 символів!",
                 },]}
               >
-                <Input value={Club.officeNumber} maxLength={6}/>
+                <Input value={club.officeNumber} maxLength={6}/>
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
@@ -357,17 +377,17 @@ const CreateClub = () => {
                 name="postIndex"
                 label="Поштовий індекс"
                 labelCol={{ span: 24 }}
-                initialValue={Club.postIndex}
+                initialValue={club.postIndex}
                 rules={[{
                   max: 5,
                   message: "Максимальна довжина - 5 символів!",
                 },]}
               >
-                <Input type="number" value={Club.postIndex}/>
+                <Input type="number" value={club.postIndex}/>
               </Form.Item>
             </Col>
           </Row>
-          <Row className="ClubButtons" justify="center" gutter={[0, 6]}>
+          <Row className="clubButtons" justify="center" gutter={[0, 6]}>
             <Col xs={24} sm={12}>
               <Button
                 type="primary"
@@ -385,12 +405,12 @@ const CreateClub = () => {
           </Row>
         </Form>
       </Card>
-      {Club.id ? (
-        <Card hoverable className="ClubMembersCard">
+      {club.id ? (
+        <Card hoverable className="clubMembersCard">
           <Row justify="space-between" gutter={[0, 12]}>
             <Col span={24}>
               <Table
-                dataSource={getTableAdmins(admins, Club.head)}
+                dataSource={getTableAdmins(admins, club.head)}
                 columns={administrationsColumns}
                 pagination={{ defaultPageSize: 4 }}
                 className="table"
@@ -398,7 +418,7 @@ const CreateClub = () => {
             </Col>
             <Col md={10} xs={24}>
               <Table
-                dataSource={getTableMembers(members, admins, Club.head)}
+                dataSource={getTableMembers(members, admins, club.head)}
                 columns={membersColumns}
                 pagination={{ defaultPageSize: 4 }}
               />

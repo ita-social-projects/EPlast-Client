@@ -42,7 +42,7 @@ const ClubDocuments = () => {
 
     return (
       <Layout.Content>
-        <Title level={2}>Документообіг станиці</Title>
+        <Title level={2}>Документообіг куреня</Title>
         {loading ? (
           <Spinner />
         ) : (
@@ -96,7 +96,7 @@ const ClubDocuments = () => {
                 </Card>
               ))
             ) : (
-              <Title level={4}>Ще немає документів станиці</Title>
+              <Title level={4}>Ще немає документів куреня</Title>
             )}
           </div>
         )}

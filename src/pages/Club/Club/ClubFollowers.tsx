@@ -53,7 +53,7 @@ const ClubFollowers = () => {
 
     return (
       <Layout.Content>
-        <Title level={2}>Прихильники станиці</Title>
+        <Title level={2}>Прихильники куреня</Title>
         {loading ? (
           <Spinner />
         ) : (
@@ -99,7 +99,7 @@ const ClubFollowers = () => {
                 </Card>
               ))
             ) : (
-              <Title level={4}>Ще немає прихильників станиці</Title>
+              <Title level={4}>Ще немає прихильників куреня</Title>
             )}
           </div>
         )}

@@ -80,7 +80,7 @@ export const getTableMembers = (members: ClubMember[], admins: ClubAdmin[], head
   return arr.map((member: ClubMember) => ({
     key: member.id,
     name: `${member.user.firstName} ${member.user.lastName}`,
-    status: "Член куреня",
+    status: "Член станиці",
   }));
 };
 
@@ -88,6 +88,6 @@ export const getTableFollowers = (followers: ClubMember[]) => {
   return followers.map((member: ClubMember) => ({
     key: member.id,
     name: `${member.user.firstName} ${member.user.lastName}`,
-    status: "Прихильник куреня",
+    status: "Прихильник станиці",
   }));
 };

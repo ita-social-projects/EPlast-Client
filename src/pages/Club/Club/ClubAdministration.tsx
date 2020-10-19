@@ -114,7 +114,7 @@ const ClubAdministration = () => {
             )}
           </div>
         )}
-        <div className="ClubMoreItems">
+        <div className="clubMoreItems">
           <Button
             className="backButton"
             icon={<RollbackOutlined />}
