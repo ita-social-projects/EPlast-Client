@@ -45,8 +45,10 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
   const handleDelete = (id: number) => {
     const filteredData = distData.filter((d: { id: number }) => d.id !== id);
     setDistData([...filteredData]);
+    setEditVisible(false);
     notificationLogic("success", "Тип відзначення успішно видалено!");
   };
+
   const handleAdd = async () => {
     const newDistinction: Distinction = {
       id: 0,

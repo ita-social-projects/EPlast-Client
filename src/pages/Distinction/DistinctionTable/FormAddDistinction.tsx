@@ -181,18 +181,27 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       >
         <Input.TextArea
           allowClear
+          autoSize =
+          {
+            {
+              minRows: 2,
+              maxRows: 6
+            }
+          }
           className={formclasses.inputField}
           maxLength={251}
         />
       </Form.Item>
 
-      <Form.Item style={{ textAlign: "right" }}>
-        <Button key="back" onClick={handleCancel}>
-          Відмінити
-        </Button>
-        <Button type="primary" htmlType="submit">
-          Опублікувати
-        </Button>
+      <Form.Item>
+        <div className={formclasses.cardButton}>
+          <Button key="back" onClick={handleCancel}>
+            Відмінити
+          </Button>
+          <Button type="primary" htmlType="submit">
+            Опублікувати
+          </Button>
+        </div>
       </Form.Item>
     </Form>
   );
