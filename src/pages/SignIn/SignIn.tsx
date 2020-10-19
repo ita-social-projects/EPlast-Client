@@ -18,14 +18,6 @@ export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
  
-  const responseGoogle = async (response:any) => {
-    console.log(response);
-    await authService.sendToken(response.tokenId);
-    const token = AuthStore.getToken() as string;
-    user = jwt(token);
-    history.push(`/userpage/main/${user.nameid}`);
-    window.location.reload();
-  }
   const initialValues = {
     Email: "",
     Password: "",
@@ -51,6 +43,13 @@ export default function () {
     window.location.reload();
   };
 
+  const handleGoogleResponse = async (response:any) => {
+    await authService.sendToken(response.tokenId);
+    const token = AuthStore.getToken() as string;
+    user = jwt(token);
+    history.push(`/userpage/main/${user.nameid}`);
+    window.location.reload();
+  }
 
   return (
     <div className={styles.mainContainer}>
@@ -99,9 +98,8 @@ export default function () {
             </Button>
             )}
             buttonText="Login"
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
-            //isSignedIn={true}
+            onSuccess={handleGoogleResponse}
+            onFailure={handleGoogleResponse}
             cookiePolicy={'single_host_origin'}
           />
           <Button id={styles.facebookBtn} className={styles.socialButton}>
