@@ -32,7 +32,6 @@ export const Blanks = () => {
     const [visibleExtractFromUPUModal, setVisibleExtractFromUPUModal] = useState(false);
     const [visibleAchievementModal, setvisibleAchievementModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [form] = Form.useForm();
     const [userToken, setUserToken] = useState<any>([
         {
             nameid: "",

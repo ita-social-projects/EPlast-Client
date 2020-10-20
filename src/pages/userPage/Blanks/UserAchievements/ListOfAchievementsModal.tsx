@@ -28,12 +28,14 @@ const ListOfAchievementsModal = (props: Props) => {
     const [achievements, setAchievements] = useState<BlankDocument[]>([]);
     let [pageNumber, setPageNumber] = useState(0);
     const [pageSize] = useState(7);
-    const [form] = Form.useForm();
     const [isEmpty, setIsEmpty] = useState(false);
 
     const handleCancel = () => {
-        form.resetFields();
+        setLoadingMore({ loading: false, hasMore: true });
+        setIsEmpty(false);
+        setPageNumber(0);
         props.setVisibleModal(false);
+        setAchievements([]);
     }
 
     const deleteFIle = async (documentId: number, fileName: string) => {
@@ -62,7 +64,7 @@ const ListOfAchievementsModal = (props: Props) => {
     const getAchievements = async () => {
         const response = await getAchievementsByPage(pageNumber, pageSize, userId);
         console.log(response);
-        if (response.data.length == 0){
+        if (response.data.length == 0) {
             setIsEmpty(true);
         }
         var concatedAchievements = achievements.concat(response.data);
@@ -71,18 +73,17 @@ const ListOfAchievementsModal = (props: Props) => {
     };
     const handleInfiniteOfLoad = () => {
         setLoadingMore({ loading: true, hasMore: true });
-        setPageNumber(++pageNumber);
         if (isEmpty) {
             message.success(`Всі файли завантажено`);
             setLoadingMore({ loading: false, hasMore: false });
             return;
         }
         getAchievements();
+        setPageNumber(++pageNumber);
     }
 
     useEffect(() => {
         hideDelete();
-        getAchievements();
     }, []);
 
     return (
@@ -93,7 +94,6 @@ const ListOfAchievementsModal = (props: Props) => {
             destroyOnClose={true}
             onCancel={handleCancel}
         >
-            <Form>
             <div className={classes.demoInfiniteContainer}>
                 <InfiniteScroll
                     pageStart={0}
@@ -142,7 +142,6 @@ const ListOfAchievementsModal = (props: Props) => {
                     </List>
                 </InfiniteScroll>
             </div>
-            </Form>
         </Modal>
     );
 }
