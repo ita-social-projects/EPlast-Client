@@ -6,43 +6,51 @@ export type NotificationType = {
 }
 export type UserNotification ={
     id: number;
-    // notificationType : NotificationType;
+    notificationTypeId: number; // notificationType : NotificationType;
     checked : boolean;
     message : string;
-    OwneruserId : string;
-    userName : string;
-    userLink : string;
-    date : string;
+    ownerUserId : string;
+    senderLink : string;
+    senderName : string;
+    createdAt : string;
+    checkedAt? : string;
 }
 
 const getAllUserNotifications = async (id : string) : Promise<Array<UserNotification>>=> {
-    const response = await Api.get(`Notifications/all/${id}`);
+    const response = await Api.get(`NotificationBox/getNotifications/${id}`);
 
     return response.data;
 };
 
- const getAllNotificationTypes = async () :Promise<Array<NotificationType>>=> {
-    const response = await Api.get(`Notifications/all`);
+const getAllNotificationTypes = async () :Promise<Array<NotificationType>>=> {
+    const response = await Api.get(`NotificationBox/getTypes`);
 
     return response.data;
- };
+};
 
- const postUserNotification = async (userNotification : UserNotification) =>{
-     const response = await Api.post(`Notifications`, userNotification);
+const postUserNotifications = async (userNotifications : Array<NotificationType>) =>{
+     const response = await Api.post(`NotificationBox/addNotifications`, userNotifications);
         
      return response.data;
  };
 
- const removeUserNotification = async (userId : string, userNotificationId: number) =>{
-    const response = await Api.remove(`Notifications/${userId}/${userNotificationId}`);
+const removeUserNotifications = async (userId : string) =>{
+    const response = await Api.remove(`NotificationBox/removeAllNotifications/${userId}`);
+       
+    return response.data;
+};
+
+const removeNotification = async (notificationId : number) =>{
+    const response = await Api.remove(`NotificationBox/removeNotification/${notificationId}`);
        
     return response.data;
 };
 
 export default
 { 
-    removeUserNotification,
-    postUserNotification,
+    removeUserNotifications,
+    removeNotification,
+    postUserNotifications,
     getAllNotificationTypes,
     getAllUserNotifications
 };

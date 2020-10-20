@@ -10,7 +10,9 @@ import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
 import NotificationBox from '../NotificationBox/NotificationBox';
-import NotificationBoxApi, {UserNotification } from '../../api/NotificationBoxApi';
+import NotificationBoxApi, {NotificationType, UserNotification } from '../../api/NotificationBoxApi';
+import SignalRConnection from '../NotificationBox/SignalRConnection'
+
 let authService = new AuthorizeApi();
 
 const HeaderContainer = () => {
@@ -21,6 +23,7 @@ const HeaderContainer = () => {
   const token = AuthStore.getToken() as string;
   const signedIn = AuthorizeApi.isSignedIn();
   const [userState, setUserState] = useState(signedIn);
+  const [notificationTypes, setNotificationTypes] = useState<Array<NotificationType>>([]);
   const [notifications, setNotifications] = useState<Array<UserNotification>>([]);
   const [visibleDrawer, setVisibleDrawer] = useState<boolean>(false);
   
@@ -33,23 +36,52 @@ const HeaderContainer = () => {
           setUserState(true);
         }
         setId(response.data.user.id);
+        
+        if (response.data.user.id !== undefined) 
+        {
+          getNotifications(response.data.user.id);
+          getNotificationTypes();
+          let connection = SignalRConnection.ManageConnection(response.data.user.id);
+          connection.on("ReceiveUserNotification", (userNotification : UserNotification) => {
+            console.log(userNotification); 
+            setNotifications(t => [userNotification].concat(t));
+          })
+          
+        }
         await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
         })
       })
-      setNotifications([
-        { 
-          id: 2,
-          checked : false,
-          message : "Петро вступив до вашого куреня",
-          OwneruserId : id ? id : "111",
-          userName : "User",
-          userLink : "234234-234234-2-3-423-4-23-4",
-          date : "23-10-2020",
-        }
-      ])
     }
   };
+
+  const getNotifications = async (userId : string) => {
+    await NotificationBoxApi.getAllUserNotifications(userId)
+    .then((response) => {
+      console.log(response)
+      setNotifications(response)
+    })
+    .catch(err => console.log(err))
+  }
+
+  const RemoveNotification = async (notificationId : number) => {
+    await NotificationBoxApi.removeNotification(notificationId)
+    .then(() => setNotifications(arr => arr.filter(elem => elem.id !== notificationId)));
+  }
+
+  const RemoveAllUserNotifications = async (userId : string) => {
+    await NotificationBoxApi.removeUserNotifications(userId)
+    .then(() => setNotifications([]));
+  }
+
+  const getNotificationTypes = async () => {
+    await NotificationBoxApi.getAllNotificationTypes()
+    .then((response) => {
+      console.log(response)
+      setNotificationTypes(response)
+    })
+    .catch(err => console.log(err))
+  }
   
   useEffect(() => {
     fetchData();
@@ -148,7 +180,9 @@ const HeaderContainer = () => {
             Notifications={notifications}
             VisibleDrawer={visibleDrawer}
             setVisibleDrawer={setVisibleDrawer}
-            handleNotificationBox={()=>{}}
+            handleNotificationBox={() => {}}
+            RemoveNotification={RemoveNotification} 
+            RemoveAllNotifications={RemoveAllUserNotifications}
           />
         </>
       ) : (

@@ -9,20 +9,27 @@ type props = {
     VisibleDrawer : boolean;
     setVisibleDrawer : (visibleDrawer: boolean) => void;
     handleNotificationBox :() => void;
+    RemoveNotification : (notificationId : number) => void;
+    RemoveAllNotifications : (userId : string) => void;
+
 }
 const NotificationBox = ({
     userId,
     Notifications,
     VisibleDrawer,
     setVisibleDrawer,
-    handleNotificationBox
+    handleNotificationBox,
+    RemoveNotification,
+    RemoveAllNotifications
     }: props) =>{
     const handleCancel = () => setVisibleDrawer(false);
- 
-const Debug = (txt : any) => {
-    console.log(txt)
-    debugger
-}
+    
+    const Debug = (item : any) => 
+    {
+        console.log(item)
+        debugger
+        return item
+    }
 
     return (   
     <Drawer
@@ -33,26 +40,23 @@ const Debug = (txt : any) => {
         visible={VisibleDrawer}
         width={450}
     >
-
+        
         {Notifications.length !== 0 ? 
             (
                 <List
                 itemLayout="vertical"
                 dataSource={Notifications}
                 bordered
-                renderItem={item => (
+                renderItem={(item, index) => (
                   <List.Item
-                    key={item.id}
-                    actions={[
-                        <p>{item.date}</p>
-                    ]}
                     extra={
                         <div className={classes.Button}> 
-                            <Button className={classes.DeleteButton} size="small" type="primary">&times;</Button>
+                            <Button className={classes.DeleteButton} onClick={() => RemoveNotification(item.id)} size="small" type="primary">&times;</Button>
                         </div>
                     }
                   >
-                    {item.message + " "}<a href={item.userLink}>{item.userName}</a>
+                    {item.message + " "}<a href={item.senderLink}>{item.senderName}</a>
+                    <p>{moment(item.createdAt).format("MM-DD HH:mm")}</p>
                   </List.Item>
                 )}
               />

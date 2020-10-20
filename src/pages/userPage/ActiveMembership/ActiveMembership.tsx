@@ -152,7 +152,7 @@ const ActiveMembership = () => {
         <div className={classes.wrapper}>
           <div className={classes.wrapper2}>
             <Title level={2}> Загальна інформація </Title>
-            <div className={classes.line} />
+            {/* <div className={classes.line} /> */}
             <div className={classes.textBlock}>
               {LoadInfo ? (
                 <>
@@ -197,7 +197,7 @@ const ActiveMembership = () => {
           </div>
           <div className={classes.wrapper2}>
             <Title level={2}> Рівні доступу </Title>
-            <div className={classes.line} />
+            {/* <div className={classes.line} /> */}
               <div className={classes.textBlock}>
                 <List
                   dataSource={accessLevels}
@@ -213,7 +213,7 @@ const ActiveMembership = () => {
           <div className={classes.wrapperScrollDegree}>
           <div className={classes.wrapperPlastDegree}>
             <Title level={2}> Ступені користувача </Title>
-            <div className={classes.line} />
+            {/* <div className={classes.line} /> */}
             {plastDegrees.map((pd) => (
               <React.Fragment key={pd.id}>
                 <div className={classes.textFieldsMain}>
