@@ -1,4 +1,12 @@
 
+.cardButton {
+    display: flex;
+    width: 100%;
+}
+.cardButton>* {
+  margin-right: 8px;
+}
+
 .inputField{
     float: right;
     text-align: left;
@@ -17,22 +25,4 @@
   .formField {
     width: 100%;
   }
-
-  .cardButton{
-    float: right;
-    inline-size: -webkit-fill-available;
-    margin-top: 7px;
-    color:#3c5438;
-    border-color: #3c5438;
-    max-width: 320px;
-    min-width: 320px;
-  }
-
-  .drawer{
-    width: 520px;
-  }
-  @media(max-width: 520px){
-    .drawer{
-      width: 90%;
-    }
-  }
+ 
