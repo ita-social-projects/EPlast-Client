@@ -19,7 +19,7 @@ const HeaderContainer = () => {
   const user = AuthorizeApi.isSignedIn();
   const [imageBase64, setImageBase64] = useState<string>();
   const [name, setName] = useState<string>();
-  const [id, setId] = useState<string>();
+  const [id, setId] = useState<string>("");
   const token = AuthStore.getToken() as string;
   const signedIn = AuthorizeApi.isSignedIn();
   const [userState, setUserState] = useState(signedIn);
@@ -46,7 +46,6 @@ const HeaderContainer = () => {
             console.log(userNotification); 
             setNotifications(t => [userNotification].concat(t));
           })
-          
         }
         await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
@@ -82,6 +81,17 @@ const HeaderContainer = () => {
     })
     .catch(err => console.log(err))
   }
+
+  const handleNotificationBox = async () => {
+    if (id !== "") {
+      getNotifications(id);
+    }
+  }
+
+  const ShowNotifications = () => {
+    setVisibleDrawer(true);
+    NotificationBoxApi.SetCheckedAllUserNotification(notifications.map(n => n.id))
+  }
   
   useEffect(() => {
     fetchData();
@@ -91,8 +101,6 @@ const HeaderContainer = () => {
     await authService.logout();
     setUserState(false);
   }
-
-  const ShowNotifications = () => setVisibleDrawer(true)
 
   const primaryMenu = (
     <Menu
@@ -151,7 +159,7 @@ const HeaderContainer = () => {
               className={classes.headerItem}
               key="4"
             >
-              <Badge count={notifications.length}>
+              <Badge count={notifications.filter(n => n.checked===false).length}>
                 <Button ghost
                   icon={<BellOutlined style={{ fontSize: "26px" }} />}
                   onClick={ShowNotifications}
@@ -175,15 +183,17 @@ const HeaderContainer = () => {
               </NavLink>
             </Dropdown>
           </Menu>
-          <NotificationBox
-            userId={id}
-            Notifications={notifications}
-            VisibleDrawer={visibleDrawer}
-            setVisibleDrawer={setVisibleDrawer}
-            handleNotificationBox={() => {}}
-            RemoveNotification={RemoveNotification} 
-            RemoveAllNotifications={RemoveAllUserNotifications}
-          />
+          {id !== "" &&
+            <NotificationBox
+              userId={id}
+              Notifications={notifications}
+              VisibleDrawer={visibleDrawer}
+              setVisibleDrawer={setVisibleDrawer}
+              RemoveNotification={RemoveNotification} 
+              RemoveAllNotifications={RemoveAllUserNotifications}
+              handleNotificationBox={handleNotificationBox}
+            />
+          }
         </>
       ) : (
           <Menu mode="horizontal" className={classes.headerMenu}>

@@ -1,8 +1,38 @@
-.DeleteButton{
-    vertical-align: middle;
+.Footer{
+    display: flex;
+    height: 40px;
 }
 
 .Button{
-    width: 100%;
-    height: 100%;
+    margin: 20px 0 0 auto;
 }
+
+.NotificationItem{
+    width: 100%;
+    height: 20%;
+    display: flex;
+}
+
+.NotificationTextBox{
+    width: 90%;
+    height: 100%;
+    padding: 5px 10px;
+    font-size: 16px;
+}
+
+.Text{
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.Date{
+    font-size: 14px;
+    color: grey;
+    margin: 0;
+}
+
+.Link{
+    color: rgb(87 137 78);
+}
+
+
