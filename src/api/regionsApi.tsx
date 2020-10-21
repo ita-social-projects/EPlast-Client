@@ -120,6 +120,14 @@ export const getUsersAdministrations = async (userId:string)=>{
 }
 
 
+export const getUsersPreviousAdministrations = async (userId:string)=>{
+  return api.get(`Regions/GetUserPreviousAdministrations/${userId}`).catch((error)=>{
+    throw new Error(error);
+  })
+}
+
+
+
 export const getAdminTypes = async ()=>{
   return api.get(`Regions/GetAdminTypes`).catch((error)=>{
    throw new Error(error);
@@ -134,8 +142,16 @@ export const removeDocument = async (documentId: number) => {
 }
 
 
+export const redirectCities = async (prevRegId:number, nextRegId: number)=>{
+  return api.put(`Regions/RedirectCities/${prevRegId}/${nextRegId}`).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+
 
 export default{
+  redirectCities,
   getHead,
   removeDocument,
   getRegionDocuments,

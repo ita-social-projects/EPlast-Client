@@ -14,6 +14,7 @@ import CityDocument from "../../models/City/CityDocument";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
 import userApi from "./../../api/UserApi";
 import {getLogo} from "./../../api/citiesApi"
+import CitiesRedirectForm from "./CitiesRedirectForm";
 
 
 
@@ -81,6 +82,8 @@ const Region = () => {
     logo: ''
   }]);
 
+  const [memberRedirectVisibility, setMemberRedirectVisibility] = useState<boolean>(false)
+
   const [canCreate, setCanCreate] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
@@ -140,7 +143,16 @@ const Region = () => {
       okType: 'danger',
       cancelText: 'Скасувати',
       maskClosable: true,
-      onOk() { deleteRegion() }
+      onOk() { 
+        {members[0].name !== '' ? (
+        setMemberRedirectVisibility(true)
+        )
+        :
+        (
+        deleteRegion()
+        )
+        }
+      }
     });
   }
 
@@ -178,7 +190,8 @@ const Region = () => {
   const handleOk = () => {
 
     setvisible(false);
-
+    setMemberRedirectVisibility(false);
+    
   };
 
 
@@ -352,7 +365,9 @@ const Region = () => {
                         title="Видалити округ">
                         <DeleteOutlined
                           className="cityInfoIconDelete"
-                          onClick={() => seeDeleteModal()}
+                          onClick={
+                            
+                            () => seeDeleteModal()}
                         />
                       </Tooltip>
                     </Col>
@@ -542,6 +557,16 @@ const Region = () => {
           footer={null}
         >
           <AddNewSecretaryForm onAdd={handleOk}></AddNewSecretaryForm>
+        </Modal>
+
+        <Modal
+          title="Оберіть округ до якого належатимуть станиці-члени:"
+          visible={memberRedirectVisibility}
+          onOk={handleOk}
+          onCancel={handleOk}
+          footer={null}
+        >
+          <CitiesRedirectForm onAdd={handleOk}/>
         </Modal>
 
 
