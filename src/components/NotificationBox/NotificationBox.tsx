@@ -66,7 +66,7 @@ const NotificationBox = ({
                                 }
                             </div> 
                             <p className={classes.Date}>
-                                {moment(item.createdAt).format("MM-DD HH:mm")}
+                                {moment(item.createdAt).format("DD-MM-YYYY HH:mm")}
                             </p>
                         </div> 
                         <div className={classes.Button}> 
