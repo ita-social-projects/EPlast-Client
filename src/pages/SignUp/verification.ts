@@ -10,12 +10,12 @@ export const checkEmail = (role: object, value: string, callback:any) => {
   };
   
   export const checkNameSurName = (role: object, value: string, callback:any) => {
-    const reg = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,20}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,20})*$/;
+    const reg = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,25}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,25})*$/;
       if (value.length === 0) {
         return callback('');
       }
       if (reg.test(value) === false) {
-        return callback('Дане поле повинне містити тільки літери та бути коротшим за 20 символів');
+        return callback('Дане поле повинне містити тільки літери та бути коротшим за 25 символів');
       }
       return callback();
   };

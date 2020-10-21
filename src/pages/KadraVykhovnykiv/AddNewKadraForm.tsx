@@ -4,8 +4,6 @@ import { Form, Input, DatePicker, AutoComplete, Select, Button } from 'antd';
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import adminApi from "../../api/adminApi";
 import notificationLogic from '../../components/Notifications/Notification';
-import { findAllByDisplayValue } from '@testing-library/react';
-
 
 type FormAddKadraProps = {
     onAdd: () => void;

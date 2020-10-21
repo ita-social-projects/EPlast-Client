@@ -24,6 +24,7 @@ const Cities = () => {
   const [searchedData, setSearchedData] = useState("");
 
   const setPhotos = async (cities: CityProfile[]) => {
+    console.log(cities);
     for await (const city of cities) {
       if (city.logo === null) {
         city.logo = CityDefaultLogo;
@@ -133,7 +134,8 @@ const Cities = () => {
               current={page}
               pageSize={pageSize}
               total={total}
-              showSizeChanger
+              responsive
+              showLessItems
               onChange={(page) => handleChange(page)}
               onShowSizeChange={(page, size) => handleSizeChange(page, size)}
             />
