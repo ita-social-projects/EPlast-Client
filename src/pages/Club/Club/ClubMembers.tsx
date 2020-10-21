@@ -1,156 +1,170 @@
-import React, {useEffect, useState} from 'react';
-import {useParams, useHistory} from 'react-router-dom';
-import {Avatar, Card, Layout, Spin, Skeleton, Button} from 'antd';
-import {SettingOutlined, CloseOutlined, RollbackOutlined} from '@ant-design/icons';
-import moment from "moment";
-import clubsApi from "../../../api/clubsApi";
+import React, { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import { Avatar, Button, Card, Layout, Row, Skeleton, Spin, } from "antd";
+import { SettingOutlined, CloseOutlined, RollbackOutlined } from "@ant-design/icons";
+import { removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
-import classes from './Club.module.css';
-import ClubAdmin from "../../../models/Club/ClubAdmin";
+import "./Club.less";
 import ClubMember from "../../../models/Club/ClubMember";
+import ClubAdmin from "../../../models/Club/ClubAdmin";
 import AddAdministratorModal from "../AddAdministratorModal/AddAdministratorModal";
+import moment from "moment";
+import "moment/locale/uk";
+import Title from "antd/lib/typography/Title";
+import Spinner from "../../Spinner/Spinner";
+moment.locale("uk-ua");
 
 const ClubMembers = () => {
-    const {id} = useParams();
-    const history = useHistory();
+  const {id} = useParams();
+  const history = useHistory();
 
-    const [members, setMembers] = useState<ClubMember[]>([]);
-    const [admins, setAdmins] = useState<ClubAdmin[]>([]);
-    const [clubHead, setClubHead] = useState<ClubAdmin>(new ClubAdmin());
-    const [visibleModal, setVisibleModal] = useState(false);
-    const [admin, setAdmin] = useState<ClubAdmin>(new ClubAdmin());
-    const [isCurrentUserAdmin, setIsAdmin] = useState(false);
-    const [isCurrentUserClubAdmin, setIsClubAdmin] = useState(false);
-    const [photosLoading, setPhotosLoading] = useState<boolean>(false);
-    const [loading, setLoading] = useState(false);
+  const [members, setMembers] = useState<ClubMember[]>([]);
+  const [admins, setAdmins] = useState<ClubAdmin[]>([]);
+  const [head, setHead] = useState<ClubAdmin>(new ClubAdmin());
+  const [visibleModal, setVisibleModal] = useState(false);
+  const [admin, setAdmin] = useState<ClubAdmin>(new ClubAdmin());
+  const [canEdit, setCanEdit] = useState<Boolean>(false);
+  const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  
+  const getMembers = async () => {
+    setLoading(true);
+    const responseMembers = await getAllMembers(id);
 
-    const getMembers = async () => {
-        setLoading(true);
-        const response = await clubsApi.getAllMembers(id);
-        setPhotosLoading(true);
-        setPhotos(response.data.members);
-        setMembers(response.data.members);
+    setPhotosLoading(true);
+    setPhotos(responseMembers.data.members);
+    setMembers(responseMembers.data.members);
+    setCanEdit(responseMembers.data.canEdit);
 
-        setIsAdmin(response.data.isCurrentUserAdmin);
-        setIsClubAdmin(response.data.isCurrentUserClubAdmin);
+    const responseAdmins = await getAllAdmins(id);
+    setAdmins(responseAdmins.data.administration);
+    setHead(responseAdmins.data.head);
+    setLoading(false);
+  };
 
-        setClubHead(response.data.clubAdmin)
-        setAdmins(response.data.clubAdministration);
+  const removeMember = async (member: ClubMember) => {
+    await toggleMemberStatus(member.id);
 
-        setLoading(false);
-    };
+    const existingAdmin = [head, ...admins].filter(
+      (a) =>
+        a?.userId === member.userId &&
+        (moment(a?.endDate).isAfter(moment()) || a?.endDate === null)
+    );
 
-    useEffect(() => {
-        getMembers();
-    }, []);
+    for (let i of existingAdmin) {
+      await removeAdministrator(i.id);
+    }
 
-    const setPhotos = async (members: ClubMember[]) => {
-        for (let i = 0; i < members.length; i++) {
-          members[i].user.imagePath = (
-            await userApi.getImage(members[i].user.imagePath)
-          ).data;
-        }
+    setMembers(members.filter((u) => u.id !== member.id));
+  };
+
+  const onAdd = async () => {
+    const responseAdmins = await getAllAdmins(id);
+    setAdmins(responseAdmins.data.administration);
+    setHead(responseAdmins.data.head);
+  }
+
+  const showModal = (member: ClubMember) => {    
+    const existingAdmin = [head, ...admins].find((a) => a?.userId === member.userId);
     
-        setPhotosLoading(false);
-      };
-
-    const toggleMemberStatus = async (member: ClubMember) => {
-        await clubsApi.toggleMemberStatus(id, member.id);
-
-        const existingAdmin = [clubHead, ...admins].filter(
-            (a) => a?.clubMembers.userId === member.userId && moment(a?.endDate).isAfter(moment())
-        );
-
-        for (let i = 0; i < existingAdmin.length; i++) {
-            await clubsApi.removeAdministrator(existingAdmin[i].id);
-        }
-
-        setMembers(members.filter((u) => u.id !== member.id));
-    };
-
-    const showModal = (member: ClubMember) => {
-        const existingAdmin = [clubHead, ...admins].find((a) => a?.clubMembers.userId === member.userId);
-    
-        if (existingAdmin !== undefined) {
-            setAdmin(existingAdmin);
-        }
-        else {
-        setAdmin({
+    if (existingAdmin !== undefined) {
+      setAdmin(existingAdmin);
+    }
+    else {
+      setAdmin({
         ...(new ClubAdmin()),
-        //userId: member.user.id,
-        clubMembers: member,
-        clubId: member.clubId,
-        });
+        userId: member.user.id,
+        clubId: member.ClubId,
+      });
     }
 
     setVisibleModal(true);
-    };
+  };
 
-    return loading ? (
-        <Layout.Content className={classes.spiner}>
-            <Spin size="large" />
-        </Layout.Content>
+  const setPhotos = async (members: ClubMember[]) => {
+    for (let i of members) {
+      i.user.imagePath = (await userApi.getImage(i.user.imagePath)).data;
+    }
+
+    setPhotosLoading(false);
+  };
+
+  useEffect(() => {
+    getMembers();
+  }, []);
+
+  return (
+    <Layout.Content>
+      <Title level={2}>
+        Члени куреня
+      </Title>
+      {loading ? (
+          <Spinner />
         ) : (
-        <Layout.Content>
-        <h1 className={classes.mainTitle}>Члени куреня</h1>
-        <div className={classes.wrapper}>
+      <div className="clubMoreItems">
         {members.length > 0 ? (
-            members.map((member: ClubMember) => (
+          members.map((member: ClubMember) => (
             <Card
-                key={member.id}
-                className={classes.detailsCard}
-                actions={
-                    (isCurrentUserClubAdmin || isCurrentUserAdmin) ? [
-                        <SettingOutlined onClick={() => showModal(member)} />,
-                        <CloseOutlined onClick={() => toggleMemberStatus(member)} />,
+              key={member.id}
+              className="detailsCard"
+              actions={
+                canEdit
+                  ? [
+                      <SettingOutlined onClick={() => showModal(member)} />,
+                      <CloseOutlined onClick={() => removeMember(member)} />,
                     ]
-                    : undefined
-                }
+                  : undefined
+              }
             >
-                <div
+              <div
                 onClick={() => history.push(`/userpage/main/${member.userId}`)}
-                className={classes.clubMember}
-                >
+                className="clubMember"
+              >
                 {photosLoading ? (
-                    <Skeleton.Avatar active size={86}></Skeleton.Avatar>
+                  <Skeleton.Avatar active size={86}></Skeleton.Avatar>
                 ) : (
-                    <Avatar
+                  <Avatar
                     size={86}
                     src={member.user.imagePath}
-                    className={classes.detailsIcon}
-                    />
+                    className="detailsIcon"
+                  />
                 )}
                 <Card.Meta
-                    className={classes.detailsMeta}
-                    title={`${member.user.firstName} ${member.user.lastName}`}
+                  className="detailsMeta"
+                  title={`${member.user.firstName} ${member.user.lastName}`}
                 />
-                </div>
+              </div>
             </Card>
-            ))
+          ))
         ) : (
-            <h1>Ще немає членів куреня</h1>
+          <Title level={4}>
+            Ще немає членів куреня
+          </Title>
         )}
-        </div>
-        <div className={classes.wrapper}>
+      </div>)}
+      <div className="clubMoreItems">
         <Button
-            className={classes.backButton}
-            icon={<RollbackOutlined />}
-            size={"large"}
-            onClick={() => history.goBack()}
-            type="primary"
+          className="backButton"
+          icon={<RollbackOutlined />}
+          size={"large"}
+          onClick={() => history.goBack()}
+          type="primary"
         >
-            Назад
+          Назад
         </Button>
-        </div>
-        { (isCurrentUserClubAdmin || isCurrentUserAdmin) ? (
-            <AddAdministratorModal
-                admin={admin}
-                setAdmin={setAdmin}
-                visibleModal={visibleModal}
-                setVisibleModal={setVisibleModal}
-            ></AddAdministratorModal>
-        ) : null}
-        </Layout.Content>
-    );
+      </div>
+      {canEdit ? (
+        <AddAdministratorModal
+          admin={admin}
+          setAdmin={setAdmin}
+          visibleModal={visibleModal}
+          setVisibleModal={setVisibleModal}
+          ClubId={+id}
+          onAdd={onAdd}
+        ></AddAdministratorModal>
+      ) : null}
+    </Layout.Content>
+  );
 };
+
 export default ClubMembers;
