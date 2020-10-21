@@ -23,6 +23,8 @@ interface Props {
     onChange: (id: string, userRoles: string) => void;
 }
 
+const { SubMenu } = Menu;
+
 const DropDown = (props: Props) => {
     const history = useHistory();
     const { record, pageX, pageY, showDropdown, onDelete, onChange } = props;
@@ -41,9 +43,18 @@ const DropDown = (props: Props) => {
                 await setShowEditModal(true);
                 break;
             case '4':
-                await setVisibleModalDegree(true);
+                await setShowEditModal(true);
                 break;
             case '5':
+                await setShowEditModal(true);
+                break;
+            case '6':
+                await setShowEditModal(true);
+                break;
+            case '7':
+                await setVisibleModalDegree(true);
+                break;
+            case '8':
                 await adminApi.putExpiredRole(record);
                 break;
             default:
@@ -73,15 +84,17 @@ const DropDown = (props: Props) => {
                         <DeleteOutlined />
                         Видалити
                 </Menu.Item>
-                <Menu.Item key="3">
-                    <EditOutlined />
-                        Змінити права доступу
-                </Menu.Item>
-                <Menu.Item key="4">
+                <SubMenu icon={<EditOutlined />} title="Змінити права доступу" >
+                    <Menu.Item key="3">Провід станиці</Menu.Item>
+                    <Menu.Item key="4">Провід округу</Menu.Item>
+                    <Menu.Item key="5">Провід куреня</Menu.Item>
+                    <Menu.Item key="6">Поточний стан користувача</Menu.Item>
+                </SubMenu>
+                <Menu.Item key="7">
                     <PlusCircleOutlined />
                         Додати ступінь
                 </Menu.Item>
-                <Menu.Item key="5">
+                <Menu.Item key="8">
                     <ScissorOutlined />
                         Заархівувати користувача
                 </Menu.Item>
