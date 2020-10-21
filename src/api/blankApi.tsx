@@ -10,17 +10,26 @@ export const addAchievementDocuments = async (userId: number, data: any) => {
     throw new Error(error);
   });
 }
+export const addExtractFromUPU = async (userId: number, data: any) => {
+  return api.post(`Blanks/AddExtractFromUPUDocument/${userId}`, data).catch((error) => {
+    throw new Error(error);
+  });
+}
 
 export const getDocumentByUserId = async (userId: string) => {
   return api.get(`Blanks/GetDocumentByUserId/${userId}`);
+}
+
+export const getExtractFromUPUByUserId = async (userId: string) => {
+  return api.get(`Blanks/GetExtractFromUPUDocumentByUserId/${userId}`);
 }
 
 export const getAllAchievementDocumentsByUserId = async (userId: string) => {
   return api.get(`Blanks/GetAchievementDocumentsByUserId/${userId}`);
 }
 
-export const getAchievementsByPage = async (pageNumber: number, pageSize: number, userId:string) => {
-  const response = await api.get(`Blanks/InfinityScroll`, {pageNumber, pageSize,userId});
+export const getAchievementsByPage = async (pageNumber: number, pageSize: number, userId: string) => {
+  const response = await api.get(`Blanks/InfinityScroll`, { pageNumber, pageSize, userId });
   return response;
 }
 
@@ -34,9 +43,22 @@ export const removeAchievementDocument = async (documentId: number) => {
     throw new Error(error);
   });
 }
+export const removeExtractFromUPUDocument = async (documentId: number) => {
+  return api.remove(`Blanks/RemoveExtractFromUPUDocument/${documentId}`, documentId).catch((error) => {
+    throw new Error(error);
+  });
+}
 
-export const openBiographyFile = async (fileBlob: string,) => {
+export const openBiographyFile = async (fileBlob: string) => {
   const response = await (await api.get(`Blanks/BiographyDocumentBase64/${fileBlob}`, fileBlob)).data;
+  const base64 = response.split(",")[1];
+  let pdfWindow = window.open("");
+  pdfWindow?.document.write("<iframe width='99%' height='99%' src='data:application/pdf;base64," +
+    encodeURI(base64) + "'></iframe>")
+}
+
+export const openExtractFromUPUFile = async(fileBlob:string)=>{
+  const response = await (await api.get(`Blanks/ExtractFromUPUDocumentBase64/${fileBlob}`, fileBlob)).data;
   const base64 = response.split(",")[1];
   let pdfWindow = window.open("");
   pdfWindow?.document.write("<iframe width='99%' height='99%' src='data:application/pdf;base64," +
@@ -73,6 +95,19 @@ export const getFile = async (fileBlob: string, fileName: string) => {
 
 export const getAchievementFile = async (fileBlob: string, fileName: string) => {
   const response = await (await api.get(`Blanks/AchievementDocumentBase64/${fileBlob}`, fileBlob)).data;
+  const anchor = window.document.createElement('a');
+  document.body.appendChild(anchor);
+  anchor.target = "_blank";
+  anchor.href = response;
+  anchor.download = fileName;
+  anchor.click();
+  document.body.removeChild(anchor);
+  window.URL.revokeObjectURL(anchor.href);
+  return response;
+}
+
+export const getExtractFromUPUFile = async(fileBlob:string,fileName:string)=>{
+  const response = await (await api.get(`Blanks/ExtractFromUPUDocumentBase64/${fileBlob}`, fileBlob)).data;
   const anchor = window.document.createElement('a');
   document.body.appendChild(anchor);
   anchor.target = "_blank";
