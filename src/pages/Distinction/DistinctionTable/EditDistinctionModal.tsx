@@ -32,7 +32,7 @@ const EditDistinctionModal = ({
     <Drawer
       title="Редагувати відзначення"
       placement="right"
-      width={520}
+      width="auto"
       height={1000}
       visible={showModal}
       onClose={handleCancel}

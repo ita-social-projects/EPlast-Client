@@ -8,6 +8,7 @@ import ActiveMembership from '../ActiveMembership/ActiveMembership'
 import EventUser from '../../Actions/ActionEvent/EventUser/EventUser';
 import { useParams } from 'react-router-dom';
 import Secretaries from '../Secretaries/SecretariesPage';
+import { Blanks } from '../Blanks/Blanks';
 
 
 
@@ -40,6 +41,10 @@ export default function (
       ) : specify === 'eventuser' ? (
         <div className="content">
           <EventUser />
+        </div>
+      ):specify === 'blank' ? (
+        <div className="content">
+          <Blanks />
         </div>
       ) : specify === 'approvers' ? (
         <div className="content">

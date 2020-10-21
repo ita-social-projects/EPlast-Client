@@ -164,7 +164,6 @@ const EventUser = () => {
         <div className={classes.wrapper}>
           <div className={classes.wrapper2}>
             <Title level={2}> Відвідані події </Title>
-            <div className={classes.line} />
             {allEvents.visitedEvents?.length === 0 &&
               userToken.nameid !== userId && (
                 <h2>
@@ -228,7 +227,7 @@ const EventUser = () => {
                     type="primary"
                     className={classes.button}
                     id={classes.button}
-                    onClick={() => history.push(`/events/${item.id}/details`)}
+                    onClick={() => history.push(`/events/details/${item.id}`)}
                   >
                     Деталі
                   </Button>
@@ -239,7 +238,6 @@ const EventUser = () => {
           </div>
           <div className={classes.wrapper3}>
             <Title level={2}> Створені події </Title>
-            <div className={classes.line} />
             {allEvents.createdEvents.length !== 0 && (
               <div>
                 <Badge
@@ -250,6 +248,7 @@ const EventUser = () => {
                 <Button
                   type="primary"
                   className={classes.button}
+                  style={{ width: "360%" , marginLeft: "-40px"}}
                   onClick={() => setCreatedEventsModal(true)}
                 >
                   Список
@@ -280,10 +279,10 @@ const EventUser = () => {
               className={classes.modal}
               onCancel={() => setCreatedEventsModal(false)}
               footer={[
-                <div className={classes.modalFooter}>
+                <div className={classes.Modal}>
                   <Button
                     type="primary"
-                    className={classes.button}
+                    className={classes.buttonSmallFooter}
                     onClick={() => setCreatedEventsModal(false)}
                   >
                     Закрити
@@ -366,17 +365,15 @@ const EventUser = () => {
                   </h2>
                   <Button
                     type="primary"
-                    className={classes.button}
-                    id={classes.button}
-                    onClick={() => history.push(`/events/${item.id}/details`)}
+                    className={classes.buttonSmall}
+                    onClick={() => history.push(`/events/details/${item.id}`)}
                   >
                     Деталі
                   </Button>
                   {item.eventStatusID !== 1 && userToken.nameid === userId && (
                     <Button
                       type="primary"
-                      className={classes.button}
-                      id={classes.button}
+                      className={classes.buttonSmall}
                       onClick={() => {
                         setShowEventEditDrawer(true);
                         setEventId(item.id);
@@ -403,7 +400,6 @@ const EventUser = () => {
               {" "}
               Заплановані події{" "}
             </Title>
-            <div className={classes.line} />
             {allEvents?.planedEvents?.length === 0 &&
               userToken.nameid === userId && (
                 <div>
@@ -435,6 +431,7 @@ const EventUser = () => {
                 <Button
                   type="primary"
                   className={classes.button}
+                  style={{ width: "360%" , marginLeft: "-40px"}}
                   onClick={() => setPlannedEventsModal(true)}
                 >
                   Список
@@ -450,15 +447,14 @@ const EventUser = () => {
               footer={[
                 <Button
                   type="primary"
-                  className={classes.button}
-                  id={classes.subcribeButton}
+                  className={classes.buttonSmallFooter}
                   onClick={() => history.push("/events/types")}
                 >
                   Зголоситись на подію
                 </Button>,
                 <Button
                   type="primary"
-                  className={classes.button}
+                  className={classes.buttonSmallFooter}
                   onClick={() => setPlannedEventsModal(false)}
                 >
                   Закрити
@@ -482,10 +478,8 @@ const EventUser = () => {
                   </h2>
                   <Button
                     type="primary"
-                    className={classes.button}
-                    id={classes.button}
-                    style={{ marginLeft: 160 }}
-                    onClick={() => history.push(`/events/${item.id}/details`)}
+                    className={classes.buttonSmall}
+                    onClick={() => history.push(`/events/details/${item.id}`)}
                   >
                     Деталі
                   </Button>
@@ -499,13 +493,12 @@ const EventUser = () => {
               {" "}
               Календар подій{" "}
             </Title>
-            <div className={classes.line} />
             <CalendarOutlined
               style={{ fontSize: "23px", marginBottom: "7.5px" }}
             />
             <Button
               type="primary"
-              className={classes.button}
+              className={classes.buttonSmallCalendar}
               onClick={() => setShowEventCalendarDrawer(true)}
             >
               Переглянути
