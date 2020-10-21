@@ -4,7 +4,7 @@ import { Data } from "../Interface/Interface";
 import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
 import AvatarAndProgress from "../personalData/AvatarAndProgress";
-import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId, openBiographyFile } from "../../../api/blankApi";
+import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId, openBiographyFile, getExtractFromUPUByUserId, removeExtractFromUPUDocument, getExtractFromUPUFile, openExtractFromUPUFile } from "../../../api/blankApi";
 import { Badge, Button, Col, Form, Tooltip } from "antd";
 import classes from "./Blanks.module.css";
 import Title from "antd/lib/typography/Title";
@@ -17,6 +17,7 @@ import AddAchievementsModal from "./UserAchievements/AddAchievementsModal";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import ListOfAchievementsModal from "./UserAchievements/ListOfAchievementsModal";
+import AddExtractFromUPUModal from "./UserExtractFromUPU/AddExtractFromUPUModal";
 
 export const Blanks = () => {
     const history = useHistory();
@@ -25,11 +26,12 @@ export const Blanks = () => {
     const [data, setData] = useState<Data>();
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
     const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
+    const [extractUPU, setExtractUPU] = useState<BlankDocument>(new BlankDocument);
     const [visibleModal, setVisibleModal] = useState(false);
     const [visibleListAchievementModal, setVisibleListAchievementModal] = useState(false);
+    const [visibleExtractFromUPUModal, setVisibleExtractFromUPUModal] = useState(false);
     const [visibleAchievementModal, setvisibleAchievementModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [form] = Form.useForm();
     const [userToken, setUserToken] = useState<any>([
         {
             nameid: "",
@@ -53,25 +55,42 @@ export const Blanks = () => {
         const response = await getAllAchievementDocumentsByUserId(userId);
         setAchievementDoc(response.data);
     };
+    const getExtractFromUPU = async () => {
+        const response = await getExtractFromUPUByUserId(userId);
+        setExtractUPU(response.data);
+    }
     const removeDocumentById = async (documentId: number) => {
         await removeDocument(documentId);
         notificationLogic('success', "Файл успішно видалено");
         getDocument();
     };
+    const removeExtractDocument = async (documentId: number) => {
+        await removeExtractFromUPUDocument(documentId);
+        notificationLogic('success', "Файл успішно видалено");
+        getExtractFromUPU();
+    }
+
+    const downloadExtractDocument = async (fileBlob: string, fileName: string) => {
+        await getExtractFromUPUFile(fileBlob, fileName);
+    }
 
     const downloadDocument = async (fileBlob: string, fileName: string) => {
         await getFile(fileBlob, fileName);
     }
 
-    const openDocument = async(fileBlob:string)=>{
+    const openDocument = async (fileBlob: string) => {
         await openBiographyFile(fileBlob);
+    }
+    const openExtractFromUPUDocument = async (fileBlob: string) => {
+        await openExtractFromUPUFile(fileBlob);
     }
 
     useEffect(() => {
         fetchData();
         getDocument();
         getAchievementDocumentsByUserId();
-    }, [userId, visibleModal, visibleAchievementModal]);
+        getExtractFromUPU();
+    }, [userId, visibleModal, visibleAchievementModal, visibleExtractFromUPUModal]);
 
     return (loading === false ? (
         <Spinner />
@@ -97,7 +116,7 @@ export const Blanks = () => {
                                         key={document.id}
                                     >
                                         <div>
-                                            <FilePdfOutlined className={classes.documentIcon} 
+                                            <FilePdfOutlined className={classes.documentIcon}
                                             />
                                             <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
                                                 {document.fileName}
@@ -116,11 +135,11 @@ export const Blanks = () => {
                                             />
                                         </Tooltip>
                                         <Tooltip title="Переглянути">
-                                            <EyeOutlined 
-                                            className={classes.reviewIcon}
-                                            key="review"
-                                            onClick={()=>openDocument(document.blobName)}/>
-                                            </Tooltip>
+                                            <EyeOutlined
+                                                className={classes.reviewIcon}
+                                                key="review"
+                                                onClick={() => openDocument(document.blobName)} />
+                                        </Tooltip>
                                         {userToken.nameid === userId &&
                                             <Tooltip title="Видалити">
                                                 <DeleteOutlined
@@ -156,6 +175,66 @@ export const Blanks = () => {
 
                             <div className={classes.wrapper3}>
                                 <Title level={2}>Виписка з УПЮ</Title>
+                                {extractUPU.userId == userId ? (
+                                    <Col
+                                        xs={18}
+                                        sm={18}
+                                        key={document.id}
+                                    >
+                                        <div>
+                                            <FilePdfOutlined className={classes.documentIcon}
+                                            />
+                                            <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
+                                                {extractUPU.fileName}
+                                            </Paragraph>
+                                        </div>
+                                        <Tooltip title="Завантажити">
+                                            <DownloadOutlined
+                                                className={classes.downloadIcon}
+                                                key="download"
+                                                onClick={() =>
+                                                    downloadExtractDocument(
+                                                        extractUPU.blobName,
+                                                        extractUPU.fileName
+                                                    )
+                                                }
+                                            />
+                                        </Tooltip>
+                                        <Tooltip title="Переглянути">
+                                            <EyeOutlined
+                                                className={classes.reviewIcon}
+                                                key="review"
+                                                onClick={() => openExtractFromUPUDocument(extractUPU.blobName)} />
+                                        </Tooltip>
+                                        {userToken.nameid === userId &&
+                                            <Tooltip title="Видалити">
+                                                <DeleteOutlined
+                                                    className={classes.deleteIcon}
+                                                    key="close"
+                                                    onClick={() => removeExtractDocument(extractUPU.id)}
+                                                />
+                                            </Tooltip>
+                                        }
+                                    </Col>
+                                ) : (
+                                        <Col>
+                                            {userToken.nameid === userId &&
+                                                <h2>Ви ще не додали виписку</h2>
+                                            }
+                                            {userToken.nameid !== userId &&
+                                                <h2>Користувач ще не додав(ла) виписку</h2>
+                                            }
+                                            {userToken.nameid === userId &&
+                                                <div>
+                                                    <Button type="primary"
+                                                        className={classes.addIcon}
+                                                        onClick={() => setVisibleExtractFromUPUModal(true)}>
+                                                        Створити Виписку
+                                            </Button>
+                                                </div>
+                                            }
+                                        </Col>
+                                    )}
                             </div>
                         </div>
 
@@ -232,6 +311,14 @@ export const Blanks = () => {
                     visibleModal={visibleModal}
                     setVisibleModal={setVisibleModal}
                 ></AddBiographyModal>
+
+                <AddExtractFromUPUModal
+                    userId={data?.user.id}
+                    document={extractUPU}
+                    setDocument={setExtractUPU}
+                    visibleModal={visibleExtractFromUPUModal}
+                    setVisibleModal={setVisibleExtractFromUPUModal}
+                ></AddExtractFromUPUModal>
             </>
 
         )
