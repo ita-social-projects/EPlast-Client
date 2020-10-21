@@ -1,97 +1,147 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { Card, Spin, Layout, Pagination} from "antd";
-import clubsApi from "../../../api/clubsApi";
+import { Card, Layout, Pagination, Result, Skeleton } from "antd";
 import Add from "../../../assets/images/add.png";
-import classes from "./Clubs.module.css";
-import Club from "../../../models/Club/Club";
+import ClubDefaultLogo from "../../../assets/images/default_club_image.jpg";
+import { getClubByPage, getLogo } from "../../../api/clubsApi";
+import "./Clubs.less";
+import ClubProfile from "../../../models/Club/ClubProfile";
+import Title from "antd/lib/typography/Title";
+import Spinner from "../../Spinner/Spinner";
+import Search from "antd/lib/input/Search";
 
 const Clubs = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
-  const [loading, setLoading] = useState(false);
 
-  const [clubs, setClubs] = useState<Club[]>([]);
-  const [pageNumber, setPageNumber] = useState(1);
+  const [clubs, setClubs] = useState<ClubProfile[]>([]);
+  const [canCreate, setCanCreate] = useState(false);
+  const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [clubsCount, setClubsCount] = useState(0);
-  const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+  const [searchedData, setSearchedData] = useState("");
 
-  const getClubs = async () => {
-    const fetchData = async () => {
-        setLoading(true);
+  const setPhotos = async (clubs: ClubProfile[]) => {
+    console.log(clubs);
+    for await (const club of clubs) {
+      if (club.logo === null) {
+        club.logo = ClubDefaultLogo;
+      } else {
+        const logo = await getLogo(club.logo);
+        club.logo = logo.data;
+      }
+    }
 
-        const responseCount = await clubsApi.getClubsCount();
-        setClubsCount(responseCount.data);
-        const response = await clubsApi.getClubsByPage(pageNumber, pageSize);
-        setClubs(response.data);
-
-        setLoading(false);
-      };
-      fetchData();
+    setPhotosLoading(false);
   };
 
-  const handlePageNumberChange = (pageNumber: number) => {
-    setPageNumber(pageNumber);
-  }
+  const getClubs = async () => {
+    setLoading(true);
 
-  const handlePageSizeChange = (pageNumber: number, pageSize: number = 10) => {
-    setPageNumber(pageNumber);
+    try {
+      const response = await getClubByPage(
+        page,
+        pageSize,
+        searchedData.trim()
+      );
+
+      setPhotosLoading(true);
+      setPhotos(response.data.clubs);
+      setClubs(response.data.clubs);
+      setCanCreate(response.data.canCreate);
+      setTotal(response.data.total);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (page: number) => {
+    setPage(page);
+  };
+
+  const handleSizeChange = (page: number, pageSize: number = 10) => {
+    setPage(page);
     setPageSize(pageSize);
-  }
+  };
 
   useEffect(() => {
     getClubs();
-  }, [pageNumber, pageSize]);
+  }, [page, pageSize, searchedData]);
+
+  const handleSearch = (event: any) => {
+    setSearchedData(event);
+  };
 
   return (
-    <Layout.Content>
-      <h1 className={classes.mainTitle}>Курені</h1>
-      {loading ? ( 
-        <div className={classes.spiner}>
-          <Spin size="large" />
-        </div>
+    <Layout.Content className="clubs">
+      <Title level={1}>Курені</Title>
+      <div className="searchContainer">
+        <Search
+          placeholder="Пошук"
+          enterButton
+          onSearch={handleSearch}
+          loading={photosLoading}
+          disabled={photosLoading}
+        />
+      </div>
+      {loading ? (
+        <Spinner />
       ) : (
         <div>
-          <div className={classes.wrapper}>
-          <Card
-            hoverable
-            className={classes.cardStyles}
-            cover={<img src={Add} alt="Add" />}
-            onClick={() => history.push(`${url}/new`)}
-          >
-            <Card.Meta
-              className={classes.titleText}
-              title="Створити новий курінь"
+          <div className="clubWrapper">
+            {canCreate && page === 1 && searchedData.length === 0 ? (
+              <Card
+                hoverable
+                className="cardStyles addClub"
+                cover={<img src={Add} alt="AddClub" />}
+                onClick={() => history.push(`${url}/new`)}
+              >
+                <Card.Meta
+                  className="titleText"
+                  title="Створити новий курінь"
+                />
+              </Card>
+            ) : null}
+
+            {clubs.length === 0 && searchedData.length !== 0 ? (
+              <div>
+                <Result status="404" title="Курінь не знайдено" />
+              </div>
+            ) : (
+              clubs.map((club: ClubProfile) => (
+                <Card
+                  key={club.id}
+                  hoverable
+                  className="cardStyles"
+                  cover={
+                    photosLoading ? (
+                      <Skeleton.Avatar shape="square" active />
+                    ) : (
+                      <img src={club.logo || undefined} alt="Club" />
+                    )
+                  }
+                  onClick={() => history.push(`${url}/${club.id}`)}
+                >
+                  <Card.Meta title={club.name} className="titleText" />
+                </Card>
+              ))
+            )}
+          </div>
+          <div className="pagination">
+            <Pagination
+              current={page}
+              pageSize={pageSize}
+              total={total}
+              showSizeChanger
+              onChange={(page) => handleChange(page)}
+              onShowSizeChange={(page, size) => handleSizeChange(page, size)}
             />
-          </Card>
-          {clubs.map((club: Club) => (
-            <Card
-              key={club.id}
-              hoverable
-              className={classes.cardStyles}
-              cover={
-                <img src={club.logo} alt="Club" className={classes.cardCoverStyles} />
-              }
-              onClick={() => history.push(`${url}/${club.id}`)}
-            >
-              <Card.Meta title={club.clubName} className={classes.titleText} />
-            </Card>
-          ))}
+          </div>
         </div>
-        <div className={classes.pagination}>
-        <Pagination
-          current={pageNumber}
-          pageSize={pageSize}
-          total={clubsCount}
-          showSizeChanger
-          onChange={(pageNumber) => handlePageNumberChange(pageNumber)}
-          onShowSizeChange={(pageNumber, pageSize) => handlePageSizeChange(pageNumber, pageSize)}
-        />
-        </div> 
-      </div> )}
+      )}
     </Layout.Content>
   );
-
 };
 export default Clubs;
