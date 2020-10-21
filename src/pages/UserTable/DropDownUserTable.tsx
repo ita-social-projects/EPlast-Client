@@ -11,6 +11,7 @@ import classes from "./UserTable.module.css";
 import userDeleteCofirm from "./UserDeleteConfirm";
 import ChangeUserRoleModal from "./ChangeUserRoleModal";
 import adminApi from "../../api/adminApi";
+const { SubMenu } = Menu;
 
 interface Props {
   record: string;
@@ -70,6 +71,13 @@ const DropDown = (props: Props) => {
           <EditOutlined />
           Змінити права доступу
         </Menu.Item>
+        <SubMenu icon={<EditOutlined />} title="Змінити права доступу" >
+          <Menu.Item>Провід станиці</Menu.Item>
+          <Menu.Item>Провід округу</Menu.Item>
+          <Menu.Item>Провід куреня</Menu.Item>
+          <Menu.Item>Адміністрація подій</Menu.Item>
+          <Menu.Item>Поточний стан користувача</Menu.Item>
+        </SubMenu>
         <Menu.Item key="4">
           <ScissorOutlined />
           Заархівувати користувача

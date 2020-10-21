@@ -99,6 +99,8 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
                     showModal={showEditOptionsModal}
                     setShowModal={setShowEditOptionsModal}
                     onChange={onChange}
+                    nameOfRoles={roles.userRoles}
+                    
                 />
             </Form>
         </div>

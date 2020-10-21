@@ -7,8 +7,9 @@ interface Props {
     showModal: boolean;
     setShowModal: (showModal: any) => void;
     onChange: (id: string, userRoles: string) => void;
+    nameOfRoles: any;
 }
-const AssignUserNewOptionsModal = ({ record, showModal, setShowModal, onChange }: Props) => {
+const AssignUserNewOptionsModal = ({ record, showModal, setShowModal, onChange, nameOfRoles }: Props) => {
     return (
         <Modal
             title="Редагування інформації користувача"
@@ -20,7 +21,8 @@ const AssignUserNewOptionsModal = ({ record, showModal, setShowModal, onChange }
             <AssignUserNewOptionsForm
                 record={record}
                 setShowModal={setShowModal}
-                onChange={onChange} />
+                onChange={onChange} 
+                nameOfRoles={nameOfRoles}/>
         </Modal>
     );
 };
