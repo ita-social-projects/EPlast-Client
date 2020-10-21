@@ -2,6 +2,7 @@ import React from 'react';
 import {Modal} from 'antd';
 import {ExclamationCircleOutlined} from '@ant-design/icons';
 import eventsApi from "../../api/eventsApi";
+import eventUserApi from "../../api/eventUserApi";
 import {useHistory} from "react-router-dom";
 
 const {confirm} = Modal;
@@ -22,6 +23,12 @@ interface EventDataForDeleting {
     eventName: string;
     eventTypeId: number;
     eventCategoryId: number;
+}
+
+interface EventDataForApproving {
+    eventId: number;
+    eventName: string;
+    eventStatusId: string;
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -159,3 +166,31 @@ export const showDeleteConfirmForSingleEvent = ({eventId, eventName, eventTypeId
     });
 }
 
+export const showApproveConfirm = ({eventId, eventName, eventStatusId}: EventDataForApproving) => {
+    confirm({
+        title: 'Ви впевнені, що хочете затвердити дану подію?',
+        icon: <ExclamationCircleOutlined/>,
+        content: `Подія: ${eventName}`,
+        okText: 'Так, затвердити',
+        cancelText: 'Скасувати',
+        onOk() {
+            const createEvent = async () => {
+                await eventUserApi.getEventToApprove(eventId);
+            };
+            createEvent()
+                .then(() => {
+                    Success('Ви успішно затвердили дану подію.')
+                    if (eventStatusId==="Затверджений(-на)") {
+                        // @ts-ignore
+                        successCallback()
+                    } 
+                })
+                .catch(() => {
+                    showError();
+                });
+        },
+        onCancel() {
+            console.log('Cancel');
+        },
+    });
+}

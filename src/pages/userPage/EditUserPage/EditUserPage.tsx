@@ -111,13 +111,9 @@ export default function () {
 
   const validationSchema = {
     name: [
-      { required: true, message: "Ім'я є обов'язковим" },
-      { max: 25, message: "Максимальна довжина - 25 символів" },
       { validator: checkNameSurName },
     ],
     surName: [
-      { required: true, message: "Прізвище є обов'язковим" },
-      { max: 25, message: "Максимальна довжина - 25 символів" },
       { validator: checkNameSurName },
     ],
     fatherName: [
