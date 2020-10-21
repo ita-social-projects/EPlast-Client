@@ -175,7 +175,7 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/events/:id/details"
+            path="/events/details/:id"
             component={EventInfo}
           />
           <RouteWithLayout
