@@ -117,7 +117,7 @@ const PrivateLayout = ({ children }: any) => {
             <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Документи">
               <SubMenu key="sub2.1" title="Звіти">
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/annualreport/table'); }} key="9">Річні звіти</Menu.Item>
-                <Menu.Item key="10">Статистичні звіти</Menu.Item>
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/statistics/cities'); }} key="10">Статистичні звіти</Menu.Item>
               </SubMenu>
               <SubMenu
                 key="sub2.2"
@@ -125,8 +125,8 @@ const PrivateLayout = ({ children }: any) => {
                 title="Статистика"
               >
                 <Menu.Item onClick={() => { handleClickAway(); }} key="11">Геостатистика</Menu.Item>
-                <Menu.Item onClick={() => { handleClickAway(); }} key="12">Статистика по роках</Menu.Item>
-                <Menu.Item onClick={() => { handleClickAway(); }} key="13">Статистика(періоди)</Menu.Item>
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/statistics/year'); }} key="12">Статистика за роки</Menu.Item>
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/statistics/period'); }} key="13">Статистика за періоди</Menu.Item>
               </SubMenu>
               <SubMenu key="sub2.3" title="Осередки">
                 <Menu.Item onClick={() => { handleClickAway(); }} key="14">Осередки та адміни</Menu.Item>

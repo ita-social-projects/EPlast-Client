@@ -48,7 +48,10 @@ import AddNewRegionFormPage from "./pages/Regions/AddRegion";
 import RegionAdministration from "./pages/Regions/RegionAdministration";
 import RegionDocuments from "./pages/Regions/RegionDocuments";
 import RegionMembers from "./../src/pages/Regions/RegionMembers";
-
+//import StatisticsCityYear from "./pages/Statistics/StatisticsCityYear";
+//import StatisticsRegionYear from "./pages/Statistics/StatisticsRegionYear";
+//import StatisticsYear from "./pages/Statistics/Statistics/StatisticsYear";
+//import StatisticsPeriod from "./pages/Statistics/Statistics/StatisticsPeriod";
 
 const App: FC = () => (
   <div className="App">
