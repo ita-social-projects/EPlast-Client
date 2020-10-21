@@ -1,5 +1,5 @@
 import { DeleteOutlined, DownloadOutlined, EyeOutlined, EyeTwoTone, FileImageOutlined, FilePdfOutlined } from "@ant-design/icons";
-import { List, message, Modal, Spin } from "antd";
+import { Form, List, message, Modal, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { getAchievementFile, openAchievemetFile, removeAchievementDocument, getAchievementsByPage } from "../../../../api/blankApi";
 import BlankDocument from "../../../../models/Blank/BlankDocument";
@@ -28,14 +28,20 @@ const ListOfAchievementsModal = (props: Props) => {
     const [achievements, setAchievements] = useState<BlankDocument[]>([]);
     let [pageNumber, setPageNumber] = useState(0);
     const [pageSize] = useState(7);
+    const [isEmpty, setIsEmpty] = useState(false);
 
     const handleCancel = () => {
+        setLoadingMore({ loading: false, hasMore: true });
+        setIsEmpty(false);
+        setPageNumber(0);
         props.setVisibleModal(false);
+        setAchievements([]);
     }
 
     const deleteFIle = async (documentId: number, fileName: string) => {
         await removeAchievementDocument(documentId);
         notificationLogic('success', `Файл "${fileName}" успішно видалено`);
+        setAchievements(achievements.filter((d) => d.id !== documentId));
         props.setAchievementDoc(props.achievementDoc.filter((d) => d.id !== documentId));
     }
 
@@ -57,24 +63,27 @@ const ListOfAchievementsModal = (props: Props) => {
 
     const getAchievements = async () => {
         const response = await getAchievementsByPage(pageNumber, pageSize, userId);
+        console.log(response);
+        if (response.data.length == 0) {
+            setIsEmpty(true);
+        }
         var concatedAchievements = achievements.concat(response.data);
         setAchievements(concatedAchievements);
         setLoadingMore({ loading: false, hasMore: true });
     };
     const handleInfiniteOfLoad = () => {
         setLoadingMore({ loading: true, hasMore: true });
-        setPageNumber(++pageNumber);
-        if (props.achievementDoc.length === achievements.length) {
+        if (isEmpty) {
             message.success(`Всі файли завантажено`);
             setLoadingMore({ loading: false, hasMore: false });
             return;
         }
         getAchievements();
+        setPageNumber(++pageNumber);
     }
 
     useEffect(() => {
         hideDelete();
-        getAchievements();
     }, []);
 
     return (
@@ -82,11 +91,12 @@ const ListOfAchievementsModal = (props: Props) => {
             title="Список досягнень"
             visible={props.visibleModal}
             footer={null}
+            destroyOnClose={true}
             onCancel={handleCancel}
         >
             <div className={classes.demoInfiniteContainer}>
                 <InfiniteScroll
-                    pageStart={pageNumber}
+                    pageStart={0}
                     loadMore={handleInfiniteOfLoad}
                     hasMore={!loadingMore.loading && loadingMore.hasMore}
                     useWindow={false}>
