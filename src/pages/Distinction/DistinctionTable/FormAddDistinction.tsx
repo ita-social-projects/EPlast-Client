@@ -4,7 +4,6 @@ import Distinction from "../Interfaces/Distinction";
 import UserDistinction from "../Interfaces/UserDistinction";
 import distinctionApi from "../../../api/distinctionApi";
 import adminApi from "../../../api/adminApi";
-import notificationLogic from "../../../components/Notifications/Notification";
 import formclasses from "./Form.module.css";
 
 type FormAddDistinctionProps = {
