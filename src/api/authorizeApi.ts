@@ -1,6 +1,7 @@
 import Api from "./api";
 import notificationLogic from '../components/Notifications/Notification';
 import AuthStore from '../stores/AuthStore';
+import { string } from "yup";
 
 export default class AuthorizeApi {
 
@@ -106,5 +107,10 @@ export default class AuthorizeApi {
         }
       })
     return response;
+  };
+  getGoogleId= async () => {
+    const response = await Api.get("Auth/GoogleClientId");
+    return response.data;
+    
   };
 }

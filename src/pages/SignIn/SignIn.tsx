@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import Switcher from "../SignUp/Switcher/Switcher";
 import googleImg from "../../assets/images/google.png";
@@ -11,13 +11,32 @@ import { useHistory } from 'react-router-dom';
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import GoogleLogin from 'react-google-login';
+import { ApiFilled } from "@ant-design/icons";
+import api from "../../api/api";
+import { string } from "yup";
 
 let authService = new AuthorizeApi();
 let user: any;
+const googleId = "710369145500-ur2qfp5292p16458pfvg4oieu7eqmca7.apps.googleusercontent.com";
+// let googleId:string; 
+// const getId = async()=>{ 
+// const id = await authService.getGoogleId()
+// googleId=id.id;
+//   console.log(googleId);
+// };
+// let id:string ;
+//   // let id='';
+// const googleId = ()=> authService.getGoogleId().then(res=>{console.log(res); setTimeout(() => {  console.log("World!"); }, 2000); id=res.data.id});
+// googleId();
+  // useEffect(() => {
+  //   googleId().then(res=>{id=res.id})
+    
+  // });
 export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
- 
+  // const [googleId, setGoogleId] = useState("") ;
+
   const initialValues = {
     Email: "",
     Password: "",
@@ -50,6 +69,40 @@ export default function () {
     history.push(`/userpage/main/${user.nameid}`);
     window.location.reload();
   }
+  const getNotificationTypes = () => {
+    // await  authService.getGoogleId()
+    // .then((response) => {
+    //   console.log(response.id)
+    //   googleId.push(response.id)
+    // })
+    // console.log(googleId[0])
+    return "710369145500-ur2qfp5292p16458pfvg4oieu7eqmca7.apps.googleusercontent.com";
+  }
+
+//   const getId =  ():string=>
+//   {
+//     const id =  authService.getGoogleId();
+//  debugger;
+//     return id;
+//   }
+  useEffect(() => {
+    // getId()
+    //  setTimeout(() => {  console.log("World!"); }, 2000);
+  //  debugger;
+  //  getNotificationTypes().then(()=>{ console.log(googleId[0])});
+    
+  });
+  // const retryGoogleRequest = async (request:any) => {
+    
+  // }
+  // const [id, setId] = useState('') ;
+  // // let id='';
+  // const googleId = async()=> authService.getGoogleId();
+  
+  // useEffect(() => {
+  //   googleId().then(res=>{setId(res.id)})
+    
+  // });
 
   return (
     <div className={styles.mainContainer}>
@@ -83,8 +136,9 @@ export default function () {
         </Form.Item>
         <Link className={styles.forgot} to="/forgotPassword">Забули пароль</Link>
         <div className={styles.GoogleFacebookLogin}>
+  <p>{getNotificationTypes()}</p>
         <GoogleLogin
-         clientId="595575738840-spdo3o49i30fuc39icvrl1n5aiureubv.apps.googleusercontent.com"
+         clientId= {googleId} 
           render={renderProps => (
             <Button onClick={renderProps.onClick} disabled={renderProps.disabled} id={styles.googleBtn} className={styles.socialButton}>
             <span id={styles.imgSpanGoogle}>
@@ -99,7 +153,10 @@ export default function () {
             )}
             buttonText="Login"
             onSuccess={handleGoogleResponse}
-            onFailure={handleGoogleResponse}
+            // onFailure={getNotificationTypes}
+            // onRequest={() => {
+            //   googleId().then(res=>{setId(res.id)})}}
+            // onAutoLoadFinished={googleId}
             cookiePolicy={'single_host_origin'}
           />
           <Button id={styles.facebookBtn} className={styles.socialButton}>
