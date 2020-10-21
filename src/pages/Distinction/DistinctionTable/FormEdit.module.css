@@ -20,7 +20,7 @@
     align-items: center;
 }
 .list {
-    max-width: 520%;
+    max-width: 520px;
     font-size: 18px;
     display: flex;
 }
@@ -36,6 +36,7 @@
 
   @media (max-width: 490px){
     .list{
+    max-width: 400px;
     font-size: 12px;
     }
     .editIcon {
