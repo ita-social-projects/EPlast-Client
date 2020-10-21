@@ -14,8 +14,9 @@ import classes from "./FormEdit.module.css";
 import Item from "antd/lib/list/Item";
 import DeleteTypeConfirm from "./DeleteTypeConfirm";
 import Search from "antd/lib/input/Search";
+import Text from "antd/lib/typography/Text";
 
-const Text = Typography;
+
 type FormEditDistinctionTypesProps = {
   setVisibleModal: (visibleModal: boolean) => void;
 };
@@ -31,6 +32,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
   const [curDist, setCurDist] = useState<Distinction>(defaultDist);
   const [editVisible, setEditVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [visRule, setVisRule] = useState(false);
   const fetchData = async () => {
     const distData = (await distinctionApi.getDistinctions()).data;
     setDistData(distData);
@@ -122,14 +124,32 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
               className={classes.inputField}
               name="inputName"
               value={title}
-              onChange={(event) => setTitle(event.target.value)}
+              onChange={(event) => {
+                if(event.target.value.length < 249)
+                {
+                  setTitle(event.target.value);
+                  setVisRule(false);
+                }
+                else
+                  setVisRule(true);
+              }}
               placeholder="Додати відзначення"
               maxLength={250}
               onPressEnter={handleAdd}
               enterButton={<CheckOutlined onClick={handleAdd} />}
-            />
+            /> 
+           
           </Item>
+          {visRule ?
+              <div>
+                <Text type="danger">
+                  Поле не повинно містити більше 250 символів!
+                </Text>
+              </div>
+              : <></>
+            }
         </div>
+        
       ) : (
         <></>
       )}

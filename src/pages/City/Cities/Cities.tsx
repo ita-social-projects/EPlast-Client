@@ -134,7 +134,8 @@ const Cities = () => {
               current={page}
               pageSize={pageSize}
               total={total}
-              showSizeChanger
+              responsive
+              showLessItems
               onChange={(page) => handleChange(page)}
               onShowSizeChange={(page, size) => handleSizeChange(page, size)}
             />
