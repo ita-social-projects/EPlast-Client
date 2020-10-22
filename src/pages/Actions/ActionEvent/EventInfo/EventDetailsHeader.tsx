@@ -18,7 +18,7 @@ const EventDetailsHeader = ({
                                 eventInfo: {
                                     eventName, eventCategory, eventType, eventDateStart,
                                     eventDateEnd, eventStatus, eventLocation,
-                                    description, forWhom, formOfHolding, eventParticipants
+                                    description, forWhom, formOfHolding, eventParticipants, numberOfPartisipants
                                 }
                             }: Props) => {
     return (
@@ -32,6 +32,7 @@ const EventDetailsHeader = ({
             <Descriptions.Item label={renderLabel("Призначений для")}>{renderContent(forWhom)}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Форма проведення")}>{renderContent(formOfHolding)}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Статус")}>{renderContent(eventStatus)}</Descriptions.Item>
+            <Descriptions.Item label={renderLabel("Заплановано учасників")}>{renderContent(numberOfPartisipants.toString())}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Кількість учасників")}>{renderContent(eventParticipants.length.toString())}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Опис")}>
                 {renderDescription(description)}
