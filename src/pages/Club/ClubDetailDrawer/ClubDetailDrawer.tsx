@@ -66,7 +66,7 @@ const ClubDetailDrawer = (props: Props) => {
         </Row>
         <Row justify="center" gutter={[12, 0]}>
           <Col md={12} xs={24}>
-            <Form.Item
+          <Form.Item
               name="email"
               label="Електронна пошта"
               labelCol={{ span: 24 }}
@@ -80,12 +80,10 @@ const ClubDetailDrawer = (props: Props) => {
               />
             </Form.Item>
           </Col>
-        </Row>
-        <Row justify="center" gutter={[12, 0]}>
           <Col md={12} xs={24}>
-            <Form.Item
+          <Form.Item
               name="street"
-              label="Вулиця"
+              label="Гасло"
               labelCol={{ span: 24 }}
               initialValue={
                 props.Club.street?.length > 0 ? props.Club.street : "---"
@@ -99,29 +97,8 @@ const ClubDetailDrawer = (props: Props) => {
               />
             </Form.Item>
           </Col>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="houseNumber"
-              label="Номер будинку"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.Club.houseNumber?.length > 0
-                  ? props.Club.houseNumber
-                  : "---"
-              }
-            >
-              <Input
-                value={
-                  props.Club.houseNumber?.length > 0
-                    ? props.Club.houseNumber
-                    : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
         </Row>
-        <Row justify="center" gutter={[12, 0]}>
+        {/* <Row justify="center" gutter={[12, 0]}>
           <Col md={12} xs={24}>
             <Form.Item
               name="officeNumber"
@@ -162,7 +139,7 @@ const ClubDetailDrawer = (props: Props) => {
               />
             </Form.Item>
           </Col>
-        </Row>
+        </Row> */}
         <Row justify="center" gutter={[12, 0]}>
           <Col md={24} xs={24}>
             <Form.Item

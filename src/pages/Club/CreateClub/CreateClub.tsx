@@ -309,82 +309,20 @@ const CreateClub = () => {
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
-              <Form.Item
-                name="region"
-                label="Для балансу"
-                labelCol={{ span: 24 }}
-                rules={[{message: "Це поле для балансу" }]}
-              >
-                <Select
-                  showSearch
-                  optionFilterProp="children"
-                  onSearch={onSearch}
-                >
-                  {regions.map((item: RegionProfile) => (
-                    <Select.Option key={item.id} value={item.regionName}>
-                      {item.regionName}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col md={11} xs={24}>
-              <Form.Item
+            <Form.Item
                 name="street"
-                label="Вулиця"
+                label="Гасло"
                 labelCol={{ span: 24 }}
                 initialValue={club.street}
-                rules={[{ required: true, message: "Це поле є обов'язковим" },
-                {
-                  max: 50,
-                  message: "Максимальна довжина - 50 символів!",
-                },]}
+                rules={[
+                  {
+                    max: 1000,
+                    message: "Максимальна довжина - 1000 символів!",
+                  },
+                ]}
               >
-                <Input value={club.street} maxLength={51}/>
-              </Form.Item>
-            </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
-              <Form.Item
-                name="houseNumber"
-                label="Номер будинку"
-                labelCol={{ span: 24 }}
-                initialValue={club.houseNumber}
-                rules={[{ required: true, message: "Це поле є обов'язковим" },
-                {
-                  max: 5,
-                  message: "Максимальна довжина - 5 символів!",
-                },]}
-              >
-                <Input value={club.houseNumber} maxLength={6}/>
-              </Form.Item>
-            </Col>
-            <Col md={11} xs={24}>
-              <Form.Item
-                name="officeNumber"
-                label="Номер офісу/квартири"
-                labelCol={{ span: 24 }}
-                initialValue={club.officeNumber}
-                rules={[{
-                  max: 5,
-                  message: "Максимальна довжина - 5 символів!",
-                },]}
-              >
-                <Input value={club.officeNumber} maxLength={6}/>
-              </Form.Item>
-            </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
-              <Form.Item
-                name="postIndex"
-                label="Поштовий індекс"
-                labelCol={{ span: 24 }}
-                initialValue={club.postIndex}
-                rules={[{
-                  max: 5,
-                  message: "Максимальна довжина - 5 символів!",
-                },]}
-              >
-                <Input type="number" value={club.postIndex}/>
-              </Form.Item>
+                <Input value={club.description} maxLength={1001}/>
+                </Form.Item>
             </Col>
           </Row>
           <Row className="clubButtons" justify="center" gutter={[0, 6]}>
