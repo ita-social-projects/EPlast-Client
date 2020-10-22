@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Modal} from 'antd';
 import {ExclamationCircleOutlined} from '@ant-design/icons';
 import eventsApi from "../../api/eventsApi";
@@ -29,6 +29,7 @@ interface EventDataForApproving {
     eventId: number;
     eventName: string;
     eventStatusId: string;
+    setState:(visible:boolean)=>void;
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -166,7 +167,7 @@ export const showDeleteConfirmForSingleEvent = ({eventId, eventName, eventTypeId
     });
 }
 
-export const showApproveConfirm = ({eventId, eventName, eventStatusId}: EventDataForApproving) => {
+export const showApproveConfirm = ({eventId, eventName, eventStatusId,setState}: EventDataForApproving) => {
     confirm({
         title: 'Ви впевнені, що хочете затвердити дану подію?',
         icon: <ExclamationCircleOutlined/>,
@@ -174,10 +175,11 @@ export const showApproveConfirm = ({eventId, eventName, eventStatusId}: EventDat
         okText: 'Так, затвердити',
         cancelText: 'Скасувати',
         onOk() {
-            const createEvent = async () => {
-                await eventUserApi.getEventToApprove(eventId);
+            const approveEvent = async () => {
+             await eventUserApi.getEventToApprove(eventId);
+             setState(true);
             };
-            createEvent()
+            approveEvent()
                 .then(() => {
                     Success('Ви успішно затвердили дану подію.')
                     if (eventStatusId==="Затверджений(-на)") {
