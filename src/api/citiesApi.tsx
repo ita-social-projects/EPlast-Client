@@ -147,3 +147,7 @@ export const getUsersAdministrations = async(UserId:string)=>{
    return api.get(`Cities/GetUserAdmins/${UserId}`);
   
 }
+
+export const getCities = async()=>{
+  return api.get(`Cities/Cities`);
+}

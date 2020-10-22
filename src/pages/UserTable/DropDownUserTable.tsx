@@ -11,8 +11,11 @@ import { useHistory } from 'react-router-dom';
 import classes from './UserTable.module.css';
 import userDeleteCofirm from './UserDeleteConfirm';
 import ChangeUserRoleModal from './ChangeUserRoleModal';
+import ChangeUserCityModal from './ChangeUserCityModal';
 import adminApi from '../../api/adminApi';
 import ModalAddPlastDegree from '../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree';
+import ChangeUserRegionModal from './ChangeUserRegionModal';
+import ChangeUserClubModal from './ChangeUserClubModal';
 
 interface Props {
     record: string;
@@ -30,6 +33,9 @@ const DropDown = (props: Props) => {
     const { record, pageX, pageY, showDropdown, onDelete, onChange } = props;
     const [showEditModal, setShowEditModal] = useState(false);
     const [visibleModalDegree, setVisibleModalDegree] = useState<boolean>(false);
+    const [showCityModal, setShowCityModal] = useState<boolean>(false);
+    const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
+    const [showClubModal, setShowClubModal] = useState<boolean>(false);
   
     const handleItemClick = async (item: any) => {
         switch (item.key) {
@@ -40,13 +46,13 @@ const DropDown = (props: Props) => {
                 await userDeleteCofirm(record, onDelete);
                 break;
             case '3':
-                await setShowEditModal(true);
+                await setShowCityModal(true);
                 break;
             case '4':
-                await setShowEditModal(true);
+                await setShowRegionModal(true);
                 break;
             case '5':
-                await setShowEditModal(true);
+                await setShowClubModal(true);
                 break;
             case '6':
                 await setShowEditModal(true);
@@ -102,6 +108,24 @@ const DropDown = (props: Props) => {
                     record={record}
                     showModal={showEditModal}
                     setShowModal={setShowEditModal}
+                    onChange={onChange}
+                />
+                <ChangeUserCityModal
+                    record={record}
+                    showModal={showCityModal}
+                    setShowModal={setShowCityModal}
+                    onChange={onChange}
+                />
+                <ChangeUserRegionModal
+                    record={record}
+                    showModal={showRegionModal}
+                    setShowModal={setShowRegionModal}
+                    onChange={onChange}
+                />
+                <ChangeUserClubModal
+                    record={record}
+                    showModal={showClubModal}
+                    setShowModal={setShowClubModal}
                     onChange={onChange}
                 />
                 <ModalAddPlastDegree 
