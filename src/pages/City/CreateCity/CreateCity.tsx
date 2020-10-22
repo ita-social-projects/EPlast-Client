@@ -265,12 +265,12 @@ const CreateCity = () => {
                 initialValue={city.cityURL}
                 rules={[
                   {
-                    max: 500,
-                    message: "Максимальна довжина - 500 символів!",
+                    max: 256,
+                    message: "Максимальна довжина - 256 символів!",
                   },
                 ]}
               >
-                <Input value={city.cityURL} maxLength={501}/>
+                <Input value={city.cityURL} maxLength={257}/>
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
@@ -355,7 +355,8 @@ const CreateCity = () => {
                 {
                   max: 5,
                   message: "Максимальна довжина - 5 символів!",
-                },]}
+                },
+               ]}
               >
                 <Input value={city.houseNumber} maxLength={6}/>
               </Form.Item>
@@ -369,7 +370,7 @@ const CreateCity = () => {
                 rules={[{
                   max: 5,
                   message: "Максимальна довжина - 5 символів!",
-                },]}
+                }]}
               >
                 <Input value={city.officeNumber} maxLength={6}/>
               </Form.Item>
@@ -383,7 +384,10 @@ const CreateCity = () => {
                 rules={[{
                   max: 5,
                   message: "Максимальна довжина - 5 символів!",
-                },]}
+                }, {
+                  min: 5,
+                  message: "Мінімальна довжина - 5 символів!",
+                }]}
               >
                 <Input type="number" value={city.postIndex}/>
               </Form.Item>
