@@ -230,7 +230,7 @@ const Club = () => {
                   </div>
                 ) : (
                   <Paragraph>
-                    <b>Немає контактів</b>
+                    <b>Немає інформації</b>
                   </Paragraph>
                 )}
               </Col>
