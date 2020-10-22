@@ -109,8 +109,14 @@ export default class AuthorizeApi {
     return response;
   };
   getGoogleId= async () => {
+    try{
     const response = await Api.get("Auth/GoogleClientId");
     return response.data;
+    }
+    catch(error)
+    {
+      console.log(error)
+    }
     
   };
 }

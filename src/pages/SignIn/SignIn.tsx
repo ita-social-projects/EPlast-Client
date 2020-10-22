@@ -11,9 +11,11 @@ import { useHistory } from 'react-router-dom';
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import GoogleLogin from 'react-google-login';
+import GoogleLoginWrapper from '../SignIn/GoogleLoginWrapper';
 import { ApiFilled } from "@ant-design/icons";
 import api from "../../api/api";
 import { string } from "yup";
+import Spinner from "../Spinner/Spinner";
 
 let authService = new AuthorizeApi();
 let user: any;
@@ -35,7 +37,8 @@ let user: any;
 export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
-   const [googleId, setGoogleId] = useState("") ;
+  const [googleId, setGoogleId] = useState("") ;
+  const [loading, setLoading] = useState(false);
 
   const initialValues = {
     Email: "",
@@ -69,12 +72,17 @@ export default function () {
     history.push(`/userpage/main/${user.nameid}`);
     window.location.reload();
   }
+
   const getId = async () => {
-    await  authService.getGoogleId()
-    .then((response) => {
-      console.log(response.id);
-      setGoogleId(response.id);
-    })
+    setLoading(true);
+   await  authService.getGoogleId().then(
+     (id)=>{
+      setGoogleId(id.id);
+     }
+   ).catch(exc=>{console.log(exc)});
+      // setGoogleId(id.id);
+      setLoading(false);
+
     // console.log(googleId[0])
     // return "710369145500-ur2qfp5292p16458pfvg4oieu7eqmca7.apps.googleusercontent.com";
   }
@@ -85,13 +93,21 @@ export default function () {
 //  debugger;
 //     return id;
 //   }
-useLayoutEffect(() => {
-     getId()
+function waitForElement(){
+  if(googleId == ""){
+    // debugger;
+      setTimeout(waitForElement, 700);
+  }
+}
+useEffect(() => {
+     getId();
+    //  waitForElement();
+    //  waitForElement();
     //  setTimeout(() => {  console.log("World!"); }, 2000);
   //  debugger;
   //  getNotificationTypes().then(()=>{ console.log(googleId[0])});
     
-  });
+  },[googleId]);
   // const retryGoogleRequest = async (request:any) => {
     
   // }
@@ -136,29 +152,13 @@ useLayoutEffect(() => {
         </Form.Item>
         <Link className={styles.forgot} to="/forgotPassword">Забули пароль</Link>
         <div className={styles.GoogleFacebookLogin}>
-        <p>{googleId}</p>
-        <GoogleLogin
-         clientId= {googleId} 
-          render={renderProps => (
-            <Button onClick={renderProps.onClick} disabled={renderProps.disabled} id={styles.googleBtn} className={styles.socialButton}>
-            <span id={styles.imgSpanGoogle}>
-              <img
-                alt="Google icon"
-                className={styles.socialImg}
-                src={googleImg}
-               />
-             </span>
-              <span className={styles.btnText}>Google</span>
-            </Button>
-            )}
-            buttonText="Login"
-            onSuccess={handleGoogleResponse}
-            // onFailure={getNotificationTypes}
-            // onRequest={() => {
-            //   googleId().then(res=>{setId(res.id)})}}
-            // onAutoLoadFinished={googleId}
-            cookiePolicy={'single_host_origin'}
-          />
+        {/* <p>{googleId}</p>
+       {console.log(googleId)} */}
+       {loading ? (
+        ''
+      ) : (
+        <GoogleLoginWrapper googleIdProp={googleId} handleGoogleResponseProp = {handleGoogleResponse} getIdprop={getId}>
+        </GoogleLoginWrapper>)}
           <Button id={styles.facebookBtn} className={styles.socialButton}>
             <span id={styles.imgSpanFacebook}>
               <img
