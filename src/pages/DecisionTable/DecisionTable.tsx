@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Input, Button, Layout } from 'antd';
+import { Table, Input, Button, Layout,Pagination } from 'antd';
 import columns from './columns';
 import DropDown from './DropDownDecision';
 import AddDecisionModal from './AddDecisionModal';
@@ -19,6 +19,9 @@ const DecisionTable = () => {
   const [y, setY] = useState(0);
   const [searchedData, setSearchedData] = useState('');
   const [visibleModal, setVisibleModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
   const handleDelete = (id: number) => {
     const filteredData = data.filter(d => d.id !== id);
     setData([...filteredData]);
@@ -53,9 +56,15 @@ const DecisionTable = () => {
    .catch(() =>{
     notificationLogic('success', "Рішення не існує");
    });
-  
-
   }
+  const handleChange = (page: number) => {
+    setPage(page);
+  };
+
+  const handleSizeChange = (page: number, pageSize: number = 10) => {
+    setPage(page);
+    setPageSize(pageSize);
+  };
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -142,6 +151,17 @@ const DecisionTable = () => {
                   });
                 }
               }}
+              //  pagination={false}
+              
+            />
+            <Pagination
+              current={page}
+              pageSize={pageSize}
+              total={total}
+              responsive
+              showLessItems
+              onChange={(page) => handleChange(page)}
+              onShowSizeChange={(page, size) => handleSizeChange(page, size)}
             />
             <ClickAwayListener onClickAway={handleClickAway}>
             <DropDown

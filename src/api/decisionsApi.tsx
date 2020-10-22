@@ -147,6 +147,12 @@ const getFileAsBase64 = async (fileName: string) =>{
     });
     return response;
   };
-    
+  export const getDecisionsByPage = async (page: number, pageSize: number, cityName: string | null = null) => {
+    return Api
+      .get(`Cities/Profiles/${page}`, { page, pageSize, cityName })
+      .catch((error) => {
+        throw new Error(error);
+      });
+  };
 
 export default {getById, getAll, getOnCreate,getPdf,getFileAsBase64, post,postForCheckFile, put, remove};
