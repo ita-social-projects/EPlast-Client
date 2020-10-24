@@ -31,6 +31,7 @@ import userApi from "../../../../api/UserApi";
 interface Props {
     event: EventDetails;
     visibleDrawer:boolean;
+    setState:(visible:boolean)=>void;
     setVisibleDrawer:(visible:boolean)=>void;
     subscribeOnEvent: () => void;
     unSubscribeOnEvent: () => void;
@@ -41,6 +42,7 @@ const RenderEventIcons = ({
                               isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
                               isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
                           }: EventDetails,
+                          setState:(visible:boolean)=>void,
                           setVisibleDrawer:(visible:boolean)=>void,
                           subscribeOnEvent: () => void,
                           unSubscribeOnEvent: () => void,
@@ -52,7 +54,8 @@ const RenderEventIcons = ({
             <SettingTwoTone twoToneColor="#3c5438"  onClick={() => showApproveConfirm({
                                eventId: event?.eventId,
                                eventName: event?.eventName,
-                               eventStatusId:event?.eventStatus
+                               eventStatusId:event?.eventStatus,
+                               setState:setState
                            })}
                            className="icon" key="setting"/>
         </Tooltip>)
@@ -168,9 +171,8 @@ const RenderAdminCards = (eventAdmins: EventAdmin[],visibleDrawer:any) => {
     />
 }
 
-const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer ,setVisibleDrawer}: Props) => {
+const SortedEventInfo = ({event,setState, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer ,setVisibleDrawer}: Props) => {
     const [adminsVisible, setAdminsVisibility] = useState(false);
-    const [currentUser, setCurrentUser] = useState<any>({});
     const {id}= useParams();
     const { userId } = useParams();
     const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
@@ -184,7 +186,6 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent, visibleDr
       ]);
     const [imageBase64, setImageBase64] = useState<string>();
     const [loading, setLoading] = useState(false);
-
     const fetchData = async () => {
         const token = AuthStore.getToken() as string;
         setUserToken(jwt(token));
@@ -208,7 +209,7 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent, visibleDr
                 src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
             />
             <div className="iconsFlex">
-                {RenderEventIcons(event,setVisibleDrawer, subscribeOnEvent, unSubscribeOnEvent, setAdminsVisibility)}
+                {RenderEventIcons(event,setState,setVisibleDrawer, subscribeOnEvent, unSubscribeOnEvent, setAdminsVisibility)}
             </div>
             <div className="rateFlex">
                 {RenderRatingSystem(event)}
