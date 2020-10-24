@@ -50,12 +50,14 @@ const AddExtractFromUPUModal = (props: Props) => {
       if (!isCorrectExtension) {
         notificationLogic("error", "Можливі розширення файлів: pdf");
         setDisabled(true);
+        return isCorrectExtension;
       }
       
       const isSmaller3mb = fileSize < 3145728;
       if (!isSmaller3mb) {
         notificationLogic("error", "Розмір файлу перевищує 3 Мб");
         setDisabled(true);
+        return isSmaller3mb;
       }
 
       return isSmaller3mb && isCorrectExtension;
