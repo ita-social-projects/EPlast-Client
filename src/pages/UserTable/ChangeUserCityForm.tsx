@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Select, Typography } from 'antd';
-import adminApi from '../../api/adminApi';
-import { getAllFollowers,  getAllMembers, getCities,addFollower, addFollowerWithId, toggleMemberStatus } from '../../api/citiesApi';
+import { getAllFollowers,  getAllMembers, getCities, addFollowerWithId, toggleMemberStatus } from '../../api/citiesApi';
 import CityForAdmin from '../../models/City/CityForAdmin';
 import CityAdmin from '../../models/City/CityAdmin';
 import CityUser from '../../models/City/CityUser';
 import AdminType from '../../models/Admin/AdminType';
 import AddAdministratorModal from '../City/AddAdministratorModal/AddAdministratorModal';
 import CityMember from '../../models/City/CityMember';
-import userApi from "../../api/UserApi";
-const { Title } = Typography;
 const { Option } = Select;
 
 interface Props {
@@ -47,12 +44,10 @@ const ChangeUserCityForm = ({ record, showModal, setShowModal, onChange }: Props
         setCityId(id);
 
         await getAllMembers(id).then(response =>{
-            setMembers(response.data.members);
-        })
+            setMembers(response.data.members);})
 
         await getAllFollowers(id).then(response => {
-            setFollowers(response.data.followers);
-        })
+            setFollowers(response.data.followers);})
     }
 
     const handleCancel = () => {
@@ -61,21 +56,15 @@ const ChangeUserCityForm = ({ record, showModal, setShowModal, onChange }: Props
     
     const handleFinish = async (value: any) => {
 
-        const member = members.filter((m: any) => m.userId === record)[0];
-        const follower = followers.filter((f: any) => f.userId === record)[0];
+        const member = members.find((m: any) => m.userId === record);
+        const follower = followers.find((f: any) => f.userId === record);
 
         if( member === undefined ){
             if(follower === undefined ){
-                // Add follower
-                await addFollowerWithId(cityId, record);
-                // Toggle aprove
                 const newFollower: any = await addFollowerWithId(cityId, record);
-
                 await toggleMemberStatus(newFollower.data.id);
-
             }
             else{
-                // Toggle approve
                 await toggleMemberStatus(follower.id);
             }
         }
@@ -128,7 +117,6 @@ const ChangeUserCityForm = ({ record, showModal, setShowModal, onChange }: Props
             visibleModal={visibleModal}
             setVisibleModal={setVisibleModal}
             cityId={cityId}
-            //onAdd={onAdd}
           ></AddAdministratorModal>
         </div>
     );
