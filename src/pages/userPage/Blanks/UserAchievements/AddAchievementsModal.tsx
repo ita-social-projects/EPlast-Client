@@ -23,7 +23,7 @@ const AddAchievementsModal = (props: Props) => {
 
   const handleUpload = (info: any) => {
     if (info.file !== null) {
-      if (checkFile(info.file.name)) {
+      if (checkFile(info.file.name, info.file.size)) {
         getBase64(info.file, (base64: string) => {
           const newDocument: BlankDocument = {
             id: 0,
@@ -43,7 +43,7 @@ const AddAchievementsModal = (props: Props) => {
     form.resetFields();
   };
 
-  const checkFile = (fileName: string): boolean => {
+  const checkFile = (fileName: string, fileSize:number): boolean => {
     const extension = fileName.split(".").reverse()[0];
     const isCorrectExtension =
       extension.indexOf("pdf") !== -1 ||
@@ -52,9 +52,14 @@ const AddAchievementsModal = (props: Props) => {
       extension.indexOf("png") !== -1
     if (!isCorrectExtension) {
       notificationLogic("error", "Можливі розширення файлів: pdf,jpg,jpeg,png");
-      setDisabled(true);
+      return isCorrectExtension;
     }
-    return isCorrectExtension;
+    const isSmaller3mb =  fileSize < 3145728;
+    if (!isSmaller3mb) {
+      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+      return isSmaller3mb;
+    }
+    return isCorrectExtension && isSmaller3mb;
   }
 
   const handleSubmit = async () => {
