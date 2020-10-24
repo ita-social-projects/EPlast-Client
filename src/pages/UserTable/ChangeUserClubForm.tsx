@@ -8,11 +8,12 @@ const { Option } = Select;
 
 interface Props {
     record: string;
+    showModal: boolean;
     setShowModal: (showModal: boolean) => void;
     onChange: (id: string, userRoles: string) => void;
 }
 
-const ChangeUserClubForm = ({ record, setShowModal, onChange }: Props) => {
+const ChangeUserClubForm = ({ record, showModal, setShowModal, onChange }: Props) => {
     const id = record;
     const [form] = Form.useForm();
     const[clubs, setClubs] = useState<ClubForAdmin[]>([]);
@@ -24,6 +25,9 @@ const ChangeUserClubForm = ({ record, setShowModal, onChange }: Props) => {
             })
         }
         fetchData();
+        if( showModal ) {
+            form.resetFields();
+        }
     }, [])
 
     const handleCancel = () => {

@@ -7,11 +7,12 @@ const { Option } = Select;
 
 interface Props {
     record: string;
+    showModal: boolean;
     setShowModal: (showModal: boolean) => void;
     onChange: (id: string, userRoles: string) => void;
 }
 
-const ChangeUserRegionForm = ({ record, setShowModal, onChange }: Props) => {
+const ChangeUserRegionForm = ({ record, showModal, setShowModal, onChange }: Props) => {
     const id = record;
     const [form] = Form.useForm();
     const [regions, setRegions] = useState<RegionForAdmin[]>([]);
@@ -23,6 +24,9 @@ const ChangeUserRegionForm = ({ record, setShowModal, onChange }: Props) => {
             })
         }
         fetchData();
+        if ( showModal ) {
+            form.resetFields();
+        }
     }, [])
 
     const handleCancel = () => {

@@ -19,6 +19,7 @@ const ChangeUserRegionModal = ({ record, showModal, setShowModal, onChange }: Pr
         >
             <ChangeUserRegionForm
                 record={record}
+                showModal={showModal}
                 setShowModal={setShowModal}
                 onChange={onChange} />
         </Modal>

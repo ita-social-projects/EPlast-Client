@@ -19,6 +19,7 @@ const ChangeUserCityModal = ({ record, showModal, setShowModal, onChange }: Prop
         >
             <ChangeUserCityForm
                 record={record}
+                showModal={showModal}
                 setShowModal={setShowModal}
                 onChange={onChange} />
         </Modal>

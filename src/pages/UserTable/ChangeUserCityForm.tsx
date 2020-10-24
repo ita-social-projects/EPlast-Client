@@ -1,29 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Select, Typography } from 'antd';
 import adminApi from '../../api/adminApi';
-import { getCities } from '../../api/citiesApi';
+import { getAllFollowers,  getAllMembers, getCities,addFollower, addFollowerWithId, toggleMemberStatus } from '../../api/citiesApi';
 import CityForAdmin from '../../models/City/CityForAdmin';
 import CityAdmin from '../../models/City/CityAdmin';
 import CityUser from '../../models/City/CityUser';
 import AdminType from '../../models/Admin/AdminType';
 import AddAdministratorModal from '../City/AddAdministratorModal/AddAdministratorModal';
+import CityMember from '../../models/City/CityMember';
+import userApi from "../../api/UserApi";
 const { Title } = Typography;
 const { Option } = Select;
 
 interface Props {
     record: string;
+    showModal: boolean;
     setShowModal: (showModal: boolean) => void;
     onChange: (id: string, userRoles: string) => void;
 }
 
-const ChangeUserCityForm = ({ record, setShowModal, onChange }: Props) => {
+const ChangeUserCityForm = ({ record, showModal, setShowModal, onChange }: Props) => {
     const id = record;
     const [form] = Form.useForm();
     const [cities, setCities] = useState<CityForAdmin[]>([]);
     const [cityId, setCityId] = useState<number>(0);
     const [visibleModal, setVisibleModal] = useState(false);
     const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
-
+    const [members, setMembers] = useState<CityMember[]>([]);
+    const [followers, setFollowers] = useState<CityMember[]>([]);
+    
     useEffect(() => {
         const fetchData = async () => {
             await getCities().then(response => {
@@ -31,19 +36,49 @@ const ChangeUserCityForm = ({ record, setShowModal, onChange }: Props) => {
             })
         }
         fetchData();
+        
+        if ( showModal ) {
+            form.resetFields();
+        }
     }, [])
 
     const handleClick = async (event: any) => {
         const id = cities.filter((c: any) => c.name === event)[0].id;
         setCityId(id);
-        
+
+        await getAllMembers(id).then(response =>{
+            setMembers(response.data.members);
+        })
+
+        await getAllFollowers(id).then(response => {
+            setFollowers(response.data.followers);
+        })
     }
 
     const handleCancel = () => {
         setShowModal(false);
     }
+    
     const handleFinish = async (value: any) => {
-        //перевірка чи є фоловером запит на всіх фоловерів і на всіх мемберів
+
+        const member = members.filter((m: any) => m.userId === record)[0];
+        const follower = followers.filter((f: any) => f.userId === record)[0];
+
+        if( member === undefined ){
+            if(follower === undefined ){
+                // Add follower
+                await addFollowerWithId(cityId, record);
+                // Toggle aprove
+                const newFollower: any = await addFollowerWithId(cityId, record);
+
+                await toggleMemberStatus(newFollower.data.id);
+
+            }
+            else{
+                // Toggle approve
+                await toggleMemberStatus(follower.id);
+            }
+        }
 
         const newAdmin: CityAdmin = {
             id: 0,

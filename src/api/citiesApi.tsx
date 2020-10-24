@@ -1,3 +1,4 @@
+import CityMember from "../models/City/CityMember";
 import api from "./api";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
@@ -83,6 +84,12 @@ export const toggleMemberStatus = async (id: number) => {
 
 export const addFollower = async (cityId: number) => {
   return api.post(`Cities/AddFollower/${cityId}`, cityId).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+export const addFollowerWithId = async (cityId: number, userId: string) => {
+  return api.post(`Cities/AddFollowerWithId/${cityId}/${userId}`).catch((error) => {
     throw new Error(error);
   });
 }

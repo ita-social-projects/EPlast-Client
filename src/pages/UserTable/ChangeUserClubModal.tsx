@@ -19,6 +19,7 @@ const ChangeUserClubModal = ({ record, showModal, setShowModal, onChange }: Prop
         >
             <ChangeUserClubForm
                 record={record}
+                showModal={showModal}
                 setShowModal={setShowModal}
                 onChange={onChange} />
         </Modal>
