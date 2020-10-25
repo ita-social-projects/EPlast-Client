@@ -149,8 +149,19 @@ export const redirectCities = async (prevRegId:number, nextRegId: number)=>{
 }
 
 
+export const getRegionsByPage = async (page: number, pageSize: number, regionName: string | null = null) => {
+  return api
+    .get(`Regions/Profiles/${page}`, { page, pageSize, regionName})
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+
+
 
 export default{
+  getRegionsByPage,
   redirectCities,
   getHead,
   removeDocument,

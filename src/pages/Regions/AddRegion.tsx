@@ -101,7 +101,7 @@ const AddNewRegionFormPage = () => {
           </Form.Item>
         <Form.Item
             className={classes.formField}
-            label="Назва регіону"
+            label="Назва округу"
             name="regionName"
 
             rules={[

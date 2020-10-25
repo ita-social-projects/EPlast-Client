@@ -15,6 +15,8 @@ import AddNewSecretaryForm from "./AddRegionSecretaryForm";
 import userApi from "./../../api/UserApi";
 import {getLogo} from "./../../api/citiesApi"
 import CitiesRedirectForm from "./CitiesRedirectForm";
+import CityDetailDrawer from "../City/CityDetailDrawer/CityDetailDrawer";
+import RegionDetailDrawer from "./RegionsDetailDrawer";
 
 
 
@@ -55,7 +57,8 @@ const Region = () => {
     phoneNumber: '',
     email: '',
     link: '',
-    documents: [{}]
+    documents: [{}],
+    postIndex:''
   });
 
   const [visibleDrawer, setVisibleDrawer] = useState(false);
@@ -568,6 +571,12 @@ const Region = () => {
         >
           <CitiesRedirectForm onAdd={handleOk}/>
         </Modal>
+
+        <RegionDetailDrawer
+        region={region}
+        setVisibleDrawer={setVisibleDrawer}
+        visibleDrawer={visibleDrawer}
+      ></RegionDetailDrawer>
 
 
       </Layout.Content>
