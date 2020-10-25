@@ -143,6 +143,13 @@ export const getDocumentTypes = async () => {
 }
 
 
+export const getusersPreviousAdministrations = async(UserId:string)=>{
+  return api.get(`Cities/GetUserPreviousAdmins/${UserId}`).catch((error)=>{
+    throw new Error(error);
+  })
+}
+
+
 export const getUsersAdministrations = async(UserId:string)=>{
    return api.get(`Cities/GetUserAdmins/${UserId}`);
   

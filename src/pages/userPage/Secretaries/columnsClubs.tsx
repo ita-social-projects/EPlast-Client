@@ -41,7 +41,7 @@ const columns = [
   } ,
   {
     title: 'Курінь',
-    dataIndex: 'clubId',
+    dataIndex: 'club',
   } 
 ];
 export default columns;
