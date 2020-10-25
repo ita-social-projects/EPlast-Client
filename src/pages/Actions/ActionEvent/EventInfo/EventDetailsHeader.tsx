@@ -35,7 +35,7 @@ const EventDetailsHeader = ({
             <Descriptions.Item label={renderLabel("Заплановано учасників")}>{renderContent(numberOfPartisipants.toString())}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Кількість учасників")}>{renderContent(eventParticipants.length.toString())}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Опис")}>
-                {renderDescription(description)}
+                {renderContent(description)}
             </Descriptions.Item>
         </Descriptions>
     )
