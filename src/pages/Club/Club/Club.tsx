@@ -203,6 +203,11 @@ const Club = () => {
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
                 {club.clubURL || club.email || club.phoneNumber ? (
                   <div>
+                    {club.street ? (
+                      <Paragraph>
+                        <b>Гасло:</b> {club.street}
+                      </Paragraph>
+                    ) : null}
                     {club.clubURL ? (
                       <Paragraph
                         ellipsis>
@@ -225,7 +230,7 @@ const Club = () => {
                   </div>
                 ) : (
                   <Paragraph>
-                    <b>Немає контактів</b>
+                    <b>Немає інформації</b>
                   </Paragraph>
                 )}
               </Col>
@@ -240,17 +245,6 @@ const Club = () => {
                   Деталі
                 </Button>
               </Col>
-              {/* {canEdit ? (
-                <Col>
-                  <Button
-                    type="primary"
-                    className="clubInfoButton"
-                    onClick={() => history.push(`/annualreport/table`)}
-                  >
-                    Річні звіти
-                  </Button>
-                </Col>
-              ) : null} */}
               {canEdit ? (
                 <Col xs={24} sm={4}>
                   <Row
