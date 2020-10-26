@@ -70,7 +70,13 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
   const showEdit = async (id: number) => {
     const distinction = (await distinctionApi.getDistinctionById(id)).data;
     setCurDist(distinction);
-    if (curDist.id == id) setEditVisible(!editVisible);
+    if (curDist.id != id) {
+      setEditVisible(true);
+    }
+    else {
+      setEditVisible(false);
+      setCurDist(defaultDist);
+    }
   };
 
   const handleEdit = async () => {
@@ -170,7 +176,8 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
             }
             maxLength={250}
             onPressEnter={handleEdit}
-            enterButton={<SaveOutlined onClick={handleEdit} />}
+            enterButton={<SaveOutlined/>}
+            onSearch={handleEdit}
           />
         </Item>
       ) : (
