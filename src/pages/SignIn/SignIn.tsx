@@ -38,7 +38,7 @@ export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
   const [googleId, setGoogleId] = useState("") ;
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const initialValues = {
     Email: "",
@@ -74,7 +74,7 @@ export default function () {
   }
 
   const getId = async () => {
-    setLoading(true);
+    // setLoading(true);
    await  authService.getGoogleId().then(
      (id)=>{
       setGoogleId(id.id);
