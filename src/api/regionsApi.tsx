@@ -141,6 +141,9 @@ export const removeDocument = async (documentId: number) => {
   });
 }
 
+export const getRegions = async()=>{
+  return api.get(`Regions/Regions`);
+}
 
 export const redirectCities = async (prevRegId:number, nextRegId: number)=>{
   return api.put(`Regions/RedirectCities/${prevRegId}/${nextRegId}`).catch((error) => {
