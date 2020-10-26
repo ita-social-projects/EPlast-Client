@@ -212,8 +212,8 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </div>
       < div className={classes.row} >
         <h3>Приблизна кількість учасників </h3>
-        < Form.Item name="NumberOfPartisipants" rules={[{ required: true, message: 'Вкажіть приблизну к-сть учасників' }, { min:0, message: 'Мінімальна к-сть учасників - 0'}]} >
-          <Input className={classes.input} type="number" min="0"/>
+        < Form.Item name="NumberOfPartisipants" rules={[{ required: true, message: 'Вкажіть приблизну к-сть учасників' }, { max: 6, message: 'Максимальна к-сть - 999 999'}]} >
+          <Input className={classes.input} type="number" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() } min="1" max="999999"/>
         </Form.Item>
       </ div>
       < div className={classes.row} >
