@@ -3,49 +3,73 @@ import {useParams} from "react-router-dom";
 import ActionCard from '../ActionCard/ActionCard';
 import eventsApi from "../../api/eventsApi";
 import spinClasses from "./ActionEvent/EventUser/EventUser.module.css";
-import {Space, Spin} from "antd";
+import {Pagination, Space, Spin} from "antd";
 
 const classes = require('./Actions.module.css');
 
 const Actions = () => {
-
-    const [loading, setLoading] = useState(false);
-    const [actions, setActions] = useState([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [actions, setActions] = useState<any>(
+      {
+        events:[{
+        eventCategoryId:'',
+        eventCategoryName:''
+        }],
+        total:''
+      } 
+    );
     const {typeId} = useParams();
+    const [page, setPageNumber] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [total, setTotal]= useState<number>(0);
 
-    useEffect(() => {
-        const getCategories = async () => {
-            const response = await eventsApi.getCategories(typeId);
-            setActions(response.data);
-            setLoading(true);
-        };
-        getCategories();
-    }, []);
+    const handlePageNumberChange = (pageNumber: number) => {
+      setPageNumber(pageNumber);
+      getCategories();
+    }
+  
+    const handlePageSizeChange = (pageNumber: number, pageSize: number = 10) => {
+      setPageNumber(pageNumber);
+      setPageSize(pageSize);
+      getCategories();
+    }
 
-    const renderActions = (arr: any) => {
-        if (arr) {
-            const cutArr = arr.slice(0, 48);
-            return cutArr.map((item: any) => (
-                <ActionCard item={item} eventTypeId={typeId} key={item.eventCategoryId}/>
-            ));
-        }
-        return null;
+    const getCategories = async () => {
+      const response = await eventsApi.getCategoriesByPage(typeId,page,pageSize);
+      setTotal(response.data.total);
+      setActions(response.data.events);
+      setLoading(true);
     };
 
-    const plastActions = renderActions(actions);
+    useEffect(() => {
+        getCategories();
+    }, [page, pageSize]);
 
-    return loading === false ? (
+    return  loading === false ? (
         <div className={spinClasses.spaceWrapper}>
             <Space className={spinClasses.loader} size="large">
                 <Spin size="large"/>
             </Space>
         </div>
-
     ) : (
         <div className={classes.background}>
             <h1 className={classes.mainTitle}>Категорії</h1>
-            <div className={classes.actionsWrapper}>{plastActions}</div>
+            <div className={classes.actionsWrapper}>
+            { 
+             actions.map((item: any) => (
+                <ActionCard item={item} eventTypeId={typeId} key={item.eventCategoryId}/>
+            ))
+            }</div>
+        <div className={classes.pagination}>
+        <Pagination
+          current={page}
+          pageSize={pageSize}
+          total={total}
+          showSizeChanger
+          onChange={(pageNumber) => handlePageNumberChange(pageNumber)}
+          onShowSizeChange={(pageNumber, pageSize) => handlePageSizeChange(pageNumber, pageSize)}
+        /></div> 
         </div>
-    )
+    )   
 }
 export default Actions;
