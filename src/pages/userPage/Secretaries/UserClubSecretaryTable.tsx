@@ -1,6 +1,6 @@
 import React, { useEffect, useState, PropsWithRef } from 'react';
 import { Table, Spin, Input } from 'antd';
-import columns from './columnsCIties';
+import columns from './columnsClubs';
 import { getUsersAdministrations, getUsersPreviousAdministrations } from "../../../api/clubsApi";
 
 

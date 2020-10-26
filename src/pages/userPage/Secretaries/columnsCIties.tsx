@@ -40,8 +40,8 @@ const columns = [
   }
   } ,
   {
-    title: 'Курінь',
-    dataIndex: 'clubId',
+    title: 'Станиця',
+    dataIndex: 'cityId',
   } 
 ];
 export default columns;

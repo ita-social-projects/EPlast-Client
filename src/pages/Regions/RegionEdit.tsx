@@ -1,4 +1,4 @@
-import { Form, Input, DatePicker, AutoComplete, Select, Button, Layout, Card, Upload } from 'antd';
+import { Form, Input, DatePicker, AutoComplete, Select, Button, Layout, Card, Upload, Row, Col } from 'antd';
 import React, { useState, useEffect } from 'react';
 import RegionsApi from '../../api/regionsApi'
 import classes from './Form.module.css'
@@ -108,7 +108,7 @@ const RegionEditFormPage = () => {
 
     return  <Layout.Content className="createCity">
     <Card hoverable className="createCityCard">
-        
+      
     <Form
         name="basic"
         onFinish={handleSubmit}
@@ -134,7 +134,8 @@ const RegionEditFormPage = () => {
             </Upload>
           </Form.Item>
 
-
+          <Row justify="center">
+            <Col md={11} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Назва регіону"
@@ -145,6 +146,11 @@ const RegionEditFormPage = () => {
                     required: true,
                     message: 'Це поле має бути заповненим'
                 },
+            
+                  {
+                    max: 50,
+                    message: "Максимальна довжина - 50 символів!",
+                  },
             ]}
         >
              <Input
@@ -153,7 +159,8 @@ const RegionEditFormPage = () => {
                 />
 
         </Form.Item>
-
+        </Col>
+        <Col md={{ span: 11, offset: 2 }} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Опис"
@@ -164,13 +171,20 @@ const RegionEditFormPage = () => {
                     required: true,
                     message: 'Це поле має бути заповненим'
                 },
+               {
+                    max: 1000,
+                    message: "Максимальна довжина - 1000 символів!",
+                }
+                  
             ]}
         >
            <Input
                 placeholder={chosenRegion.description}
                 className={classes.inputField} />
         </Form.Item>
+</Col>
 
+    <Col md={11} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Номер телефону"
@@ -181,32 +195,43 @@ const RegionEditFormPage = () => {
                     required: true,
                     message: 'Це поле має бути заповненим'
                 },
+                {
+                    max: 13,
+                    message: "Максимальна довжина 13 цифр!",
+                }
             ]}
         >
            <Input
            placeholder={chosenRegion.phoneNumber}
                 className={classes.inputField} />
         </Form.Item>
+</Col>
 
-
+<Col  md={{ span: 11, offset: 2 }} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Email"
             name="email"
 
             rules={[
-                {
-                    required: true,
-                    message: 'Це поле має бути заповненим'
-                },
+                
+                    {
+                      pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                      message: "Неправильна пошта",
+                    },
+                    {
+                      max: 50,
+                      message: "Максимальна довжина - 50 символів!",
+                    },
             ]}
         >
            <Input
            placeholder={chosenRegion.email}
                 className={classes.inputField} />
         </Form.Item>
+</Col>
 
-
+<Col md={11} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Link"
@@ -214,21 +239,22 @@ const RegionEditFormPage = () => {
 
             rules={[
                 {
-                    required: true,
-                    message: 'Це поле має бути заповненим'
-                },
+                    max: 256,
+                    message: "Максимальна довжина - 256 символів!",
+                  },
             ]}
         >
            <Input
            placeholder={chosenRegion.link}
                 className={classes.inputField} />
         </Form.Item>
+</Col>
 
-
+<Col md={{ span: 11, offset: 2 }} xs={24}>
         <Form.Item
             className={classes.formField}
-            label="Вулиця"
-            name="street"
+            label="Місто"
+            name="city"
 
             rules={[
                 {
@@ -238,11 +264,32 @@ const RegionEditFormPage = () => {
             ]}
         >
            <Input
+           placeholder={chosenRegion.city}
+                className={classes.inputField} />
+        </Form.Item>
+</Col>
+
+
+<Col md={11} xs={24}>
+        <Form.Item
+            className={classes.formField}
+            label="Вулиця"
+            name="street"
+
+            rules={[
+                
+                {
+                  max: 50,
+                  message: "Максимальна довжина - 50 символів!",
+                }
+            ]}
+        >
+           <Input
            placeholder={chosenRegion.street}
                 className={classes.inputField} />
         </Form.Item>
-
-
+</Col>
+<Col md={{ span: 11, offset: 2 }} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Номер будинку"
@@ -250,17 +297,18 @@ const RegionEditFormPage = () => {
 
             rules={[
                 {
-                    required: true,
-                    message: 'Це поле має бути заповненим'
-                },
+                    max: 5,
+                    message: "Максимальна довжина - 5 символів!",
+                  }
+                
             ]}
         >
            <Input
            placeholder={chosenRegion.houseNumber}
                 className={classes.inputField} />
         </Form.Item>
-
-
+</Col>
+<Col md={11} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Номер офісу/квартири"
@@ -268,22 +316,28 @@ const RegionEditFormPage = () => {
 
             rules={[
                 {
-                    required: true,
-                    message: 'Це поле має бути заповненим'
-                },
+                    max: 5,
+                    message: "Максимальна довжина - 5 символів!",
+                  }
+                
             ]}
         >
            <Input
            placeholder={chosenRegion.officeNumber}
                 className={classes.inputField} />
         </Form.Item>
-
+</Col>
+<Col md={{ span: 11, offset: 2 }} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Поштовий індекс"
             name="postIndex"
 
             rules={[
+                {
+                    max: 5,
+                    message: "Максимальна довжина - 5 символів!",
+                  },
                 {
                     required: true,
                     message: 'Це поле має бути заповненим'
@@ -294,8 +348,9 @@ const RegionEditFormPage = () => {
            placeholder={chosenRegion.postIndex}
                 className={classes.inputField} />
         </Form.Item>
+</Col>
 
-
+<Col>
         <Form.Item style = {{ textAlign: "right"}}>
       
         <Button
@@ -305,8 +360,10 @@ const RegionEditFormPage = () => {
         </Button>
 
       </Form.Item> 
-
-    </Form>;
+      </Col>
+   
+    </Row>
+    </Form>
     </Card>
     </Layout.Content>
 }
