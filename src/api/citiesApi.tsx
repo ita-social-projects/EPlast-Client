@@ -1,3 +1,4 @@
+import CityMember from "../models/City/CityMember";
 import api from "./api";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
@@ -87,6 +88,12 @@ export const addFollower = async (cityId: number) => {
   });
 }
 
+export const addFollowerWithId = async (cityId: number, userId: string) => {
+  return api.post(`Cities/AddFollowerWithId/${cityId}/${userId}`).catch((error) => {
+    throw new Error(error);
+  });
+}
+
 export const removeFollower = async (followerId: number) => {
   return api.remove(`Cities/RemoveFollower/${followerId}`, followerId).catch((error) => {
     throw new Error(error);
@@ -146,4 +153,8 @@ export const getDocumentTypes = async () => {
 export const getUsersAdministrations = async(UserId:string)=>{
    return api.get(`Cities/GetUserAdmins/${UserId}`);
   
+}
+
+export const getCities = async()=>{
+  return api.get(`Cities/Cities`);
 }

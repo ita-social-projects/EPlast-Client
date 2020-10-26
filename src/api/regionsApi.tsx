@@ -133,6 +133,9 @@ export const removeDocument = async (documentId: number) => {
   });
 }
 
+export const getRegions = async()=>{
+  return api.get(`Regions/Regions`);
+}
 
 
 export default{
