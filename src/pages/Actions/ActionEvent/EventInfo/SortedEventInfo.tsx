@@ -114,12 +114,7 @@ const RenderEventIcons = ({
                              key="subscribe"/>
         </Tooltip>) 
     }
-    // eventIcons.push(<Tooltip placement="bottom" title="Учасники" key="participants">
-    //     <TeamOutlined style={{color: "#3c5438"}} className="icon"/>
-    // </Tooltip>)
-    // eventIcons.push(<Tooltip placement="bottom" title="Галерея" key="gallery">
-    //     <CameraOutlined style={{color: "#3c5438"}} className="icon"/>
-    // </Tooltip>)
+
     eventIcons.push(<Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
         <IdcardOutlined style={{color: "#3c5438", fontSize: "30px"}} className="icon"
                         onClick={() => setAdminsVisibility(true)}
