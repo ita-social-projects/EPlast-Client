@@ -154,6 +154,12 @@ export const getUsersAdministrations = async(UserId:string)=>{
   
 }
 
+
+export const getUsersPreviousAdministrations = async(UserId:string)=>{
+  return api.get(`Club/GetUserPreviousAdmins/${UserId}`);
+}
+ 
+
 export const getClubs = async()=>{
   return api.get(`Club/Clubs`);
 }

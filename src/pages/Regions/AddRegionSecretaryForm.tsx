@@ -19,6 +19,7 @@ type AddNewSecretaryForm = {
     const [currentRegion, setCurrentRegion]=useState<number>();
     const  { onAdd, onCancel } = props;
     const [form] = Form.useForm();
+    const [AdminType, setAdminType] = useState<number>();
     const [users, setUsers] = useState<any[]>([{
         user:{
             id: '',
@@ -42,12 +43,17 @@ type AddNewSecretaryForm = {
      
 
       const handleSubmit = async (values : any)=>{
+
+
+
+
+
         const newAdmin  : any= {
             id: 0,
 
             userId: JSON.parse(values.userId).user.id,
 
-            AdminTypeId: JSON.parse(values.AdminType).id,
+            AdminTypeId: await (await regionsApi.getAdminTypeIdByName(values.AdminType)).data,
 
             startDate: values.startDate,
 
@@ -122,14 +128,22 @@ type AddNewSecretaryForm = {
                  },
              ]}
          >
-             <Select
-        filterOption={false}
-        className={classes.inputField}
-        >
-             {types?.map((o) => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{ o.adminTypeName }</Select.Option>))}
+        <AutoComplete
+            className={classes.inputField}
+            options={[
+              { value: "Голова Округу" },
+              { value: "Писар" },
+              { value: "Бунчужний" },
+              { value: "Скарбник" },
+              { value: "Домівкар" },
+              { value: "Член ОПР" },
+              {value: "Голова ОПС"},
+              {value: "Голова ОПР"}
+            ]}
+           
+            placeholder={"Тип адміністрування"}
             
-        
-        </Select>
+          ></AutoComplete>
          </Form.Item>
 
          <Form.Item
