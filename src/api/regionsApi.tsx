@@ -161,9 +161,19 @@ export const getRegionsByPage = async (page: number, pageSize: number, regionNam
 };
 
 
+export const getAdminTypeIdByName = async (name: string) => {
+  return api
+    .get(`Regions/GetAdminTypeId/${name}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+
 
 
 export default{
+  getAdminTypeIdByName,
   getRegionsByPage,
   redirectCities,
   getHead,
