@@ -10,17 +10,20 @@ const getCategories = async (typeId: number) => {
     return response;
 }
 
+const getCategoriesByPage = async (typeId: number, page:number, pageSize:number) => {
+    const response = await Api.get(`Events/types/${typeId}/categories/${page}`, {page, pageSize});
+    return response;
+}
+
 const getEvents = async (typeId: number, categoryId: number) => {
     const response = await Api.get(`types/${typeId}/categories/${categoryId}/events`);
     return response;
 }
 
-
 const getEventsByStatuses = async (typeId: number, categoryId: number, status:number) => {
     const response = await Api.get(`types/${typeId}/categories/${categoryId}/events/${status}`);
     return response;
 }
-
 
 const getEventInfo = async (id: number) => {
     const response = await Api.get(`Events/${id}/details`);
@@ -81,6 +84,7 @@ export default {
     getEventsByStatuses,
     getTypes,
     getCategories,
+    getCategoriesByPage,
     getEvents,
     getEventInfo,
     getPictures,
