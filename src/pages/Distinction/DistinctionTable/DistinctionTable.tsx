@@ -198,6 +198,12 @@ const DistinctionTable = () => {
                   },
                 };
               }}
+              pagination={
+                {
+                  showLessItems: true,
+                  responsive:true
+                }
+              }
               bordered
               rowKey="id"
             />
