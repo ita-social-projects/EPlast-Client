@@ -18,6 +18,7 @@ const AddBiographyModal = (props: Props) => {
     const [form] = Form.useForm();
     const [fileName, setFileName] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [buttonLoading, setButtonLoading] = useState(false);
     const [disabled, setDisabled] = useState(true);
 
     const normFile = (e: { fileList: any }) => {
@@ -65,6 +66,7 @@ const AddBiographyModal = (props: Props) => {
 
     const handleSubmit = async (values: any) => {
       setLoading(true);
+      setButtonLoading(true);
       const newDocument: BlankDocument = {
         id: 0,
         blobName: props.document.blobName,
@@ -78,6 +80,7 @@ const AddBiographyModal = (props: Props) => {
       removeFile();
       setDisabled(true);
       setLoading(false);
+      setButtonLoading(false);
     };
 
     const removeFile = () => {
@@ -151,7 +154,7 @@ const AddBiographyModal = (props: Props) => {
                 xs={{ span: 11, offset: 2 }}
                 sm={{ span: 6, offset: 1 }}
               >
-                <Button type="primary" htmlType="submit" disabled={disabled}>
+                <Button type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
                   Опублікувати
                 </Button>
               </Col>

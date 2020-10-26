@@ -19,6 +19,7 @@ const AddAchievementsModal = (props: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [files, setFiles] = useState<BlankDocument[]>([]);
   const [disabled, setDisabled] = useState(true);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
 
   const handleUpload = (info: any) => {
@@ -63,6 +64,7 @@ const AddAchievementsModal = (props: Props) => {
   }
 
   const handleSubmit = async () => {
+    setButtonLoading(true);
     setLoading(true);
     await addAchievementDocuments(props.userId, files);
     props.setVisibleModal(false);
@@ -70,6 +72,7 @@ const AddAchievementsModal = (props: Props) => {
     removeFile();
     setDisabled(true);
     setLoading(false);
+    setButtonLoading(false);
   };
 
   const removeFile = () => {
@@ -140,7 +143,7 @@ const AddAchievementsModal = (props: Props) => {
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" htmlType="submit" disabled={disabled}>
+              <Button type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
                 Опублікувати
                   </Button>
             </Col>

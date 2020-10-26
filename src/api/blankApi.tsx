@@ -57,6 +57,14 @@ export const openBiographyFile = async (fileBlob: string) => {
     encodeURI(base64) + "'></iframe>")
 }
 
+export const openGenerationFile = async (userId: string) => {
+  const response = await (await api.get(`Blanks/GeneratePDFFile/${userId}`, userId)).data;
+  const base64 = response.split(",")[1];
+  let pdfWindow = window.open("");
+  pdfWindow?.document.write("<iframe width='99%' height='99%' src='data:application/pdf;base64," +
+    encodeURI(base64) + "'></iframe>")
+}
+
 export const openExtractFromUPUFile = async(fileBlob:string)=>{
   const response = await (await api.get(`Blanks/ExtractFromUPUDocumentBase64/${fileBlob}`, fileBlob)).data;
   const base64 = response.split(",")[1];
