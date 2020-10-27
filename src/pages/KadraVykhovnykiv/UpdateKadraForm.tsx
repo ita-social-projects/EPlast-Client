@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import classes from './Form.module.css'
-import { Form, Input, DatePicker, AutoComplete, Select, Button } from 'antd';
+import { Form, Input, DatePicker, AutoComplete, Select, Button, Layout } from 'antd';
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import notificationLogic from '../../components/Notifications/Notification';
+import Spinner from '../Spinner/Spinner';
 
 
 type FormUpdateKadraProps = {
@@ -16,12 +17,17 @@ type FormUpdateKadraProps = {
  const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any)=>{
     const  { onAdd, record , onEdit } = props;
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState<boolean>(true);
    
+    const [currentKadra, setCurrentKadra]=useState<any>({
+        dateOfGranting: '',
 
-    const [types, setTypes] = useState<any[]>([{
-        id: '',
-        name: '',
-      }])
+        numberInRegister: '',
+
+        basisOfGranting: '',
+
+        link: ''
+    })
      
 
       const handleSubmit = async (values : any)=>{
@@ -58,33 +64,43 @@ type FormUpdateKadraProps = {
             }
            
            
-
-
+            const setCurrent=async ()=>{
+                try{
+            const response= await   kadrasApi.GetStaffById(record);
+            setCurrentKadra( response.data)
+                }
+                finally{
+                    setLoading(false)
+                }
+            }
         
       useEffect(() => {
-        const fetchData = async () => {
-            await kadrasApi.getAllKVTypes().then(response => {
-                setTypes(response.data);
-            })
-           
-        }
-        fetchData();
+          setCurrent();
+
       }, [])
 
 
 
-    return <Form
+    return <Layout>
+    {currentKadra.numberInRegister === '' ? <Spinner/> :
+    <Form
          name="basic"
          onFinish={handleSubmit}
          form = {form}
      >
        
         
-
          <Form.Item
              className={classes.formField}
              label="Дата вручення"
              name="dateOfGranting"
+
+             rules={[
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
+            ]}
          >
              <DatePicker className={classes.inputField}/>
          </Form.Item>
@@ -95,16 +111,21 @@ type FormUpdateKadraProps = {
              className={classes.formField}
              label="Номер в реєстрі"
              name="numberInRegister"
-
+             initialValue={currentKadra.numberInRegister}
              rules={[
-                 {
-                     required: true,
-                     message: 'Це поле має бути заповненим'
-                 },
-             ]}
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                }
+                
+            ]}
          >
              <Input
-                 className={classes.inputField} />
+              type="number"
+              min={1}
+              max={999999}
+              value={currentKadra.numberInRegister}
+              className={classes.inputField} />
          </Form.Item>
 
 
@@ -112,15 +133,17 @@ type FormUpdateKadraProps = {
              className={classes.formField}
              label="Причина надання"
              name="basisOfGranting"
+             initialValue={currentKadra.basisOfGranting}
              rules={[
                 {
                     required: true,
                     message: 'Це поле має бути заповненим'
                 },
-                { max: 100, message: 'Причина надання не може перевищувати 100 символів' }
+                { max: 100, message: 'Поле не може перевищувати 100 символів' }
             ]}  
          >
              <Input
+                value={currentKadra.basisOfGranting}
                  className={classes.inputField} />
          </Form.Item>
 
@@ -128,9 +151,14 @@ type FormUpdateKadraProps = {
              className={classes.formField}
              label="Лінк"
              name="link"
+             initialValue={currentKadra.link}
+             rules={[
+                { max: 500, message: 'Поле не може перевищувати 500 символів' }
+            ]}
          >
              <Input
-                 className={classes.inputField} />
+              value={currentKadra.link}
+              className={classes.inputField} />
          </Form.Item>
          <Form.Item style = {{ textAlign: "right"}}>
       
@@ -142,9 +170,9 @@ type FormUpdateKadraProps = {
 
       </Form.Item> 
         
-     </Form>;
-
-
+     </Form>
+ }
+</Layout>
 }
 
 export default UpdateKadraForm;
