@@ -38,6 +38,7 @@
     "react-messenger-customer-chat": "^0.8.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
+    "signalr": "^2.4.1",
     "typescript": "~3.7.2",
     "yup": "^0.29.1"
   },
