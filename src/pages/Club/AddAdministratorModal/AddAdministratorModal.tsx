@@ -94,7 +94,6 @@ const AddAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: "Голова Чату" },
               { value: "Голова Куреня" },
               { value: "Голова СПС" },
               { value: "Фотограф" },
