@@ -1,9 +1,8 @@
 import React, { useEffect, useState, PropsWithRef } from 'react';
 import { Table, Spin, Input } from 'antd';
-import columns from './columnsCIties';
-import { getUsersAdministrations, getusersPreviousAdministrations } from "../../../api/citiesApi";
+import columns from './columnsClubs';
+import { getUsersAdministrations, getUsersPreviousAdministrations } from "../../../api/clubsApi";
 
-import ClickAwayListener from 'react-click-away-listener';
 
 
 
@@ -12,7 +11,7 @@ interface props {
   UserId: string;
 }
 
-export const UserCitySecretaryTable = ({  UserId }: props) => {
+export const UserClubSecretaryTable = ({  UserId }: props) => {
 
 
   const [data, setData] = useState<any>([{
@@ -21,7 +20,7 @@ export const UserCitySecretaryTable = ({  UserId }: props) => {
     adminType: '',
     startDate: '',
     endDate: '',
-    cityId:''
+    clubId:''
   }]);
 
 
@@ -31,7 +30,7 @@ export const UserCitySecretaryTable = ({  UserId }: props) => {
     adminType: '',
     startDate: '',
     endDate: '',
-    cityId:''
+    clubId:''
   }]);
 
 
@@ -44,7 +43,7 @@ export const UserCitySecretaryTable = ({  UserId }: props) => {
     })
 
 
-    await getusersPreviousAdministrations(UserId).then(response => {
+    await getUsersPreviousAdministrations(UserId).then(response => {
 
       setPrevData(response.data);
     })
