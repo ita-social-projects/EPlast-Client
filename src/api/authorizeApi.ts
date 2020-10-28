@@ -95,7 +95,7 @@ export default class AuthorizeApi {
   };
 
   sendToken=async (token: string) => {
-    const response = await Api.post("Auth/signin/google/?googleToken="+token,null)
+    const response = await Api.post("Auth/signin/google/?googleToken="+token)
       .then(response => {
         if (response.data.token !== null) {
           AuthStore.setToken(response.data.token);
@@ -108,15 +108,11 @@ export default class AuthorizeApi {
       })
     return response;
   };
+  
   getGoogleId= async () => {
-    try{
-    const response = await Api.get("Auth/GoogleClientId");
-    return response.data;
-    }
-    catch(error)
-    {
-      console.log(error)
-    }
     
+    const response = await Api.get("Auth/GoogleClientId");
+
+    return response.data;
   };
 }

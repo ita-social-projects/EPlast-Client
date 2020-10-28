@@ -1,7 +1,6 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import Switcher from "../SignUp/Switcher/Switcher";
-import googleImg from "../../assets/images/google.png";
 import styles from "./SignIn.module.css";
 import facebookImg from "../../assets/images/facebook.png";
 import { checkEmail } from "../SignUp/verification";
@@ -10,30 +9,11 @@ import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
-import GoogleLogin from 'react-google-login';
 import GoogleLoginWrapper from '../SignIn/GoogleLoginWrapper';
-import { ApiFilled } from "@ant-design/icons";
-import api from "../../api/api";
-import { string } from "yup";
-import Spinner from "../Spinner/Spinner";
 
 let authService = new AuthorizeApi();
 let user: any;
-// const googleId = "710369145500-ur2qfp5292p16458pfvg4oieu7eqmca7.apps.googleusercontent.com";
-// let googleId:string; 
-// const getId = async()=>{ 
-// const id = await authService.getGoogleId()
-// googleId=id.id;
-//   console.log(googleId);
-// };
-// let id:string ;
-//   // let id='';
-// const googleId = ()=> authService.getGoogleId().then(res=>{console.log(res); setTimeout(() => {  console.log("World!"); }, 2000); id=res.data.id});
-// googleId();
-  // useEffect(() => {
-  //   googleId().then(res=>{id=res.id})
-    
-  // });
+
 export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
@@ -74,51 +54,20 @@ export default function () {
   }
 
   const getId = async () => {
-    // setLoading(true);
-   await  authService.getGoogleId().then(
-     (id)=>{
-      setGoogleId(id.id);
+   await authService.getGoogleId().then(
+     (data)=>{
+      setGoogleId(data.id);
      }
    ).catch(exc=>{console.log(exc)});
-      // setGoogleId(id.id);
-      setLoading(false);
-
-    // console.log(googleId[0])
-    // return "710369145500-ur2qfp5292p16458pfvg4oieu7eqmca7.apps.googleusercontent.com";
-  }
-
-//   const getId =  ():string=>
-//   {
-//     const id =  authService.getGoogleId();
-//  debugger;
-//     return id;
-//   }
-function waitForElement(){
-  if(googleId == ""){
-    // debugger;
-      setTimeout(waitForElement, 700);
-  }
-}
-useEffect(() => {
-     getId();
-    //  waitForElement();
-    //  waitForElement();
-    //  setTimeout(() => {  console.log("World!"); }, 2000);
-  //  debugger;
-  //  getNotificationTypes().then(()=>{ console.log(googleId[0])});
-    
-  },[googleId]);
-  // const retryGoogleRequest = async (request:any) => {
-    
-  // }
-  // const [id, setId] = useState('') ;
-  // // let id='';
-  // const googleId = async()=> authService.getGoogleId();
   
-  // useEffect(() => {
-  //   googleId().then(res=>{setId(res.id)})
-    
-  // });
+      setLoading(false);
+  }
+
+useEffect(() => {
+
+     getId();
+
+  },[googleId]);
 
   return (
     <div className={styles.mainContainer}>
@@ -152,12 +101,10 @@ useEffect(() => {
         </Form.Item>
         <Link className={styles.forgot} to="/forgotPassword">Забули пароль</Link>
         <div className={styles.GoogleFacebookLogin}>
-        {/* <p>{googleId}</p>
-       {console.log(googleId)} */}
        {loading ? (
         ''
       ) : (
-        <GoogleLoginWrapper googleIdProp={googleId} handleGoogleResponseProp = {handleGoogleResponse} getIdprop={getId}>
+        <GoogleLoginWrapper googleId={googleId} handleGoogleResponse = {handleGoogleResponse}>
         </GoogleLoginWrapper>)}
           <Button id={styles.facebookBtn} className={styles.socialButton}>
             <span id={styles.imgSpanFacebook}>
