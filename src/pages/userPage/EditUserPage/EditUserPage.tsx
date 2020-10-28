@@ -109,6 +109,11 @@ export default function () {
     fetchData();
   }, [form]);
 
+  function disabledDate(current: any) {
+    let date =  moment().endOf('day');
+    return current && (current > date);
+  }
+
   const validationSchema = {
     name: [
       { validator: checkNameSurName },
@@ -392,6 +397,7 @@ export default function () {
             <Form.Item label="Дата народження" className={styles.formItem}>
               <DatePicker
                 className={styles.dataInput}
+                disabledDate={(cur) => disabledDate(cur)}
                 value={birthday}
                 onChange={handleOnChangeBirthday}
                 format="DD-MM-YYYY"
