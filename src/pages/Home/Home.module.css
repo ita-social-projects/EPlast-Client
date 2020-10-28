@@ -41,6 +41,7 @@
 
 .card__title {
   text-align: center;
+  padding-top: 10px;
   order: 2;
   display: flex;
   width: 25%;
