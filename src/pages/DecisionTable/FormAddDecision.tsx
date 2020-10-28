@@ -204,15 +204,16 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
       <Button 
         key="back"
         onClick = {handleCancel}
+        className={formclasses.buttons}
         >
           Відмінити
         </Button>
         <Button
          type="primary" htmlType="submit"
+         className={formclasses.buttons}
         >
          Опублікувати
         </Button>
-
       </Form.Item> 
     </Form>
   );
