@@ -71,6 +71,7 @@ const Cities = () => {
   }, [page, pageSize, searchedData]);
 
   const handleSearch = (event: any) => {
+    setPage(1);
     setSearchedData(event);
   };
 

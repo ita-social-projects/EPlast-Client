@@ -1,41 +1,40 @@
 import React from "react";
 import { Drawer, Button, Col, Row, Form, Input } from "antd";
-import "./ClubDetailDrawer.less";
-import ClubProfile from "../../../models/Club/ClubProfile";
+import "./RegionDetailDrawer.less";
 import TextArea from "antd/lib/input/TextArea";
 
 interface Props {
   visibleDrawer: boolean;
   setVisibleDrawer: (visibleDrawer: boolean) => void;
-  Club: ClubProfile;
+  region: any;
 }
 
-const ClubDetailDrawer = (props: Props) => {
+const RegionDetailDrawer = (props: Props) => {
   return (
     <Drawer
-      title={`Деталі куреня ${props.Club.name?.length > 0 ? props.Club.name : ""}`}
+      title={`Деталі округу ${props.region.regionname?.length > 0 ? props.region.regionname : ""}`}
       onClose={() => props.setVisibleDrawer(false)}
       visible={props.visibleDrawer}
       footer={null}
       forceRender={true}
       width=""
-      className="ClubDetail"
+      className="cityDetail"
     >
       <Form className="detailsForm">
         <Row justify="center" gutter={[12, 0]}>
           <Col md={12} xs={24}>
             <Form.Item
-              name="clubURL"
+              name="cityURL"
               label="Посилання"
               labelCol={{ span: 24 }}
               initialValue={
-                props.Club.clubURL?.length > 0 ? props.Club.clubURL : "---"
+                props.region.link?.length > 0 ? props.region.link : "---"
               }
             >
-              <a href={props.Club.clubURL} target="_blank">
+              <a href={props.region.link} target="_blank">
                 <Input
                   value={
-                    props.Club.clubURL?.length > 0 ? props.Club.clubURL : "---"
+                    props.region.link?.length > 0 ? props.region.link : "---"
                   }
                   disabled
                 />
@@ -48,15 +47,15 @@ const ClubDetailDrawer = (props: Props) => {
               label="Номер телефону"
               labelCol={{ span: 24 }}
               initialValue={
-                props.Club.phoneNumber?.length > 0
-                  ? props.Club.phoneNumber
+                props.region.phoneNumber?.length > 0
+                  ? props.region.phoneNumber
                   : "---"
               }
             >
               <Input
                 value={
-                  props.Club.phoneNumber?.length > 0
-                    ? props.Club.phoneNumber
+                  props.region.phoneNumber?.length > 0
+                    ? props.region.phoneNumber
                     : "---"
                 }
                 disabled
@@ -66,54 +65,92 @@ const ClubDetailDrawer = (props: Props) => {
         </Row>
         <Row justify="center" gutter={[12, 0]}>
           <Col md={12} xs={24}>
-          <Form.Item
+            <Form.Item
               name="email"
               label="Електронна пошта"
               labelCol={{ span: 24 }}
               initialValue={
-                props.Club.email?.length > 0 ? props.Club.email : "---"
+                props.region.email?.length > 0 ? props.region.email : "---"
               }
             >
               <Input
-                value={props.Club.email?.length > 0 ? props.Club.email : "---"}
+                value={props.region.email?.length > 0 ? props.region.email : "---"}
                 disabled
               />
             </Form.Item>
           </Col>
           <Col md={12} xs={24}>
-          <Form.Item
-              name="street"
-              label="Гасло"
+            <Form.Item
+              name="City"
+              label="Місто"
               labelCol={{ span: 24 }}
               initialValue={
-                props.Club.street?.length > 0 ? props.Club.street : "---"
+                props.region.city?.length > 0 ? props.region.city : "---"
+              }
+            >
+              <Input
+                value={props.region.city?.length > 0 ? props.region.city : "---"}
+                disabled
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="center" gutter={[12, 0]}>
+          <Col md={12} xs={24}>
+            <Form.Item
+              name="street"
+              label="Вулиця"
+              labelCol={{ span: 24 }}
+              initialValue={
+                props.region.street?.length > 0 ? props.region.street : "---"
               }
             >
               <Input
                 value={
-                  props.Club.street?.length > 0 ? props.Club.street : "---"
+                  props.region.street?.length > 0 ? props.region.street : "---"
+                }
+                disabled
+              />
+            </Form.Item>
+          </Col>
+          <Col md={12} xs={24}>
+            <Form.Item
+              name="houseNumber"
+              label="Номер будинку"
+              labelCol={{ span: 24 }}
+              initialValue={
+                props.region.houseNumber?.length > 0
+                  ? props.region.houseNumber
+                  : "---"
+              }
+            >
+              <Input
+                value={
+                  props.region.houseNumber?.length > 0
+                    ? props.region.houseNumber
+                    : "---"
                 }
                 disabled
               />
             </Form.Item>
           </Col>
         </Row>
-        {/* <Row justify="center" gutter={[12, 0]}>
+        <Row justify="center" gutter={[12, 0]}>
           <Col md={12} xs={24}>
             <Form.Item
               name="officeNumber"
               label="Номер офісу/квартири"
               labelCol={{ span: 24 }}
               initialValue={
-                props.Club.officeNumber?.length > 0
-                  ? props.Club.officeNumber
+                props.region.officeNumber?.length > 0
+                  ? props.region.officeNumber
                   : "---"
               }
             >
               <Input
                 value={
-                  props.Club.officeNumber?.length > 0
-                    ? props.Club.officeNumber
+                  props.region.officeNumber?.length > 0
+                    ? props.region.officeNumber
                     : "---"
                 }
                 disabled
@@ -126,20 +163,20 @@ const ClubDetailDrawer = (props: Props) => {
               label="Поштовий індекс"
               labelCol={{ span: 24 }}
               initialValue={
-                props.Club.postIndex?.length > 0 ? props.Club.postIndex : "---"
+                props.region.postIndex > 0 ? props.region.postIndex : "---"
               }
             >
               <Input
                 value={
-                  props.Club.postIndex?.length > 0
-                    ? props.Club.postIndex
+                  props.region.postIndex?.length > 0
+                    ? props.region.postIndex
                     : "---"
                 }
                 disabled
               />
             </Form.Item>
           </Col>
-        </Row> */}
+        </Row>
         <Row justify="center" gutter={[12, 0]}>
           <Col md={24} xs={24}>
             <Form.Item
@@ -147,16 +184,16 @@ const ClubDetailDrawer = (props: Props) => {
               label="Опис"
               labelCol={{ span: 24 }}
               initialValue={
-                props.Club.description?.length > 0
-                  ? props.Club.description
+                props.region.description?.length > 0
+                  ? props.region.description
                   : "---"
               }
             >
               <TextArea
                 autoSize
                 value={
-                  props.Club.description?.length > 0
-                    ? props.Club.description
+                  props.region.description?.length > 0
+                    ? props.region.description
                     : "---"
                 }
                 disabled
@@ -169,4 +206,4 @@ const ClubDetailDrawer = (props: Props) => {
   );
 };
 
-export default ClubDetailDrawer;
+export default RegionDetailDrawer;

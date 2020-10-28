@@ -13,7 +13,7 @@ interface Props {
   setVisibleModal: (visibleModal: boolean) => void;
   admin: ClubAdmin;
   setAdmin: (admin: ClubAdmin) => void;
-  ClubId: number;
+  clubId: number;
   onAdd?: (admin?: ClubAdmin) => void;
 }
 
@@ -39,7 +39,7 @@ const AddAdministratorModal = (props: Props) => {
         ...new AdminType(),
         adminTypeName: values.adminType,
       },
-      clubId: props.ClubId,
+      clubId: props.clubId,
       user: props.admin.user,
       userId: props.admin.userId,
       endDate: values.endDate?._d,
@@ -48,9 +48,9 @@ const AddAdministratorModal = (props: Props) => {
 
     try {
       if (admin.id === 0) {
-        admin = (await addAdministrator(props.admin.clubId, admin)).data;
+        admin = (await addAdministrator(props.clubId, admin)).data;
       } else {
-        admin = (await editAdministrator(props.admin.clubId, admin)).data;
+        admin = (await editAdministrator(props.clubId, admin)).data;
       }
     } finally {
       props.onAdd?.(admin);
@@ -73,7 +73,7 @@ const AddAdministratorModal = (props: Props) => {
     <Modal
       title={
         props.admin.id === 0
-          ? "Додати в провід куреня"
+          ? "Додати в провід станиці"
           : "Редагувати адміністратора"
       }
       visible={props.visibleModal}
@@ -94,8 +94,10 @@ const AddAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
+              { value: "Голова Чату" },
               { value: "Голова Куреня" },
               { value: "Голова СПС" },
+              { value: "Фотограф" },
               { value: "Писар" },
               { value: "Скарбник" },
               { value: "Домівкар" },

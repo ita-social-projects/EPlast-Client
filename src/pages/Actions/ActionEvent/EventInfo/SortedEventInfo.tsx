@@ -31,6 +31,7 @@ import userApi from "../../../../api/UserApi";
 interface Props {
     event: EventDetails;
     visibleDrawer:boolean;
+    setState:(visible:boolean)=>void;
     setVisibleDrawer:(visible:boolean)=>void;
     subscribeOnEvent: () => void;
     unSubscribeOnEvent: () => void;
@@ -41,6 +42,7 @@ const RenderEventIcons = ({
                               isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
                               isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
                           }: EventDetails,
+                          setState:(visible:boolean)=>void,
                           setVisibleDrawer:(visible:boolean)=>void,
                           subscribeOnEvent: () => void,
                           unSubscribeOnEvent: () => void,
@@ -48,18 +50,31 @@ const RenderEventIcons = ({
 ) => {
     const eventIcons: React.ReactNode[] = []
     if (isUserEventAdmin) {
+        if (event.eventStatus==="Не затверджені"){
         eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
             <SettingTwoTone twoToneColor="#3c5438"  onClick={() => showApproveConfirm({
                                eventId: event?.eventId,
                                eventName: event?.eventName,
-                               eventStatusId:event?.eventStatus
+                               eventStatusId:event?.eventStatus,
+                               setState:setState
                            })}
                            className="icon" key="setting"/>
         </Tooltip>)
         eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
             <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
             onClick={()=> setVisibleDrawer(true)} />      
-        </Tooltip>)
+            </Tooltip>)
+        eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
+            <DeleteTwoTone twoToneColor="#8B0000"
+                       onClick={() => showDeleteConfirmForSingleEvent({
+                           eventId: event?.eventId,
+                           eventName: event?.eventName,
+                           eventTypeId: event?.eventTypeId,
+                           eventCategoryId: event?.eventCategoryId
+                       })}
+                       className="icon" key="delete"/>
+                        </Tooltip>)}
+        else if (event.eventStatus==="Завершений(-на)"){
         eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
             <DeleteTwoTone twoToneColor="#8B0000"
                            onClick={() => showDeleteConfirmForSingleEvent({
@@ -69,7 +84,23 @@ const RenderEventIcons = ({
                                eventCategoryId: event?.eventCategoryId
                            })}
                            className="icon" key="delete"/>
-        </Tooltip>)
+        </Tooltip>)}
+        else if(event.eventStatus==="Затверджений(-на)"){
+            eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
+            <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
+            onClick={()=> setVisibleDrawer(true)} />      
+            </Tooltip>)
+            eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
+                <DeleteTwoTone twoToneColor="#8B0000"
+                               onClick={() => showDeleteConfirmForSingleEvent({
+                                   eventId: event?.eventId,
+                                   eventName: event?.eventName,
+                                   eventTypeId: event?.eventTypeId,
+                                   eventCategoryId: event?.eventCategoryId
+                               })}
+                               className="icon" key="delete"/>
+            </Tooltip>)}
+
     } else if (isUserParticipant && !isEventFinished) {
         if (isUserRejectedParticipant) {
             eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено"
@@ -111,12 +142,7 @@ const RenderEventIcons = ({
                              key="subscribe"/>
         </Tooltip>) 
     }
-    // eventIcons.push(<Tooltip placement="bottom" title="Учасники" key="participants">
-    //     <TeamOutlined style={{color: "#3c5438"}} className="icon"/>
-    // </Tooltip>)
-    // eventIcons.push(<Tooltip placement="bottom" title="Галерея" key="gallery">
-    //     <CameraOutlined style={{color: "#3c5438"}} className="icon"/>
-    // </Tooltip>)
+
     eventIcons.push(<Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
         <IdcardOutlined style={{color: "#3c5438", fontSize: "30px"}} className="icon"
                         onClick={() => setAdminsVisibility(true)}
@@ -168,9 +194,8 @@ const RenderAdminCards = (eventAdmins: EventAdmin[],visibleDrawer:any) => {
     />
 }
 
-const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer ,setVisibleDrawer}: Props) => {
+const SortedEventInfo = ({event,setState, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer ,setVisibleDrawer}: Props) => {
     const [adminsVisible, setAdminsVisibility] = useState(false);
-    const [currentUser, setCurrentUser] = useState<any>({});
     const {id}= useParams();
     const { userId } = useParams();
     const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
@@ -184,7 +209,6 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent, visibleDr
       ]);
     const [imageBase64, setImageBase64] = useState<string>();
     const [loading, setLoading] = useState(false);
-
     const fetchData = async () => {
         const token = AuthStore.getToken() as string;
         setUserToken(jwt(token));
@@ -208,7 +232,7 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent, visibleDr
                 src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
             />
             <div className="iconsFlex">
-                {RenderEventIcons(event,setVisibleDrawer, subscribeOnEvent, unSubscribeOnEvent, setAdminsVisibility)}
+                {RenderEventIcons(event,setState,setVisibleDrawer, subscribeOnEvent, unSubscribeOnEvent, setAdminsVisibility)}
             </div>
             <div className="rateFlex">
                 {RenderRatingSystem(event)}

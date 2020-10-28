@@ -8,7 +8,7 @@ export const checkEmail = (role: object, value: string, callback:any) => {
     }
       return callback();
   };
-  
+
   export const checkNameSurName = (role: object, value: string, callback:any) => {
     const reg = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,25}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,25})*$/;
       if (value.length === 0) {
@@ -32,4 +32,16 @@ export const checkEmail = (role: object, value: string, callback:any) => {
       return callback('Дане поле повинне містити тільки літери');
     }
     return callback();
+  };
+
+  
+  export const checkPassword = (role: object, value: string, callback:any) => {
+    const reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
+    if (value.length === 0) {
+      return callback('');
+    }
+    if (reg.test(value) === false) {
+        return callback('Пароль повинен містити літери, цифри та знаки');
+    }
+      return callback();
   };

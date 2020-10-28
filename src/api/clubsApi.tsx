@@ -81,8 +81,14 @@ export const toggleMemberStatus = async (id: number) => {
   });
 }
 
-export const addFollower = async (ClubId: number) => {
-  return api.post(`Club/AddFollower/${ClubId}`, ClubId).catch((error) => {
+export const addFollower = async (clubId: number) => {
+  return api.post(`Club/AddFollower/${clubId}`, clubId).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+export const addFollowerWithId = async (clubId: number, userId: string) => {
+  return api.post(`Club/AddFollowerWithId/${clubId}/${userId}`).catch((error) => {
     throw new Error(error);
   });
 }
@@ -93,8 +99,8 @@ export const removeFollower = async (followerId: number) => {
   });
 }
 
-export const addAdministrator = async (ClubId: number, data: any) => {
-  return api.post(`Club/AddAdmin/${ClubId}`, data).catch((error) => {
+export const addAdministrator = async (clubId: number, data: any) => {
+  return api.post(`Club/AddAdmin/${clubId}`, data).catch((error) => {
     throw new Error(error);
   });
 }
@@ -111,8 +117,8 @@ export const editAdministrator = async (adminId: number, data: any) => {
   });
 }
 
-export const addDocument = async (ClubId: number, data: any) => {
-  return api.post(`Club/AddDocument/${ClubId}`, data).catch((error) => {
+export const addDocument = async (clubId: number, data: any) => {
+  return api.post(`Club/AddDocument/${clubId}`, data).catch((error) => {
     throw new Error(error);
   });
 }
@@ -127,7 +133,7 @@ export const getFile = async (fileBlob: string, fileName: string) => {
   const response = await (await api.get(`Club/FileBase64/${fileBlob}`, fileBlob)).data;
   const file = dataURLtoFile(response, fileBlob);
   const anchor = window.document.createElement('a');
-  anchor.href = response;
+  anchor.href = window.URL.createObjectURL(file);
   anchor.download = fileName;
   document.body.appendChild(anchor);
   anchor.click();
@@ -146,4 +152,14 @@ export const getDocumentTypes = async () => {
 export const getUsersAdministrations = async(UserId:string)=>{
    return api.get(`Club/GetUserAdmins/${UserId}`);
   
+}
+
+
+export const getUsersPreviousAdministrations = async(UserId:string)=>{
+  return api.get(`Club/GetUserPreviousAdmins/${UserId}`);
+}
+ 
+
+export const getClubs = async()=>{
+  return api.get(`Club/Clubs`);
 }
