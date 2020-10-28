@@ -50,6 +50,7 @@ const RenderEventIcons = ({
 ) => {
     const eventIcons: React.ReactNode[] = []
     if (isUserEventAdmin) {
+        if (event.eventStatus==="Не затверджені"){
         eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
             <SettingTwoTone twoToneColor="#3c5438"  onClick={() => showApproveConfirm({
                                eventId: event?.eventId,
@@ -62,7 +63,18 @@ const RenderEventIcons = ({
         eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
             <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
             onClick={()=> setVisibleDrawer(true)} />      
-        </Tooltip>)
+            </Tooltip>)
+        eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
+            <DeleteTwoTone twoToneColor="#8B0000"
+                       onClick={() => showDeleteConfirmForSingleEvent({
+                           eventId: event?.eventId,
+                           eventName: event?.eventName,
+                           eventTypeId: event?.eventTypeId,
+                           eventCategoryId: event?.eventCategoryId
+                       })}
+                       className="icon" key="delete"/>
+                        </Tooltip>)}
+        else if (event.eventStatus==="Завершений(-на)"){
         eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
             <DeleteTwoTone twoToneColor="#8B0000"
                            onClick={() => showDeleteConfirmForSingleEvent({
@@ -72,7 +84,23 @@ const RenderEventIcons = ({
                                eventCategoryId: event?.eventCategoryId
                            })}
                            className="icon" key="delete"/>
-        </Tooltip>)
+        </Tooltip>)}
+        else if(event.eventStatus==="Затверджений(-на)"){
+            eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
+            <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
+            onClick={()=> setVisibleDrawer(true)} />      
+            </Tooltip>)
+            eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
+                <DeleteTwoTone twoToneColor="#8B0000"
+                               onClick={() => showDeleteConfirmForSingleEvent({
+                                   eventId: event?.eventId,
+                                   eventName: event?.eventName,
+                                   eventTypeId: event?.eventTypeId,
+                                   eventCategoryId: event?.eventCategoryId
+                               })}
+                               className="icon" key="delete"/>
+            </Tooltip>)}
+
     } else if (isUserParticipant && !isEventFinished) {
         if (isUserRejectedParticipant) {
             eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено"
