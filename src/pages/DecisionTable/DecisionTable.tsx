@@ -151,17 +151,13 @@ const DecisionTable = () => {
                   });
                 }
               }}
-              //  pagination={false}
+              pagination={
+                {
+                  showLessItems: true,
+                  responsive:true
+                }
+              }
               
-            />
-            <Pagination
-              current={page}
-              pageSize={pageSize}
-              total={total}
-              responsive
-              showLessItems
-              onChange={(page) => handleChange(page)}
-              onShowSizeChange={(page, size) => handleSizeChange(page, size)}
             />
             <ClickAwayListener onClickAway={handleClickAway}>
             <DropDown
