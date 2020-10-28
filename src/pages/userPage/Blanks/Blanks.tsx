@@ -8,7 +8,7 @@ import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocument
 import { Badge, Button, Col, Popconfirm, Tooltip } from "antd";
 import classes from "./Blanks.module.css";
 import Title from "antd/lib/typography/Title";
-import { DeleteOutlined, DownloadOutlined, EyeOutlined, FilePdfOutlined } from "@ant-design/icons";
+import { DeleteOutlined, DownloadOutlined, EyeOutlined, FilePdfOutlined, FileTextOutlined } from "@ant-design/icons";
 import AddBiographyModal from "./UserBiography/AddBiographyModal";
 import BlankDocument from "../../../models/Blank/BlankDocument";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -295,7 +295,14 @@ export const Blanks = () => {
 
                             <div className={classes.wrapper5}>
                                 <Title level={2}>Генерація</Title>
-                                <a onClick={() => getPdf()}>a</a>
+                                <FileTextOutlined 
+                                className={classes.documentIcon}/>
+                                <Button
+                                 className={classes.addIcon}
+                                type="primary"
+                                onClick={() => getPdf()}>
+                                    Згенерувати файл
+                                </Button>
                             </div>
 
                         </div>

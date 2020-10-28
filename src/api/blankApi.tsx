@@ -58,7 +58,7 @@ export const openBiographyFile = async (fileBlob: string) => {
 }
 
 export const openGenerationFile = async (userId: string) => {
-  const response = await (await api.get(`Blanks/GeneratePDFFile/${userId}`, userId)).data;
+  const response = await (await api.get(`Blanks/getGenerationFile/${userId}`, userId)).data;
   const base64 = response.split(",")[1];
   let pdfWindow = window.open("");
   pdfWindow?.document.write("<iframe width='99%' height='99%' src='data:application/pdf;base64," +
