@@ -19,9 +19,6 @@ const DecisionTable = () => {
   const [y, setY] = useState(0);
   const [searchedData, setSearchedData] = useState('');
   const [visibleModal, setVisibleModal] = useState(false);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [total, setTotal] = useState(0);
   const handleDelete = (id: number) => {
     const filteredData = data.filter(d => d.id !== id);
     setData([...filteredData]);
@@ -57,14 +54,7 @@ const DecisionTable = () => {
     notificationLogic('success', "Рішення не існує");
    });
   }
-  const handleChange = (page: number) => {
-    setPage(page);
-  };
 
-  const handleSizeChange = (page: number, pageSize: number = 10) => {
-    setPage(page);
-    setPageSize(pageSize);
-  };
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -95,16 +85,6 @@ const DecisionTable = () => {
 
 
   const showModal = () => setVisibleModal(true);
-
-  const itemRender = (current: any, type: string, originalElement: any) => {
-    if (type === 'prev') {
-      return <Button type="primary">Попередня</Button>;
-    }
-    if (type === 'next') {
-      return <Button type="primary">Наступна</Button>;
-    }
-    return originalElement;
-  };
 
   return (
     <Layout>
@@ -157,7 +137,6 @@ const DecisionTable = () => {
                   responsive:true
                 }
               }
-              
             />
             <ClickAwayListener onClickAway={handleClickAway}>
             <DropDown
