@@ -48,7 +48,13 @@ const ColumnsForUserTable: any = [
             if (date !== null) {
                 return moment(date).format('DD-MM-YYYY')
             }
-        }
+        },
+        sorter:(a: any, b:any)  => {
+            a = a.user.birthday || ' ';
+            b = b.user.birthday || ' ';
+            return a.localeCompare(b);
+        },
+        sortDirections: ['descend', 'ascend']
     },
     {
         title: 'Стать',
@@ -72,6 +78,12 @@ const ColumnsForUserTable: any = [
                 )
             }
         },
+        sorter:(a: any, b:any)  => {
+            a = a.user.gender || ' ';
+            b = b.user.gender || ' ';
+            return a.localeCompare(b);
+        },
+        sortDirections: ['descend', 'ascend']
     },
     {
         title: 'Округ',
@@ -83,6 +95,12 @@ const ColumnsForUserTable: any = [
                 </Tag>
             }
         },
+        sorter:(a: any, b:any)  => {
+            a = a.regionName || ' ';
+            b = b.regionName || ' ';
+            return a.localeCompare(b);
+        },
+        sortDirections: ['descend', 'ascend']
     },
     {
         title: 'Станиця',
@@ -94,6 +112,12 @@ const ColumnsForUserTable: any = [
                 </Tag>
             }
         },
+        sorter:(a: any, b:any)  => {
+            a = a.cityName || ' ';
+            b = b.cityName || ' ';
+            return a.localeCompare(b);
+        },
+        sortDirections: ['descend', 'ascend']
     },
     {
         title: 'Курінь',
@@ -105,6 +129,12 @@ const ColumnsForUserTable: any = [
                 </Tag>
             }
         },
+        sorter:(a: any, b:any)  => {
+            a = a.clubName || ' ';
+            b = b.clubName || ' ';
+            return a.localeCompare(b);
+        },
+        sortDirections: ['descend', 'ascend']
     },
     {
         title: 'Ступінь',
@@ -137,6 +167,12 @@ const ColumnsForUserTable: any = [
                 }
             }
         },
+        sorter:(a: any, b:any)  => {
+            a = a.userPlastDegreeName || ' ';
+            b = b.userPlastDegreeName || ' ';
+            return a.localeCompare(b);
+        },
+        sortDirections: ['descend', 'ascend']
     },
     {
         title: 'Права доступу',
