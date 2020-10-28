@@ -11,6 +11,7 @@ import {
   Table,
   Select,
   Card,
+  message,
 } from "antd";
 import {
   DeleteOutlined,
@@ -298,7 +299,7 @@ const CreateCity = () => {
                 rules={[
                   {
                     pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-                    message: "Неправильна пошта",
+                    message: "Неправильний формат електронної пошти!",
                   },
                   {
                     max: 50,
@@ -387,6 +388,9 @@ const CreateCity = () => {
                 }, {
                   min: 5,
                   message: "Мінімальна довжина - 5 символів!",
+                }, {
+                  validator: (_, value) => 
+                  parseInt(value) > 0 ? Promise.resolve() : Promise.reject("Поле не може бути від'ємним"),
                 }]}
               >
                 <Input type="number" value={city.postIndex}/>

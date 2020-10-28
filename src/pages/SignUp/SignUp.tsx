@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, Input, Button} from 'antd';
 import styles from './SignUp.module.css';
 import Switcher from './Switcher/Switcher';
-import { checkEmail, checkNameSurName } from './verification';
+import { checkEmail, checkNameSurName, checkPassword } from './verification';
 import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
 let authService = new AuthorizeApi();
@@ -12,14 +12,26 @@ export default function () {
   const history = useHistory();
   const [available, setAvailabe] = useState(true);
 
+
+
   const validationSchema = {
-    Email: [{ required: true, message: "Поле електронна пошта є обов'язковим" }, { validator: checkEmail }],
+    Email: [
+      { required: true, message: "Поле електронна пошта є обов'язковим" }, 
+      { validator: checkEmail }
+    ],
     Password: [
       { required: true, message: "Поле пароль є обов'язковим" },
-      { min: 6, message: 'Мінімальна допустима довжина - 6 символів' },
+      { min: 8, message: 'Мінімальна допустима довжина - 6 символів' },
+      { validator: checkPassword }
     ],
-    Name: [{ required: true, message: "Поле ім'я є обов'язковим" }, { validator: checkNameSurName }],
-    SurName: [{ required: true, message: "Поле прізвище є обов'язковим" }, { validator: checkNameSurName }],
+    Name: [
+      { required: true, message: "Поле ім'я є обов'язковим" }, 
+      { validator: checkNameSurName }
+    ],
+    SurName: [
+      { required: true, message: "Поле прізвище є обов'язковим" }, 
+      { validator: checkNameSurName }
+    ],
     ConfirmPassword: [
       { required: true, message: "Дане поле є обов'язковим" },
       { min: 6, message: 'Мінімальна допустима довжина - 6 символів' },
