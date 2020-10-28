@@ -145,7 +145,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Назва події </h3>
         < Form.Item name="EventName" rules={[{ required: true, message: 'Вкажіть назву події' }, { max: 50, message: 'Назва події не може перевищувати 50 символів' }]} >
-          <Input className={classes.input} />
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </ Form.Item>
       </ div>
       < div className={classes.row} >
@@ -195,19 +195,19 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Форма проведення </h3>
         < Form.Item name="FormOfHolding" rules={[{ required: true, message: 'Вкажіть форму проведення події' },{ max: 50, message: 'Максимальна к-сть символів - 50' }]} >
-          <Input className={classes.input} />
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>
       <div className={classes.row} >
         <h3>Локація </h3>
-        < Form.Item name="Eventlocation" rules={[{ required: true, message: 'Вкажіть локацію події' }]}>
-          <Input className={classes.input} />
+        < Form.Item name="Eventlocation" rules={[{ required: true, message: 'Вкажіть локацію події' }, { max: 50, message: 'Максимальна к-сть символів - 50' }]}>
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>
       < div className={classes.row} >
-        <h3>Призначений для </h3>
+        <h3>Призначена для </h3>
         < Form.Item name="ForWhom" rules={[{ required: true, message: 'Вкажіть для кого призначена подія' },{ max: 50, message: 'Максимальна к-сть символів - 50' }]}>
-          <Input className={classes.input} />
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>
       < div className={classes.row} >
@@ -218,14 +218,14 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </ div>
       < div className={classes.row} >
         <h3>Питання / побажання до булави </h3>
-        < Form.Item name="Questions" rules={[{ required: true, message: 'Вкажіть питання' },
+        < Form.Item name="Questions" rules={[{ required: true, message: 'Вкажіть питання/побажання' },{ required: true, message: 'до булави' },
         { max: 50, message: 'Довжина поля менша 50 символів' }]}>
           <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>
       < div className={classes.row} >
         <h3>Опис події</h3>
-        < Form.Item name="Description" rules={[{ required: true, message: 'Вкажіть, які впроваджено зміни' },
+        < Form.Item name="Description" rules={[{ required: true, message: 'Вкажіть опис події' },
         { max: 50, message: 'Довжина поля менша 50 символів' }]}>
           <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
