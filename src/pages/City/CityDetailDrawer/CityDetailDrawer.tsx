@@ -193,7 +193,13 @@ const CityDetailDrawer = (props: Props) => {
               }
             >
               <TextArea
-                autoSize
+                autoSize =
+                {
+                  {
+                    minRows: 1,
+                    maxRows: 9
+                  }
+                }
                 value={
                   props.city.description?.length > 0
                     ? props.city.description
