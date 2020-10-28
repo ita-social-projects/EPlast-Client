@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Row, Col, Table, Tooltip, Modal, Card, List, Rate, notification} from 'antd';
 import {
     TeamOutlined,
@@ -15,14 +15,24 @@ import {
 } from '@ant-design/icons';
 // eslint-disable-next-line import/no-cycle,import/no-duplicates
 import {EventDetails, EventAdmin} from "./EventInfo";
-import {useHistory} from "react-router-dom";
-import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirmForSingleEvent} from "../../EventsModals";
+import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirmForSingleEvent, showApproveConfirm} from "../../EventsModals";
 import EventAdminLogo from "../../../../assets/images/EventAdmin.png"
 import './EventInfo.less';
 import eventsApi from "../../../../api/eventsApi";
+import { useHistory, useParams } from 'react-router-dom';
+import EventEditDrawer from '../EventEdit/EventEditDrawer';
+import AuthStore from '../../../../stores/AuthStore';
+import eventUserApi from '../../../../api/eventUserApi';
+import jwt from "jwt-decode";
+import CreatedEvents from '../../../../models/EventUser/CreatedEvents';
+import EventsUser from '../../../../models/EventUser/EventUser';
+import userApi from "../../../../api/UserApi";
 
 interface Props {
     event: EventDetails;
+    visibleDrawer:boolean;
+    setState:(visible:boolean)=>void;
+    setVisibleDrawer:(visible:boolean)=>void;
     subscribeOnEvent: () => void;
     unSubscribeOnEvent: () => void;
 }
@@ -32,17 +42,26 @@ const RenderEventIcons = ({
                               isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
                               isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
                           }: EventDetails,
+                          setState:(visible:boolean)=>void,
+                          setVisibleDrawer:(visible:boolean)=>void,
                           subscribeOnEvent: () => void,
                           unSubscribeOnEvent: () => void,
                           setAdminsVisibility: (flag: boolean) => void
-): React.ReactNode[] => {
+) => {
     const eventIcons: React.ReactNode[] = []
     if (isUserEventAdmin) {
-        eventIcons.push(<Tooltip placement="bottom" title="Ви адмін!" key="setting">
-            <SettingTwoTone twoToneColor="#3c5438" className="icon" key="setting"/>
+        eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
+            <SettingTwoTone twoToneColor="#3c5438"  onClick={() => showApproveConfirm({
+                               eventId: event?.eventId,
+                               eventName: event?.eventName,
+                               eventStatusId:event?.eventStatus,
+                               setState:setState
+                           })}
+                           className="icon" key="setting"/>
         </Tooltip>)
-        eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit">
-            <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"/>
+        eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
+            <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
+            onClick={()=> setVisibleDrawer(true)} />      
         </Tooltip>)
         eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
             <DeleteTwoTone twoToneColor="#8B0000"
@@ -93,14 +112,9 @@ const RenderEventIcons = ({
             })}
                              style={{color: "#3c5438"}}
                              key="subscribe"/>
-        </Tooltip>)
+        </Tooltip>) 
     }
-    // eventIcons.push(<Tooltip placement="bottom" title="Учасники" key="participants">
-    //     <TeamOutlined style={{color: "#3c5438"}} className="icon"/>
-    // </Tooltip>)
-    // eventIcons.push(<Tooltip placement="bottom" title="Галерея" key="gallery">
-    //     <CameraOutlined style={{color: "#3c5438"}} className="icon"/>
-    // </Tooltip>)
+
     eventIcons.push(<Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
         <IdcardOutlined style={{color: "#3c5438", fontSize: "30px"}} className="icon"
                         onClick={() => setAdminsVisibility(true)}
@@ -122,7 +136,8 @@ const RenderRatingSystem = ({
     }
 }
 
-const RenderAdminCards = (eventAdmins: EventAdmin[]) => {
+const RenderAdminCards = (eventAdmins: EventAdmin[],visibleDrawer:any) => {
+   
     const history = useHistory();
     return <List className="event-admin-card"
                  grid={{
@@ -151,8 +166,36 @@ const RenderAdminCards = (eventAdmins: EventAdmin[]) => {
     />
 }
 
-const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) => {
+const SortedEventInfo = ({event,setState, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer ,setVisibleDrawer}: Props) => {
     const [adminsVisible, setAdminsVisibility] = useState(false);
+    const {id}= useParams();
+    const { userId } = useParams();
+    const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
+        new CreatedEvents(),
+      ]);
+    const [allEvents, setAllEvents] = useState<EventsUser>(new EventsUser());
+    const [userToken, setUserToken] = useState<any>([
+        {
+          nameid: "",
+        },
+      ]);
+    const [imageBase64, setImageBase64] = useState<string>();
+    const [loading, setLoading] = useState(false);
+    const fetchData = async () => {
+        const token = AuthStore.getToken() as string;
+        setUserToken(jwt(token));
+        await eventUserApi.getEventsUser(userId).then(async (response) => {
+          setCreatedEvents(response.data);
+          setAllEvents(response.data);
+          await userApi
+            .getImage(response.data.user.imagePath)
+            .then((response: { data: any }) => {
+              setImageBase64(response.data);
+            });
+           
+          setLoading(true);
+        });
+      };
     return <Row >
         <Col className="eventActions">
             <img
@@ -161,7 +204,7 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) =
                 src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
             />
             <div className="iconsFlex">
-                {RenderEventIcons(event, subscribeOnEvent, unSubscribeOnEvent, setAdminsVisibility)}
+                {RenderEventIcons(event,setState,setVisibleDrawer, subscribeOnEvent, unSubscribeOnEvent, setAdminsVisibility)}
             </div>
             <div className="rateFlex">
                 {RenderRatingSystem(event)}
@@ -175,8 +218,15 @@ const SortedEventInfo = ({event, subscribeOnEvent, unSubscribeOnEvent}: Props) =
                 setAdminsVisibility(false);
             }}
         >
-            {RenderAdminCards(event.event.eventAdmins)}
+            {RenderAdminCards(event.event.eventAdmins,visibleDrawer)}
+ 
         </Modal>
+        <EventEditDrawer
+                id={id}
+                visibleEventEditDrawer={visibleDrawer}
+                setShowEventEditDrawer={setVisibleDrawer}
+                onEdit={fetchData}
+              />
     </Row>
 }
 export default SortedEventInfo;

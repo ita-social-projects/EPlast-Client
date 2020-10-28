@@ -1,29 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { Data } from "../Interface/Interface";
 import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
 import AvatarAndProgress from "../personalData/AvatarAndProgress";
-import { getDocumentByUserId, removeDocument, getFile } from "../../../api/blankApi";
-import { Button, Col, Form, Tooltip } from "antd";
+import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId, openBiographyFile, getExtractFromUPUByUserId, removeExtractFromUPUDocument, getExtractFromUPUFile, openExtractFromUPUFile } from "../../../api/blankApi";
+import { Badge, Button, Col, Form, Tooltip } from "antd";
 import classes from "./Blanks.module.css";
 import Title from "antd/lib/typography/Title";
-import { DeleteOutlined, DownloadOutlined, FileTextOutlined } from "@ant-design/icons";
+import { DeleteOutlined, DownloadOutlined, EyeOutlined, FilePdfOutlined } from "@ant-design/icons";
 import AddBiographyModal from "./UserBiography/AddBiographyModal";
 import BlankDocument from "../../../models/Blank/BlankDocument";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
-
+import AddAchievementsModal from "./UserAchievements/AddAchievementsModal";
+import AuthStore from "../../../stores/AuthStore";
+import jwt from "jwt-decode";
+import ListOfAchievementsModal from "./UserAchievements/ListOfAchievementsModal";
+import AddExtractFromUPUModal from "./UserExtractFromUPU/AddExtractFromUPUModal";
 
 export const Blanks = () => {
+    const history = useHistory();
     const { userId } = useParams();
+
     const [data, setData] = useState<Data>();
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
+    const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
+    const [extractUPU, setExtractUPU] = useState<BlankDocument>(new BlankDocument);
     const [visibleModal, setVisibleModal] = useState(false);
+    const [visibleListAchievementModal, setVisibleListAchievementModal] = useState(false);
+    const [visibleExtractFromUPUModal, setVisibleExtractFromUPUModal] = useState(false);
+    const [visibleAchievementModal, setvisibleAchievementModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [form] = Form.useForm();
+    const [userToken, setUserToken] = useState<any>([
+        {
+            nameid: "",
+        },
+    ]);
 
     const fetchData = async () => {
+        const token = AuthStore.getToken() as string;
+        setUserToken(jwt(token));
         await userApi.getById(userId).then(response => {
             setData(response.data);
         }).catch(() => { notificationLogic('error', "Щось пішло не так") })
@@ -34,21 +51,46 @@ export const Blanks = () => {
         const response = await getDocumentByUserId(userId);
         setDocument(response.data);
     };
+    const getAchievementDocumentsByUserId = async () => {
+        const response = await getAllAchievementDocumentsByUserId(userId);
+        setAchievementDoc(response.data);
+    };
+    const getExtractFromUPU = async () => {
+        const response = await getExtractFromUPUByUserId(userId);
+        setExtractUPU(response.data);
+    }
     const removeDocumentById = async (documentId: number) => {
         await removeDocument(documentId);
         notificationLogic('success', "Файл успішно видалено");
         getDocument();
     };
+    const removeExtractDocument = async (documentId: number) => {
+        await removeExtractFromUPUDocument(documentId);
+        notificationLogic('success', "Файл успішно видалено");
+        getExtractFromUPU();
+    }
+
+    const downloadExtractDocument = async (fileBlob: string, fileName: string) => {
+        await getExtractFromUPUFile(fileBlob, fileName);
+    }
 
     const downloadDocument = async (fileBlob: string, fileName: string) => {
         await getFile(fileBlob, fileName);
     }
 
+    const openDocument = async (fileBlob: string) => {
+        await openBiographyFile(fileBlob);
+    }
+    const openExtractFromUPUDocument = async (fileBlob: string) => {
+        await openExtractFromUPUFile(fileBlob);
+    }
+
     useEffect(() => {
         fetchData();
         getDocument();
-
-    }, [userId, visibleModal]);
+        getAchievementDocumentsByUserId();
+        getExtractFromUPU();
+    }, [userId, visibleModal, visibleAchievementModal, visibleExtractFromUPUModal]);
 
     return (loading === false ? (
         <Spinner />
@@ -67,15 +109,15 @@ export const Blanks = () => {
                         <div className={classes.wrapper}>
                             <div className={classes.wrapper2}>
                                 <Title level={2}>Життєпис</Title>
-                                <div className={classes.line} />
                                 {document.userId == userId ? (
                                     <Col
-                                        xs={12}
-                                        sm={8}
+                                        xs={18}
+                                        sm={18}
                                         key={document.id}
                                     >
                                         <div>
-                                            <FileTextOutlined className={classes.documentIcon} />
+                                            <FilePdfOutlined className={classes.documentIcon}
+                                            />
                                             <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
                                                 {document.fileName}
                                             </Paragraph>
@@ -92,61 +134,175 @@ export const Blanks = () => {
                                                 }
                                             />
                                         </Tooltip>
-                                        <Tooltip title="Видалити">
-                                            <DeleteOutlined
-                                                className={classes.deleteIcon}
-                                                key="close"
-                                                onClick={() => removeDocumentById(document.id)}
-                                            />
+                                        <Tooltip title="Переглянути">
+                                            <EyeOutlined
+                                                className={classes.reviewIcon}
+                                                key="review"
+                                                onClick={() => openDocument(document.blobName)} />
                                         </Tooltip>
+                                        {userToken.nameid === userId &&
+                                            <Tooltip title="Видалити">
+                                                <DeleteOutlined
+                                                    className={classes.deleteIcon}
+                                                    key="close"
+                                                    onClick={() => removeDocumentById(document.id)}
+                                                />
+                                            </Tooltip>
+                                        }
                                     </Col>
                                 )
                                     : (
                                         <Col>
-                                            <h2>Ви ще не додали Життєпис</h2>
-                                            <div>
-                                                <Button type="primary"
-                                                    className={classes.addIcon}
-                                                    onClick={() => setVisibleModal(true)}>
-                                                    Створити Життєпис
+                                            {userToken.nameid === userId &&
+                                                <h2>Ви ще не додали Життєпис</h2>
+                                            }
+                                            {userToken.nameid !== userId &&
+                                                <h2>Користувач ще не додав(ла) Життєпис</h2>
+                                            }
+                                            {userToken.nameid === userId &&
+                                                <div>
+                                                    <Button type="primary"
+                                                        className={classes.addIcon}
+                                                        onClick={() => setVisibleModal(true)}>
+                                                        Створити Життєпис
                                             </Button>
-                                            </div>
+                                                </div>
+                                            }
                                         </Col>
                                     )}
 
                             </div>
 
                             <div className={classes.wrapper3}>
-                                <Title level={2}>Генерація</Title>
-                                <div className={classes.line} />
+                                <Title level={2}>Виписка з УПЮ</Title>
+                                {extractUPU.userId == userId ? (
+                                    <Col
+                                        xs={18}
+                                        sm={18}
+                                        key={document.id}
+                                    >
+                                        <div>
+                                            <FilePdfOutlined className={classes.documentIcon}
+                                            />
+                                            <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
+                                                {extractUPU.fileName}
+                                            </Paragraph>
+                                        </div>
+                                        <Tooltip title="Завантажити">
+                                            <DownloadOutlined
+                                                className={classes.downloadIcon}
+                                                key="download"
+                                                onClick={() =>
+                                                    downloadExtractDocument(
+                                                        extractUPU.blobName,
+                                                        extractUPU.fileName
+                                                    )
+                                                }
+                                            />
+                                        </Tooltip>
+                                        <Tooltip title="Переглянути">
+                                            <EyeOutlined
+                                                className={classes.reviewIcon}
+                                                key="review"
+                                                onClick={() => openExtractFromUPUDocument(extractUPU.blobName)} />
+                                        </Tooltip>
+                                        {userToken.nameid === userId &&
+                                            <Tooltip title="Видалити">
+                                                <DeleteOutlined
+                                                    className={classes.deleteIcon}
+                                                    key="close"
+                                                    onClick={() => removeExtractDocument(extractUPU.id)}
+                                                />
+                                            </Tooltip>
+                                        }
+                                    </Col>
+                                ) : (
+                                        <Col>
+                                            {userToken.nameid === userId &&
+                                                <h2>Ви ще не додали виписку</h2>
+                                            }
+                                            {userToken.nameid !== userId &&
+                                                <h2>Користувач ще не додав(ла) виписку</h2>
+                                            }
+                                            {userToken.nameid === userId &&
+                                                <div>
+                                                    <Button type="primary"
+                                                        className={classes.addIcon}
+                                                        onClick={() => setVisibleExtractFromUPUModal(true)}>
+                                                        Створити Виписку
+                                            </Button>
+                                                </div>
+                                            }
+                                        </Col>
+                                    )}
                             </div>
                         </div>
 
                         <div className={classes.wrapper}>
                             <div className={classes.wrapper4}>
                                 <Title level={2}>Досягнення</Title>
-                                <div className={classes.line} />
+                                {achievementDoc.length !== 0 ? (
+                                    <div>
+                                        <Col>
+                                            <Badge
+                                                count={achievementDoc.length}
+                                                style={{ backgroundColor: "#3c5438" }}
+                                            />
+
+                                        </Col>
+                                        <Col>
+                                            <Button type="primary"
+                                                className={classes.listButton}
+                                                onClick={() => setVisibleListAchievementModal(true)}>
+                                                Список
+                                        </Button>
+                                        </Col>
+                                    </div>
+                                ) : (
+                                        <Col>
+                                            {userToken.nameid === userId &&
+                                                <h2>Ви ще не додали жодного Досягнення</h2>
+                                            }
+                                            {userToken.nameid !== userId &&
+                                                <h2> Користувач ще не додав(ла) жодного Досягнення</h2>
+                                            }
+                                        </Col>
+                                    )}
+                                <Col>
+
+                                    {userToken.nameid === userId &&
+                                        <div>
+                                            <Button type="primary"
+                                                className={classes.addIcon}
+                                                onClick={() => setvisibleAchievementModal(true)}>
+                                                Додати Досягнення
+                                            </Button>
+                                        </div>
+                                    }
+                                </Col>
                             </div>
 
                             <div className={classes.wrapper5}>
-                                <Title level={2}>Виписка з УПЮ</Title>
-                                <div className={classes.line} />
+                                <Title level={2}>Генерація</Title>
                             </div>
-
-                        </div>
-
-                        <div className={classes.wrapper}>
-                            <div className={classes.wrapper6}>
-                                <Title level={2}>Пошук</Title>
-                                <div className={classes.line} />
-                            </div>
-
-
 
                         </div>
 
                     </div>
                 </div>
+                <ListOfAchievementsModal
+                    userToken={userToken}
+                    visibleModal={visibleListAchievementModal}
+                    setVisibleModal={setVisibleListAchievementModal}
+                    achievementDoc={achievementDoc}
+                    setAchievementDoc={setAchievementDoc}
+                ></ListOfAchievementsModal>
+
+                <AddAchievementsModal
+                    userId={data?.user.id}
+                    visibleModal={visibleAchievementModal}
+                    setVisibleModal={setvisibleAchievementModal}
+                ></AddAchievementsModal>
 
                 <AddBiographyModal
                     userId={data?.user.id}
@@ -155,6 +311,14 @@ export const Blanks = () => {
                     visibleModal={visibleModal}
                     setVisibleModal={setVisibleModal}
                 ></AddBiographyModal>
+
+                <AddExtractFromUPUModal
+                    userId={data?.user.id}
+                    document={extractUPU}
+                    setDocument={setExtractUPU}
+                    visibleModal={visibleExtractFromUPUModal}
+                    setVisibleModal={setVisibleExtractFromUPUModal}
+                ></AddExtractFromUPUModal>
             </>
 
         )

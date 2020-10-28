@@ -1,14 +1,20 @@
-import { Form, Input, DatePicker, AutoComplete, Select, Button, Layout, Card } from 'antd';
+import { Form, Input, DatePicker, AutoComplete, Select, Button, Layout, Card, Upload, Col, Row } from 'antd';
 import React, { useState, useEffect } from 'react';
 import RegionsApi from '../../api/regionsApi'
 import classes from './Form.module.css'
 import "./CreateRegion.less"
-
+import CityDefaultLogo from "../../assets/images/default_city_image.jpg"
 import notificationLogic from '../../components/Notifications/Notification';
+import { RcCustomRequestOptions } from 'antd/es/upload/interface';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { useHistory } from 'react-router-dom';
 
 const AddNewRegionFormPage = () => {
 
     const [form] = Form.useForm();
+    const history = useHistory();
+
+    const [logo, setLogo]=useState<any>();
 
     const handleSubmit = async (values: any) => {
         const newRegion: any = {
@@ -17,6 +23,7 @@ const AddNewRegionFormPage = () => {
             phoneNumber: values.phoneNumber,
             email: values.email,
             link: values.link,
+            logo: logo,
             street: values.street, 
             houseNumber: values.houseNumber,
             officeNumber: values.officeNumber,
@@ -26,18 +33,83 @@ const AddNewRegionFormPage = () => {
         form.resetFields();
 
         notificationLogic('success', "Успішно додано округ");
+        history.push('/regions')
     }
+
+
+    const checkFile = (size: number, fileName: string) => {
+        const extension = fileName.split(".").reverse()[0];
+        const isCorrectExtension =
+          extension.indexOf("jpeg") !== -1 ||
+          extension.indexOf("jpg") !== -1 ||
+          extension.indexOf("png") !== -1;
+        if (!isCorrectExtension) {
+          notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
+        }
+    
+        const isSmaller2mb = size <= 3145728;
+        if (!isSmaller2mb) {
+          notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+        }
+    
+        return isCorrectExtension && isSmaller2mb;
+      };
+
+  const getBase64 = (img: Blob, callback: Function) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
+    const handleUpload = (info: RcCustomRequestOptions) => {
+        if (info !== null) {
+          if (checkFile(info.file.size, info.file.name)) {
+            getBase64(info.file, (base64: string) => {
+              setLogo( base64 );
+            });
+            notificationLogic("success", "Фото завантажено");
+          }
+        } else {
+          notificationLogic("error", "Проблема з завантаженням фото");
+        }
+      };
+
+
 
     return <Layout.Content className="createCity">
         <Card hoverable className="createCityCard">
+            <h1>Створення нового округу</h1>
+            <br/>
     <Form
         name="basic"
         onFinish={handleSubmit}
         form={form}
     >
+        
+         <Form.Item name="logo">
+            <Upload
+              name="avatar"
+              listType="picture-card"
+              showUploadList={false}
+              accept=".jpeg,.jpg,.png"
+              customRequest={handleUpload}
+            >
+               
+              
+                <PlusOutlined />
+              <img
+                src={logo ? logo : CityDefaultLogo}
+                alt="Region"
+                className="cityLogo"
+              />
+            </Upload>
+          </Form.Item>
+
+          <Row justify="center">
+            <Col md={11} xs={24}>
         <Form.Item
             className={classes.formField}
-            label="Назва регіону"
+            label="Назва округу"
             name="regionName"
 
             rules={[
@@ -51,7 +123,8 @@ const AddNewRegionFormPage = () => {
                 className={classes.inputField} />
 
         </Form.Item>
-
+        </Col>
+        <Col md={{ span: 11, offset: 2 }} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Опис"
@@ -67,7 +140,9 @@ const AddNewRegionFormPage = () => {
            <Input
                 className={classes.inputField} />
         </Form.Item>
+        </Col>
 
+        <Col md={11} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Номер телефону"
@@ -83,8 +158,9 @@ const AddNewRegionFormPage = () => {
            <Input
                 className={classes.inputField} />
         </Form.Item>
+        </Col>
 
-
+        <Col md={{ span: 11, offset: 2 }} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Email"
@@ -100,8 +176,9 @@ const AddNewRegionFormPage = () => {
            <Input
                 className={classes.inputField} />
         </Form.Item>
+            </Col>
 
-
+            <Col md={11} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Link"
@@ -117,8 +194,28 @@ const AddNewRegionFormPage = () => {
            <Input
                 className={classes.inputField} />
         </Form.Item>
+        </Col>
 
 
+ <Col md={{ span: 11, offset: 2 }} xs={24}>
+        <Form.Item
+            className={classes.formField}
+            label="Місто"
+            name="city"
+
+            rules={[
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
+            ]}
+        >
+           <Input
+                className={classes.inputField} />
+        </Form.Item>
+        </Col>
+
+        <Col md={11} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Вулиця"
@@ -134,8 +231,9 @@ const AddNewRegionFormPage = () => {
            <Input
                 className={classes.inputField} />
         </Form.Item>
+        </Col>
 
-
+        <Col md={{ span: 11, offset: 2 }} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Номер будинку"
@@ -151,8 +249,9 @@ const AddNewRegionFormPage = () => {
            <Input
                 className={classes.inputField} />
         </Form.Item>
+        </Col>
 
-
+        <Col md={11} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Номер офісу/квартири"
@@ -168,7 +267,9 @@ const AddNewRegionFormPage = () => {
            <Input
                 className={classes.inputField} />
         </Form.Item>
+        </Col>
 
+        <Col md={{ span: 11, offset: 2 }} xs={24}>
         <Form.Item
             className={classes.formField}
             label="Поштовий індекс"
@@ -184,18 +285,20 @@ const AddNewRegionFormPage = () => {
            <Input
                 className={classes.inputField} />
         </Form.Item>
-
+        </Col>
+        </Row>
 
         <Form.Item style = {{ textAlign: "right"}}>
       
         <Button
          type="primary" htmlType="submit" 
+         
         >
          Додати
         </Button>
 
       </Form.Item> 
-
+      
     </Form>;
     </Card>
     </Layout.Content>

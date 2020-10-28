@@ -24,6 +24,7 @@ export interface EventDetails {
     isUserUndeterminedParticipant: boolean;
     isUserRejectedParticipant: boolean;
     isEventFinished: boolean;
+    isEventNotApproved: boolean;
     canEstimate: boolean;
 }
 
@@ -42,6 +43,7 @@ export interface EventInformation {
     formOfHolding: string;
     forWhom: string;
     rating: number;
+    numberOfPartisipants: number;
     eventAdmins: EventAdmin[];
     eventParticipants: EventParticipant[];
 }
@@ -91,6 +93,8 @@ const EventInfo = () => {
     // @ts-ignore
     const [event, setEvent] = useState<EventDetails>({})
     const { id } = useParams();
+    const [visibleDrawer,setVisibleDrawer]= useState(false);
+    const[state, setState] =useState(false); 
 
     useEffect(() => {
         const fetchData = async () => {
@@ -99,7 +103,7 @@ const EventInfo = () => {
             setLoading(true);
         };
         fetchData();
-    }, []);
+    }, [visibleDrawer, state]);
 
     const search = (value: any) => {
         const filteredTable = baseData.filter((item: any) =>
@@ -147,6 +151,9 @@ const EventInfo = () => {
                     <Col xs={24} sm={24} md={24} lg={8}>
                         <SortedEventInfo
                             event={event}
+                            setState={setState}
+                            setVisibleDrawer={setVisibleDrawer}
+                            visibleDrawer={visibleDrawer}
                             subscribeOnEvent={subscribeOnEvent}
                             unSubscribeOnEvent={unSubscribeOnEvent}
                             key={event.event?.eventName}

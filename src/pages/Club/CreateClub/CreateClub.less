@@ -1,0 +1,76 @@
+.createClub {
+    .createClubCard {
+      width: 80%;
+      margin: 0 auto;
+      cursor: default;
+      
+      .ant-upload {
+        font-size: 18px;
+        margin: 0 auto;
+        float: none;
+  
+        .clubLogo {
+          width: 350px;
+        }
+      }
+  
+      .ant-form-item-label {
+        padding: 0;
+      }
+  
+      .clubButtons {
+        text-align: center;
+  
+        .ant-btn-primary {
+          width: 65%;
+        }
+      }
+    }
+  
+    .clubMembersCard {
+      width: 80%;
+      margin: 40px auto 0;
+  
+      .ant-table-wrapper {
+        border-bottom: 2px solid rgb(60, 84, 56);
+      }
+    }
+  
+    @media (max-width: 575px) {
+      .createClubCard {
+        width: 100%;
+  
+        .ant-upload {
+          width: 100%;
+  
+          .clubLogo {
+            width: 100%;
+          }
+        }
+  
+        .clubButtons {
+          text-align: center;
+  
+          .ant-btn-primary {
+            width: 70%;
+          }
+        }
+      }
+  
+      .ClubMembersCard {
+        width: 100%;
+      }
+    }
+  
+    @media (max-width: 784px) {
+      .table {
+        overflow-x: scroll;
+      }
+    }
+  }
+  
+  
+  
+  .backButton{
+    background-color: gray;
+  }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Input, Button, Layout } from "antd";
+import { Table, Input, Button, Layout, Row } from "antd";
 import columns from "./columns";
 import notificationLogic from "../../../components/Notifications/Notification";
 import UserDistinction from "../Interfaces/UserDistinction";
@@ -13,6 +13,7 @@ import Distinction from "../Interfaces/Distinction";
 import Spinner from "../../Spinner/Spinner";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
+import moment from "moment";
 
 const { Content } = Layout;
 const DistinctionTable = () => {
@@ -60,8 +61,13 @@ const DistinctionTable = () => {
   }, []);
 
   let filteredData = searchedData
-    ? UserDistinctions.filter((item: any) => {
-        return Object.values(item).find((element) => {
+    ? UserDistinctions.filter((item) => {
+        return Object.values([
+          item.reporter,
+          item.reason,
+          item.number,
+          moment(item.date.toLocaleString()).format("DD-MM-YYYY"),
+        ]).find((element) => {
           return String(element).toLowerCase().includes(searchedData);
         });
       })
@@ -142,6 +148,7 @@ const DistinctionTable = () => {
     setData([...filteredData]);
     notificationLogic("success", "Відзначення успішно змінено!");
   };
+
   return loading === false ? (
     <Spinner />
   ) : (
@@ -168,7 +175,7 @@ const DistinctionTable = () => {
             ) : (
               <></>
             )}
-            <Input placeholder="Пошук" onChange={handleSearch} />
+            <Input placeholder="Пошук" onChange={handleSearch} allowClear />
           </div>
           <div>
             <Table
@@ -191,6 +198,12 @@ const DistinctionTable = () => {
                   },
                 };
               }}
+              pagination={
+                {
+                  showLessItems: true,
+                  responsive:true
+                }
+              }
               bordered
               rowKey="id"
             />

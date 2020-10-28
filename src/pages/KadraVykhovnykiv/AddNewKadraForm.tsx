@@ -4,8 +4,6 @@ import { Form, Input, DatePicker, AutoComplete, Select, Button } from 'antd';
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import adminApi from "../../api/adminApi";
 import notificationLogic from '../../components/Notifications/Notification';
-import { findAllByDisplayValue } from '@testing-library/react';
-
 
 type FormAddKadraProps = {
     onAdd: () => void;
@@ -154,6 +152,12 @@ type FormAddKadraProps = {
              className={classes.formField}
              label="Дата вручення"
              name="dateOfGranting"
+             rules={[
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
+            ]}
          >
              <DatePicker className={classes.inputField}/>
          </Form.Item>
@@ -166,13 +170,20 @@ type FormAddKadraProps = {
              name="numberInRegister"
 
              rules={[
-                 {
-                     required: true,
-                     message: 'Це поле має бути заповненим'
-                 },
-             ]}
+                {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
+                {
+                    max: 6,
+                    message: "Поле не може перевищувати 6 символів!",
+                }
+            ]}
          >
              <Input
+               type="number"
+              min={1}
+              max={999999}
                  className={classes.inputField} />
          </Form.Item>
 
@@ -186,8 +197,8 @@ type FormAddKadraProps = {
                     required: true,
                     message: 'Це поле має бути заповненим'
                 },
-                { max: 100, message: 'Причина надання не може перевищувати 100 символів' }
-            ]}
+                { max: 100, message: 'Поле не може перевищувати 100 символів' }
+            ]}  
          >
              <Input
                  className={classes.inputField}  />
@@ -197,12 +208,21 @@ type FormAddKadraProps = {
              className={classes.formField}
              label="Лінк"
              name="link"
+             rules={[
+                { max: 500, message: 'Поле не може перевищувати 500 символів' }
+            ]}
          >
              <Input
                  className={classes.inputField} />
          </Form.Item>
          <Form.Item style = {{ textAlign: "right"}}>
-      
+         <Button
+          type="primary" className={classes.clearButton}  onClick={()=> {form.resetFields()}}
+        >
+         Очистити
+        </Button>
+
+
         <Button
          type="primary" htmlType="submit" 
         >

@@ -146,25 +146,26 @@ const EventUser = () => {
     <div className={classes.wrapper}>
       <div className="avatarWrapper">
                     
- {userToken.nameid === userId && allEvents?.createdEvents.length !== 0 && (
+ 
+
+<AvatarAndProgress imageUrl={currentUser.imagePath} time={currentUser.timeToJoinPlast} firstName={currentUser.firstName} lastName={currentUser.lastName} isUserPlastun={true} />
+{userToken.nameid === userId && allEvents?.createdEvents.length !== 0 && (
           <Button
             type="primary"
-            className={classes.button}
+            className={classes.buttonInside}
+            style={{marginBottom:"15px"}}
             onClick={() => setShowEventCreateDrawer(true)}
           >
             Створити подію
           </Button>
-        )}
-
-<AvatarAndProgress imageUrl={currentUser.imagePath} time={currentUser.timeToJoinPlast} firstName={currentUser.firstName} lastName={currentUser.lastName} isUserPlastun={true} />
+        )} 
 </div>
-       
+ 
         
       <div className={classes.wrapperCol}>
         <div className={classes.wrapper}>
           <div className={classes.wrapper2}>
             <Title level={2}> Відвідані події </Title>
-            <div className={classes.line} />
             {allEvents.visitedEvents?.length === 0 &&
               userToken.nameid !== userId && (
                 <h2>
@@ -185,7 +186,7 @@ const EventUser = () => {
                 <br />
                 <Button
                   type="primary"
-                  className={classes.button}
+                  className={classes.buttonInside}
                   onClick={() => setVisitedEventsModal(true)}
                 >
                   Список
@@ -201,12 +202,12 @@ const EventUser = () => {
               footer={[
                 <Button
                   type="primary"
-                  className={classes.button}
+                  className={classes.buttonSmall}
+                  style={{marginRight:"110px",marginLeft:"110px"}}
                   onClick={() => setVisitedEventsModal(false)}
                 >
-                  {" "}
-                  Закрити{" "}
-                </Button>,
+                  Закрити
+                </Button>
               ]}
             >
               {allEvents?.visitedEvents?.map((item: any) => (
@@ -226,9 +227,8 @@ const EventUser = () => {
                   </h2>
                   <Button
                     type="primary"
-                    className={classes.button}
-                    id={classes.button}
-                    onClick={() => history.push(`/events/${item.id}/details`)}
+                    className={classes.buttonSmall}
+                    onClick={() => history.push(`/events/details/${item.id}`)}
                   >
                     Деталі
                   </Button>
@@ -239,7 +239,6 @@ const EventUser = () => {
           </div>
           <div className={classes.wrapper3}>
             <Title level={2}> Створені події </Title>
-            <div className={classes.line} />
             {allEvents.createdEvents.length !== 0 && (
               <div>
                 <Badge
@@ -249,30 +248,14 @@ const EventUser = () => {
                 <br />
                 <Button
                   type="primary"
-                  className={classes.button}
+                  className={classes.buttonInside}
                   onClick={() => setCreatedEventsModal(true)}
                 >
                   Список
                 </Button>
               </div>
             )}
-            {userToken.nameid === userId &&
-              allEvents.createdEvents.length === 0 && (
-                <div>
-                  <h2>Ви ще не створили жодної події</h2>
-                  {canCreate ? (
-                    <Button
-                      type="primary"
-                      className={classes.button}
-                      onClick={() => setShowEventCreateDrawer(true)}
-                    >
-                      Створити подію
-                    </Button>
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              )}
+            
 
             <EventCreateDrawer
               visibleEventCreateDrawer={showEventCreateDrawer}
@@ -296,15 +279,16 @@ const EventUser = () => {
               className={classes.modal}
               onCancel={() => setCreatedEventsModal(false)}
               footer={[
-                <div className={classes.modalFooter}>
+                <div className={classes.Modal}>
                   <Button
                     type="primary"
-                    className={classes.button}
+                    className={classes.buttonSmall}
+                    style={{marginRight:"110px",marginLeft:"110px"}}
                     onClick={() => setCreatedEventsModal(false)}
                   >
                     Закрити
                   </Button>
-                </div>,
+                </div>
               ]}
             >
               <Input.Search
@@ -382,17 +366,15 @@ const EventUser = () => {
                   </h2>
                   <Button
                     type="primary"
-                    className={classes.button}
-                    id={classes.button}
-                    onClick={() => history.push(`/events/${item.id}/details`)}
+                    className={classes.buttonSmall}
+                    onClick={() => history.push(`/events/details/${item.id}`)}
                   >
                     Деталі
                   </Button>
                   {item.eventStatusID !== 1 && userToken.nameid === userId && (
                     <Button
                       type="primary"
-                      className={classes.button}
-                      id={classes.button}
+                      className={classes.buttonSmall}
                       onClick={() => {
                         setShowEventEditDrawer(true);
                         setEventId(item.id);
@@ -419,15 +401,14 @@ const EventUser = () => {
               {" "}
               Заплановані події{" "}
             </Title>
-            <div className={classes.line} />
             {allEvents?.planedEvents?.length === 0 &&
               userToken.nameid === userId && (
                 <div>
                   <h2>Ви ще не запланували жодної події</h2>
                   <Button
                     type="primary"
-                    className={classes.button}
-                    id={classes.subcribeButton}
+                    className={classes.buttonInside}
+                    //id={classes.subcribeButton}
                     onClick={() => history.push("/events/types")}
                   >
                     Зголоситись на подію
@@ -450,7 +431,7 @@ const EventUser = () => {
                 <br />
                 <Button
                   type="primary"
-                  className={classes.button}
+                  className={classes.buttonInside}
                   onClick={() => setPlannedEventsModal(true)}
                 >
                   Список
@@ -466,19 +447,20 @@ const EventUser = () => {
               footer={[
                 <Button
                   type="primary"
-                  className={classes.button}
-                  id={classes.subcribeButton}
+                  className={classes.buttonSmall}
+                  style={{marginRight:"110px",marginLeft:"110px"}}
                   onClick={() => history.push("/events/types")}
                 >
                   Зголоситись на подію
                 </Button>,
                 <Button
                   type="primary"
-                  className={classes.button}
+                  className={classes.buttonSmall}
+                  style={{marginRight:"110px",marginLeft:"110px"}}
                   onClick={() => setPlannedEventsModal(false)}
                 >
                   Закрити
-                </Button>,
+                </Button>
               ]}
             >
               {allEvents?.planedEvents?.map((item: any) => (
@@ -498,10 +480,8 @@ const EventUser = () => {
                   </h2>
                   <Button
                     type="primary"
-                    className={classes.button}
-                    id={classes.button}
-                    style={{ marginLeft: 160 }}
-                    onClick={() => history.push(`/events/${item.id}/details`)}
+                    className={classes.buttonSmall}
+                    onClick={() => history.push(`/events/details/${item.id}`)}
                   >
                     Деталі
                   </Button>
@@ -515,13 +495,12 @@ const EventUser = () => {
               {" "}
               Календар подій{" "}
             </Title>
-            <div className={classes.line} />
             <CalendarOutlined
               style={{ fontSize: "23px", marginBottom: "7.5px" }}
             />
             <Button
               type="primary"
-              className={classes.button}
+              className={classes.buttonInside}
               onClick={() => setShowEventCalendarDrawer(true)}
             >
               Переглянути

@@ -3,7 +3,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip, Input } from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getRegionById, getRegionLogo, removeRegion, getRegionAdministration, getRegionDocuments } from "../../api/regionsApi";
+import { addFollower, getRegionById, getRegionLogo, removeRegion, getRegionAdministration, getRegionDocuments, getHead } from "../../api/regionsApi";
 import "./Region.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg"
 import Title from "antd/lib/typography/Title";
@@ -14,7 +14,10 @@ import CityDocument from "../../models/City/CityDocument";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
 import userApi from "./../../api/UserApi";
 import {getLogo} from "./../../api/citiesApi"
-import { Console } from "console";
+import CitiesRedirectForm from "./CitiesRedirectForm";
+import CityDetailDrawer from "../City/CityDetailDrawer/CityDetailDrawer";
+import RegionDetailDrawer from "./RegionsDetailDrawer";
+
 
 
 
@@ -23,6 +26,10 @@ const Region = () => {
   const { id } = useParams();
   const [visibleModal, setVisibleModal] = useState(false);
   const [loading, setLoading] = useState(false);
+
+
+  const [photoStatus, setPhotoStatus] = useState(true);
+
 
   const [document, setDocument] = useState<any>({
     ID: '',
@@ -50,10 +57,9 @@ const Region = () => {
     phoneNumber: '',
     email: '',
     link: '',
-    documents: [{}]
+    documents: [{}],
+    postIndex:''
   });
-
-  const [RegionLogo64, setRegionLogo64] = useState<string>("");
 
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [admins, setAdmins] = useState<any[]>([{
@@ -79,15 +85,25 @@ const Region = () => {
     logo: ''
   }]);
 
+  const [memberRedirectVisibility, setMemberRedirectVisibility] = useState<boolean>(false)
+
   const [canCreate, setCanCreate] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
 
   const [visible, setvisible] = useState<boolean>(false);
 
+  const [head, setHead]=useState<any>({
+    user:{
+      firstName:'',
+      lastName:''
+      
+    },
+    startDate:'',
+    endDate:''
+  })
 
-
-  const setPhotos = async (members: any[], admins: any[], logo: string) => {
+  const setPhotos = async (members: any[], admins: any[]) => {
 
     for (let i = 0; i < admins.length; i++) {
       admins[i].user.imagePath = (
@@ -110,12 +126,8 @@ const Region = () => {
 
     setPhotosLoading(false);
 
-    if (logo === null) {
-      setRegionLogo64(CityDefaultLogo);
-    } else {
-      const response = await getRegionLogo(logo);
-      setRegionLogo64(response.data);
-    }
+    
+  
     setRegionLogoLoading(false);
   };
 
@@ -134,7 +146,16 @@ const Region = () => {
       okType: 'danger',
       cancelText: 'Скасувати',
       maskClosable: true,
-      onOk() { deleteRegion() }
+      onOk() { 
+        {members[0].name !== '' ? (
+        setMemberRedirectVisibility(true)
+        )
+        :
+        (
+        deleteRegion()
+        )
+        }
+      }
     });
   }
 
@@ -145,15 +166,24 @@ const Region = () => {
     try {
       const response = await getRegionById(id);
       const response1 = await getRegionAdministration(id);
+
+      const responseHead = await getHead(id);
+
+
+      setHead(responseHead.data);
       setSixMembers(response.data.cities, 6);
 
       setPhotosLoading(true);
       setAdmins(response1.data);
       setRegionLogoLoading(true);
-      setPhotos([...response.data.cities], [...response1.data],
-        response.data.logo);
+      setPhotos([...response.data.cities], [...response1.data]);
 
       setRegion(response.data);
+
+      if(response.data.logo==null){
+        setPhotoStatus(false);
+      }
+     
 
     } finally {
       setLoading(false);
@@ -163,7 +193,8 @@ const Region = () => {
   const handleOk = () => {
 
     setvisible(false);
-
+    setMemberRedirectVisibility(false);
+    
   };
 
 
@@ -207,6 +238,7 @@ const Region = () => {
   useEffect(() => {
     setRegionDocs();
     getRegion();
+    
 
   }, []);
 
@@ -220,10 +252,12 @@ const Region = () => {
               <Title level={3}>Округ {region.regionName}</Title>
               <Row className="cityPhotos" gutter={[0, 12]}>
                 <Col md={13} sm={24} xs={24}>
-                  {regionLogoLoading ? (
-                    <Skeleton.Avatar active shape={"square"} size={172} />
+                  {photoStatus ? (
+                    <img src={region.logo} alt="Region" className="cityLogo" />
+                   
                   ) : (
-                      <img src={RegionLogo64} alt="City" className="cityLogo" />
+                      
+                      <img src={CityDefaultLogo} alt="Region" className="cityLogo" />
                     )}
                 </Col>
                 <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
@@ -237,26 +271,24 @@ const Region = () => {
               </Row>
               <Row className="cityInfo">
                 <Col md={13} sm={24} xs={24}>
-                  {region.head ? (
+                 {head.user?(
                     <div>
                       <Paragraph>
-                        <b>Голова округу:</b> {region.head.user.firstName}{" "}
-                        {region.head.user.lastName}
+                        <b>Голова округу:</b> {head.user.firstName}{" "}
+                        {head.user.lastName}
                       </Paragraph>
                       <Paragraph>
-                        <b>Час правління:</b> {moment(region.head.startDate).format("DD.MM.YYYY")}
-                        {region.head.endDate
-                          ? ` - ${moment(region.head.endDate).format(
+                        <b>Час правління:</b> {moment(head.startDate).format("DD.MM.YYYY")}
+                        {head.endDate
+                          ? ` - ${moment(head.endDate).format(
                             "DD.MM.YYYY"
                           )}`
                           : " "}
                       </Paragraph>
-                    </div>
-                  ) : (
-                      <Paragraph>
-                        <b>Немає голови округу</b>
-                      </Paragraph>
-                    )}
+                    </div>) : (
+                      <p>Ще немає голови округу</p>
+                    )
+}
                 </Col>
 
                 <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
@@ -265,8 +297,8 @@ const Region = () => {
                       {region.link ? (
                         <Paragraph
                           ellipsis>
-                          <b>Посилання:</b>{" "}
-                          <u><a href={region.link} target="_blank">
+                          <b >Посилання:</b>{" "}
+                          <u><a href={region.link} target="_blank" className="link">
                             {region.link}
                           </a></u>
                         </Paragraph>
@@ -336,7 +368,9 @@ const Region = () => {
                         title="Видалити округ">
                         <DeleteOutlined
                           className="cityInfoIconDelete"
-                          onClick={() => seeDeleteModal()}
+                          onClick={
+                            
+                            () => seeDeleteModal()}
                         />
                       </Tooltip>
                     </Col>
@@ -348,55 +382,21 @@ const Region = () => {
             </Card>
           </Col>
 
+
+
+
+
           <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
             <Card hoverable className="cityCard">
-              <Title level={4}>Члени округу</Title>
+              <Title level={4}>Опис округу</Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
-                {members.length !== 0 ? (
-                  members.map((member) => (
-                    <Col
-                      className="cityMemberItem"
-                      key={member.id}
-                      xs={12}
-                      sm={8}
-                    >
-                      <div
-                        onClick={() =>
-                          history.push(`/cities/${member.id}`)
-                        }
-                      >
-                        {photosLoading ? (
-                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
-                        ) : (
+             
 
-                            <Avatar size={64} src={member.logo} />
-                          )}
-                        <p className="userName">{member.name}</p>
-
-                      </div>
-                    </Col>
-                  ))
-                ) : (
-                    <Paragraph>Ще немає членів округу</Paragraph>
-                  )}
+                  <div className="regionDesc">{region.description}</div>
 
               </Row>
-              <div className="cityMoreButton">
-              <Button
-                type="primary"
-                className="cityInfoButton"
-                onClick={() => history.push(`/regions/members/${id}`)}
-              >
-                Більше
-              </Button>
-            </div>
-
             </Card>
           </Col>
-
-
-
-
 
           <Col
             xl={{ span: 7, offset: 0 }}
@@ -450,7 +450,51 @@ const Region = () => {
             </Card>
           </Col>
 
+          <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+            <Card hoverable className="cityCard">
+              <Title level={4}>Члени округу</Title>
+              <Row className="cityItems" justify="center" gutter={[0, 16]}>
+                {members[0].name !== '' ? (
+                  members.map((member) => (
+                    <Col
+                      className="cityMemberItem"
+                      key={member.id}
+                      xs={12}
+                      sm={8}
+                    >
+                      <div
+                        onClick={() =>
+                          history.push(`/cities/${member.id}`)
+                        }
+                      >
+                        {photosLoading ? (
+                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        ) : (
 
+                            <Avatar size={64} src={member.logo} />
+                          )}
+                        <p className="userName">{member.name}</p>
+
+                      </div>
+                    </Col>
+                  ))
+                ) : (
+                    <Paragraph>Ще немає членів округу</Paragraph>
+                  )}
+
+              </Row>
+              <div className="cityMoreButton">
+              <Button
+                type="primary"
+                className="cityInfoButton"
+                onClick={() => history.push(`/regions/members/${id}`)}
+              >
+                Більше
+              </Button>
+            </div>
+
+            </Card>
+          </Col>
          
 
           <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
@@ -517,6 +561,22 @@ const Region = () => {
         >
           <AddNewSecretaryForm onAdd={handleOk}></AddNewSecretaryForm>
         </Modal>
+
+        <Modal
+          title="Оберіть округ до якого належатимуть станиці-члени:"
+          visible={memberRedirectVisibility}
+          onOk={handleOk}
+          onCancel={handleOk}
+          footer={null}
+        >
+          <CitiesRedirectForm onAdd={handleOk}/>
+        </Modal>
+
+        <RegionDetailDrawer
+        region={region}
+        setVisibleDrawer={setVisibleDrawer}
+        visibleDrawer={visibleDrawer}
+      ></RegionDetailDrawer>
 
 
       </Layout.Content>

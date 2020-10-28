@@ -23,6 +23,12 @@ export type UserPlastDegreePut ={
     plastDegreeId : number;
     endDate : string;
 }
+export type UserDates ={
+    dateEntry : string;
+    dateOath : string | null
+    dateEnd: string | null;
+    userId : string;
+}
 const getAccessLevelById = async (id : string) => {
     const response = await Api.get(`ActiveMembership/accessLevel/${id}`);
 
@@ -62,6 +68,17 @@ const addEndDateForUserPlastDegree = async (userPlastDegreePut: UserPlastDegreeP
        
     return response.data;
 }
+const getUserDates = async (id : string) :Promise<UserDates>=> {
+    const response = await Api.get(`ActiveMembership/dates/${id}`);
+
+    return response.data;
+ };
+ const postUserDates = async (userDates : UserDates) =>{
+     const response = await Api.post(`ActiveMembership/dates`, userDates);
+        
+     return response.data;
+ };
+
 export default
 { 
     getAccessLevelById,
@@ -70,5 +87,7 @@ export default
     postUserPlastDegree,
     removeUserPlastDegree,
     setPlastDegreeAsCurrent,
-    addEndDateForUserPlastDegree
+    addEndDateForUserPlastDegree,
+    getUserDates,
+    postUserDates
 };

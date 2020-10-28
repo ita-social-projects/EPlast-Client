@@ -130,7 +130,7 @@ export default function () {
                         <h2>Дата завершення: {moment(eventInfo?.event?.end).format("LLLL")}</h2>
                         <h2>Локація: {eventInfo?.event?._def.extendedProps.eventlocation}</h2>
                         <h2>Опис: {eventInfo?.event?._def.extendedProps.description}</h2>
-                        < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/${eventInfo?.event?.id}/details`)} >
+                        < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/details/${eventInfo?.event?.id}`)} >
                             Деталі
                         </Button>
                     </Modal >

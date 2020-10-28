@@ -8,6 +8,7 @@
     "@fullcalendar/core": "^5.1.0",
     "@fullcalendar/daygrid": "^5.1.0",
     "@fullcalendar/react": "^5.1.0",
+    "@microsoft/signalr": "^3.1.9",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -34,10 +35,12 @@
     "react-google-login": "^5.1.22",
     "react-google-oauth": "^1.0.0",
     "react-hook-form": "^5.7.2",
+    "react-infinite-scroller": "^1.2.4",
     "react-input-mask": "^2.0.4",
     "react-messenger-customer-chat": "^0.8.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
+    "signalr": "^2.4.1",
     "typescript": "~3.7.2",
     "yup": "^0.29.1"
   },
@@ -70,6 +73,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-infinite-scroller": "^1.2.1",
     "@types/react-input-mask": "^2.0.5",
     "@types/yup": "^0.29.3",
     "@typescript-eslint/eslint-plugin": "^2.33.0",

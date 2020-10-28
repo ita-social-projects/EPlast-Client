@@ -94,6 +94,7 @@ const DropDown = (props: Props) => {
       <Menu
         onClick={handleItemClick}
         theme="dark"
+        selectable={false}
         className={classes.menu}
         style={{
           top: pageY,

@@ -4,7 +4,6 @@ import Distinction from "../Interfaces/Distinction";
 import UserDistinction from "../Interfaces/UserDistinction";
 import distinctionApi from "../../../api/distinctionApi";
 import adminApi from "../../../api/adminApi";
-import notificationLogic from "../../../components/Notifications/Notification";
 import formclasses from "./Form.module.css";
 
 type FormAddDistinctionProps = {
@@ -181,18 +180,27 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       >
         <Input.TextArea
           allowClear
+          autoSize =
+          {
+            {
+              minRows: 2,
+              maxRows: 6
+            }
+          }
           className={formclasses.inputField}
           maxLength={251}
         />
       </Form.Item>
 
-      <Form.Item style={{ textAlign: "right" }}>
-        <Button key="back" onClick={handleCancel}>
-          Відмінити
-        </Button>
-        <Button type="primary" htmlType="submit">
-          Опублікувати
-        </Button>
+      <Form.Item>
+        <div className={formclasses.cardButton}>
+          <Button key="back" onClick={handleCancel}>
+            Відмінити
+          </Button>
+          <Button type="primary" htmlType="submit">
+            Опублікувати
+          </Button>
+        </div>
       </Form.Item>
     </Form>
   );
