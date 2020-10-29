@@ -23,7 +23,23 @@
 }
 
 /* Context menu right click */
+@media(max-width: 800px){
+  .searchContainer{
+    width: 100%;
+    flex-direction: column;
+    
+  }
+  .searchContainer>input{
+    max-width: 100%;
+    margin-left: auto; 
+  }
+  .searchContainer>button{
+    width: 100%;
+    margin-bottom: 10px;
+    margin-left: auto; 
 
+  }
+}
 .menu {
   box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
   position: absolute;
