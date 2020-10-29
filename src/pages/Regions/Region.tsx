@@ -58,7 +58,8 @@ const Region = () => {
     email: '',
     link: '',
     documents: [{}],
-    postIndex:''
+    postIndex:'',
+    city:''
   });
 
   const [visibleDrawer, setVisibleDrawer] = useState(false);

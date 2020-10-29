@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Modal, Input,  Button, Card, Spin } from 'antd';
+import {Modal, Input,  Button, Card, Spin, Drawer } from 'antd';
 
 import {KVTable} from './KVTable';
 
@@ -117,15 +117,14 @@ export const KadrasTable = ()=>{
 
        
             
-        <Modal
+        <Drawer width="auto"
           title="Надати кадру виховників"
           visible={visible}
-          onOk={handleOk}
-          onCancel={handleCancel}
-          footer={null}
+          onClose={handleCancel}
+         
         >
           <AddNewKadraForm onAdd={renewPage}></AddNewKadraForm>
-        </Modal>
+        </Drawer>
       </>
     )
         
