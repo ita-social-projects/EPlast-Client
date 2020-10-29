@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal} from 'antd';
+import { Modal,Drawer} from 'antd';
 import FormEditDecision from './FormEditDecision';
 import { DecisionPost } from '../../api/decisionsApi';
 
@@ -15,10 +15,11 @@ const EditDecisionModal = ({ record, showModal, setShowModal, onEdit, decision }
   const handleCancel = () => setShowModal(false);
 
   return (
-    <Modal
+    <Drawer
+      width="auto"
       title="Редагування рішення пластового проводу"
       visible={showModal}
-      onCancel={handleCancel}
+      onClose={handleCancel}
       footer = {null}
     >
       <FormEditDecision 
@@ -26,7 +27,7 @@ const EditDecisionModal = ({ record, showModal, setShowModal, onEdit, decision }
       decision = {decision}
       setShowModal = { setShowModal}
       onEdit = {onEdit}/>
-    </Modal>
+    </Drawer>
   );
 };
 

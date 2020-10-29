@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { Form, Input,Button } from 'antd';
 import decisionsApi, {DecisionPost} from '../../api/decisionsApi';
+import formclasses from './FormEditDecision.module.css';
 
 interface Props {
   record: number;
@@ -80,11 +81,13 @@ const FormEditDecision = ({ record,  setShowModal, onEdit, decision}: Props) => 
       <Button 
         key="back"
         onClick = {handleCancel}
+        className={formclasses.buttons}
         >
           Відмінити
         </Button>
         <Button
          type="primary" htmlType="submit"
+         className={formclasses.buttons}
         >
           Змінити
         </Button>
