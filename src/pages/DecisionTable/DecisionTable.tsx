@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Input, Button, Layout } from 'antd';
+import { Table, Input, Button, Layout,Pagination } from 'antd';
 import columns from './columns';
 import DropDown from './DropDownDecision';
 import AddDecisionModal from './AddDecisionModal';
@@ -52,9 +52,8 @@ const DecisionTable = () => {
    .catch(() =>{
     notificationLogic('error', "Рішення не існує");
    });
-  
-
   }
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -86,16 +85,6 @@ const DecisionTable = () => {
 
   const showModal = () => setVisibleModal(true);
 
-  const itemRender = (current: any, type: string, originalElement: any) => {
-    if (type === 'prev') {
-      return <Button type="primary">Попередня</Button>;
-    }
-    if (type === 'next') {
-      return <Button type="primary">Наступна</Button>;
-    }
-    return originalElement;
-  };
-
   return (
     <Layout>
       <Content>
@@ -110,7 +99,9 @@ const DecisionTable = () => {
               </Button>
             </div>
             <Table
+              className={classes.table}
               dataSource={filteredData}
+              scroll={{ x: 1300 }}
               columns={columns}
               bordered
               rowKey="id"
@@ -139,12 +130,12 @@ const DecisionTable = () => {
                   });
                 }
               }}
-              pagination={{
-                itemRender,
-                position: ['bottomRight'],
-                showTotal: (total, range) =>
-                  `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
-              }}
+              pagination={
+                {
+                  showLessItems: true,
+                  responsive:true
+                }
+              }
             />
             <ClickAwayListener onClickAway={handleClickAway}>
             <DropDown
