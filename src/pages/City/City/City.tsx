@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip } from "antd";
+import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip} from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../../api/citiesApi";
@@ -16,7 +16,7 @@ import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
 import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
-
+import notificationLogic from "../../../components/Notifications/Notification";
 
 const City = () => {
   const history = useHistory();
@@ -66,7 +66,7 @@ const City = () => {
 
   const deleteCity = async () => {
     await removeCity(city.id);
-
+    notificationLogic("success", "Станицю успішно видалено");
     history.push('/cities');
   }
 
