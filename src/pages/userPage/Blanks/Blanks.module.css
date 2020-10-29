@@ -18,7 +18,7 @@
     margin-bottom: 5px;
 }
 .wrapperImg {
-    width:  calc(100% - 200px);
+    width:  calc(100% - 60px);
     height: 521px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
     display: flex;
