@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Select, DatePicker } from "antd";
+import { Form, Button, Select, DatePicker, AutoComplete } from "antd";
 import classes from "../../pages/Regions/Form.module.css";
 import regionsApi from "../../api/regionsApi";
 import notificationLogic from "../../components/Notifications/Notification";
 import Modal from "antd/lib/modal/Modal";
+import moment from "moment";
 
 interface Props {
   userId: string;
   showAdministratorModal: boolean;
   regionId: number;
-  setShowAdministratorModal: (showModal: boolean) => void;
+  setShowAdministratorModal: (showAdministratorModal: boolean) => void;
 }
 
 const AddNewAdministratorForm = ({
@@ -20,6 +21,7 @@ const AddNewAdministratorForm = ({
 }: Props) => {
   const [currentRegion, setCurrentRegion] = useState<number>();
   const [form] = Form.useForm();
+  const [date, setDate] = useState<any>();
 
   const [types, setTypes] = useState<any[]>([
     {
@@ -28,17 +30,30 @@ const AddNewAdministratorForm = ({
     },
   ]);
 
+  const disabledEndDate = (current: any) => {
+    return current && current < date;
+  };
+
+  const disabledStartDate = (current: any) => {
+    return current && current > moment();
+  };
+
   const handleSubmit = async (values: any) => {
     const newAdmin: any = {
       id: 0,
       userId: userId,
-      AdminTypeId: JSON.parse(values.AdminType).id,
+      AdminTypeId: await (
+        await regionsApi.getAdminTypeIdByName(values.AdminType)
+      ).data,
       startDate: values.startDate,
       endDate: values.endDate,
       regionId: regionId,
     };
     await regionsApi.AddAdmin(newAdmin);
+    form.resetFields();
+
     notificationLogic("success", "Користувач успішно доданий в провід");
+
     form.resetFields();
     setShowAdministratorModal(false);
   };
@@ -66,13 +81,20 @@ const AddNewAdministratorForm = ({
           },
         ]}
       >
-        <Select filterOption={false} className={classes.inputField}>
-          {types?.map((o) => (
-            <Select.Option key={o.id} value={JSON.stringify(o)}>
-              {o.adminTypeName}
-            </Select.Option>
-          ))}
-        </Select>
+        <AutoComplete
+          className={classes.inputField}
+          options={[
+            { value: "Голова Округу" },
+            { value: "Писар" },
+            { value: "Бунчужний" },
+            { value: "Скарбник" },
+            { value: "Домівкар" },
+            { value: "Член ОПР" },
+            { value: "Голова ОПС" },
+            { value: "Голова ОПР" },
+          ]}
+          placeholder={"Тип адміністрування"}
+        ></AutoComplete>
       </Form.Item>
 
       <Form.Item
@@ -80,7 +102,11 @@ const AddNewAdministratorForm = ({
         label="Дата початку"
         name="startDate"
       >
-        <DatePicker className={classes.inputField} />
+        <DatePicker
+          className={classes.inputField}
+          disabledDate={disabledStartDate}
+          format="DD.MM.YYYY"
+        />
       </Form.Item>
 
       <Form.Item
@@ -88,7 +114,11 @@ const AddNewAdministratorForm = ({
         label="Дата кінця"
         name="endDate"
       >
-        <DatePicker className={classes.inputField} />
+        <DatePicker
+          className={classes.inputField}
+          disabledDate={disabledEndDate}
+          format="DD.MM.YYYY"
+        />
       </Form.Item>
 
       <Form.Item style={{ textAlign: "right" }}>
