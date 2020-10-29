@@ -37,8 +37,13 @@ const ModalChangeUserDates = ({
         }
     }
 
-    function disabledDate(current: any, date: string) {
-        return current && current < moment(date).endOf('day');
+    function disabledDate(current: any, date: string, futureDate? : string) {
+        let futureRes = false;
+        if (futureDate)
+        {
+            futureRes = moment(futureDate).endOf('day') < current;
+        }
+        return current && (current < moment(date).endOf('day') || futureRes);
       }
 
     const handleFinish = async (info : any)=>{
@@ -68,7 +73,7 @@ const ModalChangeUserDates = ({
         className={classes.formField}
        name="datepickerOath">
         <DatePicker format = "DD-MM-YYYY" 
-        disabledDate={(cur) => disabledDate(cur ,dates.dateEntry)}
+        disabledDate={(cur) => disabledDate(cur ,dates.dateEntry, (dates.dateEnd==="" ? undefined : dates.dateEnd))}
         defaultValue = { dates.dateOath !== "" ? moment(dates.dateOath, 'YYYY-MM-DD') : undefined}
         className={classes.selectField}
         placeholder="Дата присяги"
@@ -80,7 +85,7 @@ const ModalChangeUserDates = ({
         className={classes.formField}
        name="datepickerEnd">
         <DatePicker format = "DD-MM-YYYY" 
-        disabledDate={(cur) => disabledDate(cur ,dates.dateEntry)}
+        disabledDate={(cur) => disabledDate(cur , (dates.dateOath==="" ? dates.dateEntry : dates.dateOath))}
         defaultValue = { dates.dateEnd !== "" ? moment(dates.dateEnd, 'YYYY-MM-DD') : undefined}
         className={classes.selectField}
         placeholder="Дата завершення"
