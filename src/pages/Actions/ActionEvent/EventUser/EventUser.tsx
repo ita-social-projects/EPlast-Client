@@ -255,23 +255,7 @@ const EventUser = () => {
                 </Button>
               </div>
             )}
-            {userToken.nameid === userId &&
-              allEvents.createdEvents.length === 0 && (
-                <div>
-                  <h2>Ви ще не створили жодної події</h2>
-                  {canCreate ? (
-                    <Button
-                      type="primary"
-                      className={classes.button}
-                      onClick={() => setShowEventCreateDrawer(true)}
-                    >
-                      Створити подію
-                    </Button>
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              )}
+            
 
             <EventCreateDrawer
               visibleEventCreateDrawer={showEventCreateDrawer}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, PropsWithRef } from 'react';
 import { Table, Spin, Input } from 'antd';
 import columns from './columnsregions';
-import { getUsersAdministrations } from "../../../api/regionsApi";
+import { getUsersAdministrations, getUsersPreviousAdministrations } from "../../../api/regionsApi";
 
 
 interface props {
@@ -9,25 +9,42 @@ interface props {
   UserId: string;
 }
 
-export const UserRegionSecretaryTable = ({  UserId }: props) => {
+export const UserRegionSecretaryTable = ({ UserId }: props) => {
 
 
   const [data, setData] = useState<any>([{
     id: '',
     user: {
-        firstName:'',
-        lastName:''
+      firstName: '',
+      lastName: ''
     },
     adminType: {
-        adminTypeName:''
+      adminTypeName: ''
     },
     startDate: '',
     endDate: '',
-    region:{
-        regionName:''
+    region: {
+      regionName: ''
     }
   }]);
 
+
+
+  const [prevdata, setPrevData] = useState<any>([{
+    id: '',
+    user: {
+      firstName: '',
+      lastName: ''
+    },
+    adminType: {
+      adminTypeName: ''
+    },
+    startDate: '',
+    endDate: '',
+    region: {
+      regionName: ''
+    }
+  }]);
 
 
 
@@ -37,6 +54,11 @@ export const UserRegionSecretaryTable = ({  UserId }: props) => {
 
       setData(response.data);
     })
+
+    await getUsersPreviousAdministrations(UserId).then(resp => {
+      setPrevData(resp.data)
+    })
+
   }
 
   useEffect(() => {
@@ -47,13 +69,20 @@ export const UserRegionSecretaryTable = ({  UserId }: props) => {
 
   return (
     <div>
-
+      <h1>Дійсні діловодства округу</h1>
+      <br/>
       <Table
+      
         columns={columns}
         dataSource={data}
       />
+      <h1>Колишні діловодства округу</h1>
+      <br/>
+      <Table
+        columns={columns}
+        dataSource={prevdata}
+      />
     </div>
-
 
   )
 }
