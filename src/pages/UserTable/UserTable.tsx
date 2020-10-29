@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Input,
-  Layout,
-  Row,
-  Col,
-  Button,
-} from "antd";
+import { Table, Input, Layout, Row, Col, Button } from "antd";
 import adminApi from "../../api/adminApi";
 import DropDownUserTable from "./DropDownUserTable";
 import Title from "antd/lib/typography/Title";
@@ -25,6 +18,7 @@ const UsersTable = () => {
   const [searchedData, setSearchedData] = useState("");
   const [users, setUsers] = useState<UserTable[]>([]);
   const [updatedUser, setUpdatedUser] = useState<UserTable[]>([]);
+  const [roles, setRoles] = useState<string>();
 
   useEffect(() => {
     fetchData();
@@ -64,8 +58,12 @@ const UsersTable = () => {
   filteredData = filteredData.concat(
     users.filter(
       (item) =>
-        (item.user.firstName.toLowerCase()?.includes(searchedData.toLowerCase()) ||
-          item.user.lastName.toLowerCase()?.includes(searchedData.toLowerCase())) &&
+        (item.user.firstName
+          .toLowerCase()
+          ?.includes(searchedData.toLowerCase()) ||
+          item.user.lastName
+            .toLowerCase()
+            ?.includes(searchedData.toLowerCase())) &&
         !filteredData.includes(item)
     )
   );
@@ -120,6 +118,7 @@ const UsersTable = () => {
               event.preventDefault();
               setShowDropdown(true);
               setRecordObj(record.user.id);
+              setRoles(record.userRoles);
               setX(event.pageX);
               setY(event.pageY);
             },
@@ -149,6 +148,7 @@ const UsersTable = () => {
           pageY={y}
           onDelete={handleDelete}
           onChange={handleChange}
+          roles={roles}
         />
       </ClickAwayListener>
     </Layout.Content>

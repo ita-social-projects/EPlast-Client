@@ -24,6 +24,7 @@ interface Props {
   showDropdown: boolean;
   onDelete: (id: string) => void;
   onChange: (id: string, userRoles: string) => void;
+  roles: string | undefined;
 }
 
 const { SubMenu } = Menu;
@@ -119,6 +120,7 @@ const DropDown = (props: Props) => {
           showModal={showRegionModal}
           setShowModal={setShowRegionModal}
           onChange={onChange}
+          roles={props.roles}
         />
         <ChangeUserClubModal
           record={record}
