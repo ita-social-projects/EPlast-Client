@@ -12,7 +12,6 @@ import {
 import { UploadOutlined } from "@ant-design/icons";
 import styles from "./EditUserPage.module.css";
 import { checkNameSurName, checkPhone } from "../../SignUp/verification";
-import { getBase64 } from "./Services";
 import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
 import userApi from "../../../api/UserApi";
@@ -24,6 +23,7 @@ import { useParams } from "react-router-dom";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Spinner from "../../Spinner/Spinner";
 import { useHistory } from "react-router-dom";
+import { RcCustomRequestOptions } from "antd/es/upload/interface";
 
 export default function () {
   const history = useHistory();
@@ -159,24 +159,43 @@ export default function () {
     phone: [{ validator: checkPhone }],
   };
 
-  const uploadPhotoConfig = {
-    name: "file",
-    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-    headers: {
-      authorization: "authorization-text",
-    },
-    onChange(info: any) {
-      if (info.file.status === "done") {
-        getBase64(info.file.originFileObj, (imageUrl: any) => {
-          setUserAvatar(imageUrl);
-        });
-      } else if (info.file.status === "removed") {
-        setUserAvatar(avatar);
-      }
-    },
+  const getBase64 = (img: Blob, callback: Function) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+  
+  const checkFile = (size: number, fileName: string) => {
+    const extension = fileName.split(".").reverse()[0];
+    const isCorrectExtension =
+      extension.indexOf("jpeg") !== -1 ||
+      extension.indexOf("jpg") !== -1 ||
+      extension.indexOf("png") !== -1;
+    if (!isCorrectExtension) {
+      notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
+    }
+
+    const isSmaller2mb = size <= 3145728;
+    if (!isSmaller2mb) {
+      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+    }
+
+    return isCorrectExtension && isSmaller2mb;
   };
 
-  const { name, action, headers, onChange } = uploadPhotoConfig;
+  const handleUpload = (info: RcCustomRequestOptions) => {
+    if (info !== null) {
+      if (checkFile(info.file.size, info.file.name)) {
+        getBase64(info.file, (imageUrl: any) => {
+          setUserAvatar(imageUrl);
+        });
+        notificationLogic("success", "Фото завантажено");
+      }
+    } else {
+      setUserAvatar(avatar);
+      notificationLogic("error", "Проблема з завантаженням фото");
+    }
+  };
 
   const handleOnChangeNationality = (value: any, event: any) => {
     if (event.key === undefined) {
@@ -331,11 +350,11 @@ export default function () {
         <div className={styles.avatarWrapper}>
           <Avatar size={300} src={userAvatar} className="avatarElem" />
           <Upload
-            name={name}
-            action={action}
-            headers={headers}
-            onChange={onChange}
+            name="avatar"
             className={styles.changeAvatar}
+            showUploadList={false}
+            accept=".jpeg,.jpg,.png"
+            customRequest={handleUpload}
           >
             <Button className={styles.changeAvatarBtn}>
               <UploadOutlined /> Вибрати
@@ -394,7 +413,7 @@ export default function () {
                 className={styles.dataInput}
                 value={birthday}
                 onChange={handleOnChangeBirthday}
-                format="DD-MM-YYYY"
+                format="DD.MM.YYYY"
               />
             </Form.Item>
             <Form.Item
