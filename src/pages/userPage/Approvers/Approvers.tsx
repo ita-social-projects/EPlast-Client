@@ -33,7 +33,7 @@ const Assignments = () => {
 
   const deleteApprove = async (event: number) => {
     await userApi.deleteApprove(event).
-      then(() => { notificationLogic('success', "Поручення успішно видалине") }).
+      then(() => { notificationLogic('success', "Поручення успішно видалено") }).
       catch(() => { notificationLogic('error', "Не вдалося видалити поручення") });
     fetchData();
   }
@@ -67,7 +67,7 @@ const Assignments = () => {
                         cover={<Avatar alt="example" src={p.approver.user.imagePath} className="avatar" />}
                       >
                         <Meta title={p.approver.user.firstName + " " + p.approver.user.lastName} className="titleText" />
-                        <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className="titleText" />
+                        <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="titleText" />
                         <Button className="cardButton" danger onClick={() => deleteApprove(p.id)}>
                           Відкликати
                             </Button>
@@ -86,7 +86,7 @@ const Assignments = () => {
                           cover={<Avatar alt="example" src={p.approver.user.imagePath} className="avatar" />}
                         >
                           <Meta title={p.approver.user.firstName + " " + p.approver.user.lastName} className="titleText" />
-                          <Meta title={moment(p.confirmDate).format("DD-MM-YYYY")} className="titleText" />
+                          <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="titleText" />
                           <p className="cardP" />
                         </Card>
                       </Link>
@@ -100,14 +100,21 @@ const Assignments = () => {
                   <div>
                     <Tooltip
                       title="Поручитися за користувача"
-                      placement="rightBottom">
+                      placement="bottom">
                       <Link to="#" onClick={() => approveClick(data?.user.id)}>
-                          <Avatar
+                      <Card
+                          hoverable
+                          className="cardStyles"
+                          cover={<Avatar
                             src={AddUser}
-                            alt="example" size={168}
-                            className="avatarEmpty" 
-                            shape="square"/>
-                          <Meta className="cardBodyEmpty" />
+                            alt="example" size={166}
+                            shape="square"
+                            className="avatar"
+                           />}
+                        >
+                          <p className="cardP" />
+                          <p className="cardP" />
+                        </Card>
                       </Link>
                     </Tooltip>
                   </div>
@@ -141,7 +148,7 @@ const Assignments = () => {
                           />}
                       >
                         <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
-                        <Meta title={moment(data.clubApprover.confirmDate).format("DD-MM-YYYY")} className="titleText" />
+                        <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="titleText" />
                         <Button className="cardButton" danger onClick={() => deleteApprove(data.clubApprover.id)} value={data.clubApprover.id}>
                           Відкликати
                     </Button>
@@ -158,7 +165,7 @@ const Assignments = () => {
                             />}
                         >
                           <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
-                          <Meta title={moment(data.clubApprover.confirmDate).format("DD-MM-YYYY")} className="titleText" />
+                          <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="titleText" />
                         </Card>
                       </Link>
                     )}
@@ -204,7 +211,7 @@ const Assignments = () => {
                         />}
                     >
                       <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
-                      <Meta title={moment(data.cityApprover.confirmDate).format("DD-MM-YYYY")} className="titleText" />
+                      <Meta title={moment(data.cityApprover.confirmDate).format("DD.MM.YYYY")} className="titleText" />
                       <Button className="cardButton" danger onClick={() => deleteApprove(data.cityApprover.id)} value={data.cityApprover.id}>
                         Відкликати
                     </Button>
@@ -221,7 +228,7 @@ const Assignments = () => {
                             />}
                         >
                           <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
-                          <Meta title={moment(data.cityApprover.confirmDate).format("DD-MM-YYYY")} className="titleText" />
+                          <Meta title={moment(data.cityApprover.confirmDate).format("DD.MM.YYYY")} className="titleText" />
                         </Card>
                       </Link>
                     )}
