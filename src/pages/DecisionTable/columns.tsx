@@ -6,6 +6,7 @@ const columns = [
   {
     title: 'ID',
     dataIndex: 'id',
+    fixed: true,
     width: 60
   },
   {

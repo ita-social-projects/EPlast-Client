@@ -147,6 +147,5 @@ const getFileAsBase64 = async (fileName: string) =>{
     });
     return response;
   };
-    
 
 export default {getById, getAll, getOnCreate,getPdf,getFileAsBase64, post,postForCheckFile, put, remove};
