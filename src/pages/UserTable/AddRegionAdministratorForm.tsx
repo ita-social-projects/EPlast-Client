@@ -30,14 +30,6 @@ const AddNewAdministratorForm = ({
     },
   ]);
 
-  const disabledEndDate = (current: any) => {
-    return current && current < date;
-  };
-
-  const disabledStartDate = (current: any) => {
-    return current && current > moment();
-  };
-
   const handleSubmit = async (values: any) => {
     const newAdmin: any = {
       id: 0,
@@ -102,11 +94,7 @@ const AddNewAdministratorForm = ({
         label="Дата початку"
         name="startDate"
       >
-        <DatePicker
-          className={classes.inputField}
-          disabledDate={disabledStartDate}
-          format="DD.MM.YYYY"
-        />
+        <DatePicker className={classes.inputField} />
       </Form.Item>
 
       <Form.Item
@@ -114,11 +102,7 @@ const AddNewAdministratorForm = ({
         label="Дата кінця"
         name="endDate"
       >
-        <DatePicker
-          className={classes.inputField}
-          disabledDate={disabledEndDate}
-          format="DD.MM.YYYY"
-        />
+        <DatePicker className={classes.inputField} />
       </Form.Item>
 
       <Form.Item style={{ textAlign: "right" }}>
