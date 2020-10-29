@@ -48,10 +48,9 @@ const DecisionTable = () => {
         fileName: res.fileName,
         date:"Щойно" };
         setData([...data, dec]);
-        notificationLogic('success', "Рішення успішно додано");
    })
    .catch(() =>{
-    notificationLogic('success', "Рішення не існує");
+    notificationLogic('error', "Рішення не існує");
    });
   }
 
