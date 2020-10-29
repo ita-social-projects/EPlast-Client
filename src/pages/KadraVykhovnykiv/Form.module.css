@@ -14,7 +14,13 @@
     }
   }
 
-  
+  .clearButton{
+    float: left;
+    background-color:grey;
+    width: 125px;
+  }
+
+
   .selectField {
     float: right;
     text-align: left;
