@@ -8,7 +8,6 @@ const {Text} = Typography;
 
 const renderLabel = (name: string): ReactNode => <Text className="eventLabel">{name}</Text>
 const renderContent = (text: string): ReactNode => <Text className="event-data-input">{text}</Text>
-const renderDescription = (text: string): ReactNode => <Text className="dataDescription">{text}</Text>
 
 interface Props {
     eventInfo: EventInformation;
