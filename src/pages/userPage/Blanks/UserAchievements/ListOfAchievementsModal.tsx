@@ -1,5 +1,5 @@
-import { DeleteOutlined, DownloadOutlined, EyeOutlined, EyeTwoTone, FileImageOutlined, FilePdfOutlined } from "@ant-design/icons";
-import { Form, List, message, Modal, Spin } from "antd";
+import { DeleteOutlined, DownloadOutlined, EyeOutlined,  FileImageOutlined, FilePdfOutlined, LoadingOutlined } from "@ant-design/icons";
+import {List, message, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { getAchievementFile, openAchievemetFile, removeAchievementDocument, getAchievementsByPage } from "../../../../api/blankApi";
 import BlankDocument from "../../../../models/Blank/BlankDocument";
@@ -136,7 +136,7 @@ const ListOfAchievementsModal = (props: Props) => {
                     >
                         {loadingMore.loading && loadingMore.hasMore && (
                             <div className={classes.demoLoadingContainer}>
-                                <Spin />
+                                <LoadingOutlined />
                             </div>
                         )}
                     </List>

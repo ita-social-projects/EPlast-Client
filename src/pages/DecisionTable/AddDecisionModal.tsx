@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal } from 'antd';
+import { Modal,Drawer } from 'antd';
 import FormAddDecision from './FormAddDecision';
 import { Decision } from '../../api/decisionsApi';
 
@@ -14,16 +14,17 @@ const AddDecisionModal = ({ visibleModal, setVisibleModal, onAdd }: Props) => {
   const handleCancel = () => setVisibleModal(false);
 
   return (
-    <Modal
+    <Drawer
+      width="auto"
       title="Додати рішення пластового проводу"
       visible={visibleModal}
-      onCancel={handleCancel}
+      onClose={handleCancel}
       footer={null}
     >
       <FormAddDecision  
         setVisibleModal = {setVisibleModal}
         onAdd ={onAdd} />
-    </Modal>
+    </Drawer>
   );
 };
 

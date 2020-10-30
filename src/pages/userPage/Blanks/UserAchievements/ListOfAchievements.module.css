@@ -30,8 +30,10 @@
     height: 420px;
   }
   .demoLoadingContainer {
-    position: absolute;
-    bottom: 20px;
-    width: 100%;
+      font-size: 30px;
+      color: #3C5438;
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
     text-align: center;
   }
