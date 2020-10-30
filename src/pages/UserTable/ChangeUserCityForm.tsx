@@ -120,6 +120,7 @@ const ChangeUserCityForm = ({
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
         cityId={cityId}
+        onChange={onChange}
       ></AddAdministratorModal>
     </div>
   );

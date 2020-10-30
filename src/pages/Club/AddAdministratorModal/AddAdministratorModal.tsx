@@ -16,6 +16,7 @@ interface Props {
   setAdmin: (admin: ClubAdmin) => void;
   clubId: number;
   onAdd?: (admin?: ClubAdmin) => void;
+  onChange?: (id: string, userRoles: string) => void;
 }
 
 const AddAdministratorModal = (props: Props) => {
@@ -56,6 +57,7 @@ const AddAdministratorModal = (props: Props) => {
     } finally {
       props.onAdd?.(admin);
       props.setVisibleModal(false);
+      props.onChange?.(props.admin.userId, values.adminType);
       notificationLogic("success", "Користувач успішно доданий в провід");
       setLoading(false);
     }

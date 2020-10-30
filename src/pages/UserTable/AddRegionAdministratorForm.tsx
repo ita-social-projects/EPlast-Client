@@ -12,6 +12,7 @@ interface Props {
   regionId: number;
   setShowAdministratorModal: (showAdministratorModal: boolean) => void;
   roles: string | undefined;
+  onChange: (id: string, userRoles: string) => void;
 }
 
 const AddNewAdministratorForm = ({
@@ -20,6 +21,7 @@ const AddNewAdministratorForm = ({
   setShowAdministratorModal,
   regionId,
   roles,
+  onChange,
 }: Props) => {
   const [currentRegion, setCurrentRegion] = useState<number>();
   const [form] = Form.useForm();
@@ -49,11 +51,16 @@ const AddNewAdministratorForm = ({
         await regionsApi.AddAdmin(newAdmin);
         notificationLogic("success", "Користувач успішно доданий в провід");
         form.resetFields();
+        onChange(userId, values.AdminType);
+        setShowAdministratorModal(false);
+      } else if (roles?.includes("Голова Округу")) {
+        notificationLogic("error", "Даний користувач уже є головою округу :(");
+        form.resetFields();
         setShowAdministratorModal(false);
       } else {
         notificationLogic(
           "error",
-          "Даний користувач не може бути головою округу :("
+          "Даний користувач не може бути головою округу( не має ролі пластуна)"
         );
         form.resetFields();
         setShowAdministratorModal(false);
@@ -73,7 +80,7 @@ const AddNewAdministratorForm = ({
       form.resetFields();
 
       notificationLogic("success", "Користувач успішно доданий в провід");
-
+      onChange(userId, values.AdminType);
       form.resetFields();
       setShowAdministratorModal(false);
     }

@@ -8,6 +8,7 @@ interface Props {
   showAdministratorModal: boolean;
   setShowAdministratorModal: (showModal: any) => void;
   roles: string | undefined;
+  onChange: (id: string, userRoles: string) => void;
 }
 const AddRegionAdministratorModal = ({
   userId,
@@ -15,6 +16,7 @@ const AddRegionAdministratorModal = ({
   setShowAdministratorModal,
   regionId,
   roles,
+  onChange,
 }: Props) => {
   return (
     <Modal
@@ -30,6 +32,7 @@ const AddRegionAdministratorModal = ({
         showAdministratorModal={showAdministratorModal}
         setShowAdministratorModal={setShowAdministratorModal}
         roles={roles}
+        onChange={onChange}
       />
     </Modal>
   );

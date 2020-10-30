@@ -6,8 +6,14 @@ interface Props {
   record: string;
   showModal: boolean;
   setShowModal: (showModal: any) => void;
+  onChange: (id: string, userRoles: string) => void;
 }
-const ChangeUserRoleModal = ({ record, showModal, setShowModal }: Props) => {
+const ChangeUserRoleModal = ({
+  record,
+  showModal,
+  setShowModal,
+  onChange,
+}: Props) => {
   return (
     <Modal
       title="Редагування прав доступу користувача"
@@ -16,7 +22,11 @@ const ChangeUserRoleModal = ({ record, showModal, setShowModal }: Props) => {
       footer={null}
       onCancel={() => setShowModal(false)}
     >
-      <ChangeUserRoleForm record={record} setShowModal={setShowModal} />
+      <ChangeUserRoleForm
+        record={record}
+        setShowModal={setShowModal}
+        onChange={onChange}
+      />
     </Modal>
   );
 };

@@ -13,9 +13,10 @@ import adminApi from "../../api/adminApi";
 interface Props {
   record: string;
   setShowModal: (showModal: boolean) => void;
+  onChange: (id: string, userRoles: string) => void;
 }
 
-const ChangeUserRoleForm = ({ record, setShowModal }: Props) => {
+const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
   const userId = record;
   const [form] = Form.useForm();
 
@@ -30,9 +31,8 @@ const ChangeUserRoleForm = ({ record, setShowModal }: Props) => {
     setShowModal(false);
   };
   const handleFinish = async (value: any) => {
-    //const rolesParam = JSON.stringify(value.userRole);
     await adminApi.postCurrentRole(userId, value.userRole);
-
+    onChange(userId, value.userRole);
     setShowModal(false);
   };
 

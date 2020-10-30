@@ -79,6 +79,7 @@ const ChangeUserRegionForm = ({
           setShowAdministratorModal={setShowAdministratorModal}
           regionId={regionId}
           roles={roles}
+          onChange={onChange}
         ></AddRegionAdministratorModal>
       </Form>
     </div>

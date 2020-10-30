@@ -108,6 +108,7 @@ const DropDown = (props: Props) => {
           record={record}
           showModal={showEditModal}
           setShowModal={setShowEditModal}
+          onChange={onChange}
         />
         <ChangeUserCityModal
           record={record}

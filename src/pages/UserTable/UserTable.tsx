@@ -78,10 +78,10 @@ const UsersTable = () => {
     setShowDropdown(false);
   };
 
-  const handleChange = (id: string, userRoles: string) => {
+  const handleChange = (id: string, userRole: string) => {
     const filteredData = users.filter((d: any) => {
       if (d.id === id) {
-        d.userRoles = userRoles;
+        d.userRoles += ", " + userRole;
       }
       return d;
     });

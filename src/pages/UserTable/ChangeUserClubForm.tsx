@@ -122,6 +122,7 @@ const ChangeUserClubForm = ({
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
         clubId={clubId}
+        onChange={onChange}
       ></AddAdministratorModal>
     </div>
   );
