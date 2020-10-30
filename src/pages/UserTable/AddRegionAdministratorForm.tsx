@@ -36,54 +36,21 @@ const AddNewAdministratorForm = ({
 
   const handleSubmit = async (values: any) => {
     // перевірка чи голова станиці, а тоді перевірка чи юзер пластун
-    if (values.AdminType === "Голова Округу") {
-      if (roles?.includes("Пластун")) {
-        const newAdmin: any = {
-          id: 0,
-          userId: userId,
-          AdminTypeId: await (
-            await regionsApi.getAdminTypeIdByName(values.AdminType)
-          ).data,
-          startDate: values.startDate,
-          endDate: values.endDate,
-          regionId: regionId,
-        };
-        await regionsApi.AddAdmin(newAdmin);
-        notificationLogic("success", "Користувач успішно доданий в провід");
-        form.resetFields();
-        onChange(userId, values.AdminType);
-        setShowAdministratorModal(false);
-      } else if (roles?.includes("Голова Округу")) {
-        notificationLogic("error", "Даний користувач уже є головою округу :(");
-        form.resetFields();
-        setShowAdministratorModal(false);
-      } else {
-        notificationLogic(
-          "error",
-          "Даний користувач не може бути головою округу( не має ролі пластуна)"
-        );
-        form.resetFields();
-        setShowAdministratorModal(false);
-      }
-    } else {
-      const newAdmin: any = {
-        id: 0,
-        userId: userId,
-        AdminTypeId: await (
-          await regionsApi.getAdminTypeIdByName(values.AdminType)
-        ).data,
-        startDate: values.startDate,
-        endDate: values.endDate,
-        regionId: regionId,
-      };
-      await regionsApi.AddAdmin(newAdmin);
-      form.resetFields();
-
-      notificationLogic("success", "Користувач успішно доданий в провід");
-      onChange(userId, values.AdminType);
-      form.resetFields();
-      setShowAdministratorModal(false);
-    }
+    const newAdmin: any = {
+      id: 0,
+      userId: userId,
+      AdminTypeId: await (
+        await regionsApi.getAdminTypeIdByName(values.AdminType)
+      ).data,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      regionId: regionId,
+    };
+    await regionsApi.AddAdmin(newAdmin);
+    notificationLogic("success", "Користувач успішно доданий в провід");
+    form.resetFields();
+    onChange(userId, values.AdminType);
+    setShowAdministratorModal(false);
   };
 
   useEffect(() => {
