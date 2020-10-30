@@ -27,6 +27,7 @@ import AuthStore from "../../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
 import CitySelectModal from "./CitySelectModal/CitySelectModal";
 import ClickAwayListener from "react-click-away-listener";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
@@ -151,12 +152,25 @@ const AnnualReportTable = () => {
     }
   };
 
+  
+
   const handleRemove = async (id: number) => {
-    hideDropdowns();
+    hideDropdowns(); 
     try {
+      Modal.confirm({
+        title: "Ви дійсно хочете видалити річний звіт?",
+        icon: <ExclamationCircleOutlined/>,
+        okText: 'Так, видалити',
+        okType: 'danger',
+        cancelText: 'Скасувати',
+        maskClosable: true,
+        async onOk() {
       let response = await AnnualReportApi.remove(id);
       setAnnualReports(annualReports?.filter((item) => item.id !== id));
       showSuccess(response.data.message);
+        }
+      });
+      
     } catch (error) {
       showError(error.message);
     }
