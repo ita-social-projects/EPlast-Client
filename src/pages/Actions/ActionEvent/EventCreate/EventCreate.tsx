@@ -8,6 +8,7 @@ import notificationLogic from '../../../../components/Notifications/Notification
 import EventCategories from '../../../../models/EventCreate/EventCategories';
 import Users from '../../../../models/EventCreate/Users';
 import EventTypes from '../../../../models/EventCreate/EventTypes';
+import NotificationBoxApi from '../../../../api/NotificationBoxApi';
 
 const classes = require('./EventCreate.module.css');
 
@@ -76,6 +77,14 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
     }
     await eventUserApi.post(newEvent).then(response => {
       notificationLogic('success', 'Подія ' + values.EventName + ' успішно створена');
+      
+      NotificationBoxApi.createNotifications(
+        [values.commandantId, values.alternateId, values.bunchuzhnyiId, values.pysarId],
+        "Вам надано адміністративну роль в новій ",
+        1,
+        `/events/details/${response.data.event.id}`,
+        "події"
+        );
     }).catch(error => {
       if (error.response?.status === 400) {
         notificationLogic('error', 'Спробуйте ще раз');

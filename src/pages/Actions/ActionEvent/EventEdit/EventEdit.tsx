@@ -10,6 +10,7 @@ import EventCategories from '../../../../models/EventCreate/EventCategories';
 import EventTypes from '../../../../models/EventCreate/EventTypes';
 import Users from '../../../../models/EventCreate/Users';
 import EventEdit from '../../../../models/EventEdit/EventEdit';
+import NotificationBoxApi from '../../../../api/NotificationBoxApi';
 moment.locale('uk-ua');
 
 const classes = require('./EventEdit.module.css');
@@ -111,6 +112,13 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
         await eventUserApi.put(newEvent).then(response => {
             notificationLogic('success', 'Подія ' + values.EventName + ' успішно змінена');
 
+            NotificationBoxApi.createNotifications(
+                [values.commandantId, values.alternateId, values.bunchuzhnyiId, values.pysarId],
+                "Подія, в якій ви є адміністратором, змінена: ",
+                1,
+                `/events/details/${values.ID}`,
+                values.EventName
+                );
         }).catch(error => {
             if (error.response.status === 400) {
                 notificationLogic('error', 'Спробуйте ще раз');

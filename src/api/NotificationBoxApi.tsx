@@ -38,7 +38,7 @@ const getAllNotificationTypes = async () :Promise<Array<NotificationType>>=> {
 
 const postUserNotifications = async (userNotifications : Array<UserNotificationPost>) =>{
      const response = await Api.post(`NotificationBox/addNotifications`, userNotifications);
-        
+     
      return response.data;
  };
 
@@ -59,8 +59,33 @@ const removeNotification = async (notificationId : number) =>{
     return response.data;
 };
 
+const createNotifications = async (userIds : Array<string>, 
+                                   message : string, 
+                                   NotifiType : number, 
+                                   senderLink? : string,
+                                   senderName? : string
+                                   ) => 
+{
+    let notifications : UserNotificationPost[] = [];
+    
+    for (let i = 0; i < userIds.length; i++) {
+        notifications.push(
+           {
+               notificationTypeId: NotifiType,
+               message: message,
+               ownerUserId: userIds[i],
+               senderLink: senderLink? senderLink : "",
+               senderName: senderName? senderName : ""
+           }
+        ); 
+    }
+
+    await postUserNotifications(notifications);
+}
+
 export default
 { 
+    createNotifications,
     removeUserNotifications,
     removeNotification,
     postUserNotifications,
