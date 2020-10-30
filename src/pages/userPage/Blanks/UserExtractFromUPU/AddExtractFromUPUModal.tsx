@@ -19,6 +19,7 @@ const AddExtractFromUPUModal = (props: Props) => {
     const [fileName, setFileName] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [disabled, setDisabled] = useState(true);
+    const [buttonLoading, setButtonLoading] = useState(false);
 
     const normFile = (e: { fileList: any }) => {
         if (Array.isArray(e)) {
@@ -50,18 +51,21 @@ const AddExtractFromUPUModal = (props: Props) => {
       if (!isCorrectExtension) {
         notificationLogic("error", "Можливі розширення файлів: pdf");
         setDisabled(true);
+        return isCorrectExtension;
       }
       
       const isSmaller3mb = fileSize < 3145728;
       if (!isSmaller3mb) {
         notificationLogic("error", "Розмір файлу перевищує 3 Мб");
         setDisabled(true);
+        return isSmaller3mb;
       }
 
       return isSmaller3mb && isCorrectExtension;
     };
 
     const handleSubmit = async (values: any) => {
+      setButtonLoading(true);
       setLoading(true);
       const newDocument: BlankDocument = {
         id: 0,
@@ -76,6 +80,7 @@ const AddExtractFromUPUModal = (props: Props) => {
       removeFile();
       setDisabled(true);
       setLoading(false);
+      setButtonLoading(false);
     };
 
     const removeFile = () => {
@@ -149,7 +154,7 @@ const AddExtractFromUPUModal = (props: Props) => {
                 xs={{ span: 11, offset: 2 }}
                 sm={{ span: 6, offset: 1 }}
               >
-                <Button type="primary" htmlType="submit" disabled={disabled}>
+                <Button type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
                   Опублікувати
                 </Button>
               </Col>
