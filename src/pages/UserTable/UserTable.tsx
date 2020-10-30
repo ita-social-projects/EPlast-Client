@@ -98,15 +98,14 @@ const UsersTable = () => {
       }}
     >
       <Title level={2}>Таблиця користувачів</Title>
-      <Row gutter={16}>
-        <Col span={4}>
-          <Input.Search placeholder="Пошук" onChange={handleSearch} />
-        </Col>
-      </Row>
+      <div className={classes.searchContainer}>
+        <Input.Search placeholder="Пошук" onChange={handleSearch} />
+      </div>
       <Table
         className={classes.table}
         bordered
         rowKey="id"
+        scroll={{ x: 1300 }}
         columns={ColumnsForUserTable}
         dataSource={filteredData}
         onRow={(record) => {
