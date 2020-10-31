@@ -16,6 +16,12 @@ export type UserNotification ={
     checkedAt? : string;
 }
 
+const NotificationTypes = {
+    Default: 0,
+    EventNotifications: 0,
+    UserNotifications: 0 
+};
+
 export type UserNotificationPost ={
     notificationTypeId: number; 
     message : string;
@@ -32,9 +38,19 @@ const getAllUserNotifications = async (id : string) : Promise<Array<UserNotifica
 
 const getAllNotificationTypes = async () :Promise<Array<NotificationType>>=> {
     const response = await Api.get(`NotificationBox/getTypes`);
-
+    InitializeNotificationTypes(response.data);
     return response.data;
 };
+
+const InitializeNotificationTypes = (types : Array<NotificationType>) => {
+    debugger
+    const def = types.find(t => t.name="Default");
+    NotificationTypes.Default = def ? def.id : 0;
+    const eventNotifi = types.find(t => t.name="Створення події");
+    NotificationTypes.EventNotifications = eventNotifi ? eventNotifi.id : 0;
+    const userNotifi = types.find(t => t.name="Додавання користувача");
+    NotificationTypes.UserNotifications = userNotifi ? userNotifi.id : 0;
+}
 
 const postUserNotifications = async (userNotifications : Array<UserNotificationPost>) =>{
      const response = await Api.post(`NotificationBox/addNotifications`, userNotifications);
@@ -71,7 +87,7 @@ const createNotifications = async (userIds : Array<string>,
     for (let i = 0; i < userIds.length; i++) {
         notifications.push(
            {
-               notificationTypeId: NotifiType,
+               notificationTypeId: NotifiType !== 0 ? NotifiType : NotificationTypes.Default,
                message: message,
                ownerUserId: userIds[i],
                senderLink: senderLink? senderLink : "",
@@ -85,6 +101,7 @@ const createNotifications = async (userIds : Array<string>,
 
 export default
 { 
+    NotificationTypes,
     createNotifications,
     removeUserNotifications,
     removeNotification,

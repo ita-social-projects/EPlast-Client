@@ -81,7 +81,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       NotificationBoxApi.createNotifications(
         [values.commandantId, values.alternateId, values.bunchuzhnyiId, values.pysarId],
         "Вам надано адміністративну роль в новій ",
-        1,
+        NotificationBoxApi.NotificationTypes.EventNotifications,
         `/events/details/${response.data.event.id}`,
         "події"
         );

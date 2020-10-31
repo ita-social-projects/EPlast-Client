@@ -115,7 +115,7 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
             NotificationBoxApi.createNotifications(
                 [values.commandantId, values.alternateId, values.bunchuzhnyiId, values.pysarId],
                 "Подія, в якій ви є адміністратором, змінена: ",
-                1,
+                NotificationBoxApi.NotificationTypes.EventNotifications,
                 `/events/details/${values.ID}`,
                 values.EventName
                 );
