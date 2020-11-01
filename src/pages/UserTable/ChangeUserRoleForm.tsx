@@ -1,94 +1,74 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Select, Typography, Radio } from 'antd';
-import adminApi from '../../api/adminApi';
-import { useHistory } from 'react-router-dom';
-const { Title } = Typography;
+import React, { useState, useEffect } from "react";
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  Typography,
+  Radio,
+  AutoComplete,
+} from "antd";
+import adminApi from "../../api/adminApi";
 
 interface Props {
-    record: string;
-    setShowModal: (showModal: boolean) => void;
-    onChange: (id: string, userRoles: string) => void;
+  record: string;
+  setShowModal: (showModal: boolean) => void;
+  onChange: (id: string, userRoles: string) => void;
 }
 
 const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
-    const id = record;
-    const [form] = Form.useForm();
-    const history = useHistory();
+  const userId = record;
+  const [form] = Form.useForm();
 
-    const [roles, setRoles] = useState<any>({
-        userID: '',
-        userEmail: '',
-        allRoles: [{
-            id: '',
-            name: ''
-        }],
-        userRoles: ['']
-    })
+  const [role, setRole] = useState<any>();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await adminApi.getRolesForEdit(id).then(response => {
-                const { allRoles, userRoles } = response.data;
-                setRoles({ allRoles, userRoles });
-                form.setFieldsValue({
-                    userRoles: roles.userRoles
-                });
-            })
-        }
-        fetchData();
-    }, [])
+  useEffect(() => {
+    const fetchData = async () => {};
+    fetchData();
+  }, []);
 
-    const handleCancel = () => {
-        setShowModal(false);
-    }
-    const handleFinish = async (value: any) => {
-        const rolesParam = JSON.stringify(value.userRole);
-        await adminApi.putEditedRoles(id, rolesParam);
-        const newRoles: any = {
-            userID: roles.userID,
-            userEmail: roles.userEmail,
-            allRoles: [{
-                id: roles.allRoles.id,
-                name: roles.allRoles.name,
-            }],
-            userRoles: rolesParam
-        };
-        onChange(id, newRoles);
-        setShowModal(false);
-    };
+  const handleCancel = () => {
+    setShowModal(false);
+  };
+  const handleFinish = async (value: any) => {
+    await adminApi.postCurrentRole(userId, value.userRole);
+    onChange(userId, value.userRole);
+    setShowModal(false);
+  };
 
-    return (
-        <div>
-            <Form
-                name="basic"
-                onFinish={handleFinish}
-                form={form}
-            >
-                <h4>Оберіть одну або декілька ролей</h4>
-                <Form.Item name="userRole">
-                    <Select mode='multiple' >
-                        {roles?.allRoles.map((item: any) => (<Radio.Button key={item.id} value={item.name} >
-                            {item.name}
-                        </Radio.Button>))}
-                    </Select>
-                </Form.Item>
-                <Form.Item style={{ textAlign: "right" }}>
-                    <Button
-                        key="back"
-                        onClick={handleCancel}
-                    >
-                        Відмінити
-                        </Button>
-                    <Button
-                        type="primary" htmlType="submit"
-                    >
-                        Змінити
-                        </Button>
-
-                </Form.Item>
-            </Form>
-        </div>
-    );
+  return (
+    <div>
+      <Form name="basic" onFinish={handleFinish} form={form}>
+        <h4>Оберіть поточну роль користувача</h4>
+        <Form.Item
+          name="userRole"
+          rules={[
+            {
+              required: true,
+              message: "Це поле має бути заповненим",
+            },
+          ]}
+        >
+          <AutoComplete
+            options={[
+              { value: "Прихильник" },
+              { value: "Зацікавлений" },
+              { value: "Пластун" },
+              { value: "Колишній член пласту" },
+            ]}
+          ></AutoComplete>
+        </Form.Item>
+        <Form.Item style={{ textAlign: "right" }}>
+          <Button key="back" onClick={handleCancel}>
+            Відмінити
+          </Button>
+          <Button type="primary" htmlType="submit">
+            Змінити
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
+  );
 };
 
 export default ChangeUserRoleForm;

@@ -21,7 +21,7 @@ export default function () {
     ],
     Password: [
       { required: true, message: "Поле пароль є обов'язковим" },
-      { min: 8, message: 'Мінімальна допустима довжина - 6 символів' },
+      { min: 6, message: 'Мінімальна допустима довжина - 6 символів' },
       { validator: checkPassword }
     ],
     Name: [
