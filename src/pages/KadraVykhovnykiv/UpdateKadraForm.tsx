@@ -4,6 +4,7 @@ import { Form, Input, DatePicker, AutoComplete, Select, Button, Layout } from 'a
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import notificationLogic from '../../components/Notifications/Notification';
 import Spinner from '../Spinner/Spinner';
+import moment from 'moment';
 
 
 type FormUpdateKadraProps = {
@@ -11,7 +12,6 @@ type FormUpdateKadraProps = {
     record:number;
     onEdit:()=>void;
 }
-
 
 
  const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any)=>{
@@ -81,7 +81,7 @@ type FormUpdateKadraProps = {
 
 
 
-    return <Layout>
+    return <div>
     {currentKadra.numberInRegister === '' ? <Spinner/> :
     <Form
          name="basic"
@@ -94,7 +94,7 @@ type FormUpdateKadraProps = {
              className={classes.formField}
              label="Дата вручення"
              name="dateOfGranting"
-
+            initialValue={moment(currentKadra.dateOfGranting)}
              rules={[
                 {
                     required: true,
@@ -172,7 +172,7 @@ type FormUpdateKadraProps = {
         
      </Form>
  }
-</Layout>
+</div>
 }
 
 export default UpdateKadraForm;

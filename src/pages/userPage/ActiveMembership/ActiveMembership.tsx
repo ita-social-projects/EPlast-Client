@@ -36,6 +36,8 @@ const ActiveMembership = () => {
     false
   );
   const [plastDegreeIdToAddEndDate, setPlastDegreeIdToAddEndDate] = useState<number>(0);
+  const [startDateToAddEndDate, setStartDateToAddEndDate] = useState<string>("");
+  
   const userAdminTypeRoles = [
     "Admin",
     "Голова Пласту",
@@ -47,7 +49,7 @@ const ActiveMembership = () => {
     "Голова Станиці",
     "Діловод Станиці",
   ];
-  const userGenders = ["Чоловік", "Жінка"];
+  const userGenders = ["Чоловік", "Жінка", "Інша"];
 
   const handleAddDegree = async () => {
     await activeMembershipApi.getUserPlastDegrees(userId).then((response) => {
@@ -140,9 +142,12 @@ const ActiveMembership = () => {
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ]
         ) && (
-          <Button type="primary" onClick={showModal}>
-            Додати ступінь
-          </Button>
+          <div className={classes.buttonChange}>
+            <Button type="primary" onClick={showModal}>
+                Додати ступінь
+            </Button>
+          </div>
+ 
         )}
       </div>
 
@@ -246,6 +251,7 @@ const ActiveMembership = () => {
                     <button
                       onClick={() => {
                         setPlastDegreeIdToAddEndDate(pd.plastDegree.id);
+                        setStartDateToAddEndDate(pd.dateStart);
                         setEndDateVisibleModal(true);
                       }}
                       className={classes.button}
@@ -285,6 +291,7 @@ const ActiveMembership = () => {
       <ModalAddEndDatePlastDegree
         userId={userId}
         plastDegreeId={plastDegreeIdToAddEndDate}
+        dateOfStart={startDateToAddEndDate}
         endDateVisibleModal={endDateVisibleModal}
         setEndDateVisibleModal={setEndDateVisibleModal}
         handleAddEndDate={handleAddEndDate}

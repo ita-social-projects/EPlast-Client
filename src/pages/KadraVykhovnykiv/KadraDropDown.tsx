@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu , Modal} from 'antd';
+import { Drawer, Menu , Modal} from 'antd';
 import {
     FileSearchOutlined,
     DeleteOutlined,
@@ -104,16 +104,15 @@ const DropDown = (props: Props) => {
                 </Menu.Item>
             </Menu>
 
-         <Modal
+         <Drawer width="auto"
           title="Змінити кадру виховників"
           visible={visibleEdit}
-          onOk={handleOkEdit}
-          onCancel={handleCancelEdit}
+          onClose={handleCancelEdit}
           footer={null}
 
         >
           <UpdateKadraForm record={record} onAdd={handleCancelEdit} onEdit={onEdit}></UpdateKadraForm>
-        </Modal>
+        </Drawer>
         </>
       
     );
