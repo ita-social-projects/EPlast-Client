@@ -1,38 +1,48 @@
-
-import axios from 'axios';
-import Api from './api'
-import BASE_URL from '../config';
+import axios from "axios";
+import Api from "./api";
+import BASE_URL from "../config";
 
 const getUsersForTable = async () => {
-    const response = await Api.get(`Admin/usersTable`);
+  const response = await Api.get(`Admin/usersTable`);
 
-    return response;
+  return response;
 };
 
 const deleteUser = async (userId: string) => {
-    const response = await Api.remove(`Admin/deleteUser/${userId}`);
+  const response = await Api.remove(`Admin/deleteUser/${userId}`);
 
-    return response;
+  return response;
 };
 
 const getRolesForEdit = async (userId: string) => {
-    const response = await Api.get(`Admin/editRole/${userId}`);
+  const response = await Api.get(`Admin/editRole/${userId}`);
 
-    return response;
+  return response;
 };
 
 const putEditedRoles = async (userId: string, userRoles: any) => {
-    const response = await Api.put(`Admin/editedRole/${userId}`, userRoles);
+  const response = await Api.put(`Admin/editedRole/${userId}`, userRoles);
 
-    return response;
+  return response;
 };
 
 const putExpiredRole = async (userId: string) => {
-    const response = await Api.put(`Admin/changeRole/${userId}`);
+  const response = await Api.put(`Admin/changeRole/${userId}`);
 
-    return response;
+  return response;
 };
 
+const postCurrentRole = async (userId: string, role: string) => {
+  const response = await Api.post(`Admin/changeRole/${userId}/${role}`);
 
+  return response;
+};
 
-export default { getUsersForTable, deleteUser, getRolesForEdit, putEditedRoles, putExpiredRole };
+export default {
+  getUsersForTable,
+  deleteUser,
+  getRolesForEdit,
+  putEditedRoles,
+  putExpiredRole,
+  postCurrentRole,
+};
