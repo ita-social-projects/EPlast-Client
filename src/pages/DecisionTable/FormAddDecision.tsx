@@ -12,7 +12,6 @@ import decisionsApi, {
   statusTypePostParser } from '../../api/decisionsApi'
 import { getBase64 } from '../userPage/EditUserPage/Services';
 import notificationLogic from '../../components/Notifications/Notification';
-import classes from './Table.module.css';
 import formclasses from './FormAddDecision.module.css';
 type FormAddDecisionProps ={
    setVisibleModal: (visibleModal: boolean) => void;
@@ -111,6 +110,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
        name = "organization"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
         <Select
+         placeholder="Оберіть орган"
          className={formclasses.selectField}
          >
       {data?.organizations.map(o => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{o.organizationName}</Select.Option>))}
