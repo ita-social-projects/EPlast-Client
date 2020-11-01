@@ -1,6 +1,7 @@
 import Api from "./api";
 import notificationLogic from '../components/Notifications/Notification';
 import AuthStore from '../stores/AuthStore';
+import { string } from "yup";
 
 export default class AuthorizeApi {
 
@@ -93,4 +94,25 @@ export default class AuthorizeApi {
     return response;
   };
 
+  sendToken=async (token: string) => {
+    const response = await Api.post("Auth/signin/google/?googleToken="+token)
+      .then(response => {
+        if (response.data.token !== null) {
+          AuthStore.setToken(response.data.token);
+        }
+      })
+      .catch(error => {
+        if (error.response.status === 400) {
+          notificationLogic('error', error.response.data.value);
+        }
+      })
+    return response;
+  };
+  
+  getGoogleId= async () => {
+    
+    const response = await Api.get("Auth/GoogleClientId");
+
+    return response.data;
+  };
 }

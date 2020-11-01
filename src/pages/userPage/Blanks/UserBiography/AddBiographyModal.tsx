@@ -18,6 +18,7 @@ const AddBiographyModal = (props: Props) => {
     const [form] = Form.useForm();
     const [fileName, setFileName] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [buttonLoading, setButtonLoading] = useState(false);
     const [disabled, setDisabled] = useState(true);
 
     const normFile = (e: { fileList: any }) => {
@@ -50,12 +51,14 @@ const AddBiographyModal = (props: Props) => {
       if (!isCorrectExtension) {
         notificationLogic("error", "Можливі розширення файлів: pdf");
         setDisabled(true);
+        return isCorrectExtension;
       }
       
       const isSmaller3mb = fileSize < 3145728;
       if (!isSmaller3mb) {
         notificationLogic("error", "Розмір файлу перевищує 3 Мб");
         setDisabled(true);
+        return isSmaller3mb;
       }
 
       return isSmaller3mb && isCorrectExtension;
@@ -63,6 +66,7 @@ const AddBiographyModal = (props: Props) => {
 
     const handleSubmit = async (values: any) => {
       setLoading(true);
+      setButtonLoading(true);
       const newDocument: BlankDocument = {
         id: 0,
         blobName: props.document.blobName,
@@ -76,6 +80,7 @@ const AddBiographyModal = (props: Props) => {
       removeFile();
       setDisabled(true);
       setLoading(false);
+      setButtonLoading(false);
     };
 
     const removeFile = () => {
@@ -149,7 +154,7 @@ const AddBiographyModal = (props: Props) => {
                 xs={{ span: 11, offset: 2 }}
                 sm={{ span: 6, offset: 1 }}
               >
-                <Button type="primary" htmlType="submit" disabled={disabled}>
+                <Button type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
                   Опублікувати
                 </Button>
               </Col>
