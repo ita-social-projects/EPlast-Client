@@ -43,7 +43,6 @@ const getAllNotificationTypes = async () :Promise<Array<NotificationType>>=> {
 };
 
 const InitializeNotificationTypes = (types : Array<NotificationType>) => {
-    debugger
     const def = types.find(t => t.name="Default");
     NotificationTypes.Default = def ? def.id : 0;
     const eventNotifi = types.find(t => t.name="Створення події");
