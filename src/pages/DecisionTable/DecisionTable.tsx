@@ -66,14 +66,14 @@ const DecisionTable = () => {
   }, []);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchedData(event.target.value);
+    setSearchedData(event.target.value.toLowerCase());
   };
 
 
   const filteredData = searchedData
     ? data.filter((item) => {
       return Object.values(item).find((element) => {
-        return String(element).includes(searchedData);
+        return String(element).toLowerCase().includes(searchedData);
       });
     })
     : data;
