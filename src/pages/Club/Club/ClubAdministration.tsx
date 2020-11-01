@@ -40,7 +40,7 @@ const ClubAdministration = () => {
     const removeAdmin = async (admin: ClubAdmin) => {
       await removeAdministrator(admin.id);
       setAdministration(administration.filter((u) => u.id !== admin.id));
-      await createNotification(admin.userId, `На жаль, ви були позбавлені ролі '${admin.adminType.adminTypeName}' в курені`);
+      await createNotification(admin.userId, `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в курені`);
     };
 
     const createNotification = async(userId : string, message : string) => {
