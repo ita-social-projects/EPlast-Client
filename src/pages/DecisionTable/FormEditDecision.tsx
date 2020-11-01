@@ -52,7 +52,7 @@ const FormEditDecision = ({ record,  setShowModal, onEdit, decision}: Props) => 
       <Form.Item
         label="Назва рішення"
         name="name"
-        
+        className={formclasses.inputWidth}
         rules={[
           {
           

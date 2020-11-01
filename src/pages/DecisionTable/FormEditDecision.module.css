@@ -2,3 +2,7 @@
   {
     margin: 3.5px;
   }
+  .inputWidth
+  {
+    min-width: 420px ;
+  }
