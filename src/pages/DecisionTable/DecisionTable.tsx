@@ -104,7 +104,7 @@ const DecisionTable = () => {
         {!loading && (
           <>
             <div className={classes.searchContainer}>
-              <Input placeholder="Пошук" onChange={handleSearch} />
+              <Input placeholder="Пошук" onChange={handleSearch} allowClear />
               <Button type="primary" onClick={showModal}>
                 Додати рішення
               </Button>
