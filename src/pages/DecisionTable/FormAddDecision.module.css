@@ -1,6 +1,7 @@
 
 .inputField{
     float: right;
+    padding-left: 200px;
     text-align: left;
     max-width: 320px;
   }
@@ -10,11 +11,13 @@
     text-align: left;
     max-width: 320px;
     min-width: 320px;
+    padding-left: 50px ;
   }
-  
+
   
   .formField {
     width: 100%;
+    text-align: right;
   }
 
   .cardButton{

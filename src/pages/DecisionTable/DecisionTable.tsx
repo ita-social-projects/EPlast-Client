@@ -6,6 +6,7 @@ import AddDecisionModal from './AddDecisionModal';
 import decisionsApi, { Decision, statusTypeGetParser } from '../../api/decisionsApi';
 import notificationLogic from '../../components/Notifications/Notification';
 import ClickAwayListener from 'react-click-away-listener';
+import moment from "moment";
 const classes = require('./Table.module.css');
 
 const { Content } = Layout;
@@ -72,7 +73,15 @@ const DecisionTable = () => {
 
   const filteredData = searchedData
     ? data.filter((item) => {
-      return Object.values(item).find((element) => {
+      return Object.values([
+        item.name,
+        item.organization,
+        item.id,
+        item.description,
+        item.decisionStatusType,
+        item.decisionTarget,
+        moment(item.date.toLocaleString()).format("DD/MM/YYYY"),
+      ]).find((element) => {
         return String(element).toLowerCase().includes(searchedData);
       });
     })
