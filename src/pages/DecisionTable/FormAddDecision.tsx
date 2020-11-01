@@ -20,6 +20,7 @@ type FormAddDecisionProps ={
 const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
 
  const  { setVisibleModal, onAdd } = props;
+ const [submitLoading,setSubmitLoading] = useState(false);
  const [fileData, setFileData] = useState<FileWrapper>({FileAsBase64 : null, FileName: null});
  const [form] = Form.useForm();
   const normFile = (e: { fileList: any }) => {
@@ -52,6 +53,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
   }
   
  const handleSubmit = async (values : any)=>{
+  setSubmitLoading(true);
   const newDecision  : DecisionWrapper= {
     decision: {
       id: 0,
@@ -212,6 +214,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
         <Button
          type="primary" htmlType="submit"
          className={formclasses.buttons}
+         loading={submitLoading}
         >
          Опублікувати
         </Button>
