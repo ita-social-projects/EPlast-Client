@@ -57,7 +57,6 @@ const HeaderContainer = () => {
   const getNotifications = async (userId : string) => {
     await NotificationBoxApi.getAllUserNotifications(userId)
     .then((response) => {
-      console.log(response)
       setNotifications(response)
     })
     .catch(err => console.log(err))
@@ -76,7 +75,6 @@ const HeaderContainer = () => {
   const getNotificationTypes = async () => {
     await NotificationBoxApi.getAllNotificationTypes()
     .then((response) => {
-      console.log(response)
       setNotificationTypes(response)
     })
     .catch(err => console.log(err))

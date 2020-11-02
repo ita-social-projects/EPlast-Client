@@ -1,10 +1,16 @@
 .menu {
-    box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
-    position: absolute;
-  }
+  box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
+  position: absolute;
+}
 
-  @media (max-width: 767px) {
-      .table{
-      overflow-x: scroll;
-      }
+@media (max-width: 767px) {
+  .table {
+    overflow-x: scroll;
   }
+}
+
+.searchContainer {
+  margin-bottom: 12px;
+  width: 200px;
+  margin-left: auto;
+}

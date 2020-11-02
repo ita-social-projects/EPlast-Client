@@ -2,9 +2,11 @@ import React from 'react';
 import { Modal, Form,DatePicker, Button } from 'antd';
 import classes from "./FormAddPlastDegree.module.css"
 import activeMembershipApi,{ UserPlastDegreePut } from '../../../../api/activeMembershipApi';
+import moment from 'moment';
 type props = {
     userId : string;
     plastDegreeId : number;
+    dateOfStart : string;
     endDateVisibleModal : boolean;
     setEndDateVisibleModal: (visibleModal: boolean) => void;
     handleAddEndDate :() => void;
@@ -12,6 +14,7 @@ type props = {
 const ModalAddEndDatePlastDegree = ({
     userId,
     plastDegreeId,
+    dateOfStart,
     endDateVisibleModal,
     setEndDateVisibleModal,
     handleAddEndDate
@@ -29,6 +32,12 @@ const ModalAddEndDatePlastDegree = ({
         form.resetFields();
         setEndDateVisibleModal(false);
         };
+
+        function disabledDate(current: any, date: string) 
+        {
+            return current && current < moment(date).endOf('day')
+        }
+
     return <Modal
         visible={endDateVisibleModal}
         onCancel = {handleCancel}
@@ -43,6 +52,7 @@ const ModalAddEndDatePlastDegree = ({
        name="datepickerEnd"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
         <DatePicker format = "YYYY-MM-DD"
+        disabledDate={(cur) => disabledDate(cur , dateOfStart)}
         className={classes.selectField}
         placeholder="Дата закінчення ступеню"
         

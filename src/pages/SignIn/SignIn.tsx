@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import Switcher from "../SignUp/Switcher/Switcher";
-import googleImg from "../../assets/images/google.png";
 import styles from "./SignIn.module.css";
 import facebookImg from "../../assets/images/facebook.png";
 import { checkEmail } from "../SignUp/verification";
@@ -10,12 +9,16 @@ import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
+import GoogleLoginWrapper from '../SignIn/GoogleLoginWrapper';
 
 let authService = new AuthorizeApi();
 let user: any;
+
 export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
+  const [googleId, setGoogleId] = useState("") ;
+  const [loading, setLoading] = useState(true);
 
   const initialValues = {
     Email: "",
@@ -42,6 +45,29 @@ export default function () {
     window.location.reload();
   };
 
+  const handleGoogleResponse = async (response:any) => {
+    await authService.sendToken(response.tokenId);
+    const token = AuthStore.getToken() as string;
+    user = jwt(token);
+    history.push(`/userpage/main/${user.nameid}`);
+    window.location.reload();
+  }
+
+  const getId = async () => {
+   await authService.getGoogleId().then(
+     (data)=>{
+      setGoogleId(data.id);
+     }
+   ).catch(exc=>{console.log(exc)});
+  
+      setLoading(false);
+  }
+
+useEffect(() => {
+
+     getId();
+
+  },[googleId]);
 
   return (
     <div className={styles.mainContainer}>
@@ -75,16 +101,11 @@ export default function () {
         </Form.Item>
         <Link className={styles.forgot} to="/forgotPassword">Забули пароль</Link>
         <div className={styles.GoogleFacebookLogin}>
-          <Button id={styles.googleBtn} className={styles.socialButton}>
-            <span id={styles.imgSpanGoogle}>
-              <img
-                alt="Google icon"
-                className={styles.socialImg}
-                src={googleImg}
-              />
-            </span>
-            <span className={styles.btnText}>Google</span>
-          </Button>
+       {loading ? (
+        ''
+      ) : (
+        <GoogleLoginWrapper googleId={googleId} handleGoogleResponse = {handleGoogleResponse}>
+        </GoogleLoginWrapper>)}
           <Button id={styles.facebookBtn} className={styles.socialButton}>
             <span id={styles.imgSpanFacebook}>
               <img

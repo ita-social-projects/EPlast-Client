@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Input,
-  Layout,
-  Row,
-  Col,
-  Button,
-} from "antd";
+import { Table, Input, Layout, Row, Col, Button } from "antd";
 import adminApi from "../../api/adminApi";
 import DropDownUserTable from "./DropDownUserTable";
 import Title from "antd/lib/typography/Title";
@@ -25,6 +18,7 @@ const UsersTable = () => {
   const [searchedData, setSearchedData] = useState("");
   const [users, setUsers] = useState<UserTable[]>([]);
   const [updatedUser, setUpdatedUser] = useState<UserTable[]>([]);
+  const [roles, setRoles] = useState<string>();
 
   useEffect(() => {
     fetchData();
@@ -64,8 +58,12 @@ const UsersTable = () => {
   filteredData = filteredData.concat(
     users.filter(
       (item) =>
-        (item.user.firstName.toLowerCase()?.includes(searchedData.toLowerCase()) ||
-          item.user.lastName.toLowerCase()?.includes(searchedData.toLowerCase())) &&
+        (item.user.firstName
+          .toLowerCase()
+          ?.includes(searchedData.toLowerCase()) ||
+          item.user.lastName
+            .toLowerCase()
+            ?.includes(searchedData.toLowerCase())) &&
         !filteredData.includes(item)
     )
   );
@@ -80,10 +78,10 @@ const UsersTable = () => {
     setShowDropdown(false);
   };
 
-  const handleChange = (id: string, userRoles: string) => {
+  const handleChange = (id: string, userRole: string) => {
     const filteredData = users.filter((d: any) => {
       if (d.id === id) {
-        d.userRoles = userRoles;
+        d.userRoles += ", " + userRole;
       }
       return d;
     });
@@ -100,15 +98,14 @@ const UsersTable = () => {
       }}
     >
       <Title level={2}>Таблиця користувачів</Title>
-      <Row gutter={16}>
-        <Col span={4}>
-          <Input.Search placeholder="Пошук" onChange={handleSearch} />
-        </Col>
-      </Row>
+      <div className={classes.searchContainer}>
+        <Input.Search placeholder="Пошук" onChange={handleSearch} />
+      </div>
       <Table
         className={classes.table}
         bordered
         rowKey="id"
+        scroll={{ x: 1300 }}
         columns={ColumnsForUserTable}
         dataSource={filteredData}
         onRow={(record) => {
@@ -120,6 +117,7 @@ const UsersTable = () => {
               event.preventDefault();
               setShowDropdown(true);
               setRecordObj(record.user.id);
+              setRoles(record.userRoles);
               setX(event.pageX);
               setY(event.pageY);
             },
@@ -135,10 +133,8 @@ const UsersTable = () => {
           }
         }}
         pagination={{
-          itemRender,
-          position: ["bottomRight"],
-          showTotal: (total, range) =>
-            `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
+          showLessItems: true,
+          responsive: true,
         }}
       />
       <ClickAwayListener onClickAway={handleClickAway}>
@@ -149,6 +145,7 @@ const UsersTable = () => {
           pageY={y}
           onDelete={handleDelete}
           onChange={handleChange}
+          roles={roles}
         />
       </ClickAwayListener>
     </Layout.Content>

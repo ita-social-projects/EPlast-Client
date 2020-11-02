@@ -219,7 +219,7 @@ type FormAddKadraProps = {
          <Button
           type="primary" className={classes.clearButton}  onClick={()=> {form.resetFields()}}
         >
-         Очистити
+         Відмінити
         </Button>
 
 

@@ -33,7 +33,8 @@ const RegionEditFormPage = () => {
     houseNumber: '',
     officeNumber: '',
     postIndex: '',
-    logo: ''
+    logo: '',
+    city:''
   }
   )
 
@@ -182,8 +183,8 @@ const RegionEditFormPage = () => {
                     message: 'Це поле має бути заповненим'
                   },
                   {
-                    max: 1000,
-                    message: "Максимальна довжина - 1000 символів!",
+                    max: 250,
+                    message: "Максимальна довжина - 250 символів!",
                   }
 
                 ]}
@@ -225,7 +226,10 @@ const RegionEditFormPage = () => {
                 initialValue={chosenRegion?.email}
 
                 rules={[
-
+                  {
+                    required: true,
+                    message: 'Це поле має бути заповненим'
+                },
                   {
                     pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
                     message: "Неправильна пошта",
@@ -251,8 +255,8 @@ const RegionEditFormPage = () => {
 
                 rules={[
                   {
-                    max: 256,
-                    message: "Максимальна довжина - 256 символів!",
+                    max: 500,
+                    message: "Максимальна довжина - 500 символів!",
                   },
                 ]}
               >
@@ -269,6 +273,10 @@ const RegionEditFormPage = () => {
                 name="city"
                 initialValue={chosenRegion?.city}
                 rules={[
+                  {
+                    max: 50,
+                    message: "Максимальна довжина - 50 символів!",
+                  },
                   {
                     required: true,
                     message: 'Це поле має бути заповненим'
