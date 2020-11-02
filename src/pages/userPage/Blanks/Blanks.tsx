@@ -18,6 +18,7 @@ import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import ListOfAchievementsModal from "./UserAchievements/ListOfAchievementsModal";
 import AddExtractFromUPUModal from "./UserExtractFromUPU/AddExtractFromUPUModal";
+import jwt_decode from "jwt-decode";
 
 export const Blanks = () => {
     const { userId } = useParams();
@@ -31,6 +32,7 @@ export const Blanks = () => {
     const [visibleExtractFromUPUModal, setVisibleExtractFromUPUModal] = useState(false);
     const [visibleAchievementModal, setvisibleAchievementModal] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [canEdit, setCanEdit] = useState(false);
     const [userToken, setUserToken] = useState<any>([
         {
             nameid: "",
@@ -40,6 +42,9 @@ export const Blanks = () => {
     const fetchData = async () => {
         const token = AuthStore.getToken() as string;
         setUserToken(jwt(token));
+        let decodedJwt = jwt_decode(token) as any;
+        let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+        setCanEdit(roles.includes("Admin"));
         await userApi.getById(userId).then(response => {
             setData(response.data);
         }).catch(() => { notificationLogic('error', "Щось пішло не так") })
@@ -294,15 +299,20 @@ export const Blanks = () => {
                             </div>
 
                             <div className={classes.wrapper5}>
-                                <Title level={2}>Генерація</Title>
-                                <FileTextOutlined 
-                                className={classes.documentIcon}/>
+                                <Title level={2}>Заява для вступу</Title>
+                                <FileTextOutlined
+                                    className={classes.documentIcon} />
+                                {canEdit == true || userToken.nameid === userId ? (
                                 <Button
-                                 className={classes.addIcon}
-                                type="primary"
-                                onClick={() => getPdf()}>
-                                    Згенерувати файл
+                                        className={classes.addIcon}
+                                        type="primary"
+                                        onClick={() => getPdf()}>
+                                        Згенерувати файл
                                 </Button>
+                                 ) :(
+                                     null
+                                 )
+                                }
                             </div>
 
                         </div>

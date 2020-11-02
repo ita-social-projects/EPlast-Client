@@ -31,7 +31,7 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
     setShowModal(false);
   };
   const handleFinish = async (value: any) => {
-    await adminApi.postCurrentRole(userId, value.userRole);
+    await adminApi.putCurrentRole(userId, value.userRole);
     onChange(userId, value.userRole);
     setShowModal(false);
   };
