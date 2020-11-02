@@ -3,13 +3,14 @@ import React, { useEffect, useState } from 'react';
 import TextArea from 'antd/lib/input/TextArea';
 import eventUserApi from '../../../../api/eventUserApi';
 import notificationLogic from '../../../../components/Notifications/Notification';
-import moment from 'moment';
+import moment, { min } from 'moment';
 import 'moment/locale/uk';
 import eventsApi from '../../../../api/eventsApi';
 import EventCategories from '../../../../models/EventCreate/EventCategories';
 import EventTypes from '../../../../models/EventCreate/EventTypes';
 import Users from '../../../../models/EventCreate/Users';
 import EventEdit from '../../../../models/EventEdit/EventEdit';
+import NotificationBoxApi from '../../../../api/NotificationBoxApi';
 moment.locale('uk-ua');
 
 const classes = require('./EventEdit.module.css');
@@ -24,7 +25,7 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
     const [form] = Form.useForm();
     const [doneLoading, setDoneLoading] = useState(false);
     const [selectedUsers, setSelectedUsers] = useState<string[]>(['', '', '', '']);
-    const dateFormat = 'DD/MM/YYYY HH:mm';
+    const dateFormat = 'DD.MM.YYYY HH:mm';
     const [categories, setCategories] = useState<EventCategories[]>([]);
     const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
     const [administators, setAdministators] = useState<Users[]>([]);
@@ -111,6 +112,13 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
         await eventUserApi.put(newEvent).then(response => {
             notificationLogic('success', 'Подія ' + values.EventName + ' успішно змінена');
 
+            NotificationBoxApi.createNotifications(
+                [values.commandantId, values.alternateId, values.bunchuzhnyiId, values.pysarId],
+                "Подія, в якій ви є адміністратором, змінена: ",
+                NotificationBoxApi.NotificationTypes.EventNotifications,
+                `/events/details/${values.ID}`,
+                values.EventName
+                );
         }).catch(error => {
             if (error.response.status === 400) {
                 notificationLogic('error', 'Спробуйте ще раз');
@@ -174,8 +182,8 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
             </ div>
             < div className={classes.row} >
                 <h3>Назва події </h3>
-                < Form.Item name="EventName" rules={[{ required: true, message: 'Вкажіть назву події' }]} >
-                    <Input className={classes.input} />
+                < Form.Item name="EventName" rules={[{ required: true, message: 'Вкажіть назву події' }, { max: 50, message: 'Назва події не більше 50 символів'}]} >
+                <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} /> 
                 </ Form.Item>
             </ div>
             < div className={classes.row} >
@@ -225,37 +233,37 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
             < div className={classes.row} >
                 <h3>Форма проведення </h3>
                 < Form.Item name="FormOfHolding" rules={[{ required: true, message: 'Вкажіть форму проведення події' }, { max: 50, message: 'Максимальна к-сть символів - 50' }]}>
-                    <Input className={classes.input} />
+                <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
                 </Form.Item>
             </div>
             <div className={classes.row} >
                 <h3>Локація </h3>
-                < Form.Item name="Eventlocation" rules={[{ required: true, message: 'Вкажіть локацію події' }]}>
-                    <Input className={classes.input} />
+                < Form.Item name="Eventlocation" rules={[{ required: true, message: 'Вкажіть локацію події' } , { max: 50, message: 'Максимальна к-сть символів - 50' }]}>
+                <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
                 </Form.Item>
             </div>
             < div className={classes.row} >
-                <h3>Призначений для </h3>
+                <h3>Призначена для </h3>
                 < Form.Item name="ForWhom" rules={[{ required: true, message: 'Вкажіть для кого призначена подія' },{ max: 50, message: 'Максимальна к-сть символів - 50' }]}>
-                    <Input className={classes.input} />
+                <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
                 </Form.Item>
             </div>
             < div className={classes.row} >
                 <h3>Приблизна кількість учасників </h3>
-                < Form.Item name="NumberOfPartisipants" rules={[{ required: true, message: 'Вкажіть приблизну к-сть учасників' }, { max: 6, message: 'Максимальна к-сть - 999 999'}]}>
-                    <Input className={classes.input} type="number" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() } min="1" max="999999" />
+                < Form.Item name="NumberOfPartisipants">
+                    <Input className={classes.input} type="number"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
                 </Form.Item>
             </ div>
             < div className={classes.row} >
                 <h3>Питання / побажання до булави </h3>
-                < Form.Item name="Questions" rules={[{ required: true, message: 'Вкажіть питання' },
+                < Form.Item name="Questions" rules={[{ required: true, message: 'Вкажіть питання/побажання' },{ required: true, message: 'до булави' },
                 { max: 50, message: 'Максимальна довжина- 50 символів' }]}>
                     <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
                 </Form.Item>
             </div>
             < div className={classes.row} >
                 <h3>Опис події </h3>
-                < Form.Item name="Description" rules={[{ required: true, message: 'Вкажіть, які впроваджено зміни' },
+                < Form.Item name="Description" rules={[{ required: true, message: 'Вкажіть опис події' },
                 { max: 50, message: 'Максимальна довжина- 50 символів' }]}>
                     <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
                 </Form.Item>

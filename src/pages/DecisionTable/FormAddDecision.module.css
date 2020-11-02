@@ -11,10 +11,11 @@
     max-width: 320px;
     min-width: 320px;
   }
-  
+
   
   .formField {
     width: 100%;
+    text-align: right;
   }
 
   .cardButton{
@@ -25,4 +26,8 @@
     border-color: #3c5438;
     max-width: 320px;
     min-width: 320px;
+  }
+  .buttons
+  {
+    margin: 3.5px;
   }

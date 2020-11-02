@@ -217,13 +217,13 @@ const EventUser = () => {
                     {" "}
                     Дата початку:{" "}
                     {moment(item.eventDateStart).format(
-                      "DD-MM-YYYY HH:mm"
+                      "DD.MM.YYYY HH:mm"
                     )}{" "}
                   </h2>
                   <h2>
                     {" "}
                     Дата завершення:{" "}
-                    {moment(item.eventDateEnd).format("DD-MM-YYYY HH:mm")}{" "}
+                    {moment(item.eventDateEnd).format("DD.MM.YYYY HH:mm")}{" "}
                   </h2>
                   <Button
                     type="primary"
@@ -356,13 +356,13 @@ const EventUser = () => {
                     {" "}
                     Дата початку:{" "}
                     {moment(item.eventDateStart).format(
-                      "DD-MM-YYYY HH:mm"
+                      "DD.MM.YYYY HH:mm"
                     )}{" "}
                   </h2>
                   <h2>
                     {" "}
                     Дата завершення:{" "}
-                    {moment(item.eventDateEnd).format("DD-MM-YYYY HH:mm")}{" "}
+                    {moment(item.eventDateEnd).format("DD.MM.YYYY HH:mm")}{" "}
                   </h2>
                   <Button
                     type="primary"
@@ -470,13 +470,13 @@ const EventUser = () => {
                     {" "}
                     Дата початку:{" "}
                     {moment(item.eventDateStart).format(
-                      "DD-MM-YYYY HH:mm"
+                      "DD.MM.YYYY HH:mm"
                     )}{" "}
                   </h2>
                   <h2>
                     {" "}
                     Дата завершення:{" "}
-                    {moment(item.eventDateEnd).format("DD-MM-YYYY HH:mm")}{" "}
+                    {moment(item.eventDateEnd).format("DD.MM.YYYY HH:mm")}{" "}
                   </h2>
                   <Button
                     type="primary"
