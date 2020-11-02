@@ -13,7 +13,9 @@ import {
 } from "antd";
 import moment from "moment";
 import AnnualReportApi from "../../../api/AnnualReportApi";
+import {getClubAnnualReport} from "../../../api/clubsApi";
 import AnnualReport from "../Interfaces/AnnualReport";
+import ClubAnnualReport from "../Interfaces/ClubAnnualReport"
 import User from "../Interfaces/User";
 import City from "../Interfaces/City";
 import Region from "../Interfaces/Region";
@@ -27,14 +29,19 @@ import AuthStore from "../../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
 import CitySelectModal from "./CitySelectModal/CitySelectModal";
 import ClickAwayListener from "react-click-away-listener";
+import { Card } from 'antd';
+import { CityAnnualReportTable } from "./CityAnnualReportTable";
+import { ClubAnnualReportTable } from "./ClubAnnualReport";
 
 const { Title } = Typography;
 
 const AnnualReportTable = () => {
   const history = useHistory();
   const [annualReport, setAnnualReport] = useState<AnnualReport>(Object);
+  const [clubAnnualReport, setClubAnnualReport] = useState<ClubAnnualReport>(Object);
   const [reportStatusNames, setReportStatusNames] = useState<string[]>(Array());
   const [annualReports, setAnnualReports] = useState<AnnualReport[]>(Array());
+  const [clubAnnualReports, setClubAnnualReports] = useState<ClubAnnualReport[]>(Array());
   const [searchedData, setSearchedData] = useState("");
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
@@ -64,6 +71,7 @@ const AnnualReportTable = () => {
   useEffect(() => {
     fetchAnnualReportStatuses();
     fetchAnnualReports();
+    fetchClubAnnualReports();
     checkAccessToManage();
   }, []);
 
@@ -73,9 +81,11 @@ const AnnualReportTable = () => {
     let roles = decodedJwt[
       "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
     ] as string[];
-    console.log(roles);
     setCanManage(roles.includes("Admin") || roles.includes("Голова Регіону"));
   };
+
+
+
 
   const fetchAnnualReportStatuses = async () => {
     try {
@@ -88,8 +98,18 @@ const AnnualReportTable = () => {
 
   const fetchAnnualReports = async () => {
     try {
+  
       let response = await AnnualReportApi.getAll();
       setAnnualReports(response.data.annualReports);
+    } catch (error) {
+      showError(error.message);
+    }
+  };
+  
+  const fetchClubAnnualReports = async () => {
+    try {
+      let response = await getClubAnnualReport();
+      setClubAnnualReports(response.data.clubAnnualReports);
     } catch (error) {
       showError(error.message);
     }
@@ -213,6 +233,8 @@ const AnnualReportTable = () => {
         )
       : annualReports;
 
+ 
+
   const showSuccess = (message: string) => {
     Modal.success({
       content: message,
@@ -231,13 +253,7 @@ const AnnualReportTable = () => {
       title: "Номер",
       dataIndex: "id",
     },
-    {
-      title: "Подавач",
-      dataIndex: "creator",
-      render: (creator: User) => {
-        return `${creator.firstName} ${creator.lastName}`;
-      },
-    },
+
     {
       title: "Станиця",
       dataIndex: ["city", "name"],
@@ -262,9 +278,75 @@ const AnnualReportTable = () => {
     },
   ];
 
+  const tabList = [
+    {
+      key: 'tab1',
+      tab: 'Річні звіти станиць',
+    },
+    {
+      key: 'tab2',
+      tab: 'Річні звіти куренів',
+    },
+    {
+      key: 'tab3',
+      tab: 'Річні звіти округів',
+    },
+  ];
+
+
+  
+
+  const columnsClub=[
+    {
+      title: "Номер",
+      dataIndex: "id",
+    },
+    {
+      title: "Курінь",
+      dataIndex: ["club", "name"],
+    },
+    {
+      title: "Дата подання",
+      dataIndex: "date",
+      render: (date: Date) => {
+        return moment(date.toLocaleString()).format("DD-MM-YYYY");
+      },
+    },
+    {
+      title: "Статус",
+      dataIndex: "status",
+      render: (status: number) => {
+        return reportStatusNames[status];
+      },
+    },
+  ];
+
+  const contentList:  { [key: string]: any }  = {
+    tab1: <div><CityAnnualReportTable columns={columns} filteredData={filteredData}/></div>,
+    tab2: <div><ClubAnnualReportTable columns={columnsClub} filteredData={clubAnnualReports}/></div>,
+    tab3: <div>Region table...</div>,
+  };
+  const [noTitleKey, setKey] = useState<string>('tab1');
+
+  const  renewPage = ()=>{
+    const key = noTitleKey;
+    
+    setKey('KV1N');
+    setKey('KV2N');
+    setKey(key);
+   }
+
+   const onTabChange =  (key:string) => {
+    console.log(noTitleKey)
+    setKey(key);
+   
+   console.log(noTitleKey)
+   
+ };
   return (
+
     <Layout.Content className="annualreport-table">
-      <Title level={2}>Річні звіти станиць</Title>
+      <Title level={2}>Річні звіти</Title>
       <Row className="searchContainer" gutter={16}>
         <Col span={4}>
           <Input placeholder="Пошук" onChange={handleSearch} />
@@ -279,41 +361,24 @@ const AnnualReportTable = () => {
           </Button>
         </Col>
       </Row>
-      <Table
-        bordered
-        rowKey="id"
-        columns={columns}
-        dataSource={filteredData}
-        onRow={(record) => {
-          return {
-            onClick: () => {
-              hideDropdowns();
-            },
-            onContextMenu: (event) => {
-              event.preventDefault();
-              showDropdown(record.status);
-              setAnnualReport(record);
-              setX(event.pageX);
-              setY(event.pageY);
-            },
-          };
-        }}
-        onChange={(pagination) => {
-          if (pagination) {
-            window.scrollTo({
-              left: 0,
-              top: 0,
-              behavior: "smooth",
-            });
-          }
-        }}
-        pagination={{
-          itemRender,
-          position: ["bottomRight"],
-          showTotal: (total, range) =>
-            `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
-        }}
-      />
+
+      <Row>
+
+      <Card
+          style={{ width: '100%' }}
+          tabList={tabList}
+          activeTabKey={noTitleKey}
+          onTabChange={key => {
+            onTabChange(key);
+          }}
+        >
+          {contentList[noTitleKey]}
+        </Card>
+
+      </Row>
+
+
+
       <ClickAwayListener onClickAway={hideDropdowns}>
         <UnconfirmedDropdown
           showDropdown={showUnconfirmedDropdown}

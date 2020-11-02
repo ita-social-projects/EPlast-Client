@@ -169,12 +169,22 @@ const Club = () => {
                 )}
               </Col>
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
-                <iframe
-                  src=""
-                  title="map"
-                  aria-hidden="false"
-                  className="mainMap"
-                />
+
+                <div>
+            <Title level={4}>Опис куреня</Title>
+                {club.description.length!=0?(
+                <Paragraph>
+                  <b>{club.description}</b>
+
+                </Paragraph>
+
+                ):(
+                  <Paragraph>
+                  <b>Ще немає опису куреня.</b>
+
+                </Paragraph>
+                )}
+                  </div>
               </Col>
             </Row>
             <Row className="clubInfo">
@@ -245,6 +255,17 @@ const Club = () => {
                   Деталі
                 </Button>
               </Col>
+              {canEdit ? (
+                <Col>
+                  <Button
+                    type="primary"
+                    className="clubInfoButton"
+                    onClick={() => history.push(`/annualreport/table`)}
+                  >
+                    Річні звіти
+                  </Button>
+                </Col>
+              ) : null}
               {canEdit ? (
                 <Col xs={24} sm={4}>
                   <Row
