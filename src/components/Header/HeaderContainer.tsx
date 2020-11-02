@@ -41,11 +41,11 @@ const HeaderContainer = () => {
         {
           getNotifications(response.data.user.id);
           getNotificationTypes();
-          let connection = SignalRConnection.ManageConnection(response.data.user.id);
-          connection.on("ReceiveUserNotification", (userNotification : UserNotification) => {
-            console.log(userNotification); 
-            setNotifications(t => [userNotification].concat(t));
-          })
+         let connection = SignalRConnection.ManageConnection(response.data.user.id);
+         connection.on("ReceiveUserNotification", (userNotification : UserNotification) => {
+           console.log(userNotification); 
+           setNotifications(t => [userNotification].concat(t));
+         })
         }
         await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
