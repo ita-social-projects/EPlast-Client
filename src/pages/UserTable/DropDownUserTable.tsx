@@ -100,14 +100,7 @@ const DropDown = (props: Props) => {
           }}
         >
           <Menu.Item key="3">Провід станиці</Menu.Item>
-          <Menu.Item
-            key="4"
-            style={{
-              display: props.roles?.includes("Пластун") ? "block" : "none",
-            }}
-          >
-            Провід округу
-          </Menu.Item>
+          <Menu.Item key="4">Провід округу</Menu.Item>
           <Menu.Item key="5">Провід куреня</Menu.Item>
           <Menu.Item key="6">Поточний стан користувача</Menu.Item>
         </SubMenu>
