@@ -6,6 +6,7 @@ import { Tooltip } from 'antd';
 import { SortOrder } from 'antd/lib/table/interface';
 import { FormLabelAlign } from 'antd/lib/form/interface';
 
+
 const columns = [
     {
         align: 'right' as FormLabelAlign,
@@ -22,6 +23,8 @@ const columns = [
         render: (distinction: Distinction) => {
             return distinction.name
         },
+        sorter: (a: any, b: any) => a.distinction.name.localeCompare(b.distinction.name),
+        sortDirections: ['ascend', 'descend'] as SortOrder[],
         
         
     },
@@ -30,9 +33,9 @@ const columns = [
         dataIndex: 'user',
         render: (user: CityUser) => {
             return user.firstName + " " + user.lastName
-            
-        }
-        
+        },
+        sorter: (a: any, b: any) => a.user.firstName.localeCompare(b.user.firstName),
+        sortDirections: ['ascend', 'descend'] as SortOrder[],
     },
     {
         title: 'Дата затвердження',
@@ -40,6 +43,8 @@ const columns = [
         render: (date: Date) => {
             return moment(date.toLocaleString()).format('DD-MM-YYYY');
         },
+        sorter:(a: any, b: any)  => a.date.localeCompare(b.date),
+      sortDirections: ['ascend', 'descend'] as SortOrder[],
     },
     {
         title: 'Подання від',
