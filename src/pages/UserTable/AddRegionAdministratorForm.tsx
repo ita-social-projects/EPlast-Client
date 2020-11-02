@@ -35,7 +35,6 @@ const AddNewAdministratorForm = ({
   ]);
 
   const handleSubmit = async (values: any) => {
-    // перевірка чи голова станиці, а тоді перевірка чи юзер пластун
     const newAdmin: any = {
       id: 0,
       userId: userId,
@@ -76,20 +75,36 @@ const AddNewAdministratorForm = ({
           },
         ]}
       >
-        <AutoComplete
-          className={classes.inputField}
-          options={[
-            { value: "Голова Округу" },
-            { value: "Писар" },
-            { value: "Бунчужний" },
-            { value: "Скарбник" },
-            { value: "Домівкар" },
-            { value: "Член ОПР" },
-            { value: "Голова ОПС" },
-            { value: "Голова ОПР" },
-          ]}
-          placeholder={"Тип адміністрування"}
-        ></AutoComplete>
+        {roles?.includes("Пластун") ? (
+          <AutoComplete
+            className={classes.inputField}
+            options={[
+              { value: "Голова Округу" },
+              { value: "Писар" },
+              { value: "Бунчужний" },
+              { value: "Скарбник" },
+              { value: "Домівкар" },
+              { value: "Член ОПР" },
+              { value: "Голова ОПС" },
+              { value: "Голова ОПР" },
+            ]}
+            placeholder={"Тип адміністрування"}
+          ></AutoComplete>
+        ) : (
+          <AutoComplete
+            className={classes.inputField}
+            options={[
+              { value: "Писар" },
+              { value: "Бунчужний" },
+              { value: "Скарбник" },
+              { value: "Домівкар" },
+              { value: "Член ОПР" },
+              { value: "Голова ОПС" },
+              { value: "Голова ОПР" },
+            ]}
+            placeholder={"Тип адміністрування"}
+          ></AutoComplete>
+        )}
       </Form.Item>
 
       <Form.Item

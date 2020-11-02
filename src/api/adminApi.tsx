@@ -32,8 +32,8 @@ const putExpiredRole = async (userId: string) => {
   return response;
 };
 
-const postCurrentRole = async (userId: string, role: string) => {
-  const response = await Api.post(`Admin/changeRole/${userId}/${role}`);
+const putCurrentRole = async (userId: string, role: string) => {
+  const response = await Api.put(`Admin/changeRole/${userId}/${role}`);
 
   return response;
 };
@@ -44,5 +44,5 @@ export default {
   getRolesForEdit,
   putEditedRoles,
   putExpiredRole,
-  postCurrentRole,
+  putCurrentRole,
 };
