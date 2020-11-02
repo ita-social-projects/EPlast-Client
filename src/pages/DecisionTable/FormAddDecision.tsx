@@ -65,9 +65,11 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
       extension.indexOf("txt") !== -1 ||
       extension.indexOf("csv") !== -1 ||
       extension.indexOf("xls") !== -1 ||
-      extension.indexOf("xml") !== -1
+      extension.indexOf("xml") !== -1 ||
+      extension.indexOf("odt") !== -1 ||
+      extension.indexOf("ods") !== -1
     if (!isCorrectExtension) {
-      notificationLogic("error", "Можливі розширення файлів: pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png");
+      notificationLogic("error", "Можливі розширення файлів: pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods.");
     }
     return isCorrectExtension;
   }
