@@ -65,7 +65,8 @@ export const Blanks = () => {
     }
 
     const getPdf = async () => {
-        await openGenerationFile(userId);
+       const pdfLink = await openGenerationFile(userId);
+        window.open(pdfLink);
     }
 
     const removeDocumentById = async (documentId: number) => {
