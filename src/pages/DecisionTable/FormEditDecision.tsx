@@ -52,7 +52,7 @@ const FormEditDecision = ({ record,  setShowModal, onEdit, decision}: Props) => 
       <Form.Item
         label="Назва рішення"
         name="name"
-        
+        className={formclasses.inputWidth}
         rules={[
           {
           
@@ -61,7 +61,7 @@ const FormEditDecision = ({ record,  setShowModal, onEdit, decision}: Props) => 
           },
         ]}
       >
-        <Input />
+        <Input className={formclasses.input}/>
       </Form.Item>
 
       <Form.Item
@@ -75,7 +75,7 @@ const FormEditDecision = ({ record,  setShowModal, onEdit, decision}: Props) => 
         },
       ]}
        >
-        <Input.TextArea allowClear />
+        <Input.TextArea className={formclasses.input} allowClear />
       </Form.Item>
       <Form.Item style = {{ textAlign: "right"}}>
       <Button 
