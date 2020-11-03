@@ -15,6 +15,7 @@ interface Props {
 }
 
 const AnnualReportInformation = (props: Props) => {
+    console.log(props)
     const { visibleModal, annualReport, handleOk, showError } = props;
     const [cityLegalStatuses, setCityLegalStatuses] = useState<string[]>(Array());
 
@@ -31,7 +32,8 @@ const AnnualReportInformation = (props: Props) => {
             showError(error.message)
         }
     }
-
+console.log(annualReport)
+console.log(props)
     return (
         <Modal
             onCancel={handleOk}
@@ -41,7 +43,7 @@ const AnnualReportInformation = (props: Props) => {
             <Title
                 className='textCenter'
                 level={3} >
-                {`Річний звіт станиці ${annualReport.city?.name} за 
+                {`Річний звіт станиці ${props.annualReport.city?.name} за 
                     ${moment(annualReport.date).year()} рік`}</Title>
             <Card>
                 <Card.Grid
