@@ -95,7 +95,7 @@ export default class AuthorizeApi {
   };
 
   sendToken=async (token: string) => {
-    const response = await Api.post("Auth/signin/google/?googleToken="+token)
+    const response = await Api.post(`Auth/signin/google/?googleToken=${token}`)
       .then(response => {
         if (response.data.token !== null) {
           AuthStore.setToken(response.data.token);

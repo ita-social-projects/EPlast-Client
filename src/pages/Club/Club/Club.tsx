@@ -16,6 +16,7 @@ import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
 import ClubDetailDrawer from "../ClubDetailDrawer/ClubDetailDrawer";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 
 const Club = () => {
@@ -40,6 +41,15 @@ const Club = () => {
 
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
+
+    await NotificationBoxApi.createNotifications(
+      [member.data.userId],
+      "Вітаємо, вас зараховано до членів куреня: ",
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/clubs/${id}`,
+      club.name
+      );
+
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
     ).data;
@@ -53,6 +63,14 @@ const Club = () => {
 
   const addMember = async () => {
     const follower = await addFollower(+id);
+    
+    await NotificationBoxApi.createNotifications(
+      admins.map(ad => ad.userId),
+      `До вашого куреня: ${club.name} приєднався новий прихильник: `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/userpage/main/${follower.data.userId}`,
+      `${follower.data.user.firstName} ${follower.data.user.lastName}`
+      );
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
