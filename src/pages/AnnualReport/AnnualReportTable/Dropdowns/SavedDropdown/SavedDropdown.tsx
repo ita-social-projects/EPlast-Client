@@ -8,6 +8,7 @@ const ConfirmedDropdown = (props: Props) => {
     const { record, pageX, pageY, showDropdown, onView } = props;
 
     const handleClick = (item: any) => {
+        console.log(item)
         switch (item.key) {
             case '1':
                 onView(record.id);
@@ -24,6 +25,7 @@ const ConfirmedDropdown = (props: Props) => {
                 onClick={handleClick}
                 className={showDropdown ? styles.menu : styles.menuHidden}
                 style={{
+                    position:"absolute",
                     top: pageY,
                     left: pageX
                 }} >
