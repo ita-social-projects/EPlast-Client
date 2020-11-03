@@ -49,7 +49,7 @@ const RegionAdministration = () => {
       await removeAdmin(admin.id);
       await NotificationBoxApi.createNotifications(
         [admin.userId],
-        `Вас було позбавлено адміністративної ролі: '${admin.adminType}' в `,
+        `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/regions/${id}`,
         `цьому окрузі`
@@ -67,7 +67,7 @@ const RegionAdministration = () => {
       administration[index] = newAdmin;
       await NotificationBoxApi.createNotifications(
         [newAdmin.userId],
-        `Вам було надано нову адміністративну роль: '${newAdmin.adminType}' в `,
+        `Вам було надано нову адміністративну роль: '${newAdmin.adminType.adminTypeName}' в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/regions/${id}`,
         `цьому окрузі`

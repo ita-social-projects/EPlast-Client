@@ -66,9 +66,9 @@ type AddNewSecretaryForm = {
                       notificationLogic('success', "Користувач успішно доданий в провід");
                     
                       form.resetFields();
-                      
+
                       await NotificationBoxApi.createNotifications(
-                        newAdmin.userId,
+                        [newAdmin.userId],
                         `Вам була присвоєна адміністративна роль: '${values.AdminType}' в `,
                         NotificationBoxApi.NotificationTypes.UserNotifications,
                         `/regions/${currentRegion}`,
