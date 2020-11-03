@@ -65,7 +65,6 @@ interface props {
     };
     
     const showDropdown = (annualReportStatus: number) => {
-      console.log(annualReportStatus)
       switch (annualReportStatus) {
         case 0:
           hideDropdowns();
@@ -92,11 +91,9 @@ interface props {
       return originalElement;
     };
     const handleView = async (id: number) => {
-      console.log(id)
       hideDropdowns();
       try {
         let response = await AnnualReportApi.getById(id);
-        console.log(id)
         setAnnualReport(response.data.annualReport);
         console.log(annualReport)
         setShowAnnualReportModal(true);
@@ -171,6 +168,7 @@ interface props {
 
       checkAccessToManage();
     }, []);
+console.log(annualReport)
     return (
         
         <div>
@@ -185,7 +183,6 @@ interface props {
               hideDropdowns();
             },
             onContextMenu: (event) => {
-              console.log(record)
               event.preventDefault();
               showDropdown(record.status);
               setAnnualReport(record);

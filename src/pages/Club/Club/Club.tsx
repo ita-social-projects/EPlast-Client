@@ -214,12 +214,24 @@ const Club = () => {
                       {club.head.user.lastName}
                     </Paragraph>
                     <Paragraph>
-                      <b>Час правління:</b> {moment(club.head.startDate).format("DD.MM.YYYY")}
-                        {club.head.endDate
-                          ? ` - ${moment(club.head.endDate).format(
-                              "DD.MM.YYYY"
-                            )}`
-                          : " "}
+                      {club.head.endDate===null?
+                                (<div>
+                                        <b>
+                                          Початок правління:
+                                        </b>
+                                        {` ${moment(club.head.startDate).format("DD.MM.YYYY")}`}
+                                </div> 
+                                  )  
+                                  :
+                                  (<div>
+                                      <b>
+                                          Термін правління: 
+                                      </b> 
+                                  {` ${moment(club.head.startDate).format("DD.MM.YYYY")} - ${moment(club.head.endDate).format("DD.MM.YYYY")}`}
+                                  </div>
+                                  )
+
+                       }
                     </Paragraph>
                   </div>
                 ) : (

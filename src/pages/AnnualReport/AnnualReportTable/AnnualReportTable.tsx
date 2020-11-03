@@ -376,48 +376,6 @@ const AnnualReportTable = () => {
         </Card>
 
       </Row>
-
-
-
-      <ClickAwayListener onClickAway={hideDropdowns}>
-        <UnconfirmedDropdown
-          showDropdown={showUnconfirmedDropdown}
-          record={annualReport}
-          pageX={x}
-          pageY={y}
-          canManage={canManage}
-          onView={handleView}
-          onEdit={handleEdit}
-          onConfirm={handleConfirm}
-          onRemove={handleRemove}
-        />
-        <ConfirmedDropdown
-          showDropdown={showConfirmedDropdown}
-          record={annualReport}
-          pageX={x}
-          pageY={y}
-          canManage={canManage}
-          onView={handleView}
-          onCancel={handleCancel}
-        />
-        <SavedDropdown
-          showDropdown={showSavedDropdown}
-          record={annualReport}
-          pageX={x}
-          pageY={y}
-          onView={handleView}
-        />
-      </ClickAwayListener>
-      <AnnualReportInformation
-        visibleModal={showAnnualReportModal}
-        annualReport={annualReport}
-        showError={showError}
-        handleOk={() => setShowAnnualReportModal(false)}
-      />
-      <CitySelectModal
-        visibleModal={showCitySelectModal}
-        handleOk={() => setShowCitySelectModal(false)}
-      />
     </Layout.Content>
   );
 };
