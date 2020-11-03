@@ -46,6 +46,7 @@ import {
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
+import { checkPhone } from "../../SignUp/verification";
 
 
 const CreateCity = () => {
