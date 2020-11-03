@@ -66,10 +66,10 @@ const Club = () => {
     
     await NotificationBoxApi.createNotifications(
       admins.map(ad => ad.userId),
-      `До вашого куреня: ${club.name} приєднався новий прихильник: `,
+      `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня: `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/userpage/main/${follower.data.userId}`,
-      `${follower.data.user.firstName} ${follower.data.user.lastName}`
+      `/clubs/followers/${id}`,
+      `${club.name}`
       );
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
