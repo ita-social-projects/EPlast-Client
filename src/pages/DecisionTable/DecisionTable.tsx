@@ -79,7 +79,7 @@ const DecisionTable = () => {
         item.description,
         item.decisionStatusType,
         item.decisionTarget,
-        moment(item.date.toLocaleString()).format("DD/MM/YYYY"),
+        moment(item.date.toLocaleString()).format("DD-MM-YYYY"),
       ]).find((element) => {
         return String(element).toLowerCase().includes(searchedData);
       });
