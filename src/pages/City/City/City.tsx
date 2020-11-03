@@ -86,8 +86,12 @@ const City = () => {
     await removeCity(city.id);
     notificationLogic("success", "Станицю успішно видалено");
 
-    admins.map(ad => {
-
+    admins.map(async (ad) => {
+      await NotificationBoxApi.createNotifications(
+        [ad.userId],
+        `На жаль станицю: '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+        );
     });
     history.push('/cities');
   }

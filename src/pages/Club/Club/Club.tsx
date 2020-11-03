@@ -85,6 +85,13 @@ const Club = () => {
   const deleteClub = async () => {
     await removeClub(club.id);
 
+    admins.map(async (ad) => {
+      await NotificationBoxApi.createNotifications(
+        [ad.userId],
+        `На жаль курінь: '${club.name}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+        );
+    });
     history.push('/clubs');
   }
 

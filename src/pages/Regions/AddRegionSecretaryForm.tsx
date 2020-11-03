@@ -5,6 +5,7 @@ import adminApi from "../../api/adminApi";
 import notificationLogic from '../../components/Notifications/Notification';
 import regionsApi from '../../api/regionsApi';
 import { ReloadOutlined } from '@ant-design/icons';
+import NotificationBoxApi from '../../api/NotificationBoxApi';
 
 
 
@@ -66,7 +67,17 @@ type AddNewSecretaryForm = {
                     
                       form.resetFields();
                       
+                      await NotificationBoxApi.createNotifications(
+                        newAdmin.userId,
+                        `Вам була присвоєна адміністративна роль: '${values.AdminType}' в `,
+                        NotificationBoxApi.NotificationTypes.UserNotifications,
+                        `/regions/${currentRegion}`,
+                        `цьому окрузі`
+                    );
+
                      onAdd();
+
+                    
             }
            
 

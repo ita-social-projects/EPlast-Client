@@ -11,6 +11,7 @@ import Title from 'antd/lib/typography/Title';
 import Spinner from '../Spinner/Spinner';
 import AddAdministratorModal from '../City/AddAdministratorModal/AddAdministratorModal';
 import CityAdmin from '../../models/City/CityAdmin';
+import NotificationBoxApi from '../../api/NotificationBoxApi';
 moment.locale("uk-ua");
 
 const RegionAdministration = () => {
@@ -44,9 +45,16 @@ const RegionAdministration = () => {
       setLoading(false);
     };
 
-    const removeAdministrator = async (adminId: number) => {
-      await removeAdmin(adminId);
-      setAdministration(administration.filter((u) => u.id !== adminId));
+    const removeAdministrator = async (admin: CityAdmin) => {
+      await removeAdmin(admin.id);
+      await NotificationBoxApi.createNotifications(
+        [admin.userId],
+        `Вас було позбавлено адміністративної ролі: '${admin.adminType}' в `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/regions/${id}`,
+        `цьому окрузі`
+    );
+      setAdministration(administration.filter((u) => u.id !== admin.id));
     };
 
     const showModal = (member: any) => {
@@ -57,7 +65,13 @@ const RegionAdministration = () => {
     const onAdd = async (newAdmin: any) => {
       const index = administration.findIndex((a) => a.id === admin.id);
       administration[index] = newAdmin;
-      
+      await NotificationBoxApi.createNotifications(
+        [newAdmin.userId],
+        `Вам було надано нову адміністративну роль: '${newAdmin.adminType}' в `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/regions/${id}`,
+        `цьому окрузі`
+    );
       setAdministration(administration);
     };
 
@@ -92,7 +106,7 @@ const RegionAdministration = () => {
  [
                             <SettingOutlined onClick={() => showModal(member)} />,
                             <CloseOutlined
-                              onClick={() => removeAdministrator(member.id)}
+                              onClick={() => removeAdministrator(member)}
                             />,
                           ]
                     }
