@@ -27,7 +27,8 @@ const AddNewRegionFormPage = () => {
             street: values.street, 
             houseNumber: values.houseNumber,
             officeNumber: values.officeNumber,
-            postIndex: values.postIndex
+            postIndex: values.postIndex,
+            city: values.city
         }
         await RegionsApi.createRegion(newRegion)
         form.resetFields();
@@ -117,6 +118,10 @@ const AddNewRegionFormPage = () => {
                     required: true,
                     message: 'Це поле має бути заповненим'
                 },
+                {
+                    max: 50,
+                    message: "Максимальна довжина - 50 символів!",
+                  },
             ]}
         >
              <Input
@@ -135,6 +140,10 @@ const AddNewRegionFormPage = () => {
                     required: true,
                     message: 'Це поле має бути заповненим'
                 },
+                {
+                    max: 250,
+                    message: "Максимальна довжина - 250 символів!",
+                  }
             ]}
         >
            <Input
@@ -153,6 +162,10 @@ const AddNewRegionFormPage = () => {
                     required: true,
                     message: 'Це поле має бути заповненим'
                 },
+                {
+                    max: 13,
+                    message: "Максимальна довжина 13 цифр!",
+                  }
             ]}
         >
            <Input
@@ -168,9 +181,17 @@ const AddNewRegionFormPage = () => {
 
             rules={[
                 {
+                    pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                    message: "Неправильна пошта",
+                  },
+                {
                     required: true,
                     message: 'Це поле має бути заповненим'
                 },
+                {
+                    max: 50,
+                    message: "Максимальна довжина - 50 символів!",
+                  },
             ]}
         >
            <Input
@@ -189,6 +210,10 @@ const AddNewRegionFormPage = () => {
                     required: true,
                     message: 'Це поле має бути заповненим'
                 },
+                {
+                    max: 500,
+                    message: "Максимальна довжина - 500 символів!",
+                  },
             ]}
         >
            <Input
@@ -204,6 +229,10 @@ const AddNewRegionFormPage = () => {
             name="city"
 
             rules={[
+                {
+                    max: 50,
+                    message: "Максимальна довжина - 50 символів!",
+                  },
                 {
                     required: true,
                     message: 'Це поле має бути заповненим'
@@ -223,6 +252,10 @@ const AddNewRegionFormPage = () => {
 
             rules={[
                 {
+                    max: 50,
+                    message: "Максимальна довжина - 50 символів!",
+                  },
+                {
                     required: true,
                     message: 'Це поле має бути заповненим'
                 },
@@ -240,6 +273,10 @@ const AddNewRegionFormPage = () => {
             name="houseNumber"
 
             rules={[
+                {
+                    max: 5,
+                    message: "Максимальна довжина - 5 символів!",
+                  },
                 {
                     required: true,
                     message: 'Це поле має бути заповненим'
@@ -259,6 +296,10 @@ const AddNewRegionFormPage = () => {
 
             rules={[
                 {
+                    max: 5,
+                    message: "Максимальна довжина - 5 символів!",
+                  },
+                {
                     required: true,
                     message: 'Це поле має бути заповненим'
                 },
@@ -276,6 +317,10 @@ const AddNewRegionFormPage = () => {
             name="postIndex"
 
             rules={[
+                {
+                    max: 5,
+                    message: "Максимальна довжина - 5 символів!",
+                  },
                 {
                     required: true,
                     message: 'Це поле має бути заповненим'

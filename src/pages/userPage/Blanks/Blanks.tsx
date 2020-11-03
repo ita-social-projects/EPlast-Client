@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Data } from "../Interface/Interface";
 import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
 import AvatarAndProgress from "../personalData/AvatarAndProgress";
-import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId, openBiographyFile, getExtractFromUPUByUserId, removeExtractFromUPUDocument, getExtractFromUPUFile, openExtractFromUPUFile } from "../../../api/blankApi";
-import { Badge, Button, Col, Form, Tooltip } from "antd";
+import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId, openBiographyFile, getExtractFromUPUByUserId, removeExtractFromUPUDocument, getExtractFromUPUFile, openExtractFromUPUFile, openGenerationFile } from "../../../api/blankApi";
+import { Badge, Button, Col, Popconfirm, Tooltip } from "antd";
 import classes from "./Blanks.module.css";
 import Title from "antd/lib/typography/Title";
-import { DeleteOutlined, DownloadOutlined, EyeOutlined, FilePdfOutlined } from "@ant-design/icons";
+import { DeleteOutlined, DownloadOutlined, EyeOutlined, FilePdfOutlined, FileTextOutlined } from "@ant-design/icons";
 import AddBiographyModal from "./UserBiography/AddBiographyModal";
 import BlankDocument from "../../../models/Blank/BlankDocument";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -18,9 +18,9 @@ import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import ListOfAchievementsModal from "./UserAchievements/ListOfAchievementsModal";
 import AddExtractFromUPUModal from "./UserExtractFromUPU/AddExtractFromUPUModal";
+import jwt_decode from "jwt-decode";
 
 export const Blanks = () => {
-    const history = useHistory();
     const { userId } = useParams();
 
     const [data, setData] = useState<Data>();
@@ -32,6 +32,7 @@ export const Blanks = () => {
     const [visibleExtractFromUPUModal, setVisibleExtractFromUPUModal] = useState(false);
     const [visibleAchievementModal, setvisibleAchievementModal] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [canEdit, setCanEdit] = useState(false);
     const [userToken, setUserToken] = useState<any>([
         {
             nameid: "",
@@ -41,6 +42,9 @@ export const Blanks = () => {
     const fetchData = async () => {
         const token = AuthStore.getToken() as string;
         setUserToken(jwt(token));
+        let decodedJwt = jwt_decode(token) as any;
+        let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+        setCanEdit(roles.includes("Admin"));
         await userApi.getById(userId).then(response => {
             setData(response.data);
         }).catch(() => { notificationLogic('error', "Щось пішло не так") })
@@ -59,6 +63,11 @@ export const Blanks = () => {
         const response = await getExtractFromUPUByUserId(userId);
         setExtractUPU(response.data);
     }
+
+    const getPdf = async () => {
+        await openGenerationFile(userId);
+    }
+
     const removeDocumentById = async (documentId: number) => {
         await removeDocument(documentId);
         notificationLogic('success', "Файл успішно видалено");
@@ -103,7 +112,7 @@ export const Blanks = () => {
                             time={data?.timeToJoinPlast}
                             firstName={data?.user.firstName}
                             lastName={data?.user.lastName}
-                            isUserPlastun={data?.isUserPlastun} />
+                            isUserPlastun={true} />
                     </div>
                     <div className={classes.wrapperCol}>
                         <div className={classes.wrapper}>
@@ -164,7 +173,7 @@ export const Blanks = () => {
                                                     <Button type="primary"
                                                         className={classes.addIcon}
                                                         onClick={() => setVisibleModal(true)}>
-                                                        Створити Життєпис
+                                                        Додати Життєпис
                                             </Button>
                                                 </div>
                                             }
@@ -208,11 +217,18 @@ export const Blanks = () => {
                                         </Tooltip>
                                         {userToken.nameid === userId &&
                                             <Tooltip title="Видалити">
-                                                <DeleteOutlined
-                                                    className={classes.deleteIcon}
-                                                    key="close"
-                                                    onClick={() => removeExtractDocument(extractUPU.id)}
-                                                />
+                                                <Popconfirm
+                                                    title="Видалити цей документ?"
+                                                    placement="bottom"
+                                                    icon={false}
+                                                    onConfirm={() => removeExtractDocument(extractUPU.id)}
+                                                    okText="Так"
+                                                    cancelText="Ні">
+                                                    <DeleteOutlined
+                                                        className={classes.deleteIcon}
+                                                        key="close"
+                                                    />
+                                                </Popconfirm>
                                             </Tooltip>
                                         }
                                     </Col>
@@ -229,7 +245,7 @@ export const Blanks = () => {
                                                     <Button type="primary"
                                                         className={classes.addIcon}
                                                         onClick={() => setVisibleExtractFromUPUModal(true)}>
-                                                        Створити Виписку
+                                                        Додати Виписку
                                             </Button>
                                                 </div>
                                             }
@@ -283,7 +299,20 @@ export const Blanks = () => {
                             </div>
 
                             <div className={classes.wrapper5}>
-                                <Title level={2}>Генерація</Title>
+                                <Title level={2}>Заява для вступу</Title>
+                                <FileTextOutlined
+                                    className={classes.documentIcon} />
+                                {canEdit == true || userToken.nameid === userId ? (
+                                <Button
+                                        className={classes.addIcon}
+                                        type="primary"
+                                        onClick={() => getPdf()}>
+                                        Згенерувати файл
+                                </Button>
+                                 ) :(
+                                     null
+                                 )
+                                }
                             </div>
 
                         </div>

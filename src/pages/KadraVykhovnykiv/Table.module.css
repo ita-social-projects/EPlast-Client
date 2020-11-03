@@ -19,7 +19,15 @@
   color: blue;
 }
   
+.IDcolumn{
+  text-align: center;
+}
 
+.Namecolumn{
+  background-color: rgb(247, 245, 245);
+  font-weight: 400;
+  text-align: center;
+}
 
   .menu {
     box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;

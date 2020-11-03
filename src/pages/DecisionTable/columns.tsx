@@ -1,4 +1,5 @@
 import { Tooltip } from 'antd';
+import moment from 'moment';
 import React from 'react';
 import decisionsApi from '../../api/decisionsApi';
 
@@ -6,6 +7,7 @@ const columns = [
   {
     title: 'ID',
     dataIndex: 'id',
+    fixed: true,
     width: 60
   },
   {
@@ -39,6 +41,9 @@ const columns = [
   {
     title: 'Дата',
     dataIndex: 'date',
+    render: (date: Date) => {
+      return moment(date.toLocaleString()).format('DD-MM-YYYY');
+  },
   },
   {
     title: 'Додатки',

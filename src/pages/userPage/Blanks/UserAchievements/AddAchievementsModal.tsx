@@ -19,11 +19,12 @@ const AddAchievementsModal = (props: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [files, setFiles] = useState<BlankDocument[]>([]);
   const [disabled, setDisabled] = useState(true);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
 
   const handleUpload = (info: any) => {
     if (info.file !== null) {
-      if (checkFile(info.file.name)) {
+      if (checkFile(info.file.name, info.file.size)) {
         getBase64(info.file, (base64: string) => {
           const newDocument: BlankDocument = {
             id: 0,
@@ -43,7 +44,7 @@ const AddAchievementsModal = (props: Props) => {
     form.resetFields();
   };
 
-  const checkFile = (fileName: string): boolean => {
+  const checkFile = (fileName: string, fileSize:number): boolean => {
     const extension = fileName.split(".").reverse()[0];
     const isCorrectExtension =
       extension.indexOf("pdf") !== -1 ||
@@ -52,12 +53,18 @@ const AddAchievementsModal = (props: Props) => {
       extension.indexOf("png") !== -1
     if (!isCorrectExtension) {
       notificationLogic("error", "Можливі розширення файлів: pdf,jpg,jpeg,png");
-      setDisabled(true);
+      return isCorrectExtension;
     }
-    return isCorrectExtension;
+    const isSmaller3mb =  fileSize < 3145728;
+    if (!isSmaller3mb) {
+      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+      return isSmaller3mb;
+    }
+    return isCorrectExtension && isSmaller3mb;
   }
 
   const handleSubmit = async () => {
+    setButtonLoading(true);
     setLoading(true);
     await addAchievementDocuments(props.userId, files);
     props.setVisibleModal(false);
@@ -65,6 +72,7 @@ const AddAchievementsModal = (props: Props) => {
     removeFile();
     setDisabled(true);
     setLoading(false);
+    setButtonLoading(false);
   };
 
   const removeFile = () => {
@@ -135,7 +143,7 @@ const AddAchievementsModal = (props: Props) => {
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" htmlType="submit" disabled={disabled}>
+              <Button type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
                 Опублікувати
                   </Button>
             </Col>

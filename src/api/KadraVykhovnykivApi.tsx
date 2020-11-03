@@ -75,7 +75,15 @@ const findUserByEduStaff = async (EduStaffId:number)=>{
   return response;
   }
 
+
+  const GetStaffById = async (kadraId:number)=>{
+    const response = await Api.get(`EducatorsStaff/GetEduStaffById/${kadraId}`);
+    return response;
+    }
+
+
   export default {
+    GetStaffById,
     findUserByEduStaff,
     doesRegisterNumberExistEdit,
     doesUserHaveStaffEdit,

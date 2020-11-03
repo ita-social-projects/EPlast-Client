@@ -46,7 +46,7 @@ import {
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
-import { checkPhone } from "../../SignUp/verification";
+
 
 const CreateCity = () => {
   const { id } = useParams();
@@ -206,7 +206,7 @@ const CreateCity = () => {
         )}
         <Form onFinish={handleSubmit}>
           <Form.Item name="logo" initialValue={city.logo}>
-            <Upload
+          <Upload
               name="avatar"
               listType="picture-card"
               showUploadList={false}
