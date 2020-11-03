@@ -12,7 +12,7 @@ export const checkEmail = (role: object, value: string, callback:any) => {
   export const checkNameSurName = (role: object, value: string, callback:any) => {
     const reg = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,25}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,25})*$/;
       if (value.length === 0) {
-        return callback('');
+        return callback('Поле не може бути пустим');
       }
       if (reg.test(value) === false) {
         return callback('Дане поле повинне містити тільки літери та бути коротшим за 25 символів');
@@ -21,12 +21,12 @@ export const checkEmail = (role: object, value: string, callback:any) => {
   };
   
   export const checkPhone = (role: object, value: string, callback: any) => {
-    const reg = /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))\d{7}$/;
+    const reg = /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/;
     if (reg.test(value) === false) {
       return callback('Дане поле не є номером телефону');
     }
     if (value.length === 0) {
-        return callback('');
+        return callback('Поле не може бути пустим');
     }
     if (reg.test(value) === false) {
       return callback('Дане поле повинне містити тільки літери');

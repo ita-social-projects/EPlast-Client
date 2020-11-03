@@ -404,9 +404,13 @@ const CreateCity = () => {
                   },
                   {
                     validator: (_, value) =>
-                      parseInt(value) > 0
+                      parseInt(value) >= 0 ||
+                      value == null ||
+                      String(value).length == 0
                         ? Promise.resolve()
-                        : Promise.reject("Поле не може бути від'ємним"),
+                        : Promise.reject(
+                            `Поле не може бути від'ємним, ${value}`
+                          ),
                   },
                 ]}
               >

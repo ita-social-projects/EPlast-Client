@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip} from "antd";
-import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip, Breadcrumb} from "antd";
+import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined, HomeOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
@@ -17,6 +17,7 @@ import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
 import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
+import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 
 const City = () => {
   const history = useHistory();
@@ -157,8 +158,11 @@ const City = () => {
   ) : city.id !== 0 ? (
     <Layout.Content className="cityProfile">
       <Row gutter={[0, 48]}>
+        
         <Col xl={15} sm={24} xs={24}>
+          
           <Card hoverable className="cityCard">
+
             <Title level={3}>Станиця {city.name}</Title>
             <Row className="cityPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>

@@ -16,7 +16,7 @@ import { getBase64 } from "./Services";
 import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
 import userApi from "../../../api/UserApi";
-import InputMask from "react-input-mask";
+import ReactInputMask from "react-input-mask";
 import moment, { Moment } from "moment";
 import jwt from "jwt-decode";
 import AuthStore from "../../../stores/AuthStore";
@@ -402,12 +402,14 @@ export default function () {
               className={styles.formItem}
               rules={validationSchema.phone}
             >
-              <InputMask
-                value={phoneNumber}
-                onChange={changePhoneNumber}
-                className={styles.dataInput}
-                mask="+38(999)-999-99-99"
-              />
+              <ReactInputMask
+                 value={phoneNumber}
+                 onChange={changePhoneNumber}
+                 className={styles.dataInput}
+                 mask="+38(999)-999-99-99"
+              >
+              {(inputProps: any) => <Input {...inputProps} />}
+              </ReactInputMask>
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
