@@ -1,50 +1,60 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "antd";
-import { getAdminTypeIdByName, AddAdmin } from "../../api/regionsApi";
-import notificationLogic from "../../components/Notifications/Notification";
+import notificationLogic from "./../../../components/Notifications/Notification";
+import CityAdmin from "../../../models/City/CityAdmin";
+import { addAdministrator } from "../../../api/citiesApi";
+import AdminType from "../../../models/Admin/AdminType";
 
 interface Props {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: any) => void;
-  onChange: (id: string, userRoles: string) => void;
-  userId: string;
-  regionId: number;
+  onChange?: (id: string, userRoles: string) => void;
+  admin: CityAdmin;
+  cityId: number;
   adminType: any;
   startDate: any;
   endDate: any;
   endDayOld: any;
   oldAdminFirstName: string | undefined;
   oldAdminLastName: string | undefined;
+  onAdd?: (admin?: CityAdmin) => void;
 }
-const ConfirmRegionAdminModal = ({
+const ConfirmHeadAdminModal = ({
   visibleModal,
   setVisibleModal,
   onChange,
-  userId,
-  regionId,
+  admin,
+  cityId,
   adminType,
   startDate,
   endDate,
   endDayOld,
   oldAdminFirstName,
   oldAdminLastName,
+  onAdd,
 }: Props) => {
   const handleCancel = () => {
     setVisibleModal(false);
   };
 
-  const handleSubmit = async (values: any) => {
-    const newAdmin: any = {
-      id: 0,
-      userId: userId,
-      AdminTypeId: await (await getAdminTypeIdByName(adminType)).data,
-      startDate: startDate,
-      endDate: endDate,
-      regionId: regionId,
+  const handleSubmit = async () => {
+    let newAdmin: CityAdmin = {
+      id: admin.id,
+      adminType: {
+        ...new AdminType(),
+        adminTypeName: adminType,
+      },
+      cityId: cityId,
+      user: admin.user,
+      userId: admin.userId,
+      endDate: endDate?._d,
+      startDate: startDate?._d,
     };
-    await AddAdmin(newAdmin);
+
+    admin = (await addAdministrator(admin.cityId, newAdmin)).data;
+    onAdd?.(admin);
     notificationLogic("success", "Користувач успішно доданий в провід");
-    onChange(userId, values.AdminType);
+    onChange?.(admin.userId, adminType);
     setVisibleModal(false);
   };
 
@@ -65,7 +75,7 @@ const ConfirmRegionAdminModal = ({
       <div>
         <Form>
           <div style={{ margin: 10 }}>
-            {oldAdminFirstName} {oldAdminLastName} є {adminType}, термін дії
+            {oldAdminFirstName} {oldAdminLastName} є Головою Станиці, термін дії
             посади закінчується{" "}
             {endDayOld === "Invalid date" ? "ще не скоро" : endDayOld}.
             Призначити даного користувача на цю посаду?
@@ -94,4 +104,4 @@ const ConfirmRegionAdminModal = ({
   );
 };
 
-export default ConfirmRegionAdminModal;
+export default ConfirmHeadAdminModal;

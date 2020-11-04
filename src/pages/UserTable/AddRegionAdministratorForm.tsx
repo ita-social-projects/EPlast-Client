@@ -171,7 +171,7 @@ const AddNewAdministratorForm = ({
 
       <Form.Item style={{ textAlign: "right" }}>
         <Button type="primary" htmlType="submit">
-          Опублікувати
+          Призначити
         </Button>
       </Form.Item>
       <ConfirmRegionAdminModal

@@ -63,7 +63,7 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
             Відмінити
           </Button>
           <Button type="primary" htmlType="submit">
-            Змінити
+            Призначити
           </Button>
         </Form.Item>
       </Form>

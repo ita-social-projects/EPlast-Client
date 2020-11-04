@@ -3,10 +3,15 @@ import "./AddAdministrationModal.less";
 import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
 import ClubAdmin from "./../../../models/Club/ClubAdmin";
 import AdminType from "./../../../models/Admin/AdminType";
-import { addAdministrator, editAdministrator } from "../../../api/clubsApi";
+import {
+  addAdministrator,
+  editAdministrator,
+  getAllAdmins,
+} from "../../../api/clubsApi";
 import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
 import "moment/locale/uk";
+import ConfirmHeadAdminModal from "./ConfirmHeadAdminModal";
 moment.locale("uk-ua");
 
 interface Props {
@@ -21,15 +26,37 @@ interface Props {
 
 const AddAdministratorModal = (props: Props) => {
   const [loading, setLoading] = useState(false);
-  const [date, setDate] = useState<any>();
+  const [startDate, setStartDate] = useState<any>();
+  const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
+  const [confirmModal, setConfirmModal] = useState<boolean>(false);
+  const [head, setHead] = useState<ClubAdmin>();
+  const [adminType, setAdminType] = useState<string>();
+  const [endDayOld, setEndDayOld] = useState<any>();
+  const [oldAdminFirstName, setOldAdminFirstName] = useState<string>();
+  const [oldAdminLastName, setOldAdminLastName] = useState<string>();
 
   const disabledEndDate = (current: any) => {
-    return current && current < date;
+    return current && current < startDate;
   };
 
   const disabledStartDate = (current: any) => {
     return current && current > moment();
+  };
+
+  const getClubHead = async () => {
+    if (props.clubId !== 0) {
+      const responseAdmins = await getAllAdmins(props.clubId);
+      setHead(responseAdmins.data.head);
+      setLoading(false);
+    }
+  };
+
+  const handleClick = async (value: any) => {
+    setAdminType(value);
+    setEndDayOld(moment(head?.endDate).format("DD.MM.YYYY"));
+    setOldAdminFirstName(head?.user.firstName);
+    setOldAdminLastName(head?.user.lastName);
   };
 
   const handleSubmit = async (values: any) => {
@@ -50,15 +77,24 @@ const AddAdministratorModal = (props: Props) => {
 
     try {
       if (admin.id === 0) {
-        admin = (await addAdministrator(props.clubId, admin)).data;
+        if (values.adminType === "Голова Куреня" && head !== null) {
+          setConfirmModal(true);
+          props.setVisibleModal(false);
+        } else {
+          admin = (await addAdministrator(props.admin.clubId, admin)).data;
+          props.onAdd?.(admin);
+          props.setVisibleModal(false);
+          notificationLogic("success", "Користувач успішно доданий в провід");
+          props.onChange?.(props.admin.userId, values.adminType);
+        }
       } else {
-        admin = (await editAdministrator(props.clubId, admin)).data;
+        admin = (await editAdministrator(props.admin.clubId, admin)).data;
+        props.onAdd?.(admin);
+        props.setVisibleModal(false);
+        notificationLogic("success", "Адміністратор успішно відредагований");
+        props.onChange?.(props.admin.userId, values.adminType);
       }
     } finally {
-      props.onAdd?.(admin);
-      props.setVisibleModal(false);
-      props.onChange?.(props.admin.userId, values.adminType);
-      notificationLogic("success", "Користувач успішно доданий в провід");
       setLoading(false);
     }
   };
@@ -71,6 +107,7 @@ const AddAdministratorModal = (props: Props) => {
     if (props.visibleModal) {
       form.resetFields();
     }
+    getClubHead();
   }, [props]);
 
   return (
@@ -97,6 +134,7 @@ const AddAdministratorModal = (props: Props) => {
         >
           <AutoComplete
             className="adminTypeSelect"
+            onChange={handleClick}
             options={[
               { value: "Голова Чату" },
               { value: "Голова Куреня" },
@@ -136,7 +174,7 @@ const AddAdministratorModal = (props: Props) => {
                     ? moment(props.admin.startDate)
                     : undefined
                 }
-                onChange={(e) => setDate(e)}
+                onChange={(e) => setStartDate(e)}
               />
             </Form.Item>
           </Col>
@@ -156,6 +194,7 @@ const AddAdministratorModal = (props: Props) => {
                 value={
                   props.admin.endDate ? moment(props.admin.endDate) : undefined
                 }
+                onChange={(e) => setEndDate(e)}
               />
             </Form.Item>
           </Col>
@@ -179,6 +218,20 @@ const AddAdministratorModal = (props: Props) => {
             </Col>
           </Row>
         </Form.Item>
+        <ConfirmHeadAdminModal
+          onChange={props.onChange}
+          visibleModal={confirmModal}
+          setVisibleModal={setConfirmModal}
+          admin={props.admin}
+          clubId={props.clubId}
+          adminType={adminType}
+          startDate={startDate}
+          endDate={endDate}
+          endDayOld={endDayOld}
+          oldAdminFirstName={oldAdminFirstName}
+          oldAdminLastName={oldAdminLastName}
+          onAdd={props.onAdd}
+        />
       </Form>
     </Modal>
   );
