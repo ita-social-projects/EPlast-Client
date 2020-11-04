@@ -15,8 +15,7 @@ const AddNewRegionFormPage = () => {
     const history = useHistory();
 
     const [logo, setLogo]=useState<any>();
-    const [currentPhoto,setCurrentPhoto] = useState(true);
-    const [disabled,setDisabled] = useState(false);
+    const [currentPhoto,setCurrentPhoto] = useState(false);
 
     const handleSubmit = async (values: any) => {
         const newRegion: any = {
@@ -71,18 +70,18 @@ const AddNewRegionFormPage = () => {
               setLogo( base64 );
             });
             notificationLogic("success", "Фото завантажено");
-            setCurrentPhoto(false);
-            setDisabled(true);
+            setCurrentPhoto(true);
           }
         } else {
           notificationLogic("error", "Проблема з завантаженням фото");
         }
       };
 
-      const removePhoto = () => {
+      const removePhoto = (event: any) => {
         setLogo(CityDefaultLogo);
-        setCurrentPhoto(true);
-        setDisabled(false);
+        notificationLogic("success", "Фото видалено");
+        event.stopPropagation();
+        setCurrentPhoto(false);
       }; 
 
     return <Layout.Content className="createCity">
@@ -102,22 +101,13 @@ const AddNewRegionFormPage = () => {
               showUploadList={false}
               accept=".jpeg,.jpg,.png"
               customRequest={handleUpload}
-              disabled={disabled}
             >
                
-              {currentPhoto ? (
+               {currentPhoto ? (
+                <DeleteOutlined onClick={removePhoto} />
+              ) : (
                 <PlusOutlined />
-              ):(
-                <div>
-                <DeleteOutlined 
-                  onClick={() => {
-                    removePhoto();
-                    notificationLogic("success", "Фото видалено");
-                  }}
-                  />
-              </div>
-              )
-              }
+              )}
               <img
                 src={logo ? logo : CityDefaultLogo}
                 alt="Region"
