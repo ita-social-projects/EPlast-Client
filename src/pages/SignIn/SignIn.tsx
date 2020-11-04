@@ -45,11 +45,10 @@ export default function () {
     if(prevPage){
       history.push(prevPage);
       localStorage.removeItem('pathName');
-      window.location.reload();
     }else{
     history.push(`/userpage/main/${user.nameid}`);
-    window.location.reload();
-    }
+  }
+  window.location.reload();
   };
 
   const handleGoogleResponse = async (response:any) => {
