@@ -366,6 +366,7 @@ export default function () {
             </Button>
           </Upload>
         </div>
+        
         <div className={styles.allFields}>
           <div className={styles.rowBlock}>
             <Form.Item

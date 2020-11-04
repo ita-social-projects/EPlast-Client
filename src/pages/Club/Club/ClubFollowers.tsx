@@ -72,7 +72,7 @@ const ClubFollowers = () => {
         {loading ? (
           <Spinner />
         ) : (
-          <div className="ClubMoreItems">
+          <div className="clubMoreItems">
             {followers.length > 0 ? (
               followers.map((follower: ClubMember) => (
                 <Card
@@ -95,7 +95,7 @@ const ClubFollowers = () => {
                     onClick={() =>
                       history.push(`/userpage/main/${follower.userId}`)
                     }
-                    className="ClubMember"
+                    className="clubMember"
                   >
                     {photosLoading ? (
                       <Skeleton.Avatar active size={86}></Skeleton.Avatar>
@@ -118,7 +118,7 @@ const ClubFollowers = () => {
             )}
           </div>
         )}
-        <div className="ClubMoreItems">
+        <div className="clubMoreItems">
           <Button
             className="backButton"
             icon={<RollbackOutlined />}

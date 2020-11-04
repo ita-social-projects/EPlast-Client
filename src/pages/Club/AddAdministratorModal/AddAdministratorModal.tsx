@@ -136,7 +136,6 @@ const AddAdministratorModal = (props: Props) => {
             className="adminTypeSelect"
             onChange={handleClick}
             options={[
-              { value: "Голова Чату" },
               { value: "Голова Куреня" },
               { value: "Голова СПС" },
               { value: "Фотограф" },
