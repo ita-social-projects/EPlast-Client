@@ -1,5 +1,5 @@
-import { DeleteOutlined, DownloadOutlined, EyeOutlined,  FileImageOutlined, FilePdfOutlined, LoadingOutlined } from "@ant-design/icons";
-import {List, message, Modal } from "antd";
+import { DeleteOutlined, DownloadOutlined, EyeOutlined, FileImageOutlined, FilePdfOutlined, LoadingOutlined } from "@ant-design/icons";
+import { List, message, Modal, Popconfirm } from "antd";
 import React, { useEffect, useState } from "react";
 import { getAchievementFile, openAchievemetFile, removeAchievementDocument, getAchievementsByPage } from "../../../../api/blankApi";
 import BlankDocument from "../../../../models/Blank/BlankDocument";
@@ -74,7 +74,6 @@ const ListOfAchievementsModal = (props: Props) => {
     const handleInfiniteOfLoad = () => {
         setLoadingMore({ loading: true, hasMore: true });
         if (isEmpty) {
-            message.success(`Всі файли завантажено`);
             setLoadingMore({ loading: false, hasMore: false });
             return;
         }
@@ -112,11 +111,18 @@ const ListOfAchievementsModal = (props: Props) => {
                                     <EyeOutlined
                                         className={classes.reviewIcon}
                                         onClick={() => reviewFile(item.blobName, item.fileName)} />,
-                                    <DeleteOutlined
-                                        hidden={currentUser}
-                                        className={classes.deleteIcon}
-                                        onClick={() => deleteFIle(item.id, item.fileName)}
-                                    />
+                                    <Popconfirm
+                                        title="Видалити цей документ?"
+                                        placement="bottom"
+                                        icon={false}
+                                        onConfirm={() => deleteFIle(item.id, item.fileName)}
+                                        okText="Так"
+                                        cancelText="Ні">
+                                        <DeleteOutlined
+                                            hidden={currentUser}
+                                            className={classes.deleteIcon}
+                                        />
+                                    </Popconfirm>
                                 ]}>
                                 {item.blobName.split(".")[1] === "pdf"
                                     ?

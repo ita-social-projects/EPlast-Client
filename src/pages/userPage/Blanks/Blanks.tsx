@@ -152,11 +152,19 @@ export const Blanks = () => {
                                         </Tooltip>
                                         {userToken.nameid === userId &&
                                             <Tooltip title="Видалити">
+                                                <Popconfirm
+                                                title="Видалити цей документ?"
+                                                placement="bottom"
+                                                icon={false}
+                                                onConfirm={() => removeDocumentById(document.id)}
+                                                okText="Так"
+                                                cancelText="Ні">
+                                                
                                                 <DeleteOutlined
                                                     className={classes.deleteIcon}
                                                     key="close"
-                                                    onClick={() => removeDocumentById(document.id)}
                                                 />
+                                                </Popconfirm>
                                             </Tooltip>
                                         }
                                     </Col>
