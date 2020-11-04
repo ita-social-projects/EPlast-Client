@@ -113,7 +113,7 @@ const ListOfAchievementsModal = (props: Props) => {
                                         onClick={() => reviewFile(item.blobName, item.fileName)} />,
                                     <Popconfirm
                                         title="Видалити цей документ?"
-                                        placement="bottom"
+                                        placement="right"
                                         icon={false}
                                         onConfirm={() => deleteFIle(item.id, item.fileName)}
                                         okText="Так"
