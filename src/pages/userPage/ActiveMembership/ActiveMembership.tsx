@@ -120,7 +120,7 @@ const ActiveMembership = () => {
     if(currentPlastDegree){
       await NotificationBoxApi.createNotifications(
         [userId],
-        `На жаль вас було позбавлено ступеня: ${getAppropriateToGenderDegree(currentPlastDegree.plastDegree.name)}`,
+        `На жаль вас було позбавлено ступеня: ${getAppropriateToGenderDegree(currentPlastDegree.plastDegree.name)} в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/userpage/activeMembership/${userId}`,
         `Дійсному членстві`
