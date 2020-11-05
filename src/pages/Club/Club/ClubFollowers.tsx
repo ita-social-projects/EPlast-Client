@@ -8,12 +8,14 @@ import "./Club.less";
 import ClubMember from '../../../models/Club/ClubMember';
 import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
+import NotificationBoxApi from '../../../api/NotificationBoxApi';
 
 const ClubFollowers = () => {
     const {id} = useParams();
     const history = useHistory();
 
     const [followers, setFollowers] = useState<ClubMember[]>([]);
+    const [clubName, setClubName] = useState<string>("");
     const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -26,17 +28,30 @@ const ClubFollowers = () => {
       setPhotos(response.data.followers);
       setFollowers(response.data.followers);
       setCanEdit(response.data.canEdit);
+      setClubName(response.data.name);
       setLoading(false);
     };
 
-    const addMember = async (followerId: number) => {
-        await toggleMemberStatus (followerId);
-        setFollowers(followers.filter(u => u.id !== followerId));
+    const createNotification = async(userId : string, message : string) => {
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message + ": ",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/clubs/${id}`,
+        clubName
+        );
     }
 
-    const removeMember = async (followerId: number) => {
-        await removeFollower(followerId);
-        setFollowers(followers.filter(u => u.id !== followerId));
+    const addMember = async (follower: ClubMember) => {
+        await toggleMemberStatus (follower.id);
+        await createNotification(follower.userId, "Вітаємо, вас зараховано до членів куреня");
+        setFollowers(followers.filter(u => u.id !== follower.id));
+    }
+
+    const removeMember = async (follower: ClubMember) => {
+        await removeFollower(follower.id);
+        await createNotification(follower.userId, "На жаль, ви були виключені з прихильників куреня");
+        setFollowers(followers.filter(u => u.id !== follower.id));
     }
 
     const setPhotos = async (members: ClubMember[]) => {
@@ -48,7 +63,7 @@ const ClubFollowers = () => {
     }
 
     useEffect(() => {
-        getFollowers();
+      getFollowers();
     }, []);
 
     return (
@@ -57,7 +72,7 @@ const ClubFollowers = () => {
         {loading ? (
           <Spinner />
         ) : (
-          <div className="ClubMoreItems">
+          <div className="clubMoreItems">
             {followers.length > 0 ? (
               followers.map((follower: ClubMember) => (
                 <Card
@@ -67,10 +82,10 @@ const ClubFollowers = () => {
                     canEdit
                       ? [
                           <PlusOutlined
-                            onClick={() => addMember(follower.id)}
+                            onClick={() => addMember(follower)}
                           />,
                           <CloseOutlined
-                            onClick={() => removeMember(follower.id)}
+                            onClick={() => removeMember(follower)}
                           />,
                         ]
                       : undefined
@@ -80,7 +95,7 @@ const ClubFollowers = () => {
                     onClick={() =>
                       history.push(`/userpage/main/${follower.userId}`)
                     }
-                    className="ClubMember"
+                    className="clubMember"
                   >
                     {photosLoading ? (
                       <Skeleton.Avatar active size={86}></Skeleton.Avatar>
@@ -103,7 +118,7 @@ const ClubFollowers = () => {
             )}
           </div>
         )}
-        <div className="ClubMoreItems">
+        <div className="clubMoreItems">
           <Button
             className="backButton"
             icon={<RollbackOutlined />}

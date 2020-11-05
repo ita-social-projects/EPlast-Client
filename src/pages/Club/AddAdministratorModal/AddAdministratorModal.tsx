@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import './AddAdministrationModal.less';
+import "./AddAdministrationModal.less";
 import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
 import ClubAdmin from "./../../../models/Club/ClubAdmin";
-import AdminType from './../../../models/Admin/AdminType';
+import AdminType from "./../../../models/Admin/AdminType";
 import { addAdministrator, editAdministrator } from "../../../api/clubsApi";
+import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
 import "moment/locale/uk";
 moment.locale("uk-ua");
@@ -15,6 +16,7 @@ interface Props {
   setAdmin: (admin: ClubAdmin) => void;
   clubId: number;
   onAdd?: (admin?: ClubAdmin) => void;
+  onChange?: (id: string, userRoles: string) => void;
 }
 
 const AddAdministratorModal = (props: Props) => {
@@ -24,11 +26,11 @@ const AddAdministratorModal = (props: Props) => {
 
   const disabledEndDate = (current: any) => {
     return current && current < date;
-  }
+  };
 
   const disabledStartDate = (current: any) => {
     return current && current > moment();
-  }
+  };
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
@@ -43,8 +45,8 @@ const AddAdministratorModal = (props: Props) => {
       user: props.admin.user,
       userId: props.admin.userId,
       endDate: values.endDate?._d,
-      startDate: values.startDate?._d
-    }
+      startDate: values.startDate?._d,
+    };
 
     try {
       if (admin.id === 0) {
@@ -55,6 +57,8 @@ const AddAdministratorModal = (props: Props) => {
     } finally {
       props.onAdd?.(admin);
       props.setVisibleModal(false);
+      props.onChange?.(props.admin.userId, values.adminType);
+      notificationLogic("success", "Користувач успішно доданий в провід");
       setLoading(false);
     }
   };
@@ -94,7 +98,6 @@ const AddAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: "Голова Чату" },
               { value: "Голова Куреня" },
               { value: "Голова СПС" },
               { value: "Фотограф" },
@@ -104,7 +107,8 @@ const AddAdministratorModal = (props: Props) => {
               { value: "Член СПР" },
             ]}
             filterOption={(inputValue, option) =>
-              option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+              option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
+              -1
             }
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}

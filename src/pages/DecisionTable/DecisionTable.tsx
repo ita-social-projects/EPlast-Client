@@ -6,6 +6,7 @@ import AddDecisionModal from './AddDecisionModal';
 import decisionsApi, { Decision, statusTypeGetParser } from '../../api/decisionsApi';
 import notificationLogic from '../../components/Notifications/Notification';
 import ClickAwayListener from 'react-click-away-listener';
+import moment from "moment";
 const classes = require('./Table.module.css');
 
 const { Content } = Layout;
@@ -65,14 +66,22 @@ const DecisionTable = () => {
   }, []);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchedData(event.target.value);
+    setSearchedData(event.target.value.toLowerCase());
   };
 
 
   const filteredData = searchedData
     ? data.filter((item) => {
-      return Object.values(item).find((element) => {
-        return String(element).includes(searchedData);
+      return Object.values([
+        item.name,
+        item.organization,
+        item.id,
+        item.description,
+        item.decisionStatusType,
+        item.decisionTarget,
+        moment(item.date.toLocaleString()).format("DD-MM-YYYY"),
+      ]).find((element) => {
+        return String(element).toLowerCase().includes(searchedData);
       });
     })
     : data;
@@ -93,7 +102,7 @@ const DecisionTable = () => {
         {!loading && (
           <>
             <div className={classes.searchContainer}>
-              <Input placeholder="Пошук" onChange={handleSearch} />
+              <Input placeholder="Пошук" onChange={handleSearch} allowClear />
               <Button type="primary" onClick={showModal}>
                 Додати рішення
               </Button>

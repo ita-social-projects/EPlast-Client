@@ -22,6 +22,8 @@ const AddDocumentModal = (props: Props) => {
     const [form] = Form.useForm();
     const [fileName, setFileName] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [disabled, setDisabled] = useState(true);
+    const [buttonLoading, setButtonLoading] = useState(false);
 
 
     const normFile = (e: { fileList: any }) => {
@@ -39,10 +41,12 @@ const AddDocumentModal = (props: Props) => {
               props.setDocument({...props.document, blobName: base64});
               setFileName(info.file.name);
             });
-            notificationLogic("success", "Файл завантажено");    
+            notificationLogic("success", "Файл завантажено"); 
+            setDisabled(false);   
         }
       } else {
         notificationLogic("error", "Проблема з завантаженням файлу");
+        setDisabled(true);
       }
     };
 
@@ -54,17 +58,19 @@ const AddDocumentModal = (props: Props) => {
         extension.indexOf("docx") !== -1;
       if (!isCorrectExtension) {
         notificationLogic("error", "Можливі розширення файлів: pdf, doc, docx");
+        setDisabled(true);
       }
       
       const isSmaller3mb = fileSize < 3145728;
       if (!isSmaller3mb) {
         notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+        setDisabled(true);
       }
-
       return isSmaller3mb && isCorrectExtension;
     };
 
     const handleSubmit = async (values: any) => {
+      setButtonLoading(true);
       setLoading(true);
       const newDocument: any = {
         id: 0,
@@ -79,11 +85,14 @@ const AddDocumentModal = (props: Props) => {
       props.setVisibleModal(false);
       form.resetFields();
       setLoading(false);
+      removeFile();
+      setButtonLoading(false);
     };
 
     const removeFile = () => {
       props.setDocument({ ...props.document, blobName: "" });
       setFileName("");
+      setDisabled(true);
     };
 
     const handleCancel = () => {
@@ -91,9 +100,6 @@ const AddDocumentModal = (props: Props) => {
       form.resetFields();
       removeFile();
     };
-
-    const onSearch = (val: any) => {
-    }
 
 
     return (
@@ -161,7 +167,7 @@ const AddDocumentModal = (props: Props) => {
                 xs={{ span: 11, offset: 2 }}
                 sm={{ span: 6, offset: 1 }}
               >
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" loading={buttonLoading} disabled={disabled} htmlType="submit">
                   Опублікувати
                 </Button>
               </Col>
