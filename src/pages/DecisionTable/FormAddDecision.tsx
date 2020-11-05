@@ -31,6 +31,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
   };
   const handleCancel = () => {
     form.resetFields();
+    setFileData({FileAsBase64 : null, FileName: null});
     setVisibleModal(false);
   };
   const handleUpload = (info :any) => {
