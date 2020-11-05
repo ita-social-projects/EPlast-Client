@@ -110,9 +110,9 @@ export default class AuthorizeApi {
     return response;
   };
   
-  getGoogleId= async () => {
+  getGoogleId = async () => {
     
-    const response = await Api.get("Auth/GoogleId");
+    const response = await Api.get("Auth/GoogleClientId");
 
     return response.data;
   };
