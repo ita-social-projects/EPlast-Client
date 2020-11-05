@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Form, Input, Layout, List, Select } from "antd";
-import { EnvironmentOutlined, PhoneOutlined, MailOutlined, InfoOutlined} from "@ant-design/icons";
+import { EnvironmentOutlined, PhoneOutlined, MailOutlined, InfoOutlined } from "@ant-design/icons";
 import styles from "./Contacts.module.css";
 import AuthorizeApi from "../../api/authorizeApi";
 import { useHistory } from 'react-router-dom';
+import ReactInputMask from "react-input-mask";
 let authService = new AuthorizeApi();
 
 export default function () {
@@ -13,19 +14,19 @@ export default function () {
   const data = [
     {
       avatar: (
-        <EnvironmentOutlined id={styles.environmentOutlined}/>
+        <EnvironmentOutlined id={styles.environmentOutlined} />
       ),
       title: "Україна",
     },
     {
       avatar: (
-        <PhoneOutlined id={styles.environmentOutlined}/>
+        <PhoneOutlined id={styles.environmentOutlined} />
       ),
-      title: "+38(099)-99-99-99-9",
+      title: "+38 (099)-999-99-99",
     },
     {
       avatar: (
-        <MailOutlined id={styles.environmentOutlined}/>
+        <MailOutlined id={styles.environmentOutlined} />
       ),
       title: "info@plast.ua",
     },
@@ -34,12 +35,14 @@ export default function () {
   const handleSubmit = async (values: any) => {
     await authService.sendQuestionAdmin(values);
     history.push("/contacts");
+    form.resetFields();
   };
 
   const validateMessages = {
     required: "Це поле є обов`язковим!",
     types: {
-      email: "Невалідний email!",
+      email: "Неправильний формат електронної пошти!",
+      string: "Непрвильний номер телефону",
     },
   };
 
@@ -72,7 +75,7 @@ export default function () {
         className={styles.contactsForm}
         layout="vertical"
         initialValues={{ prefix: "+380" }}
-        form={form}
+        form={form} 
         validateMessages={validateMessages}
         onFinish={handleSubmit}
       >
@@ -85,13 +88,22 @@ export default function () {
         </Form.Item>
         <Form.Item
           name="Email"
-          label="Вкажіть Ваш email"
-          rules={[{ type: "email" }]}
+          label="Вкажіть Вашу електронну пошту"
+          rules={[{ type: "email", required: true }]}
         >
           <Input />
         </Form.Item>
-        <Form.Item name="PhoneNumber" label="Вкажіть Ваш номер телефону">
-          <Input addonBefore={prefixSelector} id={styles.addonElement} />
+        <Form.Item
+          name="PhoneNumber"
+          label="Вкажіть Ваш номер телефону"
+          rules={[{min:18, message:"Непрвильний номер телефону"}]}
+          >
+          <ReactInputMask
+            mask="+380(99)-999-99-99"
+            maskChar={null}
+          >
+            {(inputProps: any) => <Input  {...inputProps} type="tel" />}
+          </ReactInputMask>
         </Form.Item>
         <Form.Item
           name="FeedBackDescription"
