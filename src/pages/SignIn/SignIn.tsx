@@ -10,6 +10,8 @@ import { useHistory } from 'react-router-dom';
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import GoogleLoginWrapper from '../SignIn/GoogleLoginWrapper';
+import FacebookLoginWrapper from '../SignIn/FacebookLoginWrapper';
+import FacebookData from '../SignIn/FacebookDataInterface';
 
 let authService = new AuthorizeApi();
 let user: any;
@@ -18,7 +20,10 @@ export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
   const [googleId, setGoogleId] = useState("") ;
-  const [loading, setLoading] = useState(true);
+  const [facebookAppId, setFacebookAppId] = useState("") ;
+  // const [allId, setallId] = useState({googleId:"",facebookAppId:""}) ;
+  const [googleLoading, setGoogleLoading] = useState(true);
+  const [facebookLoading, setFacebookLoading] = useState(true);
 
   const initialValues = {
     Email: "",
@@ -53,6 +58,14 @@ export default function () {
     window.location.reload();
   }
 
+  const handleFacebookResponse = async (response:FacebookData) => {
+    await authService.sendFacebookInfo(response);
+    const token = AuthStore.getToken() as string;
+    user = jwt(token);
+    history.push(`/userpage/main/${user.nameid}`);
+    window.location.reload();
+  }
+
   const getId = async () => {
    await authService.getGoogleId().then(
      (data)=>{
@@ -60,14 +73,26 @@ export default function () {
      }
    ).catch(exc=>{console.log(exc)});
   
-      setLoading(false);
+    setGoogleLoading(false);
   }
 
-useEffect(() => {
+  const getAppId = async () => {
+    await authService.getFacebookId().then(
+      (data)=>{
+        setFacebookAppId(data.id);
+      }
+    ).catch(exc=>{console.log(exc)});
+   
+       setFacebookLoading(false);
+   }
 
-     getId();
+   useEffect(() => {
 
-  },[googleId]);
+    getId();
+    getAppId();
+    // console.log(allId);
+  
+    },[googleId,facebookAppId]);
 
   return (
     <div className={styles.mainContainer}>
@@ -101,21 +126,16 @@ useEffect(() => {
         </Form.Item>
         <Link className={styles.forgot} to="/forgotPassword">Забули пароль</Link>
         <div className={styles.GoogleFacebookLogin}>
-       {loading ? (
+        {googleLoading ? (
         ''
       ) : (
-        <GoogleLoginWrapper googleId={googleId} handleGoogleResponse = {handleGoogleResponse}>
-        </GoogleLoginWrapper>)}
-          <Button id={styles.facebookBtn} className={styles.socialButton}>
-            <span id={styles.imgSpanFacebook}>
-              <img
-                alt="Facebook icon"
-                className={styles.socialImg}
-                src={facebookImg}
-              />
-            </span>
-            <span className={styles.btnText}>Facebook</span>
-          </Button>
+        <GoogleLoginWrapper googleId={googleId} handleGoogleResponse = {handleGoogleResponse}></GoogleLoginWrapper>
+        )}
+        {facebookLoading ? (
+        ''
+      ) : (
+        <FacebookLoginWrapper appId={facebookAppId} handleFacebookResponse = {handleFacebookResponse}></FacebookLoginWrapper> 
+        )}
         </div>
       </Form>
     </div>
