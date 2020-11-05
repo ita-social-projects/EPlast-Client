@@ -8,6 +8,8 @@ import {
   InfoCircleOutlined,
   SnippetsOutlined,
   PieChartOutlined,
+  FileTextOutlined,
+  BarChartOutlined
 } from "@ant-design/icons";
 import classes from "./PrivateLayout.module.css";
 import jwt from 'jwt-decode';
@@ -115,22 +117,17 @@ const PrivateLayout = ({ children }: any) => {
               <Menu.Item onClick={() => { handleClickAway(); history.push('/kadra'); }} key="8">Кадра виховників</Menu.Item>
             </SubMenu>
             <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Документи">
-              <SubMenu key="sub2.1" title="Звіти">
-                <Menu.Item onClick={() => { handleClickAway(); history.push('/annualreport/table'); }} key="9">Річні звіти</Menu.Item>
-                <Menu.Item onClick={() => { handleClickAway(); history.push('/statistics/cities'); }} key="10">Статистичні звіти</Menu.Item>
-              </SubMenu>
+                <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push('/annualreport/table'); }} key="9">Річні звіти</Menu.Item>
               <SubMenu
-                key="sub2.2"
+                key="sub2.1"
                 icon={<PieChartOutlined />}
-                title="Статистика"
-              >
-                <Menu.Item onClick={() => { handleClickAway(); }} key="11">Геостатистика</Menu.Item>
-                <Menu.Item onClick={() => { handleClickAway(); history.push('/statistics/year'); }} key="12">Статистика за роки</Menu.Item>
-                <Menu.Item onClick={() => { handleClickAway(); history.push('/statistics/period'); }} key="13">Статистика за періоди</Menu.Item>
+                title="Статистика" >
+                <Menu.Item icon={<BarChartOutlined />} onClick={() => { handleClickAway(); history.push('/statistics/cities'); }} key="10">Статистика станиць</Menu.Item>
+                <Menu.Item icon={<BarChartOutlined />} onClick={() => { handleClickAway(); history.push('/statistics/regions'); }} key="11">Статистика округів</Menu.Item>
               </SubMenu>
               <SubMenu key="sub2.3" title="Осередки">
-                <Menu.Item onClick={() => { handleClickAway(); }} key="14">Осередки та адміни</Menu.Item>
-                <Menu.Item onClick={() => { handleClickAway(); }} key="15">Порівняти осередки</Menu.Item>
+                <Menu.Item onClick={() => { handleClickAway(); }} key="12">Осередки та адміни</Menu.Item>
+                <Menu.Item onClick={() => { handleClickAway(); }} key="13">Порівняти осередки</Menu.Item>
               </SubMenu>
             </SubMenu>
           </Menu>

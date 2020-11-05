@@ -48,10 +48,8 @@ import AddNewRegionFormPage from "./pages/Regions/AddRegion";
 import RegionAdministration from "./pages/Regions/RegionAdministration";
 import RegionDocuments from "./pages/Regions/RegionDocuments";
 import RegionMembers from "./../src/pages/Regions/RegionMembers";
-//import StatisticsCityYear from "./pages/Statistics/StatisticsCityYear";
-//import StatisticsRegionYear from "./pages/Statistics/StatisticsRegionYear";
-//import StatisticsYear from "./pages/Statistics/Statistics/StatisticsYear";
-//import StatisticsPeriod from "./pages/Statistics/Statistics/StatisticsPeriod";
+import StatisticsCities from "./pages/Statistics/StatisticsCities";
+//import StatisticsRegion from "./pages/Statistics/StatisticsRegion";
 
 const App: FC = () => (
   <div className="App">
@@ -282,13 +280,19 @@ const App: FC = () => (
             exact
             path="/distinctions"
             component={UserDistinctions}
+          />          
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/statistics/cities"
+            component={StatisticsCities}
           />
           <RouteWithLayout
             layout={PrivateLayout}
             exact
             path="*"
             component={NotFound}
-          />
+          />        
 
 
         </Switch>
