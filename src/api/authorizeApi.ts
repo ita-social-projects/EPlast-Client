@@ -118,7 +118,6 @@ export default class AuthorizeApi {
   };
 
   sendFacebookInfo = async(response: FacebookData)=> {
-    console.log(JSON.stringify(response));
     const respon = await Api.post(`Auth/signin/facebook`,JSON.stringify(response))
       .then(respon => {
         if (respon.data.token !== null) {
@@ -133,10 +132,8 @@ export default class AuthorizeApi {
     return respon;
   }
 
-  getFacebookId= async () => {
-    
+  getFacebookId = async () => {
     const response = await Api.get("Auth/FacebookAppId");
-
     return response.data;
   };
 }
