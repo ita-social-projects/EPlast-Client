@@ -44,8 +44,14 @@ export default function () {
     await authService.login(values);
     const token = AuthStore.getToken() as string;
     user = jwt(token);
+    var prevPage = localStorage.getItem('pathName');
+    if(prevPage){
+      history.push(prevPage);
+      localStorage.removeItem('pathName');
+    }else{
     history.push(`/userpage/main/${user.nameid}`);
-    window.location.reload();
+  }
+  window.location.reload();
   };
 
   const handleGoogleResponse = async (response: any) => {
