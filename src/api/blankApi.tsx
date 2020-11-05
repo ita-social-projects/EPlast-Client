@@ -59,10 +59,16 @@ export const openBiographyFile = async (fileBlob: string) => {
 
 export const openGenerationFile = async (userId: string) => {
   const response = await (await api.get(`Blanks/getGenerationFile/${userId}`, userId)).data;
-  const base64 = response.split(",")[1];
-  let pdfWindow = window.open("");
-  pdfWindow?.document.write("<iframe width='99%' height='99%' src='data:application/pdf;base64," +
-    encodeURI(base64) + "'></iframe>")
+  const binaryString = window.atob(response);
+  const binaryLen = binaryString.length;
+  const bytes = new Uint8Array(binaryLen);
+  for (let i = 0; i < binaryLen; i += 1) {
+    const ascii = binaryString.charCodeAt(i);
+    bytes[i] = ascii;
+    };
+  const blob = new Blob([bytes], {type: "application/pdf"});
+  const link = window.URL.createObjectURL(blob);
+  return  link;
 }
 
 export const openExtractFromUPUFile = async(fileBlob:string)=>{
