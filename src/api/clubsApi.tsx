@@ -21,6 +21,12 @@ export const getClubById = async (id: number) => {
   });
 };
 
+export const getClubAnnualReport = async () => {
+  return await api.get(`Club/GetAllClubAnnualReports`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export const getClubByPage = async (page: number, pageSize: number, clubName: string | null = null) => {
   return api
     .get(`Club/Profiles/${page}`, { page, pageSize, clubName })
