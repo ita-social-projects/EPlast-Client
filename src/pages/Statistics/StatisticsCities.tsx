@@ -149,77 +149,48 @@ const StatisticsCities = () => {
     return originalElement;
   };
 
-  const filteredData =
-    searchedData !== ""
-      ? result.filter(
-          (item:any) =>
-            cityFilter(item.city as City, searchedData) ||
-            regionFilter(item.city?.region as Region, searchedData)
-        )
-      : result;
-  
-  
-  
-
   const onSubmit = async (info: any) => {
-    const counter = 0;
     const statisticsParameters: StatisticsParameters = {
       CitiesId: info.citiesId,
       Years: info.years,
       Indicators: info.indicators
     }
-    let data  = Array<DataFromResponse>();
+    let data  = Array<any>();
+    
+    let counter = 0;
     let response = await StatisticsApi.getStatisticsForCitiesForYears(statisticsParameters);
     console.log(response); // забрати потім
-    (response.data).map((stanytsya: CityStatistics) => { 
-      (stanytsya.yearStatistics).map((years) => {
+    response.data.map((stanytsya: CityStatistics) => { 
+      stanytsya.yearStatistics.map(year => {
           data.push( 
             {
               id: counter + 1,
               cityName: stanytsya.city.name,
               regionName: stanytsya.city.region.regionName,
-              year: years.year,
-              number: years.statisticsItems,
-              numberOfPtashata: years.statisticsItems[0].value,
-              numberOfNovatstva: years.statisticsItems[1].value,
-              numberOfUnatstva: years.statisticsItems[2].value,
-              numberOfUnatstvaNoname: years.statisticsItems[3].value,
-              numberOfUnatstvaSupporters: years.statisticsItems[4].value,
-              numberOfUnatstvaMembers: years.statisticsItems[5].value,
-              numberOfUnatstvaProspectors: years.statisticsItems[6].value,
-              numberOfUnatstvaSkobVirlyts: years.statisticsItems[7].value,
-              numberOfSenior: years.statisticsItems[8].value,
-              numberOfSeniorPlastynSupporters: years.statisticsItems[9].value,
-              numberOfSeniorPlastynMembers: years.statisticsItems[10].value,
-              numberOfSeigneur: years.statisticsItems[11].value,
-              numberOfSeigneurSupporters: years.statisticsItems[12].value,
-              numberOfSeigneurMembers: years.statisticsItems[13].value
+              year: year.year,
+              statisticsItems: year.statisticsItems,
+              ...year.statisticsItems.map((it: Object) => {
+                let [key, value] = Object.entries(it)[1];
+                return value;              
+              })
             })
-          }
-      )});
+          counter ++;
+        })
+      });
       console.log(data); // забрати потім
       setShowTable(true);
       setResult(data);
       console.log(data); // забрати потім
-      let temp = [...constColumns, ...data[0].number.map(statisticsItem => {
-        //if(statisticsItem.indicator === 0){
+      let temp = [...constColumns, ...data[0].statisticsItems.map((statisticsItem: any, index: any) => {
           return {
             title: statisticsItem.indicator,
-            dataIndex: "numbe",
-            key: "number"  
+            dataIndex: index,
+            key: index
           }
-        //}
-        
       })];
       console.log(temp);
       setColumns(temp);
   };
-  
-  
-    
-
-
-
   
   return (
     <Layout.Content>
