@@ -179,7 +179,21 @@ const StatisticsCities = () => {
               cityName: stanytsya.city.name,
               regionName: stanytsya.city.region.regionName,
               year: years.year,
-              number: years.statisticsItems
+              number: years.statisticsItems,
+              numberOfPtashata: years.statisticsItems[0].value,
+              numberOfNovatstva: years.statisticsItems[1].value,
+              numberOfUnatstva: years.statisticsItems[2].value,
+              numberOfUnatstvaNoname: years.statisticsItems[3].value,
+              numberOfUnatstvaSupporters: years.statisticsItems[4].value,
+              numberOfUnatstvaMembers: years.statisticsItems[5].value,
+              numberOfUnatstvaProspectors: years.statisticsItems[6].value,
+              numberOfUnatstvaSkobVirlyts: years.statisticsItems[7].value,
+              numberOfSenior: years.statisticsItems[8].value,
+              numberOfSeniorPlastynSupporters: years.statisticsItems[9].value,
+              numberOfSeniorPlastynMembers: years.statisticsItems[10].value,
+              numberOfSeigneur: years.statisticsItems[11].value,
+              numberOfSeigneurSupporters: years.statisticsItems[12].value,
+              numberOfSeigneurMembers: years.statisticsItems[13].value
             })
           }
       )});
@@ -188,11 +202,14 @@ const StatisticsCities = () => {
       setResult(data);
       console.log(data); // забрати потім
       let temp = [...constColumns, ...data[0].number.map(statisticsItem => {
-        return {
+        //if(statisticsItem.indicator === 0){
+          return {
             title: statisticsItem.indicator,
-            dataIndex: "number",
+            dataIndex: "numbe",
             key: "number"  
           }
+        //}
+        
       })];
       console.log(temp);
       setColumns(temp);
