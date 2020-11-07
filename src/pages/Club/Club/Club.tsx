@@ -66,10 +66,10 @@ const Club = () => {
     
     await NotificationBoxApi.createNotifications(
       admins.map(ad => ad.userId),
-      `До вашого куреня: ${club.name} приєднався новий прихильник: `,
+      `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня: `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/userpage/main/${follower.data.userId}`,
-      `${follower.data.user.firstName} ${follower.data.user.lastName}`
+      `/clubs/followers/${id}`,
+      `${club.name}`
       );
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
@@ -85,6 +85,13 @@ const Club = () => {
   const deleteClub = async () => {
     await removeClub(club.id);
 
+    admins.map(async (ad) => {
+      await NotificationBoxApi.createNotifications(
+        [ad.userId],
+        `На жаль курінь: '${club.name}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+        );
+    });
     history.push('/clubs');
   }
 

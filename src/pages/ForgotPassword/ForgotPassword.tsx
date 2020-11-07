@@ -50,6 +50,12 @@ export default function () {
                     <Button htmlType="submit" id={styles.confirmButton} loading={loading}>
                         Надіслати
                 </Button>
+                <Button 
+                    htmlType="submit"
+                    id={styles.confirmButton}
+                    onClick={()=>history.push("/signin")}>
+                        Скасувати
+                    </Button>
                 </Form.Item>
             </Form>
         </div>

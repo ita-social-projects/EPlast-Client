@@ -104,7 +104,8 @@ const RegionEditFormPage = () => {
       houseNumber: values.houseNumber,
       officeNumber: values.officeNumber,
       postIndex: values.postIndex,
-      logo: logo
+      logo: logo,
+      city: values.city
 
     }
     await RegionsApi.EditRegion(currentRegion, newRegion)
