@@ -17,6 +17,7 @@ import {getLogo} from "./../../api/citiesApi"
 import CitiesRedirectForm from "./CitiesRedirectForm";
 import CityDetailDrawer from "../City/CityDetailDrawer/CityDetailDrawer";
 import RegionDetailDrawer from "./RegionsDetailDrawer";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
 
 
 
@@ -135,6 +136,13 @@ const Region = () => {
 
   const deleteRegion = async () => {
     await removeRegion(region.id);
+    admins.map(async (ad) => {
+      await NotificationBoxApi.createNotifications(
+        [ad.userId],
+        `На жаль регіон: '${region.name}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+        );
+    });
     history.push('/regions');
   }
 
