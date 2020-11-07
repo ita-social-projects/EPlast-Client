@@ -10,6 +10,8 @@ import {
   Col,
   Typography,
   Select,
+  Drawer,
+  message,
 } from "antd";
 import moment from "moment";
 import AnnualReportApi from "../../../api/AnnualReportApi";
@@ -33,6 +35,10 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Card } from 'antd';
 import { CityAnnualReportTable } from "./CityAnnualReportTable";
 import { ClubAnnualReportTable } from "./ClubAnnualReport";
+import FormAnnualReportRegion from "./FormAnnualReportRegion"
+import { getAllRegionsReports } from "../../../api/regionsApi";
+import { RegionAnnualReportTable } from "./RegionAnnualReportTable";
+
 
 const { Title } = Typography;
 
@@ -43,6 +49,8 @@ const AnnualReportTable = () => {
   const [reportStatusNames, setReportStatusNames] = useState<string[]>(Array());
   const [annualReports, setAnnualReports] = useState<AnnualReport[]>(Array());
   const [clubAnnualReports, setClubAnnualReports] = useState<ClubAnnualReport[]>(Array());
+  const [regionAnnualReports, setRegionsAnnualReports]= useState<[]>([]);
+  const [showRegionAnnualReports, setShowRegionAnnualReports] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
@@ -73,8 +81,12 @@ const AnnualReportTable = () => {
     fetchAnnualReportStatuses();
     fetchAnnualReports();
     fetchClubAnnualReports();
+    fetchRegionAnnualReports();
     checkAccessToManage();
   }, []);
+
+  const handleCancal = () =>
+      {setShowRegionAnnualReports (false)};
 
   const checkAccessToManage = () => {
     let jwt = AuthStore.getToken() as string;
@@ -84,9 +96,6 @@ const AnnualReportTable = () => {
     ] as string[];
     setCanManage(roles.includes("Admin") || roles.includes("Голова Регіону"));
   };
-
-
-
 
   const fetchAnnualReportStatuses = async () => {
     try {
@@ -99,7 +108,6 @@ const AnnualReportTable = () => {
 
   const fetchAnnualReports = async () => {
     try {
-  
       let response = await AnnualReportApi.getAll();
       setAnnualReports(response.data.annualReports);
     } catch (error) {
@@ -116,11 +124,20 @@ const AnnualReportTable = () => {
     }
   };
 
+  const fetchRegionAnnualReports = async () => {
+    try {
+      let response = await getAllRegionsReports();
+      setRegionsAnnualReports(response.data);
+    } catch (error) {
+      showError(error.message);
+    }
+  };
+
   const handleView = async (id: number) => {
     hideDropdowns();
     try {
       let response = await AnnualReportApi.getById(id);
-      setAnnualReport(response.data.annualreport);
+      setAnnualReport(response.data.value);
       setShowAnnualReportModal(true);
     } catch (error) {
       showError(error.message);
@@ -247,6 +264,8 @@ const AnnualReportTable = () => {
         )
       : annualReports;
 
+      
+
  
 
   const showSuccess = (message: string) => {
@@ -261,6 +280,27 @@ const AnnualReportTable = () => {
       content: message,
     });
   };
+
+  const columnsRegion = [
+    {
+      title: "Номер",
+      dataIndex: "id",
+    },
+
+    {
+      title: "Округ",
+      dataIndex: ["regionName"],
+    },
+    {
+      title: "Дата подання",
+      dataIndex: "date",
+      render: (date: Date) => {
+        return moment(date.toLocaleString()).format("DD.MM.YYYY");
+      },
+    }
+  ];
+
+  
 
   const columns = [
     {
@@ -280,7 +320,7 @@ const AnnualReportTable = () => {
       title: "Дата подання",
       dataIndex: "date",
       render: (date: Date) => {
-        return moment(date.toLocaleString()).format("DD-MM-YYYY");
+        return moment(date.toLocaleString()).format("DD.MM.YYYY");
       },
     },
     {
@@ -323,7 +363,7 @@ const AnnualReportTable = () => {
       title: "Дата подання",
       dataIndex: "date",
       render: (date: Date) => {
-        return moment(date.toLocaleString()).format("DD-MM-YYYY");
+        return moment(date.toLocaleString()).format("DD.MM.YYYY");
       },
     },
     {
@@ -338,7 +378,7 @@ const AnnualReportTable = () => {
   const contentList:  { [key: string]: any }  = {
     tab1: <div><CityAnnualReportTable columns={columns} filteredData={filteredData}/></div>,
     tab2: <div><ClubAnnualReportTable columns={columnsClub} filteredData={clubAnnualReports}/></div>,
-    tab3: <div>Region table...</div>,
+    tab3: <div><RegionAnnualReportTable columns={columnsRegion} filteredData={regionAnnualReports}/></div>,
   };
   const [noTitleKey, setKey] = useState<string>('tab1');
 
@@ -371,7 +411,25 @@ const AnnualReportTable = () => {
             htmlType="button"
             onClick={() => setShowCitySelectModal(true)}
           >
-            Подати річний звіт
+            Подати річний звіт станиці
+          </Button>
+        </Col>
+        <Col span={4}>
+          <Button
+            type="primary"
+            htmlType="button"
+            onClick={() => setShowRegionAnnualReports(true)}
+          >
+            Подати річний звіт округу
+          </Button>
+        </Col>
+        <Col span={4}>
+          <Button
+            type="primary"
+            htmlType="button"
+            onClick={() => setShowCitySelectModal(true)}
+          >
+            Подати річний звіт куреня
           </Button>
         </Col>
       </Row>
@@ -390,7 +448,17 @@ const AnnualReportTable = () => {
         </Card>
 
       </Row>
+      <Drawer width="auto"
+          title="Створити річний звіт округу"
+          visible={showRegionAnnualReports}
+          onClose={handleCancal}
+        >
+          <FormAnnualReportRegion
+          onAdd={handleCancal} />
+        </Drawer>
     </Layout.Content>
+
+    
   );
 };
 

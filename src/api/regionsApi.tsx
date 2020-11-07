@@ -162,17 +162,37 @@ export const getRegionsByPage = async (page: number, pageSize: number, regionNam
 
 
 export const getAdminTypeIdByName = async (name: string) => {
-  return api
-    .get(`Regions/GetAdminTypeId/${name}`)
+  return api.get(`Regions/GetAdminTypeId/${name}`)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
+export const createRegionAnnualReport = async (id:number, year:number)=>{
+  return api.post(`Regions/CreateRegionAnnualReportById/${id}/${year}`)
+  .catch((error)=>{
+   throw new Error(error);
+ })
+}
 
+export const getReportById = async (id:number, year:number)=>{
+  return api.get(`Regions/GetReportById/${id}/${year}`)
+  .catch((error)=>{
+   throw new Error(error);
+ })
+}
 
+export const getAllRegionsReports = async ()=>{
+  return api.get(`Regions/GetAllRegionsReports`)
+  .catch((error)=>{
+   throw new Error(error);
+ })
+}
 
 export default{
+  getAllRegionsReports,
+  getReportById,
+  createRegionAnnualReport,
   getAdminTypeIdByName,
   getRegionsByPage,
   redirectCities,
