@@ -46,24 +46,31 @@ const UsersTable = () => {
     return originalElement;
   };
 
-  const filteredData = searchedData
+  let filteredData = searchedData
     ? users.filter((item) => {
         return Object.values([
-          item.user.firstName,
-          item.user.lastName,
-          item.user.gender,
-          item.user.userProfileId,
           item.regionName,
           item.cityName,
           item.clubName,
           item.userPlastDegreeName,
           item.userRoles,
-          moment(item.user.birthday?.toLocaleString()).format("DD.MM.YYYY"),
+          item.user.userProfileId,
         ]).find((element) => {
           return String(element).toLowerCase().includes(searchedData);
         });
       })
     : users;
+
+  filteredData = filteredData.concat(
+    users.filter(
+      (item) =>
+        (item.user.firstName?.toLowerCase()?.includes(searchedData) ||
+          item.user.lastName?.toLowerCase()?.includes(searchedData) ||
+          item.user.firstName?.includes(searchedData) ||
+          item.user.lastName?.includes(searchedData)) &&
+        !filteredData.includes(item)
+    )
+  );
 
   const handleDelete = (id: string) => {
     fetchData();
