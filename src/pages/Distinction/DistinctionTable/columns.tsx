@@ -38,7 +38,7 @@ const columns = [
         title: 'Дата затвердження',
         dataIndex: 'date',
         render: (date: Date) => {
-            return moment(date.toLocaleString()).format('DD-MM-YYYY');
+            return moment(date.toLocaleString()).format('DD.MM.YYYY');
         },
     },
     {
