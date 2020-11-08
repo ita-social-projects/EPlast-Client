@@ -11,7 +11,7 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import styles from "./EditUserPage.module.css";
-import { checkNameSurName, checkPhone } from "../../SignUp/verification";
+import { checkNameSurName} from "../../SignUp/verification";
 import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
 import userApi from "../../../api/UserApi";
@@ -160,8 +160,6 @@ export default function () {
         message: "Дане поле повинне містити тільки літери та цифри",
       },
     ],
-
-    phone: [{ validator: checkPhone }],
   };
 
   const getBase64 = (img: Blob, callback: Function) => {
@@ -425,17 +423,17 @@ export default function () {
             </Form.Item>
             <Form.Item
               label="Номер телефону"
+              name="phoneNumber"
               className={styles.formItem}
-              rules={validationSchema.phone}
+              rules={[{min:18,message:"Дане поле не є номером телефону"}]}
             >
-              <ReactInputMask
-                 value={phoneNumber}
-                 onChange={changePhoneNumber}
-                 className={styles.dataInput}
-                 mask="+38(999)-999-99-99"
-              >
-              {(inputProps: any) => <Input {...inputProps} />}
-              </ReactInputMask>
+              <InputMask
+              value={phoneNumber}
+                className={styles.dataInput}
+                mask={"+380(99)-999-99-99"}
+                maskChar={null}
+                onChange={changePhoneNumber}
+              />
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>

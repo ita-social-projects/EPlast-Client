@@ -9,6 +9,9 @@ import {
   AutoComplete,
 } from "antd";
 import adminApi from "../../api/adminApi";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
+import activeMembershipApi from "../../api/activeMembershipApi";
+import moment from "moment";
 
 interface Props {
   record: string;
@@ -20,18 +23,44 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
   const userId = record;
   const [form] = Form.useForm();
 
-  const [role, setRole] = useState<any>();
+  const [roles, setRoles] = useState<Array<string>>([]);
 
   useEffect(() => {
-    const fetchData = async () => {};
+    const fetchData = async () => {
+      await adminApi.getRolesForEdit(userId)
+      .then(response => {
+        setRoles(response.data.userRoles);
+      });
+    };
     fetchData();
   }, []);
 
   const handleCancel = () => {
     setShowModal(false);
   };
+
+  const addEndDate = async (isEmpty : Boolean) => {
+    let currentDates = await activeMembershipApi.getUserDates(userId);
+    currentDates.dateEnd = isEmpty ? "0001-01-01T00:00:00" : moment().format();
+    await activeMembershipApi.postUserDates(currentDates);
+  }
+
   const handleFinish = async (value: any) => {
     await adminApi.putCurrentRole(userId, value.userRole);
+    
+    if(value.userRole === "Колишній член пласту"){
+      await addEndDate(false);
+    }
+    else if(roles.includes("Колишній член пласту")){
+      await addEndDate(true);
+    }
+
+    await NotificationBoxApi.createNotifications(
+      [userId],
+      `Вам надано нову роль: '${value.userRole}'`,
+      NotificationBoxApi.NotificationTypes.UserNotifications
+      );
+      
     onChange(userId, value.userRole);
     setShowModal(false);
   };
@@ -63,7 +92,7 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
             Відмінити
           </Button>
           <Button type="primary" htmlType="submit">
-            Змінити
+            Призначити
           </Button>
         </Form.Item>
       </Form>

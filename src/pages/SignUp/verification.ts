@@ -19,7 +19,7 @@ export const checkEmail = (role: object, value: string, callback:any) => {
       }
       return callback();
   };
-  
+
   export const checkPhone = (role: object, value: string, callback: any) => {
     const reg = /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/;
     if (reg.test(value) === false) {
@@ -28,12 +28,8 @@ export const checkEmail = (role: object, value: string, callback:any) => {
     if (value.length === 0) {
         return callback('Поле не може бути пустим');
     }
-    if (reg.test(value) === false) {
-      return callback('Дане поле повинне містити тільки літери');
-    }
     return callback();
   };
-
   
   export const checkPassword = (role: object, value: string, callback:any) => {
     const reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;

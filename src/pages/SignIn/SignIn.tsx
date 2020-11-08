@@ -2,7 +2,6 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import Switcher from "../SignUp/Switcher/Switcher";
 import styles from "./SignIn.module.css";
-import facebookImg from "../../assets/images/facebook.png";
 import { checkEmail } from "../SignUp/verification";
 import { Link } from 'react-router-dom';
 import AuthorizeApi from '../../api/authorizeApi';
@@ -10,6 +9,8 @@ import { useHistory } from 'react-router-dom';
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import GoogleLoginWrapper from '../SignIn/GoogleLoginWrapper';
+import FacebookLoginWrapper from '../SignIn/FacebookLoginWrapper';
+import FacebookData from '../SignIn/FacebookDataInterface';
 
 let authService = new AuthorizeApi();
 let user: any;
@@ -17,8 +18,10 @@ let user: any;
 export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
-  const [googleId, setGoogleId] = useState("") ;
-  const [loading, setLoading] = useState(true);
+  const [googleId, setGoogleId] = useState("");
+  const [facebookAppId, setFacebookAppId] = useState("");
+  const [googleLoading, setGoogleLoading] = useState(true);
+  const [facebookLoading, setFacebookLoading] = useState(true);
 
   const initialValues = {
     Email: "",
@@ -41,11 +44,17 @@ export default function () {
     await authService.login(values);
     const token = AuthStore.getToken() as string;
     user = jwt(token);
+    var prevPage = localStorage.getItem('pathName');
+    if(prevPage){
+      history.push(prevPage);
+      localStorage.removeItem('pathName');
+    }else{
     history.push(`/userpage/main/${user.nameid}`);
-    window.location.reload();
+  }
+  window.location.reload();
   };
 
-  const handleGoogleResponse = async (response:any) => {
+  const handleGoogleResponse = async (response: any) => {
     await authService.sendToken(response.tokenId);
     const token = AuthStore.getToken() as string;
     user = jwt(token);
@@ -53,21 +62,40 @@ export default function () {
     window.location.reload();
   }
 
-  const getId = async () => {
-   await authService.getGoogleId().then(
-     (data)=>{
-      setGoogleId(data.id);
-     }
-   ).catch(exc=>{console.log(exc)});
-  
-      setLoading(false);
+  const handleFacebookResponse = async (response: FacebookData) => {
+    await authService.sendFacebookInfo(response);
+    const token = AuthStore.getToken() as string;
+    user = jwt(token);
+    history.push(`/userpage/main/${user.nameid}`);
+    window.location.reload();
   }
 
-useEffect(() => {
+  const getId = async () => {
+    await authService.getGoogleId().then(
+      (data) => {
+        setGoogleId(data.id);
+      }
+    ).catch(exc => { console.log(exc) });
 
-     getId();
+    setGoogleLoading(false);
+  }
 
-  },[googleId]);
+  const getAppId = async () => {
+    await authService.getFacebookId().then(
+      (data) => {
+        setFacebookAppId(data.id);
+      }
+    ).catch(exc => { console.log(exc) });
+
+    setFacebookLoading(false);
+  }
+
+  useEffect(() => {
+
+    getId();
+    getAppId();
+
+  }, [googleId, facebookAppId]);
 
   return (
     <div className={styles.mainContainer}>
@@ -101,21 +129,16 @@ useEffect(() => {
         </Form.Item>
         <Link className={styles.forgot} to="/forgotPassword">Забули пароль</Link>
         <div className={styles.GoogleFacebookLogin}>
-       {loading ? (
-        ''
-      ) : (
-        <GoogleLoginWrapper googleId={googleId} handleGoogleResponse = {handleGoogleResponse}>
-        </GoogleLoginWrapper>)}
-          <Button id={styles.facebookBtn} className={styles.socialButton}>
-            <span id={styles.imgSpanFacebook}>
-              <img
-                alt="Facebook icon"
-                className={styles.socialImg}
-                src={facebookImg}
-              />
-            </span>
-            <span className={styles.btnText}>Facebook</span>
-          </Button>
+          {googleLoading ? (
+            ''
+          ) : (
+              <GoogleLoginWrapper googleId={googleId} handleGoogleResponse={handleGoogleResponse}></GoogleLoginWrapper>
+            )}
+          {facebookLoading ? (
+            ''
+          ) : (
+              <FacebookLoginWrapper appId={facebookAppId} handleFacebookResponse={handleFacebookResponse}></FacebookLoginWrapper>
+            )}
         </div>
       </Form>
     </div>

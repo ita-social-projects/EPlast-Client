@@ -82,7 +82,7 @@ export default function () {
          label="Дата народження"
          className="formItem"
        >
-         {data?.user.birthday!==null? 
+         {data?.user.birthday!==null && data?.user.birthday.toString()!=="0001-01-01T00:00:00"? 
                 (<Input readOnly className="dataInput" value={moment(data?.user.birthday).format("DD-MM-YYYY")} />):
                 <Input readOnly className="dataInput" value="-"/>
               }
