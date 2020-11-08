@@ -28,6 +28,15 @@ const setTagColor = (userRoles: string) => {
 
 const ColumnsForUserTable: any = [
   {
+    title: "ID",
+    dataIndex: ["user", "userProfileId"],
+    render: (id: number) => <Text>{id}</Text>,
+    sorter: (a: any, b: any) =>
+      a.user.firstName.localeCompare(b.user.firstName),
+    sortDirections: ["descend", "ascend"],
+    defaultSortOrder: "ascend",
+  },
+  {
     title: "Ім`я",
     dataIndex: ["user", "firstName"],
     render: (text: any) => (
@@ -56,7 +65,7 @@ const ColumnsForUserTable: any = [
     dataIndex: ["user", "birthday"],
     render: (date: Date) => {
       if (date !== null) {
-        return moment(date).format("DD-MM-YYYY");
+        return moment(date).format("DD.MM.YYYY");
       }
     },
     sorter: (a: any, b: any) => {
