@@ -15,10 +15,10 @@ const Regions = () => {
   const { url } = useRouteMatch();
 
   const [regions, setRegions] = useState<any[]>([{
-    id:0,
-    regionName:'',
-    description:'',
-    logo:''
+    id: 0,
+    regionName: '',
+    description: '',
+    logo: ''
   }
   ]);
 
@@ -29,6 +29,7 @@ const Regions = () => {
   const [total, setTotal] = useState(0);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
+  const [canCreate, setCanCreate] = useState<boolean>(false);
 
 
   const handleSearch = (event: any) => {
@@ -41,7 +42,7 @@ const Regions = () => {
       if (region.logo === null) {
         region.logo = RegionDefaultLogo;
       } else {
-       
+
       }
     }
 
@@ -55,10 +56,11 @@ const Regions = () => {
       const response = await getRegionsByPage(page,
         pageSize,
         searchedData.trim()
-       );
-      
+      );
+
       setPhotosLoading(true);
       setPhotos(response.data.regions);
+      setCanCreate(response.data.canCreate);
       setRegions(response.data.regions);
       setTotal(response.data.total);
     }
@@ -82,13 +84,13 @@ const Regions = () => {
   useEffect(() => {
     getRegions();
   }, [page, pageSize, searchedData]);
-  
-  
+
+
   return (
     <Layout.Content className="cities">
       <Title level={1}>Округи</Title>
       <div className="searchContainer">
-      <Search
+        <Search
           placeholder="Пошук"
           enterButton
           onSearch={handleSearch}
@@ -99,55 +101,56 @@ const Regions = () => {
       {loading ? (
         <Spinner />
       ) : (
-        <div>
-          <div className="cityWrapper">
-            
-              <Card
-                hoverable
-                className="cardStyles addCity"
-                cover={<img src={Add} alt="AddCity" />}
-                onClick={() => history.push(`${url}/new`)}
-              >
-                <Card.Meta
-                  className="titleText"
-                  title="Створити новий округ"
-                />
-              </Card>
-            
-            {regions.map((region: any) => (
-              <Card
-                key={region.id}
-                hoverable
-                className="cardStyles"
-                cover={
-                  photosLoading ? (
-                    <Skeleton.Avatar shape="square" active />
-                  ) : (
-                    <img src={region.logo || undefined} alt="RegionDefault" />
-                  )
-                }
-                onClick={() => history.push(`${url}/${region.id}`)}
-              >
-                <Card.Meta title={region.regionName} className="titleText" />
-              </Card>
-            ))}
-          </div>
-         
-        </div>
-      )}
-       <div className="pagination">
-            <Pagination
-              current={page}
-              pageSize={pageSize}
-              total={total}
-              responsive
-              showLessItems
-              onChange={(page) => handleChange(page)}
-              onShowSizeChange={(page, size) => handleSizeChange(page, size)}
-            />
-          </div>
+          <div>
+            <div className="cityWrapper">
+              {canCreate &&
+                < Card
+                  hoverable
+                  className="cardStyles addCity"
+                  cover={<img src={Add} alt="AddCity" />}
+                  onClick={() => history.push(`${url}/new`)}
+                >
+                  <Card.Meta
+                    className="titleText"
+                    title="Створити новий округ"
+                  />
+                </Card>
+              }
+              {regions.map((region: any) => (
+                <Card
+                  key={region.id}
+                  hoverable
+                  className="cardStyles"
+                  cover={
+                    photosLoading ? (
+                      <Skeleton.Avatar shape="square" active />
+                    ) : (
+                        <img src={region.logo || undefined} alt="RegionDefault" />
+                      )
+                  }
+                  onClick={() => history.push(`${url}/${region.id}`)}
+                >
+                  <Card.Meta title={region.regionName} className="titleText" />
+                </Card>
+              ))}
+            </div>
 
-    </Layout.Content>
+          </div>
+        )
+      }
+      <div className="pagination">
+        <Pagination
+          current={page}
+          pageSize={pageSize}
+          total={total}
+          responsive
+          showLessItems
+          onChange={(page) => handleChange(page)}
+          onShowSizeChange={(page, size) => handleSizeChange(page, size)}
+        />
+      </div>
+
+    </Layout.Content >
   );
 };
 export default Regions;
