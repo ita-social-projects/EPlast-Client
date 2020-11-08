@@ -67,7 +67,7 @@ const DistinctionTable = () => {
           item.reporter,
           item.reason,
           item.number,
-          moment(item.date.toLocaleString()).format("DD-MMYYYY"),
+          moment(item.date.toLocaleString()).format("DD.MM.YYYY"),
         ]).find((element) => {
           return String(element).toLowerCase().includes(searchedData);
         });

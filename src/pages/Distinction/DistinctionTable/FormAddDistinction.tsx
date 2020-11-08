@@ -32,7 +32,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
   ]);
   const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
-  const dateFormat = "DD-MM-YYYY";
+  const dateFormat = "DD.MM.YYYY";
   const openNotification = (message:string) => {
     notification.error({
       message: `Невдалося створити відзначення` ,
