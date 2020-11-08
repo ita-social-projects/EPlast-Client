@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { Form, Select, Button, DatePicker, Checkbox, Switch } from 'antd';
 import activeMembershipApi,{ PlastDegree, UserPlastDegreePost, UserPlastDegree } from '../../../../api/activeMembershipApi';
 import classes from "./FormAddPlastDegree.module.css"
+import NotificationBoxApi from '../../../../api/NotificationBoxApi';
 type FormAddPlastDegreeProps = {
     availablePlastDegree:  Array<PlastDegree>;
     setVisibleModal: (visibleModal: boolean) => void;
@@ -28,6 +29,14 @@ const FormAddPlastDegree = ({
        };
        await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
        setVisibleModal(false);
+       
+       await NotificationBoxApi.createNotifications(
+        [userId],
+        `Вам було надано новий ступінь в `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/userpage/activeMembership/${userId}`,
+        `Дійсному членстві`
+        );
        handleAddDegree();
        form.resetFields();
        resetAvailablePlastDegree();

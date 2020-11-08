@@ -18,6 +18,7 @@ import ModalAddEndDatePlastDegree from "./PlastDegree/ModalAddEndDatePlastDegree
 import ModalChangeUserDates from "./UserDates/ModalChangeUserDates";
 import DeleteDegreeConfirm from "./PlastDegree/DeleteDegreeConfirm";
 import { SafetyCertificateOutlined } from "@ant-design/icons";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 const { Title } = Typography;
 
@@ -113,7 +114,18 @@ const ActiveMembership = () => {
     });
     return IsUserHasAnyAdminRole;
   };
-  const handleDelete = async () => {
+  const handleDelete = async (plastDegreeId : number) => {
+    var currentPlastDegree = plastDegrees.find(p => p.plastDegree.id === plastDegreeId);
+    debugger
+    if(currentPlastDegree){
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        `На жаль вас було позбавлено ступеня: ${getAppropriateToGenderDegree(currentPlastDegree.plastDegree.name)} в `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/userpage/activeMembership/${userId}`,
+        `Дійсному членстві`
+        );
+    }
     fetchData();
   };
   const handleAddEndDate = async () => {

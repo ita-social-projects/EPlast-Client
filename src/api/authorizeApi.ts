@@ -2,6 +2,7 @@ import Api from "./api";
 import notificationLogic from '../components/Notifications/Notification';
 import AuthStore from '../stores/AuthStore';
 import { string } from "yup";
+import FacebookData from '../pages/SignIn/FacebookDataInterface';
 
 export default class AuthorizeApi {
 
@@ -109,10 +110,30 @@ export default class AuthorizeApi {
     return response;
   };
   
-  getGoogleId= async () => {
+  getGoogleId = async () => {
     
     const response = await Api.get("Auth/GoogleClientId");
 
+    return response.data;
+  };
+
+  sendFacebookInfo = async(response: FacebookData)=> {
+    const respon = await Api.post(`Auth/signin/facebook`,JSON.stringify(response))
+      .then(respon => {
+        if (respon.data.token !== null) {
+          AuthStore.setToken(respon.data.token);
+        }
+      })
+      .catch(error => {
+        if (error.response.status === 400) {
+          notificationLogic('error', error.response.data.value);
+        }
+      })
+    return respon;
+  }
+
+  getFacebookId = async () => {
+    const response = await Api.get("Auth/FacebookAppId");
     return response.data;
   };
 }
