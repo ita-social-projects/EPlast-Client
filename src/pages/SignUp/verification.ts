@@ -37,11 +37,16 @@ export const checkEmail = (role: object, value: string, callback:any) => {
   
   export const checkPassword = (role: object, value: string, callback:any) => {
     const reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
-    if (value.length === 0) {
-      return callback('');
-    }
-    if (reg.test(value) === false) {
+    if(value.length > 0)
+    {
+      if (value.length < 8)
+      {
+        return callback('Мінімальна допустима довжина - 8 символів');
+      }
+      if (reg.test(value) === false) 
+      {
         return callback('Пароль повинен містити літери, цифри та знаки');
+      }
     }
       return callback();
   };
