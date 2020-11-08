@@ -32,10 +32,6 @@ const UsersTable = () => {
     setLoading(true);
   };
 
-  // const handleSearch = (event: any) => {
-  //   setSearchedData(event.target.value);
-  // };
-
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchedData(event.target.value.toLowerCase());
   };
@@ -49,29 +45,6 @@ const UsersTable = () => {
     }
     return originalElement;
   };
-
-  // let filteredData = searchedData
-  //   ? users?.filter((item: any) => {
-  //       return Object.values(item).find((element) => {
-  //         return String(element)
-  //           .toLowerCase()
-  //           .includes(searchedData.toLowerCase());
-  //       });
-  //     })
-  //   : users;
-
-  // filteredData = filteredData.concat(
-  //   users.filter(
-  //     (item) =>
-  //       (item.user.firstName
-  //         .toLowerCase()
-  //         ?.includes(searchedData.toLowerCase()) ||
-  //         item.user.lastName
-  //           .toLowerCase()
-  //           ?.includes(searchedData.toLowerCase())) &&
-  //       !filteredData.includes(item)
-  //   )
-  // );
 
   const filteredData = searchedData
     ? users.filter((item) => {

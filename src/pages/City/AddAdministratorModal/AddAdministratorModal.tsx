@@ -11,8 +11,9 @@ import {
 import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
 import "moment/locale/uk";
-import ConfirmHeadAdminModal from "./ConfirmHeadAdminModal";
 moment.locale("uk-ua");
+
+const confirm = Modal.confirm;
 
 interface Props {
   visibleModal: boolean;
@@ -29,12 +30,16 @@ const AddAdministratorModal = (props: Props) => {
   const [startDate, setStartDate] = useState<any>();
   const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
-  const [confirmModal, setConfirmModal] = useState<boolean>(false);
   const [head, setHead] = useState<CityAdmin>();
-  const [adminType, setAdminType] = useState<string>();
-  const [endDayOld, setEndDayOld] = useState<any>();
-  const [oldAdminFirstName, setOldAdminFirstName] = useState<string>();
-  const [oldAdminLastName, setOldAdminLastName] = useState<string>();
+
+  const getCityHead = async () => {
+    if (props.cityId !== 0) {
+      await getAllAdmins(props.cityId).then((response) => {
+        setHead(response.data.head);
+      });
+      setLoading(false);
+    }
+  };
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -44,19 +49,41 @@ const AddAdministratorModal = (props: Props) => {
     return current && current > moment();
   };
 
-  const getCityHead = async () => {
-    if (props.cityId !== 0) {
-      const responseAdmins = await getAllAdmins(props.cityId);
-      setHead(responseAdmins.data.head);
-      setLoading(false);
-    }
+  const showConfirm = (admin: CityAdmin) => {
+    confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (
+        <div style={{ margin: 10 }}>
+          <b>
+            {head?.user.firstName} {head?.user.lastName}
+          </b>{" "}
+          є Головою Станиці, час правління закінчується{" "}
+          <b>
+            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(head?.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onCancel() {},
+      onOk() {
+        if (admin.id === 0) {
+          addCityAdmin(admin);
+        } else {
+          editCityAdmin(admin);
+        }
+      },
+    });
   };
 
-  const handleClick = async (value: any) => {
-    setAdminType(value);
-    setEndDayOld(moment(head?.endDate).format("DD.MM.YYYY"));
-    setOldAdminFirstName(head?.user.firstName);
-    setOldAdminLastName(head?.user.lastName);
+  const addCityAdmin = async (admin: CityAdmin) => {
+    admin = (await addAdministrator(props.admin.cityId, admin)).data;
+    notificationLogic("success", "Користувач успішно доданий в провід");
+  };
+  const editCityAdmin = async (admin: CityAdmin) => {
+    admin = (await editAdministrator(props.admin.cityId, admin)).data;
+    notificationLogic("success", "Адміністратор успішно відредагований");
   };
 
   const handleSubmit = async (values: any) => {
@@ -76,27 +103,26 @@ const AddAdministratorModal = (props: Props) => {
     };
 
     try {
-      if (admin.id === 0) {
-        if (values.adminType === "Голова Станиці" && head !== null) {
-          setConfirmModal(true);
-          props.setVisibleModal(false);
+      if (values.adminType === "Голова Станиці" && head !== null) {
+        if (head?.userId !== admin.userId) {
+          showConfirm(admin);
         } else {
-          admin = (await addAdministrator(props.admin.cityId, admin)).data;
-          props.onAdd?.(admin);
-          props.setVisibleModal(false);
-          notificationLogic("success", "Користувач успішно доданий в провід");
-          props.onChange?.(props.admin.userId, values.adminType);
+          editCityAdmin(admin);
         }
       } else {
-        admin = (await editAdministrator(props.admin.cityId, admin)).data;
-        props.onAdd?.(admin);
-        props.setVisibleModal(false);
-        notificationLogic("success", "Адміністратор успішно відредагований");
-        props.onChange?.(props.admin.userId, values.adminType);
+        if (admin.id === 0) {
+          addCityAdmin(admin);
+        } else {
+          editCityAdmin(admin);
+        }
       }
     } finally {
+      props.onAdd?.(admin);
+      props.setVisibleModal(false);
       setLoading(false);
     }
+
+    props.onChange?.(props.admin.userId, values.adminType);
   };
 
   const handleCancel = () => {
@@ -107,7 +133,6 @@ const AddAdministratorModal = (props: Props) => {
     if (props.visibleModal) {
       form.resetFields();
     }
-    getCityHead();
   }, [props]);
 
   return (
@@ -134,7 +159,6 @@ const AddAdministratorModal = (props: Props) => {
         >
           <AutoComplete
             className="adminTypeSelect"
-            onChange={handleClick}
             options={[
               { value: "Голова Станиці" },
               { value: "Голова СПС" },
@@ -149,6 +173,7 @@ const AddAdministratorModal = (props: Props) => {
             }
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}
+            onChange={getCityHead}
           ></AutoComplete>
         </Form.Item>
         <Row>
@@ -216,20 +241,6 @@ const AddAdministratorModal = (props: Props) => {
             </Col>
           </Row>
         </Form.Item>
-        <ConfirmHeadAdminModal
-          onChange={props.onChange}
-          visibleModal={confirmModal}
-          setVisibleModal={setConfirmModal}
-          admin={props.admin}
-          cityId={props.cityId}
-          adminType={adminType}
-          startDate={startDate}
-          endDate={endDate}
-          endDayOld={endDayOld}
-          oldAdminFirstName={oldAdminFirstName}
-          oldAdminLastName={oldAdminLastName}
-          onAdd={props.onAdd}
-        />
       </Form>
     </Modal>
   );

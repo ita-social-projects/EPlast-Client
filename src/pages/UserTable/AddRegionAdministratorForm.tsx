@@ -58,18 +58,17 @@ const AddNewAdministratorForm = ({
     const oldAdmin = administration.find(
       (a: any) => a.adminType.adminTypeName === value
     );
-    setEndDayOld(moment(oldAdmin.endDate).format("DD.MM.YYYY"));
-    setOldAdminFirstName(oldAdmin.user.firstName);
-    setOldAdminLastName(oldAdmin.user.lastName);
+    if (oldAdmin !== undefined) {
+      setEndDayOld(moment(oldAdmin.endDate).format("DD.MM.YYYY"));
+      setOldAdminFirstName(oldAdmin.user.firstName);
+      setOldAdminLastName(oldAdmin.user.lastName);
+    }
   };
 
   const handleStartDay = (value: any) => {
-    //setStartDay(moment(oldAdmin.endDate).format("DD-MM-YYYY"));
     setStartDay(value);
   };
   const handleEndDay = (value: any) => {
-    //console.log(value);
-    //setEndDay(moment(value._d).format("DD-MM-YYYY"));
     setEndDay(value);
   };
 
@@ -87,15 +86,15 @@ const AddNewAdministratorForm = ({
       endDate: values.endDate,
       regionId: regionId,
     };
-    if (oldAdmin === undefined) {
+    if (oldAdmin !== undefined && values.AdminType === "Голова Округу") {
+      setShowAdministratorModal(false);
+      setShowConfirmModal(true);
+    } else {
       await regionsApi.AddAdmin(newAdmin);
       notificationLogic("success", "Користувач успішно доданий в провід");
       form.resetFields();
       onChange(userId, values.AdminType);
       setShowAdministratorModal(false);
-    } else {
-      setShowAdministratorModal(false);
-      setShowConfirmModal(true);
     }
   };
 
