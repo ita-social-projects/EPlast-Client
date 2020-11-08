@@ -5,6 +5,7 @@ import UserDistinction from "../Interfaces/UserDistinction";
 import distinctionApi from "../../../api/distinctionApi";
 import adminApi from "../../../api/adminApi";
 import formclasses from "./Form.module.css";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 type FormAddDistinctionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -79,6 +80,13 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       await distinctionApi.addUserDistinction(newDistinction);
       setVisibleModal(false);
       form.resetFields();
+      await NotificationBoxApi.createNotifications(
+        [newDistinction.userId],
+        `Вам було надано нове відзначення: '${newDistinction.distinction.name}' від ${newDistinction.reporter}. `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/distinctions`,
+        `Переглянути`
+        );
       onAdd();
     } else {
       openNotification(`Номер ${values.number} вже зайнятий`);

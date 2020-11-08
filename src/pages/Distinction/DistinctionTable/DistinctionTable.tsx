@@ -14,6 +14,7 @@ import Spinner from "../../Spinner/Spinner";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import moment from "moment";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 const { Content } = Layout;
 const DistinctionTable = () => {
@@ -66,7 +67,7 @@ const DistinctionTable = () => {
           item.reporter,
           item.reason,
           item.number,
-          moment(item.date.toLocaleString()).format("DD-MM-YYYY"),
+          moment(item.date.toLocaleString()).format("DD-MMYYYY"),
         ]).find((element) => {
           return String(element).toLowerCase().includes(searchedData);
         });
@@ -114,12 +115,36 @@ const DistinctionTable = () => {
     setShowDropdown(false);
   };
 
+  const CreateDeleteNotification = (id : number) => {
+    const userDistinction = UserDistinctions.find(
+      (d: { id: number }) => d.id === id
+    );
+    userDistinction &&
+    NotificationBoxApi.createNotifications(
+      [userDistinction.userId],
+      `Ваше відзначення: '${userDistinction.distinction.name}' було видалено.`,
+      NotificationBoxApi.NotificationTypes.UserNotifications
+    );
+  }
+
+  const CreateEditNotification = (userId : string, name : string) => {
+    userId !== "" && name !== "" &&
+    NotificationBoxApi.createNotifications(
+      [userId],
+      `Ваше відзначення: '${name}' було змінено. `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/distinctions`,
+      `Переглянути`
+      );
+  }
+
   const handleDelete = (id: number) => {
     const filteredData = UserDistinctions.filter(
       (d: { id: number }) => d.id !== id
     );
     setData([...filteredData]);
     notificationLogic("success", "Відзначення успішно видалено!");
+    CreateDeleteNotification(id);
   };
   const handleEdit = (
     id: number,
@@ -147,6 +172,7 @@ const DistinctionTable = () => {
     });
     setData([...filteredData]);
     notificationLogic("success", "Відзначення успішно змінено!");
+    CreateEditNotification(userId, distinction.name);
   };
 
   return loading === false ? (
