@@ -42,7 +42,7 @@ const columns = [
     title: 'Дата',
     dataIndex: 'date',
     render: (date: Date) => {
-      return moment(date.toLocaleString()).format('DD-MM-YYYY');
+      return moment(date.toLocaleString()).format('DD.MM.YYYY');
   },
   },
   {
