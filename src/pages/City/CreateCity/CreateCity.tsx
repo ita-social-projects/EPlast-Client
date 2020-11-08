@@ -282,7 +282,8 @@ const CreateCity = () => {
                 rules={[{ min: 18, message: "Неправильний телефон" }]}
               >
                 <ReactInputMask
-                  mask="+38(999)-999-99-99"
+                  mask="+380(99)-999-99-99"
+                  maskChar={null}
                   value={city.phoneNumber}
                 >
                   {(inputProps: any) => <Input {...inputProps} type="tel" />}
