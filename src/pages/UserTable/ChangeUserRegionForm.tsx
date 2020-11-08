@@ -70,7 +70,7 @@ const ChangeUserRegionForm = ({
             Відмінити
           </Button>
           <Button type="primary" htmlType="submit">
-            Змінити
+            Обрати
           </Button>
         </Form.Item>
         <AddRegionAdministratorModal

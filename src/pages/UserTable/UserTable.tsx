@@ -7,6 +7,7 @@ import ColumnsForUserTable from "./ColumnsForUserTable";
 import UserTable from "../../models/UserTable/UserTable";
 import Spinner from "../Spinner/Spinner";
 import ClickAwayListener from "react-click-away-listener";
+import moment from "moment";
 const classes = require("./UserTable.module.css");
 
 const UsersTable = () => {
@@ -31,8 +32,8 @@ const UsersTable = () => {
     setLoading(true);
   };
 
-  const handleSearch = (event: any) => {
-    setSearchedData(event.target.value);
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchedData(event.target.value.toLowerCase());
   };
 
   const itemRender = (current: any, type: string, originalElement: any) => {
@@ -45,28 +46,24 @@ const UsersTable = () => {
     return originalElement;
   };
 
-  let filteredData = searchedData
-    ? users?.filter((item: any) => {
-        return Object.values(item).find((element) => {
-          return String(element)
-            .toLowerCase()
-            .includes(searchedData.toLowerCase());
+  const filteredData = searchedData
+    ? users.filter((item) => {
+        return Object.values([
+          item.user.firstName,
+          item.user.lastName,
+          item.user.gender,
+          item.user.userProfileId,
+          item.regionName,
+          item.cityName,
+          item.clubName,
+          item.userPlastDegreeName,
+          item.userRoles,
+          moment(item.user.birthday?.toLocaleString()).format("DD.MM.YYYY"),
+        ]).find((element) => {
+          return String(element).toLowerCase().includes(searchedData);
         });
       })
     : users;
-
-  filteredData = filteredData.concat(
-    users.filter(
-      (item) =>
-        (item.user.firstName
-          .toLowerCase()
-          ?.includes(searchedData.toLowerCase()) ||
-          item.user.lastName
-            .toLowerCase()
-            ?.includes(searchedData.toLowerCase())) &&
-        !filteredData.includes(item)
-    )
-  );
 
   const handleDelete = (id: string) => {
     fetchData();
@@ -99,7 +96,7 @@ const UsersTable = () => {
     >
       <Title level={2}>Таблиця користувачів</Title>
       <div className={classes.searchContainer}>
-        <Input.Search placeholder="Пошук" onChange={handleSearch} />
+        <Input placeholder="Пошук" onChange={handleSearch} allowClear />
       </div>
       <Table
         className={classes.table}
