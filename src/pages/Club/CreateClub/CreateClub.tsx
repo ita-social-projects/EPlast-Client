@@ -281,7 +281,8 @@ const CreateClub = () => {
                 rules={[{ min: 18, message: "Неправильний телефон" }]}
               >
                 <ReactInputMask
-                  mask="+38(999)-999-99-99"
+                maskChar={null}
+                  mask="+380(99)-999-99-99"
                   value={club.phoneNumber}
                 >
                   {(inputProps: any) => <Input {...inputProps} type="tel" />}
@@ -296,7 +297,7 @@ const CreateClub = () => {
                 initialValue={club.email}
                 rules={[
                   {
-                    pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                    pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
                     message: "Неправильна пошта",
                   },
                   {
