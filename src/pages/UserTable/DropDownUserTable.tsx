@@ -90,15 +90,7 @@ const DropDown = (props: Props) => {
           <DeleteOutlined />
           Видалити
         </Menu.Item>
-        <SubMenu
-          icon={<EditOutlined />}
-          title="Змінити права доступу"
-          style={{
-            display: props.roles?.includes("Колишній член пласту")
-              ? "none"
-              : "block",
-          }}
-        >
+        <SubMenu icon={<EditOutlined />} title="Змінити права доступу">
           <Menu.Item key="3">Провід станиці</Menu.Item>
           <Menu.Item key="4">Провід округу</Menu.Item>
           <Menu.Item key="5">Провід куреня</Menu.Item>

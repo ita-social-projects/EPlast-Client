@@ -11,16 +11,19 @@ const { Text } = Typography;
 
 const setTagColor = (userRoles: string) => {
   let color = "";
-  if (userRoles === "Admin") {
+  if (userRoles.includes("Admin")) {
     color = "red";
   }
-  if (userRoles === "Пластун") {
+  if (userRoles.includes("Пластун")) {
     color = "green";
   }
-  if (userRoles === "Прихильник") {
+  if (userRoles.includes("Прихильник")) {
     color = "orange";
   }
-  if (userRoles === "Колишній член пласту") {
+  if (userRoles.includes("Зацікавлений")) {
+    color = "yellow";
+  }
+  if (userRoles.includes("Колишній член пласту")) {
     color = "black";
   }
   return color;
@@ -221,8 +224,50 @@ const ColumnsForUserTable: any = [
     title: "Права доступу",
     dataIndex: "userRoles",
     ellipsis: true,
-    sorter: (a: any, b: any) => a.userRoles.localeCompare(b.userRoles),
-    sortDirections: ["descend", "ascend"],
+    filters: [
+      {
+        text: "Пластун",
+        value: "Пластун",
+      },
+      {
+        text: "Колишній член пласту",
+        value: "Колишній член пласту",
+      },
+      {
+        text: "Зацікавлений",
+        value: "Зацікавлений",
+      },
+      {
+        text: "Прихильник",
+        value: "Прихильник",
+      },
+      {
+        text: "Голова Округу",
+        value: "Голова Округу",
+      },
+      {
+        text: "Діловод Округу",
+        value: "Діловод Округу",
+      },
+      {
+        text: "Голова Станиці",
+        value: "Голова Станиці",
+      },
+      {
+        text: "Діловод Станиці",
+        value: "Діловод Станиці",
+      },
+      {
+        text: "Голова Куреня",
+        value: "Голова Куреня",
+      },
+      {
+        text: "Діловод Куреня",
+        value: "Діловод Куреня",
+      },
+    ],
+    filterMultiple: false,
+    onFilter: (value: any, record: any) => record.userRoles.includes(value),
     render: (userRoles: any) => {
       if (userRoles.length > 19) {
         return (

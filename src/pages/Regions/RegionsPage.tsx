@@ -32,6 +32,12 @@ const Regions = () => {
   const [canCreate, setCanCreate] = useState<boolean>(false);
 
 
+  useEffect(() => {
+    getRegions();
+  }, [page, pageSize, searchedData]);
+  
+  
+
   const handleSearch = (event: any) => {
     setSearchedData(event);
   };
