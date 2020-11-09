@@ -11,7 +11,6 @@ import { useHistory } from 'react-router-dom';
 import ReactInputMask from 'react-input-mask';
 
 const AddNewRegionFormPage = () => {
-
   const [form] = Form.useForm();
   const history = useHistory();
 
