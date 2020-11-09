@@ -41,6 +41,9 @@ const StatisticsCities = () => {
       dataIndex: "cityName",
       key: "cityName",
       fixed: "left",
+      ellipsis: {
+        showTitle: true,
+      },
       sorter: (a: any, b: any) => a.cityName.localeCompare(b.cityName),
       sortDirections: ["ascend", "descend"] as SortOrder[],
       width: 100
@@ -57,6 +60,9 @@ const StatisticsCities = () => {
       title: "Регіон",
       dataIndex: "regionName",
       key: "regionName",
+      ellipsis: {
+        showTitle: true,
+      },
       sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
       sortDirections: ["ascend", "descend"] as SortOrder[],
       width: 200
