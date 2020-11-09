@@ -410,7 +410,7 @@ const CreateCity = () => {
                       String(value).length == 0
                         ? Promise.resolve()
                         : Promise.reject(
-                            `Поле не може бути від'ємним, ${value}`
+                            `Поле не може бути від'ємним`
                           ),
                   },
                 ]}

@@ -41,7 +41,7 @@ const columns = [
         title: 'Дата затвердження',
         dataIndex: 'date',
         render: (date: Date) => {
-            return moment(date.toLocaleString()).format('DD-MM-YYYY');
+            return moment(date.toLocaleString()).format('DD.MM.YYYY');
         },
         sorter:(a: any, b: any)  => a.date.localeCompare(b.date),
       sortDirections: ['ascend', 'descend'] as SortOrder[],

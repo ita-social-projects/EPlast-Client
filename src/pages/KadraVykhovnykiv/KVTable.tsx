@@ -69,7 +69,7 @@ export const KVTable = ({ current, searchData }: props) => {
         item.basisOfGranting,
         item.numberInRegister,
         item.link,
-        moment(item.dateOfGranting.toLocaleString()).format("DD-MM-YYYY"),
+        moment(item.dateOfGranting.toLocaleString()).format("DD.MM.YYYY"),
       ]).find((element) => {
         return String(element).toLowerCase().includes(searchData);
       });
@@ -98,6 +98,7 @@ export const KVTable = ({ current, searchData }: props) => {
         loading={loading}
         columns={columns}
         dataSource={filteredData}
+        scroll={{ x: 1300 }}
         onRow={(record) => {
           return {
             onClick: () => {
@@ -108,10 +109,18 @@ export const KVTable = ({ current, searchData }: props) => {
               setShowDropdown(true);
               setRecordObj(record.id);
               setX(event.pageX);
-              setY(event.pageY - 250);
+              setY(event.pageY-200);
             },
           };
         }}
+        pagination={
+          {
+            showLessItems: true,
+            responsive:true
+          }
+        }
+        bordered
+        rowKey="id"
       />
       <ClickAwayListener onClickAway={handleClickAway}>
         <DropDown

@@ -31,6 +31,12 @@ const Regions = () => {
   const [searchedData, setSearchedData] = useState("");
 
 
+  useEffect(() => {
+    getRegions();
+  }, [page, pageSize, searchedData]);
+  
+  
+
   const handleSearch = (event: any) => {
     setSearchedData(event);
   };
@@ -79,11 +85,7 @@ const Regions = () => {
 
 
 
-  useEffect(() => {
-    getRegions();
-  }, [page, pageSize, searchedData]);
-  
-  
+
   return (
     <Layout.Content className="cities">
       <Title level={1}>Округи</Title>
@@ -101,7 +103,7 @@ const Regions = () => {
       ) : (
         <div>
           <div className="cityWrapper">
-            
+          {page === 1 && searchedData.length === 0 ? (
               <Card
                 hoverable
                 className="cardStyles addCity"
@@ -113,6 +115,7 @@ const Regions = () => {
                   title="Створити новий округ"
                 />
               </Card>
+          ) : null }
             
             {regions.map((region: any) => (
               <Card

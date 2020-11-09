@@ -162,7 +162,12 @@ const City = () => {
         <Col xl={15} sm={24} xs={24}>
           
           <Card hoverable className="cityCard">
-
+            <Crumb
+            current={city.name}
+            first=""
+            second={history.goBack}
+            second_name="Станиці"
+            />
             <Title level={3}>Станиця {city.name}</Title>
             <Row className="cityPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>

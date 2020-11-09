@@ -79,7 +79,7 @@ const DecisionTable = () => {
         item.description,
         item.decisionStatusType,
         item.decisionTarget,
-        moment(item.date.toLocaleString()).format("DD-MM-YYYY"),
+        moment(item.date.toLocaleString()).format("DD.MM.YYYY"),
       ]).find((element) => {
         return String(element).toLowerCase().includes(searchedData);
       });
@@ -102,10 +102,10 @@ const DecisionTable = () => {
         {!loading && (
           <>
             <div className={classes.searchContainer}>
-              <Input placeholder="Пошук" onChange={handleSearch} allowClear />
               <Button type="primary" onClick={showModal}>
                 Додати рішення
               </Button>
+              <Input placeholder="Пошук" onChange={handleSearch} allowClear />
             </div>
             <Table
               className={classes.table}
