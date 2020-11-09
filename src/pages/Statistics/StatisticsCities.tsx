@@ -7,12 +7,12 @@ import {
   Layout,
   Modal,
   Row,
-  Col} from "antd";
+  Col
+} from "antd";
 import StatisticsApi from "../../api/StatisticsApi";
 import City from "./Interfaces/City";
 import StatisticsItemIndicator from "./Interfaces/StatisticsItemIndicator";
 import AnnualReportApi from "../../api/AnnualReportApi";
-import StatisticsParameters from "./Interfaces/StatisticsParameters";
 import CityStatistics from "./Interfaces/CityStatistics";
 import DataFromResponse from "./Interfaces/DataFromResponse";
 import { SortOrder } from "antd/lib/table/interface";
@@ -66,9 +66,9 @@ const StatisticsCities = () => {
       sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
       sortDirections: ["ascend", "descend"] as SortOrder[],
       width: 200
-    }    
+    }
   ];
-  
+
   const indicatorsArray = [
     { value: StatisticsItemIndicator.NumberOfPtashata, label: "Кількість пташат" },
     { value: StatisticsItemIndicator.NumberOfNovatstva, label: "Кількість новацтва" },
@@ -149,58 +149,59 @@ const StatisticsCities = () => {
   };
 
   const onSubmit = async (info: any) => {
-    const statisticsParameters: StatisticsParameters = {
+    let counter = 1;
+
+    let response = await StatisticsApi.getStatisticsForCitiesForYears({
       CitiesId: info.citiesId,
       Years: info.years,
       Indicators: info.indicators
-    }
-    let data  = Array<any>();
-    let counter = 0;
+    });
 
-    let response = await StatisticsApi.getStatisticsForCitiesForYears(statisticsParameters);
-    response.data.map((stanytsya: CityStatistics) => { 
-      stanytsya.yearStatistics.map(year => {
-          data.push( 
-            {
-              id: counter + 1,
-              cityName: stanytsya.city.name,
-              regionName: stanytsya.city.region.regionName,
-              year: year.year,
-              statisticsItems: year.statisticsItems,
-              ...year.statisticsItems.map((it: Object) => {
-                let [, value] = Object.entries(it)[1];
-                return value;              
-              })
-            })
-          counter ++;
-        })
-      });
-      setShowTable(true);
-      setResult(data);
-      let temp = [...constColumns, ...data[0].statisticsItems.map((statisticsItem: any, index: any) => {
-          return {
-            title: indicatorsArray[statisticsItem.indicator as number].label,
-            dataIndex: index,
-            key: index,
-            width: 200
-          }
-      })];
-      setColumns(temp);
+    let data = response.data.map((stanytsya: CityStatistics) => {
+      return stanytsya.yearStatistics.map(yearStatistic => {
+        return {
+          id: counter++,
+          cityName: stanytsya.city.name,
+          regionName: stanytsya.city.region.regionName,
+          year: yearStatistic.year,
+          ...yearStatistic.statisticsItems.map(it => it.value)
+        }
+      })
+    }).flat();
+
+    // reading statisticsItems' indicators of the very first element 
+    // because they are the same for all the items
+    let statistics = (response.data && response.data[0] && response.data[0].yearStatistics
+      && response.data[0].yearStatistics[0] && response.data[0].yearStatistics[0].statisticsItems) || [];
+
+    setShowTable(true);
+    setResult(data);
+
+    let temp = [...constColumns, ...statistics.map((statisticsItem: any, index: any) => {
+      return {
+        title: indicatorsArray[statisticsItem.indicator as number].label,
+        dataIndex: index,
+        key: index,
+        width: 200
+      }
+    })];
+
+    setColumns(temp);
   };
 
   let onChange = (pagination: any) => {
     if (pagination) {
-        window.scrollTo({
-          left: 0,
-          top: 0,
-          behavior: "smooth",
-        });
-      }    
+      window.scrollTo({
+        left: 0,
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   }
-    
+
   return (
     <Layout.Content>
-     <h1>Статистика станиць</h1>
+      <h1>Статистика станиць</h1>
       <Form onFinish={onSubmit}>
         <Row>
           <Col
@@ -213,7 +214,7 @@ const StatisticsCities = () => {
                 mode="multiple"
                 options={cities}
                 placeholder="Обрати станицю"
-                 />
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -228,7 +229,7 @@ const StatisticsCities = () => {
                 mode="multiple"
                 options={years}
                 placeholder="Обрати рік"
-                />
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -243,7 +244,7 @@ const StatisticsCities = () => {
                 mode="multiple"
                 options={indicators}
                 placeholder="Обрати показник"
-                />
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -257,22 +258,22 @@ const StatisticsCities = () => {
           </Col>
         </Row>
       </Form>
-      <br/>
-      {showTable === false ? "" : 
-      <Table
-        bordered
-        rowKey="id"
-        columns={columns}
-        dataSource={result}
-        scroll={{ x: 1000 }}
-        onChange={onChange}
-        pagination={{
-          itemRender,
-          position: ["bottomRight"],
-          showTotal: (total, range) =>
-            `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
-        }}
-      />}
+      <br />
+      {showTable === false ? "" :
+        <Table
+          bordered
+          rowKey="id"
+          columns={columns}
+          dataSource={result}
+          scroll={{ x: 1000 }}
+          onChange={onChange}
+          pagination={{
+            itemRender,
+            position: ["bottomRight"],
+            showTotal: (total, range) =>
+              `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
+          }}
+        />}
     </Layout.Content>
   )
 }
