@@ -20,10 +20,14 @@ const DistinctionTable = () => {
   const classes = require("./Table.module.css");
   let user: any;
   let curToken = AuthStore.getToken() as string;
-  user = jwt(curToken);
-  let roles = user[
-    "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-  ] as string[];
+  let roles: string[] = [""];
+  user = curToken !== null ? (jwt(curToken) as string) : "";
+  roles =
+    curToken !== null
+      ? (user[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ] as string[])
+      : [""];
   const [recordObj, setRecordObj] = useState<any>(0);
   const [userId, setUserId] = useState<any>(0);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -66,7 +70,7 @@ const DistinctionTable = () => {
           item.reporter,
           item.reason,
           item.number,
-          moment(item.date.toLocaleString()).format("DD-MM-YYYY"),
+          moment(item.date.toLocaleString()).format("DD.MM.YYYY"),
         ]).find((element) => {
           return String(element).toLowerCase().includes(searchedData);
         });
@@ -198,12 +202,10 @@ const DistinctionTable = () => {
                   },
                 };
               }}
-              pagination={
-                {
-                  showLessItems: true,
-                  responsive:true
-                }
-              }
+              pagination={{
+                showLessItems: true,
+                responsive: true,
+              }}
               bordered
               rowKey="id"
             />
