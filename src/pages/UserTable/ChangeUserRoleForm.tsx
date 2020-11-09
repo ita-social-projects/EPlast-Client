@@ -54,15 +54,15 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
     else if(roles.includes("Колишній член пласту")){
       await addEndDate(true);
     }
+      
+    onChange(userId, value.userRole);
+    setShowModal(false);
 
     await NotificationBoxApi.createNotifications(
       [userId],
       `Вам надано нову роль: '${value.userRole}'`,
       NotificationBoxApi.NotificationTypes.UserNotifications
       );
-      
-    onChange(userId, value.userRole);
-    setShowModal(false);
   };
 
   return (
