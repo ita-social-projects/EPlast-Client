@@ -1,9 +1,9 @@
 import StatisticsItemIndicator from './StatisticsItemIndicator';
 
-interface StatisticsParameters {
+interface CitiesStatisticsParameters {
     CitiesId: Array<number>;
     Years: Array<number>;
     Indicators: Array<StatisticsItemIndicator>;
 }
 
-export default StatisticsParameters;
+export default CitiesStatisticsParameters;

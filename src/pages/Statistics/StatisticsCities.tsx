@@ -151,7 +151,7 @@ const StatisticsCities = () => {
   const onSubmit = async (info: any) => {
     let counter = 1;
 
-    let response = await StatisticsApi.getStatisticsForCitiesForYears({
+    let response = await StatisticsApi.getCitiesStatistics({
       CitiesId: info.citiesId,
       Years: info.years,
       Indicators: info.indicators
