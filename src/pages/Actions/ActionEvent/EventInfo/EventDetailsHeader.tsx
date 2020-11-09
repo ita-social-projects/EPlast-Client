@@ -8,7 +8,6 @@ const {Text} = Typography;
 
 const renderLabel = (name: string): ReactNode => <Text className="eventLabel">{name}</Text>
 const renderContent = (text: string): ReactNode => <Text className="event-data-input">{text}</Text>
-const renderDescription = (text: string): ReactNode => <Text className="dataDescription">{text}</Text>
 
 interface Props {
     eventInfo: EventInformation;
@@ -18,7 +17,7 @@ const EventDetailsHeader = ({
                                 eventInfo: {
                                     eventName, eventCategory, eventType, eventDateStart,
                                     eventDateEnd, eventStatus, eventLocation,
-                                    description, forWhom, formOfHolding, eventParticipants
+                                    description, forWhom, formOfHolding, eventParticipants, numberOfPartisipants
                                 }
                             }: Props) => {
     return (
@@ -29,12 +28,13 @@ const EventDetailsHeader = ({
             <Descriptions.Item label={renderLabel("Дата початку")}>{renderContent(eventDateStart)}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Дата завершення")}>{renderContent(eventDateEnd)}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Локація")}>{renderContent(eventLocation)}</Descriptions.Item>
-            <Descriptions.Item label={renderLabel("Призначений для")}>{renderContent(forWhom)}</Descriptions.Item>
+            <Descriptions.Item label={renderLabel("Призначена для")}>{renderContent(forWhom)}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Форма проведення")}>{renderContent(formOfHolding)}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Статус")}>{renderContent(eventStatus)}</Descriptions.Item>
+            <Descriptions.Item label={renderLabel("Заплановано учасників")}>{renderContent(numberOfPartisipants.toString())}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Кількість учасників")}>{renderContent(eventParticipants.length.toString())}</Descriptions.Item>
             <Descriptions.Item label={renderLabel("Опис")}>
-                {renderDescription(description)}
+                {renderContent(description)}
             </Descriptions.Item>
         </Descriptions>
     )

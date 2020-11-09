@@ -18,6 +18,7 @@ import ModalAddEndDatePlastDegree from "./PlastDegree/ModalAddEndDatePlastDegree
 import ModalChangeUserDates from "./UserDates/ModalChangeUserDates";
 import DeleteDegreeConfirm from "./PlastDegree/DeleteDegreeConfirm";
 import { SafetyCertificateOutlined } from "@ant-design/icons";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 const { Title } = Typography;
 
@@ -35,9 +36,9 @@ const ActiveMembership = () => {
   const [endDateVisibleModal, setEndDateVisibleModal] = useState<boolean>(
     false
   );
-  const [plastDegreeIdToAddEndDate, setPlastDegreeIdToAddEndDate] = useState<
-    number
-  >(0);
+  const [plastDegreeIdToAddEndDate, setPlastDegreeIdToAddEndDate] = useState<number>(0);
+  const [startDateToAddEndDate, setStartDateToAddEndDate] = useState<string>("");
+  
   const userAdminTypeRoles = [
     "Admin",
     "Голова Пласту",
@@ -49,7 +50,7 @@ const ActiveMembership = () => {
     "Голова Станиці",
     "Діловод Станиці",
   ];
-  const userGenders = ["Чоловік", "Жінка"];
+  const userGenders = ["Чоловік", "Жінка", "Інша"];
 
   const handleAddDegree = async () => {
     await activeMembershipApi.getUserPlastDegrees(userId).then((response) => {
@@ -113,7 +114,18 @@ const ActiveMembership = () => {
     });
     return IsUserHasAnyAdminRole;
   };
-  const handleDelete = async () => {
+  const handleDelete = async (plastDegreeId : number) => {
+    var currentPlastDegree = plastDegrees.find(p => p.plastDegree.id === plastDegreeId);
+    debugger
+    if(currentPlastDegree){
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        `На жаль вас було позбавлено ступеня: ${getAppropriateToGenderDegree(currentPlastDegree.plastDegree.name)} в `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/userpage/activeMembership/${userId}`,
+        `Дійсному членстві`
+        );
+    }
     fetchData();
   };
   const handleAddEndDate = async () => {
@@ -142,9 +154,12 @@ const ActiveMembership = () => {
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ]
         ) && (
-          <Button type="primary" onClick={showModal}>
-            Додати ступінь
-          </Button>
+          <div className={classes.buttonChange}>
+            <Button type="primary" onClick={showModal}>
+                Додати ступінь
+            </Button>
+          </div>
+ 
         )}
       </div>
 
@@ -152,7 +167,6 @@ const ActiveMembership = () => {
         <div className={classes.wrapper}>
           <div className={classes.wrapper2}>
             <Title level={2}> Загальна інформація </Title>
-            <div className={classes.line} />
             <div className={classes.textBlock}>
               {LoadInfo ? (
                 <>
@@ -197,7 +211,6 @@ const ActiveMembership = () => {
           </div>
           <div className={classes.wrapper2}>
             <Title level={2}> Рівні доступу </Title>
-            <div className={classes.line} />
               <div className={classes.textBlock}>
                 <List
                   dataSource={accessLevels}
@@ -213,7 +226,6 @@ const ActiveMembership = () => {
           <div className={classes.wrapperScrollDegree}>
           <div className={classes.wrapperPlastDegree}>
             <Title level={2}> Ступені користувача </Title>
-            <div className={classes.line} />
             {plastDegrees.map((pd) => (
               <React.Fragment key={pd.id}>
                 <div className={classes.textFieldsMain}>
@@ -251,6 +263,7 @@ const ActiveMembership = () => {
                     <button
                       onClick={() => {
                         setPlastDegreeIdToAddEndDate(pd.plastDegree.id);
+                        setStartDateToAddEndDate(pd.dateStart);
                         setEndDateVisibleModal(true);
                       }}
                       className={classes.button}
@@ -290,6 +303,7 @@ const ActiveMembership = () => {
       <ModalAddEndDatePlastDegree
         userId={userId}
         plastDegreeId={plastDegreeIdToAddEndDate}
+        dateOfStart={startDateToAddEndDate}
         endDateVisibleModal={endDateVisibleModal}
         setEndDateVisibleModal={setEndDateVisibleModal}
         handleAddEndDate={handleAddEndDate}

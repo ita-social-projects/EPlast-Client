@@ -11,12 +11,11 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import styles from "./EditUserPage.module.css";
-import { checkNameSurName, checkPhone } from "../../SignUp/verification";
-import { getBase64 } from "./Services";
+import { checkNameSurName} from "../../SignUp/verification";
 import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
 import userApi from "../../../api/UserApi";
-import InputMask from "react-input-mask";
+import ReactInputMask from "react-input-mask";
 import moment, { Moment } from "moment";
 import jwt from "jwt-decode";
 import AuthStore from "../../../stores/AuthStore";
@@ -24,6 +23,7 @@ import { useParams } from "react-router-dom";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Spinner from "../../Spinner/Spinner";
 import { useHistory } from "react-router-dom";
+import { RcCustomRequestOptions } from "antd/es/upload/interface";
 
 export default function () {
   const history = useHistory();
@@ -109,15 +109,16 @@ export default function () {
     fetchData();
   }, [form]);
 
+  function disabledDate(current: any) {
+    let date =  moment().endOf('day');
+    return current && (current > date);
+  }
+
   const validationSchema = {
     name: [
-      { required: true, message: "Ім'я є обов'язковим" },
-      { max: 25, message: "Максимальна довжина - 25 символів" },
       { validator: checkNameSurName },
     ],
     surName: [
-      { required: true, message: "Прізвище є обов'язковим" },
-      { max: 25, message: "Максимальна довжина - 25 символів" },
       { validator: checkNameSurName },
     ],
     fatherName: [
@@ -159,28 +160,45 @@ export default function () {
         message: "Дане поле повинне містити тільки літери та цифри",
       },
     ],
-
-    phone: [{ validator: checkPhone }],
   };
 
-  const uploadPhotoConfig = {
-    name: "file",
-    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-    headers: {
-      authorization: "authorization-text",
-    },
-    onChange(info: any) {
-      if (info.file.status === "done") {
-        getBase64(info.file.originFileObj, (imageUrl: any) => {
+  const getBase64 = (img: Blob, callback: Function) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+  
+  const checkFile = (size: number, fileName: string) => {
+    const extension = fileName.split(".").reverse()[0];
+    const isCorrectExtension =
+      extension.indexOf("jpeg") !== -1 ||
+      extension.indexOf("jpg") !== -1 ||
+      extension.indexOf("png") !== -1;
+    if (!isCorrectExtension) {
+      notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
+    }
+
+    const isSmaller2mb = size <= 3145728;
+    if (!isSmaller2mb) {
+      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+    }
+
+    return isCorrectExtension && isSmaller2mb;
+  };
+
+  const handleUpload = (info: RcCustomRequestOptions) => {
+    if (info !== null) {
+      if (checkFile(info.file.size, info.file.name)) {
+        getBase64(info.file, (imageUrl: any) => {
           setUserAvatar(imageUrl);
         });
-      } else if (info.file.status === "removed") {
-        setUserAvatar(avatar);
+        notificationLogic("success", "Фото завантажено");
       }
-    },
+    } else {
+      setUserAvatar(avatar);
+      notificationLogic("error", "Проблема з завантаженням фото");
+    }
   };
-
-  const { name, action, headers, onChange } = uploadPhotoConfig;
 
   const handleOnChangeNationality = (value: any, event: any) => {
     if (event.key === undefined) {
@@ -335,17 +353,18 @@ export default function () {
         <div className={styles.avatarWrapper}>
           <Avatar size={300} src={userAvatar} className="avatarElem" />
           <Upload
-            name={name}
-            action={action}
-            headers={headers}
-            onChange={onChange}
+            name="avatar"
             className={styles.changeAvatar}
+            showUploadList={false}
+            accept=".jpeg,.jpg,.png"
+            customRequest={handleUpload}
           >
             <Button className={styles.changeAvatarBtn}>
               <UploadOutlined /> Вибрати
             </Button>
           </Upload>
         </div>
+        
         <div className={styles.allFields}>
           <div className={styles.rowBlock}>
             <Form.Item
@@ -396,22 +415,26 @@ export default function () {
             <Form.Item label="Дата народження" className={styles.formItem}>
               <DatePicker
                 className={styles.dataInput}
+                disabledDate={(cur) => disabledDate(cur)}
                 value={birthday}
                 onChange={handleOnChangeBirthday}
-                format="DD-MM-YYYY"
+                format="DD.MM.YYYY"
               />
             </Form.Item>
             <Form.Item
               label="Номер телефону"
+              name="phoneNumber"
               className={styles.formItem}
-              rules={validationSchema.phone}
+              rules={[{min:18,message:"Дане поле не є номером телефону"}]}
             >
-              <InputMask
-                value={phoneNumber}
-                onChange={changePhoneNumber}
-                className={styles.dataInput}
-                mask="+38(999)-999-99-99"
-              />
+              <ReactInputMask
+                 value={phoneNumber}
+                 onChange={changePhoneNumber}
+                 className={styles.dataInput}
+                 mask="+38(999)-999-99-99"
+              >
+              {(inputProps: any) => <Input {...inputProps} />}
+              </ReactInputMask>
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>

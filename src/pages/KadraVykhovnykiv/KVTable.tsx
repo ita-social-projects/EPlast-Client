@@ -4,6 +4,7 @@ import columns from './columns';
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import DropDown from './KadraDropDown';
 import ClickAwayListener from 'react-click-away-listener';
+import moment from 'moment';
 
 
 const classes = require('./Table.module.css');
@@ -15,7 +16,7 @@ interface props {
 }
 
 export const KVTable = ({ current, searchData }: props) => {
-  const [recordObj, setRecordObj] = useState<any>(0);
+  const [recordObj, setRecordObj] = useState<number>(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
@@ -62,21 +63,31 @@ export const KVTable = ({ current, searchData }: props) => {
   }, [])
 
 
-
   let filteredData = searchData
-    ? data.filter((item: any) => {
-      return Object.values(item).find((element) => {
-        return String(element).includes(searchData)
+  ? data.filter((item) => {
+      return Object.values([
+        item.basisOfGranting,
+        item.numberInRegister,
+        item.link,
+        moment(item.dateOfGranting.toLocaleString()).format("DD.MM.YYYY"),
+      ]).find((element) => {
+        return String(element).toLowerCase().includes(searchData);
       });
     })
-    : data;
+  : data;
 
 
   filteredData = filteredData.concat(
-    data.filter((item) => (item.user.firstName?.includes(searchData)||
-    item.user.lastName?.includes(searchData)) && !filteredData.includes(item)
+    data.filter(
+      (item) =>
+        (item.user.firstName?.toLowerCase()?.includes(searchData) ||
+          item.user.lastName?.toLowerCase()?.includes(searchData)||
+          item.user.firstName?.includes(searchData) ||
+          item.user.lastName?.includes(searchData)) &&
+        !filteredData.includes(item)
     )
-  )
+  );
+
 
 
   return (
@@ -87,6 +98,7 @@ export const KVTable = ({ current, searchData }: props) => {
         loading={loading}
         columns={columns}
         dataSource={filteredData}
+        scroll={{ x: 1300 }}
         onRow={(record) => {
           return {
             onClick: () => {
@@ -97,10 +109,18 @@ export const KVTable = ({ current, searchData }: props) => {
               setShowDropdown(true);
               setRecordObj(record.id);
               setX(event.pageX);
-              setY(event.pageY - 250);
+              setY(event.pageY-200);
             },
           };
         }}
+        pagination={
+          {
+            showLessItems: true,
+            responsive:true
+          }
+        }
+        bordered
+        rowKey="id"
       />
       <ClickAwayListener onClickAway={handleClickAway}>
         <DropDown

@@ -9,6 +9,9 @@ import moment from "moment";
 import "moment/locale/uk";
 import Title from 'antd/lib/typography/Title';
 import Spinner from '../Spinner/Spinner';
+import AddAdministratorModal from '../City/AddAdministratorModal/AddAdministratorModal';
+import CityAdmin from '../../models/City/CityAdmin';
+import NotificationBoxApi from '../../api/NotificationBoxApi';
 moment.locale("uk-ua");
 
 const RegionAdministration = () => {
@@ -28,8 +31,7 @@ const RegionAdministration = () => {
       startDate:'',
       endDate:''}]);
     const [visibleModal, setVisibleModal] = useState(false);
-    const [admin, setAdmin] = useState<any>();
-    const [canEdit, setCanEdit] = useState<boolean>(false);
+    const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin);
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
   
@@ -40,19 +42,37 @@ const RegionAdministration = () => {
         setPhotosLoading(true);
         setPhotos([...response.data].filter(a => a != null));
         setAdministration([...response.data].filter(a => a != null));
-        setCanEdit(response.data.canEdit);
       setLoading(false);
     };
 
-    const removeAdmin = async (adminId: number) => {
-      await removeAdmin(adminId);
-      setAdministration(administration.filter((u) => u.id !== adminId));
+    const removeAdministrator = async (admin: CityAdmin) => {
+      await removeAdmin(admin.id);
+      await NotificationBoxApi.createNotifications(
+        [admin.userId],
+        `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/regions/${id}`,
+        `цьому окрузі`
+    );
+      setAdministration(administration.filter((u) => u.id !== admin.id));
     };
 
     const showModal = (member: any) => {
       setAdmin(member);
-
       setVisibleModal(true);
+    };
+
+    const onAdd = async (newAdmin: any) => {
+      const index = administration.findIndex((a) => a.id === admin.id);
+      administration[index] = newAdmin;
+      await NotificationBoxApi.createNotifications(
+        [newAdmin.userId],
+        `Вам було надано нову адміністративну роль: '${newAdmin.adminType.adminTypeName}' в `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/regions/${id}`,
+        `цьому окрузі`
+    );
+      setAdministration(administration);
     };
 
     const setPhotos = async (members: any[]) => {
@@ -86,7 +106,7 @@ const RegionAdministration = () => {
  [
                             <SettingOutlined onClick={() => showModal(member)} />,
                             <CloseOutlined
-                              onClick={() => removeAdmin(member.id)}
+                              onClick={() => removeAdministrator(member)}
                             />,
                           ]
                     }
@@ -127,6 +147,16 @@ const RegionAdministration = () => {
               Назад
             </Button>
           </div>
+         
+          <AddAdministratorModal
+            admin={admin}
+            setAdmin={setAdmin}
+            visibleModal={visibleModal}
+            setVisibleModal={setVisibleModal}
+            cityId={+id}
+            onAdd={onAdd}
+          ></AddAdministratorModal>
+        
          
         </Layout.Content>
       );

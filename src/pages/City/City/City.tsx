@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip } from "antd";
-import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip, Breadcrumb} from "antd";
+import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined, HomeOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
@@ -16,7 +16,9 @@ import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
 import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
-
+import notificationLogic from "../../../components/Notifications/Notification";
+import Crumb from "../../../components/Breadcrumb/Breadcrumb";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 const City = () => {
   const history = useHistory();
@@ -40,6 +42,15 @@ const City = () => {
 
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
+
+    await NotificationBoxApi.createNotifications(
+      [member.data.userId],
+      "Вітаємо, вас зараховано до членів станиці: ",
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/cities/${id}`,
+      city.name
+      );
+
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
     ).data;
@@ -53,6 +64,14 @@ const City = () => {
 
   const addMember = async () => {
     const follower = await addFollower(+id);
+        
+    await NotificationBoxApi.createNotifications(
+      admins.map(ad => ad.userId),
+      `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці: `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/cities/followers/${id}`,
+      city.name
+      );
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
@@ -66,7 +85,15 @@ const City = () => {
 
   const deleteCity = async () => {
     await removeCity(city.id);
+    notificationLogic("success", "Станицю успішно видалено");
 
+    admins.map(async (ad) => {
+      await NotificationBoxApi.createNotifications(
+        [ad.userId],
+        `На жаль станицю: '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+        );
+    });
     history.push('/cities');
   }
 
@@ -157,8 +184,16 @@ const City = () => {
   ) : city.id !== 0 ? (
     <Layout.Content className="cityProfile">
       <Row gutter={[0, 48]}>
+        
         <Col xl={15} sm={24} xs={24}>
+          
           <Card hoverable className="cityCard">
+            <Crumb
+            current={city.name}
+            first=""
+            second={history.goBack}
+            second_name="Станиці"
+            />
             <Title level={3}>Станиця {city.name}</Title>
             <Row className="cityPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>

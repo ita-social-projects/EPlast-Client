@@ -4,8 +4,8 @@ import Distinction from "../Interfaces/Distinction";
 import UserDistinction from "../Interfaces/UserDistinction";
 import distinctionApi from "../../../api/distinctionApi";
 import adminApi from "../../../api/adminApi";
-import notificationLogic from "../../../components/Notifications/Notification";
 import formclasses from "./Form.module.css";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 type FormAddDistinctionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -32,7 +32,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
   ]);
   const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
-  const dateFormat = "DD-MM-YYYY";
+  const dateFormat = "DD.MM.YYYY";
   const openNotification = (message:string) => {
     notification.error({
       message: `Невдалося створити відзначення` ,
@@ -80,6 +80,13 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       await distinctionApi.addUserDistinction(newDistinction);
       setVisibleModal(false);
       form.resetFields();
+      await NotificationBoxApi.createNotifications(
+        [newDistinction.userId],
+        `Вам було надано нове відзначення: '${newDistinction.distinction.name}' від ${newDistinction.reporter}. `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/distinctions`,
+        `Переглянути`
+        );
       onAdd();
     } else {
       openNotification(`Номер ${values.number} вже зайнятий`);
@@ -181,18 +188,27 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       >
         <Input.TextArea
           allowClear
+          autoSize =
+          {
+            {
+              minRows: 2,
+              maxRows: 6
+            }
+          }
           className={formclasses.inputField}
           maxLength={251}
         />
       </Form.Item>
 
-      <Form.Item style={{ textAlign: "right" }}>
-        <Button key="back" onClick={handleCancel}>
-          Відмінити
-        </Button>
-        <Button type="primary" htmlType="submit">
-          Опублікувати
-        </Button>
+      <Form.Item>
+        <div className={formclasses.cardButton}>
+          <Button key="back" onClick={handleCancel}>
+            Відмінити
+          </Button>
+          <Button type="primary" htmlType="submit">
+            Опублікувати
+          </Button>
+        </div>
       </Form.Item>
     </Form>
   );

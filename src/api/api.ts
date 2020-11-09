@@ -38,6 +38,7 @@ axios.interceptors.response.use(
       })
       source.cancel();
       AuthStore.removeToken();
+      localStorage.setItem('pathName',history.location.pathname);
       history.push("/signin");
       window.location.reload();
 

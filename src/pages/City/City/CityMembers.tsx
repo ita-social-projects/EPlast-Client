@@ -12,6 +12,7 @@ import moment from "moment";
 import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
 moment.locale("uk-ua");
 
 const CityMembers = () => {
@@ -26,6 +27,7 @@ const CityMembers = () => {
   const [canEdit, setCanEdit] = useState<Boolean>(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [cityName, setCityName] = useState<string>("");
   
   const getMembers = async () => {
     setLoading(true);
@@ -35,6 +37,7 @@ const CityMembers = () => {
     setPhotos(responseMembers.data.members);
     setMembers(responseMembers.data.members);
     setCanEdit(responseMembers.data.canEdit);
+    setCityName(responseMembers.data.name);
 
     const responseAdmins = await getAllAdmins(id);
     setAdmins(responseAdmins.data.administration);
@@ -54,14 +57,27 @@ const CityMembers = () => {
     for (let i of existingAdmin) {
       await removeAdministrator(i.id);
     }
-
+    await createNotification([member.userId], "На жаль, ви були виключені з членів станиці");
     setMembers(members.filter((u) => u.id !== member.id));
   };
 
-  const onAdd = async () => {
+  const createNotification = async(userId : Array<string>, message : string) => {
+    await NotificationBoxApi.createNotifications(
+      userId,
+      message + ": ",
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/clubs/${id}`,
+      cityName
+      );
+  }
+
+  const onAdd = async (admin? : CityAdmin) => {
     const responseAdmins = await getAllAdmins(id);
     setAdmins(responseAdmins.data.administration);
-    setHead(responseAdmins.data.head);
+    setHead(responseAdmins.data.head); 
+    if(admin){
+      await createNotification([admin.userId], `Вам була присвоєна нова роль: '${admin.adminType.adminTypeName}' в станиці`);
+    }
   }
 
   const showModal = (member: CityMember) => {    

@@ -8,6 +8,7 @@ import { Card, Form, Input } from 'antd';
 import './Secretaries.less'
 import {UserCitySecretaryTable} from './UserCitySecretaryTable';
 import { UserRegionSecretaryTable } from './UserRegionSecretaryTable';
+import { UserClubSecretaryTable } from './UserClubSecretaryTable';
 
 
 
@@ -62,7 +63,7 @@ export const Secretaries = () => {
      const contentListNoTitle: { [key: string]: any } = {
         1: <div key='1'><UserRegionSecretaryTable UserId={userId}/></div>,
         2: <div key='2'><UserCitySecretaryTable UserId={userId}/></div>,
-        3: <div key='3'>Курінь</div>
+        3: <div key='3'><UserClubSecretaryTable UserId={userId}/></div>
       };
 
 

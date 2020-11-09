@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {Modal, Input,  Button, Card, Spin } from 'antd';
+import {Input,  Button, Card, Spin, Drawer } from 'antd';
 
 import {KVTable} from './KVTable';
-
+import jwt from "jwt-decode";
 import AddNewKadraForm from './AddNewKadraForm';
+import AuthStore from '../../stores/AuthStore';
 
 
 const classes = require('./Table.module.css');
@@ -29,8 +30,16 @@ const tabListNoTitle = [
 
 
 export const KadrasTable = ()=>{
-
-
+  let user: any;
+  let curToken = AuthStore.getToken() as string;
+  let roles: string[] = [""];
+  user = curToken !== null ? (jwt(curToken) as string) : "";
+  roles =
+    curToken !== null
+      ? (user[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ] as string[])
+      : [""];
 
   const [searchedData, setSearchedData] = useState('');
 
@@ -46,7 +55,7 @@ export const KadrasTable = ()=>{
    
 
    const [noTitleKey, setKey] = useState<string>('KV1N');
-
+   const [canEdit] = useState(roles.includes("Admin"));
 
    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchedData(event.target.value);
@@ -96,11 +105,18 @@ export const KadrasTable = ()=>{
     return(
     <>
         <h1 className={classes.titleTable}>Кадра виховників</h1>
-        <Button className={classes.addKadraButton} type="primary" onClick={showModal}>
-          Додати кадру
-        </Button>
-        <Input.Search className={classes.searchInput} placeholder="Пошук"  onChange={handleSearch} />
-        <br />
+        <div className={classes.searchContainer}>
+            {canEdit === true ? (
+              <>
+                <Button type="primary" onClick={showModal}>
+                  Додати кадру
+                </Button>
+              </>
+            ) : (
+              <></>
+            )}
+            <Input placeholder="Пошук" onChange={handleSearch} allowClear />
+          </div>
         <Card
           style={{ width: '100%' }}
           tabList={tabListNoTitle}
@@ -117,15 +133,14 @@ export const KadrasTable = ()=>{
 
        
             
-        <Modal
+        <Drawer width="auto"
           title="Надати кадру виховників"
           visible={visible}
-          onOk={handleOk}
-          onCancel={handleCancel}
-          footer={null}
+          onClose={handleCancel}
+         
         >
           <AddNewKadraForm onAdd={renewPage}></AddNewKadraForm>
-        </Modal>
+        </Drawer>
       </>
     )
         

@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
-import './AddAdministrationModal.less';
+import "./AddAdministrationModal.less";
 import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
 import CityAdmin from "./../../../models/City/CityAdmin";
-import AdminType from './../../../models/Admin/AdminType';
-import { addAdministrator, editAdministrator } from "../../../api/citiesApi";
+import AdminType from "./../../../models/Admin/AdminType";
+import {
+  addAdministrator,
+  editAdministrator,
+  getAllAdmins,
+} from "../../../api/citiesApi";
+import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
 import "moment/locale/uk";
 moment.locale("uk-ua");
+
+const confirm = Modal.confirm;
 
 interface Props {
   visibleModal: boolean;
@@ -15,20 +22,69 @@ interface Props {
   setAdmin: (admin: CityAdmin) => void;
   cityId: number;
   onAdd?: (admin?: CityAdmin) => void;
+  onChange?: (id: string, userRoles: string) => void;
 }
 
 const AddAdministratorModal = (props: Props) => {
   const [loading, setLoading] = useState(false);
-  const [date, setDate] = useState<any>();
+  const [startDate, setStartDate] = useState<any>();
+  const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
+  const [head, setHead] = useState<CityAdmin>();
+
+  const getCityHead = async () => {
+    if (props.cityId !== 0) {
+      await getAllAdmins(props.cityId).then((response) => {
+        setHead(response.data.head);
+      });
+      setLoading(false);
+    }
+  };
 
   const disabledEndDate = (current: any) => {
-    return current && current < date;
-  }
+    return current && current < startDate;
+  };
 
   const disabledStartDate = (current: any) => {
     return current && current > moment();
-  }
+  };
+
+  const showConfirm = (admin: CityAdmin) => {
+    confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (
+        <div style={{ margin: 10 }}>
+          <b>
+            {head?.user.firstName} {head?.user.lastName}
+          </b>{" "}
+          є Головою Станиці, час правління закінчується{" "}
+          <b>
+            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(head?.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onCancel() {},
+      onOk() {
+        if (admin.id === 0) {
+          addCityAdmin(admin);
+        } else {
+          editCityAdmin(admin);
+        }
+      },
+    });
+  };
+
+  const addCityAdmin = async (admin: CityAdmin) => {
+    admin = (await addAdministrator(props.admin.cityId, admin)).data;
+    notificationLogic("success", "Користувач успішно доданий в провід");
+  };
+  const editCityAdmin = async (admin: CityAdmin) => {
+    admin = (await editAdministrator(props.admin.cityId, admin)).data;
+    notificationLogic("success", "Адміністратор успішно відредагований");
+  };
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
@@ -43,20 +99,30 @@ const AddAdministratorModal = (props: Props) => {
       user: props.admin.user,
       userId: props.admin.userId,
       endDate: values.endDate?._d,
-      startDate: values.startDate?._d
-    }
+      startDate: values.startDate?._d,
+    };
 
     try {
-      if (admin.id === 0) {
-        admin = (await addAdministrator(props.admin.cityId, admin)).data;
+      if (values.adminType === "Голова Станиці" && head !== null) {
+        if (head?.userId !== admin.userId) {
+          showConfirm(admin);
+        } else {
+          editCityAdmin(admin);
+        }
       } else {
-        admin = (await editAdministrator(props.admin.cityId, admin)).data;
+        if (admin.id === 0) {
+          addCityAdmin(admin);
+        } else {
+          editCityAdmin(admin);
+        }
       }
     } finally {
       props.onAdd?.(admin);
       props.setVisibleModal(false);
       setLoading(false);
     }
+
+    props.onChange?.(props.admin.userId, values.adminType);
   };
 
   const handleCancel = () => {
@@ -102,10 +168,12 @@ const AddAdministratorModal = (props: Props) => {
               { value: "Член СПР" },
             ]}
             filterOption={(inputValue, option) =>
-              option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+              option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
+              -1
             }
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}
+            onChange={getCityHead}
           ></AutoComplete>
         </Form.Item>
         <Row>
@@ -129,7 +197,7 @@ const AddAdministratorModal = (props: Props) => {
                     ? moment(props.admin.startDate)
                     : undefined
                 }
-                onChange={(e) => setDate(e)}
+                onChange={(e) => setStartDate(e)}
               />
             </Form.Item>
           </Col>
@@ -149,6 +217,7 @@ const AddAdministratorModal = (props: Props) => {
                 value={
                   props.admin.endDate ? moment(props.admin.endDate) : undefined
                 }
+                onChange={(e) => setEndDate(e)}
               />
             </Form.Item>
           </Col>

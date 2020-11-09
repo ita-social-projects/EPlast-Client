@@ -14,6 +14,10 @@ import CityDocument from "../../models/City/CityDocument";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
 import userApi from "./../../api/UserApi";
 import {getLogo} from "./../../api/citiesApi"
+import CitiesRedirectForm from "./CitiesRedirectForm";
+import CityDetailDrawer from "../City/CityDetailDrawer/CityDetailDrawer";
+import RegionDetailDrawer from "./RegionsDetailDrawer";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
 
 
 
@@ -54,7 +58,9 @@ const Region = () => {
     phoneNumber: '',
     email: '',
     link: '',
-    documents: [{}]
+    documents: [{}],
+    postIndex:'',
+    city:''
   });
 
   const [visibleDrawer, setVisibleDrawer] = useState(false);
@@ -80,6 +86,8 @@ const Region = () => {
     name: '',
     logo: ''
   }]);
+
+  const [memberRedirectVisibility, setMemberRedirectVisibility] = useState<boolean>(false)
 
   const [canCreate, setCanCreate] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
@@ -128,6 +136,13 @@ const Region = () => {
 
   const deleteRegion = async () => {
     await removeRegion(region.id);
+    admins.map(async (ad) => {
+      await NotificationBoxApi.createNotifications(
+        [ad.userId],
+        `На жаль регіон: '${region.name}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+        );
+    });
     history.push('/regions');
   }
 
@@ -140,7 +155,16 @@ const Region = () => {
       okType: 'danger',
       cancelText: 'Скасувати',
       maskClosable: true,
-      onOk() { deleteRegion() }
+      onOk() { 
+        {members[0].name !== '' ? (
+        setMemberRedirectVisibility(true)
+        )
+        :
+        (
+        deleteRegion()
+        )
+        }
+      }
     });
   }
 
@@ -178,7 +202,8 @@ const Region = () => {
   const handleOk = () => {
 
     setvisible(false);
-
+    setMemberRedirectVisibility(false);
+    
   };
 
 
@@ -352,7 +377,9 @@ const Region = () => {
                         title="Видалити округ">
                         <DeleteOutlined
                           className="cityInfoIconDelete"
-                          onClick={() => seeDeleteModal()}
+                          onClick={
+                            
+                            () => seeDeleteModal()}
                         />
                       </Tooltip>
                     </Col>
@@ -543,6 +570,22 @@ const Region = () => {
         >
           <AddNewSecretaryForm onAdd={handleOk}></AddNewSecretaryForm>
         </Modal>
+
+        <Modal
+          title="Оберіть округ до якого належатимуть станиці-члени:"
+          visible={memberRedirectVisibility}
+          onOk={handleOk}
+          onCancel={handleOk}
+          footer={null}
+        >
+          <CitiesRedirectForm onAdd={handleOk}/>
+        </Modal>
+
+        <RegionDetailDrawer
+        region={region}
+        setVisibleDrawer={setVisibleDrawer}
+        visibleDrawer={visibleDrawer}
+      ></RegionDetailDrawer>
 
 
       </Layout.Content>

@@ -4,12 +4,12 @@ export default class ClubMember {
   id: number;
   userId: string;
   user: ClubUser;
-  clubId: number;
+  ClubId: number;
 
   constructor() {
     this.id = 0;
     this.userId = "";
     this.user = new ClubUser();
-    this.clubId = 0;
+    this.ClubId = 0;
   }
 }

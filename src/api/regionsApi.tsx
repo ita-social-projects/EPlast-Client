@@ -120,6 +120,14 @@ export const getUsersAdministrations = async (userId:string)=>{
 }
 
 
+export const getUsersPreviousAdministrations = async (userId:string)=>{
+  return api.get(`Regions/GetUserPreviousAdministrations/${userId}`).catch((error)=>{
+    throw new Error(error);
+  })
+}
+
+
+
 export const getAdminTypes = async ()=>{
   return api.get(`Regions/GetAdminTypes`).catch((error)=>{
    throw new Error(error);
@@ -133,9 +141,41 @@ export const removeDocument = async (documentId: number) => {
   });
 }
 
+export const getRegions = async()=>{
+  return api.get(`Regions/Regions`);
+}
+
+export const redirectCities = async (prevRegId:number, nextRegId: number)=>{
+  return api.put(`Regions/RedirectCities/${prevRegId}/${nextRegId}`).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+
+export const getRegionsByPage = async (page: number, pageSize: number, regionName: string | null = null) => {
+  return api
+    .get(`Regions/Profiles/${page}`, { page, pageSize, regionName})
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+
+export const getAdminTypeIdByName = async (name: string) => {
+  return api
+    .get(`Regions/GetAdminTypeId/${name}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+
 
 
 export default{
+  getAdminTypeIdByName,
+  getRegionsByPage,
+  redirectCities,
   getHead,
   removeDocument,
   getRegionDocuments,

@@ -12,7 +12,6 @@ import decisionsApi, {
   statusTypePostParser } from '../../api/decisionsApi'
 import { getBase64 } from '../userPage/EditUserPage/Services';
 import notificationLogic from '../../components/Notifications/Notification';
-import classes from './Table.module.css';
 import formclasses from './FormAddDecision.module.css';
 type FormAddDecisionProps ={
    setVisibleModal: (visibleModal: boolean) => void;
@@ -21,6 +20,7 @@ type FormAddDecisionProps ={
 const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
 
  const  { setVisibleModal, onAdd } = props;
+ const [submitLoading,setSubmitLoading] = useState(false);
  const [fileData, setFileData] = useState<FileWrapper>({FileAsBase64 : null, FileName: null});
  const [form] = Form.useForm();
   const normFile = (e: { fileList: any }) => {
@@ -30,16 +30,20 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
     return e && e.fileList;
   };
   const handleCancel = () => {
+    form.resetFields();
+    setFileData({FileAsBase64 : null, FileName: null});
     setVisibleModal(false);
   };
   const handleUpload = (info :any) => {
     if(info.file !== null){
       if(info.file.size <= 3145728){
+        if (checkFile(info.file.name)){
         getBase64( info.file,(base64: string) => {
           setFileData({FileAsBase64 :base64.split(',')[1] ,  FileName:info.file.name});
         });
         notificationLogic('success', "Файл завантажено");
       }
+    }
       else{
         notificationLogic('error', "Розмір файлу перевищує 3 Мб");
       }
@@ -50,8 +54,29 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
     }
 
   }
+  const checkFile = (fileName: string): boolean => {
+    const extension = fileName.split(".").reverse()[0];
+    const isCorrectExtension =
+      extension.indexOf("pdf") !== -1 ||
+      extension.indexOf("jpg") !== -1 ||
+      extension.indexOf("jpeg") !== -1 ||
+      extension.indexOf("png") !== -1 ||
+      extension.indexOf("docx") !== -1 ||
+      extension.indexOf("doc") !== -1 ||
+      extension.indexOf("txt") !== -1 ||
+      extension.indexOf("csv") !== -1 ||
+      extension.indexOf("xls") !== -1 ||
+      extension.indexOf("xml") !== -1 ||
+      extension.indexOf("odt") !== -1 ||
+      extension.indexOf("ods") !== -1
+    if (!isCorrectExtension) {
+      notificationLogic("error", "Можливі розширення файлів: pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods.");
+    }
+    return isCorrectExtension;
+  }
   
  const handleSubmit = async (values : any)=>{
+  setSubmitLoading(true);
   const newDecision  : DecisionWrapper= {
     decision: {
       id: 0,
@@ -67,10 +92,11 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
   }
   await decisionsApi.post(newDecision);
   setVisibleModal(false);
-
   onAdd();
   form.resetFields();
+  setSubmitLoading(false);
   }
+
   const[data, setData] = useState<DecisionOnCreateData>({organizations: Array<Organization>(),
     decisionStatusTypeListItems: Array<decisionStatusType>(),
     decisionTargets: Array<decisionTarget>(),});
@@ -110,6 +136,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
        name = "organization"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
         <Select
+         placeholder="Оберіть орган"
          className={formclasses.selectField}
          >
       {data?.organizations.map(o => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{o.organizationName}</Select.Option>))}
@@ -137,7 +164,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
        name="datepicker"
        label="Дата рішення"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
-        <DatePicker format = "YYYY-MM-DD"
+        <DatePicker format = "DD.MM.YYYY"
         className={formclasses.selectField}
         />
       </Form.Item>
@@ -204,15 +231,17 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
       <Button 
         key="back"
         onClick = {handleCancel}
+        className={formclasses.buttons}
         >
           Відмінити
         </Button>
         <Button
          type="primary" htmlType="submit"
+         className={formclasses.buttons}
+         loading={submitLoading}
         >
          Опублікувати
         </Button>
-
       </Form.Item> 
     </Form>
   );

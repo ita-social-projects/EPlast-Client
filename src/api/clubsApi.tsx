@@ -1,107 +1,171 @@
-import axios from "axios";
-import Api from "./api";
-import BASE_URL from "../config";
+import api from "./api";
 
-const getById = async (id: number) => {
-  const response = await Api.get(`Club/${id}`, {id});
-  return response;
+const dataURLtoFile = (dataurl: string, filename: string) => {
+  const arr = dataurl.split(",");
+  const mime = arr[0].match(/:(.*?);/)![1];
+  const bstr = atob(arr[1]);
+  let { length } = bstr;
+  const u8arr = new Uint8Array(length);
+
+  while (length !== 0) {
+    u8arr[length] = bstr.charCodeAt(length);
+    length -= 1;
+  }
+
+  return new File([u8arr], filename, { type: mime });
 };
 
-const getAll = async () => {
-  const response = await Api.get("Club");
-  return response;
+export const getClubById = async (id: number) => {
+  return await api.get(`Club/Profile/${id}`, id).catch((error) => {
+    throw new Error(error);
+  });
 };
 
-const getClubsByPage = async (pageNumber: number, pageSize: number) => {
-  const response = await Api.get(`Club/page/${pageNumber}`, {pageNumber, pageSize});
+export const getClubAnnualReport = async () => {
+  return await api.get(`Club/GetAllClubAnnualReports`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const getClubByPage = async (page: number, pageSize: number, clubName: string | null = null) => {
+  return api
+    .get(`Club/Profiles/${page}`, { page, pageSize, clubName })
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const createClub = async (data: any) => {
+  return api.post("Club/CreateClub", data).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const updateClub = async (id: number, data: any) => {
+  return api.put(`Club/EditClub/${id}`, data).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const removeClub = async (id: number) => {
+  return api.remove(`Club/RemoveClub/${id}`, id).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const getLogo = async (logoName: string) => {
+  return api.get("Club/LogoBase64", { logoName })
+};
+
+export const getAllAdmins = async (id: number) => {
+  return api.get(`Club/Admins/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const getAllDocuments = async (id: number) => {
+  return api.get(`Club/Documents/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const getAllMembers = async (id: number) => {
+  return api.get(`Club/Members/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const getAllFollowers = async (id: number) => {
+  return api.get(`Club/Followers/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const toggleMemberStatus = async (id: number) => {
+  return api.put(`Club/ChangeApproveStatus/${id}`, id).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+export const addFollower = async (clubId: number) => {
+  return api.post(`Club/AddFollower/${clubId}`, clubId).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+export const addFollowerWithId = async (clubId: number, userId: string) => {
+  return api.post(`Club/AddFollowerWithId/${clubId}/${userId}`).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+export const removeFollower = async (followerId: number) => {
+  return api.remove(`Club/RemoveFollower/${followerId}`, followerId).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+export const addAdministrator = async (clubId: number, data: any) => {
+  return api.post(`Club/AddAdmin/${clubId}`, data).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+export const removeAdministrator = async (adminId: number) => {
+  return api.put(`Club/RemoveAdmin/${adminId}`, adminId).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+export const editAdministrator = async (adminId: number, data: any) => {
+  return api.put(`Club/EditAdmin/${adminId}`, data).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+export const addDocument = async (clubId: number, data: any) => {
+  return api.post(`Club/AddDocument/${clubId}`, data).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+export const removeDocument = async (documentId: number) => {
+  return api.remove(`Club/RemoveDocument/${documentId}`, documentId).catch((error) => {
+    throw new Error(error);
+  });
+}
+
+export const getFile = async (fileBlob: string, fileName: string) => {
+  const response = await (await api.get(`Club/FileBase64/${fileBlob}`, fileBlob)).data;
+  const file = dataURLtoFile(response, fileBlob);
+  const anchor = window.document.createElement('a');
+  anchor.href = window.URL.createObjectURL(file);
+  anchor.download = fileName;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  window.URL.revokeObjectURL(anchor.href);
   return response;
 }
 
-const getClubsCount = async () => {
-  const response = await Api.get("Club/count");
-  return response;
+export const getDocumentTypes = async () => {
+  return api.get(`Club/GetDocumentTypes`).catch((error) => {
+    throw new Error(error);
+  });
 }
 
-const getAllMembers = async (clubId: number) => {
-  const response = await Api.get(`Club/${clubId}/members`, {clubId});
-  return response;
-};
-const getAllFollowers = async (clubId: number) => {
-  const response = await Api.get(`Club/${clubId}/followers`, {clubId});
-  return response;
-};
-const getAllAdmins = async (clubId: number) => {
-  const response = await Api.get(`Club/${clubId}/administration`, {clubId});
-  return response;
-};
-const post = async (url: string, data: any) => {
-  const response = await Api.post(url, data);
-  return response;
-};
 
-const put = async (data: any) => {
-  const response = await Api.put("Club", data);
-  return response;
-};
-
-const remove = async (id: number) => {
-  const response = await Api.put("Club", id);
-  return response;
-};
-
-const getImage = async (imageName: string | undefined) => {
-  const response = await axios.get(
-    `${`${BASE_URL}Club/getImage`}/${imageName}`
-  );
-  return response;
-};
-
-const addFollower = async (clubId: number, userId: string) => {
-  const response = await Api.post(`Club/${clubId}/add-follower/${userId}`, {clubId, userId});
-  return response;
+export const getUsersAdministrations = async(UserId:string)=>{
+   return api.get(`Club/GetUserAdmins/${UserId}`);
+  
 }
 
-const toggleMemberStatus = async (clubId: number, memberId: number) => {
-  const response = await Api.put(`Club/${clubId}/member/${memberId}/change-status`, {clubId, memberId});
-  return response;
-}
 
-const removeMember = async (memberId: number) => {
-  const response = await Api.remove(`Club/remove-member/${memberId}`, {memberId});
-  return response;
+export const getUsersPreviousAdministrations = async(UserId:string)=>{
+  return api.get(`Club/GetUserPreviousAdmins/${UserId}`);
 }
+ 
 
-const removeAdministrator = async (adminId: number) => {
-  const response = await Api.remove(`Club/administration/${adminId}`, {adminId});
-  return response;
+export const getClubs = async()=>{
+  return api.get(`Club/Clubs`);
 }
-
-const addAdministrator = async (clubId: number, data: any) => {
-  const response = await Api.post(`Club/${clubId}/add-administration`, {clubId, data});
-  return response;
-}
-
-const setAdministratorEndDate = async (adminId: number, endDate: string | undefined) => {
-  const response = await Api.put(`Club/administration/${adminId}/change-end-date`, {adminId, endDate});
-  return response;
-}
-
-export default {
-  getById,
-  getAll,
-  getClubsByPage,
-  getClubsCount,
-  post,
-  put,
-  remove,
-  getImage,
-  getAllMembers,
-  getAllFollowers,
-  getAllAdmins,
-  addFollower,
-  toggleMemberStatus,
-  removeMember,
-  removeAdministrator,
-  addAdministrator,
-  setAdministratorEndDate,
-};

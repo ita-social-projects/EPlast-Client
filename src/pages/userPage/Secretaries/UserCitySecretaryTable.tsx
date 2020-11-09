@@ -1,9 +1,10 @@
 import React, { useEffect, useState, PropsWithRef } from 'react';
 import { Table, Spin, Input } from 'antd';
 import columns from './columnsCIties';
-import { getUsersAdministrations } from "../../../api/citiesApi";
+import { getUsersAdministrations, getusersPreviousAdministrations } from "../../../api/citiesApi";
 
 import ClickAwayListener from 'react-click-away-listener';
+
 
 
 interface props {
@@ -24,6 +25,15 @@ export const UserCitySecretaryTable = ({  UserId }: props) => {
   }]);
 
 
+  const [prevData, setPrevData] = useState<any>([{
+    id: '',
+    user: '',
+    adminType: '',
+    startDate: '',
+    endDate: '',
+    cityId:''
+  }]);
+
 
 
   const fetchData = async () => {
@@ -31,6 +41,12 @@ export const UserCitySecretaryTable = ({  UserId }: props) => {
     await getUsersAdministrations(UserId).then(response => {
 
       setData(response.data);
+    })
+
+
+    await getusersPreviousAdministrations(UserId).then(response => {
+
+      setPrevData(response.data);
     })
   }
 
@@ -42,13 +58,19 @@ export const UserCitySecretaryTable = ({  UserId }: props) => {
 
   return (
     <div>
-
+ <h1>Дійсні діловодства станиці</h1>
+ <br/>
       <Table
         columns={columns}
         dataSource={data}
       />
-    </div>
-
-
+    
+    <h1>Колишні діловодства станиці</h1>
+ <br/>
+      <Table
+        columns={columns}
+        dataSource={prevData}
+      />
+</div>
   )
 }
