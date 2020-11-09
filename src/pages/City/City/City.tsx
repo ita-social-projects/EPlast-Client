@@ -20,7 +20,6 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
-
 const City = () => {
   const history = useHistory();
   const {id} = useParams();
