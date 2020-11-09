@@ -8,5 +8,10 @@ export default interface FacebookData
   id:number,
   name:string,
   picture:any,
-  userID:number
+  userID:number,
+  birthday:string,
+  gender:string,
+  address:string,
+  education:string,
+  religion:string
 }

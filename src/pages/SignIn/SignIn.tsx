@@ -89,7 +89,7 @@ export default function () {
     getId();
     getAppId();
 
-  }, [googleId, facebookAppId]);
+  }, []);
 
   return (
     <div className={styles.mainContainer}>
