@@ -6,24 +6,16 @@ import {
   Select,
   Layout,
   Modal,
-  Input,
   Row,
-  Col,
-  Typography
-} from "antd";
+  Col} from "antd";
 import StatisticsApi from "../../api/StatisticsApi";
 import City from "./Interfaces/City";
-import Region from './Interfaces/Region';
 import StatisticsItemIndicator from "./Interfaces/StatisticsItemIndicator";
 import AnnualReportApi from "../../api/AnnualReportApi";
-import { useHistory, useLocation } from 'react-router-dom';
-import StatisticsParameters from './Interfaces/StatisticsParameters';
-import Filters from "./Filters";
-import MembersStatistic from "../AnnualReport/Interfaces/MembersStatistic";
+import StatisticsParameters from "./Interfaces/StatisticsParameters";
 import CityStatistics from "./Interfaces/CityStatistics";
-import YearStatistics from "./Interfaces/YearStatistics";
-import StatisticsItem from "./Interfaces/StatisticsItem";
 import DataFromResponse from "./Interfaces/DataFromResponse";
+import { SortOrder } from "antd/lib/table/interface";
 
 
 const StatisticsCities = () => {
@@ -31,9 +23,7 @@ const StatisticsCities = () => {
   const [years, setYears] = useState<any>();
   const [indicators, setIndicators] = useState<any>();
   const [cities, setCities] = useState<any>();
-  const indicatorsForNeeds = StatisticsItemIndicator;
   const [result, setResult] = useState<DataFromResponse[]>(Array());
-  const [searchedData, setSearchedData] = useState("");
   const [showTable, setShowTable] = useState(false);
   const [columns, setColumns] = useState(Array());
 
@@ -42,18 +32,17 @@ const StatisticsCities = () => {
       title: "№",
       dataIndex: "id",
       key: "id",
-      fixed: 'left',
-      sorter: {
-        compare: (a: any, b: any) => a.id - b.id,
-        multiple: 3,
-      },
+      fixed: "left",
+      sorter: { compare: (a: any, b: any) => a.id - b.id },
       width: 55
     },
     {
       title: "Станиця",
       dataIndex: "cityName",
       key: "cityName",
-      fixed: 'left',
+      fixed: "left",
+      sorter: (a: any, b: any) => a.cityName.localeCompare(b.cityName),
+      sortDirections: ["ascend", "descend"] as SortOrder[],
       width: 100
     },
     {
@@ -61,19 +50,34 @@ const StatisticsCities = () => {
       dataIndex: "year",
       key: "year",
       fixed: "left",
-      sorter: {
-        compare: (a: any, b: any) => a.year - b.year,
-        multiple: 1,
-      },
+      sorter: { compare: (a: any, b: any) => a.year - b.year },
       width: 100
     },
     {
       title: "Регіон",
       dataIndex: "regionName",
       key: "regionName",
+      sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
+      sortDirections: ["ascend", "descend"] as SortOrder[],
       width: 200
-    },
-    
+    }    
+  ];
+  
+  const indicatorsArray = [
+    { value: StatisticsItemIndicator.NumberOfPtashata, label: "Кількість пташат" },
+    { value: StatisticsItemIndicator.NumberOfNovatstva, label: "Кількість новацтва" },
+    { value: StatisticsItemIndicator.NumberOfUnatstva, label: "Кількість юнацтва загалом" },
+    { value: StatisticsItemIndicator.NumberOfUnatstvaNoname, label: "Кількість неіменованих" },
+    { value: StatisticsItemIndicator.NumberOfUnatstvaSupporters, label: "Кількість прихильників" },
+    { value: StatisticsItemIndicator.NumberOfUnatstvaMembers, label: "Кількість учасників" },
+    { value: StatisticsItemIndicator.NumberOfUnatstvaProspectors, label: "Кількість розвідувачів" },
+    { value: StatisticsItemIndicator.NumberOfUnatstvaSkobVirlyts, label: "Кількість скобів/вірлиць" },
+    { value: StatisticsItemIndicator.NumberOfSenior, label: "Кількість старших пластунів загалом" },
+    { value: StatisticsItemIndicator.NumberOfSeniorPlastynSupporters, label: "Кількість старших пластунів прихильників" },
+    { value: StatisticsItemIndicator.NumberOfSeniorPlastynMembers, label: "Кількість старших пластунів учасників" },
+    { value: StatisticsItemIndicator.NumberOfSeigneur, label: "Кількість сеньйорів загалом" },
+    { value: StatisticsItemIndicator.NumberOfSeigneurSupporters, label: "Кількість сеньйорів пластунів прихильників" },
+    { value: StatisticsItemIndicator.NumberOfSeigneurMembers, label: "Кількість сеньйорів пластунів учасників" }
   ];
 
   useEffect(() => {
@@ -112,23 +116,6 @@ const StatisticsCities = () => {
     }
   }
 
-  const indicatorsArray = [
-    { value: indicatorsForNeeds.NumberOfPtashata, label: 'Кількість пташат' },
-    { value: indicatorsForNeeds.NumberOfNovatstva, label: 'Кількість новацтва' },
-    { value: indicatorsForNeeds.NumberOfUnatstva, label: 'Кількість юнацтва загалом' },
-    { value: indicatorsForNeeds.NumberOfUnatstvaNoname, label: 'Кількість неіменованих' },
-    { value: indicatorsForNeeds.NumberOfUnatstvaSupporters, label: 'Кількість прихильників' },
-    { value: indicatorsForNeeds.NumberOfUnatstvaMembers, label: 'Кількість учасників' },
-    { value: indicatorsForNeeds.NumberOfUnatstvaProspectors, label: 'Кількість розвідувачів' },
-    { value: indicatorsForNeeds.NumberOfUnatstvaSkobVirlyts, label: 'Кількість скобів/вірлиць' },
-    { value: indicatorsForNeeds.NumberOfSenior, label: 'Кількість старших пластунів загалом' },
-    { value: indicatorsForNeeds.NumberOfSeniorPlastynSupporters, label: 'Кількість старших пластунів прихильників' },
-    { value: indicatorsForNeeds.NumberOfSeniorPlastynMembers, label: 'Кількість старших пластунів учасників' },
-    { value: indicatorsForNeeds.NumberOfSeigneur, label: 'Кількість сеньйорів загалом' },
-    { value: indicatorsForNeeds.NumberOfSeigneurSupporters, label: 'Кількість сеньйорів пластунів прихильників' },
-    { value: indicatorsForNeeds.NumberOfSeigneurMembers, label: 'Кількість сеньйорів пластунів учасників' }
-  ];
-
   const fechIndicatorsNames = async () => {
     try {
       setIndicators(indicatorsArray);
@@ -141,12 +128,6 @@ const StatisticsCities = () => {
   const showError = (message: string) => {
     Modal.error({
       title: "Помилка!",
-      content: message,
-    });
-  };
-
-  const showSuccess = (message: string) => {
-    Modal.success({
       content: message,
     });
   };
@@ -168,10 +149,9 @@ const StatisticsCities = () => {
       Indicators: info.indicators
     }
     let data  = Array<any>();
-    
     let counter = 0;
+
     let response = await StatisticsApi.getStatisticsForCitiesForYears(statisticsParameters);
-    console.log(response); // забрати потім
     response.data.map((stanytsya: CityStatistics) => { 
       stanytsya.yearStatistics.map(year => {
           data.push( 
@@ -182,30 +162,28 @@ const StatisticsCities = () => {
               year: year.year,
               statisticsItems: year.statisticsItems,
               ...year.statisticsItems.map((it: Object) => {
-                let [key, value] = Object.entries(it)[1];
+                let [, value] = Object.entries(it)[1];
                 return value;              
               })
             })
           counter ++;
         })
       });
-      console.log(data); // забрати потім
       setShowTable(true);
       setResult(data);
-      console.log(data); // забрати потім
       let temp = [...constColumns, ...data[0].statisticsItems.map((statisticsItem: any, index: any) => {
           return {
             title: indicatorsArray[statisticsItem.indicator as number].label,
             dataIndex: index,
             key: index,
+            sorter: { compare: (a: any, b: any) => a.id - b.id },
             width: 200
           }
       })];
-      console.log(temp);
       setColumns(temp);
   };
 
-  let onChange = (pagination: any, sorter: any) => {
+  let onChange = (pagination: any) => {
     if (pagination) {
         window.scrollTo({
           left: 0,
@@ -214,22 +192,22 @@ const StatisticsCities = () => {
         });
       }    
   }
-  
-  
+    
   return (
     <Layout.Content>
+     <h1>Статистика станиць</h1>
       <Form onFinish={onSubmit}>
         <Row>
           <Col
             span={8} >
             <Form.Item
-              name='citiesId'
-              rules={[{ required: true, message: 'Оберіть хоча б одну станицю', type: 'array' }]} >
+              name="citiesId"
+              rules={[{ required: true, message: "Оберіть хоча б одну станицю", type: "array" }]} >
               <Select
                 showSearch
-                mode='multiple'
+                mode="multiple"
                 options={cities}
-                placeholder='Обрати станицю'
+                placeholder="Обрати станицю"
                  />
             </Form.Item>
           </Col>
@@ -238,13 +216,13 @@ const StatisticsCities = () => {
           <Col
             span={8} >
             <Form.Item
-              name='years'
-              rules={[{ required: true, message: 'Оберіть хоча б один рік', type: 'array' }]}>
+              name="years"
+              rules={[{ required: true, message: "Оберіть хоча б один рік", type: "array" }]}>
               <Select
                 showSearch
-                mode='multiple'
+                mode="multiple"
                 options={years}
-                placeholder='Обрати рік'
+                placeholder="Обрати рік"
                 />
             </Form.Item>
           </Col>
@@ -253,29 +231,29 @@ const StatisticsCities = () => {
           <Col
             span={8} >
             <Form.Item
-              name='indicators'
-              rules={[{ required: true, message: 'Оберіть хоча б один показник', type: 'array' }]}>
+              name="indicators"
+              rules={[{ required: true, message: "Оберіть хоча б один показник", type: "array" }]}>
               <Select
                 showSearch
-                mode='multiple'
+                mode="multiple"
                 options={indicators}
-                placeholder='Обрати показник'
+                placeholder="Обрати показник"
                 />
             </Form.Item>
           </Col>
         </Row>
-        <Row justify='start'>
+        <Row justify="start">
           <Col>
             <Button
-              type='primary'
-              htmlType='submit' >
+              type="primary"
+              htmlType="submit" >
               Сформувати
                     </Button>
           </Col>
         </Row>
       </Form>
       <br/>
-      {showTable === false ? '' :
+      {showTable === false ? "" : 
       <Table
         bordered
         rowKey="id"
