@@ -11,6 +11,7 @@ import moment from "moment";
 type AddNewSecretaryForm = {
   onAdd: () => void;
   onCancel: () => void;
+  admin?: any;
 };
 
 const AddNewSecretaryForm = (props: any) => {
@@ -51,9 +52,12 @@ const AddNewSecretaryForm = (props: any) => {
 
   const handleSubmit = async (values: any) => {
     const newAdmin: any = {
-      id: 0,
+      id: props.admin === undefined ? 0 : props.admin.id,
 
-      userId: JSON.parse(values.userId).user.id,
+      userId:
+        props.admin === undefined
+          ? JSON.parse(values.userId).user.id
+          : props.admin.userId,
 
       AdminTypeId: await (
         await regionsApi.getAdminTypeIdByName(values.AdminType)
@@ -65,21 +69,38 @@ const AddNewSecretaryForm = (props: any) => {
 
       regionId: currentRegion,
     };
-    await regionsApi.AddAdmin(newAdmin);
+    if (newAdmin.id === 0) {
+      await regionsApi.AddAdmin(newAdmin);
 
-    notificationLogic("success", "Користувач успішно доданий в провід");
+      notificationLogic("success", "Користувач успішно доданий в провід");
 
-    form.resetFields();
+      form.resetFields();
 
-    await NotificationBoxApi.createNotifications(
-      [newAdmin.userId],
-      `Вам була присвоєна адміністративна роль: '${values.AdminType}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/regions/${currentRegion}`,
-      `цьому окрузі`
-    );
+      await NotificationBoxApi.createNotifications(
+        [newAdmin.userId],
+        `Вам була присвоєна адміністративна роль: '${values.AdminType}' в `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/regions/${currentRegion}`,
+        `цьому окрузі`
+      );
 
-    onAdd();
+      onAdd();
+    } else {
+      await regionsApi.EditAdmin(newAdmin);
+
+      notificationLogic("success", "Адміністратор успішно відредагований");
+
+      form.resetFields();
+
+      await NotificationBoxApi.createNotifications(
+        [newAdmin.userId],
+        `Вам була відредагована адміністративна роль: '${values.AdminType}' в `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/regions/${currentRegion}`,
+        `цьому окрузі`
+      );
+      onAdd();
+    }
   };
 
   useEffect(() => {
@@ -104,11 +125,12 @@ const AddNewSecretaryForm = (props: any) => {
     <Form name="basic" onFinish={handleSubmit} form={form}>
       <Form.Item
         className={classes.formField}
+        style={{ display: props.admin === undefined ? "flex" : "none" }}
         label="Користувач"
         name="userId"
         rules={[
           {
-            required: true,
+            required: props.admin === undefined ? true : false,
             message: "Це поле має бути заповненим",
           },
         ]}
@@ -125,6 +147,9 @@ const AddNewSecretaryForm = (props: any) => {
       <Form.Item
         className={classes.formField}
         label="Тип адміністрування"
+        initialValue={
+          props.admin === undefined ? "" : props.admin.adminType.adminTypeName
+        }
         name="AdminType"
         rules={[
           {
@@ -153,6 +178,9 @@ const AddNewSecretaryForm = (props: any) => {
         className={classes.formField}
         label="Дата початку"
         name="startDate"
+        initialValue={
+          props.admin === undefined ? undefined : moment(props.admin.startDate)
+        }
       >
         <DatePicker
           className={classes.inputField}
@@ -165,6 +193,13 @@ const AddNewSecretaryForm = (props: any) => {
         className={classes.formField}
         label="Дата кінця"
         name="endDate"
+        initialValue={
+          props.admin === undefined
+            ? undefined
+            : props.admin.endDate === null
+            ? undefined
+            : moment(props.admin.endDate)
+        }
       >
         <DatePicker
           className={classes.inputField}
