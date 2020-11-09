@@ -15,7 +15,7 @@ import { checkNameSurName} from "../../SignUp/verification";
 import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
 import userApi from "../../../api/UserApi";
-import InputMask from "react-input-mask";
+import ReactInputMask from "react-input-mask";
 import moment, { Moment } from "moment";
 import jwt from "jwt-decode";
 import AuthStore from "../../../stores/AuthStore";
@@ -427,13 +427,14 @@ export default function () {
               className={styles.formItem}
               rules={[{min:18,message:"Дане поле не є номером телефону"}]}
             >
-              <InputMask
-              value={phoneNumber}
-                className={styles.dataInput}
-                mask={"+380(99)-999-99-99"}
-                maskChar={null}
-                onChange={changePhoneNumber}
-              />
+              <ReactInputMask
+                 value={phoneNumber}
+                 onChange={changePhoneNumber}
+                 className={styles.dataInput}
+                 mask="+38(999)-999-99-99"
+              >
+              {(inputProps: any) => <Input {...inputProps} />}
+              </ReactInputMask>
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
