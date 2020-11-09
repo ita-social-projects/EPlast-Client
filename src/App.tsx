@@ -49,7 +49,6 @@ import RegionAdministration from "./pages/Regions/RegionAdministration";
 import RegionDocuments from "./pages/Regions/RegionDocuments";
 import RegionMembers from "./../src/pages/Regions/RegionMembers";
 import StatisticsCities from "./pages/Statistics/StatisticsCities";
-//import StatisticsRegion from "./pages/Statistics/StatisticsRegion";
 
 const App: FC = () => (
   <div className="App">
