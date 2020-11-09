@@ -11,6 +11,7 @@ import moment from "moment";
 import "moment/locale/uk";
 import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
+import NotificationBoxApi from '../../../api/NotificationBoxApi';
 moment.locale("uk-ua");
 
 const CityAdministration = () => {
@@ -23,6 +24,7 @@ const CityAdministration = () => {
     const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [cityName, setCityName] = useState<string>("");
   
     const getAdministration = async () => {
       setLoading(true);
@@ -31,13 +33,25 @@ const CityAdministration = () => {
         setPhotos([...response.data.administration, response.data.head].filter(a => a != null));
         setAdministration([...response.data.administration, response.data.head].filter(a => a != null));
         setCanEdit(response.data.canEdit);
+        setCityName(response.data.name);
       setLoading(false);
     };
 
-    const removeAdmin = async (adminId: number) => {
-      await removeAdministrator(adminId);
-      setAdministration(administration.filter((u) => u.id !== adminId));
+    const removeAdmin = async (admin: CityAdmin) => {
+      await removeAdministrator(admin.id);
+      setAdministration(administration.filter((u) => u.id !== admin.id));
+      await createNotification(admin.userId, `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в станиці`);
     };
+    
+    const createNotification = async(userId : string, message : string) => {
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message + ": ",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/cities/${id}`,
+        cityName
+        );
+    }
 
     const showModal = (member: CityAdmin) => {
       setAdmin(member);
@@ -56,7 +70,7 @@ const CityAdministration = () => {
     const onAdd = async (newAdmin: CityAdmin = new CityAdmin()) => {
       const index = administration.findIndex((a) => a.id === admin.id);
       administration[index] = newAdmin;
-      
+      await createNotification(newAdmin.userId, `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в станиці`);
       setAdministration(administration);
     };
 
@@ -83,7 +97,7 @@ const CityAdministration = () => {
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
                           <CloseOutlined
-                            onClick={() => removeAdmin(member.id)}
+                            onClick={() => removeAdmin(member)}
                           />,
                         ]
                       : undefined

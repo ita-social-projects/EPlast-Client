@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Dropdown, Avatar } from "antd";
+import { Layout, Menu, Dropdown, Avatar, Badge, Button } from "antd";
 import { LoginOutlined, LogoutOutlined, BellOutlined, EditOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import LogoImg from "../../assets/images/ePlastLogotype.png";
@@ -9,16 +9,23 @@ import AuthorizeApi from '../../api/authorizeApi';
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
+import NotificationBox from '../NotificationBox/NotificationBox';
+import NotificationBoxApi, {NotificationType, UserNotification } from '../../api/NotificationBoxApi';
+import SignalRConnection from '../NotificationBox/SignalRConnection'
+
 let authService = new AuthorizeApi();
 
 const HeaderContainer = () => {
   const user = AuthorizeApi.isSignedIn();
   const [imageBase64, setImageBase64] = useState<string>();
   const [name, setName] = useState<string>();
-  const [id, setId] = useState<string>();
+  const [id, setId] = useState<string>("");
   const token = AuthStore.getToken() as string;
   const signedIn = AuthorizeApi.isSignedIn();
   const [userState, setUserState] = useState(signedIn);
+  const [notificationTypes, setNotificationTypes] = useState<Array<NotificationType>>([]);
+  const [notifications, setNotifications] = useState<Array<UserNotification>>([]);
+  const [visibleDrawer, setVisibleDrawer] = useState<boolean>(false);
   
   const fetchData = async () => {
     if (user) {
@@ -29,12 +36,60 @@ const HeaderContainer = () => {
           setUserState(true);
         }
         setId(response.data.user.id);
+        
+        if (response.data.user.id !== undefined) 
+        {
+          getNotifications(response.data.user.id);
+          getNotificationTypes();
+         let connection = SignalRConnection.ManageConnection(response.data.user.id);
+         connection.on("ReceiveUserNotification", (userNotification : UserNotification) => {
+           console.log(userNotification); 
+           setNotifications(t => [userNotification].concat(t));
+         })
+        }
         await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
         })
       })
     }
   };
+
+  const getNotifications = async (userId : string) => {
+    await NotificationBoxApi.getAllUserNotifications(userId)
+    .then((response) => {
+      setNotifications(response)
+    })
+    .catch(err => console.log(err))
+  }
+
+  const RemoveNotification = async (notificationId : number) => {
+    await NotificationBoxApi.removeNotification(notificationId)
+    .then(() => setNotifications(arr => arr.filter(elem => elem.id !== notificationId)));
+  }
+
+  const RemoveAllUserNotifications = async (userId : string) => {
+    await NotificationBoxApi.removeUserNotifications(userId)
+    .then(() => setNotifications([]));
+  }
+
+  const getNotificationTypes = async () => {
+    await NotificationBoxApi.getAllNotificationTypes()
+    .then((response) => {
+      setNotificationTypes(response)
+    })
+    .catch(err => console.log(err))
+  }
+
+  const handleNotificationBox = async () => {
+    if (id !== "") {
+      getNotifications(id);
+    }
+  }
+
+  const ShowNotifications = () => {
+    setVisibleDrawer(true);
+    NotificationBoxApi.SetCheckedAllUserNotification(notifications.map(n => n.id))
+  }
   
   useEffect(() => {
     fetchData();
@@ -96,28 +151,48 @@ const HeaderContainer = () => {
         </Menu.Item>
       </Menu>
       {signedIn && userState ? (
-        <Menu mode="horizontal" className={classes.headerMenu}>
-          <Menu.Item
-            className={classes.headerItem}
-            key="4"
-            icon={<BellOutlined style={{ fontSize: "22px" }} />}
-          />
-          <Dropdown overlay={primaryMenu}>
-            <NavLink
-              to={`/userpage/main/${id}`}
-              className={classes.userMenu}
-              activeClassName={classes.activeLink}
+        <>
+          <Menu mode="horizontal" className={classes.headerMenu}>
+            <Menu.Item
+              className={classes.headerItem}
+              key="4"
             >
-              <Avatar
-                size={36}
-                src={imageBase64}
-                alt="User"
-                style={{ marginRight: "10px" }}
-              />
-              Привіт, {name}
-            </NavLink>
-          </Dropdown>
-        </Menu>
+              <Badge count={notifications.filter(n => n.checked===false).length}>
+                <Button ghost
+                  icon={<BellOutlined style={{ fontSize: "26px" }} />}
+                  onClick={ShowNotifications}
+                >
+                </Button>
+              </Badge>
+            </Menu.Item>
+            <Dropdown overlay={primaryMenu}>
+              <NavLink
+                to={`/userpage/main/${id}`}
+                className={classes.userMenu}
+                activeClassName={classes.activeLink}
+              >
+                <Avatar
+                  size={36}
+                  src={imageBase64}
+                  alt="User"
+                  style={{ marginRight: "10px" }}
+                />
+                Привіт, {name}
+              </NavLink>
+            </Dropdown>
+          </Menu>
+          {id !== "" &&
+            <NotificationBox
+              userId={id}
+              Notifications={notifications}
+              VisibleDrawer={visibleDrawer}
+              setVisibleDrawer={setVisibleDrawer}
+              RemoveNotification={RemoveNotification} 
+              RemoveAllNotifications={RemoveAllUserNotifications}
+              handleNotificationBox={handleNotificationBox}
+            />
+          }
+        </>
       ) : (
           <Menu mode="horizontal" className={classes.headerMenu}>
             <Menu.Item className={classes.headerItem} key="2">

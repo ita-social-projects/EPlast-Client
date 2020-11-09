@@ -94,6 +94,7 @@ const DropDown = (props: Props) => {
       <Menu
         onClick={handleItemClick}
         theme="dark"
+        selectable={false}
         className={classes.menu}
         style={{
           top: pageY,
@@ -105,18 +106,18 @@ const DropDown = (props: Props) => {
           <FileSearchOutlined />
           Переглянути профіль
         </Menu.Item>
-        {canEdit == true ? (
-          <Menu.Item key="2">
-            <DeleteOutlined />
-            Видалити
+        {canEdit ? (
+          <Menu.Item key="3">
+            <EditOutlined />
+            Редагувати
           </Menu.Item>
         ) : (
           <></>
         )}
-        {canEdit == true ? (
-          <Menu.Item key="3">
-            <EditOutlined />
-            Редагувати
+        {canEdit ? (
+          <Menu.Item key="2">
+            <DeleteOutlined />
+            Видалити
           </Menu.Item>
         ) : (
           <></>

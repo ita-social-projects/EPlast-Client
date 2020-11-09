@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Input,
-  Layout,
-  Row,
-  Col,
-  Button,
-} from "antd";
+import { Table, Input, Layout, Row, Col, Button } from "antd";
 import adminApi from "../../api/adminApi";
 import DropDownUserTable from "./DropDownUserTable";
 import Title from "antd/lib/typography/Title";
@@ -14,6 +7,7 @@ import ColumnsForUserTable from "./ColumnsForUserTable";
 import UserTable from "../../models/UserTable/UserTable";
 import Spinner from "../Spinner/Spinner";
 import ClickAwayListener from "react-click-away-listener";
+import moment from "moment";
 const classes = require("./UserTable.module.css");
 
 const UsersTable = () => {
@@ -25,6 +19,7 @@ const UsersTable = () => {
   const [searchedData, setSearchedData] = useState("");
   const [users, setUsers] = useState<UserTable[]>([]);
   const [updatedUser, setUpdatedUser] = useState<UserTable[]>([]);
+  const [roles, setRoles] = useState<string>();
 
   useEffect(() => {
     fetchData();
@@ -37,8 +32,8 @@ const UsersTable = () => {
     setLoading(true);
   };
 
-  const handleSearch = (event: any) => {
-    setSearchedData(event.target.value);
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchedData(event.target.value.toLowerCase());
   };
 
   const itemRender = (current: any, type: string, originalElement: any) => {
@@ -52,11 +47,16 @@ const UsersTable = () => {
   };
 
   let filteredData = searchedData
-    ? users?.filter((item: any) => {
-        return Object.values(item).find((element) => {
-          return String(element)
-            .toLowerCase()
-            .includes(searchedData.toLowerCase());
+    ? users.filter((item) => {
+        return Object.values([
+          item.regionName,
+          item.cityName,
+          item.clubName,
+          item.userPlastDegreeName,
+          item.userRoles,
+          item.user.userProfileId,
+        ]).find((element) => {
+          return String(element).toLowerCase().includes(searchedData);
         });
       })
     : users;
@@ -64,8 +64,10 @@ const UsersTable = () => {
   filteredData = filteredData.concat(
     users.filter(
       (item) =>
-        (item.user.firstName.toLowerCase()?.includes(searchedData.toLowerCase()) ||
-          item.user.lastName.toLowerCase()?.includes(searchedData.toLowerCase())) &&
+        (item.user.firstName?.toLowerCase()?.includes(searchedData) ||
+          item.user.lastName?.toLowerCase()?.includes(searchedData) ||
+          item.user.firstName?.includes(searchedData) ||
+          item.user.lastName?.includes(searchedData)) &&
         !filteredData.includes(item)
     )
   );
@@ -80,10 +82,10 @@ const UsersTable = () => {
     setShowDropdown(false);
   };
 
-  const handleChange = (id: string, userRoles: string) => {
+  const handleChange = (id: string, userRole: string) => {
     const filteredData = users.filter((d: any) => {
       if (d.id === id) {
-        d.userRoles = userRoles;
+        d.userRoles += ", " + userRole;
       }
       return d;
     });
@@ -100,15 +102,14 @@ const UsersTable = () => {
       }}
     >
       <Title level={2}>Таблиця користувачів</Title>
-      <Row gutter={16}>
-        <Col span={4}>
-          <Input.Search placeholder="Пошук" onChange={handleSearch} />
-        </Col>
-      </Row>
+      <div className={classes.searchContainer}>
+        <Input placeholder="Пошук" onChange={handleSearch} allowClear />
+      </div>
       <Table
         className={classes.table}
         bordered
         rowKey="id"
+        scroll={{ x: 1300 }}
         columns={ColumnsForUserTable}
         dataSource={filteredData}
         onRow={(record) => {
@@ -120,6 +121,7 @@ const UsersTable = () => {
               event.preventDefault();
               setShowDropdown(true);
               setRecordObj(record.user.id);
+              setRoles(record.userRoles);
               setX(event.pageX);
               setY(event.pageY);
             },
@@ -135,10 +137,8 @@ const UsersTable = () => {
           }
         }}
         pagination={{
-          itemRender,
-          position: ["bottomRight"],
-          showTotal: (total, range) =>
-            `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
+          showLessItems: true,
+          responsive: true,
         }}
       />
       <ClickAwayListener onClickAway={handleClickAway}>
@@ -149,6 +149,7 @@ const UsersTable = () => {
           pageY={y}
           onDelete={handleDelete}
           onChange={handleChange}
+          roles={roles}
         />
       </ClickAwayListener>
     </Layout.Content>

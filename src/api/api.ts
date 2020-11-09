@@ -38,9 +38,14 @@ axios.interceptors.response.use(
       })
       source.cancel();
       AuthStore.removeToken();
+      localStorage.setItem('pathName',history.location.pathname);
       history.push("/signin");
       window.location.reload();
 
+    }
+    if(err.response.status === 403){
+      history.push("/notAuthorized");
+      window.location.reload();
     }
     return Promise.reject(err);
   }

@@ -59,7 +59,7 @@ const FormEditDistinction = ({
       placement: "topLeft",
     });
   };
-  const dateFormat = "DD-MM-YYYY";
+  const dateFormat = "DD.MM.YYYY";
 
   useEffect(() => {
     setLoading(true);
@@ -153,7 +153,7 @@ const FormEditDistinction = ({
               type="number"
               min={1}
               className={formclasses.inputField}
-              max={1000}
+              max={9999}
             />
           </Form.Item>
           <Form.Item
@@ -250,18 +250,25 @@ const FormEditDistinction = ({
           >
             <Input.TextArea
               allowClear
+              autoSize={{
+                minRows: 2,
+                maxRows: 6,
+              }}
               className={formclasses.inputField}
               maxLength={251}
             />
           </Form.Item>
 
-          <Form.Item style={{ textAlign: "right" }}>
-            <Button key="back" onClick={handleCancel}>
-              Відмінити
-            </Button>
-            <Button type="primary" htmlType="submit">
-              Зберегти
-            </Button>
+          <Form.Item>
+            <div 
+            className={formclasses.cardButton} >
+              <Button key="back" onClick={handleCancel}>
+                Відмінити
+              </Button>
+              <Button type="primary" htmlType="submit">
+                Зберегти
+              </Button>
+            </div>
           </Form.Item>
         </Form>
       )}

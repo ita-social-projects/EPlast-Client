@@ -1,7 +1,5 @@
 import api from "./api";
 
-
-
 const dataURLtoFile = (dataurl: string, filename: string) => {
   const arr = dataurl.split(",");
   const mime = arr[0].match(/:(.*?);/)![1];
@@ -23,34 +21,31 @@ export const GetAllRegions = async () => {
   });
 };
 
-export const EditRegion = async (regId:number, data:any) => {
+export const EditRegion = async (regId: number, data: any) => {
   return await api.put(`Regions/EditRegion/${regId}`, data).catch((error) => {
     throw new Error(error);
   });
 };
 
-
-export const addDocument = async ( data: any) => {
+export const addDocument = async (data: any) => {
   return api.post(`Regions/AddDocument`, data).catch((error) => {
     throw new Error(error);
   });
-}
+};
 
-
-export const getRegionDocuments = async ( regionId: any) => {
+export const getRegionDocuments = async (regionId: any) => {
   return api.get(`Regions/getDocs/${regionId}`).catch((error) => {
     throw new Error(error);
   });
-}
+};
 
-
- export const createRegion = async (data: any) => {
+export const createRegion = async (data: any) => {
   const response = await api.post("Regions/AddRegion", data);
   return response;
 };
 
 export const getRegionById = async (regionId: number) => {
-  const response = await api.get(`Regions/Profile/${regionId}` );
+  const response = await api.get(`Regions/Profile/${regionId}`);
   return response;
 };
 
@@ -66,13 +61,11 @@ export const removeRegion = async (id: number) => {
   });
 };
 
-
-export const getHead = async (regionId: number)=>{
-  return api.get(`Regions/GetHead/${regionId}`).catch((error)=>{
+export const getHead = async (regionId: number) => {
+  return api.get(`Regions/GetHead/${regionId}`).catch((error) => {
     throw new Error(error);
-  })
-}
-
+  });
+};
 
 export const removeAdmin = async (id: number) => {
   return api.remove(`Regions/RemoveAdministration/${id}`, id).catch((error) => {
@@ -80,11 +73,12 @@ export const removeAdmin = async (id: number) => {
   });
 };
 
-
 export const getFile = async (fileBlob: string, fileName: string) => {
-  const response = await (await api.get(`Regions/FileBase64/${fileBlob}`, fileBlob)).data;
+  const response = await (
+    await api.get(`Regions/FileBase64/${fileBlob}`, fileBlob)
+  ).data;
   const file = dataURLtoFile(response, fileBlob);
-  const anchor = window.document.createElement('a');
+  const anchor = window.document.createElement("a");
   anchor.href = window.URL.createObjectURL(file);
   anchor.download = fileName;
   document.body.appendChild(anchor);
@@ -92,56 +86,101 @@ export const getFile = async (fileBlob: string, fileName: string) => {
   document.body.removeChild(anchor);
   window.URL.revokeObjectURL(anchor.href);
   return response;
-}
+};
 
+export const addFollower = async (regionId: number, cityId: number) => {
+  return api
+    .post(`Regions/AddFollower/${regionId}/${cityId}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
 
-
-export const addFollower = async (regionId: number, cityId:number) => {
-  return api.post(`Regions/AddFollower/${regionId}/${cityId}`).catch((error) => {
-    throw new Error(error);
-  });
-}
-
-export const AddAdmin = async (data:any)=>{
+export const AddAdmin = async (data: any) => {
   const response = api.post("Regions/AddAdministrator", data);
   return response;
-}
+};
 
-export const getRegionAdministration = async (regionId: number)=>{
-   return api.get(`Regions/GetAdministration/${regionId}`).catch((error)=>{
-    throw new Error(error);
-  })
-}
+export const EditAdmin = async (data: any) => {
+  const response = api.post("Regions/EditAdministrator", data);
+  return response;
+};
 
-export const getUsersAdministrations = async (userId:string)=>{
-  return api.get(`Regions/GetUserAdministrations/${userId}`).catch((error)=>{
-    throw new Error(error);
-  })
-}
-
-
-export const getAdminTypes = async ()=>{
-  return api.get(`Regions/GetAdminTypes`).catch((error)=>{
-   throw new Error(error);
- })
-}
-
-
-export const removeDocument = async (documentId: number) => {
-  return api.remove(`Regions/RemoveDocument/${documentId}`, documentId).catch((error) => {
+export const getRegionAdministration = async (regionId: number) => {
+  return api.get(`Regions/GetAdministration/${regionId}`).catch((error) => {
     throw new Error(error);
   });
-}
+};
 
+export const getUsersAdministrations = async (userId: string) => {
+  return api.get(`Regions/GetUserAdministrations/${userId}`).catch((error) => {
+    throw new Error(error);
+  });
+};
 
+export const getUsersPreviousAdministrations = async (userId: string) => {
+  return api
+    .get(`Regions/GetUserPreviousAdministrations/${userId}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
 
-export default{
+export const getAdminTypes = async () => {
+  return api.get(`Regions/GetAdminTypes`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const removeDocument = async (documentId: number) => {
+  return api
+    .remove(`Regions/RemoveDocument/${documentId}`, documentId)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const getRegions = async () => {
+  return api.get(`Regions/Regions`);
+};
+
+export const redirectCities = async (prevRegId: number, nextRegId: number) => {
+  return api
+    .put(`Regions/RedirectCities/${prevRegId}/${nextRegId}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const getRegionsByPage = async (
+  page: number,
+  pageSize: number,
+  regionName: string | null = null
+) => {
+  return api
+    .get(`Regions/Profiles/${page}`, { page, pageSize, regionName })
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const getAdminTypeIdByName = async (name: string) => {
+  return api.get(`Regions/GetAdminTypeId/${name}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export default {
+  getAdminTypeIdByName,
+  getRegionsByPage,
+  redirectCities,
   getHead,
   removeDocument,
   getRegionDocuments,
   getUsersAdministrations,
   removeAdmin,
   AddAdmin,
+  EditAdmin,
   getAdminTypes,
   getRegionAdministration,
   EditRegion,
@@ -149,7 +188,5 @@ export default{
   getRegionLogo,
   getRegionById,
   GetAllRegions,
-  createRegion
-}
-
-
+  createRegion,
+};

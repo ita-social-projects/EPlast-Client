@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Input, Button, Layout } from 'antd';
+import { Table, Input, Button, Layout,Pagination } from 'antd';
 import columns from './columns';
 import DropDown from './DropDownDecision';
 import AddDecisionModal from './AddDecisionModal';
 import decisionsApi, { Decision, statusTypeGetParser } from '../../api/decisionsApi';
 import notificationLogic from '../../components/Notifications/Notification';
 import ClickAwayListener from 'react-click-away-listener';
+import moment from "moment";
 const classes = require('./Table.module.css');
 
 const { Content } = Layout;
@@ -46,16 +47,14 @@ const DecisionTable = () => {
         decisionTarget: res.decisionTarget.targetName,
         description : res.description,
         fileName: res.fileName,
-        date:"Щойно" };
+        date:res.date };
         setData([...data, dec]);
-        notificationLogic('success', "Рішення успішно додано");
    })
    .catch(() =>{
-    notificationLogic('success', "Рішення не існує");
+    notificationLogic('error', "Рішення не існує");
    });
-  
-
   }
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -67,14 +66,22 @@ const DecisionTable = () => {
   }, []);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchedData(event.target.value);
+    setSearchedData(event.target.value.toLowerCase());
   };
 
 
   const filteredData = searchedData
     ? data.filter((item) => {
-      return Object.values(item).find((element) => {
-        return String(element).includes(searchedData);
+      return Object.values([
+        item.name,
+        item.organization,
+        item.id,
+        item.description,
+        item.decisionStatusType,
+        item.decisionTarget,
+        moment(item.date.toLocaleString()).format("DD.MM.YYYY"),
+      ]).find((element) => {
+        return String(element).toLowerCase().includes(searchedData);
       });
     })
     : data;
@@ -87,16 +94,6 @@ const DecisionTable = () => {
 
   const showModal = () => setVisibleModal(true);
 
-  const itemRender = (current: any, type: string, originalElement: any) => {
-    if (type === 'prev') {
-      return <Button type="primary">Попередня</Button>;
-    }
-    if (type === 'next') {
-      return <Button type="primary">Наступна</Button>;
-    }
-    return originalElement;
-  };
-
   return (
     <Layout>
       <Content>
@@ -105,13 +102,15 @@ const DecisionTable = () => {
         {!loading && (
           <>
             <div className={classes.searchContainer}>
-              <Input placeholder="Пошук" onChange={handleSearch} />
               <Button type="primary" onClick={showModal}>
                 Додати рішення
               </Button>
+              <Input placeholder="Пошук" onChange={handleSearch} allowClear />
             </div>
             <Table
+              className={classes.table}
               dataSource={filteredData}
+              scroll={{ x: 1300 }}
               columns={columns}
               bordered
               rowKey="id"
@@ -140,12 +139,12 @@ const DecisionTable = () => {
                   });
                 }
               }}
-              pagination={{
-                itemRender,
-                position: ['bottomRight'],
-                showTotal: (total, range) =>
-                  `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
-              }}
+              pagination={
+                {
+                  showLessItems: true,
+                  responsive:true
+                }
+              }
             />
             <ClickAwayListener onClickAway={handleClickAway}>
             <DropDown
