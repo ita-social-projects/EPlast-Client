@@ -2,7 +2,6 @@ import Api from './api';
 import { AxiosError } from 'axios';
 import StatisticsItemIndicator from '../pages/Statistics/Interfaces/StatisticsItemIndicator';
 import StatisticsParameters from '../pages/Statistics/Interfaces/StatisticsParameters';
-import NotFound from "../pages/Statistics/Error/NotFound";
 
 const getStatisticsForCitiesForYears = async (data: StatisticsParameters) => {
     /* overriding axios serialization method due to issue with it returning url string with [] brackets.
@@ -25,23 +24,7 @@ const getStatisticsForRegionsForYears = async (regionsId: Array<number>, years: 
         });
 }
 
-const getAllCitiesStatistics = async () => {
-    return await Api.get(`Statistics/cities/allstatistics`)
-        .catch((error: AxiosError) => {
-            throw new Error(error.response?.data.message);
-        });
-}
-
-const getIndicators = async () => {
-    return await Api.get(`Statistics/getIndicators`)
-        .catch((error: AxiosError) => {
-            throw new Error(error.response?.data.message);
-        });
-}
-
 export default {
     getStatisticsForCitiesForYears,
-    getStatisticsForRegionsForYears,
-    getAllCitiesStatistics,
-    getIndicators
-};
+    getStatisticsForRegionsForYears
+}

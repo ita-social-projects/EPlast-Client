@@ -57,7 +57,7 @@ const StatisticsCities = () => {
       width: 100
     },
     {
-      title: "Регіон",
+      title: "Округ",
       dataIndex: "regionName",
       key: "regionName",
       ellipsis: {
@@ -182,7 +182,6 @@ const StatisticsCities = () => {
             title: indicatorsArray[statisticsItem.indicator as number].label,
             dataIndex: index,
             key: index,
-            sorter: { compare: (a: any, b: any) => a.id - b.id },
             width: 200
           }
       })];
@@ -265,7 +264,7 @@ const StatisticsCities = () => {
         rowKey="id"
         columns={columns}
         dataSource={result}
-        scroll={{ x: 1500, y: 300 }}
+        scroll={{ x: 1000 }}
         onChange={onChange}
         pagination={{
           itemRender,
