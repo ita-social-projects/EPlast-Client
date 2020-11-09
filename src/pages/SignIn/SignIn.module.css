@@ -67,6 +67,26 @@
     justify-content: space-between !important;
 }
 
+.btnFacebook { 
+    width: auto;
+    border-radius: 4px;
+    background-color: rgb(76, 115, 197);
+    color:white;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    font-family: Verdana ;
+    font-weight: 500 ;
+    outline: none!important;
+    border: 0 !important;
+    padding: 3.5px 15px;
+  }
+
+  .btnFacebook:hover
+  {
+    background-color: rgb(76, 105, 186);
+  }
+
 .socialImg{
     height: 25px;
     width: auto;

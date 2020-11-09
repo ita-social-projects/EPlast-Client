@@ -3,11 +3,17 @@ import "./AddAdministrationModal.less";
 import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
 import ClubAdmin from "./../../../models/Club/ClubAdmin";
 import AdminType from "./../../../models/Admin/AdminType";
-import { addAdministrator, editAdministrator } from "../../../api/clubsApi";
+import {
+  addAdministrator,
+  editAdministrator,
+  getAllAdmins,
+} from "../../../api/clubsApi";
 import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
 import "moment/locale/uk";
 moment.locale("uk-ua");
+
+const confirm = Modal.confirm;
 
 interface Props {
   visibleModal: boolean;
@@ -21,15 +27,62 @@ interface Props {
 
 const AddAdministratorModal = (props: Props) => {
   const [loading, setLoading] = useState(false);
-  const [date, setDate] = useState<any>();
+  const [startDate, setStartDate] = useState<any>();
+  const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
+  const [head, setHead] = useState<ClubAdmin>();
 
   const disabledEndDate = (current: any) => {
-    return current && current < date;
+    return current && current < startDate;
   };
 
   const disabledStartDate = (current: any) => {
     return current && current > moment();
+  };
+
+  const showConfirm = (admin: ClubAdmin) => {
+    confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (
+        <div style={{ margin: 10 }}>
+          <b>
+            {head?.user.firstName} {head?.user.lastName}
+          </b>{" "}
+          є Головою Куреня, час правління закінчується{" "}
+          <b>
+            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(head?.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onCancel() {},
+      onOk() {
+        if (admin.id === 0) {
+          addClubAdmin(admin);
+        } else {
+          editClubAdmin(admin);
+        }
+      },
+    });
+  };
+
+  const addClubAdmin = async (admin: ClubAdmin) => {
+    admin = (await addAdministrator(props.admin.clubId, admin)).data;
+    notificationLogic("success", "Користувач успішно доданий в провід");
+  };
+  const editClubAdmin = async (admin: ClubAdmin) => {
+    admin = (await editAdministrator(props.admin.clubId, admin)).data;
+    notificationLogic("success", "Адміністратор успішно відредагований");
+  };
+
+  const getClubHead = async () => {
+    if (props.clubId !== 0) {
+      const responseAdmins = await getAllAdmins(props.clubId);
+      setHead(responseAdmins.data.head);
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (values: any) => {
@@ -49,16 +102,23 @@ const AddAdministratorModal = (props: Props) => {
     };
 
     try {
-      if (admin.id === 0) {
-        admin = (await addAdministrator(props.clubId, admin)).data;
+      if (values.adminType === "Голова Куреня" && head !== null) {
+        if (head?.userId !== admin.userId) {
+          showConfirm(admin);
+        } else {
+          editClubAdmin(admin);
+        }
       } else {
-        admin = (await editAdministrator(props.clubId, admin)).data;
+        if (admin.id === 0) {
+          addClubAdmin(admin);
+        } else {
+          editClubAdmin(admin);
+        }
       }
     } finally {
       props.onAdd?.(admin);
-      props.setVisibleModal(false);
       props.onChange?.(props.admin.userId, values.adminType);
-      notificationLogic("success", "Користувач успішно доданий в провід");
+      props.setVisibleModal(false);
       setLoading(false);
     }
   };
@@ -71,6 +131,7 @@ const AddAdministratorModal = (props: Props) => {
     if (props.visibleModal) {
       form.resetFields();
     }
+    getClubHead();
   }, [props]);
 
   return (
@@ -135,7 +196,7 @@ const AddAdministratorModal = (props: Props) => {
                     ? moment(props.admin.startDate)
                     : undefined
                 }
-                onChange={(e) => setDate(e)}
+                onChange={(e) => setStartDate(e)}
               />
             </Form.Item>
           </Col>
@@ -155,6 +216,7 @@ const AddAdministratorModal = (props: Props) => {
                 value={
                   props.admin.endDate ? moment(props.admin.endDate) : undefined
                 }
+                onChange={(e) => setEndDate(e)}
               />
             </Form.Item>
           </Col>

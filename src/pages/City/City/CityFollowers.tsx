@@ -8,6 +8,7 @@ import "./City.less";
 import CityMember from '../../../models/City/CityMember';
 import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
+import NotificationBoxApi from '../../../api/NotificationBoxApi';
 
 const CityFollowers = () => {
     const {id} = useParams();
@@ -17,6 +18,7 @@ const CityFollowers = () => {
     const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [cityName, setCityName] = useState<string>("");
 
     const getFollowers = async () => {
       setLoading(true);
@@ -26,17 +28,30 @@ const CityFollowers = () => {
       setPhotos(response.data.followers);
       setFollowers(response.data.followers);
       setCanEdit(response.data.canEdit);
+      setCityName(response.data.name);
       setLoading(false);
     };
 
-    const addMember = async (followerId: number) => {
-        await toggleMemberStatus (followerId);
-        setFollowers(followers.filter(u => u.id !== followerId));
+    const createNotification = async(userId : string, message : string) => {
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message + ": ",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/cities/${id}`,
+        cityName
+        );
     }
 
-    const removeMember = async (followerId: number) => {
-        await removeFollower(followerId);
-        setFollowers(followers.filter(u => u.id !== followerId));
+    const addMember = async (follower: CityMember) => {
+        await toggleMemberStatus (follower.id);
+        await createNotification(follower.userId, "Вітаємо, вас зараховано до членів станиці");
+        setFollowers(followers.filter(u => u.id !== follower.id));
+    }
+
+    const removeMember = async (follower: CityMember) => {
+        await removeFollower(follower.id);
+        await createNotification(follower.userId, "На жаль, ви були виключені з прихильників станиці");
+        setFollowers(followers.filter(u => u.id !== follower.id));
     }
 
     const setPhotos = async (members: CityMember[]) => {
@@ -67,10 +82,10 @@ const CityFollowers = () => {
                     canEdit
                       ? [
                           <PlusOutlined
-                            onClick={() => addMember(follower.id)}
+                            onClick={() => addMember(follower)}
                           />,
                           <CloseOutlined
-                            onClick={() => removeMember(follower.id)}
+                            onClick={() => removeMember(follower)}
                           />,
                         ]
                       : undefined

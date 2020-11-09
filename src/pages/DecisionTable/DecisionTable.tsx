@@ -47,7 +47,7 @@ const DecisionTable = () => {
         decisionTarget: res.decisionTarget.targetName,
         description : res.description,
         fileName: res.fileName,
-        date:"Щойно" };
+        date:res.date };
         setData([...data, dec]);
    })
    .catch(() =>{

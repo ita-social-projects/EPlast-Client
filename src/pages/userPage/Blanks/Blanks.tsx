@@ -65,7 +65,8 @@ export const Blanks = () => {
     }
 
     const getPdf = async () => {
-        await openGenerationFile(userId);
+        const pdfLink = await openGenerationFile(userId);
+        window.open(pdfLink);
     }
 
     const removeDocumentById = async (documentId: number) => {
@@ -151,11 +152,19 @@ export const Blanks = () => {
                                         </Tooltip>
                                         {userToken.nameid === userId &&
                                             <Tooltip title="Видалити">
-                                                <DeleteOutlined
-                                                    className={classes.deleteIcon}
-                                                    key="close"
-                                                    onClick={() => removeDocumentById(document.id)}
-                                                />
+                                                <Popconfirm
+                                                    title="Видалити цей документ?"
+                                                    placement="bottom"
+                                                    icon={false}
+                                                    onConfirm={() => removeDocumentById(document.id)}
+                                                    okText="Так"
+                                                    cancelText="Ні">
+
+                                                    <DeleteOutlined
+                                                        className={classes.deleteIcon}
+                                                        key="close"
+                                                    />
+                                                </Popconfirm>
                                             </Tooltip>
                                         }
                                     </Col>
@@ -166,7 +175,7 @@ export const Blanks = () => {
                                                 <h2>Ви ще не додали Життєпис</h2>
                                             }
                                             {userToken.nameid !== userId &&
-                                                <h2>Користувач ще не додав(ла) Життєпис</h2>
+                                                <h2>{data?.user.firstName} ще не додав(ла) Життєпис</h2>
                                             }
                                             {userToken.nameid === userId &&
                                                 <div>
@@ -238,7 +247,7 @@ export const Blanks = () => {
                                                 <h2>Ви ще не додали виписку</h2>
                                             }
                                             {userToken.nameid !== userId &&
-                                                <h2>Користувач ще не додав(ла) виписку</h2>
+                                                <h2>{data?.user.firstName} ще не додав(ла) виписку</h2>
                                             }
                                             {userToken.nameid === userId &&
                                                 <div>
@@ -280,7 +289,7 @@ export const Blanks = () => {
                                                 <h2>Ви ще не додали жодного Досягнення</h2>
                                             }
                                             {userToken.nameid !== userId &&
-                                                <h2> Користувач ще не додав(ла) жодного Досягнення</h2>
+                                                <h2>{data?.user.firstName} ще не додав(ла) жодного Досягнення</h2>
                                             }
                                         </Col>
                                     )}
@@ -303,15 +312,15 @@ export const Blanks = () => {
                                 <FileTextOutlined
                                     className={classes.documentIcon} />
                                 {canEdit == true || userToken.nameid === userId ? (
-                                <Button
+                                    <Button
                                         className={classes.addIcon}
                                         type="primary"
                                         onClick={() => getPdf()}>
                                         Згенерувати файл
-                                </Button>
-                                 ) :(
-                                     null
-                                 )
+                                    </Button>
+                                ) : (
+                                        null
+                                    )
                                 }
                             </div>
 
