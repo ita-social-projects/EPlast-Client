@@ -13,6 +13,7 @@ import CityUser from "../../models/City/CityUser";
 import AdminType from "../../models/Admin/AdminType";
 import AddAdministratorModal from "../City/AddAdministratorModal/AddAdministratorModal";
 import CityMember from "../../models/City/CityMember";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
 const { Option } = Select;
 
 interface Props {
@@ -91,7 +92,20 @@ const ChangeUserCityForm = ({
     setVisibleModal(true);
     setShowModal(false);
   };
-
+  
+  const handleChange = (id : string, userRole: string) => {
+    onChange(id, userRole);
+    const cityName = cities.find(r => r.id === cityId)?.name;
+    cityName &&
+    NotificationBoxApi.createNotifications(
+      [id],
+      `Вам була присвоєна нова роль: '${userRole}' в станиці: `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/cities/${cityId}`,
+      cityName
+      );
+  }
+  
   return (
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
@@ -120,7 +134,7 @@ const ChangeUserCityForm = ({
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
         cityId={cityId}
-        onChange={onChange}
+        onChange={handleChange}
       ></AddAdministratorModal>
     </div>
   );
