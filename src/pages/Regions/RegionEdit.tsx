@@ -10,6 +10,7 @@ import CityDefaultLogo from "../../assets/images/default_city_image.jpg"
 import { RcCustomRequestOptions } from 'antd/es/upload/interface';
 import { useHistory } from 'react-router-dom';
 import Spinner from '../Spinner/Spinner';
+import ReactInputMask from 'react-input-mask';
 
 
 
@@ -208,14 +209,18 @@ const RegionEditFormPage = () => {
                     message: 'Це поле має бути заповненим'
                   },
                   {
-                    max: 13,
-                    message: "Максимальна довжина 13 цифр!",
+                    min: 18,
+                    message: "Неправильний телефон",
                   }
                 ]}
               >
-                <Input
+                <ReactInputMask
+                maskChar={null}
+                  mask="+380(99)-999-99-99"
                   value={chosenRegion?.phoneNumber}
-                  className={classes.inputField} />
+                >
+                  {(inputProps: any) => <Input {...inputProps} type="tel" />}
+                </ReactInputMask>
               </Form.Item>
             </Col>
 
@@ -232,7 +237,7 @@ const RegionEditFormPage = () => {
                     message: 'Це поле має бути заповненим'
                 },
                   {
-                    pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                    pattern:/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
                     message: "Неправильна пошта",
                   },
                   {
