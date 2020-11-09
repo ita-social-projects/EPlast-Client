@@ -2,6 +2,7 @@ import Api from './api';
 import { AxiosError } from 'axios';
 import StatisticsItemIndicator from '../pages/Statistics/Interfaces/StatisticsItemIndicator';
 import StatisticsParameters from '../pages/Statistics/Interfaces/StatisticsParameters';
+import NotFound from "../pages/Statistics/Error/NotFound";
 
 const getStatisticsForCitiesForYears = async (data: StatisticsParameters) => {
     /* overriding axios serialization method due to issue with it returning url string with [] brackets.
