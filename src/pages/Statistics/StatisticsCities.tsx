@@ -39,31 +39,42 @@ const StatisticsCities = () => {
 
   const constColumns = [
     {
-      title: "Порядковий номер",
+      title: "№",
       dataIndex: "id",
-      key: "id"
+      key: "id",
+      fixed: 'left',
+      sorter: {
+        compare: (a: any, b: any) => a.id - b.id,
+        multiple: 3,
+      },
+      width: 55
     },
     {
       title: "Станиця",
       dataIndex: "cityName",
-      key: "cityName"
-    },
-    {
-      title: "Регіон",
-      dataIndex: "regionName",
-      key: "regionName"
+      key: "cityName",
+      fixed: 'left',
+      width: 100
     },
     {
       title: "Рік",
       dataIndex: "year",
-      key: "year"
+      key: "year",
+      fixed: "left",
+      sorter: {
+        compare: (a: any, b: any) => a.year - b.year,
+        multiple: 1,
+      },
+      width: 100
     },
+    {
+      title: "Регіон",
+      dataIndex: "regionName",
+      key: "regionName",
+      width: 200
+    },
+    
   ];
-
-  const {
-    cityFilter,
-    regionFilter
-  } = Filters;
 
   useEffect(() => {
     fetchCities();
@@ -101,24 +112,25 @@ const StatisticsCities = () => {
     }
   }
 
+  const indicatorsArray = [
+    { value: indicatorsForNeeds.NumberOfPtashata, label: 'Кількість пташат' },
+    { value: indicatorsForNeeds.NumberOfNovatstva, label: 'Кількість новацтва' },
+    { value: indicatorsForNeeds.NumberOfUnatstva, label: 'Кількість юнацтва загалом' },
+    { value: indicatorsForNeeds.NumberOfUnatstvaNoname, label: 'Кількість неіменованих' },
+    { value: indicatorsForNeeds.NumberOfUnatstvaSupporters, label: 'Кількість прихильників' },
+    { value: indicatorsForNeeds.NumberOfUnatstvaMembers, label: 'Кількість учасників' },
+    { value: indicatorsForNeeds.NumberOfUnatstvaProspectors, label: 'Кількість розвідувачів' },
+    { value: indicatorsForNeeds.NumberOfUnatstvaSkobVirlyts, label: 'Кількість скобів/вірлиць' },
+    { value: indicatorsForNeeds.NumberOfSenior, label: 'Кількість старших пластунів загалом' },
+    { value: indicatorsForNeeds.NumberOfSeniorPlastynSupporters, label: 'Кількість старших пластунів прихильників' },
+    { value: indicatorsForNeeds.NumberOfSeniorPlastynMembers, label: 'Кількість старших пластунів учасників' },
+    { value: indicatorsForNeeds.NumberOfSeigneur, label: 'Кількість сеньйорів загалом' },
+    { value: indicatorsForNeeds.NumberOfSeigneurSupporters, label: 'Кількість сеньйорів пластунів прихильників' },
+    { value: indicatorsForNeeds.NumberOfSeigneurMembers, label: 'Кількість сеньйорів пластунів учасників' }
+  ];
+
   const fechIndicatorsNames = async () => {
     try {
-      const indicatorsArray = [
-        { value: indicatorsForNeeds.NumberOfPtashata, label: 'Кількість пташат' },
-        { value: indicatorsForNeeds.NumberOfNovatstva, label: 'Кількість новацтва' },
-        { value: indicatorsForNeeds.NumberOfUnatstva, label: 'Кількість юнацтва загалом' },
-        { value: indicatorsForNeeds.NumberOfUnatstvaNoname, label: 'Кількість неіменованих' },
-        { value: indicatorsForNeeds.NumberOfUnatstvaSupporters, label: 'Кількість прихильників' },
-        { value: indicatorsForNeeds.NumberOfUnatstvaMembers, label: 'Кількість учасників' },
-        { value: indicatorsForNeeds.NumberOfUnatstvaProspectors, label: 'Кількість розвідувачів' },
-        { value: indicatorsForNeeds.NumberOfUnatstvaSkobVirlyts, label: 'Кількість скобів/вірлиць' },
-        { value: indicatorsForNeeds.NumberOfSenior, label: 'Кількість старших пластунів загалом' },
-        { value: indicatorsForNeeds.NumberOfSeniorPlastynSupporters, label: 'Кількість старших пластунів прихильників' },
-        { value: indicatorsForNeeds.NumberOfSeniorPlastynMembers, label: 'Кількість старших пластунів учасників' },
-        { value: indicatorsForNeeds.NumberOfSeigneur, label: 'Кількість сеньйорів загалом' },
-        { value: indicatorsForNeeds.NumberOfSeigneurSupporters, label: 'Кількість сеньйорів пластунів прихильників' },
-        { value: indicatorsForNeeds.NumberOfSeigneurMembers, label: 'Кількість сеньйорів пластунів учасників' }
-      ]
       setIndicators(indicatorsArray);
     }
     catch (error) {
@@ -183,14 +195,26 @@ const StatisticsCities = () => {
       console.log(data); // забрати потім
       let temp = [...constColumns, ...data[0].statisticsItems.map((statisticsItem: any, index: any) => {
           return {
-            title: statisticsItem.indicator,
+            title: indicatorsArray[statisticsItem.indicator as number].label,
             dataIndex: index,
-            key: index
+            key: index,
+            width: 200
           }
       })];
       console.log(temp);
       setColumns(temp);
   };
+
+  let onChange = (pagination: any, sorter: any) => {
+    if (pagination) {
+        window.scrollTo({
+          left: 0,
+          top: 0,
+          behavior: "smooth",
+        });
+      }    
+  }
+  
   
   return (
     <Layout.Content>
@@ -257,16 +281,8 @@ const StatisticsCities = () => {
         rowKey="id"
         columns={columns}
         dataSource={result}
-        
-        onChange={(pagination) => {
-          if (pagination) {
-            window.scrollTo({
-              left: 0,
-              top: 0,
-              behavior: "smooth",
-            });
-          }
-        }}
+        scroll={{ x: 1500, y: 300 }}
+        onChange={onChange}
         pagination={{
           itemRender,
           position: ["bottomRight"],

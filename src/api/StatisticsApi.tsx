@@ -6,6 +6,7 @@ import StatisticsParameters from '../pages/Statistics/Interfaces/StatisticsParam
 const getStatisticsForCitiesForYears = async (data: StatisticsParameters) => {
     /* overriding axios serialization method due to issue with it returning url string with [] brackets.
     For example: CitiesId[]=10&CitiesId[]=9 */
+    debugger;
     return await Api.get(`Statistics/cities`, data, (params: any) => {
         return Object.entries(params).map(([key, value]) => {
             if (Array.isArray(value)) return value.map(it => `${key}=${it}`).join('&');
