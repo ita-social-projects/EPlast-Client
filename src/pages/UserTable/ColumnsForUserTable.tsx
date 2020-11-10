@@ -6,7 +6,7 @@ import {
   ManOutlined,
   QuestionOutlined,
 } from "@ant-design/icons";
-
+import "./Filter.less";
 const { Text } = Typography;
 
 const setTagColor = (userRoles: string) => {
@@ -33,6 +33,7 @@ const ColumnsForUserTable: any = [
   {
     title: "ID",
     dataIndex: ["user", "userProfileId"],
+    width: 75,
     render: (id: number) => <Text>{id}</Text>,
     sorter: (a: any, b: any) =>
       a.user.firstName.localeCompare(b.user.firstName),
@@ -81,6 +82,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Стать",
     dataIndex: ["user", "gender"],
+    width: 120,
     render: (gender: any) => {
       if (gender === null) {
         return <h4>Не вказано</h4>;
