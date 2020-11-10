@@ -6,8 +6,6 @@ import styles from "./SignIn.module.css";
 
 const FacebookLoginWrapper = (props: any) => {
    const responseFacebook = (response: any) => {
-      console.log(response)
-      debugger
       if (response.status !== "unknown") {
          props.handleFacebookResponse(response);
       }
