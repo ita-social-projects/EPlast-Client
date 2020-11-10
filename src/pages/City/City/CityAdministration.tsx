@@ -37,9 +37,9 @@ const CityAdministration = () => {
       setLoading(false);
     };
 
-    const removeAdmin = async (adminId: number) => {
-      await removeAdministrator(adminId);
-      setAdministration(administration.filter((u) => u.id !== adminId));
+    const removeAdmin = async (admin: CityAdmin) => {
+      await removeAdministrator(admin.id);
+      setAdministration(administration.filter((u) => u.id !== admin.id));
       await createNotification(admin.userId, `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в станиці`);
     };
     
@@ -97,7 +97,7 @@ const CityAdministration = () => {
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
                           <CloseOutlined
-                            onClick={() => removeAdmin(member.id)}
+                            onClick={() => removeAdmin(member)}
                           />,
                         ]
                       : undefined
