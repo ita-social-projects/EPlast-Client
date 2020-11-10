@@ -3,6 +3,7 @@ import { Form, Input, Button, Select, Typography } from "antd";
 import RegionForAdmin from "../../models/Region/RegionForAdmin";
 import { getRegions } from "../../api/regionsApi";
 import AddRegionAdministratorModal from "./AddRegionAdministratorModal";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
 const { Option } = Select;
 
 interface Props {
@@ -52,6 +53,19 @@ const ChangeUserRegionForm = ({
     setShowAdministratorModal(true);
   };
 
+  const handleChange = (id : string, userRole: string) => {
+    onChange(id, userRole);
+    const regionName = regions.find(r => r.id === regionId)?.regionName;
+    regionName &&
+    NotificationBoxApi.createNotifications(
+      [id],
+      `Вам була присвоєна нова роль: '${userRole}' в окрузі: `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/regions/${regionId}`,
+      regionName
+      );
+  }
+
   return (
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
@@ -70,7 +84,7 @@ const ChangeUserRegionForm = ({
             Відмінити
           </Button>
           <Button type="primary" htmlType="submit">
-            Змінити
+            Обрати
           </Button>
         </Form.Item>
         <AddRegionAdministratorModal
@@ -79,7 +93,7 @@ const ChangeUserRegionForm = ({
           setShowAdministratorModal={setShowAdministratorModal}
           regionId={regionId}
           roles={roles}
-          onChange={onChange}
+          onChange={handleChange}
         ></AddRegionAdministratorModal>
       </Form>
     </div>

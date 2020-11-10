@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import DecisionTable from "./pages/DecisionTable/DecisionTable";
 import "./App.less";
-import AddNewRegionForm from './pages/Regions/AddRegion';
+import AddNewRegionForm from "./pages/Regions/AddRegion";
 import HeaderContainer from "./components/Header/HeaderContainer";
 import Home from "./pages/Home/Home";
 import FooterContainer from "./components/Footer/FooterContainer";
@@ -36,7 +36,7 @@ import ClubDocuments from "./pages/Club/Club/ClubDocuments";
 import { Demo } from "../src/pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
 import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
-import AnnualReportTable from './pages/AnnualReport/AnnualReportTable/AnnualReportTable';
+import AnnualReportTable from "./pages/AnnualReport/AnnualReportTable/AnnualReportTable";
 import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
 import NotFound from "./pages/Error/NotFound";
 import UsersTable from "./pages/UserTable/UserTable";
@@ -49,12 +49,13 @@ import AddNewRegionFormPage from "./pages/Regions/AddRegion";
 import RegionAdministration from "./pages/Regions/RegionAdministration";
 import RegionDocuments from "./pages/Regions/RegionDocuments";
 import RegionMembers from "./../src/pages/Regions/RegionMembers";
-
+import StatisticsCities from "./pages/Statistics/StatisticsCities";
+import NotAuthorizedPage from "./pages/Error/NotAuthorized";
 
 const App: FC = () => (
   <div className="App">
     <Router>
-      <HeaderContainer/>
+      <HeaderContainer />
       <div className="mainContent">
         <Switch>
           <Route exact path="/" component={Home} />
@@ -81,7 +82,7 @@ const App: FC = () => (
             path="/cities"
             component={Cities}
           />
-           <RouteWithLayout
+          <RouteWithLayout
             layout={PrivateLayout}
             exact
             path="/regions/members/:id"
@@ -148,19 +149,19 @@ const App: FC = () => (
             path="/events/types"
             component={EventTypes}
           />
-           <RouteWithLayout
+          <RouteWithLayout
             layout={PrivateLayout}
             exact
             path="/regions/new"
             component={AddNewRegionFormPage}
           />
-            <RouteWithLayout
+          <RouteWithLayout
             layout={PrivateLayout}
             exact
             path="/regions/edit/:regionid"
             component={RegionEdit}
           />
-         
+
           <RouteWithLayout
             layout={PrivateLayout}
             exact
@@ -275,7 +276,7 @@ const App: FC = () => (
             path="/kadra"
             component={KadrasTable}
           />
-            <RouteWithLayout
+          <RouteWithLayout
             layout={PrivateLayout}
             exact
             path="/regions/:id"
@@ -286,14 +287,25 @@ const App: FC = () => (
             exact
             path="/distinctions"
             component={UserDistinctions}
+          />          
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/statistics/cities"
+            component={StatisticsCities}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/notAuthorized"
+            component={NotAuthorizedPage}
           />
           <RouteWithLayout
             layout={PrivateLayout}
             exact
             path="*"
             component={NotFound}
-          />
-
+          />        
 
         </Switch>
       </div>

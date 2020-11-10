@@ -66,7 +66,7 @@ const CityMembers = () => {
       userId,
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/clubs/${id}`,
+      `/cities/${id}`,
       cityName
       );
   }

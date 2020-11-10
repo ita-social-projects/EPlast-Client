@@ -43,13 +43,18 @@ axios.interceptors.response.use(
       window.location.reload();
 
     }
+    if(err.response.status === 403){
+      history.push("/notAuthorized");
+      window.location.reload();
+    }
     return Promise.reject(err);
   }
 );
 
-const get = async (url: string, data?: any): Promise<HttpResponse> => {
+const get = async (url: string, data?: any, paramsSerializer?: any): Promise<HttpResponse> => {
   const response = await axios.get(BASE_URL + url, {
     params: data,
+    paramsSerializer: paramsSerializer
   });
   return response;
 };

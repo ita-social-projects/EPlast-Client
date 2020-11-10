@@ -14,6 +14,7 @@ import ClubMember from "../../models/Club/ClubMember";
 import ClubUser from "../../models/Club/ClubUser";
 import AdminType from "../../models/Admin/AdminType";
 import AddAdministratorModal from "../Club/AddAdministratorModal/AddAdministratorModal";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -94,6 +95,19 @@ const ChangeUserClubForm = ({
     setShowModal(false);
   };
 
+  const handleChange = (id : string, userRole: string) => {
+    onChange(id, userRole);
+    const clubName = clubs.find(r => r.id === clubId)?.name;
+    clubName &&
+    NotificationBoxApi.createNotifications(
+      [id],
+      `Вам була присвоєна нова роль: '${userRole}' в станиці: `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/clubs/${clubId}`,
+      clubName
+      );
+  }
+
   return (
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
@@ -122,7 +136,7 @@ const ChangeUserClubForm = ({
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
         clubId={clubId}
-        onChange={onChange}
+        onChange={handleChange}
       ></AddAdministratorModal>
     </div>
   );
