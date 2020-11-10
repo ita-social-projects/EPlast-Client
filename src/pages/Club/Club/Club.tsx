@@ -66,10 +66,10 @@ const Club = () => {
     
     await NotificationBoxApi.createNotifications(
       admins.map(ad => ad.userId),
-      `До вашого куреня: ${club.name} приєднався новий прихильник: `,
+      `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня: `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/userpage/main/${follower.data.userId}`,
-      `${follower.data.user.firstName} ${follower.data.user.lastName}`
+      `/clubs/followers/${id}`,
+      `${club.name}`
       );
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
@@ -85,6 +85,13 @@ const Club = () => {
   const deleteClub = async () => {
     await removeClub(club.id);
 
+    admins.map(async (ad) => {
+      await NotificationBoxApi.createNotifications(
+        [ad.userId],
+        `На жаль курінь: '${club.name}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+        );
+    });
     history.push('/clubs');
   }
 
@@ -187,12 +194,22 @@ const Club = () => {
                 )}
               </Col>
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
-                <iframe
-                  src=""
-                  title="map"
-                  aria-hidden="false"
-                  className="mainMap"
-                />
+
+                <div>
+            <Title level={4}>Опис куреня</Title>
+                {club.description.length!=0?(
+                <Paragraph>
+                  <b>{club.description}</b>
+
+                </Paragraph>
+
+                ):(
+                  <Paragraph>
+                  <b>Ще немає опису куреня.</b>
+
+                </Paragraph>
+                )}
+                  </div>
               </Col>
             </Row>
             <Row className="clubInfo">
@@ -204,12 +221,24 @@ const Club = () => {
                       {club.head.user.lastName}
                     </Paragraph>
                     <Paragraph>
-                      <b>Час правління:</b> {moment(club.head.startDate).format("DD.MM.YYYY")}
-                        {club.head.endDate
-                          ? ` - ${moment(club.head.endDate).format(
-                              "DD.MM.YYYY"
-                            )}`
-                          : " "}
+                      {club.head.endDate===null?
+                                (<div>
+                                        <b>
+                                          Початок правління:
+                                        </b>
+                                        {` ${moment(club.head.startDate).format("DD.MM.YYYY")}`}
+                                </div> 
+                                  )  
+                                  :
+                                  (<div>
+                                      <b>
+                                          Термін правління: 
+                                      </b> 
+                                  {` ${moment(club.head.startDate).format("DD.MM.YYYY")} - ${moment(club.head.endDate).format("DD.MM.YYYY")}`}
+                                  </div>
+                                  )
+
+                       }
                     </Paragraph>
                   </div>
                 ) : (
@@ -263,6 +292,17 @@ const Club = () => {
                   Деталі
                 </Button>
               </Col>
+              {canEdit ? (
+                <Col>
+                  <Button
+                    type="primary"
+                    className="clubInfoButton"
+                    onClick={() => history.push(`/annualreport/table`)}
+                  >
+                    Річні звіти
+                  </Button>
+                </Col>
+              ) : null}
               {canEdit ? (
                 <Col xs={24} sm={4}>
                   <Row

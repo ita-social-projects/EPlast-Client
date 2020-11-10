@@ -47,7 +47,7 @@ const DecisionTable = () => {
         decisionTarget: res.decisionTarget.targetName,
         description : res.description,
         fileName: res.fileName,
-        date:"Щойно" };
+        date:res.date };
         setData([...data, dec]);
    })
    .catch(() =>{
@@ -79,7 +79,7 @@ const DecisionTable = () => {
         item.description,
         item.decisionStatusType,
         item.decisionTarget,
-        moment(item.date.toLocaleString()).format("DD/MM/YYYY"),
+        moment(item.date.toLocaleString()).format("DD.MM.YYYY"),
       ]).find((element) => {
         return String(element).toLowerCase().includes(searchedData);
       });

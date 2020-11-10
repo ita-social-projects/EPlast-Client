@@ -31,6 +31,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
   };
   const handleCancel = () => {
     form.resetFields();
+    setFileData({FileAsBase64 : null, FileName: null});
     setVisibleModal(false);
   };
   const handleUpload = (info :any) => {
@@ -65,12 +66,15 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
       extension.indexOf("txt") !== -1 ||
       extension.indexOf("csv") !== -1 ||
       extension.indexOf("xls") !== -1 ||
-      extension.indexOf("xml") !== -1
+      extension.indexOf("xml") !== -1 ||
+      extension.indexOf("odt") !== -1 ||
+      extension.indexOf("ods") !== -1
     if (!isCorrectExtension) {
-      notificationLogic("error", "Можливі розширення файлів: pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png");
+      notificationLogic("error", "Можливі розширення файлів: pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods.");
     }
     return isCorrectExtension;
   }
+  
  const handleSubmit = async (values : any)=>{
   setSubmitLoading(true);
   const newDecision  : DecisionWrapper= {
@@ -88,11 +92,11 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
   }
   await decisionsApi.post(newDecision);
   setVisibleModal(false);
-
   onAdd();
   form.resetFields();
   setSubmitLoading(false);
   }
+
   const[data, setData] = useState<DecisionOnCreateData>({organizations: Array<Organization>(),
     decisionStatusTypeListItems: Array<decisionStatusType>(),
     decisionTargets: Array<decisionTarget>(),});
@@ -164,7 +168,7 @@ const FormAddDecision : React.FC<FormAddDecisionProps> = (props: any) => {
        name="datepicker"
        label="Дата рішення"
        rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
-        <DatePicker format = "YYYY-MM-DD"
+        <DatePicker format = "DD.MM.YYYY"
         className={formclasses.selectField}
         />
       </Form.Item>

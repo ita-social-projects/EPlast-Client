@@ -1,5 +1,6 @@
 import classes from '*.module.css';
 import { Tooltip } from 'antd';
+import moment from 'moment';
 import React from 'react';
 import decisionsApi from '../../api/decisionsApi';
 const columns = [
@@ -40,6 +41,9 @@ const columns = [
   {
     title: 'Дата',
     dataIndex: 'date',
+    render: (date: Date) => {
+      return moment(date.toLocaleString()).format('DD.MM.YYYY');
+  },
   },
   {
     title: 'Додатки',
