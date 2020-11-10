@@ -1,7 +1,7 @@
+import classes from '*.module.css';
 import { Tooltip } from 'antd';
 import React from 'react';
 import decisionsApi from '../../api/decisionsApi';
-
 const columns = [
   {
     title: 'ID',
@@ -32,7 +32,7 @@ const columns = [
       showTitle: false,
     },
     render: (description: any) => (
-      <Tooltip placement="topLeft" title={description}>
+      <Tooltip placement="topLeft" title={description.substring(0, 400)}>
         {description}
       </Tooltip>
     ),
