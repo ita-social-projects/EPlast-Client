@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import classes from './Form.module.css'
-import { Form, Input, DatePicker, AutoComplete, Select, Button } from 'antd';
+import { Form, AutoComplete, Select, Button } from 'antd';
 import regionsApi from '../../../api/regionsApi';
+import notificationLogic from "../../../components/Notifications/Notification";
 
 type FormAnnualReportRegionProps = {
     onAdd: () => void;
 }
-
-
 
  const AddNewRegionReport: React.FC<FormAnnualReportRegionProps> = (props: any)=>{
     const  { onAdd } = props;
@@ -16,15 +15,19 @@ type FormAnnualReportRegionProps = {
         id:'',
         regionName:''
       }])
-     
 
       const handleSubmit = async (values : any)=>{
-          regionsApi.createRegionAnnualReport(JSON.parse(values.region).id, values.year)   
+          regionsApi.createRegionAnnualReport(JSON.parse(values.region).id, values.year) 
+          .then(() => {
+            notificationLogic("success", "Річний звіт успішно створено");
+            window.location.reload();
+          })
+          .catch(() => {
+            notificationLogic("error", "Щось пішло не так. Можливо даний річний звіт уже створено");
+          });   
           onAdd()    
           form.resetFields(); 
         }
-        
-      
 
       useEffect(() => {
         const fetchData = async () => {
@@ -34,8 +37,6 @@ type FormAnnualReportRegionProps = {
         }
         fetchData();
       }, [])
-
-
 
     return <Form
          name="basic"
@@ -63,7 +64,6 @@ type FormAnnualReportRegionProps = {
         </Select>
              
          </Form.Item>
-
         
          <Form.Item
              className={classes.formField}
@@ -89,8 +89,7 @@ type FormAnnualReportRegionProps = {
               { value: 2026 }
             ]}
            
-            placeholder={"Оберіть рік"}
-            
+          placeholder={"Оберіть рік"}
           ></AutoComplete>
          </Form.Item>
 
@@ -101,7 +100,6 @@ type FormAnnualReportRegionProps = {
          Відмінити
         </Button>
 
-
         <Button
          type="primary" htmlType="submit" 
         >
@@ -109,10 +107,7 @@ type FormAnnualReportRegionProps = {
         </Button>
 
       </Form.Item> 
-        
      </Form>;
-
-
 }
 
 export default AddNewRegionReport;

@@ -22,6 +22,10 @@ interface RegionAnnualReport {
     numberOfSeigneurSupporters: number;
     numberOfSeigneurMembers: number;
     annualReportId: number;
+    annualReportDate: Date;
+    annualReportYear:number;
+    regionName: string;
+    regionId: number;
 }
 
 export default RegionAnnualReport;
