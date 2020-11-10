@@ -4,7 +4,7 @@ export const checkEmail = (role: object, value: string, callback:any) => {
       return callback('');
     }
     if (reg.test(value) === false) {
-        return callback('Введене поле не є правильним для електронної пошти');
+        return callback('Неправильний формат електронної пошти');
     }
       return callback();
   };
