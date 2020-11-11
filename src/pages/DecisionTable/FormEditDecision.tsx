@@ -55,9 +55,12 @@ const FormEditDecision = ({ record,  setShowModal, onEdit, decision}: Props) => 
         className={formclasses.inputWidth}
         rules={[
           {
-          
             required: true,
             message: 'Це поле має бути заповненим' 
+          },
+          { 
+            max: 60,
+            message: 'Назва рішення не має перевищувати 60 символів!' 
           },
         ]}
       >
