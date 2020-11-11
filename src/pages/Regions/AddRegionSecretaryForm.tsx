@@ -186,6 +186,7 @@ const AddNewSecretaryForm = (props: any) => {
           className={classes.inputField}
           disabledDate={disabledStartDate}
           onChange={(e) => setStartDate(e)}
+          format="DD.MM.YYYY"
         />
       </Form.Item>
 
@@ -204,6 +205,7 @@ const AddNewSecretaryForm = (props: any) => {
         <DatePicker
           className={classes.inputField}
           disabledDate={disabledEndDate}
+          format="DD.MM.YYYY"
         />
       </Form.Item>
 

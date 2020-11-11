@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Select, Typography } from "antd";
+import { Form, Input, Button, Select, Typography, Row, Col } from "antd";
 import adminApi from "../../api/adminApi";
 import ClubForAdmin from "../../models/Club/ClubForAdmin";
 import {
@@ -14,6 +14,7 @@ import ClubMember from "../../models/Club/ClubMember";
 import ClubUser from "../../models/Club/ClubUser";
 import AdminType from "../../models/Admin/AdminType";
 import AddAdministratorModal from "../Club/AddAdministratorModal/AddAdministratorModal";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -94,6 +95,19 @@ const ChangeUserClubForm = ({
     setShowModal(false);
   };
 
+  const handleChange = (id: string, userRole: string) => {
+    onChange(id, userRole);
+    const clubName = clubs.find((r) => r.id === clubId)?.name;
+    clubName &&
+      NotificationBoxApi.createNotifications(
+        [id],
+        `Вам була присвоєна нова роль: '${userRole}' в станиці: `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/clubs/${clubId}`,
+        clubName
+      );
+  };
+
   return (
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
@@ -107,13 +121,23 @@ const ChangeUserClubForm = ({
             ))}
           </Select>
         </Form.Item>
-        <Form.Item style={{ textAlign: "right" }}>
-          <Button key="back" onClick={handleCancel}>
-            Відмінити
-          </Button>
-          <Button type="primary" htmlType="submit">
-            Змінити
-          </Button>
+        <Form.Item className="cancelConfirmButtons">
+          <Row justify="end">
+            <Col xs={11} sm={5}>
+              <Button key="back" onClick={handleCancel}>
+                Відмінити
+              </Button>
+            </Col>
+            <Col
+              className="publishButton"
+              xs={{ span: 11, offset: 2 }}
+              sm={{ span: 6, offset: 1 }}
+            >
+              <Button type="primary" htmlType="submit">
+                Призначити
+              </Button>
+            </Col>
+          </Row>
         </Form.Item>
       </Form>
       <AddAdministratorModal
@@ -122,7 +146,7 @@ const ChangeUserClubForm = ({
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
         clubId={clubId}
-        onChange={onChange}
+        onChange={handleChange}
       ></AddAdministratorModal>
     </div>
   );
