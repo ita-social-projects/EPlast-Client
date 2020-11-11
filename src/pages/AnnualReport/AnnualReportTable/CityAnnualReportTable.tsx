@@ -95,7 +95,6 @@ interface props {
       try {
         let response = await AnnualReportApi.getById(id);
         setAnnualReport(response.data.annualReport);
-        console.log(annualReport)
         setShowAnnualReportModal(true);
       } catch (error) {
         showError(error.message);
@@ -164,10 +163,11 @@ interface props {
         showError(error.message);
       }
     };
+    
     useEffect(() => {
-
       checkAccessToManage();
     }, []);
+
 console.log(annualReport)
     return (
         

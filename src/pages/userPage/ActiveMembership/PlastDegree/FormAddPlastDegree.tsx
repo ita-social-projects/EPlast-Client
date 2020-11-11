@@ -30,6 +30,9 @@ const FormAddPlastDegree = ({
        await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
        setVisibleModal(false);
        
+       handleAddDegree();
+       form.resetFields();
+       resetAvailablePlastDegree();
        await NotificationBoxApi.createNotifications(
         [userId],
         `Вам було надано новий ступінь в `,
@@ -37,9 +40,6 @@ const FormAddPlastDegree = ({
         `/userpage/activeMembership/${userId}`,
         `Дійсному членстві`
         );
-       handleAddDegree();
-       form.resetFields();
-       resetAvailablePlastDegree();
     }
     const handleSwitchChange = (e: boolean) => setIsChecked(e);
     return <Form
