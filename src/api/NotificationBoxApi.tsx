@@ -1,3 +1,5 @@
+import User from '../models/UserTable/User';
+import adminApi from './adminApi';
 import Api from './api';
 
 export type NotificationType = {
@@ -14,6 +16,11 @@ export type UserNotification ={
     senderName : string;
     createdAt : string;
     checkedAt? : string;
+}
+
+export type CityRegionAdminsOfUser ={
+    cityRegionAdmins: Array<{cityName: string, cityAdminId : string, regionAdminId : string}>;
+    user: User; 
 }
 
 const NotificationTypes = {
@@ -98,9 +105,33 @@ const createNotifications = async (userIds : Array<string>,
     await postUserNotifications(notifications);
 }
 
+const getCitiesForUserAdmins = async (userId : string) : Promise<CityRegionAdminsOfUser> => {
+    const cityRegionAdminsOfUser: CityRegionAdminsOfUser = {
+        cityRegionAdmins : [],
+        user : new User()
+    }
+    
+    await adminApi.getCityRegionAdmins(userId)
+          .then(res => {
+            res.data.result.forEach((c : any) => {
+            cityRegionAdminsOfUser.cityRegionAdmins.push(
+                {
+                    cityName : c.name,
+                    cityAdminId : c.cityAdministration.reverse().find((ca : any) => ca.adminType.adminTypeName==="Голова Станиці")?.userId,
+                    regionAdminId : c.region.regionAdministration.reverse().find((ra : any) => ra.adminType.adminTypeName==="Голова Округу")?.userId
+                }
+            );
+            });
+                  console.log(cityRegionAdminsOfUser.cityRegionAdmins);
+            cityRegionAdminsOfUser.user = res.data.user;
+          }).catch(e => console.log(e))
+    return cityRegionAdminsOfUser;
+}
+
 export default
 { 
     NotificationTypes,
+    getCitiesForUserAdmins,
     createNotifications,
     removeUserNotifications,
     removeNotification,
