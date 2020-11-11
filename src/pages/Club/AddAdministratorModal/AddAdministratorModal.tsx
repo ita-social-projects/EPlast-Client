@@ -71,10 +71,14 @@ const AddAdministratorModal = (props: Props) => {
   const addClubAdmin = async (admin: ClubAdmin) => {
     admin = (await addAdministrator(props.admin.clubId, admin)).data;
     notificationLogic("success", "Користувач успішно доданий в провід");
+    props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
+    props.onAdd?.(admin);
   };
   const editClubAdmin = async (admin: ClubAdmin) => {
     admin = (await editAdministrator(props.admin.clubId, admin)).data;
     notificationLogic("success", "Адміністратор успішно відредагований");
+    props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
+    props.onAdd?.(admin);
   };
 
   const getClubHead = async () => {
