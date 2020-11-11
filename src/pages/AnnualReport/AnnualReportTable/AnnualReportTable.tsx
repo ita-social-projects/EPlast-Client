@@ -456,6 +456,10 @@ const AnnualReportTable = () => {
           <FormAnnualReportRegion
           onAdd={handleCancal} />
         </Drawer>
+        <CitySelectModal
+        visibleModal={showCitySelectModal}
+        handleOk={() => setShowCitySelectModal(false)}
+        />
     </Layout.Content>
 
     
