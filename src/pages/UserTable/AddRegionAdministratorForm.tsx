@@ -162,6 +162,7 @@ const AddNewAdministratorForm = ({
           className={classes.inputField}
           disabledDate={disabledStartDate}
           onChange={(e) => setStartDay(e)}
+          format="DD.MM.YYYY"
         />
       </Form.Item>
 
@@ -174,6 +175,7 @@ const AddNewAdministratorForm = ({
           className={classes.inputField}
           disabledDate={disabledEndDate}
           onChange={(e) => setEndDay(e)}
+          format="DD.MM.YYYY"
         />
       </Form.Item>
 
