@@ -286,10 +286,6 @@ const AddNewRegionFormPage = () => {
                     max: 5,
                     message: "Максимальна довжина - 5 символів!",
                   },
-                  {
-                    min: 5,
-                    message: "Мінімальна довжина - 5 символів!",
-                  },
                 ]}
               >
                 <Input className={classes.inputField} />
@@ -304,7 +300,8 @@ const AddNewRegionFormPage = () => {
                 rules={[
                   {
                     max: 5,
-                    message: "Максимальна довжина - 5 символів!",
+                    min: 5,
+                    message: "Довжина повинна бути - 5 символів!",
                   },
                   {
                     required: true,
