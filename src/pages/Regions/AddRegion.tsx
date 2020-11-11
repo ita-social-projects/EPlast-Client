@@ -179,7 +179,13 @@ const AddNewRegionFormPage = () => {
                 ]}
               >
                 <ReactInputMask maskChar={null} mask="+380(99)-999-99-99">
-                  {(inputProps: any) => <Input {...inputProps} type="tel" />}
+                  {(inputProps: any) => (
+                    <Input
+                      {...inputProps}
+                      type="tel"
+                      className={classes.inputField}
+                    />
+                  )}
                 </ReactInputMask>
               </Form.Item>
             </Col>
