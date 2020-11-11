@@ -19,7 +19,6 @@ const ConfirmedRegionDropdown = (props: Props) => {
     }
 
     return (
-        <>
             <Menu
                 theme='dark'
                 onClick={handleClick}
@@ -33,7 +32,6 @@ const ConfirmedRegionDropdown = (props: Props) => {
                     <FileSearchOutlined />Переглянути
                 </Menu.Item>
             </Menu>
-        </>
     );
 }
 
