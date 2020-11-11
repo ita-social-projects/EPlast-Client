@@ -448,14 +448,12 @@ const AnnualReportTable = () => {
         </Card>
 
       </Row>
-      <Drawer width="auto"
-          title="Створити річний звіт округу"
-          visible={showRegionAnnualReports}
-          onClose={handleCancal}
-        >
-          <FormAnnualReportRegion
-          onAdd={handleCancal} />
-        </Drawer>
+
+
+        <FormAnnualReportRegion
+        visibleModal={showRegionAnnualReports}
+        handleOk={() => setShowRegionAnnualReports(false)}
+        />
         <CitySelectModal
         visibleModal={showCitySelectModal}
         handleOk={() => setShowCitySelectModal(false)}
