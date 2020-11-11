@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Select, Typography } from "antd";
+import { Form, Input, Button, Select, Typography, Row, Col } from "antd";
 import adminApi from "../../api/adminApi";
 import ClubForAdmin from "../../models/Club/ClubForAdmin";
 import {
@@ -95,18 +95,18 @@ const ChangeUserClubForm = ({
     setShowModal(false);
   };
 
-  const handleChange = (id : string, userRole: string) => {
+  const handleChange = (id: string, userRole: string) => {
     onChange(id, userRole);
-    const clubName = clubs.find(r => r.id === clubId)?.name;
+    const clubName = clubs.find((r) => r.id === clubId)?.name;
     clubName &&
-    NotificationBoxApi.createNotifications(
-      [id],
-      `Вам була присвоєна нова роль: '${userRole}' в станиці: `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/clubs/${clubId}`,
-      clubName
+      NotificationBoxApi.createNotifications(
+        [id],
+        `Вам була присвоєна нова роль: '${userRole}' в станиці: `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/clubs/${clubId}`,
+        clubName
       );
-  }
+  };
 
   return (
     <div>
@@ -121,13 +121,23 @@ const ChangeUserClubForm = ({
             ))}
           </Select>
         </Form.Item>
-        <Form.Item style={{ textAlign: "right" }}>
-          <Button key="back" onClick={handleCancel}>
-            Відмінити
-          </Button>
-          <Button type="primary" htmlType="submit">
-            Змінити
-          </Button>
+        <Form.Item className="cancelConfirmButtons">
+          <Row justify="end">
+            <Col xs={11} sm={5}>
+              <Button key="back" onClick={handleCancel}>
+                Відмінити
+              </Button>
+            </Col>
+            <Col
+              className="publishButton"
+              xs={{ span: 11, offset: 2 }}
+              sm={{ span: 6, offset: 1 }}
+            >
+              <Button type="primary" htmlType="submit">
+                Призначити
+              </Button>
+            </Col>
+          </Row>
         </Form.Item>
       </Form>
       <AddAdministratorModal

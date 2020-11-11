@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Select, Typography } from "antd";
+import { Form, Input, Button, Select, Typography, Row, Col } from "antd";
 import {
   getAllFollowers,
   getAllMembers,
@@ -92,20 +92,20 @@ const ChangeUserCityForm = ({
     setVisibleModal(true);
     setShowModal(false);
   };
-  
-  const handleChange = (id : string, userRole: string) => {
+
+  const handleChange = (id: string, userRole: string) => {
     onChange(id, userRole);
-    const cityName = cities.find(r => r.id === cityId)?.name;
+    const cityName = cities.find((r) => r.id === cityId)?.name;
     cityName &&
-    NotificationBoxApi.createNotifications(
-      [id],
-      `Вам була присвоєна нова роль: '${userRole}' в станиці: `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${cityId}`,
-      cityName
+      NotificationBoxApi.createNotifications(
+        [id],
+        `Вам була присвоєна нова роль: '${userRole}' в станиці: `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/cities/${cityId}`,
+        cityName
       );
-  }
-  
+  };
+
   return (
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
@@ -119,13 +119,23 @@ const ChangeUserCityForm = ({
             ))}
           </Select>
         </Form.Item>
-        <Form.Item style={{ textAlign: "right" }}>
-          <Button key="back" onClick={handleCancel}>
-            Відмінити
-          </Button>
-          <Button type="primary" htmlType="submit">
-            Змінити
-          </Button>
+        <Form.Item className="cancelConfirmButtons">
+          <Row justify="end">
+            <Col xs={11} sm={5}>
+              <Button key="back" onClick={handleCancel}>
+                Відмінити
+              </Button>
+            </Col>
+            <Col
+              className="publishButton"
+              xs={{ span: 11, offset: 2 }}
+              sm={{ span: 6, offset: 1 }}
+            >
+              <Button type="primary" htmlType="submit">
+                Призначити
+              </Button>
+            </Col>
+          </Row>
         </Form.Item>
       </Form>
       <AddAdministratorModal
