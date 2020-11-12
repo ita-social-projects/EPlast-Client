@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Select, DatePicker, notification } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  DatePicker,
+  notification,
+  Row,
+  Col,
+} from "antd";
 import distinctionApi from "../../../api/distinctionApi";
 import UserDistinction from "../Interfaces/UserDistinction";
 import formclasses from "./Form.module.css";
@@ -137,131 +146,163 @@ const FormEditDistinction = ({
     <div>
       {!loading && (
         <Form name="basic" onFinish={handleFinish} form={form}>
-          <Form.Item
-            initialValue={distinction.number}
-            className={formclasses.formField}
-            label="Номер в реєстрі"
-            name="number"
-            rules={[
-              {
-                required: true,
-                message: "Це поле має бути заповненим",
-              },
-            ]}
-          >
-            <Input
-              type="number"
-              min={1}
-              className={formclasses.inputField}
-              max={9999}
-            />
-          </Form.Item>
-          <Form.Item
-            className={formclasses.formField}
-            label="Відзначення"
-            name="distinction"
-            initialValue={distinction.distinction.name}
-            rules={[
-              {
-                required: true,
-                message: "Це поле має бути заповненим",
-              },
-            ]}
-          >
-            <Select
-              className={formclasses.selectField}
-              showSearch
-              onSelect={distChange}
-            >
-              {distData?.map((o) => (
-                <Select.Option key={o.id} value={JSON.stringify(o)}>
-                  {o.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            className={formclasses.formField}
-            label="Ім'я"
-            name="user"
-            initialValue={
-              distinction.user.firstName + " " + distinction.user.lastName
-            }
-            rules={[{ required: true, message: "Це поле має бути заповненим" }]}
-          >
-            <Select
-              className={formclasses.selectField}
-              onSelect={userChange}
-              showSearch
-              loading={loadingUserStatus}
-            >
-              {userData?.map((o) => (
-                <Select.Option key={o.user.id} value={JSON.stringify(o.user)}>
-                  {o.user.firstName + " " + o.user.lastName}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            className={formclasses.formField}
-            label="Подання від"
-            name="reporter"
-            initialValue={distinction.reporter}
-            rules={[
-              {
-                max: 100,
-                message: "Поле подання не має перевищувати 100 символів!",
-              },
-            ]}
-          >
-            <Input
-              allowClear
-              className={formclasses.inputField}
-              maxLength={101}
-            />
-          </Form.Item>
-
-          <Form.Item
-            className={formclasses.formField}
-            name="date"
-            label="Дата затвердження"
-            initialValue={moment(distinction.date)}
-            rules={[{ required: true, message: "Це поле має бути заповненим" }]}
-          >
-            <DatePicker
-              format={dateFormat}
-              className={formclasses.selectField}
-            />
-          </Form.Item>
-
-          <Form.Item
-            className={formclasses.formField}
-            label="Обгрунтування"
-            name="reason"
-            initialValue={distinction.reason}
-            rules={[
-              {
-                max: 250,
-                message: "Поле обгрунтування не має перевищувати 250 символів!",
-              },
-            ]}
-          >
-            <Input.TextArea
-              allowClear
-              autoSize={{
-                minRows: 2,
-                maxRows: 6,
-              }}
-              className={formclasses.inputField}
-              maxLength={251}
-            />
-          </Form.Item>
-
+          <Row justify="start" gutter={[12, 0]}>
+            <Col md={24} xs={24}>
+              <Form.Item
+                initialValue={distinction.number}
+                className={formclasses.formField}
+                label="Номер в реєстрі"
+                labelCol={{ span: 24 }}
+                name="number"
+                rules={[
+                  {
+                    required: true,
+                    message: "Це поле має бути заповненим",
+                  },
+                ]}
+              >
+                <Input
+                  type="number"
+                  min={1}
+                  className={formclasses.inputField}
+                  max={99999}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row justify="start" gutter={[12, 0]}>
+            <Col md={24} xs={24}>
+              <Form.Item
+                className={formclasses.formField}
+                label="Відзначення"
+                labelCol={{ span: 24 }}
+                name="distinction"
+                initialValue={distinction.distinction.name}
+                rules={[
+                  {
+                    required: true,
+                    message: "Це поле має бути заповненим",
+                  },
+                ]}
+              >
+                <Select
+                  className={formclasses.selectField}
+                  showSearch
+                  onSelect={distChange}
+                >
+                  {distData?.map((o) => (
+                    <Select.Option key={o.id} value={JSON.stringify(o)}>
+                      {o.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row justify="start" gutter={[12, 0]}>
+            <Col md={24} xs={24}>
+              <Form.Item
+                className={formclasses.formField}
+                label="Ім'я"
+                labelCol={{ span: 24 }}
+                name="user"
+                initialValue={
+                  distinction.user.firstName + " " + distinction.user.lastName
+                }
+                rules={[
+                  { required: true, message: "Це поле має бути заповненим" },
+                ]}
+              >
+                <Select
+                  className={formclasses.selectField}
+                  onSelect={userChange}
+                  showSearch
+                  loading={loadingUserStatus}
+                >
+                  {userData?.map((o) => (
+                    <Select.Option
+                      key={o.user.id}
+                      value={JSON.stringify(o.user)}
+                    >
+                      {o.user.firstName + " " + o.user.lastName}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row justify="start" gutter={[12, 0]}>
+            <Col md={24} xs={24}>
+              <Form.Item
+                className={formclasses.formField}
+                label="Подання від"
+                labelCol={{ span: 24 }}
+                name="reporter"
+                initialValue={distinction.reporter}
+                rules={[
+                  {
+                    max: 100,
+                    message: "Поле подання не має перевищувати 100 символів!",
+                  },
+                ]}
+              >
+                <Input
+                  allowClear
+                  className={formclasses.inputField}
+                  maxLength={101}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row justify="start" gutter={[12, 0]}>
+            <Col md={24} xs={24}>
+              <Form.Item
+                className={formclasses.formField}
+                name="date"
+                label="Дата затвердження"
+                labelCol={{ span: 24 }}
+                initialValue={moment(distinction.date)}
+                rules={[
+                  { required: true, message: "Це поле має бути заповненим" },
+                ]}
+              >
+                <DatePicker
+                  format={dateFormat}
+                  className={formclasses.selectField}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row justify="start" gutter={[12, 0]}>
+            <Col md={24} xs={24}>
+              <Form.Item
+                className={formclasses.formField}
+                label="Обгрунтування"
+                labelCol={{ span: 24 }}
+                name="reason"
+                initialValue={distinction.reason}
+                rules={[
+                  {
+                    max: 250,
+                    message:
+                      "Поле обгрунтування не має перевищувати 250 символів!",
+                  },
+                ]}
+              >
+                <Input.TextArea
+                  allowClear
+                  autoSize={{
+                    minRows: 2,
+                    maxRows: 6,
+                  }}
+                  className={formclasses.inputField}
+                  maxLength={251}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
           <Form.Item>
-            <div 
-            className={formclasses.cardButton} >
+            <div className={formclasses.cardButton}>
               <Button key="back" onClick={handleCancel}>
                 Відмінити
               </Button>
