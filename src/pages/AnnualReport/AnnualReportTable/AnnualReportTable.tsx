@@ -418,24 +418,23 @@ const AnnualReportTable = () => {
           <Button
             type="primary"
             htmlType="button"
-            onClick={() => setShowRegionAnnualReports(true)}
+            onClick={() => setShowCitySelectModal(true)}
           >
-            Подати річний звіт округу
+            Подати річний звіт куреня
           </Button>
         </Col>
         <Col span={4}>
           <Button
             type="primary"
             htmlType="button"
-            onClick={() => setShowCitySelectModal(true)}
+            onClick={() => setShowRegionAnnualReports(true)}
           >
-            Подати річний звіт куреня
+            Подати річний звіт округу
           </Button>
         </Col>
       </Row>
 
       <Row>
-
       <Card
           style={{ width: '100%' }}
           tabList={tabList}
@@ -448,8 +447,6 @@ const AnnualReportTable = () => {
         </Card>
 
       </Row>
-
-
         <FormAnnualReportRegion
         visibleModal={showRegionAnnualReports}
         handleOk={() => setShowRegionAnnualReports(false)}
