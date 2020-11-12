@@ -60,6 +60,30 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     setVisibleModal(false);
   };
 
+  const createNotifications = async (userDistinction : UserDistinction) => {
+    await NotificationBoxApi.createNotifications(
+        [userDistinction.userId],
+        `Вам було надано нове відзначення: '${userDistinction.distinction.name}' від ${userDistinction.reporter}. `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/distinctions`,
+        `Переглянути`
+        );
+
+    await NotificationBoxApi.getCitiesForUserAdmins(userDistinction.userId)
+        .then(res => {
+            res.cityRegionAdmins.length !== 0 &&
+            res.cityRegionAdmins.forEach(async (cra) => {
+                await NotificationBoxApi.createNotifications(
+                    [cra.cityAdminId, cra.regionAdminId],
+                    `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав нове відзначення: '${userDistinction.distinction.name}' від ${userDistinction.reporter}. `,
+                    NotificationBoxApi.NotificationTypes.UserNotifications,
+                    `/distinctions`,
+                    `Переглянути`
+                    );
+            })                
+        });
+  } 
+
   const handleSubmit = async (values: any) => {
     const newDistinction: UserDistinction = {
       id: 0,
@@ -80,14 +104,8 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       await distinctionApi.addUserDistinction(newDistinction);
       setVisibleModal(false);
       form.resetFields();
-      await NotificationBoxApi.createNotifications(
-        [newDistinction.userId],
-        `Вам було надано нове відзначення: '${newDistinction.distinction.name}' від ${newDistinction.reporter}. `,
-        NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/distinctions`,
-        `Переглянути`
-        );
       onAdd();
+      await createNotifications(newDistinction);
     } else {
       openNotification(`Номер ${values.number} вже зайнятий`);
       form.resetFields(["number"]);
