@@ -119,27 +119,56 @@ const DistinctionTable = () => {
     setShowDropdown(false);
   };
 
+
   const CreateDeleteNotification = (id : number) => {
     const userDistinction = UserDistinctions.find(
       (d: { id: number }) => d.id === id
     );
-    userDistinction &&
-    NotificationBoxApi.createNotifications(
-      [userDistinction.userId],
-      `Ваше відзначення: '${userDistinction.distinction.name}' було видалено.`,
-      NotificationBoxApi.NotificationTypes.UserNotifications
-    );
+    if(userDistinction)
+    {
+      NotificationBoxApi.createNotifications(
+        [userDistinction.userId],
+        `Ваше відзначення: '${userDistinction.distinction.name}' було видалено.`,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+      );
+      NotificationBoxApi.getCitiesForUserAdmins(userDistinction.userId)
+      .then(res => {
+          res.cityRegionAdmins.length !== 0 &&
+          res.cityRegionAdmins.forEach(async (cra) => {
+              await NotificationBoxApi.createNotifications(
+                  [cra.cityAdminId, cra.regionAdminId],
+                  `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' був позбавлений відзначення: '${userDistinction.distinction.name}'. `,
+                  NotificationBoxApi.NotificationTypes.UserNotifications
+                  );
+          })                
+      });
+    }
   }
 
   const CreateEditNotification = (userId : string, name : string) => {
-    userId !== "" && name !== "" &&
-    NotificationBoxApi.createNotifications(
-      [userId],
-      `Ваше відзначення: '${name}' було змінено. `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/distinctions`,
-      `Переглянути`
-      );
+    if(userId !== "" && name !== "")
+    {
+      NotificationBoxApi.createNotifications(
+        [userId],
+        `Ваше відзначення: '${name}' було змінено. `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/distinctions`,
+        `Переглянути`
+        );
+      NotificationBoxApi.getCitiesForUserAdmins(userId)
+      .then(res => {
+          res.cityRegionAdmins.length !== 0 &&
+          res.cityRegionAdmins.forEach(async (cra) => {
+              await NotificationBoxApi.createNotifications(
+                  [cra.cityAdminId, cra.regionAdminId],
+                  `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінене відзначення: '${name}'. `,
+                  NotificationBoxApi.NotificationTypes.UserNotifications,
+                  `/distinctions`,
+                  `Переглянути`
+                  );
+          })           
+      });
+    }
   }
 
   const handleDelete = (id: number) => {

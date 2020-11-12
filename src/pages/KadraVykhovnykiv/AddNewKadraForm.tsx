@@ -13,6 +13,7 @@ import {
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import adminApi from "../../api/adminApi";
 import notificationLogic from "../../components/Notifications/Notification";
+import NotificationBoxApi from '../../api/NotificationBoxApi';
 
 type FormAddKadraProps = {
     showModal: (visibleModal: boolean) => void;  
@@ -72,6 +73,7 @@ const AddNewKadraForm: React.FC<FormAddKadraProps> = (props: any) => {
             .then(async (response) => {
               if (response.data == false) {
                 await kadrasApi.createKadra(newKadra);
+
                 form.resetFields();
                 onAdd();
 
