@@ -3,14 +3,20 @@ import { Link, useHistory, useParams, useRouteMatch } from "react-router-dom";
 import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip, Breadcrumb} from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined, HomeOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getCityById, getLogo, removeCity, toggleMemberStatus } from "../../../api/citiesApi";
+import {
+  addFollower,
+  getCityById,
+  getLogo,
+  removeCity,
+  toggleMemberStatus,
+} from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import CityProfile from "../../../models/City/CityProfile";
-import CityMember from '../../../models/City/CityMember';
-import CityAdmin from '../../../models/City/CityAdmin';
-import CityDocument from '../../../models/City/CityDocument';
+import CityMember from "../../../models/City/CityMember";
+import CityAdmin from "../../../models/City/CityAdmin";
+import CityDocument from "../../../models/City/CityDocument";
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -50,7 +56,7 @@ const City = () => {
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/cities/${id}`,
       city.name
-      );
+    );
 
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
@@ -65,14 +71,14 @@ const City = () => {
 
   const addMember = async () => {
     const follower = await addFollower(+id);
-        
+
     await NotificationBoxApi.createNotifications(
-      admins.map(ad => ad.userId),
+      admins.map((ad) => ad.userId),
       `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці: `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/cities/followers/${id}`,
       city.name
-      );
+    );
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
@@ -93,10 +99,10 @@ const City = () => {
         [ad.userId],
         `На жаль станицю: '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
         NotificationBoxApi.NotificationTypes.UserNotifications
-        );
+      );
     });
-    history.push('/cities');
-  }
+    history.push("/cities");
+  };
 
   const setPhotos = async (members: CityMember[], logo: string) => {
     for (let i = 0; i < members.length; i++) {
@@ -119,29 +125,33 @@ const City = () => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
-  }
+  };
 
-  function seeDeleteModal () {
+  function seeDeleteModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити дану станицю?",
-      icon: <ExclamationCircleOutlined/>,
-      okText: 'Так, видалити',
-      okType: 'danger',
-      cancelText: 'Скасувати',
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, видалити",
+      okType: "danger",
+      cancelText: "Скасувати",
       maskClosable: true,
-      onOk() {deleteCity()}
+      onOk() {
+        deleteCity();
+      },
     });
   }
 
-  function seeJoinModal () {
+  function seeJoinModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете долучитися до даної станиці?",
-      icon: <ExclamationCircleOutlined/>,
-      okText: 'Так, долучитися',
-      okType: 'primary',
-      cancelText: 'Скасувати',
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, долучитися",
+      okType: "primary",
+      cancelText: "Скасувати",
       maskClosable: true,
-      onOk() {addMember()}
+      onOk() {
+        addMember();
+      },
     });
   }
 
@@ -153,16 +163,16 @@ const City = () => {
 
       setPhotosLoading(true);
       setCityLogoLoading(true);
-      const admins = [...response.data.administration, response.data.head]
-      .filter(a => a !== null);
+      const admins = [
+        ...response.data.administration,
+        response.data.head,
+      ].filter((a) => a !== null);
 
-      setPhotos([
-        ...admins,
-        ...response.data.members,
-        ...response.data.followers,
-        
-      ], response.data.logo);
-      
+      setPhotos(
+        [...admins, ...response.data.members, ...response.data.followers],
+        response.data.logo
+      );
+
       setCity(response.data);
       setAdmins(admins);
       setMembers(response.data.members);
@@ -198,10 +208,14 @@ const City = () => {
       </Col>
     </Row>
       <Row gutter={[0, 48]}>
-        
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-           
+            <Crumb
+              current={city.name}
+              first=""
+              second={history.goBack}
+              second_name="Станиці"
+            />
             <Title level={3}>Станиця {city.name}</Title>
             <Row className="cityPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
@@ -228,14 +242,18 @@ const City = () => {
                       <b>Станичний:</b> {city.head.user.firstName}{" "}
                       {city.head.user.lastName}
                     </Paragraph>
-                    <Paragraph>
-                      <b>Час правління:</b> {moment(city.head.startDate).format("DD.MM.YYYY")}
-                        {city.head.endDate
-                          ? ` - ${moment(city.head.endDate).format(
-                              "DD.MM.YYYY"
-                            )}`
-                          : " "}
-                    </Paragraph>
+                    {city.head.endDate ? (
+                      <Paragraph>
+                        <b>Час правління:</b>{" "}
+                        {moment(city.head.startDate).format("DD.MM.YYYY")}{" "}
+                        {moment(city.head.endDate).format("DD.MM.YYYY")}
+                      </Paragraph>
+                    ) : (
+                      <Paragraph>
+                        <b>Початок правління:</b>{" "}
+                        {moment(city.head.startDate).format("DD.MM.YYYY")}
+                      </Paragraph>
+                    )}
                   </div>
                 ) : (
                   <Paragraph>
@@ -247,12 +265,13 @@ const City = () => {
                 {city.cityURL || city.email || city.phoneNumber ? (
                   <div>
                     {city.cityURL ? (
-                      <Paragraph
-                        ellipsis>
+                      <Paragraph ellipsis>
                         <b>Посилання:</b>{" "}
-                        <u><a href={city.cityURL} target="_blank">
-                          {city.cityURL}
-                        </a></u>
+                        <u>
+                          <a href={city.cityURL} target="_blank">
+                            {city.cityURL}
+                          </a>
+                        </u>
                       </Paragraph>
                     ) : null}
                     {city.phoneNumber ? (
@@ -302,8 +321,7 @@ const City = () => {
                   >
                     {canEdit ? (
                       <Col>
-                      <Tooltip
-                        title="Редагувати станицю">
+                        <Tooltip title="Редагувати станицю">
                           <EditOutlined
                             className="cityInfoIcon"
                             onClick={() =>
@@ -315,12 +333,11 @@ const City = () => {
                     ) : null}
                     {canCreate ? (
                       <Col offset={1}>
-                        <Tooltip
-                          title="Видалити станицю">
-                            <DeleteOutlined
-                              className="cityInfoIconDelete"
-                              onClick={() => seeDeleteModal()}
-                            />
+                        <Tooltip title="Видалити станицю">
+                          <DeleteOutlined
+                            className="cityInfoIconDelete"
+                            onClick={() => seeDeleteModal()}
+                          />
                         </Tooltip>
                       </Col>
                     ) : null}
@@ -540,7 +557,7 @@ const City = () => {
         setVisibleDrawer={setVisibleDrawer}
         visibleDrawer={visibleDrawer}
       ></CityDetailDrawer>
-      
+
       {canEdit ? (
         <AddDocumentModal
           cityId={+id}

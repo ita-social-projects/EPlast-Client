@@ -48,6 +48,14 @@ const AddNewAdministratorForm = ({
   const [oldAdminFirstName, setOldAdminFirstName] = useState<string>();
   const [oldAdminLastName, setOldAdminLastName] = useState<string>();
 
+  const disabledEndDate = (current: any) => {
+    return current && current < startDay;
+  };
+
+  const disabledStartDate = (current: any) => {
+    return current && current > moment();
+  };
+
   const getAdministration = async () => {
     const response = await getRegionAdministration(regionId);
     setAdministration([...response.data].filter((a) => a != null));
@@ -63,13 +71,6 @@ const AddNewAdministratorForm = ({
       setOldAdminFirstName(oldAdmin.user.firstName);
       setOldAdminLastName(oldAdmin.user.lastName);
     }
-  };
-
-  const handleStartDay = (value: any) => {
-    setStartDay(value);
-  };
-  const handleEndDay = (value: any) => {
-    setEndDay(value);
   };
 
   const handleSubmit = async (values: any) => {
@@ -157,7 +158,12 @@ const AddNewAdministratorForm = ({
         label="Дата початку"
         name="startDate"
       >
-        <DatePicker className={classes.inputField} onChange={handleStartDay} />
+        <DatePicker
+          className={classes.inputField}
+          disabledDate={disabledStartDate}
+          onChange={(e) => setStartDay(e)}
+          format="DD.MM.YYYY"
+        />
       </Form.Item>
 
       <Form.Item
@@ -165,7 +171,12 @@ const AddNewAdministratorForm = ({
         label="Дата кінця"
         name="endDate"
       >
-        <DatePicker className={classes.inputField} onChange={handleEndDay} />
+        <DatePicker
+          className={classes.inputField}
+          disabledDate={disabledEndDate}
+          onChange={(e) => setEndDay(e)}
+          format="DD.MM.YYYY"
+        />
       </Form.Item>
 
       <Form.Item style={{ textAlign: "right" }}>

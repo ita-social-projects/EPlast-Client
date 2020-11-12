@@ -80,10 +80,14 @@ const AddAdministratorModal = (props: Props) => {
   const addCityAdmin = async (admin: CityAdmin) => {
     admin = (await addAdministrator(props.admin.cityId, admin)).data;
     notificationLogic("success", "Користувач успішно доданий в провід");
+    props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
+    props.onAdd?.(admin);
   };
   const editCityAdmin = async (admin: CityAdmin) => {
     admin = (await editAdministrator(props.admin.cityId, admin)).data;
     notificationLogic("success", "Адміністратор успішно відредагований");
+    props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
+    props.onAdd?.(admin);
   };
 
   const handleSubmit = async (values: any) => {
@@ -117,12 +121,9 @@ const AddAdministratorModal = (props: Props) => {
         }
       }
     } finally {
-      props.onAdd?.(admin);
       props.setVisibleModal(false);
       setLoading(false);
     }
-
-    props.onChange?.(props.admin.userId, values.adminType);
   };
 
   const handleCancel = () => {

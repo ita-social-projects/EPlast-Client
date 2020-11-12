@@ -20,8 +20,8 @@ interface AnnualReport {
     contributionFunds: number;
     plastSalary: number;
     sponsorshipFunds: number;
-    listProperty: string;
-    improvementNeeds: string;
+    listProperty: string| null;
+    improvementNeeds: string| null;
     membersStatistic: MembersStatistic;
     creatorId: string;
     creator: User | null;

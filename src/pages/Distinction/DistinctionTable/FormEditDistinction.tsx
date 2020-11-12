@@ -68,7 +68,7 @@ const FormEditDistinction = ({
       placement: "topLeft",
     });
   };
-  const dateFormat = "DD-MM-YYYY";
+  const dateFormat = "DD.MM.YYYY";
 
   useEffect(() => {
     setLoading(true);
