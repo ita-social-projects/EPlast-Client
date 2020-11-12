@@ -72,7 +72,6 @@ const Cities = () => {
     setPage(1);
     setSearchedData(event);
   };
-console.log(url);
   return (
     <Layout.Content className="cities">
       <Title level={1}>Станиці</Title>
