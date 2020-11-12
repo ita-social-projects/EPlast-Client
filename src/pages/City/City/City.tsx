@@ -189,7 +189,6 @@ const City = () => {
   useEffect(() => {
     getCity();
   }, []);
-  console.log(path);
   return loading ? (
     <Spinner />
   ) : city.id !== 0 ? (
