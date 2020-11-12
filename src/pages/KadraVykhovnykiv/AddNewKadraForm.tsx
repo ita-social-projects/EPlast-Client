@@ -287,4 +287,5 @@ type FormAddKadraProps = {
   );
 };
 
+
 export default AddNewKadraForm;
