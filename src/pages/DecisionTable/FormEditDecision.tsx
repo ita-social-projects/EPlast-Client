@@ -62,6 +62,10 @@ const FormEditDecision = ({
                     required: true,
                     message: "Це поле має бути заповненим",
                   },
+                  { 
+                    max: 60,
+                    message: 'Назва рішення не має перевищувати 60 символів!' 
+                  },
                 ]}
               >
                 <Input className={formclasses.input} />
