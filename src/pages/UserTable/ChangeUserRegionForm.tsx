@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Select, Typography } from "antd";
+import { Form, Input, Button, Select, Typography, Row, Col } from "antd";
 import RegionForAdmin from "../../models/Region/RegionForAdmin";
 import { getRegions } from "../../api/regionsApi";
 import AddRegionAdministratorModal from "./AddRegionAdministratorModal";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
 const { Option } = Select;
 
 interface Props {
@@ -52,6 +53,19 @@ const ChangeUserRegionForm = ({
     setShowAdministratorModal(true);
   };
 
+  const handleChange = (id: string, userRole: string) => {
+    onChange(id, userRole);
+    const regionName = regions.find((r) => r.id === regionId)?.regionName;
+    regionName &&
+      NotificationBoxApi.createNotifications(
+        [id],
+        `Вам була присвоєна нова роль: '${userRole}' в окрузі: `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/regions/${regionId}`,
+        regionName
+      );
+  };
+
   return (
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
@@ -65,21 +79,32 @@ const ChangeUserRegionForm = ({
             ))}
           </Select>
         </Form.Item>
-        <Form.Item style={{ textAlign: "right" }}>
-          <Button key="back" onClick={handleCancel}>
-            Відмінити
-          </Button>
-          <Button type="primary" htmlType="submit">
-            Обрати
-          </Button>
+        <Form.Item className="cancelConfirmButtons">
+          <Row justify="end">
+            <Col xs={11} sm={5}>
+              <Button key="back" onClick={handleCancel}>
+                Відмінити
+              </Button>
+            </Col>
+            <Col
+              className="publishButton"
+              xs={{ span: 11, offset: 2 }}
+              sm={{ span: 6, offset: 1 }}
+            >
+              <Button type="primary" htmlType="submit">
+                Призначити
+              </Button>
+            </Col>
+          </Row>
         </Form.Item>
+
         <AddRegionAdministratorModal
           userId={id}
           showAdministratorModal={showAdministratorModal}
           setShowAdministratorModal={setShowAdministratorModal}
           regionId={regionId}
           roles={roles}
-          onChange={onChange}
+          onChange={handleChange}
         ></AddRegionAdministratorModal>
       </Form>
     </div>

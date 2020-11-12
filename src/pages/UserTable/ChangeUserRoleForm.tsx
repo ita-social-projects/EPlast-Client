@@ -7,6 +7,8 @@ import {
   Typography,
   Radio,
   AutoComplete,
+  Row,
+  Col,
 } from "antd";
 import adminApi from "../../api/adminApi";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
@@ -27,8 +29,7 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await adminApi.getRolesForEdit(userId)
-      .then(response => {
+      await adminApi.getRolesForEdit(userId).then((response) => {
         setRoles(response.data.userRoles);
       });
     };
@@ -39,30 +40,29 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
     setShowModal(false);
   };
 
-  const addEndDate = async (isEmpty : Boolean) => {
+  const addEndDate = async (isEmpty: Boolean) => {
     let currentDates = await activeMembershipApi.getUserDates(userId);
     currentDates.dateEnd = isEmpty ? "0001-01-01T00:00:00" : moment().format();
     await activeMembershipApi.postUserDates(currentDates);
-  }
+  };
 
   const handleFinish = async (value: any) => {
     await adminApi.putCurrentRole(userId, value.userRole);
-    
-    if(value.userRole === "Колишній член пласту"){
+
+    if (value.userRole === "Колишній член пласту") {
       await addEndDate(false);
-    }
-    else if(roles.includes("Колишній член пласту")){
+    } else if (roles.includes("Колишній член пласту")) {
       await addEndDate(true);
     }
+
+    onChange(userId, value.userRole);
+    setShowModal(false);
 
     await NotificationBoxApi.createNotifications(
       [userId],
       `Вам надано нову роль: '${value.userRole}'`,
       NotificationBoxApi.NotificationTypes.UserNotifications
-      );
-      
-    onChange(userId, value.userRole);
-    setShowModal(false);
+    );
   };
 
   return (
@@ -87,13 +87,23 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
             ]}
           ></AutoComplete>
         </Form.Item>
-        <Form.Item style={{ textAlign: "right" }}>
-          <Button key="back" onClick={handleCancel}>
-            Відмінити
-          </Button>
-          <Button type="primary" htmlType="submit">
-            Призначити
-          </Button>
+        <Form.Item className="cancelConfirmButtons">
+          <Row justify="end">
+            <Col xs={11} sm={5}>
+              <Button key="back" onClick={handleCancel}>
+                Відмінити
+              </Button>
+            </Col>
+            <Col
+              className="publishButton"
+              xs={{ span: 11, offset: 2 }}
+              sm={{ span: 6, offset: 1 }}
+            >
+              <Button type="primary" htmlType="submit">
+                Призначити
+              </Button>
+            </Col>
+          </Row>
         </Form.Item>
       </Form>
     </div>
