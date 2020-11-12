@@ -12,90 +12,114 @@ import {
 } from "antd";
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import adminApi from "../../api/adminApi";
-import notificationLogic from "../../components/Notifications/Notification";
+import notificationLogic from '../../components/Notifications/Notification';
+import NotificationBoxApi from '../../api/NotificationBoxApi';
 
 type FormAddKadraProps = {
     showModal: (visibleModal: boolean) => void;  
     onAdd: () => void;
-};
+}
 
-const AddNewKadraForm: React.FC<FormAddKadraProps> = (props: any) => {
-  const { showModal, onAdd } = props;
-  const [form] = Form.useForm();
-  const dateFormat = "DD-MM-YYYY";
-  const [users, setUsers] = useState<any[]>([
-    {
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-        birthday: "",
-      },
-      regionName: "",
-      cityName: "",
-      clubName: "",
-      userPlastDegreeName: "",
-      userRoles: "",
-    },
-  ]);
 
-  const [types, setTypes] = useState<any[]>([
-    {
-      id: "",
-      name: "",
-    },
-  ]);
+ const AddNewKadraForm: React.FC<FormAddKadraProps> = (props: any)=>{
+    const  { showModal, onAdd } = props;
+    const [form] = Form.useForm();
+    const [users, setUsers] = useState<any[]>([{
+        user:{
+            id: '',
+            firstName: '',
+            lastName:'',
+            birthday:''
+        },
+        regionName:'',
+        cityName:'',
+        clubName:'',
+        userPlastDegreeName:'',
+        userRoles:''
+        
+      }])
 
-  const handleSubmit = async (values: any) => {
-    const newKadra: any = {
-      id: 0,
 
-      userId: JSON.parse(values.userId).user.id,
+    const [types, setTypes] = useState<any[]>([{
+        id: '',
+        name: '',
+      }])
+    const dateFormat = "DD.MM.YYYY";
 
-      KadraVykhovnykivTypeId: JSON.parse(values.KadraVykhovnykivType).id,
+     const createNotifications = async (userId : string, kadraTypeName : string) => {
+        await NotificationBoxApi.createNotifications(
+            [userId],
+            `Ваc було додано в кадру виховників: '${kadraTypeName}'. `,
+            NotificationBoxApi.NotificationTypes.UserNotifications,
+            `/kadra`,
+            `Переглянути`
+            );
 
-      dateOfGranting: values.dateOfGranting,
-
-      numberInRegister: values.numberInRegister,
-
-      basisOfGranting: values.basisOfGranting,
-
-      link: values.link,
-    };
-
-    kadrasApi
-      .doesRegisterNumberExist(newKadra.numberInRegister)
-      .then((responce) => {
-        if (responce.data == false) {
-          kadrasApi
-            .doesUserHaveStaff(newKadra.userId, newKadra.KadraVykhovnykivTypeId)
-            .then(async (response) => {
-              if (response.data == false) {
-                await kadrasApi.createKadra(newKadra);
-                form.resetFields();
-                onAdd();
-
-                notificationLogic(
-                  "success",
-                  "Користувач успішно отримав відзнаку"
-                );
-              } else {
-                notificationLogic(
-                  "error",
-                  "Користувач вже отримував цю відзнаку"
-                );
-                form.resetFields();
-                onAdd();
-              }
+        await NotificationBoxApi.getCitiesForUserAdmins(userId)
+            .then(res => {
+                res.cityRegionAdmins.length !== 0 &&
+                res.cityRegionAdmins.forEach(async (cra) => {
+                    await NotificationBoxApi.createNotifications(
+                        [cra.cityAdminId, cra.regionAdminId],
+                        `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' був доданий в кадру виховників: '${kadraTypeName}'. `,
+                        NotificationBoxApi.NotificationTypes.UserNotifications,
+                        `/kadra`,
+                        `Переглянути`
+                        );
+                })                
             });
-        } else {
-          notificationLogic("error", "Номер реєстру вже зайнятий");
-          form.resetFields();
-          onAdd();
-        }
-      });
-  };
+     } 
 
+      const handleSubmit = async (values : any)=>{
+        const newKadra  : any= {
+            id: 0,
+
+            userId: JSON.parse(values.userId).user.id,
+
+            KadraVykhovnykivTypeId:JSON.parse(values.KadraVykhovnykivType).id,
+
+            dateOfGranting: values.dateOfGranting,
+
+            numberInRegister: values.numberInRegister,
+
+            basisOfGranting:values.basisOfGranting,
+
+            link: values.link,
+  
+        }
+
+         kadrasApi.doesRegisterNumberExist(newKadra.numberInRegister).then(responce=>{
+            if (responce.data==false){
+                 kadrasApi.doesUserHaveStaff(newKadra.userId,newKadra.KadraVykhovnykivTypeId).then(  async response=>{
+
+                    if(response.data==false){
+                      await kadrasApi.createKadra(newKadra)
+                      form.resetFields();
+                      onAdd();
+                      notificationLogic('success', "Користувач успішно отримав відзнаку");
+
+                      await createNotifications(newKadra.userId, JSON.parse(values.KadraVykhovnykivType).name);
+                     }
+                     else{
+                      notificationLogic('error', "Користувач вже отримував цю відзнаку");
+                      form.resetFields();
+                      onAdd();
+                     }
+          
+                 })
+            }
+                else{
+                    notificationLogic('error', "Номер реєстру вже зайнятий");
+                    form.resetFields();
+                    onAdd();
+
+                    notificationLogic(
+                    "success",
+                    "Користувач успішно отримав відзнаку"
+                    );
+                }; 
+        });
+    }
 
   const handleCancel = () => {
     form.resetFields();
