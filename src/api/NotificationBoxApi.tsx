@@ -122,7 +122,6 @@ const getCitiesForUserAdmins = async (userId : string) : Promise<CityRegionAdmin
                 }
             );
             });
-                  console.log(cityRegionAdminsOfUser.cityRegionAdmins);
             cityRegionAdminsOfUser.user = res.data.user;
           }).catch(e => console.log(e))
     return cityRegionAdminsOfUser;
