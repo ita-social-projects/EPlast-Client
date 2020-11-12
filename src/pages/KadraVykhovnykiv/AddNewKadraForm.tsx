@@ -4,11 +4,11 @@ import { Form, Input, DatePicker, AutoComplete, Select, Button } from 'antd';
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import adminApi from "../../api/adminApi";
 import notificationLogic from '../../components/Notifications/Notification';
+import NotificationBoxApi from '../../api/NotificationBoxApi';
 
 type FormAddKadraProps = {
     onAdd: () => void;
 }
-
 
 
  const AddNewKadraForm: React.FC<FormAddKadraProps> = (props: any)=>{
@@ -35,7 +35,29 @@ type FormAddKadraProps = {
         name: '',
       }])
 
-     
+     const createNotifications = async (userId : string, kadraTypeName : string) => {
+        await NotificationBoxApi.createNotifications(
+            [userId],
+            `Ваc було додано в кадру виховників: '${kadraTypeName}'. `,
+            NotificationBoxApi.NotificationTypes.UserNotifications,
+            `/kadra`,
+            `Переглянути`
+            );
+
+        await NotificationBoxApi.getCitiesForUserAdmins(userId)
+            .then(res => {
+                res.cityRegionAdmins.length !== 0 &&
+                res.cityRegionAdmins.forEach(async (cra) => {
+                    await NotificationBoxApi.createNotifications(
+                        [cra.cityAdminId, cra.regionAdminId],
+                        `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' був доданий в кадру виховників: '${kadraTypeName}'. `,
+                        NotificationBoxApi.NotificationTypes.UserNotifications,
+                        `/kadra`,
+                        `Переглянути`
+                        );
+                })                
+            });
+     } 
 
       const handleSubmit = async (values : any)=>{
         const newKadra  : any= {
@@ -64,8 +86,9 @@ type FormAddKadraProps = {
                       await kadrasApi.createKadra(newKadra)
                       form.resetFields();
                       onAdd();
-                        
                       notificationLogic('success', "Користувач успішно отримав відзнаку");
+
+                      await createNotifications(newKadra.userId, JSON.parse(values.KadraVykhovnykivType).name);
                      }
                      else{
                       notificationLogic('error', "Користувач вже отримував цю відзнаку");
