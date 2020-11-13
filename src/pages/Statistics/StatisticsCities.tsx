@@ -152,7 +152,7 @@ const StatisticsCities = () => {
     let counter = 1;
 
     let response = await StatisticsApi.getCitiesStatistics({
-      CitiesId: info.citiesId,
+      CityIds: info.citiesId,
       Years: info.years,
       Indicators: info.indicators
     });
