@@ -5,6 +5,7 @@ import kadrasApi from "../../api/KadraVykhovnykivApi";
 import DropDown from './KadraDropDown';
 import ClickAwayListener from 'react-click-away-listener';
 import moment from 'moment';
+import NotificationBoxApi from '../../api/NotificationBoxApi';
 
 
 const classes = require('./Table.module.css');
@@ -31,13 +32,38 @@ export const KVTable = ({ current, searchData }: props) => {
     link: '',
   }]);
 
+  const createNotifications = async (userId : string) => {
+    await NotificationBoxApi.createNotifications(
+        [userId],
+        `Ваc було видалено з кадри виховників. `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/kadra`,
+        `Переглянути`
+        );
 
+    await NotificationBoxApi.getCitiesForUserAdmins(userId)
+        .then(res => {
+            res.cityRegionAdmins.length !== 0 &&
+            res.cityRegionAdmins.forEach(async (cra) => {
+                await NotificationBoxApi.createNotifications(
+                    [cra.cityAdminId, cra.regionAdminId],
+                    `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' був видалений з кадри виховників. `,
+                    NotificationBoxApi.NotificationTypes.UserNotifications,
+                    `/kadra`,
+                    `Переглянути`
+                    );
+            })                
+        });
+ } 
+  
   const handleDelete = (id: number) => {
     const filteredData = data.filter((d: { id: number; }) => d.id !== id);
+    const DeletedKadra = data.find((d: { id: number; }) => d.id === id);
     setData([...filteredData]);
+    DeletedKadra &&
+    createNotifications(DeletedKadra.userId);
+   
   }
-
-
 
   const onEdit = () => {
     fetchData()

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useHistory , useRouteMatch } from "react-router-dom";
 import { Card, Layout, Pagination, Result, Skeleton } from "antd";
 import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -24,7 +24,6 @@ const Cities = () => {
   const [searchedData, setSearchedData] = useState("");
 
   const setPhotos = async (cities: CityProfile[]) => {
-    console.log(cities);
     for await (const city of cities) {
       if (city.logo === null) {
         city.logo = CityDefaultLogo;
@@ -36,7 +35,6 @@ const Cities = () => {
 
     setPhotosLoading(false);
   };
-
   const getCities = async () => {
     setLoading(true);
 
@@ -74,7 +72,6 @@ const Cities = () => {
     setPage(1);
     setSearchedData(event);
   };
-
   return (
     <Layout.Content className="cities">
       <Title level={1}>Станиці</Title>
@@ -112,21 +109,23 @@ const Cities = () => {
               </div>
             ) : (
               cities.map((city: CityProfile) => (
+               <a href={`${url}/${city.id}`}> 
                 <Card
-                  key={city.id}
-                  hoverable
-                  className="cardStyles"
-                  cover={
-                    photosLoading ? (
-                      <Skeleton.Avatar shape="square" active />
-                    ) : (
-                      <img src={city.logo || undefined} alt="City" />
-                    )
-                  }
-                  onClick={() => history.push(`${url}/${city.id}`)}
-                >
-                  <Card.Meta title={city.name} className="titleText" />
-                </Card>
+                    key={city.id}
+                    hoverable
+                    className="cardStyles"
+                    cover={
+                      photosLoading ? (
+                        <Skeleton.Avatar shape="square" active />
+                      ) : (
+                        <img src={city.logo || undefined} alt="City" />
+                      )
+                    } 
+                    onClick={() => history.push(`${url}/${city.id}`)}
+                  >
+                    <Card.Meta title={city.name} className="titleText" />
+                  </Card>
+                </a>
               ))
             )}
           </div>

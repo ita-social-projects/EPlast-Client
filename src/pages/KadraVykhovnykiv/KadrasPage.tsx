@@ -137,9 +137,10 @@ export const KadrasTable = ()=>{
           title="Надати кадру виховників"
           visible={visible}
           onClose={handleCancel}
+          footer={null}
          
         >
-          <AddNewKadraForm onAdd={renewPage}></AddNewKadraForm>
+          <AddNewKadraForm onAdd={renewPage} showModal={setvisible} ></AddNewKadraForm>
         </Drawer>
       </>
     )

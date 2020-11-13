@@ -8,6 +8,12 @@ const getUsersForTable = async () => {
   return response;
 };
 
+const getCityRegionAdmins = async (userId: string) => {
+  const response = await Api.get(`Admin/CityRegionAdmins/${userId}`);
+
+  return response;
+};
+
 const deleteUser = async (userId: string) => {
   const response = await Api.remove(`Admin/deleteUser/${userId}`);
 
@@ -39,6 +45,7 @@ const putCurrentRole = async (userId: string, role: string) => {
 };
 
 export default {
+  getCityRegionAdmins,
   getUsersForTable,
   deleteUser,
   getRolesForEdit,

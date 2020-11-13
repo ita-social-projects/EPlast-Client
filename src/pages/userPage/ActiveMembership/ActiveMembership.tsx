@@ -174,19 +174,19 @@ const ActiveMembership = () => {
                     <span className={classes.date}>Дата вступу:{" "}</span> 
                     {dates?.dateEntry === ""
                       ? "Не задано"
-                      : moment(dates.dateEntry).format("DD-MM-YYYY")}
+                      : moment(dates.dateEntry).format("DD.MM.YYYY")}
                   </div>
                   <div className={classes.textGeneralInfo}>
                   <span className={classes.date}>Дата присяги:{" "}</span> 
                     {dates?.dateOath === ""
                       ? "Без присяги"
-                      : moment(dates.dateOath).format("DD-MM-YYYY")}
+                      : moment(dates.dateOath).format("DD.MM.YYYY")}
                   </div>
                   <div className={classes.textGeneralInfo}>
                   <span className={classes.date}>Дата завершення:{" "}</span> 
                     {dates?.dateEnd === ""
                       ? "Ще в Пласті"
-                      : moment(dates.dateEnd).format("DD-MM-YYYY")}
+                      : moment(dates.dateEnd).format("DD.MM.YYYY")}
                   </div>
                   {IsUserHasAnyAdminTypeRoles(
                     userToken[
@@ -234,12 +234,12 @@ const ActiveMembership = () => {
                 </div>
                 <div className={classes.textFieldsOthers}>
                   Дата початку ступеню:{" "}
-                  {moment(pd.dateStart).format("DD-MM-YYYY")}
+                  {moment(pd.dateStart).format("DD.MM.YYYY")}
                 </div>
                 {pd.dateFinish !== null && (
                   <div className={classes.textFieldsOthers}>
                     Дата завершення ступеню:{" "}
-                    {moment(pd.dateFinish).format("DD-MM-YYYY")}
+                    {moment(pd.dateFinish).format("DD.MM.YYYY")}
                   </div>
                 )}
                 {IsUserHasAnyAdminTypeRoles(

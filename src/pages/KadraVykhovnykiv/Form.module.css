@@ -1,44 +1,27 @@
+.cardButton {
+  display: flex;
+  width: 100%;
+}
+.cardButton>* {
+margin-right: 8px;
+} 
+.formField {
+  max-width: 370px;
+  min-width: 370px;
+}
 
+.selectField {
+  max-width: 370px;
+  min-width: 370px;
+}
 
-
-.inputField{
-    float: right;
-    text-align: left;
-    max-width: 320px;
-    width:320px;
-  }
-
-  @media (max-width: 576px){
-    .inputField{
-    width: 100%;
-    }
-  }
-
-  .clearButton{
-    float: left;
-    background-color:grey;
-    width: 125px;
-  }
-
-
-  .selectField {
-    float: right;
-    text-align: left;
-    width:320px;
-   
-  }
-  
-  
-  .formField {
-    width: 100%;
-  }
-
-  .cardButton{
-    float: right;
-    inline-size: -webkit-fill-available;
-    margin-top: 7px;
-    color:#3c5438;
-    border-color: #3c5438;
-    max-width: 320px;
-    min-width: 320px;
-  }
+@media(max-width: 400px) {
+.formField{ 
+  max-width: 100%;
+  min-width: 100%;
+}
+.selectField {
+  max-width: 100%;
+  min-width: 100%;
+}
+}
