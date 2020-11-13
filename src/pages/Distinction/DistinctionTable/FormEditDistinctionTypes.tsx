@@ -80,11 +80,15 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
   };
 
   const handleEdit = async () => {
-    await distinctionApi.editDistinction(curDist);
-    notificationLogic("success", "Тип відзначення успішно змінено!");
-    fetchData();
-    setCurDist(defaultDist);
-    setEditVisible(false);
+    if(curDist.name.length !== 0) 
+    {
+      await distinctionApi.editDistinction(curDist);
+      notificationLogic("success", "Тип відзначення успішно змінено!");
+      fetchData();
+      setCurDist(defaultDist);
+      setEditVisible(false);
+    } else 
+        notificationLogic("error", "Хибна назва");
   };
 
   return (
@@ -131,7 +135,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
               name="inputName"
               value={title}
               onChange={(event) => {
-                if(event.target.value.length < 249)
+                if(event.target.value.length < 250)
                 {
                   setTitle(event.target.value);
                   setVisRule(false);

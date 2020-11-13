@@ -4,24 +4,24 @@
 }
 .cardButton>* {
   margin-right: 8px;
-}
-
-.inputField{
-    float: right;
-    text-align: left;
-    max-width: 320px;
-    min-width: 320px;
+} 
+  .formField {
+    max-width: 370px;
+    min-width: 370px;
   }
   
   .selectField {
-    float: right;
-    text-align: left;
-    max-width: 320px;
-    min-width: 320px;
+    max-width: 370px;
+    min-width: 370px;
   }
-  
-  
-  .formField {
-    width: 100%;
+
+@media(max-width: 400px) {
+  .formField{ 
+    max-width: 100%;
+    min-width: 100%;
   }
- 
+  .selectField {
+    max-width: 100%;
+    min-width: 100%;
+  }
+}
