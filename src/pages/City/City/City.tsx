@@ -1,29 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import {
-  Avatar,
-  Row,
-  Col,
-  Button,
-  Spin,
-  Layout,
-  Modal,
-  Skeleton,
-  Divider,
-  Card,
-  Tooltip,
-  Breadcrumb,
-} from "antd";
-import {
-  FileTextOutlined,
-  EditOutlined,
-  PlusSquareFilled,
-  UserAddOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-  ExclamationCircleOutlined,
-  HomeOutlined,
-} from "@ant-design/icons";
+import { Link, useHistory, useParams, useRouteMatch } from "react-router-dom";
+import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip, Breadcrumb} from "antd";
+import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined, HomeOutlined } from "@ant-design/icons";
 import moment from "moment";
 import {
   addFollower,
@@ -47,10 +25,12 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import BreadcrumbItem from "antd/lib/breadcrumb/BreadcrumbItem";
 
 const City = () => {
   const history = useHistory();
-  const { id } = useParams();
+  const {id} = useParams();
+  const { url, path } = useRouteMatch();
 
   const [loading, setLoading] = useState(false);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
@@ -67,7 +47,6 @@ const City = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
-
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
 
@@ -210,11 +189,23 @@ const City = () => {
   useEffect(() => {
     getCity();
   }, []);
-
   return loading ? (
     <Spinner />
   ) : city.id !== 0 ? (
     <Layout.Content className="cityProfile">
+      
+    <Row gutter={[0,15]}>
+      <Col span={8} offset={1}>
+      <div>
+         <Crumb
+            current={city.name}
+            first="/"
+            second={url.replace(id,'')}
+            second_name="Станиці"
+            />
+      </div>
+      </Col>
+    </Row>
       <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="cityCard">

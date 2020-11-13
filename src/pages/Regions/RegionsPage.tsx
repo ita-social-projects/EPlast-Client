@@ -123,6 +123,7 @@ const Regions = () => {
                 </Card>
               }
               {regions.map((region: any) => (
+                <a href={`${url}/${region.id}`}>
                 <Card
                   key={region.id}
                   hoverable
@@ -138,6 +139,7 @@ const Regions = () => {
                 >
                   <Card.Meta title={region.regionName} className="titleText" />
                 </Card>
+                </a>
               ))}
             </div>
 

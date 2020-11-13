@@ -112,6 +112,7 @@ const Clubs = () => {
               </div>
             ) : (
               clubs.map((club: ClubProfile) => (
+                <a href={`${url}/${club.id}`}>
                 <Card
                   key={club.id}
                   hoverable
@@ -127,6 +128,7 @@ const Clubs = () => {
                 >
                   <Card.Meta title={club.name} className="titleText" />
                 </Card>
+                </a>
               ))
             )}
           </div>
