@@ -44,7 +44,7 @@ const HeaderContainer = () => {
           let connection = WebSocketConnection.ManageConnection(response.data.user.id);
           
           connection.onmessage = function(event) {
-            const result = JSON.parse(event.data);
+            const result = JSON.parse(decodeURIComponent(event.data));
             setNotifications(t => [result as UserNotification].concat(t))
         };
         }
