@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import classes from './Form.module.css'
-import { Form, AutoComplete, Select, Button } from 'antd';
+import { Form, AutoComplete, Select, Button, Modal } from 'antd';
 import regionsApi from '../../../api/regionsApi';
 import notificationLogic from "../../../components/Notifications/Notification";
+import { useHistory } from 'react-router-dom';
 
-type FormAnnualReportRegionProps = {
-    onAdd: () => void;
+interface Props {
+  visibleModal: boolean,
+  handleOk: () => void,
 }
 
- const AddNewRegionReport: React.FC<FormAnnualReportRegionProps> = (props: any)=>{
-    const  { onAdd } = props;
+
+ const AddNewRegionReport = (props: Props)=>{
+    const { visibleModal, handleOk } = props;
+    const history = useHistory();
     const [form] = Form.useForm();
     const [regions, setRegions] = useState<any[]>([{
         id:'',
@@ -24,8 +28,7 @@ type FormAnnualReportRegionProps = {
           })
           .catch(() => {
             notificationLogic("error", "Щось пішло не так. Можливо даний річний звіт уже створено");
-          });   
-          onAdd()    
+          });    
           form.resetFields(); 
         }
 
@@ -38,7 +41,12 @@ type FormAnnualReportRegionProps = {
         fetchData();
       }, [])
 
-    return <Form
+    return (<Modal
+    title='Оберіть округ та рік для створення річного звіту'
+    onCancel={handleOk}
+    visible={visibleModal}
+    footer={null} >
+    <Form
          name="basic"
          onFinish={handleSubmit}
          form = {form}
@@ -107,7 +115,8 @@ type FormAnnualReportRegionProps = {
         </Button>
 
       </Form.Item> 
-     </Form>;
+     </Form>
+     </Modal>)
 }
 
 export default AddNewRegionReport;

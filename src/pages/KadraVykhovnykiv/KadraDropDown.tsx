@@ -124,6 +124,7 @@ const DropDown = (props: Props) => {
           record={record}
           onAdd={handleCancelEdit}
           onEdit={onEdit}
+          showModal={setvisibleEdit}
         ></UpdateKadraForm>
       </Drawer>
     </>
