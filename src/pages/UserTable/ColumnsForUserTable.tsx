@@ -31,14 +31,15 @@ const setTagColor = (userRoles: string) => {
 
 const ColumnsForUserTable: any = [
   {
-    title: "ID",
+    title: "№",
     dataIndex: ["user", "userProfileId"],
-    width: 75,
     render: (id: number) => <Text>{id}</Text>,
-    sorter: (a: any, b: any) =>
-      a.user.firstName.localeCompare(b.user.firstName),
+    sorter: {
+      compare: (a: any, b: any) => a.user.userProfileId - b.user.userProfileId,
+    },
     sortDirections: ["descend", "ascend"],
     defaultSortOrder: "ascend",
+    width: 75,
   },
   {
     title: "Ім`я",
@@ -51,7 +52,6 @@ const ColumnsForUserTable: any = [
     sorter: (a: any, b: any) =>
       a.user.firstName.localeCompare(b.user.firstName),
     sortDirections: ["descend", "ascend"],
-    defaultSortOrder: "ascend",
   },
   {
     title: "Прізвище",
@@ -102,14 +102,6 @@ const ColumnsForUserTable: any = [
         return <h4>Інша</h4>;
       }
     },
-    sorter: (a: any, b: any) => {
-      if (a.user.gender !== null && b.user.gender != null) {
-        a = a.user.gender.name || " ";
-        b = b.user.gender.name || " ";
-        return a.localeCompare(b);
-      }
-    },
-    sortDirections: ["descend", "ascend"],
   },
   {
     title: "Округ",
