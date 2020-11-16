@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Select, DatePicker, AutoComplete } from "antd";
 import classes from "../../pages/Regions/Form.module.css";
-import regionsApi from "../../api/regionsApi";
+import regionsApi, { getRegionAdministration } from "../../api/regionsApi";
 import notificationLogic from "../../components/Notifications/Notification";
-import Modal from "antd/lib/modal/Modal";
+import ConfirmRegionAdminModal from "./ConfirmRegionAdministrationModal";
 import moment from "moment";
 
 interface Props {
@@ -23,18 +23,60 @@ const AddNewAdministratorForm = ({
   roles,
   onChange,
 }: Props) => {
-  const [currentRegion, setCurrentRegion] = useState<number>();
+  const [currentRegion, setCurrentRegion] = useState<number>(0);
   const [form] = Form.useForm();
-  const [date, setDate] = useState<any>();
-
-  const [types, setTypes] = useState<any[]>([
+  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+  const [administration, setAdministration] = useState<any[]>([
     {
       id: "",
-      adminTypeName: "",
+      user: {
+        firstName: "",
+        lastName: "",
+        imagePath: "",
+      },
+      adminType: {
+        adminTypeName: "",
+      },
+      startDate: "",
+      endDate: "",
     },
   ]);
+  const [adminType, setAdminType] = useState<any>();
+  const [startDay, setStartDay] = useState<any>();
+  const [endDay, setEndDay] = useState<any>();
+  const [endDayOld, setEndDayOld] = useState<any>();
+  const [oldAdminFirstName, setOldAdminFirstName] = useState<string>();
+  const [oldAdminLastName, setOldAdminLastName] = useState<string>();
+
+  const disabledEndDate = (current: any) => {
+    return current && current < startDay;
+  };
+
+  const disabledStartDate = (current: any) => {
+    return current && current > moment();
+  };
+
+  const getAdministration = async () => {
+    const response = await getRegionAdministration(regionId);
+    setAdministration([...response.data].filter((a) => a != null));
+  };
+
+  const handleClick = async (value: any) => {
+    setAdminType(value);
+    const oldAdmin = administration.find(
+      (a: any) => a.adminType.adminTypeName === value
+    );
+    if (oldAdmin !== undefined) {
+      setEndDayOld(moment(oldAdmin.endDate).format("DD.MM.YYYY"));
+      setOldAdminFirstName(oldAdmin.user.firstName);
+      setOldAdminLastName(oldAdmin.user.lastName);
+    }
+  };
 
   const handleSubmit = async (values: any) => {
+    const oldAdmin = administration.find(
+      (a: any) => a.adminType.adminTypeName === values.AdminType
+    );
     const newAdmin: any = {
       id: 0,
       userId: userId,
@@ -45,20 +87,22 @@ const AddNewAdministratorForm = ({
       endDate: values.endDate,
       regionId: regionId,
     };
-    await regionsApi.AddAdmin(newAdmin);
-    notificationLogic("success", "Користувач успішно доданий в провід");
-    form.resetFields();
-    onChange(userId, values.AdminType);
-    setShowAdministratorModal(false);
+    if (oldAdmin !== undefined && values.AdminType === "Голова Округу") {
+      setShowAdministratorModal(false);
+      setShowConfirmModal(true);
+    } else {
+      await regionsApi.AddAdmin(newAdmin);
+      notificationLogic("success", "Користувач успішно доданий в провід");
+      form.resetFields();
+      onChange(userId, values.AdminType);
+      setShowAdministratorModal(false);
+    }
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      await regionsApi.getAdminTypes().then((response) => {
-        setTypes(response.data);
-      });
-    };
+    const fetchData = async () => {};
     setCurrentRegion(regionId);
+    getAdministration();
     fetchData();
   }, []);
 
@@ -78,6 +122,7 @@ const AddNewAdministratorForm = ({
         {roles?.includes("Пластун") ? (
           <AutoComplete
             className={classes.inputField}
+            onChange={handleClick}
             options={[
               { value: "Голова Округу" },
               { value: "Писар" },
@@ -93,6 +138,7 @@ const AddNewAdministratorForm = ({
         ) : (
           <AutoComplete
             className={classes.inputField}
+            onChange={handleClick}
             options={[
               { value: "Писар" },
               { value: "Бунчужний" },
@@ -112,7 +158,11 @@ const AddNewAdministratorForm = ({
         label="Дата початку"
         name="startDate"
       >
-        <DatePicker className={classes.inputField} />
+        <DatePicker
+          className={classes.inputField}
+          disabledDate={disabledStartDate}
+          onChange={(e) => setStartDay(e)}
+        />
       </Form.Item>
 
       <Form.Item
@@ -120,14 +170,31 @@ const AddNewAdministratorForm = ({
         label="Дата кінця"
         name="endDate"
       >
-        <DatePicker className={classes.inputField} />
+        <DatePicker
+          className={classes.inputField}
+          disabledDate={disabledEndDate}
+          onChange={(e) => setEndDay(e)}
+        />
       </Form.Item>
 
       <Form.Item style={{ textAlign: "right" }}>
         <Button type="primary" htmlType="submit">
-          Опублікувати
+          Призначити
         </Button>
       </Form.Item>
+      <ConfirmRegionAdminModal
+        onChange={onChange}
+        visibleModal={showConfirmModal}
+        setVisibleModal={setShowConfirmModal}
+        userId={userId}
+        regionId={regionId}
+        adminType={adminType}
+        startDate={startDay}
+        endDate={endDay}
+        endDayOld={endDayOld}
+        oldAdminFirstName={oldAdminFirstName}
+        oldAdminLastName={oldAdminLastName}
+      />
     </Form>
   );
 };
