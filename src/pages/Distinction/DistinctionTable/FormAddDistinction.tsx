@@ -260,10 +260,10 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
         <Col md={24} xs={24}>
           <Form.Item>
             <div className={formclasses.cardButton}>
-              <Button key="back" onClick={handleCancel}>
+              <Button key="back" onClick={handleCancel} className={formclasses.buttons}>
                 Відмінити
               </Button>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" className={formclasses.buttons}>
                 Опублікувати
               </Button>
             </div>
