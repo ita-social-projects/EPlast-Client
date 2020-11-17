@@ -24,7 +24,6 @@ const ModalChangeUserDates = ({
     
     const SetDate  = (date: any, prevDate : string) : string =>
     {
-        debugger
         if (date === undefined) {
             if(prevDate === "")
                 return "0001-01-01T00:00:00";
