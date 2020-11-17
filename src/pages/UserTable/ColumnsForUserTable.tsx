@@ -34,6 +34,7 @@ const ColumnsForUserTable: any = [
     title: "№",
     dataIndex: ["user", "userProfileId"],
     render: (id: number) => <Text>{id}</Text>,
+    fixed: true,
     sorter: {
       compare: (a: any, b: any) => a.user.userProfileId - b.user.userProfileId,
     },
@@ -217,7 +218,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Права доступу",
     dataIndex: "userRoles",
-    ellipsis: true,
+    ellipsis: false,
     filters: [
       {
         text: "Пластун",
@@ -263,11 +264,11 @@ const ColumnsForUserTable: any = [
     filterMultiple: false,
     onFilter: (value: any, record: any) => record.userRoles.includes(value),
     render: (userRoles: any) => {
-      if (userRoles.length > 19) {
+      if (userRoles.length > 17) {
         return (
           <Tag color={setTagColor(userRoles)} key={userRoles}>
             <Tooltip placement="topLeft" title={userRoles}>
-              {userRoles.slice(0, 19).toUpperCase()}
+              {userRoles.slice(0, 17).toUpperCase()}
             </Tooltip>
           </Tag>
         );
