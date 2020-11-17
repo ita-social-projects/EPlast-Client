@@ -81,16 +81,7 @@ interface props {
           break;
       }
     };
-
-    const itemRender = (current: any, type: string, originalElement: any) => {
-      if (type === "prev") {
-        return <Button type="primary">Попередня</Button>;
-      }
-      if (type === "next") {
-        return <Button type="primary">Наступна</Button>;
-      }
-      return originalElement;
-    };
+    
     const handleView = async (id: number) => {
       hideDropdowns();
       try {
@@ -214,10 +205,9 @@ console.log(annualReport)
           }
         }}
         pagination={{
-          itemRender,
-          position: ["bottomRight"],
-          showTotal: (total, range) =>
-            `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
+          showLessItems: true,
+          responsive: true,
+          showSizeChanger: true,
         }}
       />
       <ClickAwayListener onClickAway={hideDropdowns}>

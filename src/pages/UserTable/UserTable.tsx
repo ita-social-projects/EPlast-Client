@@ -109,7 +109,7 @@ const UsersTable = () => {
         className={classes.table}
         bordered
         rowKey="id"
-        scroll={{ x: 1300 }}
+        scroll={{ x: 1450 }}
         columns={ColumnsForUserTable}
         dataSource={filteredData}
         onRow={(record) => {

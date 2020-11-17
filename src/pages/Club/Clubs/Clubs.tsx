@@ -137,7 +137,8 @@ const Clubs = () => {
               current={page}
               pageSize={pageSize}
               total={total}
-              showSizeChanger
+              responsive
+              showSizeChanger = { total < 20 ? false : true }
               onChange={(page) => handleChange(page)}
               onShowSizeChange={(page, size) => handleSizeChange(page, size)}
             />
