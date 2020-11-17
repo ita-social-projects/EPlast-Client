@@ -261,8 +261,7 @@ const ActiveMembership = () => {
             <Title level={2}> Ступені користувача </Title>
             {plastDegrees.map((pd) => (
               <React.Fragment key={pd.id}>
-                {/* style={pd.isCurrent ? {border: "1px solid #3C5438 5px"} : {}} */}
-                <div>
+                <div style={{marginBottom: "7px"}}>
                   <div className={classes.textFieldsMain} >
                     {pd.isCurrent && <SafetyCertificateOutlined />}{" "}
                     {getAppropriateToGenderDegree(pd.plastDegree.name)}

@@ -259,7 +259,6 @@
 .textFieldsMain,
 .textFieldsOthers
 {
-    /* text-align : left; */
     margin-left : auto;
     margin-right : auto;
 }
@@ -275,7 +274,6 @@
 
 .textFieldsMain{
     font-size : 18px;
-    margin-top: 7px;
 }
 .textFieldsOthers{
     font-size : 16px;
