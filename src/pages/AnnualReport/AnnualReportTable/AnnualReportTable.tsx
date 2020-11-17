@@ -12,6 +12,8 @@ import {
   Select,
   Drawer,
   message,
+  Tag,
+  Tooltip,
 } from "antd";
 import moment from "moment";
 import AnnualReportApi from "../../../api/AnnualReportApi";
@@ -38,15 +40,27 @@ import { ClubAnnualReportTable } from "./ClubAnnualReport";
 import FormAnnualReportRegion from "./FormAnnualReportRegion"
 import { getAllRegionsReports } from "../../../api/regionsApi";
 import { RegionAnnualReportTable } from "./RegionAnnualReportTable";
+import ClubSelectModal from "./ClubSelectModal/ClubSelectModal";
 
 
 const { Title } = Typography;
+
+const setTagColor = (status: number) => {
+  let color = "";
+  if (status==0) {
+    color = "red";
+  }
+  if (status==1) {
+    color = "green";
+  }
+  return color;
+};
 
 const AnnualReportTable = () => {
   const history = useHistory();
   const [annualReport, setAnnualReport] = useState<AnnualReport>(Object);
   const [clubAnnualReport, setClubAnnualReport] = useState<ClubAnnualReport>(Object);
-  const [reportStatusNames, setReportStatusNames] = useState<string[]>(Array());
+  const [reportStatusNames, setReportStatusNames] = useState<any[]>(Array());
   const [annualReports, setAnnualReports] = useState<AnnualReport[]>(Array());
   const [clubAnnualReports, setClubAnnualReports] = useState<ClubAnnualReport[]>(Array());
   const [regionAnnualReports, setRegionsAnnualReports]= useState<[]>([]);
@@ -65,6 +79,9 @@ const AnnualReportTable = () => {
     false
   );
   const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(
+    false
+  );
+  const [showClubSelectModal, setShowClubSelectModal] = useState<boolean>(
     false
   );
   const [canManage, setCanManage] = useState<boolean>(false);
@@ -301,7 +318,6 @@ const AnnualReportTable = () => {
   ];
 
   
-
   const columns = [
     {
       title: "Номер",
@@ -326,10 +342,16 @@ const AnnualReportTable = () => {
     {
       title: "Статус",
       dataIndex: "status",
-      render: (status: number) => {
-        return reportStatusNames[status];
-      },
+      render: (status: any) => {
+        return (
+          <Tag color={setTagColor(status)} key={reportStatusNames[status]}>
+            <Tooltip placement="topLeft" title={reportStatusNames[status]}>
+        {reportStatusNames[status]}
+            </Tooltip>
+          </Tag>
+        );
     },
+  }
   ];
 
   const tabList = [
@@ -369,9 +391,15 @@ const AnnualReportTable = () => {
     {
       title: "Статус",
       dataIndex: "status",
-      render: (status: number) => {
-        return reportStatusNames[status];
-      },
+      render: (status: any) => {
+        return (
+          <Tag color={setTagColor(status)} key={reportStatusNames[status]}>
+            <Tooltip placement="topLeft" title={reportStatusNames[status]}>
+        {reportStatusNames[status]}
+            </Tooltip>
+          </Tag>
+        );
+    },
     },
   ];
 
@@ -402,36 +430,33 @@ const AnnualReportTable = () => {
     <Layout.Content className="annualreport-table">
       <Title level={2}>Річні звіти</Title>
       <Row className="searchContainer" gutter={16}>
-        <Col span={4}>
+        <Col >
           <Input placeholder="Пошук" onChange={handleSearch} />
         </Col>
-        <Col span={4}>
+        <Col>
           <Button
             type="primary"
-            htmlType="button"
             onClick={() => setShowCitySelectModal(true)}
           >
             Подати річний звіт станиці
           </Button>
-        </Col>
-        <Col span={4}>
+          </Col>
+          <Col>
           <Button
             type="primary"
-            htmlType="button"
-            onClick={() => setShowCitySelectModal(true)}
+            onClick={() => setShowClubSelectModal(true)}
           >
             Подати річний звіт куреня
           </Button>
-        </Col>
-        <Col span={4}>
+          </Col>
+        <Col>
           <Button
             type="primary"
-            htmlType="button"
             onClick={() => setShowRegionAnnualReports(true)}
           >
             Подати річний звіт округу
           </Button>
-        </Col>
+          </Col>
       </Row>
 
       <Row>
@@ -454,6 +479,10 @@ const AnnualReportTable = () => {
         <CitySelectModal
         visibleModal={showCitySelectModal}
         handleOk={() => setShowCitySelectModal(false)}
+        />
+        <ClubSelectModal
+        visibleModal={showClubSelectModal}
+        handleOk={() => setShowClubSelectModal(false)}
         />
     </Layout.Content>
 
