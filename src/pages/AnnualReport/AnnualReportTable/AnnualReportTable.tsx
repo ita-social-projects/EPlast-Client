@@ -391,9 +391,15 @@ const AnnualReportTable = () => {
     {
       title: "Статус",
       dataIndex: "status",
-      render: (status: number) => {
-        return reportStatusNames[status];
-      },
+      render: (status: any) => {
+        return (
+          <Tag color={setTagColor(status)} key={reportStatusNames[status]}>
+            <Tooltip placement="topLeft" title={reportStatusNames[status]}>
+        {reportStatusNames[status]}
+            </Tooltip>
+          </Tag>
+        );
+    },
     },
   ];
 
