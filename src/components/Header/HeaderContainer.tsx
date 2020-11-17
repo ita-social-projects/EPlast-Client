@@ -89,7 +89,7 @@ const HeaderContainer = () => {
 
   const ShowNotifications = () => {
     setVisibleDrawer(true);
-    NotificationBoxApi.SetCheckedAllUserNotification(notifications.map(n => n.id))
+    NotificationBoxApi.SetCheckedAllUserNotification(id)
   }
   
   useEffect(() => {
