@@ -15,7 +15,6 @@ import classes from "./PrivateLayout.module.css";
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
-import adminApi from "../../api/adminApi";
 import jwt_decode from "jwt-decode";
 
 const { Content, Sider } = Layout;
