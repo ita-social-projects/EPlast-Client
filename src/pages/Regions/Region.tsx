@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import {
   Avatar,
   Row,
@@ -47,9 +47,12 @@ import CitiesRedirectForm from "./CitiesRedirectForm";
 import CityDetailDrawer from "../City/CityDetailDrawer/CityDetailDrawer";
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
+import Crumb from "../../components/Breadcrumb/Breadcrumb";
 
 const Region = () => {
   const history = useHistory();
+  const { url } = useRouteMatch();
+  
   const { id } = useParams();
   const [visibleModal, setVisibleModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -258,6 +261,14 @@ const Region = () => {
       <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="cityCard">
+          <div>
+              <Crumb
+                current={region.regionName}
+                first="/"
+                second={url.replace(`/${id}`, "")}
+                second_name="Округи"
+              />
+            </div>
             <Title level={3}>Округ {region.regionName}</Title>
             <Row className="cityPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
