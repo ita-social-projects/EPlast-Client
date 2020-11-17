@@ -2,7 +2,6 @@ import React, { FC } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import DecisionTable from "./pages/DecisionTable/DecisionTable";
 import "./App.less";
-import AddNewRegionForm from "./pages/Regions/AddRegion";
 import HeaderContainer from "./components/Header/HeaderContainer";
 import Home from "./pages/Home/Home";
 import FooterContainer from "./components/Footer/FooterContainer";
@@ -50,6 +49,7 @@ import RegionAdministration from "./pages/Regions/RegionAdministration";
 import RegionDocuments from "./pages/Regions/RegionDocuments";
 import RegionMembers from "./../src/pages/Regions/RegionMembers";
 import StatisticsCities from "./pages/Statistics/StatisticsCities";
+import StatisticsRegions from "./pages/Statistics/StatisticsRegions";
 import NotAuthorizedPage from "./pages/Error/NotAuthorized";
 
 const App: FC = () => (
@@ -293,6 +293,12 @@ const App: FC = () => (
             exact
             path="/statistics/cities"
             component={StatisticsCities}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/statistics/regions"
+            component={StatisticsRegions}
           />
           <RouteWithLayout
             layout={PrivateLayout}
