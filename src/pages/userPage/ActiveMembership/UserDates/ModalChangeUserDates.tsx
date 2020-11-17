@@ -3,6 +3,7 @@ import { Modal, Form,DatePicker, Button } from 'antd';
 import activeMembershipApi,{ UserDates } from '../../../../api/activeMembershipApi';
 import classes from './ModalChangeUserDates.module.css';
 import moment from 'moment';
+moment.locale("uk-ua");
 
 type props = {
     userId : string;
@@ -33,7 +34,7 @@ const ModalChangeUserDates = ({
             return "0001-01-01T00:00:00";
         }
         else{
-            return moment(date._d).format();
+            return moment(date._d).add(3, 'hours').format();
         }
     }
 
@@ -72,7 +73,7 @@ const ModalChangeUserDates = ({
         <Form.Item 
         className={classes.formField}
        name="datepickerOath">
-        <DatePicker format = "DD-MM-YYYY" 
+        <DatePicker format = "DD.MM.YYYY" 
         disabledDate={(cur) => disabledDate(cur ,dates.dateEntry, (dates.dateEnd==="" ? undefined : dates.dateEnd))}
         defaultValue = { dates.dateOath !== "" ? moment(dates.dateOath, 'YYYY-MM-DD') : undefined}
         className={classes.selectField}
@@ -84,7 +85,7 @@ const ModalChangeUserDates = ({
         <Form.Item 
         className={classes.formField}
        name="datepickerEnd">
-        <DatePicker format = "DD-MM-YYYY" 
+        <DatePicker format = "DD.MM.YYYY" 
         disabledDate={(cur) => disabledDate(cur , (dates.dateOath==="" ? dates.dateEntry : dates.dateOath))}
         defaultValue = { dates.dateEnd !== "" ? moment(dates.dateEnd, 'YYYY-MM-DD') : undefined}
         className={classes.selectField}
