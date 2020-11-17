@@ -113,6 +113,9 @@
     .wrapper {
         width: 99%;
     }
+    .buttonChange{
+        width: 170px !important;
+    }
 }
 @media (max-width: 767px) {
 
@@ -140,11 +143,43 @@
     .wrapper3,
     .wrapperScrollDegree {
         margin: 10px 0;
+    }  
+    .buttonChange{
+        width: 170px !important;
     }
+}
+
+.textList
+{
+    list-style-type: none;
+    margin: 0 auto;
+    padding: 0;
+    
+}
+
+.textListItem
+{
+    font-size : 16px;
+    padding: 6px 0;
 }
 
 .buttonChange {
     margin-top: 10px;
+    margin-bottom: 10px;
+    background: #3C5438;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    border: none;
+    width: 200px;
+    height: 30px;
+    outline: none;
+    text-align: center;
+    cursor: pointer;
+    align-items: center;
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
 .line {
@@ -178,7 +213,7 @@
 }
 .buttons{
     display : flex;
-    justify-content : flex-start;
+    justify-content: center;
 }
 .buttonInside {
     margin-top: 10px;
@@ -224,8 +259,9 @@
 .textFieldsMain,
 .textFieldsOthers
 {
-    text-align : left;
-    margin-left : 50px;
+    /* text-align : left; */
+    margin-left : auto;
+    margin-right : auto;
 }
 
 .textGeneralInfo
@@ -239,6 +275,7 @@
 
 .textFieldsMain{
     font-size : 18px;
+    margin-top: 7px;
 }
 .textFieldsOthers{
     font-size : 16px;
