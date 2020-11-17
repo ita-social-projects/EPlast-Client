@@ -111,7 +111,7 @@ const ColumnsForUserTable: any = [
       if (regionName.length > 0) {
         return (
           <Tag color={"blue"} key={regionName}>
-            {regionName.toUpperCase()}
+            {regionName}
           </Tag>
         );
       }
@@ -130,7 +130,7 @@ const ColumnsForUserTable: any = [
       if (cityName.length > 0) {
         return (
           <Tag color={"lime"} key={cityName}>
-            {cityName.toUpperCase()}
+            {cityName}
           </Tag>
         );
       }
@@ -149,7 +149,7 @@ const ColumnsForUserTable: any = [
       if (clubName.length > 0) {
         return (
           <Tag color={"pink"} key={clubName}>
-            {clubName.toUpperCase()}
+            {clubName}
           </Tag>
         );
       }
@@ -201,7 +201,7 @@ const ColumnsForUserTable: any = [
           return (
             <Tag color={"red"} key={userPlastDegreeName}>
               <Tooltip placement="topLeft" title={userPlastDegreeName}>
-                {userPlastDegreeName.toUpperCase()}
+                {userPlastDegreeName}
               </Tooltip>
             </Tag>
           );
@@ -264,11 +264,11 @@ const ColumnsForUserTable: any = [
     filterMultiple: false,
     onFilter: (value: any, record: any) => record.userRoles.includes(value),
     render: (userRoles: any) => {
-      if (userRoles.length > 17) {
+      if (userRoles.length > 20) {
         return (
           <Tag color={setTagColor(userRoles)} key={userRoles}>
             <Tooltip placement="topLeft" title={userRoles}>
-              {userRoles.slice(0, 17).toUpperCase()}
+              {userRoles.slice(0, 20)}
             </Tooltip>
           </Tag>
         );
@@ -276,7 +276,7 @@ const ColumnsForUserTable: any = [
       return (
         <Tag color={setTagColor(userRoles)} key={userRoles}>
           <Tooltip placement="topLeft" title={userRoles}>
-            {userRoles.toUpperCase()}
+            {userRoles}
           </Tooltip>
         </Tag>
       );
