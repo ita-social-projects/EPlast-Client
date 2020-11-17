@@ -3,6 +3,7 @@ import { Modal, Form,DatePicker, Button } from 'antd';
 import activeMembershipApi,{ UserDates } from '../../../../api/activeMembershipApi';
 import classes from './ModalChangeUserDates.module.css';
 import moment from 'moment';
+moment.locale("uk-ua");
 
 type props = {
     userId : string;

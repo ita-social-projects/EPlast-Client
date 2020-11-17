@@ -239,7 +239,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
               <Upload.Dragger
                 name="file"
                 customRequest={handleUpload}
-                className={formclasses.inputField}
+                className={formclasses.formField}
                 multiple={false}
                 showUploadList={false}
                 accept=".doc,.docx,.png,.xls,xlsx,.png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -298,7 +298,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
-          <Form.Item style={{ textAlign: "right" }}>
+          <Form.Item style={{ textAlign: "right" }} className={formclasses.formField}>
             <Button
               key="back"
               onClick={handleCancel}
