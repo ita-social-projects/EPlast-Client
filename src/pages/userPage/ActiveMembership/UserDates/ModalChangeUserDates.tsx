@@ -34,7 +34,7 @@ const ModalChangeUserDates = ({
             return "0001-01-01T00:00:00";
         }
         else{
-            return moment(date._d).format();
+            return moment(date._d).add(3, 'hours').format();
         }
     }
 
