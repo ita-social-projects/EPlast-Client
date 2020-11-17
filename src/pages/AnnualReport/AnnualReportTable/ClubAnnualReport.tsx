@@ -59,6 +59,7 @@ interface props {
   bordered
   rowKey="id"
   columns={columns}
+  scroll={{ x: 1300 }}
   dataSource={filteredData}
   onRow={(record) => {
     return {

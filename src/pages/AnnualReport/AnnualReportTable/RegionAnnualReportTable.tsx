@@ -59,39 +59,40 @@ export const RegionAnnualReportTable=({columns,filteredData}:props)=>{
 return (  
     <div>
         <Table
-    bordered
-    rowKey="id"
-    columns={columns}
-    dataSource={filteredData}
-    onRow={(regionRecord) => {
-        return {
-          onClick: () => {
-            hideDropdowns();
-          },
-          onContextMenu: (event) => {
-            event.preventDefault();
-            showDropdown();
-            setRegionAnnualReport(regionRecord);
-            setX(event.pageX);
-            setY(event.pageY-200);
-          },
-        };
-      }}
-    onChange={(pagination) => {
-        if (pagination) {
-          window.scrollTo({
-            left: 0,
-            top: 0,
-            behavior: "smooth",
-          });
-        }
-      }}
-      pagination={{
+        bordered
+        rowKey="id"
+        columns={columns}
+        scroll={{ x: 1300 }}
+        dataSource={filteredData}
+        onRow={(regionRecord) => {
+          return {
+            onClick: () => {
+              hideDropdowns();
+            },
+            onContextMenu: (event) => {
+              event.preventDefault();
+              showDropdown();
+              setRegionAnnualReport(regionRecord);
+              setX(event.pageX);
+              setY(event.pageY - 200);
+            },
+          };
+        }}
+        onChange={(pagination) => {
+          if (pagination) {
+            window.scrollTo({
+              left: 0,
+              top: 0,
+              behavior: "smooth",
+            });
+          }
+        }}
+        pagination={{
         showLessItems: true,
         responsive: true,
         showSizeChanger: true,
       }}
-  />
+      />
   <ClickAwayListener onClickAway={hideDropdowns}>
         <ConfirmedRegionDropdown
           showDropdown={showConfirmedRegionDropdown}
