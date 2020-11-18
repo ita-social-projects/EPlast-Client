@@ -28,6 +28,10 @@ export const successfulDeleteAction = (name:string, itemName?:string)=>{
     return itemName ? `${name} ${itemName} успішно видалено` : `${name} успішно видалено`;
 }; 
 
+export const successfulUpdateAction = (name:string, itemName?:string)=>{
+    return itemName ? `${name} ${itemName} успішно оновлено` : `${name} успішно оновлено`;
+}; 
+
 export const failCreateAction = (name:string)=>{
     return `Не вдалося створити ${name}`;
 }; 
@@ -38,6 +42,10 @@ export const failEditAction = (name:string)=>{
 
 export const failDeleteAction = (name:string)=>{
     return `Не вдалося видалити ${name}`;
+}; 
+
+export const failUpdateAction = (name:string)=>{
+    return `Не вдалося оновити ${name}`;
 }; 
 
 export const shouldContain = (items:string)=>{

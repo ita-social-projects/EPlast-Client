@@ -47,7 +47,22 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import { checkPhone } from "../../SignUp/verification";
-
+import{
+  emptyInput,
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  successfulDeleteAction, 
+  successfulCreateAction, 
+  successfulUpdateAction, 
+  maxLength,
+  minLength,
+  failCreateAction,
+  failUpdateAction,
+  incorrectPhone,
+  incorrectEmail
+} from "../../../components/Notifications/Messages"
 
 const CreateCity = () => {
   const { id } = useParams();
@@ -73,12 +88,12 @@ const CreateCity = () => {
       extension.indexOf("jpg") !== -1 ||
       extension.indexOf("png") !== -1;
     if (!isCorrectExtension) {
-      notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
+      notificationLogic("error", possibleFileExtensions("png, jpg, jpeg"));
     }
 
     const isSmaller2mb = size <= 3145728;
     if (!isSmaller2mb) {
-      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+      notificationLogic("error", fileIsTooBig(3));
     }
 
     return isCorrectExtension && isSmaller2mb;
@@ -90,16 +105,16 @@ const CreateCity = () => {
         getBase64(info.file, (base64: string) => {
           setCity({ ...city, logo: base64 });
         });
-        notificationLogic("success", "Фото завантажено");
+        notificationLogic("success", fileIsUpload);
       }
     } else {
-      notificationLogic("error", "Проблема з завантаженням фото");
+      notificationLogic("error", fileIsNotUpload);
     }
   };
 
   const removeLogo = (event: any) => {
     setCity({ ...city, logo: null });
-    notificationLogic("success", "Фото видалено");
+    notificationLogic("success", successfulDeleteAction("Фото"));
     event.stopPropagation();
   };
 
@@ -174,11 +189,11 @@ const CreateCity = () => {
 
     return responsePromise
       .then(() => {
-        notificationLogic("success", "Станицю успішно створено");
+        notificationLogic("success", successfulCreateAction("Станицю"));
         history.push(`${city.id}`);
       })
       .catch(() => {
-        notificationLogic("error", "Не вдалося створити станицю");
+        notificationLogic("error", failCreateAction("станицю"));
       });
   };
 
@@ -187,11 +202,11 @@ const CreateCity = () => {
 
     return updateCity(city.id, JSON.stringify(newCity))
       .then(() => {
-        notificationLogic("success", "Станицю успішно оновлено");
+        notificationLogic("success", successfulUpdateAction("Станицю"));
         history.goBack();
       })
       .catch(() => {
-        notificationLogic("error", "Не вдалося оновити станицю");
+        notificationLogic("error", failUpdateAction("станицю"));
       });
   };
 
@@ -234,10 +249,10 @@ const CreateCity = () => {
                 labelCol={{ span: 24 }}
                 initialValue={city.name}
                 rules={[
-                  { required: true, message: "Це поле є обов'язковим" },
+                  { required: true, message: emptyInput },
                   {
                     max: 50,
-                    message: "Максимальна довжина - 50 символів!",
+                    message: maxLength(50),
                   },
                 ]}
               >
@@ -253,7 +268,7 @@ const CreateCity = () => {
                 rules={[
                   {
                     max: 1000,
-                    message: "Максимальна довжина - 1000 символів!",
+                    message: maxLength(1000),
                   },
                 ]}
               >
@@ -269,7 +284,7 @@ const CreateCity = () => {
                 rules={[
                   {
                     max: 256,
-                    message: "Максимальна довжина - 256 символів!",
+                    message: maxLength(256),
                   },
                 ]}
               >
@@ -285,7 +300,7 @@ const CreateCity = () => {
                 rules={[
                   {
                     pattern: /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/,
-                    message: "Невірно вказаний номер",
+                    message: incorrectPhone,
                   },
                 ]}
               >
@@ -307,11 +322,11 @@ const CreateCity = () => {
                 rules={[
                   {
                     pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-                    message: "Неправильний формат електронної пошти!",
+                    message: incorrectEmail,
                   },
                   {
                     max: 75,
-                    message: "Максимальна довжина - 75 символів!",
+                    message: maxLength(75),
                   },
                 ]}
               >
@@ -324,7 +339,7 @@ const CreateCity = () => {
                 label="Округ"
                 labelCol={{ span: 24 }}
                 initialValue={city.region}
-                rules={[{ required: true, message: "Це поле є обов'язковим" }]}
+                rules={[{ required: true, message: emptyInput }]}
               >
                 <Select
                   showSearch
@@ -346,10 +361,10 @@ const CreateCity = () => {
                 labelCol={{ span: 24 }}
                 initialValue={city.street}
                 rules={[
-                  { required: true, message: "Це поле є обов'язковим" },
+                  { required: true, message: emptyInput },
                   {
                     max: 50,
-                    message: "Максимальна довжина - 50 символів!",
+                    message: maxLength(50),
                   },
                 ]}
               >
@@ -363,10 +378,10 @@ const CreateCity = () => {
                 labelCol={{ span: 24 }}
                 initialValue={city.houseNumber}
                 rules={[
-                  { required: true, message: "Це поле є обов'язковим" },
+                  { required: true, message: emptyInput },
                   {
                     max: 5,
-                    message: "Максимальна довжина - 5 символів!",
+                    message: maxLength(5),
                   },
                 ]}
               >
@@ -382,7 +397,7 @@ const CreateCity = () => {
                 rules={[
                   {
                     max: 5,
-                    message: "Максимальна довжина - 5 символів!",
+                    message: maxLength(5),
                   },
                 ]}
               >
@@ -398,11 +413,11 @@ const CreateCity = () => {
                 rules={[
                   {
                     max: 5,
-                    message: "Максимальна довжина - 5 символів!",
+                    message: maxLength(5),
                   },
                   {
                     min: 5,
-                    message: "Мінімальна довжина - 5 символів!",
+                    message: minLength(5),
                   },
                   {
                     validator: (_, value) =>

@@ -62,9 +62,9 @@ const convertToTableAdmin = (admin: CityAdmin) => {
         name: `${admin.user.firstName} ${admin.user.lastName}`,
         status: "Адміністратор",
         type: admin.adminType.adminTypeName,
-        startDate: moment(admin.startDate).format("DD-MM-YYYY"),
+        startDate: moment(admin.startDate).format("DD.MM.YYYY"),
         endDate: admin.endDate
-          ? moment(admin.endDate).format("DD-MM-YYYY")
+          ? moment(admin.endDate).format("DD.MM.YYYY")
           : "Не визначено",
       }
     : null;
