@@ -273,10 +273,10 @@ type FormAddKadraProps = {
         <Col md={24} xs={24}>
           <Form.Item>
             <div className={classes.cardButton}>
-              <Button key="back" onClick={handleCancel}>
+              <Button key="back" onClick={handleCancel} className={classes.buttons}>
                 Відмінити
               </Button>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" className={classes.buttons}>
                 Опублікувати
               </Button>
             </div>

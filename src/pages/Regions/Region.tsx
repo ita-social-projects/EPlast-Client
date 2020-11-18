@@ -302,7 +302,7 @@ const Region = () => {
                     {head.endDate ? (
                       <Paragraph>
                         <b>Час правління:</b>{" "}
-                        {moment(head.startDate).format("DD.MM.YYYY")}{" "}
+                        {moment(head.startDate).format("DD.MM.YYYY")}{" - "}
                         {moment(head.endDate).format("DD.MM.YYYY")}
                       </Paragraph>
                     ) : (

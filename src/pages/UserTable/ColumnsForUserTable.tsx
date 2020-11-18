@@ -31,14 +31,16 @@ const setTagColor = (userRoles: string) => {
 
 const ColumnsForUserTable: any = [
   {
-    title: "ID",
+    title: "№",
     dataIndex: ["user", "userProfileId"],
-    width: 75,
     render: (id: number) => <Text>{id}</Text>,
-    sorter: (a: any, b: any) =>
-      a.user.firstName.localeCompare(b.user.firstName),
+    fixed: true,
+    sorter: {
+      compare: (a: any, b: any) => a.user.userProfileId - b.user.userProfileId,
+    },
     sortDirections: ["descend", "ascend"],
     defaultSortOrder: "ascend",
+    width: 75,
   },
   {
     title: "Ім`я",
@@ -51,7 +53,6 @@ const ColumnsForUserTable: any = [
     sorter: (a: any, b: any) =>
       a.user.firstName.localeCompare(b.user.firstName),
     sortDirections: ["descend", "ascend"],
-    defaultSortOrder: "ascend",
   },
   {
     title: "Прізвище",
@@ -102,14 +103,6 @@ const ColumnsForUserTable: any = [
         return <h4>Інша</h4>;
       }
     },
-    sorter: (a: any, b: any) => {
-      if (a.user.gender !== null && b.user.gender != null) {
-        a = a.user.gender.name || " ";
-        b = b.user.gender.name || " ";
-        return a.localeCompare(b);
-      }
-    },
-    sortDirections: ["descend", "ascend"],
   },
   {
     title: "Округ",
@@ -118,7 +111,7 @@ const ColumnsForUserTable: any = [
       if (regionName.length > 0) {
         return (
           <Tag color={"blue"} key={regionName}>
-            {regionName.toUpperCase()}
+            {regionName}
           </Tag>
         );
       }
@@ -137,7 +130,7 @@ const ColumnsForUserTable: any = [
       if (cityName.length > 0) {
         return (
           <Tag color={"lime"} key={cityName}>
-            {cityName.toUpperCase()}
+            {cityName}
           </Tag>
         );
       }
@@ -156,7 +149,7 @@ const ColumnsForUserTable: any = [
       if (clubName.length > 0) {
         return (
           <Tag color={"pink"} key={clubName}>
-            {clubName.toUpperCase()}
+            {clubName}
           </Tag>
         );
       }
@@ -208,7 +201,7 @@ const ColumnsForUserTable: any = [
           return (
             <Tag color={"red"} key={userPlastDegreeName}>
               <Tooltip placement="topLeft" title={userPlastDegreeName}>
-                {userPlastDegreeName.toUpperCase()}
+                {userPlastDegreeName}
               </Tooltip>
             </Tag>
           );
@@ -225,7 +218,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Права доступу",
     dataIndex: "userRoles",
-    ellipsis: true,
+    ellipsis: false,
     filters: [
       {
         text: "Пластун",
@@ -271,11 +264,11 @@ const ColumnsForUserTable: any = [
     filterMultiple: false,
     onFilter: (value: any, record: any) => record.userRoles.includes(value),
     render: (userRoles: any) => {
-      if (userRoles.length > 19) {
+      if (userRoles.length > 20) {
         return (
           <Tag color={setTagColor(userRoles)} key={userRoles}>
             <Tooltip placement="topLeft" title={userRoles}>
-              {userRoles.slice(0, 19).toUpperCase()}
+              {userRoles.slice(0, 20)}
             </Tooltip>
           </Tag>
         );
@@ -283,7 +276,7 @@ const ColumnsForUserTable: any = [
       return (
         <Tag color={setTagColor(userRoles)} key={userRoles}>
           <Tooltip placement="topLeft" title={userRoles}>
-            {userRoles.toUpperCase()}
+            {userRoles}
           </Tooltip>
         </Tag>
       );

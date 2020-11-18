@@ -52,16 +52,6 @@ interface props {
           break;
       }
     };
-
-    const itemRender = (current: any, type: string, originalElement: any) => {
-      if (type === "prev") {
-        return <Button type="primary">Попередня</Button>;
-      }
-      if (type === "next") {
-        return <Button type="primary">Наступна</Button>;
-      }
-      return originalElement;
-    };
     
     return(
         <div>
@@ -69,6 +59,7 @@ interface props {
   bordered
   rowKey="id"
   columns={columns}
+  scroll={{ x: 1300 }}
   dataSource={filteredData}
   onRow={(record) => {
     return {
@@ -93,10 +84,9 @@ interface props {
     }
   }}
   pagination={{
-    itemRender,
-    position: ["bottomRight"],
-    showTotal: (total, range) =>
-      `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
+    showLessItems: true,
+    responsive: true,
+    showSizeChanger: true,
   }}
 />
   </div>

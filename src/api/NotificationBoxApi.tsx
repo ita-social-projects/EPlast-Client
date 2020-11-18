@@ -64,8 +64,8 @@ const postUserNotifications = async (userNotifications : Array<UserNotificationP
      return response.data;
  };
 
-const SetCheckedAllUserNotification = async (notificationIds : Array<number>) =>{
-    const response = await Api.post(`NotificationBox/setCheckNotifications/setChecked`, notificationIds);
+const SetCheckedAllUserNotification = async (userId : string) =>{
+    const response = await Api.post(`NotificationBox/setCheckNotifications/setChecked/${userId}`);
        
     return response.data;
 };

@@ -258,7 +258,7 @@ const City = () => {
                     {city.head.endDate ? (
                       <Paragraph>
                         <b>Час правління:</b>{" "}
-                        {moment(city.head.startDate).format("DD.MM.YYYY")}{" "}
+                        {moment(city.head.startDate).format("DD.MM.YYYY")}{" - "}
                         {moment(city.head.endDate).format("DD.MM.YYYY")}
                       </Paragraph>
                     ) : (

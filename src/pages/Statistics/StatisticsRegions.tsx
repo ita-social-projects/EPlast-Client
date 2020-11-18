@@ -10,22 +10,22 @@ import {
   Col
 } from "antd";
 import StatisticsApi from "../../api/StatisticsApi";
-import City from "./Interfaces/City";
 import StatisticsItemIndicator from "./Interfaces/StatisticsItemIndicator";
-import AnnualReportApi from "../../api/AnnualReportApi";
-import CityStatistics from "./Interfaces/CityStatistics";
 import DataFromResponse from "./Interfaces/DataFromResponse";
 import { SortOrder } from "antd/lib/table/interface";
+import RegionsApi from "../../api/regionsApi";
+import Region from "./Interfaces/Region";
+import RegionStatistics from "./Interfaces/RegionStatistics";
 
 
 const StatisticsCities = () => {
 
   const [years, setYears] = useState<any>();
   const [indicators, setIndicators] = useState<any>();
-  const [cities, setCities] = useState<any>();
   const [result, setResult] = useState<DataFromResponse[]>(Array());
   const [showTable, setShowTable] = useState(false);
   const [columns, setColumns] = useState(Array());
+  const [regions, setRegions] = useState<any>();
 
   const constColumns = [
     {
@@ -37,14 +37,14 @@ const StatisticsCities = () => {
       width: 55
     },
     {
-      title: "Станиця",
-      dataIndex: "cityName",
-      key: "cityName",
+      title: "Округ",
+      dataIndex: "regionName",
+      key: "regionName",
       fixed: "left",
       ellipsis: {
         showTitle: true,
       },
-      sorter: (a: any, b: any) => a.cityName.localeCompare(b.cityName),
+      sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
       sortDirections: ["ascend", "descend"] as SortOrder[],
       width: 100
     },
@@ -55,18 +55,7 @@ const StatisticsCities = () => {
       fixed: "left",
       sorter: { compare: (a: any, b: any) => a.year - b.year },
       width: 100
-    },
-    {
-      title: "Округ",
-      dataIndex: "regionName",
-      key: "regionName",
-      ellipsis: {
-        showTitle: true,
-      },
-      sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
-      sortDirections: ["ascend", "descend"] as SortOrder[],
-      width: 200
-    }
+    }    
   ];
 
   const indicatorsArray = [
@@ -87,18 +76,18 @@ const StatisticsCities = () => {
   ];
 
   useEffect(() => {
-    fetchCities();
+    fetchRegions();
     fechYears();
     fechIndicatorsNames();
   }, []);
 
-  const fetchCities = async () => {
+  const fetchRegions = async () => {
     try {
-      let response = await AnnualReportApi.getCities();
-      let cities = response.data.cities as City[];
-      setCities(cities.map(item => {
+      let response = await RegionsApi.getRegions();
+      let regions = response.data as Region[];
+      setRegions(regions.map(item => {
         return {
-          label: item.name,
+          label: item.regionName,
           value: item.id
         }
       }));
@@ -141,18 +130,17 @@ const StatisticsCities = () => {
   const onSubmit = async (info: any) => {
     let counter = 1;
 
-    let response = await StatisticsApi.getCitiesStatistics({
-      CityIds: info.citiesId,
+    let response = await StatisticsApi.getRegionsStatistics({
+      RegionIds: info.regionIds,
       Years: info.years,
       Indicators: info.indicators
     });
 
-    let data = response.data.map((stanytsya: CityStatistics) => {
-      return stanytsya.yearStatistics.map(yearStatistic => {
+    let data = response.data.map((region: RegionStatistics) => {
+      return region.yearStatistics.map(yearStatistic => {
         return {
           id: counter++,
-          cityName: stanytsya.city.name,
-          regionName: stanytsya.city.region.regionName,
+          regionName: region.region.regionName,
           year: yearStatistic.year,
           ...yearStatistic.statisticsItems.map(it => it.value)
         }
@@ -191,19 +179,19 @@ const StatisticsCities = () => {
 
   return (
     <Layout.Content>
-      <h1>Статистика станиць</h1>
+      <h1>Статистика округів</h1>
       <Form onFinish={onSubmit}>
         <Row>
           <Col
             span={8} >
             <Form.Item
-              name="citiesId"
-              rules={[{ required: true, message: "Оберіть хоча б одну станицю", type: "array" }]} >
+              name="regionIds"
+              rules={[{ required: true, message: "Оберіть хоча б один округ", type: "array" }]} >
               <Select
                 showSearch
                 mode="multiple"
-                options={cities}
-                placeholder="Обрати станицю"
+                options={regions}
+                placeholder="Обрати округ"
               />
             </Form.Item>
           </Col>

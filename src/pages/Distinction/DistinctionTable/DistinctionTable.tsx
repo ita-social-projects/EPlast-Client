@@ -260,6 +260,7 @@ const DistinctionTable = () => {
               pagination={{
                 showLessItems: true,
                 responsive: true,
+                showSizeChanger: true,
               }}
               bordered
               rowKey="id"

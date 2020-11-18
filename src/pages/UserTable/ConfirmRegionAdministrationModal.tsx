@@ -44,7 +44,7 @@ const ConfirmRegionAdminModal = ({
     };
     await AddAdmin(newAdmin);
     notificationLogic("success", "Користувач успішно доданий в провід");
-    onChange(userId, values.AdminType);
+    onChange(userId, adminType);
     setVisibleModal(false);
   };
 
@@ -62,15 +62,13 @@ const ConfirmRegionAdminModal = ({
       onCancel={() => setVisibleModal(false)}
       onOk={handleSubmit}
     >
-      <div>
-        <Form>
+    
           <div style={{ margin: 10 }}>
             {oldAdminFirstName} {oldAdminLastName} є {adminType}, термін дії
             посади закінчується{" "}
             {endDayOld === "Invalid date" ? "ще не скоро" : endDayOld}.
             Призначити даного користувача на цю посаду?
           </div>
-          <Form.Item className="cancelConfirmButtons">
             <Row justify="end">
               <Col xs={11} sm={5}>
                 <Button key="back" onClick={handleCancel}>
@@ -87,9 +85,6 @@ const ConfirmRegionAdminModal = ({
                 </Button>
               </Col>
             </Row>
-          </Form.Item>
-        </Form>
-      </div>
     </Modal>
   );
 };
