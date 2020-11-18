@@ -58,7 +58,7 @@ const App: FC = () => (
       <HeaderContainer />
       <div className="mainContent">
         <Switch>
-          <Route exact path="/" component={Home} />
+          <RouteWithLayout exact path="/" component={Home} layout={PrivateLayout} />
           <Route path="/contacts" component={Contacts} />
           <Route path="/signin" component={SignIn} />
           <Route path="/signup" component={SignUp} />
