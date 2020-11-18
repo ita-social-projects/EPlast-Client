@@ -137,10 +137,31 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
     const onChange = async (e: any) => {
         await eventsApi.getCategories(e.target.value).then(async response => {
             setCategories([...response.data]);
-            form.setFieldsValue({
-                EventCategoryID: '',
-            });
+            let arrWithSelectedItem = response.data.filter((c: { eventCategoryId: any; })=>c.eventCategoryId==form.getFieldValue("EventCategoryID"));
+            let arrWithDefaultItem = response.data.filter((c: { eventCategoryId: any; })=>c.eventCategoryId==editedEvent?.event.eventCategoryID);
+            if(arrWithSelectedItem.length==0)
+            {
+                if(arrWithDefaultItem.length!=0)
+                {
+                    form.setFieldsValue({
+                        EventCategoryID: editedEvent?.event.eventCategoryID,
+                    });
+                }
+                else
+                {
+                    form.setFieldsValue({
+                        EventCategoryID: '',
+                    });
+                }
+            }
+            else
+            {
+                form.setFieldsValue({
+                    EventCategoryID: form.getFieldValue("EventCategoryID"),
+                });
+            }
         })
+        
     }
 
     const handleSelectChange = (dropdownIndex: number, selectedId: string) => {
@@ -159,6 +180,9 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
         });
         setAdministators([...updatedUsers]);
     }
+    const handleCancel = () => {
+        setShowEventEditDrawer(false);
+      };
 
     return (
         <Form name="basic" form={form} onFinish={handleFinish} initialValues={editedEvent}>
@@ -269,9 +293,12 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
                 </Form.Item>
             </div>
             < Form.Item >
-                <Button type="primary" htmlType="submit" className={classes.button} loading={doneLoading} >
+                <Button type="primary" htmlType="submit" className={classes.button} style={{ marginRight: 45 }} loading={doneLoading} >
                     Зберегти подію
                </Button>
+               <Button key="back" onClick={handleCancel} className={classes.button} loading={doneLoading} >
+                    Відмінити
+                </Button>
             </Form.Item>
         </Form>
     );

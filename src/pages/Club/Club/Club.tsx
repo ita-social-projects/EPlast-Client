@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip } from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
@@ -17,12 +17,14 @@ import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
 import ClubDetailDrawer from "../ClubDetailDrawer/ClubDetailDrawer";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 
 
 const Club = () => {
   const history = useHistory();
   const {id} = useParams();
-
+  const { url } = useRouteMatch();
+  
   const [loading, setLoading] = useState(false);
   const [club, setClub] = useState<ClubProfile>(new ClubProfile());
   const [clubLogo64, setClubLogo64] = useState<string>("");
@@ -184,6 +186,14 @@ const Club = () => {
       <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="clubCard">
+          <div>
+              <Crumb
+                current={club.name}
+                first="/"
+                second={url.replace(`/${id}`, "")}
+                second_name="Курені"
+              />
+            </div>
             <Title level={3}>Курінь {club.name}</Title>
             <Row className="clubPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>

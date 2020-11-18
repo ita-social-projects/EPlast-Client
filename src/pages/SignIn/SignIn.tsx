@@ -11,7 +11,7 @@ import AuthStore from '../../stores/AuthStore';
 import GoogleLoginWrapper from '../SignIn/GoogleLoginWrapper';
 import FacebookLoginWrapper from '../SignIn/FacebookLoginWrapper';
 import FacebookData from '../SignIn/FacebookDataInterface';
-
+import '../SignIn/SignIn.less';
 let authService = new AuthorizeApi();
 let user: any;
 
