@@ -93,8 +93,6 @@ const CreateCity = () => {
     event.stopPropagation();
   };
 
-  function onSearch(val: any) {}
-
   const getCity = async () => {
     try {
       setLoading(true);
@@ -297,8 +295,8 @@ const CreateCity = () => {
                     message: "Неправильний формат електронної пошти!",
                   },
                   {
-                    max: 75,
-                    message: "Максимальна довжина - 75 символів!",
+                    max: 50,
+                    message: "Максимальна довжина - 50 символів!",
                   },
                 ]}
               >
@@ -316,7 +314,6 @@ const CreateCity = () => {
                 <Select
                   showSearch
                   optionFilterProp="children"
-                  onSearch={onSearch}
                 >
                   {regions.map((item: RegionProfile) => (
                     <Select.Option key={item.id} value={item.regionName}>
@@ -384,12 +381,8 @@ const CreateCity = () => {
                 initialValue={city.postIndex}
                 rules={[
                   {
-                    max: 5,
-                    message: "Максимальна довжина - 5 символів!",
-                  },
-                  {
-                    min: 5,
-                    message: "Мінімальна довжина - 5 символів!",
+                    len: 5,
+                    message: "Довжина поштового індексу - 5 символів!",
                   },
                   {
                     validator: (_, value) =>

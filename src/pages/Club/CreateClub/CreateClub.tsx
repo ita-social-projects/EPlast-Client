@@ -250,14 +250,19 @@ const CreateClub = () => {
                 label="Номер телефону"
                 labelCol={{ span: 24 }}
                 initialValue={club.phoneNumber}
-                rules={[{ min: 18, message: "Неправильний телефон" }]}
+                rules={[
+                  {
+                    pattern: /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/,
+                    message: "Невірно вказаний номер",
+                  },
+                ]}
               >
                 <ReactInputMask
                 maskChar={null}
                   mask="+380(99)-999-99-99"
                   value={club.phoneNumber}
                 >
-                  {(inputProps: any) => <Input {...inputProps} type="tel" />}
+                  {(inputProps: any) => <Input {...inputProps}/>}
                 </ReactInputMask>
               </Form.Item>
             </Col>
