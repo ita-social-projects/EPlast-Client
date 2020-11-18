@@ -142,7 +142,8 @@ export const KVTable = ({ current, searchData }: props) => {
         pagination={
           {
             showLessItems: true,
-            responsive:true
+            responsive:true,
+            showSizeChanger: true,
           }
         }
         bordered

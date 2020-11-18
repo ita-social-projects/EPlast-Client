@@ -27,15 +27,7 @@ export const RegionAnnualReportTable=({columns,filteredData}:props)=>{
             hideDropdowns();
             setShowConfirmedRegionDropdown(true);
         }
-    const itemRender = (current: any, type: string, originalElement: any) => {
-            if (type === "prev") {
-              return <Button type="primary">Попередня</Button>;
-            }
-            if (type === "next") {
-              return <Button type="primary">Наступна</Button>;
-            }
-            return originalElement;
-          };
+        
     const handleView = async (id: number, year:number) => {
             hideDropdowns();
             try {
@@ -96,13 +88,10 @@ return (
           }
         }}
         pagination={{
-          itemRender,
-          responsive: true,
-          showLessItems: true,
-          position: ["bottomRight"],
-          showTotal: (total, range) =>
-            `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
-        }}
+        showLessItems: true,
+        responsive: true,
+        showSizeChanger: true,
+      }}
       />
   <ClickAwayListener onClickAway={hideDropdowns}>
         <ConfirmedRegionDropdown
