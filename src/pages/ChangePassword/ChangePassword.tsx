@@ -3,6 +3,7 @@ import { Form, Input, Button } from 'antd';
 import styles from '../ChangePassword/ChangePassword.module.css';
 import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
+import {minLength, emptyInput} from "../../components/Notifications/Messages"
 let authService = new AuthorizeApi();
 
 export default function () {
@@ -11,16 +12,16 @@ export default function () {
 
     const validationSchema = {
         CurrentPassword: [
-            { required: true, message: "Поле пароль є обов'язковим" },
-            { min: 6, message: 'Мінімальна допустима довжина - 6 символів' }
+            { required: true, message: emptyInput },
+            { min: 8, message: minLength(8) }
         ],
         NewPassword: [
-            { required: true, message: "Поле пароль є обов'язковим" },
-            { min: 6, message: 'Мінімальна допустима довжина - 6 символів' },
+            { required: true, message: emptyInput },
+            { min: 8, message: minLength(8) },
         ],
         ConfirmPassword: [
-            { required: true, message: "Дане поле є обов'язковим" },
-            { min: 6, message: 'Мінімальна допустима довжина - 6 символів' },
+            { required: true, message: emptyInput },
+            { min: 8, message: minLength(8) },
         ]
     };
 
@@ -59,7 +60,7 @@ export default function () {
                     rules={[
                         {
                             required: true,
-                            message: 'Підтвердіть пароль',
+                            message: emptyInput,
                         },
                         ({ getFieldValue }) => ({
                             validator(rule, value) {

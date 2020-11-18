@@ -18,7 +18,7 @@ export const updateNotification = () => {
 export const failUpdatingNotification = () => {
     notification.error(
         {
-            message: "На жаль не вдалося обновити галерею!",
+            message: "На жаль не вдалося оновити галерею!",
             placement: "topRight",
             duration: 7
         }

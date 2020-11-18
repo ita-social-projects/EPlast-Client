@@ -1,4 +1,4 @@
-import{incorrectEmail, emptyInput, incorrectPhone, minLength} from "../../components/Notifications/Messages"
+import{incorrectEmail, emptyInput, incorrectPhone, minLength, shouldContain} from "../../components/Notifications/Messages"
 export const checkEmail = (role: object, value: string, callback:any) => {
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (value.length === 0) {
@@ -13,7 +13,7 @@ export const checkEmail = (role: object, value: string, callback:any) => {
   export const checkNameSurName = (role: object, value: string, callback:any) => {
     const reg = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,25}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,25})*$/;
       if (value.length !== 0 && reg.test(value) === false) {
-        return callback('Дане поле повинне містити тільки літери та бути коротшим за 25 символів');
+        return callback(shouldContain('тільки літери та бути коротшим за 25 символів'));
       }
       return callback();
   };
@@ -39,7 +39,7 @@ export const checkEmail = (role: object, value: string, callback:any) => {
       }
       if (reg.test(value) === false) 
       {
-        return callback('Пароль повинен містити літери, цифри та знаки');
+        return callback(shouldContain('літери, цифри та знаки'));
       }
     }
       return callback();

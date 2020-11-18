@@ -4,6 +4,7 @@ import {getClubs} from '../../../../api/clubsApi';
 import Clubs from '../../Interfaces/ClubAnnualReport'
 import { useHistory } from 'react-router-dom';
 import './ClubSelectModal.less'
+import {emptyInput} from "../../../../components/Notifications/Messages"
 
 interface Props {
     visibleModal: boolean,
@@ -17,7 +18,7 @@ const ClubSelectModal = (props: Props) => {
 
     const validationSchema = {
         club: [
-            { required: true, message: "Оберіть курінь" }
+            { required: true, message: emptyInput }
         ],
     }
 

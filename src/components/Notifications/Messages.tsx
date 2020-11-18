@@ -7,10 +7,14 @@ export const emptyInput = 'Поле не може бути пустим';
 export const incorrectPhone = 'Дане поле не є номером телефону'; 
 
 export const minLength = (len:number)=>{
-    return `Мінімальна допустима довжина - ${len} символів`
+    return `Мінімальна довжина - ${len} символів`
 }; 
 
-export const tryAgain = 'Спробуйте ще раз'; 
+export const maxLength = (len:number)=>{
+    return `Максимальна довжина - ${len} символів`
+}; 
+
+export const tryAgain = 'Щось пішло не так. Спробуйте ще раз.'; 
 
 export const successfulCreateAction = (name:string, itemName?:string)=>{
     return itemName ? `${name} ${itemName} успішно створено` : `${name} успішно створено`;
@@ -21,3 +25,17 @@ export const successfulEditAction = (name:string, itemName?:string)=>{
 export const successfulDeleteAction = (name:string, itemName?:string)=>{
     return itemName ? `${name} ${itemName} успішно видалено` : `${name} успішно видалено`;
 }; 
+
+export const failCreateAction = (name:string)=>{
+    return `Не вдалося створити ${name}`;
+}; 
+export const failEditAction = (name:string)=>{
+    return `Не вдалося змінити ${name}`;
+}; 
+export const failDeleteAction = (name:string)=>{
+    return `Не вдалося видалити ${name}`;
+}; 
+
+export const shouldContain = (items:string)=>{
+    return `Поле повинне містити ${items}`;
+};

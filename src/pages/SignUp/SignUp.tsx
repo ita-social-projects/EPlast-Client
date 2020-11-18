@@ -75,7 +75,7 @@ export default function () {
           rules={[
             {
               required: true,
-              message: 'Підтвердіть пароль',
+              message: emptyInput,
             },
             ({ getFieldValue }) => ({
               validator(rule, value) {
