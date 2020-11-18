@@ -58,6 +58,7 @@ const Region = () => {
   const [loading, setLoading] = useState(false);
 
   const [photoStatus, setPhotoStatus] = useState(true);
+  const [canEdit, setCanEdit] = useState(false);
 
   const [document, setDocument] = useState<any>({
     ID: "",
@@ -207,6 +208,7 @@ const Region = () => {
       setPhotos([...response.data.cities], [...response1.data]);
 
       setRegion(response.data);
+      setCanEdit(response.data.canEdit);
 
       if (response.data.logo == null) {
         setPhotoStatus(false);
@@ -363,7 +365,9 @@ const Region = () => {
                 </Button>
               </Col>
 
-              <Col>
+              { canCreate || canEdit ? (
+                <>
+              <Col style={{display: canCreate || canEdit ? "block" : "none"}}>
                 <Button
                   type="primary"
                   className="cityInfoButton"
@@ -372,8 +376,7 @@ const Region = () => {
                   Річні звіти
                 </Button>
               </Col>
-
-              <Col xs={24} sm={4}>
+              <Col xs={24} sm={4} style={{display: canCreate || canEdit ? "block" : "none"}}>
                 <Row
                   className="cityIcons"
                   justify={canCreate ? "center" : "start"}
@@ -399,6 +402,10 @@ const Region = () => {
                   </Col>
                 </Row>
               </Col>
+              </>
+              ) : null }
+
+
             </Row>
           </Card>
         </Col>

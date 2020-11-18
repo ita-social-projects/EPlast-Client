@@ -32,8 +32,9 @@
       flex-direction: column;
       
     }
-    .searchContainer>input{
-      max-width: 100%;
+    .searchContainer>*{
+      width: 100%;
+      margin-bottom: 5px;
       margin-left: auto; 
     }
     .searchContainer>button{
@@ -42,6 +43,7 @@
       margin-left: auto; 
 
     }
+
   }
  
 .link{

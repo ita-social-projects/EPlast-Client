@@ -10,8 +10,13 @@
   align-items: baseline;
   margin-bottom: 12px;
   width: 400px;
-  margin-left: auto;
+  margin-left: auto; 
 }
+.searchContainer>input{
+  max-width: 300px;
+  margin-left: auto; 
+}
+
 .cardButton{
   inline-size: -webkit-fill-available;
   margin-top: 7px;
@@ -29,8 +34,9 @@
     flex-direction: column;
     
   }
-  .searchContainer>input{
-    max-width: 100%;
+  .searchContainer>*{
+    width: 100%;
+    margin-bottom: 5px;
     margin-left: auto; 
   }
   .searchContainer>button{
@@ -39,6 +45,7 @@
     margin-left: auto; 
 
   }
+
 }
 .menu {
   box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
