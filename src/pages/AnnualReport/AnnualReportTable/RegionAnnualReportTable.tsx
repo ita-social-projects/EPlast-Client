@@ -67,40 +67,43 @@ export const RegionAnnualReportTable=({columns,filteredData}:props)=>{
 return (  
     <div>
         <Table
-    bordered
-    rowKey="id"
-    columns={columns}
-    dataSource={filteredData}
-    onRow={(regionRecord) => {
-        return {
-          onClick: () => {
-            hideDropdowns();
-          },
-          onContextMenu: (event) => {
-            event.preventDefault();
-            showDropdown();
-            setRegionAnnualReport(regionRecord);
-            setX(event.pageX);
-            setY(event.pageY-200);
-          },
-        };
-      }}
-    onChange={(pagination) => {
-        if (pagination) {
-          window.scrollTo({
-            left: 0,
-            top: 0,
-            behavior: "smooth",
-          });
-        }
-      }}
-    pagination={{
-        itemRender,
-        position: ["bottomRight"],
-        showTotal: (total, range) =>
-          `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
-      }}
-  />
+        bordered
+        rowKey="id"
+        columns={columns}
+        scroll={{ x: 1300 }}
+        dataSource={filteredData}
+        onRow={(regionRecord) => {
+          return {
+            onClick: () => {
+              hideDropdowns();
+            },
+            onContextMenu: (event) => {
+              event.preventDefault();
+              showDropdown();
+              setRegionAnnualReport(regionRecord);
+              setX(event.pageX);
+              setY(event.pageY - 200);
+            },
+          };
+        }}
+        onChange={(pagination) => {
+          if (pagination) {
+            window.scrollTo({
+              left: 0,
+              top: 0,
+              behavior: "smooth",
+            });
+          }
+        }}
+        pagination={{
+          itemRender,
+          responsive: true,
+          showLessItems: true,
+          position: ["bottomRight"],
+          showTotal: (total, range) =>
+            `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
+        }}
+      />
   <ClickAwayListener onClickAway={hideDropdowns}>
         <ConfirmedRegionDropdown
           showDropdown={showConfirmedRegionDropdown}

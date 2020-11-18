@@ -23,7 +23,7 @@ interface props {
     columns: any;
     filteredData: any;
   }
-
+  
   export const CityAnnualReportTable =({columns, filteredData}:props)=>{
   const history = useHistory();
     const [annualReport, setAnnualReport] = useState<AnnualReport>(Object);
@@ -188,7 +188,8 @@ console.log(annualReport)
               <Table
         bordered
         rowKey="id"
-        columns={columns}
+        columns={columns} 
+        scroll={{ x: 1300 }}
         dataSource={filteredData}
         onRow={(record) => {
           return {
@@ -215,6 +216,8 @@ console.log(annualReport)
         }}
         pagination={{
           itemRender,
+          responsive: true,
+          showLessItems: true,
           position: ["bottomRight"],
           showTotal: (total, range) =>
             `Записи з ${range[0]} по ${range[1]} із ${total} записів`,
