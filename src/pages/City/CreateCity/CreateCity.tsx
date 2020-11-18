@@ -40,6 +40,7 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import { checkPhone } from "../../SignUp/verification";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 
 const CreateCity = () => {
@@ -218,13 +219,7 @@ const CreateCity = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={city.name}
-                rules={[
-                  { required: true, message: "Це поле є обов'язковим" },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.Name}
               >
                 <Input value={city.name} maxLength={51} />
               </Form.Item>
@@ -235,12 +230,7 @@ const CreateCity = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={city.description}
-                rules={[
-                  {
-                    max: 1000,
-                    message: "Максимальна довжина - 1000 символів!",
-                  },
-                ]}
+                rules={[descriptionValidation.Description]}
               >
                 <Input value={city.description} maxLength={1001} />
               </Form.Item>
@@ -251,12 +241,7 @@ const CreateCity = () => {
                 label="Посилання"
                 labelCol={{ span: 24 }}
                 initialValue={city.cityURL}
-                rules={[
-                  {
-                    max: 256,
-                    message: "Максимальна довжина - 256 символів!",
-                  },
-                ]}
+                rules={[descriptionValidation.Link]}
               >
                 <Input value={city.cityURL} maxLength={257} />
               </Form.Item>
@@ -267,12 +252,7 @@ const CreateCity = () => {
                 label="Номер телефону"
                 labelCol={{ span: 24 }}
                 initialValue={city.phoneNumber}
-                rules={[
-                  {
-                    pattern: /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/,
-                    message: "Невірно вказаний номер",
-                  },
-                ]}
+                rules={[descriptionValidation.Phone]}
               >
                 <ReactInputMask
                   mask="+380(99)-999-99-99"
@@ -289,16 +269,7 @@ const CreateCity = () => {
                 label="Електронна пошта"
                 labelCol={{ span: 24 }}
                 initialValue={city.email}
-                rules={[
-                  {
-                    pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-                    message: "Неправильний формат електронної пошти!",
-                  },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.Email}
               >
                 <Input value={city.email} maxLength={51} />
               </Form.Item>
@@ -329,13 +300,7 @@ const CreateCity = () => {
                 label="Вулиця"
                 labelCol={{ span: 24 }}
                 initialValue={city.street}
-                rules={[
-                  { required: true, message: "Це поле є обов'язковим" },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.Street}
               >
                 <Input value={city.street} maxLength={51} />
               </Form.Item>
@@ -346,13 +311,7 @@ const CreateCity = () => {
                 label="Номер будинку"
                 labelCol={{ span: 24 }}
                 initialValue={city.houseNumber}
-                rules={[
-                  { required: true, message: "Це поле є обов'язковим" },
-                  {
-                    max: 5,
-                    message: "Максимальна довжина - 5 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.houseNumber}
               >
                 <Input value={city.houseNumber} maxLength={6} />
               </Form.Item>
@@ -363,12 +322,7 @@ const CreateCity = () => {
                 label="Номер офісу/квартири"
                 labelCol={{ span: 24 }}
                 initialValue={city.officeNumber}
-                rules={[
-                  {
-                    max: 5,
-                    message: "Максимальна довжина - 5 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.officeNumber}
               >
                 <Input value={city.officeNumber} maxLength={6} />
               </Form.Item>
@@ -379,22 +333,7 @@ const CreateCity = () => {
                 label="Поштовий індекс"
                 labelCol={{ span: 24 }}
                 initialValue={city.postIndex}
-                rules={[
-                  {
-                    len: 5,
-                    message: "Довжина поштового індексу - 5 символів!",
-                  },
-                  {
-                    validator: (_, value) =>
-                      parseInt(value) >= 0 ||
-                      value == null ||
-                      String(value).length == 0
-                        ? Promise.resolve()
-                        : Promise.reject(
-                            `Поле не може бути від'ємним`
-                          ),
-                  },
-                ]}
+                rules={descriptionValidation.postIndex}
               >
                 <Input type="number" value={city.postIndex} />
               </Form.Item>

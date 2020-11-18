@@ -19,6 +19,7 @@ import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import ReactInputMask from "react-input-mask";
 import Title from "antd/lib/typography/Title";
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 
 const AddNewRegionFormPage = () => {
   const [form] = Form.useForm();
@@ -125,16 +126,7 @@ const AddNewRegionFormPage = () => {
                 label="Назва округу"
                 name="regionName"
                 labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    required: true,
-                    message: "Це поле є обов'язковим",
-                  },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.Name}
               >
                 <Input maxLength={51} />
               </Form.Item>
@@ -144,16 +136,7 @@ const AddNewRegionFormPage = () => {
                 label="Опис"
                 name="description"
                 labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    required: true,
-                    message: "Це поле має бути заповненим",
-                  },
-                  {
-                    max: 250,
-                    message: "Максимальна довжина - 250 символів!",
-                  },
-                ]}
+                rules={[descriptionValidation.Description, descriptionValidation.Required]}
               >
                 <Input maxLength={251} />
               </Form.Item>
@@ -164,16 +147,7 @@ const AddNewRegionFormPage = () => {
                 name="phoneNumber"
                 label="Номер телефону"
                 labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    required: true,
-                    message: "Це поле має бути заповненим",
-                  },
-                  {
-                    pattern: /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/,
-                    message: "Невірно вказаний номер",
-                  },
-                ]}
+                rules={[descriptionValidation.Phone, descriptionValidation.Required]}
               >
                 <ReactInputMask
                   mask="+380(99)-999-99-99"
@@ -189,20 +163,7 @@ const AddNewRegionFormPage = () => {
                 label="Електронна пошта"
                 name="email"
                 labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-                    message: "Неправильний формат електронної пошти!",
-                  },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                  {
-                    required: true,
-                    message: "Це поле має бути заповненим",
-                  },
-                ]}
+                rules={descriptionValidation.RegionEmail}
               >
                 <Input maxLength={51}/>
               </Form.Item>
@@ -213,12 +174,7 @@ const AddNewRegionFormPage = () => {
                 label="Посилання"
                 name="link"
                 labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    max: 256,
-                    message: "Максимальна довжина - 256 символів!",
-                  },
-                ]}
+                rules={[descriptionValidation.Link]}
               >
                 <Input maxLength={257} />
               </Form.Item>
@@ -229,16 +185,7 @@ const AddNewRegionFormPage = () => {
                 label="Місто"
                 name="city"
                 labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                  {
-                    required: true,
-                    message: "Це поле має бути заповненим",
-                  },
-                ]}
+                rules={descriptionValidation.Name}
               >
                 <Input maxLength={51} />
               </Form.Item>
@@ -249,13 +196,7 @@ const AddNewRegionFormPage = () => {
                 labelCol={{ span: 24 }}
                 label="Вулиця"
                 name="street"
-                rules={[
-                  { required: true, message: "Це поле є обов'язковим" },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.Street}
               >
                 <Input  maxLength={51} />
               </Form.Item>
@@ -266,13 +207,7 @@ const AddNewRegionFormPage = () => {
                 labelCol={{ span: 24 }}
                 label="Номер будинку"
                 name="houseNumber"
-                rules={[
-                  { required: true, message: "Це поле є обов'язковим" },
-                  {
-                    max: 5,
-                    message: "Максимальна довжина - 5 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.houseNumber}
               >
                 <Input maxLength={6} />
               </Form.Item>
@@ -283,12 +218,7 @@ const AddNewRegionFormPage = () => {
                 labelCol={{ span: 24 }}
                 label="Номер офісу/квартири"
                 name="officeNumber"
-                rules={[
-                  {
-                    max: 5,
-                    message: "Максимальна довжина - 5 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.officeNumber}
               >
                 <Input maxLength={6} />
               </Form.Item>
@@ -299,26 +229,7 @@ const AddNewRegionFormPage = () => {
                 labelCol={{ span: 24 }}
                 label="Поштовий індекс"
                 name="postIndex"
-                rules={[
-                  {
-                    validator: (_, value) => 
-                    String(value).length == 5
-                        ? Promise.resolve()
-                        : Promise.reject(
-                            `Довжина поштового індексу - 5 символів!`
-                          )
-                  },
-                  {
-                    validator: (_, value) =>
-                      parseInt(value) >= 0 ||
-                      value == null ||
-                      String(value).length == 0
-                        ? Promise.resolve()
-                        : Promise.reject(
-                            `Поле не може бути від'ємним`
-                          ),
-                  },
-                ]}
+                rules={descriptionValidation.postIndex}
               >
                 <Input type="number"/>
               </Form.Item>
@@ -341,8 +252,7 @@ const AddNewRegionFormPage = () => {
               </Button>
             </Col>
           </Row>
-        </Form>
-        ;
+        </Form>\
       </Card>
     </Layout.Content>
   );

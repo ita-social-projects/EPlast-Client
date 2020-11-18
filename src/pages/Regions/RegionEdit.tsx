@@ -24,6 +24,7 @@ import { useHistory } from "react-router-dom";
 import Spinner from "../Spinner/Spinner";
 import Title from "antd/lib/typography/Title";
 import RegionProfile from "../../models/Region/RegionProfile";
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 
 const RegionEditFormPage = () => {
   let currentRegion = Number(
@@ -142,16 +143,7 @@ const RegionEditFormPage = () => {
                     name="regionName"
                     initialValue={chosenRegion.regionName}
                     labelCol={{ span: 24 }}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Це поле є обов'язковим",
-                      },
-                      {
-                        max: 50,
-                        message: "Максимальна довжина - 50 символів!",
-                      },
-                    ]}
+                    rules={descriptionValidation.Name}
                   >
                     <Input
                     value={chosenRegion.regionName} maxLength={51} />
@@ -163,16 +155,7 @@ const RegionEditFormPage = () => {
                     name="description"
                     initialValue={chosenRegion?.description}
                     labelCol={{ span: 24 }}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Це поле має бути заповненим",
-                      },
-                      {
-                        max: 250,
-                        message: "Максимальна довжина - 250 символів!",
-                      },
-                    ]}
+                    rules={[descriptionValidation.Description, descriptionValidation.Required]}
                   >
                     <Input
                     value={chosenRegion?.description} maxLength={251} />
@@ -185,16 +168,7 @@ const RegionEditFormPage = () => {
                     label="Номер телефону"
                     labelCol={{ span: 24 }}
                     initialValue={chosenRegion?.phoneNumber}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Це поле має бути заповненим",
-                      },
-                      {
-                        pattern: /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/,
-                        message: "Невірно вказаний номер",
-                      },
-                    ]}
+                    rules={[descriptionValidation.Phone, descriptionValidation.Required]}
                   >
                     <ReactInputMask
                       mask="+380(99)-999-99-99"
@@ -212,20 +186,7 @@ const RegionEditFormPage = () => {
                     name="email"
                     labelCol={{ span: 24 }}
                     initialValue={chosenRegion?.email}
-                    rules={[
-                      {
-                        pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-                        message: "Неправильний формат електронної пошти!",
-                      },
-                      {
-                        max: 50,
-                        message: "Максимальна довжина - 50 символів!",
-                      },
-                      {
-                        required: true,
-                        message: "Це поле має бути заповненим",
-                      },
-                    ]}
+                    rules={descriptionValidation.RegionEmail}
                   >
                     <Input maxLength={51} 
                     value={chosenRegion?.email}/>
@@ -238,12 +199,7 @@ const RegionEditFormPage = () => {
                     name="link"
                     initialValue={chosenRegion?.link}
                     labelCol={{ span: 24 }}
-                    rules={[
-                      {
-                        max: 256,
-                        message: "Максимальна довжина - 256 символів!",
-                      },
-                    ]}
+                    rules={[descriptionValidation.Link]}
                   >
                     <Input maxLength={257} 
                     value={chosenRegion?.link}/>
@@ -256,16 +212,7 @@ const RegionEditFormPage = () => {
                     name="city"
                     initialValue={chosenRegion?.city}
                     labelCol={{ span: 24 }}
-                    rules={[
-                      {
-                        max: 50,
-                        message: "Максимальна довжина - 50 символів!",
-                      },
-                      {
-                        required: true,
-                        message: "Це поле має бути заповненим",
-                      },
-                    ]}
+                    rules={descriptionValidation.Name}
                   >
                     <Input maxLength={51} 
                     value={chosenRegion?.city}/>
@@ -278,13 +225,7 @@ const RegionEditFormPage = () => {
                     label="Вулиця"
                     name="street"
                     initialValue={chosenRegion?.street}
-                    rules={[
-                      { required: true, message: "Це поле є обов'язковим" },
-                      {
-                        max: 50,
-                        message: "Максимальна довжина - 50 символів!",
-                      },
-                    ]}
+                    rules={descriptionValidation.Street}
                   >
                     <Input  maxLength={51} 
                     value={chosenRegion?.street}/>
@@ -297,13 +238,7 @@ const RegionEditFormPage = () => {
                     label="Номер будинку"
                     name="houseNumber"
                     initialValue={chosenRegion?.houseNumber}
-                    rules={[
-                      { required: true, message: "Це поле є обов'язковим" },
-                      {
-                        max: 5,
-                        message: "Максимальна довжина - 5 символів!",
-                      },
-                    ]}
+                    rules={descriptionValidation.houseNumber}
                   >
                     <Input maxLength={6} 
                     value={chosenRegion?.houseNumber}/>
@@ -316,12 +251,7 @@ const RegionEditFormPage = () => {
                     label="Номер офісу/квартири"
                     name="officeNumber"
                     initialValue={chosenRegion?.officeNumber}
-                    rules={[
-                      {
-                        max: 5,
-                        message: "Максимальна довжина - 5 символів!",
-                      },
-                    ]}
+                    rules={descriptionValidation.officeNumber}
                   >
                     <Input maxLength={6} 
                     value={chosenRegion?.officeNumber}/>
@@ -334,26 +264,7 @@ const RegionEditFormPage = () => {
                     label="Поштовий індекс"
                     name="postIndex"
                     initialValue={chosenRegion.postIndex}
-                    rules={[
-                      {
-                        validator: (_, value) => 
-                        String(value).length == 5
-                            ? Promise.resolve()
-                            : Promise.reject(
-                                `Довжина поштового індексу - 5 символів!`
-                              )
-                      },
-                      {
-                        validator: (_, value) => 
-                        parseInt(value) >= 0 ||
-                          value == null ||
-                          String(value).length == 0
-                            ? Promise.resolve()
-                            : Promise.reject(
-                                `Поле не може бути від'ємним`
-                              )
-                      },
-                    ]}
+                    rules={descriptionValidation.postIndex}
                   >
                     <Input type="number" 
                     value={chosenRegion.postIndex}/>

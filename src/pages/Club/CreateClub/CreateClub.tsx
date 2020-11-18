@@ -38,6 +38,7 @@ import RegionProfile from "../../../models/Region/RegionProfile";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 const CreateClub = () => {
   const { id } = useParams();
@@ -201,13 +202,7 @@ const CreateClub = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={club.name}
-                rules={[
-                  { required: true, message: "Це поле є обов'язковим" },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.Name}
               >
                 <Input value={club.name} maxLength={51} />
               </Form.Item>
@@ -218,12 +213,7 @@ const CreateClub = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={club.description}
-                rules={[
-                  {
-                    max: 1000,
-                    message: "Максимальна довжина - 1000 символів!",
-                  },
-                ]}
+                rules={[descriptionValidation.Description]}
               >
                 <Input value={club.description} maxLength={1001}/>
               </Form.Item>
@@ -234,14 +224,9 @@ const CreateClub = () => {
                 label="Посилання"
                 labelCol={{ span: 24 }}
                 initialValue={club.clubURL}
-                rules={[
-                  {
-                    max: 500,
-                    message: "Максимальна довжина - 500 символів!",
-                  },
-                ]}
+                rules={[descriptionValidation.Link]}
               >
-                <Input value={club.clubURL} maxLength={501}/>
+                <Input value={club.clubURL} maxLength={257}/>
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
@@ -250,12 +235,7 @@ const CreateClub = () => {
                 label="Номер телефону"
                 labelCol={{ span: 24 }}
                 initialValue={club.phoneNumber}
-                rules={[
-                  {
-                    pattern: /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/,
-                    message: "Невірно вказаний номер",
-                  },
-                ]}
+                rules={[descriptionValidation.Phone]}
               >
                 <ReactInputMask
                 maskChar={null}
@@ -272,16 +252,7 @@ const CreateClub = () => {
                 label="Електронна пошта"
                 labelCol={{ span: 24 }}
                 initialValue={club.email}
-                rules={[
-                  {
-                    pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-                    message: "Неправильна пошта",
-                  },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.Email}
               >
                 <Input value={club.email} maxLength={51}/>
               </Form.Item>
