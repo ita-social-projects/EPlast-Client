@@ -142,7 +142,8 @@ const DecisionTable = () => {
               pagination={
                 {
                   showLessItems: true,
-                  responsive:true
+                  responsive:true,
+                  showSizeChanger: true,
                 }
               }
             />

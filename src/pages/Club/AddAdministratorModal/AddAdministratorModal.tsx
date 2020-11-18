@@ -142,7 +142,7 @@ const AddAdministratorModal = (props: Props) => {
     <Modal
       title={
         props.admin.id === 0
-          ? "Додати в провід станиці"
+          ? "Додати в провід куреня"
           : "Редагувати адміністратора"
       }
       visible={props.visibleModal}
