@@ -30,19 +30,7 @@ const Regions = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
   const [canCreate, setCanCreate] = useState<boolean>(false);
-
-
-  useEffect(() => {
-    getRegions();
-  }, [page, pageSize, searchedData]);
   
-  
-
-  const handleSearch = (event: any) => {
-    setSearchedData(event);
-  };
-
-
   const setPhotos = async (regions: any[]) => {
     for await (const region of regions) {
       if (region.logo === null) {
@@ -54,7 +42,7 @@ const Regions = () => {
 
     setPhotosLoading(false);
   };
-
+  
   const getRegions = async () => {
     setLoading(true);
 
@@ -74,16 +62,22 @@ const Regions = () => {
       setLoading(false);
     }
   };
-
-
+  
+  
   const handleChange = (page: number) => {
     setPage(page);
   };
-
+  
   const handleSizeChange = (page: number, pageSize: number = 10) => {
     setPage(page);
     setPageSize(pageSize);
   };
+  const handleSearch = (event: any) => {
+    setPage(1);
+    setSearchedData(event);
+  };
+
+
 
 
 
@@ -142,21 +136,21 @@ const Regions = () => {
                 </a>
               ))}
             </div>
-
+            <div className="pagination">
+              <Pagination
+                current={page}
+                pageSize={pageSize}
+                total={total}
+                responsive
+                showSizeChanger = { total < 20 ? false : true }
+                onChange={(page) => handleChange(page)}
+                onShowSizeChange={(page, size) => handleSizeChange(page, size)}
+              />
+            </div>
           </div>
         )
       }
-      <div className="pagination">
-        <Pagination
-          current={page}
-          pageSize={pageSize}
-          total={total}
-          responsive
-          showLessItems
-          onChange={(page) => handleChange(page)}
-          onShowSizeChange={(page, size) => handleSizeChange(page, size)}
-        />
-      </div>
+      
 
     </Layout.Content >
   );
