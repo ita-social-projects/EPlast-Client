@@ -115,7 +115,7 @@ const AddDocumentModal = (props: Props) => {
           <div className="formFields">
 
             <Form.Item name="datepicker" label="Дата документу">
-              <DatePicker format="YYYY-MM-DD" className="formSelect" />
+              <DatePicker format="DD.MM.YYYY" className="formSelect" />
             </Form.Item>
           </div>
 
