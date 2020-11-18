@@ -12,6 +12,8 @@ import GoogleLoginWrapper from '../SignIn/GoogleLoginWrapper';
 import FacebookLoginWrapper from '../SignIn/FacebookLoginWrapper';
 import FacebookData from '../SignIn/FacebookDataInterface';
 import '../SignIn/SignIn.less';
+import{incorrectEmail, emptyInput, incorrectPhone, minLength} from "../../components/Notifications/Messages"
+
 let authService = new AuthorizeApi();
 let user: any;
 
@@ -31,12 +33,12 @@ export default function () {
 
   const validationSchema = {
     Email: [
-      { required: true, message: "Поле електронна пошта є обов'язковим" },
+      { required: true, message: emptyInput },
       { validator: checkEmail },
     ],
     Password: [
-      { required: true, message: "Поле пароль є обов'язковим" },
-      { min: 6, message: "Мінімальна допустима довжина - 6 символів" },
+      { required: true, message: emptyInput },
+      { min: 6, message: minLength(6) },
     ]
   };
 

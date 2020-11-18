@@ -1,20 +1,18 @@
+import{incorrectEmail, emptyInput, incorrectPhone, minLength} from "../../components/Notifications/Messages"
 export const checkEmail = (role: object, value: string, callback:any) => {
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (value.length === 0) {
       return callback('');
     }
     if (reg.test(value) === false) {
-        return callback('Неправильний формат електронної пошти');
+        return callback(incorrectEmail);
     }
       return callback();
   };
 
   export const checkNameSurName = (role: object, value: string, callback:any) => {
     const reg = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,25}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,25})*$/;
-      if (value.length === 0) {
-        return callback('Поле не може бути пустим');
-      }
-      if (reg.test(value) === false) {
+      if (value.length !== 0 && reg.test(value) === false) {
         return callback('Дане поле повинне містити тільки літери та бути коротшим за 25 символів');
       }
       return callback();
@@ -23,10 +21,10 @@ export const checkEmail = (role: object, value: string, callback:any) => {
   export const checkPhone = (role: object, value: string, callback: any) => {
     const reg = /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/;
     if (reg.test(value) === false) {
-      return callback('Дане поле не є номером телефону');
+      return callback(incorrectPhone);
     }
     if (value.length === 0) {
-        return callback('Поле не може бути пустим');
+        return callback(emptyInput);
     }
     return callback();
   };
@@ -37,7 +35,7 @@ export const checkEmail = (role: object, value: string, callback:any) => {
     {
       if (value.length < 8)
       {
-        return callback('Мінімальна допустима довжина - 8 символів');
+        return callback(minLength(8));
       }
       if (reg.test(value) === false) 
       {

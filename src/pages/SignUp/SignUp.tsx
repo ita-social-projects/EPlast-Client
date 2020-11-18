@@ -5,6 +5,8 @@ import Switcher from './Switcher/Switcher';
 import { checkEmail, checkNameSurName, checkPassword } from './verification';
 import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
+import{incorrectEmail, emptyInput, incorrectPhone, minLength} from "../../components/Notifications/Messages"
+
 let authService = new AuthorizeApi();
 
 export default function () {
@@ -16,24 +18,24 @@ export default function () {
 
   const validationSchema = {
     Email: [
-      { required: true, message: "Поле електронна пошта є обов'язковим" }, 
+      { required: true, message: emptyInput }, 
       { validator: checkEmail }
     ],
     Password: [
-      { required: true, message: "Поле пароль є обов'язковим" },
+      { required: true, message: emptyInput },
       { validator: checkPassword }
     ],
     Name: [
-      { required: true, message: "Поле ім'я є обов'язковим" }, 
+      { required: true, message: emptyInput }, 
       { validator: checkNameSurName }
     ],
     SurName: [
-      { required: true, message: "Поле прізвище є обов'язковим" }, 
+      { required: true, message: emptyInput }, 
       { validator: checkNameSurName }
     ],
     ConfirmPassword: [
-      { required: true, message: "Дане поле є обов'язковим" },
-      { min: 8, message: 'Мінімальна допустима довжина - 8 символів' },
+      { required: true, message: emptyInput },
+      { min: 8, message: minLength(8) },
     ],
   };
 
