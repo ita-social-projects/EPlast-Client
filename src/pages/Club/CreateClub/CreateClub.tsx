@@ -35,13 +35,6 @@ import ClubProfile from "../../../models/Club/ClubProfile";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
 import ClubMember from "../../../models/Club/ClubMember";
 import RegionProfile from "../../../models/Region/RegionProfile";
-import {
-  membersColumns,
-  administrationsColumns,
-  getTableAdmins,
-  getTableMembers,
-  getTableFollowers,
-} from "./ClubTableColumns";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
@@ -52,10 +45,6 @@ const CreateClub = () => {
 
   const [loading, setLoading] = useState(false);
   const [club, setClub] = useState<ClubProfile>(new ClubProfile());
-  const [regions, setRegions] = useState<RegionProfile[]>([]);
-  const [admins, setAdmins] = useState<ClubAdmin[]>([]);
-  const [members, setMembers] = useState<ClubMember[]>([]);
-  const [followers, setFollowers] = useState<ClubMember[]>([]);
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -100,8 +89,6 @@ const CreateClub = () => {
     event.stopPropagation();
   };
 
-  function onSearch(val: any) {}
-
   const getClub = async () => {
     try {
       setLoading(true);
@@ -113,19 +100,6 @@ const CreateClub = () => {
       }
 
       setClub(response.data);
-      setAdmins((await getAllAdmins(+id)).data.administration);
-      setMembers((await getAllMembers(+id)).data.members);
-      setFollowers((await getAllFollowers(+id)).data.followers);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getRegions = async () => {
-    try {
-      setLoading(true);
-      const response = await GetAllRegions();
-      setRegions(response.data);
     } finally {
       setLoading(false);
     }
@@ -133,9 +107,7 @@ const CreateClub = () => {
 
   useEffect(() => {
     if (+id) {
-      getClub().then(() => getRegions());
-    } else {
-      getRegions();
+      getClub();
     }
   }, [id]);
 
@@ -344,34 +316,6 @@ const CreateClub = () => {
           </Row>
         </Form>
       </Card>
-      {club.id ? (
-        <Card hoverable className="clubMembersCard">
-          <Row justify="space-between" gutter={[0, 12]}>
-            <Col span={24}>
-              <Table
-                dataSource={getTableAdmins(admins, club.head)}
-                columns={administrationsColumns}
-                pagination={{ defaultPageSize: 4 }}
-                className="table"
-              />
-            </Col>
-            <Col md={10} xs={24}>
-              <Table
-                dataSource={getTableMembers(members, admins, club.head)}
-                columns={membersColumns}
-                pagination={{ defaultPageSize: 4 }}
-              />
-            </Col>
-            <Col md={{ span: 10, offset: 2 }} xs={24}>
-              <Table
-                dataSource={getTableFollowers(followers)}
-                columns={membersColumns}
-                pagination={{ defaultPageSize: 4 }}
-              />
-            </Col>
-          </Row>
-        </Card>
-      ) : null}
     </Layout.Content>
   );
 };

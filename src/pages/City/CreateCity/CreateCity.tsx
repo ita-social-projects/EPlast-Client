@@ -36,13 +36,6 @@ import CityProfile from "../../../models/City/CityProfile";
 import CityAdmin from "../../../models/City/CityAdmin";
 import CityMember from "../../../models/City/CityMember";
 import RegionProfile from "../../../models/Region/RegionProfile";
-import {
-  membersColumns,
-  administrationsColumns,
-  getTableAdmins,
-  getTableMembers,
-  getTableFollowers,
-} from "./CityTableColumns";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
@@ -56,9 +49,6 @@ const CreateCity = () => {
   const [loading, setLoading] = useState(false);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
   const [regions, setRegions] = useState<RegionProfile[]>([]);
-  const [admins, setAdmins] = useState<CityAdmin[]>([]);
-  const [members, setMembers] = useState<CityMember[]>([]);
-  const [followers, setFollowers] = useState<CityMember[]>([]);
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -116,9 +106,6 @@ const CreateCity = () => {
       }
 
       setCity(response.data);
-      setAdmins((await getAllAdmins(+id)).data.administration);
-      setMembers((await getAllMembers(+id)).data.members);
-      setFollowers((await getAllFollowers(+id)).data.followers);
     } finally {
       setLoading(false);
     }
@@ -438,34 +425,6 @@ const CreateCity = () => {
           </Row>
         </Form>
       </Card>
-      {city.id ? (
-        <Card hoverable className="cityMembersCard">
-          <Row justify="space-between" gutter={[0, 12]}>
-            <Col span={24}>
-              <Table
-                dataSource={getTableAdmins(admins, city.head)}
-                columns={administrationsColumns}
-                pagination={{ defaultPageSize: 4 }}
-                className="table"
-              />
-            </Col>
-            <Col md={10} xs={24}>
-              <Table
-                dataSource={getTableMembers(members, admins, city.head)}
-                columns={membersColumns}
-                pagination={{ defaultPageSize: 4 }}
-              />
-            </Col>
-            <Col md={{ span: 10, offset: 2 }} xs={24}>
-              <Table
-                dataSource={getTableFollowers(followers)}
-                columns={membersColumns}
-                pagination={{ defaultPageSize: 4 }}
-              />
-            </Col>
-          </Row>
-        </Card>
-      ) : null}
     </Layout.Content>
   );
 };
