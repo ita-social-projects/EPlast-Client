@@ -141,7 +141,10 @@ export const removeDocument = async (documentId: number) => {
 };
 
 export const getRegions = async () => {
-  return api.get(`Regions/Regions`);
+  return api.get(`Regions/Regions`)
+  .catch((error) => {
+    throw new Error(error);
+  });
 };
 
 export const redirectCities = async (prevRegId: number, nextRegId: number) => {
@@ -213,4 +216,5 @@ export default {
   getRegionById,
   GetAllRegions,
   createRegion,
+  getRegions
 };
