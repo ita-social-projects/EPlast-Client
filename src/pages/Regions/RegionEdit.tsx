@@ -1,9 +1,6 @@
 import {
   Form,
   Input,
-  DatePicker,
-  AutoComplete,
-  Select,
   Button,
   Layout,
   Card,
@@ -16,7 +13,6 @@ import RegionsApi from "../../api/regionsApi";
 import ReactInputMask from "react-input-mask";
 import "./CreateRegion.less";
 import notificationLogic from "../../components/Notifications/Notification";
-import regionsApi from "../../api/regionsApi";
 import { PlusOutlined } from "@ant-design/icons";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";

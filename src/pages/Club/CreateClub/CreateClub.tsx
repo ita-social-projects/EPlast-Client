@@ -8,8 +8,6 @@ import {
   Upload,
   Row,
   Col,
-  Table,
-  Select,
   Card,
 } from "antd";
 import {
@@ -22,19 +20,12 @@ import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 import ClubDefaultLogo from "../../../assets/images/default_club_image.jpg";
 import {
   createClub,
-  getAllAdmins,
-  getAllFollowers,
-  getAllMembers,
   getClubById,
   getLogo,
   updateClub,
 } from "../../../api/clubsApi";
-import { GetAllRegions } from "../../../api/regionsApi";
 import "./CreateClub.less";
 import ClubProfile from "../../../models/Club/ClubProfile";
-import ClubAdmin from "../../../models/Club/ClubAdmin";
-import ClubMember from "../../../models/Club/ClubMember";
-import RegionProfile from "../../../models/Region/RegionProfile";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";

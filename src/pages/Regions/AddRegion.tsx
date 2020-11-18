@@ -10,7 +10,6 @@ import {
 } from "antd";
 import React, { useState, useEffect } from "react";
 import RegionsApi from "../../api/regionsApi";
-import classes from "./Form.module.css";
 import "./CreateRegion.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import notificationLogic from "../../components/Notifications/Notification";

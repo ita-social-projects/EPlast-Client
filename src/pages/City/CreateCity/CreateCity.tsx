@@ -8,10 +8,8 @@ import {
   Upload,
   Row,
   Col,
-  Table,
   Select,
   Card,
-  message,
 } from "antd";
 import {
   DeleteOutlined,
@@ -23,9 +21,6 @@ import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import {
   createCity,
-  getAllAdmins,
-  getAllFollowers,
-  getAllMembers,
   getCityById,
   getLogo,
   updateCity,
@@ -33,13 +28,10 @@ import {
 import { GetAllRegions } from "../../../api/regionsApi";
 import "./CreateCity.less";
 import CityProfile from "../../../models/City/CityProfile";
-import CityAdmin from "../../../models/City/CityAdmin";
-import CityMember from "../../../models/City/CityMember";
 import RegionProfile from "../../../models/Region/RegionProfile";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
-import { checkPhone } from "../../SignUp/verification";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 
