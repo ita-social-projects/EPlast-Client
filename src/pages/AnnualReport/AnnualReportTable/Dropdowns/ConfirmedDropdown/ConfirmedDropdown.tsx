@@ -30,7 +30,7 @@ const ConfirmedDropdown = (props: Props) => {
                 className={showDropdown ? styles.menu : styles.menuHidden}
                 style={{
                     top: pageY,
-                    left: pageX
+                    left: (window.innerWidth - (pageX + 170)) < 0 ? window.innerWidth - 220 : pageX ,
                 }} >
                 <Menu.Item
                     key='1' >

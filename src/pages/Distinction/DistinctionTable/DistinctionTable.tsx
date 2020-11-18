@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Input, Button, Layout, Row } from "antd";
+import { Table, Input, Button, Layout } from "antd";
 import columns from "./columns";
 import notificationLogic from "../../../components/Notifications/Notification";
 import UserDistinction from "../Interfaces/UserDistinction";
@@ -260,6 +260,7 @@ const DistinctionTable = () => {
               pagination={{
                 showLessItems: true,
                 responsive: true,
+                showSizeChanger: true,
               }}
               bordered
               rowKey="id"

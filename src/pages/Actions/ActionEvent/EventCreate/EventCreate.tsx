@@ -22,7 +22,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
   const [form] = Form.useForm();
   const [selectedUsers, setSelectedUsers] = useState<string[]>(['', '', '', '']);
   const [loading, setLoading] = useState(false);
-  const dateFormat = 'MM/DD/YYYY HH:mm';
+  const dateFormat = 'DD.MM.YYYY HH:mm';
   const [categories, setCategories] = useState<EventCategories[]>([]);
   const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
   const [administators, setAdministators] = useState<Users[]>([]);
