@@ -139,6 +139,7 @@ const UsersTable = () => {
         pagination={{
           showLessItems: true,
           responsive: true,
+          showSizeChanger: true,
         }}
       />
       <ClickAwayListener onClickAway={handleClickAway}>

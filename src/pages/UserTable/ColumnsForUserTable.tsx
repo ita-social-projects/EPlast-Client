@@ -68,6 +68,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Дата народження",
     dataIndex: ["user", "birthday"],
+    width: 130,
     render: (date: Date) => {
       if (date !== null) {
         return moment(date).format("DD.MM.YYYY");
@@ -129,7 +130,7 @@ const ColumnsForUserTable: any = [
     render: (cityName: any) => {
       if (cityName.length > 0) {
         return (
-          <Tag color={"lime"} key={cityName}>
+          <Tag color={"purple"} key={cityName}>
             {cityName}
           </Tag>
         );
