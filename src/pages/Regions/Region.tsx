@@ -507,7 +507,12 @@ const Region = () => {
           </Card>
         </Col>
 
-        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+        <Col
+          xl={{ span: 7, offset: 1 }}
+          md={{ span: 11, offset: 2 }}
+          sm={24}
+          xs={24}
+        >
           <Card hoverable className="cityCard">
             <Title level={4}>Документообіг округу</Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
