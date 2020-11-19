@@ -8,8 +8,6 @@ import {
   Upload,
   Row,
   Col,
-  Table,
-  Select,
   Card,
 } from "antd";
 import {
@@ -22,29 +20,16 @@ import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 import ClubDefaultLogo from "../../../assets/images/default_club_image.jpg";
 import {
   createClub,
-  getAllAdmins,
-  getAllFollowers,
-  getAllMembers,
   getClubById,
   getLogo,
   updateClub,
 } from "../../../api/clubsApi";
-import { GetAllRegions } from "../../../api/regionsApi";
 import "./CreateClub.less";
 import ClubProfile from "../../../models/Club/ClubProfile";
-import ClubAdmin from "../../../models/Club/ClubAdmin";
-import ClubMember from "../../../models/Club/ClubMember";
-import RegionProfile from "../../../models/Region/RegionProfile";
-import {
-  membersColumns,
-  administrationsColumns,
-  getTableAdmins,
-  getTableMembers,
-  getTableFollowers,
-} from "./ClubTableColumns";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 const CreateClub = () => {
   const { id } = useParams();
@@ -52,10 +37,6 @@ const CreateClub = () => {
 
   const [loading, setLoading] = useState(false);
   const [club, setClub] = useState<ClubProfile>(new ClubProfile());
-  const [regions, setRegions] = useState<RegionProfile[]>([]);
-  const [admins, setAdmins] = useState<ClubAdmin[]>([]);
-  const [members, setMembers] = useState<ClubMember[]>([]);
-  const [followers, setFollowers] = useState<ClubMember[]>([]);
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -100,8 +81,6 @@ const CreateClub = () => {
     event.stopPropagation();
   };
 
-  function onSearch(val: any) {}
-
   const getClub = async () => {
     try {
       setLoading(true);
@@ -113,19 +92,6 @@ const CreateClub = () => {
       }
 
       setClub(response.data);
-      setAdmins((await getAllAdmins(+id)).data.administration);
-      setMembers((await getAllMembers(+id)).data.members);
-      setFollowers((await getAllFollowers(+id)).data.followers);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getRegions = async () => {
-    try {
-      setLoading(true);
-      const response = await GetAllRegions();
-      setRegions(response.data);
     } finally {
       setLoading(false);
     }
@@ -133,9 +99,7 @@ const CreateClub = () => {
 
   useEffect(() => {
     if (+id) {
-      getClub().then(() => getRegions());
-    } else {
-      getRegions();
+      getClub();
     }
   }, [id]);
 
@@ -229,13 +193,7 @@ const CreateClub = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={club.name}
-                rules={[
-                  { required: true, message: "Це поле є обов'язковим" },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.Name}
               >
                 <Input value={club.name} maxLength={51} />
               </Form.Item>
@@ -246,12 +204,7 @@ const CreateClub = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={club.description}
-                rules={[
-                  {
-                    max: 1000,
-                    message: "Максимальна довжина - 1000 символів!",
-                  },
-                ]}
+                rules={[descriptionValidation.Description]}
               >
                 <Input value={club.description} maxLength={1001}/>
               </Form.Item>
@@ -262,14 +215,9 @@ const CreateClub = () => {
                 label="Посилання"
                 labelCol={{ span: 24 }}
                 initialValue={club.clubURL}
-                rules={[
-                  {
-                    max: 500,
-                    message: "Максимальна довжина - 500 символів!",
-                  },
-                ]}
+                rules={[descriptionValidation.Link]}
               >
-                <Input value={club.clubURL} maxLength={501}/>
+                <Input value={club.clubURL} maxLength={257}/>
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
@@ -278,14 +226,14 @@ const CreateClub = () => {
                 label="Номер телефону"
                 labelCol={{ span: 24 }}
                 initialValue={club.phoneNumber}
-                rules={[{ min: 18, message: "Неправильний телефон" }]}
+                rules={[descriptionValidation.Phone]}
               >
                 <ReactInputMask
                 maskChar={null}
                   mask="+380(99)-999-99-99"
                   value={club.phoneNumber}
                 >
-                  {(inputProps: any) => <Input {...inputProps} type="tel" />}
+                  {(inputProps: any) => <Input {...inputProps}/>}
                 </ReactInputMask>
               </Form.Item>
             </Col>
@@ -295,16 +243,7 @@ const CreateClub = () => {
                 label="Електронна пошта"
                 labelCol={{ span: 24 }}
                 initialValue={club.email}
-                rules={[
-                  {
-                    pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-                    message: "Неправильна пошта",
-                  },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.Email}
               >
                 <Input value={club.email} maxLength={51}/>
               </Form.Item>
@@ -344,34 +283,6 @@ const CreateClub = () => {
           </Row>
         </Form>
       </Card>
-      {club.id ? (
-        <Card hoverable className="clubMembersCard">
-          <Row justify="space-between" gutter={[0, 12]}>
-            <Col span={24}>
-              <Table
-                dataSource={getTableAdmins(admins, club.head)}
-                columns={administrationsColumns}
-                pagination={{ defaultPageSize: 4 }}
-                className="table"
-              />
-            </Col>
-            <Col md={10} xs={24}>
-              <Table
-                dataSource={getTableMembers(members, admins, club.head)}
-                columns={membersColumns}
-                pagination={{ defaultPageSize: 4 }}
-              />
-            </Col>
-            <Col md={{ span: 10, offset: 2 }} xs={24}>
-              <Table
-                dataSource={getTableFollowers(followers)}
-                columns={membersColumns}
-                pagination={{ defaultPageSize: 4 }}
-              />
-            </Col>
-          </Row>
-        </Card>
-      ) : null}
     </Layout.Content>
   );
 };
