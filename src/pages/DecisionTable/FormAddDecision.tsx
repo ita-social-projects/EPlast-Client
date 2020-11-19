@@ -24,6 +24,16 @@ import decisionsApi, {
 import { getBase64 } from "../userPage/EditUserPage/Services";
 import notificationLogic from "../../components/Notifications/Notification";
 import formclasses from "./FormAddDecision.module.css";
+import{
+  emptyInput,
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  maxLength,
+  fileIsDeleted,
+} from "../../components/Notifications/Messages"
+
 type FormAddDecisionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: () => void;
@@ -57,13 +67,13 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
               FileName: info.file.name,
             });
           });
-          notificationLogic("success", "Файл завантажено");
+          notificationLogic("success", fileIsUpload());
         }
       } else {
-        notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+        notificationLogic("error", fileIsTooBig(3));
       }
     } else {
-      notificationLogic("error", "Проблема з завантаженням файлу");
+      notificationLogic("error", fileIsNotUpload());
     }
   };
   const checkFile = (fileName: string): boolean => {
@@ -84,7 +94,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     if (!isCorrectExtension) {
       notificationLogic(
         "error",
-        "Можливі розширення файлів: pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods."
+        possibleFileExtensions("pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods.")
       );
     }
     return isCorrectExtension;
@@ -141,11 +151,11 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             rules={[
               {
                 required: true,
-                message: "Це поле має бути заповненим",
+                message: emptyInput(),
               },
               { 
                 max: 60,
-                message: 'Назва рішення не має перевищувати 60 символів!' 
+                message: maxLength(60) 
               },
             ]}
           >
@@ -160,7 +170,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Рішення органу"
             labelCol={{ span: 24 }}
             name="organization"
-            rules={[{ required: true, message: "Це поле має бути заповненим" }]}
+            rules={[{ required: true, message: emptyInput() }]}
           >
             <Select
               placeholder="Оберіть орган"
@@ -182,7 +192,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Тема рішення"
             labelCol={{ span: 24 }}
             name="decisionTarget"
-            rules={[{ required: true, message: "Це поле має бути заповненим" }]}
+            rules={[{ required: true, message: emptyInput() }]}
           >
             <AutoComplete
               filterOption={true}
@@ -204,7 +214,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             name="datepicker"
             label="Дата рішення"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: "Це поле має бути заповненим" }]}
+            rules={[{ required: true, message: emptyInput() }]}
           >
             <DatePicker
               format="DD.MM.YYYY"
@@ -220,7 +230,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Текст рішення"
             labelCol={{ span: 24 }}
             name="description"
-            rules={[{ required: true, message: "Це поле має бути заповненим" }]}
+            rules={[{ required: true, message: emptyInput() }]}
           >
             <Input.TextArea allowClear className={formclasses.inputField} />
           </Form.Item>
@@ -265,7 +275,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
                     className={formclasses.cardButton}
                     onClick={() => {
                       setFileData({ FileAsBase64: null, FileName: null });
-                      notificationLogic("success", "Файл видалено");
+                      notificationLogic("success", fileIsDeleted());
                     }}
                   >
                     {" "}
@@ -284,7 +294,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Статус рішення"
             labelCol={{ span: 24 }}
             name="decisionStatusType"
-            rules={[{ required: true, message: "Це поле має бути заповненим" }]}
+            rules={[{ required: true, message: emptyInput() }]}
           >
             <Select className={formclasses.selectField}>
               {data?.decisionStatusTypeListItems.map((dst) => (
