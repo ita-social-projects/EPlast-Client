@@ -11,7 +11,6 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import styles from "./EditUserPage.module.css";
-import { checkNameSurName} from "../../SignUp/verification";
 import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
 import userApi from "../../../api/UserApi";
@@ -118,10 +117,16 @@ export default function () {
 
   const validationSchema = {
     name: [
-      { validator: checkNameSurName },
+      { max: 25, message: "Максимальна довжина - 25 символів" },
+      { min: 2, message: "Мінімальна довжина - 2 символів" },
+      { required: true, message: "Поле є обов'язковим" },
+      { pattern: patern, message: message },
     ],
     surName: [
-      { validator: checkNameSurName },
+      { max: 25, message: "Максимальна довжина - 25 символів" },
+      { min: 2, message: "Мінімальна довжина - 2 символів" },
+      { required: true, message: "Поле є обов'язковим" },
+      { pattern: patern, message: message },
     ],
     fatherName: [
       { max: 25, message: "Максимальна довжина - 25 символів" },
