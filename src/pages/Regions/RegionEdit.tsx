@@ -154,7 +154,7 @@ const RegionEditFormPage = () => {
                     rules={[descriptionValidation.Description, descriptionValidation.Required]}
                   >
                     <Input
-                    value={chosenRegion?.description} maxLength={251} />
+                    value={chosenRegion?.description} maxLength={1001} />
                   </Form.Item>
                 </Col>
 

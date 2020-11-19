@@ -137,7 +137,7 @@ const AddNewRegionFormPage = () => {
                 labelCol={{ span: 24 }}
                 rules={[descriptionValidation.Description, descriptionValidation.Required]}
               >
-                <Input maxLength={251} />
+                <Input maxLength={1001} />
               </Form.Item>
             </Col>
 
@@ -230,7 +230,7 @@ const AddNewRegionFormPage = () => {
                 name="postIndex"
                 rules={descriptionValidation.postIndex}
               >
-                <Input type="number"/>
+                <Input type="number" />
               </Form.Item>
             </Col>
           </Row>
@@ -251,7 +251,7 @@ const AddNewRegionFormPage = () => {
               </Button>
             </Col>
           </Row>
-        </Form>\
+        </Form>
       </Card>
     </Layout.Content>
   );
