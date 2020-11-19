@@ -92,7 +92,7 @@ import{
             String(value).length == 5
                 ? Promise.resolve()
                 : Promise.reject(
-                    maxLength(5)
+                    `Довжина поштового індексу - 5 символів!`
                     )
         },
         {

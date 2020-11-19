@@ -18,14 +18,6 @@ export const maxLength = (len:number)=>{
     return `Максимальна довжина - ${len} символів`
 }; 
 
-export const minCount = (len:number)=>{
-    return `Мінімальна довжина - ${len} символів`
-}; 
-
-export const maxCount = (len:number)=>{
-    return `Максимальна довжина - ${len} символів`
-}; 
-
 export const tryAgain = 'Щось пішло не так. Спробуйте ще раз.'; 
 
 export const successfulCreateAction = (name:string, itemName?:string)=>{
