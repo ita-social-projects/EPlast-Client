@@ -24,10 +24,12 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Spinner from "../../Spinner/Spinner";
 import { useHistory } from "react-router-dom";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 export default function () {
   const history = useHistory();
   const patern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50})*$/;
+  const secondPatern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50})*$/;
   const message = "Дане поле повинне містити тільки літери";
   const [form] = Form.useForm();
 
@@ -131,11 +133,10 @@ export default function () {
     ],
     placeOfStudy: [
       { max: 50, message: "Максимальна довжина - 50 символів" },
-      { pattern: patern, message: message },
     ],
     speciality: [
       { max: 50, message: "Максимальна довжина - 50 символів" },
-      { pattern: patern, message: message },
+      { pattern: secondPatern, message: message },
     ],
     nationality: [
       { max: 25, message: "Максимальна довжина - 25 символів" },
@@ -146,19 +147,14 @@ export default function () {
       { pattern: patern, message: message },
     ],
     placeOfWork: [
-      { max: 50, message: "Максимальна довжина - 50 символів" },
-      { pattern: patern, message: message },
+      { max: 50, message: "Максимальна довжина - 50 символів" }
     ],
     position: [
-      { max: 50, message: "Максимальна довжина - 50 символів" },
+      { max: 30, message: "Максимальна довжина - 30 символів" },
       { pattern: patern, message: message },
     ],
-    adress: [
-      { max: 50, message: "Максимальна довжина - 50 символів" },
-      {
-        pattern: /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`0-9.-]{0,30}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`0-9.-]{0,30})*$/,
-        message: "Дане поле повинне містити тільки літери та цифри",
-      },
+    address: [
+      { max: 50, message: "Максимальна довжина - 50 символів" }
     ],
   };
 
@@ -373,7 +369,7 @@ export default function () {
               rules={validationSchema.name}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} />
+              <Input className={styles.dataInput} maxLength={26}/>
             </Form.Item>
             <Form.Item
               label="Прізвище"
@@ -381,7 +377,7 @@ export default function () {
               rules={validationSchema.surName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} />
+              <Input className={styles.dataInput} maxLength={26}/>
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
@@ -391,7 +387,7 @@ export default function () {
               rules={validationSchema.fatherName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} />
+              <Input className={styles.dataInput} maxLength={26}/>
             </Form.Item>
             <Form.Item
               label="Стать"
@@ -425,15 +421,16 @@ export default function () {
               label="Номер телефону"
               name="phoneNumber"
               className={styles.formItem}
-              rules={[{min:18,message:"Дане поле не є номером телефону"}]}
+              rules={[descriptionValidation.Phone]}
             >
               <ReactInputMask
-                 value={phoneNumber}
-                 onChange={changePhoneNumber}
-                 className={styles.dataInput}
-                 mask="+38(999)-999-99-99"
-              >
-              {(inputProps: any) => <Input {...inputProps} />}
+                  mask="+380(99)-999-99-99"
+                  maskChar={null}
+                  value={phoneNumber}
+                  onChange={changePhoneNumber}
+                  className={styles.dataInput}
+                >
+                  {(inputProps: any) => <Input {...inputProps} />}
               </ReactInputMask>
             </Form.Item>
           </div>
@@ -574,10 +571,10 @@ export default function () {
             <Form.Item
               label="Адреса проживання"
               name="address"
-              rules={validationSchema.adress}
+              rules={validationSchema.address}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} />
+              <Input className={styles.dataInput} maxLength={51}/>
             </Form.Item>
           </div>
           <Button className={styles.confirmBtn} htmlType="submit">
