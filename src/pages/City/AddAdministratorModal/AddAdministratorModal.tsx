@@ -157,7 +157,7 @@ const AddAdministratorModal = (props: Props) => {
           label="Виберіть тип адміністрування"
           labelCol={{ span: 24 }}
           initialValue={props.admin.adminType.adminTypeName}
-          rules={[{ required: true, message: emptyInput }]}
+          rules={[{ required: true, message: emptyInput() }]}
         >
           <AutoComplete
             className="adminTypeSelect"

@@ -24,7 +24,7 @@ export const checkEmail = (role: object, value: string, callback:any) => {
       return callback(incorrectPhone);
     }
     if (value.length === 0) {
-        return callback(emptyInput);
+        return callback(emptyInput());
     }
     return callback();
   };

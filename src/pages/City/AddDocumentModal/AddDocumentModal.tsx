@@ -50,11 +50,11 @@ const AddDocumentModal = (props: Props) => {
               props.setDocument({...props.document, blobName: base64});
               setFileName(info.file.name);
             });
-            notificationLogic("success", fileIsUpload);   
+            notificationLogic("success", fileIsUpload());   
             setDisabled(false); 
         }
       } else {
-        notificationLogic("error", fileIsNotUpload);
+        notificationLogic("error", fileIsNotUpload());
         setDisabled(true);
       }
     };
@@ -138,7 +138,7 @@ const AddDocumentModal = (props: Props) => {
               label="Тип документу"
               name="documentType"
               rules={[
-                { required: true, message: emptyInput },
+                { required: true, message: emptyInput() },
               ]}
             >
               <Select

@@ -12,10 +12,10 @@ const AnnualReportForm = (props: Props) => {
 
     const validationSchema = {
         cityLegalStatus: [
-            { required: true, message: emptyInput }
+            { required: true, message: emptyInput() }
         ],
         number: [
-            { required: true, message: emptyInput },
+            { required: true, message: emptyInput() },
             { pattern: /^\d+$/, message: shouldContain("додатні цілі числа") },
             { max: 5, message: maxLength(5) }
         ],
@@ -23,7 +23,7 @@ const AnnualReportForm = (props: Props) => {
             { max: 2000, message: maxLength(2000) }
         ],
         money: [
-            { required: true, message: emptyInput },
+            { required: true, message: emptyInput() },
             { pattern: /^\d+$/, message: shouldContain("додатні цілі числа") },
             { max: 10, message: maxLength(10) }
         ]

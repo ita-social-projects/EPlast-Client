@@ -18,7 +18,7 @@ const ClubSelectModal = (props: Props) => {
 
     const validationSchema = {
         club: [
-            { required: true, message: emptyInput }
+            { required: true, message: emptyInput() }
         ],
     }
 

@@ -30,6 +30,17 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import{
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  successfulCreateAction, 
+  successfulUpdateAction, 
+  failCreateAction,
+  failUpdateAction,
+  fileIsDeleted
+} from "../../../components/Notifications/Messages"
 
 const CreateClub = () => {
   const { id } = useParams();
@@ -51,12 +62,12 @@ const CreateClub = () => {
       extension.indexOf("jpg") !== -1 ||
       extension.indexOf("png") !== -1;
     if (!isCorrectExtension) {
-      notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
+      notificationLogic("error", possibleFileExtensions("png, jpg, jpeg"));
     }
 
     const isSmaller2mb = size <= 3145728;
     if (!isSmaller2mb) {
-      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+      notificationLogic("error", fileIsTooBig(3));
     }
 
     return isCorrectExtension && isSmaller2mb;
@@ -68,16 +79,16 @@ const CreateClub = () => {
         getBase64(info.file, (base64: string) => {
           setClub({ ...club, logo: base64 });
         });
-        notificationLogic("success", "Фото завантажено");
+        notificationLogic("success", fileIsUpload("Фото"));
       }
     } else {
-      notificationLogic("error", "Проблема з завантаженням фото");
+      notificationLogic("error", fileIsNotUpload("фото"));
     }
   };
 
   const removeLogo = (event: any) => {
     setClub({ ...club, logo: null });
-    notificationLogic("success", "Фото видалено");
+    notificationLogic("success", fileIsDeleted("Фото"));
     event.stopPropagation();
   };
 
@@ -134,11 +145,11 @@ const CreateClub = () => {
 
     return responsePromise
       .then(() => {
-        notificationLogic("success", "Курінь успішно створено");
+        notificationLogic("success", successfulCreateAction("Курінь"));
         history.push(`${club.id}`);
       })
       .catch(() => {
-        notificationLogic("error", "Не вдалося створити курінь");
+        notificationLogic("error", failCreateAction("курінь"));
       });
   };
 
@@ -147,11 +158,11 @@ const CreateClub = () => {
 
     return updateClub(club.id, JSON.stringify(newClub))
       .then(() => {
-        notificationLogic("success", "Курінь успішно оновлено");
+        notificationLogic("success", successfulUpdateAction("Курінь"));
         history.goBack();
       })
       .catch(() => {
-        notificationLogic("error", "Не вдалося оновити курінь");
+        notificationLogic("error", failUpdateAction("курінь"));
       });
   };
 
@@ -254,12 +265,7 @@ const CreateClub = () => {
                 label="Гасло"
                 labelCol={{ span: 24 }}
                 initialValue={club.street}
-                rules={[
-                  {
-                    max: 1000,
-                    message: "Максимальна довжина - 1000 символів!",
-                  },
-                ]}
+                rules={[descriptionValidation.Description]}
               >
                 <Input value={club.description} maxLength={1001}/>
                 </Form.Item>

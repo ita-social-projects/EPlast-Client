@@ -1,14 +1,18 @@
 import React from "react";
 import {notification, Spin} from "antd";
 import {LoadingOutlined} from '@ant-design/icons';
-
+import{
+    successfulUpdateAction, 
+    failUpdateAction,
+    isNotChosen
+  } from "../../../../components/Notifications/Messages"
 
 const antIcon = <LoadingOutlined style={{fontSize: 24}} spin/>;
 
 export const updateNotification = () => {
     notification.success(
         {
-            message: "Галерея події успішно оновлена!",
+            message: successfulUpdateAction("Галерею події"),
             placement: "topRight",
             duration: 7
         }
@@ -18,7 +22,7 @@ export const updateNotification = () => {
 export const failUpdatingNotification = () => {
     notification.error(
         {
-            message: "На жаль не вдалося оновити галерею!",
+            message: failUpdateAction("галерею"),
             placement: "topRight",
             duration: 7
         }
@@ -35,7 +39,7 @@ export const loadingNotification = () => {
 
 export const emptyPhotoListNotification = () => {
     notification.warn({
-        message: "Ви ще не вибрали жодної фотографії для завантаження!",
+        message: isNotChosen("Жодної фотографії"),
         placement: "topRight",
         duration: 7
     });

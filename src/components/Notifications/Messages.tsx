@@ -2,15 +2,27 @@ import React from 'react';
 
 export const incorrectEmail = 'Неправильний формат електронної пошти'; 
 
-export const emptyInput = 'Поле не може бути пустим'; 
+export const emptyInput = (name?:string)=>{
+    return name ? `Поле ${name} є обов'язковим` : `Поле є обов'язковим`;
+}; 
 
 export const incorrectPhone = 'Дане поле не є номером телефону'; 
+
+export const onlyPositiveNumber = `Поле не може бути від'ємним`; 
 
 export const minLength = (len:number)=>{
     return `Мінімальна довжина - ${len} символів`
 }; 
 
 export const maxLength = (len:number)=>{
+    return `Максимальна довжина - ${len} символів`
+}; 
+
+export const minCount = (len:number)=>{
+    return `Мінімальна довжина - ${len} символів`
+}; 
+
+export const maxCount = (len:number)=>{
     return `Максимальна довжина - ${len} символів`
 }; 
 
@@ -52,9 +64,20 @@ export const shouldContain = (items:string)=>{
     return `Поле повинне містити ${items}`;
 };
 
-export const fileIsUpload = "Файл завантажено"; 
+export const fileIsUpload = (name?:string)=>{
+    return name ? `${name} завантажено` : `Файл завантажено`;
+}; 
 
-export const fileIsNotUpload = "Проблема з завантаженням файлу"; 
+export const fileIsNotUpload = (name?:string)=>{
+    return name ? `Проблема з завантаженням ${name}` : `Проблема з завантаженням файлу`;
+}; 
+export const fileIsDeleted = (name?:string)=>{
+    return name ? `${name} видалено` : `Файл видалено`;
+}; 
+
+export const isNotChosen = (name:string)=>{
+    return `${name} не вибрано`;
+}; 
 
 export const possibleFileExtensions = (items:string)=>{
     return `Можливі розширення файлів: ${items}`;

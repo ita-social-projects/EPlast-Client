@@ -33,11 +33,11 @@ export default function () {
 
   const validationSchema = {
     Email: [
-      { required: true, message: emptyInput },
+      { required: true, message: emptyInput() },
       { validator: checkEmail },
     ],
     Password: [
-      { required: true, message: emptyInput },
+      { required: true, message: emptyInput() },
       { min: 6, message: minLength(6) },
     ]
   };

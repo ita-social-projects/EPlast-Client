@@ -18,7 +18,7 @@ const CitySelectModal = (props: Props) => {
 
     const validationSchema = {
         city: [
-            { required: true, message: emptyInput }
+            { required: true, message: emptyInput() }
         ],
     }
 

@@ -60,7 +60,7 @@ interface Props {
              rules={[
                  {
                      required: true,
-                     message: emptyInput
+                     message: emptyInput("округ")
                  },
              ]}
          >
@@ -81,7 +81,7 @@ interface Props {
              rules={[
                 {
                     required: true,
-                    message: emptyInput
+                    message: emptyInput("року подання")
                 },
             ]}
          >

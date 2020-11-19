@@ -7,6 +7,14 @@ import ClubDocument from '../../../models/Club/ClubDocument';
 import { addDocument, getDocumentTypes } from "../../../api/clubsApi";
 import ClubDocumentType from '../../../models/Club/ClubDocumentType';
 import { InboxOutlined } from "@ant-design/icons";
+import{
+  emptyInput,
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  fileIsDeleted
+} from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
 moment.locale("uk-ua");
@@ -49,11 +57,11 @@ const AddDocumentModal = (props: Props) => {
               props.setDocument({...props.document, blobName: base64});
               setFileName(info.file.name);
             });
-            notificationLogic("success", "Файл завантажено");  
+            notificationLogic("success", fileIsUpload());  
             setDisabled(false); 
         }
       } else {
-        notificationLogic("error", "Проблема з завантаженням файлу");
+        notificationLogic("error", fileIsNotUpload());
         setDisabled(true);
       }
     };
@@ -65,13 +73,13 @@ const AddDocumentModal = (props: Props) => {
         extension.indexOf("doc") !== -1 ||
         extension.indexOf("docx") !== -1;
       if (!isCorrectExtension) {
-        notificationLogic("error", "Можливі розширення файлів: pdf, doc, docx");
+        notificationLogic("error", possibleFileExtensions("pdf, doc, docx"));
         setDisabled(true);
       }
       
       const isSmaller3mb = fileSize < 3145728;
       if (!isSmaller3mb) {
-        notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+        notificationLogic("error", fileIsTooBig(3));
       setDisabled(true);
       }
 
@@ -136,7 +144,7 @@ const AddDocumentModal = (props: Props) => {
               label="Тип документу"
               name="documentType"
               rules={[
-                { required: true, message: "Це поле має бути заповненим" },
+                { required: true, message: emptyInput() },
               ]}
             >
               <Select
@@ -186,7 +194,7 @@ const AddDocumentModal = (props: Props) => {
                   className="cardButton"
                   onClick={() => {
                     removeFile();
-                    notificationLogic("success", "Файл видалено");
+                    notificationLogic("success", fileIsDeleted());
                   }}
                 >
                   Видалити файл

@@ -41,12 +41,8 @@ import{
   successfulDeleteAction, 
   successfulCreateAction, 
   successfulUpdateAction, 
-  maxLength,
-  minLength,
   failCreateAction,
   failUpdateAction,
-  incorrectPhone,
-  incorrectEmail
 } from "../../../components/Notifications/Messages"
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
@@ -89,10 +85,10 @@ const CreateCity = () => {
         getBase64(info.file, (base64: string) => {
           setCity({ ...city, logo: base64 });
         });
-        notificationLogic("success", fileIsUpload);
+        notificationLogic("success", fileIsUpload("Фото"));
       }
     } else {
-      notificationLogic("error", fileIsNotUpload);
+      notificationLogic("error", fileIsNotUpload("фото"));
     }
   };
 
@@ -288,7 +284,7 @@ const CreateCity = () => {
                 label="Округ"
                 labelCol={{ span: 24 }}
                 initialValue={city.region}
-                rules={[{ required: true, message: emptyInput }]}
+                rules={[{ required: true, message: emptyInput("округ") }]}
               >
                 <Select
                   showSearch

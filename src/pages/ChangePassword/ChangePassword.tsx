@@ -12,15 +12,15 @@ export default function () {
 
     const validationSchema = {
         CurrentPassword: [
-            { required: true, message: emptyInput },
+            { required: true, message: emptyInput() },
             { min: 8, message: minLength(8) }
         ],
         NewPassword: [
-            { required: true, message: emptyInput },
+            { required: true, message: emptyInput() },
             { min: 8, message: minLength(8) },
         ],
         ConfirmPassword: [
-            { required: true, message: emptyInput },
+            { required: true, message: emptyInput() },
             { min: 8, message: minLength(8) },
         ]
     };
@@ -60,7 +60,7 @@ export default function () {
                     rules={[
                         {
                             required: true,
-                            message: emptyInput,
+                            message: emptyInput(),
                         },
                         ({ getFieldValue }) => ({
                             validator(rule, value) {

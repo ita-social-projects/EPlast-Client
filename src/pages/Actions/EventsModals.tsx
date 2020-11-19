@@ -3,7 +3,6 @@ import {Modal} from 'antd';
 import {ExclamationCircleOutlined} from '@ant-design/icons';
 import eventsApi from "../../api/eventsApi";
 import eventUserApi from "../../api/eventUserApi";
-import {useHistory} from "react-router-dom";
 import{successfulDeleteAction, tryAgain} from "../../components/Notifications/Messages"
 
 const {confirm} = Modal;

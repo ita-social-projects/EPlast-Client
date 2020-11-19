@@ -1,16 +1,7 @@
 import{
     emptyInput,
-    fileIsUpload,
-    fileIsNotUpload, 
-    possibleFileExtensions, 
-    fileIsTooBig, 
-    successfulDeleteAction, 
-    successfulCreateAction, 
-    successfulUpdateAction, 
     maxLength,
-    minLength,
-    failCreateAction,
-    failUpdateAction,
+    onlyPositiveNumber,
     incorrectPhone,
     incorrectEmail
   } from "../../components/Notifications/Messages"
@@ -19,7 +10,7 @@ import{
     Name: [
         {
             required: true,
-            message: emptyInput,
+            message: emptyInput(),
         },
         {
             max: 50,
@@ -42,7 +33,7 @@ import{
         },
         {
             required: true,
-            message: emptyInput,
+            message: emptyInput(),
         }
     ],
     Email: [
@@ -69,7 +60,7 @@ import{
     [
         {
             required: true,
-            message: emptyInput,
+            message: emptyInput(),
         },
         {
             max: 50,
@@ -80,7 +71,7 @@ import{
     [
         {
             required: true,
-            message: emptyInput,
+            message: emptyInput(),
         },
         {
             max: 5,
@@ -111,14 +102,14 @@ import{
                 String(value).length == 0
                 ? Promise.resolve()
                 : Promise.reject(
-                    `Поле не може бути від'ємним`
+                    onlyPositiveNumber
                     )
         },
     ],
     Required:
     {
         required: true,
-        message: emptyInput,
+        message: emptyInput(),
     }
     
   };
