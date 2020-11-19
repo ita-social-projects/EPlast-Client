@@ -5,6 +5,7 @@ import { checkEmail } from '../SignUp/verification';
 import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
 import { loadingNotification } from '../Actions/ActionEvent/EventInfo/GalleryNotifications';
+import{ emptyInput } from "../../components/Notifications/Messages"
 let authService = new AuthorizeApi();
 
 export default function () {
@@ -14,7 +15,7 @@ export default function () {
 
     const validationSchema = {
         Email: [
-            { required: true, message: "Поле електронна пошта є обов'язковим" },
+            { required: true, message: emptyInput("електронна пошта") },
             { validator: checkEmail }
         ]
     };

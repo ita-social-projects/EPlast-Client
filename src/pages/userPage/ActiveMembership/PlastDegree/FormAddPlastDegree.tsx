@@ -3,6 +3,8 @@ import { Form, Select, Button, DatePicker, Checkbox, Switch } from 'antd';
 import activeMembershipApi,{ PlastDegree, UserPlastDegreePost, UserPlastDegree } from '../../../../api/activeMembershipApi';
 import classes from "./FormAddPlastDegree.module.css"
 import NotificationBoxApi from '../../../../api/NotificationBoxApi';
+import{ emptyInput } from "../../../../components/Notifications/Messages"
+
 type FormAddPlastDegreeProps = {
     availablePlastDegree:  Array<PlastDegree>;
     setVisibleModal: (visibleModal: boolean) => void;
@@ -48,7 +50,7 @@ const FormAddPlastDegree = ({
     form = {form}>
         <Form.Item
         name ="plastDegree"
-         rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
+         rules={[ { required: true,  message: emptyInput()}]}>
         <Select
         placeholder={"Оберіть ступінь"}
         >{availablePlastDegree.map( apd => (<Select.Option key={apd.id} value={apd.id}>{apd.name}</Select.Option>))}</Select>
@@ -56,8 +58,8 @@ const FormAddPlastDegree = ({
         <Form.Item 
         className={classes.formField}
        name="datepickerStart"
-       rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
-        <DatePicker format = "YYYY-MM-DD"
+       rules={[ { required: true,  message: emptyInput()}]}>
+        <DatePicker format = "DD.MM.YYYY"
         className={classes.selectField}
         placeholder="Дата надання ступеню"
         

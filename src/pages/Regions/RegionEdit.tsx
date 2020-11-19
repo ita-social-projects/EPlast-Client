@@ -21,6 +21,13 @@ import Spinner from "../Spinner/Spinner";
 import Title from "antd/lib/typography/Title";
 import RegionProfile from "../../models/Region/RegionProfile";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
+import{
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  successfulEditAction,
+} from "../../components/Notifications/Messages"
 
 const RegionEditFormPage = () => {
   let currentRegion = Number(
@@ -55,12 +62,12 @@ const RegionEditFormPage = () => {
       extension.indexOf("jpg") !== -1 ||
       extension.indexOf("png") !== -1;
     if (!isCorrectExtension) {
-      notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
+      notificationLogic("error", possibleFileExtensions("png, jpg, jpeg"));
     }
 
     const isSmaller2mb = size <= 3145728;
     if (!isSmaller2mb) {
-      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+      notificationLogic("error", fileIsTooBig(3));
     }
 
     return isCorrectExtension && isSmaller2mb;
@@ -78,10 +85,10 @@ const RegionEditFormPage = () => {
         getBase64(info.file, (base64: string) => {
           setLogo(base64);
         });
-        notificationLogic("success", "Фото завантажено");
+        notificationLogic("success", fileIsUpload("Фото"));
       }
     } else {
-      notificationLogic("error", "Проблема з завантаженням фото");
+      notificationLogic("error", fileIsNotUpload("фото"));
     }
   };
 
@@ -103,7 +110,7 @@ const RegionEditFormPage = () => {
 
     form.resetFields();
 
-    notificationLogic("success", "Успішно змінено дані округу");
+    notificationLogic("success", successfulEditAction("Дані округу"));
     history.push(`/regions/${currentRegion}`);
   };
 

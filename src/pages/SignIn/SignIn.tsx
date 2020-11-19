@@ -12,7 +12,7 @@ import GoogleLoginWrapper from '../SignIn/GoogleLoginWrapper';
 import FacebookLoginWrapper from '../SignIn/FacebookLoginWrapper';
 import FacebookData from '../SignIn/FacebookDataInterface';
 import '../SignIn/SignIn.less';
-import{incorrectEmail, emptyInput, incorrectPhone, minLength} from "../../components/Notifications/Messages"
+import{emptyInput, minLength} from "../../components/Notifications/Messages"
 
 let authService = new AuthorizeApi();
 let user: any;

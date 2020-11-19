@@ -15,6 +15,11 @@ import kadrasApi from "../../api/KadraVykhovnykivApi";
 import notificationLogic from "../../components/Notifications/Notification";
 import Spinner from "../Spinner/Spinner";
 import moment from "moment";
+import{
+  emptyInput,
+  maxLength,
+  successfulEditAction
+} from "../../components/Notifications/Messages"
 
 type FormUpdateKadraProps = {
   showModal: (visibleModal: boolean) => void;
@@ -58,7 +63,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
           form.resetFields();
           onAdd();
           onEdit();
-          notificationLogic("success", "Відзнаку успішно змінено");
+          notificationLogic("success", successfulEditAction("Відзнаку"));
         } else {
           notificationLogic("error", "Номер реєстру вже зайнятий");
           form.resetFields();
@@ -101,7 +106,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 rules={[
                   {
                     required: true,
-                    message: "Це поле має бути заповненим",
+                    message: emptyInput(),
                   },
                 ]}
               >
@@ -120,7 +125,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 rules={[
                   {
                     required: true,
-                    message: "Це поле має бути заповненим",
+                    message: emptyInput(),
                   },
                 ]}
               >
@@ -145,11 +150,11 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 rules={[
                   {
                     required: true,
-                    message: "Це поле має бути заповненим",
+                    message: emptyInput(),
                   },
                   {
                     max: 100,
-                    message: "Поле не може перевищувати 100 символів",
+                    message: maxLength(100),
                   },
                 ]}
               >
@@ -171,7 +176,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 rules={[
                   {
                     max: 500,
-                    message: "Поле не може перевищувати 500 символів",
+                    message: maxLength(500),
                   },
                 ]}
               >

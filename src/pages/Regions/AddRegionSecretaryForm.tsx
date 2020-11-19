@@ -7,6 +7,10 @@ import regionsApi from "../../api/regionsApi";
 import { ReloadOutlined } from "@ant-design/icons";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import moment from "moment";
+import{
+  emptyInput,
+  successfulEditAction,
+} from "../../components/Notifications/Messages"
 
 type AddNewSecretaryForm = {
   onAdd: () => void;
@@ -88,7 +92,7 @@ const AddNewSecretaryForm = (props: any) => {
     } else {
       await regionsApi.EditAdmin(newAdmin);
 
-      notificationLogic("success", "Адміністратор успішно відредагований");
+      notificationLogic("success", successfulEditAction("Адміністратора"));
 
       form.resetFields();
 
@@ -131,7 +135,7 @@ const AddNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: props.admin === undefined ? true : false,
-            message: "Це поле має бути заповненим",
+            message: emptyInput(),
           },
         ]}
       >
@@ -154,7 +158,7 @@ const AddNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: true,
-            message: "Це поле має бути заповненим",
+            message: emptyInput(),
           },
         ]}
       >

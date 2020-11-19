@@ -6,6 +6,22 @@ import { addAchievementDocuments } from "../../../../api/blankApi";
 import BlankDocument from "../../../../models/Blank/BlankDocument";
 import { getBase64 } from "../../EditUserPage/Services";
 import { InboxOutlined } from "@ant-design/icons";
+import{
+  emptyInput,
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  maxLength,
+  fileIsDeleted,
+  successfulEditAction,
+  successfulCreateAction,
+  successfulDeleteAction,
+  failDeleteAction,
+  incorrectEmail,
+  minLength
+} from "../../../../components/Notifications/Messages"
+
 const { Dragger } = Upload;
 
 interface Props {

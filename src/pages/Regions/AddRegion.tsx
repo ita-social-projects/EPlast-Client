@@ -19,6 +19,14 @@ import { useHistory } from "react-router-dom";
 import ReactInputMask from "react-input-mask";
 import Title from "antd/lib/typography/Title";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
+import{
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  fileIsDeleted,
+  successfulCreateAction
+} from "../../components/Notifications/Messages"
 
 const AddNewRegionFormPage = () => {
   const [form] = Form.useForm();
@@ -44,7 +52,7 @@ const AddNewRegionFormPage = () => {
     await RegionsApi.createRegion(newRegion);
     form.resetFields();
 
-    notificationLogic("success", "Успішно додано округ");
+    notificationLogic("success", successfulCreateAction("Округ"));
     history.push("/regions");
   };
 
@@ -55,12 +63,12 @@ const AddNewRegionFormPage = () => {
       extension.indexOf("jpg") !== -1 ||
       extension.indexOf("png") !== -1;
     if (!isCorrectExtension) {
-      notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
+      notificationLogic("error", possibleFileExtensions("png, jpg, jpeg"));
     }
 
     const isSmaller2mb = size <= 3145728;
     if (!isSmaller2mb) {
-      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+      notificationLogic("error", fileIsTooBig(3));
     }
 
     return isCorrectExtension && isSmaller2mb;
@@ -78,17 +86,17 @@ const AddNewRegionFormPage = () => {
         getBase64(info.file, (base64: string) => {
           setLogo(base64);
         });
-        notificationLogic("success", "Фото завантажено");
+        notificationLogic("success", fileIsUpload("Фото"));
         setCurrentPhoto(true);
       }
     } else {
-      notificationLogic("error", "Проблема з завантаженням фото");
+      notificationLogic("error", fileIsNotUpload("фото"));
     }
   };
 
   const removePhoto = (event: any) => {
     setLogo(CityDefaultLogo);
-    notificationLogic("success", "Фото видалено");
+    notificationLogic("success", fileIsDeleted("Фото"));
     event.stopPropagation();
     setCurrentPhoto(false);
   };
