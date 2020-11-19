@@ -395,7 +395,7 @@ export default function () {
               className={styles.formItem}
             >
               <Select
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 onChange={handleOnChangeGender}
               >
                 {data?.genders.map((p) => (
@@ -442,7 +442,7 @@ export default function () {
               className={styles.formItem}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangeNationality}
               >
@@ -460,9 +460,10 @@ export default function () {
               rules={validationSchema.religion}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangeReligion}
+                
               >
                 {data?.religions.map((p) => (
                   <Select.Option key={p.id} value={p.name}>
@@ -481,7 +482,7 @@ export default function () {
               className={styles.formItem}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangePlaceOfStudy}
               >
@@ -499,7 +500,7 @@ export default function () {
               className={styles.formItem}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangeSpeciality}
               >
@@ -519,7 +520,7 @@ export default function () {
               className={styles.formItem}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangeDegree}
               >
@@ -537,7 +538,7 @@ export default function () {
               className={styles.formItem}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangePlaceOWork}
               >
@@ -557,7 +558,7 @@ export default function () {
               className={styles.formItem}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangePosition}
               >
