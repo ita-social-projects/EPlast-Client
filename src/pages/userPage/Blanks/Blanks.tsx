@@ -19,6 +19,10 @@ import jwt from "jwt-decode";
 import ListOfAchievementsModal from "./UserAchievements/ListOfAchievementsModal";
 import AddExtractFromUPUModal from "./UserExtractFromUPU/AddExtractFromUPUModal";
 import jwt_decode from "jwt-decode";
+import{
+    fileIsDeleted,
+    tryAgain
+  } from "../../../components/Notifications/Messages"
 
 export const Blanks = () => {
     const { userId } = useParams();
@@ -47,7 +51,7 @@ export const Blanks = () => {
         setCanEdit(roles.includes("Admin"));
         await userApi.getById(userId).then(response => {
             setData(response.data);
-        }).catch(() => { notificationLogic('error', "Щось пішло не так") })
+        }).catch(() => { notificationLogic('error', tryAgain) })
         setLoading(true);
     };
 
@@ -71,12 +75,12 @@ export const Blanks = () => {
 
     const removeDocumentById = async (documentId: number) => {
         await removeDocument(documentId);
-        notificationLogic('success', "Файл успішно видалено");
+        notificationLogic('success', fileIsDeleted());
         getDocument();
     };
     const removeExtractDocument = async (documentId: number) => {
         await removeExtractFromUPUDocument(documentId);
-        notificationLogic('success', "Файл успішно видалено");
+        notificationLogic('success', fileIsDeleted());
         getExtractFromUPU();
     }
 

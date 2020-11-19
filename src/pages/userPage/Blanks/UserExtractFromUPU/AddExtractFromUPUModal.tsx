@@ -5,6 +5,13 @@ import { addExtractFromUPU } from "../../../../api/blankApi";
 import { getBase64 } from "../../EditUserPage/Services";
 import notificationLogic from '../../../../components/Notifications/Notification';
 import { InboxOutlined } from "@ant-design/icons";
+import{
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  fileIsDeleted,
+} from "../../../../components/Notifications/Messages"
 
 interface Props {
     visibleModal: boolean;
@@ -36,11 +43,11 @@ const AddExtractFromUPUModal = (props: Props) => {
               props.setDocument({...props.document, blobName: base64});
               setFileName(info.file.name);
             });
-            notificationLogic("success", "Файл завантажено");    
+            notificationLogic("success", fileIsUpload());    
             setDisabled(false);
         }
       } else {
-        notificationLogic("error", "Проблема з завантаженням файлу");
+        notificationLogic("error", fileIsNotUpload());
       }
     };
 
@@ -49,14 +56,14 @@ const AddExtractFromUPUModal = (props: Props) => {
       const isCorrectExtension =
         extension.indexOf("pdf") !== -1;
       if (!isCorrectExtension) {
-        notificationLogic("error", "Можливі розширення файлів: pdf");
+        notificationLogic("error", possibleFileExtensions("pdf"));
         setDisabled(true);
         return isCorrectExtension;
       }
       
       const isSmaller3mb = fileSize < 3145728;
       if (!isSmaller3mb) {
-        notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+        notificationLogic("error", fileIsTooBig(3));
         setDisabled(true);
         return isSmaller3mb;
       }
@@ -133,7 +140,7 @@ const AddExtractFromUPUModal = (props: Props) => {
                   className="cardButton"
                   onClick={() => {
                     removeFile();
-                    notificationLogic("success", "Файл видалено");
+                    notificationLogic("success", fileIsDeleted());
                   }}
                 >
                   Видалити файл

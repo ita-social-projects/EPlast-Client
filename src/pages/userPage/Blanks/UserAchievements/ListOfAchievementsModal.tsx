@@ -7,7 +7,7 @@ import classes from "./ListOfAchievements.module.css"
 import notificationLogic from '../../../../components/Notifications/Notification';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useParams } from "react-router-dom";
-
+import{ fileIsDeleted } from "../../../../components/Notifications/Messages"
 
 
 interface Props {
@@ -40,7 +40,7 @@ const ListOfAchievementsModal = (props: Props) => {
 
     const deleteFIle = async (documentId: number, fileName: string) => {
         await removeAchievementDocument(documentId);
-        notificationLogic('success', `Файл "${fileName}" успішно видалено`);
+        notificationLogic('success', fileIsDeleted(`Файл ${fileName}`));
         setAchievements(achievements.filter((d) => d.id !== documentId));
         props.setAchievementDoc(props.achievementDoc.filter((d) => d.id !== documentId));
     }
