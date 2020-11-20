@@ -14,6 +14,10 @@ import kadrasApi from "../../api/KadraVykhovnykivApi";
 import adminApi from "../../api/adminApi";
 import notificationLogic from '../../components/Notifications/Notification';
 import NotificationBoxApi from '../../api/NotificationBoxApi';
+import{
+  emptyInput,
+  maxLength,
+} from "../../components/Notifications/Messages"
 
 type FormAddKadraProps = {
     showModal: (visibleModal: boolean) => void;  
@@ -150,7 +154,7 @@ type FormAddKadraProps = {
             rules={[
               {
                 required: true,
-                message: "Це поле має бути заповненим",
+                message: emptyInput(),
               },
             ]}
           >
@@ -174,7 +178,7 @@ type FormAddKadraProps = {
             rules={[
               {
                 required: true,
-                message: "Це поле має бути заповненим",
+                message: emptyInput(),
               },
             ]}
           >
@@ -198,7 +202,7 @@ type FormAddKadraProps = {
             rules={[
               {
                 required: true,
-                message: "Це поле має бути заповненим",
+                message: emptyInput(),
               },
             ]}
           >
@@ -218,11 +222,11 @@ type FormAddKadraProps = {
             rules={[
               {
                 required: true,
-                message: "Це поле має бути заповненим",
+                message: emptyInput(),
               },
               {
                 max: 6,
-                message: "Поле не може перевищувати 6 символів!",
+                message: maxLength(6),
               },
             ]}
           >
@@ -245,9 +249,9 @@ type FormAddKadraProps = {
             rules={[
               {
                 required: true,
-                message: "Це поле має бути заповненим",
+                message: emptyInput(),
               },
-              { max: 100, message: "Поле не може перевищувати 100 символів" },
+              { max: 100, message: maxLength(100) },
             ]}
           >
             <Input className={classes.inputField} />
@@ -262,7 +266,7 @@ type FormAddKadraProps = {
             labelCol={{ span: 24 }}
             name="link"
             rules={[
-              { max: 500, message: "Поле не може перевищувати 500 символів" },
+              { max: 500, message: maxLength(500) },
             ]}
           >
             <Input className={classes.inputField} />

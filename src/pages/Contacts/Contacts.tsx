@@ -5,6 +5,12 @@ import styles from "./Contacts.module.css";
 import AuthorizeApi from "../../api/authorizeApi";
 import { useHistory } from 'react-router-dom';
 import ReactInputMask from "react-input-mask";
+import{
+  emptyInput,
+  incorrectEmail,
+  incorrectPhone,
+} from "../../components/Notifications/Messages"
+
 let authService = new AuthorizeApi();
 
 export default function () {
@@ -39,10 +45,10 @@ export default function () {
   };
 
   const validateMessages = {
-    required: "Це поле є обов`язковим!",
+    required: emptyInput(),
     types: {
-      email: "Неправильний формат електронної пошти!",
-      string: "Непрвильний номер телефону",
+      email: incorrectEmail,
+      string: incorrectPhone,
     },
   };
 
@@ -96,7 +102,7 @@ export default function () {
         <Form.Item
           name="PhoneNumber"
           label="Вкажіть Ваш номер телефону"
-          rules={[{min:18, message:"Непрвильний номер телефону"}]}
+          rules={[{min:18, message:incorrectPhone}]}
           >
           <ReactInputMask
             mask="+380(99)-999-99-99"

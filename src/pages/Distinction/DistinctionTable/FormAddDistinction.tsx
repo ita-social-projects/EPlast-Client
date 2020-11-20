@@ -15,6 +15,11 @@ import distinctionApi from "../../../api/distinctionApi";
 import adminApi from "../../../api/adminApi";
 import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import{
+  emptyInput,
+  maxLength,
+  failCreateAction
+} from "../../../components/Notifications/Messages"
 
 type FormAddDistinctionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -44,7 +49,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
   const dateFormat = "DD.MM.YYYY";
   const openNotification = (message: string) => {
     notification.error({
-      message: `Невдалося створити відзначення`,
+      message: failCreateAction(`відзначення`),
       description: `${message}`,
       placement: "topLeft",
     });
@@ -132,7 +137,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             rules={[
               {
                 required: true,
-                message: "Це поле має бути заповненим",
+                message: emptyInput(),
               },
             ]}
           >
@@ -155,7 +160,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             rules={[
               {
                 required: true,
-                message: "Це поле має бути заповненим",
+                message: emptyInput(),
               },
             ]}
           >
@@ -176,7 +181,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Ім'я"
             name="user"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: "Це поле має бути заповненим" }]}
+            rules={[{ required: true, message: emptyInput() }]}
           >
             <Select
               className={formclasses.selectField}
@@ -202,7 +207,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             rules={[
               {
                 max: 100,
-                message: "Поле подання не має перевищувати 100 символів!",
+                message: maxLength(100),
               },
             ]}
           >
@@ -221,7 +226,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             name="date"
             label="Дата затвердження"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: "Це поле має бути заповненим" }]}
+            rules={[{ required: true, message: emptyInput() }]}
           >
             <DatePicker
               format={dateFormat}
@@ -240,7 +245,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             rules={[
               {
                 max: 250,
-                message: "Поле обгрунтування не має перевищувати 250 символів!",
+                message: maxLength(250),
               },
             ]}
           >

@@ -4,6 +4,7 @@ import { Form, AutoComplete, Select, Button, Modal } from 'antd';
 import regionsApi from '../../../api/regionsApi';
 import notificationLogic from "../../../components/Notifications/Notification";
 import { useHistory } from 'react-router-dom';
+import {successfulCreateAction, tryAgain, emptyInput} from "../../../components/Notifications/Messages"
 
 interface Props {
   visibleModal: boolean,
@@ -23,11 +24,11 @@ interface Props {
       const handleSubmit = async (values : any)=>{
           regionsApi.createRegionAnnualReport(JSON.parse(values.region).id, values.year) 
           .then(() => {
-            notificationLogic("success", "Річний звіт успішно створено");
+            notificationLogic("success", successfulCreateAction("Річний звіт"));
             window.location.reload();
           })
           .catch(() => {
-            notificationLogic("error", "Щось пішло не так. Можливо даний річний звіт уже створено");
+            notificationLogic("error", tryAgain);
           });    
           form.resetFields(); 
         }
@@ -59,7 +60,7 @@ interface Props {
              rules={[
                  {
                      required: true,
-                     message: 'Це поле має бути заповненим'
+                     message: emptyInput("округ")
                  },
              ]}
          >
@@ -80,7 +81,7 @@ interface Props {
              rules={[
                 {
                     required: true,
-                    message: 'Це поле має бути заповненим'
+                    message: emptyInput("року подання")
                 },
             ]}
          >

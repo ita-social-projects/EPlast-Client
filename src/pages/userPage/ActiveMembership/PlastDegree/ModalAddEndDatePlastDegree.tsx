@@ -3,6 +3,7 @@ import { Modal, Form,DatePicker, Button } from 'antd';
 import classes from "./FormAddPlastDegree.module.css"
 import activeMembershipApi,{ UserPlastDegreePut } from '../../../../api/activeMembershipApi';
 import moment from 'moment';
+import{ emptyInput } from "../../../../components/Notifications/Messages"
 type props = {
     userId : string;
     plastDegreeId : number;
@@ -50,8 +51,8 @@ const ModalAddEndDatePlastDegree = ({
           <Form.Item 
         className={classes.formField}
        name="datepickerEnd"
-       rules={[ { required: true,  message: 'Це поле має бути заповненим'}]}>
-        <DatePicker format = "YYYY-MM-DD"
+       rules={[ { required: true,  message: emptyInput()}]}>
+        <DatePicker format = "DD.MM.YYYY"
         disabledDate={(cur) => disabledDate(cur , dateOfStart)}
         className={classes.selectField}
         placeholder="Дата закінчення ступеню"

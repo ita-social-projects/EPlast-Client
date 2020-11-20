@@ -16,7 +16,7 @@ import AnnualReportApi from "../../api/AnnualReportApi";
 import CityStatistics from "./Interfaces/CityStatistics";
 import DataFromResponse from "./Interfaces/DataFromResponse";
 import { SortOrder } from "antd/lib/table/interface";
-
+import{ shouldContain } from "../../components/Notifications/Messages"
 
 const StatisticsCities = () => {
 
@@ -198,7 +198,7 @@ const StatisticsCities = () => {
             span={8} >
             <Form.Item
               name="citiesId"
-              rules={[{ required: true, message: "Оберіть хоча б одну станицю", type: "array" }]} >
+              rules={[{ required: true, message: shouldContain("хоча б одну станицю"), type: "array" }]} >
               <Select
                 showSearch
                 mode="multiple"
@@ -213,7 +213,7 @@ const StatisticsCities = () => {
             span={8} >
             <Form.Item
               name="years"
-              rules={[{ required: true, message: "Оберіть хоча б один рік", type: "array" }]}>
+              rules={[{ required: true, message: shouldContain("хоча б один рік"), type: "array" }]}>
               <Select
                 showSearch
                 mode="multiple"
@@ -228,7 +228,7 @@ const StatisticsCities = () => {
             span={8} >
             <Form.Item
               name="indicators"
-              rules={[{ required: true, message: "Оберіть хоча б один показник", type: "array" }]}>
+              rules={[{ required: true, message: shouldContain("хоча б один показник"), type: "array" }]}>
               <Select
                 showSearch
                 mode="multiple"

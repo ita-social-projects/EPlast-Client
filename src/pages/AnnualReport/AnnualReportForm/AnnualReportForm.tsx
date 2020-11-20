@@ -2,6 +2,7 @@ import React from 'react';
 import { Typography, Form, Row, Col, Input, Select, message } from 'antd';
 import Props from './AnnualReportFormProps';
 import './AnnualReportForm.less';
+import{emptyInput, maxLength, shouldContain} from "../../../components/Notifications/Messages"
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -11,20 +12,20 @@ const AnnualReportForm = (props: Props) => {
 
     const validationSchema = {
         cityLegalStatus: [
-            { required: true, message: "Оберіть правовий статус осередку" }
+            { required: true, message: emptyInput() }
         ],
         number: [
-            { required: true, message: "Поле є обов'язковим для заповнення" },
-            { pattern: /^\d+$/, message: "Поле повинне містити додатні цілі числа" },
-            { max: 5, message: "Поле не повинно містити більше 5 чисел" }
+            { required: true, message: emptyInput() },
+            { pattern: /^\d+$/, message: shouldContain("додатні цілі числа") },
+            { max: 5, message: maxLength(5) }
         ],
         textarea: [
-            { max: 2000, message: "Максимально допустима кількість символів - 2000" }
+            { max: 2000, message: maxLength(2000) }
         ],
         money: [
-            { required: true, message: "Поле є обов'язковим для заповнення" },
-            { pattern: /^\d+$/, message: "Поле повинне містити додатні цілі числа" },
-            { max: 10, message: "Поле не повинно містити більше 10 чисел" }
+            { required: true, message: emptyInput() },
+            { pattern: /^\d+$/, message: shouldContain("додатні цілі числа") },
+            { max: 10, message: maxLength(10) }
         ]
     }
 

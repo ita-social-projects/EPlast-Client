@@ -3,9 +3,6 @@ import { Table, Spin, Input } from 'antd';
 import columns from './columnsCIties';
 import { getUsersAdministrations, getusersPreviousAdministrations } from "../../../api/citiesApi";
 
-import ClickAwayListener from 'react-click-away-listener';
-
-
 
 interface props {
 
