@@ -3,7 +3,7 @@ import {Modal} from 'antd';
 import {ExclamationCircleOutlined} from '@ant-design/icons';
 import eventsApi from "../../api/eventsApi";
 import eventUserApi from "../../api/eventUserApi";
-import {useHistory} from "react-router-dom";
+import{successfulDeleteAction, tryAgain} from "../../components/Notifications/Messages"
 
 const {confirm} = Modal;
 
@@ -43,7 +43,7 @@ export const Success = (message: string) => {
 export const showError = () => {
     Modal.error({
         title: 'Упсс...',
-        content: 'Щось пішло не так. Спробуйте повторити дану дію пізніше або напишіть у техпідтримку.'
+        content: tryAgain
     });
 }
 
@@ -123,7 +123,7 @@ export const showDeleteConfirm = ({eventId, eventName, successCallback, isSingle
             };
             deleteEvent()
                 .then(() => {
-                    Success('Подія успішно видалена.')
+                    Success(successfulDeleteAction("Подію"))
                     if (isSingleEventInState) {
                         // @ts-ignore
                         successCallback()

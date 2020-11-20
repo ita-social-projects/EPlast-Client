@@ -4,8 +4,6 @@ import columns from './columnsClubs';
 import { getUsersAdministrations, getUsersPreviousAdministrations } from "../../../api/clubsApi";
 
 
-
-
 interface props {
 
   UserId: string;

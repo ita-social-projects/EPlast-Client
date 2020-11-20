@@ -1,80 +1,88 @@
-  export const descriptionValidation = {
+import{
+    emptyInput,
+    maxLength,
+    onlyPositiveNumber,
+    incorrectPhone,
+    incorrectEmail
+  } from "../../components/Notifications/Messages"
+
+ export const descriptionValidation = {
     Name: [
         {
             required: true,
-            message: "Це поле є обов'язковим",
+            message: emptyInput(),
         },
         {
             max: 50,
-            message: "Максимальна довжина - 50 символів!",
+            message: maxLength(50),
         }
     ],
     Description:
     {
         max: 1000,
-        message: "Максимальна довжина - 1000 символів!",
+        message: maxLength(1000),
     },
     RegionEmail: [
         {
             pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-            message: "Неправильний формат електронної пошти!",
+            message: incorrectEmail,
         },
         {
             max: 50,
-            message: "Максимальна довжина - 50 символів!",
+            message: maxLength(50),
         },
         {
             required: true,
-            message: "Це поле має бути заповненим",
+            message: emptyInput(),
         }
     ],
     Email: [
         {
             pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-            message: "Неправильний формат електронної пошти!",
+            message: incorrectEmail,
         },
         {
             max: 50,
-            message: "Максимальна довжина - 50 символів!",
+            message: maxLength(50),
         }
     ],
     Phone: 
         {
             pattern: /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/,
-            message: "Невірно вказаний номер",
+            message: incorrectPhone,
         },
     Link:
         {
             max: 256,
-            message: "Максимальна довжина - 256 символів!",
+            message: maxLength(256),
         },
     Street:
     [
         {
             required: true,
-            message: "Це поле має бути заповненим",
+            message: emptyInput(),
         },
         {
             max: 50,
-            message: "Максимальна довжина - 50 символів!",
+            message: maxLength(50),
         },
     ],
     houseNumber:
     [
         {
             required: true,
-            message: "Це поле має бути заповненим",
+            message: emptyInput(),
         },
         {
             max: 5,
-            message: "Максимальна довжина - 5 символів!",
+            message: maxLength(5),
         },
     ],
     officeNumber:
     [
         {
             max: 5,
-            message: "Максимальна довжина - 5 символів!",
+            message: maxLength(5),
         },
     ],
     postIndex:
@@ -94,14 +102,14 @@
                 String(value).length == 0
                 ? Promise.resolve()
                 : Promise.reject(
-                    `Поле не може бути від'ємним`
+                    onlyPositiveNumber
                     )
         },
     ],
     Required:
     {
         required: true,
-        message: "Це поле має бути заповненим",
+        message: emptyInput(),
     }
     
   };

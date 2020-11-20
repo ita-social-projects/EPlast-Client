@@ -13,7 +13,7 @@ import User from "../../../models/UserTable/User";
 import distinctionApi from "../../../api/distinctionApi";
 import Distinction from "../Interfaces/Distinction";
 import EditDistinctionModal from "./EditDistinctionModal";
-import ClickAwayListener from "react-click-away-listener";
+
 
 interface Props {
   record: number;

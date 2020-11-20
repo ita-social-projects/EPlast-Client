@@ -32,6 +32,18 @@ import RegionProfile from "../../../models/Region/RegionProfile";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
+import{
+  emptyInput,
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  successfulDeleteAction, 
+  successfulCreateAction, 
+  successfulUpdateAction, 
+  failCreateAction,
+  failUpdateAction,
+} from "../../../components/Notifications/Messages"
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 
@@ -56,12 +68,12 @@ const CreateCity = () => {
       extension.indexOf("jpg") !== -1 ||
       extension.indexOf("png") !== -1;
     if (!isCorrectExtension) {
-      notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
+      notificationLogic("error", possibleFileExtensions("png, jpg, jpeg"));
     }
 
     const isSmaller2mb = size <= 3145728;
     if (!isSmaller2mb) {
-      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+      notificationLogic("error", fileIsTooBig(3));
     }
 
     return isCorrectExtension && isSmaller2mb;
@@ -73,16 +85,16 @@ const CreateCity = () => {
         getBase64(info.file, (base64: string) => {
           setCity({ ...city, logo: base64 });
         });
-        notificationLogic("success", "Фото завантажено");
+        notificationLogic("success", fileIsUpload("Фото"));
       }
     } else {
-      notificationLogic("error", "Проблема з завантаженням фото");
+      notificationLogic("error", fileIsNotUpload("фото"));
     }
   };
 
   const removeLogo = (event: any) => {
     setCity({ ...city, logo: null });
-    notificationLogic("success", "Фото видалено");
+    notificationLogic("success", successfulDeleteAction("Фото"));
     event.stopPropagation();
   };
 
@@ -152,11 +164,11 @@ const CreateCity = () => {
 
     return responsePromise
       .then(() => {
-        notificationLogic("success", "Станицю успішно створено");
+        notificationLogic("success", successfulCreateAction("Станицю"));
         history.push(`${city.id}`);
       })
       .catch(() => {
-        notificationLogic("error", "Не вдалося створити станицю");
+        notificationLogic("error", failCreateAction("станицю"));
       });
   };
 
@@ -165,11 +177,11 @@ const CreateCity = () => {
 
     return updateCity(city.id, JSON.stringify(newCity))
       .then(() => {
-        notificationLogic("success", "Станицю успішно оновлено");
+        notificationLogic("success", successfulUpdateAction("Станицю"));
         history.goBack();
       })
       .catch(() => {
-        notificationLogic("error", "Не вдалося оновити станицю");
+        notificationLogic("error", failUpdateAction("станицю"));
       });
   };
 
@@ -272,7 +284,7 @@ const CreateCity = () => {
                 label="Округ"
                 labelCol={{ span: 24 }}
                 initialValue={city.region}
-                rules={[{ required: true, message: "Це поле є обов'язковим" }]}
+                rules={[{ required: true, message: emptyInput("округ") }]}
               >
                 <Select
                   showSearch

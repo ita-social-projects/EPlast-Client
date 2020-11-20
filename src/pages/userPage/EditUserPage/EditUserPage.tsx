@@ -24,11 +24,22 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Spinner from "../../Spinner/Spinner";
 import { useHistory } from "react-router-dom";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";
+import{
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  maxLength,
+  successfulEditAction,
+  tryAgain,
+  shouldContain,
+  incorrectPhone
+} from "../../../components/Notifications/Messages"
 
 export default function () {
   const history = useHistory();
   const patern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50})*$/;
-  const message = "Дане поле повинне містити тільки літери";
+  const message = shouldContain("тільки літери");
   const [form] = Form.useForm();
 
   const [nationality, setNationality] = useState<Nationality>();
@@ -59,10 +70,10 @@ export default function () {
               setUserAvatar(q.data);
             })
             .catch(() => {
-              notificationLogic("error", "Проблема з завантаженням фото");
+              notificationLogic("error", fileIsNotUpload("фото"));
             });
         } else {
-          notificationLogic("error", "Проблема з завантаженням даних");
+          notificationLogic("error", fileIsNotUpload("даних"));
         }
 
         setLoading(true);
@@ -101,7 +112,7 @@ export default function () {
         }
       })
       .catch(() => {
-        notificationLogic("error", "Щось пішло не так");
+        notificationLogic("error", tryAgain);
       });
   };
 
@@ -122,42 +133,42 @@ export default function () {
       { validator: checkNameSurName },
     ],
     fatherName: [
-      { max: 25, message: "Максимальна довжина - 25 символів" },
+      { max: 25, message: maxLength(25) },
       { pattern: patern, message: message },
     ],
     degree: [
-      { max: 30, message: "Максимальна довжина - 30 символів" },
+      { max: 30, message: maxLength(30) },
       { pattern: patern, message: message },
     ],
     placeOfStudy: [
-      { max: 50, message: "Максимальна довжина - 50 символів" },
+      { max: 50, message: maxLength(50) },
       { pattern: patern, message: message },
     ],
     speciality: [
-      { max: 50, message: "Максимальна довжина - 50 символів" },
+      { max: 50, message: maxLength(50) },
       { pattern: patern, message: message },
     ],
     nationality: [
-      { max: 25, message: "Максимальна довжина - 25 символів" },
+      { max: 25, message: maxLength(25) },
       { pattern: patern, message: message },
     ],
     religion: [
-      { max: 25, message: "Максимальна довжина - 25 символів" },
+      { max: 25, message: maxLength(25) },
       { pattern: patern, message: message },
     ],
     placeOfWork: [
-      { max: 50, message: "Максимальна довжина - 50 символів" },
+      { max: 50, message: maxLength(50) },
       { pattern: patern, message: message },
     ],
     position: [
-      { max: 50, message: "Максимальна довжина - 50 символів" },
+      { max: 50, message: maxLength(50) },
       { pattern: patern, message: message },
     ],
     adress: [
-      { max: 50, message: "Максимальна довжина - 50 символів" },
+      { max: 50, message: maxLength(50) },
       {
         pattern: /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`0-9.-]{0,30}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`0-9.-]{0,30})*$/,
-        message: "Дане поле повинне містити тільки літери та цифри",
+        message: shouldContain("тільки літери та цифри"),
       },
     ],
   };
@@ -175,12 +186,12 @@ export default function () {
       extension.indexOf("jpg") !== -1 ||
       extension.indexOf("png") !== -1;
     if (!isCorrectExtension) {
-      notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
+      notificationLogic("error", possibleFileExtensions("png, jpg, jpeg"));
     }
 
     const isSmaller2mb = size <= 3145728;
     if (!isSmaller2mb) {
-      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+      notificationLogic("error", fileIsTooBig(3));
     }
 
     return isCorrectExtension && isSmaller2mb;
@@ -192,11 +203,11 @@ export default function () {
         getBase64(info.file, (imageUrl: any) => {
           setUserAvatar(imageUrl);
         });
-        notificationLogic("success", "Фото завантажено");
+        notificationLogic("success", fileIsUpload("Фото"));
       }
     } else {
       setUserAvatar(avatar);
-      notificationLogic("error", "Проблема з завантаженням фото");
+      notificationLogic("error", fileIsNotUpload("фото"));
     }
   };
 
@@ -328,13 +339,13 @@ export default function () {
     await userApi
       .put(newUserProfile)
       .then(() => {
-        notificationLogic("success", "Дані успішно змінено");
+        notificationLogic("success", successfulEditAction("Дані"));
         history.replace(`/userpage/main/${newUserProfile.user.id}`);
         window.location.reload();
         
       })
       .catch(() => {
-        notificationLogic("error", "Щось пішло не так");
+        notificationLogic("error", tryAgain);
       });
     fetchData();
   };
@@ -425,7 +436,7 @@ export default function () {
               label="Номер телефону"
               name="phoneNumber"
               className={styles.formItem}
-              rules={[{min:18,message:"Дане поле не є номером телефону"}]}
+              rules={[{min:18,message:incorrectPhone}]}
             >
               <ReactInputMask
                  value={phoneNumber}
