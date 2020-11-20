@@ -11,7 +11,6 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import styles from "./EditUserPage.module.css";
-import { checkNameSurName} from "../../SignUp/verification";
 import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
 import userApi from "../../../api/UserApi";
@@ -24,6 +23,7 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Spinner from "../../Spinner/Spinner";
 import { useHistory } from "react-router-dom";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 import{
   fileIsUpload,
   fileIsNotUpload, 
@@ -39,6 +39,7 @@ import{
 export default function () {
   const history = useHistory();
   const patern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50})*$/;
+  const secondPatern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50})*$/;
   const message = shouldContain("тільки літери");
   const [form] = Form.useForm();
 
@@ -127,10 +128,16 @@ export default function () {
 
   const validationSchema = {
     name: [
-      { validator: checkNameSurName },
+      { max: 25, message: "Максимальна довжина - 25 символів" },
+      { min: 2, message: "Мінімальна довжина - 2 символів" },
+      { required: true, message: "Поле є обов'язковим" },
+      { pattern: patern, message: message },
     ],
     surName: [
-      { validator: checkNameSurName },
+      { max: 25, message: "Максимальна довжина - 25 символів" },
+      { min: 2, message: "Мінімальна довжина - 2 символів" },
+      { required: true, message: "Поле є обов'язковим" },
+      { pattern: patern, message: message },
     ],
     fatherName: [
       { max: 25, message: maxLength(25) },
@@ -142,11 +149,10 @@ export default function () {
     ],
     placeOfStudy: [
       { max: 50, message: maxLength(50) },
-      { pattern: patern, message: message },
     ],
     speciality: [
       { max: 50, message: maxLength(50) },
-      { pattern: patern, message: message },
+      { pattern: secondPatern, message: message },
     ],
     nationality: [
       { max: 25, message: maxLength(25) },
@@ -157,19 +163,14 @@ export default function () {
       { pattern: patern, message: message },
     ],
     placeOfWork: [
-      { max: 50, message: maxLength(50) },
-      { pattern: patern, message: message },
+      { max: 50, message: maxLength(50) }
     ],
     position: [
-      { max: 50, message: maxLength(50) },
+      { max: 30, message: maxLength(30) },
       { pattern: patern, message: message },
     ],
-    adress: [
-      { max: 50, message: maxLength(50) },
-      {
-        pattern: /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`0-9.-]{0,30}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`0-9.-]{0,30})*$/,
-        message: shouldContain("тільки літери та цифри"),
-      },
+    address: [
+      { max: 50, message: maxLength(50) }
     ],
   };
 
@@ -384,7 +385,7 @@ export default function () {
               rules={validationSchema.name}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} />
+              <Input className={styles.dataInput} maxLength={26}/>
             </Form.Item>
             <Form.Item
               label="Прізвище"
@@ -392,7 +393,7 @@ export default function () {
               rules={validationSchema.surName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} />
+              <Input className={styles.dataInput} maxLength={26}/>
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
@@ -402,7 +403,7 @@ export default function () {
               rules={validationSchema.fatherName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} />
+              <Input className={styles.dataInput} maxLength={26}/>
             </Form.Item>
             <Form.Item
               label="Стать"
@@ -410,7 +411,7 @@ export default function () {
               className={styles.formItem}
             >
               <Select
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 onChange={handleOnChangeGender}
               >
                 {data?.genders.map((p) => (
@@ -436,15 +437,16 @@ export default function () {
               label="Номер телефону"
               name="phoneNumber"
               className={styles.formItem}
-              rules={[{min:18,message:incorrectPhone}]}
+              rules={[descriptionValidation.Phone]}
             >
               <ReactInputMask
-                 value={phoneNumber}
-                 onChange={changePhoneNumber}
-                 className={styles.dataInput}
-                 mask="+38(999)-999-99-99"
-              >
-              {(inputProps: any) => <Input {...inputProps} />}
+                  mask="+380(99)-999-99-99"
+                  maskChar={null}
+                  value={phoneNumber}
+                  onChange={changePhoneNumber}
+                  className={styles.dataInput}
+                >
+                  {(inputProps: any) => <Input {...inputProps} />}
               </ReactInputMask>
             </Form.Item>
           </div>
@@ -456,7 +458,7 @@ export default function () {
               className={styles.formItem}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangeNationality}
               >
@@ -474,9 +476,10 @@ export default function () {
               rules={validationSchema.religion}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangeReligion}
+                
               >
                 {data?.religions.map((p) => (
                   <Select.Option key={p.id} value={p.name}>
@@ -495,7 +498,7 @@ export default function () {
               className={styles.formItem}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangePlaceOfStudy}
               >
@@ -513,7 +516,7 @@ export default function () {
               className={styles.formItem}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangeSpeciality}
               >
@@ -533,7 +536,7 @@ export default function () {
               className={styles.formItem}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangeDegree}
               >
@@ -551,7 +554,7 @@ export default function () {
               className={styles.formItem}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangePlaceOWork}
               >
@@ -571,7 +574,7 @@ export default function () {
               className={styles.formItem}
             >
               <AutoComplete
-                className={styles.dataInput}
+                className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangePosition}
               >
@@ -585,10 +588,10 @@ export default function () {
             <Form.Item
               label="Адреса проживання"
               name="address"
-              rules={validationSchema.adress}
+              rules={validationSchema.address}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} />
+              <Input className={styles.dataInput} maxLength={51}/>
             </Form.Item>
           </div>
           <Button className={styles.confirmBtn} htmlType="submit">
