@@ -31,7 +31,7 @@ import{
   possibleFileExtensions, 
   fileIsTooBig, 
   maxLength,
-  fileIsDeleted,
+  successfulDeleteAction,
 } from "../../components/Notifications/Messages"
 
 type FormAddDecisionProps = {
@@ -275,7 +275,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
                     className={formclasses.cardButton}
                     onClick={() => {
                       setFileData({ FileAsBase64: null, FileName: null });
-                      notificationLogic("success", fileIsDeleted());
+                      notificationLogic("success", successfulDeleteAction("Файл"));
                     }}
                   >
                     {" "}

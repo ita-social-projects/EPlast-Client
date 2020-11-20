@@ -11,7 +11,13 @@ import EventTypes from '../../../../models/EventCreate/EventTypes';
 import Users from '../../../../models/EventCreate/Users';
 import EventEdit from '../../../../models/EventEdit/EventEdit';
 import NotificationBoxApi from '../../../../api/NotificationBoxApi';
-import{successfulEditAction, tryAgain, emptyInput, maxLength} from "../../../../components/Notifications/Messages"
+import{
+    successfulEditAction, 
+    tryAgain, 
+    emptyInput, 
+    maxLength, 
+    isNotChosen
+} from "../../../../components/Notifications/Messages"
 moment.locale('uk-ua');
 
 const classes = require('./EventEdit.module.css');
@@ -191,7 +197,7 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
                 <Input type="hidden" style={{ width: 0 }} />
             </Form.Item>
             < div className={classes.radio} >
-                <Form.Item name="EventTypeID" rules={[{ required: true, message: emptyInput() }]} className={classes.radio}>
+                <Form.Item name="EventTypeID" rules={[{ required: true, message: isNotChosen("Тип події") }]} className={classes.radio}>
                     <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup} onChange={onChange} >
                         {eventTypes.map((item: any) => (<Radio.Button defaultChecked={true} key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
                     </Radio.Group>

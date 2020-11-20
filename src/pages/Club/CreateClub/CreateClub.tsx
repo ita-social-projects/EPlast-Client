@@ -39,7 +39,7 @@ import{
   successfulUpdateAction, 
   failCreateAction,
   failUpdateAction,
-  fileIsDeleted
+  successfulDeleteAction
 } from "../../../components/Notifications/Messages"
 
 const CreateClub = () => {
@@ -88,7 +88,7 @@ const CreateClub = () => {
 
   const removeLogo = (event: any) => {
     setClub({ ...club, logo: null });
-    notificationLogic("success", fileIsDeleted("Фото"));
+    notificationLogic("success", successfulDeleteAction("Фото"));
     event.stopPropagation();
   };
 

@@ -10,7 +10,7 @@ import{
   fileIsNotUpload, 
   possibleFileExtensions, 
   fileIsTooBig, 
-  fileIsDeleted,
+  successfulDeleteAction,
 } from "../../../../components/Notifications/Messages"
 
 interface Props {
@@ -140,7 +140,7 @@ const AddBiographyModal = (props: Props) => {
                   className="cardButton"
                   onClick={() => {
                     removeFile();
-                    notificationLogic("success", fileIsDeleted());
+                    notificationLogic("success", successfulDeleteAction("Файл"));
                   }}
                 >
                   Видалити файл

@@ -1,4 +1,11 @@
-import{incorrectEmail, emptyInput, incorrectPhone, minLength, shouldContain} from "../../components/Notifications/Messages"
+import{
+  incorrectEmail, 
+  emptyInput, 
+  incorrectPhone, 
+  minLength, 
+  shouldContain
+} from "../../components/Notifications/Messages"
+
 export const checkEmail = (role: object, value: string, callback:any) => {
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (value.length === 0) {

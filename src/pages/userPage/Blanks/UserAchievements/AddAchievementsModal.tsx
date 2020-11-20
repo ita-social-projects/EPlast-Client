@@ -11,7 +11,7 @@ import{
   fileIsNotUpload, 
   possibleFileExtensions, 
   fileIsTooBig, 
-  fileIsDeleted,
+  successfulDeleteAction,
 } from "../../../../components/Notifications/Messages"
 
 const { Dragger } = Upload;
@@ -127,7 +127,7 @@ const AddAchievementsModal = (props: Props) => {
                 className="cardButton"
                 onClick={() => {
                   removeFile();
-                  notificationLogic("success", fileIsDeleted());
+                  notificationLogic("success", successfulDeleteAction("Файл"));
                 }}
               >
                 {files.length > 1 &&

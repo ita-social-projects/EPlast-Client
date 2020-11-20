@@ -63,9 +63,6 @@ export const fileIsUpload = (name?:string)=>{
 export const fileIsNotUpload = (name?:string)=>{
     return name ? `Проблема з завантаженням ${name}` : `Проблема з завантаженням файлу`;
 }; 
-export const fileIsDeleted = (name?:string)=>{
-    return name ? `${name} видалено` : `Файл видалено`;
-}; 
 
 export const isNotChosen = (name:string)=>{
     return `${name} не вибрано`;

@@ -20,7 +20,7 @@ import ListOfAchievementsModal from "./UserAchievements/ListOfAchievementsModal"
 import AddExtractFromUPUModal from "./UserExtractFromUPU/AddExtractFromUPUModal";
 import jwt_decode from "jwt-decode";
 import{
-    fileIsDeleted,
+    successfulDeleteAction,
     tryAgain
   } from "../../../components/Notifications/Messages"
 
@@ -75,12 +75,12 @@ export const Blanks = () => {
 
     const removeDocumentById = async (documentId: number) => {
         await removeDocument(documentId);
-        notificationLogic('success', fileIsDeleted());
+        notificationLogic('success', successfulDeleteAction("Файл"));
         getDocument();
     };
     const removeExtractDocument = async (documentId: number) => {
         await removeExtractFromUPUDocument(documentId);
-        notificationLogic('success', fileIsDeleted());
+        notificationLogic('success', successfulDeleteAction("Файл"));
         getExtractFromUPU();
     }
 

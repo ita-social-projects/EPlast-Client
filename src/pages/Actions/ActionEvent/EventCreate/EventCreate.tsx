@@ -9,7 +9,13 @@ import EventCategories from '../../../../models/EventCreate/EventCategories';
 import Users from '../../../../models/EventCreate/Users';
 import EventTypes from '../../../../models/EventCreate/EventTypes';
 import NotificationBoxApi from '../../../../api/NotificationBoxApi';
-import{successfulCreateAction, tryAgain, emptyInput, maxLength} from "../../../../components/Notifications/Messages"
+import{
+  successfulCreateAction,
+  tryAgain, 
+  emptyInput, 
+  maxLength, 
+  isNotChosen
+} from "../../../../components/Notifications/Messages"
 
 const classes = require('./EventCreate.module.css');
 
@@ -141,7 +147,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       onFinish={handleFinish}
     >
       < div className={classes.radio} >
-        <Form.Item name="EventTypeID" rules={[{ required: true, message: emptyInput() }]} className={classes.radio}>
+        <Form.Item name="EventTypeID" rules={[{ required: true, message: isNotChosen("Тип події") }]} className={classes.radio}>
           <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup} onChange={onChange} value={categories}>
             {eventTypes.map((item: any) => (<Radio.Button key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
           </Radio.Group>

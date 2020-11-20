@@ -24,7 +24,7 @@ import{
   fileIsNotUpload, 
   possibleFileExtensions, 
   fileIsTooBig, 
-  fileIsDeleted,
+  successfulDeleteAction,
   successfulCreateAction
 } from "../../components/Notifications/Messages"
 
@@ -96,7 +96,7 @@ const AddNewRegionFormPage = () => {
 
   const removePhoto = (event: any) => {
     setLogo(CityDefaultLogo);
-    notificationLogic("success", fileIsDeleted("Фото"));
+    notificationLogic("success", successfulDeleteAction("Фото"));
     event.stopPropagation();
     setCurrentPhoto(false);
   };

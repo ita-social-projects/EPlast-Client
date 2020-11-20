@@ -11,7 +11,7 @@ import{
   fileIsNotUpload, 
   possibleFileExtensions, 
   fileIsTooBig, 
-  fileIsDeleted,
+  successfulDeleteAction,
 } from "../../components/Notifications/Messages"
 import "moment/locale/uk";
 moment.locale("uk-ua");
@@ -153,7 +153,7 @@ const AddDocumentModal = (props: Props) => {
                   className="cardButton"
                   onClick={() => {
                     removeFile();
-                    notificationLogic("success", fileIsDeleted());
+                    notificationLogic("success", successfulDeleteAction("Файл"));
                   }}
                 >
                   Видалити файл
