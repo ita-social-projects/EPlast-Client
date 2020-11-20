@@ -6,6 +6,13 @@ import notificationLogic from '../../components/Notifications/Notification';
 import { addDocument } from "../../api/regionsApi";
 import { InboxOutlined } from "@ant-design/icons";
 import moment from "moment";
+import{
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  successfulDeleteAction,
+} from "../../components/Notifications/Messages"
 import "moment/locale/uk";
 moment.locale("uk-ua");
 
@@ -41,11 +48,11 @@ const AddDocumentModal = (props: Props) => {
               props.setDocument({...props.document, blobName: base64});
               setFileName(info.file.name);
             });
-            notificationLogic("success", "Файл завантажено"); 
+            notificationLogic("success", fileIsUpload()); 
             setDisabled(false);   
         }
       } else {
-        notificationLogic("error", "Проблема з завантаженням файлу");
+        notificationLogic("error", fileIsNotUpload());
         setDisabled(true);
       }
     };
@@ -57,13 +64,13 @@ const AddDocumentModal = (props: Props) => {
         extension.indexOf("doc") !== -1 ||
         extension.indexOf("docx") !== -1;
       if (!isCorrectExtension) {
-        notificationLogic("error", "Можливі розширення файлів: pdf, doc, docx");
+        notificationLogic("error", possibleFileExtensions("pdf, doc, docx"));
         setDisabled(true);
       }
       
       const isSmaller3mb = fileSize < 3145728;
       if (!isSmaller3mb) {
-        notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+        notificationLogic("error", fileIsTooBig(3));
         setDisabled(true);
       }
       return isSmaller3mb && isCorrectExtension;
@@ -115,7 +122,7 @@ const AddDocumentModal = (props: Props) => {
           <div className="formFields">
 
             <Form.Item name="datepicker" label="Дата документу">
-              <DatePicker format="YYYY-MM-DD" className="formSelect" />
+              <DatePicker format="DD.MM.YYYY" className="formSelect" />
             </Form.Item>
           </div>
 
@@ -146,7 +153,7 @@ const AddDocumentModal = (props: Props) => {
                   className="cardButton"
                   onClick={() => {
                     removeFile();
-                    notificationLogic("success", "Файл видалено");
+                    notificationLogic("success", successfulDeleteAction("Файл"));
                   }}
                 >
                   Видалити файл
