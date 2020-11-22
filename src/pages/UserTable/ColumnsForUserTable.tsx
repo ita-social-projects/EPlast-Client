@@ -165,9 +165,6 @@ const ColumnsForUserTable: any = [
   {
     title: "Ступінь",
     dataIndex: "userPlastDegreeName",
-    ellipsis: {
-      showTitle: false,
-    },
     render: (userPlastDegreeName: any, record: any) => {
       if (userPlastDegreeName !== null && userPlastDegreeName.length > 0) {
         if (
@@ -180,7 +177,7 @@ const ColumnsForUserTable: any = [
                 placement="topLeft"
                 title={userPlastDegreeName.split("/")[0]}
               >
-                {userPlastDegreeName.split("/")[0]}
+                {userPlastDegreeName.split("/")[0].slice(0, 20)}
               </Tooltip>
             </Tag>
           );
@@ -194,7 +191,7 @@ const ColumnsForUserTable: any = [
                 placement="topLeft"
                 title={userPlastDegreeName.split("/")[1]}
               >
-                {userPlastDegreeName.split("/")[1]}
+                {userPlastDegreeName.split("/")[1].slice(0, 20)}
               </Tooltip>
             </Tag>
           );
@@ -202,7 +199,7 @@ const ColumnsForUserTable: any = [
           return (
             <Tag color={"red"} key={userPlastDegreeName}>
               <Tooltip placement="topLeft" title={userPlastDegreeName}>
-                {userPlastDegreeName}
+                {userPlastDegreeName.slice(0, 20)}
               </Tooltip>
             </Tag>
           );

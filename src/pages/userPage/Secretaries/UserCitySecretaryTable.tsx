@@ -18,7 +18,10 @@ export const UserCitySecretaryTable = ({  UserId }: props) => {
     adminType: '',
     startDate: '',
     endDate: '',
-    cityId:''
+    city: {
+      id: '',
+      name: ''
+    }
   }]);
 
 
@@ -28,7 +31,10 @@ export const UserCitySecretaryTable = ({  UserId }: props) => {
     adminType: '',
     startDate: '',
     endDate: '',
-    cityId:''
+    city: {
+      id: '',
+      name: ''
+    }
   }]);
 
 
@@ -60,6 +66,7 @@ export const UserCitySecretaryTable = ({  UserId }: props) => {
       <Table
         columns={columns}
         dataSource={data}
+        scroll={{ x: 655 }}
       />
     
     <h1>Колишні діловодства станиці</h1>
@@ -67,6 +74,7 @@ export const UserCitySecretaryTable = ({  UserId }: props) => {
       <Table
         columns={columns}
         dataSource={prevData}
+        scroll={{ x: 655 }}
       />
 </div>
   )
