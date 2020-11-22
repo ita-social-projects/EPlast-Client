@@ -165,9 +165,6 @@ const ColumnsForUserTable: any = [
   {
     title: "Ступінь",
     dataIndex: "userPlastDegreeName",
-    // ellipsis: {
-    //   showTitle: false,
-    // },
     render: (userPlastDegreeName: any, record: any) => {
       if (userPlastDegreeName !== null && userPlastDegreeName.length > 0) {
         if (
