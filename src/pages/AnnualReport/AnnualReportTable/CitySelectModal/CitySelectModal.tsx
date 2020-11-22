@@ -4,6 +4,7 @@ import AnnualReportApi from '../../../../api/AnnualReportApi';
 import City from '../../Interfaces/City';
 import { useHistory } from 'react-router-dom';
 import './CitySelectModal.less'
+import {emptyInput} from "../../../../components/Notifications/Messages"
 
 interface Props {
     visibleModal: boolean,
@@ -17,7 +18,7 @@ const CitySelectModal = (props: Props) => {
 
     const validationSchema = {
         city: [
-            { required: true, message: "Оберіть станицю" }
+            { required: true, message: emptyInput() }
         ],
     }
 

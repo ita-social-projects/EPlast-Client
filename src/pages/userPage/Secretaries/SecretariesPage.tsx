@@ -9,7 +9,7 @@ import './Secretaries.less'
 import {UserCitySecretaryTable} from './UserCitySecretaryTable';
 import { UserRegionSecretaryTable } from './UserRegionSecretaryTable';
 import { UserClubSecretaryTable } from './UserClubSecretaryTable';
-
+import{ tryAgain } from "../../../components/Notifications/Messages";
 
 
 const tabList = [
@@ -38,7 +38,7 @@ export const Secretaries = () => {
     const fetchData = async () => {
         await userApi.getById(userId).then(response => {
             setData(response.data);
-        }).catch(() => { notificationLogic('error', "Щось пішло не так") })
+        }).catch(() => { notificationLogic('error', tryAgain) })
     };
 
     useEffect(() => {

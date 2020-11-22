@@ -5,6 +5,7 @@ import regionsApi, { getRegionAdministration } from "../../api/regionsApi";
 import notificationLogic from "../../components/Notifications/Notification";
 import ConfirmRegionAdminModal from "./ConfirmRegionAdministrationModal";
 import moment from "moment";
+import{ emptyInput } from "../../components/Notifications/Messages"
 
 interface Props {
   userId: string;
@@ -115,7 +116,7 @@ const AddNewAdministratorForm = ({
         rules={[
           {
             required: true,
-            message: "Це поле має бути заповненим",
+            message: emptyInput(),
           },
         ]}
       >

@@ -1,9 +1,6 @@
 import {
   Form,
   Input,
-  DatePicker,
-  AutoComplete,
-  Select,
   Button,
   Layout,
   Card,
@@ -13,7 +10,6 @@ import {
 } from "antd";
 import React, { useState, useEffect } from "react";
 import RegionsApi from "../../api/regionsApi";
-import classes from "./Form.module.css";
 import "./CreateRegion.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import notificationLogic from "../../components/Notifications/Notification";
@@ -21,6 +17,16 @@ import { RcCustomRequestOptions } from "antd/es/upload/interface";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import ReactInputMask from "react-input-mask";
+import Title from "antd/lib/typography/Title";
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
+import{
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  successfulDeleteAction,
+  successfulCreateAction
+} from "../../components/Notifications/Messages"
 
 const AddNewRegionFormPage = () => {
   const [form] = Form.useForm();
@@ -46,7 +52,7 @@ const AddNewRegionFormPage = () => {
     await RegionsApi.createRegion(newRegion);
     form.resetFields();
 
-    notificationLogic("success", "Успішно додано округ");
+    notificationLogic("success", successfulCreateAction("Округ"));
     history.push("/regions");
   };
 
@@ -57,12 +63,12 @@ const AddNewRegionFormPage = () => {
       extension.indexOf("jpg") !== -1 ||
       extension.indexOf("png") !== -1;
     if (!isCorrectExtension) {
-      notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
+      notificationLogic("error", possibleFileExtensions("png, jpg, jpeg"));
     }
 
     const isSmaller2mb = size <= 3145728;
     if (!isSmaller2mb) {
-      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+      notificationLogic("error", fileIsTooBig(3));
     }
 
     return isCorrectExtension && isSmaller2mb;
@@ -80,17 +86,17 @@ const AddNewRegionFormPage = () => {
         getBase64(info.file, (base64: string) => {
           setLogo(base64);
         });
-        notificationLogic("success", "Фото завантажено");
+        notificationLogic("success", fileIsUpload("Фото"));
         setCurrentPhoto(true);
       }
     } else {
-      notificationLogic("error", "Проблема з завантаженням фото");
+      notificationLogic("error", fileIsNotUpload("фото"));
     }
   };
 
   const removePhoto = (event: any) => {
     setLogo(CityDefaultLogo);
-    notificationLogic("success", "Фото видалено");
+    notificationLogic("success", successfulDeleteAction("Фото"));
     event.stopPropagation();
     setCurrentPhoto(false);
   };
@@ -98,8 +104,7 @@ const AddNewRegionFormPage = () => {
   return (
     <Layout.Content className="createCity">
       <Card hoverable className="createCityCard">
-        <h1>Створення нового округу</h1>
-        <br />
+        <Title level={2}>Створення округу</Title>
         <Form name="basic" onFinish={handleSubmit} form={form}>
           <Form.Item name="logo">
             <Upload
@@ -125,208 +130,136 @@ const AddNewRegionFormPage = () => {
           <Row justify="center">
             <Col md={11} xs={24}>
               <Form.Item
-                className={classes.formField}
                 label="Назва округу"
                 name="regionName"
-                rules={[
-                  {
-                    required: true,
-                    message: "Це поле має бути заповненим",
-                  },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                labelCol={{ span: 24 }}
+                rules={descriptionValidation.Name}
               >
-                <Input className={classes.inputField} />
+                <Input maxLength={51} />
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
               <Form.Item
-                className={classes.formField}
                 label="Опис"
                 name="description"
-                rules={[
-                  {
-                    required: true,
-                    message: "Це поле має бути заповненим",
-                  },
-                  {
-                    max: 250,
-                    message: "Максимальна довжина - 250 символів!",
-                  },
-                ]}
+                labelCol={{ span: 24 }}
+                rules={[descriptionValidation.Description, descriptionValidation.Required]}
               >
-                <Input className={classes.inputField} />
+                <Input maxLength={1001} />
               </Form.Item>
             </Col>
 
             <Col md={11} xs={24}>
-              <Form.Item
-                className={classes.formField}
-                label="Номер телефону"
+            <Form.Item
                 name="phoneNumber"
-                rules={[
-                  {
-                    required: true,
-                    message: "Це поле має бути заповненим",
-                  },
-                  {
-                    min: 18,
-                    message: "Неправильний телефон",
-                  },
-                ]}
+                label="Номер телефону"
+                labelCol={{ span: 24 }}
+                rules={[descriptionValidation.Phone, descriptionValidation.Required]}
               >
-                <ReactInputMask maskChar={null} mask="+380(99)-999-99-99">
-                  {(inputProps: any) => (
-                    <Input
-                      {...inputProps}
-                      type="tel"
-                      className={classes.inputField}
-                    />
-                  )}
+                <ReactInputMask
+                  mask="+380(99)-999-99-99"
+                  maskChar={null}
+                >
+                  {(inputProps: any) => <Input {...inputProps} />}
                 </ReactInputMask>
               </Form.Item>
             </Col>
 
             <Col md={{ span: 11, offset: 2 }} xs={24}>
               <Form.Item
-                className={classes.formField}
-                label="Email"
+                label="Електронна пошта"
                 name="email"
-                rules={[
-                  {
-                    pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-                    message: "Неправильна пошта",
-                  },
-                  {
-                    required: true,
-                    message: "Це поле має бути заповненим",
-                  },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                labelCol={{ span: 24 }}
+                rules={descriptionValidation.RegionEmail}
               >
-                <Input className={classes.inputField} />
+                <Input maxLength={51}/>
               </Form.Item>
             </Col>
 
             <Col md={11} xs={24}>
               <Form.Item
-                className={classes.formField}
-                label="Link"
+                label="Посилання"
                 name="link"
-                rules={[
-                  {
-                    max: 500,
-                    message: "Максимальна довжина - 500 символів!",
-                  },
-                ]}
+                labelCol={{ span: 24 }}
+                rules={[descriptionValidation.Link]}
               >
-                <Input className={classes.inputField} />
+                <Input maxLength={257} />
               </Form.Item>
             </Col>
 
             <Col md={{ span: 11, offset: 2 }} xs={24}>
               <Form.Item
-                className={classes.formField}
                 label="Місто"
                 name="city"
-                rules={[
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                  {
-                    required: true,
-                    message: "Це поле має бути заповненим",
-                  },
-                ]}
+                labelCol={{ span: 24 }}
+                rules={descriptionValidation.Name}
               >
-                <Input className={classes.inputField} />
+                <Input maxLength={51} />
               </Form.Item>
             </Col>
 
             <Col md={11} xs={24}>
               <Form.Item
-                className={classes.formField}
+                labelCol={{ span: 24 }}
                 label="Вулиця"
                 name="street"
-                rules={[
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.Street}
               >
-                <Input className={classes.inputField} />
+                <Input  maxLength={51} />
               </Form.Item>
             </Col>
 
             <Col md={{ span: 11, offset: 2 }} xs={24}>
               <Form.Item
-                className={classes.formField}
+                labelCol={{ span: 24 }}
                 label="Номер будинку"
                 name="houseNumber"
-                rules={[
-                  {
-                    max: 5,
-                    message: "Максимальна довжина - 5 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.houseNumber}
               >
-                <Input className={classes.inputField} />
+                <Input maxLength={6} />
               </Form.Item>
             </Col>
 
             <Col md={11} xs={24}>
               <Form.Item
-                className={classes.formField}
+                labelCol={{ span: 24 }}
                 label="Номер офісу/квартири"
                 name="officeNumber"
-                rules={[
-                  {
-                    max: 5,
-                    message: "Максимальна довжина - 5 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.officeNumber}
               >
-                <Input className={classes.inputField} />
+                <Input maxLength={6} />
               </Form.Item>
             </Col>
 
             <Col md={{ span: 11, offset: 2 }} xs={24}>
               <Form.Item
-                className={classes.formField}
+                labelCol={{ span: 24 }}
                 label="Поштовий індекс"
                 name="postIndex"
-                rules={[
-                  {
-                    max: 5,
-                    min: 5,
-                    message: "Довжина повинна бути - 5 символів!",
-                  },
-                  {
-                    required: true,
-                    message: "Це поле має бути заповненим",
-                  },
-                ]}
+                rules={descriptionValidation.postIndex}
               >
-                <Input className={classes.inputField} />
+                <Input type="number" />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item style={{ textAlign: "right" }}>
-            <Button type="primary" htmlType="submit">
-              Додати
-            </Button>
-          </Form.Item>
+          <Row className="cityButtons" justify="center" gutter={[0, 6]}>
+            <Col xs={24} sm={12}>
+              <Button
+                type="primary"
+                className="backButton"
+                onClick={() => history.goBack()}
+              >
+                Назад
+              </Button>
+            </Col>
+            <Col xs={24} sm={12}>
+              <Button htmlType="submit" type="primary">
+                Підтвердити
+              </Button>
+            </Col>
+          </Row>
         </Form>
-        ;
       </Card>
     </Layout.Content>
   );

@@ -14,6 +14,7 @@ import adminApi from "../../api/adminApi";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import activeMembershipApi from "../../api/activeMembershipApi";
 import moment from "moment";
+import{ emptyInput } from "../../components/Notifications/Messages";
 
 interface Props {
   record: string;
@@ -74,7 +75,7 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
           rules={[
             {
               required: true,
-              message: "Це поле має бути заповненим",
+              message: emptyInput(),
             },
           ]}
         >
