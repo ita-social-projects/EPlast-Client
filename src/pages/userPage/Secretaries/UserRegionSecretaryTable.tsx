@@ -75,12 +75,14 @@ export const UserRegionSecretaryTable = ({ UserId }: props) => {
       
         columns={columns}
         dataSource={data}
+        scroll={{ x: 655 }}
       />
       <h1>Колишні діловодства округу</h1>
       <br/>
       <Table
         columns={columns}
         dataSource={prevdata}
+        scroll={{ x: 655 }}
       />
     </div>
 
