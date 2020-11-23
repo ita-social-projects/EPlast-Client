@@ -232,8 +232,10 @@ if(chartData != undefined)
 
   return (
     <Layout.Content >
+      <div className = "background">
       <Title level={2}>Статистика станиць</Title>
-      <Form onFinish={onSubmit}>
+      <div className = "formAndChart">
+      <Form onFinish={onSubmit} className = "form">
         <Row justify="center">
           <Col
             span={8} >
@@ -287,7 +289,7 @@ if(chartData != undefined)
       </Form>
       <br/>
       {sumOfIndicators === 0 || title === undefined ? '': 
-      <div className = "form">        
+      <div className = "chart">         
         <h1>{title.cityName}, {title.year}</h1>
         <Chart height={400} data={dataChart} justify="center" autoFit>
         <Coordinate type="theta" radius={0.75} />
@@ -310,6 +312,7 @@ if(chartData != undefined)
         <Interaction type="element-single-selected" />
       </Chart>
       </div>}
+      </div>
       <br/> 
       {showTable === false ? "" :
         <Table
@@ -332,6 +335,7 @@ if(chartData != undefined)
             showSizeChanger: true,
           }}
         />}        
+        </div>
     </Layout.Content>
   )
 }
