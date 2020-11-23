@@ -181,8 +181,7 @@ const ActiveMembership = () => {
 
       <div className={classes.wrapperCol}>
         <div className={classes.wrapper}>
-        <div className={classes.wrapperScrollDegree}>
-          <div className={classes.wrapperPlastDegree}>
+          <div className={classes.wrapperGeneralInfo}>
             <Title level={2}> Загальна інформація </Title>
             <div className={classes.textBlock}>
             {LoadInfo ? (
@@ -234,25 +233,25 @@ const ActiveMembership = () => {
                 <div></div>
               )}
             </div>
-          </div>
-          <div className={""}>
-            <Title level={1}> Рівні доступу </Title>
-              <div className={classes.textBlock}>
-                <List style={{overflow: "hiden"}}
-                  dataSource={accessLevels}
-                  renderItem={(item, index) => (
-                    <List.Item className={classes.textListItem} style={{  padding: "6px 0"}}>
-                      <Tag color={setTagColor(item)} key={index}>
-                        <Tooltip placement="topLeft" title={item}>
-                          {item}
-                        </Tooltip>
-                      </Tag>
-                    </List.Item>
-                  
+          
+            <div className={""}>
+              <Title level={4}> Рівні доступу </Title>
+                <div className={classes.textBlock}>
+                  <List style={{overflow: "hidden"}}
+                    dataSource={accessLevels}
+                    renderItem={(item, index) => (
+                      <List.Item className={classes.textListItem} style={{  padding: "6px 0"}}>
+                        <Tag color={setTagColor(item)} key={index}>
+                          <Tooltip placement="topLeft" title={item}>
+                            {item}
+                          </Tooltip>
+                        </Tag>
+                      </List.Item>
                     
-                  )}
-                />
-              </div>
+                      
+                    )}
+                  />
+                </div>
             </div>
           </div>
         </div>
