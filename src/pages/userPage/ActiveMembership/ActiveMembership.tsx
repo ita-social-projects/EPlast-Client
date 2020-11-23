@@ -181,7 +181,8 @@ const ActiveMembership = () => {
 
       <div className={classes.wrapperCol}>
         <div className={classes.wrapper}>
-          <div className={classes.wrapper2}>
+        <div className={classes.wrapperScrollDegree}>
+          <div className={classes.wrapperPlastDegree}>
             <Title level={2}> Загальна інформація </Title>
             <div className={classes.textBlock}>
             {LoadInfo ? (
@@ -234,13 +235,13 @@ const ActiveMembership = () => {
               )}
             </div>
           </div>
-          <div className={classes.wrapper2}>
-            <Title level={2}> Рівні доступу </Title>
+          <div className={""}>
+            <Title level={1}> Рівні доступу </Title>
               <div className={classes.textBlock}>
                 <List style={{overflow: "hiden"}}
                   dataSource={accessLevels}
                   renderItem={(item, index) => (
-                    <List.Item style={{ fontSize: "16px", padding: "6px 0"}}>
+                    <List.Item className={classes.textListItem} style={{  padding: "6px 0"}}>
                       <Tag color={setTagColor(item)} key={index}>
                         <Tooltip placement="topLeft" title={item}>
                           {item}
@@ -252,7 +253,7 @@ const ActiveMembership = () => {
                   )}
                 />
               </div>
-
+            </div>
           </div>
         </div>
         <div className={classes.wrapper}>
