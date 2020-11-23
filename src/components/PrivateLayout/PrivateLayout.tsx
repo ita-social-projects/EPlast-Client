@@ -38,6 +38,11 @@ const PrivateLayout = ({ children }: any) => {
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
     if (token == null) {
+      const str = window.location.pathname
+      if(str !== "/signin")
+      {
+        localStorage.setItem('pathName',str);
+      }
       history.push("/signin");
     }
     else {
