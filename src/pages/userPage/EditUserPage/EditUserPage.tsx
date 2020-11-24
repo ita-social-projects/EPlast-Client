@@ -8,8 +8,10 @@ import {
   Select,
   AutoComplete,
   DatePicker,
+  Popconfirm,
+  Tooltip,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 import styles from "./EditUserPage.module.css";
 import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
@@ -37,6 +39,7 @@ import{
   emptyInput,
   minLength
 } from "../../../components/Notifications/Messages"
+import "../EditUserPage/EditUserPage.less"
 
 export default function () {
   const history = useHistory();
@@ -58,6 +61,8 @@ export default function () {
   const [userAvatar, setUserAvatar] = useState<any>();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
+  const [photoName, setPhotoName] = useState<string>();
+  const [defaultPhotoName, setDefaultPhotoName] = useState<string>("default_user_image.png");
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
@@ -75,6 +80,7 @@ export default function () {
             .catch(() => {
               notificationLogic("error", fileIsNotUpload("фото"));
             });
+            setPhotoName(response.data.user.imagePath);
         } else {
           notificationLogic("error", fileIsNotUpload("даних"));
         }
@@ -206,6 +212,7 @@ export default function () {
         getBase64(info.file, (imageUrl: any) => {
           setUserAvatar(imageUrl);
         });
+        setPhotoName(info.file.name);
         notificationLogic("success", fileIsUpload("Фото"));
       }
     } else {
@@ -295,6 +302,18 @@ export default function () {
       setBirthday(moment(event?._d));
     }
   };
+  const handleDeletePhoto = async () => {
+    await userApi
+            .getImage(defaultPhotoName)
+            .then((q: { data: any }) => {
+              console.log(q);
+              setUserAvatar(q.data);
+            })
+            .catch(() => {
+              notificationLogic("error", fileIsNotUpload("фото"));
+            });
+            setPhotoName(defaultPhotoName);
+  };
   const handleSubmit = async (values: any) => {
     const newUserProfile = {
       user: {
@@ -366,6 +385,7 @@ export default function () {
       >
         <div className={styles.avatarWrapper}>
           <Avatar size={300} src={userAvatar} className="avatarElem" />
+          <div className={styles.buttons}>
           <Upload
             name="avatar"
             className={styles.changeAvatar}
@@ -377,6 +397,22 @@ export default function () {
               <UploadOutlined /> Вибрати
             </Button>
           </Upload>
+          {photoName!==defaultPhotoName?
+          <Tooltip title="Видалити">
+            <Popconfirm
+              title="Видалити фото?"
+              placement="bottom"
+              icon={false}
+              onConfirm={()=>handleDeletePhoto()}
+              okText="Так"
+              cancelText="Ні">
+              <DeleteOutlined
+                className={styles.deleteIcon}
+                key="close"
+              />
+            </Popconfirm>
+          </Tooltip>:null}
+          </div>
         </div>
         
         <div className={styles.allFields}>
