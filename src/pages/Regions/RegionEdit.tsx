@@ -13,7 +13,7 @@ import RegionsApi from "../../api/regionsApi";
 import ReactInputMask from "react-input-mask";
 import "./CreateRegion.less";
 import notificationLogic from "../../components/Notifications/Notification";
-import { PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";
 import { useHistory } from "react-router-dom";
@@ -92,6 +92,12 @@ const RegionEditFormPage = () => {
     }
   };
 
+  const removeLogo = (event: any) => {
+    setLogo(null);
+    notificationLogic("success", "Фото видалено");
+    event.stopPropagation();
+  };
+
   const handleSubmit = async (values: any) => {
     const newRegion: any = {
       regionName: values.regionName,
@@ -122,7 +128,7 @@ const RegionEditFormPage = () => {
         ) : (
           <Form name="basic" onFinish={handleSubmit} form={form}>
           <Title level={2}>Редагування округу</Title>
-            <Form.Item name="logo">
+            <Form.Item name="logo" initialValue={chosenRegion.logo}>
               <Upload
                 name="avatar"
                 listType="picture-card"
@@ -130,7 +136,11 @@ const RegionEditFormPage = () => {
                 accept=".jpeg,.jpg,.png"
                 customRequest={handleUpload}
               >
+                {logo?.length! > 0 ? (
+                <DeleteOutlined onClick={removeLogo} />
+              ) : (
                 <PlusOutlined />
+              )}
                 <img
                   src={logo ? logo : CityDefaultLogo}
                   alt="Region"
@@ -161,7 +171,7 @@ const RegionEditFormPage = () => {
                     rules={[descriptionValidation.Description, descriptionValidation.Required]}
                   >
                     <Input
-                    value={chosenRegion?.description} maxLength={251} />
+                    value={chosenRegion?.description} maxLength={1001} />
                   </Form.Item>
                 </Col>
 

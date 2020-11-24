@@ -40,7 +40,10 @@ const columns = [
   },
   {
     title: "Станиця",
-    dataIndex: "cityId",
+    dataIndex: "city",
+    render: (city: any) =>{
+      return city.name;
+    }
   },
 ];
 export default columns;
