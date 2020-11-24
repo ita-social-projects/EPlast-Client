@@ -33,7 +33,9 @@ import{
   successfulEditAction,
   tryAgain,
   shouldContain,
-  incorrectPhone
+  incorrectPhone,
+  emptyInput,
+  minLength
 } from "../../../components/Notifications/Messages"
 
 export default function () {
@@ -128,15 +130,15 @@ export default function () {
 
   const validationSchema = {
     name: [
-      { max: 25, message: "Максимальна довжина - 25 символів" },
-      { min: 2, message: "Мінімальна довжина - 2 символів" },
-      { required: true, message: "Поле є обов'язковим" },
+      { max: 25, message: maxLength(25) },
+      { min: 2, message: minLength(2) },
+      { required: true, message: emptyInput() },
       { pattern: patern, message: message },
     ],
     surName: [
-      { max: 25, message: "Максимальна довжина - 25 символів" },
-      { min: 2, message: "Мінімальна довжина - 2 символів" },
-      { required: true, message: "Поле є обов'язковим" },
+      { max: 25, message: maxLength(25) },
+      { min: 2, message: minLength(2) },
+      { required: true, message: emptyInput() },
       { pattern: patern, message: message },
     ],
     fatherName: [
