@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Table,
   Form,
@@ -8,7 +8,8 @@ import {
   Modal,
   Row,
   Typography,
-  Col
+  Col,
+  TreeSelect
 } from "antd";
 import StatisticsApi from "../../api/StatisticsApi";
 import City from "./Interfaces/City";
@@ -26,21 +27,18 @@ import {
   Interaction
 } from "bizcharts";
 import "./StatisticsCities.less";
-
-const { Title } = Typography;
+import { number } from "yup";
 
 const StatisticsCities = () => {
 
   const [years, setYears] = useState<any>();
-  const [indicators, setIndicators] = useState<any>();
   const [cities, setCities] = useState<any>();
-  const [result, setResult] = useState<DataFromResponse[]>(Array());
+  const [dataForTable, setdataForTable] = useState<DataFromResponse[]>(Array());
   const [showTable, setShowTable] = useState(false);
   const [columns, setColumns] = useState(Array());
   const [dataChart, setDataChart] = useState(Array());
-  const [chartData, setChartData] = useState<DataFromResponse>();
-  const [dataFromOutput, setDataForOutput] = useState<any>();
-  const [arrayOfIndicators, setArrayOfIndicators] = useState<any>();
+  const [dataFromRow, setdataFromRow] = useState<DataFromResponse>();
+  const [arrayOfInindicators, setArrayOfIndicators] = useState<any[]>(Array());
   const [title, setTitle] = useState<DataFromResponse>();
   
   const constColumns = [
@@ -62,7 +60,7 @@ const StatisticsCities = () => {
       },
       sorter: (a: any, b: any) => a.cityName.localeCompare(b.cityName),
       sortDirections: ["ascend", "descend"] as SortOrder[],
-      width: 100
+      width: 150
     },
     {
       title: "Рік",
@@ -81,16 +79,9 @@ const StatisticsCities = () => {
       },
       sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
       sortDirections: ["ascend", "descend"] as SortOrder[],
-      width: 200
+      width: 150
     }
   ];
-
-  useEffect(() => {
-    fetchIndicators();
-    fetchCities();
-    fetchYears();
-    fetchIndicatorsNames();
-  }, []);
 
   const indicatorsArray = [
     { value: StatisticsItemIndicator.NumberOfPtashata, label: "Пташата" },
@@ -108,8 +99,15 @@ const StatisticsCities = () => {
     { value: StatisticsItemIndicator.NumberOfSeigneurSupporters, label: "Сеньйори пластуни прихильники" },
     { value: StatisticsItemIndicator.NumberOfSeigneurMembers, label: "Сеньйори пластуни учасники" }
   ];
-  const fetchIndicators = async () => {setArrayOfIndicators(indicatorsArray)};
   
+  const { Title } = Typography;
+  const { TreeNode } = TreeSelect;
+
+  useEffect(() => {
+    fetchCities();
+    fetchYears();
+  }, []);
+    
   const fetchCities = async () => {
     try {
       let response = await AnnualReportApi.getCities();
@@ -140,15 +138,6 @@ const StatisticsCities = () => {
     }
   }
 
-  const fetchIndicatorsNames = async () => {
-    try {
-      setIndicators(indicatorsArray);
-    }
-    catch (error) {
-      showError(error.message);
-    }
-  };
-
   const showError = (message: string) => {
     Modal.error({
       title: "Помилка!",
@@ -158,12 +147,14 @@ const StatisticsCities = () => {
 
   const onSubmit = async (info: any) => {
     let counter = 1;
-
+    setArrayOfIndicators(info.indicators);
+    console.log(info.indicators)
     let response = await StatisticsApi.getCitiesStatistics({
       CityIds: info.citiesId,
       Years: info.years,
       Indicators: info.indicators
     });
+    console.log(response);
 
     let data = response.data.map((stanytsya: CityStatistics) => {
       return stanytsya.yearStatistics.map(yearStatistic => {
@@ -183,7 +174,7 @@ const StatisticsCities = () => {
       && response.data[0].yearStatistics[0] && response.data[0].yearStatistics[0].statisticsItems) || [];
 
     setShowTable(true);
-    setResult(data);
+    setdataForTable(data);
 
     let temp = [...constColumns, ...statistics.map((statisticsItem: any, index: any) => {
       return {
@@ -210,25 +201,28 @@ const StatisticsCities = () => {
     }
   }    
   
-if(chartData != undefined)
+if(dataFromRow != undefined)
 {
   const regex = /[0-9]/g;
-  const allDataForChart = [...Object.entries(chartData as Object).map(([key, value]) => {
+  arrayOfInindicators.sort(function(a, b){return a-b});
+  console.log(arrayOfInindicators);
+  console.log(dataFromRow);
+  const allDataForChart = [...Object.entries(dataFromRow as Object).map(([key, value]) => {
     
     if(key.match(regex)!== null)
     {
     return{
-      item: arrayOfIndicators[Number(key)].label,
+      item: indicatorsArray[arrayOfInindicators[Number(key)]].label,
       count: value,
       percent: value    
     }}
   })]
   let indicatorsForChart = allDataForChart.slice(0, columns.length - 4);
-
-  setTitle(chartData);
+  setTitle(dataFromRow);
   setDataChart(indicatorsForChart);
-  setChartData(undefined);
+  setdataFromRow(undefined);
 }
+let old = true;
 
   return (
     <Layout.Content >
@@ -238,27 +232,30 @@ if(chartData != undefined)
       <Form onFinish={onSubmit} className = "form">
         <Row justify="center">
           <Col
-            span={8} >
+            span={20} >
             <Form.Item
               name="citiesId"
               rules={[{ required: true, message: "Оберіть хоча б одну станицю", type: "array" }]} >
               <Select
                 showSearch
+                allowClear
                 mode="multiple"
                 options={cities}
                 placeholder="Обрати станицю"
+                filterOption={(input, option) => (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
               />
             </Form.Item>
           </Col>
         </Row>
         <Row justify="center">
           <Col
-            span={8} >
+            span={20} >
             <Form.Item
               name="years"
               rules={[{ required: true, message: "Оберіть хоча б один рік", type: "array" }]}>
               <Select
                 showSearch
+                allowClear
                 mode="multiple"
                 options={years}
                 placeholder="Обрати рік"
@@ -266,18 +263,38 @@ if(chartData != undefined)
             </Form.Item>
           </Col>
         </Row>
-        <Row justify="center">
+        <Row justify="center" >
           <Col
-            span={8} >
+            span={20} >
             <Form.Item
               name="indicators"
               rules={[{ required: true, message: "Оберіть хоча б один показник", type: "array" }]}>
-              <Select
+              <TreeSelect
                 showSearch
-                mode="multiple"
-                options={indicators}
+                allowClear
+                multiple
+                treeDefaultExpandAll
                 placeholder="Обрати показник"
-              />
+                filterTreeNode={(input, option) => (option?.title as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
+              >
+                <TreeNode value={0} title="Неіменовані" />
+                <TreeNode value={1} title="Новацтво" />
+                <TreeNode value={2} title="Юнацтво загалом">
+                <TreeNode value={3} title="Неіменовані" />
+                <TreeNode value={4} title="Прихильники" />
+                <TreeNode value={5} title="Учасники" />
+                <TreeNode value={6} title="Розвідувачі" />
+                <TreeNode value={7} title="Скоби/вірлиці" />
+                </TreeNode>
+                <TreeNode value={8} title="Старші пластуни загалом" selectable = {old}>
+                <TreeNode value={9} title="Старші пластуни прихильники"/>
+                <TreeNode value={10} title="Старші пластуни учасники"/>
+                </TreeNode>
+                <TreeNode value={11} title="Сеньйори загалом">
+                <TreeNode value={12} title="Сеньйори пластуни прихильники"/>
+                <TreeNode value={13} title="Сеньйори пластуни учасники"/>
+                </TreeNode>
+              </TreeSelect>
             </Form.Item>
           </Col>
         </Row>
@@ -319,12 +336,12 @@ if(chartData != undefined)
           bordered
           rowKey="id"
           columns={columns}
-          dataSource={result}
+          dataSource={dataForTable}
           scroll={{ x: 1000 }}
           onRow={(cityRecord) => {
             return {
               onClick: async () => {                
-                setChartData(cityRecord);
+                setdataFromRow(cityRecord);
               }};
           }}
           
