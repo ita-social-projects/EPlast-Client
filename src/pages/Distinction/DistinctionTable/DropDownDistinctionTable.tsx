@@ -13,7 +13,6 @@ import User from "../../../models/UserTable/User";
 import distinctionApi from "../../../api/distinctionApi";
 import Distinction from "../Interfaces/Distinction";
 import EditDistinctionModal from "./EditDistinctionModal";
-import ClickAwayListener from "react-click-away-listener";
 
 interface Props {
   record: number;
@@ -36,7 +35,6 @@ interface Props {
 }
 
 const DropDown = (props: Props) => {
-  const history = useHistory();
   const {
     record,
     userId,
@@ -77,7 +75,7 @@ const DropDown = (props: Props) => {
   const handleItemClick = async (item: any) => {
     switch (item.key) {
       case "1":
-        history.push(`/userpage/main/${userId}`);
+        window.open(`/userpage/main/${userId}`);
         break;
       case "2":
         deleteConfirm(record, onDelete);

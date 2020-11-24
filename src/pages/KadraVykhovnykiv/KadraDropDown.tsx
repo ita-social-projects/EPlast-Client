@@ -73,7 +73,7 @@ const DropDown = (props: Props) => {
         break;
       case "3":
         await kadrasApi.findUserByEduStaff(record).then((response) => {
-          history.push(`/userpage/main/${response.data}`);
+          window.open(`/userpage/main/${response.data}`);
         });
 
         break;

@@ -44,7 +44,7 @@ export default function () {
   const [userAvatar, setUserAvatar] = useState<any>();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
-
+  debugger
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
@@ -131,7 +131,8 @@ export default function () {
     ],
     placeOfStudy: [
       { max: 50, message: "Максимальна довжина - 50 символів" },
-      { pattern: patern, message: message },
+      { pattern: /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"().`0-9.-]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ()'".`0-9.-]{0,50})*$/ 
+        , message: message },
     ],
     speciality: [
       { max: 50, message: "Максимальна довжина - 50 символів" },
