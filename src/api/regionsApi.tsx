@@ -1,3 +1,4 @@
+import RegionAnnualReportQuestions from "../pages/AnnualReport/Interfaces/RegionAnnualReportQuestions";
 import api from "./api";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
@@ -155,8 +156,8 @@ export const redirectCities = async (prevRegId: number, nextRegId: number) => {
     });
 };
 
-export const createRegionAnnualReport = async (id:number, year:number)=>{
-  return api.post(`Regions/CreateRegionAnnualReportById/${id}/${year}`)
+export const createRegionAnnualReport = async (id:number, year:number, data: RegionAnnualReportQuestions)=>{
+  return api.post(`Regions/CreateRegionAnnualReportById/${id}/${year}`, JSON.stringify(data))
   .catch((error)=>{
    throw new Error(error);
  })

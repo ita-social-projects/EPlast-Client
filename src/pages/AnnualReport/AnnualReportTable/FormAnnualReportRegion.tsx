@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import classes from './Form.module.css'
-import { Form, AutoComplete, Select, Button, Modal } from 'antd';
+import { Form, AutoComplete, Select, Button, Modal, Input } from 'antd';
 import regionsApi from '../../../api/regionsApi';
 import notificationLogic from "../../../components/Notifications/Notification";
 import { useHistory } from 'react-router-dom';
 import {successfulCreateAction, tryAgain, emptyInput} from "../../../components/Notifications/Messages"
+import { maxLength } from '../../../components/Notifications/Messages';
+import TextArea from 'antd/lib/input/TextArea';
+import RegionAnnualReportQuestions from '../Interfaces/RegionAnnualReportQuestions';
 
 interface Props {
   visibleModal: boolean,
@@ -22,7 +25,22 @@ interface Props {
       }])
 
       const handleSubmit = async (values : any)=>{
-          regionsApi.createRegionAnnualReport(JSON.parse(values.region).id, values.year) 
+        const regionQuestions = {
+            stateOfPreparation: values.StateOfPreparation,
+            characteristic: values.Characteristic,
+            statusOfStrategy: values.StatusOfStrategy,
+            involvementOfVolunteers: values.InvolvementOfVolunteers,
+            trainedNeeds:values.TrainedNeeds,
+            publicFunding:values.PublicFunding,
+            churchCooperation:values.ChurchCooperation,
+            socialProjects:values.SocialProjects,
+            problemSituations:values.ProblemSituations,
+            importantNeeds:values.ImportantNeeds,
+            successStories:values.SuccessStories,
+            fundraising:values.Fundraising
+          }
+          regionsApi.createRegionAnnualReport(JSON.parse(values.region).id,
+           values.year, regionQuestions)
           .then(() => {
             notificationLogic("success", successfulCreateAction("Річний звіт"));
             window.location.reload();
@@ -52,11 +70,10 @@ interface Props {
          onFinish={handleSubmit}
          form = {form}
      >
+       <div>
          <Form.Item
-             className={classes.formField}
-             label="Округ"
+         label="Округ"
              name="region"
-
              rules={[
                  {
                      required: true,
@@ -66,16 +83,13 @@ interface Props {
          >
             <Select
         showSearch
-        className={classes.inputField}
-        >
-           
+        > 
         {regions?.map((o) => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{o.regionName}</Select.Option>))}
-        </Select>
-             
+        </Select>   
          </Form.Item>
-        
+         </div>
+        <div>
          <Form.Item
-             className={classes.formField}
              label="Рік подання"
              name="year"
              rules={[
@@ -85,8 +99,10 @@ interface Props {
                 },
             ]}
          >
+           <Select
+        showSearch
+        >
              <AutoComplete
-            className={classes.inputField}
             options={[
               { value: 2019 },
               { value: 2020 },
@@ -96,11 +112,87 @@ interface Props {
               { value: 2024 },
               { value: 2025 },
               { value: 2026 }
-            ]}
-           
+            ]}   
           placeholder={"Оберіть рік"}
-          ></AutoComplete>
-         </Form.Item>
+          ></AutoComplete></Select>
+         </Form.Item></div>
+
+        <div className={classes.row} >
+        <h3>Загальна характеристика діяльності осередків в області </h3>
+        < Form.Item name="Characteristic" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]} >
+        <TextArea className={classes.input}  />
+        </Form.Item>
+        </div>
+
+        < div className={classes.row} >
+        <h3>Стан підготовки/реалізації стратегії округи, осередків округи</h3>
+        < Form.Item name="StateOfPreparation" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]} >
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
+        </Form.Item>
+        </ div>
+
+        < div className={classes.row} >
+        <h3>Чи виконується стратегія у Вашій окрузі? Що допоможе її реалізувати?</h3>
+        < Form.Item name="StatusOfStrategy" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]} >
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
+        </Form.Item>
+        </ div>
+
+        < div className={classes.row} >
+        <h3>Стан роботи із залученням волонтерів</h3>
+        < Form.Item name="InvolvementOfVolunteers" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]} >
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
+        </Form.Item>
+        </ div>
+
+        < div className={classes.row} >
+        <h3>Які вишколи потрібні членам вашої округи? та  Які вишколи із вказаних ви можете провести самостійно?</h3>
+        < Form.Item name="TrainedNeeds" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]} >
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
+        </Form.Item></ div>
+
+        
+        < div className={classes.row} >
+        <h3>Чи отримають станиці державне фінансування або іншу підтримку від влади? Якщо так, то яку?</h3>
+        < Form.Item name="PublicFunding" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]} >
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
+        </Form.Item></ div>
+
+        < div className={classes.row} >
+        <h3>Чи співпрацюєте ви із церквою (вкажіть як саме, тип співпраці з церквою)</h3>
+        < Form.Item name="ChurchCooperation" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]} >
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
+        </Form.Item></ div>
+
+        < div className={classes.row} >
+        <h3>Чи займаються станиці фандрейзингом? Якщо так, то хто і в якому форматі?</h3>
+        < Form.Item name="Fundraising" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]} >
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
+        </Form.Item></ div>
+
+        < div className={classes.row} >
+        <h3>Участь (організація) у соціальних проектах</h3>
+        < Form.Item name="SocialProjects" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]} >
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
+        </Form.Item></ div>
+
+        < div className={classes.row} >
+        <h3>Проблемні ситуації, виклики, які мають негативний вплив на організацію на місцевому та національному рівні.</h3>
+        < Form.Item name="ProblemSituations" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]} >
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
+        </Form.Item></ div>
+
+        < div className={classes.row} >
+        <h3>Вкажіть важливі потреби для розвитку округи та осередків</h3>
+        < Form.Item name="ImportantNeeds" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]} >
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
+        </Form.Item></ div>
+
+        <div className={classes.row} >
+        <h3>Розкажіть про ваші історії успіху, за цей період</h3>
+        < Form.Item name="SuccessStories" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]} >
+        <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
+        </Form.Item></div>
 
          <Form.Item style = {{ textAlign: "right"}}>
          <Button

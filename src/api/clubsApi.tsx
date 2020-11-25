@@ -1,3 +1,5 @@
+import { AxiosError } from "axios";
+import ClubAnnualReport from "../pages/AnnualReport/Interfaces/ClubAnnualReport";
 import api from "./api";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
@@ -21,8 +23,20 @@ export const getClubById = async (id: number) => {
   });
 };
 
+export const createClubAnnualReport= async (data: any) => {
+  return await api.post(`Club/CreateClubAnnualReport`,data) .catch((error: AxiosError) => {
+    throw new Error(error.response?.data.message);
+});
+};
+
 export const getClubAnnualReport = async () => {
   return await api.get(`Club/GetAllClubAnnualReports`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const getClubAnnualReportById = async (id:any) => {
+  return await api.get(`Club/GetClubAnnualReportById/${id}`,id).catch((error) => {
     throw new Error(error);
   });
 };
@@ -169,3 +183,4 @@ export const getUsersPreviousAdministrations = async(UserId:string)=>{
 export const getClubs = async()=>{
   return api.get(`Club/Clubs`);
 }
+

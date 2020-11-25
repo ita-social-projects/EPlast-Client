@@ -2,11 +2,8 @@ import React, { useEffect, useState, PropsWithRef } from "react";
 import { Table, Spin, Input, Divider, Button } from 'antd';
 import AnnualReport from '../Interfaces/AnnualReport';
 import ClubAnnualReport from '../Interfaces/ClubAnnualReport';
-import Paragraph from 'antd/lib/skeleton/Paragraph';
-
 
 interface props {
-
     columns: any;
     filteredData: any;
   }

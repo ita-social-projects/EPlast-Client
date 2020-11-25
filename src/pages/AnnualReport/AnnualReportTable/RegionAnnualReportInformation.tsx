@@ -118,6 +118,37 @@ const RegionAnnualReportInformation = (props: Props) => {
                             ${regionAnnualReport.numberOfHonoraryMembers}`}</Text>
                     </Space>
                 </Card.Grid>
+                <Card.Grid
+                    className='container'>
+                    <Title
+                        level={4}>Додаткові дані</Title>
+                    <Space direction='vertical'>
+                        <Text strong={true}>{`1. Загальна характеристика діяльності осередків в області:`} </Text>
+                        <Text>{`${regionAnnualReport.characteristic}`}</Text>
+                        <Text strong={true}>{`2. Стан підготовки/реалізації стратегії округи, осередків округи: `} </Text>
+                        <Text>{`${regionAnnualReport.stateOfPreparation}`}</Text>
+                        <Text strong={true}>{`3. Чи виконується стратегія у Вашій окрузі? Що допоможе її реалізувати?`} </Text>
+                        <Text>{`${regionAnnualReport.statusOfStrategy}`}</Text>
+                        <Text strong={true}>{`4. Стан роботи із залученням волонтерів:`} </Text>
+                        <Text>{`${regionAnnualReport.involvementOfVolunteers}`}</Text>
+                        <Text strong={true}>{`5. Які вишколи потрібні членам вашої округи? та  Які вишколи із вказаних ви можете провести самостійно? `} </Text>
+                        <Text>{`${regionAnnualReport.trainedNeeds}`}</Text>
+                        <Text strong={true}>{`6. Чи отримають станиці державне фінансування або іншу підтримку від влади? Якщо так, то яку? `} </Text>
+                        <Text>{`${regionAnnualReport.publicFunding}`}</Text>
+                        <Text strong={true}>{`7. Чи співпрацюєте ви із церквою (вкажіть як саме, тип співпраці з церквою)?`} </Text>
+                        <Text>{`${regionAnnualReport.churchCooperation}`}</Text>
+                        <Text strong={true}>{`8. Чи займаються станиці фандрейзингом? Якщо так, то хто і в якому форматі?`} </Text>
+                        <Text>{`${regionAnnualReport.fundraising}`}</Text>
+                        <Text strong={true}>{`9. Участь (організація) у соціальних проектах:`} </Text>
+                        <Text>{`${regionAnnualReport.socialProjects}`}</Text>
+                        <Text strong={true}>{`10. Проблемні ситуації, виклики, які мають негативний вплив на організацію на місцевому та національному рівні.`} </Text>
+                        <Text>{`${regionAnnualReport.problemSituations}`}</Text>
+                        <Text strong={true}>{`11. Вкажіть важливі потреби для розвитку округи та осередків:`} </Text>
+                        <Text>{`${regionAnnualReport.importantNeeds}`}</Text>
+                        <Text strong={true}>{`12. Розкажіть про ваші історії успіху, за цей період:`} </Text>
+                        <Text>{`${regionAnnualReport.successStories}`}</Text>
+                    </Space>
+                </Card.Grid>
             </Card>
         </Modal>
     );
