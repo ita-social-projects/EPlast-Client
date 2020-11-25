@@ -44,7 +44,6 @@ export default function () {
   const [userAvatar, setUserAvatar] = useState<any>();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
-  debugger
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
