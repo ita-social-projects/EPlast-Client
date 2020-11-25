@@ -48,6 +48,7 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import BreadcrumbItem from "antd/lib/breadcrumb/BreadcrumbItem";
+import{successfulDeleteAction} from "../../../components/Notifications/Messages"
 
 const City = () => {
   const history = useHistory();
@@ -114,7 +115,7 @@ const City = () => {
 
   const deleteCity = async () => {
     await removeCity(city.id);
-    notificationLogic("success", "Станицю успішно видалено");
+    notificationLogic("success", successfulDeleteAction("Станицю"));
 
     admins.map(async (ad) => {
       await NotificationBoxApi.createNotifications(
@@ -258,7 +259,7 @@ const City = () => {
                     {city.head.endDate ? (
                       <Paragraph>
                         <b>Час правління:</b>{" "}
-                        {moment(city.head.startDate).format("DD.MM.YYYY")}{" "}
+                        {moment(city.head.startDate).format("DD.MM.YYYY")}{" - "}
                         {moment(city.head.endDate).format("DD.MM.YYYY")}
                       </Paragraph>
                     ) : (

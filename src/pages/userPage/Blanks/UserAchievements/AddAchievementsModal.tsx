@@ -6,6 +6,14 @@ import { addAchievementDocuments } from "../../../../api/blankApi";
 import BlankDocument from "../../../../models/Blank/BlankDocument";
 import { getBase64 } from "../../EditUserPage/Services";
 import { InboxOutlined } from "@ant-design/icons";
+import{
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  successfulDeleteAction,
+} from "../../../../components/Notifications/Messages"
+
 const { Dragger } = Upload;
 
 interface Props {
@@ -35,11 +43,11 @@ const AddAchievementsModal = (props: Props) => {
           files.push(newDocument);
           setFiles([...files]);
         });
-        notificationLogic("success", `Файл "${info.file.name}" завантажено`);
+        notificationLogic("success", fileIsUpload(`Файл ${info.file.name}`));
         setDisabled(false);
       }
     } else {
-      notificationLogic("error", "Проблема з завантаженням файлу");
+      notificationLogic("error", fileIsNotUpload());
     }
     form.resetFields();
   };
@@ -52,12 +60,12 @@ const AddAchievementsModal = (props: Props) => {
       extension.indexOf("jpeg") !== -1 ||
       extension.indexOf("png") !== -1
     if (!isCorrectExtension) {
-      notificationLogic("error", "Можливі розширення файлів: pdf,jpg,jpeg,png");
+      notificationLogic("error", possibleFileExtensions("pdf,jpg,jpeg,png"));
       return isCorrectExtension;
     }
     const isSmaller3mb =  fileSize < 3145728;
     if (!isSmaller3mb) {
-      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+      notificationLogic("error", fileIsTooBig(3));
       return isSmaller3mb;
     }
     return isCorrectExtension && isSmaller3mb;
@@ -119,7 +127,7 @@ const AddAchievementsModal = (props: Props) => {
                 className="cardButton"
                 onClick={() => {
                   removeFile();
-                  notificationLogic("success", "Файли видалено");
+                  notificationLogic("success", successfulDeleteAction("Файл"));
                 }}
               >
                 {files.length > 1 &&

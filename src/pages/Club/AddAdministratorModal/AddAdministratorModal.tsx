@@ -8,6 +8,9 @@ import {
   editAdministrator,
   getAllAdmins,
 } from "../../../api/clubsApi";
+import{
+  emptyInput,
+} from "../../../components/Notifications/Messages"
 import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
 import "moment/locale/uk";
@@ -142,7 +145,7 @@ const AddAdministratorModal = (props: Props) => {
     <Modal
       title={
         props.admin.id === 0
-          ? "Додати в провід станиці"
+          ? "Додати в провід куреня"
           : "Редагувати адміністратора"
       }
       visible={props.visibleModal}
@@ -158,7 +161,7 @@ const AddAdministratorModal = (props: Props) => {
           label="Виберіть тип адміністрування"
           labelCol={{ span: 24 }}
           initialValue={props.admin.adminType.adminTypeName}
-          rules={[{ required: true, message: "Це поле є обов'язковим" }]}
+          rules={[{ required: true, message: emptyInput() }]}
         >
           <AutoComplete
             className="adminTypeSelect"

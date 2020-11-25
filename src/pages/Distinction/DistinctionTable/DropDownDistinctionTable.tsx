@@ -96,7 +96,7 @@ const DropDown = (props: Props) => {
         className={classes.menu}
         style={{
           top: pageY,
-          left: pageX,
+          left: (window.innerWidth - (pageX + 194)) < 0 ? window.innerWidth - 237 : pageX ,
           display: showDropdown ? "block" : "none",
         }}
       >

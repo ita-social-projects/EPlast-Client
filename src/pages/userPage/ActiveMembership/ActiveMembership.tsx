@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import classes from "./ActiveMembership.module.css";
-import { Avatar, Typography, List, Button } from "antd";
+import { Avatar, Typography, List, Button, Tooltip, Tag } from "antd";
 
 import "../personalData/PersonalData.less";
 import activeMembershipApi, {
@@ -128,6 +128,22 @@ const ActiveMembership = () => {
     }
     fetchData();
   };
+  const setTagColor = (userRoles: string) => {
+    let color = "";
+    if (userRoles.includes("Доступ члена проводу організації")) {
+      color = "red";
+    }
+    if (userRoles.includes("Доступ члена організації")) {
+      color = "green";
+    }
+    if (userRoles.includes("Доступ прихильника організації")) {
+      color = "orange";
+    }
+    if (userRoles.includes("Колишній член")) {
+      color = "black";
+    }
+    return color;
+  };
   const handleAddEndDate = async () => {
     fetchData();
   };
@@ -154,8 +170,8 @@ const ActiveMembership = () => {
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ]
         ) && (
-          <div className={classes.buttonChange}>
-            <Button type="primary" onClick={showModal}>
+          <div>
+            <Button type="primary" onClick={showModal} className={classes.buttonChange}>
                 Додати ступінь
             </Button>
           </div>
@@ -165,29 +181,38 @@ const ActiveMembership = () => {
 
       <div className={classes.wrapperCol}>
         <div className={classes.wrapper}>
-          <div className={classes.wrapper2}>
+          <div className={classes.wrapperGeneralInfo}>
             <Title level={2}> Загальна інформація </Title>
             <div className={classes.textBlock}>
-              {LoadInfo ? (
+            {LoadInfo ? (
                 <>
-                  <div className={classes.textGeneralInfo}>
+                <ul className={classes.textList}>
+                  <li className={classes.textListItem} key={1}>
+                    <div >
                     <span className={classes.date}>Дата вступу:{" "}</span> 
                     {dates?.dateEntry === ""
                       ? "Не задано"
                       : moment(dates.dateEntry).format("DD.MM.YYYY")}
-                  </div>
-                  <div className={classes.textGeneralInfo}>
-                  <span className={classes.date}>Дата присяги:{" "}</span> 
-                    {dates?.dateOath === ""
-                      ? "Без присяги"
-                      : moment(dates.dateOath).format("DD.MM.YYYY")}
-                  </div>
-                  <div className={classes.textGeneralInfo}>
-                  <span className={classes.date}>Дата завершення:{" "}</span> 
-                    {dates?.dateEnd === ""
-                      ? "Ще в Пласті"
-                      : moment(dates.dateEnd).format("DD.MM.YYYY")}
-                  </div>
+                    </div>
+                  </li>
+                  <li className={classes.textListItem} key={2}>
+                    <div >
+                    <span className={classes.date}>Дата присяги:{" "}</span> 
+                      {dates?.dateOath === ""
+                        ? "Без присяги"
+                        : moment(dates.dateOath).format("DD.MM.YYYY")}
+                    </div>
+                  </li>
+                  <li className={classes.textListItem} key={3}>
+                    <div >
+                    <span className={classes.date}>Дата завершення:{" "}</span> 
+                      {dates?.dateEnd === ""
+                        ? "Ще в Пласті"
+                        : moment(dates.dateEnd).format("DD.MM.YYYY")}
+                    </div>
+                  </li>
+                </ul>
+                  
                   {IsUserHasAnyAdminTypeRoles(
                     userToken[
                       "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
@@ -208,18 +233,26 @@ const ActiveMembership = () => {
                 <div></div>
               )}
             </div>
-          </div>
-          <div className={classes.wrapper2}>
-            <Title level={2}> Рівні доступу </Title>
-              <div className={classes.textBlock}>
-                <List
-                  dataSource={accessLevels}
-                  renderItem={(item) => (
-                    <List.Item style={{ fontSize: "16px" }}>{item}</List.Item>
-                  )}
-                />
-              </div>
-
+          
+            <div className={""}>
+              <Title level={4}> Рівні доступу </Title>
+                <div className={classes.textBlock}>
+                  <List style={{overflow: "hidden"}}
+                    dataSource={accessLevels}
+                    renderItem={(item, index) => (
+                      <List.Item className={classes.textListItem} style={{  padding: "6px 0"}}>
+                        <Tag color={setTagColor(item)} key={index}>
+                          <Tooltip placement="topLeft" title={item}>
+                            {item}
+                          </Tooltip>
+                        </Tag>
+                      </List.Item>
+                    
+                      
+                    )}
+                  />
+                </div>
+            </div>
           </div>
         </div>
         <div className={classes.wrapper}>
@@ -228,64 +261,67 @@ const ActiveMembership = () => {
             <Title level={2}> Ступені користувача </Title>
             {plastDegrees.map((pd) => (
               <React.Fragment key={pd.id}>
-                <div className={classes.textFieldsMain}>
-                  {pd.isCurrent && <SafetyCertificateOutlined />}{" "}
-                  {getAppropriateToGenderDegree(pd.plastDegree.name)}
-                </div>
-                <div className={classes.textFieldsOthers}>
-                  Дата початку ступеню:{" "}
-                  {moment(pd.dateStart).format("DD.MM.YYYY")}
-                </div>
-                {pd.dateFinish !== null && (
-                  <div className={classes.textFieldsOthers}>
-                    Дата завершення ступеню:{" "}
-                    {moment(pd.dateFinish).format("DD.MM.YYYY")}
+                <div style={{marginBottom: "7px"}}>
+                  <div className={classes.textFieldsMain} >
+                    {pd.isCurrent && <SafetyCertificateOutlined />}{" "}
+                    {getAppropriateToGenderDegree(pd.plastDegree.name)}
                   </div>
-                )}
-                {IsUserHasAnyAdminTypeRoles(
-                  userToken[
-                    "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-                  ]
-                ) && (
-                  <div className={classes.buttons}>
-                    <button
-                      onClick={() => {
-                        DeleteDegreeConfirm(
-                          userId,
-                          pd.plastDegree.id,
-                          handleDelete
-                        );
-                      }}
-                      className={classes.button}
-                    >
-                      Видалити
-                    </button>
-                    <button
-                      onClick={() => {
-                        setPlastDegreeIdToAddEndDate(pd.plastDegree.id);
-                        setStartDateToAddEndDate(pd.dateStart);
-                        setEndDateVisibleModal(true);
-                      }}
-                      className={classes.button}
-                    >
-                      Надати дату завершення
-                    </button>
-                    {!pd.isCurrent && pd.dateFinish === null && (
+                  <div className={classes.textFieldsOthers}>
+                    Дата початку ступеню:{" "}
+                    {moment(pd.dateStart).format("DD.MM.YYYY")}
+                  </div>
+                  {pd.dateFinish !== null && (
+                    <div className={classes.textFieldsOthers}>
+                      Дата завершення ступеню:{" "}
+                      {moment(pd.dateFinish).format("DD.MM.YYYY")}
+                    </div>
+                  )}
+                  {IsUserHasAnyAdminTypeRoles(
+                    userToken[
+                      "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+                    ]
+                  ) && (
+                    <div className={classes.buttons}>
                       <button
-                        onClick={async () => {
-                          await activeMembershipApi
-                            .setPlastDegreeAsCurrent(userId, pd.plastDegree.id)
-                            .then(() => {
-                              handleChangeAsCurrent(pd.plastDegree.id);
-                            });
+                        onClick={() => {
+                          DeleteDegreeConfirm(
+                            userId,
+                            pd.plastDegree.id,
+                            handleDelete
+                          );
                         }}
                         className={classes.button}
                       >
-                        Обрати поточним
+                        Видалити
                       </button>
-                    )}
-                  </div>
-                )}
+                      <button
+                        onClick={() => {
+                          setPlastDegreeIdToAddEndDate(pd.plastDegree.id);
+                          setStartDateToAddEndDate(pd.dateStart);
+                          setEndDateVisibleModal(true);
+                        }}
+                        className={classes.button}
+                      >
+                        Надати дату завершення
+                      </button>
+                      {!pd.isCurrent && pd.dateFinish === null && (
+                        <button
+                          onClick={async () => {
+                            await activeMembershipApi
+                              .setPlastDegreeAsCurrent(userId, pd.plastDegree.id)
+                              .then(() => {
+                                handleChangeAsCurrent(pd.plastDegree.id);
+                              });
+                          }}
+                          className={classes.button}
+                        >
+                          Обрати поточним
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+                
               </React.Fragment>
             ))}
             </div>

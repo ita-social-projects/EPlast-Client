@@ -91,7 +91,7 @@ const DropDown = (props: Props) => {
         theme="dark"
         style={{
           top: pageY,
-          left: pageX,
+          left: (window.innerWidth - (pageX + 194)) < 0 ? window.innerWidth - 275 : pageX ,
           display: showDropdown ? "block" : "none",
         }}
       >

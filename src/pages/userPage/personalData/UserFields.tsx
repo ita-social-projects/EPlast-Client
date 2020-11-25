@@ -8,6 +8,7 @@ import { Data } from '../Interface/Interface';
 import {useParams, useHistory} from 'react-router-dom';
 import notificationLogic from '../../../components/Notifications/Notification';
 import Spinner from '../../Spinner/Spinner';
+import{ tryAgain } from "../../../components/Notifications/Messages"
 
 export default function () {
   const {userId}=useParams();
@@ -19,7 +20,7 @@ export default function () {
     await userApi.getById(userId).then(response => {
       setLoading(true);
       setData(response.data);
-    }).catch(() => { notificationLogic('error', "Щось пішло не так") })
+    }).catch(() => { notificationLogic('error', tryAgain) })
   };
 
   useEffect(() => {
@@ -83,7 +84,7 @@ export default function () {
          className="formItem"
        >
          {data?.user.birthday!==null && data?.user.birthday.toString()!=="0001-01-01T00:00:00"? 
-                (<Input readOnly className="dataInput" value={moment(data?.user.birthday).format("DD-MM-YYYY")} />):
+                (<Input readOnly className="dataInput" value={moment(data?.user.birthday).format("DD.MM.YYYY")} />):
                 <Input readOnly className="dataInput" value="-"/>
               }
         

@@ -8,10 +8,8 @@ import {
   Upload,
   Row,
   Col,
-  Table,
   Select,
   Card,
-  message,
 } from "antd";
 import {
   DeleteOutlined,
@@ -23,9 +21,6 @@ import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import {
   createCity,
-  getAllAdmins,
-  getAllFollowers,
-  getAllMembers,
   getCityById,
   getLogo,
   updateCity,
@@ -33,20 +28,23 @@ import {
 import { GetAllRegions } from "../../../api/regionsApi";
 import "./CreateCity.less";
 import CityProfile from "../../../models/City/CityProfile";
-import CityAdmin from "../../../models/City/CityAdmin";
-import CityMember from "../../../models/City/CityMember";
 import RegionProfile from "../../../models/Region/RegionProfile";
-import {
-  membersColumns,
-  administrationsColumns,
-  getTableAdmins,
-  getTableMembers,
-  getTableFollowers,
-} from "./CityTableColumns";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
-import { checkPhone } from "../../SignUp/verification";
+import{
+  emptyInput,
+  fileIsUpload,
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  successfulDeleteAction, 
+  successfulCreateAction, 
+  successfulUpdateAction, 
+  failCreateAction,
+  failUpdateAction,
+} from "../../../components/Notifications/Messages"
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 
 const CreateCity = () => {
@@ -56,9 +54,6 @@ const CreateCity = () => {
   const [loading, setLoading] = useState(false);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
   const [regions, setRegions] = useState<RegionProfile[]>([]);
-  const [admins, setAdmins] = useState<CityAdmin[]>([]);
-  const [members, setMembers] = useState<CityMember[]>([]);
-  const [followers, setFollowers] = useState<CityMember[]>([]);
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -73,12 +68,12 @@ const CreateCity = () => {
       extension.indexOf("jpg") !== -1 ||
       extension.indexOf("png") !== -1;
     if (!isCorrectExtension) {
-      notificationLogic("error", "Можливі розширення фото: png, jpg, jpeg");
+      notificationLogic("error", possibleFileExtensions("png, jpg, jpeg"));
     }
 
     const isSmaller2mb = size <= 3145728;
     if (!isSmaller2mb) {
-      notificationLogic("error", "Розмір файлу перевищує 3 Мб");
+      notificationLogic("error", fileIsTooBig(3));
     }
 
     return isCorrectExtension && isSmaller2mb;
@@ -90,20 +85,18 @@ const CreateCity = () => {
         getBase64(info.file, (base64: string) => {
           setCity({ ...city, logo: base64 });
         });
-        notificationLogic("success", "Фото завантажено");
+        notificationLogic("success", fileIsUpload("Фото"));
       }
     } else {
-      notificationLogic("error", "Проблема з завантаженням фото");
+      notificationLogic("error", fileIsNotUpload("фото"));
     }
   };
 
   const removeLogo = (event: any) => {
     setCity({ ...city, logo: null });
-    notificationLogic("success", "Фото видалено");
+    notificationLogic("success", successfulDeleteAction("Фото"));
     event.stopPropagation();
   };
-
-  function onSearch(val: any) {}
 
   const getCity = async () => {
     try {
@@ -116,9 +109,6 @@ const CreateCity = () => {
       }
 
       setCity(response.data);
-      setAdmins((await getAllAdmins(+id)).data.administration);
-      setMembers((await getAllMembers(+id)).data.members);
-      setFollowers((await getAllFollowers(+id)).data.followers);
     } finally {
       setLoading(false);
     }
@@ -174,11 +164,11 @@ const CreateCity = () => {
 
     return responsePromise
       .then(() => {
-        notificationLogic("success", "Станицю успішно створено");
+        notificationLogic("success", successfulCreateAction("Станицю"));
         history.push(`${city.id}`);
       })
       .catch(() => {
-        notificationLogic("error", "Не вдалося створити станицю");
+        notificationLogic("error", failCreateAction("станицю"));
       });
   };
 
@@ -187,11 +177,11 @@ const CreateCity = () => {
 
     return updateCity(city.id, JSON.stringify(newCity))
       .then(() => {
-        notificationLogic("success", "Станицю успішно оновлено");
+        notificationLogic("success", successfulUpdateAction("Станицю"));
         history.goBack();
       })
       .catch(() => {
-        notificationLogic("error", "Не вдалося оновити станицю");
+        notificationLogic("error", failUpdateAction("станицю"));
       });
   };
 
@@ -233,13 +223,7 @@ const CreateCity = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={city.name}
-                rules={[
-                  { required: true, message: "Це поле є обов'язковим" },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.Name}
               >
                 <Input value={city.name} maxLength={51} />
               </Form.Item>
@@ -250,12 +234,7 @@ const CreateCity = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={city.description}
-                rules={[
-                  {
-                    max: 1000,
-                    message: "Максимальна довжина - 1000 символів!",
-                  },
-                ]}
+                rules={[descriptionValidation.Description]}
               >
                 <Input value={city.description} maxLength={1001} />
               </Form.Item>
@@ -266,12 +245,7 @@ const CreateCity = () => {
                 label="Посилання"
                 labelCol={{ span: 24 }}
                 initialValue={city.cityURL}
-                rules={[
-                  {
-                    max: 256,
-                    message: "Максимальна довжина - 256 символів!",
-                  },
-                ]}
+                rules={[descriptionValidation.Link]}
               >
                 <Input value={city.cityURL} maxLength={257} />
               </Form.Item>
@@ -282,12 +256,7 @@ const CreateCity = () => {
                 label="Номер телефону"
                 labelCol={{ span: 24 }}
                 initialValue={city.phoneNumber}
-                rules={[
-                  {
-                    pattern: /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/,
-                    message: "Невірно вказаний номер",
-                  },
-                ]}
+                rules={[descriptionValidation.Phone]}
               >
                 <ReactInputMask
                   mask="+380(99)-999-99-99"
@@ -304,16 +273,7 @@ const CreateCity = () => {
                 label="Електронна пошта"
                 labelCol={{ span: 24 }}
                 initialValue={city.email}
-                rules={[
-                  {
-                    pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-                    message: "Неправильний формат електронної пошти!",
-                  },
-                  {
-                    max: 75,
-                    message: "Максимальна довжина - 75 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.Email}
               >
                 <Input value={city.email} maxLength={51} />
               </Form.Item>
@@ -324,12 +284,11 @@ const CreateCity = () => {
                 label="Округ"
                 labelCol={{ span: 24 }}
                 initialValue={city.region}
-                rules={[{ required: true, message: "Це поле є обов'язковим" }]}
+                rules={[{ required: true, message: emptyInput("округ") }]}
               >
                 <Select
                   showSearch
                   optionFilterProp="children"
-                  onSearch={onSearch}
                 >
                   {regions.map((item: RegionProfile) => (
                     <Select.Option key={item.id} value={item.regionName}>
@@ -345,13 +304,7 @@ const CreateCity = () => {
                 label="Вулиця"
                 labelCol={{ span: 24 }}
                 initialValue={city.street}
-                rules={[
-                  { required: true, message: "Це поле є обов'язковим" },
-                  {
-                    max: 50,
-                    message: "Максимальна довжина - 50 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.Street}
               >
                 <Input value={city.street} maxLength={51} />
               </Form.Item>
@@ -362,13 +315,7 @@ const CreateCity = () => {
                 label="Номер будинку"
                 labelCol={{ span: 24 }}
                 initialValue={city.houseNumber}
-                rules={[
-                  { required: true, message: "Це поле є обов'язковим" },
-                  {
-                    max: 5,
-                    message: "Максимальна довжина - 5 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.houseNumber}
               >
                 <Input value={city.houseNumber} maxLength={6} />
               </Form.Item>
@@ -379,12 +326,7 @@ const CreateCity = () => {
                 label="Номер офісу/квартири"
                 labelCol={{ span: 24 }}
                 initialValue={city.officeNumber}
-                rules={[
-                  {
-                    max: 5,
-                    message: "Максимальна довжина - 5 символів!",
-                  },
-                ]}
+                rules={descriptionValidation.officeNumber}
               >
                 <Input value={city.officeNumber} maxLength={6} />
               </Form.Item>
@@ -395,26 +337,7 @@ const CreateCity = () => {
                 label="Поштовий індекс"
                 labelCol={{ span: 24 }}
                 initialValue={city.postIndex}
-                rules={[
-                  {
-                    max: 5,
-                    message: "Максимальна довжина - 5 символів!",
-                  },
-                  {
-                    min: 5,
-                    message: "Мінімальна довжина - 5 символів!",
-                  },
-                  {
-                    validator: (_, value) =>
-                      parseInt(value) >= 0 ||
-                      value == null ||
-                      String(value).length == 0
-                        ? Promise.resolve()
-                        : Promise.reject(
-                            `Поле не може бути від'ємним`
-                          ),
-                  },
-                ]}
+                rules={descriptionValidation.postIndex}
               >
                 <Input type="number" value={city.postIndex} />
               </Form.Item>
@@ -438,34 +361,6 @@ const CreateCity = () => {
           </Row>
         </Form>
       </Card>
-      {city.id ? (
-        <Card hoverable className="cityMembersCard">
-          <Row justify="space-between" gutter={[0, 12]}>
-            <Col span={24}>
-              <Table
-                dataSource={getTableAdmins(admins, city.head)}
-                columns={administrationsColumns}
-                pagination={{ defaultPageSize: 4 }}
-                className="table"
-              />
-            </Col>
-            <Col md={10} xs={24}>
-              <Table
-                dataSource={getTableMembers(members, admins, city.head)}
-                columns={membersColumns}
-                pagination={{ defaultPageSize: 4 }}
-              />
-            </Col>
-            <Col md={{ span: 10, offset: 2 }} xs={24}>
-              <Table
-                dataSource={getTableFollowers(followers)}
-                columns={membersColumns}
-                pagination={{ defaultPageSize: 4 }}
-              />
-            </Col>
-          </Row>
-        </Card>
-      ) : null}
     </Layout.Content>
   );
 };

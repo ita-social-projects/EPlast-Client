@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Row, Col } from "antd";
 import decisionsApi, { DecisionPost } from "../../api/decisionsApi";
 import formclasses from "./FormEditDecision.module.css";
+import{
+  emptyInput,
+  maxLength,
+} from "../../components/Notifications/Messages"
 
 interface Props {
   record: number;
@@ -60,11 +64,11 @@ const FormEditDecision = ({
                 rules={[
                   {
                     required: true,
-                    message: "Це поле має бути заповненим",
+                    message: emptyInput(),
                   },
                   { 
                     max: 60,
-                    message: 'Назва рішення не має перевищувати 60 символів!' 
+                    message: maxLength(60) 
                   },
                 ]}
               >
@@ -81,7 +85,7 @@ const FormEditDecision = ({
                 rules={[
                   {
                     required: true,
-                    message: "Це поле має бути заповненим",
+                    message: emptyInput(),
                   },
                 ]}
               >

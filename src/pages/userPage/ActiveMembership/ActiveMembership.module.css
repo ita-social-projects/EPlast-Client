@@ -9,14 +9,15 @@
     width: 60%;
     margin-left: 20px;
 }
-.wrapper2,
-.wrapper3 {
-    width: 400px;
-    min-width: 250px;
-    min-height: 265px;
+.wrapperGeneralInfo {
+    padding: 20px 0px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
-    align-items: center;
-    padding-top: 15px;
+    width: 100%;
+    max-width: 820px;
+    display: flex;
+    flex-direction: column;
+    align-items: normal;
+    text-align: center;
 }
 
 .textBlock {
@@ -48,23 +49,20 @@
     text-align: center;
 }
 
-.wrapper2:hover,
-.wrapper3:hover,
+.wrapperGeneralInfo:hover,
 .wrapperScrollDegree:hover,
 .avatarWrapper:hover {
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
-.wrapper2,
-.wrapper3,
+.wrapperGeneralInfo,
 .wrapperScrollDegree,
 .avatarWrapper {
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
-.wrapper2,
-.wrapper3,
+.wrapperGeneralInfo,
 .wrapperScrollDegree {
     margin: 0px 0px 20px 20px;
 }
@@ -81,9 +79,24 @@
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
-@media (min-width: 768px) and (max-width: 1048px){
-    .wrapper2,
-    .wrapper3,
+@media (min-width: 875px) and (max-width: 1480px){
+    .date::after{
+        content: "\A";
+        white-space: pre;
+    }
+}
+
+@media (max-width: 875px){
+    .textListItem
+    {
+        padding: 6px 0px;
+        clear: left;
+    }
+}
+
+
+@media (min-width: 769px) and (max-width: 1048px){
+    .wrapperGeneralInfo,
     .wrapperScrollDegree {
         margin: 0px 0px 20px 10px;
     }
@@ -92,11 +105,7 @@
         padding-top:5px;
         padding-bottom: 5px;
     }
-    .wrapper2,
-    .wrapper3 {
-        min-width: 160px;
-        min-height: 250px;
-    }
+    
     .textBlock {
         padding: 10px 10px 10px;
     }
@@ -106,15 +115,14 @@
         width: 60%;
         margin-left: 10px;
     }
-    .date::after{
-        content: "\A";
-        white-space: pre;
-    }
     .wrapper {
         width: 99%;
     }
+    .buttonChange{
+        width: 170px !important;
+    }
 }
-@media (max-width: 767px) {
+@media (max-width: 768px) {
 
     .avatarWrapper{
         width: 100% !important;
@@ -124,27 +132,56 @@
     .wrapper {
         flex-direction: column;
     }
-    .wrapper2,
-    .wrapper3 {
-        min-width: 160px;
-        min-height: 240px;
-    }
+    
     .wrapperCol,
-    .wrapper2,
-    .wrapper3,
+    .wrapperGeneralInfo,
     .wrapperScrollDegree {
         width: 100%;
         margin: 0;
     }
-    .wrapper2,
-    .wrapper3,
+    .wrapperGeneralInfo,
     .wrapperScrollDegree {
         margin: 10px 0;
+    }  
+    .buttonChange{
+        width: 170px !important;
     }
 }
 
+.textList
+{
+    list-style-type: none;
+    margin: 0 auto;
+    padding: 0;
+    
+}
+
+.textListItem
+{
+    font-size : 16px;
+    padding: 6px 10px;
+    float: left;
+}
+
+
+
 .buttonChange {
     margin-top: 10px;
+    margin-bottom: 10px;
+    background: #3C5438;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    border: none;
+    width: 200px;
+    height: 30px;
+    outline: none;
+    text-align: center;
+    cursor: pointer;
+    align-items: center;
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
 .line {
@@ -178,7 +215,7 @@
 }
 .buttons{
     display : flex;
-    justify-content : flex-start;
+    justify-content: center;
 }
 .buttonInside {
     margin-top: 10px;
@@ -224,8 +261,8 @@
 .textFieldsMain,
 .textFieldsOthers
 {
-    text-align : left;
-    margin-left : 50px;
+    margin-left : auto;
+    margin-right : auto;
 }
 
 .textGeneralInfo

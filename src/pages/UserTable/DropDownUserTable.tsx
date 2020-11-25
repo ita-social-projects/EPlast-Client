@@ -39,33 +39,33 @@ const DropDown = (props: Props) => {
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
 
   const handleItemClick = async (item: any) => {
-    switch (item.key) {
-      case "1":
-        await history.push(`/userpage/main/${record}`);
-        break;
-      case "2":
-        await userDeleteCofirm(record, onDelete);
-        break;
-      case "3":
-        await setShowCityModal(true);
-        break;
-      case "4":
-        await setShowRegionModal(true);
-        break;
-      case "5":
-        await setShowClubModal(true);
-        break;
-      case "6":
-        await setShowEditModal(true);
-        break;
-      case "7":
-        await setVisibleModalDegree(true);
-        break;
-      case "8":
-        await adminApi.putExpiredRole(record);
-        break;
-      default:
-        break;
+      switch (item.key) {
+        case "1":
+          window.open(`/userpage/main/${record}`);
+          break;
+        case "2":
+          await userDeleteCofirm(record, onDelete);
+          break;
+        case "3":
+          await setShowCityModal(true);
+          break;
+        case "4":
+          await setShowRegionModal(true);
+          break;
+        case "5":
+          await setShowClubModal(true);
+          break;
+        case "6":
+          await setShowEditModal(true);
+          break;
+        case "7":
+          await setVisibleModalDegree(true);
+          break;
+        case "8":
+          await adminApi.putExpiredRole(record);
+          break;
+        default:
+          break;
     }
     item.key = "0";
   };
@@ -78,7 +78,7 @@ const DropDown = (props: Props) => {
         className={classes.menu}
         style={{
           top: pageY,
-          left: pageX,
+          left: (window.innerWidth - (pageX + 223)) < 0 ? window.innerWidth - 266 : pageX ,
           display: showDropdown ? "block" : "none",
         }}
       >
@@ -90,7 +90,7 @@ const DropDown = (props: Props) => {
           <DeleteOutlined />
           Видалити
         </Menu.Item>
-        <SubMenu icon={<EditOutlined />} title="Змінити права доступу">
+        <SubMenu key="sub" icon={<EditOutlined />} title="Змінити права доступу">
           <Menu.Item key="3">Провід станиці</Menu.Item>
           <Menu.Item key="4">Провід округу</Menu.Item>
           <Menu.Item key="5">Провід куреня</Menu.Item>

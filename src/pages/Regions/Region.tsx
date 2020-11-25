@@ -58,6 +58,7 @@ const Region = () => {
   const [loading, setLoading] = useState(false);
 
   const [photoStatus, setPhotoStatus] = useState(true);
+  const [canEdit, setCanEdit] = useState(false);
 
   const [document, setDocument] = useState<any>({
     ID: "",
@@ -207,6 +208,7 @@ const Region = () => {
       setPhotos([...response.data.cities], [...response1.data]);
 
       setRegion(response.data);
+      setCanEdit(response.data.canEdit);
 
       if (response.data.logo == null) {
         setPhotoStatus(false);
@@ -302,7 +304,7 @@ const Region = () => {
                     {head.endDate ? (
                       <Paragraph>
                         <b>Час правління:</b>{" "}
-                        {moment(head.startDate).format("DD.MM.YYYY")}{" "}
+                        {moment(head.startDate).format("DD.MM.YYYY")}{" - "}
                         {moment(head.endDate).format("DD.MM.YYYY")}
                       </Paragraph>
                     ) : (
@@ -363,7 +365,9 @@ const Region = () => {
                 </Button>
               </Col>
 
-              <Col>
+              { canCreate || canEdit ? (
+                <>
+              <Col style={{display: canCreate || canEdit ? "block" : "none"}}>
                 <Button
                   type="primary"
                   className="cityInfoButton"
@@ -372,8 +376,7 @@ const Region = () => {
                   Річні звіти
                 </Button>
               </Col>
-
-              <Col xs={24} sm={4}>
+              <Col xs={24} sm={4} style={{display: canCreate || canEdit ? "block" : "none"}}>
                 <Row
                   className="cityIcons"
                   justify={canCreate ? "center" : "start"}
@@ -399,6 +402,10 @@ const Region = () => {
                   </Col>
                 </Row>
               </Col>
+              </>
+              ) : null }
+
+
             </Row>
           </Card>
         </Col>
@@ -500,7 +507,12 @@ const Region = () => {
           </Card>
         </Col>
 
-        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+        <Col
+          xl={{ span: 7, offset: 1 }}
+          md={{ span: 11, offset: 2 }}
+          sm={24}
+          xs={24}
+        >
           <Card hoverable className="cityCard">
             <Title level={4}>Документообіг округу</Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>

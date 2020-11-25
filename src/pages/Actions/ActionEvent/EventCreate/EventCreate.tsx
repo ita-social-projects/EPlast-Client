@@ -9,6 +9,13 @@ import EventCategories from '../../../../models/EventCreate/EventCategories';
 import Users from '../../../../models/EventCreate/Users';
 import EventTypes from '../../../../models/EventCreate/EventTypes';
 import NotificationBoxApi from '../../../../api/NotificationBoxApi';
+import{
+  successfulCreateAction,
+  tryAgain, 
+  emptyInput, 
+  maxLength, 
+  isNotChosen
+} from "../../../../components/Notifications/Messages"
 
 const classes = require('./EventCreate.module.css');
 
@@ -22,7 +29,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
   const [form] = Form.useForm();
   const [selectedUsers, setSelectedUsers] = useState<string[]>(['', '', '', '']);
   const [loading, setLoading] = useState(false);
-  const dateFormat = 'MM/DD/YYYY HH:mm';
+  const dateFormat = 'DD.MM.YYYY HH:mm';
   const [categories, setCategories] = useState<EventCategories[]>([]);
   const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
   const [administators, setAdministators] = useState<Users[]>([]);
@@ -76,7 +83,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       }
     }
     await eventUserApi.post(newEvent).then(response => {
-      notificationLogic('success', 'Подія ' + values.EventName + ' успішно створена');
+      notificationLogic('success', successfulCreateAction('Подію', values.EventName));
       
       NotificationBoxApi.createNotifications(
         [values.commandantId, values.alternateId, values.bunchuzhnyiId, values.pysarId],
@@ -87,7 +94,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         );
     }).catch(error => {
       if (error.response?.status === 400) {
-        notificationLogic('error', 'Спробуйте ще раз');
+        notificationLogic('error', tryAgain);
       }
     });
     onCreate();
@@ -130,14 +137,17 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
 
     setAdministators([...updatedUsers]);
   }
-
+  const handleCancel = () => {
+    form.resetFields();
+    setShowEventCreateDrawer(false);
+  };
   return (
     <Form name="basic"
       form={form}
       onFinish={handleFinish}
     >
       < div className={classes.radio} >
-        <Form.Item name="EventTypeID" rules={[{ required: true, message: 'Оберіть тип події' }]} className={classes.radio}>
+        <Form.Item name="EventTypeID" rules={[{ required: true, message: isNotChosen("Тип події") }]} className={classes.radio}>
           <Radio.Group buttonStyle="solid" className={classes.eventTypeGroup} onChange={onChange} value={categories}>
             {eventTypes.map((item: any) => (<Radio.Button key={item.id} value={item.id}> {item.eventTypeName}</Radio.Button>))}
           </Radio.Group>
@@ -145,7 +155,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </div>
       < div className={classes.row} >
         <h3>Категорія </h3>
-        < Form.Item name="EventCategoryID" className={classes.input} rules={[{ required: true, message: 'Оберіть категорію події' }]} >
+        < Form.Item name="EventCategoryID" className={classes.input} rules={[{ required: true, message: emptyInput() }]} >
           <Select notFoundContent="Спочатку оберіть тип події" showSearch optionFilterProp="children" >
             {categories.map((item: any) => (<Select.Option key={item.eventCategoryId} value={item.eventCategoryId} > {item.eventCategoryName} </Select.Option>))}
           </Select>
@@ -153,13 +163,13 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </ div>
       < div className={classes.row} >
         <h3>Назва події </h3>
-        < Form.Item name="EventName" rules={[{ required: true, message: 'Вкажіть назву події' }, { max: 50, message: 'Назва події не може перевищувати 50 символів' }]} >
+        < Form.Item name="EventName" rules={[{ required: true, message: emptyInput() }, { max: 50, message: maxLength(50) }]} >
         <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </ Form.Item>
       </ div>
       < div className={classes.row} >
         <h3>Комендант </h3>
-        < Form.Item name="commandantId" className={classes.select} rules={[{ required: true, message: 'Оберіть коменданта' }]} >
+        < Form.Item name="commandantId" className={classes.select} rules={[{ required: true, message: emptyInput() }]} >
           <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(0, e)}  >
             {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.id} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
           </Select>
@@ -167,7 +177,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </ div>
       < div className={classes.row} >
         <h3>Заступник коменданта </h3>
-        < Form.Item name="alternateId" className={classes.select} rules={[{ required: true, message: 'Оберіть заступника коменданта' }]} >
+        < Form.Item name="alternateId" className={classes.select} rules={[{ required: true, message: emptyInput() }]} >
           <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(1, e)} >
             {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
           </Select>
@@ -175,7 +185,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </ div>
       < div className={classes.row} >
         <h3>Бунчужний </h3>
-        < Form.Item name="bunchuzhnyiId" className={classes.select} rules={[{ required: true, message: 'Оберіть бунчужного' }]} >
+        < Form.Item name="bunchuzhnyiId" className={classes.select} rules={[{ required: true, message: emptyInput() }]} >
           <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(2, e)}>
             {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
           </Select>
@@ -183,7 +193,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </ div>
       < div className={classes.row} >
         <h3>Писар </h3>
-        < Form.Item name="pysarId" className={classes.select} rules={[{ required: true, message: 'Оберіть писаря' }]} >
+        < Form.Item name="pysarId" className={classes.select} rules={[{ required: true, message: emptyInput() }]} >
           <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(3, e)}>
             {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
           </Select>
@@ -191,58 +201,61 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </ div>
       < div className={classes.row} >
         <h3>Дата початку </h3>
-        < Form.Item name="EventDateStart" rules={[{ required: true, message: 'Оберіть дату початку події' }]} >
+        < Form.Item name="EventDateStart" rules={[{ required: true, message: emptyInput() }]} >
           <DatePicker showTime disabledDate={disabledDate} placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} onChange={setStartDate}/>
         </ Form.Item>
       </ div>
       < div className={classes.row} >
         <h3>Дата завершення </h3>
-        < Form.Item name="EventDateEnd" rules={[{ required: true, message: 'Оберіть дату завершення події' }]} >
+        < Form.Item name="EventDateEnd" rules={[{ required: true, message: emptyInput() }]} >
           <DatePicker showTime disabledDate={disabledEndDate} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
         </ Form.Item>
       </ div>
       < div className={classes.row} >
         <h3>Форма проведення </h3>
-        < Form.Item name="FormOfHolding" rules={[{ required: true, message: 'Вкажіть форму проведення події' },{ max: 50, message: 'Максимальна к-сть символів - 50' }]} >
+        < Form.Item name="FormOfHolding" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]} >
         <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>
       <div className={classes.row} >
         <h3>Локація </h3>
-        < Form.Item name="Eventlocation" rules={[{ required: true, message: 'Вкажіть локацію події' }, { max: 50, message: 'Максимальна к-сть символів - 50' }]}>
+        < Form.Item name="Eventlocation" rules={[{ required: true, message: emptyInput() }, { max: 50, message: maxLength(50) }]}>
         <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>
       < div className={classes.row} >
         <h3>Призначена для </h3>
-        < Form.Item name="ForWhom" rules={[{ required: true, message: 'Вкажіть для кого призначена подія' },{ max: 50, message: 'Максимальна к-сть символів - 50' }]}>
+        < Form.Item name="ForWhom" rules={[{ required: true, message: emptyInput() },{ max: 50, message: maxLength(50) }]}>
         <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>
       < div className={classes.row} >
         <h3>Приблизна кількість учасників </h3>
-        < Form.Item name="NumberOfPartisipants" rules={[{ required: true, message: 'Вкажіть приблизну к-сть учасників' }, { max: 6, message: 'Максимальна к-сть - 999 999'}]} >
+        < Form.Item name="NumberOfPartisipants" rules={[{ required: true, message: emptyInput() }, { max: 6, message: maxLength(6)}]} >
           <Input className={classes.input} type="number" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() } min="1" max="999999"/>
         </Form.Item>
       </ div>
       < div className={classes.row} >
         <h3>Питання / побажання до булави </h3>
-        < Form.Item name="Questions" rules={[{ required: true, message: 'Вкажіть питання/побажання' },{ required: true, message: 'до булави' },
-        { max: 50, message: 'Довжина поля менша 50 символів' }]}>
+        < Form.Item name="Questions" rules={[{ required: true, message: emptyInput() },
+        { max: 50, message: maxLength(50) }]}>
           <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>
       < div className={classes.row} >
         <h3>Опис події</h3>
-        < Form.Item name="Description" rules={[{ required: true, message: 'Вкажіть опис події' },
-        { max: 50, message: 'Довжина поля менша 50 символів' }]}>
+        < Form.Item name="Description" rules={[{ required: true, message: emptyInput() },
+        { max: 50, message: maxLength(50) }]}>
           <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>
       < Form.Item >
-        <Button type="primary" htmlType="submit" className={classes.button} loading={loading} >
+        <Button type="primary" htmlType="submit" className={classes.button} style={{ marginRight: 45 }} loading={loading} >
           Зберегти подію
-               </Button>
+        </Button>
+        <Button key="back" onClick={handleCancel} className={classes.button} loading={loading} >
+          Відмінити
+        </Button>
       </Form.Item>
     </Form>
   );

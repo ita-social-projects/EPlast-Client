@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { Card, Input, Layout, Pagination, Skeleton } from "antd";
+import { Card, Input, Layout, Pagination, Result, Skeleton } from "antd";
 
 import Add from "../../assets/images/add.png";
 import RegionDefaultLogo from "../../assets/images/default_city_image.jpg";
@@ -30,19 +30,7 @@ const Regions = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
   const [canCreate, setCanCreate] = useState<boolean>(false);
-
-
-  useEffect(() => {
-    getRegions();
-  }, [page, pageSize, searchedData]);
   
-  
-
-  const handleSearch = (event: any) => {
-    setSearchedData(event);
-  };
-
-
   const setPhotos = async (regions: any[]) => {
     for await (const region of regions) {
       if (region.logo === null) {
@@ -54,7 +42,7 @@ const Regions = () => {
 
     setPhotosLoading(false);
   };
-
+  
   const getRegions = async () => {
     setLoading(true);
 
@@ -74,16 +62,22 @@ const Regions = () => {
       setLoading(false);
     }
   };
-
-
+  
+  
   const handleChange = (page: number) => {
     setPage(page);
   };
-
+  
   const handleSizeChange = (page: number, pageSize: number = 10) => {
     setPage(page);
     setPageSize(pageSize);
   };
+  const handleSearch = (event: any) => {
+    setPage(1);
+    setSearchedData(event);
+  };
+
+
 
 
 
@@ -100,8 +94,8 @@ const Regions = () => {
           placeholder="Пошук"
           enterButton
           onSearch={handleSearch}
-          loading={photosLoading}
-          disabled={photosLoading}
+          loading={loading}
+          disabled={loading}
         />
       </div>
       {loading ? (
@@ -109,7 +103,7 @@ const Regions = () => {
       ) : (
           <div>
             <div className="cityWrapper">
-              {canCreate &&
+              {canCreate && page === 1 && searchedData.length === 0 ? (
                 < Card
                   hoverable
                   className="cardStyles addCity"
@@ -121,8 +115,13 @@ const Regions = () => {
                     title="Створити новий округ"
                   />
                 </Card>
-              }
-              {regions.map((region: any) => (
+              ): null }
+
+              { regions.length === 0 && searchedData.length !== 0 ? (
+              <div>
+              <Result status="404" title="Округ не знайдено" />
+            </div>) : (
+              regions.map((region: any) => (
                 <a href={`${url}/${region.id}`}>
                 <Card
                   key={region.id}
@@ -140,23 +139,25 @@ const Regions = () => {
                   <Card.Meta title={region.regionName} className="titleText" />
                 </Card>
                 </a>
-              ))}
+              ))
+              )
+            }
             </div>
-
+            <div className="pagination">
+              <Pagination
+                current={page}
+                pageSize={pageSize}
+                total={total}
+                responsive
+                showSizeChanger = { total < 20 ? false : true }
+                onChange={(page) => handleChange(page)}
+                onShowSizeChange={(page, size) => handleSizeChange(page, size)}
+              />
+            </div>
           </div>
         )
       }
-      <div className="pagination">
-        <Pagination
-          current={page}
-          pageSize={pageSize}
-          total={total}
-          responsive
-          showLessItems
-          onChange={(page) => handleChange(page)}
-          onShowSizeChange={(page, size) => handleSizeChange(page, size)}
-        />
-      </div>
+      
 
     </Layout.Content >
   );
