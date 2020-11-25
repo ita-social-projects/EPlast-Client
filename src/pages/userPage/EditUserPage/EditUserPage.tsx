@@ -151,6 +151,9 @@ export default function () {
       { max: 25, message: maxLength(25) },
       { pattern: patern, message: message },
     ],
+    gender: [
+      { required: true, message: emptyInput() },
+    ],
     degree: [
       { max: 30, message: maxLength(30) },
       { pattern: patern, message: message },
@@ -447,6 +450,7 @@ export default function () {
               label="Стать"
               name="genderName"
               className={styles.formItem}
+              rules={validationSchema.gender}
             >
               <Select
                 className={styles.dataInputSelect}
