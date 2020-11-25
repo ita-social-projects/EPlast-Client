@@ -61,7 +61,7 @@ export default function () {
   const [userAvatar, setUserAvatar] = useState<any>();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
-  const [photoName, setPhotoName] = useState<string>();
+  const [photoName, setPhotoName] = useState<any>(null);
   const [defaultPhotoName, setDefaultPhotoName] = useState<string>("default_user_image.png");
 
   const fetchData = async () => {
@@ -212,7 +212,7 @@ export default function () {
         getBase64(info.file, (imageUrl: any) => {
           setUserAvatar(imageUrl);
         });
-        setPhotoName(info.file.name);
+        setPhotoName(null);
         notificationLogic("success", fileIsUpload("Фото"));
       }
     } else {
@@ -306,7 +306,6 @@ export default function () {
     await userApi
             .getImage(defaultPhotoName)
             .then((q: { data: any }) => {
-              console.log(q);
               setUserAvatar(q.data);
             })
             .catch(() => {
@@ -324,6 +323,7 @@ export default function () {
         fatherName: values.fatherName,
         phoneNumber: phoneNumber,
         birthday: birthday,
+        imagePath:photoName,
 
         degree: {
           id: degree?.id,
