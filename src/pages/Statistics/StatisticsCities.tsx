@@ -39,16 +39,14 @@ const StatisticsCities = () => {
   const [dataFromRow, setDataFromRow] = useState<DataFromResponse>();
   const [arrayOfInindicators, setArrayOfIndicators] = useState<any[]>(Array());
   const [title, setTitle] = useState<DataFromResponse>();
+  const [selectableUnatstvaPart, setSelectableUnatstvaPart] = useState<boolean>();
+  const [selectableUnatstvaZahalom, setSelectableUnatstvaZahalom] = useState<boolean>();
+  const [selectableSeniorPart, setSelectableSeniorPart] = useState<boolean>();
+  const [selectableSeniorZahalom, setSelectableSeniorZahalom] = useState<boolean>();
+  const [selectableSeigneurPart, setSelectableSeigneurPart] = useState<boolean>();
+  const [selectableSeigneurZahalom, setSelectableSeigneurZahalom] = useState<boolean>();
   
   const constColumns = [
-    {
-      title: "№",
-      dataIndex: "id",
-      key: "id",
-      fixed: "left",
-      sorter: { compare: (a: any, b: any) => a.id - b.id },
-      width: 55
-    },
     {
       title: "Станиця",
       dataIndex: "cityName",
@@ -65,6 +63,7 @@ const StatisticsCities = () => {
       title: "Рік",
       dataIndex: "year",
       key: "year",
+      fixed: "left",
       sorter: { compare: (a: any, b: any) => a.year - b.year },
       width: 80
     },
@@ -216,13 +215,62 @@ if(dataFromRow != undefined)
       percent: value    
     }}
   })]
-  let indicatorsForChart = allDataForChart.slice(0, columns.length - 4);
+  let indicatorsForChart = allDataForChart.slice(0, columns.length - 3);
   setTitle(dataFromRow);
   setDataChart(indicatorsForChart);
   setDataFromRow(undefined);
 }
 
-let old = true;
+const onClick = (value: Array<Number>) => {
+  
+  if (value.includes(2)) {
+    setSelectableUnatstvaPart(false);
+  }
+  if(!value.includes(2)){
+    setSelectableUnatstvaPart(true);
+  }
+  if (value.includes(3)||value.includes(4)||value.includes(5)||value.includes(6)||value.includes(7)) {
+    setSelectableUnatstvaZahalom(false);
+  }
+  if (!value.includes(3)&&!value.includes(4)&&!value.includes(5)&&!value.includes(6)&&!value.includes(7)) {
+    setSelectableUnatstvaZahalom(true);
+  }
+  
+  if (value.includes(8)) {
+    setSelectableSeniorPart(false);
+  }
+  if (!value.includes(8)) {
+    setSelectableSeniorPart(true);
+  }
+  if (value.includes(9)||value.includes(10)) {
+    setSelectableSeniorZahalom(false);
+  }
+  if (!value.includes(9)&&!value.includes(10)) {
+    setSelectableSeniorZahalom(true);
+  }
+
+  if (value.includes(11)) {
+    setSelectableSeigneurPart(false);
+  }
+  if (!value.includes(11)) {
+    setSelectableSeigneurPart(true);
+  }
+  if (value.includes(12)||value.includes(13)) {
+    setSelectableSeigneurZahalom(false);
+  }
+  if (!value.includes(12)&&!value.includes(13)) {
+    setSelectableSeigneurZahalom(true);
+  }
+
+  if (value.length == 0) {
+    setSelectableUnatstvaPart(true);
+    setSelectableUnatstvaZahalom(true);
+    setSelectableSeniorPart(true);
+    setSelectableSeniorZahalom(true);
+    setSelectableSeigneurPart(true);
+    setSelectableSeigneurZahalom(true);
+  }
+}
 
   return (
     <Layout.Content >
@@ -279,26 +327,27 @@ let old = true;
                 showSearch
                 allowClear
                 multiple
+                onChange={onClick}
                 treeDefaultExpandAll
                 placeholder="Обрати показник"
                 filterTreeNode={(input, option) => (option?.title as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
               >
-                <TreeNode value={0} title="Пташата" />
-                <TreeNode value={1} title="Новацтво" />
-                <TreeNode value={2} title="Юнацтво загалом">
-                <TreeNode value={3} title="Неіменовані" />
-                <TreeNode value={4} title="Прихильники" />
-                <TreeNode value={5} title="Учасники" />
-                <TreeNode value={6} title="Розвідувачі" />
-                <TreeNode value={7} title="Скоби/вірлиці" />
+                <TreeNode value={0} title="Пташата"/>
+                <TreeNode value={1} title="Новацтво"/>
+                <TreeNode value={2} title="Юнацтво загалом" selectable = {selectableUnatstvaZahalom}>
+                <TreeNode value={3} title="Неіменовані" selectable = {selectableUnatstvaPart}/>
+                <TreeNode value={4} title="Прихильники" selectable = {selectableUnatstvaPart}/>
+                <TreeNode value={5} title="Учасники" selectable = {selectableUnatstvaPart}/>
+                <TreeNode value={6} title="Розвідувачі" selectable = {selectableUnatstvaPart}/>
+                <TreeNode value={7} title="Скоби/вірлиці" selectable = {selectableUnatstvaPart}/>
                 </TreeNode>
-                <TreeNode value={8} title="Старші пластуни загалом" selectable = {old}>
-                <TreeNode value={9} title="Старші пластуни прихильники" />
-                <TreeNode value={10} title="Старші пластуни учасники"/>
+                <TreeNode value={8} title="Старші пластуни загалом" selectable = {selectableSeniorZahalom}>
+                <TreeNode value={9} title="Старші пластуни прихильники" selectable = {selectableSeniorPart}/>
+                <TreeNode value={10} title="Старші пластуни учасники" selectable = {selectableSeniorPart}/>
                 </TreeNode>
-                <TreeNode value={11} title="Сеньйори загалом">
-                <TreeNode value={12} title="Сеньйори пластуни прихильники"/>
-                <TreeNode value={13} title="Сеньйори пластуни учасники"/>
+                <TreeNode value={11} title="Сеньйори загалом" selectable = {selectableSeigneurZahalom}>
+                <TreeNode value={12} title="Сеньйори пластуни прихильники" selectable = {selectableSeigneurPart}/>
+                <TreeNode value={13} title="Сеньйори пластуни учасники" selectable = {selectableSeigneurPart}/>
                 </TreeNode>
               </TreeSelect>
             </Form.Item>
@@ -350,7 +399,6 @@ let old = true;
                 setDataFromRow(cityRecord);
               }};
           }}
-          
           onChange={onChange}
           pagination={{
             showLessItems: true,
