@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   Form,
@@ -27,17 +27,16 @@ import {
   Interaction
 } from "bizcharts";
 import "./StatisticsCities.less";
-import { number } from "yup";
 
 const StatisticsCities = () => {
 
   const [years, setYears] = useState<any>();
   const [cities, setCities] = useState<any>();
-  const [dataForTable, setdataForTable] = useState<DataFromResponse[]>(Array());
+  const [dataForTable, setDataForTable] = useState<DataFromResponse[]>(Array());
   const [showTable, setShowTable] = useState(false);
   const [columns, setColumns] = useState(Array());
   const [dataChart, setDataChart] = useState(Array());
-  const [dataFromRow, setdataFromRow] = useState<DataFromResponse>();
+  const [dataFromRow, setDataFromRow] = useState<DataFromResponse>();
   const [arrayOfInindicators, setArrayOfIndicators] = useState<any[]>(Array());
   const [title, setTitle] = useState<DataFromResponse>();
   
@@ -66,7 +65,6 @@ const StatisticsCities = () => {
       title: "Рік",
       dataIndex: "year",
       key: "year",
-      fixed: "left",
       sorter: { compare: (a: any, b: any) => a.year - b.year },
       width: 80
     },
@@ -147,15 +145,17 @@ const StatisticsCities = () => {
 
   const onSubmit = async (info: any) => {
     let counter = 1;
-    setArrayOfIndicators(info.indicators);
-    console.log(info.indicators)
     let response = await StatisticsApi.getCitiesStatistics({
       CityIds: info.citiesId,
       Years: info.years,
       Indicators: info.indicators
     });
-    console.log(response);
 
+    // seting (for chart needs) statisticsItems indicators of the very first element 
+    // because they are the same for all the elements
+    setArrayOfIndicators(response.data[0].yearStatistics[0].statisticsItems.map((it: any)=> it.indicator));
+
+    // reading data from response and seting data for table
     let data = response.data.map((stanytsya: CityStatistics) => {
       return stanytsya.yearStatistics.map(yearStatistic => {
         return {
@@ -167,15 +167,16 @@ const StatisticsCities = () => {
         }
       })
     }).flat();
+    
+    setShowTable(true);
+    setDataForTable(data);
 
-    // reading statisticsItems' indicators of the very first element 
-    // because they are the same for all the items
+    // reading statisticsItems indicators of the very first element 
+    // because they are the same for all the elements
     let statistics = (response.data && response.data[0] && response.data[0].yearStatistics
       && response.data[0].yearStatistics[0] && response.data[0].yearStatistics[0].statisticsItems) || [];
 
-    setShowTable(true);
-    setdataForTable(data);
-
+    // creating and seting columns for table
     let temp = [...constColumns, ...statistics.map((statisticsItem: any, index: any) => {
       return {
         title: indicatorsArray[statisticsItem.indicator as number].label,
@@ -184,10 +185,10 @@ const StatisticsCities = () => {
         width: 130
       }
     })];
-
     setColumns(temp);
   };
 
+  // calculating for chart percentage
   let sumOfIndicators = 0;
   dataChart.map((indicator: any) => { sumOfIndicators += indicator.count });
   
@@ -204,11 +205,9 @@ const StatisticsCities = () => {
 if(dataFromRow != undefined)
 {
   const regex = /[0-9]/g;
-  arrayOfInindicators.sort(function(a, b){return a-b});
-  console.log(arrayOfInindicators);
-  console.log(dataFromRow);
+
+  // seting data for chart
   const allDataForChart = [...Object.entries(dataFromRow as Object).map(([key, value]) => {
-    
     if(key.match(regex)!== null)
     {
     return{
@@ -220,8 +219,9 @@ if(dataFromRow != undefined)
   let indicatorsForChart = allDataForChart.slice(0, columns.length - 4);
   setTitle(dataFromRow);
   setDataChart(indicatorsForChart);
-  setdataFromRow(undefined);
+  setDataFromRow(undefined);
 }
+
 let old = true;
 
   return (
@@ -277,7 +277,7 @@ let old = true;
                 placeholder="Обрати показник"
                 filterTreeNode={(input, option) => (option?.title as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
               >
-                <TreeNode value={0} title="Неіменовані" />
+                <TreeNode value={0} title="Пташата" />
                 <TreeNode value={1} title="Новацтво" />
                 <TreeNode value={2} title="Юнацтво загалом">
                 <TreeNode value={3} title="Неіменовані" />
@@ -287,7 +287,7 @@ let old = true;
                 <TreeNode value={7} title="Скоби/вірлиці" />
                 </TreeNode>
                 <TreeNode value={8} title="Старші пластуни загалом" selectable = {old}>
-                <TreeNode value={9} title="Старші пластуни прихильники"/>
+                <TreeNode value={9} title="Старші пластуни прихильники" />
                 <TreeNode value={10} title="Старші пластуни учасники"/>
                 </TreeNode>
                 <TreeNode value={11} title="Сеньйори загалом">
@@ -341,7 +341,7 @@ let old = true;
           onRow={(cityRecord) => {
             return {
               onClick: async () => {                
-                setdataFromRow(cityRecord);
+                setDataFromRow(cityRecord);
               }};
           }}
           
