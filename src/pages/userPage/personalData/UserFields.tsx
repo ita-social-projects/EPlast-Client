@@ -8,6 +8,7 @@ import { Data } from '../Interface/Interface';
 import {useParams, useHistory} from 'react-router-dom';
 import notificationLogic from '../../../components/Notifications/Notification';
 import Spinner from '../../Spinner/Spinner';
+import{ tryAgain } from "../../../components/Notifications/Messages"
 
 export default function () {
   const {userId}=useParams();
@@ -19,7 +20,7 @@ export default function () {
     await userApi.getById(userId).then(response => {
       setLoading(true);
       setData(response.data);
-    }).catch(() => { notificationLogic('error', "Щось пішло не так") })
+    }).catch(() => { notificationLogic('error', tryAgain) })
   };
 
   useEffect(() => {

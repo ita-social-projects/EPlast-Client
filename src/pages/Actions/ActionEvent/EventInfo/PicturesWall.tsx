@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {EventGallery} from "./EventInfo";
 import {DeleteOutlined, EyeOutlined} from "@ant-design/icons/lib";
 import eventsApi from "../../../../api/eventsApi";
-
+import{failDeleteAction} from "../../../../components/Notifications/Messages"
 import './EventInfo.less';
 
 interface Props {
@@ -35,7 +35,7 @@ const PicturesWall = ({pictures, removePicture}: Props) => {
                 key="deletePicture"
                 onClick={() => deletePicture(id)
                     .then(() => removePicture(id))
-                    .catch(() => notification.error({message: 'Не вдалося видалити зображення', duration: 3}))
+                    .catch(() => notification.error({message: failDeleteAction('зображення'), duration: 3}))
                 }
             />
         );

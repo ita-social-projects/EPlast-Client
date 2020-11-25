@@ -27,6 +27,7 @@ import {
   Interaction
 } from "bizcharts";
 import "./StatisticsCities.less";
+import{ shouldContain } from "../../components/Notifications/Messages"
 
 const StatisticsCities = () => {
 
@@ -285,7 +286,7 @@ const onClick = (value: Array<Number>) => {
               labelCol={{ span: 24 }}
               label="Станиці"
               name="citiesId"
-              rules={[{ required: true, message: "Оберіть хоча б одну станицю", type: "array" }]} >
+              rules={[{ required: true, message: shouldContain("хоча б одну станицю"), type: "array" }]} >
               <Select
                 showSearch
                 allowClear
@@ -304,7 +305,7 @@ const onClick = (value: Array<Number>) => {
               labelCol={{ span: 24 }}
               label="Роки"
               name="years"
-              rules={[{ required: true, message: "Оберіть хоча б один рік", type: "array" }]}>
+              rules={[{ required: true, message: shouldContain("хоча б один рік"), type: "array" }]}>
               <Select
                 showSearch
                 allowClear
@@ -322,7 +323,7 @@ const onClick = (value: Array<Number>) => {
               labelCol={{ span: 24 }}
               label="Показники"
               name="indicators"
-              rules={[{ required: true, message: "Оберіть хоча б один показник", type: "array" }]}>
+              rules={[{ required: true, message: shouldContain("хоча б один показник"), type: "array" }]}>
               <TreeSelect
                 showSearch
                 allowClear

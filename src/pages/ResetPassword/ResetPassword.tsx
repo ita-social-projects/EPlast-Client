@@ -5,6 +5,12 @@ import AuthorizeApi from '../../api/authorizeApi';
 import { checkEmail } from '../SignUp/verification';
 import { useParams, useLocation, useHistory } from 'react-router-dom';
 import jwt from 'jwt-decode';
+import{
+    emptyInput,
+    incorrectEmail,
+    minLength
+  } from "../../components/Notifications/Messages"
+
 let authService = new AuthorizeApi();
 
 export default function () {
@@ -18,16 +24,16 @@ export default function () {
 
     const validationSchema = {
         Email: [
-            { required: true, message: "Поле електронна пошта є обов'язковим" },
+            { required: true, message: incorrectEmail },
             { validator: checkEmail },
         ],
         Password: [
-            { required: true, message: "Поле пароль є обов'язковим" },
-            { min: 6, message: 'Мінімальна допустима довжина - 6 символів' },
+            { required: true, message: emptyInput() },
+            { min: 6, message: minLength(6) },
         ],
         ConfirmPassword: [
-            { required: true, message: "Дане поле є обов'язковим" },
-            { min: 6, message: 'Мінімальна допустима довжина - 6 символів' },
+            { required: true, message: emptyInput() },
+            { min: 6, message: minLength(6) },
         ]
     };
 
@@ -77,7 +83,7 @@ export default function () {
                     rules={[
                         {
                             required: true,
-                            message: "Підтвердіть пароль",
+                            message: emptyInput(),
                         },
                         ({ getFieldValue }) => ({
                             validator(rule, value) {

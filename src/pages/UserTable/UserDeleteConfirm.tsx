@@ -3,6 +3,10 @@ import { Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import adminApi from '../../api/adminApi';
 import notificationLogic from '../../components/Notifications/Notification';
+import{
+    successfulDeleteAction,
+    tryAgain,
+  } from "../../components/Notifications/Messages"
 
 const { confirm } = Modal;
 
@@ -15,10 +19,10 @@ const UserDeleteConfirm = (id: string, onDelete: any) => {
         onOk() {
             const remove = async () => {
                 await adminApi.deleteUser(id).then(response => {
-                    notificationLogic('success', 'Користувач успішно видалений');
+                    notificationLogic('success', successfulDeleteAction('Користувача'));
                 }).catch(error => {
                     if (error.response?.status === 400) {
-                        notificationLogic('error', 'Спробуйте ще раз');
+                        notificationLogic('error', tryAgain);
                     }
                 });
             };

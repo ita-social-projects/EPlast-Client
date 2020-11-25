@@ -5,7 +5,9 @@ import notificationLogic from '../../components/Notifications/Notification';
 import {GetAllRegions, redirectCities, removeRegion } from "../../api/regionsApi";
 import { useParams, useHistory } from 'react-router-dom';
 import { removeCity } from '../../api/citiesApi';
-
+import{
+    emptyInput,
+  } from "../../components/Notifications/Messages"
 
 type CitiesRedirectForm = {
     onAdd: () => void;
@@ -65,7 +67,7 @@ const CitiesRedirectForm  = (props: any)=>{
              rules={[
                  {
                      required: true,
-                     message: 'Це поле має бути заповненим'
+                     message: emptyInput()
                  },
              ]}
          >

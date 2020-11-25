@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Input, Button, Layout, Row } from "antd";
+import { Table, Input, Button, Layout } from "antd";
 import columns from "./columns";
 import notificationLogic from "../../../components/Notifications/Notification";
 import UserDistinction from "../Interfaces/UserDistinction";
@@ -15,6 +15,11 @@ import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import moment from "moment";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import{
+  successfulCreateAction,
+  successfulDeleteAction,
+  successfulUpdateAction
+} from "../../../components/Notifications/Messages"
 
 const { Content } = Layout;
 const DistinctionTable = () => {
@@ -107,7 +112,7 @@ const DistinctionTable = () => {
     setLoading(false);
     const res: UserDistinction[] = await distinctionApi.getUserDistinctions();
     setData(res);
-    notificationLogic("success", "Відзначення успішно додано!");
+    notificationLogic("success", successfulCreateAction("Відзначення"));
     setLoading(true);
   };
 
@@ -176,7 +181,7 @@ const DistinctionTable = () => {
       (d: { id: number }) => d.id !== id
     );
     setData([...filteredData]);
-    notificationLogic("success", "Відзначення успішно видалено!");
+    notificationLogic("success", successfulDeleteAction("Відзначення"));
     CreateDeleteNotification(id);
   };
   const handleEdit = (
@@ -204,7 +209,7 @@ const DistinctionTable = () => {
       return d;
     });
     setData([...filteredData]);
-    notificationLogic("success", "Відзначення успішно змінено!");
+    notificationLogic("success", successfulUpdateAction("Відзначення"));
     CreateEditNotification(userId, distinction.name);
   };
 

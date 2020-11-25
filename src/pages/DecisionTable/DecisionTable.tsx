@@ -7,6 +7,7 @@ import decisionsApi, { Decision, statusTypeGetParser } from '../../api/decisions
 import notificationLogic from '../../components/Notifications/Notification';
 import ClickAwayListener from 'react-click-away-listener';
 import moment from "moment";
+import Spinner from '../Spinner/Spinner';
 const classes = require('./Table.module.css');
 
 const { Content } = Layout;
@@ -94,12 +95,10 @@ const DecisionTable = () => {
 
   const showModal = () => setVisibleModal(true);
 
-  return (
+  return !loading ? (
     <Layout>
       <Content>
         <h1 className={classes.titleTable}>Рішення керівних органів</h1>
-        {loading && <Table loading />}
-        {!loading && (
           <>
             <div className={classes.searchContainer}>
               <Button type="primary" onClick={showModal}>
@@ -163,9 +162,10 @@ const DecisionTable = () => {
               onAdd={handleAdd}
             />
           </>
-        )}
       </Content>
     </Layout>
+  ) : (
+    <Spinner />
   );
 };
 
