@@ -234,6 +234,8 @@ let old = true;
           <Col
             span={20} >
             <Form.Item
+              labelCol={{ span: 24 }}
+              label="Станиці"
               name="citiesId"
               rules={[{ required: true, message: "Оберіть хоча б одну станицю", type: "array" }]} >
               <Select
@@ -246,11 +248,13 @@ let old = true;
               />
             </Form.Item>
           </Col>
-        </Row>
+        </Row>        
         <Row justify="center">
           <Col
             span={20} >
             <Form.Item
+              labelCol={{ span: 24 }}
+              label="Роки"
               name="years"
               rules={[{ required: true, message: "Оберіть хоча б один рік", type: "array" }]}>
               <Select
@@ -262,11 +266,13 @@ let old = true;
               />
             </Form.Item>
           </Col>
-        </Row>
+        </Row>        
         <Row justify="center" >
           <Col
             span={20} >
             <Form.Item
+              labelCol={{ span: 24 }}
+              label="Показники"
               name="indicators"
               rules={[{ required: true, message: "Оберіть хоча б один показник", type: "array" }]}>
               <TreeSelect
@@ -338,7 +344,7 @@ let old = true;
           columns={columns}
           dataSource={dataForTable}
           scroll={{ x: 1000 }}
-          onRow={(cityRecord) => {
+          onRow={(cityRecord, index) => {
             return {
               onClick: async () => {                
                 setDataFromRow(cityRecord);
