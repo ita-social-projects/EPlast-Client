@@ -46,7 +46,7 @@ export const checkEmail = (role: object, value: string, callback:any) => {
       }
       if (reg.test(value) === false) 
       {
-        return callback(shouldContain('літери, цифри та знаки'));
+        return callback(shouldContain('літери(хоча б одну велику), цифри та знаки'));
       }
     }
       return callback();
