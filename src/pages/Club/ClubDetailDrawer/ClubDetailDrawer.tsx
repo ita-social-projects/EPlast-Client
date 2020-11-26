@@ -98,48 +98,6 @@ const ClubDetailDrawer = (props: Props) => {
             </Form.Item>
           </Col>
         </Row>
-        {/* <Row justify="center" gutter={[12, 0]}>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="officeNumber"
-              label="Номер офісу/квартири"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.Club.officeNumber?.length > 0
-                  ? props.Club.officeNumber
-                  : "---"
-              }
-            >
-              <Input
-                value={
-                  props.Club.officeNumber?.length > 0
-                    ? props.Club.officeNumber
-                    : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="postIndex"
-              label="Поштовий індекс"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.Club.postIndex?.length > 0 ? props.Club.postIndex : "---"
-              }
-            >
-              <Input
-                value={
-                  props.Club.postIndex?.length > 0
-                    ? props.Club.postIndex
-                    : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
-        </Row> */}
         <Row justify="center" gutter={[12, 0]}>
           <Col md={24} xs={24}>
             <Form.Item

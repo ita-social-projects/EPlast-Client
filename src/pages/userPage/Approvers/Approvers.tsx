@@ -13,6 +13,11 @@ import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import notificationLogic from '../../../components/Notifications/Notification';
 import Spinner from '../../Spinner/Spinner';
+import{
+  fileIsNotUpload, 
+  successfulDeleteAction,
+  failDeleteAction,
+} from "../../../components/Notifications/Messages"
 
 const Assignments = () => {
   const history = useHistory();
@@ -25,7 +30,7 @@ const Assignments = () => {
     await userApi.getApprovers(userId, user.nameid).then(response => {
       setData(response.data);
       setLoading(true);
-    }).catch(() => { notificationLogic('error', "Не вдалося завантажити дані") });
+    }).catch(() => { notificationLogic('error', fileIsNotUpload("даних")) });
   };
   useEffect(() => {
     fetchData();
@@ -33,8 +38,8 @@ const Assignments = () => {
 
   const deleteApprove = async (event: number) => {
     await userApi.deleteApprove(event).
-      then(() => { notificationLogic('success', "Поручення успішно видалено") }).
-      catch(() => { notificationLogic('error', "Не вдалося видалити поручення") });
+      then(() => { notificationLogic('success', successfulDeleteAction("Поручення")) }).
+      catch(() => { notificationLogic('error', failDeleteAction("поручення")) });
     fetchData();
   }
   const approveClick = async (userId: string, isClubAdmin: boolean = false, isCityAdmin: boolean = false) => {

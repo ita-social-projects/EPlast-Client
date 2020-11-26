@@ -14,6 +14,11 @@ import UserDistinction from "../Interfaces/UserDistinction";
 import formclasses from "./Form.module.css";
 import adminApi from "../../../api/adminApi";
 import Distinction from "../Interfaces/Distinction";
+import{
+  emptyInput,
+  maxLength,
+  failEditAction
+} from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
 moment.locale("uk-ua");
@@ -63,7 +68,7 @@ const FormEditDistinction = ({
   const [userValue, setUserValue] = useState<any>();
   const openNotification = (message: string) => {
     notification.error({
-      message: `Невдалося редагувати відзначення`,
+      message: failEditAction(`відзначення`),
       description: `${message}`,
       placement: "topLeft",
     });
@@ -157,7 +162,7 @@ const FormEditDistinction = ({
                 rules={[
                   {
                     required: true,
-                    message: "Це поле має бути заповненим",
+                    message: emptyInput(),
                   },
                 ]}
               >
@@ -181,7 +186,7 @@ const FormEditDistinction = ({
                 rules={[
                   {
                     required: true,
-                    message: "Це поле має бути заповненим",
+                    message: emptyInput(),
                   },
                 ]}
               >
@@ -210,7 +215,7 @@ const FormEditDistinction = ({
                   distinction.user.firstName + " " + distinction.user.lastName
                 }
                 rules={[
-                  { required: true, message: "Це поле має бути заповненим" },
+                  { required: true, message: emptyInput() },
                 ]}
               >
                 <Select
@@ -242,7 +247,7 @@ const FormEditDistinction = ({
                 rules={[
                   {
                     max: 100,
-                    message: "Поле подання не має перевищувати 100 символів!",
+                    message: maxLength(100),
                   },
                 ]}
               >
@@ -263,7 +268,7 @@ const FormEditDistinction = ({
                 labelCol={{ span: 24 }}
                 initialValue={moment(distinction.date)}
                 rules={[
-                  { required: true, message: "Це поле має бути заповненим" },
+                  { required: true, message: emptyInput() },
                 ]}
               >
                 <DatePicker
@@ -284,8 +289,7 @@ const FormEditDistinction = ({
                 rules={[
                   {
                     max: 250,
-                    message:
-                      "Поле обгрунтування не має перевищувати 250 символів!",
+                    message: maxLength(250),
                   },
                 ]}
               >

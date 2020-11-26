@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { Card, Input, Layout, Pagination, Skeleton } from "antd";
+import { Card, Input, Layout, Pagination, Result, Skeleton } from "antd";
 
 import Add from "../../assets/images/add.png";
 import RegionDefaultLogo from "../../assets/images/default_city_image.jpg";
@@ -94,8 +94,8 @@ const Regions = () => {
           placeholder="Пошук"
           enterButton
           onSearch={handleSearch}
-          loading={photosLoading}
-          disabled={photosLoading}
+          loading={loading}
+          disabled={loading}
         />
       </div>
       {loading ? (
@@ -103,7 +103,7 @@ const Regions = () => {
       ) : (
           <div>
             <div className="cityWrapper">
-              {canCreate &&
+              {canCreate && page === 1 && searchedData.length === 0 ? (
                 < Card
                   hoverable
                   className="cardStyles addCity"
@@ -115,8 +115,13 @@ const Regions = () => {
                     title="Створити новий округ"
                   />
                 </Card>
-              }
-              {regions.map((region: any) => (
+              ): null }
+
+              { regions.length === 0 && searchedData.length !== 0 ? (
+              <div>
+              <Result status="404" title="Округ не знайдено" />
+            </div>) : (
+              regions.map((region: any) => (
                 <a href={`${url}/${region.id}`}>
                 <Card
                   key={region.id}
@@ -134,7 +139,9 @@ const Regions = () => {
                   <Card.Meta title={region.regionName} className="titleText" />
                 </Card>
                 </a>
-              ))}
+              ))
+              )
+            }
             </div>
             <div className="pagination">
               <Pagination

@@ -68,6 +68,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Дата народження",
     dataIndex: ["user", "birthday"],
+    width: 130,
     render: (date: Date) => {
       if (date !== null) {
         return moment(date).format("DD.MM.YYYY");
@@ -129,7 +130,7 @@ const ColumnsForUserTable: any = [
     render: (cityName: any) => {
       if (cityName.length > 0) {
         return (
-          <Tag color={"lime"} key={cityName}>
+          <Tag color={"purple"} key={cityName}>
             {cityName}
           </Tag>
         );
@@ -164,9 +165,6 @@ const ColumnsForUserTable: any = [
   {
     title: "Ступінь",
     dataIndex: "userPlastDegreeName",
-    ellipsis: {
-      showTitle: false,
-    },
     render: (userPlastDegreeName: any, record: any) => {
       if (userPlastDegreeName !== null && userPlastDegreeName.length > 0) {
         if (
@@ -179,7 +177,7 @@ const ColumnsForUserTable: any = [
                 placement="topLeft"
                 title={userPlastDegreeName.split("/")[0]}
               >
-                {userPlastDegreeName.split("/")[0]}
+                {userPlastDegreeName.split("/")[0].slice(0, 20)}
               </Tooltip>
             </Tag>
           );
@@ -193,7 +191,7 @@ const ColumnsForUserTable: any = [
                 placement="topLeft"
                 title={userPlastDegreeName.split("/")[1]}
               >
-                {userPlastDegreeName.split("/")[1]}
+                {userPlastDegreeName.split("/")[1].slice(0, 20)}
               </Tooltip>
             </Tag>
           );
@@ -201,7 +199,7 @@ const ColumnsForUserTable: any = [
           return (
             <Tag color={"red"} key={userPlastDegreeName}>
               <Tooltip placement="topLeft" title={userPlastDegreeName}>
-                {userPlastDegreeName}
+                {userPlastDegreeName.slice(0, 20)}
               </Tooltip>
             </Tag>
           );

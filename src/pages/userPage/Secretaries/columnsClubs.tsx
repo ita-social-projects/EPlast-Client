@@ -41,6 +41,9 @@ const columns = [
   {
     title: "Курінь",
     dataIndex: "club",
+    render: (club: any) =>{
+      return club.name;
+    }
   },
 ];
 export default columns;

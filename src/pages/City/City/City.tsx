@@ -1,7 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Link, useHistory, useParams, useRouteMatch } from "react-router-dom";
-import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip, Breadcrumb} from "antd";
-import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined, HomeOutlined } from "@ant-design/icons";
+import {
+  Avatar,
+  Row,
+  Col,
+  Button,
+  Spin,
+  Layout,
+  Modal,
+  Skeleton,
+  Divider,
+  Card,
+  Tooltip,
+  Breadcrumb,
+} from "antd";
+import {
+  FileTextOutlined,
+  EditOutlined,
+  PlusSquareFilled,
+  UserAddOutlined,
+  PlusOutlined,
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  HomeOutlined,
+} from "@ant-design/icons";
 import moment from "moment";
 import {
   addFollower,
@@ -26,11 +48,12 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import BreadcrumbItem from "antd/lib/breadcrumb/BreadcrumbItem";
+import{successfulDeleteAction} from "../../../components/Notifications/Messages"
 
 const City = () => {
   const history = useHistory();
-  const {id} = useParams();
-  const { url, path } = useRouteMatch();
+  const { id } = useParams();
+  const { url } = useRouteMatch();
 
   const [loading, setLoading] = useState(false);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
@@ -92,7 +115,7 @@ const City = () => {
 
   const deleteCity = async () => {
     await removeCity(city.id);
-    notificationLogic("success", "Станицю успішно видалено");
+    notificationLogic("success", successfulDeleteAction("Станицю"));
 
     admins.map(async (ad) => {
       await NotificationBoxApi.createNotifications(
@@ -193,28 +216,20 @@ const City = () => {
     <Spinner />
   ) : city.id !== 0 ? (
     <Layout.Content className="cityProfile">
-      
-    <Row gutter={[0,15]}>
-      <Col span={8} offset={1}>
-      <div>
-         <Crumb
-            current={city.name}
-            first="/"
-            second={url.replace(id,'')}
-            second_name="Станиці"
-            />
-      </div>
-      </Col>
-    </Row>
+      <Row gutter={[0, 15]}>
+        <Col span={8} offset={1}></Col>
+      </Row>
       <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Crumb
-              current={city.name}
-              first=""
-              second={history.goBack}
-              second_name="Станиці"
-            />
+            <div>
+              <Crumb
+                current={city.name}
+                first="/"
+                second={url.replace(`/${id}`, "")}
+                second_name="Станиці"
+              />
+            </div>
             <Title level={3}>Станиця {city.name}</Title>
             <Row className="cityPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>

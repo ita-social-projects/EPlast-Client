@@ -16,7 +16,7 @@ import { SortOrder } from "antd/lib/table/interface";
 import RegionsApi from "../../api/regionsApi";
 import Region from "./Interfaces/Region";
 import RegionStatistics from "./Interfaces/RegionStatistics";
-
+import{ shouldContain } from "../../components/Notifications/Messages"
 
 const StatisticsCities = () => {
 
@@ -186,7 +186,7 @@ const StatisticsCities = () => {
             span={8} >
             <Form.Item
               name="regionIds"
-              rules={[{ required: true, message: "Оберіть хоча б один округ", type: "array" }]} >
+              rules={[{ required: true, message: shouldContain("хоча б один округ"), type: "array" }]} >
               <Select
                 showSearch
                 mode="multiple"
@@ -201,7 +201,7 @@ const StatisticsCities = () => {
             span={8} >
             <Form.Item
               name="years"
-              rules={[{ required: true, message: "Оберіть хоча б один рік", type: "array" }]}>
+              rules={[{ required: true, message: shouldContain("хоча б один рік"), type: "array" }]}>
               <Select
                 showSearch
                 mode="multiple"
@@ -216,7 +216,7 @@ const StatisticsCities = () => {
             span={8} >
             <Form.Item
               name="indicators"
-              rules={[{ required: true, message: "Оберіть хоча б один показник", type: "array" }]}>
+              rules={[{ required: true, message: shouldContain("хоча б один показник"), type: "array" }]}>
               <Select
                 showSearch
                 mode="multiple"
