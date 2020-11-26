@@ -46,6 +46,7 @@ const StatisticsCities = () => {
   const [selectableSeniorZahalom, setSelectableSeniorZahalom] = useState<boolean>();
   const [selectableSeigneurPart, setSelectableSeigneurPart] = useState<boolean>();
   const [selectableSeigneurZahalom, setSelectableSeigneurZahalom] = useState<boolean>();
+  const [onClickRow, setOnClickRow] = useState<any>();
   
   const constColumns = [
     {
@@ -170,6 +171,7 @@ const StatisticsCities = () => {
     
     setShowTable(true);
     setDataForTable(data);
+    setOnClickRow(null);
 
     // reading statisticsItems indicators of the very first element 
     // because they are the same for all the elements
@@ -317,7 +319,7 @@ const onClick = (value: Array<Number>) => {
             </Form.Item>
           </Col>
         </Row>        
-        <Row justify="center" >
+        <Row justify="center">
           <Col
             span={20} >
             <Form.Item
@@ -363,7 +365,7 @@ const onClick = (value: Array<Number>) => {
       </Form>
       </div>
       <br/>
-      {sumOfIndicators === 0 || title === undefined ? '': 
+      {sumOfIndicators === 0 || title === undefined || onClickRow === null ? '': 
       <div className = "chart">         
         <h1>{title.cityName}, {title.year}</h1>
         <Chart height={400} data={dataChart} justify="center" autoFit>
@@ -391,16 +393,29 @@ const onClick = (value: Array<Number>) => {
       <br/> 
       {showTable === false ? "" :
         <Table
-          bordered
+          bordered          
+          className = "tableRow"
+          onHeaderRow={() => {
+            return{
+              style: {textAlign: "center"},
+              className: "tableRow"
+            }
+          }}
+          rowClassName={(record, index) => index === onClickRow ? "onClickRow" : "tableRow" }
           rowKey="id"
           columns={columns}
           dataSource={dataForTable}
           scroll={{ x: 1000 }}
           onRow={(cityRecord, index) => {
-            return {
-              onClick: async () => {                
+            return {              
+              onClick: async () => {              
                 setDataFromRow(cityRecord);
-              }};
+                setOnClickRow(index);
+              },
+              onDoubleClick: async () => {                
+                setOnClickRow(null);
+              }
+            };
           }}
           onChange={onChange}
           pagination={{
