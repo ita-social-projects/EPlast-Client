@@ -277,7 +277,8 @@ const onClick = (value: Array<Number>) => {
       <div className = "background">
       <Title level={2}>Статистика станиць</Title>
       <div className = "formAndChart">
-      <Form onFinish={onSubmit} className = "form">
+      <div className = "form"> 
+      <Form onFinish={onSubmit}>
         <Row justify="center">
           <Col
             span={20} >
@@ -359,6 +360,7 @@ const onClick = (value: Array<Number>) => {
           </Col>
         </Row>
       </Form>
+      </div>
       <br/>
       {sumOfIndicators === 0 || title === undefined ? '': 
       <div className = "chart">         
