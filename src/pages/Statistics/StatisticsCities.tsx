@@ -284,13 +284,14 @@ const onClick = (value: Array<Number>) => {
       <Form onFinish={onSubmit}>
         <Row justify="center">
           <Col
-            span={20} >
+            span={20}>
             <Form.Item
-              labelCol={{ span: 24 }}
+              labelCol={{span: 24}}
               label="Станиці"
               name="citiesId"
-              rules={[{ required: true, message: shouldContain("хоча б одну станицю"), type: "array" }]} >
+              rules={[{required: true, message: shouldContain("хоча б одну станицю"), type: "array"}]} >
               <Select
+                maxTagCount={4}
                 showSearch
                 allowClear
                 mode="multiple"
@@ -303,13 +304,14 @@ const onClick = (value: Array<Number>) => {
         </Row>        
         <Row justify="center">
           <Col
-            span={20} >
+            span={20}>
             <Form.Item
-              labelCol={{ span: 24 }}
+              labelCol={{span: 24}}
               label="Роки"
               name="years"
-              rules={[{ required: true, message: shouldContain("хоча б один рік"), type: "array" }]}>
+              rules={[{required: true, message: shouldContain("хоча б один рік"), type: "array"}]}>
               <Select
+                maxTagCount={8}
                 showSearch
                 allowClear
                 mode="multiple"
@@ -321,21 +323,21 @@ const onClick = (value: Array<Number>) => {
         </Row>        
         <Row justify="center">
           <Col
-            span={20} >
+            span={20}>
             <Form.Item
-              labelCol={{ span: 24 }}
+              labelCol={{span: 24}}
               label="Показники"
               name="indicators"
-              rules={[{ required: true, message: shouldContain("хоча б один показник"), type: "array" }]}>
+              rules={[{required: true, message: shouldContain("хоча б один показник"), type: "array"}]}>
               <TreeSelect
+                maxTagCount={4}
                 showSearch
                 allowClear
                 multiple
                 onChange={onClick}
                 treeDefaultExpandAll
                 placeholder="Обрати показник"
-                filterTreeNode={(input, option) => (option?.title as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
-              >
+                filterTreeNode={(input, option) => (option?.title as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}>
                 <TreeNode value={0} title="Пташата"/>
                 <TreeNode value={1} title="Новацтво"/>
                 <TreeNode value={2} title="Юнацтво загалом" selectable = {selectableUnatstvaZahalom}>
@@ -369,7 +371,7 @@ const onClick = (value: Array<Number>) => {
       <div className = "chart">         
         <h1>{title.cityName}, {title.year}</h1>
         <Chart height={400} data={dataChart} justify="center" autoFit>
-        <Coordinate type="theta" radius={0.75} />
+        <Coordinate type="theta" radius={0.75}/>
         <Tooltip showTitle={false}/>
         <Axis visible={false}/>
         <Interval
@@ -386,7 +388,7 @@ const onClick = (value: Array<Number>) => {
             },
           }]}
         />
-        <Interaction type="element-single-selected" />
+        <Interaction type="element-single-selected"/>
       </Chart>
       </div>}
       </div>
@@ -417,7 +419,7 @@ const onClick = (value: Array<Number>) => {
             showSizeChanger: true,
           }}
         />}        
-        </div>
+      </div>
     </Layout.Content>
   )
 }
