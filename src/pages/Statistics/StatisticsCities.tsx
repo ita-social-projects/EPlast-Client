@@ -393,15 +393,8 @@ const onClick = (value: Array<Number>) => {
       <br/> 
       {showTable === false ? "" :
         <Table
-          bordered          
-          className = "tableRow"
-          onHeaderRow={() => {
-            return{
-              style: {textAlign: "center"},
-              className: "tableRow"
-            }
-          }}
-          rowClassName={(record, index) => index === onClickRow ? "onClickRow" : "tableRow" }
+          bordered 
+          rowClassName={(record, index) => index === onClickRow ? "onClickRow" : "" }
           rowKey="id"
           columns={columns}
           dataSource={dataForTable}
