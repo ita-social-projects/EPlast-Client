@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams, useRouteMatch } from "react-router-dom";
-import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip } from "antd";
+import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip, Badge } from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { addFollower, getClubById, getLogo, removeClub, toggleMemberStatus } from "../../../api/clubsApi";
@@ -37,6 +37,9 @@ const Club = () => {
   const [canCreate, setCanCreate] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const [canJoin, setCanJoin] = useState(false);
+  const [membersCount, setMembersCount] = useState<number>();
+  const [adminsCount, setAdminsCount] = useState<number>();
+  const [followersCount, setFollowersCount] = useState<number>();
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [clubLogoLoading, setClubLogoLoading] = useState<boolean>(false);
   const [document, setDocument] = useState<ClubDocument>(new ClubDocument());
@@ -56,7 +59,7 @@ const Club = () => {
       await userApi.getImage(member.data.user.imagePath)
     ).data;
 
-    if (members.length < 6) {
+    if (members.length < 9) {
       setMembers([...members, member.data]);
     }
 
@@ -170,6 +173,9 @@ const Club = () => {
       setCanCreate(response.data.canCreate);
       setCanEdit(response.data.canEdit);
       setCanJoin(response.data.canJoin);
+      setMembersCount(response.data.memberCount);
+      setAdminsCount(response.data.administrationCount);
+      setFollowersCount(response.data.followerCount)
     } finally {
       setLoading(false);
     }
@@ -352,7 +358,15 @@ const Club = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="clubCard">
-            <Title level={4}>Члени куреня</Title>
+            <Title level={4}>Члени куреня <a onClick={() => history.push(`/clubs/members/${club.id}`)}>
+              {membersCount !== 0 ? 
+                <Badge
+                  count={membersCount }
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+              </a>
+            </Title>
             <Row className="clubItems" justify="center" gutter={[0, 16]}>
               {members.length !== 0 ? (
                 members.map((member) => (
@@ -400,7 +414,15 @@ const Club = () => {
           xs={24}
         >
           <Card hoverable className="clubCard">
-            <Title level={4}>Провід куреня</Title>
+            <Title level={4}>Провід куреня <a onClick={() => history.push(`/clubs/administration/${club.id}`)}>
+              {adminsCount !== 0 ? 
+                <Badge
+                  count={adminsCount }
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+              </a>
+            </Title>
             <Row className="clubItems" justify="center" gutter={[0, 16]}>
               {admins.length !== 0 ? (
                 admins.map((admin) => (
@@ -488,7 +510,15 @@ const Club = () => {
           xs={24}
         >
           <Card hoverable className="clubCard">
-            <Title level={4}>Прихильники куреня</Title>
+            <Title level={4}>Прихильники куреня <a onClick={() => history.push(`/clubs/followers/${club.id}`)}>
+              {followersCount !== 0 ? 
+                <Badge
+                  count={followersCount }
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+              </a>
+            </Title>
             <Row className="clubItems" justify="center" gutter={[0, 16]}>
               {canJoin ? (
                 <Col

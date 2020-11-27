@@ -14,7 +14,6 @@ import distinctionApi from "../../../api/distinctionApi";
 import Distinction from "../Interfaces/Distinction";
 import EditDistinctionModal from "./EditDistinctionModal";
 
-
 interface Props {
   record: number;
   userId: string;
@@ -36,7 +35,6 @@ interface Props {
 }
 
 const DropDown = (props: Props) => {
-  const history = useHistory();
   const {
     record,
     userId,
@@ -77,7 +75,7 @@ const DropDown = (props: Props) => {
   const handleItemClick = async (item: any) => {
     switch (item.key) {
       case "1":
-        history.push(`/userpage/main/${userId}`);
+        window.open(`/userpage/main/${userId}`);
         break;
       case "2":
         deleteConfirm(record, onDelete);
