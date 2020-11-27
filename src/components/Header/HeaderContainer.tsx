@@ -105,6 +105,7 @@ const HeaderContainer = () => {
     <Menu
       mode="vertical"
       className={`${classes.headerMenu} ${classes.dropDownMenu}`}
+      theme="light"
     >
       <Menu.Item className={classes.headerDropDownItem} key="5">
         <NavLink
@@ -141,7 +142,7 @@ const HeaderContainer = () => {
   );
   return (
     <Layout.Header className={classes.headerContainer}>
-      <Menu mode="horizontal" className={classes.headerMenu}>
+      <Menu mode="horizontal" className={classes.headerMenu} theme="light">
         <Menu.Item className={classes.headerItem} key="1">
           <div className={classes.headerLogo}>
             <NavLink to="/">
@@ -195,7 +196,7 @@ const HeaderContainer = () => {
           }
         </>
       ) : (
-          <Menu mode="horizontal" className={classes.headerMenu}>
+          <Menu mode="horizontal" className={classes.headerMenu} theme="light">
             <Menu.Item className={classes.headerItem} key="2">
               <NavLink
                 to="/contacts"
