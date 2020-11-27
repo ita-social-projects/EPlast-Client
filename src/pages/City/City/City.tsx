@@ -13,6 +13,7 @@ import {
   Card,
   Tooltip,
   Breadcrumb,
+  Badge,
 } from "antd";
 import {
   FileTextOutlined,
@@ -68,6 +69,9 @@ const City = () => {
   const [canEdit, setCanEdit] = useState(false);
   const [canJoin, setCanJoin] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+  const [membersCount, setMembersCount] = useState<number>();
+  const [adminsCount, setAdminsCount] = useState<number>();
+  const [followersCount, setFollowersCount] = useState<number>();
   const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const changeApproveStatus = async (memberId: number) => {
@@ -85,7 +89,7 @@ const City = () => {
       await userApi.getImage(member.data.user.imagePath)
     ).data;
 
-    if (members.length < 6) {
+    if (members.length < 9) {
       setMembers([...members, member.data]);
     }
 
@@ -204,6 +208,9 @@ const City = () => {
       setCanCreate(response.data.canCreate);
       setCanEdit(response.data.canEdit);
       setCanJoin(response.data.canJoin);
+      setMembersCount(response.data.memberCount);
+      setAdminsCount(response.data.administrationCount);
+      setFollowersCount(response.data.followerCount)
     } finally {
       setLoading(false);
     }
@@ -364,7 +371,15 @@ const City = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={4}>Члени станиці</Title>
+            <Title level={4}>Члени станиці <a onClick={() => history.push(`/cities/members/${city.id}`)}>
+              {membersCount !== 0 ? 
+                <Badge
+                  count={membersCount }
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+              </a>
+            </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {members.length !== 0 ? (
                 members.map((member) => (
@@ -412,7 +427,15 @@ const City = () => {
           xs={24}
         >
           <Card hoverable className="cityCard">
-            <Title level={4}>Провід станиці</Title>
+            <Title level={4}>Провід станиці <a onClick={() => history.push(`/cities/administration/${city.id}`)}>
+              {adminsCount !== 0 ? 
+                <Badge
+                  count={adminsCount }
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+              </a>
+            </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {admins.length !== 0 ? (
                 admins.map((admin) => (
@@ -499,7 +522,15 @@ const City = () => {
           xs={24}
         >
           <Card hoverable className="cityCard">
-            <Title level={4}>Прихильники станиці</Title>
+            <Title level={4}>Прихильники станиці <a onClick={() => history.push(`/cities/followers/${city.id}`)}>
+              {followersCount !== 0 ? 
+                <Badge
+                  count={followersCount }
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+              </a>
+            </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {canJoin ? (
                 <Col
