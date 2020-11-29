@@ -10,7 +10,7 @@ import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
 import NotificationBox from '../NotificationBox/NotificationBox';
-import NotificationBoxApi, {NotificationType, UserNotification } from '../../api/NotificationBoxApi';
+import NotificationBoxApi, { NotificationType, UserNotification } from '../../api/NotificationBoxApi';
 import WebSocketConnection from '../NotificationBox/WebSocketConnection'
 
 let authService = new AuthorizeApi();
@@ -26,27 +26,26 @@ const HeaderContainer = () => {
   const [notificationTypes, setNotificationTypes] = useState<Array<NotificationType>>([]);
   const [notifications, setNotifications] = useState<Array<UserNotification>>([]);
   const [visibleDrawer, setVisibleDrawer] = useState<boolean>(false);
-  
+
   const fetchData = async () => {
     if (user) {
       const user: any = jwt(token);
       await userApi.getById(user.nameid).then(async response => {
         setName(response.data.user.firstName);
-        if(name !== undefined){
+        if (name !== undefined) {
           setUserState(true);
         }
         setId(response.data.user.id);
-        
-        if (response.data.user.id !== undefined) 
-        {
+
+        if (response.data.user.id !== undefined) {
           getNotifications(response.data.user.id);
           getNotificationTypes();
           let connection = WebSocketConnection.ManageConnection(response.data.user.id);
-          
-          connection.onmessage = function(event) {
+
+          connection.onmessage = function (event) {
             const result = JSON.parse(decodeURIComponent(event.data));
             setNotifications(t => [result as UserNotification].concat(t))
-        };
+          };
         }
         await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
@@ -55,30 +54,30 @@ const HeaderContainer = () => {
     }
   };
 
-  const getNotifications = async (userId : string) => {
+  const getNotifications = async (userId: string) => {
     await NotificationBoxApi.getAllUserNotifications(userId)
-    .then((response) => {
-      setNotifications(response)
-    })
-    .catch(err => console.log(err))
+      .then((response) => {
+        setNotifications(response)
+      })
+      .catch(err => console.log(err))
   }
 
-  const RemoveNotification = async (notificationId : number) => {
+  const RemoveNotification = async (notificationId: number) => {
     await NotificationBoxApi.removeNotification(notificationId)
-    .then(() => setNotifications(arr => arr.filter(elem => elem.id !== notificationId)));
+      .then(() => setNotifications(arr => arr.filter(elem => elem.id !== notificationId)));
   }
 
-  const RemoveAllUserNotifications = async (userId : string) => {
+  const RemoveAllUserNotifications = async (userId: string) => {
     await NotificationBoxApi.removeUserNotifications(userId)
-    .then(() => setNotifications([]));
+      .then(() => setNotifications([]));
   }
 
   const getNotificationTypes = async () => {
     await NotificationBoxApi.getAllNotificationTypes()
-    .then((response) => {
-      setNotificationTypes(response)
-    })
-    .catch(err => console.log(err))
+      .then((response) => {
+        setNotificationTypes(response)
+      })
+      .catch(err => console.log(err))
   }
 
   const handleNotificationBox = async () => {
@@ -91,7 +90,7 @@ const HeaderContainer = () => {
     setVisibleDrawer(true);
     NotificationBoxApi.SetCheckedAllUserNotification(id)
   }
-  
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -154,12 +153,12 @@ const HeaderContainer = () => {
       </Menu>
       {signedIn && userState ? (
         <>
-          <Menu mode="horizontal" className={classes.headerMenu}>
+          <Menu mode="horizontal" className={classes.headerMenu + " " + classes.MenuWidth}>
             <Menu.Item
               className={classes.headerItem}
               key="4"
             >
-              <Badge count={notifications.filter(n => n.checked===false).length}>
+              <Badge count={notifications.filter(n => n.checked === false).length}>
                 <Button ghost
                   icon={<BellOutlined style={{ fontSize: "26px" }} />}
                   onClick={ShowNotifications}
@@ -167,21 +166,26 @@ const HeaderContainer = () => {
                 </Button>
               </Badge>
             </Menu.Item>
-            <Dropdown overlay={primaryMenu}>
-              <NavLink
-                to={`/userpage/main/${id}`}
-                className={classes.userMenu}
-                activeClassName={classes.activeLink}
-              >
-                <Avatar
-                  size={36}
-                  src={imageBase64}
-                  alt="User"
-                  style={{ marginRight: "10px" }}
-                />
-                Привіт, {name}
-              </NavLink>
-            </Dropdown>
+            <Menu.Item
+              className={classes.headerItem}
+              key="5"
+            >
+              <Dropdown overlay={primaryMenu}>
+                <NavLink
+                  to={`/userpage/main/${id}`}
+                  className={classes.userMenu}
+                  activeClassName={classes.activeLink}
+                >
+                  <Avatar
+                    size={36}
+                    src={imageBase64}
+                    alt="User"
+                    style={{ marginRight: "10px" }}
+                  />
+                  Привіт, {name}
+                </NavLink>
+              </Dropdown>
+            </Menu.Item>
           </Menu>
           {id !== "" &&
             <NotificationBox
@@ -189,7 +193,7 @@ const HeaderContainer = () => {
               Notifications={notifications}
               VisibleDrawer={visibleDrawer}
               setVisibleDrawer={setVisibleDrawer}
-              RemoveNotification={RemoveNotification} 
+              RemoveNotification={RemoveNotification}
               RemoveAllNotifications={RemoveAllUserNotifications}
               handleNotificationBox={handleNotificationBox}
             />

@@ -79,7 +79,7 @@
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
-@media (min-width: 875px) and (max-width: 1494px){
+@media (min-width: 875px) and (max-width: 1516px){
     .date::after{
         content: "\A";
         white-space: pre;
@@ -159,7 +159,7 @@
 .textListItem
 {
     font-size : 16px;
-    padding: 6px 10px;
+    padding: 4px 10px;
     float: left;
 }
 
