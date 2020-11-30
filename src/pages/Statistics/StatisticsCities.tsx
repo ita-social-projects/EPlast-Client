@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Table,
   Form,
@@ -27,28 +27,29 @@ import {
   Interaction
 } from "bizcharts";
 import "./StatisticsCities.less";
-import{ shouldContain } from "../../components/Notifications/Messages"
+import { number } from "yup";
 
 const StatisticsCities = () => {
 
   const [years, setYears] = useState<any>();
   const [cities, setCities] = useState<any>();
-  const [dataForTable, setDataForTable] = useState<DataFromResponse[]>(Array());
+  const [dataForTable, setdataForTable] = useState<DataFromResponse[]>(Array());
   const [showTable, setShowTable] = useState(false);
   const [columns, setColumns] = useState(Array());
   const [dataChart, setDataChart] = useState(Array());
-  const [dataFromRow, setDataFromRow] = useState<DataFromResponse>();
+  const [dataFromRow, setdataFromRow] = useState<DataFromResponse>();
   const [arrayOfInindicators, setArrayOfIndicators] = useState<any[]>(Array());
   const [title, setTitle] = useState<DataFromResponse>();
-  const [selectableUnatstvaPart, setSelectableUnatstvaPart] = useState<boolean>();
-  const [selectableUnatstvaZahalom, setSelectableUnatstvaZahalom] = useState<boolean>();
-  const [selectableSeniorPart, setSelectableSeniorPart] = useState<boolean>();
-  const [selectableSeniorZahalom, setSelectableSeniorZahalom] = useState<boolean>();
-  const [selectableSeigneurPart, setSelectableSeigneurPart] = useState<boolean>();
-  const [selectableSeigneurZahalom, setSelectableSeigneurZahalom] = useState<boolean>();
-  const [onClickRow, setOnClickRow] = useState<any>();
   
   const constColumns = [
+    {
+      title: "№",
+      dataIndex: "id",
+      key: "id",
+      fixed: "left",
+      sorter: { compare: (a: any, b: any) => a.id - b.id },
+      width: 55
+    },
     {
       title: "Станиця",
       dataIndex: "cityName",
@@ -146,17 +147,15 @@ const StatisticsCities = () => {
 
   const onSubmit = async (info: any) => {
     let counter = 1;
+    setArrayOfIndicators(info.indicators);
+    console.log(info.indicators)
     let response = await StatisticsApi.getCitiesStatistics({
       CityIds: info.citiesId,
       Years: info.years,
       Indicators: info.indicators
     });
+    console.log(response);
 
-    // seting (for chart needs) statisticsItems indicators of the very first element 
-    // because they are the same for all the elements
-    setArrayOfIndicators(response.data[0].yearStatistics[0].statisticsItems.map((it: any)=> it.indicator));
-
-    // reading data from response and seting data for table
     let data = response.data.map((stanytsya: CityStatistics) => {
       return stanytsya.yearStatistics.map(yearStatistic => {
         return {
@@ -168,17 +167,15 @@ const StatisticsCities = () => {
         }
       })
     }).flat();
-    
-    setShowTable(true);
-    setDataForTable(data);
-    setOnClickRow(null);
 
-    // reading statisticsItems indicators of the very first element 
-    // because they are the same for all the elements
+    // reading statisticsItems' indicators of the very first element 
+    // because they are the same for all the items
     let statistics = (response.data && response.data[0] && response.data[0].yearStatistics
       && response.data[0].yearStatistics[0] && response.data[0].yearStatistics[0].statisticsItems) || [];
 
-    // creating and seting columns for table
+    setShowTable(true);
+    setdataForTable(data);
+
     let temp = [...constColumns, ...statistics.map((statisticsItem: any, index: any) => {
       return {
         title: indicatorsArray[statisticsItem.indicator as number].label,
@@ -187,10 +184,10 @@ const StatisticsCities = () => {
         width: 130
       }
     })];
+
     setColumns(temp);
   };
 
-  // calculating for chart percentage
   let sumOfIndicators = 0;
   dataChart.map((indicator: any) => { sumOfIndicators += indicator.count });
   
@@ -207,9 +204,11 @@ const StatisticsCities = () => {
 if(dataFromRow != undefined)
 {
   const regex = /[0-9]/g;
-
-  // seting data for chart
+  arrayOfInindicators.sort(function(a, b){return a-b});
+  console.log(arrayOfInindicators);
+  console.log(dataFromRow);
   const allDataForChart = [...Object.entries(dataFromRow as Object).map(([key, value]) => {
+    
     if(key.match(regex)!== null)
     {
     return{
@@ -218,78 +217,32 @@ if(dataFromRow != undefined)
       percent: value    
     }}
   })]
-  let indicatorsForChart = allDataForChart.slice(0, columns.length - 3);
+  let indicatorsForChart = allDataForChart.slice(0, columns.length - 4);
   setTitle(dataFromRow);
   setDataChart(indicatorsForChart);
-  setDataFromRow(undefined);
+  setdataFromRow(undefined);
 }
-
-const onClick = (value: Array<Number>) => {
-  
-  if (value.includes(2)) {
-    setSelectableUnatstvaPart(false);
-  }
-  if(!value.includes(2)){
-    setSelectableUnatstvaPart(true);
-  }
-  if (value.includes(3)||value.includes(4)||value.includes(5)||value.includes(6)||value.includes(7)) {
-    setSelectableUnatstvaZahalom(false);
-  }
-  if (!value.includes(3)&&!value.includes(4)&&!value.includes(5)&&!value.includes(6)&&!value.includes(7)) {
-    setSelectableUnatstvaZahalom(true);
-  }
-  
-  if (value.includes(8)) {
-    setSelectableSeniorPart(false);
-  }
-  if (!value.includes(8)) {
-    setSelectableSeniorPart(true);
-  }
-  if (value.includes(9)||value.includes(10)) {
-    setSelectableSeniorZahalom(false);
-  }
-  if (!value.includes(9)&&!value.includes(10)) {
-    setSelectableSeniorZahalom(true);
-  }
-
-  if (value.includes(11)) {
-    setSelectableSeigneurPart(false);
-  }
-  if (!value.includes(11)) {
-    setSelectableSeigneurPart(true);
-  }
-  if (value.includes(12)||value.includes(13)) {
-    setSelectableSeigneurZahalom(false);
-  }
-  if (!value.includes(12)&&!value.includes(13)) {
-    setSelectableSeigneurZahalom(true);
-  }
-
-  if (value.length == 0) {
-    setSelectableUnatstvaPart(true);
-    setSelectableUnatstvaZahalom(true);
-    setSelectableSeniorPart(true);
-    setSelectableSeniorZahalom(true);
-    setSelectableSeigneurPart(true);
-    setSelectableSeigneurZahalom(true);
-  }
-}
+let old = true;
 
   return (
     <Layout.Content >
       <div className = "background">
       <Title level={2}>Статистика станиць</Title>
       <div className = "formAndChart">
-      <div className = "form"> 
-      <Form onFinish={onSubmit}>
+      <Form onFinish={onSubmit} className = "form">
         <Row justify="center">
           <Col
             span={20}>
             <Form.Item
+
               labelCol={{span: 24}}
               label="Станиці"
               name="citiesId"
               rules={[{required: true, message: shouldContain("хоча б одну станицю"), type: "array"}]} >
+
+              name="citiesId"
+              rules={[{ required: true, message: "Оберіть хоча б одну станицю", type: "array" }]} >
+
               <Select
                 maxTagCount={4}
                 showSearch
@@ -301,15 +254,20 @@ const onClick = (value: Array<Number>) => {
               />
             </Form.Item>
           </Col>
-        </Row>        
+        </Row>
         <Row justify="center">
           <Col
             span={20}>
             <Form.Item
+
               labelCol={{span: 24}}
               label="Роки"
               name="years"
               rules={[{required: true, message: shouldContain("хоча б один рік"), type: "array"}]}>
+
+              name="years"
+              rules={[{ required: true, message: "Оберіть хоча б один рік", type: "array" }]}>
+
               <Select
                 maxTagCount={8}
                 showSearch
@@ -320,23 +278,28 @@ const onClick = (value: Array<Number>) => {
               />
             </Form.Item>
           </Col>
-        </Row>        
-        <Row justify="center">
+        </Row>
+        <Row justify="center" >
           <Col
             span={20}>
             <Form.Item
+
               labelCol={{span: 24}}
               label="Показники"
               name="indicators"
               rules={[{required: true, message: shouldContain("хоча б один показник"), type: "array"}]}>
+
+              name="indicators"
+              rules={[{ required: true, message: "Оберіть хоча б один показник", type: "array" }]}>
+
               <TreeSelect
                 maxTagCount={4}
                 showSearch
                 allowClear
                 multiple
-                onChange={onClick}
                 treeDefaultExpandAll
                 placeholder="Обрати показник"
+
                 filterTreeNode={(input, option) => (option?.title as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}>
                 <TreeNode value={0} title="Пташата"/>
                 <TreeNode value={1} title="Новацтво"/>
@@ -346,14 +309,26 @@ const onClick = (value: Array<Number>) => {
                 <TreeNode value={5} title="Учасники" selectable = {selectableUnatstvaPart}/>
                 <TreeNode value={6} title="Розвідувачі" selectable = {selectableUnatstvaPart}/>
                 <TreeNode value={7} title="Скоби/вірлиці" selectable = {selectableUnatstvaPart}/>
+
+                filterTreeNode={(input, option) => (option?.title as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
+              >
+                <TreeNode value={0} title="Неіменовані" />
+                <TreeNode value={1} title="Новацтво" />
+                <TreeNode value={2} title="Юнацтво загалом">
+                <TreeNode value={3} title="Неіменовані" />
+                <TreeNode value={4} title="Прихильники" />
+                <TreeNode value={5} title="Учасники" />
+                <TreeNode value={6} title="Розвідувачі" />
+                <TreeNode value={7} title="Скоби/вірлиці" />
+
                 </TreeNode>
-                <TreeNode value={8} title="Старші пластуни загалом" selectable = {selectableSeniorZahalom}>
-                <TreeNode value={9} title="Старші пластуни прихильники" selectable = {selectableSeniorPart}/>
-                <TreeNode value={10} title="Старші пластуни учасники" selectable = {selectableSeniorPart}/>
+                <TreeNode value={8} title="Старші пластуни загалом" selectable = {old}>
+                <TreeNode value={9} title="Старші пластуни прихильники"/>
+                <TreeNode value={10} title="Старші пластуни учасники"/>
                 </TreeNode>
-                <TreeNode value={11} title="Сеньйори загалом" selectable = {selectableSeigneurZahalom}>
-                <TreeNode value={12} title="Сеньйори пластуни прихильники" selectable = {selectableSeigneurPart}/>
-                <TreeNode value={13} title="Сеньйори пластуни учасники" selectable = {selectableSeigneurPart}/>
+                <TreeNode value={11} title="Сеньйори загалом">
+                <TreeNode value={12} title="Сеньйори пластуни прихильники"/>
+                <TreeNode value={13} title="Сеньйори пластуни учасники"/>
                 </TreeNode>
               </TreeSelect>
             </Form.Item>
@@ -365,9 +340,8 @@ const onClick = (value: Array<Number>) => {
           </Col>
         </Row>
       </Form>
-      </div>
       <br/>
-      {sumOfIndicators === 0 || title === undefined || onClickRow === null ? '': 
+      {sumOfIndicators === 0 || title === undefined ? '': 
       <div className = "chart">         
         <h1>{title.cityName}, {title.year}</h1>
         <Chart height={400} data={dataChart} justify="center" autoFit>
@@ -395,23 +369,23 @@ const onClick = (value: Array<Number>) => {
       <br/> 
       {showTable === false ? "" :
         <Table
+
           bordered 
           rowClassName={(record, index) => index === onClickRow ? "onClickRow" : "" }
+
+          bordered
+
           rowKey="id"
           columns={columns}
           dataSource={dataForTable}
           scroll={{ x: 1000 }}
-          onRow={(cityRecord, index) => {
-            return {              
-              onClick: async () => {              
-                setDataFromRow(cityRecord);
-                setOnClickRow(index);
-              },
-              onDoubleClick: async () => {                
-                setOnClickRow(null);
-              }
-            };
+          onRow={(cityRecord) => {
+            return {
+              onClick: async () => {                
+                setdataFromRow(cityRecord);
+              }};
           }}
+          
           onChange={onChange}
           pagination={{
             showLessItems: true,
