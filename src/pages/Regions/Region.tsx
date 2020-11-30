@@ -13,6 +13,7 @@ import {
   Card,
   Tooltip,
   Input,
+  Badge,
 } from "antd";
 import {
   FileTextOutlined,
@@ -128,7 +129,8 @@ const Region = () => {
   const [canCreate, setCanCreate] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
-
+  const [membersCount, setMembersCount] = useState<number>();
+  const [adminsCount, setAdminsCount] = useState<number>();
   const [visible, setvisible] = useState<boolean>(false);
 
   const [head, setHead] = useState<any>({
@@ -200,10 +202,13 @@ const Region = () => {
       const responseHead = await getHead(id);
 
       setHead(responseHead.data);
+      setMembersCount(response.data.cities.length);
       setSixMembers(response.data.cities, 6);
 
       setPhotosLoading(true);
-      setAdmins(response1.data);
+      setSixAdmins(response1.data, 6);
+      setAdminsCount(response1.data.length);
+
       setRegionLogoLoading(true);
       setPhotos([...response.data.cities], [...response1.data]);
 
@@ -232,6 +237,20 @@ const Region = () => {
       if (member.length != 0) {
         for (let i = 0; i < member.length; i++) {
           members[i] = member[i];
+        }
+      }
+    }
+  };
+
+  const setSixAdmins = (admin: any[], amount: number) => {
+    if (admin.length > 6) {
+      for (let i = 0; i < amount; i++) {
+        admins[i] = admin[i];
+      }
+    } else {
+      if (admin.length != 0) {
+        for (let i = 0; i < admin.length; i++) {
+          admins[i] = admin[i];
         }
       }
     }
@@ -426,7 +445,15 @@ const Region = () => {
           xs={24}
         >
           <Card hoverable className="cityCard">
-            <Title level={4}>Провід округу</Title>
+            <Title level={4}>Провід округу <a onClick={() => history.push(`/region/administration/${region.id}`)}>
+              {adminsCount !== 0 ? 
+                <Badge
+                  count={adminsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+              </a>
+            </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {admins.length !== 0 ? (
                 admins.map((admin) => (
@@ -471,7 +498,15 @@ const Region = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={4}>Члени округу</Title>
+            <Title level={4}>Члени округу <a onClick={() => history.push(`/regions/members/${id}`)}>
+              {membersCount !== 0 ? 
+                <Badge
+                  count={membersCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+              </a>
+            </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {members[0].name !== "" ? (
                 members.map((member) => (
