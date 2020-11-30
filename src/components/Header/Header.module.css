@@ -16,6 +16,10 @@
     font-size: 16px;
 }
 
+.MenuWidth {
+    width: 260px;
+}
+
 .headerMenu :hover {
     color: white;
 }
