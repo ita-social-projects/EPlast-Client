@@ -7,9 +7,13 @@ import {
   Layout,
   Modal,
   Row,
+<<<<<<< HEAD
   Typography,
   Col,
   TreeSelect
+=======
+  Col
+>>>>>>> parent of dca0802... Working process on statistics chart
 } from "antd";
 import StatisticsApi from "../../api/StatisticsApi";
 import City from "./Interfaces/City";
@@ -18,6 +22,7 @@ import AnnualReportApi from "../../api/AnnualReportApi";
 import CityStatistics from "./Interfaces/CityStatistics";
 import DataFromResponse from "./Interfaces/DataFromResponse";
 import { SortOrder } from "antd/lib/table/interface";
+<<<<<<< HEAD
 import {
   Chart,
   Interval,
@@ -28,6 +33,9 @@ import {
 } from "bizcharts";
 import "./StatisticsCities.less";
 import{ shouldContain } from "../../components/Notifications/Messages"
+=======
+
+>>>>>>> parent of dca0802... Working process on statistics chart
 
 const StatisticsCities = () => {
 
@@ -36,6 +44,7 @@ const StatisticsCities = () => {
   const [dataForTable, setDataForTable] = useState<DataFromResponse[]>(Array());
   const [showTable, setShowTable] = useState(false);
   const [columns, setColumns] = useState(Array());
+<<<<<<< HEAD
   const [dataChart, setDataChart] = useState(Array());
   const [dataFromRow, setDataFromRow] = useState<DataFromResponse>();
   const [arrayOfInindicators, setArrayOfIndicators] = useState<any[]>(Array());
@@ -48,6 +57,9 @@ const StatisticsCities = () => {
   const [selectableSeigneurZahalom, setSelectableSeigneurZahalom] = useState<boolean>();
   const [onClickRow, setOnClickRow] = useState<any>();
   
+=======
+
+>>>>>>> parent of dca0802... Working process on statistics chart
   const constColumns = [
     {
       title: "Станиця",
@@ -67,7 +79,7 @@ const StatisticsCities = () => {
       key: "year",
       fixed: "left",
       sorter: { compare: (a: any, b: any) => a.year - b.year },
-      width: 80
+      width: 100
     },
     {
       title: "Округ",
@@ -83,6 +95,7 @@ const StatisticsCities = () => {
   ];
 
   const indicatorsArray = [
+<<<<<<< HEAD
     { value: StatisticsItemIndicator.NumberOfPtashata, label: "Пташата" },
     { value: StatisticsItemIndicator.NumberOfNovatstva, label: "Новацтво" },
     { value: StatisticsItemIndicator.NumberOfUnatstva, label: "Юнацтво загалом" },
@@ -107,6 +120,30 @@ const StatisticsCities = () => {
     fetchYears();
   }, []);
     
+=======
+    { value: StatisticsItemIndicator.NumberOfPtashata, label: "Кількість пташат" },
+    { value: StatisticsItemIndicator.NumberOfNovatstva, label: "Кількість новацтва" },
+    { value: StatisticsItemIndicator.NumberOfUnatstva, label: "Кількість юнацтва загалом" },
+    { value: StatisticsItemIndicator.NumberOfUnatstvaNoname, label: "Кількість неіменованих" },
+    { value: StatisticsItemIndicator.NumberOfUnatstvaSupporters, label: "Кількість прихильників" },
+    { value: StatisticsItemIndicator.NumberOfUnatstvaMembers, label: "Кількість учасників" },
+    { value: StatisticsItemIndicator.NumberOfUnatstvaProspectors, label: "Кількість розвідувачів" },
+    { value: StatisticsItemIndicator.NumberOfUnatstvaSkobVirlyts, label: "Кількість скобів/вірлиць" },
+    { value: StatisticsItemIndicator.NumberOfSenior, label: "Кількість старших пластунів загалом" },
+    { value: StatisticsItemIndicator.NumberOfSeniorPlastynSupporters, label: "Кількість старших пластунів прихильників" },
+    { value: StatisticsItemIndicator.NumberOfSeniorPlastynMembers, label: "Кількість старших пластунів учасників" },
+    { value: StatisticsItemIndicator.NumberOfSeigneur, label: "Кількість сеньйорів загалом" },
+    { value: StatisticsItemIndicator.NumberOfSeigneurSupporters, label: "Кількість сеньйорів пластунів прихильників" },
+    { value: StatisticsItemIndicator.NumberOfSeigneurMembers, label: "Кількість сеньйорів пластунів учасників" }
+  ];
+
+  useEffect(() => {
+    fetchCities();
+    fechYears();
+    fechIndicatorsNames();
+  }, []);
+
+>>>>>>> parent of dca0802... Working process on statistics chart
   const fetchCities = async () => {
     try {
       let response = await AnnualReportApi.getCities();
@@ -123,7 +160,7 @@ const StatisticsCities = () => {
     }
   };
 
-  const fetchYears = async () => {
+  const fechYears = async () => {
     try {
       const arrayOfYears = [];
       var endDate = Number(new Date().getFullYear());
@@ -137,6 +174,18 @@ const StatisticsCities = () => {
     }
   }
 
+<<<<<<< HEAD
+=======
+  const fechIndicatorsNames = async () => {
+    try {
+      setIndicators(indicatorsArray);
+    }
+    catch (error) {
+      showError(error.message);
+    }
+  };
+
+>>>>>>> parent of dca0802... Working process on statistics chart
   const showError = (message: string) => {
     Modal.error({
       title: "Помилка!",
@@ -184,16 +233,19 @@ const StatisticsCities = () => {
         title: indicatorsArray[statisticsItem.indicator as number].label,
         dataIndex: index,
         key: index,
-        width: 130
+        width: 200
       }
     })];
     setColumns(temp);
   };
 
+<<<<<<< HEAD
   // calculating for chart percentage
   let sumOfIndicators = 0;
   dataChart.map((indicator: any) => { sumOfIndicators += indicator.count });
   
+=======
+>>>>>>> parent of dca0802... Working process on statistics chart
   let onChange = (pagination: any) => {
     if (pagination) {
       window.scrollTo({
@@ -202,6 +254,7 @@ const StatisticsCities = () => {
         behavior: "smooth",
       });
     }
+<<<<<<< HEAD
   }    
   
 if(dataFromRow != undefined)
@@ -281,8 +334,15 @@ const onClick = (value: Array<Number>) => {
       <Title level={2}>Статистика станиць</Title>
       <div className = "formAndChart">
       <div className = "form"> 
+=======
+  }
+
+  return (
+    <Layout.Content>
+      <h1>Статистика станиць</h1>
+>>>>>>> parent of dca0802... Working process on statistics chart
       <Form onFinish={onSubmit}>
-        <Row justify="center">
+        <Row>
           <Col
             span={20} >
             <Form.Item
@@ -300,8 +360,13 @@ const onClick = (value: Array<Number>) => {
               />
             </Form.Item>
           </Col>
+<<<<<<< HEAD
         </Row>        
         <Row justify="center">
+=======
+        </Row>
+        <Row>
+>>>>>>> parent of dca0802... Working process on statistics chart
           <Col
             span={20} >
             <Form.Item
@@ -318,8 +383,13 @@ const onClick = (value: Array<Number>) => {
               />
             </Form.Item>
           </Col>
+<<<<<<< HEAD
         </Row>        
         <Row justify="center">
+=======
+        </Row>
+        <Row>
+>>>>>>> parent of dca0802... Working process on statistics chart
           <Col
             span={20} >
             <Form.Item
@@ -357,12 +427,17 @@ const onClick = (value: Array<Number>) => {
             </Form.Item>
           </Col>
         </Row>
-        <Row justify="center">
+        <Row justify="start">
           <Col>
-            <Button type="primary" htmlType="submit">Сформувати</Button>
+            <Button
+              type="primary"
+              htmlType="submit" >
+              Сформувати
+                    </Button>
           </Col>
         </Row>
       </Form>
+<<<<<<< HEAD
       </div>
       <br/>
       {sumOfIndicators === 0 || title === undefined || onClickRow === null ? '': 
@@ -391,6 +466,9 @@ const onClick = (value: Array<Number>) => {
       </div>}
       </div>
       <br/> 
+=======
+      <br />
+>>>>>>> parent of dca0802... Working process on statistics chart
       {showTable === false ? "" :
         <Table
           bordered          
@@ -406,6 +484,7 @@ const onClick = (value: Array<Number>) => {
           columns={columns}
           dataSource={dataForTable}
           scroll={{ x: 1000 }}
+<<<<<<< HEAD
           onRow={(cityRecord, index) => {
             return {              
               onClick: async () => {              
@@ -417,14 +496,20 @@ const onClick = (value: Array<Number>) => {
               }
             };
           }}
+=======
+>>>>>>> parent of dca0802... Working process on statistics chart
           onChange={onChange}
           pagination={{
             showLessItems: true,
             responsive: true,
             showSizeChanger: true,
           }}
+<<<<<<< HEAD
         />}        
         </div>
+=======
+        />}
+>>>>>>> parent of dca0802... Working process on statistics chart
     </Layout.Content>
   )
 }
