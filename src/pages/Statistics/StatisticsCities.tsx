@@ -232,11 +232,19 @@ let old = true;
       <Form onFinish={onSubmit} className = "form">
         <Row justify="center">
           <Col
-            span={20} >
+            span={20}>
             <Form.Item
+
+              labelCol={{span: 24}}
+              label="Станиці"
+              name="citiesId"
+              rules={[{required: true, message: shouldContain("хоча б одну станицю"), type: "array"}]} >
+
               name="citiesId"
               rules={[{ required: true, message: "Оберіть хоча б одну станицю", type: "array" }]} >
+
               <Select
+                maxTagCount={4}
                 showSearch
                 allowClear
                 mode="multiple"
@@ -249,11 +257,19 @@ let old = true;
         </Row>
         <Row justify="center">
           <Col
-            span={20} >
+            span={20}>
             <Form.Item
+
+              labelCol={{span: 24}}
+              label="Роки"
+              name="years"
+              rules={[{required: true, message: shouldContain("хоча б один рік"), type: "array"}]}>
+
               name="years"
               rules={[{ required: true, message: "Оберіть хоча б один рік", type: "array" }]}>
+
               <Select
+                maxTagCount={8}
                 showSearch
                 allowClear
                 mode="multiple"
@@ -265,16 +281,35 @@ let old = true;
         </Row>
         <Row justify="center" >
           <Col
-            span={20} >
+            span={20}>
             <Form.Item
+
+              labelCol={{span: 24}}
+              label="Показники"
+              name="indicators"
+              rules={[{required: true, message: shouldContain("хоча б один показник"), type: "array"}]}>
+
               name="indicators"
               rules={[{ required: true, message: "Оберіть хоча б один показник", type: "array" }]}>
+
               <TreeSelect
+                maxTagCount={4}
                 showSearch
                 allowClear
                 multiple
                 treeDefaultExpandAll
                 placeholder="Обрати показник"
+
+                filterTreeNode={(input, option) => (option?.title as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}>
+                <TreeNode value={0} title="Пташата"/>
+                <TreeNode value={1} title="Новацтво"/>
+                <TreeNode value={2} title="Юнацтво загалом" selectable = {selectableUnatstvaZahalom}>
+                <TreeNode value={3} title="Неіменовані" selectable = {selectableUnatstvaPart}/>
+                <TreeNode value={4} title="Прихильники" selectable = {selectableUnatstvaPart}/>
+                <TreeNode value={5} title="Учасники" selectable = {selectableUnatstvaPart}/>
+                <TreeNode value={6} title="Розвідувачі" selectable = {selectableUnatstvaPart}/>
+                <TreeNode value={7} title="Скоби/вірлиці" selectable = {selectableUnatstvaPart}/>
+
                 filterTreeNode={(input, option) => (option?.title as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
               >
                 <TreeNode value={0} title="Неіменовані" />
@@ -285,6 +320,7 @@ let old = true;
                 <TreeNode value={5} title="Учасники" />
                 <TreeNode value={6} title="Розвідувачі" />
                 <TreeNode value={7} title="Скоби/вірлиці" />
+
                 </TreeNode>
                 <TreeNode value={8} title="Старші пластуни загалом" selectable = {old}>
                 <TreeNode value={9} title="Старші пластуни прихильники"/>
@@ -309,7 +345,7 @@ let old = true;
       <div className = "chart">         
         <h1>{title.cityName}, {title.year}</h1>
         <Chart height={400} data={dataChart} justify="center" autoFit>
-        <Coordinate type="theta" radius={0.75} />
+        <Coordinate type="theta" radius={0.75}/>
         <Tooltip showTitle={false}/>
         <Axis visible={false}/>
         <Interval
@@ -326,14 +362,19 @@ let old = true;
             },
           }]}
         />
-        <Interaction type="element-single-selected" />
+        <Interaction type="element-single-selected"/>
       </Chart>
       </div>}
       </div>
       <br/> 
       {showTable === false ? "" :
         <Table
+
+          bordered 
+          rowClassName={(record, index) => index === onClickRow ? "onClickRow" : "" }
+
           bordered
+
           rowKey="id"
           columns={columns}
           dataSource={dataForTable}
@@ -352,7 +393,7 @@ let old = true;
             showSizeChanger: true,
           }}
         />}        
-        </div>
+      </div>
     </Layout.Content>
   )
 }
