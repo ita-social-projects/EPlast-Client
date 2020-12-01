@@ -8,7 +8,7 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
   let { length } = bstr;
   const u8arr = new Uint8Array(length);
 
-  while (length !== 0) {
+  while (length !== -1) {
     u8arr[length] = bstr.charCodeAt(length);
     length -= 1;
   }
