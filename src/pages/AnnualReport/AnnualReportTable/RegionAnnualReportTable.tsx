@@ -38,12 +38,14 @@ export const RegionAnnualReportTable=({columns,filteredData}:props)=>{
               showError(error.message);
             }
           };
+
     const showError = (message: string) => {
             Modal.error({
               title: "Помилка!",
               content: message,
             });
           };
+
     const checkAccessToManage = () => {
             let jwt = AuthStore.getToken() as string;
             let decodedJwt = jwt_decode(jwt) as any;
@@ -52,11 +54,12 @@ export const RegionAnnualReportTable=({columns,filteredData}:props)=>{
             ] as string[];
             setCanManage(roles.includes("Admin") || roles.includes("Голова Регіону"));
           };
+          
     useEffect(() => {
             checkAccessToManage();
           }, []);
       
-return (  
+    return (  
     <div>
         <Table
         bordered
@@ -106,7 +109,6 @@ return (
       <RegionAnnualReportInformation
         visibleModal={showRegionAnnualReportModal}
         regionAnnualReport={regionAnnualReport}
-        showError={showError}
         handleOk={() => setShowRegionAnnualReportModal(false)}
       />
     </div>

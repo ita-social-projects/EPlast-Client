@@ -3,7 +3,6 @@ import { useHistory } from "react-router-dom";
 import { Table, Spin, Input, Divider, Button } from 'antd';
 import AnnualReport from '../Interfaces/AnnualReport';
 import ClubAnnualReport from '../Interfaces/ClubAnnualReport';
-import Paragraph from 'antd/lib/skeleton/Paragraph';
 import ClickAwayListener from "react-click-away-listener";
 import UnconfirmedDropdown from "./Dropdowns/UnconfirmedDropdown/UnconfirmedDropdown";
 import ConfirmedDropdown from "./Dropdowns/ConfirmedDropdown/ConfirmedDropdown";
@@ -110,6 +109,7 @@ interface props {
     const handleConfirm = async (id: number) => {
       hideDropdowns();
       try {
+        debugger
         let response = await AnnualReportApi.confirm(id);
         let cityId = annualReports.find((item) => item.id == id)?.cityId;
         setAnnualReports(
@@ -172,9 +172,7 @@ interface props {
       checkAccessToManage();
     }, []);
 
-console.log(annualReport)
-    return (
-        
+    return (       
         <div>
               <Table
         bordered

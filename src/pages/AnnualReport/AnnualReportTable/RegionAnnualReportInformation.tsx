@@ -9,7 +9,6 @@ interface Props {
     visibleModal: boolean,
     regionAnnualReport: RegionAnnualReport,
     handleOk: () => void,
-    showError: (message: string) => void
 }
 
 const RegionAnnualReportInformation = (props: Props) => {

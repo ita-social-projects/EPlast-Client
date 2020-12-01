@@ -24,8 +24,14 @@ export const getClubById = async (id: number) => {
 };
 
 export const createClubAnnualReport= async (data: any) => {
-  return await api.post(`Club/CreateClubAnnualReport`,data) .catch((error: AxiosError) => {
+  return await api.post(`Club/CreateClubAnnualReport`,JSON.stringify(data)) .catch((error: AxiosError) => {
     throw new Error(error.response?.data.message);
+});
+};
+
+export const confirmClubAnnualReport= async (id: number) => {
+  return await api.put(`Club/confirmClubAnnualReport/${id}`) .catch((error) => {
+    throw new Error(error);
 });
 };
 
@@ -35,7 +41,7 @@ export const getClubAnnualReport = async () => {
   });
 };
 
-export const getClubAnnualReportById = async (id:any) => {
+export const getClubAnnualReportById = async (id:number) => {
   return await api.get(`Club/GetClubAnnualReportById/${id}`,id).catch((error) => {
     throw new Error(error);
   });

@@ -1,43 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
-import { useHistory } from 'react-router-dom';
 import { Form, Button, Modal, Row, Col, Typography, Input, Table } from 'antd';
 import './ClubAnnualReportCreate.less';
-import {getClubById,createClubAnnualReport, getAllFollowers} from '../../../api/clubsApi';
+import {getClubById,createClubAnnualReport,getAllMembers, getAllFollowers, getAllAdmins} from '../../../api/clubsApi';
 import moment from 'moment';
 import ClubAdmin from '../../../models/Club/ClubAdmin';
 import ClubMember from '../../../models/Club/ClubMember';
+import notificationLogic from "../../../components/Notifications/Notification";
 import { getTableAdmins,getTableFollowers, getTableMembers } from '../../AnnualReport/ClubAnnualReportCreate/ClubAnnualReportTableColumns';
+import { emptyInput, maxLength, successfulCreateAction, tryAgain } from '../../../components/Notifications/Messages';
+import { useHistory } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 export const ClubAnnualReportCreate = () => {
-
-    const validationSchema = {
-        currentClubMembers: [
-            { required: true, message: "Оберіть хто є в проводі куреня" }
-        ],
-        textarea: [
-            { max: 2000, message: "Максимально допустима кількість символів - 2000" }
-        ],
-        text: [
-            { max: 20, message: "Максимально допустима кількість символів - 20" }
-        ],
-    }
-    const { clubId } = useParams();
     const history = useHistory();
+    const { clubId } = useParams();
+    const [id, setId] = useState<number>();
     const [title, setTitle] = useState<string>('Річний звіт куреня');
     const [form] = Form.useForm();
     const [admins, setAdmins] = useState<ClubAdmin[]>([]);
     const [members, setClubMembers] = useState<ClubMember[]>([]);
     const [followers, setFollowers] = useState<ClubMember[]>([]);
     const [club,setClub] = useState<any>({
-  id:0,
-  name: "",
-  description: "",
-  clubURL: "",
-  email: "",
+        id: 0,
+        name: "",
+        description: "",
+        clubURL: "",
+        email: "",
     });
 
     const administrationsColumns = [
@@ -62,7 +53,24 @@ export const ClubAnnualReportCreate = () => {
           key: "userCity",
         },
       ];
-    
+
+      const followersColumns = [
+        {
+          title: "Ім’я, Прізвище",
+          dataIndex: "name",
+          key: "name",
+        },
+        {
+          title: "Стан в курені",
+          dataIndex: "status",
+          key: "status",
+        },
+        {
+          title: "Станиця",
+          dataIndex: "userCity",
+          key: "userCity",
+        },
+      ];
 
     useEffect(() => {
            fetchData(clubId);
@@ -72,45 +80,39 @@ export const ClubAnnualReportCreate = () => {
         try {
             let response = await getClubById(id);
             setClub(response.data);
-            const admins = [...response.data.administration, response.data.head]
-            .filter(a => a !== null);
-            setAdmins(admins);
-            const members=[...response.data.members, response.data.head]
-            .filter(a => a !== null);
-            setClubMembers(members);
+            const admins = await getAllAdmins(id);
+            setAdmins([...admins.data.administration, admins.data.head].filter(a => a != null));
+            const members= await getAllMembers(id);
+            setClubMembers(members.data.members);
             const followers = await getAllFollowers(id);
             setFollowers(followers.data.followers);
+            setId(id);
          }
          catch (error) {
-             showError(error.message)
+            notificationLogic("error", tryAgain);
          }
     }
 
     const handleFinish = async (obj: any) => {
+        obj.clubId = id
+        obj.name = club.name
+        obj.clubPage = club.clubURL
+        obj.currentClubFollowers = followers.length
+        obj.currentClubMembers = members.length
+        obj.date = moment()
         try {
-            let response = await createClubAnnualReport(obj);
-            fetchData(clubId);
+            let response=await createClubAnnualReport(obj);
             form.resetFields();
-            showSuccess(response.data.message);
+            notificationLogic('success', successfulCreateAction('Річний звіт', response.data.name));
+            history.goBack(); 
         }
-        catch (error) {
-            showError(error.message)
-        }
-    }
-
-    const showSuccess = (message: string) => {
-        Modal.success({
-            content: message,
-            onOk: () => { history.goBack(); }
-        });
-    }
-
-    const showError = (message: string) => {
-        Modal.error({
-            title: 'Помилка!',
-            content: message,
-            onOk: () => { history.goBack(); }
-        });
+        catch (error)
+        {
+            if (error.response.status === 400) {
+                notificationLogic('error', tryAgain);
+                history.goBack(); 
+            }
+        };
     }
 
     return (
@@ -142,12 +144,11 @@ export const ClubAnnualReportCreate = () => {
                     className='container'>
                     <Text strong={true}>Провід куреня</Text>
                     {admins.length !== 0 ? (
-                admins.map((admin) => (
+                admins.map((admin:ClubAdmin) => (
                     <Form.Item
                         className='w100'
                         name='currentClubMembers'
-                    >{admin.adminType.adminTypeName}, {admin.user.firstName} {admin.user.lastName}, 
-                    {admin.user.email}
+                    >{admin.adminType.adminTypeName}, {admin.user.firstName} {admin.user.lastName}, {admin.user.email}
                     </Form.Item>
                 ))
                 ) : (
@@ -158,7 +159,6 @@ export const ClubAnnualReportCreate = () => {
             <Row
                 gutter={16}
                 align='bottom'>
-                
                 <Col
                     xs={24} sm={12} md={12} lg={12}
                     className='container'>
@@ -186,8 +186,7 @@ export const ClubAnnualReportCreate = () => {
                     <Text strong={true}>Сайт/сторінка в інтернеті:</Text>
                     <Form.Item
                         className='w100'
-                        name='clubPage'
-                        >
+                        name='clubPage'>
                     {club.clubURL}
                     </Form.Item>
                 </Col>
@@ -202,9 +201,8 @@ export const ClubAnnualReportCreate = () => {
                     {members.length !== 0 ? (
                     <Form.Item
                         className='w100'
-                        name='currentClubMembers'
-                        >
-                          <p>Дійсних членів куреня - {members.length - 1}</p>
+                        name='currentClubMembers'>
+                          <p>Дійсних членів куреня - {members.length}</p>
                     </Form.Item>
                     )
                     : (
@@ -213,8 +211,7 @@ export const ClubAnnualReportCreate = () => {
                      { followers.length !==0 ? (
                     <Form.Item
                         className='w100'
-                        name='currentClubFollowers'
-                        >
+                        name='currentClubFollowers'>
                           <p>Прихильників куреня - {followers.length }</p>
                     </Form.Item>
                     )
@@ -233,7 +230,7 @@ export const ClubAnnualReportCreate = () => {
                     <Form.Item
                             className='w100'
                             name='clubEnteredMembersCount'
-                            rules={validationSchema.text} >
+                            rules={[{ required: true, message: emptyInput() }]} >
                             <TextArea />
                     </Form.Item>
                 </Col>
@@ -248,7 +245,7 @@ export const ClubAnnualReportCreate = () => {
                     <Form.Item
                             className='w100'
                             name='clubLeftMembersCount'
-                            rules={validationSchema.text} >
+                            rules={[{ required: true, message: emptyInput() }]}>
                             <TextArea />
                     </Form.Item>
                 </Col>
@@ -263,7 +260,7 @@ export const ClubAnnualReportCreate = () => {
                     <Form.Item
                             className='w100'
                             name='clubCenters'
-                            rules={validationSchema.textarea} >
+                            rules={[{ required: true, message: emptyInput() }, { max: 2000, message: maxLength(2000)}]} >
                             <TextArea />
                     </Form.Item>
                 </Col>
@@ -278,7 +275,7 @@ export const ClubAnnualReportCreate = () => {
                     <Form.Item
                             className='w100'
                             name='kbUSPWishes'
-                            rules={validationSchema.textarea} >
+                            rules={[{ required: true, message: emptyInput() }, { max: 2000, message: maxLength(2000)}]} >
                             <TextArea />
                     </Form.Item>
                 </Col>
@@ -316,13 +313,13 @@ export const ClubAnnualReportCreate = () => {
               />
               <Table
                 dataSource={getTableFollowers(followers)}
-                columns={administrationsColumns}
+                columns={followersColumns}
                 pagination={{ defaultPageSize: 4 }}
                 className="table"
               />
               <Table
-                dataSource={getTableMembers(members,admins, club.head)}
-                columns={administrationsColumns}
+                dataSource={getTableMembers(members,admins,club.head)}
+                columns={followersColumns}
                 pagination={{ defaultPageSize: 4 }}
                 className="table"
               />

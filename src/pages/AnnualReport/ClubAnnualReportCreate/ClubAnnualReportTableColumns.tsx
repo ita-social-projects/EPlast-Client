@@ -1,11 +1,6 @@
 import ClubAdmin from "../../../models/Club/ClubAdmin";
 import ClubMember from './../../../models/Club/ClubMember';
-import moment from "moment";
-import adminApi from "../../../api/adminApi";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { CityRegionAdminsOfUser } from "../../../api/NotificationBoxApi";
-import User from "../../../models/UserTable/User";
+
 
 
 export const getTableAdmins = (admins: ClubAdmin[], head: ClubAdmin): any[] => {
@@ -27,11 +22,7 @@ const convertToTableAdmin = (admin: ClubAdmin) => {
         name: `${admin.user.firstName} ${admin.user.lastName}`,
         status: "Адміністратор",
         type: admin.adminType.adminTypeName,
-        userCity : `${admin.user.firstName}`,
-        startDate: moment(admin.startDate).format("DD-MM-YYYY"),
-        endDate: admin.endDate
-          ? moment(admin.endDate).format("DD-MM-YYYY")
-          : "Не визначено",
+        userCity : `${admin.user.cityName}`,
       }
     : null;
 };
@@ -47,6 +38,8 @@ export const getTableMembers = (members: ClubMember[], admins: ClubAdmin[], head
     key: member.id,
     name: `${member.user.firstName} ${member.user.lastName}`,
     status: "Член Куреня",
+    type: member.user.userRole,
+    userCity : `${member.user.cityName}`,
   }));
 };
 
@@ -55,5 +48,7 @@ export const getTableFollowers = (followers: ClubMember[]) => {
     key: member.id,
     name: `${member.user.firstName} ${member.user.lastName}`,
     status: "Прихильник Куреня",
+    type: member.user.userRole,
+    userCity : `${member.user.cityName}`,
   }));
 };
