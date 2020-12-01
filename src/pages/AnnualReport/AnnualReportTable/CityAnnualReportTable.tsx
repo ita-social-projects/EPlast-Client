@@ -109,7 +109,6 @@ interface props {
     const handleConfirm = async (id: number) => {
       hideDropdowns();
       try {
-        debugger
         let response = await AnnualReportApi.confirm(id);
         let cityId = annualReports.find((item) => item.id == id)?.cityId;
         setAnnualReports(
