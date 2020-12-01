@@ -75,13 +75,13 @@
 .userMenu {
     border: none;
     background: inherit;
-    color: white;
+    color: white !important;
     user-select: none;
     font-size: 14px;
 }
 
 .userMenu:hover {
-    color: wheat;
+    color: wheat !important;
 }
 
 .dropDownMenu {
