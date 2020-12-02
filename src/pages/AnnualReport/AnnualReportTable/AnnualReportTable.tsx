@@ -379,7 +379,7 @@ const AnnualReportTable = () => {
     },
     {
       title: "Курінь",
-      dataIndex: ["club", "name"],
+      dataIndex: ["clubName"],
     },
     {
       title: "Дата подання",
