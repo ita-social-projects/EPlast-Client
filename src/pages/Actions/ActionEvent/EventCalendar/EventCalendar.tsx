@@ -36,9 +36,6 @@ export default function () {
                 })
             })
             setLoading(true);
-            if (window.innerWidth < 768) {
-                notificationLogic('info', "Для кращого користувацького досвіду поверніть девайс на 90 градусів");
-            }
         }
         fetchData();
     }, []);
