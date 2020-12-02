@@ -52,7 +52,7 @@ const Assignments = () => {
   return loading === false ? (
     <Spinner />
   ) : (
-      <div className="wrapper">
+      
         <div className="displayFlex">
           <div className="avatarWrapper">
             <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} />
@@ -267,7 +267,6 @@ const Assignments = () => {
             </div>
           </div>
         </div>
-      </div>
     );
 }
 export default Assignments;
