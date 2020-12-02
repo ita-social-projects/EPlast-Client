@@ -57,7 +57,6 @@ export default function () {
   const [placeOfWorkID, setPlaceOfWorkID] = useState<any>();
   const [positionID, setPositionID] = useState<any>();
   const [birthday, setBirthday] = useState<Moment>();
-
   const [userAvatar, setUserAvatar] = useState<any>();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();

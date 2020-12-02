@@ -160,6 +160,7 @@ input,
     z-index: 999;
     background-color: white;
 }
+
 .loader{
     position: fixed !important;
     top: 50%;
@@ -167,6 +168,7 @@ input,
     transform:translateX(-50%) ;
     
 }
+
 .deleteIcon{
     margin-top: 3px;
     margin-left: 10px;
@@ -175,6 +177,7 @@ input,
    text-align: center;
     position: absolute;
 }
+
 .buttons
 {   
     padding-top: 20px;

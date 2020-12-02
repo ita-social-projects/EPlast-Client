@@ -1,5 +1,4 @@
 .headerContainer {
-    display: flex;
     justify-content: space-between;
     padding: 0 80px;
     position: fixed;
@@ -7,12 +6,22 @@
     width: 100%;
     box-shadow: 0px 1px 4px 3px #00000021;
     user-select: none;
+    display: flex;
+    align-self: center;  
 }
 
 .headerMenu {
     color: white;
     border: none;
     font-size: 16px;
+}
+
+.MenuWidth {
+    width: 260px;
+}
+
+.headerMenu :hover {
+    color: white;
 }
 
 .headerDropDownItem {
@@ -66,13 +75,13 @@
 .userMenu {
     border: none;
     background: inherit;
-    color: white;
+    color: white !important;
     user-select: none;
     font-size: 14px;
 }
 
 .userMenu:hover {
-    color: wheat;
+    color: wheat !important;
 }
 
 .dropDownMenu {
@@ -86,7 +95,14 @@
 
 @media (max-width: 767px) {
     .headerContainer {
+        color: white;
         padding: 0 15px;
+    }
+    .headerMenu {
+        color: white;
+    }
+    .headerMenu :hover {
+        color: white;
     }
     .headerMenu:nth-child(2) {
         min-width: 0;

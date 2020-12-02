@@ -36,6 +36,10 @@ export const successfulUpdateAction = (name:string, itemName?:string)=>{
     return itemName ? `${name} ${itemName} успішно оновлено` : `${name} успішно оновлено`;
 }; 
 
+export const successfulConfirmedAction = (name:string, itemName?:string)=>{
+    return itemName ? `${name} ${itemName} успішно затверджено` : `${name} успішно затверджено`;
+}; 
+
 export const failCreateAction = (name:string)=>{
     return `Не вдалося створити ${name}`;
 }; 

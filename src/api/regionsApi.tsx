@@ -1,3 +1,4 @@
+import RegionAnnualReportQuestions from "../pages/AnnualReport/Interfaces/RegionAnnualReportQuestions";
 import api from "./api";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
@@ -7,7 +8,7 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
   let { length } = bstr;
   const u8arr = new Uint8Array(length);
 
-  while (length !== 0) {
+  while (length !== -1) {
     u8arr[length] = bstr.charCodeAt(length);
     length -= 1;
   }
@@ -155,8 +156,8 @@ export const redirectCities = async (prevRegId: number, nextRegId: number) => {
     });
 };
 
-export const createRegionAnnualReport = async (id:number, year:number)=>{
-  return api.post(`Regions/CreateRegionAnnualReportById/${id}/${year}`)
+export const createRegionAnnualReport = async (id:number, year:number, data: RegionAnnualReportQuestions)=>{
+  return api.post(`Regions/CreateRegionAnnualReportById/${id}/${year}`, JSON.stringify(data))
   .catch((error)=>{
    throw new Error(error);
  })

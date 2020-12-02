@@ -1,4 +1,4 @@
-FROM node:10-alpine as builder
+FROM node:12 as builder
 
 # install and cache app dependencies
 COPY package*.json ./
@@ -8,7 +8,7 @@ WORKDIR /EPlast-Client
 
 COPY . .
 
-
+ENV NODE_OPTIONS=--max_old_space_size=4096
 RUN npm run build
 
 

@@ -3,7 +3,6 @@ import { useHistory } from "react-router-dom";
 import { Table, Spin, Input, Divider, Button } from 'antd';
 import AnnualReport from '../Interfaces/AnnualReport';
 import ClubAnnualReport from '../Interfaces/ClubAnnualReport';
-import Paragraph from 'antd/lib/skeleton/Paragraph';
 import ClickAwayListener from "react-click-away-listener";
 import UnconfirmedDropdown from "./Dropdowns/UnconfirmedDropdown/UnconfirmedDropdown";
 import ConfirmedDropdown from "./Dropdowns/ConfirmedDropdown/ConfirmedDropdown";
@@ -172,9 +171,7 @@ interface props {
       checkAccessToManage();
     }, []);
 
-console.log(annualReport)
-    return (
-        
+    return (       
         <div>
               <Table
         bordered
