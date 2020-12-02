@@ -78,22 +78,74 @@
   margin-bottom: 5px;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1320px) {
   .displayFlex {
-    display: block;
-    height: 100%;
-    width: 100%;
-  }
-}
-@media (max-width: 1400px) {
-  .avatarWrapper {
+    display: flex;
     margin-left: auto;
     margin-right: auto;
+    flex-direction: column;
   }
-}
-@media (max-width: 1400px) {
+  .avatarWrapper {
+    margin: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+  }
   .approversContent {
     margin-left: auto;
     margin-right: auto;
+    width: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .approversCard {
+    display: block;
+  }
+  .displayFlex {
+    height: auto;
+    width: auto;
+  }
+  .avatarWrapper {
+    height: auto;
+    width: auto;
+  }
+  .approversContent {
+    height: auto;
+    width: auto;
+  }
+}
+@media (max-width: 700px) {
+  .avatarWrapper {
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    height: auto;
+    width: auto;
+    min-width: auto;
+    max-width: auto;
+  }
+  .approversContent {
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    height: auto;
+    width: auto;
+    min-width: auto;
+    max-width: auto;
+  }
+  .displayFlex {
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    height: auto;
+    width: auto;
+  }
+  .approversCard {
+    margin-left: auto;
+    margin-right: auto;
+    height: auto;
+    width: auto;
+    text-align: center;
   }
 }

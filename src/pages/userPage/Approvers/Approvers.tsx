@@ -201,7 +201,7 @@ const Assignments = () => {
                 )
                 )}
             </div>
-            <h1>Поручення Голови осередку/Осередкового УСП/УПС</h1>
+            <h1 className="approversCard">Поручення Голови осередку/Осередкового УСП/УПС</h1>
             <div className="approversCard">
               {(data?.cityApprover != null) ? (
                 <div>
