@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Select, Form, Button, Row, Col } from 'antd';
-import {getClubs} from '../../../../api/clubsApi';
+import {getClubs,createClubAnnualReport} from '../../../../api/clubsApi';
 import Clubs from '../../Interfaces/ClubAnnualReport'
 import { useHistory } from 'react-router-dom';
 import './ClubSelectModal.less'
 import {emptyInput} from "../../../../components/Notifications/Messages"
+import notificationLogic from "../../../../components/Notifications/Notification";
 
 interface Props {
     visibleModal: boolean,
@@ -15,12 +16,26 @@ const ClubSelectModal = (props: Props) => {
     const { visibleModal, handleOk } = props;
     const history = useHistory();
     const [clubOptions, setClubOptions] = useState<any>();
+    const [form] = Form.useForm();
+    
 
     const validationSchema = {
         club: [
             { required: true, message: emptyInput() }
         ],
     }
+
+    const handleSubmit = async (values : any)=>{
+        createClubAnnualReport(JSON.parse(values.region).id) 
+        .then(() => {
+          notificationLogic("success", "Річний звіт успішно створено");
+          window.location.reload();
+        })
+        .catch(() => {
+          notificationLogic("error", "Щось пішло не так. Можливо даний річний звіт уже створено");
+        });    
+        form.resetFields(); 
+      }
 
     const fetchClubs = async()=>{
         let response = await getClubs();
@@ -44,7 +59,7 @@ const ClubSelectModal = (props: Props) => {
             visible={visibleModal}
             footer={null} >
             <Form
-                onFinish={(obj) => { history.push(`/club/1`) }} >
+                onFinish={(obj) =>{history.push(`/annualreport/createClubAnnualReport/${obj.clubId}`)}} >
                 <Row>
                     <Col
                         span={24} >
