@@ -15,6 +15,9 @@ interface ClubAnnualReport {
     kbUSPWishes:string;
     clubId:number;
     club: Club | null;
+    clubMembersSummary: string;
+    clubAdminContacts: string;
+    clubName: string;
 }
 
 export default ClubAnnualReport;
