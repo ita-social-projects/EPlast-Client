@@ -17,7 +17,7 @@
 }
 
 .MenuWidth {
-    width: 260px;
+    width: 300px;
 }
 
 .headerMenu :hover {
@@ -95,14 +95,14 @@
 
 @media (max-width: 767px) {
     .headerContainer {
-        color: white;
+        color: white !important;
         padding: 0 15px;
     }
     .headerMenu {
-        color: white;
+        color: white !important;
     }
     .headerMenu :hover {
-        color: white;
+        color: white !important;
     }
     .headerMenu:nth-child(2) {
         min-width: 0;
