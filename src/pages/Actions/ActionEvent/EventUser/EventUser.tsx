@@ -144,7 +144,7 @@ const EventUser = () => {
     <Spinner />
   ) : (
     <div className={classes.wrapper}>
-      <div className="avatarWrapper">
+      <div className={classes.wrapperImg}>
                     
  
 
