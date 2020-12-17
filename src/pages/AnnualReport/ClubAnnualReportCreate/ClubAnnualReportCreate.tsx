@@ -54,7 +54,7 @@ export const ClubAnnualReportCreate = () => {
         },
       ];
 
-      const followersColumns = [
+    const followersColumns = [
         {
           title: "Ім’я, Прізвище",
           dataIndex: "name",
@@ -88,7 +88,7 @@ export const ClubAnnualReportCreate = () => {
             setFollowers(followers.data.followers);
             setId(id);
          }
-         catch (error) {
+        catch (error) {
             notificationLogic("error", tryAgain);
          }
     }
@@ -230,8 +230,9 @@ export const ClubAnnualReportCreate = () => {
                     <Form.Item
                             className='w100'
                             name='clubEnteredMembersCount'
-                            rules={[{ required: true, message: emptyInput() }]} >
-                            <TextArea />
+                            rules={[{ required: true, message: emptyInput() },
+                                { max: 7, message: maxLength(7) }]}>
+                                    <Input  type="number"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
                     </Form.Item>
                 </Col>
             </Row>
@@ -245,8 +246,9 @@ export const ClubAnnualReportCreate = () => {
                     <Form.Item
                             className='w100'
                             name='clubLeftMembersCount'
-                            rules={[{ required: true, message: emptyInput() }]}>
-                            <TextArea />
+                            rules={[{ required: true, message: emptyInput() },
+                                { max: 7, message: maxLength(7) }]}>
+                                    <Input  type="number"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
                     </Form.Item>
                 </Col>
             </Row>
@@ -289,8 +291,7 @@ export const ClubAnnualReportCreate = () => {
                     <Text strong={true}>Дата заповнення</Text>
                     <Form.Item
                         className='w100'
-                        name='date'
-                        >
+                        name='date'>
                             {moment().format("DD.MM.YYYY")}
                     </Form.Item>
                 </Col>

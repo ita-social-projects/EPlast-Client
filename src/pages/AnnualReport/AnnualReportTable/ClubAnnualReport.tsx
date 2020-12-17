@@ -1,17 +1,18 @@
 import React, { useEffect, useState, PropsWithRef } from "react";
-import { Table} from 'antd';
+import { Modal, Table} from 'antd';
 import ClubAnnualReport from '../Interfaces/ClubAnnualReport';
 import AuthStore from "../../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
-import { confirmClubAnnualReport, getClubAnnualReportById } from "../../../api/clubsApi";
+import { cancelClubAnnualReport, confirmClubAnnualReport, getClubAnnualReport, getClubAnnualReportById, removeClubAnnualReport } from "../../../api/clubsApi";
 import ClubAnnualReportInformation from "./ClubAnnualReportInformation/ClubAnnualReportInformation";
 import ClickAwayListener from "react-click-away-listener";
 import UnconfirmedDropdown from "./DropdownsForClubAnnualReports/UnconfirmedDropdown/UnconfirmedDropdown";
 import ConfirmedDropdown from "./DropdownsForClubAnnualReports/ConfirmedDropdown/ConfirmedDropdown";
 import SavedDropdown from "./DropdownsForClubAnnualReports/SavedDropdown/SavedDropdown";
-import{successfulConfirmedAction, successfulUpdateAction, tryAgain} from "../../../components/Notifications/Messages";
+import{successfulConfirmedAction, successfulDeleteAction, successfulUpdateAction, tryAgain} from "../../../components/Notifications/Messages";
 import notificationLogic from '../../../components/Notifications/Notification';
 import { useHistory } from "react-router-dom";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 interface props {
     columns: any;
@@ -19,8 +20,8 @@ interface props {
   }
 
   export const ClubAnnualReportTable =({columns, filteredData}:props)=>{
-    const [clubAnnualReport, setClubAnnualReport] = useState<ClubAnnualReport>(Object);
     const history = useHistory();
+    const [clubAnnualReport, setClubAnnualReport] = useState<ClubAnnualReport>(Object);
     const [clubAnnualReports, setClubAnnualReports] = useState<ClubAnnualReport[]>(Array());
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
@@ -29,6 +30,8 @@ interface props {
     const [showSavedDropdown, setShowSavedDropdown] = useState<boolean>(false);
     const [canManage, setCanManage] = useState<boolean>(false);
     const [showClubAnnualReportModal, setShowClubAnnualReportModal] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
+
 
     const checkAccessToManage = () => {
     let jwt = AuthStore.getToken() as string;
@@ -38,6 +41,12 @@ interface props {
     ] as string[];
     setCanManage(roles.includes("Admin") || roles.includes("Голова Куреня"));
     };
+
+    const handleClickAway = () => {
+      setShowUnconfirmedDropdown(false);
+      setShowConfirmedDropdown(false);
+      setShowSavedDropdown(false);
+    }
 
     const hideDropdowns = () => {
       setShowUnconfirmedDropdown(false);
@@ -62,6 +71,10 @@ interface props {
       }
     };
 
+    const  renewPage = ()=>{
+      window.location.reload(false);
+    }
+
     const handleView = async (id:number) => {
       hideDropdowns();
       try {
@@ -72,12 +85,31 @@ interface props {
       {
         if (error.response?.status === 400) {
           notificationLogic('error', tryAgain);
+          history.goBack(); 
+        };
+      }
+    }
+
+    const handleCancel = async (id:number) => {
+      hideDropdowns();
+      setLoading(true);
+      try {
+        let response = await cancelClubAnnualReport(id);
+        setClubAnnualReports(clubAnnualReports?.filter((item) => item.id !== id));
+        notificationLogic('success', successfulUpdateAction ('Річний звіт', response.data.name));
+        renewPage();
+      } catch (error)
+      {
+        if (error.response?.status === 400) {
+          notificationLogic('error', tryAgain);
+          history.goBack(); 
         };
       }
     }
 
     const handleConfirm = async (id: number) => {
       hideDropdowns();
+      setLoading(false);
       try {
         let response = await confirmClubAnnualReport(id);
         setClubAnnualReports(
@@ -92,15 +124,49 @@ interface props {
           })
         );
         notificationLogic('success', successfulConfirmedAction ('Річний звіт', response.data.name));
-        history.goBack();
+        renewPage();
       } catch (error) {
         notificationLogic('error', tryAgain);
-        history.push(`/annualreport/table`);
+        history.goBack(); 
       }
+    }
+
+    const handleRemove = async (id: number) => {
+      hideDropdowns(); 
+      try {
+        Modal.confirm({
+          title: "Ви дійсно хочете видалити річний звіт?",
+          icon: <ExclamationCircleOutlined/>,
+          okText: 'Так, видалити',
+          okType: 'danger',
+          cancelText: 'Скасувати',
+          maskClosable: true,
+          async onOk() {
+        let response = await removeClubAnnualReport(id);
+        setClubAnnualReports(clubAnnualReports?.filter((item) => item.id !== id));
+        notificationLogic('success', successfulDeleteAction ('Річний звіт', response.data.name));
+        renewPage();
+      }
+        });
+      } catch (error) {
+        notificationLogic('error', tryAgain);
+        history.goBack(); 
+      }
+    };
+
+    const handleEdit = (id: number) => {
+      hideDropdowns();
+      history.push(`/club/editClubAnnualReport/${id}`);
+    };
+    
+    const fetchData = async () => {
+    await getClubAnnualReport();
+    setLoading(true);
     }
 
     useEffect(() => {
       checkAccessToManage();
+      fetchData();
     }, []);
     
     return(
@@ -113,11 +179,8 @@ interface props {
         dataSource={filteredData}
         onRow={(record) => {
     return {
-      onClick: () => 
-      {
-        hideDropdowns();
-      },
-      onContextMenu: (event) => {
+        onClick: () => {hideDropdowns();},
+        onContextMenu: (event) => {
         event.preventDefault();
         showDropdown(record.status);
         setClubAnnualReport(record);
@@ -149,9 +212,9 @@ interface props {
           pageY={y}
           canManage={canManage}
           onView={handleView}
-          onEdit={handleView}
+          onEdit={handleEdit}
           onConfirm={handleConfirm}
-          onRemove={handleView}
+          onRemove={handleRemove}
         />
         <ConfirmedDropdown
           showDropdown={showConfirmedDropdown}
@@ -160,7 +223,7 @@ interface props {
           pageY={y}
           canManage={canManage}
           onView={handleView}
-          onCancel={handleView}
+          onCancel={handleCancel}
         />
         <SavedDropdown
           showDropdown={showSavedDropdown}
