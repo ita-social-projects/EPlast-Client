@@ -182,7 +182,7 @@ const HeaderContainer = () => {
                     alt="User"
                     style={{ marginRight: "10px" }}
                   />
-                  Привіт, {name}
+                  Привіт, { name !== undefined ? (name?.length > 12 ? name.slice(0,10) +"..." : name) : "" }
                 </NavLink>
               </Dropdown>
             </Menu.Item>
