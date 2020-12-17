@@ -380,7 +380,7 @@ const City = () => {
               }
               </a>
             </Title>
-            <Row className="cityItems1" justify="center" gutter={[0, 16]}>
+            <Row className= {members.length >=4 ? "cityItems1" : "cityItems"} justify="center" gutter={[0, 16]}>
               {members.length !== 0 ? (
                 members.map((member) => (
                   <Col
