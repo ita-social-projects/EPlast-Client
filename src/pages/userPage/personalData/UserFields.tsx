@@ -190,6 +190,14 @@ export default function () {
      >
        Обрати/змінити курінь
      </Button>
+     <Button 
+       className="confirmBtn"
+       onClick={() =>
+         history.push(`/cities`)
+       }
+     >
+       Обрати/змінити станицю
+     </Button>
    </div>
    
  </Form>

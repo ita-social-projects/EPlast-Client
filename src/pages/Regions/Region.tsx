@@ -507,7 +507,7 @@ const Region = () => {
               }
               </a>
             </Title>
-            <Row className="cityItems" justify="center" gutter={[0, 16]}>
+            <Row className="cityItems1" justify="center" gutter={[0, 16]}>
               {members[0].name !== "" ? (
                 members.map((member) => (
                   <Col
