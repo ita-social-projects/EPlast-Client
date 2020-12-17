@@ -57,27 +57,13 @@ const setTagColor = (status: number) => {
 };
 
 const AnnualReportTable = () => {
-  const history = useHistory();
-  const [annualReport, setAnnualReport] = useState<AnnualReport>(Object);
-  const [clubAnnualReport, setClubAnnualReport] = useState<ClubAnnualReport>(Object);
   const [reportStatusNames, setReportStatusNames] = useState<any[]>(Array());
   const [annualReports, setAnnualReports] = useState<AnnualReport[]>(Array());
   const [clubAnnualReports, setClubAnnualReports] = useState<ClubAnnualReport[]>(Array());
   const [regionAnnualReports, setRegionsAnnualReports]= useState<[]>([]);
   const [showRegionAnnualReports, setShowRegionAnnualReports] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
-  const [showUnconfirmedDropdown, setShowUnconfirmedDropdown] = useState<
-    boolean
-  >(false);
-  const [showConfirmedDropdown, setShowConfirmedDropdown] = useState<boolean>(
-    false
-  );
-  const [showSavedDropdown, setShowSavedDropdown] = useState<boolean>(false);
-  const [showAnnualReportModal, setShowAnnualReportModal] = useState<boolean>(
-    false
-  );
+  const [visible, setvisible]= useState<boolean>(false) ;
   const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(
     false
   );
@@ -100,10 +86,8 @@ const AnnualReportTable = () => {
     fetchClubAnnualReports();
     fetchRegionAnnualReports();
     checkAccessToManage();
+    renewPage();
   }, []);
-
-  const handleCancal = () =>
-      {setShowRegionAnnualReports (false)};
 
   const checkAccessToManage = () => {
     let jwt = AuthStore.getToken() as string;
@@ -136,6 +120,7 @@ const AnnualReportTable = () => {
     try {
       let response = await getClubAnnualReport();
       setClubAnnualReports(response.data.clubAnnualReports);
+
     } catch (error) {
       showError(error.message);
     }
@@ -150,125 +135,11 @@ const AnnualReportTable = () => {
     }
   };
 
-  const handleView = async (id: number) => {
-    hideDropdowns();
-    try {
-      let response = await AnnualReportApi.getById(id);
-      setAnnualReport(response.data.value);
-      setShowAnnualReportModal(true);
-    } catch (error) {
-      showError(error.message);
-    }
-  };
-
-  const handleEdit = (id: number) => {
-    hideDropdowns();
-    history.push(`/annualreport/edit/${id}`);
-  };
-
-  const handleConfirm = async (id: number) => {
-    hideDropdowns();
-    try {
-      let response = await AnnualReportApi.confirm(id);
-      let cityId = annualReports.find((item) => item.id == id)?.cityId;
-      setAnnualReports(
-        annualReports.map((item) => {
-          if (
-            item.id === id ||
-            (item.id !== id && item.cityId === cityId && item.status === 1)
-          ) {
-            item.status++;
-          }
-          return item;
-        })
-      );
-      showSuccess(response.data.message);
-    } catch (error) {
-      showError(error.message);
-    }
-  };
-
-  const handleCancel = async (id: number) => {
-    hideDropdowns();
-    try {
-      let response = await AnnualReportApi.cancel(id);
-      setAnnualReports(
-        annualReports.map((item) => {
-          if (item.id === id) {
-            item.status--;
-          }
-          return item;
-        })
-      );
-      showSuccess(response.data.message);
-    } catch (error) {
-      showError(error.message);
-    }
-  };
-
-  
-
-  const handleRemove = async (id: number) => {
-    hideDropdowns(); 
-    try {
-      Modal.confirm({
-        title: "Ви дійсно хочете видалити річний звіт?",
-        icon: <ExclamationCircleOutlined/>,
-        okText: 'Так, видалити',
-        okType: 'danger',
-        cancelText: 'Скасувати',
-        maskClosable: true,
-        async onOk() {
-      let response = await AnnualReportApi.remove(id);
-      setAnnualReports(annualReports?.filter((item) => item.id !== id));
-      showSuccess(response.data.message);
-        }
-      });
-      
-    } catch (error) {
-      showError(error.message);
-    }
-  };
-
-  const itemRender = (current: any, type: string, originalElement: any) => {
-    if (type === "prev") {
-      return <Button type="primary">Попередня</Button>;
-    }
-    if (type === "next") {
-      return <Button type="primary">Наступна</Button>;
-    }
-    return originalElement;
-  };
-
-  const hideDropdowns = () => {
-    setShowUnconfirmedDropdown(false);
-    setShowConfirmedDropdown(false);
-    setShowSavedDropdown(false);
-  };
-
-  const showDropdown = (annualReportStatus: number) => {
-    switch (annualReportStatus) {
-      case 0:
-        hideDropdowns();
-        setShowUnconfirmedDropdown(true);
-        break;
-      case 1:
-        hideDropdowns();
-        setShowConfirmedDropdown(true);
-        break;
-      case 2:
-        hideDropdowns();
-        setShowSavedDropdown(true);
-        break;
-    }
-  };
-
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    hideDropdowns();
     setSearchedData(event.target.value);
   };
 
-  const filteredData =
+  const filteredCityData =
     searchedData !== ""
       ? annualReports.filter(
           (item) =>
@@ -281,15 +152,6 @@ const AnnualReportTable = () => {
         )
       : annualReports;
 
-      
-
- 
-
-  const showSuccess = (message: string) => {
-    Modal.success({
-      content: message,
-    });
-  };
 
   const showError = (message: string) => {
     Modal.error({
@@ -369,9 +231,6 @@ const AnnualReportTable = () => {
     },
   ];
 
-
-  
-
   const columnsClub=[
     {
       title: "Номер",
@@ -404,29 +263,29 @@ const AnnualReportTable = () => {
   ];
 
   const contentList:  { [key: string]: any }  = {
-    tab1: <div><CityAnnualReportTable columns={columns} filteredData={filteredData}/></div>,
+    tab1: <div><CityAnnualReportTable columns={columns} filteredData={annualReports}/></div>,
     tab2: <div><ClubAnnualReportTable columns={columnsClub} filteredData={clubAnnualReports}/></div>,
     tab3: <div><RegionAnnualReportTable columns={columnsRegion} filteredData={regionAnnualReports}/></div>,
   };
+
+
   const [noTitleKey, setKey] = useState<string>('tab1');
 
+
   const  renewPage = ()=>{
-    const key = noTitleKey;
-    
-    setKey('KV1N');
-    setKey('KV2N');
+    const key = noTitleKey; 
+    setKey('tab1');
+    setKey('tab2');
     setKey(key);
+    setvisible(false);
    }
 
    const onTabChange =  (key:string) => {
-    console.log(noTitleKey)
-    setKey(key);
-   
-   console.log(noTitleKey)
-   
+    setKey(key); 
  };
-  return (
 
+
+  return (
     <Layout.Content className="annualreport-table">
       <Title level={2}>Річні звіти</Title>
       <Row className="searchContainer" gutter={16}>
@@ -464,7 +323,7 @@ const AnnualReportTable = () => {
           style={{ width: '100%' }}
           tabList={tabList}
           activeTabKey={noTitleKey}
-          onTabChange={key => {
+          onTabChange={(key) => {
             onTabChange(key);
           }}
         >
