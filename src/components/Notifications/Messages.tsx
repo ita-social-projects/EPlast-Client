@@ -57,7 +57,7 @@ export const failUpdateAction = (name:string)=>{
 }; 
 
 export const shouldContain = (items:string)=>{
-    return `Поле повинне містити ${items}`;
+    return `Поле повинно містити ${items}`;
 };
 
 export const fileIsUpload = (name?:string)=>{
