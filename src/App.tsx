@@ -52,6 +52,7 @@ import StatisticsCities from "./pages/Statistics/StatisticsCities";
 import StatisticsRegions from "./pages/Statistics/StatisticsRegions";
 import NotAuthorizedPage from "./pages/Error/NotAuthorized";
 import { ClubAnnualReportCreate } from "./pages/AnnualReport/ClubAnnualReportCreate/ClubAnnualReportCreate";
+import ClubAnnualReportEdit from "./pages/AnnualReport/ClubAnnualReportEdit/ClubAnnualReportEdit";
 
 const App: FC = () => (
   <div className="App">
@@ -203,6 +204,12 @@ const App: FC = () => (
             exact
             path="/annualreport/edit/:id"
             component={AnnualReportEdit}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/club/editClubAnnualReport/:id"
+            component={ClubAnnualReportEdit}
           />
           <RouteWithLayout
             layout={PrivateLayout}
