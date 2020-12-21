@@ -25,7 +25,8 @@ import{
   possibleFileExtensions, 
   fileIsTooBig, 
   successfulDeleteAction,
-  successfulCreateAction
+  successfulCreateAction,
+  failCreateAction
 } from "../../components/Notifications/Messages"
 
 const AddNewRegionFormPage = () => {
@@ -36,6 +37,7 @@ const AddNewRegionFormPage = () => {
   const [currentPhoto, setCurrentPhoto] = useState(false);
 
   const handleSubmit = async (values: any) => {
+  try{
     const newRegion: any = {
       regionName: values.regionName,
       description: values.description,
@@ -54,6 +56,10 @@ const AddNewRegionFormPage = () => {
 
     notificationLogic("success", successfulCreateAction("Округ"));
     history.push("/regions");
+  }
+  catch(error){
+    notificationLogic("error", failCreateAction("округ"));
+  }
   };
 
   const checkFile = (size: number, fileName: string) => {
