@@ -129,7 +129,6 @@ const CreateClub = () => {
       postIndex: values.postIndex,
       street: values.street,
     };
-
     if (!club.id) {
       CreateClub(newClub);
     } else {
@@ -138,19 +137,16 @@ const CreateClub = () => {
   };
 
   const CreateClub = async (newClub: ClubProfile) => {
+    try{
     notificationLogic("info", "Створення...", <LoadingOutlined />);
-    const responsePromise = createClub(JSON.stringify(newClub));
-    const response = await responsePromise;
+    const response = await createClub(JSON.stringify(newClub));
     club.id = response.data;
-
-    return responsePromise
-      .then(() => {
         notificationLogic("success", successfulCreateAction("Курінь"));
-        history.push(`${club.id}`);
-      })
-      .catch(() => {
+        history.push(`/clubs/${club.id}`);
+      }
+    catch(error) {
         notificationLogic("error", failCreateAction("курінь"));
-      });
+      }
   };
 
   const EditClub = async (newClub: ClubProfile) => {
