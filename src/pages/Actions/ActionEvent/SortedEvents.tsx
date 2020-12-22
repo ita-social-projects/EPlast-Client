@@ -17,6 +17,8 @@ interface Props {
 export interface CardProps {
     eventId: number;
     eventName: string;
+    eventAdmins: any,
+     eventParticipants: any,
     isUserEventAdmin: boolean;
     isUserParticipant: boolean;
     isUserApprovedParticipant: boolean;

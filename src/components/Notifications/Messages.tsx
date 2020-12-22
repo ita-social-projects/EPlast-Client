@@ -6,7 +6,7 @@ export const emptyInput = (name?:string)=>{
     return name ? `Поле ${name} є обов'язковим` : `Поле є обов'язковим`;
 }; 
 
-export const incorrectPhone = 'Дане поле не є номером телефону'; 
+export const incorrectPhone = 'Неправильний формат телефонного номера'; 
 
 export const onlyPositiveNumber = `Поле не може бути від'ємним`; 
 

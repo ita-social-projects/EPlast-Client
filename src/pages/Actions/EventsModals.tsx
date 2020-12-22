@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {Modal} from 'antd';
 import {ExclamationCircleOutlined} from '@ant-design/icons';
 import eventsApi from "../../api/eventsApi";
 import eventUserApi from "../../api/eventUserApi";
 import{successfulDeleteAction, tryAgain} from "../../components/Notifications/Messages"
+import NotificationBoxApi from '../../api/NotificationBoxApi';
 
 const {confirm} = Modal;
 
@@ -16,6 +17,8 @@ interface EventData {
     eventName: string;
     successCallback: EventsStateCallback;
     isSingleEventInState: boolean;
+    eventAdmins: any;
+    eventParticipants: any;
 }
 
 interface EventDataForDeleting {
@@ -23,12 +26,14 @@ interface EventDataForDeleting {
     eventName: string;
     eventTypeId: number;
     eventCategoryId: number;
+    eventAdmins: any;
 }
 
 interface EventDataForApproving {
     eventId: number;
     eventName: string;
     eventStatusId: string;
+    eventAdmins:any;
     setState:(visible:boolean)=>void;
 }
 
@@ -47,7 +52,7 @@ export const showError = () => {
     });
 }
 
-export const showSubscribeConfirm = ({eventId, eventName, successCallback, isSingleEventInState}: EventData) => {
+export const showSubscribeConfirm = ({eventId, eventName, successCallback, isSingleEventInState, eventAdmins, eventParticipants}: EventData) => {
     confirm({
         title: 'Ви впевнені, що хочете зголоситися на дану подію?',
         icon: <ExclamationCircleOutlined/>,
@@ -58,6 +63,13 @@ export const showSubscribeConfirm = ({eventId, eventName, successCallback, isSin
             const createParticipant = async () => {
                 await eventsApi.createParticipant(eventId);
             };
+            NotificationBoxApi.createNotifications(
+                eventAdmins.map((ad: { userId: any; }) => ad.userId),
+                `На подію ${eventName}, у якій у вас адміністративна роль, зголосився новий учасник.`,
+                NotificationBoxApi.NotificationTypes.EventNotifications,
+                `/events/details/${eventId}`,
+                "Перейти до деталей події"
+                );
             createParticipant()
                 .then(() => {
                     Success('Ви успішно надіслали заявку на участь у події.')
@@ -78,7 +90,7 @@ export const showSubscribeConfirm = ({eventId, eventName, successCallback, isSin
     });
 }
 
-export const showUnsubscribeConfirm = ({eventId, eventName, successCallback, isSingleEventInState}: EventData) => {
+export const showUnsubscribeConfirm = ({eventId, eventName, successCallback, isSingleEventInState, eventAdmins}: EventData) => {
     confirm({
         title: 'Ви впевнені, що хочете відписатися від події?',
         icon: <ExclamationCircleOutlined/>,
@@ -89,6 +101,13 @@ export const showUnsubscribeConfirm = ({eventId, eventName, successCallback, isS
             const deleteParticipant = async () => {
                 await eventsApi.removeParticipant(eventId);
             };
+            NotificationBoxApi.createNotifications(
+                eventAdmins.map((ad: { userId: any; }) => ad.userId),
+                `Від події ${eventName}, у якій у вас адміністративна роль, відписався учасник.`,
+                NotificationBoxApi.NotificationTypes.EventNotifications,
+                `/events/details/${eventId}`,
+                "Перейти до деталей події"
+                );
             deleteParticipant()
                 .then(() => {
                     Success('Ви успішно відписалися від події.')
@@ -109,7 +128,7 @@ export const showUnsubscribeConfirm = ({eventId, eventName, successCallback, isS
     });
 }
 
-export const showDeleteConfirm = ({eventId, eventName, successCallback, isSingleEventInState}: EventData) => {
+export const showDeleteConfirm = ({eventId, eventName, successCallback, isSingleEventInState, eventAdmins}: EventData) => {
     confirm({
         title: 'Ви впевнені, що хочете видалити дану подію?',
         icon: <ExclamationCircleOutlined/>,
@@ -121,6 +140,11 @@ export const showDeleteConfirm = ({eventId, eventName, successCallback, isSingle
             const deleteEvent = async () => {
                 await eventsApi.remove(eventId);
             };
+            NotificationBoxApi.createNotifications(
+                eventAdmins.map((ad: { userId: any; }) => ad.userId),
+                `Подія ${eventName}, у якій у вас адміністративна роль, була успішно видалена `,
+                NotificationBoxApi.NotificationTypes.EventNotifications
+                );
             deleteEvent()
                 .then(() => {
                     Success(successfulDeleteAction("Подію"))
@@ -141,7 +165,7 @@ export const showDeleteConfirm = ({eventId, eventName, successCallback, isSingle
     });
 }
 
-export const showDeleteConfirmForSingleEvent = ({eventId, eventName, eventTypeId, eventCategoryId}: EventDataForDeleting) => {
+export const showDeleteConfirmForSingleEvent = ({eventId, eventName, eventTypeId, eventCategoryId, eventAdmins}: EventDataForDeleting) => {
     confirm({
         title: 'Ви впевнені, що хочете видалити дану подію?',
         icon: <ExclamationCircleOutlined/>,
@@ -153,6 +177,11 @@ export const showDeleteConfirmForSingleEvent = ({eventId, eventName, eventTypeId
             const deleteEvent = async () => {
                 await eventsApi.remove(eventId);
             };
+            NotificationBoxApi.createNotifications(
+                eventAdmins.map((ad: { userId: any; }) => ad.userId),
+                `Подія ${eventName}, у якій у вас адміністративна роль, була успішно видалена `,
+                NotificationBoxApi.NotificationTypes.EventNotifications
+                );
             deleteEvent()
                 .then(() => {
                     window.location.replace(`/types/${eventTypeId}/categories/${eventCategoryId}/events`)
@@ -167,7 +196,7 @@ export const showDeleteConfirmForSingleEvent = ({eventId, eventName, eventTypeId
     });
 }
 
-export const showApproveConfirm = ({eventId, eventName, eventStatusId,setState}: EventDataForApproving) => {
+export const showApproveConfirm = ({eventId, eventName, eventStatusId, setState, eventAdmins}: EventDataForApproving) => {
     confirm({
         title: 'Ви впевнені, що хочете затвердити дану подію?',
         icon: <ExclamationCircleOutlined/>,
@@ -179,6 +208,13 @@ export const showApproveConfirm = ({eventId, eventName, eventStatusId,setState}:
              await eventUserApi.getEventToApprove(eventId);
              setState(true);
             };
+            NotificationBoxApi.createNotifications(
+                eventAdmins.map((ad: { userId: any; }) => ad.userId),
+                `Подія ${eventName}, у якій у вас адміністративна роль, успішно затверджена.`,
+                NotificationBoxApi.NotificationTypes.EventNotifications,
+                `/events/details/${eventId}`,
+                "Перейти до деталей події"
+                );
             approveEvent()
                 .then(() => {
                     Success('Ви успішно затвердили дану подію.')
