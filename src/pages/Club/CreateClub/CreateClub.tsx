@@ -145,7 +145,7 @@ const CreateClub = () => {
         history.push(`/clubs/${club.id}`);
       }
     catch(error) {
-        notificationLogic("error", failCreateAction("курінь"));
+        notificationLogic("error", failCreateAction("курінь. Можливо курінь з даною назвою уже існує"));
       }
   };
 
