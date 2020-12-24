@@ -5,6 +5,8 @@ import eventsApi from "../../api/eventsApi";
 import eventUserApi from "../../api/eventUserApi";
 import{successfulDeleteAction, tryAgain} from "../../components/Notifications/Messages"
 import NotificationBoxApi from '../../api/NotificationBoxApi';
+import { EventAdmin } from './ActionEvent/EventInfo/EventInfo';
+
 
 const {confirm} = Modal;
 
@@ -17,7 +19,7 @@ interface EventData {
     eventName: string;
     successCallback: EventsStateCallback;
     isSingleEventInState: boolean;
-    eventAdmins: any;
+    eventAdmins: EventAdmin[];
     eventParticipants: any;
 }
 
@@ -52,7 +54,7 @@ export const showError = () => {
     });
 }
 
-export const showSubscribeConfirm = ({eventId, eventName, successCallback, isSingleEventInState, eventAdmins, eventParticipants}: EventData) => {
+export const showSubscribeConfirm = ({eventId, eventName, successCallback, isSingleEventInState, eventAdmins}: EventData) => {
     confirm({
         title: 'Ви впевнені, що хочете зголоситися на дану подію?',
         icon: <ExclamationCircleOutlined/>,
@@ -64,7 +66,7 @@ export const showSubscribeConfirm = ({eventId, eventName, successCallback, isSin
                 await eventsApi.createParticipant(eventId);
             };
             NotificationBoxApi.createNotifications(
-                eventAdmins.map((ad: { userId: any; }) => ad.userId),
+                eventAdmins.map((ad) => ad.userId),
                 `На подію ${eventName}, у якій у вас адміністративна роль, зголосився новий учасник.`,
                 NotificationBoxApi.NotificationTypes.EventNotifications,
                 `/events/details/${eventId}`,
@@ -102,7 +104,7 @@ export const showUnsubscribeConfirm = ({eventId, eventName, successCallback, isS
                 await eventsApi.removeParticipant(eventId);
             };
             NotificationBoxApi.createNotifications(
-                eventAdmins.map((ad: { userId: any; }) => ad.userId),
+                eventAdmins.map((ad) => ad.userId),
                 `Від події ${eventName}, у якій у вас адміністративна роль, відписався учасник.`,
                 NotificationBoxApi.NotificationTypes.EventNotifications,
                 `/events/details/${eventId}`,

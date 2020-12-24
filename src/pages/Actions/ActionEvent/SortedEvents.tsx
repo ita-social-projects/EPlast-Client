@@ -5,6 +5,7 @@ import EventCard from './EventCard/EventCard';
 import eventsApi from "../../../api/eventsApi";
 import {Space, Spin} from "antd";
 import spinClasses from "./EventUser/EventUser.module.css";
+import { EventAdmin, EventParticipant } from './EventInfo/EventInfo';
 
 const classes = require('./ActionEvent.module.css');
 
@@ -17,8 +18,8 @@ interface Props {
 export interface CardProps {
     eventId: number;
     eventName: string;
-    eventAdmins: any,
-     eventParticipants: any,
+    eventAdmins: EventAdmin[];
+    eventParticipants: EventParticipant[];
     isUserEventAdmin: boolean;
     isUserParticipant: boolean;
     isUserApprovedParticipant: boolean;
@@ -38,7 +39,6 @@ const SortedEvents = ({eventCategoryId, typeId, switcher}: Props) => {
     useEffect(() => {
         const fetchData = async () => {
             const response = await eventsApi.getEvents(typeId, eventCategoryId);
-           
             setActions(response.data)
             setActionsToDisplay(switcher ? response.data.filter((a: CardProps) =>!a.isEventFinished) : response.data)
             setLoading(true);
