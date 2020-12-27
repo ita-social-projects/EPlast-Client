@@ -82,12 +82,12 @@ const PrivateLayout = ({ children }: any) => {
           collapsedWidth="0"
         >
           <div className={classes.profilePhoto}>
-            <Avatar
+            <a href="/"><Avatar
               size={64}
               src={imageBase64}
               alt="User"
               style={{ marginRight: "10px" }}
-            />
+            /></a>
           </div>
           <Menu theme="dark" mode="inline" className={classes.leftMenu}>
             {(canEdit == true) ? (

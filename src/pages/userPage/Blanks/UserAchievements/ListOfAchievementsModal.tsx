@@ -63,7 +63,6 @@ const ListOfAchievementsModal = (props: Props) => {
 
     const getAchievements = async () => {
         const response = await getAchievementsByPage(pageNumber, pageSize, userId);
-        console.log(response);
         if (response.data.length == 0) {
             setIsEmpty(true);
         }

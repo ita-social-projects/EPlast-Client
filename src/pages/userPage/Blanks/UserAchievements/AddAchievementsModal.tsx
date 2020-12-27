@@ -58,9 +58,17 @@ const AddAchievementsModal = (props: Props) => {
       extension.indexOf("pdf") !== -1 ||
       extension.indexOf("jpg") !== -1 ||
       extension.indexOf("jpeg") !== -1 ||
-      extension.indexOf("png") !== -1
+      extension.indexOf("png") !== -1 ||
+      extension.indexOf("docx") !== -1 ||
+      extension.indexOf("doc") !== -1 ||
+      extension.indexOf("txt") !== -1 ||
+      extension.indexOf("csv") !== -1 ||
+      extension.indexOf("xls") !== -1 ||
+      extension.indexOf("xml") !== -1 ||
+      extension.indexOf("odt") !== -1 ||
+      extension.indexOf("ods") !== -1;
     if (!isCorrectExtension) {
-      notificationLogic("error", possibleFileExtensions("pdf,jpg,jpeg,png"));
+      notificationLogic("error", possibleFileExtensions("pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods."));
       return isCorrectExtension;
     }
     const isSmaller3mb =  fileSize < 3145728;
@@ -109,13 +117,13 @@ const AddAchievementsModal = (props: Props) => {
             customRequest={handleUpload}
             multiple={true}
             showUploadList={false}
-            accept=".png,.jpg,.jpeg,.pdf"
+            accept=".png,.jpg,.jpeg,.pdf,.doc,.docx,.xls,xlsx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           >
             <p className="ant-upload-drag-icon">
               <InboxOutlined style={{ color: "#3c5438" }} />
             </p>
             <p className="ant-upload-hint">
-              Клікніть або перетягніть файл для завантаження (PDF*,PNG*,JPG*,JPEG*)
+              Клікніть або перетягніть файл для завантаження
                 </p>
             {files.length !== 0 && files.map(file => (
               <div>{file.fileName};</div>
