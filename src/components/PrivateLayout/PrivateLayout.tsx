@@ -52,8 +52,7 @@ const PrivateLayout = ({ children }: any) => {
         await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
         })
-        console.log(response)
-          setId(response.data.user.id);
+        setId(response.data.user.id);
       })
     }
   };
