@@ -116,7 +116,6 @@ const ActiveMembership = () => {
   };
   const handleDelete = async (plastDegreeId : number) => {
     var currentPlastDegree = plastDegrees.find(p => p.plastDegree.id === plastDegreeId);
-    debugger
     if(currentPlastDegree){
       await NotificationBoxApi.createNotifications(
         [userId],

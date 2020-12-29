@@ -149,7 +149,7 @@ const EventUser = () => {
  
 
 <AvatarAndProgress imageUrl={currentUser.imagePath} time={currentUser.timeToJoinPlast} firstName={currentUser.firstName} lastName={currentUser.lastName} isUserPlastun={true} />
-{userToken.nameid === userId && allEvents?.createdEvents.length !== 0 && (
+{userToken.nameid === userId && (
           <Button
             type="primary"
             className={classes.buttonInside}

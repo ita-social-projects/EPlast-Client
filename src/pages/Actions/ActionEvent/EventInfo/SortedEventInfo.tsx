@@ -56,6 +56,7 @@ const RenderEventIcons = ({
                                eventId: event?.eventId,
                                eventName: event?.eventName,
                                eventStatusId:event?.eventStatus,
+                               eventAdmins:event.eventAdmins,
                                setState:setState
                            })}
                            className="icon" key="setting"/>
@@ -70,7 +71,8 @@ const RenderEventIcons = ({
                            eventId: event?.eventId,
                            eventName: event?.eventName,
                            eventTypeId: event?.eventTypeId,
-                           eventCategoryId: event?.eventCategoryId
+                           eventCategoryId: event?.eventCategoryId,
+                           eventAdmins: event.eventAdmins
                        })}
                        className="icon" key="delete"/>
                         </Tooltip>)}
@@ -81,7 +83,8 @@ const RenderEventIcons = ({
                                eventId: event?.eventId,
                                eventName: event?.eventName,
                                eventTypeId: event?.eventTypeId,
-                               eventCategoryId: event?.eventCategoryId
+                               eventCategoryId: event?.eventCategoryId,
+                               eventAdmins: event.eventAdmins
                            })}
                            className="icon" key="delete"/>
         </Tooltip>)}
@@ -96,7 +99,8 @@ const RenderEventIcons = ({
                                    eventId: event?.eventId,
                                    eventName: event?.eventName,
                                    eventTypeId: event?.eventTypeId,
-                                   eventCategoryId: event?.eventCategoryId
+                                   eventCategoryId: event?.eventCategoryId,
+                                   eventAdmins: event.eventAdmins
                                })}
                                className="icon" key="delete"/>
             </Tooltip>)}
@@ -124,7 +128,9 @@ const RenderEventIcons = ({
                         eventId: event?.eventId,
                         eventName: event?.eventName,
                         successCallback: unSubscribeOnEvent,
-                        isSingleEventInState: true
+                        isSingleEventInState: true,
+                        eventAdmins: event.eventAdmins,
+                        eventParticipants: event.eventParticipants
                     })}
                     style={{color: "#8B0000"}}
                     className="icon" key="unsubscribe"/>
@@ -136,7 +142,9 @@ const RenderEventIcons = ({
                 eventId: event?.eventId,
                 eventName: event?.eventName,
                 successCallback: subscribeOnEvent,
-                isSingleEventInState: true
+                isSingleEventInState: true,
+                eventAdmins: event.eventAdmins,
+                eventParticipants: event.eventParticipants
             })}
                              style={{color: "#3c5438"}}
                              key="subscribe"/>

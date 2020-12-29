@@ -38,7 +38,7 @@ const EventCard = ({
                        item: {
                            eventName, eventId, isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
                            isUserRejectedParticipant, isUserUndeterminedParticipant,
-                           isEventApproved, isEventFinished, isEventNotApproved
+                           isEventApproved, isEventFinished, isEventNotApproved, eventAdmins, eventParticipants
                        },
                        removeEvent,
                        subscribeOnEvent,
@@ -61,7 +61,9 @@ const EventCard = ({
                     eventId,
                     eventName,
                     successCallback: removeEvent,
-                    isSingleEventInState: false
+                    isSingleEventInState: false,
+                    eventAdmins,
+                    eventParticipants
                 })} twoToneColor="#8B0000"
                                key="delete"/>
             </Tooltip>)
@@ -86,7 +88,9 @@ const EventCard = ({
                         eventId,
                         eventName,
                         successCallback: unsubscribeOnEvent,
-                        isSingleEventInState: false
+                        isSingleEventInState: false,
+                        eventAdmins,
+                        eventParticipants
                     })}
                                         style={{color: "#8B0000"}}
                                         key="unsubscribe"/>
@@ -98,7 +102,9 @@ const EventCard = ({
                     eventId,
                     eventName,
                     successCallback: subscribeOnEvent,
-                    isSingleEventInState: false
+                    isSingleEventInState: false,
+                    eventAdmins,
+                    eventParticipants
                 })}
                                  style={{color: "#3c5438"}}
                                  key="unsubscribe"/>
