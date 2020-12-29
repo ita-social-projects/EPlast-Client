@@ -117,7 +117,10 @@ export const Blanks = () => {
                             time={data?.timeToJoinPlast}
                             firstName={data?.user.firstName}
                             lastName={data?.user.lastName}
-                            isUserPlastun={true} />
+                            isUserPlastun={true}
+                            pseudo={data?.user.pseudo} 
+                            city={data?.user.city} 
+                            club={data?.user.club}/>
                     </div>
                     <div className={classes.wrapperCol}>
                         <div className={classes.wrapper}>

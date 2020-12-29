@@ -7,6 +7,8 @@ export default class User {
   birthday?: Date;
   gender: Gender;
   userProfileId: number;
+  pseudo?: string;
+  email: string;
 
   constructor() {
     this.id = "";
@@ -15,5 +17,7 @@ export default class User {
     this.birthday = undefined;
     this.gender = new Gender();
     this.userProfileId = 0;
+    this.pseudo = "";
+    this.email = "";
   }
 }
