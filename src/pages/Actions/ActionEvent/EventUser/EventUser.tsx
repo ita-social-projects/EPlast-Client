@@ -148,7 +148,7 @@ const EventUser = () => {
                     
  
 
-<AvatarAndProgress imageUrl={currentUser.imagePath} time={currentUser.timeToJoinPlast} firstName={currentUser.firstName} lastName={currentUser.lastName} isUserPlastun={true} />
+<AvatarAndProgress imageUrl={currentUser.imagePath} time={currentUser.timeToJoinPlast} firstName={currentUser.firstName} lastName={currentUser.lastName} isUserPlastun={true} pseudo={currentUser.pseudo} city={currentUser.city} club={currentUser.club}/>
 {userToken.nameid === userId && (
           <Button
             type="primary"

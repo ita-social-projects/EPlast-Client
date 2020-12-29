@@ -34,7 +34,7 @@ export default function () {
       <div className="container">
         <Form name="basic" className="formContainer">
           <div className="avatarWrapper">
-            <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} />
+            <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} pseudo={data?.user.pseudo} city={data?.user.city} club={data?.user.club} />
           </div>
           <div className="allFields">
             <div className="rowBlock">
@@ -74,6 +74,27 @@ export default function () {
               >
                 {data?.user.gender.name !== null && data?.user.gender.name !== "" ?
                   (<Input readOnly className="dataInput" value={data?.user.gender.name} />) :
+                  <Input readOnly className="dataInput" value="-" />
+                }
+              </Form.Item>
+            </div>
+
+            <div className="rowBlock">
+              <Form.Item
+                label="Псевдо"
+                className="formItem"
+              >
+                {data?.user.pseudo !== null && data?.user.pseudo !== "" ?
+                  (<Input readOnly className="dataInput" value={data?.user.pseudo} />) :
+                  <Input readOnly className="dataInput" value="-" />
+                }
+              </Form.Item>
+              <Form.Item
+                label="Пошта"
+                className="formItem"
+              >
+                {data?.user.email !== null && data?.user.email !== "" ?
+                  (<Input readOnly className="dataInput" value={data?.user.email} />) :
                   <Input readOnly className="dataInput" value="-" />
                 }
               </Form.Item>
@@ -200,9 +221,7 @@ export default function () {
               Обрати/змінити станицю
      </Button>
           </div>
-
         </Form>
-
       </div>
     );
 }
