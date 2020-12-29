@@ -25,6 +25,7 @@ const PrivateLayout = ({ children }: any) => {
   const history = useHistory();
   const [userRole, setUser] = useState<string[]>();
   const [canEdit, setCanEdit] = useState(false);
+  const [id, setId] = useState<string>("");
 
   const onCollapse = (collValue: boolean) => {
     setCollapsed(collValue);
@@ -51,6 +52,8 @@ const PrivateLayout = ({ children }: any) => {
         await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
         })
+        console.log(response)
+          setId(response.data.user.id);
       })
     }
   };
@@ -82,7 +85,8 @@ const PrivateLayout = ({ children }: any) => {
           collapsedWidth="0"
         >
           <div className={classes.profilePhoto}>
-            <a href="/"><Avatar
+            <a href={`/userpage/main/${id}`}>
+              <Avatar
               size={64}
               src={imageBase64}
               alt="User"

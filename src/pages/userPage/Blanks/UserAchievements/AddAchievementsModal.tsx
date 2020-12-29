@@ -117,7 +117,7 @@ const AddAchievementsModal = (props: Props) => {
             customRequest={handleUpload}
             multiple={true}
             showUploadList={false}
-            accept=".png,.jpg,.jpeg,.pdf,.doc,.docx,.xls,xlsx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            accept=".png,.jpg,.jpeg,.pdf,.doc,.docx"
           >
             <p className="ant-upload-drag-icon">
               <InboxOutlined style={{ color: "#3c5438" }} />
