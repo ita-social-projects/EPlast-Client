@@ -63,7 +63,6 @@ const ListOfAchievementsModal = (props: Props) => {
 
     const getAchievements = async () => {
         const response = await getAchievementsByPage(pageNumber, pageSize, userId);
-        console.log(response);
         if (response.data.length == 0) {
             setIsEmpty(true);
         }
@@ -103,27 +102,49 @@ const ListOfAchievementsModal = (props: Props) => {
                         dataSource={achievements}
                         renderItem={item => (
                             <List.Item
-                                actions={[
-                                    <DownloadOutlined
-                                        className={classes.downloadIcon}
-                                        onClick={() => downloadFile(item.blobName, item.fileName)}
-                                    />,
-                                    <EyeOutlined
-                                        className={classes.reviewIcon}
-                                        onClick={() => reviewFile(item.blobName, item.fileName)} />,
-                                    <Popconfirm
-                                        title="Видалити цей документ?"
-                                        placement="right"
-                                        icon={false}
-                                        onConfirm={() => deleteFIle(item.id, item.fileName)}
-                                        okText="Так"
-                                        cancelText="Ні">
-                                        <DeleteOutlined
-                                            hidden={currentUser}
-                                            className={classes.deleteIcon}
-                                        />
-                                    </Popconfirm>
-                                ]}>
+                                actions={
+                                    (item.fileName.split(".")[1] !== "doc" && item.fileName.split(".")[1] !== "docx") ?
+                                        [
+                                            <DownloadOutlined
+                                                className={classes.downloadIcon}
+                                                onClick={() => downloadFile(item.blobName, item.fileName)}
+                                            />,
+                                            <EyeOutlined
+                                                className={classes.reviewIcon}
+                                                onClick={() => reviewFile(item.blobName, item.fileName)} />,
+                                            <Popconfirm
+                                                title="Видалити цей документ?"
+                                                placement="right"
+                                                icon={false}
+                                                onConfirm={() => deleteFIle(item.id, item.fileName)}
+                                                okText="Так"
+                                                cancelText="Ні">
+                                                <DeleteOutlined
+                                                    hidden={currentUser}
+                                                    className={classes.deleteIcon}
+                                                />
+                                            </Popconfirm>
+                                        ]
+                                        :
+                                        [
+                                            <DownloadOutlined
+                                                className={classes.downloadIcon}
+                                                onClick={() => downloadFile(item.blobName, item.fileName)}
+                                            />,
+                                            <Popconfirm
+                                                title="Видалити цей документ?"
+                                                placement="right"
+                                                icon={false}
+                                                onConfirm={() => deleteFIle(item.id, item.fileName)}
+                                                okText="Так"
+                                                cancelText="Ні">
+                                                <DeleteOutlined
+                                                    hidden={currentUser}
+                                                    className={classes.deleteIcon}
+                                                />
+                                            </Popconfirm>
+                                        ]
+                                    }>
                                 {item.blobName.split(".")[1] === "pdf"
                                     ?
                                     <FilePdfOutlined
