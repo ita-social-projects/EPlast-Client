@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Dropdown, Avatar, Badge, Button } from "antd";
+import { Layout, Menu, Dropdown, Avatar, Badge, Button, Drawer } from "antd";
 import { LoginOutlined, LogoutOutlined, BellOutlined, EditOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import LogoImg from "../../assets/images/ePlastLogotype.png";
@@ -11,7 +11,9 @@ import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
 import NotificationBox from '../NotificationBox/NotificationBox';
 import NotificationBoxApi, { NotificationType, UserNotification } from '../../api/NotificationBoxApi';
-import WebSocketConnection from '../NotificationBox/WebSocketConnection'
+import WebSocketConnection from '../NotificationBox/WebSocketConnection';
+import HistoryDrawer from "./HistoryDrawer";
+import { useLocation } from 'react-router-dom';
 
 let authService = new AuthorizeApi();
 
@@ -26,6 +28,8 @@ const HeaderContainer = () => {
   const [notificationTypes, setNotificationTypes] = useState<Array<NotificationType>>([]);
   const [notifications, setNotifications] = useState<Array<UserNotification>>([]);
   const [visibleDrawer, setVisibleDrawer] = useState<boolean>(false);
+  const [visibleHistoryDrawer, setVisibleHistoryDrawer] = useState(false);
+  const location = useLocation().pathname;
 
   const fetchData = async () => {
     if (user) {
@@ -53,6 +57,16 @@ const HeaderContainer = () => {
       })
     }
   };
+  const userHistory: string[] = sessionStorage.getItem(`${name}`) !== null ? JSON.parse(sessionStorage[`${name}`]) : [];
+  useEffect(() => {
+    if (!userHistory.includes(location) && location !== "/signin") {
+      userHistory.push(location)
+    }
+    if (userHistory.length > 25) {
+      userHistory.shift();
+    }
+    sessionStorage.setItem(`${name}`, JSON.stringify(userHistory));
+  }, [location])
 
   const getNotifications = async (userId: string) => {
     await NotificationBoxApi.getAllUserNotifications(userId)
@@ -182,10 +196,14 @@ const HeaderContainer = () => {
                     alt="User"
                     style={{ marginRight: "10px" }}
                   />
-                  Привіт, { name !== undefined ? (name?.length > 12 ? name.slice(0,10) +"..." : name) : "" }
+                  Привіт, {name !== undefined ? (name?.length > 12 ? name.slice(0, 10) + "..." : name) : ""}
                 </NavLink>
               </Dropdown>
             </Menu.Item>
+            <Button type="ghost"
+              className="historyInfoButton"
+              onClick={() => setVisibleHistoryDrawer(true)}
+            >↔</Button>
           </Menu>
           {id !== "" &&
             <NotificationBox
@@ -198,6 +216,11 @@ const HeaderContainer = () => {
               handleNotificationBox={handleNotificationBox}
             />
           }
+          <HistoryDrawer
+            history={userHistory}
+            setVisibleHistoryDrawer={setVisibleHistoryDrawer}
+            visibleHistoryDrawer={visibleHistoryDrawer}
+          ></HistoryDrawer>
         </>
       ) : (
           <Menu mode="horizontal" className={classes.headerMenu} theme="light">

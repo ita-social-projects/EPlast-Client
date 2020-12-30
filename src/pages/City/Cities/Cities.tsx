@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory , useRouteMatch } from "react-router-dom";
+import { useHistory, useRouteMatch, Link } from "react-router-dom";
 import { Card, Layout, Pagination, Result, Skeleton } from "antd";
 import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -87,61 +87,61 @@ const Cities = () => {
       {loading ? (
         <Spinner />
       ) : (
-        <div>
-          <div className="cityWrapper">
-            {canCreate && page === 1 && searchedData.length === 0 ? (
-              <Card
-                hoverable
-                className="cardStyles addCity"
-                cover={<img src={Add} alt="AddCity" />}
-                onClick={() => history.push(`${url}/new`)}
-              >
-                <Card.Meta
-                  className="titleText"
-                  title="Створити нову станицю"
-                />
-              </Card>
-            ) : null}
-
-            {cities.length === 0 && searchedData.length !== 0 ? (
-              <div>
-                <Result status="404" title="Станицю не знайдено" />
-              </div>
-            ) : (
-              cities.map((city: CityProfile) => (
-               <a href={`${url}/${city.id}`}> 
+          <div>
+            <div className="cityWrapper">
+              {canCreate && page === 1 && searchedData.length === 0 ? (
                 <Card
-                    key={city.id}
-                    hoverable
-                    className="cardStyles"
-                    cover={
-                      photosLoading ? (
-                        <Skeleton.Avatar shape="square" active />
-                      ) : (
-                        <img src={city.logo || undefined} alt="City" />
-                      )
-                    } 
-                    onClick={() => history.push(`${url}/${city.id}`)}
-                  >
-                    <Card.Meta title={city.name} className="titleText" />
-                  </Card>
-                </a>
-              ))
-            )}
+                  hoverable
+                  className="cardStyles addCity"
+                  cover={<img src={Add} alt="AddCity" />}
+                  onClick={() => history.push(`${url}/new`)}
+                >
+                  <Card.Meta
+                    className="titleText"
+                    title="Створити нову станицю"
+                  />
+                </Card>
+              ) : null}
+
+              {cities.length === 0 && searchedData.length !== 0 ? (
+                <div>
+                  <Result status="404" title="Станицю не знайдено" />
+                </div>
+              ) : (
+                  cities.map((city: CityProfile) => (
+                    <Link to={`${url}/${city.id}`}>
+                      <Card
+                        key={city.id}
+                        hoverable
+                        className="cardStyles"
+                        cover={
+                          photosLoading ? (
+                            <Skeleton.Avatar shape="square" active />
+                          ) : (
+                              <img src={city.logo || undefined} alt="City" />
+                            )
+                        }
+                        onClick={() => history.push(`${url}/${city.id}`)}
+                      >
+                        <Card.Meta title={city.name} className="titleText" />
+                      </Card>
+                    </Link>
+                  ))
+                )}
+            </div>
+            <div className="pagination">
+              <Pagination
+                current={page}
+                pageSize={pageSize}
+                total={total}
+                responsive
+                showLessItems
+                onChange={(page) => handleChange(page)}
+                onShowSizeChange={(page, size) => handleSizeChange(page, size)}
+              />
+            </div>
           </div>
-          <div className="pagination">
-            <Pagination
-              current={page}
-              pageSize={pageSize}
-              total={total}
-              responsive
-              showLessItems
-              onChange={(page) => handleChange(page)}
-              onShowSizeChange={(page, size) => handleSizeChange(page, size)}
-            />
-          </div>
-        </div>
-      )}
+        )}
     </Layout.Content>
   );
 };

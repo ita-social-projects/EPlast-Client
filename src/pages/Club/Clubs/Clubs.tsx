@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useHistory, useRouteMatch, Link } from "react-router-dom";
 import { Card, Layout, Pagination, Result, Skeleton } from "antd";
 import Add from "../../../assets/images/add.png";
 import ClubDefaultLogo from "../../../assets/images/default_club_image.jpg";
@@ -90,61 +90,61 @@ const Clubs = () => {
       {loading ? (
         <Spinner />
       ) : (
-        <div>
-          <div className="clubWrapper">
-            {canCreate && page === 1 && searchedData.length === 0 ? (
-              <Card
-                hoverable
-                className="cardStyles addClub"
-                cover={<img src={Add} alt="AddClub" />}
-                onClick={() => history.push(`${url}/new`)}
-              >
-                <Card.Meta
-                  className="titleText"
-                  title="Створити новий курінь"
-                />
-              </Card>
-            ) : null}
-
-            {clubs.length === 0 && searchedData.length !== 0 ? (
-              <div>
-                <Result status="404" title="Курінь не знайдено" />
-              </div>
-            ) : (
-              clubs.map((club: ClubProfile) => (
-                <a href={`${url}/${club.id}`}>
+          <div>
+            <div className="clubWrapper">
+              {canCreate && page === 1 && searchedData.length === 0 ? (
                 <Card
-                  key={club.id}
                   hoverable
-                  className="cardStyles"
-                  cover={
-                    photosLoading ? (
-                      <Skeleton.Avatar shape="square" active />
-                    ) : (
-                      <img src={club.logo || undefined} alt="Club" />
-                    )
-                  }
-                  onClick={() => history.push(`${url}/${club.id}`)}
+                  className="cardStyles addClub"
+                  cover={<img src={Add} alt="AddClub" />}
+                  onClick={() => history.push(`${url}/new`)}
                 >
-                  <Card.Meta title={club.name} className="titleText" />
+                  <Card.Meta
+                    className="titleText"
+                    title="Створити новий курінь"
+                  />
                 </Card>
-                </a>
-              ))
-            )}
+              ) : null}
+
+              {clubs.length === 0 && searchedData.length !== 0 ? (
+                <div>
+                  <Result status="404" title="Курінь не знайдено" />
+                </div>
+              ) : (
+                  clubs.map((club: ClubProfile) => (
+                    <Link to={`${url}/${club.id}`}>
+                      <Card
+                        key={club.id}
+                        hoverable
+                        className="cardStyles"
+                        cover={
+                          photosLoading ? (
+                            <Skeleton.Avatar shape="square" active />
+                          ) : (
+                              <img src={club.logo || undefined} alt="Club" />
+                            )
+                        }
+                        onClick={() => history.push(`${url}/${club.id}`)}
+                      >
+                        <Card.Meta title={club.name} className="titleText" />
+                      </Card>
+                    </Link>
+                  ))
+                )}
+            </div>
+            <div className="pagination">
+              <Pagination
+                current={page}
+                pageSize={pageSize}
+                total={total}
+                responsive
+                showSizeChanger={total < 20 ? false : true}
+                onChange={(page) => handleChange(page)}
+                onShowSizeChange={(page, size) => handleSizeChange(page, size)}
+              />
+            </div>
           </div>
-          <div className="pagination">
-            <Pagination
-              current={page}
-              pageSize={pageSize}
-              total={total}
-              responsive
-              showSizeChanger = { total < 20 ? false : true }
-              onChange={(page) => handleChange(page)}
-              onShowSizeChange={(page, size) => handleSizeChange(page, size)}
-            />
-          </div>
-        </div>
-      )}
+        )}
     </Layout.Content>
   );
 };

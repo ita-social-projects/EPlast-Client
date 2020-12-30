@@ -23,6 +23,7 @@ import {
   PlusOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
+  RollbackOutlined
 } from "@ant-design/icons";
 import moment from "moment";
 import {
@@ -49,11 +50,11 @@ import CityDetailDrawer from "../City/CityDetailDrawer/CityDetailDrawer";
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
-
+import PsevdonimCreator from "../../components/Header/historyPseudo";
 const Region = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
-  
+
   const { id } = useParams();
   const [visibleModal, setVisibleModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -275,354 +276,372 @@ const Region = () => {
     getRegion();
   }, []);
 
+  useEffect(() => {
+    if (region.regionName.length != 0) {
+      PsevdonimCreator.setPseudonimLocation(`regions/${region.regionName}`, `regions/${id}`);
+    }
+  }, [region])
+
   return loading ? (
     <Spinner />
   ) : (
-    <Layout.Content className="cityProfile">
-      <Row gutter={[0, 48]}>
-        <Col xl={15} sm={24} xs={24}>
-          <Card hoverable className="cityCard">
-          <div>
-              <Crumb
-                current={region.regionName}
-                first="/"
-                second={url.replace(`/${id}`, "")}
-                second_name="Округи"
-              />
-            </div>
-            <Title level={3}>Округ {region.regionName}</Title>
-            <Row className="cityPhotos" gutter={[0, 12]}>
-              <Col md={13} sm={24} xs={24}>
-                {photoStatus ? (
-                  <img src={region.logo} alt="Region" className="cityLogo" />
-                ) : (
-                  <img
-                    src={CityDefaultLogo}
-                    alt="Region"
-                    className="cityLogo"
-                  />
-                )}
-              </Col>
-              <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
-                <iframe
-                  src=""
-                  title="map"
-                  aria-hidden="false"
-                  className="mainMap"
+      <Layout.Content className="cityProfile">
+        <Row gutter={[0, 48]}>
+          <Col xl={15} sm={24} xs={24}>
+            <Card hoverable className="cityCard">
+              <div>
+                <Crumb
+                  current={region.regionName}
+                  first="/"
+                  second={url.replace(`/${id}`, "")}
+                  second_name="Округи"
                 />
-              </Col>
-            </Row>
-            <Row className="cityInfo">
-              <Col md={13} sm={24} xs={24}>
-                {head.user ? (
-                  <div>
-                    <Paragraph>
-                      <b>Голова округу:</b> {head.user.firstName}{" "}
-                      {head.user.lastName}
-                    </Paragraph>
-                    {head.endDate ? (
+              </div>
+              <Title level={3}>Округ {region.regionName}</Title>
+              <Row className="cityPhotos" gutter={[0, 12]}>
+                <Col md={13} sm={24} xs={24}>
+                  {photoStatus ? (
+                    <img src={region.logo} alt="Region" className="cityLogo" />
+                  ) : (
+                      <img
+                        src={CityDefaultLogo}
+                        alt="Region"
+                        className="cityLogo"
+                      />
+                    )}
+                </Col>
+                <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
+                  <iframe
+                    src=""
+                    title="map"
+                    aria-hidden="false"
+                    className="mainMap"
+                  />
+                </Col>
+              </Row>
+              <Row className="cityInfo">
+                <Col md={13} sm={24} xs={24}>
+                  {head.user ? (
+                    <div>
                       <Paragraph>
-                        <b>Час правління:</b>{" "}
-                        {moment(head.startDate).format("DD.MM.YYYY")}{" - "}
-                        {moment(head.endDate).format("DD.MM.YYYY")}
+                        <b>Голова округу:</b> {head.user.firstName}{" "}
+                        {head.user.lastName}
                       </Paragraph>
-                    ) : (
+                      {head.endDate ? (
+                        <Paragraph>
+                          <b>Час правління:</b>{" "}
+                          {moment(head.startDate).format("DD.MM.YYYY")}{" - "}
+                          {moment(head.endDate).format("DD.MM.YYYY")}
+                        </Paragraph>
+                      ) : (
+                          <Paragraph>
+                            <b>Початок правління:</b>{" "}
+                            {moment(head.startDate).format("DD.MM.YYYY")}
+                          </Paragraph>
+                        )}
+                    </div>
+                  ) : (
+                      <p>Ще немає голови округу</p>
+                    )}
+                </Col>
+
+                <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
+                  {region.link || region.email || region.phoneNumber ? (
+                    <div>
+                      {region.link ? (
+                        <Paragraph ellipsis>
+                          <b>Посилання:</b>{" "}
+                          <u>
+                            <a
+                              href={region.link}
+                              target="_blank"
+                              className="link"
+                            >
+                              {region.link}
+                            </a>
+                          </u>
+                        </Paragraph>
+                      ) : null}
+                      {region.phoneNumber ? (
+                        <Paragraph>
+                          <b>Телефон:</b> {region.phoneNumber}
+                        </Paragraph>
+                      ) : null}
+                      {region.email ? (
+                        <Paragraph>
+                          <b>Пошта:</b> {region.email}
+                        </Paragraph>
+                      ) : null}
+                    </div>
+                  ) : (
                       <Paragraph>
-                        <b>Початок правління:</b>{" "}
-                        {moment(head.startDate).format("DD.MM.YYYY")}
+                        <b>Немає контактів</b>
                       </Paragraph>
                     )}
-                  </div>
-                ) : (
-                  <p>Ще немає голови округу</p>
-                )}
-              </Col>
-
-              <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
-                {region.link || region.email || region.phoneNumber ? (
-                  <div>
-                    {region.link ? (
-                      <Paragraph ellipsis>
-                        <b>Посилання:</b>{" "}
-                        <u>
-                          <a
-                            href={region.link}
-                            target="_blank"
-                            className="link"
-                          >
-                            {region.link}
-                          </a>
-                        </u>
-                      </Paragraph>
-                    ) : null}
-                    {region.phoneNumber ? (
-                      <Paragraph>
-                        <b>Телефон:</b> {region.phoneNumber}
-                      </Paragraph>
-                    ) : null}
-                    {region.email ? (
-                      <Paragraph>
-                        <b>Пошта:</b> {region.email}
-                      </Paragraph>
-                    ) : null}
-                  </div>
-                ) : (
-                  <Paragraph>
-                    <b>Немає контактів</b>
-                  </Paragraph>
-                )}
-              </Col>
-            </Row>
-            <Row className="cityButtons" justify="center" gutter={[12, 0]}>
-              <Col>
-                <Button
-                  type="primary"
-                  className="cityInfoButton"
-                  onClick={() => setVisibleDrawer(true)}
-                >
-                  Деталі
+                </Col>
+              </Row>
+              <Row className="cityButtons" justify="center" gutter={[12, 0]}>
+                <Col>
+                  <Button
+                    type="primary"
+                    className="cityInfoButton"
+                    onClick={() => setVisibleDrawer(true)}
+                  >
+                    Деталі
                 </Button>
-              </Col>
+                </Col>
 
-              { canCreate || canEdit ? (
-                <>
-              <Col style={{display: canCreate || canEdit ? "block" : "none"}}>
-                <Button
-                  type="primary"
-                  className="cityInfoButton"
-                  onClick={() => history.push(`/annualreport/table`)}
-                >
-                  Річні звіти
+                {canCreate || canEdit ? (
+                  <>
+                    <Col style={{ display: canCreate || canEdit ? "block" : "none" }}>
+                      <Button
+                        type="primary"
+                        className="cityInfoButton"
+                        onClick={() => history.push(`/annualreport/table`)}
+                      >
+                        Річні звіти
                 </Button>
-              </Col>
-              <Col xs={24} sm={4} style={{display: canCreate || canEdit ? "block" : "none"}}>
-                <Row
-                  className="cityIcons"
-                  justify={canCreate ? "center" : "start"}
-                >
-                  <Col>
-                    <Tooltip title="Редагувати округ">
-                      <EditOutlined
-                        className="cityInfoIcon"
-                        onClick={() =>
-                          history.push(`/regions/edit/${region.id}`)
-                        }
-                      />
-                    </Tooltip>
-                  </Col>
+                    </Col>
+                    <Col xs={24} sm={4} style={{ display: canCreate || canEdit ? "block" : "none" }}>
+                      <Row
+                        className="cityIcons"
+                        justify={canCreate ? "center" : "start"}
+                      >
+                        <Col>
+                          <Tooltip title="Редагувати округ">
+                            <EditOutlined
+                              className="cityInfoIcon"
+                              onClick={() =>
+                                history.push(`/regions/edit/${region.id}`)
+                              }
+                            />
+                          </Tooltip>
+                        </Col>
 
-                  <Col offset={1}>
-                    <Tooltip title="Видалити округ">
-                      <DeleteOutlined
-                        className="cityInfoIconDelete"
-                        onClick={() => seeDeleteModal()}
-                      />
-                    </Tooltip>
-                  </Col>
-                </Row>
-              </Col>
-              </>
-              ) : null }
+                        <Col offset={1}>
+                          <Tooltip title="Видалити округ">
+                            <DeleteOutlined
+                              className="cityInfoIconDelete"
+                              onClick={() => seeDeleteModal()}
+                            />
+                          </Tooltip>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </>
+                ) : null}
 
 
-            </Row>
-          </Card>
-        </Col>
+              </Row>
+            </Card>
+          </Col>
 
-        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
-          <Card hoverable className="cityCard">
-            <Title level={4}>Опис округу</Title>
-            <Row className="cityItems" justify="center" gutter={[0, 16]}>
-              <div className="regionDesc">{region.description}</div>
-            </Row>
-          </Card>
-        </Col>
+          <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+            <Card hoverable className="cityCard">
+              <Title level={4}>Опис округу</Title>
+              <Row className="cityItems" justify="center" gutter={[0, 16]}>
+                <div className="regionDesc">{region.description}</div>
+              </Row>
+            </Card>
+          </Col>
 
-        <Col
-          xl={{ span: 7, offset: 0 }}
-          md={{ span: 11, offset: 2 }}
-          sm={24}
-          xs={24}
-        >
-          <Card hoverable className="cityCard">
-            <Title level={4}>Провід округу <a onClick={() => history.push(`/region/administration/${region.id}`)}>
-              {adminsCount !== 0 ? 
-                <Badge
-                  count={adminsCount}
-                  style={{ backgroundColor: "#3c5438" }}
-                /> : null
-              }
-              </a>
-            </Title>
-            <Row className="cityItems" justify="center" gutter={[0, 16]}>
-              {admins.length !== 0 ? (
-                admins.map((admin) => (
-                  <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
-                    <div
-                      onClick={() =>
-                        history.push(`/userpage/main/${admin.userId}`)
-                      }
-                    >
-                      {photosLoading ? (
-                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
-                      ) : (
-                        <Avatar size={64} src={admin.user.imagePath} />
-                      )}
-                      <p className="userName">{admin.user.firstName}</p>
-                      <p className="userName">{admin.user.lastName}</p>
-                    </div>
-                  </Col>
-                ))
-              ) : (
-                <Paragraph>Ще немає діловодів округу</Paragraph>
-              )}
-            </Row>
-            <div className="cityMoreButton">
-              <PlusSquareFilled
-                type="primary"
-                className="addReportIcon"
-                onClick={() => setvisible(true)}
-              ></PlusSquareFilled>
-              <Button
-                type="primary"
-                className="cityInfoButton"
-                onClick={() =>
-                  history.push(`/region/administration/${region.id}`)
+          <Col
+            xl={{ span: 7, offset: 0 }}
+            md={{ span: 11, offset: 2 }}
+            sm={24}
+            xs={24}
+          >
+            <Card hoverable className="cityCard">
+              <Title level={4}>Провід округу <a onClick={() => history.push(`/region/administration/${region.id}`)}>
+                {adminsCount !== 0 ?
+                  <Badge
+                    count={adminsCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  /> : null
                 }
-              >
-                Більше
-              </Button>
-            </div>
-          </Card>
-        </Col>
-
-        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
-          <Card hoverable className="cityCard">
-            <Title level={4}>Члени округу <a onClick={() => history.push(`/regions/members/${id}`)}>
-              {membersCount !== 0 ? 
-                <Badge
-                  count={membersCount}
-                  style={{ backgroundColor: "#3c5438" }}
-                /> : null
-              }
               </a>
-            </Title>
-            <Row className={members.length >=4 ? "cityItems1" : "cityItems"} justify="center" gutter={[0, 16]}>
-              {members[0].name !== "" ? (
-                members.map((member) => (
-                  <Col
-                    className="cityMemberItem"
-                    key={member.id}
-                    xs={12}
-                    sm={8}
-                  >
-                    <div onClick={() => history.push(`/cities/${member.id}`)}>
-                      {photosLoading ? (
-                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
-                      ) : (
-                        <Avatar size={64} src={member.logo} />
-                      )}
-                      <p className="userName">{member.name}</p>
-                    </div>
-                  </Col>
-                ))
-              ) : (
-                <Paragraph>Ще немає членів округу</Paragraph>
-              )}
-            </Row>
-            <div className="cityMoreButton">
-              <Button
-                type="primary"
-                className="cityInfoButton"
-                onClick={() => history.push(`/regions/members/${id}`)}
-              >
-                Більше
+              </Title>
+              <Row className="cityItems" justify="center" gutter={[0, 16]}>
+                {admins.length !== 0 ? (
+                  admins.map((admin) => (
+                    <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
+                      <div
+                        onClick={() =>
+                          history.push(`/userpage/main/${admin.userId}`)
+                        }
+                      >
+                        {photosLoading ? (
+                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        ) : (
+                            <Avatar size={64} src={admin.user.imagePath} />
+                          )}
+                        <p className="userName">{admin.user.firstName}</p>
+                        <p className="userName">{admin.user.lastName}</p>
+                      </div>
+                    </Col>
+                  ))
+                ) : (
+                    <Paragraph>Ще немає діловодів округу</Paragraph>
+                  )}
+              </Row>
+              <div className="cityMoreButton">
+                <PlusSquareFilled
+                  type="primary"
+                  className="addReportIcon"
+                  onClick={() => setvisible(true)}
+                ></PlusSquareFilled>
+                <Button
+                  type="primary"
+                  className="cityInfoButton"
+                  onClick={() =>
+                    history.push(`/region/administration/${region.id}`)
+                  }
+                >
+                  Більше
               </Button>
-            </div>
-          </Card>
-        </Col>
+              </div>
+            </Card>
+          </Col>
 
-        <Col
-          xl={{ span: 7, offset: 1 }}
-          md={{ span: 11, offset: 2 }}
-          sm={24}
-          xs={24}
+          <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+            <Card hoverable className="cityCard">
+              <Title level={4}>Члени округу <a onClick={() => history.push(`/regions/members/${id}`)}>
+                {membersCount !== 0 ?
+                  <Badge
+                    count={membersCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  /> : null
+                }
+              </a>
+              </Title>
+              <Row className={members.length >= 4 ? "cityItems1" : "cityItems"} justify="center" gutter={[0, 16]}>
+                {members[0].name !== "" ? (
+                  members.map((member) => (
+                    <Col
+                      className="cityMemberItem"
+                      key={member.id}
+                      xs={12}
+                      sm={8}
+                    >
+                      <div onClick={() => history.push(`/cities/${member.id}`)}>
+                        {photosLoading ? (
+                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        ) : (
+                            <Avatar size={64} src={member.logo} />
+                          )}
+                        <p className="userName">{member.name}</p>
+                      </div>
+                    </Col>
+                  ))
+                ) : (
+                    <Paragraph>Ще немає членів округу</Paragraph>
+                  )}
+              </Row>
+              <div className="cityMoreButton">
+                <Button
+                  type="primary"
+                  className="cityInfoButton"
+                  onClick={() => history.push(`/regions/members/${id}`)}
+                >
+                  Більше
+              </Button>
+              </div>
+            </Card>
+          </Col>
+
+          <Col
+            xl={{ span: 7, offset: 1 }}
+            md={{ span: 11, offset: 2 }}
+            sm={24}
+            xs={24}
+          >
+            <Card hoverable className="cityCard">
+              <Title level={4}>Документообіг округу</Title>
+              <Row className="cityItems" justify="center" gutter={[0, 16]}>
+                {documents.length !== 0 ? (
+                  documents.map((document) => (
+                    <Col
+                      className="cityMemberItem"
+                      xs={12}
+                      sm={8}
+                      key={document.id}
+                    >
+                      <div>
+                        <FileTextOutlined className="documentIcon" />
+                        <p className="documentText">{document.fileName}</p>
+                      </div>
+                    </Col>
+                  ))
+                ) : (
+                    <Paragraph>Ще немає документів Округу</Paragraph>
+                  )}
+              </Row>
+              <div className="cityMoreButton">
+                <Button
+                  type="primary"
+                  className="cityInfoButton"
+                  onClick={() => history.push(`/regions/documents/${region.id}`)}
+                >
+                  Більше
+              </Button>
+
+                <PlusSquareFilled
+                  className="addReportIcon"
+                  onClick={() => setVisibleModal(true)}
+                />
+              </div>
+            </Card>
+          </Col>
+
+        </Row>
+        <div className="cityMoreItems">
+          <Button
+            className="backButton"
+            icon={<RollbackOutlined />}
+            size={"large"}
+            onClick={() => history.goBack()}
+            type="primary"
+          >
+            Назад
+        </Button>
+        </div>
+
+        <AddDocumentModal
+          regionId={+id}
+          document={document}
+          setDocument={setDocument}
+          visibleModal={visibleModal}
+          setVisibleModal={setVisibleModal}
+          onAdd={onAdd}
+        ></AddDocumentModal>
+
+        <Modal
+          title="Додати діловода"
+          visible={visible}
+          onOk={handleOk}
+          onCancel={handleOk}
+          footer={null}
         >
-          <Card hoverable className="cityCard">
-            <Title level={4}>Документообіг округу</Title>
-            <Row className="cityItems" justify="center" gutter={[0, 16]}>
-              {documents.length !== 0 ? (
-                documents.map((document) => (
-                  <Col
-                    className="cityMemberItem"
-                    xs={12}
-                    sm={8}
-                    key={document.id}
-                  >
-                    <div>
-                      <FileTextOutlined className="documentIcon" />
-                      <p className="documentText">{document.fileName}</p>
-                    </div>
-                  </Col>
-                ))
-              ) : (
-                <Paragraph>Ще немає документів Округу</Paragraph>
-              )}
-            </Row>
-            <div className="cityMoreButton">
-              <Button
-                type="primary"
-                className="cityInfoButton"
-                onClick={() => history.push(`/regions/documents/${region.id}`)}
-              >
-                Більше
-              </Button>
+          <AddNewSecretaryForm onAdd={handleOk}></AddNewSecretaryForm>
+        </Modal>
 
-              <PlusSquareFilled
-                className="addReportIcon"
-                onClick={() => setVisibleModal(true)}
-              />
-            </div>
-          </Card>
-        </Col>
-      </Row>
+        <Modal
+          title="Оберіть округ до якого належатимуть станиці-члени:"
+          visible={memberRedirectVisibility}
+          onOk={handleOk}
+          onCancel={handleOk}
+          footer={null}
+        >
+          <CitiesRedirectForm onAdd={handleOk} />
+        </Modal>
 
-      <AddDocumentModal
-        regionId={+id}
-        document={document}
-        setDocument={setDocument}
-        visibleModal={visibleModal}
-        setVisibleModal={setVisibleModal}
-        onAdd={onAdd}
-      ></AddDocumentModal>
-
-      <Modal
-        title="Додати діловода"
-        visible={visible}
-        onOk={handleOk}
-        onCancel={handleOk}
-        footer={null}
-      >
-        <AddNewSecretaryForm onAdd={handleOk}></AddNewSecretaryForm>
-      </Modal>
-
-      <Modal
-        title="Оберіть округ до якого належатимуть станиці-члени:"
-        visible={memberRedirectVisibility}
-        onOk={handleOk}
-        onCancel={handleOk}
-        footer={null}
-      >
-        <CitiesRedirectForm onAdd={handleOk} />
-      </Modal>
-
-      <RegionDetailDrawer
-        region={region}
-        setVisibleDrawer={setVisibleDrawer}
-        visibleDrawer={visibleDrawer}
-      ></RegionDetailDrawer>
-    </Layout.Content>
-  );
+        <RegionDetailDrawer
+          region={region}
+          setVisibleDrawer={setVisibleDrawer}
+          visibleDrawer={visibleDrawer}
+        ></RegionDetailDrawer>
+      </Layout.Content>
+    );
 };
 
 export default Region;

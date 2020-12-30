@@ -54,9 +54,14 @@ const AddExtractFromUPUModal = (props: Props) => {
     const checkFile = (fileSize: number, fileName: string): boolean => {
       const extension = fileName.split(".").reverse()[0];
       const isCorrectExtension =
-        extension.indexOf("pdf") !== -1;
+      extension.indexOf("pdf") !== -1 ||
+      extension.indexOf("jpg") !== -1 ||
+      extension.indexOf("jpeg") !== -1 ||
+      extension.indexOf("png") !== -1 ||
+      extension.indexOf("docx") !== -1 ||
+      extension.indexOf("doc") !== -1;
       if (!isCorrectExtension) {
-        notificationLogic("error", possibleFileExtensions("pdf"));
+        notificationLogic("error", possibleFileExtensions("pdf, docx, doc, jpg, jpeg, png"));
         setDisabled(true);
         return isCorrectExtension;
       }
@@ -122,14 +127,13 @@ const AddExtractFromUPUModal = (props: Props) => {
               customRequest={handleUpload}
               multiple={false}
               showUploadList={false}
-              accept=".pdf"
+              accept=".png,.jpg,.jpeg,.pdf,.doc,.docx"
             >
               <p className="ant-upload-drag-icon">
                 <InboxOutlined style={{ color: "#3c5438" }} />
               </p>
               <p className="ant-upload-hint">
                 Клікніть або перетягніть файл для завантаження
-                (PDF*)
               </p>
               {props.document.blobName !== null && <div>{fileName}</div>}
             </Upload.Dragger>

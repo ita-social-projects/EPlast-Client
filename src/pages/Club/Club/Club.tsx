@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip, Badge } from "antd";
-import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined, RollbackOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { addFollower, getClubById, getLogo, removeClub, toggleMemberStatus } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
@@ -18,13 +18,13 @@ import Spinner from "../../Spinner/Spinner";
 import ClubDetailDrawer from "../ClubDetailDrawer/ClubDetailDrawer";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
-
+import PsevdonimCreator from "../../../components/Header/historyPseudo";
 
 const Club = () => {
   const history = useHistory();
-  const {id} = useParams();
+  const { id } = useParams();
   const { url } = useRouteMatch();
-  
+
   const [loading, setLoading] = useState(false);
   const [club, setClub] = useState<ClubProfile>(new ClubProfile());
   const [clubLogo64, setClubLogo64] = useState<string>("");
@@ -53,7 +53,7 @@ const Club = () => {
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/clubs/${id}`,
       club.name
-      );
+    );
 
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
@@ -68,14 +68,14 @@ const Club = () => {
 
   const addMember = async () => {
     const follower = await addFollower(+id);
-    
+
     await NotificationBoxApi.createNotifications(
       admins.map(ad => ad.userId),
       `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня: `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/clubs/followers/${id}`,
       `${club.name}`
-      );
+    );
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
@@ -95,7 +95,7 @@ const Club = () => {
         [ad.userId],
         `На жаль курінь: '${club.name}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
         NotificationBoxApi.NotificationTypes.UserNotifications
-        );
+      );
     });
     history.push('/clubs');
   }
@@ -123,27 +123,27 @@ const Club = () => {
     }
   }
 
-  function seeDeleteModal () {
+  function seeDeleteModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити даний курінь?",
-      icon: <ExclamationCircleOutlined/>,
+      icon: <ExclamationCircleOutlined />,
       okText: 'Так, видалити',
       okType: 'danger',
       cancelText: 'Скасувати',
       maskClosable: true,
-      onOk() {deleteClub()}
+      onOk() { deleteClub() }
     });
   }
 
-  function seeJoinModal () {
+  function seeJoinModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете долучитися до даного куреня?",
-      icon: <ExclamationCircleOutlined/>,
+      icon: <ExclamationCircleOutlined />,
       okText: 'Так, долучитися',
       okType: 'primary',
       cancelText: 'Скасувати',
       maskClosable: true,
-      onOk() {addMember()}
+      onOk() { addMember() }
     });
   }
 
@@ -156,15 +156,15 @@ const Club = () => {
       setPhotosLoading(true);
       setClubLogoLoading(true);
       const admins = [...response.data.administration, response.data.head]
-      .filter(a => a !== null);
+        .filter(a => a !== null);
 
       setPhotos([
         ...admins,
         ...response.data.members,
         ...response.data.followers,
-        
+
       ], response.data.logo);
-      
+
       setClub(response.data);
       setAdmins(admins);
       setMembers(response.data.members);
@@ -185,6 +185,12 @@ const Club = () => {
     getClub();
   }, []);
 
+  useEffect(() => {
+    if (club.name.length != 0) {
+      PsevdonimCreator.setPseudonimLocation(`clubs/${club.name}`, `clubs/${id}`);
+    }
+  }, [club])
+
   return loading ? (
     <Spinner />
   ) : club.id !== 0 ? (
@@ -192,7 +198,7 @@ const Club = () => {
       <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="clubCard">
-          <div>
+            <div>
               <Crumb
                 current={club.name}
                 first="/"
@@ -206,62 +212,62 @@ const Club = () => {
                 {clubLogoLoading ? (
                   <Skeleton.Avatar active shape={"square"} size={172} />
                 ) : (
-                  <img src={clubLogo64} alt="Club" className="clubLogo" />
-                )}
+                    <img src={clubLogo64} alt="Club" className="clubLogo" />
+                  )}
               </Col>
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
 
                 <div>
-            <Title level={4}>Опис куреня</Title>
-                {club.description.length!=0?(
-                <Paragraph>
-                  <b>{club.description}</b>
+                  <Title level={4}>Опис куреня</Title>
+                  {club.description.length != 0 ? (
+                    <Paragraph>
+                      <b>{club.description}</b>
 
-                </Paragraph>
+                    </Paragraph>
 
-                ):(
-                  <Paragraph>
-                  <b>Ще немає опису куреня.</b>
+                  ) : (
+                      <Paragraph>
+                        <b>Ще немає опису куреня.</b>
 
-                </Paragraph>
-                )}
-                  </div>
+                      </Paragraph>
+                    )}
+                </div>
               </Col>
             </Row>
             <Row className="clubInfo">
               <Col md={13} sm={24} xs={24}>
-                {club.head? (
+                {club.head ? (
                   <div>
                     <Paragraph>
                       <b>Голова Куреня:</b> {club.head.user.firstName}{" "}
                       {club.head.user.lastName}
                     </Paragraph>
                     <Paragraph>
-                      {club.head.endDate===null?
-                                (<div>
-                                        <b>
-                                          Початок правління:
+                      {club.head.endDate === null ?
+                        (<div>
+                          <b>
+                            Початок правління:
                                         </b>
-                                        {` ${moment(club.head.startDate).format("DD.MM.YYYY")}`}
-                                </div> 
-                                  )  
-                                  :
-                                  (<div>
-                                      <b>
-                                          Термін правління: 
-                                      </b> 
-                                  {` ${moment(club.head.startDate).format("DD.MM.YYYY")} - ${moment(club.head.endDate).format("DD.MM.YYYY")}`}
-                                  </div>
-                                  )
+                          {` ${moment(club.head.startDate).format("DD.MM.YYYY")}`}
+                        </div>
+                        )
+                        :
+                        (<div>
+                          <b>
+                            Термін правління:
+                                      </b>
+                          {` ${moment(club.head.startDate).format("DD.MM.YYYY")} - ${moment(club.head.endDate).format("DD.MM.YYYY")}`}
+                        </div>
+                        )
 
-                       }
+                      }
                     </Paragraph>
                   </div>
                 ) : (
-                  <Paragraph>
-                    <b>Немає голови куреня</b>
-                  </Paragraph>
-                )}
+                    <Paragraph>
+                      <b>Немає голови куреня</b>
+                    </Paragraph>
+                  )}
               </Col>
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
                 {club.clubURL || club.email || club.phoneNumber ? (
@@ -292,10 +298,10 @@ const Club = () => {
                     ) : null}
                   </div>
                 ) : (
-                  <Paragraph>
-                    <b>Немає інформації</b>
-                  </Paragraph>
-                )}
+                    <Paragraph>
+                      <b>Немає інформації</b>
+                    </Paragraph>
+                  )}
               </Col>
             </Row>
             <Row className="clubButtons" justify="center" gutter={[12, 0]}>
@@ -327,8 +333,8 @@ const Club = () => {
                   >
                     {canEdit ? (
                       <Col>
-                      <Tooltip
-                        title="Редагувати курінь">
+                        <Tooltip
+                          title="Редагувати курінь">
                           <EditOutlined
                             className="clubInfoIcon"
                             onClick={() =>
@@ -342,10 +348,10 @@ const Club = () => {
                       <Col offset={1}>
                         <Tooltip
                           title="Видалити курінь">
-                            <DeleteOutlined
-                              className="clubInfoIconDelete"
-                              onClick={() => seeDeleteModal()}
-                            />
+                          <DeleteOutlined
+                            className="clubInfoIconDelete"
+                            onClick={() => seeDeleteModal()}
+                          />
                         </Tooltip>
                       </Col>
                     ) : null}
@@ -359,13 +365,13 @@ const Club = () => {
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="clubCard">
             <Title level={4}>Члени куреня <a onClick={() => history.push(`/clubs/members/${club.id}`)}>
-              {membersCount !== 0 ? 
+              {membersCount !== 0 ?
                 <Badge
-                  count={membersCount }
+                  count={membersCount}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
-              </a>
+            </a>
             </Title>
             <Row className="clubItems" justify="center" gutter={[0, 16]}>
               {members.length !== 0 ? (
@@ -384,16 +390,16 @@ const Club = () => {
                       {photosLoading ? (
                         <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
-                        <Avatar size={64} src={member.user.imagePath} />
-                      )}
+                          <Avatar size={64} src={member.user.imagePath} />
+                        )}
                       <p className="userName">{member.user.firstName}</p>
                       <p className="userName">{member.user.lastName}</p>
                     </div>
                   </Col>
                 ))
               ) : (
-                <Paragraph>Ще немає членів куреня</Paragraph>
-              )}
+                  <Paragraph>Ще немає членів куреня</Paragraph>
+                )}
             </Row>
             <div className="clubMoreButton">
               <Button
@@ -415,13 +421,13 @@ const Club = () => {
         >
           <Card hoverable className="clubCard">
             <Title level={4}>Провід куреня <a onClick={() => history.push(`/clubs/administration/${club.id}`)}>
-              {adminsCount !== 0 ? 
+              {adminsCount !== 0 ?
                 <Badge
-                  count={adminsCount }
+                  count={adminsCount}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
-              </a>
+            </a>
             </Title>
             <Row className="clubItems" justify="center" gutter={[0, 16]}>
               {admins.length !== 0 ? (
@@ -435,16 +441,16 @@ const Club = () => {
                       {photosLoading ? (
                         <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
-                        <Avatar size={64} src={admin.user.imagePath} />
-                      )}
+                          <Avatar size={64} src={admin.user.imagePath} />
+                        )}
                       <p className="userName">{admin.user.firstName}</p>
                       <p className="userName">{admin.user.lastName}</p>
                     </div>
                   </Col>
                 ))
               ) : (
-                <Paragraph>Ще немає діловодів куреня</Paragraph>
-              )}
+                  <Paragraph>Ще немає діловодів куреня</Paragraph>
+                )}
             </Row>
             <div className="clubMoreButton">
               <Button
@@ -475,15 +481,15 @@ const Club = () => {
                     <div>
                       <FileTextOutlined className="documentIcon" />
                       <p className="documentText">
-                     {console.log(document)}
+                        {console.log(document)}
                         {document.clubDocumentType.name}
                       </p>
                     </div>
                   </Col>
                 ))
               ) : (
-                <Paragraph>Ще немає документів куреня</Paragraph>
-              )}
+                  <Paragraph>Ще немає документів куреня</Paragraph>
+                )}
             </Row>
             <div className="clubMoreButton">
               <Button
@@ -511,13 +517,13 @@ const Club = () => {
         >
           <Card hoverable className="clubCard">
             <Title level={4}>Прихильники куреня <a onClick={() => history.push(`/clubs/followers/${club.id}`)}>
-              {followersCount !== 0 ? 
+              {followersCount !== 0 ?
                 <Badge
-                  count={followersCount }
+                  count={followersCount}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
-              </a>
+            </a>
             </Title>
             <Row className="clubItems" justify="center" gutter={[0, 16]}>
               {canJoin ? (
@@ -554,8 +560,8 @@ const Club = () => {
                         {photosLoading ? (
                           <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                         ) : (
-                          <Avatar size={64} src={followers.user.imagePath} />
-                        )}
+                            <Avatar size={64} src={followers.user.imagePath} />
+                          )}
                         <p className="userName">{followers.user.firstName}</p>
                         <p className="userName">{followers.user.lastName}</p>
                       </div>
@@ -584,13 +590,23 @@ const Club = () => {
           </Card>
         </Col>
       </Row>
-
+      <div className="cityMoreItems">
+        <Button
+          className="backButton"
+          icon={<RollbackOutlined />}
+          size={"large"}
+          onClick={() => history.goBack()}
+          type="primary"
+        >
+          Назад
+        </Button>
+      </div>
       <ClubDetailDrawer
         Club={club}
         setVisibleDrawer={setVisibleDrawer}
         visibleDrawer={visibleDrawer}
       ></ClubDetailDrawer>
-      
+
       {canEdit ? (
         <AddDocumentModal
           ClubId={+id}
@@ -603,8 +619,8 @@ const Club = () => {
       ) : null}
     </Layout.Content>
   ) : (
-    <Title level={2}>Місто не знайдено</Title>
-  );
+        <Title level={2}>Місто не знайдено</Title>
+      );
 };
 
 export default Club;

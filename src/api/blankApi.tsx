@@ -49,12 +49,24 @@ export const removeExtractFromUPUDocument = async (documentId: number) => {
   });
 }
 
-export const openBiographyFile = async (fileBlob: string) => {
+const openFile = async(base64: string, format: string)=>{
+  if (format === "png" || format === "jpg" || format === "jpeg") {
+    var image = new Image();
+    image.src = `data:image/${format};base64,` + base64;
+    var w = window.open("");
+    w?.document.write(image.outerHTML);
+  } else {
+    let pdfWindow = window.open("");
+    pdfWindow?.document.write("<iframe width='99%' height='99%' src='data:application/pdf;base64," +
+      encodeURI(base64) + "'></iframe>")
+  }
+}
+
+export const openBiographyFile = async (fileBlob: string, fileName: string) => {
   const response = await (await api.get(`Blanks/BiographyDocumentBase64/${fileBlob}`, fileBlob)).data;
+  const format = fileName.split(".")[1];
   const base64 = response.split(",")[1];
-  let pdfWindow = window.open("");
-  pdfWindow?.document.write("<iframe width='99%' height='99%' src='data:application/pdf;base64," +
-    encodeURI(base64) + "'></iframe>")
+  await openFile(base64, format);
 }
 
 export const openGenerationFile = async (userId: string) => {
@@ -71,28 +83,18 @@ export const openGenerationFile = async (userId: string) => {
   return  link;
 }
 
-export const openExtractFromUPUFile = async(fileBlob:string)=>{
+export const openExtractFromUPUFile = async(fileBlob:string, fileName: string)=>{
   const response = await (await api.get(`Blanks/ExtractFromUPUDocumentBase64/${fileBlob}`, fileBlob)).data;
+  const format = fileName.split(".")[1];
   const base64 = response.split(",")[1];
-  let pdfWindow = window.open("");
-  pdfWindow?.document.write("<iframe width='99%' height='99%' src='data:application/pdf;base64," +
-    encodeURI(base64) + "'></iframe>")
+  await openFile(base64, format);
 }
 
 export const openAchievemetFile = async (fileBlob: string, fileName: string) => {
   const response = await (await api.get(`Blanks/AchievementDocumentBase64/${fileBlob}`, fileBlob)).data;
   const format = fileName.split(".")[1];
   const base64 = response.split(",")[1];
-  if (format === "png" || format === "jpg" || format === "jpeg") {
-    var image = new Image();
-    image.src = `data:image/${format};base64,` + base64;
-    var w = window.open("");
-    w?.document.write(image.outerHTML);
-  } else {
-    let pdfWindow = window.open("");
-    pdfWindow?.document.write("<iframe width='99%' height='99%' src='data:application/pdf;base64," +
-      encodeURI(base64) + "'></iframe>")
-  }
+  await openFile(base64, format);
 }
 
 export const getFile = async (fileBlob: string, fileName: string) => {

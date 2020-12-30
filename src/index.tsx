@@ -6,7 +6,7 @@ import { ConfigProvider } from "antd";
 import UkLocale from 'antd/es/locale/uk_UA';
 
 ReactDOM.render(
-    <ConfigProvider locale ={UkLocale}>
+    <ConfigProvider locale={UkLocale}>
         <App />
     </ConfigProvider>
     , document.getElementById("root"));
