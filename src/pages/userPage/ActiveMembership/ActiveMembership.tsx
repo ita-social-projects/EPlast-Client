@@ -162,6 +162,9 @@ const ActiveMembership = () => {
           firstName={user.firstName}
           lastName={user.lastName}
           isUserPlastun={true}
+          pseudo={user.pseudo}
+          city={user.city} 
+          club={user.club}
         />
 
         {IsUserHasAnyAdminTypeRoles(

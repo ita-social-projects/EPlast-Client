@@ -20,7 +20,7 @@ export type Religion={
     id:number;
     name:string;
 }
-export   type Nationality={
+export type Nationality={
     id:number;
     name:string;
 }
@@ -40,6 +40,10 @@ export type User ={
     education: Education;
     degree: Degree;
     work: Work;
+    pseudo: string;
+    email: string;
+    city: string;
+    club: string;
 }
 
 export  interface Data {

@@ -99,6 +99,7 @@ export default function () {
           religionName: response.data.user.religion.name,
           positionOfWork: response.data.user.work.position,
           address: response.data.user.address,
+          pseudo: response.data.user.pseudo,
         });
         setNationality(response.data.user.nationality);
         setReligion(response.data.user.religion);
@@ -107,7 +108,7 @@ export default function () {
         setSpecialityID(response.data.educationView.specialityID);
         setPlaceOfWorkID(response.data.workView.placeOfWorkID);
         setPositionID(response.data.workView.positionID);
-        setGender(response.data.user.gender);
+        setGender(response.data.user.gender); 
         if (response.data.user.birthday === "0001-01-01T00:00:00") {
           setBirthday(undefined);
         } else {
@@ -181,6 +182,10 @@ export default function () {
     ],
     address: [
       { max: 50, message: maxLength(50) }
+    ],
+    pseudo: [
+      {max: 30, message: maxLength(30)},
+      {pattern: patern, message: message},
     ],
   };
 
@@ -326,6 +331,8 @@ export default function () {
         phoneNumber: phoneNumber,
         birthday: birthday,
         imagePath:photoName,
+        pseudo: values.pseudo,
+        mail: values.mail,
 
         degree: {
           id: degree?.id,
@@ -463,8 +470,15 @@ export default function () {
               </Select>
             </Form.Item>
           </div>
-
           <div className={styles.rowBlock}>
+            <Form.Item
+              label="Псевдо"
+              name="pseudo"
+              rules={validationSchema.pseudo}
+              className={styles.formItem}
+            >            
+              <Input className={styles.dataInput} maxLength={31}/>
+            </Form.Item>
             <Form.Item label="Дата народження" className={styles.formItem}>
               <DatePicker
                 className={styles.dataInput}
@@ -474,6 +488,8 @@ export default function () {
                 format="DD.MM.YYYY"
               />
             </Form.Item>
+          </div>
+          <div className={styles.rowBlock}>
             <Form.Item
               label="Номер телефону"
               name="phoneNumber"
@@ -490,8 +506,6 @@ export default function () {
                   {(inputProps: any) => <Input {...inputProps} />}
               </ReactInputMask>
             </Form.Item>
-          </div>
-          <div className={styles.rowBlock}>
             <Form.Item
               label="Національність"
               name="nationalityName"
@@ -510,6 +524,8 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
+          </div>
+          <div className={styles.rowBlock}>
             <Form.Item
               label="Віровизнання"
               name="religionName"
@@ -529,9 +545,6 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
-          </div>
-
-          <div className={styles.rowBlock}>
             <Form.Item
               label="Навчальний заклад"
               name="placeOfStudy"
@@ -550,6 +563,8 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
+          </div>
+          <div className={styles.rowBlock}>
             <Form.Item
               label="Спеціальність"
               name="speciality"
@@ -568,8 +583,6 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
-          </div>
-          <div className={styles.rowBlock}>
             <Form.Item
               label="Навчальний ступінь"
               name="degreeName"
@@ -588,6 +601,8 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
+          </div>
+          <div className={styles.rowBlock}>
             <Form.Item
               label="Місце праці"
               name="placeOfWork"
@@ -606,8 +621,6 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
-          </div>
-          <div className={styles.rowBlock}>
             <Form.Item
               label="Посада"
               name="positionOfWork"
@@ -626,6 +639,8 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
+          </div>
+          <div className={styles.rowBlock}>
             <Form.Item
               label="Адреса проживання"
               name="address"
@@ -633,6 +648,10 @@ export default function () {
               className={styles.formItem}
             >
               <Input className={styles.dataInput} maxLength={51}/>
+            </Form.Item>
+            <Form.Item
+              className={styles.formItem}
+            >
             </Form.Item>
           </div>
           <Button className={styles.confirmBtn} htmlType="submit">
