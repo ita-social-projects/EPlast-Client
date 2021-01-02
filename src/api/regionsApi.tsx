@@ -1,5 +1,8 @@
 import RegionAnnualReportQuestions from "../pages/AnnualReport/Interfaces/RegionAnnualReportQuestions";
 import api from "./api";
+import Redis from 'redis';
+import Express from 'express';
+import Fetch from 'node-fetch';
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
   const arr = dataurl.split(",");
@@ -21,6 +24,14 @@ export const GetAllRegions = async () => {
     throw new Error(error);
   });
 };
+
+
+const PORT = process.env.PORT || 3000;
+
+const client = Redis.createClient({host:'127.0.0.1', port:6379});
+
+client.setex("", 3600, GetAllRegions.toString());
+
 
 export const EditRegion = async (regId: number, data: any) => {
   return await api.put(`Regions/EditRegion/${regId}`, data).catch((error) => {

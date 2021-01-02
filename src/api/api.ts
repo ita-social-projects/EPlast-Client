@@ -2,8 +2,6 @@ import axios, { Canceler } from "axios";
 import BASE_URL from "../config";
 import AuthStore from '../stores/AuthStore';
 import { createBrowserHistory } from 'history';
-import { useHistory, Router, Route } from "react-router-dom";
-import jwt_decode from "jwt-decode";
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
 
@@ -80,7 +78,7 @@ const put = async (url: string, data?: any): Promise<HttpResponse> => {
       "Content-Type": "application/json",
     },
   });
-  return response;
+  return response; 
 };
 
 const remove = async (url: string, data?: any, options: any = {}): Promise<HttpResponse> => {
