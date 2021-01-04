@@ -23,7 +23,7 @@ import {
   PlusOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
-  HomeOutlined,
+  HomeOutlined, RollbackOutlined
 } from "@ant-design/icons";
 import moment from "moment";
 import {
@@ -49,7 +49,8 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import BreadcrumbItem from "antd/lib/breadcrumb/BreadcrumbItem";
-import{successfulDeleteAction} from "../../../components/Notifications/Messages"
+import { successfulDeleteAction } from "../../../components/Notifications/Messages";
+import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 
 const City = () => {
   const history = useHistory();
@@ -210,7 +211,7 @@ const City = () => {
       setCanJoin(response.data.canJoin);
       setMembersCount(response.data.memberCount);
       setAdminsCount(response.data.administrationCount);
-      setFollowersCount(response.data.followerCount)
+      setFollowersCount(response.data.followerCount);
     } finally {
       setLoading(false);
     }
@@ -219,6 +220,14 @@ const City = () => {
   useEffect(() => {
     getCity();
   }, []);
+
+  useEffect(() => {
+    if (city.name.length != 0) {
+      PsevdonimCreator.setPseudonimLocation(`cities/${city.name}`, `cities/${id}`);
+    }
+  }, [city])
+
+
   return loading ? (
     <Spinner />
   ) : city.id !== 0 ? (
@@ -243,8 +252,8 @@ const City = () => {
                 {cityLogoLoading ? (
                   <Skeleton.Avatar active shape={"square"} size={172} />
                 ) : (
-                  <img src={cityLogo64} alt="City" className="cityLogo" />
-                )}
+                    <img src={cityLogo64} alt="City" className="cityLogo" />
+                  )}
               </Col>
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
                 <iframe
@@ -270,17 +279,17 @@ const City = () => {
                         {moment(city.head.endDate).format("DD.MM.YYYY")}
                       </Paragraph>
                     ) : (
-                      <Paragraph>
-                        <b>Початок правління:</b>{" "}
-                        {moment(city.head.startDate).format("DD.MM.YYYY")}
-                      </Paragraph>
-                    )}
+                        <Paragraph>
+                          <b>Початок правління:</b>{" "}
+                          {moment(city.head.startDate).format("DD.MM.YYYY")}
+                        </Paragraph>
+                      )}
                   </div>
                 ) : (
-                  <Paragraph>
-                    <b>Немає голови станиці</b>
-                  </Paragraph>
-                )}
+                    <Paragraph>
+                      <b>Немає голови станиці</b>
+                    </Paragraph>
+                  )}
               </Col>
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
                 {city.cityURL || city.email || city.phoneNumber ? (
@@ -307,10 +316,10 @@ const City = () => {
                     ) : null}
                   </div>
                 ) : (
-                  <Paragraph>
-                    <b>Немає контактів</b>
-                  </Paragraph>
-                )}
+                    <Paragraph>
+                      <b>Немає контактів</b>
+                    </Paragraph>
+                  )}
               </Col>
             </Row>
             <Row className="cityButtons" justify="center" gutter={[12, 0]}>
@@ -372,15 +381,15 @@ const City = () => {
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
             <Title level={4}>Члени станиці <a onClick={() => history.push(`/cities/members/${city.id}`)}>
-              {membersCount !== 0 ? 
+              {membersCount !== 0 ?
                 <Badge
-                  count={membersCount }
+                  count={membersCount}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
-              </a>
+            </a>
             </Title>
-            <Row className= {members.length >=4 ? "cityItems1" : "cityItems"} justify="center" gutter={[0, 16]}>
+            <Row className={members.length >= 4 ? "cityItems1" : "cityItems"} justify="center" gutter={[0, 16]}>
               {members.length !== 0 ? (
                 members.map((member) => (
                   <Col
@@ -397,16 +406,16 @@ const City = () => {
                       {photosLoading ? (
                         <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
-                        <Avatar size={64} src={member.user.imagePath} />
-                      )}
+                          <Avatar size={64} src={member.user.imagePath} />
+                        )}
                       <p className="userName">{member.user.firstName}</p>
                       <p className="userName">{member.user.lastName}</p>
                     </div>
                   </Col>
                 ))
               ) : (
-                <Paragraph>Ще немає членів станиці</Paragraph>
-              )}
+                  <Paragraph>Ще немає членів станиці</Paragraph>
+                )}
             </Row>
             <div className="cityMoreButton">
               <Button
@@ -428,13 +437,13 @@ const City = () => {
         >
           <Card hoverable className="cityCard">
             <Title level={4}>Провід станиці <a onClick={() => history.push(`/cities/administration/${city.id}`)}>
-              {adminsCount !== 0 ? 
+              {adminsCount !== 0 ?
                 <Badge
-                  count={adminsCount }
+                  count={adminsCount}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
-              </a>
+            </a>
             </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {admins.length !== 0 ? (
@@ -448,16 +457,16 @@ const City = () => {
                       {photosLoading ? (
                         <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
-                        <Avatar size={64} src={admin.user.imagePath} />
-                      )}
+                          <Avatar size={64} src={admin.user.imagePath} />
+                        )}
                       <p className="userName">{admin.user.firstName}</p>
                       <p className="userName">{admin.user.lastName}</p>
                     </div>
                   </Col>
                 ))
               ) : (
-                <Paragraph>Ще немає діловодів станиці</Paragraph>
-              )}
+                  <Paragraph>Ще немає діловодів станиці</Paragraph>
+                )}
             </Row>
             <div className="cityMoreButton">
               <Button
@@ -494,8 +503,8 @@ const City = () => {
                   </Col>
                 ))
               ) : (
-                <Paragraph>Ще немає документів станиці</Paragraph>
-              )}
+                  <Paragraph>Ще немає документів станиці</Paragraph>
+                )}
             </Row>
             <div className="cityMoreButton">
               <Button
@@ -523,13 +532,13 @@ const City = () => {
         >
           <Card hoverable className="cityCard">
             <Title level={4}>Прихильники станиці <a onClick={() => history.push(`/cities/followers/${city.id}`)}>
-              {followersCount !== 0 ? 
+              {followersCount !== 0 ?
                 <Badge
-                  count={followersCount }
+                  count={followersCount}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
-              </a>
+            </a>
             </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {canJoin ? (
@@ -566,8 +575,8 @@ const City = () => {
                         {photosLoading ? (
                           <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                         ) : (
-                          <Avatar size={64} src={followers.user.imagePath} />
-                        )}
+                            <Avatar size={64} src={followers.user.imagePath} />
+                          )}
                         <p className="userName">{followers.user.firstName}</p>
                         <p className="userName">{followers.user.lastName}</p>
                       </div>
@@ -596,7 +605,6 @@ const City = () => {
           </Card>
         </Col>
       </Row>
-
       <CityDetailDrawer
         city={city}
         setVisibleDrawer={setVisibleDrawer}
@@ -615,8 +623,8 @@ const City = () => {
       ) : null}
     </Layout.Content>
   ) : (
-    <Title level={2}>Місто не знайдено</Title>
-  );
+        <Title level={2}>Місто не знайдено</Title>
+      );
 };
 
 export default City;

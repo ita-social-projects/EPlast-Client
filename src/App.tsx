@@ -301,7 +301,7 @@ const App: FC = () => (
             exact
             path="/distinctions"
             component={UserDistinctions}
-          />          
+          />
           <RouteWithLayout
             layout={PrivateLayout}
             exact
@@ -325,7 +325,7 @@ const App: FC = () => (
             exact
             path="*"
             component={NotFound}
-          />        
+          />
 
         </Switch>
       </div>

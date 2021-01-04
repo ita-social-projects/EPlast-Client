@@ -5,6 +5,7 @@ import Twitter from "../../assets/images/bird.svg";
 import Instagram from "../../assets/images/instagram.svg";
 import classes from "./Footer.module.css";
 
+
 const FooterContainer = () => {
   return (
     <Layout.Footer className={classes.footerContainer}>
