@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
-import { Card, Input, Layout, Pagination, Result, Skeleton } from "antd";
-
+import { useHistory, useRouteMatch, Link } from "react-router-dom";
+import { Card, Input, Layout, Pagination, Result, Skeleton, Button } from "antd";
+import { RollbackOutlined } from "@ant-design/icons";
 import Add from "../../assets/images/add.png";
 import RegionDefaultLogo from "../../assets/images/default_city_image.jpg";
 import { GetAllRegions, getRegionsByPage } from "../../api/regionsApi";
@@ -30,7 +30,7 @@ const Regions = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
   const [canCreate, setCanCreate] = useState<boolean>(false);
-  
+
   const setPhotos = async (regions: any[]) => {
     for await (const region of regions) {
       if (region.logo === null) {
@@ -42,7 +42,7 @@ const Regions = () => {
 
     setPhotosLoading(false);
   };
-  
+
   const getRegions = async () => {
     setLoading(true);
 
@@ -62,12 +62,12 @@ const Regions = () => {
       setLoading(false);
     }
   };
-  
-  
+
+
   const handleChange = (page: number) => {
     setPage(page);
   };
-  
+
   const handleSizeChange = (page: number, pageSize: number = 10) => {
     setPage(page);
     setPageSize(pageSize);
@@ -76,10 +76,6 @@ const Regions = () => {
     setPage(1);
     setSearchedData(event);
   };
-
-
-
-
 
   useEffect(() => {
     getRegions();
@@ -115,33 +111,33 @@ const Regions = () => {
                     title="Створити новий округ"
                   />
                 </Card>
-              ): null }
+              ) : null}
 
-              { regions.length === 0 && searchedData.length !== 0 ? (
-              <div>
-              <Result status="404" title="Округ не знайдено" />
-            </div>) : (
-              regions.map((region: any) => (
-                <a href={`${url}/${region.id}`}>
-                <Card
-                  key={region.id}
-                  hoverable
-                  className="cardStyles"
-                  cover={
-                    photosLoading ? (
-                      <Skeleton.Avatar shape="square" active />
-                    ) : (
-                        <img src={region.logo || undefined} alt="RegionDefault" />
-                      )
-                  }
-                  onClick={() => history.push(`${url}/${region.id}`)}
-                >
-                  <Card.Meta title={region.regionName} className="titleText" />
-                </Card>
-                </a>
-              ))
-              )
-            }
+              {regions.length === 0 && searchedData.length !== 0 ? (
+                <div>
+                  <Result status="404" title="Округ не знайдено" />
+                </div>) : (
+                  regions.map((region: any) => (
+                    <Link to={`${url}/${region.id}`}>
+                      <Card
+                        key={region.id}
+                        hoverable
+                        className="cardStyles"
+                        cover={
+                          photosLoading ? (
+                            <Skeleton.Avatar shape="square" active />
+                          ) : (
+                              <img src={region.logo || undefined} alt="RegionDefault" />
+                            )
+                        }
+                        onClick={() => history.push(`${url}/${region.id}`)}
+                      >
+                        <Card.Meta title={region.regionName} className="titleText" />
+                      </Card>
+                    </Link>
+                  ))
+                )
+              }
             </div>
             <div className="pagination">
               <Pagination
@@ -149,7 +145,7 @@ const Regions = () => {
                 pageSize={pageSize}
                 total={total}
                 responsive
-                showSizeChanger = { total < 20 ? false : true }
+                showSizeChanger={total < 20 ? false : true}
                 onChange={(page) => handleChange(page)}
                 onShowSizeChange={(page, size) => handleSizeChange(page, size)}
               />
@@ -157,9 +153,8 @@ const Regions = () => {
           </div>
         )
       }
-      
-
     </Layout.Content >
+
   );
 };
 export default Regions;

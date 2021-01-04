@@ -39,33 +39,33 @@ const DropDown = (props: Props) => {
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
 
   const handleItemClick = async (item: any) => {
-      switch (item.key) {
-        case "1":
-          window.open(`/userpage/main/${record}`);
-          break;
-        case "2":
-          await userDeleteCofirm(record, onDelete);
-          break;
-        case "3":
-          await setShowCityModal(true);
-          break;
-        case "4":
-          await setShowRegionModal(true);
-          break;
-        case "5":
-          await setShowClubModal(true);
-          break;
-        case "6":
-          await setShowEditModal(true);
-          break;
-        case "7":
-          await setVisibleModalDegree(true);
-          break;
-        case "8":
-          await adminApi.putExpiredRole(record);
-          break;
-        default:
-          break;
+    switch (item.key) {
+      case "1":
+        window.open(`/userpage/main/${record}`);
+        break;
+      case "2":
+        await userDeleteCofirm(record, onDelete);
+        break;
+      case "3":
+        await setShowCityModal(true);
+        break;
+      case "4":
+        await setShowRegionModal(true);
+        break;
+      case "5":
+        await setShowClubModal(true);
+        break;
+      case "6":
+        await setShowEditModal(true);
+        break;
+      case "7":
+        await setVisibleModalDegree(true);
+        break;
+      case "8":
+        await adminApi.putExpiredRole(record);
+        break;
+      default:
+        break;
     }
     item.key = "0";
   };
@@ -78,7 +78,7 @@ const DropDown = (props: Props) => {
         className={classes.menu}
         style={{
           top: pageY,
-          left: (window.innerWidth - (pageX + 223)) < 0 ? window.innerWidth - 266 : pageX ,
+          left: (window.innerWidth - (pageX + 223)) < 0 ? window.innerWidth - 266 : pageX,
           display: showDropdown ? "block" : "none",
         }}
       >
@@ -130,7 +130,7 @@ const DropDown = (props: Props) => {
           onChange={onChange}
         />
         <ModalAddPlastDegree
-          handleAddDegree={() => {}}
+          handleAddDegree={() => { }}
           userId={record}
           visibleModal={visibleModalDegree}
           setVisibleModal={setVisibleModalDegree}
