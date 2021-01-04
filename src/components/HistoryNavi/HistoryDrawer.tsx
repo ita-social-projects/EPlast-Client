@@ -1,7 +1,7 @@
 import React from "react";
 import { Drawer, Col, Row, Form } from "antd";
 import { Link } from "react-router-dom";
-import "./Header.module.css";
+
 
 interface Props {
     history: string[];
@@ -11,9 +11,10 @@ interface Props {
 
 const HistoryDrawer = (props: Props) => {
     const pseudonimLocation: { userId: string, psevdonim: string }[] = sessionStorage.getItem("pseudonimLocation") !== null ? JSON.parse(sessionStorage['pseudonimLocation']) : [];
+
     return (
         <Drawer
-            title={'Історія перегляду сторінок       '}
+            title={'Історія перегляду сторінок'}
             onClose={() => props.setVisibleHistoryDrawer(false)}
             visible={props.visibleHistoryDrawer}
             footer={null}

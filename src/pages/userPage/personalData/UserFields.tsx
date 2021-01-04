@@ -9,7 +9,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import notificationLogic from '../../../components/Notifications/Notification';
 import Spinner from '../../Spinner/Spinner';
 import { tryAgain } from "../../../components/Notifications/Messages";
-import PsevdonimCreator from "../../../components/Header/historyPseudo";
+import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 
 export default function () {
   const { userId } = useParams();

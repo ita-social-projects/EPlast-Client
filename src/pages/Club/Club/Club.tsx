@@ -18,7 +18,7 @@ import Spinner from "../../Spinner/Spinner";
 import ClubDetailDrawer from "../ClubDetailDrawer/ClubDetailDrawer";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
-import PsevdonimCreator from "../../../components/Header/historyPseudo";
+import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 
 const Club = () => {
   const history = useHistory();

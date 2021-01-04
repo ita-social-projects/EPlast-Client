@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Menu, Dropdown, Avatar, Badge, Button, Drawer } from "antd";
-import { LoginOutlined, LogoutOutlined, BellOutlined, EditOutlined } from "@ant-design/icons";
+import { LoginOutlined, LogoutOutlined, BellOutlined, EditOutlined, HistoryOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import LogoImg from "../../assets/images/ePlastLogotype.png";
 import LogoText from "../../assets/images/logo_PLAST.svg";
@@ -12,7 +12,7 @@ import userApi from '../../api/UserApi';
 import NotificationBox from '../NotificationBox/NotificationBox';
 import NotificationBoxApi, { NotificationType, UserNotification } from '../../api/NotificationBoxApi';
 import WebSocketConnection from '../NotificationBox/WebSocketConnection';
-import HistoryDrawer from "./HistoryDrawer";
+import HistoryDrawer from "../HistoryNavi/HistoryDrawer";
 import { useLocation } from 'react-router-dom';
 
 let authService = new AuthorizeApi();
@@ -168,21 +168,16 @@ const HeaderContainer = () => {
       {signedIn && userState ? (
         <>
           <Menu mode="horizontal" className={classes.headerMenu + " " + classes.MenuWidth}>
+            <Button ghost
+              icon={<BellOutlined style={{ fontSize: "24px" }} />}
+              onClick={ShowNotifications}
+            >
+            </Button>
+            <Badge count={notifications.filter(n => n.checked === false).length}>
+            </Badge>
             <Menu.Item
               className={classes.headerItem}
               key="4"
-            >
-              <Badge count={notifications.filter(n => n.checked === false).length}>
-                <Button ghost
-                  icon={<BellOutlined style={{ fontSize: "26px" }} />}
-                  onClick={ShowNotifications}
-                >
-                </Button>
-              </Badge>
-            </Menu.Item>
-            <Menu.Item
-              className={classes.headerItem}
-              key="5"
             >
               <Dropdown overlay={primaryMenu}>
                 <NavLink
@@ -200,9 +195,14 @@ const HeaderContainer = () => {
                 </NavLink>
               </Dropdown>
             </Menu.Item>
-            <Button type="ghost"
-              onClick={() => setVisibleHistoryDrawer(true)}
-            >↔</Button>
+            <Menu.Item
+              className={classes.headerItem}
+              key="5"
+            >
+              <Button icon={< HistoryOutlined style={{ color: "white", fontSize: "23px", margin: "auto" }} />} type="ghost"
+                onClick={() => setVisibleHistoryDrawer(true)}
+              ></Button>
+            </Menu.Item>
           </Menu>
           {id !== "" &&
             <NotificationBox

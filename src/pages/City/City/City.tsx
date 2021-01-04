@@ -50,7 +50,7 @@ import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import BreadcrumbItem from "antd/lib/breadcrumb/BreadcrumbItem";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
-import PsevdonimCreator from "../../../components/Header/historyPseudo";
+import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 
 const City = () => {
   const history = useHistory();
@@ -605,17 +605,6 @@ const City = () => {
           </Card>
         </Col>
       </Row>
-      <div className="cityMoreItems" >
-        <Button
-          className="backButton"
-          icon={<RollbackOutlined />}
-          size={"large"}
-          onClick={() => history.goBack()}
-          type="primary"
-        >
-          Назад
-        </Button>
-      </div>
       <CityDetailDrawer
         city={city}
         setVisibleDrawer={setVisibleDrawer}

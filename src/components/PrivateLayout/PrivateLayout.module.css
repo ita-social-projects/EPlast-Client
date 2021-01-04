@@ -14,3 +14,13 @@
     top: 0;
     box-shadow: 2px 0 5px 2px #00000066;
 }
+
+.backButton {
+    position: fixed;
+    width: 36px !important;
+    background-color: #3c5438;
+    color: white;
+    z-index: 2;
+    top: 120px;
+    left: 0;
+}

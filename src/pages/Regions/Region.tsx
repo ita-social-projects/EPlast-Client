@@ -50,7 +50,7 @@ import CityDetailDrawer from "../City/CityDetailDrawer/CityDetailDrawer";
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
-import PsevdonimCreator from "../../components/Header/historyPseudo";
+import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 const Region = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
@@ -594,18 +594,6 @@ const Region = () => {
           </Col>
 
         </Row>
-        <div className="cityMoreItems">
-          <Button
-            className="backButton"
-            icon={<RollbackOutlined />}
-            size={"large"}
-            onClick={() => history.goBack()}
-            type="primary"
-          >
-            Назад
-        </Button>
-        </div>
-
         <AddDocumentModal
           regionId={+id}
           document={document}
