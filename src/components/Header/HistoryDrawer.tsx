@@ -1,6 +1,7 @@
 import React from "react";
 import { Drawer, Col, Row, Form } from "antd";
 import { Link } from "react-router-dom";
+import "./Header.module.css";
 
 interface Props {
     history: string[];
@@ -17,15 +18,13 @@ const HistoryDrawer = (props: Props) => {
             visible={props.visibleHistoryDrawer}
             footer={null}
             forceRender={true}
-            width="25%"
-            className="cityDetail"
+            width=""
         >
             <Row gutter={[25, 10]}>
                 <Col md={24} xs={24}>
                     <Form.Item
                         label="Посилання"
                         labelCol={{ span: 40 }}
-                        initialValue={""}
                     >
                     </Form.Item>
                 </Col>

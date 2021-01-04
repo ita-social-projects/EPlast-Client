@@ -201,7 +201,6 @@ const HeaderContainer = () => {
               </Dropdown>
             </Menu.Item>
             <Button type="ghost"
-              className="historyInfoButton"
               onClick={() => setVisibleHistoryDrawer(true)}
             >↔</Button>
           </Menu>

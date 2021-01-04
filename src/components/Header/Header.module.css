@@ -17,7 +17,7 @@
 }
 
 .MenuWidth {
-    width: 300px;
+    width: 320px;
 }
 
 .headerMenu :hover {
@@ -93,10 +93,11 @@
     font-size: 16px;
 }
 
-.historyInfoButton {
-    font-size: 25px;
-    width: 30px;
-    color: #3c5438;
+.ant-drawer-header {
+    width: auto;
+    @media (max-width: 768px) {
+        width: 75%;
+    }
 }
 
 @media (max-width: 767px) {
