@@ -423,5 +423,4 @@ const onClick = (value: Array<Number>) => {
     </Layout.Content>
   )
 }
-
 export default StatisticsCities;

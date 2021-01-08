@@ -5,21 +5,22 @@ import userApi from '../../../api/UserApi';
 import moment from 'moment';
 import AvatarAndProgress from './AvatarAndProgress';
 import { Data } from '../Interface/Interface';
-import {useParams, useHistory} from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import notificationLogic from '../../../components/Notifications/Notification';
 import Spinner from '../../Spinner/Spinner';
-import{ tryAgain } from "../../../components/Notifications/Messages"
+import { tryAgain } from "../../../components/Notifications/Messages";
+import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 
 export default function () {
-  const {userId}=useParams();
+  const { userId } = useParams();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
-
   const fetchData = async () => {
     await userApi.getById(userId).then(response => {
       setLoading(true);
       setData(response.data);
+      PsevdonimCreator.setPseudonimLocation(`${response.data?.user.firstName}${response.data?.user.lastName}`, userId);
     }).catch(() => { notificationLogic('error', tryAgain) })
   };
 
@@ -30,10 +31,10 @@ export default function () {
   return loading === false ? (
     <Spinner />
   ) : (
-    <div className="container">
+<div className="container">
     <Form name="basic" className="formContainer">
    <div className="avatarWrapper">
-     <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun}/>
+     <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} pseudo={data?.user.pseudo} city={data?.user.city} club={data?.user.club}/>
    </div>
    <div className="allFields">
      <div className="rowBlock">
@@ -73,6 +74,27 @@ export default function () {
          >
          {data?.user.gender.name!==null && data?.user.gender.name!==""? 
                 (<Input readOnly className="dataInput" value={data?.user.gender.name} />):
+                <Input readOnly className="dataInput" value="-"/>
+              }
+       </Form.Item>
+     </div>
+
+     <div className="rowBlock">
+       <Form.Item
+         label="Псевдо"
+         className="formItem"
+       >
+         {data?.user.pseudo!==null && data?.user.pseudo!==""? 
+                (<Input readOnly className="dataInput" value={data?.user.pseudo} />):
+                <Input readOnly className="dataInput" value="-"/>
+              }
+       </Form.Item>
+       <Form.Item 
+         label="Пошта" 
+         className="formItem"
+         >
+         {data?.user.email!==null && data?.user.email!==""? 
+                (<Input readOnly className="dataInput" value={data?.user.email} />):
                 <Input readOnly className="dataInput" value="-"/>
               }
        </Form.Item>
@@ -190,10 +212,18 @@ export default function () {
      >
        Обрати/змінити курінь
      </Button>
+     <Button 
+       className="confirmBtn"
+       onClick={() =>
+         history.push(`/cities`)
+       }
+     >
+       Обрати/змінити станицю
+     </Button>
    </div>
    
  </Form>
 
 </div>
- );
+    );
 }

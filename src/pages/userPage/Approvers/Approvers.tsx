@@ -52,10 +52,10 @@ const Assignments = () => {
   return loading === false ? (
     <Spinner />
   ) : (
-      <div className="wrapper">
+      
         <div className="displayFlex">
           <div className="avatarWrapper">
-            <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} />
+            <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} pseudo={data?.user.pseudo} city={data?.user.city} club={data?.user.club}/>
           </div>
           <div className="approversContent">
             <hr/>
@@ -201,7 +201,7 @@ const Assignments = () => {
                 )
                 )}
             </div>
-            <h1>Поручення Голови осередку/Осередкового УСП/УПС</h1>
+            <h1 className="approversCard">Поручення Голови осередку/Осередкового УСП/УПС</h1>
             <div className="approversCard">
               {(data?.cityApprover != null) ? (
                 <div>
@@ -267,7 +267,6 @@ const Assignments = () => {
             </div>
           </div>
         </div>
-      </div>
     );
 }
 export default Assignments;

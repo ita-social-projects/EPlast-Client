@@ -7,7 +7,7 @@
     box-shadow: 0px 1px 4px 3px #00000021;
     user-select: none;
     display: flex;
-    align-self: center;  
+    align-self: center;
 }
 
 .headerMenu {
@@ -17,7 +17,7 @@
 }
 
 .MenuWidth {
-    width: 260px;
+    width: 340px;
 }
 
 .headerMenu :hover {
@@ -75,13 +75,13 @@
 .userMenu {
     border: none;
     background: inherit;
-    color: white;
+    color: white !important;
     user-select: none;
     font-size: 14px;
 }
 
 .userMenu:hover {
-    color: wheat;
+    color: wheat !important;
 }
 
 .dropDownMenu {
@@ -93,16 +93,23 @@
     font-size: 16px;
 }
 
+.ant-drawer-header {
+    width: auto;
+    @media (max-width: 768px) {
+        width: 75%;
+    }
+}
+
 @media (max-width: 767px) {
     .headerContainer {
-        color: white;
+        color: white !important;
         padding: 0 15px;
     }
     .headerMenu {
-        color: white;
+        color: white !important;
     }
     .headerMenu :hover {
-        color: white;
+        color: white !important;
     }
     .headerMenu:nth-child(2) {
         min-width: 0;

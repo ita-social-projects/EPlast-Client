@@ -1,9 +1,7 @@
-import React, { useEffect, useState, PropsWithRef } from "react";
+import React, { useEffect, useState} from "react";
 import { useHistory } from "react-router-dom";
-import { Table, Spin, Input, Divider, Button } from 'antd';
+import { Table } from 'antd';
 import AnnualReport from '../Interfaces/AnnualReport';
-import ClubAnnualReport from '../Interfaces/ClubAnnualReport';
-import Paragraph from 'antd/lib/skeleton/Paragraph';
 import ClickAwayListener from "react-click-away-listener";
 import UnconfirmedDropdown from "./Dropdowns/UnconfirmedDropdown/UnconfirmedDropdown";
 import ConfirmedDropdown from "./Dropdowns/ConfirmedDropdown/ConfirmedDropdown";
@@ -15,40 +13,27 @@ import Modal from "antd/lib/modal";
 import AuthStore from "../../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-
-
+import notificationLogic from "../../../components/Notifications/Notification";
+import { successfulEditAction, tryAgain } from "../../../components/Notifications/Messages";
+import { showError } from "../../Actions/EventsModals";
 
 interface props {
-
     columns: any;
     filteredData: any;
   }
   
   export const CityAnnualReportTable =({columns, filteredData}:props)=>{
-  const history = useHistory();
+    const history = useHistory();
     const [annualReport, setAnnualReport] = useState<AnnualReport>(Object);
-    const [clubAnnualReport, setClubAnnualReport] = useState<ClubAnnualReport>(Object);
-    const [reportStatusNames, setReportStatusNames] = useState<string[]>(Array());
     const [annualReports, setAnnualReports] = useState<AnnualReport[]>(Array());
-    const [clubAnnualReports, setClubAnnualReports] = useState<ClubAnnualReport[]>(Array());
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
-  const [recordObj, setRecordObj] = useState<any>(0);
-    const [loading, setLoading] = useState(false);
     const [canManage, setCanManage] = useState<boolean>(false);
-    const [showUnconfirmedDropdown, setShowUnconfirmedDropdown] = useState<
-    boolean
-  >(false);
-  const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(
-    false
-  );
-  const [showConfirmedDropdown, setShowConfirmedDropdown] = useState<boolean>(
-    false
-  );
-  const [showAnnualReportModal, setShowAnnualReportModal] = useState<boolean>(
-    false
-  );
-  const [showSavedDropdown, setShowSavedDropdown] = useState<boolean>(false);
+    const [showUnconfirmedDropdown, setShowUnconfirmedDropdown] = useState<boolean>(false);
+    const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(false);
+    const [showConfirmedDropdown, setShowConfirmedDropdown] = useState<boolean>(false);
+    const [showAnnualReportModal, setShowAnnualReportModal] = useState<boolean>(false);
+    const [showSavedDropdown, setShowSavedDropdown] = useState<boolean>(false);
 
     const hideDropdowns = () => {
       setShowUnconfirmedDropdown(false);
@@ -89,24 +74,16 @@ interface props {
         setAnnualReport(response.data.annualReport);
         setShowAnnualReportModal(true);
       } catch (error) {
-        showError(error.message);
+        notificationLogic("error", tryAgain);
+            history.goBack(); 
       }
     };
-    const showError = (message: string) => {
-      Modal.error({
-        title: "Помилка!",
-        content: message,
-      });
-    };
-    const showSuccess = (message: string) => {
-      Modal.success({
-        content: message,
-      });
-    };
+    
     const handleEdit = (id: number) => {
       hideDropdowns();
       history.push(`/annualreport/edit/${id}`);
     };
+
     const handleConfirm = async (id: number) => {
       hideDropdowns();
       try {
@@ -123,9 +100,11 @@ interface props {
             return item;
           })
         );
-        showSuccess(response.data.message);
+        notificationLogic('success', successfulEditAction('Річний звіт', response.data.name));
+        history.goBack(); 
       } catch (error) {
-        showError(error.message);
+        notificationLogic("error", tryAgain);
+            history.goBack(); 
       }
     };
 
@@ -142,11 +121,13 @@ interface props {
           async onOk() {
         let response = await AnnualReportApi.remove(id);
         setAnnualReports(annualReports?.filter((item) => item.id !== id));
-        showSuccess(response.data.message);
+        notificationLogic('success', successfulEditAction('Річний звіт', response.data.name));
+        history.goBack(); 
           }
         });
       } catch (error) {
-        showError(error.message);
+        notificationLogic("error", tryAgain);
+            history.goBack(); 
       }
     };
 
@@ -162,9 +143,11 @@ interface props {
             return item;
           })
         );
-        showSuccess(response.data.message);
+        notificationLogic('success', successfulEditAction('Річний звіт', response.data.name));
+        history.goBack(); 
       } catch (error) {
-        showError(error.message);
+        notificationLogic("error", tryAgain);
+            history.goBack(); 
       }
     };
     
@@ -172,9 +155,7 @@ interface props {
       checkAccessToManage();
     }, []);
 
-console.log(annualReport)
-    return (
-        
+    return (       
         <div>
               <Table
         bordered
@@ -250,7 +231,6 @@ console.log(annualReport)
         visibleModal={showCitySelectModal}
         handleOk={() => setShowCitySelectModal(false)}
       />
-        </div>
-        
-        )
+        </div>  
+      )
 }

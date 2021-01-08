@@ -43,6 +43,9 @@ export const Blanks = () => {
         },
     ]);
 
+    const [documentFormat, setDocumentFormat] = useState<string | undefined>();
+    const [extractUPUFormat, setExtractUPUFormat] = useState<string | undefined>();
+
     const fetchData = async () => {
         const token = AuthStore.getToken() as string;
         setUserToken(jwt(token));
@@ -58,6 +61,7 @@ export const Blanks = () => {
     const getDocument = async () => {
         const response = await getDocumentByUserId(userId);
         setDocument(response.data);
+        setDocumentFormat(getFormat(response.data.fileName));
     };
     const getAchievementDocumentsByUserId = async () => {
         const response = await getAllAchievementDocumentsByUserId(userId);
@@ -66,6 +70,7 @@ export const Blanks = () => {
     const getExtractFromUPU = async () => {
         const response = await getExtractFromUPUByUserId(userId);
         setExtractUPU(response.data);
+        setExtractUPUFormat(getFormat(response.data.fileName));
     }
 
     const getPdf = async () => {
@@ -92,13 +97,16 @@ export const Blanks = () => {
         await getFile(fileBlob, fileName);
     }
 
-    const openDocument = async (fileBlob: string) => {
-        await openBiographyFile(fileBlob);
+    const openDocument = async (fileBlob: string, fileName: string) => {
+        await openBiographyFile(fileBlob, fileName);
     }
-    const openExtractFromUPUDocument = async (fileBlob: string) => {
-        await openExtractFromUPUFile(fileBlob);
+    const openExtractFromUPUDocument = async (fileBlob: string, fileName: string) => {
+        await openExtractFromUPUFile(fileBlob, fileName);
     }
-
+    const getFormat = (fileName:string)=>{
+        if(fileName != undefined)
+        return fileName.split(".")[1];
+    }
     useEffect(() => {
         fetchData();
         getDocument();
@@ -117,7 +125,10 @@ export const Blanks = () => {
                             time={data?.timeToJoinPlast}
                             firstName={data?.user.firstName}
                             lastName={data?.user.lastName}
-                            isUserPlastun={true} />
+                            isUserPlastun={true}
+                            pseudo={data?.user.pseudo} 
+                            city={data?.user.city} 
+                            club={data?.user.club}/>
                     </div>
                     <div className={classes.wrapperCol}>
                         <div className={classes.wrapper}>
@@ -148,12 +159,14 @@ export const Blanks = () => {
                                                 }
                                             />
                                         </Tooltip>
+                                        {(documentFormat !== "doc" && documentFormat !== "docx")?
                                         <Tooltip title="Переглянути">
                                             <EyeOutlined
                                                 className={classes.reviewIcon}
                                                 key="review"
-                                                onClick={() => openDocument(document.blobName)} />
+                                                onClick={() => openDocument(document.blobName, document.fileName)} />
                                         </Tooltip>
+                                        :null}
                                         {userToken.nameid === userId &&
                                             <Tooltip title="Видалити">
                                                 <Popconfirm
@@ -222,12 +235,14 @@ export const Blanks = () => {
                                                 }
                                             />
                                         </Tooltip>
+                                        {(extractUPUFormat !== "doc" && extractUPUFormat !== "docx")?
                                         <Tooltip title="Переглянути">
                                             <EyeOutlined
                                                 className={classes.reviewIcon}
                                                 key="review"
-                                                onClick={() => openExtractFromUPUDocument(extractUPU.blobName)} />
+                                                onClick={() => openExtractFromUPUDocument(extractUPU.blobName, extractUPU.fileName)} />
                                         </Tooltip>
+                                        :null}
                                         {userToken.nameid === userId &&
                                             <Tooltip title="Видалити">
                                                 <Popconfirm

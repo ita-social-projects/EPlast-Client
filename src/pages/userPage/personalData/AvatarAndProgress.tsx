@@ -21,6 +21,9 @@ class AvatarAndProgressProps {
   firstName: string | undefined;
   lastName: string | undefined;
   isUserPlastun: boolean | undefined;
+  pseudo: string | undefined;
+  city: string | undefined;
+  club: string | undefined;
 }
 
 
@@ -38,7 +41,7 @@ const contentListNoTitle: { [key: string]: any } = {
 const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndProgressProps) => {
   const { userId } = useParams();
   const [loading, setLoading] = useState(false);
-  const { time, imageUrl, firstName, lastName, isUserPlastun } = props;
+  const { time, imageUrl, firstName, lastName, isUserPlastun, pseudo, city, club } = props;
   const [imageBase64, setImageBase64] = useState<string>();
   const [UserDistinctions, setData] = useState<UserDistinction[]>([{
     id: 0,
@@ -99,8 +102,11 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
       <div className="kadraWrapper">
         <Avatar src={imageBase64} className="img" />
         <Title level={2}>{firstName} {lastName}</Title>
+        <Title level={4}>Псевдо: {pseudo}</Title>       
+        <p className="statusText">Станиця: {city}  </p> 
+        <p className="statusText">Курінь: {club}</p>
         {!isUserPlastun &&
-          <div className="progress">
+          <div className="progress">        
             <p className="statusText">{time} дні і {firstName} {lastName} Пластун:)</p>
             <Progress
               type="circle"

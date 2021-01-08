@@ -51,6 +51,8 @@ import RegionMembers from "./../src/pages/Regions/RegionMembers";
 import StatisticsCities from "./pages/Statistics/StatisticsCities";
 import StatisticsRegions from "./pages/Statistics/StatisticsRegions";
 import NotAuthorizedPage from "./pages/Error/NotAuthorized";
+import { ClubAnnualReportCreate } from "./pages/AnnualReport/ClubAnnualReportCreate/ClubAnnualReportCreate";
+import ClubAnnualReportEdit from "./pages/AnnualReport/ClubAnnualReportEdit/ClubAnnualReportEdit";
 
 const App: FC = () => (
   <div className="App">
@@ -194,8 +196,20 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+            path="/annualreport/createClubAnnualReport/:clubId"
+            component={ClubAnnualReportCreate}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/annualreport/edit/:id"
             component={AnnualReportEdit}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/club/editClubAnnualReport/:id"
+            component={ClubAnnualReportEdit}
           />
           <RouteWithLayout
             layout={PrivateLayout}
@@ -287,7 +301,7 @@ const App: FC = () => (
             exact
             path="/distinctions"
             component={UserDistinctions}
-          />          
+          />
           <RouteWithLayout
             layout={PrivateLayout}
             exact
@@ -311,7 +325,7 @@ const App: FC = () => (
             exact
             path="*"
             component={NotFound}
-          />        
+          />
 
         </Switch>
       </div>

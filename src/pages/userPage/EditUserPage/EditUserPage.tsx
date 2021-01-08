@@ -8,8 +8,10 @@ import {
   Select,
   AutoComplete,
   DatePicker,
+  Popconfirm,
+  Tooltip,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 import styles from "./EditUserPage.module.css";
 import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
@@ -33,8 +35,11 @@ import{
   successfulEditAction,
   tryAgain,
   shouldContain,
-  incorrectPhone
+  incorrectPhone,
+  emptyInput,
+  minLength
 } from "../../../components/Notifications/Messages"
+import "../EditUserPage/EditUserPage.less"
 
 export default function () {
   const history = useHistory();
@@ -55,6 +60,8 @@ export default function () {
   const [userAvatar, setUserAvatar] = useState<any>();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
+  const [photoName, setPhotoName] = useState<any>(null);
+  const [defaultPhotoName, setDefaultPhotoName] = useState<string>("default_user_image.png");
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
@@ -72,6 +79,7 @@ export default function () {
             .catch(() => {
               notificationLogic("error", fileIsNotUpload("фото"));
             });
+            setPhotoName(response.data.user.imagePath);
         } else {
           notificationLogic("error", fileIsNotUpload("даних"));
         }
@@ -91,6 +99,7 @@ export default function () {
           religionName: response.data.user.religion.name,
           positionOfWork: response.data.user.work.position,
           address: response.data.user.address,
+          pseudo: response.data.user.pseudo,
         });
         setNationality(response.data.user.nationality);
         setReligion(response.data.user.religion);
@@ -99,7 +108,7 @@ export default function () {
         setSpecialityID(response.data.educationView.specialityID);
         setPlaceOfWorkID(response.data.workView.placeOfWorkID);
         setPositionID(response.data.workView.positionID);
-        setGender(response.data.user.gender);
+        setGender(response.data.user.gender); 
         if (response.data.user.birthday === "0001-01-01T00:00:00") {
           setBirthday(undefined);
         } else {
@@ -127,20 +136,23 @@ export default function () {
 
   const validationSchema = {
     name: [
-      { max: 25, message: "Максимальна довжина - 25 символів" },
-      { min: 2, message: "Мінімальна довжина - 2 символів" },
-      { required: true, message: "Поле є обов'язковим" },
+      { max: 25, message: maxLength(25) },
+      { min: 2, message: minLength(2) },
+      { required: true, message: emptyInput() },
       { pattern: patern, message: message },
     ],
     surName: [
-      { max: 25, message: "Максимальна довжина - 25 символів" },
-      { min: 2, message: "Мінімальна довжина - 2 символів" },
-      { required: true, message: "Поле є обов'язковим" },
+      { max: 25, message: maxLength(25) },
+      { min: 2, message: minLength(2) },
+      { required: true, message: emptyInput() },
       { pattern: patern, message: message },
     ],
     fatherName: [
       { max: 25, message: maxLength(25) },
       { pattern: patern, message: message },
+    ],
+    gender: [
+      { required: true, message: emptyInput() },
     ],
     degree: [
       { max: 30, message: maxLength(30) },
@@ -170,6 +182,10 @@ export default function () {
     ],
     address: [
       { max: 50, message: maxLength(50) }
+    ],
+    pseudo: [
+      {max: 30, message: maxLength(30)},
+      {pattern: patern, message: message},
     ],
   };
 
@@ -203,6 +219,7 @@ export default function () {
         getBase64(info.file, (imageUrl: any) => {
           setUserAvatar(imageUrl);
         });
+        setPhotoName(null);
         notificationLogic("success", fileIsUpload("Фото"));
       }
     } else {
@@ -292,6 +309,17 @@ export default function () {
       setBirthday(moment(event?._d));
     }
   };
+  const handleDeletePhoto = async () => {
+    await userApi
+            .getImage(defaultPhotoName)
+            .then((q: { data: any }) => {
+              setUserAvatar(q.data);
+            })
+            .catch(() => {
+              notificationLogic("error", fileIsNotUpload("фото"));
+            });
+            setPhotoName(defaultPhotoName);
+  };
   const handleSubmit = async (values: any) => {
     const newUserProfile = {
       user: {
@@ -302,6 +330,9 @@ export default function () {
         fatherName: values.fatherName,
         phoneNumber: phoneNumber,
         birthday: birthday,
+        imagePath:photoName,
+        pseudo: values.pseudo,
+        mail: values.mail,
 
         degree: {
           id: degree?.id,
@@ -363,6 +394,7 @@ export default function () {
       >
         <div className={styles.avatarWrapper}>
           <Avatar size={300} src={userAvatar} className="avatarElem" />
+          <div className={styles.buttons}>
           <Upload
             name="avatar"
             className={styles.changeAvatar}
@@ -374,6 +406,22 @@ export default function () {
               <UploadOutlined /> Вибрати
             </Button>
           </Upload>
+          {photoName!==defaultPhotoName?
+          <Tooltip title="Видалити">
+            <Popconfirm
+              title="Видалити фото?"
+              placement="bottom"
+              icon={false}
+              onConfirm={()=>handleDeletePhoto()}
+              okText="Так"
+              cancelText="Ні">
+              <DeleteOutlined
+                className={styles.deleteIcon}
+                key="close"
+              />
+            </Popconfirm>
+          </Tooltip>:null}
+          </div>
         </div>
         
         <div className={styles.allFields}>
@@ -408,6 +456,7 @@ export default function () {
               label="Стать"
               name="genderName"
               className={styles.formItem}
+              rules={validationSchema.gender}
             >
               <Select
                 className={styles.dataInputSelect}
@@ -421,8 +470,15 @@ export default function () {
               </Select>
             </Form.Item>
           </div>
-
           <div className={styles.rowBlock}>
+            <Form.Item
+              label="Псевдо"
+              name="pseudo"
+              rules={validationSchema.pseudo}
+              className={styles.formItem}
+            >            
+              <Input className={styles.dataInput} maxLength={31}/>
+            </Form.Item>
             <Form.Item label="Дата народження" className={styles.formItem}>
               <DatePicker
                 className={styles.dataInput}
@@ -432,6 +488,8 @@ export default function () {
                 format="DD.MM.YYYY"
               />
             </Form.Item>
+          </div>
+          <div className={styles.rowBlock}>
             <Form.Item
               label="Номер телефону"
               name="phoneNumber"
@@ -448,8 +506,6 @@ export default function () {
                   {(inputProps: any) => <Input {...inputProps} />}
               </ReactInputMask>
             </Form.Item>
-          </div>
-          <div className={styles.rowBlock}>
             <Form.Item
               label="Національність"
               name="nationalityName"
@@ -468,6 +524,8 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
+          </div>
+          <div className={styles.rowBlock}>
             <Form.Item
               label="Віровизнання"
               name="religionName"
@@ -487,9 +545,6 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
-          </div>
-
-          <div className={styles.rowBlock}>
             <Form.Item
               label="Навчальний заклад"
               name="placeOfStudy"
@@ -508,6 +563,8 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
+          </div>
+          <div className={styles.rowBlock}>
             <Form.Item
               label="Спеціальність"
               name="speciality"
@@ -526,8 +583,6 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
-          </div>
-          <div className={styles.rowBlock}>
             <Form.Item
               label="Навчальний ступінь"
               name="degreeName"
@@ -546,6 +601,8 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
+          </div>
+          <div className={styles.rowBlock}>
             <Form.Item
               label="Місце праці"
               name="placeOfWork"
@@ -564,8 +621,6 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
-          </div>
-          <div className={styles.rowBlock}>
             <Form.Item
               label="Посада"
               name="positionOfWork"
@@ -584,6 +639,8 @@ export default function () {
                 ))}
               </AutoComplete>
             </Form.Item>
+          </div>
+          <div className={styles.rowBlock}>
             <Form.Item
               label="Адреса проживання"
               name="address"
@@ -591,6 +648,10 @@ export default function () {
               className={styles.formItem}
             >
               <Input className={styles.dataInput} maxLength={51}/>
+            </Form.Item>
+            <Form.Item
+              className={styles.formItem}
+            >
             </Form.Item>
           </div>
           <Button className={styles.confirmBtn} htmlType="submit">

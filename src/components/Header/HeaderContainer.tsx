@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Dropdown, Avatar, Badge, Button } from "antd";
-import { LoginOutlined, LogoutOutlined, BellOutlined, EditOutlined } from "@ant-design/icons";
+import { Layout, Menu, Dropdown, Avatar, Badge, Button, Drawer } from "antd";
+import { LoginOutlined, LogoutOutlined, BellOutlined, EditOutlined, HistoryOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import LogoImg from "../../assets/images/ePlastLogotype.png";
 import LogoText from "../../assets/images/logo_PLAST.svg";
@@ -11,7 +11,9 @@ import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
 import NotificationBox from '../NotificationBox/NotificationBox';
 import NotificationBoxApi, { NotificationType, UserNotification } from '../../api/NotificationBoxApi';
-import WebSocketConnection from '../NotificationBox/WebSocketConnection'
+import WebSocketConnection from '../NotificationBox/WebSocketConnection';
+import HistoryDrawer from "../HistoryNavi/HistoryDrawer";
+import { useLocation } from 'react-router-dom';
 
 let authService = new AuthorizeApi();
 
@@ -26,6 +28,8 @@ const HeaderContainer = () => {
   const [notificationTypes, setNotificationTypes] = useState<Array<NotificationType>>([]);
   const [notifications, setNotifications] = useState<Array<UserNotification>>([]);
   const [visibleDrawer, setVisibleDrawer] = useState<boolean>(false);
+  const [visibleHistoryDrawer, setVisibleHistoryDrawer] = useState(false);
+  const location = useLocation().pathname;
 
   const fetchData = async () => {
     if (user) {
@@ -53,6 +57,16 @@ const HeaderContainer = () => {
       })
     }
   };
+  const userHistory: string[] = sessionStorage.getItem(`${name}`) !== null ? JSON.parse(sessionStorage[`${name}`]) : [];
+  useEffect(() => {
+    if (!userHistory.includes(location) && location !== "/signin") {
+      userHistory.push(location)
+    }
+    if (userHistory.length > 25) {
+      userHistory.shift();
+    }
+    sessionStorage.setItem(`${name}`, JSON.stringify(userHistory));
+  }, [location])
 
   const getNotifications = async (userId: string) => {
     await NotificationBoxApi.getAllUserNotifications(userId)
@@ -154,21 +168,16 @@ const HeaderContainer = () => {
       {signedIn && userState ? (
         <>
           <Menu mode="horizontal" className={classes.headerMenu + " " + classes.MenuWidth}>
+            <Button ghost
+              icon={<BellOutlined style={{ fontSize: "24px" }} />}
+              onClick={ShowNotifications}
+            >
+            </Button>
+            <Badge count={notifications.filter(n => n.checked === false).length}>
+            </Badge>
             <Menu.Item
               className={classes.headerItem}
               key="4"
-            >
-              <Badge count={notifications.filter(n => n.checked === false).length}>
-                <Button ghost
-                  icon={<BellOutlined style={{ fontSize: "26px" }} />}
-                  onClick={ShowNotifications}
-                >
-                </Button>
-              </Badge>
-            </Menu.Item>
-            <Menu.Item
-              className={classes.headerItem}
-              key="5"
             >
               <Dropdown overlay={primaryMenu}>
                 <NavLink
@@ -182,9 +191,17 @@ const HeaderContainer = () => {
                     alt="User"
                     style={{ marginRight: "10px" }}
                   />
-                  Привіт, {name}
+                  Привіт, {name !== undefined ? (name?.length > 12 ? name.slice(0, 10) + "..." : name) : ""}
                 </NavLink>
               </Dropdown>
+            </Menu.Item>
+            <Menu.Item
+              className={classes.headerItem}
+              key="5"
+            >
+              <Button icon={< HistoryOutlined style={{ color: "white", fontSize: "23px", margin: "auto" }} />} type="ghost"
+                onClick={() => setVisibleHistoryDrawer(true)}
+              ></Button>
             </Menu.Item>
           </Menu>
           {id !== "" &&
@@ -198,6 +215,11 @@ const HeaderContainer = () => {
               handleNotificationBox={handleNotificationBox}
             />
           }
+          <HistoryDrawer
+            history={userHistory}
+            setVisibleHistoryDrawer={setVisibleHistoryDrawer}
+            visibleHistoryDrawer={visibleHistoryDrawer}
+          ></HistoryDrawer>
         </>
       ) : (
           <Menu mode="horizontal" className={classes.headerMenu} theme="light">

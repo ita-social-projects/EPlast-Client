@@ -1,3 +1,5 @@
+import { AxiosError } from "axios";
+import ClubAnnualReport from "../pages/AnnualReport/Interfaces/ClubAnnualReport";
 import api from "./api";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
@@ -21,11 +23,49 @@ export const getClubById = async (id: number) => {
   });
 };
 
+export const createClubAnnualReport = async (data: any) => {
+  return await api.post(`Club/CreateClubAnnualReport`,JSON.stringify(data)) .catch((error: AxiosError) => {
+    throw new Error(error.response?.data.message);
+});
+};
+
+export const removeClubAnnualReport = async (id: number) => {
+  return await api.remove(`Club/deleteClubAnnualReport/${id}`)
+      .catch((error: AxiosError) => {
+          throw new Error(error.response?.data.message);
+      });
+}
+
+export const confirmClubAnnualReport = async (id: number) => {
+  return await api.put(`Club/confirmClubAnnualReport/${id}`) .catch((error) => {
+    throw new Error(error);
+});
+};
+
+export const cancelClubAnnualReport = async (id: number) => {
+  return await api.put(`Club/cancelClubAnnualReport/${id}`) .catch((error) => {
+    throw new Error(error);
+});
+};
+
 export const getClubAnnualReport = async () => {
   return await api.get(`Club/GetAllClubAnnualReports`).catch((error) => {
     throw new Error(error);
   });
 };
+
+export const getClubAnnualReportById = async (id:number) => {
+  return await api.get(`Club/GetClubAnnualReportById/${id}`,id).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const editClubAnnualReport = async (data: ClubAnnualReport) => {
+  return await api.put('Club/editClubAnnualReport', data)
+      .catch((error: AxiosError) => {
+          throw new Error(error.response?.data.message);
+      });
+}
 
 export const getClubByPage = async (page: number, pageSize: number, clubName: string | null = null) => {
   return api
@@ -169,3 +209,4 @@ export const getUsersPreviousAdministrations = async(UserId:string)=>{
 export const getClubs = async()=>{
   return api.get(`Club/Clubs`);
 }
+

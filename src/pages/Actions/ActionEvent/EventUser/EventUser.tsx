@@ -144,12 +144,12 @@ const EventUser = () => {
     <Spinner />
   ) : (
     <div className={classes.wrapper}>
-      <div className="avatarWrapper">
+      <div className={classes.wrapperImg}>
                     
  
 
-<AvatarAndProgress imageUrl={currentUser.imagePath} time={currentUser.timeToJoinPlast} firstName={currentUser.firstName} lastName={currentUser.lastName} isUserPlastun={true} />
-{userToken.nameid === userId && allEvents?.createdEvents.length !== 0 && (
+<AvatarAndProgress imageUrl={currentUser.imagePath} time={currentUser.timeToJoinPlast} firstName={currentUser.firstName} lastName={currentUser.lastName} isUserPlastun={true} pseudo={currentUser.pseudo} city={currentUser.city} club={currentUser.club}/>
+{userToken.nameid === userId && (
           <Button
             type="primary"
             className={classes.buttonInside}

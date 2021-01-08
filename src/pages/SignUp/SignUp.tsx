@@ -87,7 +87,7 @@ export default function () {
             }),
           ]}
         >
-          <Input.Password visibilityToggle={true} className={styles.MyInput} placeholder="Повторіть пароль" />
+          <Input.Password visibilityToggle={true} className={styles.MyInput} placeholder="Підтвердити пароль" />
         </Form.Item>
         <Form.Item name="Name" rules={validationSchema.Name}>
           <Input className={styles.MyInput} placeholder="Ім'я" />

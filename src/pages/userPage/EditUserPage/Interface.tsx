@@ -53,7 +53,8 @@ export type User ={
     religion: Religion;
     education: Education;
     degree: Degree;
-    work: Work;
+    work: Work;   
+    pseudo: string;
 }
   
 export type Data={

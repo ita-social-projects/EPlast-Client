@@ -15,12 +15,13 @@ import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import moment from "moment";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import{
+import {
   successfulCreateAction,
   successfulDeleteAction,
   successfulUpdateAction
 } from "../../../components/Notifications/Messages"
-
+import { RollbackOutlined } from "@ant-design/icons";
+import { useHistory } from "react-router-dom";
 const { Content } = Layout;
 const DistinctionTable = () => {
   const classes = require("./Table.module.css");
@@ -31,8 +32,8 @@ const DistinctionTable = () => {
   roles =
     curToken !== null
       ? (user[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] as string[])
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ] as string[])
       : [""];
   const [recordObj, setRecordObj] = useState<any>(0);
   const [userId, setUserId] = useState<any>(0);
@@ -44,6 +45,7 @@ const DistinctionTable = () => {
   const [loading, setLoading] = useState(false);
   const [searchedData, setSearchedData] = useState("");
   const [canEdit] = useState(roles.includes("Admin"));
+  const history = useHistory();
   const [UserDistinctions, setData] = useState<UserDistinction[]>([
     {
       id: 0,
@@ -72,15 +74,15 @@ const DistinctionTable = () => {
 
   let filteredData = searchedData
     ? UserDistinctions.filter((item) => {
-        return Object.values([
-          item.reporter,
-          item.reason,
-          item.number,
-          moment(item.date.toLocaleString()).format("DD.MM.YYYY"),
-        ]).find((element) => {
-          return String(element).toLowerCase().includes(searchedData);
-        });
-      })
+      return Object.values([
+        item.reporter,
+        item.reason,
+        item.number,
+        moment(item.date.toLocaleString()).format("DD.MM.YYYY"),
+      ]).find((element) => {
+        return String(element).toLowerCase().includes(searchedData);
+      });
+    })
     : UserDistinctions;
 
   filteredData = filteredData.concat(
@@ -125,54 +127,52 @@ const DistinctionTable = () => {
   };
 
 
-  const CreateDeleteNotification = (id : number) => {
+  const CreateDeleteNotification = (id: number) => {
     const userDistinction = UserDistinctions.find(
       (d: { id: number }) => d.id === id
     );
-    if(userDistinction)
-    {
+    if (userDistinction) {
       NotificationBoxApi.createNotifications(
         [userDistinction.userId],
         `Ваше відзначення: '${userDistinction.distinction.name}' було видалено.`,
         NotificationBoxApi.NotificationTypes.UserNotifications
       );
       NotificationBoxApi.getCitiesForUserAdmins(userDistinction.userId)
-      .then(res => {
+        .then(res => {
           res.cityRegionAdmins.length !== 0 &&
-          res.cityRegionAdmins.forEach(async (cra) => {
+            res.cityRegionAdmins.forEach(async (cra) => {
               await NotificationBoxApi.createNotifications(
-                  [cra.cityAdminId, cra.regionAdminId],
-                  `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' був позбавлений відзначення: '${userDistinction.distinction.name}'. `,
-                  NotificationBoxApi.NotificationTypes.UserNotifications
-                  );
-          })                
-      });
+                [cra.cityAdminId, cra.regionAdminId],
+                `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' був позбавлений відзначення: '${userDistinction.distinction.name}'. `,
+                NotificationBoxApi.NotificationTypes.UserNotifications
+              );
+            })
+        });
     }
   }
 
-  const CreateEditNotification = (userId : string, name : string) => {
-    if(userId !== "" && name !== "")
-    {
+  const CreateEditNotification = (userId: string, name: string) => {
+    if (userId !== "" && name !== "") {
       NotificationBoxApi.createNotifications(
         [userId],
         `Ваше відзначення: '${name}' було змінено. `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/distinctions`,
         `Переглянути`
-        );
+      );
       NotificationBoxApi.getCitiesForUserAdmins(userId)
-      .then(res => {
+        .then(res => {
           res.cityRegionAdmins.length !== 0 &&
-          res.cityRegionAdmins.forEach(async (cra) => {
+            res.cityRegionAdmins.forEach(async (cra) => {
               await NotificationBoxApi.createNotifications(
-                  [cra.cityAdminId, cra.regionAdminId],
-                  `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінене відзначення: '${name}'. `,
-                  NotificationBoxApi.NotificationTypes.UserNotifications,
-                  `/distinctions`,
-                  `Переглянути`
-                  );
-          })           
-      });
+                [cra.cityAdminId, cra.regionAdminId],
+                `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінене відзначення: '${name}'. `,
+                NotificationBoxApi.NotificationTypes.UserNotifications,
+                `/distinctions`,
+                `Переглянути`
+              );
+            })
+        });
     }
   }
 
@@ -216,86 +216,98 @@ const DistinctionTable = () => {
   return loading === false ? (
     <Spinner />
   ) : (
-    <Layout>
-      <Content
-        onClick={() => {
-          setShowDropdown(false);
-        }}
-      >
-        <h1 className={classes.titleTable}>Відзначення</h1>
+      <Layout>
+        <Content
+          onClick={() => {
+            setShowDropdown(false);
+          }}
+        >
+          <h1 className={classes.titleTable}>Відзначення</h1>
 
-        <>
-          <div className={classes.searchContainer}>
-            {canEdit === true ? (
-              <>
-                <Button type="primary" onClick={showModal}>
-                  Додати відзначення
+          <>
+            <div className={classes.searchContainer}>
+              {canEdit === true ? (
+                <>
+                  <Button type="primary" onClick={showModal}>
+                    Додати відзначення
                 </Button>
-                <Button type="primary" onClick={showModalEditTypes}>
-                  Редагування типів відзначень
+                  <Button type="primary" onClick={showModalEditTypes}>
+                    Редагування типів відзначень
                 </Button>
-                <span />
-              </>
-            ) : (
-              <></>
-            )}
-            <Input placeholder="Пошук" onChange={handleSearch} allowClear />
-          </div>
-          <div>
-            <Table
-              className={classes.table}
-              dataSource={filteredData}
-              columns={columns}
-              scroll={{ x: 1300 }}
-              onRow={(record) => {
-                return {
-                  onClick: () => {
-                    setShowDropdown(false);
-                  },
-                  onContextMenu: (event) => {
-                    event.preventDefault();
-                    setShowDropdown(true);
-                    setRecordObj(record.id);
-                    setUserId(record.userId);
-                    setX(event.pageX);
-                    setY(event.pageY);
-                  },
-                };
-              }}
-              pagination={{
-                showLessItems: true,
-                responsive: true,
-                showSizeChanger: true,
-              }}
-              bordered
-              rowKey="id"
-            />
-          </div>
-          <ClickAwayListener onClickAway={handleClickAway}>
-            <DropDownDistinctionTable
-              showDropdown={showDropdown}
-              record={recordObj}
-              userId={userId}
-              pageX={x}
-              pageY={y}
-              canEdit={canEdit}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-            />
-          </ClickAwayListener>
+                  <span />
+                </>
+              ) : (
+                  <></>
+                )}
+              <Input placeholder="Пошук" onChange={handleSearch} allowClear />
+            </div>
+            <div>
+              <Table
+                className={classes.table}
+                dataSource={filteredData}
+                columns={columns}
+                scroll={{ x: 1300 }}
+                onRow={(record) => {
+                  return {
+                    onClick: () => {
+                      setShowDropdown(false);
+                    },
+                    onContextMenu: (event) => {
+                      event.preventDefault();
+                      setShowDropdown(true);
+                      setRecordObj(record.id);
+                      setUserId(record.userId);
+                      setX(event.pageX);
+                      setY(event.pageY);
+                    },
+                  };
+                }}
+                pagination={{
+                  showLessItems: true,
+                  responsive: true,
+                  showSizeChanger: true,
+                }}
+                bordered
+                rowKey="id"
+              />
+            </div>
+            <ClickAwayListener onClickAway={handleClickAway}>
+              <DropDownDistinctionTable
+                showDropdown={showDropdown}
+                record={recordObj}
+                userId={userId}
+                pageX={x}
+                pageY={y}
+                canEdit={canEdit}
+                onDelete={handleDelete}
+                onEdit={handleEdit}
+              />
+            </ClickAwayListener>
 
-          <AddDistinctionModal
-            setVisibleModal={setVisibleModal}
-            visibleModal={visibleModal}
-            onAdd={handleAdd}
-          />
-          <EditDistinctionTypesModal
-            setVisibleModal={setVisibleModalEditDist}
-            visibleModal={visibleModalEditDist}
-          />
-        </>
-      </Content>
-    </Layout>
-  );
+            <AddDistinctionModal
+              setVisibleModal={setVisibleModal}
+              visibleModal={visibleModal}
+              onAdd={handleAdd}
+            />
+            <EditDistinctionTypesModal
+              setVisibleModal={setVisibleModalEditDist}
+              visibleModal={visibleModalEditDist}
+            />
+          </>
+        </Content>
+        <div className="cityMoreItems">
+          <Button
+            className="backButton"
+            icon={<RollbackOutlined />}
+            size={"large"}
+            onClick={() => history.goBack()}
+            type="primary"
+          >
+            Назад
+        </Button>
+        </div>
+
+      </Layout>
+    );
 };
 export default DistinctionTable;

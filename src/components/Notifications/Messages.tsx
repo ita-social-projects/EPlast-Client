@@ -6,7 +6,7 @@ export const emptyInput = (name?:string)=>{
     return name ? `Поле ${name} є обов'язковим` : `Поле є обов'язковим`;
 }; 
 
-export const incorrectPhone = 'Дане поле не є номером телефону'; 
+export const incorrectPhone = 'Неправильний формат телефонного номера'; 
 
 export const onlyPositiveNumber = `Поле не може бути від'ємним`; 
 
@@ -36,6 +36,10 @@ export const successfulUpdateAction = (name:string, itemName?:string)=>{
     return itemName ? `${name} ${itemName} успішно оновлено` : `${name} успішно оновлено`;
 }; 
 
+export const successfulConfirmedAction = (name:string, itemName?:string)=>{
+    return itemName ? `${name} ${itemName} успішно затверджено` : `${name} успішно затверджено`;
+}; 
+
 export const failCreateAction = (name:string)=>{
     return `Не вдалося створити ${name}`;
 }; 
@@ -53,7 +57,7 @@ export const failUpdateAction = (name:string)=>{
 }; 
 
 export const shouldContain = (items:string)=>{
-    return `Поле повинне містити ${items}`;
+    return `Поле повинно містити ${items}`;
 };
 
 export const fileIsUpload = (name?:string)=>{

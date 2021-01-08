@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import { Avatar, Layout, Menu } from "antd";
+import { useHistory, Link } from "react-router-dom";
+import { Avatar, Layout, Menu, Button } from "antd";
 import ClickAwayListener from 'react-click-away-listener';
-
+import { RollbackOutlined } from "@ant-design/icons";
 import {
   SolutionOutlined,
   InfoCircleOutlined,
@@ -30,6 +30,9 @@ const PrivateLayout = ({ children }: any) => {
   const [regionAdm, setRegionAdm] = useState(false);
   const [cityAdm, setCityAdm] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
+  const [id, setId] = useState<string>("");
+  const [onlyRegistered, setOnlyRegistered] = useState(false);
+
 
   const onCollapse = (collValue: boolean) => {
     setCollapsed(collValue);
@@ -44,9 +47,8 @@ const PrivateLayout = ({ children }: any) => {
     const token = AuthStore.getToken() as string;
     if (token == null) {
       const str = window.location.pathname
-      if(str !== "/signin")
-      {
-        localStorage.setItem('pathName',str);
+      if (str !== "/signin") {
+        localStorage.setItem('pathName', str);
       }
       history.push("/signin");
     }
@@ -56,6 +58,7 @@ const PrivateLayout = ({ children }: any) => {
         await userApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
         })
+        setId(response.data.user.id);
       })
     }
   };
@@ -71,6 +74,7 @@ const PrivateLayout = ({ children }: any) => {
     setClubAdm(roles.includes("Голова Куреня"));
     setCanSee(roles.includes("Пластун"));
     setCanAccess(roles.includes("Прихильник")); 
+    setOnlyRegistered(roles.includes("Зареєстрований користувач"));
   }
 
   useEffect(() => {
@@ -92,12 +96,13 @@ const PrivateLayout = ({ children }: any) => {
           collapsedWidth="0"
         >
           <div className={classes.profilePhoto}>
-            <Avatar
-              size={64}
-              src={imageBase64}
-              alt="User"
-              style={{ marginRight: "10px" }}
-            />
+            <Link to={`/userpage/main/${id}`}>
+              <Avatar
+                size={64}
+                src={imageBase64}
+                alt="User"
+                style={{ marginRight: "10px" }}
+              /></Link>
           </div>
           <Menu theme="dark" mode="inline" className={classes.leftMenu}>
             {(canEdit == true || canSee == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
@@ -114,12 +119,26 @@ const PrivateLayout = ({ children }: any) => {
             }
             <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Довідник">
             {(canEdit == true || canSee == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+              <Menu.Item
+                key="1"
+                icon={<SolutionOutlined />}
+                onClick={() => { handleClickAway(); history.push("/decisions"); }}
+                style={{ color: "white" }}
+              >
+                Рішення
+              </Menu.Item>
+            ) : (<> </>)
+            }
+            <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
+              {(canEdit == true) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
                   Таблиця користувачів
                 </Menu.Item>
-                ) : (<> </>)
-            }
-              <Menu.Item onClick={() => { handleClickAway(); history.push("/regions");}} key="3">Округи</Menu.Item>
+              ) : (<> </>)
+              }
+              <Menu.Item onClick={() => { handleClickAway(); history.push("/regions"); }} key="3">
+                Округи
+              </Menu.Item>
               <Menu.Item onClick={() => { handleClickAway(); history.push("/cities"); }} key="4">
                 Станиці
             </Menu.Item>
@@ -138,6 +157,7 @@ const PrivateLayout = ({ children }: any) => {
               : (<> </>)
             }
               </SubMenu>
+              </SubMenu>
               {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
             <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
                 <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push('/annualreport/table'); }} key="9">Річні звіти</Menu.Item>
@@ -155,9 +175,9 @@ const PrivateLayout = ({ children }: any) => {
             </SubMenu>
              ) : (<> </>)
             }
-          </Menu>
-        </Sider>
-      </ClickAwayListener>
+         
+        </Menu>
+      </Sider>
 
       <Layout className="site-layout">
         <Content style={{ margin: "0 16px" }}>
@@ -169,10 +189,18 @@ const PrivateLayout = ({ children }: any) => {
           </div>
         </Content>
       </Layout>
-
-    </Layout>
-
+      <div>
+        <Button icon={<RollbackOutlined />}
+          className={classes.backButton}
+          size={"large"}
+          onClick={() => history.goBack()}
+          type="primary"
+          style={{}}
+        ></Button>
+      </div>
+    </ClickAwayListener>
+</Layout>
   );
-};
+};  
 
 export default PrivateLayout;
