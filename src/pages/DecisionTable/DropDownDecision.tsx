@@ -5,6 +5,8 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from '@ant-design/icons';
+import AuthStore from '../../stores/AuthStore';
+import jwt_decode from "jwt-decode";
 import classes from './Table.module.css';
 import EditDecisionModal from './EditDecisionModal';
 import deleteConfirm from './DeleteConfirm';
@@ -22,6 +24,12 @@ interface Props {
 const DropDown = (props: Props) => {
   const { record, pageX, pageY, showDropdown, onDelete, onEdit } = props;
   const [showEditModal, setShowEditModal] = useState(false);
+  const [userRole, setUser] = useState<string[]>();
+  const [canEdit, setCanEdit] = useState(false);
+  const [canSee, setCanSee] = useState(false);
+  const [regionAdm, setRegionAdm] = useState(false);
+  const [cityAdm, setCityAdm] = useState(false);
+  const [clubAdm, setClubAdm] = useState(false);
   const [data, setData] = useState<DecisionPost>({
     id: 0,
     name: "",
@@ -32,10 +40,20 @@ const DropDown = (props: Props) => {
     date: "",
     fileName: null,
 });
+
   useEffect(() => {
   if(showEditModal){
     const fetchData = async () =>{
       await decisionsApi.getById(record).then(res => setData(res));
+      let jwt = AuthStore.getToken() as string;
+      let decodedJwt = jwt_decode(jwt) as any;
+      let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+      setUser(roles);
+      setCanEdit(roles.includes("Admin"));
+      setRegionAdm(roles.includes("Голова Округу"));
+      setCityAdm(roles.includes("Голова Станиці"));
+      setClubAdm(roles.includes("Голова Куреня"));
+      setCanSee(roles.includes("Пластун"));
     }
     fetchData();
   }
@@ -76,18 +94,24 @@ const DropDown = (props: Props) => {
         }
         }
       >
+        {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
         <Menu.Item key="1">
           <EditOutlined />
           Редагувати
         </Menu.Item>
+          ) : (<> </>)
+        }
         <Menu.Item key="2">
           <FilePdfOutlined />
           Конвертувати в PDF
         </Menu.Item>
+        {(canEdit == true) ? (
         <Menu.Item key="3">
           <DeleteOutlined />
           Видалити
         </Menu.Item>
+        ) : (<> </>)
+              }
       </Menu>
       <EditDecisionModal
         record={record}
