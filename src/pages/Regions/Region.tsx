@@ -49,6 +49,8 @@ import CityDetailDrawer from "../City/CityDetailDrawer/CityDetailDrawer";
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
+import AuthStore from '../../stores/AuthStore';
+import jwt_decode from "jwt-decode";
 
 const Region = () => {
   const history = useHistory();
@@ -60,6 +62,14 @@ const Region = () => {
 
   const [photoStatus, setPhotoStatus] = useState(true);
   const [canEdit, setCanEdit] = useState(false);
+
+  const [userRole, setUser] = useState<string[]>();
+  const [mainAdm, setMainAdm] = useState(false);
+  const [canSee, setCanSee] = useState(false);
+  const [canAccess, setCanAccess] = useState(false);
+  const [regionAdm, setRegionAdm] = useState(false);
+  const [cityAdm, setCityAdm] = useState(false);
+  const [clubAdm, setClubAdm] = useState(false);
 
   const [document, setDocument] = useState<any>({
     ID: "",
@@ -270,9 +280,22 @@ const Region = () => {
     }
   };
 
+  const fetchUser = async () => {
+    let jwt = AuthStore.getToken() as string;
+    let decodedJwt = jwt_decode(jwt) as any;
+    let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+    setUser(roles);
+    setMainAdm(roles.includes("Admin"));
+    setRegionAdm(roles.includes("Голова Округу"));
+    setCityAdm(roles.includes("Голова Станиці"));
+    setClubAdm(roles.includes("Голова Куреня"));
+    setCanSee(roles.includes("Пластун"));
+    setCanAccess(roles.includes("Прихильник")); 
+  }
   useEffect(() => {
     setRegionDocs();
     getRegion();
+    fetchUser();
   }, []);
 
   return loading ? (
@@ -478,11 +501,14 @@ const Region = () => {
               )}
             </Row>
             <div className="cityMoreButton">
+            {(canEdit == true || regionAdm == true) ? (
               <PlusSquareFilled
                 type="primary"
                 className="addReportIcon"
                 onClick={() => setvisible(true)}
               ></PlusSquareFilled>
+              ) : (<> </>)
+            }
               <Button
                 type="primary"
                 className="cityInfoButton"
@@ -626,3 +652,4 @@ const Region = () => {
 };
 
 export default Region;
+

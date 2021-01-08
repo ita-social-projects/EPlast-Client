@@ -8,6 +8,8 @@ import notificationLogic from '../../components/Notifications/Notification';
 import ClickAwayListener from 'react-click-away-listener';
 import moment from "moment";
 import Spinner from '../Spinner/Spinner';
+import AuthStore from '../../stores/AuthStore';
+import jwt_decode from "jwt-decode";
 const classes = require('./Table.module.css');
 
 const { Content } = Layout;
@@ -21,6 +23,11 @@ const DecisionTable = () => {
   const [y, setY] = useState(0);
   const [searchedData, setSearchedData] = useState('');
   const [visibleModal, setVisibleModal] = useState(false);
+  const [userRole, setUser] = useState<string[]>();
+  const [canEdit, setCanEdit] = useState(false);
+  const [regionAdm, setRegionAdm] = useState(false);
+  const [cityAdm, setCityAdm] = useState(false);
+  const [clubAdm, setClubAdm] = useState(false);
   const handleDelete = (id: number) => {
     const filteredData = data.filter(d => d.id !== id);
     setData([...filteredData]);
@@ -37,7 +44,7 @@ const DecisionTable = () => {
     );
     setData([...filteredData]);
   }
-  const handleAdd =async () => {
+  const handleAdd = async () => {
     const lastId = data[data.length - 1].id;
     await decisionsApi.getById(lastId+1).then(res =>{
       const dec : Decision = {
@@ -49,7 +56,7 @@ const DecisionTable = () => {
         description : res.description,
         fileName: res.fileName,
         date:res.date };
-        setData([...data, dec]);
+        setData([...data, dec]); 
    })
    .catch(() =>{
     notificationLogic('error', "Рішення не існує");
@@ -57,11 +64,19 @@ const DecisionTable = () => {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const res: Decision[] = await decisionsApi.getAll();
-      setData(res);
-      setLoading(false);
+        const fetchData = async () => {
+        let jwt = AuthStore.getToken() as string;
+        let decodedJwt = jwt_decode(jwt) as any;
+        let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+        setLoading(true);
+        const res: Decision[] = await decisionsApi.getAll();
+        setData(res);
+        setLoading(false);
+        setUser(roles);
+        setCanEdit(roles.includes("Admin"));
+        setRegionAdm(roles.includes("Голова Округу"));
+        setCityAdm(roles.includes("Голова Станиці"));
+        setClubAdm(roles.includes("Голова Куреня"));
     };
     fetchData();
   }, []);
@@ -101,9 +116,12 @@ const DecisionTable = () => {
         <h1 className={classes.titleTable}>Рішення керівних органів</h1>
           <>
             <div className={classes.searchContainer}>
+            {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
               <Button type="primary" onClick={showModal}>
                 Додати рішення
               </Button>
+               ) : (<> </>)
+              }
               <Input placeholder="Пошук" onChange={handleSearch} allowClear />
             </div>
             <Table

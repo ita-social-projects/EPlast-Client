@@ -16,6 +16,9 @@ import adminApi from "../../api/adminApi";
 import ModalAddPlastDegree from "../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
 import ChangeUserRegionModal from "./ChangeUserRegionModal";
 import ChangeUserClubModal from "./ChangeUserClubModal";
+import AuthStore from '../../stores/AuthStore';
+import jwt_decode from "jwt-decode";
+
 
 interface Props {
   record: string;
@@ -37,6 +40,13 @@ const DropDown = (props: Props) => {
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
+  const [userRole, setUser] = useState<string[]>();
+  const [canEdit, setCanEdit] = useState(false);
+  const [canSee, setCanSee] = useState(false);
+  const [canAccess, setCanAccess] = useState(false);
+  const [regionAdm, setRegionAdm] = useState(false);
+  const [cityAdm, setCityAdm] = useState(false);
+  const [clubAdm, setClubAdm] = useState(false);
 
   const handleItemClick = async (item: any) => {
       switch (item.key) {
@@ -69,7 +79,22 @@ const DropDown = (props: Props) => {
     }
     item.key = "0";
   };
+  const fetchUser = async () => {
+    let jwt = AuthStore.getToken() as string;
+    let decodedJwt = jwt_decode(jwt) as any;
+    let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+    setUser(roles);
+    setCanEdit(roles.includes("Admin"));
+    setRegionAdm(roles.includes("Голова Округу"));
+    setCityAdm(roles.includes("Голова Станиці"));
+    setClubAdm(roles.includes("Голова Куреня"));
+    setCanSee(roles.includes("Пластун"));
+    setCanAccess(roles.includes("Прихильник")); 
+  }
 
+  useEffect(() => {
+    fetchUser();
+  }, []);
   return (
     <>
       <Menu
@@ -86,24 +111,48 @@ const DropDown = (props: Props) => {
           <FileSearchOutlined />
           Переглянути профіль
         </Menu.Item>
+        {(canEdit == true) ? (
         <Menu.Item key="2">
           <DeleteOutlined />
           Видалити
         </Menu.Item>
+         ) : (<> </>)
+        }
+       {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
         <SubMenu key="sub" icon={<EditOutlined />} title="Змінити права доступу">
+          {(canEdit == true || regionAdm == true || cityAdm == true) ? (
           <Menu.Item key="3">Провід станиці</Menu.Item>
+          ) : (<> </>)
+          }
+          {(canEdit == true || regionAdm == true) ? (
           <Menu.Item key="4">Провід округу</Menu.Item>
+          ) : (<> </>)
+          }
+          {(canEdit == true || clubAdm == true) ? (
           <Menu.Item key="5">Провід куреня</Menu.Item>
+          ) : (<> </>)
+          }
+          {(canEdit == true || regionAdm == true || cityAdm == true) ? (
           <Menu.Item key="6">Поточний стан користувача</Menu.Item>
+          ) : (<> </>)
+          }
         </SubMenu>
+        ) : (<> </>)
+       }
+        {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
         <Menu.Item key="7">
           <PlusCircleOutlined />
           Додати ступінь
         </Menu.Item>
+         ) : (<> </>)
+        }
+         {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
         <Menu.Item key="8">
           <ScissorOutlined />
           Заархівувати користувача
         </Menu.Item>
+         ) : (<> </>)
+         }
         <ChangeUserRoleModal
           record={record}
           showModal={showEditModal}

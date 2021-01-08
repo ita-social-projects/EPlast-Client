@@ -25,6 +25,11 @@ const PrivateLayout = ({ children }: any) => {
   const history = useHistory();
   const [userRole, setUser] = useState<string[]>();
   const [canEdit, setCanEdit] = useState(false);
+  const [canSee, setCanSee] = useState(false);
+  const [canAccess, setCanAccess] = useState(false);
+  const [regionAdm, setRegionAdm] = useState(false);
+  const [cityAdm, setCityAdm] = useState(false);
+  const [clubAdm, setClubAdm] = useState(false);
 
   const onCollapse = (collValue: boolean) => {
     setCollapsed(collValue);
@@ -61,6 +66,11 @@ const PrivateLayout = ({ children }: any) => {
     let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
     setUser(roles);
     setCanEdit(roles.includes("Admin"));
+    setRegionAdm(roles.includes("Голова Округу"));
+    setCityAdm(roles.includes("Голова Станиця"));
+    setClubAdm(roles.includes("Голова Куреня"));
+    setCanSee(roles.includes("Пластун"));
+    setCanAccess(roles.includes("Прихильник")); 
   }
 
   useEffect(() => {
@@ -90,7 +100,7 @@ const PrivateLayout = ({ children }: any) => {
             />
           </div>
           <Menu theme="dark" mode="inline" className={classes.leftMenu}>
-            {(canEdit == true) ? (
+            {(canEdit == true || canSee == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
             <Menu.Item
               key="1"
               icon={<SolutionOutlined />}
@@ -102,8 +112,8 @@ const PrivateLayout = ({ children }: any) => {
           </Menu.Item>
             ) : (<> </>)
             }
-            <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
-            {(canEdit == true) ? (
+            <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Довідник">
+            {(canEdit == true || canSee == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
                   Таблиця користувачів
                 </Menu.Item>
@@ -113,14 +123,23 @@ const PrivateLayout = ({ children }: any) => {
               <Menu.Item onClick={() => { handleClickAway(); history.push("/cities"); }} key="4">
                 Станиці
             </Menu.Item>
-              <Menu.Item onClick={() => { handleClickAway(); history.push('/clubs'); }} key="5">Курені</Menu.Item>
+            {(canEdit == true || canSee == true || canAccess == true || regionAdm == true || cityAdm == true || clubAdm == true ) ? (
+              <Menu.Item onClick={() => { handleClickAway(); history.push('/clubs'); }} key="5">Курені</Menu.Item>  ) : (<> </>)
+            }
+             
               <Menu.Item onClick={() => { handleClickAway(); history.push('/events/types'); }} key="6">
                 Події
             </Menu.Item>
-              <Menu.Item onClick={() => { handleClickAway(); history.push('/distinctions'); }} key="7">Відзначення</Menu.Item>
-              <Menu.Item onClick={() => { handleClickAway(); history.push('/kadra'); }} key="8">Кадра виховників</Menu.Item>
-            </SubMenu>
-            <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Документи">
+            {(canEdit == true  || canSee == true || canAccess == true  || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+              <Menu.Item onClick={() => { handleClickAway(); history.push('/distinctions'); }} key="7">Відзначення</Menu.Item> ) : (<> </>)
+            }
+            {(canEdit == true  || canSee == true || canAccess == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+              <Menu.Item onClick={() => { handleClickAway(); history.push('/kadra'); }} key="8">Кадра виховників</Menu.Item>)
+              : (<> </>)
+            }
+              </SubMenu>
+              {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+            <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
                 <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push('/annualreport/table'); }} key="9">Річні звіти</Menu.Item>
               <SubMenu
                 key="sub2.1"
@@ -134,6 +153,8 @@ const PrivateLayout = ({ children }: any) => {
                 <Menu.Item onClick={() => { handleClickAway(); }} key="13">Порівняти осередки</Menu.Item>
               </SubMenu>
             </SubMenu>
+             ) : (<> </>)
+            }
           </Menu>
         </Sider>
       </ClickAwayListener>
