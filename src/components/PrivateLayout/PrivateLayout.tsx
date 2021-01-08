@@ -117,19 +117,8 @@ const PrivateLayout = ({ children }: any) => {
           </Menu.Item>
             ) : (<> </>)
             }
+
             <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Довідник">
-            {(canEdit == true || canSee == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
-              <Menu.Item
-                key="1"
-                icon={<SolutionOutlined />}
-                onClick={() => { handleClickAway(); history.push("/decisions"); }}
-                style={{ color: "white" }}
-              >
-                Рішення
-              </Menu.Item>
-            ) : (<> </>)
-            }
-            <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Інформація">
               {(canEdit == true) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
                   Таблиця користувачів
@@ -157,7 +146,7 @@ const PrivateLayout = ({ children }: any) => {
               : (<> </>)
             }
               </SubMenu>
-              </SubMenu>
+             
               {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
             <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
                 <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push('/annualreport/table'); }} key="9">Річні звіти</Menu.Item>
