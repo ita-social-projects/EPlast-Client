@@ -83,7 +83,6 @@ const PrivateLayout = ({ children }: any) => {
   }, []);
 
   return (
-
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
       <ClickAwayListener onClickAway={handleClickAway}>
         <Sider
@@ -167,6 +166,7 @@ const PrivateLayout = ({ children }: any) => {
          
         </Menu>
       </Sider>
+      </ClickAwayListener>
 
       <Layout className="site-layout">
         <Content style={{ margin: "0 16px" }}>
@@ -187,8 +187,7 @@ const PrivateLayout = ({ children }: any) => {
           style={{}}
         ></Button>
       </div>
-    </ClickAwayListener>
-</Layout>
+   </Layout>
   );
 };  
 
