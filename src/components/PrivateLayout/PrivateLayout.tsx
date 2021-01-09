@@ -70,7 +70,7 @@ const PrivateLayout = ({ children }: any) => {
     setUser(roles);
     setCanEdit(roles.includes("Admin"));
     setRegionAdm(roles.includes("Голова Округу"));
-    setCityAdm(roles.includes("Голова Станиця"));
+    setCityAdm(roles.includes("Голова Станиці"));
     setClubAdm(roles.includes("Голова Куреня"));
     setCanSee(roles.includes("Пластун"));
     setCanAccess(roles.includes("Прихильник")); 
@@ -83,7 +83,6 @@ const PrivateLayout = ({ children }: any) => {
   }, []);
 
   return (
-
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
       <ClickAwayListener onClickAway={handleClickAway}>
         <Sider
@@ -119,7 +118,7 @@ const PrivateLayout = ({ children }: any) => {
             }
 
             <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Довідник">
-              {(canEdit == true) ? (
+              {(canEdit == true || canSee == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
                   Таблиця користувачів
                 </Menu.Item>
@@ -167,6 +166,7 @@ const PrivateLayout = ({ children }: any) => {
          
         </Menu>
       </Sider>
+      </ClickAwayListener>
 
       <Layout className="site-layout">
         <Content style={{ margin: "0 16px" }}>
@@ -187,8 +187,7 @@ const PrivateLayout = ({ children }: any) => {
           style={{}}
         ></Button>
       </div>
-    </ClickAwayListener>
-</Layout>
+   </Layout>
   );
 };  
 
