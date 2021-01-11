@@ -21,7 +21,7 @@
     "@types/react-router-dom": "^5.1.5",
     "antd": "^4.3.4",
     "antd-mask-input": "^0.1.13",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bizcharts": "^4.0.15",
     "craco-less": "^1.17.0",
     "formik": "^2.1.4",
