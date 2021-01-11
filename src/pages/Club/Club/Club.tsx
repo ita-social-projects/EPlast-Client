@@ -590,17 +590,6 @@ const Club = () => {
           </Card>
         </Col>
       </Row>
-      <div className="cityMoreItems">
-        <Button
-          className="backButton"
-          icon={<RollbackOutlined />}
-          size={"large"}
-          onClick={() => history.goBack()}
-          type="primary"
-        >
-          Назад
-        </Button>
-      </div>
       <ClubDetailDrawer
         Club={club}
         setVisibleDrawer={setVisibleDrawer}
