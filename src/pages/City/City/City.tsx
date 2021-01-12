@@ -51,12 +51,12 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import BreadcrumbItem from "antd/lib/breadcrumb/BreadcrumbItem";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
+import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 
 const City = () => {
   const history = useHistory();
   const { id } = useParams();
   const { url } = useRouteMatch();
-
   const [loading, setLoading] = useState(false);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
   const [cityLogo64, setCityLogo64] = useState<string>("");
@@ -74,6 +74,7 @@ const City = () => {
   const [adminsCount, setAdminsCount] = useState<number>();
   const [followersCount, setFollowersCount] = useState<number>();
   const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
+  const [visible, setvisible] = useState<boolean>(false);
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
@@ -185,10 +186,8 @@ const City = () => {
 
   const getCity = async () => {
     setLoading(true);
-
     try {
       const response = await getCityById(+id);
-
       setPhotosLoading(true);
       setCityLogoLoading(true);
       const admins = [
@@ -200,7 +199,6 @@ const City = () => {
         [...admins, ...response.data.members, ...response.data.followers],
         response.data.logo
       );
-
       setCity(response.data);
       setAdmins(admins);
       setMembers(response.data.members);
@@ -217,6 +215,10 @@ const City = () => {
     }
   };
 
+  const handleOk = () => {
+    setvisible(false);
+  };
+
   useEffect(() => {
     getCity();
   }, []);
@@ -226,7 +228,6 @@ const City = () => {
       PsevdonimCreator.setPseudonimLocation(`cities/${city.name}`, `cities/${id}`);
     }
   }, [city])
-
 
   return loading ? (
     <Spinner />
@@ -469,6 +470,11 @@ const City = () => {
                 )}
             </Row>
             <div className="cityMoreButton">
+              <PlusSquareFilled
+                type="primary"
+                className="addReportIcon"
+                onClick={() => setvisible(true)}
+              ></PlusSquareFilled>
               <Button
                 type="primary"
                 className="cityInfoButton"
@@ -610,6 +616,18 @@ const City = () => {
         setVisibleDrawer={setVisibleDrawer}
         visibleDrawer={visibleDrawer}
       ></CityDetailDrawer>
+      <Modal
+        title="Додати діловода"
+        visible={visible}
+        onOk={handleOk}
+        onCancel={handleOk}
+        footer={null}
+      >
+        <AddCitiesNewSecretaryForm
+          onAdd={handleOk}
+          cityId={+id}>
+        </AddCitiesNewSecretaryForm>
+      </Modal>
 
       {canEdit ? (
         <AddDocumentModal

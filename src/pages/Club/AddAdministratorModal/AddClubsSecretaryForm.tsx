@@ -1,25 +1,34 @@
 import React, { useState, useEffect } from "react";
-import classes from "./Form.module.css";
-import { Form, Input, DatePicker, AutoComplete, Select, Button } from "antd";
-import adminApi from "../../api/adminApi";
-import notificationLogic from "../../components/Notifications/Notification";
-import regionsApi from "../../api/regionsApi";
+import classes from "../../Regions/Form.module.css";
+import { Form, Input, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
+import adminApi from "../../../api/adminApi";
+import notificationLogic from "../../../components/Notifications/Notification";
+import {
+  addAdministrator,
+  editAdministrator,
+  getAllAdmins,
+} from "../../../api/clubsApi";
 import { ReloadOutlined } from "@ant-design/icons";
-import NotificationBoxApi from "../../api/NotificationBoxApi";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import moment from "moment";
 import {
   emptyInput,
   successfulEditAction,
-} from "../../components/Notifications/Messages"
+} from "../../../components/Notifications/Messages"
+import AdminType from "../../../models/Admin/AdminType";
+import regionsApi from "../../../api/regionsApi";
+import ClubAdmin from "../../../models/Club/ClubAdmin";
 
-type AddNewSecretaryForm = {
+type AddClubsNewSecretaryForm = {
   onAdd: () => void;
   onCancel: () => void;
+  clubId: number;
   admin?: any;
 };
-
-const AddNewSecretaryForm = (props: any) => {
-  const [currentRegion, setCurrentRegion] = useState<number>();
+const confirm = Modal.confirm;
+const AddClubsNewSecretaryForm = (props: any) => {
+  const [head, setHead] = useState<ClubAdmin>();
+  const [loading, setLoading] = useState(false);
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
@@ -39,12 +48,13 @@ const AddNewSecretaryForm = (props: any) => {
     },
   ]);
 
-  const [types, setTypes] = useState<any[]>([
-    {
-      id: "",
-      adminTypeName: "",
-    },
-  ]);
+  const getClubHead = async () => {
+    if (props.clubId !== 0) {
+      const responseAdmins = await getAllAdmins(props.clubId);
+      setHead(responseAdmins.data.head);
+      setLoading(false);
+    }
+  };
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -54,62 +64,100 @@ const AddNewSecretaryForm = (props: any) => {
     return current && current > moment();
   };
 
+  const showConfirm = (admin: ClubAdmin) => {
+    confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (
+        <div style={{ margin: 10 }}>
+          <b>
+            {head?.user.firstName} {head?.user.lastName}
+          </b>{" "}
+          є Головою Куреня, час правління закінчується{" "}
+          <b>
+            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(head?.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onCancel() { },
+      onOk() {
+        if (admin.id === 0) {
+          addClubAdmin(admin);
+        } else {
+          editClubAdmin(admin);
+        }
+      },
+    });
+  };
+
+  const addClubAdmin = async (admin: ClubAdmin) => {
+    await addAdministrator(props.clubId, admin);
+    form.resetFields();
+    notificationLogic("success", "Користувач успішно доданий в провід");
+    props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
+    props.onAdd?.(admin);
+  };
+  const editClubAdmin = async (admin: ClubAdmin) => {
+    admin = (await editAdministrator(props.clubId, admin)).data;
+    notificationLogic("success", "Адміністратор успішно відредагований");
+    props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
+    props.onAdd?.(admin);
+  };
+
+
   const handleSubmit = async (values: any) => {
-    const newAdmin: any = {
+    setLoading(true);
+
+    let admin: ClubAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
-      userId:
-        props.admin === undefined
-          ? JSON.parse(values.userId).user.id
-          : props.admin.userId,
-      AdminTypeId: await (
-        await regionsApi.getAdminTypeIdByName(values.AdminType)
-      ).data,
-      startDate: values.startDate,
-      endDate: values.endDate,
-      regionId: currentRegion,
+      adminType: {
+        ...new AdminType(),
+        adminTypeName: values.AdminType,
+      },
+      clubId: props.clubId,
+      userId: props.admin === undefined
+        ? JSON.parse(values.userId).user.id
+        : props.admin.userId,
+      user: values.user,
+      endDate: values.endDate?._d,
+      startDate: values.startDate?._d,
     };
-    if (newAdmin.id === 0) {
-      await regionsApi.AddAdmin(newAdmin);
-      notificationLogic("success", "Користувач успішно доданий в провід");
-      form.resetFields();
-      await NotificationBoxApi.createNotifications(
-        [newAdmin.userId],
-        `Вам була присвоєна адміністративна роль: '${values.AdminType}' в `,
-        NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/regions/${currentRegion}`,
-        `цьому окрузі`
-      );
-      onAdd();
-    } else {
-      await regionsApi.EditAdmin(newAdmin);
-      notificationLogic("success", successfulEditAction("Адміністратора"));
-      form.resetFields();
-      await NotificationBoxApi.createNotifications(
-        [newAdmin.userId],
-        `Вам була відредагована адміністративна роль: '${values.AdminType}' в `,
-        NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/regions/${currentRegion}`,
-        `цьому окрузі`
-      );
+
+    try {
+      if (values.AdminType === "Голова Куреня" && head !== null) {
+        if (head?.userId !== admin.userId) {
+          showConfirm(admin);
+        } else {
+          editClubAdmin(admin);
+        }
+      } else {
+        if (admin.id === 0) {
+          addClubAdmin(admin);
+        } else {
+          editClubAdmin(admin);
+        }
+      }
+    } finally {
       onAdd();
     }
   };
 
   useEffect(() => {
+    if (props.visibleModal) {
+      form.resetFields();
+    }
+    getClubHead();
+  }, [props]);
+
+
+  useEffect(() => {
     const fetchData = async () => {
-      await regionsApi.getAdminTypes().then((response) => {
-        setTypes(response.data);
-      });
       await adminApi.getUsersForTable().then((response) => {
         setUsers(response.data);
       });
     };
-    setCurrentRegion(
-      Number(
-        window.location.hash.substring(1) ||
-        window.location.pathname.split("/").pop()
-      )
-    );
     fetchData();
   }, []);
 
@@ -153,14 +201,13 @@ const AddNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Округу" },
+            { value: "Голова Куреня" },
+            { value: "Голова СПС" },
+            { value: "Фотограф" },
             { value: "Писар" },
-            { value: "Бунчужний" },
             { value: "Скарбник" },
             { value: "Домівкар" },
-            { value: "Член ОПР" },
-            { value: "Голова ОПС" },
-            { value: "Голова ОПР" },
+            { value: "Член СПР" },
           ]}
           placeholder={"Тип адміністрування"}
         ></AutoComplete>
@@ -210,4 +257,4 @@ const AddNewSecretaryForm = (props: any) => {
   );
 };
 
-export default AddNewSecretaryForm;
+export default AddClubsNewSecretaryForm;
