@@ -7,7 +7,7 @@ import regionsApi from "../../api/regionsApi";
 import { ReloadOutlined } from "@ant-design/icons";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import moment from "moment";
-import{
+import {
   emptyInput,
   successfulEditAction,
 } from "../../components/Notifications/Messages"
@@ -57,29 +57,21 @@ const AddNewSecretaryForm = (props: any) => {
   const handleSubmit = async (values: any) => {
     const newAdmin: any = {
       id: props.admin === undefined ? 0 : props.admin.id,
-
       userId:
         props.admin === undefined
           ? JSON.parse(values.userId).user.id
           : props.admin.userId,
-
       AdminTypeId: await (
         await regionsApi.getAdminTypeIdByName(values.AdminType)
       ).data,
-
       startDate: values.startDate,
-
       endDate: values.endDate,
-
       regionId: currentRegion,
     };
     if (newAdmin.id === 0) {
       await regionsApi.AddAdmin(newAdmin);
-
       notificationLogic("success", "Користувач успішно доданий в провід");
-
       form.resetFields();
-
       await NotificationBoxApi.createNotifications(
         [newAdmin.userId],
         `Вам була присвоєна адміністративна роль: '${values.AdminType}' в `,
@@ -87,15 +79,11 @@ const AddNewSecretaryForm = (props: any) => {
         `/regions/${currentRegion}`,
         `цьому окрузі`
       );
-
       onAdd();
     } else {
       await regionsApi.EditAdmin(newAdmin);
-
       notificationLogic("success", successfulEditAction("Адміністратора"));
-
       form.resetFields();
-
       await NotificationBoxApi.createNotifications(
         [newAdmin.userId],
         `Вам була відредагована адміністративна роль: '${values.AdminType}' в `,
@@ -119,7 +107,7 @@ const AddNewSecretaryForm = (props: any) => {
     setCurrentRegion(
       Number(
         window.location.hash.substring(1) ||
-          window.location.pathname.split("/").pop()
+        window.location.pathname.split("/").pop()
       )
     );
     fetchData();
@@ -202,8 +190,8 @@ const AddNewSecretaryForm = (props: any) => {
           props.admin === undefined
             ? undefined
             : props.admin.endDate === null
-            ? undefined
-            : moment(props.admin.endDate)
+              ? undefined
+              : moment(props.admin.endDate)
         }
       >
         <DatePicker
