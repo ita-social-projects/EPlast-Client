@@ -100,6 +100,7 @@ export default function () {
           positionOfWork: response.data.user.work.position,
           address: response.data.user.address,
           pseudo: response.data.user.pseudo,
+          publicPoliticalActivity: response.data.user.publicPoliticalActivity,
         });
         setNationality(response.data.user.nationality);
         setReligion(response.data.user.religion);
@@ -181,11 +182,15 @@ export default function () {
       { pattern: patern, message: message },
     ],
     address: [
-      { max: 50, message: maxLength(50) }
+      { max: 50, message: maxLength(50) },
+      { required: true, message: emptyInput() },
     ],
     pseudo: [
       {max: 30, message: maxLength(30)},
       {pattern: patern, message: message},
+    ],
+    publicPoliticalActivity: [
+      {max: 50, message: maxLength(50)},
     ],
   };
 
@@ -332,7 +337,7 @@ export default function () {
         birthday: birthday,
         imagePath:photoName,
         pseudo: values.pseudo,
-        mail: values.mail,
+        publicPoliticalActivity: values.publicPoliticalActivity,
 
         degree: {
           id: degree?.id,
@@ -479,7 +484,12 @@ export default function () {
             >            
               <Input className={styles.dataInput} maxLength={31}/>
             </Form.Item>
-            <Form.Item label="Дата народження" className={styles.formItem}>
+            <Form.Item 
+              label="Дата народження" 
+              name="birthday"
+              className={styles.formItem}
+              rules={[descriptionValidation.Required]}
+            >
               <DatePicker
                 className={styles.dataInput}
                 disabledDate={(cur) => disabledDate(cur)}
@@ -494,7 +504,7 @@ export default function () {
               label="Номер телефону"
               name="phoneNumber"
               className={styles.formItem}
-              rules={[descriptionValidation.Phone]}
+              rules={[descriptionValidation.Phone, descriptionValidation.Required]}
             >
               <ReactInputMask
                   mask="+380(99)-999-99-99"
@@ -650,8 +660,12 @@ export default function () {
               <Input className={styles.dataInput} maxLength={51}/>
             </Form.Item>
             <Form.Item
+              label="Громадська, політична діяльність"
+              name="publicPoliticalActivity"
+              rules={validationSchema.publicPoliticalActivity}
               className={styles.formItem}
-            >
+            >            
+              <Input className={styles.dataInput} maxLength={501}/>
             </Form.Item>
           </div>
           <Button className={styles.confirmBtn} htmlType="submit">
