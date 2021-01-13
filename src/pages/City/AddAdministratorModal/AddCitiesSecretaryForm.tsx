@@ -116,7 +116,6 @@ const AddCitiesNewSecretaryForm = (props: any) => {
     });
   };
 
-
   const handleSubmit = async (values: any) => {
     const newAdmin: CityAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
@@ -138,13 +137,16 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         if (values.AdminType === "Голова Станиці" && head !== null) {
           if (head?.userId !== newAdmin.userId) {
             showConfirm(newAdmin);
-          } else {
+          } else if (head?.userId === newAdmin.userId) {
+          }
+          else {
             editClubAdmin(newAdmin);
           }
         } else {
           if (newAdmin.id === 0) {
             addClubAdmin(newAdmin);
-          } else {
+          }
+          else {
             editClubAdmin(newAdmin);
           }
         }

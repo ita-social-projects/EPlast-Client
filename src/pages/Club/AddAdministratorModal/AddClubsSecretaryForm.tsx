@@ -129,6 +129,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
       if (values.AdminType === "Голова Куреня" && head !== null) {
         if (head?.userId !== admin.userId) {
           showConfirm(admin);
+        } else if (head?.userId === admin.userId) {
         } else {
           editClubAdmin(admin);
         }
