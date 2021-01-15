@@ -6,24 +6,23 @@ import {
   Input,
   Upload,
   Button,
-  AutoComplete,
   Row,
   Col,
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 
-import decisionsApi, {
-  DecisionOnCreateData,
-  decisionStatusType,
-  DecisionWrapper,
-  decisionTarget,
+import documentsApi, {
+  DocumentWrapper,
+  DocumentOnCreateData,
+  MethodicDocumentType,
   FileWrapper,
   Organization,
-  statusTypePostParser,
-} from "../../api/decisionsApi";
+  TypePostParser
+} from "../../api/documentsApi";
+
 import { getBase64 } from "../userPage/EditUserPage/Services";
 import notificationLogic from "../../components/Notifications/Notification";
-import formclasses from "./FormAddDecision.module.css";
+import formclasses from "../DecisionTable/FormAddDecision.module.css";
 import {
   emptyInput,
   fileIsUpload,
@@ -34,11 +33,11 @@ import {
   successfulDeleteAction,
 } from "../../components/Notifications/Messages"
 
-type FormAddDecisionProps = {
+type FormAddDocumentsProps = {
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: () => void;
 };
-const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
+const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
   const { setVisibleModal, onAdd } = props;
   const [submitLoading, setSubmitLoading] = useState(false);
   const [fileData, setFileData] = useState<FileWrapper>({
@@ -52,11 +51,13 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     }
     return e && e.fileList;
   };
+
   const handleCancel = () => {
     form.resetFields();
     setFileData({ FileAsBase64: null, FileName: null });
     setVisibleModal(false);
   };
+
   const handleUpload = (info: any) => {
     if (info.file !== null) {
       if (info.file.size <= 3145728) {
@@ -102,15 +103,14 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
 
   const handleSubmit = async (values: any) => {
     setSubmitLoading(true);
-    const newDecision: DecisionWrapper = {
-      decision: {
+    const newDocument: DocumentWrapper = {
+      MethodicDocument: {
         id: 0,
         name: values.name,
-        decisionStatusType: statusTypePostParser(
-          JSON.parse(values.decisionStatusType)
+        type: TypePostParser(
+          JSON.parse(values.methodicDocumentType)
         ),
         organization: JSON.parse(values.organization),
-        decisionTarget: { id: 0, targetName: values.decisionTarget },
         description: values.description,
         date:
           /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values
@@ -119,34 +119,54 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
       },
       fileAsBase64: fileData.FileAsBase64,
     };
-    await decisionsApi.post(newDecision);
+    await documentsApi.post(newDocument);
     setVisibleModal(false);
     onAdd();
     form.resetFields();
     setSubmitLoading(false);
   };
 
-  const [data, setData] = useState<DecisionOnCreateData>({
+  const [data, setData] = useState<DocumentOnCreateData>({
     organizations: Array<Organization>(),
-    decisionStatusTypeListItems: Array<decisionStatusType>(),
-    decisionTargets: Array<decisionTarget>(),
+    methodicDocumentTypesItems: Array<MethodicDocumentType>(),
   });
+
   useEffect(() => {
     const fetchData = async () => {
-      await decisionsApi
+      await documentsApi
         .getOnCreate()
-        .then((d: DecisionOnCreateData) => setData(d));
+        .then((d: DocumentOnCreateData) => setData(d));
     };
     fetchData();
   }, []);
+
   return (
     <Form name="basic" onFinish={handleSubmit} form={form}>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
             className={formclasses.formField}
+            label="Тип документу"
             labelCol={{ span: 24 }}
-            label="Назва рішення"
+            name="methodicDocumentType"
+            rules={[{ required: true, message: emptyInput() }]}
+          >
+            <Select className={formclasses.selectField}>
+              {data?.methodicDocumentTypesItems.map((dst) => (
+                <Select.Option key={dst.value} value={JSON.stringify(dst)}>
+                  {dst.text}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row justify="start" gutter={[12, 0]}>
+        <Col md={24} xs={24}>
+          <Form.Item
+            className={formclasses.formField}
+            labelCol={{ span: 24 }}
+            label="Назва документу"
             name="name"
             rules={[
               {
@@ -167,7 +187,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
         <Col md={24} xs={24}>
           <Form.Item
             className={formclasses.formField}
-            label="Рішення органу"
+            label="Орган, що видав документ"
             labelCol={{ span: 24 }}
             name="organization"
             rules={[{ required: true, message: emptyInput() }]}
@@ -189,30 +209,8 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
         <Col md={24} xs={24}>
           <Form.Item
             className={formclasses.formField}
-            label="Тема рішення"
-            labelCol={{ span: 24 }}
-            name="decisionTarget"
-            rules={[{ required: true, message: emptyInput() }]}
-          >
-            <AutoComplete
-              filterOption={true}
-              className={formclasses.selectField}
-            >
-              {data?.decisionTargets.map((dt) => (
-                <Select.Option key={dt.id} value={dt.targetName}>
-                  {dt.targetName}
-                </Select.Option>
-              ))}
-            </AutoComplete>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            className={formclasses.formField}
             name="datepicker"
-            label="Дата рішення"
+            label="Дата документу"
             labelCol={{ span: 24 }}
             rules={[{ required: true, message: emptyInput() }]}
           >
@@ -227,7 +225,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
         <Col md={24} xs={24}>
           <Form.Item
             className={formclasses.formField}
-            label="Текст рішення"
+            label="Короткий зміст (опис) документу"
             labelCol={{ span: 24 }}
             name="description"
             rules={[{ required: true, message: emptyInput() }]}
@@ -289,25 +287,6 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
-          <Form.Item
-            className={formclasses.formField}
-            label="Статус рішення"
-            labelCol={{ span: 24 }}
-            name="decisionStatusType"
-            rules={[{ required: true, message: emptyInput() }]}
-          >
-            <Select className={formclasses.selectField}>
-              {data?.decisionStatusTypeListItems.map((dst) => (
-                <Select.Option key={dst.value} value={JSON.stringify(dst)}>
-                  {dst.text}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
           <Form.Item style={{ textAlign: "right" }} className={formclasses.formField}>
             <Button
               key="back"
@@ -331,4 +310,4 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
   );
 };
 
-export default FormAddDecision;
+export default FormAddDocument;
