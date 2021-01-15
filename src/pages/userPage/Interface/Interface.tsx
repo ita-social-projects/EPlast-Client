@@ -44,6 +44,7 @@ export type User ={
     email: string;
     city: string;
     club: string;
+    publicPoliticalActivity: string;
 }
 
 export  interface Data {
