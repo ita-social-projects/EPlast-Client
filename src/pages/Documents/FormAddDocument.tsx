@@ -12,11 +12,6 @@ import {
 import { InboxOutlined } from "@ant-design/icons";
 
 import documentsApi, {
-  DocumentWrapper,
-  DocumentOnCreateData,
-  MethodicDocumentType,
-  FileWrapper,
-  Organization,
   TypePostParser
 } from "../../api/documentsApi";
 
@@ -32,6 +27,7 @@ import {
   maxLength,
   successfulDeleteAction,
 } from "../../components/Notifications/Messages"
+import { DocumentOnCreateData, DocumentWrapper, FileWrapper, MethodicDocumentType, Organization } from "../../models/Documents/DocumentModels";
 
 type FormAddDocumentsProps = {
   setVisibleModal: (visibleModal: boolean) => void;

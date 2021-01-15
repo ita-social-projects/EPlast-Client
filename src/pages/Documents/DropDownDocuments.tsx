@@ -9,8 +9,9 @@ import AuthStore from '../../stores/AuthStore';
 import jwt_decode from "jwt-decode";
 import classes from './Table.module.css';
 import deleteConfirm from './DeleteConfirm';
-import documentsApi, { DocumentPost } from '../../api/documentsApi';
+import documentsApi from '../../api/documentsApi';
 import { destroyFns } from 'antd/lib/modal/Modal';
+import { DocumentPost } from '../../models/Documents/DocumentModels';
 interface Props {
   record: number;
   pageX: number;
