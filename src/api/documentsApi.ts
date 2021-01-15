@@ -90,7 +90,6 @@ const getPdf = async (id: number) => {
 };
 
 const post = async (data: any) => {
-    console.log(data);
     const response = await Api.post("MethodicDocuments", data).then(response => {
         notificationLogic('success', successfulCreateAction("Документ"));
     })
