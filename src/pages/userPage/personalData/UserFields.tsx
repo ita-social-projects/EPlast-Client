@@ -204,6 +204,20 @@ export default function () {
               }
        </Form.Item>
      </div>
+
+     <div className="rowBlock">
+       <Form.Item
+         label="Громадська, політична діяльність"
+         className="formItem"
+       >
+         {data?.user.publicPoliticalActivity!==null && data?.user.publicPoliticalActivity!==""? 
+                (<Input readOnly className="dataInput" value={data?.user.publicPoliticalActivity} />):
+                <Input readOnly className="dataInput" value="-"/>
+              }
+       </Form.Item>
+       <Form.Item className="formItem"></Form.Item>
+     </div>
+     
      <Button 
        className="confirmBtn"
        onClick={() =>
