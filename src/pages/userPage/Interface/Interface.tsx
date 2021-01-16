@@ -24,6 +24,10 @@ export type Nationality={
     id:number;
     name:string;
 }
+export type UpuDegree={
+    id:number;
+    name:string;
+}
 export type User ={
     id:any;
     userProfileID:any;
@@ -45,6 +49,7 @@ export type User ={
     city: string;
     club: string;
     publicPoliticalActivity: string;
+    upuDegree: UpuDegree;
 }
 
 export  interface Data {
