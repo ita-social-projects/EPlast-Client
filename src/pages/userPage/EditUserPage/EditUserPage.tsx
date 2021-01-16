@@ -40,6 +40,7 @@ import{
   minLength
 } from "../../../components/Notifications/Messages"
 import "../EditUserPage/EditUserPage.less"
+import { UpuDegree } from "../Interface/Interface";
 
 export default function () {
   const history = useHistory();
@@ -62,6 +63,7 @@ export default function () {
   const [data, setData] = useState<Data>();
   const [photoName, setPhotoName] = useState<any>(null);
   const [defaultPhotoName, setDefaultPhotoName] = useState<string>("default_user_image.png");
+  const [upuDegree, setUpuDegree] = useState<UpuDegree>();
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
@@ -89,6 +91,7 @@ export default function () {
           firstName: response.data.user.firstName,
           lastName: response.data.user.lastName,
           fatherName: response.data.user.fatherName,
+          birthday: moment(response.data.user.birthday),
           phoneNumber: response.data.user.phoneNumber,
           nationalityName: response.data.user.nationality.name,
           genderName: response.data.user.gender.name,
@@ -101,6 +104,7 @@ export default function () {
           address: response.data.user.address,
           pseudo: response.data.user.pseudo,
           publicPoliticalActivity: response.data.user.publicPoliticalActivity,
+          upuDegreeName: response.data.user.upuDegree.name,
         });
         setNationality(response.data.user.nationality);
         setReligion(response.data.user.religion);
@@ -109,7 +113,8 @@ export default function () {
         setSpecialityID(response.data.educationView.specialityID);
         setPlaceOfWorkID(response.data.workView.placeOfWorkID);
         setPositionID(response.data.workView.positionID);
-        setGender(response.data.user.gender); 
+        setGender(response.data.user.gender);
+        setUpuDegree(response.data.user.upuDegree); 
         if (response.data.user.birthday === "0001-01-01T00:00:00") {
           setBirthday(undefined);
         } else {
@@ -155,6 +160,9 @@ export default function () {
     gender: [
       { required: true, message: emptyInput() },
     ],
+    birthday: [
+      { required: true, message: emptyInput() },
+    ],
     degree: [
       { max: 30, message: maxLength(30) },
       { pattern: patern, message: message },
@@ -191,6 +199,9 @@ export default function () {
     ],
     publicPoliticalActivity: [
       {max: 50, message: maxLength(50)},
+    ],
+    upuDegree: [
+      { required: true, message: emptyInput() },
     ],
   };
 
@@ -314,6 +325,9 @@ export default function () {
       setBirthday(moment(event?._d));
     }
   };
+  const handleOnChangeUpuDegree = (value: any) => {
+    setUpuDegree(JSON.parse(value));
+  };
   const handleDeletePhoto = async () => {
     await userApi
             .getImage(defaultPhotoName)
@@ -335,7 +349,7 @@ export default function () {
         fatherName: values.fatherName,
         phoneNumber: phoneNumber,
         birthday: birthday,
-        imagePath:photoName,
+        imagePath: photoName,
         pseudo: values.pseudo,
         publicPoliticalActivity: values.publicPoliticalActivity,
 
@@ -361,6 +375,7 @@ export default function () {
         },
         gender: gender,
         address: values.address,
+        upuDegree: upuDegree,
       },
       imageBase64: userAvatar,
       educationView: {
@@ -485,10 +500,10 @@ export default function () {
               <Input className={styles.dataInput} maxLength={31}/>
             </Form.Item>
             <Form.Item 
-              label="Дата народження" 
+              label="Дата народження"
               name="birthday"
               className={styles.formItem}
-              rules={[descriptionValidation.Required]}
+              rules={validationSchema.birthday}
             >
               <DatePicker
                 className={styles.dataInput}
@@ -667,6 +682,26 @@ export default function () {
             >            
               <Input className={styles.dataInput} maxLength={501}/>
             </Form.Item>
+          </div>
+          <div className={styles.rowBlock}>
+          <Form.Item
+              label="Ступінь в УПЮ"
+              name="upuDegreeName"
+              className={styles.formItem}
+              rules={validationSchema.upuDegree}
+            >
+              <Select
+                className={styles.dataInputSelect}
+                onChange={handleOnChangeUpuDegree}
+              >
+                {data?.upuDegrees.map((p) => (
+                  <Select.Option key={p.id} value={JSON.stringify(p)}>
+                    {p.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Form.Item className={styles.formItem}></Form.Item>
           </div>
           <Button className={styles.confirmBtn} htmlType="submit">
             Підтвердити

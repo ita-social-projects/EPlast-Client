@@ -200,7 +200,7 @@ export default function () {
        >
          {data?.user.address!==null && data?.user.address!==""? 
                 (<Input readOnly className="dataInput" value={data?.user.address} />):
-                  <Input readOnly className="dataInput" value="-"/>
+                <Input readOnly className="dataInput" value="-"/>
               }
        </Form.Item>
      </div>
@@ -215,7 +215,19 @@ export default function () {
                 <Input readOnly className="dataInput" value="-"/>
               }
        </Form.Item>
-       <Form.Item className="formItem"></Form.Item>
+       <Form.Item 
+          label="Ступінь в УПЮ"
+          className="formItem"
+        >
+          {data?.user.upuDegree.name!==null? 
+                data?.user.upuDegree.id===1?
+                  data?.user.gender.id===2?
+                  (<Input readOnly className="dataInput" value="не була в юнацтві" />):
+                  (<Input readOnly className="dataInput" value="не був в юнацтві" />):
+                  (<Input readOnly className="dataInput" value={data?.user.upuDegree.name} />):
+                <Input readOnly className="dataInput" value="-"/>
+              }
+        </Form.Item>
      </div>
      
      <Button 
