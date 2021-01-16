@@ -3,7 +3,7 @@ import { Table, Input, Button, Layout, Pagination, Card } from 'antd';
 import columns from './columns';
 import DropDown from './DropDownDocuments';
 import documentsApi, { TypeGetParser } from '../../api/documentsApi';
-import { Document } from "../../models/Documents/DocumentModels";
+import { Document } from "../../models/Documents/Document";
 import notificationLogic from '../../components/Notifications/Notification';
 import ClickAwayListener from 'react-click-away-listener';
 import moment from "moment";

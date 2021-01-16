@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu } from 'antd';
 import {
-  FilePdfOutlined,
   DeleteOutlined,
-  EditOutlined,
 } from '@ant-design/icons';
 import AuthStore from '../../stores/AuthStore';
 import jwt_decode from "jwt-decode";
@@ -11,7 +9,7 @@ import classes from './Table.module.css';
 import deleteConfirm from './DeleteConfirm';
 import documentsApi from '../../api/documentsApi';
 import { destroyFns } from 'antd/lib/modal/Modal';
-import { DocumentPost } from '../../models/Documents/DocumentModels';
+import { DocumentPost } from '../../models/Documents/DocumentPost';
 interface Props {
   record: number;
   pageX: number;

@@ -14,7 +14,6 @@ import { InboxOutlined } from "@ant-design/icons";
 import documentsApi, {
   TypePostParser
 } from "../../api/documentsApi";
-
 import { getBase64 } from "../userPage/EditUserPage/Services";
 import notificationLogic from "../../components/Notifications/Notification";
 import formclasses from "../DecisionTable/FormAddDecision.module.css";
@@ -27,8 +26,10 @@ import {
   maxLength,
   successfulDeleteAction,
 } from "../../components/Notifications/Messages"
-import { DocumentOnCreateData, DocumentWrapper, FileWrapper, MethodicDocumentType, Organization } from "../../models/Documents/DocumentModels";
-
+import { DocumentOnCreateData } from "../../models/Documents/DocumentOnCreateData";
+import { MethodicDocumentType } from "../../models/Documents/MethodicDocumentType"
+import { FileWrapper, Organization } from "../../api/decisionsApi";
+import { DocumentWrapper } from "../../models/Documents/DocumentWraper";
 type FormAddDocumentsProps = {
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: () => void;

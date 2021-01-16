@@ -1,7 +1,9 @@
 import Api from "./api";
 import notificationLogic from '../components/Notifications/Notification';
 import { successfulCreateAction, successfulEditAction, successfulDeleteAction } from "../components/Notifications/Messages"
-import { DocumentOnCreateData, DocumentPost, MethodicDocumentType } from "../models/Documents/DocumentModels";
+import { DocumentOnCreateData } from "../models/Documents/DocumentOnCreateData";
+import { DocumentPost } from "../models/Documents/DocumentPost";
+import { MethodicDocumentType } from "../models/Documents/MethodicDocumentType";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
     const arr = dataurl.split(',');
