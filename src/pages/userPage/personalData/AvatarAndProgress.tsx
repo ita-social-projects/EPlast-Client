@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Avatar, Progress, Spin, Space, Skeleton, Tooltip , Typography} from 'antd';
+import { Avatar, Progress, Spin, Space, Skeleton, Tooltip, Typography } from 'antd';
 import './PersonalData.less';
 import userApi from '../../../api/UserApi';
 import kadrasApi from '../../../api/KadraVykhovnykivApi';
 import distinctionApi from '../../../api/distinctionApi';
+import precautionApi from '../../../api/precautionApi';
 import KV1YPU from '../../../assets/images/KV1YPU.png';
 import KV1YPN from '../../../assets/images/KV1YPN.png';
 import KV2YPN from '../../../assets/images/KV2YPN.png';
 import KV2YPU from '../../../assets/images/KV2YPU.png';
 import UserDistinction from '../../Distinction/Interfaces/UserDistinction';
+import UserPrecaution from "../../Precaution/Interfaces/UserPrecaution";
 import User from '../../../models/UserTable/User';
 
 const { Title } = Typography;
@@ -45,19 +47,35 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
   const [imageBase64, setImageBase64] = useState<string>();
   const [UserDistinctions, setData] = useState<UserDistinction[]>([{
     id: 0,
-    distinction: 
+    distinction:
     {
       id: 0,
       name: ''
     },
-      distinctionId: 0,
-      userId: '',
-      reporter: '',
-      reason: '',
-      number: 0,
-      date: new Date(),
-      user: new User()
+    distinctionId: 0,
+    userId: '',
+    reporter: '',
+    reason: '',
+    number: 0,
+    date: new Date(),
+    user: new User()
   }]);
+  const [UserPrecaution, setPrecaution] = useState<UserPrecaution[]>([{
+    id: 0,
+    precaution:
+    {
+      id: 0,
+      name: ''
+    },
+    precautionId: 0,
+    userId: '',
+    reporter: '',
+    reason: '',
+    number: 0,
+    date: new Date(),
+    user: new User()
+  }]);
+
   const [kadras, setkadras] = useState<any[]>([{
     id: '',
     user: '',
@@ -83,6 +101,10 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
         setData(response.data);
       })
 
+      await precautionApi.getPrecautionOfGivenUser(userId).then(response => {
+        setPrecaution(response.data);
+      })
+
       await userApi.getImage(imageUrl).then((response: { data: any; }) => {
         setImageBase64(response.data);
       });
@@ -102,11 +124,11 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
       <div className="kadraWrapper">
         <Avatar src={imageBase64} className="img" />
         <Title level={2}>{firstName} {lastName}</Title>
-        <Title level={4}>Псевдо: {pseudo}</Title>       
-        <p className="statusText">Станиця: {city}  </p> 
+        <Title level={4}>Псевдо: {pseudo}</Title>
+        <p className="statusText">Станиця: {city}  </p>
         <p className="statusText">Курінь: {club}</p>
         {!isUserPlastun &&
-          <div className="progress">        
+          <div className="progress">
             <p className="statusText">{time} дні і {firstName} {lastName} Пластун:)</p>
             <Progress
               type="circle"
@@ -124,15 +146,21 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
             contentListNoTitle[element.kadraVykhovnykivTypeId]
           )}
         </div>
-        
-          {UserDistinctions.map(dist =>
-            <div className="distinctions">
-              <Tooltip title={dist?.reason}>
-                <h2>{dist.distinction.name} №{dist.number}</h2>
-              </Tooltip>
-            </div>
-          )}  
-        
+
+        {UserDistinctions.map(dist =>
+          <div className="distinctions">
+            <Tooltip title={dist?.reason}>
+              <h2>{dist.distinction.name} №{dist.number}</h2>
+            </Tooltip>
+          </div>
+        )}
+        {UserPrecaution.map(dist =>
+          <div className="precautions">
+            <Tooltip title={dist?.reason}>
+              <h2>{dist.precaution.name} №{dist.number}</h2>
+            </Tooltip>
+          </div>
+        )}
       </div>
     );
 }
