@@ -73,7 +73,7 @@ const PrivateLayout = ({ children }: any) => {
     setCityAdm(roles.includes("Голова Станиці"));
     setClubAdm(roles.includes("Голова Куреня"));
     setCanSee(roles.includes("Пластун"));
-    setCanAccess(roles.includes("Прихильник")); 
+    setCanAccess(roles.includes("Прихильник"));
     setOnlyRegistered(roles.includes("Зареєстрований користувач"));
   }
 
@@ -105,15 +105,14 @@ const PrivateLayout = ({ children }: any) => {
           </div>
           <Menu theme="dark" mode="inline" className={classes.leftMenu}>
             {(canEdit == true || canSee == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
-            <Menu.Item
-              key="1"
-              icon={<SolutionOutlined />}
-              onClick={() => { handleClickAway(); history.push("/decisions"); }}
-
-              style={{ color: "white" }}
-            >
-              Рішення
-          </Menu.Item>
+              <Menu.Item
+                key="1"
+                icon={<SolutionOutlined />}
+                onClick={() => { handleClickAway(); history.push("/decisions"); }}
+                style={{ color: "white" }}
+              >
+                Рішення
+              </Menu.Item>
             ) : (<> </>)
             }
 
@@ -130,42 +129,45 @@ const PrivateLayout = ({ children }: any) => {
               <Menu.Item onClick={() => { handleClickAway(); history.push("/cities"); }} key="4">
                 Станиці
             </Menu.Item>
-            {(canEdit == true || canSee == true || canAccess == true || regionAdm == true || cityAdm == true || clubAdm == true ) ? (
-              <Menu.Item onClick={() => { handleClickAway(); history.push('/clubs'); }} key="5">Курені</Menu.Item>  ) : (<> </>)
-            }
-             
+              {(canEdit == true || canSee == true || canAccess == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/clubs'); }} key="5">Курені</Menu.Item>) : (<> </>)
+              }
+
               <Menu.Item onClick={() => { handleClickAway(); history.push('/events/types'); }} key="6">
                 Події
             </Menu.Item>
-            {(canEdit == true  || canSee == true || canAccess == true  || regionAdm == true || cityAdm == true || clubAdm == true) ? (
-              <Menu.Item onClick={() => { handleClickAway(); history.push('/distinctions'); }} key="7">Відзначення</Menu.Item> ) : (<> </>)
-            }
-            {(canEdit == true  || canSee == true || canAccess == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
-              <Menu.Item onClick={() => { handleClickAway(); history.push('/kadra'); }} key="8">Кадра виховників</Menu.Item>)
-              : (<> </>)
-            }
-              </SubMenu>
-             
-              {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
-            <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
-                <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push('/annualreport/table'); }} key="9">Річні звіти</Menu.Item>
-              <SubMenu
-                key="sub2.1"
-                icon={<PieChartOutlined />}
-                title="Статистика" >
-                <Menu.Item icon={<BarChartOutlined />} onClick={() => { handleClickAway(); history.push('/statistics/cities'); }} key="10">Статистика станиць</Menu.Item>
-                <Menu.Item icon={<BarChartOutlined />} onClick={() => { handleClickAway(); history.push('/statistics/regions'); }} key="11">Статистика округів</Menu.Item>
-              </SubMenu>
-              <SubMenu key="sub2.3" title="Осередки">
-                <Menu.Item onClick={() => { handleClickAway(); }} key="12">Осередки та адміни</Menu.Item>
-                <Menu.Item onClick={() => { handleClickAway(); }} key="13">Порівняти осередки</Menu.Item>
-              </SubMenu>
+              {(canEdit == true || canSee == true || canAccess == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/distinctions'); }} key="7">Відзначення</Menu.Item>) : (<> </>)
+              }
+              {(canEdit == true || canSee == true || canAccess == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/kadra'); }} key="8">Кадра виховників</Menu.Item>)
+                : (<> </>)
+              }
+              <Menu.Item onClick={() => { handleClickAway(); history.push('/legislation'); }} key="14">
+                Репозитарій
+                </Menu.Item>
             </SubMenu>
-             ) : (<> </>)
+
+            {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+              <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
+                <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push('/annualreport/table'); }} key="9">Річні звіти</Menu.Item>
+                <SubMenu
+                  key="sub2.1"
+                  icon={<PieChartOutlined />}
+                  title="Статистика" >
+                  <Menu.Item icon={<BarChartOutlined />} onClick={() => { handleClickAway(); history.push('/statistics/cities'); }} key="10">Статистика станиць</Menu.Item>
+                  <Menu.Item icon={<BarChartOutlined />} onClick={() => { handleClickAway(); history.push('/statistics/regions'); }} key="11">Статистика округів</Menu.Item>
+                </SubMenu>
+                <SubMenu key="sub2.3" title="Осередки">
+                  <Menu.Item onClick={() => { handleClickAway(); }} key="12">Осередки та адміни</Menu.Item>
+                  <Menu.Item onClick={() => { handleClickAway(); }} key="13">Порівняти осередки</Menu.Item>
+                </SubMenu>
+              </SubMenu>
+            ) : (<> </>)
             }
-         
-        </Menu>
-      </Sider>
+
+          </Menu>
+        </Sider>
       </ClickAwayListener>
 
       <Layout className="site-layout">
@@ -187,8 +189,8 @@ const PrivateLayout = ({ children }: any) => {
           style={{}}
         ></Button>
       </div>
-   </Layout>
+    </Layout>
   );
-};  
+};
 
 export default PrivateLayout;
