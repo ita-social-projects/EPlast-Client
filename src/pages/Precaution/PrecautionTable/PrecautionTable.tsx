@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Table, Input, Button, Layout } from "antd";
 import columns from "./columns";
 import notificationLogic from "../../../components/Notifications/Notification";
-import UserDistinction from "../Interfaces/UserDistinction";
-import DropDownDistinctionTable from "./DropDownDistinctionTable";
-import distinctionApi from "../../../api/distinctionApi";
-import AddDistinctionModal from "../DistinctionTable/AddDistinctionModal";
-import EditDistinctionTypesModal from "./EditDistinctionTypesModal";
+import UserPrecaution from "../Interfaces/UserPrecaution";
+import DropDownPrecautionTable from "./DropDownPrecautionTable";
+import precautionApi from "../../../api/precautionApi";
+import AddPrecautionModal from "../PrecautionTable/AddPrecautionModal";
+import EditPrecautionTypesModal from "./EditPrecautionTypesModal";
 import ClickAwayListener from "react-click-away-listener";
 import User from "../../../models/UserTable/User";
-import Distinction from "../Interfaces/Distinction";
+import Precaution from "../Interfaces/Precaution";
 import Spinner from "../../Spinner/Spinner";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
@@ -23,7 +23,8 @@ import {
 import { RollbackOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 const { Content } = Layout;
-const DistinctionTable = () => {
+
+const PrecautionTable = () => {
   const classes = require("./Table.module.css");
   let user: any;
   let curToken = AuthStore.getToken() as string;
@@ -46,14 +47,14 @@ const DistinctionTable = () => {
   const [searchedData, setSearchedData] = useState("");
   const [canEdit] = useState(roles.includes("Admin"));
   const history = useHistory();
-  const [UserDistinctions, setData] = useState<UserDistinction[]>([
+  const [UserPrecautions, setData] = useState<UserPrecaution[]>([
     {
       id: 0,
-      distinction: {
+      precaution: {
         id: 0,
         name: "",
       },
-      distinctionId: 0,
+      precautionId: 0,
       userId: "",
       reporter: "",
       reason: "",
@@ -65,15 +66,16 @@ const DistinctionTable = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res: UserDistinction[] = await distinctionApi.getUserDistinctions();
+      const res: UserPrecaution[] = await precautionApi.getUserPrecautions();
       setData(res);
       setLoading(true);
     };
     fetchData();
   }, []);
 
+
   let filteredData = searchedData
-    ? UserDistinctions.filter((item) => {
+    ? UserPrecautions.filter((item) => {
       return Object.values([
         item.reporter,
         item.reason,
@@ -83,10 +85,10 @@ const DistinctionTable = () => {
         return String(element).toLowerCase().includes(searchedData);
       });
     })
-    : UserDistinctions;
+    : UserPrecautions;
 
   filteredData = filteredData.concat(
-    UserDistinctions.filter(
+    UserPrecautions.filter(
       (item) =>
         (item.user.firstName.toLowerCase()?.includes(searchedData) ||
           item.user.lastName.toLowerCase()?.includes(searchedData)) &&
@@ -94,9 +96,9 @@ const DistinctionTable = () => {
     )
   );
   filteredData = filteredData.concat(
-    UserDistinctions.filter(
+    UserPrecautions.filter(
       (item) =>
-        item.distinction.name.toLowerCase()?.includes(searchedData) &&
+        item.precaution.name.toLowerCase()?.includes(searchedData) &&
         !filteredData.includes(item)
     )
   );
@@ -112,9 +114,9 @@ const DistinctionTable = () => {
   const handleAdd = async () => {
     setVisibleModal(false);
     setLoading(false);
-    const res: UserDistinction[] = await distinctionApi.getUserDistinctions();
+    const res: UserPrecaution[] = await precautionApi.getUserPrecautions();
     setData(res);
-    notificationLogic("success", successfulCreateAction("Відзначення"));
+    notificationLogic("success", successfulCreateAction("Пересторога"));
     setLoading(true);
   };
 
@@ -128,22 +130,22 @@ const DistinctionTable = () => {
 
 
   const CreateDeleteNotification = (id: number) => {
-    const userDistinction = UserDistinctions.find(
+    const userPrecaution = UserPrecautions.find(
       (d: { id: number }) => d.id === id
     );
-    if (userDistinction) {
+    if (userPrecaution) {
       NotificationBoxApi.createNotifications(
-        [userDistinction.userId],
-        `Ваше відзначення: '${userDistinction.distinction.name}' було видалено.`,
+        [userPrecaution.userId],
+        `Ваша пересторога: '${userPrecaution.precaution.name}' була видалена.`,
         NotificationBoxApi.NotificationTypes.UserNotifications
       );
-      NotificationBoxApi.getCitiesForUserAdmins(userDistinction.userId)
+      NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId)
         .then(res => {
           res.cityRegionAdmins.length !== 0 &&
             res.cityRegionAdmins.forEach(async (cra) => {
               await NotificationBoxApi.createNotifications(
                 [cra.cityAdminId, cra.regionAdminId],
-                `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' був позбавлений відзначення: '${userDistinction.distinction.name}'. `,
+                `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' було знято пересторогу: '${userPrecaution.precaution.name}'. `,
                 NotificationBoxApi.NotificationTypes.UserNotifications
               );
             })
@@ -155,9 +157,9 @@ const DistinctionTable = () => {
     if (userId !== "" && name !== "") {
       NotificationBoxApi.createNotifications(
         [userId],
-        `Ваше відзначення: '${name}' було змінено. `,
+        `Вашу пересторогу: '${name}' було змінено. `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/distinctions`,
+        `/precautions`,
         `Переглянути`
       );
       NotificationBoxApi.getCitiesForUserAdmins(userId)
@@ -166,9 +168,9 @@ const DistinctionTable = () => {
             res.cityRegionAdmins.forEach(async (cra) => {
               await NotificationBoxApi.createNotifications(
                 [cra.cityAdminId, cra.regionAdminId],
-                `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінене відзначення: '${name}'. `,
+                `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінену пересторогу: '${name}'. `,
                 NotificationBoxApi.NotificationTypes.UserNotifications,
-                `/distinctions`,
+                `/precautions`,
                 `Переглянути`
               );
             })
@@ -177,16 +179,16 @@ const DistinctionTable = () => {
   }
 
   const handleDelete = (id: number) => {
-    const filteredData = UserDistinctions.filter(
+    const filteredData = UserPrecautions.filter(
       (d: { id: number }) => d.id !== id
     );
     setData([...filteredData]);
-    notificationLogic("success", successfulDeleteAction("Відзначення"));
+    notificationLogic("success", successfulDeleteAction("Пересторога"));
     CreateDeleteNotification(id);
   };
   const handleEdit = (
     id: number,
-    distinction: Distinction,
+    precaution: Precaution,
     date: Date,
     reason: string,
     reporter: string,
@@ -195,10 +197,10 @@ const DistinctionTable = () => {
     userId: string
   ) => {
     /* eslint no-param-reassign: "error" */
-    const filteredData = UserDistinctions.filter((d) => {
+    const filteredData = UserPrecautions.filter((d) => {
       if (d.id === id) {
-        d.distinction = distinction;
-        d.distinctionId = distinction.id;
+        d.precaution = precaution;
+        d.precautionId = precaution.id;
         d.date = date;
         d.reason = reason;
         d.reporter = reporter;
@@ -209,10 +211,10 @@ const DistinctionTable = () => {
       return d;
     });
     setData([...filteredData]);
-    notificationLogic("success", successfulUpdateAction("Відзначення"));
-    CreateEditNotification(userId, distinction.name);
+    notificationLogic("success", successfulUpdateAction("Пересторога"));
+    CreateEditNotification(userId, precaution.name);
   };
-
+  console.log(filteredData);
   return loading === false ? (
     <Spinner />
   ) : (
@@ -222,17 +224,17 @@ const DistinctionTable = () => {
             setShowDropdown(false);
           }}
         >
-          <h1 className={classes.titleTable}>Відзначення</h1>
+          <h1 className={classes.titleTable}>Перестороги</h1>
 
           <>
             <div className={classes.searchContainer}>
               {canEdit === true ? (
                 <>
                   <Button type="primary" onClick={showModal}>
-                    Додати відзначення
+                    Додати пересторогу
                 </Button>
                   <Button type="primary" onClick={showModalEditTypes}>
-                    Редагування типів відзначень
+                    Редагування типів пересторог
                 </Button>
                   <span />
                 </>
@@ -272,7 +274,7 @@ const DistinctionTable = () => {
               />
             </div>
             <ClickAwayListener onClickAway={handleClickAway}>
-              <DropDownDistinctionTable
+              <DropDownPrecautionTable
                 showDropdown={showDropdown}
                 record={recordObj}
                 userId={userId}
@@ -284,12 +286,12 @@ const DistinctionTable = () => {
               />
             </ClickAwayListener>
 
-            <AddDistinctionModal
+            <AddPrecautionModal
               setVisibleModal={setVisibleModal}
               visibleModal={visibleModal}
               onAdd={handleAdd}
             />
-            <EditDistinctionTypesModal
+            <EditPrecautionTypesModal
               setVisibleModal={setVisibleModalEditDist}
               visibleModal={visibleModalEditDist}
             />
@@ -298,4 +300,4 @@ const DistinctionTable = () => {
       </Layout>
     );
 };
-export default DistinctionTable;
+export default PrecautionTable;

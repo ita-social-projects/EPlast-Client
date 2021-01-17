@@ -53,7 +53,8 @@ import StatisticsRegions from "./pages/Statistics/StatisticsRegions";
 import NotAuthorizedPage from "./pages/Error/NotAuthorized";
 import { ClubAnnualReportCreate } from "./pages/AnnualReport/ClubAnnualReportCreate/ClubAnnualReportCreate";
 import ClubAnnualReportEdit from "./pages/AnnualReport/ClubAnnualReportEdit/ClubAnnualReportEdit";
-import DocumentsTable from "./pages/Documents/DocumentsTable"
+import DocumentsTable from "./pages/Documents/DocumentsTable";
+import PrecautionTable from "./pages/Precaution/PrecautionTable/PrecautionTable"
 
 const App: FC = () => (
   <div className="App">
@@ -309,7 +310,12 @@ const App: FC = () => (
             path="/legislation"
             component={DocumentsTable}
           />
-
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/precautions"
+            component={PrecautionTable}
+          />
           <RouteWithLayout
             layout={PrivateLayout}
             exact
