@@ -1,12 +1,14 @@
 .container{
     width: 100%;
 }
+
 .spaceWrapper{
     top: 0;
     left: 0;
     z-index: 999;
     background-color: white;
 }
+
 .loader{
     position: fixed !important;
     top: 50%;
@@ -26,9 +28,11 @@
     width: max-content;
     align-self: center;
 }
+
 .progress{
     display: contents;
 }
+
 .formContainer{
     display: flex;
     width: 100%;
@@ -46,11 +50,11 @@
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
-
 .kadraWrapper{
 
     text-align: center;
 }
+
 .allFields{
     width:  calc(60% - 30px);
     height: auto;
@@ -181,10 +185,6 @@
    }
 }
 
-
-
-
-
 .img{
     width: 300px;
     height: 300px;
@@ -199,7 +199,6 @@
         
     }
 }
-
 
 .content{
     margin-top: 20px;
@@ -232,6 +231,7 @@
     transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
+
 .title{
     width: max-content;
     display: flex;
@@ -248,12 +248,12 @@
 .distinctions{
     margin: 10px;
 }
+
 .edustaffPhoto{
     display: inline;
    max-width: 100px;
     max-height: 40px;
 }
-
 
 @media(max-width: 420px){
     .edustaffPhoto{
@@ -262,12 +262,10 @@
     }
 }
 
-
 .edustaffAllPhotos{
    margin-top: 25px;
    text-align: center;
 }
-
 
 @media(max-width:320px){
     .edustaffPhotoResponsive{
@@ -275,4 +273,20 @@
     max-height: 20px;
 
     }
+}
+
+.links{
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.links a{
+    margin-right: 10px;
+}
+.links img{
+    width: 45px;
+}
+.links img:hover{
+    transform: scale(1.3);
 }

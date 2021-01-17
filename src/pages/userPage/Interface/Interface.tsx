@@ -50,6 +50,9 @@ export type User ={
     club: string;
     publicPoliticalActivity: string;
     upuDegree: UpuDegree;
+    facebookLink: string;
+    twitterLink: string;
+    instagramLink: string;
 }
 
 export  interface Data {
