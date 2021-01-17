@@ -19,6 +19,8 @@ import ClubDetailDrawer from "../ClubDetailDrawer/ClubDetailDrawer";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
+import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
+
 
 const Club = () => {
   const history = useHistory();
@@ -30,6 +32,7 @@ const Club = () => {
   const [clubLogo64, setClubLogo64] = useState<string>("");
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
+  const [visible, setvisible] = useState<boolean>(false);
   const [admins, setAdmins] = useState<ClubAdmin[]>([]);
   const [members, setMembers] = useState<ClubMember[]>([]);
   const [followers, setFollowers] = useState<ClubMember[]>([]);
@@ -180,7 +183,9 @@ const Club = () => {
       setLoading(false);
     }
   };
-
+  const handleOk = () => {
+    setvisible(false);
+  };
   useEffect(() => {
     getClub();
   }, []);
@@ -453,6 +458,11 @@ const Club = () => {
                 )}
             </Row>
             <div className="clubMoreButton">
+              <PlusSquareFilled
+                type="primary"
+                className="addReportIcon"
+                onClick={() => setvisible(true)}
+              ></PlusSquareFilled>
               <Button
                 type="primary"
                 className="clubInfoButton"
@@ -590,6 +600,18 @@ const Club = () => {
           </Card>
         </Col>
       </Row>
+      <Modal
+        title="Додати діловода"
+        visible={visible}
+        onOk={handleOk}
+        onCancel={handleOk}
+        footer={null}
+      >
+        <AddClubsNewSecretaryForm
+          onAdd={handleOk}
+          clubId={+id}>
+        </AddClubsNewSecretaryForm>
+      </Modal>
       <ClubDetailDrawer
         Club={club}
         setVisibleDrawer={setVisibleDrawer}

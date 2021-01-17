@@ -40,12 +40,19 @@ import{
   minLength
 } from "../../../components/Notifications/Messages"
 import "../EditUserPage/EditUserPage.less"
+import { UpuDegree } from "../Interface/Interface";
 
 export default function () {
   const history = useHistory();
   const patern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50})*$/;
   const secondPatern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50})*$/;
+  const patternFB = /^(https?:\/\/){0,1}(www\.){0,1}facebook\.com/;
+  const patternTW = /(?:http:\/\/)?(?:www\.)?twitter\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w\-]*\/)*([\w\-]*)/;
+  const patternIN = /(?:(?:http|https):\/\/)?(?:www\.)?(?:instagram\.com|instagr\.am)\/([A-Za-z0-9-_\.]+)/im;
   const message = shouldContain("тільки літери");
+  const messageFB = shouldContain("посилання на сторінку у facebook");
+  const messageTW = shouldContain("посилання на сторінку у twitter");
+  const messageIN = shouldContain("посилання на сторінку в instagram");
   const [form] = Form.useForm();
 
   const [nationality, setNationality] = useState<Nationality>();
@@ -62,6 +69,7 @@ export default function () {
   const [data, setData] = useState<Data>();
   const [photoName, setPhotoName] = useState<any>(null);
   const [defaultPhotoName, setDefaultPhotoName] = useState<string>("default_user_image.png");
+  const [upuDegree, setUpuDegree] = useState<UpuDegree>();
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
@@ -89,6 +97,7 @@ export default function () {
           firstName: response.data.user.firstName,
           lastName: response.data.user.lastName,
           fatherName: response.data.user.fatherName,
+          birthday: moment(response.data.user.birthday),
           phoneNumber: response.data.user.phoneNumber,
           nationalityName: response.data.user.nationality.name,
           genderName: response.data.user.gender.name,
@@ -100,6 +109,11 @@ export default function () {
           positionOfWork: response.data.user.work.position,
           address: response.data.user.address,
           pseudo: response.data.user.pseudo,
+          publicPoliticalActivity: response.data.user.publicPoliticalActivity,
+          upuDegreeName: response.data.user.upuDegree.name,
+          facebookLink: response.data.user.facebookLink,
+          twitterLink: response.data.user.twitterLink,
+          instagramLink: response.data.user.instagramLink,
         });
         setNationality(response.data.user.nationality);
         setReligion(response.data.user.religion);
@@ -108,7 +122,8 @@ export default function () {
         setSpecialityID(response.data.educationView.specialityID);
         setPlaceOfWorkID(response.data.workView.placeOfWorkID);
         setPositionID(response.data.workView.positionID);
-        setGender(response.data.user.gender); 
+        setGender(response.data.user.gender);
+        setUpuDegree(response.data.user.upuDegree); 
         if (response.data.user.birthday === "0001-01-01T00:00:00") {
           setBirthday(undefined);
         } else {
@@ -154,6 +169,9 @@ export default function () {
     gender: [
       { required: true, message: emptyInput() },
     ],
+    birthday: [
+      { required: true, message: emptyInput() },
+    ],
     degree: [
       { max: 30, message: maxLength(30) },
       { pattern: patern, message: message },
@@ -181,11 +199,27 @@ export default function () {
       { pattern: patern, message: message },
     ],
     address: [
-      { max: 50, message: maxLength(50) }
+      { max: 50, message: maxLength(50) },
+      { required: true, message: emptyInput() },
     ],
     pseudo: [
       {max: 30, message: maxLength(30)},
       {pattern: patern, message: message},
+    ],
+    publicPoliticalActivity: [
+      {max: 50, message: maxLength(50)},
+    ],
+    upuDegree: [
+      { required: true, message: emptyInput() },
+    ],
+    facebookLink: [
+      {pattern: patternFB, message: messageFB}
+    ],
+    twitterLink: [
+      {pattern: patternTW, message: messageTW}
+    ],
+    instagramLink: [
+      {pattern: patternIN, message: messageIN}
     ],
   };
 
@@ -309,6 +343,9 @@ export default function () {
       setBirthday(moment(event?._d));
     }
   };
+  const handleOnChangeUpuDegree = (value: any) => {
+    setUpuDegree(JSON.parse(value));
+  };
   const handleDeletePhoto = async () => {
     await userApi
             .getImage(defaultPhotoName)
@@ -330,9 +367,12 @@ export default function () {
         fatherName: values.fatherName,
         phoneNumber: phoneNumber,
         birthday: birthday,
-        imagePath:photoName,
+        imagePath: photoName,
         pseudo: values.pseudo,
-        mail: values.mail,
+        publicPoliticalActivity: values.publicPoliticalActivity,
+        facebookLink: values.facebookLink,
+        twitterLink: values.twitterLink,
+        instagramLink: values.instagramLink,
 
         degree: {
           id: degree?.id,
@@ -356,6 +396,7 @@ export default function () {
         },
         gender: gender,
         address: values.address,
+        upuDegree: upuDegree,
       },
       imageBase64: userAvatar,
       educationView: {
@@ -479,7 +520,12 @@ export default function () {
             >            
               <Input className={styles.dataInput} maxLength={31}/>
             </Form.Item>
-            <Form.Item label="Дата народження" className={styles.formItem}>
+            <Form.Item 
+              label="Дата народження"
+              name="birthday"
+              className={styles.formItem}
+              rules={validationSchema.birthday}
+            >
               <DatePicker
                 className={styles.dataInput}
                 disabledDate={(cur) => disabledDate(cur)}
@@ -494,7 +540,7 @@ export default function () {
               label="Номер телефону"
               name="phoneNumber"
               className={styles.formItem}
-              rules={[descriptionValidation.Phone]}
+              rules={[descriptionValidation.Phone, descriptionValidation.Required]}
             >
               <ReactInputMask
                   mask="+380(99)-999-99-99"
@@ -650,8 +696,58 @@ export default function () {
               <Input className={styles.dataInput} maxLength={51}/>
             </Form.Item>
             <Form.Item
+              label="Громадська, політична діяльність"
+              name="publicPoliticalActivity"
+              rules={validationSchema.publicPoliticalActivity}
               className={styles.formItem}
+            >            
+              <Input className={styles.dataInput} maxLength={501}/>
+            </Form.Item>
+          </div>
+          <div className={styles.rowBlock}>
+          <Form.Item
+              label="Ступінь в УПЮ"
+              name="upuDegreeName"
+              className={styles.formItem}
+              rules={validationSchema.upuDegree}
             >
+              <Select
+                className={styles.dataInputSelect}
+                onChange={handleOnChangeUpuDegree}
+              >
+                {data?.upuDegrees.map((p) => (
+                  <Select.Option key={p.id} value={JSON.stringify(p)}>
+                    {p.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Form.Item 
+              label="Посилання на Facebook"
+              name="facebookLink"
+              className={styles.formItem}
+              rules={validationSchema.facebookLink}
+            >            
+              <Input className={styles.dataInput}/>
+            </Form.Item>
+          </div>
+          <div className={styles.rowBlock}>
+          <Form.Item 
+              label="Посилання на Twitter"
+              name="twitterLink"
+              className={styles.formItem}
+              rules={validationSchema.twitterLink}
+            >            
+              <Input className={styles.dataInput}/>
+            </Form.Item>
+          <Form.Item 
+              label="Посилання на Instagram"
+              name="instagramLink"
+              className={styles.formItem}
+              rules={validationSchema.instagramLink}
+
+            >            
+              <Input className={styles.dataInput}/>
             </Form.Item>
           </div>
           <Button className={styles.confirmBtn} htmlType="submit">

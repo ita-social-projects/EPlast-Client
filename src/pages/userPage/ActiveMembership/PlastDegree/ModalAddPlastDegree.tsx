@@ -1,50 +1,50 @@
-import React,{useState, useEffect} from 'react';
-import activeMembershipApi,{ PlastDegree, UserPlastDegree } from '../../../../api/activeMembershipApi';
+import React, { useState, useEffect } from 'react';
+import activeMembershipApi, { PlastDegree, UserPlastDegree } from '../../../../api/activeMembershipApi';
 import { Modal } from 'antd';
 import FormAddPlastDegree from './FormAddPlastDegree';
-type ModalAddPlastDegreeProps ={
-    userId : string;
+type ModalAddPlastDegreeProps = {
+    userId: string;
     visibleModal: boolean;
     setVisibleModal: (visibleModal: boolean) => void;
-    handleAddDegree : () => void;
+    handleAddDegree: () => void;
 }
-const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, userId, handleAddDegree   }: ModalAddPlastDegreeProps) =>{
+const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, userId, handleAddDegree }: ModalAddPlastDegreeProps) => {
     const [availablePlastDegree, setAvailablePlastDegree] = useState<Array<PlastDegree>>([]);
+
     const handleCancel = () => setVisibleModal(false);
-    const getAvailablePlastDegree = (allDegrees : Array<PlastDegree>, userPlastDegrees : Array<UserPlastDegree>): Array<PlastDegree>=> {
-        const aupd : Array<PlastDegree> = [];
-        allDegrees.forEach(d =>{
-            if (!userPlastDegrees.find(upd => upd.plastDegree.id === d.id))
-            {
+
+    const getAvailablePlastDegree = (allDegrees: Array<PlastDegree>, userPlastDegrees: Array<UserPlastDegree>): Array<PlastDegree> => {
+        const aupd: Array<PlastDegree> = [];
+        allDegrees.forEach(d => {
+            if (!userPlastDegrees.find(upd => upd.plastDegree.id === d.id)) {
                 aupd.push(d);
             }
         });
-       return aupd;
+        return aupd;
     }
-    const fetchData = async () =>{
-        await activeMembershipApi.getAllPlastDegrees().then( async response =>{
-            await activeMembershipApi.getUserPlastDegrees(userId).then(res =>{
+    const fetchData = async () => {
+        await activeMembershipApi.getAllPlastDegrees().then(async response => {
+            await activeMembershipApi.getUserPlastDegrees(userId).then(res => {
                 setAvailablePlastDegree(getAvailablePlastDegree(response, res));
             }
             )
         })
     }
-useEffect(()=>{
-    fetchData();
-},[userId]);
-return  <Modal 
-                visible={visibleModal}
-                onCancel ={handleCancel}
-                title = "Надання пластового ступеня"
-                footer ={null}>
-            <FormAddPlastDegree 
-                handleAddDegree = {handleAddDegree}
-                userId = {userId}
-                setVisibleModal ={setVisibleModal}
-                availablePlastDegree ={availablePlastDegree}
-                resetAvailablePlastDegree = {fetchData}/>
-                
-        </Modal>
+    useEffect(() => {
+        fetchData();
+    }, [userId]);
+    return <Modal
+        visible={visibleModal}
+        onCancel={handleCancel}
+        title="Надання пластового ступеня"
+        footer={null}>
+        <FormAddPlastDegree
+            handleAddDegree={handleAddDegree}
+            userId={userId}
+            setVisibleModal={setVisibleModal}
+            availablePlastDegree={availablePlastDegree}
+            resetAvailablePlastDegree={fetchData} />
+    </Modal>
 };
 
-export default  ModalAddPlastDegree;
+export default ModalAddPlastDegree;
