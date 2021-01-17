@@ -1,6 +1,6 @@
 import React from "react";
 import { Drawer } from "antd";
-import FormAddDistinction from "./FormAddDistinction";
+import FormAddPrecaution from "./FormAddPrecaution";
 
 interface Props {
   visibleModal: boolean;
@@ -8,7 +8,7 @@ interface Props {
   onAdd: () => void;
 }
 
-const AddDistinctionModal = ({
+const AddPrecautionModal = ({
   visibleModal,
   setVisibleModal,
   onAdd,
@@ -18,7 +18,7 @@ const AddDistinctionModal = ({
   }
   return (
     <Drawer
-      title="Додати відзначення"
+      title="Додати пересторогу"
       placement="right"
       width="auto"
       height={1000}
@@ -26,9 +26,9 @@ const AddDistinctionModal = ({
       onClose={handleCancel}
       footer={null}
     >
-      <FormAddDistinction setVisibleModal={setVisibleModal} onAdd={onAdd} />
+      <FormAddPrecaution setVisibleModal={setVisibleModal} onAdd={onAdd} />
     </Drawer>
   );
 };
 
-export default AddDistinctionModal;
+export default AddPrecautionModal;
