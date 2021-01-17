@@ -214,8 +214,46 @@ const ColumnsForUserTable: any = [
     sortDirections: ["descend", "ascend"],
   },
   {
+  title: "Email",
+    dataIndex: "email",
+    width: 220,
+    render: (email: any) => {
+        return (
+          <Tag color={"pink"}>
+            {email}
+          </Tag>
+        );
+    },
+  },
+  {
+  title: "Ступінь УПЮ",
+  dataIndex: "upuDegree",
+  width: 150,
+  render: (email: any) => {
+      return (
+        <Tag color={"yellow"}>
+          {email}
+        </Tag>
+      );
+  },
+},
+  {
+  title: "Коментар",
+    dataIndex: "Comment",
+    width: 220,
+    
+    render: (Comment: any) => {
+        return (
+          <Tag color={"green"} key={Comment}>
+            {Comment}
+          </Tag>
+        );
+    },
+  },
+  {
     title: "Права доступу",
     dataIndex: "userRoles",
+    width: 170,
     ellipsis: false,
     filters: [
       {
