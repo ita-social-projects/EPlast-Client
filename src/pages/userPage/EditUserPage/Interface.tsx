@@ -61,6 +61,9 @@ export type User ={
     pseudo: string;
     publicPoliticalActivity: string;
     upuDegree: UpuDegree;
+    facebookLink: string;
+    twitterLink: string;
+    instagramLink: string;
 }
   
 export type Data={
