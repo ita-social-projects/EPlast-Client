@@ -237,9 +237,6 @@ const PrecautionTable = () => {
                   <Button type="primary" onClick={showModal}>
                     Додати пересторогу
                 </Button>
-                  {/* <Button type="primary" onClick={showModalEditTypes}>
-                    Редагування типів пересторог
-                </Button> */}
                   <span />
                 </>
               ) : (
