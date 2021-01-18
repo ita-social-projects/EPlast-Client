@@ -32,6 +32,7 @@ interface Props {
     Precaution: Precaution,
     date: Date,
     reason: string,
+    status: string,
     reporter: string,
     number: number,
     user: any,
@@ -114,12 +115,13 @@ const FormEditPrecaution = ({
     const newPrecaution: any = {
       id: record,
       PrecautionId: distValue.id,
-      date: dist?.date,
       Precaution: distValue,
       user: userValue,
       userId: userValue.id,
-      reason: dist?.reason,
+      status: dist?.status,
+      date: dist?.date,
       reporter: dist?.reporter,
+      reason: dist?.reason,
       number: dist?.number,
     };
     if (
@@ -136,6 +138,7 @@ const FormEditPrecaution = ({
         newPrecaution.Precaution,
         newPrecaution.date,
         newPrecaution.reason,
+        newPrecaution.status,
         newPrecaution.reporter,
         newPrecaution.number,
         newPrecaution.user,
@@ -302,6 +305,29 @@ const FormEditPrecaution = ({
                   className={formclasses.inputField}
                   maxLength={251}
                 />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row justify="start" gutter={[12, 0]}>
+            <Col md={24} xs={24}>
+              <Form.Item
+                className={formclasses.formField}
+                label="статус"
+                labelCol={{ span: 24 }}
+                name="status"
+                initialValue={Precaution.status}
+                rules={[
+                  {
+                    required: true,
+                    message: emptyInput(),
+                  },
+                ]}
+              >
+                <Select className={formclasses.selectField} showSearch>
+                  <Select.Option key="9" value="Прийнято">Прийнято</Select.Option>
+                  <Select.Option key="10" value="Підтверджено">Підтверджено</Select.Option>
+                  <Select.Option key="11" value="Скасовано">Скасовано</Select.Option>
+                </Select>
               </Form.Item>
             </Col>
           </Row>
