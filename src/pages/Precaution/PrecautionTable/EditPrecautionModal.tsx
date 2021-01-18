@@ -14,6 +14,7 @@ interface Props {
     Precaution: Precaution,
     date: Date,
     reason: string,
+    status: string,
     reporter: string,
     number: number,
     user: any,

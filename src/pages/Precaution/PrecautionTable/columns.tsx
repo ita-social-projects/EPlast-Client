@@ -21,7 +21,6 @@ const columns = [
     title: 'Перестороги',
     dataIndex: 'precaution',
     render: (precaution: Precaution) => {
-      console.log(precaution);
       return precaution.name
     },
     sorter: (a: any, b: any) => a.precaution.name.localeCompare(b.precaution.name),
@@ -62,6 +61,18 @@ const columns = [
   {
     title: 'Обгрунтування',
     dataIndex: 'reason',
+    ellipsis: {
+      showTitle: false,
+    },
+    render: (reason: any) => (
+      <Tooltip placement="topRight" title={reason}>
+        {reason}
+      </Tooltip>
+    ),
+  },
+  {
+    title: 'Статус',
+    dataIndex: 'status',
     ellipsis: {
       showTitle: false,
     },

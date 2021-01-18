@@ -105,6 +105,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
       precaution: JSON.parse(values.Precaution),
       user: JSON.parse(values.user),
       userId: JSON.parse(values.user).id,
+      status: values.status,
       date: values.date,
       reporter: values.reporter,
       reason: values.reason,
@@ -272,6 +273,28 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
                 Опублікувати
               </Button>
             </div>
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row justify="start" gutter={[12, 0]}>
+        <Col md={24} xs={24}>
+          <Form.Item
+            className={formclasses.formField}
+            label="статус"
+            labelCol={{ span: 24 }}
+            name="status"
+            rules={[
+              {
+                required: true,
+                message: emptyInput(),
+              },
+            ]}
+          >
+            <Select className={formclasses.selectField} showSearch>
+              <Select.Option key="9" value="Прийнято">Прийнято</Select.Option>
+              <Select.Option key="10" value="Підтверджено">Підтверджено</Select.Option>
+              <Select.Option key="11" value="Скасовано">Скасовано</Select.Option>
+            </Select>
           </Form.Item>
         </Col>
       </Row>
