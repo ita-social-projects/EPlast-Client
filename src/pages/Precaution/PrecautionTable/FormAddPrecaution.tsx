@@ -264,20 +264,6 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
-          <Form.Item>
-            <div className={formclasses.cardButton}>
-              <Button key="back" onClick={handleCancel} className={formclasses.buttons}>
-                Відмінити
-              </Button>
-              <Button type="primary" htmlType="submit" className={formclasses.buttons}>
-                Опублікувати
-              </Button>
-            </div>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
           <Form.Item
             className={formclasses.formField}
             label="статус"
@@ -295,6 +281,20 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               <Select.Option key="10" value="Підтверджено">Підтверджено</Select.Option>
               <Select.Option key="11" value="Скасовано">Скасовано</Select.Option>
             </Select>
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row justify="start" gutter={[12, 0]}>
+        <Col md={24} xs={24}>
+          <Form.Item>
+            <div className={formclasses.cardButton}>
+              <Button key="back" onClick={handleCancel} className={formclasses.buttons}>
+                Відмінити
+              </Button>
+              <Button type="primary" htmlType="submit" className={formclasses.buttons}>
+                Опублікувати
+              </Button>
+            </div>
           </Form.Item>
         </Col>
       </Row>
