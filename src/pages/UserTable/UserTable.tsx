@@ -110,13 +110,7 @@ const UsersTable = () => {
         ))
       : (filteredData = users.filter((u) => u.user.emailConfirmed == false));
 
-    setViewedUsers(
-      key == "confirmed"
-        ? users.filter((u) => u.user.emailConfirmed == true)
-        : key == "interested"
-        ? users.filter((u) => u.userRoles.includes("Зацікавлений"))
-        : users.filter((u) => u.user.emailConfirmed == false)
-    );
+    setViewedUsers(filteredData);
   };
 
   useEffect(() => {
