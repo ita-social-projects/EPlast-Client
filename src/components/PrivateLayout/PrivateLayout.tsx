@@ -140,6 +140,12 @@ const PrivateLayout = ({ children }: any) => {
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/distinctions'); }} key="7">Відзначення</Menu.Item>) : (<> </>)
               }
               {(canEdit == true || canSee == true || canAccess == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+                <Menu.Item onClick={() => {
+                  handleClickAway();
+                  history.push('/precautions');
+                }} key="15">Перестороги</Menu.Item>) : (<> </>)
+              }
+              {(canEdit == true || canSee == true || canAccess == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/kadra'); }} key="8">Кадра виховників</Menu.Item>)
                 : (<> </>)
               }
@@ -189,7 +195,7 @@ const PrivateLayout = ({ children }: any) => {
           style={{}}
         ></Button>
       </div>
-    </Layout>
+    </Layout >
   );
 };
 

@@ -1,0 +1,56 @@
+.editIcon {
+    font-size: 24px;
+    color:#3c5438;
+  }
+.editIcon :hover {
+  color: #536150;
+  cursor: pointer;
+}
+.deleteIcon {
+    font-size: 24px;
+    color: #910202;
+}
+.deleteIcon :hover{
+    color: #690606;
+    cursor: pointer;
+}
+.editDiv{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.list {
+    max-width: 520px;
+    font-size: 18px;
+    display: flex;
+}
+.inputField {
+    size: 50px;
+    margin-right: auto;
+    float: right;
+    text-align: left;
+  }
+  .list>* {
+      width: 100%
+  }
+
+  @media (max-width: 490px){
+    .list{
+    max-width: 400px;
+    font-size: 12px;
+    }
+    .editIcon {
+        font-size: 18px;
+        color:#3c5438;
+      }
+    .deleteIcon {
+        font-size: 18px;
+        color: #910202;
+    }
+
+  }
+  .buttons{
+    margin-right: 0px !important;
+    margin-left: 7px;
+  }
+

@@ -34,7 +34,11 @@ export type Religion={
     id:number;
     name:string;
 }
-  export type Nationality={
+export type Nationality={
+    id:number;
+    name:string;
+}
+export type UpuDegree={
     id:number;
     name:string;
 }
@@ -55,6 +59,11 @@ export type User ={
     degree: Degree;
     work: Work;   
     pseudo: string;
+    publicPoliticalActivity: string;
+    upuDegree: UpuDegree;
+    facebookLink: string;
+    twitterLink: string;
+    instagramLink: string;
 }
   
 export type Data={
@@ -66,4 +75,5 @@ export type Data={
     religions:Religion[];
     degrees:Degree[];
     imageBase64:string;
+    upuDegrees:UpuDegree[];
 }

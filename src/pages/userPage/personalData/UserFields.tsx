@@ -10,6 +10,9 @@ import notificationLogic from '../../../components/Notifications/Notification';
 import Spinner from '../../Spinner/Spinner';
 import { tryAgain } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
+import Facebook from "../../../assets/images/facebookGreen.svg";
+import Twitter from "../../../assets/images/birdGreen.svg";
+import Instagram from "../../../assets/images/instagramGreen.svg";
 
 export default function () {
   const { userId } = useParams();
@@ -200,7 +203,7 @@ export default function () {
        >
          {data?.user.address!==null && data?.user.address!==""? 
                 (<Input readOnly className="dataInput" value={data?.user.address} />):
-                  <Input readOnly className="dataInput" value="-"/>
+                <Input readOnly className="dataInput" value="-"/>
               }
        </Form.Item>
      </div>
@@ -215,7 +218,50 @@ export default function () {
                 <Input readOnly className="dataInput" value="-"/>
               }
        </Form.Item>
-       <Form.Item className="formItem"></Form.Item>
+       <Form.Item 
+          label="Ступінь в УПЮ"
+          className="formItem"
+        >
+          { data?.user.upuDegree.id===1?
+              data?.user.gender.id===2?
+              (<Input readOnly className="dataInput" value="не була в юнацтві" />):
+              (<Input readOnly className="dataInput" value="не був в юнацтві" />):
+            data?.user.upuDegree.id===2?
+              data?.user.gender.id===2?
+              (<Input readOnly className="dataInput" value="пластунка учасниця" />):
+              (<Input readOnly className="dataInput" value="пластун учасник" />):
+             data?.user.upuDegree.id===3?
+              data?.user.gender.id===2?
+              (<Input readOnly className="dataInput" value="пластунка розвідувачка" />):
+              (<Input readOnly className="dataInput" value="пластун розвідувач" />):                 
+             data?.user.upuDegree.id===4?
+              data?.user.gender.id===2?
+              (<Input readOnly className="dataInput" value="пластунка вірлиця" />):
+              (<Input readOnly className="dataInput" value="пластун скоб" />):
+            (<Input readOnly className="dataInput" value="-"/>)
+          }
+        </Form.Item>
+     </div>
+
+     <div className="links">
+      {data?.user.facebookLink!==null && data?.user.facebookLink!==""?
+        <a href={data?.user.facebookLink}>
+          <img src={Facebook} alt="Facebook" />
+        </a>
+        : null
+      }
+      {data?.user.twitterLink!==null && data?.user.twitterLink!==""?
+        <a href={data?.user.twitterLink}>
+          <img src={Twitter} alt="Twitter" />
+        </a>
+        : null
+      }
+      {data?.user.instagramLink!==null && data?.user.instagramLink!==""?
+        <a href={data?.user.instagramLink}>
+          <img src={Instagram} alt="Instagram" />
+        </a>
+        : null
+      }
      </div>
      
      <Button 
