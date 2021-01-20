@@ -229,27 +229,14 @@ const ColumnsForUserTable: any = [
   title: "Ступінь УПЮ",
   dataIndex: "upuDegree",
   width: 150,
-  render: (email: any) => {
+  render: (upuDegree: any) => {
       return (
         <Tag color={"yellow"}>
-          {email}
+          {upuDegree}
         </Tag>
       );
   },
 },
-  {
-  title: "Коментар",
-    dataIndex: "Comment",
-    width: 220,
-    
-    render: (Comment: any) => {
-        return (
-          <Tag color={"green"} key={Comment}>
-            {Comment}
-          </Tag>
-        );
-    },
-  },
   {
     title: "Права доступу",
     dataIndex: "userRoles",
