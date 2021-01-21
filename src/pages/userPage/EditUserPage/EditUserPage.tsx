@@ -212,15 +212,6 @@ export default function () {
     upuDegree: [
       { required: true, message: emptyInput() },
     ],
-    facebookLink: [
-      {pattern: patternFB, message: messageFB}
-    ],
-    twitterLink: [
-      {pattern: patternTW, message: messageTW}
-    ],
-    instagramLink: [
-      {pattern: patternIN, message: messageIN}
-    ],
   };
 
   const getBase64 = (img: Blob, callback: Function) => {
@@ -705,7 +696,7 @@ export default function () {
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
-          <Form.Item
+            <Form.Item
               label="Ступінь в УПЮ"
               name="upuDegreeName"
               className={styles.formItem}
@@ -726,28 +717,24 @@ export default function () {
               label="Посилання на Facebook"
               name="facebookLink"
               className={styles.formItem}
-              rules={validationSchema.facebookLink}
-            >            
-              <Input className={styles.dataInput}/>
+            >
+              <Input className={styles.dataInput}/>               
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
-          <Form.Item 
+            <Form.Item 
               label="Посилання на Twitter"
               name="twitterLink"
               className={styles.formItem}
-              rules={validationSchema.twitterLink}
-            >            
-              <Input className={styles.dataInput}/>
+            >
+              <Input className={styles.dataInput}/>               
             </Form.Item>
-          <Form.Item 
+            <Form.Item 
               label="Посилання на Instagram"
               name="instagramLink"
               className={styles.formItem}
-              rules={validationSchema.instagramLink}
-
-            >            
-              <Input className={styles.dataInput}/>
+            >
+              <Input className={styles.dataInput}/>            
             </Form.Item>
           </div>
           <Button className={styles.confirmBtn} htmlType="submit">
