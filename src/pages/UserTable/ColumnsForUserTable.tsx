@@ -226,16 +226,19 @@ const ColumnsForUserTable: any = [
     },
   },
   {
-  title: "Ступінь УПЮ",
+  title: "Ступінь в УПЮ",
   dataIndex: "upuDegree",
-  width: 150,
+  width: 180,
   render: (upuDegree: any) => {
       return (
-        <Tag color={"yellow"}>
+        <Tag color={"blue"}>
           {upuDegree}
         </Tag>
       );
   },
+  sorter: (a: any, b: any) =>
+  a.upuDegree.localeCompare(b.upuDegree),
+  sortDirections: ["descend", "ascend"],
 },
   {
     title: "Права доступу",
