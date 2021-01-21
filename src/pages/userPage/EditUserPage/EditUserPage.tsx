@@ -46,13 +46,7 @@ export default function () {
   const history = useHistory();
   const patern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50})*$/;
   const secondPatern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50})*$/;
-  const patternFB = /^(https?:\/\/){0,1}(www\.){0,1}facebook\.com/;
-  const patternTW = /(?:http:\/\/)?(?:www\.)?twitter\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w\-]*\/)*([\w\-]*)/;
-  const patternIN = /(?:(?:http|https):\/\/)?(?:www\.)?(?:instagram\.com|instagr\.am)\/([A-Za-z0-9-_\.]+)/im;
   const message = shouldContain("тільки літери");
-  const messageFB = shouldContain("посилання на сторінку у facebook");
-  const messageTW = shouldContain("посилання на сторінку у twitter");
-  const messageIN = shouldContain("посилання на сторінку в instagram");
   const [form] = Form.useForm();
 
   const [nationality, setNationality] = useState<Nationality>();
