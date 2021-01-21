@@ -29,11 +29,11 @@ export default function () {
         ],
         Password: [
             { required: true, message: emptyInput() },
-            { min: 6, message: minLength(6) },
+            { min: 8, message: minLength(8) },
         ],
         ConfirmPassword: [
             { required: true, message: emptyInput() },
-            { min: 6, message: minLength(6) },
+            { min: 8, message: minLength(8) },
         ]
     };
 

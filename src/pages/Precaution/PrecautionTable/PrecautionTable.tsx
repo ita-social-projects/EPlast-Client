@@ -58,6 +58,7 @@ const PrecautionTable = () => {
       userId: "",
       reporter: "",
       reason: "",
+      status: "",
       number: 0,
       date: new Date(),
       user: new User(),
@@ -88,7 +89,7 @@ const PrecautionTable = () => {
     : UserPrecautions;
 
   filteredData = filteredData.concat(
-    UserPrecautions.filter(
+    UserPrecautions?.filter(
       (item) =>
         (item.user.firstName.toLowerCase()?.includes(searchedData) ||
           item.user.lastName.toLowerCase()?.includes(searchedData)) &&
@@ -191,6 +192,7 @@ const PrecautionTable = () => {
     precaution: Precaution,
     date: Date,
     reason: string,
+    status: string,
     reporter: string,
     number: number,
     user: any,
@@ -199,15 +201,17 @@ const PrecautionTable = () => {
     /* eslint no-param-reassign: "error" */
     const filteredData = UserPrecautions.filter((d) => {
       if (d.id === id) {
-        d.precaution = precaution;
         d.precautionId = precaution.id;
+        d.precaution = precaution;
+        d.number = number;
         d.date = date;
         d.reason = reason;
+        d.status = status;
         d.reporter = reporter;
-        d.number = number;
         d.user = user;
         d.userId = userId;
       }
+      console.log(d);
       return d;
     });
     setData([...filteredData]);
@@ -232,9 +236,6 @@ const PrecautionTable = () => {
                 <>
                   <Button type="primary" onClick={showModal}>
                     Додати пересторогу
-                </Button>
-                  <Button type="primary" onClick={showModalEditTypes}>
-                    Редагування типів пересторог
                 </Button>
                   <span />
                 </>

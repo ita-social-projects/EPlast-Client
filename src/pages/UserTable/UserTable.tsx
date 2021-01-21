@@ -31,6 +31,7 @@ const UsersTable = () => {
     }
     
     );
+    } );
     setLoading(true);
   };
 

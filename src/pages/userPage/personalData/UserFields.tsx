@@ -222,26 +222,24 @@ export default function () {
           label="Ступінь в УПЮ"
           className="formItem"
         >
-          {data?.user.upuDegree.name!==null? 
-                data?.user.upuDegree.id===1?
-                  data?.user.gender.id===2?
-                  (<Input readOnly className="dataInput" value="не була в юнацтві" />):
-                  (<Input readOnly className="dataInput" value="не був в юнацтві" />):
-                data?.user.upuDegree.id===2?
-                  data?.user.gender.id===2?
-                  (<Input readOnly className="dataInput" value="пластунка учасниця" />):
-                  (<Input readOnly className="dataInput" value="пластун учасник" />):
-                data?.user.upuDegree.id===3?
-                  data?.user.gender.id===2?
-                  (<Input readOnly className="dataInput" value="пластунка розвідувачка" />):
-                  (<Input readOnly className="dataInput" value="пластун розвідувач" />):                 
-                data?.user.upuDegree.id===4?
-                  data?.user.gender.id===2?
-                  (<Input readOnly className="dataInput" value="пластунка вірлиця" />):
-                  (<Input readOnly className="dataInput" value="пластун скоб" />):
-                (<Input readOnly className="dataInput" value="-"/>):
-                null
-              }
+          { data?.user.upuDegree.id===1?
+              data?.user.gender.id===2?
+              (<Input readOnly className="dataInput" value="не була в юнацтві" />):
+              (<Input readOnly className="dataInput" value="не був в юнацтві" />):
+            data?.user.upuDegree.id===2?
+              data?.user.gender.id===2?
+              (<Input readOnly className="dataInput" value="пластунка учасниця" />):
+              (<Input readOnly className="dataInput" value="пластун учасник" />):
+             data?.user.upuDegree.id===3?
+              data?.user.gender.id===2?
+              (<Input readOnly className="dataInput" value="пластунка розвідувачка" />):
+              (<Input readOnly className="dataInput" value="пластун розвідувач" />):                 
+             data?.user.upuDegree.id===4?
+              data?.user.gender.id===2?
+              (<Input readOnly className="dataInput" value="пластунка вірлиця" />):
+              (<Input readOnly className="dataInput" value="пластун скоб" />):
+            (<Input readOnly className="dataInput" value="-"/>)
+          }
         </Form.Item>
      </div>
 
