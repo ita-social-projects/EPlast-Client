@@ -70,6 +70,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
     precautionId: 0,
     userId: '',
     reporter: '',
+    status: '',
     reason: '',
     number: 0,
     date: new Date(),
