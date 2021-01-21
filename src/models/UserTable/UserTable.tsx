@@ -8,6 +8,8 @@ export default class UserTable {
     clubName: string;
     userPlastDegreeName: string;
     userRoles: string;
+    email: string;
+    upuDegree: string;
 
     constructor() {
         this.user = new User();
@@ -16,5 +18,7 @@ export default class UserTable {
         this.clubName = '';
         this.userPlastDegreeName = '';
         this.userRoles = '';
+        this.email = '';
+        this.upuDegree = '';
     }
 }
