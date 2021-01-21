@@ -61,7 +61,7 @@ export const UserClubSecretaryTable = ({  UserId }: props) => {
 
   return (
     <div>
- <h1>Дійсні діловодства станиці</h1>
+ <h1>Дійсні діловодства куреня</h1>
  <br/>
       <Table
         columns={columns}
@@ -69,7 +69,7 @@ export const UserClubSecretaryTable = ({  UserId }: props) => {
         scroll={{ x: 655 }}
       />
     
-    <h1>Колишні діловодства станиці</h1>
+    <h1>Колишні діловодства куреня</h1>
  <br/>
       <Table
         columns={columns}
