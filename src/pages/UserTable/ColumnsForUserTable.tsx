@@ -214,8 +214,36 @@ const ColumnsForUserTable: any = [
     sortDirections: ["descend", "ascend"],
   },
   {
+    title: "Email",
+    dataIndex: "email",
+    width: 220,
+    render: (email: any) => {
+        return (
+          <Tag color={"pink"}>
+            {email}
+          </Tag>
+        );
+    },
+  },
+  {
+  title: "Ступінь в УПЮ",
+  dataIndex: "upuDegree",
+  width: 180,
+  render: (upuDegree: any) => {
+      return (
+        <Tag color={"blue"}>
+          {upuDegree}
+        </Tag>
+      );
+  },
+  sorter: (a: any, b: any) =>
+  a.upuDegree.localeCompare(b.upuDegree),
+  sortDirections: ["descend", "ascend"],
+},
+  {
     title: "Права доступу",
     dataIndex: "userRoles",
+    width: 170,
     ellipsis: false,
     filters: [
       {
