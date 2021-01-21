@@ -54,11 +54,11 @@ const AddNewRegionFormPage = () => {
     await RegionsApi.createRegion(newRegion);
     form.resetFields();
 
-    notificationLogic("success", successfulCreateAction("Округ"));
+    notificationLogic("success", successfulCreateAction("Округа"));
     history.push("/regions");
   }
   catch(error){
-    notificationLogic("error", failCreateAction("округ"));
+    notificationLogic("error", failCreateAction("округа"));
   }
   };
 
@@ -110,7 +110,7 @@ const AddNewRegionFormPage = () => {
   return (
     <Layout.Content className="createCity">
       <Card hoverable className="createCityCard">
-        <Title level={2}>Створення округу</Title>
+        <Title level={2}>Створення округи</Title>
         <Form name="basic" onFinish={handleSubmit} form={form}>
           <Form.Item name="logo">
             <Upload
@@ -136,7 +136,7 @@ const AddNewRegionFormPage = () => {
           <Row justify="center">
             <Col md={11} xs={24}>
               <Form.Item
-                label="Назва округу"
+                label="Назва округи"
                 name="regionName"
                 labelCol={{ span: 24 }}
                 rules={descriptionValidation.Name}

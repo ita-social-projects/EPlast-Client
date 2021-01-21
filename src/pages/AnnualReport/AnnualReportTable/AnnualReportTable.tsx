@@ -167,7 +167,7 @@ const AnnualReportTable = () => {
     },
 
     {
-      title: "Округ",
+      title: "Округа",
       dataIndex: ["regionName"],
     },
     {
@@ -227,7 +227,7 @@ const AnnualReportTable = () => {
     },
     {
       key: 'tab3',
-      tab: 'Річні звіти округів',
+      tab: 'Річні звіти округ',
     },
   ];
 
@@ -313,7 +313,7 @@ const AnnualReportTable = () => {
             type="primary"
             onClick={() => setShowRegionAnnualReports(true)}
           >
-            Подати річний звіт округу
+            Подати річний звіт округи
           </Button>
           </Col>
       </Row>

@@ -61,7 +61,7 @@ const RegionDocuments = () => {
 
     return (
       <Layout.Content>
-        <Title level={2}>Документообіг округу</Title>
+        <Title level={2}>Документообіг округи</Title>
         {loading ? (
           <Spinner />
         ) : (
@@ -105,7 +105,7 @@ const RegionDocuments = () => {
                 </Card>
               ))
             ) : (
-              <Title level={4}>Ще немає документів округу</Title>
+              <Title level={4}>Ще немає документів округи</Title>
             )}
           </div>
         )}
