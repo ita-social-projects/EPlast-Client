@@ -177,7 +177,7 @@ const Region = () => {
 
   function seeDeleteModal() {
     return Modal.confirm({
-      title: "Ви впевнені, що хочете видалити даний округ?",
+      title: "Ви впевнені, що хочете видалити дану округу?",
       icon: <ExclamationCircleOutlined />,
       okText: "Так, видалити",
       okType: "danger",
@@ -297,7 +297,7 @@ const Region = () => {
                   second_name="Округи"
                 />
               </div>
-              <Title level={3}>Округ {region.regionName}</Title>
+              <Title level={3}>Округа {region.regionName}</Title>
               <Row className="cityPhotos" gutter={[0, 12]}>
                 <Col md={13} sm={24} xs={24}>
                   {photoStatus ? (
@@ -324,7 +324,7 @@ const Region = () => {
                   {head.user ? (
                     <div>
                       <Paragraph>
-                        <b>Голова округу:</b> {head.user.firstName}{" "}
+                        <b>Голова округи:</b> {head.user.firstName}{" "}
                         {head.user.lastName}
                       </Paragraph>
                       {head.endDate ? (
@@ -341,7 +341,7 @@ const Region = () => {
                         )}
                     </div>
                   ) : (
-                      <p>Ще немає голови округу</p>
+                      <p>Ще немає голови округи</p>
                     )}
                 </Col>
 
@@ -408,7 +408,7 @@ const Region = () => {
                         justify={canCreate ? "center" : "start"}
                       >
                         <Col>
-                          <Tooltip title="Редагувати округ">
+                          <Tooltip title="Редагувати округу">
                             <EditOutlined
                               className="cityInfoIcon"
                               onClick={() =>
@@ -419,7 +419,7 @@ const Region = () => {
                         </Col>
 
                         <Col offset={1}>
-                          <Tooltip title="Видалити округ">
+                          <Tooltip title="Видалити округу">
                             <DeleteOutlined
                               className="cityInfoIconDelete"
                               onClick={() => seeDeleteModal()}
@@ -438,7 +438,7 @@ const Region = () => {
 
           <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
             <Card hoverable className="cityCard">
-              <Title level={4}>Опис округу</Title>
+              <Title level={4}>Опис округи</Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
                 <div className="regionDesc">{region.description}</div>
               </Row>
@@ -452,7 +452,7 @@ const Region = () => {
             xs={24}
           >
             <Card hoverable className="cityCard">
-              <Title level={4}>Провід округу <a onClick={() => history.push(`/region/administration/${region.id}`)}>
+              <Title level={4}>Провід округи <a onClick={() => history.push(`/region/administration/${region.id}`)}>
                 {adminsCount !== 0 ?
                   <Badge
                     count={adminsCount}
@@ -481,7 +481,7 @@ const Region = () => {
                     </Col>
                   ))
                 ) : (
-                    <Paragraph>Ще немає діловодів округу</Paragraph>
+                    <Paragraph>Ще немає діловодів округи</Paragraph>
                   )}
               </Row>
               <div className="cityMoreButton">
@@ -505,7 +505,7 @@ const Region = () => {
 
           <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
             <Card hoverable className="cityCard">
-              <Title level={4}>Члени округу <a onClick={() => history.push(`/regions/members/${id}`)}>
+              <Title level={4}>Члени округи <a onClick={() => history.push(`/regions/members/${id}`)}>
                 {membersCount !== 0 ?
                   <Badge
                     count={membersCount}
@@ -534,7 +534,7 @@ const Region = () => {
                     </Col>
                   ))
                 ) : (
-                    <Paragraph>Ще немає членів округу</Paragraph>
+                    <Paragraph>Ще немає членів округи</Paragraph>
                   )}
               </Row>
               <div className="cityMoreButton">
@@ -556,7 +556,7 @@ const Region = () => {
             xs={24}
           >
             <Card hoverable className="cityCard">
-              <Title level={4}>Документообіг округу</Title>
+              <Title level={4}>Документообіг округи</Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
                 {documents.length !== 0 ? (
                   documents.map((document) => (
@@ -573,7 +573,7 @@ const Region = () => {
                     </Col>
                   ))
                 ) : (
-                    <Paragraph>Ще немає документів Округу</Paragraph>
+                    <Paragraph>Ще немає документів Округи</Paragraph>
                   )}
               </Row>
               <div className="cityMoreButton">
@@ -614,7 +614,7 @@ const Region = () => {
         </Modal>
 
         <Modal
-          title="Оберіть округ до якого належатимуть станиці-члени:"
+          title="Оберіть округу до якої належатимуть станиці-члени:"
           visible={memberRedirectVisibility}
           onOk={handleOk}
           onCancel={handleOk}

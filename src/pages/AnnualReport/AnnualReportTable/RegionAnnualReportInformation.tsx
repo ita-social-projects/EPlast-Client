@@ -23,8 +23,8 @@ const RegionAnnualReportInformation = (props: Props) => {
             <Title
                 className='textCenter'
                 level={3} >
-                {`Річний звіт округу ${props.regionAnnualReport.regionName} за 
-                    ${moment(regionAnnualReport.annualReportYear).year()} рік`}</Title>
+                {`Річний звіт округи ${props.regionAnnualReport.regionName} за 
+                    ${Number(JSON.stringify(regionAnnualReport).slice(17, 21))} рік`}</Title>
             <Card>
                 <Card.Grid
                     className='container'>

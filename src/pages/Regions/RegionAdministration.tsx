@@ -59,7 +59,7 @@ const RegionAdministration = () => {
       `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regions/${id}`,
-      `цьому окрузі`
+      `цій окрузі`
     );
     setAdministration(administration.filter((u) => u.id !== admin.id));
   };
@@ -81,7 +81,7 @@ const RegionAdministration = () => {
       `Вам було надано нову адміністративну роль: '${newAdmin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regions/${id}`,
-      `цьому окрузі`
+      `цій окрузі`
     );
     setAdministration(administration);
   };
@@ -100,7 +100,7 @@ const RegionAdministration = () => {
 
   return (
     <Layout.Content>
-      <Title level={2}>Провід округу</Title>
+      <Title level={2}>Провід округи</Title>
       {loading ? (
         <Spinner />
       ) : (
@@ -138,7 +138,7 @@ const RegionAdministration = () => {
               </Card>
             ))
           ) : (
-            <Title level={4}>Ще немає діловодів округу</Title>
+            <Title level={4}>Ще немає діловодів округи</Title>
           )}
         </div>
       )}

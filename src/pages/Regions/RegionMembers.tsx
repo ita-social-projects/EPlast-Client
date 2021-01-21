@@ -61,7 +61,7 @@ const RegionMembers = () => {
   return (
     <Layout.Content>
       <Title level={2}>
-        Члени округу
+        Члени округи
       </Title>
       {loading ? (
           <Spinner />
