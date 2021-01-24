@@ -20,7 +20,7 @@ const AddRegionAdministratorModal = ({
 }: Props) => {
   return (
     <Modal
-      title="Додати в провід округу"
+      title="Додати в провід округи"
       visible={showAdministratorModal}
       centered
       footer={null}

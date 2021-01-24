@@ -69,7 +69,7 @@ const ChangeUserRegionForm = ({
   return (
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
-        <h4>Оберіть округ для користувача</h4>
+        <h4>Оберіть округу для користувача</h4>
         <Form.Item name="userRegion">
           <Select onChange={handleClick}>
             {regions.map((item: RegionForAdmin) => (

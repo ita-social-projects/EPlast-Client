@@ -69,7 +69,7 @@ export const UserRegionSecretaryTable = ({ UserId }: props) => {
 
   return (
     <div>
-      <h1>Дійсні діловодства округу</h1>
+      <h1>Дійсні діловодства округи</h1>
       <br/>
       <Table
       
@@ -77,7 +77,7 @@ export const UserRegionSecretaryTable = ({ UserId }: props) => {
         dataSource={data}
         scroll={{ x: 655 }}
       />
-      <h1>Колишні діловодства округу</h1>
+      <h1>Колишні діловодства округи</h1>
       <br/>
       <Table
         columns={columns}

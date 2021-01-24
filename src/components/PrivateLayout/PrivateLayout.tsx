@@ -69,7 +69,7 @@ const PrivateLayout = ({ children }: any) => {
     let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
     setUser(roles);
     setCanEdit(roles.includes("Admin"));
-    setRegionAdm(roles.includes("Голова Округу"));
+    setRegionAdm(roles.includes("Голова Округи"));
     setCityAdm(roles.includes("Голова Станиці"));
     setClubAdm(roles.includes("Голова Куреня"));
     setCanSee(roles.includes("Пластун"));
@@ -162,7 +162,7 @@ const PrivateLayout = ({ children }: any) => {
                   icon={<PieChartOutlined />}
                   title="Статистика" >
                   <Menu.Item icon={<BarChartOutlined />} onClick={() => { handleClickAway(); history.push('/statistics/cities'); }} key="10">Статистика станиць</Menu.Item>
-                  <Menu.Item icon={<BarChartOutlined />} onClick={() => { handleClickAway(); history.push('/statistics/regions'); }} key="11">Статистика округів</Menu.Item>
+                  <Menu.Item icon={<BarChartOutlined />} onClick={() => { handleClickAway(); history.push('/statistics/regions'); }} key="11">Статистика округ</Menu.Item>
                 </SubMenu>
                 <SubMenu key="sub2.3" title="Осередки">
                   <Menu.Item onClick={() => { handleClickAway(); }} key="12">Осередки та адміни</Menu.Item>

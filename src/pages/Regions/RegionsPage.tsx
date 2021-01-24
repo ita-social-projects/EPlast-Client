@@ -108,14 +108,14 @@ const Regions = () => {
                 >
                   <Card.Meta
                     className="titleText"
-                    title="Створити новий округ"
+                    title="Створити нову округу"
                   />
                 </Card>
               ) : null}
 
               {regions.length === 0 && searchedData.length !== 0 ? (
                 <div>
-                  <Result status="404" title="Округ не знайдено" />
+                  <Result status="404" title="Округу не знайдено" />
                 </div>) : (
                   regions.map((region: any) => (
                     <Link to={`${url}/${region.id}`}>

@@ -83,7 +83,7 @@ const CityDetailDrawer = (props: Props) => {
           <Col md={12} xs={24}>
             <Form.Item
               name="region"
-              label="Округ"
+              label="Округа"
               labelCol={{ span: 24 }}
               initialValue={
                 props.city.region?.length > 0 ? props.city.region : "---"

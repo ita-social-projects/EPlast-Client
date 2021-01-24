@@ -15,7 +15,7 @@ import{ tryAgain } from "../../../components/Notifications/Messages";
 const tabList = [
     {
         key: '1',
-        tab: 'Діловодства округу',
+        tab: 'Діловодства округи',
     },
     {
         key: '2',
