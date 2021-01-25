@@ -1,7 +1,6 @@
 import Api from "./api";
 import notificationLogic from "../components/Notifications/Notification";
 import AuthStore from "../stores/AuthStore";
-import { string } from "yup";
 import FacebookData from "../pages/SignIn/FacebookDataInterface";
 
 export default class AuthorizeApi {
@@ -10,7 +9,7 @@ export default class AuthorizeApi {
   }
 
   login = async (data: any) => {
-    const response = await Api.post("Auth/signin", data)
+    const response = await Api.post("Login/signin", data)
       .then((response) => {
         if (response.data.token !== null) {
           AuthStore.setToken(response.data.token);
@@ -38,7 +37,7 @@ export default class AuthorizeApi {
   };
 
   forgotPassword = async (data: any) => {
-    const response = await Api.post("Auth/forgotPassword", data)
+    const response = await Api.post("Password/forgotPassword", data)
       .then((response) => {
         notificationLogic("success", response.data.value);
       })
@@ -51,7 +50,7 @@ export default class AuthorizeApi {
   };
 
   resetPassword = async (data: any) => {
-    const response = await Api.post("Auth/resetPassword", data)
+    const response = await Api.post("Password/resetPassword", data)
       .then((response) => {
         notificationLogic("success", response.data.value);
       })
@@ -64,7 +63,7 @@ export default class AuthorizeApi {
   };
 
   changePassword = async (data: any) => {
-    const response = await Api.post("Problem/changePassword", data)
+    const response = await Api.post("Password/changePassword", data)
       .then((response) => {
         notificationLogic("success", response.data.value);
       })
@@ -94,7 +93,7 @@ export default class AuthorizeApi {
   };
 
   sendToken = async (token: string) => {
-    const response = await Api.post(`Auth/signin/google/?googleToken=${token}`)
+    const response = await Api.post(`Login/signin/google/?googleToken=${token}`)
       .then((response) => {
         if (response.data.token !== null) {
           AuthStore.setToken(response.data.token);
@@ -109,14 +108,14 @@ export default class AuthorizeApi {
   };
 
   getGoogleId = async () => {
-    const response = await Api.get("Auth/GoogleClientId");
+    const response = await Api.get("Login/GoogleClientId");
 
     return response.data;
   };
 
   sendFacebookInfo = async (response: FacebookData) => {
     const respon = await Api.post(
-      `Auth/signin/facebook`,
+      `Login/signin/facebook`,
       JSON.stringify(response)
     )
       .then((respon) => {
@@ -133,7 +132,7 @@ export default class AuthorizeApi {
   };
 
   getFacebookId = async () => {
-    const response = await Api.get("Auth/FacebookAppId");
+    const response = await Api.get("Login/FacebookAppId");
     return response.data;
   };
 }
