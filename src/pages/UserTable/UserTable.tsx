@@ -29,7 +29,7 @@ const UsersTable = () => {
   const fetchData = async () => {
     await adminApi.getUsersForTable().then((response) => {
       setUsers(response.data);
-    });
+    } );
     setLoading(true);
   };
 

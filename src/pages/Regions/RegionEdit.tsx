@@ -116,7 +116,7 @@ const RegionEditFormPage = () => {
 
     form.resetFields();
 
-    notificationLogic("success", successfulEditAction("Дані округу"));
+    notificationLogic("success", successfulEditAction("Дані округи"));
     history.push(`/regions/${currentRegion}`);
   };
 
@@ -127,7 +127,7 @@ const RegionEditFormPage = () => {
           <Spinner />
         ) : (
           <Form name="basic" onFinish={handleSubmit} form={form}>
-          <Title level={2}>Редагування округу</Title>
+          <Title level={2}>Редагування округи</Title>
             <Form.Item name="logo" initialValue={chosenRegion.logo}>
               <Upload
                 name="avatar"
@@ -152,7 +152,7 @@ const RegionEditFormPage = () => {
             <Row justify="center">
                 <Col md={11} xs={24}>
                   <Form.Item
-                    label="Назва округу"
+                    label="Назва округи"
                     name="regionName"
                     initialValue={chosenRegion.regionName}
                     labelCol={{ span: 24 }}

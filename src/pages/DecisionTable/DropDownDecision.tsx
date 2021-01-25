@@ -40,24 +40,33 @@ const DropDown = (props: Props) => {
     date: "",
     fileName: null,
 });
+const fetchUser = async () => {
+  let jwt = AuthStore.getToken() as string;
+  let decodedJwt = jwt_decode(jwt) as any;
+  let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+  setUser(roles);
+  setCanEdit(roles.includes("Admin"));
+  setRegionAdm(roles.includes("Голова Округи"));
+  setCityAdm(roles.includes("Голова Станиці"));
+  setClubAdm(roles.includes("Голова Куреня"));
+  setCanSee(roles.includes("Пластун"));
+}
+const fetchData = async () =>{
+  await decisionsApi.getById(record).then(res => setData(res));
+}
+  useEffect(() => {
+    if(showEditModal)
+    {
+    fetchData();
+    }
+  }
+  ,[showEditModal]);
 
   useEffect(() => {
-  if(showEditModal){
-    const fetchData = async () =>{
-      await decisionsApi.getById(record).then(res => setData(res));
-      let jwt = AuthStore.getToken() as string;
-      let decodedJwt = jwt_decode(jwt) as any;
-      let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
-      setUser(roles);
-      setCanEdit(roles.includes("Admin"));
-      setRegionAdm(roles.includes("Голова Округу"));
-      setCityAdm(roles.includes("Голова Станиці"));
-      setClubAdm(roles.includes("Голова Куреня"));
-      setCanSee(roles.includes("Пластун"));
-    }
-    fetchData();
+    fetchUser();
   }
-  },[showEditModal]);
+  ,[]);
+  
   /* eslint no-param-reassign: "error" */
   const handleItemClick =async (item: any) => {
     switch (item.key) {
@@ -78,10 +87,7 @@ const DropDown = (props: Props) => {
     item.key = '0'
   };
 
- 
-
   return (
-   
     <>
       <Menu
         theme="dark"

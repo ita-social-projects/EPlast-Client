@@ -21,31 +21,31 @@ export default function () {
   }
   let query = useQuery();
 
-  const validationSchema = {
-    Email: [
-      { required: true, message: incorrectEmail },
-      { validator: checkEmail },
-    ],
-    Password: [
-      { required: true, message: emptyInput() },
-      { min: 6, message: minLength(6) },
-    ],
-    ConfirmPassword: [
-      { required: true, message: emptyInput() },
-      { min: 6, message: minLength(6) },
-    ],
-  };
-
-  const handleSubmit = async (values: any) => {
-    const newPassword = {
-      email: values.Email,
-      password: values.Password,
-      confirmPassword: values.ConfirmPassword,
-      code: query.get("token"),
+    const validationSchema = {
+        Email: [
+            { required: true, message: incorrectEmail },
+            { validator: checkEmail },
+        ],
+        Password: [
+            { required: true, message: emptyInput() },
+            { min: 8, message: minLength(8) },
+        ],
+        ConfirmPassword: [
+            { required: true, message: emptyInput() },
+            { min: 8, message: minLength(8) },
+        ]
     };
-    await authService.resetPassword(newPassword);
-    history.push("/signin");
-  };
+
+    const handleSubmit = async (values: any) => {
+        const newPassword = {
+            email: values.Email,
+            password: values.Password,
+            confirmPassword: values.ConfirmPassword,
+            code: query.get("token"),
+        }
+        await authService.resetPassword(newPassword);
+        history.push("/signin");
+    };
 
   const initialValues = {
     Email: "",

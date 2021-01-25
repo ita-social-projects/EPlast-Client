@@ -77,7 +77,7 @@ const AddNewSecretaryForm = (props: any) => {
         `Вам була присвоєна адміністративна роль: '${values.AdminType}' в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/regions/${currentRegion}`,
-        `цьому окрузі`
+        `цій окрузі`
       );
       onAdd();
     } else {
@@ -89,7 +89,7 @@ const AddNewSecretaryForm = (props: any) => {
         `Вам була відредагована адміністративна роль: '${values.AdminType}' в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/regions/${currentRegion}`,
-        `цьому окрузі`
+        `цій окрузі`
       );
       onAdd();
     }
@@ -153,7 +153,7 @@ const AddNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Округу" },
+            { value: "Голова Округи" },
             { value: "Писар" },
             { value: "Бунчужний" },
             { value: "Скарбник" },

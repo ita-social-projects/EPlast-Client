@@ -79,7 +79,7 @@ const DocumentsTable = () => {
       setLoading(false);
       setUser(roles);
       setCanEdit(roles.includes("Admin"));
-      setRegionAdm(roles.includes("Голова Округу"));
+      setRegionAdm(roles.includes("Голова Округи"));
       setCityAdm(roles.includes("Голова Станиці"));
       setClubAdm(roles.includes("Голова Куреня"));
     };

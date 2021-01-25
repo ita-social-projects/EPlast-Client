@@ -11,7 +11,7 @@ const ConfirmedRegionDropdown = (props: Props) => {
     const handleClick = (item: any) => {
         switch (item.key) {
             case '1':
-                onView(regionRecord.regionId, moment(regionRecord.annualReportYear).year());
+                onView(regionRecord.regionId, Number(JSON.stringify(regionRecord).slice(17, 21)));
                 break;
             default:
                 break;

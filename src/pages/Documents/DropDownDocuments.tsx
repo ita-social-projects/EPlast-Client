@@ -42,7 +42,7 @@ const DropDown = (props: Props) => {
         let jwt = AuthStore.getToken() as string;
         let decodedJwt = jwt_decode(jwt) as any;
         let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
-        setRegionAdm(roles.includes("Голова Округу"));
+        setRegionAdm(roles.includes("Голова Округи"));
         setCityAdm(roles.includes("Голова Станиці"));
         setClubAdm(roles.includes("Голова Куреня"));
       }

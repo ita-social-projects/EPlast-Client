@@ -39,7 +39,7 @@ const columns = [
     },
   },
   {
-    title: "Округ",
+    title: "Округа",
     dataIndex: "region",
     render: (region: any) => {
       return region.regionName;

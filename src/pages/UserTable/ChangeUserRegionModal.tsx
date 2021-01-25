@@ -18,7 +18,7 @@ const ChangeUserRegionModal = ({
 }: Props) => {
   return (
     <Modal
-      title="Редагування округу"
+      title="Редагування округи"
       visible={showModal}
       centered
       footer={null}
