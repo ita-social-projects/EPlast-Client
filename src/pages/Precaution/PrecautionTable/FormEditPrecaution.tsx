@@ -283,6 +283,7 @@ const FormEditPrecaution = ({
                 <DatePicker
                   format={dateFormat}
                   className={formclasses.selectField}
+                  disabled
                 />
               </Form.Item>
             </Col>
@@ -297,6 +298,7 @@ const FormEditPrecaution = ({
                 initialValue={Precaution.reason}
                 rules={[
                   {
+                    required: true,
                     max: 250,
                     message: maxLength(250),
                   },
@@ -318,7 +320,7 @@ const FormEditPrecaution = ({
             <Col md={24} xs={24}>
               <Form.Item
                 className={formclasses.formField}
-                label="статус"
+                label="Статус"
                 labelCol={{ span: 24 }}
                 name="status"
                 initialValue={Precaution.status}
@@ -331,7 +333,7 @@ const FormEditPrecaution = ({
               >
                 <Select className={formclasses.selectField} showSearch>
                   <Select.Option key="9" value="Прийнято">Прийнято</Select.Option>
-                  <Select.Option key="10" value="Підтверджено">Підтверджено</Select.Option>
+                  <Select.Option key="10" value="Потверджено">Потверджено</Select.Option>
                   <Select.Option key="11" value="Скасовано">Скасовано</Select.Option>
                 </Select>
               </Form.Item>
