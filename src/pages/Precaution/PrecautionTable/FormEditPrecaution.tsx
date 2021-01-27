@@ -114,6 +114,7 @@ const FormEditPrecaution = ({
   };
 
   const handleFinish = async (dist: any) => {
+    console.log(dist);
     const newPrecaution: any = {
       id: record,
       PrecautionId: distValue.id,
@@ -122,8 +123,8 @@ const FormEditPrecaution = ({
       userId: userValue.id,
       status: dist?.status,
       date: dist?.date,
-      endDate: dist?.endDate,
-      isActive: true,
+      endDate: Precaution.endDate,
+      isActive: dist?.status === "Скасовано" ? false : true,
       reporter: dist?.reporter,
       reason: dist?.reason,
       number: dist?.number,
@@ -142,14 +143,15 @@ const FormEditPrecaution = ({
         newPrecaution.Precaution,
         newPrecaution.date,
         newPrecaution.endDate,
-        newPrecaution.reason,
         newPrecaution.isActive,
+        newPrecaution.reason,
         newPrecaution.status,
         newPrecaution.reporter,
         newPrecaution.number,
         newPrecaution.user,
         newPrecaution.user.id
       );
+      console.log(newPrecaution);
     } else {
       openNotification(`Номер ${dist.number} вже зайнятий`);
       form.resetFields(["number"]);
