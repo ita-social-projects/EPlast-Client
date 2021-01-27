@@ -74,6 +74,8 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
     reason: '',
     number: 0,
     date: new Date(),
+    endDate: new Date(),
+    isActive: true,
     user: new User()
   }]);
 
@@ -156,11 +158,12 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (props: AvatarAndPro
           </div>
         )}
         {UserPrecaution.map(dist =>
-          <div className="precautions">
-            <Tooltip title={dist?.reason}>
-              <h2>{dist.precaution.name} №{dist.number}</h2>
-            </Tooltip>
-          </div>
+          dist.status != "Скасовано" ?
+            <div className="precautions">
+              <Tooltip title={dist?.reason}>
+                <h2>{dist.precaution.name} №{dist.number}</h2>
+              </Tooltip>
+            </div> : ""
         )}
       </div>
     );

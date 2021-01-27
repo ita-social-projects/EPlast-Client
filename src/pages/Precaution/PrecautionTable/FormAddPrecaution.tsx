@@ -107,6 +107,8 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
       userId: JSON.parse(values.user).id,
       status: values.status,
       date: values.date,
+      endDate: values.date,
+      isActive: true,
       reporter: values.reporter,
       reason: values.reason,
       number: values.number,

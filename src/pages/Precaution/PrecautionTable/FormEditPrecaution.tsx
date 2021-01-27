@@ -31,6 +31,8 @@ interface Props {
     id: number,
     Precaution: Precaution,
     date: Date,
+    endDate: Date,
+    isActive: boolean,
     reason: string,
     status: string,
     reporter: string,
@@ -120,6 +122,8 @@ const FormEditPrecaution = ({
       userId: userValue.id,
       status: dist?.status,
       date: dist?.date,
+      endDate: dist?.endDate,
+      isActive: true,
       reporter: dist?.reporter,
       reason: dist?.reason,
       number: dist?.number,
@@ -137,7 +141,9 @@ const FormEditPrecaution = ({
         newPrecaution.id,
         newPrecaution.Precaution,
         newPrecaution.date,
+        newPrecaution.endDate,
         newPrecaution.reason,
+        newPrecaution.isActive,
         newPrecaution.status,
         newPrecaution.reporter,
         newPrecaution.number,
@@ -331,7 +337,7 @@ const FormEditPrecaution = ({
               </Form.Item>
             </Col>
           </Row>
-          <Form.Item>
+          {Precaution.isActive ? <Form.Item>
             <div className={formclasses.cardButton}>
               <Button key="back" onClick={handleCancel} className={formclasses.buttons}>
                 Відмінити
@@ -340,7 +346,7 @@ const FormEditPrecaution = ({
                 Зберегти
               </Button>
             </div>
-          </Form.Item>
+          </Form.Item> : ""}
         </Form>
       )}
     </div>

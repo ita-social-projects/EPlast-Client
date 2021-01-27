@@ -13,6 +13,8 @@ interface Props {
     id: number,
     Precaution: Precaution,
     date: Date,
+    endDate: Date,
+    isActive: boolean,
     reason: string,
     status: string,
     reporter: string,
