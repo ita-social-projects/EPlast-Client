@@ -139,7 +139,7 @@ const PrecautionTable = () => {
     if (userPrecaution) {
       NotificationBoxApi.createNotifications(
         [userPrecaution.userId],
-        `Вашу пересторогу: '${userPrecaution.precaution.name}' було видалену.`,
+        `Вашу пересторогу: '${userPrecaution.precaution.name}' було видалено.`,
         NotificationBoxApi.NotificationTypes.UserNotifications
       );
       NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId)
