@@ -20,13 +20,22 @@ const columns = [
   {
     title: 'Перестороги',
     dataIndex: 'precaution',
+    filters: [{
+      text: "Догана",
+      value: "Догана",
+    },
+    {
+      text: "Сувора догана",
+      value: "Сувора догана",
+    },
+    {
+      text: "Попередження про виключення",
+      value: "Попередження про виключення",
+    }],
+    onFilter: (value: any, record: any) => record.precaution.name.includes(value),
     render: (precaution: Precaution) => {
       return precaution.name
     },
-    sorter: (a: any, b: any) => a.precaution.name.localeCompare(b.precaution.name),
-    sortDirections: ['ascend', 'descend'] as SortOrder[],
-
-
   },
   {
     title: 'Ім\'я',
@@ -44,6 +53,15 @@ const columns = [
       return moment(date.toLocaleString()).format('DD.MM.YYYY');
     },
     sorter: (a: any, b: any) => a.date.localeCompare(b.date),
+    sortDirections: ['ascend', 'descend'] as SortOrder[],
+  },
+  {
+    title: 'Дата завершення',
+    dataIndex: 'endDate',
+    render: (endDate: Date, record: any) => {
+      return record.isActive === true ? moment(endDate.toLocaleString()).format('DD.MM.YYYY') : "не активна";
+    },
+    sorter: (a: any, b: any) => a.endDate.localeCompare(b.endDate),
     sortDirections: ['ascend', 'descend'] as SortOrder[],
   },
   {
@@ -82,5 +100,6 @@ const columns = [
       </Tooltip>
     ),
   },
+
 ];
 export default columns;

@@ -26,6 +26,8 @@ interface Props {
     id: number,
     Precaution: Precaution,
     date: Date,
+    endDate: Date,
+    isActive: boolean,
     reason: string,
     status: string,
     reporter: string,
@@ -60,6 +62,8 @@ const DropDown = (props: Props) => {
     reason: "",
     number: 0,
     date: new Date(),
+    endDate: new Date(),
+    isActive: true,
     user: new User(),
   });
 

@@ -9,6 +9,8 @@ type UserPrecaution = {
     status: string;
     number: number;
     date: Date;
+    endDate: Date;
+    isActive: boolean;
     userId: string;
     user: User
 }
