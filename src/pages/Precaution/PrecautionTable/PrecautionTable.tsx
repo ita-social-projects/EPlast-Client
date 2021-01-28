@@ -61,6 +61,8 @@ const PrecautionTable = () => {
       status: "",
       number: 0,
       date: new Date(),
+      endDate: new Date(),
+      isActive: true,
       user: new User(),
     },
   ]);
@@ -137,7 +139,7 @@ const PrecautionTable = () => {
     if (userPrecaution) {
       NotificationBoxApi.createNotifications(
         [userPrecaution.userId],
-        `Ваша пересторога: '${userPrecaution.precaution.name}' була видалена.`,
+        `Вашу пересторогу: '${userPrecaution.precaution.name}' було видалено.`,
         NotificationBoxApi.NotificationTypes.UserNotifications
       );
       NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId)
@@ -191,6 +193,8 @@ const PrecautionTable = () => {
     id: number,
     precaution: Precaution,
     date: Date,
+    endDate: Date,
+    isActive: boolean,
     reason: string,
     status: string,
     reporter: string,
@@ -205,6 +209,8 @@ const PrecautionTable = () => {
         d.precaution = precaution;
         d.number = number;
         d.date = date;
+        d.endDate = endDate;
+        d.isActive = isActive;
         d.reason = reason;
         d.status = status;
         d.reporter = reporter;
