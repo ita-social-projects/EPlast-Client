@@ -13,6 +13,7 @@ import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import Facebook from "../../../assets/images/facebookGreen.svg";
 import Twitter from "../../../assets/images/birdGreen.svg";
 import Instagram from "../../../assets/images/instagramGreen.svg";
+import { StickyContainer } from 'react-sticky';
 
 export default function () {
   const { userId } = useParams();
@@ -35,11 +36,14 @@ export default function () {
     <Spinner />
   ) : (
 <div className="container">
-    <Form name="basic" className="formContainer">
+  <Form name="basic" className="formContainer">
    <div className="avatarWrapper">
-     <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} pseudo={data?.user.pseudo} city={data?.user.city} club={data?.user.club}/>
+     <StickyContainer className="kadraWrapper">
+      <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} pseudo={data?.user.pseudo} city={data?.user.city} club={data?.user.club}/>
+     </StickyContainer>
    </div>
    <div className="allFields">
+
      <div className="rowBlock">
        <Form.Item
          label="Ім`я"
@@ -49,7 +53,6 @@ export default function () {
                 (<Input readOnly className="dataInput" value={data?.user.firstName}/>):
                 <Input readOnly className="dataInput" value="-"/>
               }
-
        </Form.Item>
        <Form.Item
          label="Прізвище"
@@ -61,6 +64,7 @@ export default function () {
               }
        </Form.Item>
      </div>
+
      <div className="rowBlock">
        <Form.Item
          label="По-батькові"
@@ -111,8 +115,7 @@ export default function () {
          {data?.user.birthday!==null && data?.user.birthday.toString()!=="0001-01-01T00:00:00"? 
                 (<Input readOnly className="dataInput" value={moment(data?.user.birthday).format("DD.MM.YYYY")} />):
                 <Input readOnly className="dataInput" value="-"/>
-              }
-        
+              }      
        </Form.Item>
        <Form.Item
          label="Номер телефону"
@@ -122,9 +125,9 @@ export default function () {
                 (<Input readOnly className="dataInput" value={data?.user.phoneNumber} />):
                 <Input readOnly className="dataInput" value="-"/>
               }
-       </Form.Item>
-      
+       </Form.Item>     
      </div>
+
      <div className="rowBlock">
        <Form.Item
          label="Національність"
@@ -143,8 +146,7 @@ export default function () {
                 (<Input readOnly className="dataInput" value={data?.user.religion.name} />):
                 <Input readOnly className="dataInput" value="-"/>
               }
-       </Form.Item>
-      
+       </Form.Item>      
      </div>
      
      <div className="rowBlock">
@@ -167,6 +169,7 @@ export default function () {
               }
        </Form.Item>
      </div>
+
      <div className="rowBlock">
        <Form.Item
          label="Навчальний ступінь"
@@ -187,6 +190,7 @@ export default function () {
               }
        </Form.Item>
      </div>
+     
      <div className="rowBlock">
        <Form.Item
          label="Посада"
@@ -245,22 +249,28 @@ export default function () {
 
      <div className="links">
       {data?.user.facebookLink!==null && data?.user.facebookLink!==""?
-        <a href={data?.user.facebookLink}>
+        <a href={"https://www.facebook.com/" + data?.user.facebookLink}>
           <img src={Facebook} alt="Facebook" />
         </a>
         : null
       }
       {data?.user.twitterLink!==null && data?.user.twitterLink!==""?
-        <a href={data?.user.twitterLink}>
+        <a href={"https://www.twitter.com/" + data?.user.twitterLink}>
           <img src={Twitter} alt="Twitter" />
         </a>
         : null
       }
       {data?.user.instagramLink!==null && data?.user.instagramLink!==""?
-        <a href={data?.user.instagramLink}>
+        <a href={"https://www.instagram.com/" + data?.user.instagramLink}>
           <img src={Instagram} alt="Instagram" />
         </a>
         : null
+      }
+      {data?.user.facebookLink===null || data?.user.facebookLink===""&& 
+      data?.user.twitterLink===null || data?.user.twitterLink===""&& 
+      data?.user.instagramLink===null || data?.user.instagramLink===""?
+      <Form.Item className="formItem"></Form.Item> 
+      : null
       }
      </div>
      
