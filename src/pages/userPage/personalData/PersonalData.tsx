@@ -9,7 +9,6 @@ import EventUser from "../../Actions/ActionEvent/EventUser/EventUser";
 import { useParams } from "react-router-dom";
 import Secretaries from "../Secretaries/SecretariesPage";
 import { Blanks } from "../Blanks/Blanks";
-import ShortProfile from "../ShortProfile/ShortProfile";
 
 export default function ({
   match: {
