@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
 import CityUser from '../../../models/City/CityUser';
 import Precaution from "../Interfaces/Precaution";
-import { Tooltip } from 'antd';
+import { DatePicker, Tooltip } from 'antd';
 import { SortOrder } from 'antd/lib/table/interface';
 import { FormLabelAlign } from 'antd/lib/form/interface';
 
 
+const fetchYears = () => {
+  const arrayOfYears = [];
+  var startDate = Number(new Date().getFullYear());
+  for (let i = 2010; i <= startDate; i++) {
+    arrayOfYears.push({ text: i.toString(), value: i });
+  }
+  return arrayOfYears;
+}
+const years = fetchYears();
 const columns = [
   {
     align: 'right' as FormLabelAlign,
@@ -29,8 +38,8 @@ const columns = [
       value: "Сувора догана",
     },
     {
-      text: "Попередження про виключення",
-      value: "Попередження про виключення",
+      text: "догана із загрозою виключення з Пласту",
+      value: "догана із загрозою виключення з Пласту",
     }],
     onFilter: (value: any, record: any) => record.precaution.name.includes(value),
     render: (precaution: Precaution) => {
@@ -49,11 +58,11 @@ const columns = [
   {
     title: 'Дата затвердження',
     dataIndex: 'date',
+    filters: years,
+    onFilter: (value: any, record: any) => record.date.includes(value),
     render: (date: Date) => {
       return moment(date.toLocaleString()).format('DD.MM.YYYY');
     },
-    sorter: (a: any, b: any) => a.date.localeCompare(b.date),
-    sortDirections: ['ascend', 'descend'] as SortOrder[],
   },
   {
     title: 'Дата завершення',
@@ -94,9 +103,22 @@ const columns = [
     ellipsis: {
       showTitle: false,
     },
-    render: (reason: any) => (
-      <Tooltip placement="topRight" title={reason}>
-        {reason}
+    filters: [{
+      text: "Прийнято",
+      value: "Прийнято",
+    },
+    {
+      text: "Потверджено",
+      value: "Потверджено",
+    },
+    {
+      text: "Скасовано",
+      value: "Скасовано",
+    }],
+    onFilter: (value: any, record: any) => record.status.includes(value),
+    render: (status: any) => (
+      <Tooltip placement="topRight" title={status}>
+        {status}
       </Tooltip>
     ),
   },
