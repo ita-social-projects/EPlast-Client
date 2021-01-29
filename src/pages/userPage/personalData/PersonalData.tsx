@@ -9,6 +9,7 @@ import EventUser from "../../Actions/ActionEvent/EventUser/EventUser";
 import { useParams } from "react-router-dom";
 import Secretaries from "../Secretaries/SecretariesPage";
 import { Blanks } from "../Blanks/Blanks";
+import ShortProfile from "../ShortProfile/ShortProfile";
 
 export default function ({
   match: {
@@ -23,6 +24,10 @@ export default function ({
       {specify === "main" ? (
         <div className="content">
           <UserFields />
+        </div>
+      ) : specify === "mainShort" ? (
+        <div className="content">
+          <ShortProfile  />
         </div>
       ) : specify === "edit" ? (
         <div className="content">
