@@ -35,7 +35,6 @@ import{
   successfulEditAction,
   tryAgain,
   shouldContain,
-  incorrectPhone,
   emptyInput,
   minLength
 } from "../../../components/Notifications/Messages"
@@ -46,13 +45,7 @@ export default function () {
   const history = useHistory();
   const patern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50})*$/;
   const secondPatern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50})*$/;
-  const patternFB = /^(https?:\/\/){0,1}(www\.){0,1}facebook\.com/;
-  const patternTW = /(?:http:\/\/)?(?:www\.)?twitter\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w\-]*\/)*([\w\-]*)/;
-  const patternIN = /(?:(?:http|https):\/\/)?(?:www\.)?(?:instagram\.com|instagr\.am)\/([A-Za-z0-9-_\.]+)/im;
   const message = shouldContain("тільки літери");
-  const messageFB = shouldContain("посилання на сторінку у facebook");
-  const messageTW = shouldContain("посилання на сторінку у twitter");
-  const messageIN = shouldContain("посилання на сторінку в instagram");
   const [form] = Form.useForm();
 
   const [nationality, setNationality] = useState<Nationality>();
@@ -425,34 +418,36 @@ export default function () {
         onFinish={handleSubmit}
       >
         <div className={styles.avatarWrapper}>
-          <Avatar size={300} src={userAvatar} className="avatarElem" />
-          <div className={styles.buttons}>
-          <Upload
-            name="avatar"
-            className={styles.changeAvatar}
-            showUploadList={false}
-            accept=".jpeg,.jpg,.png"
-            customRequest={handleUpload}
-          >
-            <Button className={styles.changeAvatarBtn}>
-              <UploadOutlined /> Вибрати
-            </Button>
-          </Upload>
-          {photoName!==defaultPhotoName?
-          <Tooltip title="Видалити">
-            <Popconfirm
-              title="Видалити фото?"
-              placement="bottom"
-              icon={false}
-              onConfirm={()=>handleDeletePhoto()}
-              okText="Так"
-              cancelText="Ні">
-              <DeleteOutlined
-                className={styles.deleteIcon}
-                key="close"
-              />
-            </Popconfirm>
-          </Tooltip>:null}
+          <div className={styles.kadraWrapper}>
+            <Avatar size={300} src={userAvatar} className="avatarElem" />
+            <div className={styles.buttons}>
+            <Upload
+              name="avatar"
+              className={styles.changeAvatar}
+              showUploadList={false}
+              accept=".jpeg,.jpg,.png"
+              customRequest={handleUpload}
+            >
+              <Button className={styles.changeAvatarBtn}>
+                <UploadOutlined /> Вибрати
+              </Button>
+            </Upload>
+            {photoName!==defaultPhotoName?
+            <Tooltip title="Видалити">
+              <Popconfirm
+                title="Видалити фото?"
+                placement="bottom"
+                icon={false}
+                onConfirm={()=>handleDeletePhoto()}
+                okText="Так"
+                cancelText="Ні">
+                <DeleteOutlined
+                  className={styles.deleteIcon}
+                  key="close"
+                />
+              </Popconfirm>
+            </Tooltip>:null}
+            </div>
           </div>
         </div>
         

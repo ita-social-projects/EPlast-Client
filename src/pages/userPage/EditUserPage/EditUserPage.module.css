@@ -17,6 +17,12 @@
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
+.kadraWrapper{
+    height: 100%;
+    text-align: center;
+    padding: 20px 0 20px 0;
+}
+
 .allFields{
     width:  calc(60% - 30px);
     height: auto;
@@ -139,6 +145,10 @@ input,
         padding-top:5px;
         padding-bottom: 5px; 
     }
+    .kadraWrapper{
+        height: auto !important; 
+        margin-bottom: 0px !important;;  
+    }
     .allFields{
         width: 100%;
         padding:5px;
@@ -150,7 +160,7 @@ input,
         display: contents;
     }
     .formContainer{
-         flex-direction: column;
+        flex-direction: column;
     }
  }
 

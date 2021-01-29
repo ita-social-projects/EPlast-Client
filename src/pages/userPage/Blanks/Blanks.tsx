@@ -23,6 +23,7 @@ import{
     successfulDeleteAction,
     tryAgain
   } from "../../../components/Notifications/Messages"
+import { StickyContainer } from "react-sticky";
 
 export const Blanks = () => {
     const { userId } = useParams();
@@ -121,14 +122,16 @@ export const Blanks = () => {
                 <p></p>
                 <div className={classes.wrapper}>
                     <div className={classes.wrapperImg}>
-                        <AvatarAndProgress imageUrl={data?.user.imagePath}
-                            time={data?.timeToJoinPlast}
-                            firstName={data?.user.firstName}
-                            lastName={data?.user.lastName}
-                            isUserPlastun={true}
-                            pseudo={data?.user.pseudo} 
-                            city={data?.user.city} 
-                            club={data?.user.club}/>
+                        <StickyContainer className={classes.kadraWrapper}>
+                            <AvatarAndProgress imageUrl={data?.user.imagePath}
+                                time={data?.timeToJoinPlast}
+                                firstName={data?.user.firstName}
+                                lastName={data?.user.lastName}
+                                isUserPlastun={true}
+                                pseudo={data?.user.pseudo} 
+                                city={data?.user.city} 
+                                club={data?.user.club}/>
+                        </StickyContainer>
                     </div>
                     <div className={classes.wrapperCol}>
                         <div className={classes.wrapper}>
