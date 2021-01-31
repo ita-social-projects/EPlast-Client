@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { Data } from "../Interface/Interface";
 import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
-import AvatarAndProgress from "../personalData/AvatarAndProgress";
 import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId, openBiographyFile, getExtractFromUPUByUserId, removeExtractFromUPUDocument, getExtractFromUPUFile, openExtractFromUPUFile, openGenerationFile } from "../../../api/blankApi";
 import { Badge, Button, Col, Popconfirm, Tooltip } from "antd";
 import classes from "./Blanks.module.css";
@@ -23,7 +22,7 @@ import{
     successfulDeleteAction,
     tryAgain
   } from "../../../components/Notifications/Messages"
-import { StickyContainer } from "react-sticky";
+import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 
 export const Blanks = () => {
     const { userId } = useParams();
@@ -122,8 +121,7 @@ export const Blanks = () => {
                 <p></p>
                 <div className={classes.wrapper}>
                     <div className={classes.wrapperImg}>
-                        <StickyContainer className={classes.kadraWrapper}>
-                            <AvatarAndProgress imageUrl={data?.user.imagePath}
+                            <AvatarAndProgressStatic imageUrl={data?.user.imagePath}
                                 time={data?.timeToJoinPlast}
                                 firstName={data?.user.firstName}
                                 lastName={data?.user.lastName}
@@ -131,7 +129,6 @@ export const Blanks = () => {
                                 pseudo={data?.user.pseudo} 
                                 city={data?.user.city} 
                                 club={data?.user.club}/>
-                        </StickyContainer>
                     </div>
                     <div className={classes.wrapperCol}>
                         <div className={classes.wrapper}>
