@@ -19,13 +19,21 @@
 }
 .wrapperImg {
     width:  calc(100% - 60px);
+    min-height: 520px;
     height: auto;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-top: 10px;
+    margin: 0 0 20px 0;
+    padding-top: 20px;
+}
+
+.kadraWrapper{
+    height: 100%;
+    width: 100%;
+    text-align: center;
 }
 
 .documentIcon {

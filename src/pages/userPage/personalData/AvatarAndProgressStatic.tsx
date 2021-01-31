@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Sticky } from "react-sticky";
 
 import { Avatar, Progress, Skeleton, Tooltip, Typography } from "antd";
 import "./PersonalData.less";
@@ -19,7 +18,7 @@ import moment from "moment";
 
 const { Title } = Typography;
 
-class AvatarAndProgressProps {
+class AvatarAndProgressStaticProps {
   imageUrl: string | undefined;
   time: number | undefined;
   firstName: string | undefined;
@@ -53,8 +52,8 @@ const contentListNoTitle: { [key: string]: any } = {
   ),
 };
 
-const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
-  props: AvatarAndProgressProps
+const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
+  props: AvatarAndProgressStaticProps
 ) => {
   const { userId } = useParams();
   const [loading, setLoading] = useState(false);
@@ -143,111 +142,90 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
   }, [props]);
 
   return loading === false ? (
-    <Sticky disableCompensation={true} topOffset={-80}>
-      {({ style, isSticky }) => (
-        <div
-          style={
-            window.innerWidth > 1321
-              ? { ...style, marginTop: isSticky ? "80px" : "0" }
-              : undefined
-          }
-        >
-          <Skeleton.Avatar
-            size={220}
-            active={true}
-            shape="circle"
-            className="img"
+    <div className="kadraWrapper">
+      <Skeleton.Avatar
+        size={220}
+        active={true}
+        shape="circle"
+        className="img"
+      />
+    </div>
+  ) : (
+    <div className="kadraWrapper">
+      <Avatar src={imageBase64} className="img" />
+      <Title level={2}>
+        {firstName} {lastName}
+      </Title>
+      <Title level={4}>Псевдо: {pseudo}</Title>
+      <p className="statusText">Станиця: {city} </p>
+      <p className="statusText">Курінь: {club}</p>
+      {!isUserPlastun && (
+        <div className="progress">
+          <p className="statusText">
+            {time} дні і {firstName} {lastName} Пластун:)
+          </p>
+          <Progress
+            type="circle"
+            className="progressBar"
+            strokeColor={{
+              "0%": "#108ee9",
+              "100%": "#87d068",
+            }}
+            percent={Math.round(
+              100 - ((time === undefined ? 0 : time) * 100) / 365
+            )}
           />
         </div>
       )}
-    </Sticky>
-  ) : (
-    <Sticky disableCompensation={true} topOffset={-80}>
-      {({ style, isSticky }) => (
-        <div
-          style={
-            window.innerWidth > 1321 && isSticky
-              ? { ...style, marginTop: "80px", paddingBottom: "80px" }
-              : undefined
-          }
-        >
-          <Avatar src={imageBase64} className="img" />
-          <Title level={2}>
-            {firstName} {lastName}
-          </Title>
-          <Title level={4}>Псевдо: {pseudo}</Title>
-          <p className="statusText">Станиця: {city} </p>
-          <p className="statusText">Курінь: {club}</p>
-          {!isUserPlastun && (
-            <div className="progress">
-              <p className="statusText">
-                {time} дні і {firstName} {lastName} Пластун:)
-              </p>
-              <Progress
-                type="circle"
-                className="progressBar"
-                strokeColor={{
-                  "0%": "#108ee9",
-                  "100%": "#87d068",
-                }}
-                percent={Math.round(
-                  100 - ((time === undefined ? 0 : time) * 100) / 365
-                )}
-              />
-            </div>
-          )}
-          <div className="edustaffAllPhotos">
-            {kadras.map(
-              (element) => contentListNoTitle[element.kadraVykhovnykivTypeId]
-            )}
-          </div>
+      <div className="edustaffAllPhotos">
+        {kadras.map(
+          (element) => contentListNoTitle[element.kadraVykhovnykivTypeId]
+        )}
+      </div>
 
-          {UserDistinctions.map((dist) => (
-            <div className="distinctions">
-              <Tooltip title={dist?.reason}>
-                <h2>
-                  {dist.distinction.name} №{dist.number}
-                </h2>
-              </Tooltip>
-            </div>
-          ))}
-          {UserPrecaution.map((dist) => (
-            <div className="precautions">
-              <Tooltip title={dist?.reason}>
-                <h2>
-                  {dist.precaution.name} №{dist.number}
-                </h2>
-              </Tooltip>
-            </div>
-          ))}
-
-          {UserDistinctions.map((dist) => (
-            <div className="distinctions">
-              <Tooltip title={dist?.reason}>
-                <h2>
-                  {dist.distinction.name} №{dist.number}
-                </h2>
-              </Tooltip>
-            </div>
-          ))}
-          {UserPrecaution.map((dist) =>
-            dist.status != "Скасовано" ? (
-              <div className="precautions">
-                <Tooltip title={dist?.reason}>
-                  <h2>
-                    {dist.precaution.name} №{dist.number} термін дії до:{" "}
-                    {moment(dist.endDate.toLocaleString()).format("DD.MM.YYYY")}
-                  </h2>
-                </Tooltip>
-              </div>
-            ) : (
-              ""
-            )
-          )}
+      {UserDistinctions.map((dist) => (
+        <div className="distinctions">
+          <Tooltip title={dist?.reason}>
+            <h2>
+              {dist.distinction.name} №{dist.number}
+            </h2>
+          </Tooltip>
         </div>
+      ))}
+      {UserPrecaution.map((dist) => (
+        <div className="precautions">
+          <Tooltip title={dist?.reason}>
+            <h2>
+              {dist.precaution.name} №{dist.number}
+            </h2>
+          </Tooltip>
+        </div>
+      ))}
+
+      {UserDistinctions.map((dist) => (
+        <div className="distinctions">
+          <Tooltip title={dist?.reason}>
+            <h2>
+              {dist.distinction.name} №{dist.number}
+            </h2>
+          </Tooltip>
+        </div>
+      ))}
+      {UserPrecaution.map((dist) =>
+        dist.status != "Скасовано" ? (
+          <div className="precautions">
+            <Tooltip title={dist?.reason}>
+              <h2>
+                {dist.precaution.name} №{dist.number} термін дії до:{" "}
+                {moment(dist.endDate.toLocaleString()).format("DD.MM.YYYY")}
+              </h2>
+            </Tooltip>
+          </div>
+        ) : (
+          ""
+        )
       )}
-    </Sticky>
+    </div>
   );
 };
-
-export default AvatarAndProgress;
+export default AvatarAndProgressStatic;
