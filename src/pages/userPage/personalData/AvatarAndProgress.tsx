@@ -211,25 +211,6 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
               </Tooltip>
             </div>
           ))}
-          {UserPrecaution.map((dist) => (
-            <div className="precautions">
-              <Tooltip title={dist?.reason}>
-                <h2>
-                  {dist.precaution.name} №{dist.number}
-                </h2>
-              </Tooltip>
-            </div>
-          ))}
-
-          {UserDistinctions.map((dist) => (
-            <div className="distinctions">
-              <Tooltip title={dist?.reason}>
-                <h2>
-                  {dist.distinction.name} №{dist.number}
-                </h2>
-              </Tooltip>
-            </div>
-          ))}
           {UserPrecaution.map((dist) =>
             dist.status != "Скасовано" ? (
               <div className="precautions">
