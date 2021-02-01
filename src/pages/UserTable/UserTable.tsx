@@ -47,7 +47,6 @@ const UsersTable = () => {
     }
     return originalElement;
   };
-debugger
   let filteredData = searchedData
     ? viewedUsers.filter((item) => {
         return Object.values([
