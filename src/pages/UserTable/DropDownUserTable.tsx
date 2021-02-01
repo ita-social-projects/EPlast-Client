@@ -47,7 +47,6 @@ const DropDown = (props: Props) => {
   const [cityAdm, setCityAdm] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
 
-  console.log(props);
   const handleItemClick = async (item: any) => {
     switch (item.key) {
       case "1":

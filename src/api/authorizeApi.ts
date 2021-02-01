@@ -80,7 +80,6 @@ export default class AuthorizeApi {
   };
 
   sendQuestionAdmin = async (data: any) => {
-    debugger;
     const response = await Api.post("Auth/sendQuestion", data)
       .then((response) => {
         notificationLogic("success", response.data.value);
@@ -94,7 +93,6 @@ export default class AuthorizeApi {
   };
 
   resendEmailForRegistering = async (userId: string) => {
-    debugger;
     const response = await Api.post(`Auth/resendEmailForRegistering/${userId}`)
       .then((response) => {
         notificationLogic("success", response.data.value);
