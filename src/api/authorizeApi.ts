@@ -81,7 +81,7 @@ export default class AuthorizeApi {
   };
 
   sendQuestionAdmin = async (data: any) => {
-    const response = await Api.post("Auth/sendQuestion", data)
+const response = await Api.post("Auth/sendQuestion", data)
       .then((response) => {
         notificationLogic("success", response.data.value);
       })
