@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Input, Layout, Card } from "antd";
+import { Table, Input, Layout, Row, Col, Button, Card } from "antd";
 import adminApi from "../../api/adminApi";
 import DropDownUserTable from "./DropDownUserTable";
 import Title from "antd/lib/typography/Title";
@@ -7,20 +7,21 @@ import ColumnsForUserTable from "./ColumnsForUserTable";
 import UserTable from "../../models/UserTable/UserTable";
 import Spinner from "../Spinner/Spinner";
 import ClickAwayListener from "react-click-away-listener";
-import classes from "./UserTable.module.css";
+import moment from "moment";
+const classes = require("./UserTable.module.css");
 
 const UsersTable = () => {
-  const [updatedUser, setUpdatedUser] = useState<UserTable[]>([]);
-  const [users, setUsers] = useState<UserTable[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [searchedData, setSearchedData] = useState("");
-  const [viewedUsers, setViewedUsers] = useState<UserTable[]>([]);
-  const [noTitleKey, setKey] = useState<string>("confirmed");
-  const [showDropdown, setShowDropdown] = useState(false);
   const [recordObj, setRecordObj] = useState<any>(0);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [searchedData, setSearchedData] = useState("");
+  const [users, setUsers] = useState<UserTable[]>([]);
+  const [updatedUser, setUpdatedUser] = useState<UserTable[]>([]);
   const [roles, setRoles] = useState<string>();
+  const [viewedUsers, setViewedUsers] = useState<UserTable[]>([]);
+  const [noTitleKey, setKey] = useState<string>("confirmed");
 
   useEffect(() => {
     fetchData();
@@ -29,15 +30,24 @@ const UsersTable = () => {
   const fetchData = async () => {
     await adminApi.getUsersForTable().then((response) => {
       setUsers(response.data);
-    } );
+    });
     setLoading(true);
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchedData(event.target.value.toLowerCase());
-    onTabChange(noTitleKey);
   };
 
+  const itemRender = (current: any, type: string, originalElement: any) => {
+    if (type === "prev") {
+      return <Button type="primary">Попередня</Button>;
+    }
+    if (type === "next") {
+      return <Button type="primary">Наступна</Button>;
+    }
+    return originalElement;
+  };
+debugger
   let filteredData = searchedData
     ? viewedUsers.filter((item) => {
         return Object.values([
@@ -66,8 +76,8 @@ const UsersTable = () => {
 
   const handleDelete = (id: string) => {
     fetchData();
-    const usersAfterDeleting = users.filter((d: any) => d.id !== id);
-    setUsers([...usersAfterDeleting]);
+    const filteredData = users.filter((d: any) => d.id !== id);
+    setUsers([...filteredData]);
   };
 
   const handleClickAway = () => {
@@ -75,14 +85,14 @@ const UsersTable = () => {
   };
 
   const handleChange = (id: string, userRole: string) => {
-    const usersAfterRoleChanging = users.filter((d: any) => {
+    const filteredData = users.filter((d: any) => {
       if (d.id === id) {
         d.userRoles += ", " + userRole;
       }
       return d;
     });
-    setUpdatedUser([...usersAfterRoleChanging]);
-    setUsers([...usersAfterRoleChanging]);
+    setUpdatedUser([...filteredData]);
+    setUsers([...filteredData]);
   };
 
   const tabList = [
@@ -99,7 +109,7 @@ const UsersTable = () => {
       tab: "Непідтверджені",
     },
   ];
-
+debugger
   const onTabChange = (key: string) => {
     setKey(key);
     key == "confirmed"
@@ -109,13 +119,14 @@ const UsersTable = () => {
           u.userRoles.includes("Зацікавлений")
         ))
       : (filteredData = users.filter((u) => u.user.emailConfirmed == false));
-
+debugger
     setViewedUsers(filteredData);
   };
 
   useEffect(() => {
     onTabChange("confirmed");
   }, [users]);
+
 
   return loading === false ? (
     <Spinner />
