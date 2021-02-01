@@ -1,6 +1,7 @@
 import Api from "./api";
 import notificationLogic from "../components/Notifications/Notification";
 import AuthStore from "../stores/AuthStore";
+import { string } from "yup";
 import FacebookData from "../pages/SignIn/FacebookDataInterface";
 
 export default class AuthorizeApi {
@@ -80,7 +81,7 @@ export default class AuthorizeApi {
   };
 
   sendQuestionAdmin = async (data: any) => {
-    const response = await Api.post("Problem/sendQuestion", data)
+const response = await Api.post("Auth/sendQuestion", data)
       .then((response) => {
         notificationLogic("success", response.data.value);
       })

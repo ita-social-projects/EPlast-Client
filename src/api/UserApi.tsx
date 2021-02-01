@@ -8,6 +8,11 @@ const getById = async (id: string | undefined) => {
 
     return response;
 };
+const getUserProfileById = async (currentUserId: string | undefined, focusUserId: string | undefined) => {
+    const response = await axios.get(`${`${BASE_URL}User/`}${currentUserId}/${focusUserId}`);
+
+    return response;
+};
 const getImage = async (imageName: string | undefined) => {
     const response = await axios.get(`${`${BASE_URL}User/getImage`}/${imageName}`);
 
@@ -41,6 +46,7 @@ const approveUser = async (userId: string, isClubAdmin: boolean, isCityAdmin: bo
 
 export default {
     getById,
+    getUserProfileById,
     getImage,
     edit,
     put,
