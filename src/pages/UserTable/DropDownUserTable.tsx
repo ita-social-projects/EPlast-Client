@@ -6,8 +6,8 @@ import {
   EditOutlined,
   ScissorOutlined,
   PlusCircleOutlined,
+  MailOutlined,
 } from "@ant-design/icons";
-import { useHistory } from "react-router-dom";
 import classes from "./UserTable.module.css";
 import userDeleteCofirm from "./UserDeleteConfirm";
 import ChangeUserRoleModal from "./ChangeUserRoleModal";
@@ -16,9 +16,11 @@ import adminApi from "../../api/adminApi";
 import ModalAddPlastDegree from "../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
 import ChangeUserRegionModal from "./ChangeUserRegionModal";
 import ChangeUserClubModal from "./ChangeUserClubModal";
-import AuthStore from '../../stores/AuthStore';
+import AuthStore from "../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
+import AuthorizeApi from "../../api/authorizeApi";
 
+let authService = new AuthorizeApi();
 
 interface Props {
   record: string;
@@ -28,26 +30,24 @@ interface Props {
   onDelete: (id: string) => void;
   onChange: (id: string, userRoles: string) => void;
   roles: string | undefined;
+  inActiveTab: boolean;
 }
 
 const { SubMenu } = Menu;
 
 const DropDown = (props: Props) => {
-  const history = useHistory();
   const { record, pageX, pageY, showDropdown, onDelete, onChange } = props;
   const [showEditModal, setShowEditModal] = useState(false);
   const [visibleModalDegree, setVisibleModalDegree] = useState<boolean>(false);
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
-  const [userRole, setUser] = useState<string[]>();
   const [canEdit, setCanEdit] = useState(false);
-  const [canSee, setCanSee] = useState(false);
-  const [canAccess, setCanAccess] = useState(false);
   const [regionAdm, setRegionAdm] = useState(false);
   const [cityAdm, setCityAdm] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
 
+  console.log(props);
   const handleItemClick = async (item: any) => {
     switch (item.key) {
       case "1":
@@ -74,6 +74,9 @@ const DropDown = (props: Props) => {
       case "8":
         await adminApi.putExpiredRole(record);
         break;
+      case "9":
+        await authService.resendEmailForRegistering(record);
+        break;
       default:
         break;
     }
@@ -82,15 +85,14 @@ const DropDown = (props: Props) => {
   const fetchUser = async () => {
     let jwt = AuthStore.getToken() as string;
     let decodedJwt = jwt_decode(jwt) as any;
-    let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
-    setUser(roles);
+    let roles = decodedJwt[
+      "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+    ] as string[];
     setCanEdit(roles.includes("Admin"));
     setRegionAdm(roles.includes("Голова Округи"));
     setCityAdm(roles.includes("Голова Станиці"));
     setClubAdm(roles.includes("Голова Куреня"));
-    setCanSee(roles.includes("Пластун"));
-    setCanAccess(roles.includes("Прихильник")); 
-  }
+  };
 
   useEffect(() => {
     fetchUser();
@@ -103,56 +105,95 @@ const DropDown = (props: Props) => {
         className={classes.menu}
         style={{
           top: pageY,
-          left: (window.innerWidth - (pageX + 223)) < 0 ? window.innerWidth - 266 : pageX,
+          left:
+            window.innerWidth - (pageX + 223) < 0
+              ? window.innerWidth - 266
+              : pageX,
           display: showDropdown ? "block" : "none",
         }}
       >
-        <Menu.Item key="1">
-          <FileSearchOutlined />
-          Переглянути профіль
-        </Menu.Item>
-        {(canEdit == true) ? (
-        <Menu.Item key="2">
-          <DeleteOutlined />
-          Видалити
-        </Menu.Item>
-         ) : (<> </>)
-        }
-       {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
-        <SubMenu key="sub" icon={<EditOutlined />} title="Змінити права доступу">
-          {(canEdit == true || regionAdm == true || cityAdm == true) ? (
-          <Menu.Item key="3">Провід станиці</Menu.Item>
-          ) : (<> </>)
-          }
-          {(canEdit == true || regionAdm == true) ? (
-          <Menu.Item key="4">Провід округи</Menu.Item>
-          ) : (<> </>)
-          }
-          {(canEdit == true || clubAdm == true) ? (
-          <Menu.Item key="5">Провід куреня</Menu.Item>
-          ) : (<> </>)
-          }
-          {(canEdit == true || regionAdm == true || cityAdm == true) ? (
-          <Menu.Item key="6">Поточний стан користувача</Menu.Item>
-          ) : (<> </>)
-          }
-        </SubMenu>
-        ) : (<> </>)
-       }
-        {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
-        <Menu.Item key="7">
-          <PlusCircleOutlined />
-          Додати ступінь
-        </Menu.Item>
-         ) : (<> </>)
-        }
-         {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
-        <Menu.Item key="8">
-          <ScissorOutlined />
-          Заархівувати користувача
-        </Menu.Item>
-         ) : (<> </>)
-         }
+        {props.inActiveTab == false ? (
+          <Menu.Item key="1">
+            <FileSearchOutlined />
+            Переглянути профіль
+          </Menu.Item>
+        ) : (
+          <> </>
+        )}
+        {canEdit == true ? (
+          <Menu.Item key="2">
+            <DeleteOutlined />
+            Видалити
+          </Menu.Item>
+        ) : (
+          <> </>
+        )}
+        {props.inActiveTab == false &&
+        (canEdit == true ||
+          regionAdm == true ||
+          cityAdm == true ||
+          clubAdm == true) ? (
+          <SubMenu
+            key="sub"
+            icon={<EditOutlined />}
+            title="Змінити права доступу"
+          >
+            {canEdit == true || regionAdm == true || cityAdm == true ? (
+              <Menu.Item key="3">Провід станиці</Menu.Item>
+            ) : (
+              <> </>
+            )}
+            {canEdit == true || regionAdm == true ? (
+              <Menu.Item key="4">Провід округи</Menu.Item>
+            ) : (
+              <> </>
+            )}
+            {canEdit == true || clubAdm == true ? (
+              <Menu.Item key="5">Провід куреня</Menu.Item>
+            ) : (
+              <> </>
+            )}
+            {canEdit == true || regionAdm == true || cityAdm == true ? (
+              <Menu.Item key="6">Поточний стан користувача</Menu.Item>
+            ) : (
+              <> </>
+            )}
+          </SubMenu>
+        ) : (
+          <> </>
+        )}
+        {props.inActiveTab == false &&
+        (canEdit == true ||
+          regionAdm == true ||
+          cityAdm == true ||
+          clubAdm == true) ? (
+          <Menu.Item key="7">
+            <PlusCircleOutlined />
+            Додати ступінь
+          </Menu.Item>
+        ) : (
+          <> </>
+        )}
+        {props.inActiveTab == false &&
+        (canEdit == true ||
+          regionAdm == true ||
+          cityAdm == true ||
+          clubAdm == true) ? (
+          <Menu.Item key="8">
+            <ScissorOutlined />
+            Заархівувати користувача
+          </Menu.Item>
+        ) : (
+          <> </>
+        )}
+        {props.inActiveTab == true ? (
+          <Menu.Item key="9">
+            <MailOutlined />
+            Активувати
+          </Menu.Item>
+        ) : (
+          <> </>
+        )}
         <ChangeUserRoleModal
           record={record}
           showModal={showEditModal}
@@ -179,7 +220,7 @@ const DropDown = (props: Props) => {
           onChange={onChange}
         />
         <ModalAddPlastDegree
-          handleAddDegree={() => { }}
+          handleAddDegree={() => {}}
           userId={record}
           visibleModal={visibleModalDegree}
           setVisibleModal={setVisibleModalDegree}
