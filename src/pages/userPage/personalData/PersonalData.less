@@ -69,8 +69,22 @@
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
+.shortAllFields{
+    width: calc(60% - 30px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: top !important;
+    padding-top: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+}
+
+
 .avatarWrapper:hover,
-.allFields:hover{
+.allFields:hover,
+.shortAllFields:hover{
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
@@ -84,6 +98,19 @@
 .formItem{
     display: block;
     width: 260px;
+    margin: 0 0 0 0;
+}
+
+.shortRowBlock{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.shortFormItem{
+    display: block;
+    width: 90%;
     margin: 0 0 0 0;
 }
 
@@ -124,15 +151,18 @@
         height: auto !important; 
         margin-bottom: 0px !important;  
     }
-    .allFields{
+    .allFields,
+    .shortAllFields{
         width: 750px;
         padding: 5px;
         margin: auto !important;
     }
-    .formItem{
+    .formItem,
+    .shortFormItem{
         width: 100%;
     }
-    .rowBlock{
+    .rowBlock,
+    .shortRowBlock{
         display: contents;
     }
     .formContainer{
@@ -149,15 +179,18 @@
         padding-bottom: 5px;
         margin: auto !important;
     }
-    .allFields{
+    .allFields,
+    .shortAllFields{
         width: 600px;
         padding: 5px;
         margin: auto !important;
     }
-    .formItem{
+    .formItem,
+    .shortFormItem{
         width: 100%;
     }
-    .rowBlock{
+    .rowBlock,
+    .shortRowBlock{
         display: contents;
     }
     .formContainer{
@@ -173,14 +206,17 @@
        padding-top:5px;
        padding-bottom: 5px;
    }
-   .allFields{
+   .allFields,
+   .shortAllFields{
        width: 100%;
        padding: 5px;
    }
-   .formItem{
+   .formItem,
+   .shortFormItem{
        width: 100%;
    }
-   .rowBlock{
+   .rowBlock,
+   .shortRowBlock{
        display: contents;
    }
    .formContainer{
