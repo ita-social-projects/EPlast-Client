@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Input, Layout, Row, Col, Button, Card } from "antd";
+import { Table, Input, Layout, Card } from "antd";
 import adminApi from "../../api/adminApi";
 import DropDownUserTable from "./DropDownUserTable";
 import Title from "antd/lib/typography/Title";
@@ -7,8 +7,7 @@ import ColumnsForUserTable from "./ColumnsForUserTable";
 import UserTable from "../../models/UserTable/UserTable";
 import Spinner from "../Spinner/Spinner";
 import ClickAwayListener from "react-click-away-listener";
-import moment from "moment";
-const classes = require("./UserTable.module.css");
+import classes from "./UserTable.module.css";
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
@@ -21,7 +20,8 @@ const UsersTable = () => {
   const [updatedUser, setUpdatedUser] = useState<UserTable[]>([]);
   const [roles, setRoles] = useState<string>();
   const [viewedUsers, setViewedUsers] = useState<UserTable[]>([]);
-  const [noTitleKey, setKey] = useState<string>("confirmed");
+  const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
+  const [isInactive, setIsInactive] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -38,15 +38,6 @@ const UsersTable = () => {
     setSearchedData(event.target.value.toLowerCase());
   };
 
-  const itemRender = (current: any, type: string, originalElement: any) => {
-    if (type === "prev") {
-      return <Button type="primary">Попередня</Button>;
-    }
-    if (type === "next") {
-      return <Button type="primary">Наступна</Button>;
-    }
-    return originalElement;
-  };
   let filteredData = searchedData
     ? viewedUsers.filter((item) => {
         return Object.values([
@@ -108,22 +99,31 @@ const UsersTable = () => {
       tab: "Непідтверджені",
     },
   ];
+
   const onTabChange = (key: string) => {
-    setKey(key);
-    key == "confirmed"
-      ? (filteredData = users.filter((u) => u.user.emailConfirmed == true))
-      : key == "interested"
-      ? (filteredData = users.filter((u) =>
-          u.userRoles.includes("Зацікавлений")
-        ))
-      : (filteredData = users.filter((u) => u.user.emailConfirmed == false));
+    setCurrentTabName(key);
+    switch (key) {
+      case "confirmed":
+        setIsInactive(false);
+        filteredData = users.filter((u) => u.user.emailConfirmed == true);
+        break;
+      case "interested":
+        setIsInactive(false);
+        filteredData = users.filter((u) => u.userRoles.includes("Зацікавлений"));
+        break;
+      case "unconfirmed":
+        setIsInactive(true);
+        filteredData = users.filter((u) => u.user.emailConfirmed == false);
+        break;
+      default:
+        break;
+    }
     setViewedUsers(filteredData);
   };
 
   useEffect(() => {
     onTabChange("confirmed");
   }, [users]);
-
 
   return loading === false ? (
     <Spinner />
@@ -140,7 +140,7 @@ const UsersTable = () => {
       <Card
         style={{ width: "100%" }}
         tabList={tabList}
-        activeTabKey={noTitleKey}
+        activeTabKey={currentTabName}
         onTabChange={(key) => {
           onTabChange(key);
         }}
@@ -192,6 +192,7 @@ const UsersTable = () => {
           onDelete={handleDelete}
           onChange={handleChange}
           roles={roles}
+          inActiveTab={isInactive}
         />
       </ClickAwayListener>
     </Layout.Content>

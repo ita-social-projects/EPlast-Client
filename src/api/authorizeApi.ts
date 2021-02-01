@@ -1,8 +1,7 @@
-import Api from "./api";
 import notificationLogic from "../components/Notifications/Notification";
-import AuthStore from "../stores/AuthStore";
-import { string } from "yup";
 import FacebookData from "../pages/SignIn/FacebookDataInterface";
+import AuthStore from "../stores/AuthStore";
+import Api from "./api";
 
 export default class AuthorizeApi {
   static isSignedIn(): boolean {
@@ -81,7 +80,20 @@ export default class AuthorizeApi {
   };
 
   sendQuestionAdmin = async (data: any) => {
-const response = await Api.post("Auth/sendQuestion", data)
+    const response = await Api.post("Auth/sendQuestion", data)
+      .then((response) => {
+        notificationLogic("success", response.data.value);
+      })
+      .catch((error) => {
+        if (error.response.status === 400) {
+          notificationLogic("error", error.response.data.value);
+        }
+      });
+    return response;
+  };
+
+  resendEmailForRegistering = async (userId: string) => {
+    const response = await Api.post(`Auth/resendEmailForRegistering/${userId}`)
       .then((response) => {
         notificationLogic("success", response.data.value);
       })
@@ -110,7 +122,6 @@ const response = await Api.post("Auth/sendQuestion", data)
 
   getGoogleId = async () => {
     const response = await Api.get("Login/GoogleClientId");
-
     return response.data;
   };
 
