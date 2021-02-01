@@ -109,7 +109,6 @@ debugger
       tab: "Непідтверджені",
     },
   ];
-debugger
   const onTabChange = (key: string) => {
     setKey(key);
     key == "confirmed"
@@ -119,7 +118,6 @@ debugger
           u.userRoles.includes("Зацікавлений")
         ))
       : (filteredData = users.filter((u) => u.user.emailConfirmed == false));
-debugger
     setViewedUsers(filteredData);
   };
 
