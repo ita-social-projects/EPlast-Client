@@ -81,6 +81,8 @@ const RegionBoard = () => {
   });
 
   const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [orgsCount, setOrgsCount] = useState<number>();
+  const [decisionsCount, setDecisionsCount] = useState<number>();
   const [canCreate, setCanCreate] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
@@ -101,13 +103,11 @@ const RegionBoard = () => {
     setLoading(true);
     try {
       const response = await GetRegionsBoard();
-      const responseOrgs: Organization[] = await governingBodiesApi.getOrganizationsList();
       const responseHead = await getHead(response.data.id);
+      setRegionDecisions();
+      setRegionOrgs();
       setHead(responseHead.data);
-      const responseDecisions: Decision[] = await decisionsApi.getAll();
-      responseDecisions.length > 6 ? setDecisions(responseDecisions.slice(responseDecisions.length - 6)) : setDecisions(responseDecisions);
       setRegionDocs(response.data.id);
-      responseOrgs.length > 6 ? setOrganizations(responseOrgs.slice(responseOrgs.length - 6)) : setOrganizations(responseOrgs);
       setPhotosLoading(false);
       setRegionLogoLoading(true);
       setRegion(response.data);
@@ -128,11 +128,23 @@ const RegionBoard = () => {
 
   const setRegionDocs = async (id: number) => {
     try {
-      const response = await getRegionDocuments(id);
-      setDocuments(response.data);
+      const response: [] = await (await getRegionDocuments(id)).data;
+      setDocuments(response.length > 6 ? response.slice(response.length - 6) : response);
     } finally {
     }
   };
+
+  const setRegionOrgs = async () => {
+    const responseOrgs: Organization[] = await governingBodiesApi.getOrganizationsList();
+    setOrgsCount(responseOrgs.length);
+    responseOrgs.length > 6 ? setOrganizations(responseOrgs.slice(responseOrgs.length - 6)) : setOrganizations(responseOrgs);
+  }
+
+  const setRegionDecisions = async () => {
+    const responseDecisions: Decision[] = await decisionsApi.getAll();
+    setDecisionsCount(responseDecisions.length);
+    responseDecisions.length > 6 ? setDecisions(responseDecisions.slice(responseDecisions.length - 6)) : setDecisions(responseDecisions);
+  }
 
   const handleAdd = async () => {
     const lastId = decisions[decisions.length - 1].id;
@@ -313,7 +325,7 @@ const RegionBoard = () => {
             <Title level={4}>Керівні Органи <a onClick={() => history.push(`/regionsBoard/governingBodies`)}>
               {organizations.length !== 0 ?
                 <Badge
-                  count={organizations.length}
+                  count={orgsCount}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
@@ -361,7 +373,7 @@ const RegionBoard = () => {
             <Title level={4}>Рішення <a onClick={() => history.push(`/decisions`)}>
               {decisions.length !== 0 ?
                 <Badge
-                  count={decisions.length}
+                  count={decisionsCount}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
