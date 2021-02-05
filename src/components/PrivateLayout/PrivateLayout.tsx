@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { Avatar, Layout, Menu, Button } from "antd";
 import ClickAwayListener from 'react-click-away-listener';
-import { RollbackOutlined } from "@ant-design/icons";
+import { BankOutlined, RollbackOutlined } from "@ant-design/icons";
 import {
   SolutionOutlined,
   InfoCircleOutlined,
@@ -115,7 +115,17 @@ const PrivateLayout = ({ children }: any) => {
               </Menu.Item>
             ) : (<> </>)
             }
-
+            {(canEdit == true || canSee == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+              <Menu.Item
+                key="1"
+                icon={<BankOutlined />}
+                onClick={() => { handleClickAway(); history.push("/regionsBoard"); }}
+                style={{ color: "white" }}
+              >
+                Крайовий Провід Пласту
+              </Menu.Item>
+            ) : (<> </>)
+            }
             <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Довідник">
               {(canEdit == true || canSee == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
