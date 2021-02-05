@@ -33,22 +33,10 @@ const RegionBoardAdministration = () => {
     setLoading(true);
     const responseOrgs = await governingBodiesApi.getOrganizationsList();
     setPhotosLoading(true);
-    // setPhotos([...response.data].filter((a) => a != null));
+
     setOrganizations(responseOrgs);
     setLoading(false);
   };
-
-  // const removeAdministrator = async (admin: CityAdmin) => {
-  //   await removeAdmin(admin.id);
-  //   await NotificationBoxApi.createNotifications(
-  //     [admin.userId],
-  //     `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в `,
-  //     NotificationBoxApi.NotificationTypes.UserNotifications,
-  //     `/regions/${id}`,
-  //     `цій окрузі`
-  //   );
-  //   setAdministration(administration.filter((u) => u.id !== admin.id));
-  // };
 
   const showModal = (member: any) => {
     setAdmin(member);
@@ -58,27 +46,6 @@ const RegionBoardAdministration = () => {
   const handleOk = () => {
     setVisibleModal(false);
   };
-
-  // const onAdd = async (newAdmin: any) => {
-  //   const index = organizations.findIndex((a) => a.id === admin.id);
-  //   organizations[index] = newAdmin;
-  //   await NotificationBoxApi.createNotifications(
-  //     [newAdmin.userId],
-  //     `Вам було надано нову адміністративну роль: '${newAdmin.adminType.adminTypeName}' в `,
-  //     NotificationBoxApi.NotificationTypes.UserNotifications,
-  //     `/regions/${id}`,
-  //     `цій окрузі`
-  //   );
-  //   setAdministration(administration);
-  // };
-
-  // const setPhotos = async (members: any[]) => {
-  //   for (let i of members) {
-  //     i.user.imagePath = (await userApi.getImage(i.user.imagePath)).data;
-  //   }
-
-  //   setPhotosLoading(false);
-  // };
 
   useEffect(() => {
     getGoverningBodies();
@@ -98,17 +65,8 @@ const RegionBoardAdministration = () => {
                 className="detailsCard"
                 title={`${organization.organizationName}`}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-              // actions={[
-              //   <SettingOutlined onClick={() => showModal(member)} />,
-              //   <CloseOutlined onClick={() => removeAdministrator(member)} />,
-              // ]}
               >
-                <div
-                  // onClick={() =>
-                  //   history.push(`/userpage/main/${member.userId}`)
-                  // }
-                  className="cityMember"
-                >
+                <div className="cityMember" >
                   <div>
                     {photosLoading ? (
                       <Skeleton.Avatar active size={86}></Skeleton.Avatar>
