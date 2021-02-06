@@ -190,6 +190,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             rules={[{ required: true, message: emptyInput() }]}
           >
             <Select
+              showSearch
               placeholder="Оберіть орган"
               className={formclasses.selectField}
             >
