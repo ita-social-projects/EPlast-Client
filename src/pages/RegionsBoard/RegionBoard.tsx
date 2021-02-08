@@ -90,23 +90,14 @@ const RegionBoard = () => {
   const [visible, setvisible] = useState<boolean>(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [visibleDecisionModal, setVisibleDecisionModal] = useState<boolean>(false);
-  const [head, setHead] = useState<any>({
-    user: {
-      firstName: "",
-      lastName: "",
-    },
-    startDate: "",
-    endDate: "",
-  });
+
 
   const getRegion = async () => {
     setLoading(true);
     try {
       const response = await GetRegionsBoard();
-      const responseHead = await getHead(response.data.id);
       setRegionDecisions();
       setRegionOrgs();
-      setHead(responseHead.data);
       setRegionDocs(response.data.id);
       setPhotosLoading(false);
       setRegionLogoLoading(true);
@@ -211,31 +202,6 @@ const RegionBoard = () => {
               </Col>
             </Row>
             <Row className="cityInfo">
-              <Col md={13} sm={24} xs={24}>
-                {head.user ? (
-                  <div>
-                    <Paragraph>
-                      <b>Крайовий голова:</b> {head.user.firstName}{" "}
-                      {head.user.lastName}
-                    </Paragraph>
-                    {head.endDate ? (
-                      <Paragraph>
-                        <b>Час правління:</b>{" "}
-                        {moment(head.startDate).format("DD.MM.YYYY")}{" - "}
-                        {moment(head.endDate).format("DD.MM.YYYY")}
-                      </Paragraph>
-                    ) : (
-                      <Paragraph>
-                        <b>Початок правління:</b>{" "}
-                        {moment(head.startDate).format("DD.MM.YYYY")}
-                      </Paragraph>
-                    )}
-                  </div>
-                ) : (
-                  <p>Ще немає Крайового голови</p>
-                )}
-              </Col>
-
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
                 {region.link || region.email || region.phoneNumber ? (
                   <div>
