@@ -100,13 +100,13 @@ const RegionBoardEditFormPage = () => {
       description: values.description,
       phoneNumber: values.phoneNumber,
       email: values.email,
-      link: values.link,
-      street: values.street,
-      houseNumber: values.houseNumber,
-      officeNumber: values.officeNumber,
-      postIndex: values.postIndex,
+      link: chosenRegion.link,
+      street: chosenRegion.street,
+      houseNumber: chosenRegion.houseNumber,
+      officeNumber: chosenRegion.officeNumber,
+      postIndex: chosenRegion.postIndex,
       logo: logo,
-      city: values.city,
+      city: chosenRegion.city,
     };
     await RegionsApi.EditRegion(chosenRegion.id, newRegion);
 
@@ -178,7 +178,7 @@ const RegionBoardEditFormPage = () => {
                   label="Номер телефону"
                   labelCol={{ span: 24 }}
                   initialValue={chosenRegion?.phoneNumber}
-                  rules={[descriptionValidation.Phone, descriptionValidation.Required]}
+                  rules={[descriptionValidation.Phone]}
                 >
                   <ReactInputMask
                     mask="+380(99)-999-99-99"
@@ -202,86 +202,7 @@ const RegionBoardEditFormPage = () => {
                     value={chosenRegion?.email} />
                 </Form.Item>
               </Col>
-
-              <Col md={11} xs={24}>
-                <Form.Item
-                  label="Посилання"
-                  name="link"
-                  initialValue={chosenRegion?.link}
-                  labelCol={{ span: 24 }}
-                  rules={[descriptionValidation.Link]}
-                >
-                  <Input maxLength={257}
-                    value={chosenRegion?.link} />
-                </Form.Item>
-              </Col>
-
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
-                <Form.Item
-                  label="Місто"
-                  name="city"
-                  initialValue={chosenRegion?.city}
-                  labelCol={{ span: 24 }}
-                  rules={descriptionValidation.Name}
-                >
-                  <Input maxLength={51}
-                    value={chosenRegion?.city} />
-                </Form.Item>
-              </Col>
-
-              <Col md={11} xs={24}>
-                <Form.Item
-                  labelCol={{ span: 24 }}
-                  label="Вулиця"
-                  name="street"
-                  initialValue={chosenRegion?.street}
-                  rules={descriptionValidation.Street}
-                >
-                  <Input maxLength={51}
-                    value={chosenRegion?.street} />
-                </Form.Item>
-              </Col>
-
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
-                <Form.Item
-                  labelCol={{ span: 24 }}
-                  label="Номер будинку"
-                  name="houseNumber"
-                  initialValue={chosenRegion?.houseNumber}
-                  rules={descriptionValidation.houseNumber}
-                >
-                  <Input maxLength={6}
-                    value={chosenRegion?.houseNumber} />
-                </Form.Item>
-              </Col>
-
-              <Col md={11} xs={24}>
-                <Form.Item
-                  labelCol={{ span: 24 }}
-                  label="Номер офісу/квартири"
-                  name="officeNumber"
-                  initialValue={chosenRegion?.officeNumber}
-                  rules={descriptionValidation.officeNumber}
-                >
-                  <Input maxLength={6}
-                    value={chosenRegion?.officeNumber} />
-                </Form.Item>
-              </Col>
-
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
-                <Form.Item
-                  labelCol={{ span: 24 }}
-                  label="Поштовий індекс"
-                  name="postIndex"
-                  initialValue={chosenRegion.postIndex}
-                  rules={descriptionValidation.postIndex}
-                >
-                  <Input type="number"
-                    value={chosenRegion.postIndex} />
-                </Form.Item>
-              </Col>
             </Row>
-
             <Row className="cityButtons" justify="center" gutter={[0, 6]}>
               <Col xs={24} sm={12}>
                 <Button
