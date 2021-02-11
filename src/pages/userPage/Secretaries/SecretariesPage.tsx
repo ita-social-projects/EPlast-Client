@@ -10,12 +10,13 @@ import {UserCitySecretaryTable} from './UserCitySecretaryTable';
 import { UserRegionSecretaryTable } from './UserRegionSecretaryTable';
 import { UserClubSecretaryTable } from './UserClubSecretaryTable';
 import{ tryAgain } from "../../../components/Notifications/Messages";
+import { StickyContainer } from 'react-sticky';
 
 
 const tabList = [
     {
         key: '1',
-        tab: 'Діловодства округу',
+        tab: 'Діловодства округи',
     },
     {
         key: '2',
@@ -75,7 +76,9 @@ export const Secretaries = () => {
                 <Form name="basic" className="formContainer">
 
                     <div className="avatarWrapper">
-                        <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} pseudo={data?.user.pseudo} city={data?.user.city} club={data?.user.club} />
+                        <StickyContainer className="kadraWrapper">
+                            <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} pseudo={data?.user.pseudo} city={data?.user.city} club={data?.user.club} />
+                        </StickyContainer>
                     </div>
 
                     <div className="allFields">

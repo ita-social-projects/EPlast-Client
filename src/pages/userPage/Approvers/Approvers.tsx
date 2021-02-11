@@ -18,6 +18,7 @@ import{
   successfulDeleteAction,
   failDeleteAction,
 } from "../../../components/Notifications/Messages"
+import { StickyContainer } from 'react-sticky';
 
 const Assignments = () => {
   const history = useHistory();
@@ -55,7 +56,9 @@ const Assignments = () => {
       
         <div className="displayFlex">
           <div className="avatarWrapper">
-            <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} pseudo={data?.user.pseudo} city={data?.user.city} club={data?.user.club}/>
+            <StickyContainer className="kadraWrapper">
+              <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} pseudo={data?.user.pseudo} city={data?.user.city} club={data?.user.club}/>
+            </StickyContainer>
           </div>
           <div className="approversContent">
             <hr/>

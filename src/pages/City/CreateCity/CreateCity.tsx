@@ -281,10 +281,10 @@ const CreateCity = () => {
             <Col md={{ span: 11, offset: 2 }} xs={24}>
               <Form.Item
                 name="region"
-                label="Округ"
+                label="Округа"
                 labelCol={{ span: 24 }}
                 initialValue={city.region}
-                rules={[{ required: true, message: emptyInput("округ") }]}
+                rules={[{ required: true, message: emptyInput("округа") }]}
               >
                 <Select
                   showSearch

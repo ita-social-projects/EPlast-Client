@@ -46,7 +46,7 @@ const fetchUser = async () => {
   let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
   setUser(roles);
   setCanEdit(roles.includes("Admin"));
-  setRegionAdm(roles.includes("Голова Округу"));
+  setRegionAdm(roles.includes("Голова Округи"));
   setCityAdm(roles.includes("Голова Станиці"));
   setClubAdm(roles.includes("Голова Куреня"));
   setCanSee(roles.includes("Пластун"));

@@ -55,10 +55,27 @@ export type User ={
     instagramLink: string;
 }
 
+export type ShortUser ={
+    id:any;
+    userProfileID:any;
+    firstName: string;
+    lastName: string;
+    fatherName:string;
+    imagePath:string;
+    pseudo: string;
+    city: string;
+    club: string;
+    upuDegree: UpuDegree;
+    facebookLink: string;
+    twitterLink: string;
+    instagramLink: string;
+}
+
 export  interface Data {
     isUserPlastun:boolean;
     timeToJoinPlast:number;
     user:User;
+    shortUser:ShortUser;
   }
   export interface Approver{
     id:number;

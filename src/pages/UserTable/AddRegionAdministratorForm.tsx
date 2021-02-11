@@ -88,7 +88,7 @@ const AddNewAdministratorForm = ({
       endDate: values.endDate,
       regionId: regionId,
     };
-    if (oldAdmin !== undefined && values.AdminType === "Голова Округу") {
+    if (oldAdmin !== undefined && values.AdminType === "Голова Округи") {
       setShowAdministratorModal(false);
       setShowConfirmModal(true);
     } else {
@@ -125,7 +125,7 @@ const AddNewAdministratorForm = ({
             className={classes.inputField}
             onChange={handleClick}
             options={[
-              { value: "Голова Округу" },
+              { value: "Голова Округи" },
               { value: "Писар" },
               { value: "Бунчужний" },
               { value: "Скарбник" },

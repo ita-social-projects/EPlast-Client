@@ -42,6 +42,10 @@ const checkNumberExisting = async (number: number) => {
     return await api.get(`Precaution/numberExist/${number}`, number);
 };
 
+const getUsersWithoutPrecautions = async () => {
+    return (await api.get(`Precaution/usersWithoutPrecautions`)).data;
+};
+
 export default {
     getUserPrecautionById,
     getUserPrecautions,
@@ -55,4 +59,5 @@ export default {
     editPrecaution,
     editUserPrecaution,
     checkNumberExisting,
+    getUsersWithoutPrecautions
 };

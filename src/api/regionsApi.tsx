@@ -22,6 +22,12 @@ export const GetAllRegions = async () => {
   });
 };
 
+export const GetRegionsBoard = async () => {
+  return await api.get("Regions/regionsBoard").catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export const EditRegion = async (regId: number, data: any) => {
   return await api.put(`Regions/EditRegion/${regId}`, data).catch((error) => {
     throw new Error(error);
@@ -143,9 +149,9 @@ export const removeDocument = async (documentId: number) => {
 
 export const getRegions = async () => {
   return api.get(`Regions/Regions`)
-  .catch((error) => {
-    throw new Error(error);
-  });
+    .catch((error) => {
+      throw new Error(error);
+    });
 };
 
 export const redirectCities = async (prevRegId: number, nextRegId: number) => {
@@ -156,25 +162,25 @@ export const redirectCities = async (prevRegId: number, nextRegId: number) => {
     });
 };
 
-export const createRegionAnnualReport = async (id:number, year:number, data: RegionAnnualReportQuestions)=>{
+export const createRegionAnnualReport = async (id: number, year: number, data: RegionAnnualReportQuestions) => {
   return api.post(`Regions/CreateRegionAnnualReportById/${id}/${year}`, JSON.stringify(data))
-  .catch((error)=>{
-   throw new Error(error);
- })
+    .catch((error) => {
+      throw new Error(error);
+    })
 }
 
-export const getReportById = async (id:number, year:number)=>{
+export const getReportById = async (id: number, year: number) => {
   return api.get(`Regions/GetReportById/${id}/${year}`)
-  .catch((error)=>{
-   throw new Error(error);
- })
+    .catch((error) => {
+      throw new Error(error);
+    })
 }
 
-export const getAllRegionsReports = async ()=>{
+export const getAllRegionsReports = async () => {
   return api.get(`Regions/GetAllRegionsReports`)
-  .catch((error)=>{
-   throw new Error(error);
- })
+    .catch((error) => {
+      throw new Error(error);
+    })
 }
 
 export const getRegionsByPage = async (
@@ -217,5 +223,6 @@ export default {
   getRegionById,
   GetAllRegions,
   createRegion,
-  getRegions
+  getRegions,
+  GetRegionsBoard
 };

@@ -55,6 +55,10 @@ import { ClubAnnualReportCreate } from "./pages/AnnualReport/ClubAnnualReportCre
 import ClubAnnualReportEdit from "./pages/AnnualReport/ClubAnnualReportEdit/ClubAnnualReportEdit";
 import DocumentsTable from "./pages/Documents/DocumentsTable";
 import PrecautionTable from "./pages/Precaution/PrecautionTable/PrecautionTable"
+import RegionBoard from "./pages/RegionsBoard/RegionBoard";
+import RegionBoardEdit from "./pages/RegionsBoard/RegionBoardEdit";
+import RegionBoardAdministration from "./pages/RegionsBoard/RegionBoardAdministration";
+import RegionBoardDocuments from "./pages/RegionsBoard/RegionBoardDocuments";
 
 const App: FC = () => (
   <div className="App">
@@ -249,6 +253,30 @@ const App: FC = () => (
             exact
             path="/regions"
             component={Regions}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regionsBoard"
+            component={RegionBoard}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regionsBoard/edit"
+            component={RegionBoardEdit}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regionsBoard/governingBodies"
+            component={RegionBoardAdministration}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regionsBoard/documents/:id"
+            component={RegionBoardDocuments}
           />
           <RouteWithLayout
             layout={PrivateLayout}

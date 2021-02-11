@@ -108,7 +108,7 @@ const ColumnsForUserTable: any = [
     },
   },
   {
-    title: "Округ",
+    title: "Округа",
     dataIndex: "regionName",
     width: 150,
     render: (regionName: any) => {
@@ -220,7 +220,7 @@ const ColumnsForUserTable: any = [
     sortDirections: ["descend", "ascend"],
   },
   {
-  title: "Email",
+    title: "Email",
     dataIndex: "email",
     width: 220,
     render: (email: any) => {
@@ -269,12 +269,12 @@ const ColumnsForUserTable: any = [
         value: "Прихильник",
       },
       {
-        text: "Голова Округу",
-        value: "Голова Округу",
+        text: "Голова Округи",
+        value: "Голова Округи",
       },
       {
-        text: "Діловод Округу",
-        value: "Діловод Округу",
+        text: "Діловод Округи",
+        value: "Діловод Округи",
       },
       {
         text: "Голова Станиці",

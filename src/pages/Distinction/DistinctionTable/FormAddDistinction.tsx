@@ -15,11 +15,12 @@ import distinctionApi from "../../../api/distinctionApi";
 import adminApi from "../../../api/adminApi";
 import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import{
+import {
   emptyInput,
   maxLength,
   failCreateAction
 } from "../../../components/Notifications/Messages"
+import precautionApi from "../../../api/precautionApi";
 
 type FormAddDistinctionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -61,8 +62,8 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
         setDistData(response.data);
       });
       setLoadingUserStatus(true);
-      await adminApi.getUsersForTable().then((response) => {
-        setUserData(response.data);
+      await precautionApi.getUsersWithoutPrecautions().then((response) => {
+        setUserData(response);
         setLoadingUserStatus(false);
       });
     };
@@ -74,29 +75,29 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     setVisibleModal(false);
   };
 
-  const createNotifications = async (userDistinction : UserDistinction) => {
+  const createNotifications = async (userDistinction: UserDistinction) => {
     await NotificationBoxApi.createNotifications(
-        [userDistinction.userId],
-        `Вам було надано нове відзначення: '${userDistinction.distinction.name}' від ${userDistinction.reporter}. `,
-        NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/distinctions`,
-        `Переглянути`
-        );
+      [userDistinction.userId],
+      `Вам було надано нове відзначення: '${userDistinction.distinction.name}' від ${userDistinction.reporter}. `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/distinctions`,
+      `Переглянути`
+    );
 
     await NotificationBoxApi.getCitiesForUserAdmins(userDistinction.userId)
-        .then(res => {
-            res.cityRegionAdmins.length !== 0 &&
-            res.cityRegionAdmins.forEach(async (cra) => {
-                await NotificationBoxApi.createNotifications(
-                    [cra.cityAdminId, cra.regionAdminId],
-                    `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав нове відзначення: '${userDistinction.distinction.name}' від ${userDistinction.reporter}. `,
-                    NotificationBoxApi.NotificationTypes.UserNotifications,
-                    `/distinctions`,
-                    `Переглянути`
-                    );
-            })                
-        });
-  } 
+      .then(res => {
+        res.cityRegionAdmins.length !== 0 &&
+          res.cityRegionAdmins.forEach(async (cra) => {
+            await NotificationBoxApi.createNotifications(
+              [cra.cityAdminId, cra.regionAdminId],
+              `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав нове відзначення: '${userDistinction.distinction.name}' від ${userDistinction.reporter}. `,
+              NotificationBoxApi.NotificationTypes.UserNotifications,
+              `/distinctions`,
+              `Переглянути`
+            );
+          })
+      });
+  }
 
   const handleSubmit = async (values: any) => {
     const newDistinction: UserDistinction = {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { Avatar, Layout, Menu, Button } from "antd";
 import ClickAwayListener from 'react-click-away-listener';
-import { RollbackOutlined } from "@ant-design/icons";
+import { BankOutlined, RollbackOutlined } from "@ant-design/icons";
 import {
   SolutionOutlined,
   InfoCircleOutlined,
@@ -69,7 +69,7 @@ const PrivateLayout = ({ children }: any) => {
     let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
     setUser(roles);
     setCanEdit(roles.includes("Admin"));
-    setRegionAdm(roles.includes("Голова Округу"));
+    setRegionAdm(roles.includes("Голова Округи"));
     setCityAdm(roles.includes("Голова Станиці"));
     setClubAdm(roles.includes("Голова Куреня"));
     setCanSee(roles.includes("Пластун"));
@@ -115,7 +115,17 @@ const PrivateLayout = ({ children }: any) => {
               </Menu.Item>
             ) : (<> </>)
             }
-
+            {(canEdit == true || canSee == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+              <Menu.Item
+                key="1"
+                icon={<BankOutlined />}
+                onClick={() => { handleClickAway(); history.push("/regionsBoard"); }}
+                style={{ color: "white" }}
+              >
+                Крайовий Провід Пласту
+              </Menu.Item>
+            ) : (<> </>)
+            }
             <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Довідник">
               {(canEdit == true || canSee == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
@@ -162,7 +172,7 @@ const PrivateLayout = ({ children }: any) => {
                   icon={<PieChartOutlined />}
                   title="Статистика" >
                   <Menu.Item icon={<BarChartOutlined />} onClick={() => { handleClickAway(); history.push('/statistics/cities'); }} key="10">Статистика станиць</Menu.Item>
-                  <Menu.Item icon={<BarChartOutlined />} onClick={() => { handleClickAway(); history.push('/statistics/regions'); }} key="11">Статистика округів</Menu.Item>
+                  <Menu.Item icon={<BarChartOutlined />} onClick={() => { handleClickAway(); history.push('/statistics/regions'); }} key="11">Статистика округ</Menu.Item>
                 </SubMenu>
                 <SubMenu key="sub2.3" title="Осередки">
                   <Menu.Item onClick={() => { handleClickAway(); }} key="12">Осередки та адміни</Menu.Item>

@@ -105,7 +105,10 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
       precaution: JSON.parse(values.Precaution),
       user: JSON.parse(values.user),
       userId: JSON.parse(values.user).id,
+      status: values.status,
       date: values.date,
+      endDate: values.date,
+      isActive: true,
       reporter: values.reporter,
       reason: values.reason,
       number: values.number,
@@ -244,6 +247,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             name="reason"
             rules={[
               {
+                required: true,
                 max: 250,
                 message: maxLength(250),
               },
@@ -258,6 +262,28 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               className={formclasses.inputField}
               maxLength={251}
             />
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row justify="start" gutter={[12, 0]}>
+        <Col md={24} xs={24}>
+          <Form.Item
+            className={formclasses.formField}
+            label="Статус"
+            labelCol={{ span: 24 }}
+            name="status"
+            rules={[
+              {
+                required: true,
+                message: emptyInput(),
+              },
+            ]}
+          >
+            <Select className={formclasses.selectField} showSearch>
+              <Select.Option key="9" value="Прийнято">Прийнято</Select.Option>
+              <Select.Option key="10" value="Потверджено">Потверджено</Select.Option>
+              <Select.Option key="11" value="Скасовано">Скасовано</Select.Option>
+            </Select>
           </Form.Item>
         </Col>
       </Row>

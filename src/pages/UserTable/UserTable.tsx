@@ -9,10 +9,12 @@ import {
   TreeSelect,
   Modal,
   Form,
+  Card
 } from "antd";
 import "./Filter.less";
 import { getUsersForTableByPage } from "../../api/adminApi";
 import clubsApi from "../../api/clubsApi";
+import adminApi from "../../api/adminApi";
 import DropDownUserTable from "./DropDownUserTable";
 import Title from "antd/lib/typography/Title";
 import ColumnsForUserTable from "./ColumnsForUserTable";
@@ -29,7 +31,9 @@ import regionsApi from "../../api/regionsApi";
 import Region from "../Statistics/Interfaces/Region";
 import Club from "../AnnualReport/Interfaces/Club";
 import { shouldContain } from "../../components/Notifications/Messages";
-const classes = require("./UserTable.module.css");
+//const classes = require("./UserTable.module.css");
+import classes from "./UserTable.module.css";
+
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
@@ -62,6 +66,9 @@ const UsersTable = () => {
   const [selectableSomeClubs, setSelectableSomeClubs] = useState<boolean>();
   const [selectableAllDegrees, setSelectableAllDegrees] = useState<boolean>();
   const [selectableSomeDegrees, setSelectableSomeDegrees] = useState<boolean>();
+  const [viewedUsers, setViewedUsers] = useState<UserTable[]>([]);
+  const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
+  const [isInactive, setIsInactive] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -170,18 +177,8 @@ const UsersTable = () => {
     setSearchedData(event.target.value.toLowerCase());
   };
 
-  const itemRender = (current: any, type: string, originalElement: any) => {
-    if (type === "prev") {
-      return <Button type="primary">Попередня</Button>;
-    }
-    if (type === "next") {
-      return <Button type="primary">Наступна</Button>;
-    }
-    return originalElement;
-  };
-
   let filteredData = searchedData
-    ? users.filter((item) => {
+    ? viewedUsers.filter((item) => {
         return Object.values([
           item.regionName,
           item.cityName,
@@ -194,10 +191,10 @@ const UsersTable = () => {
           return String(element).toLowerCase().includes(searchedData);
         });
       })
-    : users;
+    : viewedUsers;
 
   filteredData = Array.from(filteredData).concat(
-    Array.from(users).filter(
+    Array.from(viewedUsers).filter(
       (item) =>
         (item.user.firstName?.toLowerCase()?.includes(searchedData) ||
           item.user.lastName?.toLowerCase()?.includes(searchedData) ||
@@ -358,7 +355,45 @@ const UsersTable = () => {
       }
     }
   };
+  const tabList = [
+    {
+      key: "confirmed",
+      tab: "Всі користувачі",
+    },
+    {
+      key: "interested",
+      tab: "Зацікавлені",
+    },
+    {
+      key: "unconfirmed",
+      tab: "Непідтверджені",
+    },
+  ];
 
+  const onTabChange = (key: string) => {
+    setCurrentTabName(key);
+    switch (key) {
+      case "confirmed":
+        setIsInactive(false);
+        filteredData = users.filter((u) => u.user.emailConfirmed == true);
+        break;
+      case "interested":
+        setIsInactive(false);
+        filteredData = users.filter((u) => u.userRoles.includes("Зацікавлений"));
+        break;
+      case "unconfirmed":
+        setIsInactive(true);
+        filteredData = users.filter((u) => u.user.emailConfirmed == false);
+        break;
+      default:
+        break;
+    }
+    setViewedUsers(filteredData);
+  };
+
+  useEffect(() => {
+    onTabChange("confirmed");
+  }, [users]);
   return (
     <Layout.Content
       onClick={() => {
@@ -447,6 +482,14 @@ const UsersTable = () => {
       {loading === false ? (
         <Spinner />
       ) : (
+      <Card
+        style={{ width: "100%" }}
+        tabList={tabList}
+        activeTabKey={currentTabName}
+        onTabChange={(key) => {
+          onTabChange(key);
+        }}
+      >
         <Table
           className={classes.table}
           bordered
@@ -489,6 +532,7 @@ const UsersTable = () => {
             onShowSizeChange: (page, size) => handleSizeChange(page, size),
           }}
         />
+        </Card>
       )}
       <ClickAwayListener onClickAway={handleClickAway}>
         <DropDownUserTable
@@ -499,6 +543,7 @@ const UsersTable = () => {
           onDelete={handleDelete}
           onChange={handleChange}
           roles={roles}
+          inActiveTab={isInactive}
         />
       </ClickAwayListener>
     </Layout.Content>

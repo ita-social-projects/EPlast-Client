@@ -70,7 +70,7 @@ const StatisticsCities = () => {
       width: 80
     },
     {
-      title: "Округ",
+      title: "Округа",
       dataIndex: "regionName",
       key: "regionName",
       ellipsis: {
@@ -279,92 +279,92 @@ const onClick = (value: Array<Number>) => {
   return (
     <Layout.Content >
       <div className = "background">
-      <Title level={2}>Статистика станиць</Title>
-      <div className = "formAndChart">
-      <div className = "form"> 
-      <Form onFinish={onSubmit}>
-        <Row justify="center">
-          <Col
-            span={20}>
-            <Form.Item
-              labelCol={{span: 24}}
-              label="Станиці"
-              name="citiesId"
-              rules={[{required: true, message: shouldContain("хоча б одну станицю"), type: "array"}]} >
-              <Select
-                maxTagCount={4}
-                showSearch
-                allowClear
-                mode="multiple"
-                options={cities}
-                placeholder="Обрати станицю"
-                filterOption={(input, option) => (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
-              />
-            </Form.Item>
-          </Col>
-        </Row>        
-        <Row justify="center">
-          <Col
-            span={20}>
-            <Form.Item
-              labelCol={{span: 24}}
-              label="Роки"
-              name="years"
-              rules={[{required: true, message: shouldContain("хоча б один рік"), type: "array"}]}>
-              <Select
-                maxTagCount={8}
-                showSearch
-                allowClear
-                mode="multiple"
-                options={years}
-                placeholder="Обрати рік"
-              />
-            </Form.Item>
-          </Col>
-        </Row>        
-        <Row justify="center">
-          <Col
-            span={20}>
-            <Form.Item
-              labelCol={{span: 24}}
-              label="Показники"
-              name="indicators"
-              rules={[{required: true, message: shouldContain("хоча б один показник"), type: "array"}]}>
-              <TreeSelect
-                maxTagCount={4}
-                showSearch
-                allowClear
-                multiple
-                onChange={onClick}
-                treeDefaultExpandAll
-                placeholder="Обрати показник"
-                filterTreeNode={(input, option) => (option?.title as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}>
-                <TreeNode value={0} title="Пташата"/>
-                <TreeNode value={1} title="Новацтво"/>
-                <TreeNode value={2} title="Юнацтво загалом" selectable = {selectableUnatstvaZahalom}>
-                <TreeNode value={3} title="Неіменовані" selectable = {selectableUnatstvaPart}/>
-                <TreeNode value={4} title="Прихильники" selectable = {selectableUnatstvaPart}/>
-                <TreeNode value={5} title="Учасники" selectable = {selectableUnatstvaPart}/>
-                <TreeNode value={6} title="Розвідувачі" selectable = {selectableUnatstvaPart}/>
-                <TreeNode value={7} title="Скоби/вірлиці" selectable = {selectableUnatstvaPart}/>
-                </TreeNode>
-                <TreeNode value={8} title="Старші пластуни загалом" selectable = {selectableSeniorZahalom}>
-                <TreeNode value={9} title="Старші пластуни прихильники" selectable = {selectableSeniorPart}/>
-                <TreeNode value={10} title="Старші пластуни учасники" selectable = {selectableSeniorPart}/>
-                </TreeNode>
-                <TreeNode value={11} title="Сеньйори загалом" selectable = {selectableSeigneurZahalom}>
-                <TreeNode value={12} title="Сеньйори пластуни прихильники" selectable = {selectableSeigneurPart}/>
-                <TreeNode value={13} title="Сеньйори пластуни учасники" selectable = {selectableSeigneurPart}/>
-                </TreeNode>
-              </TreeSelect>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row justify="center">
-          <Col>
-            <Button type="primary" htmlType="submit">Сформувати</Button>
-          </Col>
-        </Row>
+        <Title level={2}>Статистика станиць</Title>
+          <div className = "formAndChart">
+            <div className = "form"> 
+              <Form onFinish={onSubmit}>
+                <Row justify="center">
+                  <Col
+                    span={20}>
+                      <Form.Item
+                        labelCol={{span: 24}}
+                        label="Станиці"
+                        name="citiesId"
+                        rules={[{required: true, message: shouldContain("хоча б одну станицю"), type: "array"}]} >
+                      <Select
+                        maxTagCount={4}
+                        showSearch
+                        allowClear
+                        mode="multiple"
+                        options={cities}
+                        placeholder="Обрати станицю"
+                        filterOption={(input, option) => (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                      />
+                      </Form.Item>
+                  </Col>
+                </Row>        
+              <Row justify="center">
+                  <Col
+                    span={20}>
+                      <Form.Item
+                        labelCol={{span: 24}}
+                        label="Роки"
+                        name="years"
+                        rules={[{required: true, message: shouldContain("хоча б один рік"), type: "array"}]}>
+                      <Select
+                        maxTagCount={8}
+                        showSearch
+                        allowClear
+                        mode="multiple"
+                        options={years}
+                        placeholder="Обрати рік"
+                      />
+                      </Form.Item>
+                  </Col>
+              </Row>       
+              <Row justify="center"> 
+                  <Col
+                    span={20}>
+                      <Form.Item
+                        labelCol={{span: 24}}
+                        label="Показники"
+                        name="indicators"
+                        rules={[{required: true, message: shouldContain("хоча б один показник"), type: "array"}]}>
+                        <TreeSelect
+                          maxTagCount={4}
+                          showSearch
+                          allowClear
+                          multiple
+                          onChange={onClick}
+                          treeDefaultExpandAll
+                          placeholder="Обрати показник"
+                          filterTreeNode={(input, option) => (option?.title as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}>
+                            <TreeNode value={0} title="Пташата"/>
+                            <TreeNode value={1} title="Новацтво"/>
+                            <TreeNode value={2} title="Юнацтво загалом" selectable = {selectableUnatstvaZahalom}>
+                              <TreeNode value={3} title="Неіменовані" selectable = {selectableUnatstvaPart}/>
+                              <TreeNode value={4} title="Прихильники" selectable = {selectableUnatstvaPart}/>
+                              <TreeNode value={5} title="Учасники" selectable = {selectableUnatstvaPart}/>
+                              <TreeNode value={6} title="Розвідувачі" selectable = {selectableUnatstvaPart}/>
+                              <TreeNode value={7} title="Скоби/вірлиці" selectable = {selectableUnatstvaPart}/>
+                            </TreeNode>
+                            <TreeNode value={8} title="Старші пластуни загалом" selectable = {selectableSeniorZahalom}>
+                              <TreeNode value={9} title="Старші пластуни прихильники" selectable = {selectableSeniorPart}/>
+                              <TreeNode value={10} title="Старші пластуни учасники" selectable = {selectableSeniorPart}/>
+                            </TreeNode>
+                            <TreeNode value={11} title="Сеньйори загалом" selectable = {selectableSeigneurZahalom}>
+                              <TreeNode value={12} title="Сеньйори пластуни прихильники" selectable = {selectableSeigneurPart}/>
+                              <TreeNode value={13} title="Сеньйори пластуни учасники" selectable = {selectableSeigneurPart}/>
+                            </TreeNode>
+                        </TreeSelect>
+                      </Form.Item>
+                  </Col>
+              </Row> 
+              <Row justify="center">
+                <Col>
+                  <Button type="primary" htmlType="submit">Сформувати</Button>
+                </Col>
+              </Row>
       </Form>
       </div>
       <br/>
@@ -393,7 +393,7 @@ const onClick = (value: Array<Number>) => {
       </Chart>
       </div>}
       </div>
-      <br/> 
+      <br/>
       {showTable === false ? "" :
         <Table
           bordered 

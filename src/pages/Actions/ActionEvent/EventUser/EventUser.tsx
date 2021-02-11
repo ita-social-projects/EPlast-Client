@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import {
-  Avatar,
   Modal,
   Button,
   Typography,
   Badge,
-  Space,
-  Spin,
   Tooltip,
-  Switch,
   Drawer,
   Tag,
   Input,
@@ -25,7 +21,6 @@ import {
   NotificationTwoTone,
   ToolTwoTone,
   FlagTwoTone,
-  LoadingOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import EventCreateDrawer from "../EventCreate/EventCreateDrawer";
@@ -33,7 +28,7 @@ import EventEditDrawer from "../EventEdit/EventEditDrawer";
 import EventCalendar from "../EventCalendar/EventCalendar";
 import Spinner from "../../../Spinner/Spinner";
 import CreatedEvents from "../../../../models/EventUser/CreatedEvents";
-import AvatarAndProgress from "../../../userPage/personalData/AvatarAndProgress";
+import AvatarAndProgressStatic from "../../../userPage/personalData/AvatarAndProgressStatic";
 const { Title } = Typography;
 
 const EventUser = () => {
@@ -68,8 +63,9 @@ const EventUser = () => {
   ]);
 
   useEffect(() => {
-     userApi.getById(userId).then(async response => {
-      setCurrentUser(response.data.user)})
+    userApi.getById(userId).then(async (response) => {
+      setCurrentUser(response.data.user);
+    });
     fetchData();
   }, []);
 
@@ -84,7 +80,7 @@ const EventUser = () => {
         .then((response: { data: any }) => {
           setImageBase64(response.data);
         });
-       
+
       setLoading(true);
     });
   };
@@ -145,23 +141,30 @@ const EventUser = () => {
   ) : (
     <div className={classes.wrapper}>
       <div className={classes.wrapperImg}>
-                    
- 
-
-<AvatarAndProgress imageUrl={currentUser.imagePath} time={currentUser.timeToJoinPlast} firstName={currentUser.firstName} lastName={currentUser.lastName} isUserPlastun={true} pseudo={currentUser.pseudo} city={currentUser.city} club={currentUser.club}/>
-{userToken.nameid === userId && (
+        <div className={classes.avatarWrapper}>
+          <AvatarAndProgressStatic
+            imageUrl={currentUser.imagePath}
+            time={currentUser.timeToJoinPlast}
+            firstName={currentUser.firstName}
+            lastName={currentUser.lastName}
+            isUserPlastun={true}
+            pseudo={currentUser.pseudo}
+            city={currentUser.city}
+            club={currentUser.club}
+          />
+        </div>
+        {userToken.nameid === userId && (
           <Button
             type="primary"
             className={classes.buttonInside}
-            style={{marginBottom:"15px"}}
+            style={{ marginBottom: "15px" }}
             onClick={() => setShowEventCreateDrawer(true)}
           >
             Створити подію
           </Button>
-        )} 
-</div>
- 
-        
+        )}
+      </div>
+
       <div className={classes.wrapperCol}>
         <div className={classes.wrapper}>
           <div className={classes.wrapper2}>
@@ -203,11 +206,11 @@ const EventUser = () => {
                 <Button
                   type="primary"
                   className={classes.buttonSmall}
-                  style={{marginRight:"110px",marginLeft:"110px"}}
+                  style={{ marginRight: "110px", marginLeft: "110px" }}
                   onClick={() => setVisitedEventsModal(false)}
                 >
                   Закрити
-                </Button>
+                </Button>,
               ]}
             >
               {allEvents?.visitedEvents?.map((item: any) => (
@@ -255,7 +258,6 @@ const EventUser = () => {
                 </Button>
               </div>
             )}
-            
 
             <EventCreateDrawer
               visibleEventCreateDrawer={showEventCreateDrawer}
@@ -283,12 +285,12 @@ const EventUser = () => {
                   <Button
                     type="primary"
                     className={classes.buttonSmall}
-                    style={{marginRight:"110px",marginLeft:"110px"}}
+                    style={{ marginRight: "110px", marginLeft: "110px" }}
                     onClick={() => setCreatedEventsModal(false)}
                   >
                     Закрити
                   </Button>
-                </div>
+                </div>,
               ]}
             >
               <Input.Search
@@ -448,7 +450,7 @@ const EventUser = () => {
                 <Button
                   type="primary"
                   className={classes.buttonSmall}
-                  style={{marginRight:"110px",marginLeft:"110px"}}
+                  style={{ marginRight: "110px", marginLeft: "110px" }}
                   onClick={() => history.push("/events/types")}
                 >
                   Зголоситись на подію
@@ -456,11 +458,11 @@ const EventUser = () => {
                 <Button
                   type="primary"
                   className={classes.buttonSmall}
-                  style={{marginRight:"110px",marginLeft:"110px"}}
+                  style={{ marginRight: "110px", marginLeft: "110px" }}
                   onClick={() => setPlannedEventsModal(false)}
                 >
                   Закрити
-                </Button>
+                </Button>,
               ]}
             >
               {allEvents?.planedEvents?.map((item: any) => (

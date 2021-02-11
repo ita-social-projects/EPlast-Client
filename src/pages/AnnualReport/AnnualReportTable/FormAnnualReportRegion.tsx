@@ -85,7 +85,7 @@ interface Props {
       }, [])
 
     return (<Modal
-    title='Оберіть округ та рік для створення річного звіту'
+    title='Оберіть округу та рік для створення річного звіту'
     onCancel={handleOk}
     visible={visibleModal}
     footer={null} >
@@ -97,20 +97,20 @@ interface Props {
        <div className="rowBlock">
        <Col md={24} xs={24}>
        <Form.Item
-        label="Округ"
+        label="Округа"
              name="region"
              className="formItem"
              labelCol={{ span: 24 }}
              rules={[
                  {
                      required: true,
-                     message: emptyInput("округ")
+                     message: emptyInput("округа")
                  },
              ]}
          >
             <Select
         showSearch
-        placeholder="Обрати округ"
+        placeholder="Обрати округу"
         > 
         {regions?.map((o) => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{o.regionName}</Select.Option>))}
         </Select>   

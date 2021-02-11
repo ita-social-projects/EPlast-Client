@@ -6,8 +6,11 @@ type UserPrecaution = {
     precaution: Precaution;
     reporter: string;
     reason: string;
+    status: string;
     number: number;
     date: Date;
+    endDate: Date;
+    isActive: boolean;
     userId: string;
     user: User
 }

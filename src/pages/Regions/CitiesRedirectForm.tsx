@@ -61,7 +61,7 @@ const CitiesRedirectForm  = (props: any)=>{
      >
          <Form.Item
              className={classes.formField}
-             label="Округ"
+             label="Округа"
              name="regionId"
 
              rules={[

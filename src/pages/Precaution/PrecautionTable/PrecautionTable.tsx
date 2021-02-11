@@ -58,8 +58,11 @@ const PrecautionTable = () => {
       userId: "",
       reporter: "",
       reason: "",
+      status: "",
       number: 0,
       date: new Date(),
+      endDate: new Date(),
+      isActive: true,
       user: new User(),
     },
   ]);
@@ -88,7 +91,7 @@ const PrecautionTable = () => {
     : UserPrecautions;
 
   filteredData = filteredData.concat(
-    UserPrecautions.filter(
+    UserPrecautions?.filter(
       (item) =>
         (item.user.firstName.toLowerCase()?.includes(searchedData) ||
           item.user.lastName.toLowerCase()?.includes(searchedData)) &&
@@ -136,7 +139,7 @@ const PrecautionTable = () => {
     if (userPrecaution) {
       NotificationBoxApi.createNotifications(
         [userPrecaution.userId],
-        `Ваша пересторога: '${userPrecaution.precaution.name}' була видалена.`,
+        `Вашу пересторогу: '${userPrecaution.precaution.name}' було видалено.`,
         NotificationBoxApi.NotificationTypes.UserNotifications
       );
       NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId)
@@ -190,7 +193,10 @@ const PrecautionTable = () => {
     id: number,
     precaution: Precaution,
     date: Date,
+    endDate: Date,
+    isActive: boolean,
     reason: string,
+    status: string,
     reporter: string,
     number: number,
     user: any,
@@ -199,105 +205,105 @@ const PrecautionTable = () => {
     /* eslint no-param-reassign: "error" */
     const filteredData = UserPrecautions.filter((d) => {
       if (d.id === id) {
-        d.precaution = precaution;
         d.precautionId = precaution.id;
-        d.date = date;
-        d.reason = reason;
-        d.reporter = reporter;
+        d.precaution = precaution;
         d.number = number;
+        d.date = date;
+        d.endDate = endDate;
+        d.isActive = isActive;
+        d.reason = reason;
+        d.status = status;
+        d.reporter = reporter;
         d.user = user;
         d.userId = userId;
       }
+
       return d;
     });
     setData([...filteredData]);
     notificationLogic("success", successfulUpdateAction("Пересторога"));
     CreateEditNotification(userId, precaution.name);
   };
-  console.log(filteredData);
   return loading === false ? (
     <Spinner />
   ) : (
-      <Layout>
-        <Content
-          onClick={() => {
-            setShowDropdown(false);
-          }}
-        >
-          <h1 className={classes.titleTable}>Перестороги</h1>
+    <Layout>
+      <Content
+        onClick={() => {
+          setShowDropdown(false);
+        }}
+      >
+        <h1 className={classes.titleTable}>Перестороги</h1>
 
-          <>
-            <div className={classes.searchContainer}>
-              {canEdit === true ? (
-                <>
-                  <Button type="primary" onClick={showModal}>
-                    Додати пересторогу
+        <>
+          <div className={classes.searchContainer}>
+            {canEdit === true ? (
+              <>
+                <Button type="primary" onClick={showModal}>
+                  Додати пересторогу
                 </Button>
-                  <Button type="primary" onClick={showModalEditTypes}>
-                    Редагування типів пересторог
-                </Button>
-                  <span />
-                </>
-              ) : (
-                  <></>
-                )}
-              <Input placeholder="Пошук" onChange={handleSearch} allowClear />
-            </div>
-            <div>
-              <Table
-                className={classes.table}
-                dataSource={filteredData}
-                columns={columns}
-                scroll={{ x: 1300 }}
-                onRow={(record) => {
-                  return {
-                    onClick: () => {
-                      setShowDropdown(false);
-                    },
-                    onContextMenu: (event) => {
-                      event.preventDefault();
-                      setShowDropdown(true);
-                      setRecordObj(record.id);
-                      setUserId(record.userId);
-                      setX(event.pageX);
-                      setY(event.pageY);
-                    },
-                  };
-                }}
-                pagination={{
-                  showLessItems: true,
-                  responsive: true,
-                  showSizeChanger: true,
-                }}
-                bordered
-                rowKey="id"
-              />
-            </div>
-            <ClickAwayListener onClickAway={handleClickAway}>
-              <DropDownPrecautionTable
-                showDropdown={showDropdown}
-                record={recordObj}
-                userId={userId}
-                pageX={x}
-                pageY={y}
-                canEdit={canEdit}
-                onDelete={handleDelete}
-                onEdit={handleEdit}
-              />
-            </ClickAwayListener>
+                <span />
+              </>
+            ) : (
+              <></>
+            )}
+            <Input placeholder="Пошук" onChange={handleSearch} allowClear />
+          </div>
+          <div>
+            <Table
+              className={classes.table}
+              dataSource={filteredData}
+              columns={columns}
+              scroll={{ x: 1300 }}
+              onRow={(record) => {
+                return {
+                  onClick: () => {
+                    setShowDropdown(false);
+                  },
+                  onContextMenu: (event) => {
+                    event.preventDefault();
+                    setShowDropdown(true);
+                    setRecordObj(record.id);
+                    setUserId(record.userId);
+                    setX(event.pageX);
+                    setY(event.pageY);
+                  },
+                };
+              }}
+              pagination={{
+                showLessItems: true,
+                responsive: true,
+                showSizeChanger: true,
+              }}
+              bordered
+              rowKey="id"
+            />
+          </div>
+          <ClickAwayListener onClickAway={handleClickAway}>
+            <DropDownPrecautionTable
+              showDropdown={showDropdown}
+              record={recordObj}
+              userId={userId}
+              pageX={x}
+              pageY={y}
+              canEdit={canEdit}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+            />
+          </ClickAwayListener>
 
-            <AddPrecautionModal
-              setVisibleModal={setVisibleModal}
-              visibleModal={visibleModal}
-              onAdd={handleAdd}
-            />
-            <EditPrecautionTypesModal
-              setVisibleModal={setVisibleModalEditDist}
-              visibleModal={visibleModalEditDist}
-            />
-          </>
-        </Content>
-      </Layout>
-    );
+          <AddPrecautionModal
+            setVisibleModal={setVisibleModal}
+            visibleModal={visibleModal}
+            onAdd={handleAdd}
+          />
+          <EditPrecautionTypesModal
+            setVisibleModal={setVisibleModalEditDist}
+            visibleModal={visibleModalEditDist}
+          />
+        </>
+      </Content>
+    </Layout>
+  );
 };
 export default PrecautionTable;
