@@ -45,6 +45,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Ім`я",
     dataIndex: ["user", "firstName"],
+    width: 190,
     render: (text: any) => (
       <Text underline strong>
         {text}
@@ -57,6 +58,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Прізвище",
     dataIndex: ["user", "lastName"],
+    width: 190,
     render: (text: any | null) => (
       <Text underline strong>
         {text}
@@ -108,6 +110,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Округ",
     dataIndex: "regionName",
+    width: 150,
     render: (regionName: any) => {
       if (regionName.length > 0) {
         return (
@@ -127,6 +130,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Станиця",
     dataIndex: "cityName",
+    width: 150,
     render: (cityName: any) => {
       if (cityName.length > 0) {
         return (
@@ -146,6 +150,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Курінь",
     dataIndex: "clubName",
+    width: 190,
     render: (clubName: any) => {
       if (clubName.length > 0) {
         return (
@@ -165,6 +170,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Ступінь",
     dataIndex: "userPlastDegreeName",
+    width: 180,
     render: (userPlastDegreeName: any, record: any) => {
       if (userPlastDegreeName !== null && userPlastDegreeName.length > 0) {
         if (
@@ -228,7 +234,7 @@ const ColumnsForUserTable: any = [
   {
   title: "Ступінь в УПЮ",
   dataIndex: "upuDegree",
-  width: 180,
+  width: 210,
   render: (upuDegree: any) => {
       return (
         <Tag color={"blue"}>
