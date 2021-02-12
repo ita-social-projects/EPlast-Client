@@ -10,6 +10,7 @@ const getUsersForTable = async () => {
 
 const getCityRegionAdmins = async (userId: string) => {
   const response = await Api.get(`Admin/CityRegionAdmins/${userId}`);
+
   return response;
 };
 
