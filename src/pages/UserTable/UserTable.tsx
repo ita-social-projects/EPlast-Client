@@ -9,7 +9,7 @@ import {
   TreeSelect,
   Modal,
   Form,
-  Card
+  Card,
 } from "antd";
 import "./Filter.less";
 import { getUsersForTableByPage } from "../../api/adminApi";
@@ -31,9 +31,7 @@ import regionsApi from "../../api/regionsApi";
 import Region from "../Statistics/Interfaces/Region";
 import Club from "../AnnualReport/Interfaces/Club";
 import { shouldContain } from "../../components/Notifications/Messages";
-//const classes = require("./UserTable.module.css");
 import classes from "./UserTable.module.css";
-
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
@@ -58,14 +56,6 @@ const UsersTable = () => {
   const [dynamicDegrees, setDynamicDegrees] = useState<any[]>([]);
   const [form] = Form.useForm();
   const [, forceUpdate] = useState({});
-  const [selectableAllCities, setSelectableAllCities] = useState<boolean>();
-  const [selectableSomeCities, setSelectableSomeCities] = useState<boolean>();
-  const [selectableAllRegions, setSelectableAllRegions] = useState<boolean>();
-  const [selectableSomeRegions, setSelectableSomeRegions] = useState<boolean>();
-  const [selectableAllClubs, setSelectableAllClubs] = useState<boolean>();
-  const [selectableSomeClubs, setSelectableSomeClubs] = useState<boolean>();
-  const [selectableAllDegrees, setSelectableAllDegrees] = useState<boolean>();
-  const [selectableSomeDegrees, setSelectableSomeDegrees] = useState<boolean>();
   const [viewedUsers, setViewedUsers] = useState<UserTable[]>([]);
   const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
   const [isInactive, setIsInactive] = useState(false);
@@ -73,6 +63,11 @@ const UsersTable = () => {
   useEffect(() => {
     fetchData();
   }, [page, pageSize, updatedUser]);
+ 
+  useEffect(() => {
+   fetchData();
+   onTabChange(currentTabName);
+  }, [currentTabName]);
 
   useEffect(() => {
     fetchCities();
@@ -156,6 +151,7 @@ const UsersTable = () => {
 
   const fetchData = async () => {
     setLoading(false);
+   // console.log(currentTabName);
     try {
       const response = await getUsersForTableByPage({
         Page: page,
@@ -164,8 +160,11 @@ const UsersTable = () => {
         Regions: dynamicRegions,
         Clubs: dynamicClubs,
         Degrees: dynamicDegrees,
+        Tab: currentTabName,
       });
       setUsers(response.data.users);
+      filteredData = response.data.users;
+      console.log(filteredData);
       setTotal(response.data.total);
     } finally {
       setLoading(true);
@@ -205,7 +204,6 @@ const UsersTable = () => {
   );
 
   const onSelect = (selectedKeys: any, e: any) => {
-    console.log(selectedKeys, e);
     if (e.value == 0) {
       setDynamicRegions([...dynamicRegions, ...regions]);
     } else if (e.value == 1) {
@@ -225,7 +223,6 @@ const UsersTable = () => {
     }
   };
   const ondeSelect = (selectedKeys: any, e: any) => {
-    console.log(selectedKeys, e);
     if (e.value == 0) {
       setDynamicRegions((prev) => prev.filter((item) => item !== e.title));
     } else if (e.value == 1) {
@@ -247,13 +244,7 @@ const UsersTable = () => {
   const getDynamicCities = () => {
     var results = [];
     for (let x = 0; x < cities?.length; x++) {
-      results.push(
-        <TreeNode
-          value={"value1" + x}
-          title={cities[x].label}
-          selectable={selectableSomeCities}
-        />
-      );
+      results.push(<TreeNode value={"value1" + x} title={cities[x].label} />);
     }
     return results;
   };
@@ -261,26 +252,14 @@ const UsersTable = () => {
     var results = [];
 
     for (let x = 0; x < regions?.length; x++) {
-      results.push(
-        <TreeNode
-          value={"value2" + x}
-          title={regions[x].label}
-          selectable={selectableSomeRegions}
-        />
-      );
+      results.push(<TreeNode value={"value2" + x} title={regions[x].label} />);
     }
     return results;
   };
   const getDynamicDegrees = () => {
     var results = [];
     for (let x = 0; x < degrees?.length; x++) {
-      results.push(
-        <TreeNode
-          value={"value3" + x}
-          title={degrees[x].label}
-          selectable={selectableSomeDegrees}
-        />
-      );
+      results.push(<TreeNode value={"value3" + x} title={degrees[x].label} />);
     }
     return results;
   };
@@ -288,13 +267,7 @@ const UsersTable = () => {
     var results = [];
 
     for (let x = 0; x < clubs?.length; x++) {
-      results.push(
-        <TreeNode
-          value={"value4" + x}
-          title={clubs[x].label}
-          selectable={selectableSomeClubs}
-        />
-      );
+      results.push(<TreeNode value={"value4" + x} title={clubs[x].label} />);
     }
     return results;
   };
@@ -321,6 +294,7 @@ const UsersTable = () => {
   };
   const handlePageChange = (page: number) => {
     setPage(page);
+    setCurrentTabName(currentTabName);
   };
 
   const handleSizeChange = (page: number, pageSize: number = 10) => {
@@ -329,6 +303,7 @@ const UsersTable = () => {
   };
   const handleFilter = async () => {
     setPage(1);
+    setCurrentTabName(currentTabName);
     if (
       dynamicCities.length == 0 &&
       dynamicRegions.length == 0 &&
@@ -346,6 +321,7 @@ const UsersTable = () => {
           Regions: dynamicRegions,
           Clubs: dynamicClubs,
           Degrees: dynamicDegrees,
+          Tab: currentTabName,
         });
 
         setUsers(response.data.users);
@@ -370,30 +346,15 @@ const UsersTable = () => {
     },
   ];
 
-  const onTabChange = (key: string) => {
+  const onTabChange = async(key: string) => {
     setCurrentTabName(key);
-    switch (key) {
-      case "confirmed":
-        setIsInactive(false);
-        filteredData = users.filter((u) => u.user.emailConfirmed == true);
-        break;
-      case "interested":
-        setIsInactive(false);
-        filteredData = users.filter((u) => u.userRoles.includes("Зацікавлений"));
-        break;
-      case "unconfirmed":
-        setIsInactive(true);
-        filteredData = users.filter((u) => u.user.emailConfirmed == false);
-        break;
-      default:
-        break;
-    }
+    console.log(currentTabName);
     setViewedUsers(filteredData);
   };
-
   useEffect(() => {
-    onTabChange("confirmed");
-  }, [users]);
+  
+  }, [filteredData]);
+
   return (
     <Layout.Content
       onClick={() => {
@@ -431,32 +392,16 @@ const UsersTable = () => {
                     }
                     allowClear
                   >
-                    <TreeNode
-                      value={0}
-                      title="Всі округи"
-                      selectable={selectableAllRegions}
-                    >
+                    <TreeNode value={0} title="Всі округи">
                       {getDynamicRegions()}
                     </TreeNode>
-                    <TreeNode
-                      value={1}
-                      title="Всі станиці"
-                      selectable={selectableAllCities}
-                    >
+                    <TreeNode value={1} title="Всі станиці">
                       {getDynamicCities()}
                     </TreeNode>
-                    <TreeNode
-                      value={2}
-                      title="Всі курені"
-                      selectable={selectableAllClubs}
-                    >
+                    <TreeNode value={2} title="Всі курені">
                       {getDynamicClubs()}
                     </TreeNode>
-                    <TreeNode
-                      value={3}
-                      title="Всі ступені УПС/УСП"
-                      selectable={selectableAllDegrees}
-                    >
+                    <TreeNode value={3} title="Всі ступені УПС/УСП">
                       {getDynamicDegrees()}
                     </TreeNode>
                   </TreeSelect>
@@ -482,56 +427,56 @@ const UsersTable = () => {
       {loading === false ? (
         <Spinner />
       ) : (
-      <Card
-        style={{ width: "100%" }}
-        tabList={tabList}
-        activeTabKey={currentTabName}
-        onTabChange={(key) => {
-          onTabChange(key);
-        }}
-      >
-        <Table
-          className={classes.table}
-          bordered
-          rowKey="id"
-          scroll={{ x: 1450 }}
-          columns={ColumnsForUserTable}
-          dataSource={filteredData}
-          onRow={(record) => {
-            return {
-              onClick: () => {
-                setShowDropdown(false);
-              },
-              onContextMenu: (event) => {
-                event.preventDefault();
-                setShowDropdown(true);
-                setRecordObj(record.user.id);
-                setRoles(record.userRoles);
-                setX(event.pageX);
-                setY(event.pageY);
-              },
-            };
+        <Card
+          style={{ width: "100%" }}
+          tabList={tabList}
+          activeTabKey={currentTabName}
+          onTabChange={(key) => {
+            onTabChange(key);
           }}
-          onChange={(pagination) => {
-            if (pagination) {
-              window.scrollTo({
-                left: 0,
-                top: 0,
-                behavior: "smooth",
-              });
-            }
-          }}
-          pagination={{
-            current: page,
-            pageSize: pageSize,
-            total: total,
-            showLessItems: true,
-            responsive: true,
-            showSizeChanger: true,
-            onChange: (page) => handlePageChange(page),
-            onShowSizeChange: (page, size) => handleSizeChange(page, size),
-          }}
-        />
+        >
+          <Table
+            className={classes.table}
+            bordered
+            rowKey="id"
+            scroll={{ x: 1450 }}
+            columns={ColumnsForUserTable}
+            dataSource={filteredData}
+            onRow={(record) => {
+              return {
+                onClick: () => {
+                  setShowDropdown(false);
+                },
+                onContextMenu: (event) => {
+                  event.preventDefault();
+                  setShowDropdown(true);
+                  setRecordObj(record.user.id);
+                  setRoles(record.userRoles);
+                  setX(event.pageX);
+                  setY(event.pageY);
+                },
+              };
+            }}
+            onChange={(pagination) => {
+              if (pagination) {
+                window.scrollTo({
+                  left: 0,
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }
+            }}
+            pagination={{
+              current: page,
+              pageSize: pageSize,
+              total: total,
+              showLessItems: true,
+              responsive: true,
+              showSizeChanger: true,
+              onChange: (page) => handlePageChange(page),
+              onShowSizeChange: (page, size) => handleSizeChange(page, size),
+            }}
+          />
         </Card>
       )}
       <ClickAwayListener onClickAway={handleClickAway}>

@@ -145,7 +145,6 @@ const StatisticsCities = () => {
   };
 
   const onSubmit = async (info: any) => {
-    console.log(info)
     let counter = 1;
     let response = await StatisticsApi.getCitiesStatistics({
       CityIds: info.citiesId,
