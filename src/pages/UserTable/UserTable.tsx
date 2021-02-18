@@ -65,7 +65,7 @@ const UsersTable = () => {
   }, [page, pageSize, updatedUser]);
  
   useEffect(() => {
-   fetchData();
+    fetchData();
    onTabChange(currentTabName);
   }, [currentTabName]);
 
@@ -151,7 +151,6 @@ const UsersTable = () => {
 
   const fetchData = async () => {
     setLoading(false);
-   // console.log(currentTabName);
     try {
       const response = await getUsersForTableByPage({
         Page: page,
@@ -163,8 +162,7 @@ const UsersTable = () => {
         Tab: currentTabName,
       });
       setUsers(response.data.users);
-      filteredData = response.data.users;
-      console.log(filteredData);
+      setViewedUsers(response.data.users);
       setTotal(response.data.total);
     } finally {
       setLoading(true);
@@ -325,6 +323,7 @@ const UsersTable = () => {
         });
 
         setUsers(response.data.users);
+        setViewedUsers(response.data.users);
         setTotal(response.data.total);
       } finally {
         setLoading(true);
