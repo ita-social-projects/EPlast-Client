@@ -17,6 +17,7 @@ import{
   fileIsNotUpload, 
   successfulDeleteAction,
   failDeleteAction,
+  successfulCreateAction,
 } from "../../../components/Notifications/Messages"
 import { StickyContainer } from 'react-sticky';
 
@@ -45,6 +46,7 @@ const Assignments = () => {
   }
   const approveClick = async (userId: string, isClubAdmin: boolean = false, isCityAdmin: boolean = false) => {
     await userApi.approveUser(userId, isClubAdmin, isCityAdmin).
+      then(() => { notificationLogic('success', successfulCreateAction("Поручення")) }).
       catch(() => { notificationLogic('error', "Не вдалося поручитися") });
     fetchData();
   }
