@@ -321,6 +321,9 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
               htmlType="submit"
               className={formclasses.buttons}
               loading={submitLoading}
+              onClick={() => {
+                setFileData({ FileAsBase64: null, FileName: null });
+              }}
             >
               Опублікувати
             </Button>
