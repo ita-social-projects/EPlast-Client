@@ -23,6 +23,7 @@ export default function () {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
+  const a = 5;
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
