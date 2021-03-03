@@ -49,7 +49,7 @@ const fetchUser = async () => {
   setRegionAdm(roles.includes("Голова Округи"));
   setCityAdm(roles.includes("Голова Станиці"));
   setClubAdm(roles.includes("Голова Куреня"));
-  setCanSee(roles.includes("Пластун"));
+  setCanSee(roles.includes("Дійсний член організації"));
 }
 const fetchData = async () =>{
   await decisionsApi.getById(record).then(res => setData(res));
