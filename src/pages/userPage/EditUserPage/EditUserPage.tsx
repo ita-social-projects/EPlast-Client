@@ -214,7 +214,7 @@ export default function () {
     return word.replaceAll(/`/g, '\'');
   };
 
-  const setFirstLattersUpperCased  = (word: string) => {
+  const setFirstLettersUpperCased  = (word: string) => {
     if(word.length == 0) {
       return word;
     }
@@ -224,6 +224,14 @@ export default function () {
     parts = parts.map( (part) => part.charAt(0).toUpperCase()+ part.slice(1).toLowerCase());
     return parts.join('-');
   };
+
+  const setLettersLowerCased = (word: string) => {
+    if(word.length == 0) {
+      return word;
+    }
+
+    return word.charAt(0) + word.slice(1).toLowerCase();
+  };  
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -270,29 +278,36 @@ export default function () {
         id: 0,
         name: value,
       });
+      form.setFieldsValue({ nationalityName: setLettersLowerCased(changeApostropheInWord(value)) });
     } else {
       setNationality({
         id: parseInt(event.key),
         name: event.value,
       });
+      form.setFieldsValue({ nationalityName: setLettersLowerCased(changeApostropheInWord(event.value)) });
     }
   };
 
   const handleOnChangeFirstName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue( {firstName: setFirstLattersUpperCased(changeApostropheInWord(event.target.value)) });
+    form.setFieldsValue( {firstName: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
   }
 
   const handleOnChangeLastName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue({ lastName: setFirstLattersUpperCased(changeApostropheInWord(event.target.value))});
+    form.setFieldsValue({ lastName: setFirstLettersUpperCased(changeApostropheInWord(event.target.value))});
   }
 
   const handleOnChangeFathersName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue({ fatherName: setFirstLattersUpperCased(changeApostropheInWord(event.target.value)) });
+    form.setFieldsValue({ fatherName: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
   }
 
   const handleOnChangePseudo = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue({ pseudo: setFirstLattersUpperCased(changeApostropheInWord(event.target.value)) });
+    form.setFieldsValue({ pseudo: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
   }
+
+  const handleOnChangePublicPoliticalActivity = (event: React.ChangeEvent<HTMLInputElement>) => {
+    form.setFieldsValue({ publicPoliticalActivity: setLettersLowerCased(changeApostropheInWord(event.target.value)) });
+  }
+  
   
   const handleOnChangeReligion = (value: any, event: any) => {
     if (event.key === undefined) {
@@ -300,11 +315,13 @@ export default function () {
         id: 0,
         name: value,
       });
+      form.setFieldsValue({ religionName: setLettersLowerCased(changeApostropheInWord(value)) });
     } else {
       setReligion({
         id: parseInt(event.key),
         name: event.value,
       });
+      form.setFieldsValue({ religionName: setLettersLowerCased(changeApostropheInWord(event.value)) });
     }
   };
   const handleOnChangeDegree = (value: any, event: any) => {
@@ -721,7 +738,7 @@ export default function () {
               rules={validationSchema.publicPoliticalActivity}
               className={styles.formItem}
             >            
-              <Input className={styles.dataInput} maxLength={501}/>
+              <Input className={styles.dataInput} onChange={handleOnChangePublicPoliticalActivity} maxLength={501}/>
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
