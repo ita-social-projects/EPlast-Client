@@ -44,7 +44,7 @@ import { UpuDegree } from "../Interface/Interface";
 export default function () {
   const history = useHistory();
   const patern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50})*$/;
-  const secondPatern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50})*$/;
+  const secondPatern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`()0-9]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`()0-9]{0,50})*$/;
   const message = shouldContain("тільки літери");
   const [form] = Form.useForm();
 
@@ -169,7 +169,7 @@ export default function () {
     ],
     degree: [
       { max: 30, message: maxLength(30) },
-      { pattern: patern, message: message },
+      { pattern: secondPatern, message: message },
     ],
     placeOfStudy: [
       { max: 50, message: maxLength(50) },
@@ -191,7 +191,7 @@ export default function () {
     ],
     position: [
       { max: 30, message: maxLength(30) },
-      { pattern: patern, message: message },
+      { pattern: secondPatern, message: message },
     ],
     address: [
       { max: 50, message: maxLength(50) },
@@ -221,7 +221,7 @@ export default function () {
 
     let parts = word.split('-');
 
-    parts = parts.map( (part) => part.charAt(0).toUpperCase()+ part.slice(1).toLowerCase());
+    parts = parts.map( (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase());
     return parts.join('-');
   };
 
@@ -230,7 +230,10 @@ export default function () {
       return word;
     }
 
-    return word.charAt(0) + word.slice(1).toLowerCase();
+    let parts = word.split(' ');
+
+    parts = parts.map( (part) => part.charAt(0) + part.slice(1).toLowerCase());
+    return parts.join(' ');
   };  
 
   const getBase64 = (img: Blob, callback: Function) => {
@@ -307,8 +310,7 @@ export default function () {
   const handleOnChangePublicPoliticalActivity = (event: React.ChangeEvent<HTMLInputElement>) => {
     form.setFieldsValue({ publicPoliticalActivity: setLettersLowerCased(changeApostropheInWord(event.target.value)) });
   }
-  
-  
+
   const handleOnChangeReligion = (value: any, event: any) => {
     if (event.key === undefined) {
       setReligion({
@@ -337,6 +339,7 @@ export default function () {
       });
     }
   };
+
   const handleOnChangePlaceOfStudy = (value: any, event: any) => {
     if (event.key === undefined) {
       setPlaceOfStudyID(null);
@@ -344,6 +347,7 @@ export default function () {
       setPlaceOfStudyID(parseInt(event.key));
     }
   };
+
   const handleOnChangeSpeciality = (value: any, event: any) => {
     if (event.key === undefined) {
       setSpecialityID(null);
@@ -351,6 +355,7 @@ export default function () {
       setSpecialityID(parseInt(event.key));
     }
   };
+
   const handleOnChangePlaceOWork = (value: any, event: any) => {
     if (event.key === undefined) {
       setPlaceOfWorkID(null);
@@ -358,6 +363,7 @@ export default function () {
       setPlaceOfWorkID(parseInt(event.key));
     }
   };
+
   const handleOnChangePosition = (value: any, event: any) => {
     if (event.key === undefined) {
       setPositionID(null);
@@ -365,12 +371,15 @@ export default function () {
       setPositionID(parseInt(event.key));
     }
   };
+
   const handleOnChangeGender = (value: any) => {
     setGender(JSON.parse(value));
   };
+
   const changePhoneNumber = (event: any) => {
     setPhoneNumber(event.target.value);
   };
+
   const handleOnChangeBirthday = (event: any, value: any) => {
     if (value === "") {
       setBirthday(undefined);
@@ -378,9 +387,11 @@ export default function () {
       setBirthday(moment(event?._d));
     }
   };
+
   const handleOnChangeUpuDegree = (value: any) => {
     setUpuDegree(JSON.parse(value));
   };
+
   const handleDeletePhoto = async () => {
     await userApi
             .getImage(defaultPhotoName)
@@ -392,6 +403,7 @@ export default function () {
             });
             setPhotoName(defaultPhotoName);
   };
+
   const handleSubmit = async (values: any) => {
     const newUserProfile = {
       user: {
