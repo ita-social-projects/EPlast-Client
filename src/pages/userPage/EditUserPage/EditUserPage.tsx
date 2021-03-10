@@ -43,7 +43,7 @@ import { UpuDegree } from "../Interface/Interface";
 
 export default function () {
   const history = useHistory();
-  const patern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50})*$/;
+  const patern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`]{0,50})*$/;
   const secondPatern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50})*$/;
   const message = shouldContain("тільки літери");
   const [form] = Form.useForm();
