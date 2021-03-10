@@ -43,7 +43,7 @@ import { UpuDegree } from "../Interface/Interface";
 
 export default function () {
   const history = useHistory();
-  const patern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`]{0,50})*$/;
+  const patern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50})*$/;
   const secondPatern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50})*$/;
   const message = shouldContain("тільки літери");
   const [form] = Form.useForm();
@@ -63,6 +63,9 @@ export default function () {
   const [photoName, setPhotoName] = useState<any>(null);
   const [defaultPhotoName, setDefaultPhotoName] = useState<string>("default_user_image.png");
   const [upuDegree, setUpuDegree] = useState<UpuDegree>();
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>();
+  const [lastName, setLastName] = useState<string>();
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
@@ -207,6 +210,10 @@ export default function () {
     ],
   };
 
+  const changeApostropheInWord = (value: string) => {
+    return value.replace(/`/, '\'');
+  }
+
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
     reader.addEventListener("load", () => callback(reader.result));
@@ -259,7 +266,15 @@ export default function () {
       });
     }
   };
-  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const handleOnChangeFirstName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFirstName(changeApostropheInWord(event.currentTarget.value));
+  }
+
+  const handleOnChangeLastName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLastName(changeApostropheInWord(event.currentTarget.value));
+  }
+  
   const handleOnChangeReligion = (value: any, event: any) => {
     if (event.key === undefined) {
       setReligion({
@@ -459,7 +474,7 @@ export default function () {
               rules={validationSchema.name}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} maxLength={26}/>
+              <Input className={styles.dataInput} value={firstName} onChange={e=>handleOnChangeFirstName(e)} maxLength={26}/>
             </Form.Item>
             <Form.Item
               label="Прізвище"
@@ -467,7 +482,7 @@ export default function () {
               rules={validationSchema.surName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} maxLength={26}/>
+              <Input className={styles.dataInput} value={lastName} onChange={e=>handleOnChangeLastName(e)} maxLength={26}/>
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
