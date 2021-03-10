@@ -64,10 +64,6 @@ export default function () {
   const [defaultPhotoName, setDefaultPhotoName] = useState<string>("default_user_image.png");
   const [upuDegree, setUpuDegree] = useState<UpuDegree>();
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [firstName, setFirstName] = useState<string>();
-  const [lastName, setLastName] = useState<string>();
-  const [fathersName, setFathersName] = useState<string>();
-  const [pseudo, setPseudo] = useState<string>();
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
@@ -215,7 +211,18 @@ export default function () {
   };
 
   const changeApostropheInWord = (word: string) => {
-    return word.replace(/`/, '\'');
+    return word.replaceAll(/`/g, '\'');
+  };
+
+  const setFirstLattersUpperCased  = (word: string) => {
+    if(word.length == 0) {
+      return word;
+    }
+
+    let parts = word.split('-');
+
+    parts = parts.map( (part) => part.charAt(0).toUpperCase()+ part.slice(1).toLowerCase());
+    return parts.join('-');
   };
 
   const getBase64 = (img: Blob, callback: Function) => {
@@ -272,21 +279,19 @@ export default function () {
   };
 
   const handleOnChangeFirstName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFirstName(changeApostropheInWord(event.currentTarget.value));
+    form.setFieldsValue( {firstName: setFirstLattersUpperCased(changeApostropheInWord(event.target.value)) });
   }
 
   const handleOnChangeLastName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLastName(changeApostropheInWord(event.currentTarget.value));
+    form.setFieldsValue({ lastName: setFirstLattersUpperCased(changeApostropheInWord(event.target.value))});
   }
 
   const handleOnChangeFathersName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFathersName(changeApostropheInWord(event.currentTarget.value));
+    form.setFieldsValue({ fatherName: setFirstLattersUpperCased(changeApostropheInWord(event.target.value)) });
   }
 
   const handleOnChangePseudo = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPseudo(
-      changeApostropheInWord(event.currentTarget.value)
-    );
+    form.setFieldsValue({ pseudo: setFirstLattersUpperCased(changeApostropheInWord(event.target.value)) });
   }
   
   const handleOnChangeReligion = (value: any, event: any) => {
@@ -488,7 +493,7 @@ export default function () {
               rules={validationSchema.name}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} value={firstName} onChange={e=>handleOnChangeFirstName(e)} maxLength={26}/>
+              <Input className={styles.dataInput} onChange={handleOnChangeFirstName} maxLength={26}/>
             </Form.Item>
             <Form.Item
               label="Прізвище"
@@ -496,7 +501,7 @@ export default function () {
               rules={validationSchema.surName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} value={lastName} onChange={e=>handleOnChangeLastName(e)} maxLength={26}/>
+              <Input className={styles.dataInput} onChange={e=>handleOnChangeLastName(e)} maxLength={26}/>
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
@@ -506,7 +511,7 @@ export default function () {
               rules={validationSchema.fatherName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} value={fathersName} onChange={e=>handleOnChangeFathersName(e)} maxLength={26}/>
+              <Input className={styles.dataInput} onChange={e=>handleOnChangeFathersName(e)} maxLength={26}/>
             </Form.Item>
             <Form.Item
               label="Стать"
@@ -533,7 +538,7 @@ export default function () {
               rules={validationSchema.pseudo}
               className={styles.formItem}
             >            
-              <Input className={styles.dataInput} value={pseudo} onChange={e=>handleOnChangePseudo(e)} maxLength={31}/>
+              <Input className={styles.dataInput} onChange={handleOnChangePseudo} maxLength={31}/>
             </Form.Item>
             <Form.Item 
               label="Дата народження"
