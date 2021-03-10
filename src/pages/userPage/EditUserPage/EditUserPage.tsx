@@ -66,6 +66,8 @@ export default function () {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [firstName, setFirstName] = useState<string>();
   const [lastName, setLastName] = useState<string>();
+  const [fathersName, setFathersName] = useState<string>();
+  const [pseudo, setPseudo] = useState<string>();
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
@@ -160,7 +162,8 @@ export default function () {
     ],
     fatherName: [
       { max: 25, message: maxLength(25) },
-      { pattern: patern, message: message },
+      { min: 2, message: minLength(2) },
+      { pattern: patern, message: message }
     ],
     gender: [
       { required: true, message: emptyInput() },
@@ -201,6 +204,7 @@ export default function () {
     pseudo: [
       {max: 30, message: maxLength(30)},
       {pattern: patern, message: message},
+      { min: 2, message: minLength(2) }
     ],
     publicPoliticalActivity: [
       {max: 50, message: maxLength(50)},
@@ -210,9 +214,9 @@ export default function () {
     ],
   };
 
-  const changeApostropheInWord = (value: string) => {
-    return value.replace(/`/, '\'');
-  }
+  const changeApostropheInWord = (word: string) => {
+    return word.replace(/`/, '\'');
+  };
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -273,6 +277,16 @@ export default function () {
 
   const handleOnChangeLastName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLastName(changeApostropheInWord(event.currentTarget.value));
+  }
+
+  const handleOnChangeFathersName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFathersName(changeApostropheInWord(event.currentTarget.value));
+  }
+
+  const handleOnChangePseudo = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPseudo(
+      changeApostropheInWord(event.currentTarget.value)
+    );
   }
   
   const handleOnChangeReligion = (value: any, event: any) => {
@@ -492,7 +506,7 @@ export default function () {
               rules={validationSchema.fatherName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} maxLength={26}/>
+              <Input className={styles.dataInput} value={fathersName} onChange={e=>handleOnChangeFathersName(e)} maxLength={26}/>
             </Form.Item>
             <Form.Item
               label="Стать"
@@ -519,7 +533,7 @@ export default function () {
               rules={validationSchema.pseudo}
               className={styles.formItem}
             >            
-              <Input className={styles.dataInput} maxLength={31}/>
+              <Input className={styles.dataInput} value={pseudo} onChange={e=>handleOnChangePseudo(e)} maxLength={31}/>
             </Form.Item>
             <Form.Item 
               label="Дата народження"
