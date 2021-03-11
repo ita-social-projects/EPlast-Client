@@ -59,14 +59,14 @@ const UsersTable = () => {
   const [viewedUsers, setViewedUsers] = useState<UserTable[]>([]);
   const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
   const [isInactive, setIsInactive] = useState(false);
-
+  const { SHOW_PARENT } = TreeSelect;
   useEffect(() => {
     fetchData();
   }, [page, pageSize, updatedUser]);
- 
+
   useEffect(() => {
     fetchData();
-   onTabChange(currentTabName);
+    onTabChange(currentTabName);
   }, [currentTabName]);
 
   useEffect(() => {
@@ -182,7 +182,7 @@ const UsersTable = () => {
           item.clubName,
           item.userPlastDegreeName,
           item.userRoles,
-          item.user.userProfileId,
+          item.userProfileId,
           item.upuDegree,
         ]).find((element) => {
           return String(element).toLowerCase().includes(searchedData);
@@ -193,23 +193,23 @@ const UsersTable = () => {
   filteredData = Array.from(filteredData).concat(
     Array.from(viewedUsers).filter(
       (item) =>
-        (item.user.firstName?.toLowerCase()?.includes(searchedData) ||
-          item.user.lastName?.toLowerCase()?.includes(searchedData) ||
-          item.user.firstName?.includes(searchedData) ||
-          item.user.lastName?.includes(searchedData)) &&
+        (item.firstName?.toLowerCase()?.includes(searchedData) ||
+          item.lastName?.toLowerCase()?.includes(searchedData) ||
+          item.firstName?.includes(searchedData) ||
+          item.lastName?.includes(searchedData)) &&
         !filteredData.includes(item)
     )
   );
 
   const onSelect = (selectedKeys: any, e: any) => {
     if (e.value == 0) {
-      setDynamicRegions([...dynamicRegions, ...regions]);
+      setDynamicRegions([...dynamicRegions, e.title]);
     } else if (e.value == 1) {
-      setDynamicCities([...dynamicCities, ...cities]);
+      setDynamicCities([...dynamicCities, e.title]);
     } else if (e.value == 2) {
-      setDynamicClubs([...dynamicClubs, ...clubs]);
+      setDynamicClubs([...dynamicClubs, e.title]);
     } else if (e.value == 3) {
-      setDynamicDegrees([...dynamicDegrees, ...degrees]);
+      setDynamicDegrees([...dynamicDegrees, e.title]);
     } else if (e.value.startsWith("value1")) {
       setDynamicCities([...dynamicCities, e.title]);
     } else if (e.value.startsWith("value2")) {
@@ -321,7 +321,6 @@ const UsersTable = () => {
           Degrees: dynamicDegrees,
           Tab: currentTabName,
         });
-
         setUsers(response.data.users);
         setViewedUsers(response.data.users);
         setTotal(response.data.total);
@@ -345,14 +344,13 @@ const UsersTable = () => {
     },
   ];
 
-  const onTabChange = async(key: string) => {
+  const onTabChange = async (key: string) => {
+    setPage(page);
+    setPageSize(pageSize);
     setCurrentTabName(key);
-    console.log(currentTabName);
     setViewedUsers(filteredData);
   };
-  useEffect(() => {
-  
-  }, [filteredData]);
+  useEffect(() => {}, [filteredData]);
 
   return (
     <Layout.Content
@@ -383,6 +381,8 @@ const UsersTable = () => {
                     onDeselect={ondeSelect}
                     onSelect={onSelect}
                     className={classes.treeSelect}
+                    treeCheckable={true}
+                    showCheckedStrategy={SHOW_PARENT}
                     style={{ minWidth: "75%", height: "32px", maxWidth: "95%" }}
                     filterTreeNode={(input, option) =>
                       (option?.title as string)
@@ -449,7 +449,7 @@ const UsersTable = () => {
                 onContextMenu: (event) => {
                   event.preventDefault();
                   setShowDropdown(true);
-                  setRecordObj(record.user.id);
+                  setRecordObj(record.id);
                   setRoles(record.userRoles);
                   setX(event.pageX);
                   setY(event.pageY);
