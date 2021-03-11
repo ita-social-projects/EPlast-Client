@@ -405,7 +405,6 @@ export default function () {
       });
     fetchData();
   };
-  const { userId } = useParams();
 
   return loading === false ? (
     <Spinner />
