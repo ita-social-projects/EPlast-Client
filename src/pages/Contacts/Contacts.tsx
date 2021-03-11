@@ -39,6 +39,11 @@ export default function () {
   ];
 
   const handleSubmit = async (values: any) => {
+    if(values.PhoneNumber == "")
+    {
+      values.PhoneNumber = undefined;
+    }
+    
     await authService.sendQuestionAdmin(values);
     history.push("/contacts");
     form.resetFields();
