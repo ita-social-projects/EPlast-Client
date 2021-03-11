@@ -469,7 +469,6 @@ export default function () {
       });
     fetchData();
   };
-  const { userId } = useParams();
 
   return loading === false ? (
     <Spinner />
@@ -518,7 +517,7 @@ export default function () {
         <div className={styles.allFields}>
           <div className={styles.rowBlock}>
             <Form.Item
-              label="Ім`я"
+              label="Ім'я"
               name="firstName"
               rules={validationSchema.name}
               className={styles.formItem}
