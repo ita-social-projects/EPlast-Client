@@ -187,7 +187,8 @@ export default function () {
       { pattern: patern, message: message },
     ],
     placeOfWork: [
-      { max: 50, message: maxLength(50) }
+      { max: 50, message: maxLength(50) },
+      { pattern: patern, message: message }
     ],
     position: [
       { max: 30, message: maxLength(30) },
