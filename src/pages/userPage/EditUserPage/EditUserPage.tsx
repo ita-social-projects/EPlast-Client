@@ -47,6 +47,7 @@ export default function () {
   const secondPatern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50})*$/;
   const message = shouldContain("тільки літери");
   const [form] = Form.useForm();
+  const MAX_AGE = 100;
 
   const [nationality, setNationality] = useState<Nationality>();
   const [religion, setReligion] = useState<Religion>();
@@ -118,9 +119,9 @@ export default function () {
         setGender(response.data.user.gender);
         setUpuDegree(response.data.user.upuDegree); 
         if (response.data.user.birthday === "0001-01-01T00:00:00") {
-          setBirthday(undefined);
+          form.setFieldsValue({'birthday': undefined});
         } else {
-          setBirthday(moment(response.data.user.birthday));
+          form.setFieldsValue({'birthday': moment(response.data.user.birthday)});
         }
         if (response.data.user.phoneNumber === null) {
           setPhoneNumber("");
@@ -137,9 +138,9 @@ export default function () {
     fetchData();
   }, [form]);
 
-  function disabledDate(current: any) {
+  function disabledDate(current: moment.Moment) {
     let date =  moment().endOf('day');
-    return current && (current > date);
+    return current && (current > date) || current.isBefore(moment().subtract(MAX_AGE, 'year'));
   }
 
   const validationSchema = {
