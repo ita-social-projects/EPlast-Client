@@ -175,9 +175,9 @@ const ColumnsForUserTable: any = [
             <Tag color={"red"} key={userPlastDegreeName}>
               <Tooltip
                 placement="topLeft"
-                title={userPlastDegreeName.split("/")[0]}
+                title={userPlastDegreeName?.split("/")[0]}
               >
-                {userPlastDegreeName.split("/")[0].slice(0, 20)}
+                {userPlastDegreeName?.split("/")[0]?.slice(0, 20)}
               </Tooltip>
             </Tag>
           );
@@ -189,9 +189,9 @@ const ColumnsForUserTable: any = [
             <Tag color={"red"} key={userPlastDegreeName}>
               <Tooltip
                 placement="topLeft"
-                title={userPlastDegreeName.split("/")[1]}
+                title={userPlastDegreeName?.split("/")[1]}
               >
-                {userPlastDegreeName.split("/")[1].slice(0, 20)}
+                {userPlastDegreeName?.split("/")[1]?.slice(0, 20)}
               </Tooltip>
             </Tag>
           );
@@ -199,7 +199,7 @@ const ColumnsForUserTable: any = [
           return (
             <Tag color={"red"} key={userPlastDegreeName}>
               <Tooltip placement="topLeft" title={userPlastDegreeName}>
-                {userPlastDegreeName.slice(0, 20)}
+                {userPlastDegreeName?.slice(0, 20)}
               </Tooltip>
             </Tag>
           );
