@@ -212,7 +212,7 @@ export default function () {
   };
 
   const changeApostropheInWord = (word: string) => {
-    return word.replaceAll(/`/g, '\'');
+    return word.replace(/`/g, '\'');
   };
 
   const setFirstLettersUpperCased  = (word: string) => {
