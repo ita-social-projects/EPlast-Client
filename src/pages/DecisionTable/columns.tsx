@@ -16,7 +16,7 @@ const columns = [
   },
   {
     title: 'Керівний орган',
-    dataIndex: 'organization',
+    dataIndex: 'governingBody',
   },
   {
     title: 'Статус',

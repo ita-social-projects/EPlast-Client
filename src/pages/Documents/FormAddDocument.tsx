@@ -28,7 +28,7 @@ import {
 } from "../../components/Notifications/Messages"
 import { DocumentOnCreateData } from "../../models/Documents/DocumentOnCreateData";
 import { MethodicDocumentType } from "../../models/Documents/MethodicDocumentType"
-import { FileWrapper, Organization } from "../../api/decisionsApi";
+import { FileWrapper, GoverningBody } from "../../api/decisionsApi";
 import { DocumentWrapper } from "../../models/Documents/DocumentWraper";
 type FormAddDocumentsProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -107,7 +107,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
         type: TypePostParser(
           JSON.parse(values.methodicDocumentType)
         ),
-        organization: JSON.parse(values.organization),
+        governingBody: JSON.parse(values.governingBody),
         description: values.description,
         date:
           /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values
@@ -124,7 +124,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
   };
 
   const [data, setData] = useState<DocumentOnCreateData>({
-    organizations: Array<Organization>(),
+    governingBodies: Array<GoverningBody>(),
     methodicDocumentTypesItems: Array<MethodicDocumentType>(),
   });
 
@@ -194,9 +194,9 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
               placeholder="Оберіть орган"
               className={formclasses.selectField}
             >
-              {data?.organizations.map((o) => (
-                <Select.Option key={o.id} value={JSON.stringify(o)}>
-                  {o.organizationName}
+              {data?.governingBodies.map((g) => (
+                <Select.Option key={g.id} value={JSON.stringify(g)}>
+                  {g.name}
                 </Select.Option>
               ))}
             </Select>

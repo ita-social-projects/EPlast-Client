@@ -15,15 +15,15 @@ import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
 import CityAdmin from "../../models/City/CityAdmin";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
-import governingBodiesApi from "../../api/governingBodiesApi";
-import { Organization } from "../../api/decisionsApi";
+import { getGoverningBodiesList } from "../../api/governingBodiesApi";
+import { GoverningBody } from "../../api/decisionsApi";
 moment.locale("uk-ua");
 
 const RegionBoardAdministration = () => {
   const { id } = useParams();
   const history = useHistory();
 
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [governingBodies, setGoverningBodies] = useState<GoverningBody[]>([]);
   const [visibleModal, setVisibleModal] = useState(false);
   const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
@@ -31,10 +31,10 @@ const RegionBoardAdministration = () => {
 
   const getGoverningBodies = async () => {
     setLoading(true);
-    const responseOrgs = await governingBodiesApi.getOrganizationsList();
+    const responseOrgs = await getGoverningBodiesList();
     setPhotosLoading(true);
 
-    setOrganizations(responseOrgs);
+    setGoverningBodies(responseOrgs);
     setLoading(false);
   };
 
@@ -58,24 +58,26 @@ const RegionBoardAdministration = () => {
         <Spinner />
       ) : (
         <div className="cityMoreItems">
-          {organizations.length > 0 ? (
-            organizations.map((organization) => (
+          {governingBodies.length > 0 ? (
+            governingBodies.map((governingBody) => (
               <Card
-                key={organization.id}
+                key={governingBody.id}
                 className="detailsCard"
-                title={`${organization.organizationName}`}
+                title={`${governingBody.name}`}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
               >
-                <div className="cityMember" >
-                  <div>
+                <div className="cityMember">
+                  <div 
+                    onClick={() => history.push(`/governingBody/${governingBody.id}`)}
+                  >
                     {photosLoading ? (
                       <Skeleton.Avatar active size={86}></Skeleton.Avatar>
                     ) : (
-                      <Avatar size={86} src="" />
+                      <Avatar size={86} src={governingBody.logo} />
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={`${organization.organizationName}`}
+                      title={`${governingBody.name}`}
                     />
                   </div>
                 </div>
@@ -104,8 +106,7 @@ const RegionBoardAdministration = () => {
         onOk={handleOk}
         onCancel={handleOk}
         footer={null}
-      >
-      </Modal>
+      ></Modal>
     </Layout.Content>
   );
 };

@@ -1,13 +1,4 @@
-import {
-  Form,
-  Input,
-  Button,
-  Layout,
-  Card,
-  Upload,
-  Row,
-  Col,
-} from "antd";
+import { Form, Input, Button, Layout, Card, Upload, Row, Col } from "antd";
 import React, { useState, useEffect } from "react";
 import RegionsApi from "../../api/regionsApi";
 import ReactInputMask from "react-input-mask";
@@ -27,7 +18,7 @@ import {
   possibleFileExtensions,
   fileIsTooBig,
   successfulEditAction,
-} from "../../components/Notifications/Messages"
+} from "../../components/Notifications/Messages";
 
 const RegionBoardEditFormPage = () => {
   const [form] = Form.useForm();
@@ -35,7 +26,9 @@ const RegionBoardEditFormPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [logo, setLogo] = useState<any>();
 
-  const [chosenRegion, setChosenRegion] = useState<RegionBoardProfile>(new RegionBoardProfile());
+  const [chosenRegion, setChosenRegion] = useState<RegionBoardProfile>(
+    new RegionBoardProfile()
+  );
 
   useEffect(() => {
     getRegion();
@@ -112,7 +105,10 @@ const RegionBoardEditFormPage = () => {
 
     form.resetFields();
 
-    notificationLogic("success", successfulEditAction("Дані Крайового проводу"));
+    notificationLogic(
+      "success",
+      successfulEditAction("Дані Крайового проводу")
+    );
     history.push(`/regionsBoard`);
   };
 
@@ -156,7 +152,9 @@ const RegionBoardEditFormPage = () => {
                 >
                   <Input
                     disabled
-                    value={chosenRegion.regionName} maxLength={51} />
+                    value={chosenRegion.regionName}
+                    maxLength={51}
+                  />
                 </Form.Item>
               </Col>
               <Col md={{ span: 11, offset: 2 }} xs={24}>
@@ -165,10 +163,12 @@ const RegionBoardEditFormPage = () => {
                   name="description"
                   initialValue={chosenRegion?.description}
                   labelCol={{ span: 24 }}
-                  rules={[descriptionValidation.Description, descriptionValidation.Required]}
+                  rules={[
+                    descriptionValidation.Description,
+                    descriptionValidation.Required,
+                  ]}
                 >
-                  <Input
-                    value={chosenRegion?.description} maxLength={1001} />
+                  <Input value={chosenRegion?.description} maxLength={1001} />
                 </Form.Item>
               </Col>
 
@@ -198,8 +198,7 @@ const RegionBoardEditFormPage = () => {
                   initialValue={chosenRegion?.email}
                   rules={descriptionValidation.RegionEmail}
                 >
-                  <Input maxLength={51}
-                    value={chosenRegion?.email} />
+                  <Input maxLength={51} value={chosenRegion?.email} />
                 </Form.Item>
               </Col>
             </Row>
@@ -211,12 +210,12 @@ const RegionBoardEditFormPage = () => {
                   onClick={() => history.goBack()}
                 >
                   Назад
-                  </Button>
+                </Button>
               </Col>
               <Col xs={24} sm={12}>
                 <Button htmlType="submit" type="primary">
                   Підтвердити
-                  </Button>
+                </Button>
               </Col>
             </Row>
           </Form>
