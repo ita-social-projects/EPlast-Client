@@ -43,8 +43,8 @@ import { UpuDegree } from "../Interface/Interface";
 
 export default function () {
   const history = useHistory();
-  const patern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50})*$/;
-  const secondPatern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`()0-9]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`()0-9]{0,50})*$/;
+  const oneWordPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50})*$/;
+  const manyWordsPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`()0-9]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`()0-9]{0,50})*$/;
   const message = shouldContain("тільки літери");
   const [form] = Form.useForm();
 
@@ -148,18 +148,18 @@ export default function () {
       { max: 25, message: maxLength(25) },
       { min: 2, message: minLength(2) },
       { required: true, message: emptyInput() },
-      { pattern: patern, message: message },
+      { pattern: oneWordPattern, message: message },
     ],
     surName: [
       { max: 25, message: maxLength(25) },
       { min: 2, message: minLength(2) },
       { required: true, message: emptyInput() },
-      { pattern: patern, message: message },
+      { pattern: oneWordPattern, message: message },
     ],
     fatherName: [
       { max: 25, message: maxLength(25) },
       { min: 2, message: minLength(2) },
-      { pattern: patern, message: message }
+      { pattern: oneWordPattern, message: message }
     ],
     gender: [
       { required: true, message: emptyInput() },
@@ -169,30 +169,30 @@ export default function () {
     ],
     degree: [
       { max: 30, message: maxLength(30) },
-      { pattern: secondPatern, message: message },
+      { pattern: manyWordsPattern, message: message },
     ],
     placeOfStudy: [
       { max: 50, message: maxLength(50) },
     ],
     speciality: [
       { max: 50, message: maxLength(50) },
-      { pattern: secondPatern, message: message },
+      { pattern: manyWordsPattern, message: message },
     ],
     nationality: [
       { max: 25, message: maxLength(25) },
-      { pattern: patern, message: message },
+      { pattern: oneWordPattern, message: message },
     ],
     religion: [
       { max: 25, message: maxLength(25) },
-      { pattern: patern, message: message },
+      { pattern: oneWordPattern, message: message },
     ],
     placeOfWork: [
       { max: 50, message: maxLength(50) },
-      { pattern: patern, message: message }
+      { pattern: oneWordPattern, message: message }
     ],
     position: [
       { max: 30, message: maxLength(30) },
-      { pattern: secondPatern, message: message },
+      { pattern: manyWordsPattern, message: message },
     ],
     address: [
       { max: 50, message: maxLength(50) },
@@ -200,7 +200,7 @@ export default function () {
     ],
     pseudo: [
       {max: 30, message: maxLength(30)},
-      {pattern: patern, message: message},
+      {pattern: oneWordPattern, message: message},
       { min: 2, message: minLength(2) }
     ],
     publicPoliticalActivity: [
