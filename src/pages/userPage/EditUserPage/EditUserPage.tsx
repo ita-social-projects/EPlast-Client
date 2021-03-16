@@ -45,6 +45,8 @@ export default function () {
   const history = useHistory();
   const oneWordPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50})*$/;
   const manyWordsPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`()0-9]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`()0-9]{0,50})*$/;
+  const addressPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+-=%;₴~№"]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+-=%;₴~№"]{0,50})*$/;
+  const wrongAddressMessage = shouldContain("тільки літери та символи");
   const message = shouldContain("тільки літери");
   const [form] = Form.useForm();
   const MAX_AGE = 100;
@@ -198,6 +200,7 @@ export default function () {
     address: [
       { max: 50, message: maxLength(50) },
       { required: true, message: emptyInput() },
+      { pattern: addressPattern, message: wrongAddressMessage}
     ],
     pseudo: [
       {max: 30, message: maxLength(30)},
@@ -206,6 +209,7 @@ export default function () {
     ],
     publicPoliticalActivity: [
       {max: 50, message: maxLength(50)},
+      { pattern: manyWordsPattern, message: message },
     ],
     upuDegree: [
       { required: true, message: emptyInput() },
