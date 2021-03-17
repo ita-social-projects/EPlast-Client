@@ -433,11 +433,11 @@ export default function () {
         },
         nationality: {
           id: nationality?.id,
-          Name: nationality?.name.trim(),
+          Name: nationality?.name?.trim(),
         },
         religion: {
           id: religion?.id,
-          Name: religion?.name.trim(),
+          Name: religion?.name?.trim(),
         },
         education: {
           placeOfStudy: values.placeOfStudy?.trim(),
