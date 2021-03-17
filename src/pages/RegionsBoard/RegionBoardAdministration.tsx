@@ -35,7 +35,6 @@ const RegionBoardAdministration = () => {
     setPhotosLoading(true);
 
     setGoverningBodies(responseOrgs);
-    console.log(responseOrgs);
     setLoading(false);
   };
 
@@ -51,7 +50,7 @@ const RegionBoardAdministration = () => {
   useEffect(() => {
     getGoverningBodies();
   }, []);
-
+  
   return (
     <Layout.Content>
       <Title level={2}>Керівні органи Крайового Проводу</Title>
