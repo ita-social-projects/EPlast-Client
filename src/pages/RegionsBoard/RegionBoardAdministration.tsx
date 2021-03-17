@@ -35,6 +35,7 @@ const RegionBoardAdministration = () => {
     setPhotosLoading(true);
 
     setGoverningBodies(responseOrgs);
+    console.log(responseOrgs);
     setLoading(false);
   };
 
