@@ -19,7 +19,6 @@ export type FileWrapper = {
 export type GoverningBody = {
   id : number;
   name: string;
-  logo: string;
 }
 export type decisionTarget ={
   id : number;
