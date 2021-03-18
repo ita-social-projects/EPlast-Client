@@ -50,7 +50,7 @@ const RegionBoardAdministration = () => {
   useEffect(() => {
     getGoverningBodies();
   }, []);
-  
+
   return (
     <Layout.Content>
       <Title level={2}>Керівні органи Крайового Проводу</Title>
