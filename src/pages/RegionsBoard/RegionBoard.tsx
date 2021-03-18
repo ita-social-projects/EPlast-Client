@@ -347,7 +347,7 @@ const RegionBoard = () => {
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
-                  onClick={() => setvisible(true)}
+                  onClick={() => history.push(`/regionsBoard/createGoverningBody`)}
                 ></PlusSquareFilled>
               ) : null}
               <Button

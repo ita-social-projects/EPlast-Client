@@ -26,7 +26,7 @@ import {
   updateGoverningBody,
 } from "../../api/GoverningBodiesApi";
 import "../City/CreateCity/CreateCity.less";
-import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfile";
+import GoverningBodyProfile from "../../models/GoverningBody/governingBodyProfile";
 import RegionBoardProfile from "../../models/RegionBoard/RegionBoardProfile";
 import notificationLogic from "../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
