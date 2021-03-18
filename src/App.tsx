@@ -265,7 +265,7 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/regionsBoard/createGoverningBody"
+            path="/regionsBoard/new"
             component={CreateGoverningBody}
           />
           <RouteWithLayout
