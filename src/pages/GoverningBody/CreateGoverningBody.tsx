@@ -18,15 +18,15 @@ import {
 } from "@ant-design/icons/lib";
 import ReactInputMask from "react-input-mask";
 import { RcCustomRequestOptions } from "antd/lib/upload/interface";
-import GoverningBodyDefaultLogo from "../../../assets/images/default_city_image.jpg";
+import GoverningBodyDefaultLogo from "../../assets/images/default_city_image.jpg";
 import {
   createGoverningBody,
   getGoverningBodyById,
   getLogo,
   updateGoverningBody,
-} from "../../api/GoverningBodiesApi";
+} from "../../api/governingBodiesApi";
 import "../City/CreateCity/CreateCity.less";
-import GoverningBodyProfile from "../../models/GoverningBody/governingBodyProfile";
+import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfile";
 import RegionBoardProfile from "../../models/RegionBoard/RegionBoardProfile";
 import notificationLogic from "../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
