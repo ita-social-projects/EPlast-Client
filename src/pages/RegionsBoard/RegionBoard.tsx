@@ -38,6 +38,7 @@ import decisionsApi, {
 import { getGoverningBodiesList } from "../../api/governingBodiesApi";
 import AddDecisionModal from "../DecisionTable/AddDecisionModal";
 import notificationLogic from "../../components/Notifications/Notification";
+import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfile";
 
 const RegionBoard = () => {
   const history = useHistory();
@@ -80,11 +81,14 @@ const RegionBoard = () => {
     city: "",
   });
 
-  const [governingBodies, setGoverningBodies] = useState<any[]>([
+  const [governingBodies, setGoverningBodies] = useState<GoverningBody[]>([
     {
-      id: "",
-      name: "",
+      id: 0,
+      governingBodyName: "",
       logo: "",
+      description: "",
+      phoneNumber: "",
+      email: ""
     },
   ]);
 
@@ -159,7 +163,7 @@ const RegionBoard = () => {
         const dec: Decision = {
           id: res.id,
           name: res.name,
-          governingBody: res.governingBody.name,
+          governingBody: res.governingBody.governingBodyName,
           decisionStatusType: statusTypeGetParser(res.decisionStatusType),
           decisionTarget: res.decisionTarget.targetName,
           description: res.description,
@@ -333,7 +337,7 @@ const RegionBoard = () => {
                         <Avatar size={64} src={governingBody.logo} />
                       )}
                       <p className="userName">
-                        {governingBody.name}
+                        {governingBody.governingBodyName}
                       </p>
                     </div>
                   </Col>

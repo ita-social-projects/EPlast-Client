@@ -17,9 +17,12 @@ export type FileWrapper = {
   FileName : string | null;
 }
 export type GoverningBody = {
-  id : number;
-  name: string;
-  logo: string;
+  id: number;
+  governingBodyName: string;
+  logo: string | null;
+  description: string;
+  phoneNumber: string;
+  email: string;
 }
 export type decisionTarget ={
   id : number;

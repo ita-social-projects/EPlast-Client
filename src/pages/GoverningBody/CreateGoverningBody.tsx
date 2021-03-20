@@ -44,8 +44,6 @@ import{
   failUpdateAction,
 } from "../../components/Notifications/Messages"
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
-import { GetRegionsBoard } from "../../api/regionsApi";
-
 
 const CreateGoverningBody = () => {
   const { id } = useParams();
@@ -53,7 +51,6 @@ const CreateGoverningBody = () => {
 
   const [loading, setLoading] = useState(false);
   const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(new GoverningBodyProfile());
-  const [regionsBoard, setRegionsBoard] = useState<RegionBoardProfile[]>([]);
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -117,8 +114,6 @@ const CreateGoverningBody = () => {
   const getRegionsBoard = async () => {
     try {
       setLoading(true);
-      const response = await GetRegionsBoard();
-      setRegionsBoard(response.data);
     } finally {
       setLoading(false);
     }
@@ -134,19 +129,12 @@ const CreateGoverningBody = () => {
 
   const handleSubmit = async (values: any) => {
     const newGoverningBody: GoverningBodyProfile = {
-      governingBodyURL: values.governingBodyURL,
+      id: governingBody.id,
       description: values.description,
       email: values.email,
-      head: governingBody.head,
-      houseNumber: values.houseNumber,
-      id: governingBody.id,
+      governingBodyName: values.name,
       logo: governingBody.logo?.length === 0 ? null : governingBody.logo,
-      officeNumber: values.officeNumber,
-      name: values.name,
       phoneNumber: values.phoneNumber,
-      postIndex: values.postIndex,
-      region: values.region,
-      street: values.street,
     };
 
     if (!governingBody.id) {
@@ -188,7 +176,7 @@ const CreateGoverningBody = () => {
   return loading && governingBody ? (
     <Spinner />
   ) : (
-    <Layout.Content className="createGoverningBody">
+    <Layout.Content className="createCity">
       <Card hoverable className="createCityCard">
         {governingBody.id ? (
           <Title level={2}>Редагування керівного органу</Title>
@@ -241,17 +229,6 @@ const CreateGoverningBody = () => {
             </Col>
             <Col md={11} xs={24}>
               <Form.Item
-                name="governingBodyURL"
-                label="Посилання"
-                labelCol={{ span: 24 }}
-                initialValue={governingBody.governingBodyURL}
-                rules={[descriptionValidation.Link]}
-              >
-                <Input value={governingBody.governingBodyURL} maxLength={257} />
-              </Form.Item>
-            </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
-              <Form.Item
                 name="phoneNumber"
                 label="Номер телефону"
                 labelCol={{ span: 24 }}
@@ -267,7 +244,7 @@ const CreateGoverningBody = () => {
                 </ReactInputMask>
               </Form.Item>
             </Col>
-            <Col md={11} xs={24}>
+            <Col md={{ span: 11, offset: 2 }} xs={24}>
               <Form.Item
                 name="email"
                 label="Електронна пошта"
@@ -276,70 +253,6 @@ const CreateGoverningBody = () => {
                 rules={descriptionValidation.Email}
               >
                 <Input value={governingBody.email} maxLength={51} />
-              </Form.Item>
-            </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
-              <Form.Item
-                name="region"
-                label="Округа"
-                labelCol={{ span: 24 }}
-                initialValue={governingBody.region}
-                rules={[{ required: true, message: emptyInput("округа") }]}
-              >
-                <Select
-                  showSearch
-                  optionFilterProp="children"
-                >
-                  {regionsBoard.map((item: RegionBoardProfile) => (
-                    <Select.Option key={item.id} value={item.regionName}>
-                      {item.regionName}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col md={11} xs={24}>
-              <Form.Item
-                name="street"
-                label="Вулиця"
-                labelCol={{ span: 24 }}
-                initialValue={governingBody.street}
-                rules={descriptionValidation.Street}
-              >
-                <Input value={governingBody.street} maxLength={51} />
-              </Form.Item>
-            </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
-              <Form.Item
-                name="houseNumber"
-                label="Номер будинку"
-                labelCol={{ span: 24 }}
-                initialValue={governingBody.houseNumber}
-                rules={descriptionValidation.houseNumber}
-              >
-                <Input value={governingBody.houseNumber} maxLength={6} />
-              </Form.Item>
-            </Col>
-            <Col md={11} xs={24}>
-              <Form.Item
-                name="officeNumber"
-                label="Номер офісу/квартири"
-                labelCol={{ span: 24 }}
-                initialValue={governingBody.officeNumber}
-                rules={descriptionValidation.officeNumber}
-              >
-                <Input value={governingBody.officeNumber} maxLength={6} />
-              </Form.Item>
-            </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
-              <Form.Item
-                name="postIndex"
-                label="Поштовий індекс"
-                labelCol={{ span: 24 }}
-                initialValue={governingBody.postIndex}
-                rules={descriptionValidation.postIndex}
-              >
-                <Input type="number" value={governingBody.postIndex} />
               </Form.Item>
             </Col>
           </Row>

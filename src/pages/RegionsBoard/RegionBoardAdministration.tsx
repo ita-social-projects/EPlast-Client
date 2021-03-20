@@ -20,7 +20,6 @@ import { GoverningBody } from "../../api/decisionsApi";
 moment.locale("uk-ua");
 
 const RegionBoardAdministration = () => {
-  const { id } = useParams();
   const history = useHistory();
 
   const [governingBodies, setGoverningBodies] = useState<GoverningBody[]>([]);
@@ -63,7 +62,7 @@ const RegionBoardAdministration = () => {
               <Card
                 key={governingBody.id}
                 className="detailsCard"
-                title={`${governingBody.name}`}
+                title={`${governingBody.governingBodyName}`}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
               >
                 <div className="cityMember">
@@ -77,7 +76,7 @@ const RegionBoardAdministration = () => {
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={`${governingBody.name}`}
+                      title={`${governingBody.governingBodyName}`}
                     />
                   </div>
                 </div>
