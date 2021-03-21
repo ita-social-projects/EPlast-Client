@@ -19,7 +19,7 @@ export type FileWrapper = {
 export type GoverningBody = {
   id: number;
   governingBodyName: string;
-  logo: string | null;
+  logo: string | undefined;
   description: string;
   phoneNumber: string;
   email: string;

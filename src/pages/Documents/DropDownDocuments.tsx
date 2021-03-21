@@ -28,7 +28,7 @@ const DropDown = (props: Props) => {
   const [data, setData] = useState<DocumentPost>({
     id: 0,
     name: "",
-    governingBody: { id: 0, name: "", logo: "" },
+    governingBody: {id : 0, description: "", phoneNumber: "", email: "" ,governingBodyName: "", logo: ""},
     type: 0,
     description: "",
     date: "",

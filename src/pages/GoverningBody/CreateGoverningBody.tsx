@@ -210,10 +210,10 @@ const CreateGoverningBody = () => {
                 name="name"
                 label="Назва"
                 labelCol={{ span: 24 }}
-                initialValue={governingBody.name}
+                initialValue={governingBody.governingBodyName}
                 rules={descriptionValidation.Name}
               >
-                <Input value={governingBody.name} maxLength={51} />
+                <Input value={governingBody.governingBodyName} maxLength={51} />
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>

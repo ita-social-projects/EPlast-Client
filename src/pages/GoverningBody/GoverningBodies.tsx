@@ -123,7 +123,7 @@ const GoverningBodies = () => {
                         }
                         onClick={() => history.push(`${url}/${governingBody.id}`)}
                       >
-                        <Card.Meta title={governingBody.name} className="titleText" />
+                        <Card.Meta title={governingBody.governingBodyName} className="titleText" />
                       </Card>
                     </Link>
                   ))

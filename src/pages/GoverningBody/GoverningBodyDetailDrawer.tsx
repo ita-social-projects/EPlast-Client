@@ -13,7 +13,7 @@ interface Props {
 const GoverningBodyDetailDrawer = (props: Props) => {
   return (
     <Drawer
-      title={`Деталі керівного органу ${props.governingBody.name?.length > 0 ? props.governingBody.name : ""}`}
+      title={`Деталі керівного органу ${props.governingBody.governingBodyName?.length > 0 ? props.governingBody.governingBodyName : ""}`}
       onClose={() => props.setVisibleDrawer(false)}
       visible={props.visibleDrawer}
       footer={null}
@@ -23,25 +23,6 @@ const GoverningBodyDetailDrawer = (props: Props) => {
     >
       <Form className="detailsForm">
         <Row justify="center" gutter={[12, 0]}>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="governingBodyURL"
-              label="Посилання"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.governingBody.governingBodyURL?.length > 0 ? props.governingBody.governingBodyURL : "---"
-              }
-            >
-              <a href={props.governingBody.governingBodyURL} target="_blank">
-                <Input
-                  value={
-                    props.governingBody.governingBodyURL?.length > 0 ? props.governingBody.governingBodyURL : "---"
-                  }
-                  disabled
-                />
-              </a>
-            </Form.Item>
-          </Col>
           <Col md={12} xs={24}>
             <Form.Item
               name="phoneNumber"
@@ -80,106 +61,10 @@ const GoverningBodyDetailDrawer = (props: Props) => {
               />
             </Form.Item>
           </Col>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="region"
-              label="Округа"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.governingBody.region?.length > 0 ? props.governingBody.region : "---"
-              }
-            >
-              <Input
-                value={
-                  props.governingBody.region?.length > 0 ? props.governingBody.region : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
+
         </Row>
-        <Row justify="center" gutter={[12, 0]}>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="street"
-              label="Вулиця"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.governingBody.street?.length > 0 ? props.governingBody.street : "---"
-              }
-            >
-              <Input
-                value={
-                  props.governingBody.street?.length > 0 ? props.governingBody.street : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="houseNumber"
-              label="Номер будинку"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.governingBody.houseNumber?.length > 0
-                  ? props.governingBody.houseNumber
-                  : "---"
-              }
-            >
-              <Input
-                value={
-                  props.governingBody.houseNumber?.length > 0
-                    ? props.governingBody.houseNumber
-                    : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row justify="center" gutter={[12, 0]}>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="officeNumber"
-              label="Номер офісу/квартири"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.governingBody.officeNumber?.length > 0
-                  ? props.governingBody.officeNumber
-                  : "---"
-              }
-            >
-              <Input
-                value={
-                  props.governingBody.officeNumber?.length > 0
-                    ? props.governingBody.officeNumber
-                    : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="postIndex"
-              label="Поштовий індекс"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.governingBody.postIndex?.length > 0 ? props.governingBody.postIndex : "---"
-              }
-            >
-              <Input
-                value={
-                  props.governingBody.postIndex?.length > 0
-                    ? props.governingBody.postIndex
-                    : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
-        </Row>
+
+       
         <Row justify="center" gutter={[12, 0]}>
           <Col md={24} xs={24}>
             <Form.Item

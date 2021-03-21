@@ -55,7 +55,7 @@ const DocumentsTable = () => {
       const dec: Document = {
         id: res.id,
         name: res.name,
-        governingBody: res.governingBody.name,
+        governingBody: res.governingBody.governingBodyName,
         type: TypeGetParser(res.type),
         description: res.description,
         fileName: res.fileName,

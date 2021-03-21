@@ -79,7 +79,7 @@ const GoverningBody = () => {
     admins.map(async (ad) => {
       await NotificationBoxApi.createNotifications(
         [ad.userId],
-        `На жаль керівний орган: '${governingBody.name}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
+        `На жаль керівний орган: '${governingBody.governingBodyName}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
         NotificationBoxApi.NotificationTypes.UserNotifications
       );
     });
@@ -152,8 +152,8 @@ const GoverningBody = () => {
   }, []);
 
   useEffect(() => {
-    if (governingBody.name.length != 0) {
-      PsevdonimCreator.setPseudonimLocation(`governingBodies/${governingBody.name}`, `governingBodies/${id}`);
+    if (governingBody.governingBodyName.length != 0) {
+      PsevdonimCreator.setPseudonimLocation(`governingBodies/${governingBody.governingBodyName}`, `governingBodies/${id}`);
     }
   }, [governingBody])
 
@@ -169,13 +169,13 @@ const GoverningBody = () => {
           <Card hoverable className="CityCard">
             <div>
               <Crumb
-                current={governingBody.name}
+                current={governingBody.governingBodyName}
                 first="/"
                 second={url.replace(`/${id}`, "")}
                 second_name="Керівні органи"
               />
             </div>
-            <Title level={3}>Станиця {governingBody.name}</Title>
+            <Title level={3}>Керівний Орган {governingBody.governingBodyName}</Title>
             <Row className="CityPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
                 {governingBodyLogoLoading ? (
@@ -191,64 +191,6 @@ const GoverningBody = () => {
                   aria-hidden="false"
                   className="mainMap"
                 />
-              </Col>
-            </Row>
-            <Row className="CityInfo">
-              <Col md={13} sm={24} xs={24}>
-                {governingBody.head ? (
-                  <div>
-                    <Paragraph>
-                      <b>Станичний:</b> {governingBody.head.user.firstName}{" "}
-                      {governingBody.head.user.lastName}
-                    </Paragraph>
-                    {governingBody.head.endDate ? (
-                      <Paragraph>
-                        <b>Час правління:</b>{" "}
-                        {moment(governingBody.head.startDate).format("DD.MM.YYYY")}{" - "}
-                        {moment(governingBody.head.endDate).format("DD.MM.YYYY")}
-                      </Paragraph>
-                    ) : (
-                        <Paragraph>
-                          <b>Початок правління:</b>{" "}
-                          {moment(governingBody.head.startDate).format("DD.MM.YYYY")}
-                        </Paragraph>
-                      )}
-                  </div>
-                ) : (
-                    <Paragraph>
-                      <b>Немає голови керівного органу</b>
-                    </Paragraph>
-                  )}
-              </Col>
-              <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
-                {governingBody.governingBodyURL || governingBody.email || governingBody.phoneNumber ? (
-                  <div>
-                    {governingBody.governingBodyURL ? (
-                      <Paragraph ellipsis>
-                        <b>Посилання:</b>{" "}
-                        <u>
-                          <a href={governingBody.governingBodyURL} target="_blank">
-                            {governingBody.governingBodyURL}
-                          </a>
-                        </u>
-                      </Paragraph>
-                    ) : null}
-                    {governingBody.phoneNumber ? (
-                      <Paragraph>
-                        <b>Телефон:</b> {governingBody.phoneNumber}
-                      </Paragraph>
-                    ) : null}
-                    {governingBody.email ? (
-                      <Paragraph>
-                        <b>Пошта:</b> {governingBody.email}
-                      </Paragraph>
-                    ) : null}
-                  </div>
-                ) : (
-                    <Paragraph>
-                      <b>Немає контактів</b>
-                    </Paragraph>
-                  )}
               </Col>
             </Row>
             <Row className="CityButtons" justify="center" gutter={[12, 0]}>

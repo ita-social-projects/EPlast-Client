@@ -50,7 +50,7 @@ const DecisionTable = () => {
       const dec: Decision = {
         id: res.id,
         name: res.name,
-        governingBody: res.governingBody.name,
+        governingBody: res.governingBody.governingBodyName,
         decisionStatusType: statusTypeGetParser(res.decisionStatusType),
         decisionTarget: res.decisionTarget.targetName,
         description: res.description,

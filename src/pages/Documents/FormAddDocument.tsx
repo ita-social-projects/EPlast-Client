@@ -196,7 +196,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             >
               {data?.governingBodies.map((g) => (
                 <Select.Option key={g.id} value={JSON.stringify(g)}>
-                  {g.name}
+                  {g.governingBodyName}
                 </Select.Option>
               ))}
             </Select>

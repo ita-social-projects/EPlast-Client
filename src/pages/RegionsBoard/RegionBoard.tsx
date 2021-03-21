@@ -43,7 +43,6 @@ import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfil
 const RegionBoard = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
-  const { id } = useParams();
   const [visibleModal, setVisibleModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [photoStatus, setPhotoStatus] = useState(true);
@@ -334,7 +333,7 @@ const RegionBoard = () => {
                       {photosLoading ? (
                         <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
-                        <Avatar size={64} src={governingBody.logo} />
+                        <Avatar size={64} src={governingBody.logo == null ? undefined : governingBody.logo} />
                       )}
                       <p className="userName">
                         {governingBody.governingBodyName}
