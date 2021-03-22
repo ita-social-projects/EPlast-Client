@@ -281,7 +281,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
           >
             <Select className={formclasses.selectField} showSearch>
               <Select.Option key="9" value="Прийнято">Прийнято</Select.Option>
-              <Select.Option key="10" value="Потверджено">Потверджено</Select.Option>
+              <Select.Option key="10" value="Підтверджено">Підтверджено</Select.Option>
               <Select.Option key="11" value="Скасовано">Скасовано</Select.Option>
             </Select>
           </Form.Item>

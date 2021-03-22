@@ -83,6 +83,7 @@ const PrecautionTable = () => {
         item.reporter,
         item.reason,
         item.number,
+        item.status,
         moment(item.date.toLocaleString()).format("DD.MM.YYYY"),
       ]).find((element) => {
         return String(element).toLowerCase().includes(searchedData);
