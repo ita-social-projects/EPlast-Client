@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch, Link } from "react-router-dom";
 import { Card, Layout, Pagination, Result, Skeleton } from "antd";
-import Add from "../../../assets/images/add.png";
-import GoverningBodyDefaultLogo from "../../../assets/images/default_city_image.jpg";
-import { getGoverningBodiesByPage, getLogo } from "../../api/governingBodiesApi";
+import GoverningBodyDefaultLogo from "../../assets/images/default_city_image.jpg";
+import { getGoverningBodiesByPage, getGoverningBodyLogo } from "../../api/governingBodiesApi";
 import "../City/Cities/Cities.less";
 import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfile";
 import Title from "antd/lib/typography/Title";
@@ -23,18 +22,21 @@ const GoverningBodies = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
 
-  const setPhotos = async (governingBodies: GoverningBodyProfile[]) => {
+  const setPhotos = async () => {
     for await (const governingBody of governingBodies) {
       if (governingBody.logo === null) {
         governingBody.logo = GoverningBodyDefaultLogo;
       } else {
-        const logo = await getLogo(governingBody.logo);
+        const logo = await getGoverningBodyLogo(governingBody.logo);
         governingBody.logo = logo.data;
       }
     }
-
+ 
     setPhotosLoading(false);
   };
+  
+  if(photosLoading) setPhotos();
+
   const getGoverningBodies = async () => {
     setLoading(true);
 
@@ -46,7 +48,6 @@ const GoverningBodies = () => {
       );
 
       setPhotosLoading(true);
-      setPhotos(response.data.governingBodies);
       setGoverningBodies(response.data.governingBodies);
       setCanCreate(response.data.canCreate);
       setTotal(response.data.total);
@@ -89,20 +90,6 @@ const GoverningBodies = () => {
       ) : (
           <div>
             <div className="cityWrapper">
-              {canCreate && page === 1 && searchedData.length === 0 ? (
-                <Card
-                  hoverable
-                  className="cardStyles addCity"
-                  cover={<img src={Add} alt="AddGoverningBody" />}
-                  onClick={() => history.push(`${url}/new`)}
-                >
-                  <Card.Meta
-                    className="titleText"
-                    title="Створити новий керівний орган"
-                  />
-                </Card>
-              ) : null}
-
               {governingBodies.length === 0 && searchedData.length !== 0 ? (
                 <div>
                   <Result status="404" title="Керівний орган не знайдено" />

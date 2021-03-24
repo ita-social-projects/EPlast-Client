@@ -28,7 +28,7 @@ import {
 import moment from "moment";
 import {
   getGoverningBodyById,
-  getLogo,
+  getGoverningBodyLogo,
   removeGoverningBody
 } from "../../../api/governingBodiesApi";
 import userApi from "../../../api/UserApi";
@@ -91,7 +91,7 @@ const GoverningBody = () => {
     if (logo === null) {
       setGoverningBodyLogo64(CityDefaultLogo);
     } else {
-      const response = await getLogo(logo);
+      const response = await getGoverningBodyLogo(logo);
       setGoverningBodyLogo64(response.data);
     }
     setGoverningBodyLogoLoading(false);

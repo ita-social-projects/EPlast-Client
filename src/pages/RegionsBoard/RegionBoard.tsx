@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams, useRouteMatch } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import {
   Avatar,
   Row,
@@ -35,14 +35,12 @@ import decisionsApi, {
   statusTypeGetParser,
   GoverningBody,
 } from "../../api/decisionsApi";
-import { getGoverningBodiesList } from "../../api/governingBodiesApi";
+import { getGoverningBodiesList, getGoverningBodyLogo } from "../../api/governingBodiesApi";
 import AddDecisionModal from "../DecisionTable/AddDecisionModal";
 import notificationLogic from "../../components/Notifications/Notification";
-import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfile";
 
 const RegionBoard = () => {
   const history = useHistory();
-  const { url } = useRouteMatch();
   const [visibleModal, setVisibleModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [photoStatus, setPhotoStatus] = useState(true);
@@ -94,14 +92,10 @@ const RegionBoard = () => {
   const [orgsCount, setOrgsCount] = useState<number>();
   const [decisionsCount, setDecisionsCount] = useState<number>();
   const [canCreate, setCanCreate] = useState(false);
-  const [photosLoading, setPhotosLoading] = useState<boolean>(false);
-  const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
   const [decisions, setDecisions] = useState<Decision[]>([]);
-  const [visible, setvisible] = useState<boolean>(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
-  const [visibleDecisionModal, setVisibleDecisionModal] = useState<boolean>(
-    false
-  );
+  const [visibleDecisionModal, setVisibleDecisionModal] = useState<boolean>(false);
+  const [gbPhotosAreLoading, setGbPhotosAreLoading] = useState<boolean>(false);
 
   const getRegion = async () => {
     setLoading(true);
@@ -110,17 +104,29 @@ const RegionBoard = () => {
       setRegionDecisions();
       setRegionOrgs();
       setRegionDocs(response.data.id);
-      setPhotosLoading(false);
-      setRegionLogoLoading(true);
       setRegion(response.data);
       setCanEdit(response.data.canEdit);
       if (response.data.logo == null) {
         setPhotoStatus(false);
       }
-    } finally {
-      setLoading(false);
+      } finally {
+        setLoading(false);
     }
   };
+  
+  const loadGbPhotos = async () => {
+    
+    for (let i = 0; i < governingBodies.length; i++) {
+      if (governingBodies[i].logo == undefined) continue;
+      governingBodies[i].logo = (
+        await getGoverningBodyLogo(governingBodies[i].logo!)
+      ).data;
+    }
+
+    setGbPhotosAreLoading(false);
+  };
+
+  if(gbPhotosAreLoading) loadGbPhotos();
 
   const onAdd = (newDocument: CityDocument) => {
     if (documents.length < 6) {
@@ -144,14 +150,15 @@ const RegionBoard = () => {
     responseOrgs.length > 6
       ? setGoverningBodies(responseOrgs.slice(responseOrgs.length - 6))
       : setGoverningBodies(responseOrgs);
+    setGbPhotosAreLoading(true);
   };
 
   const setRegionDecisions = async () => {
-    const responseDecisions: Decision[] = await decisionsApi.getAll();
-    setDecisionsCount(responseDecisions.length);
-    responseDecisions.length > 6
-      ? setDecisions(responseDecisions.slice(responseDecisions.length - 6))
-      : setDecisions(responseDecisions);
+    const decisions: Decision[] = await decisionsApi.getAll();
+    setDecisionsCount(decisions.length);
+    decisions.length > 6
+      ? setDecisions(decisions.slice(decisions.length - 6))
+      : setDecisions(decisions);
   };
 
   const handleAdd = async () => {
@@ -330,7 +337,7 @@ const RegionBoard = () => {
                     <div
                       onClick={() => history.push(`/governingBody/${governingBody.id}`)}
                     >
-                      {photosLoading ? (
+                      {gbPhotosAreLoading ? (
                         <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
                         <Avatar size={64} src={governingBody.logo == null ? undefined : governingBody.logo} />

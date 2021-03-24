@@ -22,7 +22,7 @@ import GoverningBodyDefaultLogo from "../../assets/images/default_city_image.jpg
 import {
   createGoverningBody,
   getGoverningBodyById,
-  getLogo,
+  getGoverningBodyLogo,
   updateGoverningBody,
 } from "../../api/governingBodiesApi";
 import "../City/CreateCity/CreateCity.less";
@@ -101,7 +101,7 @@ const CreateGoverningBody = () => {
       let response = await getGoverningBodyById(+id);
 
       if (response.data.logo !== null) {
-        const logo = await getLogo(response.data.logo);
+        const logo = await getGoverningBodyLogo(response.data.logo);
         response.data.logo = logo.data;
       }
 

@@ -13,10 +13,9 @@ import moment from "moment";
 import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
-import CityAdmin from "../../models/City/CityAdmin";
-import NotificationBoxApi from "../../api/NotificationBoxApi";
-import { getGoverningBodiesList } from "../../api/governingBodiesApi";
+import { getGoverningBodiesList, getGoverningBodyLogo } from "../../api/governingBodiesApi";
 import { GoverningBody } from "../../api/decisionsApi";
+import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 moment.locale("uk-ua");
 
 const RegionBoardAdministration = () => {
@@ -24,22 +23,28 @@ const RegionBoardAdministration = () => {
 
   const [governingBodies, setGoverningBodies] = useState<GoverningBody[]>([]);
   const [visibleModal, setVisibleModal] = useState(false);
-  const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const setPhotos = async () => {
+    for (let i = 0; i < governingBodies.length; i++) {
+      if (governingBodies[i].logo == undefined) continue;
+      governingBodies[i].logo = (
+        await getGoverningBodyLogo(governingBodies[i].logo!)
+      ).data;
+    }
+ 
+    setPhotosLoading(false);
+  };
+  
+  if(photosLoading) setPhotos();
 
   const getGoverningBodies = async () => {
     setLoading(true);
     const responseOrgs = await getGoverningBodiesList();
-    setPhotosLoading(true);
-
     setGoverningBodies(responseOrgs);
+    setPhotosLoading(true);
     setLoading(false);
-  };
-
-  const showModal = (member: any) => {
-    setAdmin(member);
-    setVisibleModal(true);
   };
 
   const handleOk = () => {
