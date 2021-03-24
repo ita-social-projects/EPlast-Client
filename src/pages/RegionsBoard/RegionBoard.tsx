@@ -114,7 +114,7 @@ const RegionBoard = () => {
     }
   };
   
-  const loadGbPhotos = async () => {
+  const loadGbPhotos = async (governingBodies: GoverningBody[]) => {
     
     for (let i = 0; i < governingBodies.length; i++) {
       if (governingBodies[i].logo == undefined) continue;
@@ -125,8 +125,6 @@ const RegionBoard = () => {
 
     setGbPhotosAreLoading(false);
   };
-
-  if(gbPhotosAreLoading) loadGbPhotos();
 
   const onAdd = (newDocument: CityDocument) => {
     if (documents.length < 6) {
@@ -151,6 +149,7 @@ const RegionBoard = () => {
       ? setGoverningBodies(responseOrgs.slice(responseOrgs.length - 6))
       : setGoverningBodies(responseOrgs);
     setGbPhotosAreLoading(true);
+    loadGbPhotos(responseOrgs);
   };
 
   const setRegionDecisions = async () => {

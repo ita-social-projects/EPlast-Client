@@ -26,7 +26,7 @@ const RegionBoardAdministration = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const setPhotos = async () => {
+  const setPhotos = async (governingBodies: GoverningBody[]) => {
     for (let i = 0; i < governingBodies.length; i++) {
       if (governingBodies[i].logo == undefined) continue;
       governingBodies[i].logo = (
@@ -36,14 +36,13 @@ const RegionBoardAdministration = () => {
  
     setPhotosLoading(false);
   };
-  
-  if(photosLoading) setPhotos();
 
   const getGoverningBodies = async () => {
     setLoading(true);
     const responseOrgs = await getGoverningBodiesList();
     setGoverningBodies(responseOrgs);
     setPhotosLoading(true);
+    setPhotos(responseOrgs);
     setLoading(false);
   };
 
