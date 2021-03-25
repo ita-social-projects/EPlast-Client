@@ -1,10 +1,9 @@
 .cardButton {
   display: flex;
   width: 100%;
+  max-width: 370px;
 }
-.cardButton>* {
-margin-right: 8px;
-} 
+
 .formField {
   max-width: 370px;
 }

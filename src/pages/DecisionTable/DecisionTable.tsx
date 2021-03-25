@@ -113,7 +113,11 @@ const DecisionTable = () => {
 
   return !loading ? (
     <Layout>
-      <Content>
+      <Content
+        onClick={() => {
+            setShowDropdown(false);
+          }}
+      >
         <h1 className={classes.titleTable}>Рішення керівних органів</h1>
         <>
           <div className={classes.searchContainer}>
