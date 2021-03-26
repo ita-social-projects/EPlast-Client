@@ -40,12 +40,12 @@ const StatisticsCities = () => {
   const [dataFromRow, setDataFromRow] = useState<DataFromResponse>();
   const [arrayOfInindicators, setArrayOfIndicators] = useState<any[]>(Array());
   const [title, setTitle] = useState<DataFromResponse>();
-  const [selectableUnatstvaPart, setSelectableUnatstvaPart] = useState<boolean>();
-  const [selectableUnatstvaZahalom, setSelectableUnatstvaZahalom] = useState<boolean>();
-  const [selectableSeniorPart, setSelectableSeniorPart] = useState<boolean>();
-  const [selectableSeniorZahalom, setSelectableSeniorZahalom] = useState<boolean>();
-  const [selectableSeigneurPart, setSelectableSeigneurPart] = useState<boolean>();
-  const [selectableSeigneurZahalom, setSelectableSeigneurZahalom] = useState<boolean>();
+  const [selectableUnatstvaPart, setSelectableUnatstvaPart] = useState<boolean>(true);
+  const [selectableUnatstvaZahalom, setSelectableUnatstvaZahalom] = useState<boolean>(true);
+  const [selectableSeniorPart, setSelectableSeniorPart] = useState<boolean>(true);
+  const [selectableSeniorZahalom, setSelectableSeniorZahalom] = useState<boolean>(true);
+  const [selectableSeigneurPart, setSelectableSeigneurPart] = useState<boolean>(true);
+  const [selectableSeigneurZahalom, setSelectableSeigneurZahalom] = useState<boolean>(true);
   const [onClickRow, setOnClickRow] = useState<any>();
   
   const constColumns = [
@@ -340,20 +340,20 @@ const onClick = (value: Array<Number>) => {
                           filterTreeNode={(input, option) => (option?.title as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}>
                             <TreeNode value={0} title="Пташата"/>
                             <TreeNode value={1} title="Новацтво"/>
-                            <TreeNode value={2} title="Юнацтво загалом" selectable = {selectableUnatstvaZahalom}>
-                              <TreeNode value={3} title="Неіменовані" selectable = {selectableUnatstvaPart}/>
-                              <TreeNode value={4} title="Прихильники" selectable = {selectableUnatstvaPart}/>
-                              <TreeNode value={5} title="Учасники" selectable = {selectableUnatstvaPart}/>
-                              <TreeNode value={6} title="Розвідувачі" selectable = {selectableUnatstvaPart}/>
-                              <TreeNode value={7} title="Скоби/вірлиці" selectable = {selectableUnatstvaPart}/>
+                            <TreeNode value={2} title="Юнацтво загалом" disabled = {!selectableUnatstvaZahalom}>
+                              <TreeNode value={3} title="Неіменовані" disabled = {!selectableUnatstvaPart}/>
+                              <TreeNode value={4} title="Прихильники" disabled = {!selectableUnatstvaPart}/>
+                              <TreeNode value={5} title="Учасники" disabled = {!selectableUnatstvaPart}/>
+                              <TreeNode value={6} title="Розвідувачі" disabled = {!selectableUnatstvaPart}/>
+                              <TreeNode value={7} title="Скоби/вірлиці" disabled = {!selectableUnatstvaPart}/>
                             </TreeNode>
-                            <TreeNode value={8} title="Старші пластуни загалом" selectable = {selectableSeniorZahalom}>
-                              <TreeNode value={9} title="Старші пластуни прихильники" selectable = {selectableSeniorPart}/>
-                              <TreeNode value={10} title="Старші пластуни учасники" selectable = {selectableSeniorPart}/>
+                            <TreeNode value={8} title="Старші пластуни загалом" disabled = {!selectableSeniorZahalom}>
+                              <TreeNode value={9} title="Старші пластуни прихильники" disabled = {!selectableSeniorPart}/>
+                              <TreeNode value={10} title="Старші пластуни учасники" disabled = {!selectableSeniorPart}/>
                             </TreeNode>
-                            <TreeNode value={11} title="Сеньйори загалом" selectable = {selectableSeigneurZahalom}>
-                              <TreeNode value={12} title="Сеньйори пластуни прихильники" selectable = {selectableSeigneurPart}/>
-                              <TreeNode value={13} title="Сеньйори пластуни учасники" selectable = {selectableSeigneurPart}/>
+                            <TreeNode value={11} title="Сеньйори загалом" disabled = {!selectableSeigneurZahalom}>
+                              <TreeNode value={12} title="Сеньйори пластуни прихильники" disabled = {!selectableSeigneurPart}/>
+                              <TreeNode value={13} title="Сеньйори пластуни учасники" disabled = {!selectableSeigneurPart}/>
                             </TreeNode>
                         </TreeSelect>
                       </Form.Item>
