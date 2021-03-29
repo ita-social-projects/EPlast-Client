@@ -242,7 +242,8 @@ const EventUser = () => {
           </div>
           <div className={classes.wrapper3}>
             <Title level={2}> Створені події </Title>
-            {allEvents.createdEvents.length === 0 &&(
+            {allEvents.createdEvents.length === 0 &&
+              userToken.nameid === userId &&(
                 <div>
                     <h2>Ви ще не створили жодної події</h2>
                     <Button

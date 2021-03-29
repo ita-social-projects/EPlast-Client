@@ -176,7 +176,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
               placeholder="Оберіть орган"
               className={formclasses.selectField}
             >
-              {data?.organizations.map((o) => (
+              {data?.organizations?.map((o) => (
                 <Select.Option key={o.id} value={JSON.stringify(o)}>
                   {o.organizationName}
                 </Select.Option>
