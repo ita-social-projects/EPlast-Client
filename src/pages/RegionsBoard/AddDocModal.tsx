@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import '../Regions/AddDocumentModal.less';
-import { Button, Col, DatePicker, Form, Modal, Row, Select, Upload } from "antd";
-import { getBase64 } from '../userPage/EditUserPage/Services';
-import notificationLogic from '../../components/Notifications/Notification';
+import React, { useState } from "react";
+import "../Regions/AddDocumentModal.less";
+import { Button, Col, DatePicker, Form, Modal, Row, Upload } from "antd";
+import { getBase64 } from "../userPage/EditUserPage/Services";
+import notificationLogic from "../../components/Notifications/Notification";
 import { addDocument } from "../../api/regionsApi";
 import { InboxOutlined } from "@ant-design/icons";
 import moment from "moment";
@@ -12,7 +12,7 @@ import {
   possibleFileExtensions,
   fileIsTooBig,
   successfulDeleteAction,
-} from "../../components/Notifications/Messages"
+} from "../../components/Notifications/Messages";
 import "moment/locale/uk";
 moment.locale("uk-ua");
 
@@ -31,7 +31,6 @@ const AddDocumentModal = (props: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [disabled, setDisabled] = useState(true);
   const [buttonLoading, setButtonLoading] = useState(false);
-
 
   const normFile = (e: { fileList: any }) => {
     if (Array.isArray(e)) {
@@ -84,7 +83,7 @@ const AddDocumentModal = (props: Props) => {
       blobName: props.document.blobName,
       fileName: fileName,
       submitDate: values.datepicker?._d,
-      regionId: props.regionId
+      regionId: props.regionId,
     };
     console.log(newDocument);
     await addDocument(newDocument);
@@ -108,7 +107,6 @@ const AddDocumentModal = (props: Props) => {
     removeFile();
   };
 
-
   return (
     <Modal
       title="Додати документ"
@@ -120,7 +118,6 @@ const AddDocumentModal = (props: Props) => {
     >
       <Form name="basic" onFinish={handleSubmit} form={form}>
         <div className="formFields">
-
           <Form.Item name="datepicker" label="Дата документу">
             <DatePicker format="DD.MM.YYYY" className="formSelect" />
           </Form.Item>
@@ -143,7 +140,7 @@ const AddDocumentModal = (props: Props) => {
             </p>
             <p className="ant-upload-hint">
               Клікніть або перетягніть файл для завантаження
-              </p>
+            </p>
             {props.document.blobName !== null && <div>{fileName}</div>}
           </Upload.Dragger>
 
@@ -157,7 +154,7 @@ const AddDocumentModal = (props: Props) => {
                 }}
               >
                 Видалити файл
-                </Button>
+              </Button>
             </div>
           ) : null}
         </Form.Item>
@@ -167,22 +164,27 @@ const AddDocumentModal = (props: Props) => {
             <Col xs={11} sm={5}>
               <Button key="back" onClick={handleCancel}>
                 Відмінити
-                </Button>
+              </Button>
             </Col>
             <Col
               className="publishButton"
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" loading={buttonLoading} disabled={disabled} htmlType="submit">
+              <Button
+                type="primary"
+                loading={buttonLoading}
+                disabled={disabled}
+                htmlType="submit"
+              >
                 Опублікувати
-                </Button>
+              </Button>
             </Col>
           </Row>
         </Form.Item>
       </Form>
     </Modal>
   );
-}
+};
 
 export default AddDocumentModal;

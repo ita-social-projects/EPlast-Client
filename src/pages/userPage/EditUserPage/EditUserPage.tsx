@@ -43,10 +43,13 @@ import { UpuDegree } from "../Interface/Interface";
 
 export default function () {
   const history = useHistory();
-  const patern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'.`]{0,50})*$/;
-  const secondPatern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`]{0,50})*$/;
+  const oneWordPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50})*$/;
+  const manyWordsPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`()0-9]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`()0-9]{0,50})*$/;
+  const addressPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+-=%;₴~№"]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+-=%;₴~№"]{0,50})*$/;
+  const wrongAddressMessage = shouldContain("тільки літери та символи");
   const message = shouldContain("тільки літери");
   const [form] = Form.useForm();
+  const MAX_AGE = 100;
 
   const [nationality, setNationality] = useState<Nationality>();
   const [religion, setReligion] = useState<Religion>();
@@ -63,6 +66,7 @@ export default function () {
   const [photoName, setPhotoName] = useState<any>(null);
   const [defaultPhotoName, setDefaultPhotoName] = useState<string>("default_user_image.png");
   const [upuDegree, setUpuDegree] = useState<UpuDegree>();
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
@@ -118,9 +122,9 @@ export default function () {
         setGender(response.data.user.gender);
         setUpuDegree(response.data.user.upuDegree); 
         if (response.data.user.birthday === "0001-01-01T00:00:00") {
-          setBirthday(undefined);
+          form.setFieldsValue({'birthday': undefined});
         } else {
-          setBirthday(moment(response.data.user.birthday));
+          form.setFieldsValue({'birthday': moment(response.data.user.birthday)});
         }
         if (response.data.user.phoneNumber === null) {
           setPhoneNumber("");
@@ -137,9 +141,9 @@ export default function () {
     fetchData();
   }, [form]);
 
-  function disabledDate(current: any) {
+  function disabledDate(current: moment.Moment) {
     let date =  moment().endOf('day');
-    return current && (current > date);
+    return current && (current > date) || current.isBefore(moment().subtract(MAX_AGE, 'year'));
   }
 
   const validationSchema = {
@@ -147,17 +151,18 @@ export default function () {
       { max: 25, message: maxLength(25) },
       { min: 2, message: minLength(2) },
       { required: true, message: emptyInput() },
-      { pattern: patern, message: message },
+      { pattern: oneWordPattern, message: message },
     ],
     surName: [
       { max: 25, message: maxLength(25) },
       { min: 2, message: minLength(2) },
       { required: true, message: emptyInput() },
-      { pattern: patern, message: message },
+      { pattern: oneWordPattern, message: message },
     ],
     fatherName: [
       { max: 25, message: maxLength(25) },
-      { pattern: patern, message: message },
+      { min: 2, message: minLength(2) },
+      { pattern: oneWordPattern, message: message }
     ],
     gender: [
       { required: true, message: emptyInput() },
@@ -167,45 +172,75 @@ export default function () {
     ],
     degree: [
       { max: 30, message: maxLength(30) },
-      { pattern: patern, message: message },
+      { pattern: manyWordsPattern, message: message },
     ],
     placeOfStudy: [
       { max: 50, message: maxLength(50) },
     ],
     speciality: [
       { max: 50, message: maxLength(50) },
-      { pattern: secondPatern, message: message },
+      { pattern: manyWordsPattern, message: message },
     ],
     nationality: [
       { max: 25, message: maxLength(25) },
-      { pattern: patern, message: message },
+      { pattern: oneWordPattern, message: message },
     ],
     religion: [
       { max: 25, message: maxLength(25) },
-      { pattern: patern, message: message },
+      { pattern: oneWordPattern, message: message },
     ],
     placeOfWork: [
-      { max: 50, message: maxLength(50) }
+      { max: 50, message: maxLength(50) },
+      { pattern: oneWordPattern, message: message }
     ],
     position: [
       { max: 30, message: maxLength(30) },
-      { pattern: patern, message: message },
+      { pattern: manyWordsPattern, message: message },
     ],
     address: [
       { max: 50, message: maxLength(50) },
       { required: true, message: emptyInput() },
+      { pattern: addressPattern, message: wrongAddressMessage}
     ],
     pseudo: [
       {max: 30, message: maxLength(30)},
-      {pattern: patern, message: message},
+      {pattern: oneWordPattern, message: message},
+      { min: 2, message: minLength(2) }
     ],
     publicPoliticalActivity: [
       {max: 50, message: maxLength(50)},
+      { pattern: manyWordsPattern, message: message },
     ],
     upuDegree: [
       { required: true, message: emptyInput() },
     ],
   };
+
+  const changeApostropheInWord = (word: string) => {
+    return word.replace(/`/g, '\'');
+  };
+
+  const setFirstLettersUpperCased  = (word: string) => {
+    if(word.length == 0) {
+      return word;
+    }
+
+    let parts = word.split('-');
+
+    parts = parts.map( (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase());
+    return parts.join('-');
+  };
+
+  const setLettersLowerCased = (word: string) => {
+    if(word.length == 0) {
+      return word;
+    }
+
+    let parts = word.split(' ');
+
+    parts = parts.map( (part) => part.charAt(0) + part.slice(1).toLowerCase());
+    return parts.join(' ');
+  };  
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -252,25 +287,49 @@ export default function () {
         id: 0,
         name: value,
       });
+      form.setFieldsValue({ nationalityName: setLettersLowerCased(changeApostropheInWord(value)) });
     } else {
       setNationality({
         id: parseInt(event.key),
         name: event.value,
       });
+      form.setFieldsValue({ nationalityName: setLettersLowerCased(changeApostropheInWord(event.value)) });
     }
   };
-  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const handleOnChangeFirstName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    form.setFieldsValue( {firstName: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
+  }
+
+  const handleOnChangeLastName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    form.setFieldsValue({ lastName: setFirstLettersUpperCased(changeApostropheInWord(event.target.value))});
+  }
+
+  const handleOnChangeFathersName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    form.setFieldsValue({ fatherName: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
+  }
+
+  const handleOnChangePseudo = (event: React.ChangeEvent<HTMLInputElement>) => {
+    form.setFieldsValue({ pseudo: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
+  }
+
+  const handleOnChangePublicPoliticalActivity = (event: React.ChangeEvent<HTMLInputElement>) => {
+    form.setFieldsValue({ publicPoliticalActivity: setLettersLowerCased(changeApostropheInWord(event.target.value)) });
+  }
+
   const handleOnChangeReligion = (value: any, event: any) => {
     if (event.key === undefined) {
       setReligion({
         id: 0,
         name: value,
       });
+      form.setFieldsValue({ religionName: setLettersLowerCased(changeApostropheInWord(value)) });
     } else {
       setReligion({
         id: parseInt(event.key),
         name: event.value,
       });
+      form.setFieldsValue({ religionName: setLettersLowerCased(changeApostropheInWord(event.value)) });
     }
   };
   const handleOnChangeDegree = (value: any, event: any) => {
@@ -286,6 +345,7 @@ export default function () {
       });
     }
   };
+
   const handleOnChangePlaceOfStudy = (value: any, event: any) => {
     if (event.key === undefined) {
       setPlaceOfStudyID(null);
@@ -293,6 +353,7 @@ export default function () {
       setPlaceOfStudyID(parseInt(event.key));
     }
   };
+
   const handleOnChangeSpeciality = (value: any, event: any) => {
     if (event.key === undefined) {
       setSpecialityID(null);
@@ -300,6 +361,7 @@ export default function () {
       setSpecialityID(parseInt(event.key));
     }
   };
+
   const handleOnChangePlaceOWork = (value: any, event: any) => {
     if (event.key === undefined) {
       setPlaceOfWorkID(null);
@@ -307,6 +369,7 @@ export default function () {
       setPlaceOfWorkID(parseInt(event.key));
     }
   };
+
   const handleOnChangePosition = (value: any, event: any) => {
     if (event.key === undefined) {
       setPositionID(null);
@@ -314,12 +377,15 @@ export default function () {
       setPositionID(parseInt(event.key));
     }
   };
+
   const handleOnChangeGender = (value: any) => {
     setGender(JSON.parse(value));
   };
+
   const changePhoneNumber = (event: any) => {
     setPhoneNumber(event.target.value);
   };
+
   const handleOnChangeBirthday = (event: any, value: any) => {
     if (value === "") {
       setBirthday(undefined);
@@ -327,9 +393,11 @@ export default function () {
       setBirthday(moment(event?._d));
     }
   };
+
   const handleOnChangeUpuDegree = (value: any) => {
     setUpuDegree(JSON.parse(value));
   };
+
   const handleDeletePhoto = async () => {
     await userApi
             .getImage(defaultPhotoName)
@@ -341,19 +409,20 @@ export default function () {
             });
             setPhotoName(defaultPhotoName);
   };
+
   const handleSubmit = async (values: any) => {
     const newUserProfile = {
       user: {
         id: data?.user?.id,
         userProfileID: data?.user.userProfileID,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        fatherName: values.fatherName,
-        phoneNumber: phoneNumber,
-        birthday: birthday,
+        firstName: values.firstName?.trim(),
+        lastName: values.lastName?.trim(),
+        fatherName: values.fatherName?.trim(),
+        phoneNumber: phoneNumber?.trim(),
+        birthday: form?.getFieldValue('birthday'),
         imagePath: photoName,
-        pseudo: values.pseudo,
-        publicPoliticalActivity: values.publicPoliticalActivity,
+        pseudo: values.pseudo?.trim(),
+        publicPoliticalActivity: values.publicPoliticalActivity?.trim(),
         facebookLink: values.facebookLink,
         twitterLink: values.twitterLink,
         instagramLink: values.instagramLink,
@@ -364,22 +433,22 @@ export default function () {
         },
         nationality: {
           id: nationality?.id,
-          Name: nationality?.name,
+          Name: nationality?.name?.trim(),
         },
         religion: {
           id: religion?.id,
-          Name: religion?.name,
+          Name: religion?.name?.trim(),
         },
         education: {
-          placeOfStudy: values.placeOfStudy,
-          speciality: values.speciality,
+          placeOfStudy: values.placeOfStudy?.trim(),
+          speciality: values.speciality?.trim(),
         },
         work: {
-          placeOfWork: values.placeOfWork,
-          position: values.positionOfWork,
+          placeOfWork: values.placeOfWork?.trim(),
+          position: values.positionOfWork?.trim(),
         },
         gender: gender,
-        address: values.address,
+        address: values.address?.trim(),
         upuDegree: upuDegree,
       },
       imageBase64: userAvatar,
@@ -405,7 +474,6 @@ export default function () {
       });
     fetchData();
   };
-  const { userId } = useParams();
 
   return loading === false ? (
     <Spinner />
@@ -454,12 +522,12 @@ export default function () {
         <div className={styles.allFields}>
           <div className={styles.rowBlock}>
             <Form.Item
-              label="Ім`я"
+              label="Ім'я"
               name="firstName"
               rules={validationSchema.name}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} maxLength={26}/>
+              <Input className={styles.dataInput} onChange={handleOnChangeFirstName} maxLength={26}/>
             </Form.Item>
             <Form.Item
               label="Прізвище"
@@ -467,7 +535,7 @@ export default function () {
               rules={validationSchema.surName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} maxLength={26}/>
+              <Input className={styles.dataInput} onChange={e=>handleOnChangeLastName(e)} maxLength={26}/>
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
@@ -477,7 +545,7 @@ export default function () {
               rules={validationSchema.fatherName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} maxLength={26}/>
+              <Input className={styles.dataInput} onChange={e=>handleOnChangeFathersName(e)} maxLength={26}/>
             </Form.Item>
             <Form.Item
               label="Стать"
@@ -504,7 +572,7 @@ export default function () {
               rules={validationSchema.pseudo}
               className={styles.formItem}
             >            
-              <Input className={styles.dataInput} maxLength={31}/>
+              <Input className={styles.dataInput} onChange={handleOnChangePseudo} maxLength={31}/>
             </Form.Item>
             <Form.Item 
               label="Дата народження"
@@ -687,7 +755,7 @@ export default function () {
               rules={validationSchema.publicPoliticalActivity}
               className={styles.formItem}
             >            
-              <Input className={styles.dataInput} maxLength={501}/>
+              <Input className={styles.dataInput} onChange={handleOnChangePublicPoliticalActivity} maxLength={501}/>
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>

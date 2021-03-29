@@ -59,6 +59,8 @@ import RegionBoard from "./pages/RegionsBoard/RegionBoard";
 import RegionBoardEdit from "./pages/RegionsBoard/RegionBoardEdit";
 import RegionBoardAdministration from "./pages/RegionsBoard/RegionBoardAdministration";
 import RegionBoardDocuments from "./pages/RegionsBoard/RegionBoardDocuments";
+import GoverningBody from "./pages/GoverningBody/GoverningBody/GoverningBody";
+import CreateGoverningBody from "./pages/GoverningBody/CreateGoverningBody";
 
 const App: FC = () => (
   <div className="App">
@@ -263,6 +265,12 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+            path="/regionsBoard/new"
+            component={CreateGoverningBody}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/regionsBoard/edit"
             component={RegionBoardEdit}
           />
@@ -277,6 +285,12 @@ const App: FC = () => (
             exact
             path="/regionsBoard/documents/:id"
             component={RegionBoardDocuments}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/governingBodies/:id"
+            component={GoverningBody}
           />
           <RouteWithLayout
             layout={PrivateLayout}

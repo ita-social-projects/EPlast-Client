@@ -38,8 +38,8 @@ const columns = [
       value: "Сувора догана",
     },
     {
-      text: "догана із загрозою виключення з Пласту",
-      value: "догана із загрозою виключення з Пласту",
+      text: "Догана із загрозою виключення з Пласту",
+      value: "Догана із загрозою виключення з Пласту",
     }],
     onFilter: (value: any, record: any) => record.precaution.name.includes(value),
     render: (precaution: Precaution) => {
