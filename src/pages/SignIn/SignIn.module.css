@@ -22,6 +22,10 @@
     text-align: left;
 }
 
+input[type='password']{
+    background: #f7f9fc !important;
+}
+
 #confirmButton{
     border: 0;
     color: white;
