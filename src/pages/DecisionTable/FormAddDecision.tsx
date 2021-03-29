@@ -18,7 +18,7 @@ import decisionsApi, {
   DecisionWrapper,
   decisionTarget,
   FileWrapper,
-  Organization,
+  GoverningBody,
   statusTypePostParser,
 } from "../../api/decisionsApi";
 import { getBase64 } from "../userPage/EditUserPage/Services";
@@ -109,7 +109,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
         decisionStatusType: statusTypePostParser(
           JSON.parse(values.decisionStatusType)
         ),
-        organization: JSON.parse(values.organization),
+        governingBody: JSON.parse(values.governingBody),
         decisionTarget: { id: 0, targetName: values.decisionTarget },
         description: values.description,
         date:
@@ -127,7 +127,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
   };
 
   const [data, setData] = useState<DecisionOnCreateData>({
-    organizations: Array<Organization>(),
+    governingBodies: Array<GoverningBody>(),
     decisionStatusTypeListItems: Array<decisionStatusType>(),
     decisionTargets: Array<decisionTarget>(),
   });
@@ -176,9 +176,9 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
               placeholder="Оберіть орган"
               className={formclasses.selectField}
             >
-              {data?.organizations?.map((o) => (
-                <Select.Option key={o.id} value={JSON.stringify(o)}>
-                  {o.organizationName}
+              {data?.governingBodies.map((g) => (
+                <Select.Option key={g.id} value={JSON.stringify(g)}>
+                  {g.governingBodyName}
                 </Select.Option>
               ))}
             </Select>

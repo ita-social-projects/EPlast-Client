@@ -1,8 +1,8 @@
-import { Organization } from "../../api/decisionsApi"
+import { GoverningBody } from "../../api/decisionsApi"
 import { MethodicDocumentType } from "./MethodicDocumentType"
 
 export type DocumentOnCreateData = {
-    organizations: Organization[];
+    governingBodies: GoverningBody[];
     methodicDocumentTypesItems: MethodicDocumentType[];
 }
 
