@@ -51,8 +51,7 @@ const ColumnsForUserTable: any = [
         {text}
       </Text>
     ),
-    sorter: (a: any, b: any) =>
-      a.firstName.localeCompare(b.firstName),
+    sorter: (a: any, b: any) => a.firstName.localeCompare(b.firstName),
     sortDirections: ["descend", "ascend"],
   },
   {
@@ -173,10 +172,7 @@ const ColumnsForUserTable: any = [
     width: 180,
     render: (userPlastDegreeName: any, record: any) => {
       if (userPlastDegreeName !== null && userPlastDegreeName.length > 0) {
-        if (
-          record.gender?.name !== null &&
-          record.gender?.name == "Чоловік"
-        ) {
+        if (record.gender?.name !== null && record.gender?.name == "Чоловік") {
           return (
             <Tag color={"red"} key={userPlastDegreeName}>
               <Tooltip
@@ -224,28 +220,19 @@ const ColumnsForUserTable: any = [
     dataIndex: "email",
     width: 220,
     render: (email: any) => {
-        return (
-          <Tag color={"pink"}>
-            {email}
-          </Tag>
-        );
+      return <Tag color={"pink"}>{email}</Tag>;
     },
   },
   {
-  title: "Ступінь в УПЮ",
-  dataIndex: "upuDegree",
-  width: 210,
-  render: (upuDegree: any) => {
-      return (
-        <Tag color={"blue"}>
-          {upuDegree}
-        </Tag>
-      );
+    title: "Ступінь в УПЮ",
+    dataIndex: "upuDegree",
+    width: 210,
+    render: (upuDegree: any) => {
+      return <Tag color={"blue"}>{upuDegree}</Tag>;
+    },
+    sorter: (a: any, b: any) => a.upuDegree.localeCompare(b.upuDegree),
+    sortDirections: ["descend", "ascend"],
   },
-  sorter: (a: any, b: any) =>
-  a.upuDegree.localeCompare(b.upuDegree),
-  sortDirections: ["descend", "ascend"],
-},
   {
     title: "Права доступу",
     dataIndex: "userRoles",
