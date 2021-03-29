@@ -39,7 +39,7 @@ const FormEditDecision = ({
       id: decision?.id,
       name: dec.name,
       decisionStatusType: decision?.decisionStatusType,
-      organization: decision?.organization,
+      governingBody: decision?.governingBody,
       decisionTarget: decision?.decisionTarget,
       description: dec.description,
       date: decision?.date,
