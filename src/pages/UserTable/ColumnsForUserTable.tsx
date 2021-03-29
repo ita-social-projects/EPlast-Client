@@ -1,6 +1,6 @@
 import React from "react";
 import moment from "moment";
-import { Typography, Tooltip, List, Tag } from "antd";
+import { Typography, Tooltip, Tag } from "antd";
 import {
   WomanOutlined,
   ManOutlined,
