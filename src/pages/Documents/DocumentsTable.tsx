@@ -55,7 +55,7 @@ const DocumentsTable = () => {
       const dec: Document = {
         id: res.id,
         name: res.name,
-        organization: res.organization.organizationName,
+        governingBody: res.governingBody.governingBodyName,
         type: TypeGetParser(res.type),
         description: res.description,
         fileName: res.fileName,
@@ -92,7 +92,7 @@ const DocumentsTable = () => {
       ? viewedData.filter((item) => {
         return Object.values([
           item.name,
-          item.organization,
+          item.governingBody,
           item.id,
           item.description,
           moment(item.date.toLocaleString()).format("DD.MM.YYYY"),

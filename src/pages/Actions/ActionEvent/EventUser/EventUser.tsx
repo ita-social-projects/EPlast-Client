@@ -242,6 +242,19 @@ const EventUser = () => {
           </div>
           <div className={classes.wrapper3}>
             <Title level={2}> Створені події </Title>
+            {allEvents.createdEvents.length === 0 &&(
+                <div>
+                    <h2>Ви ще не створили жодної події</h2>
+                    <Button
+                        type="primary"
+                        className={classes.buttonInside}
+                        style={{ marginBottom: "15px" }}
+                        onClick={() => setShowEventCreateDrawer(true)}
+                    >
+                        Створити подію
+                    </Button>
+                </div>
+            )}
             {allEvents.createdEvents.length !== 0 && (
               <div>
                 <Badge

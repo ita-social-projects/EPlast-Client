@@ -193,7 +193,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
         </div>
       ))}
       {UserPrecaution.map((dist) =>
-        dist.status != "Скасовано" ? (
+        dist.status !== "Скасовано" ? (
           <div className="precautions">
             <Tooltip title={dist?.reason}>
               <h2>

@@ -1,20 +1,19 @@
 import React from "react";
 import { Drawer, Button, Col, Row, Form, Input } from "antd";
-import "../Regions/RegionDetailDrawer.less";
+import "../City/CityDetailDrawer/CityDetailDrawer.less";
+import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfile";
 import TextArea from "antd/lib/input/TextArea";
 
 interface Props {
   visibleDrawer: boolean;
   setVisibleDrawer: (visibleDrawer: boolean) => void;
-  region: any;
+  governingBody: GoverningBodyProfile;
 }
 
-const RegionDetailDrawer = (props: Props) => {
+const GoverningBodyDetailDrawer = (props: Props) => {
   return (
     <Drawer
-      title={`Деталі Крайового проводу ${
-        props.region.regionname?.length > 0 ? props.region.regionname : ""
-      }`}
+      title={`Деталі керівного органу ${props.governingBody.governingBodyName?.length > 0 ? props.governingBody.governingBodyName : ""}`}
       onClose={() => props.setVisibleDrawer(false)}
       visible={props.visibleDrawer}
       footer={null}
@@ -30,33 +29,16 @@ const RegionDetailDrawer = (props: Props) => {
               label="Номер телефону"
               labelCol={{ span: 24 }}
               initialValue={
-                props.region.phoneNumber?.length > 0
-                  ? props.region.phoneNumber
+                props.governingBody.phoneNumber?.length > 0
+                  ? props.governingBody.phoneNumber
                   : "---"
               }
             >
               <Input
                 value={
-                  props.region.phoneNumber?.length > 0
-                    ? props.region.phoneNumber
+                  props.governingBody.phoneNumber?.length > 0
+                    ? props.governingBody.phoneNumber
                     : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="email"
-              label="Електронна пошта"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.region.email?.length > 0 ? props.region.email : "---"
-              }
-            >
-              <Input
-                value={
-                  props.region.email?.length > 0 ? props.region.email : "---"
                 }
                 disabled
               />
@@ -64,22 +46,48 @@ const RegionDetailDrawer = (props: Props) => {
           </Col>
         </Row>
         <Row justify="center" gutter={[12, 0]}>
+          <Col md={12} xs={24}>
+            <Form.Item
+              name="email"
+              label="Електронна пошта"
+              labelCol={{ span: 24 }}
+              initialValue={
+                props.governingBody.email?.length > 0 ? props.governingBody.email : "---"
+              }
+            >
+              <Input
+                value={props.governingBody.email?.length > 0 ? props.governingBody.email : "---"}
+                disabled
+              />
+            </Form.Item>
+          </Col>
+
+        </Row>
+
+       
+        <Row justify="center" gutter={[12, 0]}>
           <Col md={24} xs={24}>
             <Form.Item
               name="description"
               label="Опис"
               labelCol={{ span: 24 }}
               initialValue={
-                props.region.description?.length > 0
-                  ? props.region.description
+                props.governingBody.description?.length > 0
+                  ? props.governingBody.description
                   : "---"
               }
             >
               <TextArea
-                autoSize
+                autoSize =
+                {
+                  {
+                    minRows: 1,
+                    maxRows: 9
+                  }
+                }
                 value={
-                  props.region.description?.length > 0
-                    ? props.region.description
+                  props.governingBody.description?.length > 0
+                    ? props.governingBody.description
                     : "---"
                 }
                 disabled
@@ -92,4 +100,4 @@ const RegionDetailDrawer = (props: Props) => {
   );
 };
 
-export default RegionDetailDrawer;
+export default GoverningBodyDetailDrawer;

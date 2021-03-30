@@ -50,7 +50,7 @@ const DecisionTable = () => {
       const dec: Decision = {
         id: res.id,
         name: res.name,
-        organization: res.organization.organizationName,
+        governingBody: res.governingBody.governingBodyName,
         decisionStatusType: statusTypeGetParser(res.decisionStatusType),
         decisionTarget: res.decisionTarget.targetName,
         description: res.description,
@@ -91,7 +91,7 @@ const DecisionTable = () => {
     ? data.filter((item) => {
       return Object.values([
         item.name,
-        item.organization,
+        item.governingBody,
         item.id,
         item.description,
         item.decisionStatusType,
@@ -113,7 +113,11 @@ const DecisionTable = () => {
 
   return !loading ? (
     <Layout>
-      <Content>
+      <Content
+        onClick={() => {
+            setShowDropdown(false);
+          }}
+      >
         <h1 className={classes.titleTable}>Рішення керівних органів</h1>
         <>
           <div className={classes.searchContainer}>
