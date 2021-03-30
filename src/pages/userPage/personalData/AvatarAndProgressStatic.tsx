@@ -162,7 +162,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       {!isUserPlastun && (
         <div className="progress">
           <p className="statusText">
-            {time} дні і {firstName} {lastName} Пластун:)
+            {time} дні і {firstName} {lastName} - Дійсний член організації :)
           </p>
           <Progress
             type="circle"

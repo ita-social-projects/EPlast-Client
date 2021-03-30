@@ -72,7 +72,7 @@ const PrivateLayout = ({ children }: any) => {
     setRegionAdm(roles.includes("Голова Округи"));
     setCityAdm(roles.includes("Голова Станиці"));
     setClubAdm(roles.includes("Голова Куреня"));
-    setCanSee(roles.includes("Пластун"));
+    setCanSee(roles.includes("Дійсний член організації"));
     setCanAccess(roles.includes("Прихильник"));
     setOnlyRegistered(roles.includes("Зареєстрований користувач"));
   }
