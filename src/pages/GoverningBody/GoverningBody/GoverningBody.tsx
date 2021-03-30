@@ -5,14 +5,11 @@ import {
   Row,
   Col,
   Button,
-  Spin,
   Layout,
   Modal,
   Skeleton,
-  Divider,
   Card,
   Tooltip,
-  Breadcrumb,
   Badge,
 } from "antd";
 import {
@@ -31,21 +28,15 @@ import {
   getGoverningBodyLogo,
   removeGoverningBody
 } from "../../../api/governingBodiesApi";
-import userApi from "../../../api/UserApi";
-import "../../City/City/City.less";
+import "./GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import GoverningBodyProfile from "../../../models/GoverningBody/GoverningBodyProfile";
-import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import GoverningBodyDocument from "../../../models/GoverningBody/GoverningBodyDocument";
-import AddDocumentModal from "../AddDocumentModal";
 import Title from "antd/lib/typography/Title";
-import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
 import GoverningBodyDetailDrawer from "../GoverningBodyDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import BreadcrumbItem from "antd/lib/breadcrumb/BreadcrumbItem";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddGoverningBodiesSecretaryForm";
@@ -59,8 +50,8 @@ const GoverningBody = () => {
   const [governingBodyLogo64, setGoverningBodyLogo64] = useState<string>("");
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
-  const [admins, setAdmins] = useState<GoverningBodyAdmin[]>([]);
-  const [documents, setDocuments] = useState<GoverningBodyDocument[]>([]);
+  //const [admins, setAdmins] = useState<GoverningBodyAdmin[]>([]);
+  //const [documents, setDocuments] = useState<GoverningBodyDocument[]>([]);
   const [canCreate, setCanCreate] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const [canJoin, setCanJoin] = useState(false);
@@ -70,19 +61,19 @@ const GoverningBody = () => {
   const [followersCount, setFollowersCount] = useState<number>();
   const [governingBodyLogoLoading, setGoverningBodyLogoLoading] = useState<boolean>(false);
   const [visible, setvisible] = useState<boolean>(false);
-  const [document, setDocument] = useState<GoverningBodyDocument>(new GoverningBodyDocument());
+  //const [document, setDocument] = useState<GoverningBodyDocument>(new GoverningBodyDocument());
 
   const deleteGoverningBody = async () => {
     await removeGoverningBody(governingBody.id);
     notificationLogic("success", successfulDeleteAction("Керівний орган"));
 
-    admins.map(async (ad) => {
-      await NotificationBoxApi.createNotifications(
-        [ad.userId],
-        `На жаль керівний орган: '${governingBody.governingBodyName}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
-        NotificationBoxApi.NotificationTypes.UserNotifications
-      );
-    });
+    // admins.map(async (ad) => {
+    //   await NotificationBoxApi.createNotifications(
+    //     [ad.userId],
+    //     `На жаль керівний орган: '${governingBody.governingBodyName}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
+    //     NotificationBoxApi.NotificationTypes.UserNotifications
+    //   );
+    // });
     history.push("/governingBodies");
   };
 
@@ -98,9 +89,9 @@ const GoverningBody = () => {
   };
 
   const onAdd = (newDocument: GoverningBodyDocument) => {
-    if (documents.length < 6) {
-      setDocuments([...documents, newDocument]);
-    }
+    // if (documents.length < 6) {
+    //   setDocuments([...documents, newDocument]);
+    // }
   };
 
   function seeDeleteModal() {
@@ -123,21 +114,18 @@ const GoverningBody = () => {
       const response = await getGoverningBodyById(+id);
       setPhotosLoading(true);
       setGoverningBodyLogoLoading(true);
-      const admins = [
-        ...response.data.administration,
-        response.data.head,
-      ].filter((a) => a !== null);
+      // const admins = [
+      //   ...response.data.administration,
+      //   response.data.head,
+      // ].filter((a) => a !== null);
 
-      setPhotos(response.data.logo);
-      setGoverningBody(response.data);
-      setAdmins(admins);
-      setDocuments(response.data.documents);
-      setCanCreate(response.data.canCreate);
-      setCanEdit(response.data.canEdit);
+      setPhotos(response.data.governingBody.logo);
+      setGoverningBody(response.data.governingBody);
+      //setAdmins(admins);
+     // setDocuments(response.data.documents);
+      setCanCreate(true);
+      setCanEdit(true);
       setCanJoin(response.data.canJoin);
-      setMembersCount(response.data.memberCount);
-      setAdminsCount(response.data.administrationCount);
-      setFollowersCount(response.data.followerCount);
     } finally {
       setLoading(false);
     }
@@ -160,13 +148,13 @@ const GoverningBody = () => {
   return loading ? (
     <Spinner />
   ) : governingBody.id !== 0 ? (
-    <Layout.Content className="CityProfile">
+    <Layout.Content className="governingBodyProfile">
       <Row gutter={[0, 15]}>
         <Col span={8} offset={1}></Col>
       </Row>
       <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
-          <Card hoverable className="CityCard">
+          <Card hoverable className="governingBodyCard">
             <div>
               <Crumb
                 current={governingBody.governingBodyName}
@@ -176,12 +164,12 @@ const GoverningBody = () => {
               />
             </div>
             <Title level={3}>Керівний Орган {governingBody.governingBodyName}</Title>
-            <Row className="CityPhotos" gutter={[0, 12]}>
+            <Row className="governingBodyPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
                 {governingBodyLogoLoading ? (
                   <Skeleton.Avatar active shape={"square"} size={172} />
                 ) : (
-                    <img src={governingBodyLogo64} alt="GoverningBody" className="CityLogo" />
+                    <img src={governingBodyLogo64} alt="GoverningBody" className="governingBodyLogo" />
                   )}
               </Col>
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
@@ -193,11 +181,11 @@ const GoverningBody = () => {
                 />
               </Col>
             </Row>
-            <Row className="CityButtons" justify="center" gutter={[12, 0]}>
+            <Row className="governingBodyButtons" justify="center" gutter={[12, 0]}>
               <Col>
                 <Button
                   type="primary"
-                  className="CityInfoButton"
+                  className="governingBodyInfoButton"
                   onClick={() => setVisibleDrawer(true)}
                 >
                   Деталі
@@ -207,24 +195,24 @@ const GoverningBody = () => {
                 <Col>
                   <Button
                     type="primary"
-                    className="CityInfoButton"
+                    className="governingBodyInfoButton"
                     onClick={() => history.push(`/annualreport/table`)}
                   >
-                    Річні звіти
+                    Додати рішення
                   </Button>
                 </Col>
               ) : null}
               {canEdit ? (
                 <Col xs={24} sm={4}>
                   <Row
-                    className="CityIcons"
+                    className="governingBodyIcons"
                     justify={canCreate ? "center" : "start"}
                   >
                     {canEdit ? (
                       <Col>
                         <Tooltip title="Редагувати керівний орган">
                           <EditOutlined
-                            className="CityInfoIcon"
+                            className="governingBodyInfoIcon"
                             onClick={() =>
                               history.push(`/governingBodies/edit/${governingBody.id}`)
                             }
@@ -236,7 +224,7 @@ const GoverningBody = () => {
                       <Col offset={1}>
                         <Tooltip title="Видалити керівний орган">
                           <DeleteOutlined
-                            className="CityInfoIconDelete"
+                            className="governingBodyInfoIconDelete"
                             onClick={() => seeDeleteModal()}
                           />
                         </Tooltip>
@@ -249,46 +237,13 @@ const GoverningBody = () => {
           </Card>
         </Col>
 
-        <Col
-          xl={{ span: 7, offset: 0 }}
-          md={{ span: 11, offset: 2 }}
-          sm={24}
-          xs={24}
-        >
-          <Card hoverable className="CityCard">
-            <Title level={4}>Провід керінвого органу <a onClick={() => history.push(`/governingBodies/administration/${governingBody.id}`)}>
-              {adminsCount !== 0 ?
-                <Badge
-                  count={adminsCount}
-                  style={{ backgroundColor: "#3c5438" }}
-                /> : null
-              }
-            </a>
-            </Title>
-            <Row className="CityItems" justify="center" gutter={[0, 16]}>
-              {admins.length !== 0 ? (
-                admins.map((admin) => (
-                  <Col className="CityMemberItem" key={admin.id} xs={12} sm={8}>
-                    <div
-                      onClick={() =>
-                        history.push(`/userpage/main/${admin.userId}`)
-                      }
-                    >
-                      {photosLoading ? (
-                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
-                      ) : (
-                          <Avatar size={64} src={admin.user.imagePath} />
-                        )}
-                      <p className="userName">{admin.user.firstName}</p>
-                      <p className="userName">{admin.user.lastName}</p>
-                    </div>
-                  </Col>
-                ))
-              ) : (
-                  <Paragraph>Ще немає діловодів керівного органу</Paragraph>
-                )}
+        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+          <Card hoverable className="governingBodyCard">
+            <Title level={4}>Напрями</Title>
+            <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
+              {/*    */}
             </Row>
-            <div className="CityMoreButton">
+            <div className="governingBodyMoreButton">
               <PlusSquareFilled
                 type="primary"
                 className="addReportIcon"
@@ -296,7 +251,7 @@ const GoverningBody = () => {
               ></PlusSquareFilled>
               <Button
                 type="primary"
-                className="CityInfoButton"
+                className="governingBodyInfoButton"
                 onClick={() =>
                   history.push(`/governingBodies/administration/${governingBody.id}`)
                 }
@@ -306,15 +261,76 @@ const GoverningBody = () => {
             </div>
           </Card>
         </Col>
+        
+        <Col
+          xl={{ span: 7 }}
+          md={11}
+          sm={24}
+          xs={24}
+        >
+          <Card hoverable className="governingBodyCard">
+            <Title level={4}>Провід керінвого органу <a onClick={() => history.push(`/governingBodies/administration/${governingBody.id}`)}>
+              {adminsCount !== 0 ?
+                <Badge
+                  count={adminsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a>
+            </Title>
+            <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
+              {/*    */}
+            </Row>
+            <div className="governingBodyMoreButton">
+              <PlusSquareFilled
+                type="primary"
+                className="addReportIcon"
+                onClick={() => setvisible(true)}
+              ></PlusSquareFilled>
+              <Button
+                type="primary"
+                className="governingBodyInfoButton"
+                onClick={() =>
+                  history.push(`/governingBodies/administration/${governingBody.id}`)
+                }
+              >
+                Більше
+              </Button>
+            </div>
+          </Card>
+        </Col>
+        
+        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+          <Card hoverable className="governingBodyCard">
+            <Title level={4}>Оголошення</Title>
+            <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
+            </Row>
+            <div className="governingBodyMoreButton">
+              <Button
+                type="primary"
+                className="governingBodyInfoButton"
+                onClick={() => history.push(`/governingBodies/documents/${governingBody.id}`)}
+              >
+                Більше
+              </Button>
+              {canEdit ? (
+                <PlusSquareFilled
+                  className="addReportIcon"
+                  onClick={() => setVisibleModal(true)}
+                />
+              ) : null}
+            </div>
+          </Card>
+        </Col>
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
-          <Card hoverable className="CityCard">
+          <Card hoverable className="governingBodyCard">
             <Title level={4}>Документообіг керівного органу</Title>
-            <Row className="CityItems" justify="center" gutter={[0, 16]}>
-              {documents.length !== 0 ? (
+            <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
+              {/* {documents.length !== 0 ? (
                 documents.map((document) => (
                   <Col
-                    className="CityMemberItem"
+                    className="governingBodyMemberItem"
                     xs={12}
                     sm={8}
                     key={document.id}
@@ -329,12 +345,12 @@ const GoverningBody = () => {
                 ))
               ) : (
                   <Paragraph>Ще немає документів керівного органу</Paragraph>
-                )}
+                )} */}
             </Row>
-            <div className="CityMoreButton">
+            <div className="governingBodyMoreButton">
               <Button
                 type="primary"
-                className="CityInfoButton"
+                className="governingBodyInfoButton"
                 onClick={() => history.push(`/governingBodies/documents/${governingBody.id}`)}
               >
                 Більше
@@ -367,7 +383,7 @@ const GoverningBody = () => {
         </AddCitiesNewSecretaryForm>
       </Modal>
 
-      {canEdit ? (
+      {/* {canEdit ? (
         <AddDocumentModal
           governingBodyId={+id}
           document={document}
@@ -376,7 +392,7 @@ const GoverningBody = () => {
           setVisibleModal={setVisibleModal}
           onAdd={onAdd}
         ></AddDocumentModal>
-      ) : null}
+      ) : null} */}
     </Layout.Content>
   ) : (
         <Title level={2}>Керівний орган не знайдено</Title>

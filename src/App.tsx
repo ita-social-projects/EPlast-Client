@@ -283,8 +283,20 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+            path="/governingBodies"
+            component={RegionBoardAdministration}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/regionsBoard/documents/:id"
             component={RegionBoardDocuments}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/governingBodies/edit/:id"
+            component={CreateGoverningBody}
           />
           <RouteWithLayout
             layout={PrivateLayout}

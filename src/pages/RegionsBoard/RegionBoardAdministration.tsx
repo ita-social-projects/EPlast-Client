@@ -15,7 +15,6 @@ import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
 import { getGoverningBodiesList, getGoverningBodyLogo } from "../../api/governingBodiesApi";
 import { GoverningBody } from "../../api/decisionsApi";
-import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 moment.locale("uk-ua");
 
 const RegionBoardAdministration = () => {
@@ -71,7 +70,7 @@ const RegionBoardAdministration = () => {
               >
                 <div className="cityMember">
                   <div 
-                    onClick={() => history.push(`/governingBody/${governingBody.id}`)}
+                    onClick={() => history.push(`/governingBodies/${governingBody.id}`)}
                   >
                     {photosLoading ? (
                       <Skeleton.Avatar active size={86}></Skeleton.Avatar>

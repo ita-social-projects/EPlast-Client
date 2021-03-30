@@ -100,12 +100,12 @@ const CreateGoverningBody = () => {
       setLoading(true);
       let response = await getGoverningBodyById(+id);
 
-      if (response.data.logo !== null) {
-        const logo = await getGoverningBodyLogo(response.data.logo);
+      if (response.data.logo !== undefined) {
+        const logo = await getGoverningBodyLogo(response.data.governingBody.logo);
         response.data.logo = logo.data;
       }
-
-      setGoverningBody(response.data);
+      
+      setGoverningBody(response.data.governingBody);
     } finally {
       setLoading(false);
     }

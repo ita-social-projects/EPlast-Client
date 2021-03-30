@@ -21,6 +21,9 @@ import {
   getRegionDocuments,
   GetRegionsBoard,
 } from "../../api/regionsApi";
+import {
+  getUserAccess
+} from "../../api/regionsBoardApi";
 import "../Regions/Region.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import Title from "antd/lib/typography/Title";
@@ -38,6 +41,8 @@ import decisionsApi, {
 import { getGoverningBodiesList, getGoverningBodyLogo } from "../../api/governingBodiesApi";
 import AddDecisionModal from "../DecisionTable/AddDecisionModal";
 import notificationLogic from "../../components/Notifications/Notification";
+import AuthStore from "../../stores/AuthStore";
+import jwt from 'jwt-decode';
 
 const RegionBoard = () => {
   const history = useHistory();
@@ -96,11 +101,13 @@ const RegionBoard = () => {
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [visibleDecisionModal, setVisibleDecisionModal] = useState<boolean>(false);
   const [gbPhotosAreLoading, setGbPhotosAreLoading] = useState<boolean>(false);
+  const [userAccesses, setUserAccesses] = useState<{[key: string]: boolean}>()
 
   const getRegion = async () => {
     setLoading(true);
     try {
       const response = await GetRegionsBoard();
+      await getUserAccesses();
       setRegionDecisions();
       setRegionOrgs();
       setRegionDocs(response.data.id);
@@ -114,6 +121,15 @@ const RegionBoard = () => {
     }
   };
   
+  const getUserAccesses = async () => {
+      let user: any = jwt(AuthStore.getToken() as string);
+      const userAcesses = await getUserAccess(user.nameid).then(
+        response => {
+          setUserAccesses(response.data);
+        }
+      );
+  }
+
   const loadGbPhotos = async (governingBodies: GoverningBody[]) => {
     
     for (let i = 0; i < governingBodies.length; i++) {
@@ -190,6 +206,8 @@ const RegionBoard = () => {
   useEffect(() => {
     getRegion();
   }, []);
+
+  console.log(userAccesses);
 
   return loading ? (
     <Spinner />
@@ -334,7 +352,7 @@ const RegionBoard = () => {
                     sm={8}
                   >
                     <div
-                      onClick={() => history.push(`/governingBody/${governingBody.id}`)}
+                      onClick={() => history.push(`/governingBodies/${governingBody.id}`)}
                     >
                       {gbPhotosAreLoading ? (
                         <Skeleton.Avatar active size={64}></Skeleton.Avatar>
