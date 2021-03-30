@@ -100,7 +100,7 @@ const fetchData = async () =>{
         }
         }
       >
-        {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+        {(canEdit === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
         <Menu.Item key="1">
           <EditOutlined />
           Редагувати
@@ -111,7 +111,7 @@ const fetchData = async () =>{
           <FilePdfOutlined />
           Конвертувати в PDF
         </Menu.Item>
-        {(canEdit == true) ? (
+        {(canEdit === true) ? (
         <Menu.Item key="3">
           <DeleteOutlined />
           Видалити

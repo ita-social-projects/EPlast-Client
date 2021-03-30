@@ -63,7 +63,7 @@ const ListOfAchievementsModal = (props: Props) => {
 
     const getAchievements = async () => {
         const response = await getAchievementsByPage(pageNumber, pageSize, userId);
-        if (response.data.length == 0) {
+        if (response.data.length === 0) {
             setIsEmpty(true);
         }
         var concatedAchievements = achievements.concat(response.data);
