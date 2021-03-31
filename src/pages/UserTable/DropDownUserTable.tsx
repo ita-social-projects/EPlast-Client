@@ -111,7 +111,7 @@ const DropDown = (props: Props) => {
           display: showDropdown ? "block" : "none",
         }}
       >
-        {props.inActiveTab == false ? (
+        {props.inActiveTab === false ? (
           <Menu.Item key="1">
             <FileSearchOutlined />
             Переглянути профіль
@@ -119,7 +119,7 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {canEdit == true ? (
+        {canEdit === true ? (
           <Menu.Item key="2">
             <DeleteOutlined />
             Видалити
@@ -127,32 +127,32 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {props.inActiveTab == false &&
-        (canEdit == true ||
-          regionAdm == true ||
-          cityAdm == true ||
-          clubAdm == true) ? (
+        {props.inActiveTab === false &&
+        (canEdit === true ||
+          regionAdm === true ||
+          cityAdm === true ||
+          clubAdm === true) ? (
           <SubMenu
             key="sub"
             icon={<EditOutlined />}
             title="Змінити права доступу"
           >
-            {canEdit == true || regionAdm == true || cityAdm == true ? (
+            {canEdit === true || regionAdm === true || cityAdm === true ? (
               <Menu.Item key="3">Провід станиці</Menu.Item>
             ) : (
               <> </>
             )}
-            {canEdit == true || regionAdm == true ? (
+            {canEdit === true || regionAdm === true ? (
               <Menu.Item key="4">Провід округи</Menu.Item>
             ) : (
               <> </>
             )}
-            {canEdit == true || clubAdm == true ? (
+            {canEdit === true || clubAdm === true ? (
               <Menu.Item key="5">Провід куреня</Menu.Item>
             ) : (
               <> </>
             )}
-            {canEdit == true || regionAdm == true || cityAdm == true ? (
+            {canEdit === true || regionAdm === true || cityAdm === true ? (
               <Menu.Item key="6">Поточний стан користувача</Menu.Item>
             ) : (
               <> </>
@@ -161,11 +161,11 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {props.inActiveTab == false &&
-        (canEdit == true ||
-          regionAdm == true ||
-          cityAdm == true ||
-          clubAdm == true) ? (
+        {props.inActiveTab === false &&
+        (canEdit === true ||
+          regionAdm === true ||
+          cityAdm === true ||
+          clubAdm === true) ? (
           <Menu.Item key="7">
             <PlusCircleOutlined />
             Додати ступінь
@@ -173,11 +173,11 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {props.inActiveTab == false &&
-        (canEdit == true ||
-          regionAdm == true ||
-          cityAdm == true ||
-          clubAdm == true) ? (
+        {props.inActiveTab === false &&
+        (canEdit === true ||
+          regionAdm === true ||
+          cityAdm === true ||
+          clubAdm === true) ? (
           <Menu.Item key="8">
             <ScissorOutlined />
             Заархівувати користувача
@@ -185,7 +185,7 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {props.inActiveTab == true ? (
+        {props.inActiveTab === true ? (
           <Menu.Item key="9">
             <MailOutlined />
             Активувати

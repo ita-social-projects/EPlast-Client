@@ -49,7 +49,7 @@ const fetchUser = async () => {
   setRegionAdm(roles.includes("Голова Округи"));
   setCityAdm(roles.includes("Голова Станиці"));
   setClubAdm(roles.includes("Голова Куреня"));
-  setCanSee(roles.includes("Пластун"));
+  setCanSee(roles.includes("Дійсний член організації"));
 }
 const fetchData = async () =>{
   await decisionsApi.getById(record).then(res => setData(res));
@@ -100,7 +100,7 @@ const fetchData = async () =>{
         }
         }
       >
-        {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+        {(canEdit === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
         <Menu.Item key="1">
           <EditOutlined />
           Редагувати
@@ -111,7 +111,7 @@ const fetchData = async () =>{
           <FilePdfOutlined />
           Конвертувати в PDF
         </Menu.Item>
-        {(canEdit == true) ? (
+        {(canEdit === true) ? (
         <Menu.Item key="3">
           <DeleteOutlined />
           Видалити

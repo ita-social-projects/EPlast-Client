@@ -129,10 +129,10 @@ const FormEditPrecaution = ({
       number: dist?.number,
     };
     if (
-      dist.number == Precaution.number ||
+      dist.number === Precaution.number ||
       (await precautionApi
         .checkNumberExisting(newPrecaution.number)
-        .then((response) => response.data == false))
+        .then((response) => response.data === false))
     ) {
       await precautionApi.editUserPrecaution(newPrecaution);
       setShowModal(false);

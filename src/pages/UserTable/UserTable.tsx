@@ -105,7 +105,7 @@ const UsersTable = () => {
     switch (key) {
       case "confirmed":
         setIsInactive(false);
-        filteredData = users.filter((u) => u.user.emailConfirmed == true);
+        filteredData = users.filter((u) => u.user.emailConfirmed === true);
         break;
       case "interested":
         setIsInactive(false);
@@ -113,7 +113,7 @@ const UsersTable = () => {
         break;
       case "unconfirmed":
         setIsInactive(true);
-        filteredData = users.filter((u) => u.user.emailConfirmed == false);
+        filteredData = users.filter((u) => u.user.emailConfirmed === false);
         break;
       default:
         break;
