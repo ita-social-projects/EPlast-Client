@@ -120,7 +120,7 @@ const AddNewAdministratorForm = ({
           },
         ]}
       >
-        {roles?.includes("Пластун") ? (
+        {roles?.includes("Дійсний член організації") ? (
           <AutoComplete
             className={classes.inputField}
             onChange={handleClick}

@@ -39,7 +39,7 @@ export default function () {
   ];
 
   const handleSubmit = async (values: any) => {
-    if(values.PhoneNumber == "")
+    if(values.PhoneNumber === "")
     {
       values.PhoneNumber = undefined;
     }

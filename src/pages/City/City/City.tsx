@@ -224,7 +224,7 @@ const City = () => {
   }, []);
 
   useEffect(() => {
-    if (city.name.length != 0) {
+    if (city.name.length !== 0) {
       PsevdonimCreator.setPseudonimLocation(`cities/${city.name}`, `cities/${id}`);
     }
   }, [city])
