@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory, useParams, useRouteMatch } from "react-router-dom";
+import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import {
-  Avatar,
   Row,
   Col,
   Button,
@@ -13,25 +12,20 @@ import {
   Badge,
 } from "antd";
 import {
-  FileTextOutlined,
   EditOutlined,
   PlusSquareFilled,
-  UserAddOutlined,
-  PlusOutlined,
   DeleteOutlined,
-  ExclamationCircleOutlined,
-  HomeOutlined, RollbackOutlined
+  ExclamationCircleOutlined
 } from "@ant-design/icons";
-import moment from "moment";
 import {
   getGoverningBodyById,
   getGoverningBodyLogo,
+  getUserAccess,
   removeGoverningBody
 } from "../../../api/governingBodiesApi";
 import "./GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import GoverningBodyProfile from "../../../models/GoverningBody/GoverningBodyProfile";
-import GoverningBodyDocument from "../../../models/GoverningBody/GoverningBodyDocument";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import GoverningBodyDetailDrawer from "../GoverningBodyDetailDrawer";
@@ -40,6 +34,8 @@ import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddGoverningBodiesSecretaryForm";
+import AuthStore from "../../../stores/AuthStore";
+import jwt from 'jwt-decode';
 
 const GoverningBody = () => {
   const history = useHistory();
@@ -50,30 +46,14 @@ const GoverningBody = () => {
   const [governingBodyLogo64, setGoverningBodyLogo64] = useState<string>("");
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
-  //const [admins, setAdmins] = useState<GoverningBodyAdmin[]>([]);
-  //const [documents, setDocuments] = useState<GoverningBodyDocument[]>([]);
-  const [canCreate, setCanCreate] = useState(false);
-  const [canEdit, setCanEdit] = useState(false);
-  const [canJoin, setCanJoin] = useState(false);
-  const [photosLoading, setPhotosLoading] = useState<boolean>(false);
-  const [membersCount, setMembersCount] = useState<number>();
-  const [adminsCount, setAdminsCount] = useState<number>();
-  const [followersCount, setFollowersCount] = useState<number>();
   const [governingBodyLogoLoading, setGoverningBodyLogoLoading] = useState<boolean>(false);
   const [visible, setvisible] = useState<boolean>(false);
-  //const [document, setDocument] = useState<GoverningBodyDocument>(new GoverningBodyDocument());
+  const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
 
   const deleteGoverningBody = async () => {
     await removeGoverningBody(governingBody.id);
     notificationLogic("success", successfulDeleteAction("Керівний орган"));
 
-    // admins.map(async (ad) => {
-    //   await NotificationBoxApi.createNotifications(
-    //     [ad.userId],
-    //     `На жаль керівний орган: '${governingBody.governingBodyName}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
-    //     NotificationBoxApi.NotificationTypes.UserNotifications
-    //   );
-    // });
     history.push("/governingBodies");
   };
 
@@ -86,12 +66,6 @@ const GoverningBody = () => {
       setGoverningBodyLogo64(response.data);
     }
     setGoverningBodyLogoLoading(false);
-  };
-
-  const onAdd = (newDocument: GoverningBodyDocument) => {
-    // if (documents.length < 6) {
-    //   setDocuments([...documents, newDocument]);
-    // }
   };
 
   function seeDeleteModal() {
@@ -108,24 +82,23 @@ const GoverningBody = () => {
     });
   }
 
+  const getUserAccesses = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    await getUserAccess(user.nameid).then(
+      response => {
+        setUserAccesses(response.data);
+      }
+    );
+  }
+
   const getGoverningBody = async () => {
     setLoading(true);
     try {
       const response = await getGoverningBodyById(+id);
-      setPhotosLoading(true);
+      await getUserAccesses();
       setGoverningBodyLogoLoading(true);
-      // const admins = [
-      //   ...response.data.administration,
-      //   response.data.head,
-      // ].filter((a) => a !== null);
-
       setPhotos(response.data.governingBody.logo);
       setGoverningBody(response.data.governingBody);
-      //setAdmins(admins);
-     // setDocuments(response.data.documents);
-      setCanCreate(true);
-      setCanEdit(true);
-      setCanJoin(response.data.canJoin);
     } finally {
       setLoading(false);
     }
@@ -191,7 +164,7 @@ const GoverningBody = () => {
                   Деталі
                 </Button>
               </Col>
-              {canEdit ? (
+              {userAccesses["AddDecision"] ? (
                 <Col>
                   <Button
                     type="primary"
@@ -202,13 +175,13 @@ const GoverningBody = () => {
                   </Button>
                 </Col>
               ) : null}
-              {canEdit ? (
+              {userAccesses["EditGB"] ? (
                 <Col xs={24} sm={4}>
                   <Row
                     className="governingBodyIcons"
-                    justify={canCreate ? "center" : "start"}
+                    justify={userAccesses["DeleteGB"] ? "center" : "start"}
                   >
-                    {canEdit ? (
+                    {userAccesses["EditGB"] ? (
                       <Col>
                         <Tooltip title="Редагувати керівний орган">
                           <EditOutlined
@@ -220,7 +193,7 @@ const GoverningBody = () => {
                         </Tooltip>
                       </Col>
                     ) : null}
-                    {canCreate ? (
+                    {userAccesses["DeleteGB"] ? (
                       <Col offset={1}>
                         <Tooltip title="Видалити керівний орган">
                           <DeleteOutlined
@@ -270,12 +243,7 @@ const GoverningBody = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Провід керінвого органу <a onClick={() => history.push(`/governingBodies/administration/${governingBody.id}`)}>
-              {adminsCount !== 0 ?
-                <Badge
-                  count={adminsCount}
-                  style={{ backgroundColor: "#3c5438" }}
-                /> : null
-              }
+              
             </a>
             </Title>
             <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
@@ -313,7 +281,7 @@ const GoverningBody = () => {
               >
                 Більше
               </Button>
-              {canEdit ? (
+              {userAccesses["ManipulatePoster"] ? (
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
@@ -355,7 +323,7 @@ const GoverningBody = () => {
               >
                 Більше
               </Button>
-              {canEdit ? (
+              {userAccesses["ManipulateDocument"] ? (
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}

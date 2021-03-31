@@ -155,6 +155,14 @@ export const getusersPreviousAdministrations = async (UserId: string) => {
     });
 };
 
+export const getUserAccess = async (userId: string) => {
+  return await api.get(`GoverningBodies/GetUserAccesses/${userId}`, userId)
+  .catch( error => {
+       throw error;
+       } 
+  );
+}  
+
 export const getUsersAdministrations = async (UserId: string) => {
   return api.get(`GoverningBodies/GetUserAdmins/${UserId}`);
 };

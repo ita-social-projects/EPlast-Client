@@ -8,7 +8,6 @@ import {
   Upload,
   Row,
   Col,
-  Select,
   Card,
 } from "antd";
 import {
