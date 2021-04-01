@@ -112,7 +112,7 @@ const Clubs = () => {
                 </div>
               ) : (
                   clubs.map((club: ClubProfile) => (
-                    <Link to={`${url}/${club.id}`}>
+                    <Link to={`${url}/${club.id}`} key={`club-${club.id}`}>
                       <Card
                         key={club.id}
                         hoverable

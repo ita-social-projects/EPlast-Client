@@ -14,7 +14,9 @@ const setTagColor = (userRoles: string) => {
   if (userRoles?.includes("Admin")) {
     color = "red";
   }
+
   if (userRoles?.includes("Дійсний член організації")) {
+
     color = "green";
   }
   if (userRoles?.includes("Прихильник")) {

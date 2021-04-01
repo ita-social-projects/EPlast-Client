@@ -30,9 +30,9 @@ const HistoryDrawer = (props: Props) => {
                     </Form.Item>
                 </Col>
             </Row>
-            {props.history.map(element => {
+            {props.history.map((element:string, index:number) => {
                 let msg = pseudonimLocation.filter(x => element.includes(x.userId.split("/")[x.userId.split("/").length - 1]) && element.includes(x.userId.split("/")[0]));
-                return <Row gutter={[12, 0]}>
+                return <Row gutter={[12, 0]} key={`history-${index}`}>
                     <Link to={element} className="historyLink" target="">{
                         msg.length === 1 ? element.replace(msg[0].userId.split("/")[msg[0].userId.split("/").length - 1], msg[0].psevdonim.split("/")[msg[0].psevdonim.split("/").length - 1]) : element
                     }
