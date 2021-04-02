@@ -210,3 +210,7 @@ export const getClubs = async()=>{
   return api.get(`Club/Clubs`);
 }
 
+export default {
+  getClubs
+}
+    

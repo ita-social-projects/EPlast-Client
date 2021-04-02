@@ -12,7 +12,6 @@ import {
 import Distinction from "../Interfaces/Distinction";
 import UserDistinction from "../Interfaces/UserDistinction";
 import distinctionApi from "../../../api/distinctionApi";
-import adminApi from "../../../api/adminApi";
 import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
@@ -114,7 +113,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     if (
       await distinctionApi
         .checkNumberExisting(newDistinction.number)
-        .then((response) => response.data == false)
+        .then((response) => response.data === false)
     ) {
       await distinctionApi.addUserDistinction(newDistinction);
       setVisibleModal(false);

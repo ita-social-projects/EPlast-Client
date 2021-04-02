@@ -1,6 +1,6 @@
 import React from "react";
 import moment from "moment";
-import { Typography, Tooltip, List, Tag } from "antd";
+import { Typography, Tooltip, Tag } from "antd";
 import {
   WomanOutlined,
   ManOutlined,
@@ -11,19 +11,21 @@ const { Text } = Typography;
 
 const setTagColor = (userRoles: string) => {
   let color = "";
-  if (userRoles.includes("Admin")) {
+  if (userRoles?.includes("Admin")) {
     color = "red";
   }
-  if (userRoles.includes("Пластун")) {
+
+  if (userRoles?.includes("Дійсний член організації")) {
+
     color = "green";
   }
-  if (userRoles.includes("Прихильник")) {
+  if (userRoles?.includes("Прихильник")) {
     color = "orange";
   }
-  if (userRoles.includes("Зацікавлений")) {
+  if (userRoles?.includes("Зацікавлений")) {
     color = "yellow";
   }
-  if (userRoles.includes("Колишній член пласту")) {
+  if (userRoles?.includes("Колишній член пласту")) {
     color = "black";
   }
   return color;
@@ -32,11 +34,11 @@ const setTagColor = (userRoles: string) => {
 const ColumnsForUserTable: any = [
   {
     title: "№",
-    dataIndex: ["user", "userProfileId"],
+    dataIndex: "userProfileId",
     render: (id: number) => <Text>{id}</Text>,
     fixed: true,
     sorter: {
-      compare: (a: any, b: any) => a.user.userProfileId - b.user.userProfileId,
+      compare: (a: any, b: any) => a.userProfileId - b.userProfileId,
     },
     sortDirections: ["descend", "ascend"],
     defaultSortOrder: "ascend",
@@ -44,30 +46,31 @@ const ColumnsForUserTable: any = [
   },
   {
     title: "Ім`я",
-    dataIndex: ["user", "firstName"],
+    dataIndex: "firstName",
+    width: 190,
     render: (text: any) => (
       <Text underline strong>
         {text}
       </Text>
     ),
-    sorter: (a: any, b: any) =>
-      a.user.firstName.localeCompare(b.user.firstName),
+    sorter: (a: any, b: any) => a.firstName.localeCompare(b.firstName),
     sortDirections: ["descend", "ascend"],
   },
   {
     title: "Прізвище",
-    dataIndex: ["user", "lastName"],
+    dataIndex: "lastName",
+    width: 190,
     render: (text: any | null) => (
       <Text underline strong>
         {text}
       </Text>
     ),
-    sorter: (a: any, b: any) => a.user.lastName.localeCompare(b.user.lastName),
+    sorter: (a: any, b: any) => a.lastName.localeCompare(b.lastName),
     sortDirections: ["descend", "ascend"],
   },
   {
     title: "Дата народження",
-    dataIndex: ["user", "birthday"],
+    dataIndex: "birthday",
     width: 130,
     render: (date: Date) => {
       if (date !== null) {
@@ -75,15 +78,15 @@ const ColumnsForUserTable: any = [
       }
     },
     sorter: (a: any, b: any) => {
-      a = a.user.birthday || " ";
-      b = b.user.birthday || " ";
+      a = a.birthday || " ";
+      b = b.birthday || " ";
       return a.localeCompare(b);
     },
     sortDirections: ["descend", "ascend"],
   },
   {
     title: "Стать",
-    dataIndex: ["user", "gender"],
+    dataIndex: "gender",
     width: 120,
     render: (gender: any) => {
       if (gender === null) {
@@ -108,8 +111,9 @@ const ColumnsForUserTable: any = [
   {
     title: "Округа",
     dataIndex: "regionName",
+    width: 150,
     render: (regionName: any) => {
-      if (regionName.length > 0) {
+      if (regionName?.length > 0) {
         return (
           <Tag color={"blue"} key={regionName}>
             {regionName}
@@ -127,8 +131,9 @@ const ColumnsForUserTable: any = [
   {
     title: "Станиця",
     dataIndex: "cityName",
+    width: 150,
     render: (cityName: any) => {
-      if (cityName.length > 0) {
+      if (cityName?.length > 0) {
         return (
           <Tag color={"purple"} key={cityName}>
             {cityName}
@@ -146,8 +151,9 @@ const ColumnsForUserTable: any = [
   {
     title: "Курінь",
     dataIndex: "clubName",
+    width: 190,
     render: (clubName: any) => {
-      if (clubName.length > 0) {
+      if (clubName?.length > 0) {
         return (
           <Tag color={"pink"} key={clubName}>
             {clubName}
@@ -165,12 +171,10 @@ const ColumnsForUserTable: any = [
   {
     title: "Ступінь",
     dataIndex: "userPlastDegreeName",
+    width: 180,
     render: (userPlastDegreeName: any, record: any) => {
       if (userPlastDegreeName !== null && userPlastDegreeName.length > 0) {
-        if (
-          record.user.gender?.name !== null &&
-          record.user.gender?.name == "Чоловік"
-        ) {
+        if (record.gender?.name !== null && record.gender?.name == "Чоловік") {
           return (
             <Tag color={"red"} key={userPlastDegreeName}>
               <Tooltip
@@ -182,8 +186,8 @@ const ColumnsForUserTable: any = [
             </Tag>
           );
         } else if (
-          record.user.gender?.name !== null &&
-          record.user.gender?.name == "Жінка"
+          record.gender?.name !== null &&
+          record.gender?.name == "Жінка"
         ) {
           return (
             <Tag color={"red"} key={userPlastDegreeName}>
@@ -218,28 +222,19 @@ const ColumnsForUserTable: any = [
     dataIndex: "email",
     width: 220,
     render: (email: any) => {
-        return (
-          <Tag color={"pink"}>
-            {email}
-          </Tag>
-        );
+      return <Tag color={"pink"}>{email}</Tag>;
     },
   },
   {
-  title: "Ступінь в УПЮ",
-  dataIndex: "upuDegree",
-  width: 180,
-  render: (upuDegree: any) => {
-      return (
-        <Tag color={"blue"}>
-          {upuDegree}
-        </Tag>
-      );
+    title: "Ступінь в УПЮ",
+    dataIndex: "upuDegree",
+    width: 210,
+    render: (upuDegree: any) => {
+      return <Tag color={"blue"}>{upuDegree}</Tag>;
+    },
+    sorter: (a: any, b: any) => a.upuDegree.localeCompare(b.upuDegree),
+    sortDirections: ["descend", "ascend"],
   },
-  sorter: (a: any, b: any) =>
-  a.upuDegree.localeCompare(b.upuDegree),
-  sortDirections: ["descend", "ascend"],
-},
   {
     title: "Права доступу",
     dataIndex: "userRoles",
@@ -247,8 +242,8 @@ const ColumnsForUserTable: any = [
     ellipsis: false,
     filters: [
       {
-        text: "Пластун",
-        value: "Пластун",
+        text: "Дійсний член організації",
+        value: "Дійсний член організації",
       },
       {
         text: "Колишній член пласту",
@@ -288,9 +283,9 @@ const ColumnsForUserTable: any = [
       },
     ],
     filterMultiple: false,
-    onFilter: (value: any, record: any) => record.userRoles.includes(value),
+    onFilter: (value: any, record: any) => record.userRoles?.includes(value),
     render: (userRoles: any) => {
-      if (userRoles.length > 20) {
+      if (userRoles?.length > 20) {
         return (
           <Tag color={setTagColor(userRoles)} key={userRoles}>
             <Tooltip placement="topLeft" title={userRoles}>
