@@ -4,7 +4,7 @@ import { Form, Select, Button, Modal, Col } from 'antd';
 import regionsApi from '../../../api/regionsApi';
 import notificationLogic from "../../../components/Notifications/Notification";
 import { useHistory } from 'react-router-dom';
-import {successfulCreateAction, tryAgain, emptyInput} from "../../../components/Notifications/Messages"
+import {successfulCreateAction, tryAgain, emptyInput, ReportAlreayExists} from "../../../components/Notifications/Messages"
 import { maxLength } from '../../../components/Notifications/Messages';
 import TextArea from 'antd/lib/input/TextArea';
 
@@ -66,8 +66,8 @@ interface Props {
             notificationLogic("success", successfulCreateAction("Річний звіт"));
             window.location.reload();
           })
-          .catch(() => {
-            notificationLogic("error", tryAgain);
+          .catch((error) => {
+            error.response.status===400? notificationLogic("error", ReportAlreayExists) : notificationLogic("error", tryAgain);
           });    
           form.resetFields(); 
           setLoading(false);

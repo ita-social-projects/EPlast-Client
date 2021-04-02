@@ -164,11 +164,18 @@ const AnnualReportTable = () => {
     {
       title: "Номер",
       dataIndex: "id",
+      sorter:{
+        compare: (a: any, b: any) => a.id - b.id,
+      },
+      sortDirections: ["descend", "ascend"],
+      defaultSortOrder: "ascend",
     },
 
     {
       title: "Округа",
       dataIndex: ["regionName"],
+      sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Дата подання",
@@ -176,6 +183,12 @@ const AnnualReportTable = () => {
       render: (date: Date) => {
         return moment(date.toLocaleString()).format("DD.MM.YYYY");
       },
+      sorter: (a: any, b: any) => {
+        a = a.date || " ";
+        b = b.date || " ";
+        return a.localeCompare(b);
+      },
+      sortDirections: ["descend", "ascend"],
     }
   ];
 
@@ -184,15 +197,32 @@ const AnnualReportTable = () => {
     {
       title: "Номер",
       dataIndex: "id",
+      sorter:{
+        compare: (a: any, b: any) => a.id - b.id,
+      },
+      sortDirections: ["descend", "ascend"],
+      defaultSortOrder: "ascend",
     },
 
     {
       title: "Станиця",
       dataIndex: ["city", "name"],
+      sorter: (a: any, b: any) => {
+        a = a.city.name || " ";
+        b = b.city.name || " ";
+        return a.localeCompare(b);
+      },
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Регіон",
       dataIndex: ["city", "region", "regionName"],
+      sorter: (a: any, b: any) => {
+        a = a.city.region.regionName || " ";
+        b = b.city.region.regionName || " ";
+        return a.localeCompare(b);
+      },
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Дата подання",
@@ -200,6 +230,12 @@ const AnnualReportTable = () => {
       render: (date: Date) => {
         return moment(date.toLocaleString()).format("DD.MM.YYYY");
       },
+      sorter: (a: any, b: any) => {
+        a = a.date || " ";
+        b = b.date || " ";
+        return a.localeCompare(b);
+      },
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Статус",
@@ -235,10 +271,21 @@ const AnnualReportTable = () => {
     {
       title: "Номер",
       dataIndex: "id",
+      sorter:{
+        compare: (a: any, b: any) => a.id - b.id,
+      },
+      sortDirections: ["descend", "ascend"],
+      defaultSortOrder: "ascend",
     },
     {
       title: "Курінь",
       dataIndex: ["clubName"],
+      sorter: (a: any, b: any) => {
+        a = a.clubName || " ";
+        b = b.clubName || " ";
+        return a.localeCompare(b);
+      },
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Дата подання",
@@ -246,6 +293,12 @@ const AnnualReportTable = () => {
       render: (date: Date) => {
         return moment(date.toLocaleString()).format("DD.MM.YYYY");
       },
+      sorter: (a: any, b: any) => {
+        a = a.date || " ";
+        b = b.date || " ";
+        return a.localeCompare(b);
+      },
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Статус",
