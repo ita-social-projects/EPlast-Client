@@ -19,7 +19,8 @@ import DeleteDegreeConfirm from "./PlastDegree/DeleteDegreeConfirm";
 import { SafetyCertificateOutlined } from "@ant-design/icons";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
-
+import {cityNameOfApprovedMember} from "../../../api/citiesApi"
+import {clubNameOfApprovedMember} from "../../../api/clubsApi"
 const { Title } = Typography;
 
 const ActiveMembership = () => {
@@ -62,9 +63,9 @@ const ActiveMembership = () => {
     });
   };
   const getAppropriateToGenderDegree = (plastDegreeName: string): string => {
-    if (userGenders[0] === user.gender.name) {
+    if (userGenders[0] === user.gender?.name) {
       return plastDegreeName.split("/")[0];
-    } else if (userGenders[1] === user.gender.name) {
+    } else if (userGenders[1] === user.gender?.name) {
       return plastDegreeName.split("/")[1];
     } else return plastDegreeName;
   };
@@ -87,6 +88,16 @@ const ActiveMembership = () => {
 
     await userApi.getById(userId).then(async (response) => {
       setUser(response.data.user);
+      
+    });
+    await cityNameOfApprovedMember(userId).then(async (responce)=>{
+      setUser({...user, city:responce.data});
+      console.log(user.city);
+    });
+
+    await clubNameOfApprovedMember(userId).then(async (responce)=>{
+      setUser({...user, club:responce.data});
+      console.log(user.club);
     });
 
     setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
