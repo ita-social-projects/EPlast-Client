@@ -22,7 +22,7 @@ const convertToTableAdmin = (admin: ClubAdmin) => {
         name: `${admin.user.firstName} ${admin.user.lastName}`,
         status: "Адміністратор",
         type: admin.adminType.adminTypeName,
-        userCity : `${admin.user.cityName}`,
+        userCity : admin.user.cityName? `${admin.user.cityName}`:'_',
       }
     : null;
 };
@@ -39,7 +39,7 @@ export const getTableMembers = (members: ClubMember[], admins: ClubAdmin[], head
     name: `${member.user.firstName} ${member.user.lastName}`,
     status: "Член Куреня",
     type: member.user.userRole,
-    userCity : `${member.user.cityName}`,
+    userCity : member.user.cityName? `${member.user.cityName}`:'_',
   }));
 };
 
@@ -49,6 +49,6 @@ export const getTableFollowers = (followers: ClubMember[]) => {
     name: `${member.user.firstName} ${member.user.lastName}`,
     status: "Прихильник Куреня",
     type: member.user.userRole,
-    userCity : `${member.user.cityName}`,
+    userCity : member.user.cityName? `${member.user.cityName}`:'_',
   }));
 };
