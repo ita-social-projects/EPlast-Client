@@ -15,7 +15,6 @@ interface Props {
 }
 
 const AnnualReportInformation = (props: Props) => {
-    console.log(props)
     const { visibleModal, annualReport, handleOk, showError } = props;
     const [cityLegalStatuses, setCityLegalStatuses] = useState<string[]>(Array());
 
@@ -32,8 +31,7 @@ const AnnualReportInformation = (props: Props) => {
             showError(error.message)
         }
     }
-console.log(annualReport)
-console.log(props)
+
     return (
         <Modal
             onCancel={handleOk}
