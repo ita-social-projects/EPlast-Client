@@ -20,7 +20,7 @@ export const maxLength = (len:number)=>{
 
 export const tryAgain = 'Щось пішло не так. Спробуйте ще раз.'; 
 
-export const ReportAlreayExists = 'Звіт вже існує.'; 
+export const ReportAlreadyExists = 'Звіт вже існує.';
 
 export const successfulCreateAction = (name:string, itemName?:string)=>{
     return itemName ? `${name} ${itemName} успішно створено` : `${name} успішно створено`;
