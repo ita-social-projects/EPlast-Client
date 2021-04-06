@@ -31,12 +31,11 @@ const AnnualReportEdit = () => {
 
     const fetchAnnualReport = async () => {
         try {
-            let response = await AnnualReportApi.getById(id);
-            response.data.annualreport.city = null;
-            response.data.annualreport.newCityAdmin = null;
-            cityId = response.data.annualreport.cityId;
-            setAnnualReport(response.data.annualreport);
-            form.setFieldsValue(response.data.annualreport);
+            let annualreport = await AnnualReportApi.getById(id)
+                .then((response)=>{return response.data.annualReport as AnnualReport});
+            cityId = annualreport.cityId;
+            setAnnualReport(annualreport);
+            form.setFieldsValue(annualreport);
         }
         catch (error) {
             showError(error.message)
