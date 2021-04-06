@@ -4,9 +4,9 @@ import { Typography, Tooltip, Tag } from "antd";
 import {
   WomanOutlined,
   ManOutlined,
-  QuestionOutlined,
 } from "@ant-design/icons";
 import "./Filter.less";
+import Transgender from '../../assets/images/lgbt.svg'
 const { Text } = Typography;
 
 const setTagColor = (userRoles: string) => {
@@ -42,12 +42,12 @@ const ColumnsForUserTable: any = [
     },
     sortDirections: ["descend", "ascend"],
     defaultSortOrder: "ascend",
-    width: 75,
+    width: 55,
   },
   {
     title: "Ім`я",
     dataIndex: "firstName",
-    width: 190,
+    width: 150,
     render: (text: any) => (
       <Text underline strong>
         {text}
@@ -59,7 +59,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Прізвище",
     dataIndex: "lastName",
-    width: 190,
+    width: 150,
     render: (text: any | null) => (
       <Text underline strong>
         {text}
@@ -87,7 +87,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Стать",
     dataIndex: "gender",
-    width: 120,
+    width: 80,
     render: (gender: any) => {
       if (gender === null) {
         return <h4>Не вказано</h4>;
@@ -104,14 +104,34 @@ const ColumnsForUserTable: any = [
           </Tooltip>
         );
       } else {
-        return <h4>Інша</h4>;
+        return (
+          <Tooltip title="Інша  ">
+              <img src={Transgender} alt="Transgender"/>
+          </Tooltip>
+        )
       }
+    },
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+    width: 160,
+    render: (email: string) => {
+      if(email.length >= 17)
+      {
+        return (
+          <Tooltip title={email}>
+              <span>{email.slice(0, 13) + "..."}</span>
+          </Tooltip>
+        )
+      }
+      return <span>{email}</span>
     },
   },
   {
     title: "Округа",
     dataIndex: "regionName",
-    width: 150,
+    width: 100,
     render: (regionName: any) => {
       if (regionName?.length > 0) {
         return (
@@ -131,7 +151,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Станиця",
     dataIndex: "cityName",
-    width: 150,
+    width: 120,
     render: (cityName: any) => {
       if (cityName?.length > 0) {
         return (
@@ -151,7 +171,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Курінь",
     dataIndex: "clubName",
-    width: 190,
+    width: 150,
     render: (clubName: any) => {
       if (clubName?.length > 0) {
         return (
@@ -171,12 +191,12 @@ const ColumnsForUserTable: any = [
   {
     title: "Ступінь",
     dataIndex: "userPlastDegreeName",
-    width: 180,
+    width: 150,
     render: (userPlastDegreeName: any, record: any) => {
       if (userPlastDegreeName !== null && userPlastDegreeName.length > 0) {
         if (record.gender?.name !== null && record.gender?.name == "Чоловік") {
           return (
-            <Tag color={"red"} key={userPlastDegreeName}>
+            <Tag color={"blue"} key={userPlastDegreeName}>
               <Tooltip
                 placement="topLeft"
                 title={userPlastDegreeName?.split("/")[0]}
@@ -201,7 +221,7 @@ const ColumnsForUserTable: any = [
           );
         } else {
           return (
-            <Tag color={"red"} key={userPlastDegreeName}>
+            <Tag color={"yellow"} key={userPlastDegreeName}>
               <Tooltip placement="topLeft" title={userPlastDegreeName}>
                 {userPlastDegreeName?.slice(0, 20)}
               </Tooltip>
@@ -216,14 +236,6 @@ const ColumnsForUserTable: any = [
       return a.localeCompare(b);
     },
     sortDirections: ["descend", "ascend"],
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-    width: 220,
-    render: (email: any) => {
-      return <Tag color={"pink"}>{email}</Tag>;
-    },
   },
   {
     title: "Ступінь в УПЮ",
