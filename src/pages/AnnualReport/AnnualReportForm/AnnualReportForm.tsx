@@ -17,7 +17,12 @@ const AnnualReportForm = (props: Props) => {
         number: [
             { required: true, message: emptyInput() },
             { pattern: /^\d+$/, message: shouldContain("додатні цілі числа") },
-            { max: 5, message: maxLength(5) },
+            {validator: (_ : object, value : string) =>
+                    String(value).length <= 5
+                        ? Promise.resolve()
+                        : Promise.reject(
+                        maxLength(5)
+                        )}
         ],
         textarea: [
             { max: 2000, message: maxLength(2000) }
@@ -25,7 +30,12 @@ const AnnualReportForm = (props: Props) => {
         money: [
             { required: true, message: emptyInput() },
             { pattern: /^\d+$/, message: shouldContain("додатні цілі числа") },
-            { max: 10, message: maxLength(10) }
+            {validator: (_ : object, value : string) =>
+                    String(value).length <= 10
+                        ? Promise.resolve()
+                        : Promise.reject(
+                        maxLength(10)
+                        )}
         ]
     }
 

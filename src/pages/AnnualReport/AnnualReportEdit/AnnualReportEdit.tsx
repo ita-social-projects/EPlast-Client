@@ -33,6 +33,8 @@ const AnnualReportEdit = () => {
         try {
             let annualreport = await AnnualReportApi.getById(id)
                 .then((response)=>{return response.data.annualReport as AnnualReport});
+            annualreport.city = null;
+            annualreport.newCityAdmin = null;
             cityId = annualreport.cityId;
             setAnnualReport(annualreport);
             form.setFieldsValue(annualreport);

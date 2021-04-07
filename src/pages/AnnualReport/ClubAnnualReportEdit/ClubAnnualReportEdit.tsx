@@ -6,7 +6,13 @@ import './ClubAnnualReportEdit.less';
 import ClubAnnualReport from '../Interfaces/ClubAnnualReport';
 import { editClubAnnualReport, getClubAnnualReportById} from '../../../api/clubsApi';
 import { Typography, Input} from 'antd';
-import { emptyInput, maxLength, successfulEditAction, tryAgain } from '../../../components/Notifications/Messages';
+import {
+    emptyInput,
+    maxLength,
+    shouldContain,
+    successfulEditAction,
+    tryAgain
+} from '../../../components/Notifications/Messages';
 import moment from 'moment';
 import notificationLogic from "../../../components/Notifications/Notification";
 
@@ -33,16 +39,7 @@ const ClubAnnualReportEdit = () => {
         try {
             let response = await getClubAnnualReportById(id);
             setClubAnnualReport(response.data.annualreport);
-            form.setFieldsValue({
-                clubName:response.data.annualreport.clubName,
-                clubMembersSummary:response.data.annualreport.clubMembersSummary,
-                clubContacts:response.data.annualreport.clubContacts,
-                clubPage :response.data.annualreport.clubPage,
-                kbUSPWishes :response.data.annualreport.kbUSPWishes,
-                clubCenters :response.data.annualreport.clubCenters,
-                clubEnteredMembersCount :response.data.annualreport.clubEnteredMembersCount,
-                clubLeftMembersCount :response.data.annualreport.clubLeftMembersCount,
-            });
+            form.setFieldsValue(response.data.annualreport);
         }
         catch (error) {
             notificationLogic("error", tryAgain);
@@ -62,6 +59,23 @@ const ClubAnnualReportEdit = () => {
             notificationLogic("error", tryAgain);
             history.goBack(); 
         }
+    }
+
+    const validationSchema = {
+        number: [
+            { required: true, message: emptyInput() },
+            { pattern: /^\d+$/, message: shouldContain("додатні цілі числа") },
+            {validator: (_ : object, value : string) =>
+                    String(value).length <= 7
+                        ? Promise.resolve()
+                        : Promise.reject(
+                        maxLength(7)
+                        )}
+        ],
+        textarea: [
+            { required: true, message: emptyInput() },
+            { max: 2000, message: maxLength(2000) }
+        ]
     }
 
     return (
@@ -145,11 +159,10 @@ const ClubAnnualReportEdit = () => {
                     className='container'>
                     <Text strong={true}>До куреня приєдналось за звітній період</Text>
                     <Form.Item
-                            className='w100'
-                            name='clubEnteredMembersCount'
-                            rules={[{ required: true, message: emptyInput() },
-                                { max: 7, message: maxLength(7) }]}>
-                                    <Input  type="number" min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
+                        className='w100'
+                        name='clubEnteredMembersCount'
+                        rules={validationSchema.number}>
+                        <Input  type="number" min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                     </Form.Item>
                 </Col>
             </Row>
@@ -161,11 +174,10 @@ const ClubAnnualReportEdit = () => {
                     className='container'>
                     <Text strong={true}>Вибули з куреня за звітній період</Text>
                     <Form.Item
-                            className='w100'
-                            name='clubLeftMembersCount'
-                            rules={[{ required: true, message: emptyInput() },
-                                { max: 7, message: maxLength(7) }]}>
-                                    <Input  type="number" min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
+                        className='w100'
+                        name='clubLeftMembersCount'
+                        rules={validationSchema.number}>
+                        <Input  type="number" min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                     </Form.Item>
                 </Col>
             </Row>
@@ -177,10 +189,10 @@ const ClubAnnualReportEdit = () => {
                     className='container'>
                     <Text strong={true}>Географія куреня. Осередки в Україні:</Text>
                     <Form.Item
-                            className='w100'
-                            name='clubCenters'
-                            rules={[{ required: true, message: emptyInput() }, { max: 2000, message: maxLength(2000)}]} >
-                            <TextArea />
+                        className='w100'
+                        name='clubCenters'
+                        rules={validationSchema.textarea}>
+                        <TextArea />
                     </Form.Item>
                 </Col>
             </Row>
@@ -192,10 +204,10 @@ const ClubAnnualReportEdit = () => {
                     className='container'>
                     <Text strong={true}>Вкажіть побажання до КБ УСП</Text>
                     <Form.Item
-                            className='w100'
-                            name='kbUSPWishes'
-                            rules={[{ required: true, message: emptyInput() }, { max: 2000, message: maxLength(2000)}]} >
-                            <TextArea />
+                        className='w100'
+                        name='kbUSPWishes'
+                        rules={validationSchema.textarea}>
+                        <TextArea />
                     </Form.Item>
                 </Col>
             </Row>
