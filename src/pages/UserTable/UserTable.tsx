@@ -10,6 +10,7 @@ import {
   Modal,
   Form,
   Card,
+  Typography
 } from "antd";
 import "./Filter.less";
 import { getUsersForTableByPage } from "../../api/adminApi";
@@ -359,6 +360,7 @@ const UsersTable = () => {
       }}
     >
       <Title level={2}>Таблиця користувачів</Title>
+      <Title level={4} style={{textAlign: "left", margin: 10}} underline={true}>Загальна кількість користувачів: {total}</Title>
       <div className={classes.searchContainer}>
         <div className={classes.filterContainer}>
           <Form form={form} onFinish={handleFilter} style={{ height: "20px" }}>
