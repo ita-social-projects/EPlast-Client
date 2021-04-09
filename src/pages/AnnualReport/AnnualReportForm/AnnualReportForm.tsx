@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Form, Row, Col, Input, Select, message } from 'antd';
+import { Typography, Form, Row, Col, Input, Select } from 'antd';
 import Props from './AnnualReportFormProps';
 import './AnnualReportForm.less';
 import{emptyInput, maxLength, shouldContain} from "../../../components/Notifications/Messages"
@@ -17,7 +17,12 @@ const AnnualReportForm = (props: Props) => {
         number: [
             { required: true, message: emptyInput() },
             { pattern: /^\d+$/, message: shouldContain("додатні цілі числа") },
-            { max: 5, message: maxLength(5) }
+            {validator: (_ : object, value : string) =>
+                    String(value).length <= 5
+                        ? Promise.resolve()
+                        : Promise.reject(
+                        maxLength(5)
+                        )}
         ],
         textarea: [
             { max: 2000, message: maxLength(2000) }
@@ -25,7 +30,12 @@ const AnnualReportForm = (props: Props) => {
         money: [
             { required: true, message: emptyInput() },
             { pattern: /^\d+$/, message: shouldContain("додатні цілі числа") },
-            { max: 10, message: maxLength(10) }
+            {validator: (_ : object, value : string) =>
+                    String(value).length <= 10
+                        ? Promise.resolve()
+                        : Promise.reject(
+                        maxLength(10)
+                        )}
         ]
     }
 
@@ -78,10 +88,8 @@ const AnnualReportForm = (props: Props) => {
                             <Form.Item
                                 className='w100'
                                 name='numberOfSeatsPtashat'
-                                rules={validationSchema.number} >
-                                <Input 
-                                    maxLength={6}
-                                />
+                                rules={validationSchema.number}>
+                                <Input type="number" maxLength={6} min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                             </Form.Item>
                         </Col>
                         <Col
@@ -91,9 +99,7 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name={['membersStatistic', 'numberOfPtashata']}
                                 rules={validationSchema.number}>
-                                <Input 
-                                    maxLength={6}
-                                />
+                                <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -112,9 +118,7 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name='numberOfIndependentRiy'
                                 rules={validationSchema.number}>
-                                <Input 
-                                    maxLength={6}
-                                />
+                                <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                             </Form.Item>
                         </Col>
                         <Col
@@ -124,9 +128,7 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name={['membersStatistic', 'numberOfNovatstva']}
                                 rules={validationSchema.number}>
-                                <Input 
-                                    maxLength={6}
-                                />
+                                <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -144,9 +146,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfClubs'
                             rules={validationSchema.number}>
-                            <Input 
-                                maxLength={6}
-                            />
+                            <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -156,9 +156,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfIndependentGroups'
                             rules={validationSchema.number}>
-                            <Input 
-                                maxLength={6}
-                            />
+                            <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -168,9 +166,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name={['membersStatistic', 'numberOfUnatstvaNoname']}
                             rules={validationSchema.number}>
-                            <Input 
-                                maxLength={6}
-                            />
+                            <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -180,9 +176,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name={['membersStatistic', 'numberOfUnatstvaSupporters']}
                             rules={validationSchema.number}>
-                            <Input 
-                                maxLength={6}
-                            />
+                            <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -192,9 +186,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name={['membersStatistic', 'numberOfUnatstvaMembers']}
                             rules={validationSchema.number}>
-                            <Input 
-                                maxLength={6}
-                            />
+                            <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -204,9 +196,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name={['membersStatistic', 'numberOfUnatstvaProspectors']}
                             rules={validationSchema.number}>
-                            <Input 
-                                maxLength={6}
-                            />
+                            <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -216,9 +206,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name={['membersStatistic', 'numberOfUnatstvaSkobVirlyts']}
                             rules={validationSchema.number}>
-                            <Input 
-                                maxLength={6}
-                            />
+                            <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -240,9 +228,7 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name={['membersStatistic', 'numberOfSeniorPlastynSupporters']}
                                 rules={validationSchema.number}>
-                                <Input 
-                                    maxLength={6}
-                                />
+                                <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                             </Form.Item>
                         </Col>
                         <Col
@@ -252,9 +238,7 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name={['membersStatistic', 'numberOfSeniorPlastynMembers']}
                                 rules={validationSchema.number}>
-                                <Input 
-                                    maxLength={6}
-                                />
+                                <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -273,9 +257,7 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name={['membersStatistic', 'numberOfSeigneurSupporters']}
                                 rules={validationSchema.number}>
-                                <Input
-                                    maxLength={6}
-                                />
+                                <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                             </Form.Item>
                         </Col>
                         <Col
@@ -285,9 +267,7 @@ const AnnualReportForm = (props: Props) => {
                                 className='w100'
                                 name={['membersStatistic', 'numberOfSeigneurMembers']}
                                 rules={validationSchema.number}>
-                                <Input 
-                                    maxLength={6}
-                                />
+                                <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -305,9 +285,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfTeachers'
                             rules={validationSchema.number}>
-                            <Input 
-                                maxLength={6}
-                            />
+                            <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -317,9 +295,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfAdministrators'
                             rules={validationSchema.number}>
-                            <Input 
-                                maxLength={6}
-                            />
+                            <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -329,9 +305,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfTeacherAdministrators'
                             rules={validationSchema.number}>
-                            <Input 
-                                maxLength={6}
-                            />
+                            <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -348,9 +322,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfBeneficiaries'
                             rules={validationSchema.number}>
-                            <Input 
-                                maxLength={6}
-                            />
+                            <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -360,9 +332,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfPlastpryiatMembers'
                             rules={validationSchema.number}>
-                            <Input 
-                                maxLength={6}
-                            />
+                            <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -372,9 +342,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='numberOfHonoraryMembers'
                             rules={validationSchema.number}>
-                            <Input 
-                                maxLength={6}
-                            />
+                            <Input type="number" maxLength={6} min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -391,9 +359,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='publicFunds'
                             rules={validationSchema.money}>
-                            <Input 
-                                maxLength={11}
-                            />
+                            <Input type="number" maxLength={6} min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -403,9 +369,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='contributionFunds'
                             rules={validationSchema.money}>
-                            <Input 
-                                maxLength={11}
-                            />
+                            <Input type="number" maxLength={6} min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -415,9 +379,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='plastSalary'
                             rules={validationSchema.money}>
-                            <Input 
-                                maxLength={11}
-                            />
+                            <Input type="number" maxLength={6} min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -427,9 +389,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='sponsorshipFunds'
                             rules={validationSchema.money}>
-                            <Input 
-                                maxLength={11}
-                            />
+                            <Input type="number" maxLength={6} min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                 </Row>
