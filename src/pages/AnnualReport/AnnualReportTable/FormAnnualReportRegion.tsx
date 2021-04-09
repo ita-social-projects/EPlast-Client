@@ -28,7 +28,8 @@ interface Props {
       const fechYears = async () => {
         try {
           const arrayOfYears = [];
-          for (let i = 2000; i <= 2040; i++) {
+          const currentYear: number=new Date().getFullYear();
+          for (let i = 2000; i <= currentYear; i++) {
             arrayOfYears.push({ lable: i.toString(), value: i });
           }
           setYears(arrayOfYears);
