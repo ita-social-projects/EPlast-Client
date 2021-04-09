@@ -4,7 +4,6 @@ import {
   Form,
   Input,
   DatePicker,
-  AutoComplete,
   Select,
   Button,
   Row,
@@ -93,10 +92,10 @@ type FormAddKadraProps = {
         }
 
          kadrasApi.doesRegisterNumberExist(newKadra.numberInRegister).then(responce=>{
-            if (responce.data==false){
+            if (responce.data === false){
                  kadrasApi.doesUserHaveStaff(newKadra.userId,newKadra.KadraVykhovnykivTypeId).then(  async response=>{
 
-                    if(response.data==false){
+                    if(response.data === false){
                       await kadrasApi.createKadra(newKadra)
                       form.resetFields();
                       onAdd();
