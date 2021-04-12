@@ -1,12 +1,9 @@
 import React from "react";
 import moment from "moment";
 import { Typography, Tooltip, Tag } from "antd";
-import {
-  WomanOutlined,
-  ManOutlined,
-} from "@ant-design/icons";
+import { WomanOutlined, ManOutlined } from "@ant-design/icons";
 import "./Filter.less";
-import Transgender from '../../assets/images/lgbt.svg'
+import Transgender from "../../assets/images/lgbt.svg";
 const { Text } = Typography;
 
 const setTagColor = (userRoles: string) => {
@@ -16,7 +13,6 @@ const setTagColor = (userRoles: string) => {
   }
 
   if (userRoles?.includes("Дійсний член організації")) {
-
     color = "green";
   }
   if (userRoles?.includes("Прихильник")) {
@@ -36,7 +32,7 @@ const ColumnsForUserTable: any = [
     title: "№",
     dataIndex: "userProfileId",
     render: (id: number) => <Text>{id}</Text>,
-    fixed: true,
+    fixed: "left",
     sorter: {
       compare: (a: any, b: any) => a.userProfileId - b.userProfileId,
     },
@@ -106,9 +102,9 @@ const ColumnsForUserTable: any = [
       } else {
         return (
           <Tooltip title="Інша  ">
-              <img src={Transgender} alt="Transgender"/>
+            <img src={Transgender} alt="Transgender" />
           </Tooltip>
-        )
+        );
       }
     },
   },
@@ -117,15 +113,14 @@ const ColumnsForUserTable: any = [
     dataIndex: "email",
     width: 160,
     render: (email: string) => {
-      if(email.length >= 17)
-      {
+      if (email.length >= 17) {
         return (
           <Tooltip title={email}>
-              <span>{email.slice(0, 13) + "..."}</span>
+            <span>{email.slice(0, 13) + "..."}</span>
           </Tooltip>
-        )
+        );
       }
-      return <span>{email}</span>
+      return <span>{email}</span>;
     },
   },
   {
@@ -151,7 +146,7 @@ const ColumnsForUserTable: any = [
   {
     title: "Станиця",
     dataIndex: "cityName",
-    width: 120,
+    width: 100,
     render: (cityName: any) => {
       if (cityName?.length > 0) {
         return (
@@ -171,12 +166,16 @@ const ColumnsForUserTable: any = [
   {
     title: "Курінь",
     dataIndex: "clubName",
-    width: 150,
+    width: 130,
     render: (clubName: any) => {
       if (clubName?.length > 0) {
         return (
           <Tag color={"pink"} key={clubName}>
-            {clubName}
+            <Tooltip placement="topLeft"
+              title={clubName}
+            >
+              {clubName.slice(0, 15)}
+            </Tooltip>
           </Tag>
         );
       }
@@ -201,7 +200,7 @@ const ColumnsForUserTable: any = [
                 placement="topLeft"
                 title={userPlastDegreeName?.split("/")[0]}
               >
-                {userPlastDegreeName?.split("/")[0]?.slice(0, 20)}
+                {userPlastDegreeName?.split("/")[0].slice(0, 20)}
               </Tooltip>
             </Tag>
           );
@@ -215,7 +214,7 @@ const ColumnsForUserTable: any = [
                 placement="topLeft"
                 title={userPlastDegreeName?.split("/")[1]}
               >
-                {userPlastDegreeName?.split("/")[1]?.slice(0, 20)}
+                {userPlastDegreeName?.split("/")[1].slice(0, 20)}
               </Tooltip>
             </Tag>
           );

@@ -43,6 +43,7 @@ const getAllPlastDegrees = async () : Promise<Array<PlastDegree>>=> {
 
  const getUserPlastDegrees = async (id : string) :Promise<Array<UserPlastDegree>>=> {
     const response = await Api.get(`ActiveMembership/degree/${id}`);
+    console.log(response.data)
 
     return response.data;
  };

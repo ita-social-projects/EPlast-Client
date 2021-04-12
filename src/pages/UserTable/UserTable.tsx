@@ -10,7 +10,7 @@ import {
   Modal,
   Form,
   Card,
-  Typography
+  Typography,
 } from "antd";
 import "./Filter.less";
 import { getUsersForTableByPage } from "../../api/adminApi";
@@ -60,6 +60,7 @@ const UsersTable = () => {
   const [viewedUsers, setViewedUsers] = useState<UserTable[]>([]);
   const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
   const [isInactive, setIsInactive] = useState(false);
+  const [scroll, setScroll] = useState<number>();
   const { SHOW_PARENT } = TreeSelect;
   useEffect(() => {
     fetchData();
@@ -129,6 +130,7 @@ const UsersTable = () => {
   const fetchDegrees = async () => {
     try {
       let response = await activeMembershipApi.getAllPlastDegrees();
+      console.log(response);
       let degrees = response as PlastDegree[];
       setDegrees(
         degrees.map((item) => {
@@ -138,6 +140,8 @@ const UsersTable = () => {
           };
         })
       );
+      console.log(degrees);
+
     } catch (error) {
       showError(error.message);
     }
@@ -162,6 +166,7 @@ const UsersTable = () => {
         Degrees: dynamicDegrees,
         Tab: currentTabName,
       });
+      console.log(response.data)
       setUsers(response.data.users);
       setViewedUsers(response.data.users);
       setTotal(response.data.total);
@@ -177,6 +182,7 @@ const UsersTable = () => {
 
   let filteredData = searchedData
     ? viewedUsers.filter((item) => {
+        console.log(item.userPlastDegreeName);
         return Object.values([
           item.regionName,
           item.cityName,
@@ -280,6 +286,13 @@ const UsersTable = () => {
   const handleClickAway = () => {
     setShowDropdown(false);
   };
+  const handleScroll = () => {
+    if(pageSize >= 10)
+    {
+      setScroll(900)
+    }
+
+  }
 
   const handleChange = (id: string, userRole: string) => {
     const filteredData = users.filter((d: any) => {
@@ -351,7 +364,7 @@ const UsersTable = () => {
     setCurrentTabName(key);
     setViewedUsers(filteredData);
   };
-  useEffect(() => {}, [filteredData]);
+
 
   return (
     <Layout.Content
@@ -360,7 +373,13 @@ const UsersTable = () => {
       }}
     >
       <Title level={2}>Таблиця користувачів</Title>
-      <Title level={4} style={{textAlign: "left", margin: 10}} underline={true}>Загальна кількість користувачів: {total}</Title>
+      <Title
+        level={4}
+        style={{ textAlign: "left", margin: 10 }}
+        underline={true}
+      >
+        Загальна кількість користувачів: {total}
+      </Title>
       <div className={classes.searchContainer}>
         <div className={classes.filterContainer}>
           <Form form={form} onFinish={handleFilter} style={{ height: "20px" }}>
@@ -440,7 +459,7 @@ const UsersTable = () => {
             className={classes.table}
             bordered
             rowKey="id"
-            scroll={{ x: 1450 }}
+            scroll={{ x: 1450, y: scroll}}
             columns={ColumnsForUserTable}
             dataSource={filteredData}
             onRow={(record) => {
@@ -460,6 +479,7 @@ const UsersTable = () => {
             }}
             onChange={(pagination) => {
               if (pagination) {
+                handleScroll()
                 window.scrollTo({
                   left: 0,
                   top: 0,

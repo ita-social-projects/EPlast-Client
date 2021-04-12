@@ -58,10 +58,12 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
   useEffect(() => {
     const fetchData = async () => {
       await precautionApi.getPrecautions().then((response) => {
+        console.log(response.data);
         setDistData(response.data);
       });
       setLoadingUserStatus(true);
       await adminApi.getUsersForTable().then((response) => {
+        console.log(response.data);
         setUserData(response.data);
         setLoadingUserStatus(false);
       });

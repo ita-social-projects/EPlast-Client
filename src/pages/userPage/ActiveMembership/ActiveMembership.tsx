@@ -58,6 +58,7 @@ const ActiveMembership = () => {
 
   const handleAddDegree = async () => {
     await activeMembershipApi.getUserPlastDegrees(userId).then((response) => {
+      console.log(response)
       setPlastDegrees(response);
     });
   };
@@ -103,6 +104,7 @@ const ActiveMembership = () => {
     });
 
     await activeMembershipApi.getUserPlastDegrees(userId).then((response) => {
+      console.log(response)
       setPlastDegrees(response);
     });
 
