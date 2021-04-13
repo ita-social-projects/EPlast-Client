@@ -24,6 +24,7 @@ export type GoverningBody = {
   phoneNumber: string;
   email: string;
 }
+
 export type decisionTarget ={
   id : number;
   targetName: string;

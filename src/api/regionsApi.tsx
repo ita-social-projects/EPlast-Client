@@ -187,7 +187,7 @@ export const getRegionsByPage = async (
   return api
     .get(`Regions/Profiles/${page}`, { page, pageSize, regionName })
     .catch((error) => {
-      throw new Error(error);
+      throw error;
     });
 };
 

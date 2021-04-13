@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams, useRouteMatch } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import {
   Avatar,
   Row,
@@ -21,6 +21,9 @@ import {
   getRegionDocuments,
   GetRegionsBoard,
 } from "../../api/regionsApi";
+import {
+  getUserAccess
+} from "../../api/regionsBoardApi";
 import "../Regions/Region.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import Title from "antd/lib/typography/Title";
@@ -35,18 +38,17 @@ import decisionsApi, {
   statusTypeGetParser,
   GoverningBody,
 } from "../../api/decisionsApi";
-import { getGoverningBodiesList } from "../../api/governingBodiesApi";
+import { getGoverningBodiesList, getGoverningBodyLogo } from "../../api/governingBodiesApi";
 import AddDecisionModal from "../DecisionTable/AddDecisionModal";
 import notificationLogic from "../../components/Notifications/Notification";
-import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfile";
+import AuthStore from "../../stores/AuthStore";
+import jwt from 'jwt-decode';
 
 const RegionBoard = () => {
   const history = useHistory();
-  const { url } = useRouteMatch();
   const [visibleModal, setVisibleModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [photoStatus, setPhotoStatus] = useState(true);
-  const [canEdit, setCanEdit] = useState(false);
   const [document, setDocument] = useState<any>({
     ID: "",
     SubmitDate: "",
@@ -93,33 +95,48 @@ const RegionBoard = () => {
 
   const [orgsCount, setOrgsCount] = useState<number>();
   const [decisionsCount, setDecisionsCount] = useState<number>();
-  const [canCreate, setCanCreate] = useState(false);
-  const [photosLoading, setPhotosLoading] = useState<boolean>(false);
-  const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
   const [decisions, setDecisions] = useState<Decision[]>([]);
-  const [visible, setvisible] = useState<boolean>(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
-  const [visibleDecisionModal, setVisibleDecisionModal] = useState<boolean>(
-    false
-  );
+  const [visibleDecisionModal, setVisibleDecisionModal] = useState<boolean>(false);
+  const [gbPhotosAreLoading, setGbPhotosAreLoading] = useState<boolean>(false);
+  const [userAccesses, setUserAccesses] = useState<{[key: string]: boolean}>({})
 
   const getRegion = async () => {
     setLoading(true);
     try {
       const response = await GetRegionsBoard();
+      await getUserAccesses();
       setRegionDecisions();
       setRegionOrgs();
       setRegionDocs(response.data.id);
-      setPhotosLoading(false);
-      setRegionLogoLoading(true);
       setRegion(response.data);
-      setCanEdit(response.data.canEdit);
       if (response.data.logo == null) {
         setPhotoStatus(false);
       }
-    } finally {
-      setLoading(false);
+      } finally {
+        setLoading(false);
     }
+  };
+  
+  const getUserAccesses = async () => {
+      let user: any = jwt(AuthStore.getToken() as string);
+      await getUserAccess(user.nameid).then(
+        response => {
+          setUserAccesses(response.data);
+        }
+      );
+  }
+
+  const loadGbPhotos = async (governingBodies: GoverningBody[]) => {
+    
+    for (let i = 0; i < governingBodies.length; i++) {
+      if (governingBodies[i].logo == undefined) continue;
+      governingBodies[i].logo = (
+        await getGoverningBodyLogo(governingBodies[i].logo!)
+      ).data;
+    }
+
+    setGbPhotosAreLoading(false);
   };
 
   const onAdd = (newDocument: CityDocument) => {
@@ -144,14 +161,16 @@ const RegionBoard = () => {
     responseOrgs.length > 6
       ? setGoverningBodies(responseOrgs.slice(responseOrgs.length - 6))
       : setGoverningBodies(responseOrgs);
+    setGbPhotosAreLoading(true);
+    loadGbPhotos(responseOrgs);
   };
 
   const setRegionDecisions = async () => {
-    const responseDecisions: Decision[] = await decisionsApi.getAll();
-    setDecisionsCount(responseDecisions.length);
-    responseDecisions.length > 6
-      ? setDecisions(responseDecisions.slice(responseDecisions.length - 6))
-      : setDecisions(responseDecisions);
+    const decisions: Decision[] = await decisionsApi.getAll();
+    setDecisionsCount(decisions.length);
+    decisions.length > 6
+      ? setDecisions(decisions.slice(decisions.length - 6))
+      : setDecisions(decisions);
   };
 
   const handleAdd = async () => {
@@ -184,6 +203,8 @@ const RegionBoard = () => {
   useEffect(() => {
     getRegion();
   }, []);
+
+  console.log(userAccesses);
 
   return loading ? (
     <Spinner />
@@ -263,19 +284,19 @@ const RegionBoard = () => {
                   Деталі
                 </Button>
               </Col>
-              {canCreate || canEdit ? (
+              {userAccesses["EditRB"] ? (
                 <>
                   <Col
-                    style={{ display: canCreate || canEdit ? "block" : "none" }}
+                    style={{ display: userAccesses["EditRB"] ? "block" : "none" }}
                   ></Col>
                   <Col
                     xs={24}
                     sm={4}
-                    style={{ display: canCreate || canEdit ? "block" : "none" }}
+                    style={{ display: userAccesses["EditRB"] ? "block" : "none" }}
                   >
                     <Row
                       className="cityIcons"
-                      justify={canCreate ? "center" : "start"}
+                      justify={userAccesses["EditRB"] ? "center" : "start"}
                     >
                       <Col>
                         <Tooltip title="Крайовий Провід Пласту">
@@ -328,9 +349,9 @@ const RegionBoard = () => {
                     sm={8}
                   >
                     <div
-                      onClick={() => history.push(`/governingBody/${governingBody.id}`)}
+                      onClick={() => history.push(`/governingBodies/${governingBody.id}`)}
                     >
-                      {photosLoading ? (
+                      {gbPhotosAreLoading ? (
                         <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
                         <Avatar size={64} src={governingBody.logo == null ? undefined : governingBody.logo} />
@@ -346,7 +367,7 @@ const RegionBoard = () => {
               )}
             </Row>
             <div className="cityMoreButton">
-              {canCreate || canEdit ? (
+              {userAccesses["CreateGB"] ? (
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
@@ -364,57 +385,58 @@ const RegionBoard = () => {
           </Card>
         </Col>
 
+        {userAccesses["ViewDecisions"] ?  
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
-          <Card hoverable className="cityCard">
-            <Title level={4}>
-              Рішення{" "}
-              <a onClick={() => history.push(`/decisions`)}>
-                {decisions.length !== 0 ? (
-                  <Badge
-                    count={decisionsCount}
-                    style={{ backgroundColor: "#3c5438" }}
-                  />
-                ) : null}
-              </a>
-            </Title>
-            <Row className="cityItems" justify="center" gutter={[0, 16]}>
+        <Card hoverable className="cityCard">
+          <Title level={4}>
+            Рішення{" "}
+            <a onClick={() => history.push(`/decisions`)}>
               {decisions.length !== 0 ? (
-                decisions.map((decision) => (
-                  <Col
-                    className="cityMemberItem"
-                    xs={12}
-                    sm={8}
-                    key={decision.id}
-                    onClick={() => openPDF(decision)}
-                  >
-                    <div>
-                      <FileDoneOutlined className="documentIcon" />
-                      <p className="documentText">{decision.name}</p>
-                    </div>
-                  </Col>
-                ))
-              ) : (
-                <Paragraph>Ще немає рішень</Paragraph>
-              )}
-            </Row>
-            <div className="cityMoreButton">
-              {canCreate || canEdit ? (
-                <PlusSquareFilled
-                  type="primary"
-                  className="addReportIcon"
-                  onClick={() => setVisibleDecisionModal(true)}
-                ></PlusSquareFilled>
+                <Badge
+                  count={decisionsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                />
               ) : null}
-              <Button
+            </a>
+          </Title>
+          <Row className="cityItems" justify="center" gutter={[0, 16]}>
+            {decisions.length !== 0 ? (
+              decisions.map((decision) => (
+                <Col
+                  className="cityMemberItem"
+                  xs={12}
+                  sm={8}
+                  key={decision.id}
+                  onClick={() => openPDF(decision)}
+                >
+                  <div>
+                    <FileDoneOutlined className="documentIcon" />
+                    <p className="documentText">{decision.name}</p>
+                  </div>
+                </Col>
+              ))
+            ) : (
+              <Paragraph>Ще немає рішень</Paragraph>
+            )}
+          </Row>
+          <div className="cityMoreButton">
+            {userAccesses["AddDecision"] ? (
+              <PlusSquareFilled
                 type="primary"
-                className="cityInfoButton"
-                onClick={() => history.push(`/decisions`)}
-              >
-                Більше
-              </Button>
-            </div>
-          </Card>
-        </Col>
+                className="addReportIcon"
+                onClick={() => setVisibleDecisionModal(true)}
+              ></PlusSquareFilled>
+            ) : null}
+            <Button
+              type="primary"
+              className="cityInfoButton"
+              onClick={() => history.push(`/decisions`)}
+            >
+              Більше
+            </Button>
+          </div>
+        </Card>
+      </Col> : null}
 
         <Col
           xl={{ span: 7, offset: 1 }}
@@ -453,7 +475,7 @@ const RegionBoard = () => {
               >
                 Більше
               </Button>
-              {canCreate || canEdit ? (
+              {userAccesses["ManipulateDocument"] ? (
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}

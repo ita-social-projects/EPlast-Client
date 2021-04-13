@@ -1,4 +1,6 @@
+import axios from "axios";
 import api from "./api";
+import BASE_URL from '../config';
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
   const arr = dataurl.split(",");
@@ -66,8 +68,10 @@ export const removeGoverningBody = async (id: number) => {
     });
 };
 
-export const getLogo = async (logoName: string) => {
-  return api.get("GoverningBodies/LogoBase64", { logoName });
+export const getGoverningBodyLogo = async (logoName: string) => {
+  return await axios.get(`${`${BASE_URL}GoverningBodies/LogoBase64/${logoName}`}`).catch((error) => {
+    throw new Error(error);
+  });
 };
 
 export const getAllAdmins = async (id: number) => {
@@ -150,6 +154,14 @@ export const getusersPreviousAdministrations = async (UserId: string) => {
       throw new Error(error);
     });
 };
+
+export const getUserAccess = async (userId: string) => {
+  return await api.get(`GoverningBodies/GetUserAccesses/${userId}`, userId)
+  .catch( error => {
+       throw error;
+       } 
+  );
+}  
 
 export const getUsersAdministrations = async (UserId: string) => {
   return api.get(`GoverningBodies/GetUserAdmins/${UserId}`);

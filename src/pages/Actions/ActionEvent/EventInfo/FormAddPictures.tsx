@@ -4,7 +4,7 @@ import {
     Button,
     Upload, notification, Tooltip,
 } from 'antd';
-import {UploadOutlined, InboxOutlined} from '@ant-design/icons';
+import {UploadOutlined} from '@ant-design/icons';
 import eventsApi from "../../../../api/eventsApi";
 import {EventGallery} from "./EventInfo";
 import {

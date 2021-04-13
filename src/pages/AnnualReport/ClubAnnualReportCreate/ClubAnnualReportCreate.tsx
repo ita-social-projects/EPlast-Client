@@ -232,7 +232,7 @@ export const ClubAnnualReportCreate = () => {
                             name='clubEnteredMembersCount'
                             rules={[{ required: true, message: emptyInput() },
                                 { max: 7, message: maxLength(7) }]}>
-                                    <Input  type="number"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
+                                    <Input  type="number" min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                     </Form.Item>
                 </Col>
             </Row>
@@ -248,7 +248,7 @@ export const ClubAnnualReportCreate = () => {
                             name='clubLeftMembersCount'
                             rules={[{ required: true, message: emptyInput() },
                                 { max: 7, message: maxLength(7) }]}>
-                                    <Input  type="number"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
+                                    <Input  type="number" min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                     </Form.Item>
                 </Col>
             </Row>
