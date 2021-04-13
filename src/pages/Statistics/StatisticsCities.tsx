@@ -334,7 +334,7 @@ const onClick = (value: Array<Number>) => {
                           showSearch
                           allowClear
                           multiple
-                          onChange={()=>onClick}
+                          onChange={onClick}
                           treeDefaultExpandAll
                           placeholder="Обрати показник"
                           filterTreeNode={(input, option) => (option?.title as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}>
@@ -393,7 +393,7 @@ const onClick = (value: Array<Number>) => {
       </div>}
       </div>
       <br/>
-      {showTable === false ? "" :
+      {!showTable ? "" :
         <Table
           bordered 
           rowClassName={(record, index) => index === onClickRow ? "onClickRow" : "" }
