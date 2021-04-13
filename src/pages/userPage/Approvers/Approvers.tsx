@@ -52,7 +52,7 @@ const fetchApproverName = async (id: string) => {
 
   useEffect(() => {
     fetchData();
-  }, [[], data]);
+  }, []);
 
   const setGreeting = () => {
       let greeting = "Друже/подруго";
@@ -79,6 +79,7 @@ const fetchApproverName = async (id: string) => {
         `/userpage/main/${data?.currentUserId}`,
         'Переглянути користувача'
     );
+    fetchData();
   }
 
   const approveClick = async (userId: string, isClubAdmin: boolean = false, isCityAdmin: boolean = false) => {
@@ -94,6 +95,7 @@ const fetchApproverName = async (id: string) => {
         `/userpage/main/${data?.currentUserId}`,
         'Переглянути користувача'
     );
+    fetchData();
   }
 
   const { Meta } = Card;
