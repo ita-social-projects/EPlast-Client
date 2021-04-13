@@ -86,7 +86,15 @@ const City = () => {
       `/cities/${id}`,
       city.name
     );
-
+    
+    if(member.data.wasRegisteredUser){
+        await NotificationBoxApi.createNotifications(
+            [member.data.userId],
+            "Тобі надано нову роль: 'Прихильник'",
+            NotificationBoxApi.NotificationTypes.UserNotifications
+          );
+    }
+    
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
     ).data;
