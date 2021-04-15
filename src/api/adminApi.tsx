@@ -12,6 +12,7 @@ const getUsersForTable = async () => {
 export const getUsersForTableByPage = async (data: TableFilterParameters) => {
   return await Api
     .get(`Admin/Profiles`, data, (params:any)=> {
+      console.log(data)
       return Object.entries(params).map(([key, value]) => {
       if (Array.isArray(value)) return value.map(it => `${key}=${it}`).join('&');
         return `${key}=${value}`;
