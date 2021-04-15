@@ -44,10 +44,12 @@ const UnconfirmedDropdown = (props: Props) => {
                     key='1' >
                     <FileSearchOutlined />Переглянути
                 </Menu.Item>
-                <Menu.Item
-                    key='2' >
-                    <FileSyncOutlined />Редагувати
-                </Menu.Item>
+                {record.canManage? (
+                    <Menu.Item
+                        key='2' >
+                        <FileSyncOutlined />Редагувати
+                    </Menu.Item>
+                ):null}
                 {canManage ? (
                     <Menu.Item
                         key='3' >
