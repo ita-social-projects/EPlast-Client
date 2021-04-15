@@ -6,14 +6,15 @@ import styles from '../Dropdown.module.css';
 
 const UnconfirmedDropdown = (props: Props) => {
     const { record, pageX, pageY, showDropdown, canManage, onView, onEdit, onConfirm, onRemove } = props;
-
     const handleClick = (item: any) => {
         switch (item.key) {
             case '1':
                 onView(record.id);
                 break;
             case '2':
-                onEdit(record.id);
+                if (record.canManage){
+                    onEdit(record.id);
+                }
                 break;
             case '3':
                 if (canManage) {
@@ -44,10 +45,12 @@ const UnconfirmedDropdown = (props: Props) => {
                     key='1' >
                     <FileSearchOutlined />Переглянути
                 </Menu.Item>
-                <Menu.Item
-                    key='2' >
-                    <FileSyncOutlined />Редагувати
-                </Menu.Item>
+                {record.canManage?(
+                    <Menu.Item
+                        key='2' >
+                        <FileSyncOutlined />Редагувати
+                    </Menu.Item>
+                ):null}
                 {canManage ? (
                     <Menu.Item
                         key='3' >

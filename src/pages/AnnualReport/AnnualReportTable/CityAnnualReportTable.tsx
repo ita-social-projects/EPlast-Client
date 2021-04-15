@@ -1,7 +1,6 @@
 import React, { useEffect, useState} from "react";
 import { useHistory } from "react-router-dom";
-import { Table } from 'antd';
-import AnnualReport from '../Interfaces/AnnualReport';
+import {Table} from 'antd';
 import ClickAwayListener from "react-click-away-listener";
 import UnconfirmedDropdown from "./Dropdowns/UnconfirmedDropdown/UnconfirmedDropdown";
 import ConfirmedDropdown from "./Dropdowns/ConfirmedDropdown/ConfirmedDropdown";
@@ -15,25 +14,61 @@ import jwt_decode from "jwt-decode";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import notificationLogic from "../../../components/Notifications/Notification";
 import { successfulEditAction, tryAgain } from "../../../components/Notifications/Messages";
-import { showError } from "../../Actions/EventsModals";
+import Spinner from "../../Spinner/Spinner";
 
 interface props {
     columns: any;
-    filteredData: any;
+    searchedData: any;
   }
   
-  export const CityAnnualReportTable =({columns, filteredData}:props)=>{
+  export const CityAnnualReportTable =({columns, searchedData}:props)=>{
     const history = useHistory();
-    const [annualReport, setAnnualReport] = useState<AnnualReport>(Object);
-    const [annualReports, setAnnualReports] = useState<AnnualReport[]>(Array());
+    const [annualReport, setAnnualReport] = useState(Object);
+    const [annualReports, setAnnualReports] = useState(Array());
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [total, setTotal] = useState<number>(0);
+    const [count, setCount] = useState<number>(0);
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
     const [canManage, setCanManage] = useState<boolean>(false);
+    const [currentSearchedData, setCurrentSearchedData] = useState<string>();
     const [showUnconfirmedDropdown, setShowUnconfirmedDropdown] = useState<boolean>(false);
     const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(false);
     const [showConfirmedDropdown, setShowConfirmedDropdown] = useState<boolean>(false);
     const [showAnnualReportModal, setShowAnnualReportModal] = useState<boolean>(false);
     const [showSavedDropdown, setShowSavedDropdown] = useState<boolean>(false);
+    const [isLoading, setIsLoading]=useState(false);
+
+    useEffect(()=>{
+      if(currentSearchedData!=searchedData){
+        setCurrentSearchedData(searchedData);
+        setPage(1);
+      }
+      fetchAnnualReports();
+      checkAccessToManage();
+    },[searchedData, page, pageSize]);
+
+    const fetchAnnualReports = async () => {
+      setIsLoading(true);
+      try {
+        let response = await AnnualReportApi.getAll(searchedData, page, pageSize);
+        setAnnualReports(response.data.annualReports);
+        setTotal(response.data.annualReports[0]?.total);
+        setCount(response.data.annualReports[0]?.count);
+      } catch (error) {
+        showError(error.message);
+      }finally {
+        setIsLoading(false);
+      }
+    };
+
+    const showError = (message: string) => {
+      Modal.error({
+        title: "Помилка!",
+        content: message,
+      });
+    };
 
     const hideDropdowns = () => {
       setShowUnconfirmedDropdown(false);
@@ -47,7 +82,7 @@ interface props {
       let roles = decodedJwt[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
       ] as string[];
-      setCanManage(roles.includes("Admin") || roles.includes("Голова Регіону"));
+      setCanManage(roles.includes("Admin"));
     };
     
     const showDropdown = (annualReportStatus: number) => {
@@ -150,48 +185,65 @@ interface props {
             history.goBack(); 
       }
     };
-    
-    useEffect(() => {
-      checkAccessToManage();
-    }, []);
+
+    const handlePageChange = (page: number) => {
+      setPage(page);
+    };
+
+    const handleSizeChange = (page: number, pageSize: number = 10) => {
+      setPage(page);
+      setPageSize(pageSize);
+    };
 
     return (       
         <div>
-              <Table
-        bordered
-        rowKey="id"
-        columns={columns} 
-        scroll={{ x: 1300 }}
-        dataSource={filteredData}
-        onRow={(record) => {
-          return {
-            onClick: () => {
-              hideDropdowns();
-            },
-            onContextMenu: (event) => {
-              event.preventDefault();
-              showDropdown(record.status);
-              setAnnualReport(record);
-              setX(event.pageX);
-              setY(event.pageY-200);
-            },
-          };
-        }}
-        onChange={(pagination) => {
-          if (pagination) {
-            window.scrollTo({
-              left: 0,
-              top: 0,
-              behavior: "smooth",
-            });
-          }
-        }}
-        pagination={{
-          showLessItems: true,
-          responsive: true,
-          showSizeChanger: true,
-        }}
-      />
+          {isLoading? (<Spinner/>):(
+              <>
+                <p style={{textAlign: "left"}}>
+                  {count? 'Знайдено '+count+'/'+total+' результатів' : 'За вашим запитом нічого не знайдено'}
+                </p>
+                <Table
+                    bordered
+                    rowKey="id"
+                    columns={columns}
+                    scroll={{ x: 1300 }}
+                    dataSource={annualReports}
+                    rowClassName={(record) => ((record.canManage === true && !canManage) ? "manageRow" : '')}
+                    onRow={(record) => {
+                      return {
+                        onClick: () => {
+                          hideDropdowns();
+                        },
+                        onContextMenu: (event) => {
+                          event.preventDefault();
+                          showDropdown(record.status);
+                          setAnnualReport(record);
+                          setX(event.pageX);
+                          setY(event.pageY-200);
+                        },
+                      };
+                    }}
+                    onChange={(pagination) => {
+                      if (pagination) {
+                        window.scrollTo({
+                          left: 0,
+                          top: 0,
+                          behavior: "smooth",
+                        });
+                      }
+                    }}
+                    pagination={{
+                      current: page,
+                      pageSize: pageSize,
+                      total: count,
+                      showLessItems: true,
+                      responsive: true,
+                      showSizeChanger: true,
+                      onChange: (page) => handlePageChange(page),
+                      onShowSizeChange: (page, size) => handleSizeChange(page, size),
+                    }}
+                />
+              </>)}
       <ClickAwayListener onClickAway={hideDropdowns}>
         <UnconfirmedDropdown
           showDropdown={showUnconfirmedDropdown}

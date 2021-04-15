@@ -1,7 +1,13 @@
-import AnnualReport from "../../../Interfaces/AnnualReport";
-
 interface Props {
-    record: AnnualReport;
+    record: {
+        id: number;
+        status: number;
+        cityId: number;
+        cityName:string;
+        regionName:string;
+        date: Date;
+        canManage: boolean;
+    };
     pageX: number;
     pageY: number;
     showDropdown: boolean;
