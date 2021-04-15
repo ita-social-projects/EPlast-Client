@@ -51,7 +51,7 @@ const UsersTable = () => {
   const [regions, setRegions] = useState<any>();
   const [clubs, setClubs] = useState<any>();
   const [degrees, setDegrees] = useState<any>();
-  const [searchData, setSearchData] = useState<string>("Anna");
+  const [searchData, setSearchData] = useState<string>("");
   const [dynamicCities, setDynamicCities] = useState<any[]>([]);
   const [dynamicRegions, setDynamicRegions] = useState<any[]>([]);
   const [dynamicClubs, setDynamicClubs] = useState<any[]>([]);
