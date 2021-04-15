@@ -20,12 +20,17 @@ import{
   successfulCreateAction,
 } from "../../../components/Notifications/Messages"
 import { StickyContainer } from 'react-sticky';
+import NotificationBoxApi from '../../../api/NotificationBoxApi';
 
 const Assignments = () => {
   const history = useHistory();
   const { userId } = useParams();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ApproversData>();
+  const [approverName, setApproverName] = useState<string>();
+  const [userGender, setuserGender] = useState<string>();
+  const userGenders = ["Чоловік", "Жінка", "Інша"];
+
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
@@ -33,21 +38,63 @@ const Assignments = () => {
       setData(response.data);
       setLoading(true);
     }).catch(() => { notificationLogic('error', fileIsNotUpload("даних")) });
-  };
+    fetchApproverName(user.nameid);
+};
+
+const fetchApproverName = async (id: string) => {
+    await userApi.getById(id).then(response => {
+        setApproverName(response.data.user.firstName + ' ' + response.data.user.lastName);
+    });
+    await userApi.getById(userId).then(response => {
+        setuserGender(response.data.user.gender.name);
+    });
+}
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  const setGreeting = () => {
+      let greeting = "Друже/подруго";
+      console.log(data?.user);
+      if (userGender === userGenders[0]) {
+        greeting = "Друже";
+      }
+      if (userGender === userGenders[1]) {
+          greeting = "Подруго";
+      }
+      return greeting;
+  }
 
   const deleteApprove = async (event: number) => {
     await userApi.deleteApprove(event).
       then(() => { notificationLogic('success', successfulDeleteAction("Поручення")) }).
       catch(() => { notificationLogic('error', failDeleteAction("поручення")) });
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        `${setGreeting()}, повідомляємо, що користувач 
+        ${approverName} скасував своє поручення за тебе.
+        Будь тією зміною, яку хочеш бачити у світі!`,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/userpage/main/${data?.currentUserId}`,
+        'Переглянути користувача'
+    );
     fetchData();
   }
+
   const approveClick = async (userId: string, isClubAdmin: boolean = false, isCityAdmin: boolean = false) => {
     await userApi.approveUser(userId, isClubAdmin, isCityAdmin).
       then(() => { notificationLogic('success', successfulCreateAction("Поручення")) }).
       catch(() => { notificationLogic('error', "Не вдалося поручитися") });
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        `${setGreeting()}, повідомляємо, що користувач 
+        ${approverName} поручився за тебе.
+        Будь тією зміною, яку хочеш бачити у світі!`,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/userpage/main/${data?.currentUserId}`,
+        'Переглянути користувача'
+    );
     fetchData();
   }
 
