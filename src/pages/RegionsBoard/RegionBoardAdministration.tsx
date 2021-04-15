@@ -13,34 +13,36 @@ import moment from "moment";
 import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
-import CityAdmin from "../../models/City/CityAdmin";
-import NotificationBoxApi from "../../api/NotificationBoxApi";
-import governingBodiesApi from "../../api/governingBodiesApi";
-import { Organization } from "../../api/decisionsApi";
+import { getGoverningBodiesList, getGoverningBodyLogo } from "../../api/governingBodiesApi";
+import { GoverningBody } from "../../api/decisionsApi";
 moment.locale("uk-ua");
 
 const RegionBoardAdministration = () => {
-  const { id } = useParams();
   const history = useHistory();
 
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [governingBodies, setGoverningBodies] = useState<GoverningBody[]>([]);
   const [visibleModal, setVisibleModal] = useState(false);
-  const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const getGoverningBodies = async () => {
-    setLoading(true);
-    const responseOrgs = await governingBodiesApi.getOrganizationsList();
-    setPhotosLoading(true);
-
-    setOrganizations(responseOrgs);
-    setLoading(false);
+  const setPhotos = async (governingBodies: GoverningBody[]) => {
+    for (let i = 0; i < governingBodies.length; i++) {
+      if (governingBodies[i].logo == undefined) continue;
+      governingBodies[i].logo = (
+        await getGoverningBodyLogo(governingBodies[i].logo!)
+      ).data;
+    }
+ 
+    setPhotosLoading(false);
   };
 
-  const showModal = (member: any) => {
-    setAdmin(member);
-    setVisibleModal(true);
+  const getGoverningBodies = async () => {
+    setLoading(true);
+    const responseOrgs = await getGoverningBodiesList();
+    setGoverningBodies(responseOrgs);
+    setPhotosLoading(true);
+    setPhotos(responseOrgs);
+    setLoading(false);
   };
 
   const handleOk = () => {
@@ -58,24 +60,26 @@ const RegionBoardAdministration = () => {
         <Spinner />
       ) : (
         <div className="cityMoreItems">
-          {organizations.length > 0 ? (
-            organizations.map((organization) => (
+          {governingBodies.length > 0 ? (
+            governingBodies.map((governingBody) => (
               <Card
-                key={organization.id}
+                key={governingBody.id}
                 className="detailsCard"
-                title={`${organization.organizationName}`}
+                title={`${governingBody.governingBodyName}`}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
               >
-                <div className="cityMember" >
-                  <div>
+                <div className="cityMember">
+                  <div 
+                    onClick={() => history.push(`/governingBodies/${governingBody.id}`)}
+                  >
                     {photosLoading ? (
                       <Skeleton.Avatar active size={86}></Skeleton.Avatar>
                     ) : (
-                      <Avatar size={86} src="" />
+                      <Avatar size={86} src={governingBody.logo} />
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={`${organization.organizationName}`}
+                      title={`${governingBody.governingBodyName}`}
                     />
                   </div>
                 </div>
@@ -104,8 +108,7 @@ const RegionBoardAdministration = () => {
         onOk={handleOk}
         onCancel={handleOk}
         footer={null}
-      >
-      </Modal>
+      ></Modal>
     </Layout.Content>
   );
 };

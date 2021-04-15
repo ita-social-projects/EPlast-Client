@@ -47,13 +47,11 @@ export const getRegionDocuments = async (regionId: any) => {
 };
 
 export const createRegion = async (data: any) => {
-  const response = await api.post("Regions/AddRegion", data);
-  return response;
+  return await api.post("Regions/AddRegion", data);
 };
 
 export const getRegionById = async (regionId: number) => {
-  const response = await api.get(`Regions/Profile/${regionId}`);
-  return response;
+  return await api.get(`Regions/Profile/${regionId}`);
 };
 
 export const getRegionLogo = async (logoName: string) => {
@@ -104,13 +102,11 @@ export const addFollower = async (regionId: number, cityId: number) => {
 };
 
 export const AddAdmin = async (data: any) => {
-  const response = api.post("Regions/AddAdministrator", data);
-  return response;
+  return api.post("Regions/AddAdministrator", data);
 };
 
 export const EditAdmin = async (data: any) => {
-  const response = api.post("Regions/EditAdministrator", data);
-  return response;
+  return api.post("Regions/EditAdministrator", data);
 };
 
 export const getRegionAdministration = async (regionId: number) => {
@@ -165,7 +161,7 @@ export const redirectCities = async (prevRegId: number, nextRegId: number) => {
 export const createRegionAnnualReport = async (id: number, year: number, data: RegionAnnualReportQuestions) => {
   return api.post(`Regions/CreateRegionAnnualReportById/${id}/${year}`, JSON.stringify(data))
     .catch((error) => {
-      throw new Error(error);
+      throw error;
     })
 }
 
@@ -191,7 +187,7 @@ export const getRegionsByPage = async (
   return api
     .get(`Regions/Profiles/${page}`, { page, pageSize, regionName })
     .catch((error) => {
-      throw new Error(error);
+      throw error;
     });
 };
 

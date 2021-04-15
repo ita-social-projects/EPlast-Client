@@ -4,6 +4,7 @@ import styles from '../ChangePassword/ChangePassword.module.css';
 import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
 import {minLength, emptyInput} from "../../components/Notifications/Messages"
+import { checkPassword } from '../SignUp/verification';
 let authService = new AuthorizeApi();
 
 export default function () {
@@ -17,11 +18,11 @@ export default function () {
         ],
         NewPassword: [
             { required: true, message: emptyInput() },
-            { min: 8, message: minLength(8) },
+            { validator: checkPassword },
         ],
         ConfirmPassword: [
             { required: true, message: emptyInput() },
-            { min: 8, message: minLength(8) },
+            { validator: checkPassword },
         ]
     };
 

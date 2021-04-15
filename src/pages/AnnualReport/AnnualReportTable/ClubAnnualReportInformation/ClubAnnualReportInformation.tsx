@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Typography, Card, Modal, Space } from 'antd';
 import ClubAnnualReport from '../../Interfaces/ClubAnnualReport';
 import moment from 'moment';
 import './ClubAnnualReportInformation.less';
-import AnnualReportApi from '../../../../api/AnnualReportApi';
-import notificationLogic from '../../../../components/Notifications/Notification';
-import { tryAgain } from '../../../../components/Notifications/Messages';
 
 const { Title, Text } = Typography;
 
@@ -17,25 +14,7 @@ interface Props {
 
 const ClubAnnualReportInformation = (props: Props) => {
     const { visibleModal, clubAnnualReport, handleOk} = props;
-    const [cityLegalStatuses, setCityLegalStatuses] = useState<string[]>(Array());
 
-    useEffect(() => {
-        fetchCityLegalStatuses();
-    }, [])
-
-    const fetchCityLegalStatuses = async () => {
-        try {
-            let response = await AnnualReportApi.getCityLegalStatuses();
-            setCityLegalStatuses(response.data.legalStatuses);
-        }
-        catch (error) {
-            {
-                if (error.response?.status === 400) {
-                  notificationLogic('error', tryAgain);
-                };
-            }
-        }
-    }
     return (
         <Modal
             onCancel={handleOk}
@@ -59,13 +38,29 @@ const ClubAnnualReportInformation = (props: Props) => {
                     className='container'>
                     <Title
                         level={4}>Провід куреня: </Title>
-                    <Text>{clubAnnualReport.clubMembersSummary}</Text>
+                    {(clubAnnualReport?.clubMembersSummary?.split('\n').map((item, key) => {
+                        if(item!=""){
+                            return <Text key={key}>{key+1}. {
+                                item?.split(',').map((item, key)=>{
+                                    if(item!="")
+                                        return <Text key={key}>{item}<br/></Text>
+                                })}<br/></Text>
+                        }
+                    }))}
                 </Card.Grid>
                 <Card.Grid
                     className='container'>
                     <Title
                         level={4}>Контакти: </Title>
-                    <Text>{clubAnnualReport.clubAdminContacts}</Text>
+                    {(clubAnnualReport?.clubAdminContacts?.split('\n').map((item, key)=>{
+                        if(item!=""){
+                            return <Text key={key}>{key+1}. {
+                                item?.split(',').map((item, key)=>{
+                                    if(item!="")
+                                        return <Text key={key}>{item}<br/></Text>
+                                })}<br/></Text>
+                        }
+                    }))}
                 </Card.Grid>
                 <Card.Grid
                     className='container'>
@@ -112,7 +107,15 @@ const ClubAnnualReportInformation = (props: Props) => {
                     className='container'>
                     <Title
                         level={4}>Список членів куреня:  </Title>
-                    <Text>{clubAnnualReport.clubMembersSummary}</Text>
+                    {(clubAnnualReport?.clubMembersSummary?.split('\n').map((item, key)=>{
+                        if(item!=""){
+                            return <Text key={key}>{key+1}. {
+                                item?.split(',').map((item, key)=>{
+                                    if(item!="")
+                                        return <Text key={key}>{item}<br/></Text>
+                                })}<br/></Text>
+                        }
+                    }))}
                 </Card.Grid>
                 </Card>
         </Modal>
