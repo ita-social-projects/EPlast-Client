@@ -91,11 +91,11 @@ const ActiveMembership = () => {
       
     });
     await cityNameOfApprovedMember(userId).then(async (response)=>{
-      setUser(response.data);
+      setUser({...user,city:response.data});
     });
 
     await clubNameOfApprovedMember(userId).then(async (response)=>{
-      setUser(response.data);
+      setUser({...user,club:response.data});
     });
 
     setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
