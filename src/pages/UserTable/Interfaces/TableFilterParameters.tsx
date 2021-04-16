@@ -6,6 +6,7 @@ interface TableFilterParameters {
     Clubs?: Array<string>;
     Degrees?: Array<string>;
     Tab: string;
+    SearchData: string
 }
 
 export default TableFilterParameters;

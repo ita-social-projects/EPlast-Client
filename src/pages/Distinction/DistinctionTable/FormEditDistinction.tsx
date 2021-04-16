@@ -123,10 +123,10 @@ const FormEditDistinction = ({
       number: dist?.number,
     };
     if (
-      dist.number == distinction.number ||
+      dist.number === distinction.number ||
       (await distinctionApi
         .checkNumberExisting(newDistinction.number)
-        .then((response) => response.data == false))
+        .then((response) => response.data === false))
     ) {
       await distinctionApi.editUserDistinction(newDistinction);
       setShowModal(false);

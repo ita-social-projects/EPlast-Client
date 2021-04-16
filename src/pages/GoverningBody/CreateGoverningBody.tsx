@@ -8,7 +8,6 @@ import {
   Upload,
   Row,
   Col,
-  Select,
   Card,
 } from "antd";
 import {
@@ -22,7 +21,7 @@ import GoverningBodyDefaultLogo from "../../assets/images/default_city_image.jpg
 import {
   createGoverningBody,
   getGoverningBodyById,
-  getLogo,
+  getGoverningBodyLogo,
   updateGoverningBody,
 } from "../../api/governingBodiesApi";
 import "../City/CreateCity/CreateCity.less";
@@ -100,12 +99,12 @@ const CreateGoverningBody = () => {
       setLoading(true);
       let response = await getGoverningBodyById(+id);
 
-      if (response.data.logo !== null) {
-        const logo = await getLogo(response.data.logo);
+      if (response.data.logo !== undefined) {
+        const logo = await getGoverningBodyLogo(response.data.governingBody.logo);
         response.data.logo = logo.data;
       }
-
-      setGoverningBody(response.data);
+      
+      setGoverningBody(response.data.governingBody);
     } finally {
       setLoading(false);
     }

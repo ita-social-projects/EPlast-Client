@@ -5,30 +5,23 @@ import {
   Row,
   Col,
   Button,
-  Spin,
   Layout,
   Modal,
   Skeleton,
-  Divider,
   Card,
   Tooltip,
-  Input,
   Badge,
 } from "antd";
 import {
   FileTextOutlined,
   EditOutlined,
   PlusSquareFilled,
-  UserAddOutlined,
-  PlusOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import {
-  addFollower,
   getRegionById,
-  getRegionLogo,
   removeRegion,
   getRegionAdministration,
   getRegionDocuments,
@@ -45,7 +38,6 @@ import AddNewSecretaryForm from "./AddRegionSecretaryForm";
 import userApi from "./../../api/UserApi";
 import { getLogo } from "./../../api/citiesApi";
 import CitiesRedirectForm from "./CitiesRedirectForm";
-import CityDetailDrawer from "../City/CityDetailDrawer/CityDetailDrawer";
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
@@ -216,7 +208,7 @@ const Region = () => {
       setRegion(response.data);
       setCanEdit(response.data.canEdit);
 
-      if (response.data.logo == null) {
+      if (response.data.logo === null) {
         setPhotoStatus(false);
       }
     } finally {
@@ -235,7 +227,7 @@ const Region = () => {
         members[i] = member[i];
       }
     } else {
-      if (member.length != 0) {
+      if (member.length !== 0) {
         for (let i = 0; i < member.length; i++) {
           members[i] = member[i];
         }
@@ -249,7 +241,7 @@ const Region = () => {
         admins[i] = admin[i];
       }
     } else {
-      if (admin.length != 0) {
+      if (admin.length !== 0) {
         for (let i = 0; i < admin.length; i++) {
           admins[i] = admin[i];
         }
@@ -277,7 +269,7 @@ const Region = () => {
   }, []);
 
   useEffect(() => {
-    if (region.regionName.length != 0) {
+    if (region.regionName.length !== 0) {
       PsevdonimCreator.setPseudonimLocation(`regions/${region.regionName}`, `regions/${id}`);
     }
   }, [region]);
