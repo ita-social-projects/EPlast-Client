@@ -48,14 +48,6 @@ export default function () {
         notificationLogic("error", tryAgain);
       });
 
-  await cityNameOfApprovedMember(userId).then(async(response)=>{
-    setData(response.data.user?.city);
-  });
-
-  await clubNameOfApprovedMember(userId).then(async(response)=>{
-    setData(response.data.user?.club);
-  });
-
   };
 
   useEffect(() => {
