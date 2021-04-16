@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory, useParams, useRouteMatch } from "react-router-dom";
+import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import {
   Avatar,
   Row,
   Col,
   Button,
-  Spin,
   Layout,
   Modal,
   Skeleton,
-  Divider,
   Card,
   Tooltip,
-  Breadcrumb,
   Badge,
 } from "antd";
 import {
@@ -22,9 +19,7 @@ import {
   UserAddOutlined,
   PlusOutlined,
   DeleteOutlined,
-  ExclamationCircleOutlined,
-  HomeOutlined, RollbackOutlined
-} from "@ant-design/icons";
+  ExclamationCircleOutlined} from "@ant-design/icons";
 import moment from "moment";
 import {
   addFollower,
@@ -48,7 +43,6 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import BreadcrumbItem from "antd/lib/breadcrumb/BreadcrumbItem";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
@@ -86,7 +80,15 @@ const City = () => {
       `/cities/${id}`,
       city.name
     );
-
+    
+    if(member.data.wasRegisteredUser){
+        await NotificationBoxApi.createNotifications(
+            [member.data.userId],
+            "Тобі надано нову роль: 'Прихильник'",
+            NotificationBoxApi.NotificationTypes.UserNotifications
+          );
+    }
+    
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
     ).data;

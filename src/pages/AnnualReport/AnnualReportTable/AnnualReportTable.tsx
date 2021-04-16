@@ -1,46 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 import {
-  Table,
   Button,
   Layout,
   Modal,
-  Input,
   Row,
   Col,
   Typography,
-  Select,
-  Drawer,
-  message,
   Tag,
   Tooltip,
 } from "antd";
 import moment from "moment";
 import AnnualReportApi from "../../../api/AnnualReportApi";
-import {getClubAnnualReport} from "../../../api/clubsApi";
-import AnnualReport from "../Interfaces/AnnualReport";
-import ClubAnnualReport from "../Interfaces/ClubAnnualReport"
-import User from "../Interfaces/User";
-import City from "../Interfaces/City";
-import Region from "../Interfaces/Region";
-import AnnualReportInformation from "./AnnualReportInformation/AnnualReportInformation";
-import UnconfirmedDropdown from "./Dropdowns/UnconfirmedDropdown/UnconfirmedDropdown";
-import ConfirmedDropdown from "./Dropdowns/ConfirmedDropdown/ConfirmedDropdown";
-import SavedDropdown from "./Dropdowns/SavedDropdown/SavedDropdown";
-import Filters from "./Filters";
 import "./AnnualReportTable.less";
 import AuthStore from "../../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
 import CitySelectModal from "./CitySelectModal/CitySelectModal";
-import ClickAwayListener from "react-click-away-listener";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Card } from 'antd';
 import { CityAnnualReportTable } from "./CityAnnualReportTable";
 import { ClubAnnualReportTable } from "./ClubAnnualReport";
 import FormAnnualReportRegion from "./FormAnnualReportRegion"
-import { getAllRegionsReports } from "../../../api/regionsApi";
 import { RegionAnnualReportTable } from "./RegionAnnualReportTable";
 import ClubSelectModal from "./ClubSelectModal/ClubSelectModal";
+import Search from "antd/lib/input/Search";
 
 
 const { Title } = Typography;
@@ -58,45 +39,20 @@ const setTagColor = (status: number) => {
 
 const AnnualReportTable = () => {
   const [reportStatusNames, setReportStatusNames] = useState<any[]>(Array());
-  const [annualReports, setAnnualReports] = useState<AnnualReport[]>(Array());
-  const [clubAnnualReports, setClubAnnualReports] = useState<ClubAnnualReport[]>(Array());
-  const [regionAnnualReports, setRegionsAnnualReports]= useState<[]>([]);
   const [showRegionAnnualReports, setShowRegionAnnualReports] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
-  const [visible, setvisible]= useState<boolean>(false) ;
-  const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(
-    false
-  );
-  const [showClubSelectModal, setShowClubSelectModal] = useState<boolean>(
-    false
-  );
-  const [canManage, setCanManage] = useState<boolean>(false);
-  const {
-    idFilter,
-    userFilter,
-    cityFilter,
-    regionFilter,
-    dateFilter,
-    statusFilter,
-  } = Filters;
+  const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(false);
+  const [showClubSelectModal, setShowClubSelectModal] = useState<boolean>(false);
+  const [cityManager, setCityManager] = useState<boolean>(false);
+  const [clubManager, setClubManager] = useState<boolean>(false);
+  const [regionManager, setRegionManager] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchAnnualReportStatuses();
-    fetchAnnualReports();
-    fetchClubAnnualReports();
-    fetchRegionAnnualReports();
     checkAccessToManage();
+    fetchAnnualReportStatuses();
+    setSearchedData(searchedData);
     renewPage();
-  }, []);
-
-  const checkAccessToManage = () => {
-    let jwt = AuthStore.getToken() as string;
-    let decodedJwt = jwt_decode(jwt) as any;
-    let roles = decodedJwt[
-      "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-    ] as string[];
-    setCanManage(roles.includes("Admin") || roles.includes("Голова Регіону"));
-  };
+  }, [searchedData]);
 
   const fetchAnnualReportStatuses = async () => {
     try {
@@ -107,50 +63,24 @@ const AnnualReportTable = () => {
     }
   };
 
-  const fetchAnnualReports = async () => {
-    try {
-      let response = await AnnualReportApi.getAll();
-      setAnnualReports(response.data.annualReports);
-    } catch (error) {
-      showError(error.message);
-    }
-  };
-  
-  const fetchClubAnnualReports = async () => {
-    try {
-      let response = await getClubAnnualReport();
-      setClubAnnualReports(response.data.clubAnnualReports);
-
-    } catch (error) {
-      showError(error.message);
-    }
+  const checkAccessToManage = () => {
+    let jwt = AuthStore.getToken() as string;
+    let decodedJwt = jwt_decode(jwt) as any;
+    let roles = decodedJwt[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ] as string[];
+    setCityManager(roles.includes("Admin") || roles.includes("Голова Станиці"));
+    setClubManager(roles.includes("Admin") || roles.includes("Голова Куреня"));
+    setRegionManager(roles.includes("Admin") || roles.includes("Голова Округи") || roles.includes("Голова Округу"))
   };
 
-  const fetchRegionAnnualReports = async () => {
-    try {
-      let response = await getAllRegionsReports();
-      setRegionsAnnualReports(response.data);
-    } catch (error) {
-      showError(error.message);
-    }
+  const handleSearch = (event: any) => {
+    setSearchedData(event);
   };
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchedData(event.target.value);
-  };
-
-  const filteredCityData =
-    searchedData !== ""
-      ? annualReports.filter(
-          (item) =>
-            idFilter(item.id, searchedData) ||
-            userFilter(item.creator as User, searchedData) ||
-            cityFilter(item.city as City, searchedData) ||
-            dateFilter(item.date, searchedData) ||
-            regionFilter(item.city?.region as Region, searchedData) ||
-            statusFilter(item.status, reportStatusNames, searchedData)
-        )
-      : annualReports;
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if(event.target.value.toLowerCase()==='') setSearchedData('');
+  }
 
 
   const showError = (message: string) => {
@@ -164,6 +94,7 @@ const AnnualReportTable = () => {
     {
       title: "Номер",
       dataIndex: "id",
+      width: 20,
       sorter:{
         compare: (a: any, b: any) => a.id - b.id,
       },
@@ -197,29 +128,30 @@ const AnnualReportTable = () => {
     {
       title: "Номер",
       dataIndex: "id",
+      width: 20,
       sorter:{
         compare: (a: any, b: any) => a.id - b.id,
       },
       sortDirections: ["descend", "ascend"],
-      defaultSortOrder: "ascend",
+      //defaultSortOrder: "ascend",
     },
 
     {
       title: "Станиця",
-      dataIndex: ["city", "name"],
+      dataIndex: ["cityName"],
       sorter: (a: any, b: any) => {
-        a = a.city.name || " ";
-        b = b.city.name || " ";
+        a = a.cityName || " ";
+        b = b.cityName || " ";
         return a.localeCompare(b);
       },
       sortDirections: ["descend", "ascend"],
     },
     {
-      title: "Регіон",
-      dataIndex: ["city", "region", "regionName"],
+      title: "Округа",
+      dataIndex: ["regionName"],
       sorter: (a: any, b: any) => {
-        a = a.city.region.regionName || " ";
-        b = b.city.region.regionName || " ";
+        a = a.regionName || " ";
+        b = b.regionName || " ";
         return a.localeCompare(b);
       },
       sortDirections: ["descend", "ascend"],
@@ -271,11 +203,11 @@ const AnnualReportTable = () => {
     {
       title: "Номер",
       dataIndex: "id",
+      width: 20,
       sorter:{
         compare: (a: any, b: any) => a.id - b.id,
       },
-      sortDirections: ["descend", "ascend"],
-      defaultSortOrder: "ascend",
+      sortDirections: ["descend", "ascend"]
     },
     {
       title: "Курінь",
@@ -316,9 +248,9 @@ const AnnualReportTable = () => {
   ];
 
   const contentList:  { [key: string]: any }  = {
-    tab1: <div><CityAnnualReportTable columns={columns} filteredData={annualReports}/></div>,
-    tab2: <div><ClubAnnualReportTable columns={columnsClub} filteredData={clubAnnualReports}/></div>,
-    tab3: <div><RegionAnnualReportTable columns={columnsRegion} filteredData={regionAnnualReports}/></div>,
+    tab1: <div><CityAnnualReportTable columns={columns} searchedData={searchedData}/></div>,
+    tab2: <div><ClubAnnualReportTable columns={columnsClub} searchedData={searchedData}/></div>,
+    tab3: <div><RegionAnnualReportTable columns={columnsRegion} searchedData={searchedData}/></div>,
   };
 
 
@@ -326,15 +258,11 @@ const AnnualReportTable = () => {
 
 
   const  renewPage = ()=>{
-    const key = noTitleKey; 
-    setKey('tab1');
-    setKey('tab2');
-    setKey(key);
-    setvisible(false);
+    setKey(noTitleKey);
    }
 
    const onTabChange =  (key:string) => {
-    setKey(key); 
+    setKey(key);
  };
 
 
@@ -343,32 +271,37 @@ const AnnualReportTable = () => {
       <Title level={2}>Річні звіти</Title>
       <Row className="searchContainer" gutter={16}>
         <Col >
-          <Input placeholder="Пошук" onChange={handleSearch} />
+          <Search
+              placeholder="Пошук"
+              enterButton
+              onChange={handleSearchChange}
+              onSearch={handleSearch}
+          />
         </Col>
-        <Col>
+        {cityManager? (<Col>
           <Button
-            type="primary"
-            onClick={() => setShowCitySelectModal(true)}
+              type="primary"
+              onClick={() => setShowCitySelectModal(true)}
           >
             Подати річний звіт станиці
           </Button>
-          </Col>
-          <Col>
+        </Col>): null }
+        {clubManager? (<Col>
           <Button
-            type="primary"
-            onClick={() => setShowClubSelectModal(true)}
+              type="primary"
+              onClick={() => setShowClubSelectModal(true)}
           >
             Подати річний звіт куреня
           </Button>
-          </Col>
-        <Col>
+        </Col>) : null}
+        {regionManager? (<Col>
           <Button
-            type="primary"
-            onClick={() => setShowRegionAnnualReports(true)}
+              type="primary"
+              onClick={() => setShowRegionAnnualReports(true)}
           >
             Подати річний звіт округи
           </Button>
-          </Col>
+        </Col>) : null}
       </Row>
 
       <Row>
