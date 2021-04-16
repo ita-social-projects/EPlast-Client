@@ -176,7 +176,12 @@ const ColumnsForUserTable: any = [
       if (clubName?.length > 0) {
         return (
           <Tag color={"pink"} key={clubName}>
-            {clubName}
+              <Tooltip
+                placement="topLeft"
+                title={clubName?.split("/")[0]}
+              >
+                {clubName?.split("/")[0]?.slice(0, 20)}
+              </Tooltip>
           </Tag>
         );
       }
