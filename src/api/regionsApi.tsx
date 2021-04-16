@@ -179,6 +179,17 @@ export const getAllRegionsReports = async () => {
     })
 }
 
+export const getSearchedRegionsReports = async (searchedData: string, page: number, pageSize: number) => {
+  return api.get(`Regions/RegionsAnnualReports`,
+      {searchedData: searchedData,
+        page: page,
+        pageSize: pageSize,
+      })
+      .catch((error) => {
+        throw new Error(error);
+      })
+}
+
 export const getRegionsByPage = async (
   page: number,
   pageSize: number,

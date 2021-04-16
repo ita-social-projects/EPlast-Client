@@ -1,7 +1,11 @@
-import RegionAnnualReport from "../../../Interfaces/RegionAnnualReports";
-
 interface Props {
-    regionRecord: RegionAnnualReport;
+    regionRecord: {
+        count: number,
+        date: Date,
+        id: number,
+        regionName: string,
+        total: number
+    };
     pageX: number;
     pageY: number;
     canManage: boolean;

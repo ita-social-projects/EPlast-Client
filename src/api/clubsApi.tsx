@@ -54,6 +54,16 @@ export const getClubAnnualReport = async () => {
   });
 };
 
+export const getSearchedClubAnnualReports = async (searchedData: string, page: number, pageSize: number) => {
+  return await api.get(`Club/ClubAnnualReports`,{searchedData: searchedData,
+    page: page,
+    pageSize: pageSize,
+  }).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+
 export const getClubAnnualReportById = async (id:number) => {
   return await api.get(`Club/GetClubAnnualReportById/${id}`,id).catch((error) => {
     throw new Error(error);
@@ -194,6 +204,12 @@ export const getDocumentTypes = async () => {
   });
 }
 
+export const getClubsOptions = async () => {
+  return api.get(`Club/ClubsOptions`).catch((error) => {
+    throw new Error(error);
+  });
+}
+
 
 export const getUsersAdministrations = async(UserId:string)=>{
    return api.get(`Club/GetUserAdmins/${UserId}`);
@@ -213,4 +229,3 @@ export const getClubs = async()=>{
 export default {
   getClubs
 }
-    
