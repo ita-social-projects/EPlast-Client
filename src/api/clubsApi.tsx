@@ -137,6 +137,12 @@ export const toggleMemberStatus = async (id: number) => {
   });
 }
 
+export const clubNameOfApprovedMember = async(id: string) =>{
+  return api.get(`Club/ClubNameOfApprovedMember/${id}`).catch((error)=>{
+    throw new Error(error)
+  });
+}; 
+
 export const addFollower = async (clubId: number) => {
   return api.post(`Club/AddFollower/${clubId}`, clubId).catch((error) => {
     throw new Error(error);

@@ -82,6 +82,12 @@ export const toggleMemberStatus = async (id: number) => {
   });
 }
 
+export const cityNameOfApprovedMember = async(id: string) =>{
+  return api.get(`Cities/CityNameOfApprovedMember/${id}`).catch((error)=>{
+    throw new Error(error)
+  });
+};
+
 export const addFollower = async (cityId: number) => {
   return api.post(`Cities/AddFollower/${cityId}`, cityId).catch((error) => {
     throw new Error(error);
