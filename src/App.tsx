@@ -61,7 +61,7 @@ import RegionBoardAdministration from "./pages/RegionsBoard/RegionBoardAdministr
 import RegionBoardDocuments from "./pages/RegionsBoard/RegionBoardDocuments";
 import GoverningBody from "./pages/GoverningBody/GoverningBody/GoverningBody";
 import CreateGoverningBody from "./pages/GoverningBody/CreateGoverningBody";
-
+import AboutBase from "./pages/AboutBase/AboutBase";
 const App: FC = () => (
   <div className="App">
     <Router>
@@ -387,6 +387,11 @@ const App: FC = () => (
             exact
             path="/notAuthorized"
             component={NotAuthorizedPage}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            path="/aboutBase"
+            component={AboutBase}
           />
           <RouteWithLayout
             layout={PrivateLayout}

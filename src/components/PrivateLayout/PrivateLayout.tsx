@@ -181,7 +181,9 @@ const PrivateLayout = ({ children }: any) => {
               </SubMenu>
             ) : (<> </>)
             }
-
+            {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/aboutBase'); }} key="5">Про Базу</Menu.Item>) : (<> </>)
+            }
           </Menu>
         </Sider>
       </ClickAwayListener>
