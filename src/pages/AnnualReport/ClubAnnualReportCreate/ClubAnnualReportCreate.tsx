@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
-import { Form, Button, Modal, Row, Col, Typography, Input, Table } from 'antd';
+import { Form, Button, Row, Col, Typography, Input, Table } from 'antd';
 import './ClubAnnualReportCreate.less';
 import {getClubById,createClubAnnualReport,getAllMembers, getAllFollowers, getAllAdmins} from '../../../api/clubsApi';
 import moment from 'moment';
 import ClubAdmin from '../../../models/Club/ClubAdmin';
 import ClubMember from '../../../models/Club/ClubMember';
 import notificationLogic from "../../../components/Notifications/Notification";
-import { getTableAdmins,getTableFollowers, getTableMembers } from '../../AnnualReport/ClubAnnualReportCreate/ClubAnnualReportTableColumns';
+import { getTableAdmins,getTableFollowers, getTableMembers } from './ClubAnnualReportTableColumns';
 import { emptyInput, maxLength, successfulCreateAction, tryAgain } from '../../../components/Notifications/Messages';
 import { useHistory } from 'react-router-dom';
 
@@ -18,7 +18,7 @@ export const ClubAnnualReportCreate = () => {
     const history = useHistory();
     const { clubId } = useParams();
     const [id, setId] = useState<number>();
-    const [title, setTitle] = useState<string>('Річний звіт куреня');
+    const [title] = useState<string>('Річний звіт куреня');
     const [form] = Form.useForm();
     const [admins, setAdmins] = useState<ClubAdmin[]>([]);
     const [members, setClubMembers] = useState<ClubMember[]>([]);
@@ -108,11 +108,11 @@ export const ClubAnnualReportCreate = () => {
         }
         catch (error)
         {
-            if (error.response.status === 400) {
+            if (error.response.status === 400 || error.response.status === 404) {
                 notificationLogic('error', tryAgain);
                 history.goBack(); 
             }
-        };
+        }
     }
 
     return (
@@ -232,7 +232,7 @@ export const ClubAnnualReportCreate = () => {
                             name='clubEnteredMembersCount'
                             rules={[{ required: true, message: emptyInput() },
                                 { max: 7, message: maxLength(7) }]}>
-                                    <Input  type="number"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
+                                    <Input  type="number" min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                     </Form.Item>
                 </Col>
             </Row>
@@ -248,7 +248,7 @@ export const ClubAnnualReportCreate = () => {
                             name='clubLeftMembersCount'
                             rules={[{ required: true, message: emptyInput() },
                                 { max: 7, message: maxLength(7) }]}>
-                                    <Input  type="number"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
+                                    <Input  type="number" min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
                     </Form.Item>
                 </Col>
             </Row>
@@ -296,28 +296,46 @@ export const ClubAnnualReportCreate = () => {
                     </Form.Item>
                 </Col>
             </Row>
-            <Row
-                gutter={16}
-                align='bottom'>
-                <Col
-                    xs={24} sm={12} md={12} lg={12}
-                    className='container'>
-                    <Text strong={true}>Список членів куреня:</Text>
-                </Col>
-            </Row>
             <Col span={24}>
+                <Row
+                    gutter={16}
+                    align='bottom'>
+                    <Col
+                        xs={24} sm={12} md={12} lg={12}
+                        className='container'>
+                        <Text strong={true}>Список адміністраторів:</Text>
+                    </Col>
+                </Row>
               <Table
                 dataSource={getTableAdmins(admins, club.head)}
                 columns={administrationsColumns}
                 pagination={{ defaultPageSize: 4 }}
                 className="table"
               />
+                <Row
+                    gutter={16}
+                    align='bottom'>
+                    <Col
+                        xs={24} sm={12} md={12} lg={12}
+                        className='container'>
+                        <Text strong={true}>Список прихильників куреня:</Text>
+                    </Col>
+                </Row>
               <Table
                 dataSource={getTableFollowers(followers)}
                 columns={followersColumns}
                 pagination={{ defaultPageSize: 4 }}
                 className="table"
               />
+                <Row
+                    gutter={16}
+                    align='bottom'>
+                    <Col
+                        xs={24} sm={12} md={12} lg={12}
+                        className='container'>
+                        <Text strong={true}>Список членів куреня:</Text>
+                    </Col>
+                </Row>
               <Table
                 dataSource={getTableMembers(members,admins,club.head)}
                 columns={followersColumns}

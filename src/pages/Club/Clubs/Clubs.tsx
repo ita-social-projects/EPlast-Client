@@ -112,7 +112,7 @@ const Clubs = () => {
                 </div>
               ) : (
                   clubs.map((club: ClubProfile) => (
-                    <Link to={`${url}/${club.id}`}>
+                    <Link to={`${url}/${club.id}`} key={`club-${club.id}`}>
                       <Card
                         key={club.id}
                         hoverable
@@ -138,7 +138,7 @@ const Clubs = () => {
                 pageSize={pageSize}
                 total={total}
                 responsive
-                showSizeChanger={total < 20 ? false : true}
+                showSizeChanger={total >= 10}
                 onChange={(page) => handleChange(page)}
                 onShowSizeChange={(page, size) => handleSizeChange(page, size)}
               />

@@ -5,7 +5,7 @@ import{successfulCreateAction, successfulEditAction, successfulDeleteAction} fro
 export type Decision = {
   id: number;
   name: string;
-  organization: string;
+  governingBody: string;
   decisionStatusType: string;
   decisionTarget : string;
   description: string;
@@ -16,10 +16,15 @@ export type FileWrapper = {
   FileAsBase64: string | null;
   FileName : string | null;
 }
-export type Organization = {
-  id : number;
-  organizationName: string;
+export type GoverningBody = {
+  id: number;
+  governingBodyName: string;
+  logo: string | undefined;
+  description: string;
+  phoneNumber: string;
+  email: string;
 }
+
 export type decisionTarget ={
   id : number;
   targetName: string;
@@ -30,7 +35,7 @@ export type decisionStatusType ={
   value: string;
 }
 export type DecisionOnCreateData = {
-  organizations: Organization[];
+  governingBodies: GoverningBody[];
   decisionStatusTypeListItems :decisionStatusType[];
   decisionTargets : decisionTarget[];
 }
@@ -42,7 +47,7 @@ export type DecisionPost  ={
   id: number;
   name: string;
   decisionStatusType: number;
-  organization: Organization ;
+  governingBody: GoverningBody;
   decisionTarget: decisionTarget;
   description: string;
   date: string;

@@ -1,10 +1,10 @@
-import { Organization } from "../../api/decisionsApi";
+import { GoverningBody } from "../../api/decisionsApi";
 
 export type DocumentPost = {
     id: number;
     name: string;
     type: number;
-    organization: Organization;
+    governingBody: GoverningBody;
     description: string;
     date: string;
     fileName: string | null;

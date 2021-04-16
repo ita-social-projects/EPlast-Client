@@ -25,7 +25,7 @@ export const getClubById = async (id: number) => {
 
 export const createClubAnnualReport = async (data: any) => {
   return await api.post(`Club/CreateClubAnnualReport`,JSON.stringify(data)) .catch((error: AxiosError) => {
-    throw new Error(error.response?.data.message);
+    throw error;
 });
 };
 
@@ -216,3 +216,7 @@ export const getClubs = async()=>{
   return api.get(`Club/Clubs`);
 }
 
+export default {
+  getClubs
+}
+    

@@ -116,7 +116,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
     if (
       await precautionApi
         .checkNumberExisting(newPrecaution.number)
-        .then((response) => response.data == false)
+        .then((response) => response.data === false)
     ) {
       await precautionApi.addUserPrecaution(newPrecaution);
       setVisibleModal(false);

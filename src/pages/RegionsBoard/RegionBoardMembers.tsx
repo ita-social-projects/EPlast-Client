@@ -1,30 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Row, Skeleton, Spin, } from "antd";
+import { Avatar, Button, Card, Layout, Row, Skeleton, Spin } from "antd";
 import { RollbackOutlined } from "@ant-design/icons";
 import { getRegionById } from "../../api/regionsApi";
-import { getLogo } from "../../api/citiesApi"
+import { getLogo } from "../../api/citiesApi";
 import "../Regions/Region.less";
 import moment from "moment";
 import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
-import CityDefaultLogo from "../../assets/images/default_city_image.jpg"
+import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 moment.locale("uk-ua");
 
 const RegionBoardMembers = () => {
   const { id } = useParams();
   const history = useHistory();
 
-  const [members, setMembers] = useState<any[]>([{
-    id: '',
-    name: '',
-    logo: ''
-  }]);
+  const [governingBodies, setGoverningBodies] = useState<any[]>([
+    {
+      id: "",
+      name: "",
+      logo: "",
+    },
+  ]);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const getMembers = async () => {
+  const getGoverningBodies = async () => {
     setLoading(true);
     const response = await getRegionById(id);
 
@@ -34,19 +36,15 @@ const RegionBoardMembers = () => {
     setLoading(false);
   };
 
-
-  const setPhotos = async (member: any[]) => {
-
-    for (let i = 0; i < member.length; ++i) {
-      members[i] = member[i];
-
+  const setPhotos = async (governingBody: any[]) => {
+    for (let i = 0; i < governingBody.length; ++i) {
+      governingBodies[i] = governingBody[i];
     }
-    for (let i = 0; i < member.length; ++i) {
-      if (member[i].logo !== null) {
-        members[i].logo = (await getLogo(member[i].logo)).data;
-      }
-      else {
-        members[i].logo = CityDefaultLogo
+    for (let i = 0; i < governingBody.length; ++i) {
+      if (governingBody[i].logo !== null) {
+        governingBodies[i].logo = (await getLogo(governingBody[i].logo)).data;
+      } else {
+        governingBodies[i].logo = CityDefaultLogo;
       }
     }
 
@@ -54,26 +52,21 @@ const RegionBoardMembers = () => {
   };
 
   useEffect(() => {
-    getMembers();
+    getGoverningBodies();
   }, []);
 
   return (
     <Layout.Content>
-      <Title level={2}>
-        Члени округи
-      </Title>
+      <Title level={2}>Члени округи</Title>
       {loading ? (
         <Spinner />
       ) : (
         <div className="cityMoreItems">
-          {members.length > 0 ? (
-            members.map((member: any) => (
-              <Card
-                key={member.id}
-                className="detailsCard"
-              >
+          {governingBodies.length > 0 ? (
+            governingBodies.map((governingBody: any) => (
+              <Card key={governingBody.id} className="detailsCard">
                 <div
-                  onClick={() => history.push(`/cities/${member.id}`)}
+                  onClick={() => history.push(`/governingBody/${governingBody.id}`)}
                   className="cityMember"
                 >
                   {photosLoading ? (
@@ -81,23 +74,19 @@ const RegionBoardMembers = () => {
                   ) : (
                     <Avatar
                       size={86}
-                      src={member.logo}
+                      src={governingBody.logo}
                       className="detailsIcon"
                     />
                   )}
-                  <Card.Meta
-                    className="detailsMeta"
-                    title={`${member.name}`}
-                  />
+                  <Card.Meta className="detailsMeta" title={`${governingBody.name}`} />
                 </div>
               </Card>
             ))
           ) : (
-            <Title level={4}>
-              Ще немає членів станиці
-            </Title>
+            <Title level={4}>Ще немає членів станиці</Title>
           )}
-        </div>)}
+        </div>
+      )}
       <div className="cityMoreItems">
         <Button
           className="backButton"
@@ -109,7 +98,6 @@ const RegionBoardMembers = () => {
           Назад
         </Button>
       </div>
-
     </Layout.Content>
   );
 };

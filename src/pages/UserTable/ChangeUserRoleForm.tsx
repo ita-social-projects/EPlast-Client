@@ -83,7 +83,7 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
             options={[
               { value: "Прихильник" },
               { value: "Зацікавлений" },
-              { value: "Пластун" },
+              { value: "Дійсний член організації" },
               { value: "Колишній член пласту" },
             ]}
           ></AutoComplete>
