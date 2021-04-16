@@ -83,9 +83,7 @@ export const toggleMemberStatus = async (id: number) => {
 }
 
 export const cityNameOfApprovedMember = async(id: string) =>{
-  console.log(id);
   return api.get(`Cities/CityNameOfApprovedMember/${id}`).catch((error)=>{
-    
     throw new Error(error)
   });
 };

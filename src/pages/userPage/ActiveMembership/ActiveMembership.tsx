@@ -16,7 +16,7 @@ import moment from "moment";
 import ModalAddEndDatePlastDegree from "./PlastDegree/ModalAddEndDatePlastDegree";
 import ModalChangeUserDates from "./UserDates/ModalChangeUserDates";
 import DeleteDegreeConfirm from "./PlastDegree/DeleteDegreeConfirm";
-import { SafetyCertificateOutlined } from "@ant-design/icons";
+import { DatabaseFilled, SafetyCertificateOutlined } from "@ant-design/icons";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 import {cityNameOfApprovedMember} from "../../../api/citiesApi"
@@ -90,14 +90,12 @@ const ActiveMembership = () => {
       setUser(response.data.user);
       
     });
-    await cityNameOfApprovedMember(userId).then(async (responce)=>{
-      setUser({...user, city:responce.data});
-      console.log(user.city);
+    await cityNameOfApprovedMember(userId).then(async (response)=>{
+      setUser(response.data);
     });
 
-    await clubNameOfApprovedMember(userId).then(async (responce)=>{
-      setUser({...user, club:responce.data});
-      console.log(user.club);
+    await clubNameOfApprovedMember(userId).then(async (response)=>{
+      setUser(response.data);
     });
 
     setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
