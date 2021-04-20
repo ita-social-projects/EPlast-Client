@@ -25,6 +25,27 @@ const CitySelectModal = (props: Props) => {
         fetchCities();
     }, [])
 
+    const checkCreated = async (id: number) => {
+        try {
+            let response = await AnnualReportApi.checkCreated(id);
+            if (response.data.hasCreated === true) {
+                showError(response.data.message);
+            }
+            else {
+                history.push(`/annualreport/create/${id}`)            }
+        }
+        catch (error) {
+            showError(error.message)
+        }
+    }
+
+    const showError = (message: string) => {
+        Modal.error({
+            title: 'Помилка!',
+            content: message
+        });
+    }
+
     const fetchCities = async () => {
         try {
             let response = await AnnualReportApi.getCitiesOptions();
@@ -48,7 +69,8 @@ const CitySelectModal = (props: Props) => {
             visible={visibleModal}
             footer={null} >
             <Form
-                onFinish={(obj) => { history.push(`/annualreport/create/${obj.cityId}`) }} >
+                onFinish={(obj) => {
+                    checkCreated(obj.cityId); }} >
                 <Row>
                     <Col
                         span={24} >

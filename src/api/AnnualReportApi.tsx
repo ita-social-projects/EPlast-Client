@@ -16,6 +16,13 @@ const getCities = async () => {
         });
 }
 
+const getCityMembers = async (cityId: number)=>{
+    return await Api.get(`AnnualReport/Members/${cityId}`)
+        .catch((error: AxiosError) => {
+        throw new Error(error.response?.data.message);
+    });
+}
+
 const getCityInfo = async (cityId: number) => {
     return await Api.get(`Cities/Profile/${cityId}`)
         .catch((error: AxiosError) => {
@@ -51,11 +58,21 @@ const getById = async (id: number) => {
         });
 }
 
-const getAll = async (searchedData: string, page: number, pageSize: number) => {
+const getAnnualReportEditFormById = async (id: number) => {
+    return await Api.get(`AnnualReport/EditCityAnnualReportForm/${id}`).then((response)=>{console.log(response.data);
+    return response})
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
+}
+
+const getAll = async (searchedData: string, page: number, pageSize: number, sortKey: number, authReport: boolean) => {
     return await Api.get('AnnualReport/Cities',
         {searchedData: searchedData,
             page: page,
             pageSize: pageSize,
+            sortKey: sortKey,
+            auth: authReport
         })
         .catch((error: AxiosError) => {
             throw new Error(error.response?.data.message);
@@ -99,5 +116,5 @@ const remove = async (id: number) => {
 
 export default {
     getCitiesOptions, getCities, getCityInfo, getCityLegalStatuses, getAnnualReportStatuses, checkCreated,
-    getById, getAll, create, edit, confirm, cancel, remove
+    getById, getAll, create, edit, confirm, cancel, remove, getAnnualReportEditFormById, getCityMembers
 };
