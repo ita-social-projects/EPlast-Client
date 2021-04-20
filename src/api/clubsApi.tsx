@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 import ClubAnnualReport from "../pages/AnnualReport/Interfaces/ClubAnnualReport";
 import api from "./api";
+import Api from "./api";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
   const arr = dataurl.split(",");
@@ -54,10 +55,12 @@ export const getClubAnnualReport = async () => {
   });
 };
 
-export const getSearchedClubAnnualReports = async (searchedData: string, page: number, pageSize: number) => {
+export const getSearchedClubAnnualReports = async (searchedData: string, page: number, pageSize: number, sortKey: number, authReport: boolean) => {
   return await api.get(`Club/ClubAnnualReports`,{searchedData: searchedData,
     page: page,
     pageSize: pageSize,
+    sortKey: sortKey,
+    auth: authReport,
   }).catch((error) => {
     throw new Error(error);
   });
@@ -216,6 +219,12 @@ export const getClubsOptions = async () => {
   });
 }
 
+const checkCreated = async (clubId: number) => {
+  return await Api.get(`AnnualReport/checkCreatedClubReport/${clubId}`)
+      .catch((error: AxiosError) => {
+        throw new Error(error.response?.data.message);
+      });
+}
 
 export const getUsersAdministrations = async(UserId:string)=>{
    return api.get(`Club/GetUserAdmins/${UserId}`);
@@ -233,5 +242,6 @@ export const getClubs = async()=>{
 }
 
 export default {
-  getClubs
+  getClubs,
+  checkCreated
 }
