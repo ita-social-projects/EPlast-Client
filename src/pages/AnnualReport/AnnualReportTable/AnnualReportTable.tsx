@@ -22,6 +22,7 @@ import FormAnnualReportRegion from "./FormAnnualReportRegion"
 import { RegionAnnualReportTable } from "./RegionAnnualReportTable";
 import ClubSelectModal from "./ClubSelectModal/ClubSelectModal";
 import Search from "antd/lib/input/Search";
+import {CaretUpOutlined, CaretDownOutlined} from "@ant-design/icons";
 
 
 const { Title } = Typography;
@@ -37,22 +38,39 @@ const setTagColor = (status: number) => {
   return color;
 };
 
+const tabList = [
+  {
+    key: 'tab1',
+    tab: 'Річні звіти станиць',
+  },
+  {
+    key: 'tab2',
+    tab: 'Річні звіти куренів',
+  },
+  {
+    key: 'tab3',
+    tab: 'Річні звіти округ',
+  },
+];
+
 const AnnualReportTable = () => {
   const [reportStatusNames, setReportStatusNames] = useState<any[]>(Array());
   const [showRegionAnnualReports, setShowRegionAnnualReports] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
   const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(false);
   const [showClubSelectModal, setShowClubSelectModal] = useState<boolean>(false);
+  const [sortKey, setSortKey]=useState<number>(1);
   const [cityManager, setCityManager] = useState<boolean>(false);
   const [clubManager, setClubManager] = useState<boolean>(false);
   const [regionManager, setRegionManager] = useState<boolean>(false);
+  const [noTitleKey, setKey] = useState<string>('tab1');
 
   useEffect(() => {
     checkAccessToManage();
     fetchAnnualReportStatuses();
     setSearchedData(searchedData);
     renewPage();
-  }, [searchedData]);
+  }, [searchedData, sortKey]);
 
   const fetchAnnualReportStatuses = async () => {
     try {
@@ -90,147 +108,98 @@ const AnnualReportTable = () => {
     });
   };
 
-  const columnsRegion = [
-    {
-      title: "Номер",
-      dataIndex: "id",
-      width: 20,
-      sorter:{
-        compare: (a: any, b: any) => a.id - b.id,
-      },
-      sortDirections: ["descend", "ascend"],
-      defaultSortOrder: "ascend",
-    },
+  const SortDirection=(props:{sort: number})=>{
+    return<>
+      <div className={"TableHeader"}>
+        <button onClick={()=>{setSortKey(props.sort)}} className={sortKey===props.sort? "sortDirection":""}><CaretUpOutlined /></button>
+        <button onClick={()=>{setSortKey(-props.sort)}} className={sortKey===-props.sort? "sortDirection":""}><CaretDownOutlined /></button>
+      </div>
+    </>
+  }
 
-    {
-      title: "Округа",
-      dataIndex: ["regionName"],
-      sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
-      sortDirections: ["descend", "ascend"],
-    },
-    {
-      title: "Дата подання",
-      dataIndex: "date",
-      render: (date: Date) => {
-        return moment(date.toLocaleString()).format("DD.MM.YYYY");
+  const SortColumnHighlight =(sort: number, text: any)=>{
+    return {
+      props: {
+        style: { background: (sortKey===sort || sortKey===-sort)? "#fafafa" : "", }
       },
-      sorter: (a: any, b: any) => {
-        a = a.date || " ";
-        b = b.date || " ";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["descend", "ascend"],
-    }
-  ];
+      children: <div>{text}</div>
+    };
+  }
 
-  
   const columns = [
     {
-      title: "Номер",
-      dataIndex: "id",
-      width: 20,
-      sorter:{
-        compare: (a: any, b: any) => a.id - b.id,
-      },
-      sortDirections: ["descend", "ascend"],
-      //defaultSortOrder: "ascend",
+      title: <>Номер<SortDirection sort={1} /></>,
+      dataIndex: ["idView"],
+      width: '8%',
+      render: (text: any)=>{return SortColumnHighlight(1, text)},
     },
 
     {
-      title: "Станиця",
+      title: <>Станиця<SortDirection sort={2} /></>,
       dataIndex: ["cityName"],
-      sorter: (a: any, b: any) => {
-        a = a.cityName || " ";
-        b = b.cityName || " ";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["descend", "ascend"],
+      render: (text: any)=>{return SortColumnHighlight(2, text)},
     },
     {
-      title: "Округа",
+      title: <>Округа<SortDirection sort={3} /></>,
       dataIndex: ["regionName"],
-      sorter: (a: any, b: any) => {
-        a = a.regionName || " ";
-        b = b.regionName || " ";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["descend", "ascend"],
+      render: (text: any)=>{return SortColumnHighlight(3, text)},
     },
     {
-      title: "Дата подання",
+      title: <>Дата подання<SortDirection sort={4} /></>,
       dataIndex: "date",
-      render: (date: Date) => {
-        return moment(date.toLocaleString()).format("DD.MM.YYYY");
-      },
-      sorter: (a: any, b: any) => {
-        a = a.date || " ";
-        b = b.date || " ";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["descend", "ascend"],
+      render: (date: any)=>{return SortColumnHighlight(4, moment(date.toLocaleString()).format("DD.MM.YYYY"))},
     },
     {
       title: "Статус",
       dataIndex: "status",
       render: (status: any) => {
         return (
-          <Tag color={setTagColor(status)} key={reportStatusNames[status]}>
-            <Tooltip placement="topLeft" title={reportStatusNames[status]}>
-        {reportStatusNames[status]}
-            </Tooltip>
-          </Tag>
+            <Tag color={setTagColor(status)} key={reportStatusNames[status]}>
+              <Tooltip placement="topLeft" title={reportStatusNames[status]}>
+                {reportStatusNames[status]}
+              </Tooltip>
+            </Tag>
         );
-    },
-  }
+      },
+    }
   ];
 
-  const tabList = [
+  const columnsRegion = [
     {
-      key: 'tab1',
-      tab: 'Річні звіти станиць',
+      title: <>Номер<SortDirection sort={1} /></>,
+      dataIndex: "id",
+      width: '8%',
+      render: (text: any)=>{return SortColumnHighlight(1, text)},
+    },
+
+    {
+      title: <>Округа<SortDirection sort={2} /></>,
+      dataIndex: ["regionName"],
+      render: (text: any)=>{return SortColumnHighlight(2, text)},
     },
     {
-      key: 'tab2',
-      tab: 'Річні звіти куренів',
-    },
-    {
-      key: 'tab3',
-      tab: 'Річні звіти округ',
-    },
+      title: <>Дата подання<SortDirection sort={3} /></>,
+      dataIndex: "date",
+      render: (date: any)=>{return SortColumnHighlight(3, moment(date.toLocaleString()).format("DD.MM.YYYY"))},
+    }
   ];
 
   const columnsClub=[
     {
-      title: "Номер",
-      dataIndex: "id",
-      width: 20,
-      sorter:{
-        compare: (a: any, b: any) => a.id - b.id,
-      },
-      sortDirections: ["descend", "ascend"]
+      title: <>Номер<SortDirection sort={1} /></>,
+      dataIndex: ["idView"],
+      width: '8%',
+      render: (text: any)=>{return SortColumnHighlight(1, text)},
     },
     {
-      title: "Курінь",
+      title: <>Курінь<SortDirection sort={2} /></>,
       dataIndex: ["clubName"],
-      sorter: (a: any, b: any) => {
-        a = a.clubName || " ";
-        b = b.clubName || " ";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["descend", "ascend"],
+      render: (text: any)=>{return SortColumnHighlight(2, text)},
     },
     {
-      title: "Дата подання",
+      title: <>Дата подання<SortDirection sort={3} /></>,
       dataIndex: "date",
-      render: (date: Date) => {
-        return moment(date.toLocaleString()).format("DD.MM.YYYY");
-      },
-      sorter: (a: any, b: any) => {
-        a = a.date || " ";
-        b = b.date || " ";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["descend", "ascend"],
+      render: (date: any)=>{return SortColumnHighlight(3, moment(date.toLocaleString()).format("DD.MM.YYYY"))},
     },
     {
       title: "Статус",
@@ -248,13 +217,10 @@ const AnnualReportTable = () => {
   ];
 
   const contentList:  { [key: string]: any }  = {
-    tab1: <div><CityAnnualReportTable columns={columns} searchedData={searchedData}/></div>,
-    tab2: <div><ClubAnnualReportTable columns={columnsClub} searchedData={searchedData}/></div>,
-    tab3: <div><RegionAnnualReportTable columns={columnsRegion} searchedData={searchedData}/></div>,
+    tab1: <div><CityAnnualReportTable columns={columns} searchedData={searchedData} sortKey={sortKey}/></div>,
+    tab2: <div><ClubAnnualReportTable columns={columnsClub} searchedData={searchedData} sortKey={sortKey}/></div>,
+    tab3: <div><RegionAnnualReportTable columns={columnsRegion} searchedData={searchedData} sortKey={sortKey}/></div>,
   };
-
-
-  const [noTitleKey, setKey] = useState<string>('tab1');
 
 
   const  renewPage = ()=>{
@@ -262,6 +228,7 @@ const AnnualReportTable = () => {
    }
 
    const onTabChange =  (key:string) => {
+    setSortKey(1);
     setKey(key);
  };
 
