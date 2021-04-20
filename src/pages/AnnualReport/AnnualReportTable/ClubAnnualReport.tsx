@@ -234,8 +234,8 @@ interface props {
               rowKey='id'
               columns={columns}
               scroll={{ x: 1300 }}
-              dataSource={canManage? clubAnnualReports : clubAnnualReports.map((item:any)=>{
-                if(item.canManage)
+              dataSource={clubAnnualReports.map((item:any)=>{
+                if(item.canManage && !canManage)
                   return{...item, idView: (<>{item.id}  <text style={{color: "#ffbb33"}}><StarOutlined /></text></>)};
                 else return {...item, idView: (<>{item.id}</>)};
               })}
