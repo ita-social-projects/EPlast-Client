@@ -11,9 +11,10 @@ import Spinner from "../../Spinner/Spinner";
 interface props{
     columns:any;
     searchedData:any;
+    sortKey: any;
 }
 
-export const RegionAnnualReportTable=({columns,searchedData}:props)=>{
+export const RegionAnnualReportTable=({columns,searchedData, sortKey}:props)=>{
     const [regionAnnualReport, setRegionAnnualReport] = useState(Object);
     const [regionAnnualReports, setRegionsAnnualReports]= useState([]);
     const [page, setPage] = useState(1);
@@ -34,14 +35,13 @@ export const RegionAnnualReportTable=({columns,searchedData}:props)=>{
             setPage(1);
         }
         fetchRegionAnnualReports();
-        //checkAccessToManage();
-    }, [searchedData, page, pageSize]);
+    }, [searchedData, page, pageSize, sortKey]);
 
 
     const fetchRegionAnnualReports = async () => {
         setIsLoading(true)
         try {
-            let response = await getSearchedRegionsReports(searchedData, page, pageSize);
+            let response = await getSearchedRegionsReports(searchedData, page, pageSize, sortKey);
             setRegionsAnnualReports(response.data);
             setTotal(response.data[0]?.total);
             setCount(response.data[0]?.count);
@@ -88,10 +88,12 @@ export const RegionAnnualReportTable=({columns,searchedData}:props)=>{
           };
 
     const handlePageChange = (page: number) => {
+        hideDropdowns();
         setPage(page);
     };
 
     const handleSizeChange = (page: number, pageSize: number = 10) => {
+        hideDropdowns();
         setPage(page);
         setPageSize(pageSize);
     };
