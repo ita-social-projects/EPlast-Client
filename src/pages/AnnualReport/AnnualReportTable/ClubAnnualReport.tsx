@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Table} from 'antd';
+import {Modal, Table, Tooltip} from 'antd';
 import AuthStore from "../../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
 import {
@@ -224,9 +224,13 @@ interface props {
                     {count? 'Знайдено '+count+'/'+total+' результатів' : 'За вашим запитом нічого не знайдено'}
                   </p>
                   {canManage? null: <div className={"AuthReport"}>
-                    <button onClick={()=>{setPage(1); setAuthReport(!authReport)}}>
-                      {authReport? <StarFilled /> : <StarOutlined />}
-                    </button>
+                    <Tooltip
+                        placement="topLeft"
+                        title="Звіти в моєму розпорядженні">
+                      <button onClick={()=>{setPage(1); setAuthReport(!authReport)}} >
+                        {authReport? <StarFilled /> : <StarOutlined />}
+                      </button>
+                    </Tooltip>
                   </div>}
                 </div>
                 <Table
@@ -236,7 +240,13 @@ interface props {
               scroll={{ x: 1300 }}
               dataSource={clubAnnualReports.map((item:any)=>{
                 if(item.canManage && !canManage)
-                  return{...item, idView: (<>{item.id}  <text style={{color: "#ffbb33"}}><StarOutlined /></text></>)};
+                  return{...item, idView: (<>{item.id}    <text style={{color: "#3c5438"}}>
+                      <Tooltip
+                          placement="topLeft"
+                          title="Звіт у моєму розпорядженні">
+                        <StarOutlined />
+                      </Tooltip>
+                  </text></>)};
                 else return {...item, idView: (<>{item.id}</>)};
               })}
               onRow={(record) => {
