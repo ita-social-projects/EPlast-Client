@@ -179,11 +179,12 @@ export const getAllRegionsReports = async () => {
     })
 }
 
-export const getSearchedRegionsReports = async (searchedData: string, page: number, pageSize: number) => {
+export const getSearchedRegionsReports = async (searchedData: string, page: number, pageSize: number, sortKey: number) => {
   return api.get(`Regions/RegionsAnnualReports`,
       {searchedData: searchedData,
         page: page,
         pageSize: pageSize,
+        sortKey: sortKey,
       })
       .catch((error) => {
         throw new Error(error);

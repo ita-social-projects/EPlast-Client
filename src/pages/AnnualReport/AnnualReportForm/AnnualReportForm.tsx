@@ -54,7 +54,9 @@ const AnnualReportForm = (props: Props) => {
                         className='w100'>
                         <Select
                             showSearch
-                            optionFilterProp="children"
+                            filterOption={(input, option) =>
+                                (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
                             options={cityMembers}>
                         </Select>
                     </Form.Item>
@@ -68,7 +70,11 @@ const AnnualReportForm = (props: Props) => {
                         name='newCityLegalStatusType'
                         rules={validationSchema.cityLegalStatus}>
                         <Select
-                            options={cityLegalStatuses}></Select>
+                            showSearch
+                            filterOption={(input, option) =>
+                                (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
+                            options={cityLegalStatuses}/>
                     </Form.Item>
                 </Col>
             </Row>
@@ -359,7 +365,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='publicFunds'
                             rules={validationSchema.money}>
-                            <Input type="number" maxLength={6} min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
+                            <Input type="number" maxLength={6} min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode === 188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -369,7 +375,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='contributionFunds'
                             rules={validationSchema.money}>
-                            <Input type="number" maxLength={6} min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
+                            <Input type="number" maxLength={6} min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode === 188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -379,7 +385,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='plastSalary'
                             rules={validationSchema.money}>
-                            <Input type="number" maxLength={6} min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
+                            <Input type="number" maxLength={6} min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode === 188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                     <Col
@@ -389,7 +395,7 @@ const AnnualReportForm = (props: Props) => {
                             className='w100'
                             name='sponsorshipFunds'
                             rules={validationSchema.money}>
-                            <Input type="number" maxLength={6} min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
+                            <Input type="number" maxLength={6} min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode === 188) && e.preventDefault() }  />
                         </Form.Item>
                     </Col>
                 </Row>
