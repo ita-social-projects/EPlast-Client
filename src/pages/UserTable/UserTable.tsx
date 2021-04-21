@@ -131,7 +131,6 @@ const UsersTable = () => {
   const fetchDegrees = async () => {
     try {
       let response = await activeMembershipApi.getAllPlastDegrees();
-      console.log(response)
       let degrees = response as PlastDegree[];
       setDegrees(
         degrees.map((item) => {
@@ -167,7 +166,6 @@ const UsersTable = () => {
         SearchData: searchData
       });
       setUsers(response.data.users);
-      console.log(response.data.users)
       setViewedUsers(response.data.users);
       setTotal(response.data.total);
     } finally {
