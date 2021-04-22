@@ -78,7 +78,6 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
 
   useEffect(() => {
     const timeoutId = setTimeout(() => [onSearch(search), setLoadingUserStatus(true)], 1000);
-    console.log(userData);
     return () => clearTimeout(timeoutId);
   }, [search]);
   
