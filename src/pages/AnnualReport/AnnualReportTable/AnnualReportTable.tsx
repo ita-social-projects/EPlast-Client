@@ -89,7 +89,7 @@ const AnnualReportTable = () => {
         ] as string[];
     setCityManager(roles.includes("Admin") || roles.includes("Голова Станиці"));
     setClubManager(roles.includes("Admin") || roles.includes("Голова Куреня"));
-    setRegionManager(roles.includes("Admin") || roles.includes("Голова Округи") || roles.includes("Голова Округу"))
+    setRegionManager(roles.includes("Admin") || roles.includes("Голова Округи") || roles.includes("Голова Округу"));
   };
 
   const handleSearch = (event: any) => {
@@ -284,18 +284,18 @@ const AnnualReportTable = () => {
         </Card>
 
       </Row>
-        <FormAnnualReportRegion
-        visibleModal={showRegionAnnualReports}
-        handleOk={() => setShowRegionAnnualReports(false)}
-        />
-        <CitySelectModal
-        visibleModal={showCitySelectModal}
-        handleOk={() => setShowCitySelectModal(false)}
-        />
-        <ClubSelectModal
-        visibleModal={showClubSelectModal}
-        handleOk={() => setShowClubSelectModal(false)}
-        />
+      {regionManager? <FormAnnualReportRegion
+          visibleModal={showRegionAnnualReports}
+          handleOk={() => setShowRegionAnnualReports(false)}
+      />: null}
+      {cityManager? <CitySelectModal
+          visibleModal={showCitySelectModal}
+          handleOk={() => setShowCitySelectModal(false)}
+      />:null}
+      {clubManager? <ClubSelectModal
+          visibleModal={showClubSelectModal}
+          handleOk={() => setShowClubSelectModal(false)}
+      />:null}
     </Layout.Content>
 
     
