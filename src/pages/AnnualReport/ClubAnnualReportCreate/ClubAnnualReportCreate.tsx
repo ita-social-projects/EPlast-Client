@@ -271,7 +271,7 @@ export const ClubAnnualReportCreate = () => {
                         <Form.Item
                             className='w100'
                             name='clubCenters'
-                            rules={[{ required: true, message: emptyInput() }, { max: 2000, message: maxLength(2000)}]} >
+                            rules={[{ required: true, message: emptyInput() }, { max: 200, message: maxLength(200)}]} >
                             <TextArea />
                         </Form.Item>
                     </Col>
@@ -286,7 +286,7 @@ export const ClubAnnualReportCreate = () => {
                         <Form.Item
                             className='w100'
                             name='kbUSPWishes'
-                            rules={[{ required: true, message: emptyInput() }, { max: 2000, message: maxLength(2000)}]} >
+                            rules={[{ required: true, message: emptyInput() }, { max: 500, message: maxLength(500)}]} >
                             <TextArea />
                         </Form.Item>
                     </Col>
