@@ -9,6 +9,11 @@ const getUsersForTable = async () => {
   return response;
 };
 
+const getShortUserInfo = async (search: string) => {
+    const response = await Api.get(`Admin/ShortUsersInfo/${search}`);
+    return response;
+  };
+
 export const getUsersForTableByPage = async (data: TableFilterParameters) => {
   return await Api
     .get(`Admin/Profiles`, data, (params:any)=> {
@@ -61,6 +66,7 @@ const putCurrentRole = async (userId: string, role: string) => {
 export default {
   getCityRegionAdmins,
   getUsersForTable,
+  getShortUserInfo,
   deleteUser,
   getRolesForEdit,
   putEditedRoles,
