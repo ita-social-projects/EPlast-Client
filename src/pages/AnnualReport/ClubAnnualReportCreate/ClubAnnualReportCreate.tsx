@@ -352,13 +352,18 @@ export const ClubAnnualReportCreate = () => {
                         className="table"
                     />
                 </Col>
-                <Row
-                    justify='center' >
+                <Row className="clubButtons" justify='center'>
                     <Col>
                         <Button
                             type='primary'
                             htmlType='submit'>
                             Подати річний звіт
+                        </Button>
+                        <Button
+                            type="primary"
+                            className="backButton"
+                            onClick={() => history.goBack()}>
+                            Скасувати
                         </Button>
                     </Col>
                 </Row>

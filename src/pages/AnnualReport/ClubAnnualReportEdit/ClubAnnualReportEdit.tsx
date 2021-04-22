@@ -254,7 +254,7 @@ const ClubAnnualReportEdit = () => {
                             type="primary"
                             className="backButton"
                             onClick={() => history.goBack()}>
-                            Назад
+                            Скасувати
                         </Button>
                     </Col>
                 </Row>
