@@ -15,6 +15,7 @@ import {
 } from '../../../components/Notifications/Messages';
 import moment from 'moment';
 import notificationLogic from "../../../components/Notifications/Notification";
+import Spinner from "../../Spinner/Spinner";
 
 
 const { Title, Text } = Typography;
@@ -25,6 +26,7 @@ const ClubAnnualReportEdit = () => {
     const history = useHistory();
     const [title] = useState<string>('Річний звіт куреня');
     const [clubAnnualReport, setClubAnnualReport] = useState<ClubAnnualReport>();
+    const [isLoading, setIsLoading] = useState(false)
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -36,6 +38,7 @@ const ClubAnnualReportEdit = () => {
     }
 
     const fetchClubAnnualReport = async () => {
+        setIsLoading(true)
         try {
             let response = await getClubAnnualReportById(id);
             setClubAnnualReport(response.data.annualreport);
@@ -44,6 +47,8 @@ const ClubAnnualReportEdit = () => {
         catch (error) {
             notificationLogic("error", tryAgain);
             history.goBack(); 
+        }finally {
+            setIsLoading(false);
         }
     }
 
@@ -79,164 +84,166 @@ const ClubAnnualReportEdit = () => {
     }
 
     return (
-        <Form
-            onFinish={handleFinish}
-            className='annualreport-form'
-            form={form} >
-            <Title>{title}</Title>
-            <Row
-                gutter={16}
-                align='bottom'>
-                <Col
-                    xs={24} sm={12} md={12} lg={12}
-                    className='container'>
-                    <Text strong={true}>Курінь</Text>
-                    <Form.Item
-                        name='clubName'
-                        className='w100'>
-                        {clubAnnualReport?.clubName}
-                    </Form.Item>
-                </Col>
+        <>
+            {isLoading? <Spinner/> : <Form
+                onFinish={handleFinish}
+                className='annualreport-form'
+                form={form} >
+                <Title>{title}</Title>
+                <Row
+                    gutter={16}
+                    align='bottom'>
+                    <Col
+                        xs={24} sm={12} md={12} lg={12}
+                        className='container'>
+                        <Text strong={true}>Курінь</Text>
+                        <Form.Item
+                            name='clubName'
+                            className='w100'>
+                            {clubAnnualReport?.clubName}
+                        </Form.Item>
+                    </Col>
                 </Row>
                 <Row
-                gutter={16}
-                align='bottom'>
-                <Col
-                    xs={24} sm={12} md={12} lg={12}
-                    className='container'>
-                    <Text strong={true}>Провід куреня</Text>
-                    <Form.Item
-                        className='w100'
-                        name='currentClubMembers'
-                    >{(clubAnnualReport?.clubMembersSummary.split('\n').map((item, key) => {
-                        return <span key={key}>{item}<br/></span>
-                      }))}
-                    </Form.Item>      
-                </Col>
-            </Row>
-            <Row
-                gutter={16}
-                align='bottom'>
-                <Col
-                    xs={24} sm={12} md={12} lg={12}
-                    className='container'>
-                    <Text strong={true}>Контакти:</Text>
-                    {clubAnnualReport?.clubContacts}
-                </Col>
-            </Row>
-            <Row
-                gutter={16}
-                align='bottom'>
-                <Col
-                    xs={24} sm={12} md={12} lg={12}
-                    className='container'>
-                    <Text strong={true}>Сайт/сторінка в інтернеті:</Text>
-                    <Form.Item
-                        className='w100'
-                        name='clubPage'>
-                    {clubAnnualReport?.clubPage}
-                    </Form.Item>
-                </Col>
-            </Row>
-            <Row
-                gutter={16}
-                align='bottom'>
-                <Col
-                    xs={24} sm={12} md={12} lg={12}
-                    className='container'>
-                    <Text strong={true}>Дані про членів куреня</Text>
+                    gutter={16}
+                    align='bottom'>
+                    <Col
+                        xs={24} sm={12} md={12} lg={12}
+                        className='container'>
+                        <Text strong={true}>Провід куреня</Text>
+                        <Form.Item
+                            className='w100'
+                            name='currentClubMembers'
+                        >{(clubAnnualReport?.clubMembersSummary.split('\n').map((item, key) => {
+                            return <span key={key}>{item}<br/></span>
+                        }))}
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row
+                    gutter={16}
+                    align='bottom'>
+                    <Col
+                        xs={24} sm={12} md={12} lg={12}
+                        className='container'>
+                        <Text strong={true}>Контакти:</Text>
+                        {clubAnnualReport?.clubContacts}
+                    </Col>
+                </Row>
+                <Row
+                    gutter={16}
+                    align='bottom'>
+                    <Col
+                        xs={24} sm={12} md={12} lg={12}
+                        className='container'>
+                        <Text strong={true}>Сайт/сторінка в інтернеті:</Text>
+                        <Form.Item
+                            className='w100'
+                            name='clubPage'>
+                            {clubAnnualReport?.clubPage}
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row
+                    gutter={16}
+                    align='bottom'>
+                    <Col
+                        xs={24} sm={12} md={12} lg={12}
+                        className='container'>
+                        <Text strong={true}>Дані про членів куреня</Text>
 
-                          <p>Дійсних членів куреня - {clubAnnualReport?.currentClubMembers}</p>
-                          <p>Прихильників куреня - {clubAnnualReport?.currentClubFollowers}</p>
-        
-                </Col>
-            </Row>
-            <Row
-                gutter={16}
-                align='bottom'>
-                <Col
-                    xs={24} sm={12} md={12} lg={12}
-                    className='container'>
-                    <Text strong={true}>До куреня приєдналось за звітній період</Text>
-                    <Form.Item
-                        className='w100'
-                        name='clubEnteredMembersCount'
-                        rules={validationSchema.number}>
-                        <Input  type="number" min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
-                    </Form.Item>
-                </Col>
-            </Row>
-            <Row
-                gutter={16}
-                align='bottom'>
-                <Col
-                    xs={24} sm={12} md={12} lg={12}
-                    className='container'>
-                    <Text strong={true}>Вибули з куреня за звітній період</Text>
-                    <Form.Item
-                        className='w100'
-                        name='clubLeftMembersCount'
-                        rules={validationSchema.number}>
-                        <Input  type="number" min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
-                    </Form.Item>
-                </Col>
-            </Row>
-            <Row
-                gutter={16}
-                align='bottom'>
-                <Col
-                    xs={24} sm={12} md={12} lg={12}
-                    className='container'>
-                    <Text strong={true}>Географія куреня. Осередки в Україні:</Text>
-                    <Form.Item
-                        className='w100'
-                        name='clubCenters'
-                        rules={validationSchema.textarea}>
-                        <TextArea />
-                    </Form.Item>
-                </Col>
-            </Row>
-            <Row
-                gutter={16}
-                align='bottom'>
-                <Col
-                    xs={24} sm={12} md={12} lg={12}
-                    className='container'>
-                    <Text strong={true}>Вкажіть побажання до КБ УСП</Text>
-                    <Form.Item
-                        className='w100'
-                        name='kbUSPWishes'
-                        rules={validationSchema.textarea}>
-                        <TextArea />
-                    </Form.Item>
-                </Col>
-            </Row>
-            <Row
-                gutter={16}
-                align='bottom'>
-                <Col
-                    xs={24} sm={12} md={12} lg={12}
-                    className='container'>
-                    <Text strong={true}>Дата заповнення</Text>
-                    <Form.Item
-                        className='w100'
-                        name='date'
+                        <p>Дійсних членів куреня - {clubAnnualReport?.currentClubMembers}</p>
+                        <p>Прихильників куреня - {clubAnnualReport?.currentClubFollowers}</p>
+
+                    </Col>
+                </Row>
+                <Row
+                    gutter={16}
+                    align='bottom'>
+                    <Col
+                        xs={24} sm={12} md={12} lg={12}
+                        className='container'>
+                        <Text strong={true}>До куреня приєдналось за звітній період</Text>
+                        <Form.Item
+                            className='w100'
+                            name='clubEnteredMembersCount'
+                            rules={validationSchema.number}>
+                            <Input  type="number" min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row
+                    gutter={16}
+                    align='bottom'>
+                    <Col
+                        xs={24} sm={12} md={12} lg={12}
+                        className='container'>
+                        <Text strong={true}>Вибули з куреня за звітній період</Text>
+                        <Form.Item
+                            className='w100'
+                            name='clubLeftMembersCount'
+                            rules={validationSchema.number}>
+                            <Input  type="number" min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row
+                    gutter={16}
+                    align='bottom'>
+                    <Col
+                        xs={24} sm={12} md={12} lg={12}
+                        className='container'>
+                        <Text strong={true}>Географія куреня. Осередки в Україні:</Text>
+                        <Form.Item
+                            className='w100'
+                            name='clubCenters'
+                            rules={validationSchema.textarea}>
+                            <TextArea />
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row
+                    gutter={16}
+                    align='bottom'>
+                    <Col
+                        xs={24} sm={12} md={12} lg={12}
+                        className='container'>
+                        <Text strong={true}>Вкажіть побажання до КБ УСП</Text>
+                        <Form.Item
+                            className='w100'
+                            name='kbUSPWishes'
+                            rules={validationSchema.textarea}>
+                            <TextArea />
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row
+                    gutter={16}
+                    align='bottom'>
+                    <Col
+                        xs={24} sm={12} md={12} lg={12}
+                        className='container'>
+                        <Text strong={true}>Дата заповнення</Text>
+                        <Form.Item
+                            className='w100'
+                            name='date'
                         >
                             {moment().format("DD.MM.YYYY")}
-                    </Form.Item>
-                </Col>
-            </Row>
-            
-            <Row justify='center'>
-                <Col>
-                    <Button
-                        type='primary'
-                        htmlType='submit'>
-                        Редагувати
-                    </Button>
-                </Col>
-            </Row>
-        </Form>
+                        </Form.Item>
+                    </Col>
+                </Row>
+
+                <Row justify='center'>
+                    <Col>
+                        <Button
+                            type='primary'
+                            htmlType='submit'>
+                            Редагувати
+                        </Button>
+                    </Col>
+                </Row>
+            </Form>}
+        </>
     );
 }
 

@@ -1,5 +1,5 @@
-import React, { useEffect, useState, PropsWithRef } from "react";
-import { Modal, Table} from 'antd';
+import React, { useEffect, useState } from "react";
+import {Modal, Table, Tooltip} from 'antd';
 import AuthStore from "../../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
 import {
@@ -17,15 +17,16 @@ import SavedDropdown from "./DropdownsForClubAnnualReports/SavedDropdown/SavedDr
 import{successfulConfirmedAction, successfulDeleteAction, successfulUpdateAction, tryAgain} from "../../../components/Notifications/Messages";
 import notificationLogic from '../../../components/Notifications/Notification';
 import { useHistory } from "react-router-dom";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import {ExclamationCircleOutlined, StarFilled, StarOutlined} from "@ant-design/icons";
 import Spinner from "../../Spinner/Spinner";
 
 interface props {
     columns: any;
     searchedData: any;
+    sortKey: any;
   }
 
-  export const ClubAnnualReportTable =({columns, searchedData}:props)=>{
+  export const ClubAnnualReportTable =({columns, searchedData, sortKey}:props)=>{
     const history = useHistory();
     const [clubAnnualReport, setClubAnnualReport] = useState(Object);
     const [clubAnnualReports, setClubAnnualReports] = useState(Array());
@@ -43,6 +44,7 @@ interface props {
     const [showClubAnnualReportModal, setShowClubAnnualReportModal] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [isLoading, setIsLoading]=useState(false);
+    const [authReport, setAuthReport]=useState(false);
 
     useEffect(()=>{
       if(currentSearchedData!=searchedData){
@@ -51,12 +53,12 @@ interface props {
       }
       fetchClubAnnualReports();
       checkAccessToManage();
-    },[searchedData, page, pageSize]);
+    },[searchedData, page, pageSize, sortKey, authReport]);
 
     const fetchClubAnnualReports = async () => {
       setIsLoading(true);
       try {
-        let response = await getSearchedClubAnnualReports(searchedData, page, pageSize);
+        let response = await getSearchedClubAnnualReports(searchedData, page, pageSize, sortKey, authReport);
         setClubAnnualReports(response.data.clubAnnualReports);
         setTotal(response.data.clubAnnualReports[0]?.total);
         setCount(response.data.clubAnnualReports[0]?.count);
@@ -129,7 +131,7 @@ interface props {
         if (error.response?.status === 400) {
           notificationLogic('error', tryAgain);
           history.goBack(); 
-        };
+        }
       }
     }
 
@@ -146,7 +148,7 @@ interface props {
         if (error.response?.status === 400) {
           notificationLogic('error', tryAgain);
           history.goBack(); 
-        };
+        }
       }
     }
 
@@ -203,10 +205,12 @@ interface props {
     };
 
     const handlePageChange = (page: number) => {
+      hideDropdowns();
       setPage(page);
     };
 
     const handleSizeChange = (page: number, pageSize: number = 10) => {
+      hideDropdowns();
       setPage(page);
       setPageSize(pageSize);
     };
@@ -215,16 +219,36 @@ interface props {
         <div>
           {isLoading? (<Spinner/>):(
               <>
-                <p style={{textAlign: "left"}}>
-                  {count? 'Знайдено '+count+'/'+total+' результатів' : 'За вашим запитом нічого не знайденого'}
-                </p>
+                <div className={"TableGeneralInfo"}>
+                  <p>
+                    {count? 'Знайдено '+count+'/'+total+' результатів' : 'За вашим запитом нічого не знайдено'}
+                  </p>
+                  {canManage? null: <div className={"AuthReport"}>
+                    <Tooltip
+                        placement="topLeft"
+                        title="Звіти в моєму розпорядженні">
+                      <button onClick={()=>{setPage(1); setAuthReport(!authReport)}} >
+                        {authReport? <StarFilled /> : <StarOutlined />}
+                      </button>
+                    </Tooltip>
+                  </div>}
+                </div>
                 <Table
               bordered
-              rowKey="id"
+              rowKey='id'
               columns={columns}
               scroll={{ x: 1300 }}
-              dataSource={clubAnnualReports}
-              rowClassName={(record, index) => ((record.canManage === true && !canManage) ? "manageRow" : '')}
+              dataSource={clubAnnualReports.map((item:any)=>{
+                if(item.canManage && !canManage)
+                  return{...item, idView: (<>{item.id}    <text style={{color: "#3c5438"}}>
+                      <Tooltip
+                          placement="topLeft"
+                          title="Звіт у моєму розпорядженні">
+                        <StarOutlined />
+                      </Tooltip>
+                  </text></>)};
+                else return {...item, idView: (<>{item.id}</>)};
+              })}
               onRow={(record) => {
                 return {
                   onClick: () => {hideDropdowns();},

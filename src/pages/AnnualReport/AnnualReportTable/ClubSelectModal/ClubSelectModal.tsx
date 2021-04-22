@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Select, Form, Button, Row, Col } from 'antd';
-import {createClubAnnualReport, getClubsOptions} from '../../../../api/clubsApi';
+import clubsApi, {createClubAnnualReport, getClubsOptions} from '../../../../api/clubsApi';
 import { useHistory } from 'react-router-dom';
 import './ClubSelectModal.less'
 import {emptyInput} from "../../../../components/Notifications/Messages"
@@ -47,6 +47,28 @@ const ClubSelectModal = (props: Props) => {
         setClubOptions(clubs);
     }
 
+    const checkCreated = async (id: number) => {
+        try {
+            let response = await clubsApi.checkCreated(id);
+            if (response.data.hasCreated === true) {
+                showError(response.data.message);
+            }
+            else{
+                history.push(`/annualreport/createClubAnnualReport/${id}`)
+            }
+        }
+        catch (error) {
+            showError(error.message)
+        }
+    }
+
+    const showError = (message: string) => {
+        Modal.error({
+            title: 'Помилка!',
+            content: message
+        });
+    }
+
     useEffect(() => {
        fetchClubs();
     }, [])
@@ -58,7 +80,9 @@ const ClubSelectModal = (props: Props) => {
             visible={visibleModal}
             footer={null} >
             <Form
-                onFinish={(obj) =>{history.push(`/annualreport/createClubAnnualReport/${obj.clubId}`)}} >
+                onFinish={(obj) =>{
+                    checkCreated(obj.clubId);
+                }} >
                 <Row>
                     <Col
                         span={24} >

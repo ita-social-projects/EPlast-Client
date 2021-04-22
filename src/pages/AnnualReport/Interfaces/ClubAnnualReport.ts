@@ -2,6 +2,7 @@ import Club from '../../../models/Club/Club';
 
 interface ClubAnnualReport {
     id: number;
+    idView:any;
     name:string;
     status: number;
     date: Date;
