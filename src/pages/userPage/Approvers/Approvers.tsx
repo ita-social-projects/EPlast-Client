@@ -56,7 +56,6 @@ const fetchApproverName = async (id: string) => {
 
   const setGreeting = () => {
       let greeting = "Друже/подруго";
-      console.log(data?.user);
       if (userGender === userGenders[0]) {
         greeting = "Друже";
       }
