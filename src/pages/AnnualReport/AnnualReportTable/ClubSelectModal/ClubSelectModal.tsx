@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Select, Form, Button, Row, Col } from 'antd';
-import clubsApi, {createClubAnnualReport, getClubsOptions} from '../../../../api/clubsApi';
+import clubsApi, {createClubAnnualReport, getClubs, getClubsOptions} from '../../../../api/clubsApi';
 import { useHistory } from 'react-router-dom';
 import './ClubSelectModal.less'
 import {emptyInput} from "../../../../components/Notifications/Messages"
@@ -37,11 +37,11 @@ const ClubSelectModal = (props: Props) => {
       }
 
     const fetchClubs = async()=>{
-        let response = await getClubsOptions();
+        let response = await getClubs();
         let clubs = response.data.map((item:any) => {
             return {
-                label: item.item2,
-                value: item.item1
+                label: item.name,
+                value: item.id
             }
         })
         setClubOptions(clubs);
