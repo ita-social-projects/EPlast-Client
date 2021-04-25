@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import ReactQuill, {Quill} from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import SubsectionModel from '../../models/AboutBase/SubsectionModel';
 import SectionModel from '../../models/AboutBase/SectionModel';
 import formclasses from './TextEditor.css';
@@ -16,6 +18,7 @@ import TextArea from "antd/lib/input/TextArea";
 
   
 const TextEditor = () => {
+  
     const [form] = Form.useForm();
     const [value, setValue] = useState('');
     const [sectionData, setSectionData] = useState<any[]>([
@@ -71,11 +74,8 @@ const TextEditor = () => {
             className={formclasses.formField}
             label="Опис"
             labelCol={{ span: 24 }}
-            rules={[{ required: true}]}
-          >
-            <TextArea
-              className={formclasses.text}
-            ></TextArea>
+            rules={[{ required: true}]}>
+            <ReactQuill className={formclasses.text} theme="snow" value={value} onChange={setValue}/>
           </Form.Item>
         </Col>
       </Row>
@@ -93,7 +93,9 @@ const TextEditor = () => {
           </Form.Item>
         </Col>
       </Row>
+      
          </Form>
+         
     )
 };
         

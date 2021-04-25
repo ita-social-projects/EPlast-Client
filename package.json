@@ -42,6 +42,7 @@
     "react-infinite-scroller": "^1.2.4",
     "react-input-mask": "^2.0.4",
     "react-messenger-customer-chat": "^0.8.0",
+    "react-quill": "^1.3.5",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
     "react-sticky": "^6.0.3",
