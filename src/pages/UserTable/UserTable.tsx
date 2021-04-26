@@ -33,6 +33,8 @@ import Region from "../Statistics/Interfaces/Region";
 import Club from "../AnnualReport/Interfaces/Club";
 import { shouldContain } from "../../components/Notifications/Messages";
 import classes from "./UserTable.module.css";
+import citiesApi from "../../api/citiesApi"
+import {User} from "../userPage/Interface/Interface"
 const { Search } = Input;
 
 const UsersTable = () => {
@@ -61,16 +63,14 @@ const UsersTable = () => {
   const [viewedUsers, setViewedUsers] = useState<UserTable[]>([]);
   const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
   const [isInactive, setIsInactive] = useState(false);
+  const [userArhive, setArhive] = useState();
+  const [user, setUser] = useState<UserTable>();
   const { SHOW_PARENT } = TreeSelect;
   const {Search} = Input;
+  
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, updatedUser, searchData]);
-
-  useEffect(() => {
-    fetchData();
-    onTabChange(currentTabName);
-  }, [currentTabName]);
+  }, [page, pageSize, updatedUser, searchData, userArhive, currentTabName]);
 
   useEffect(() => {
     fetchCities();
@@ -82,16 +82,9 @@ const UsersTable = () => {
 
   const fetchCities = async () => {
     try {
-      let response = await AnnualReportApi.getCities();
+      let response = await citiesApi.getCities();
       let cities = response.data.cities as City[];
-      setCities(
-        cities.map((item) => {
-          return {
-            label: item.name,
-            value: item.id,
-          };
-        })
-      );
+      setCities(cities)
     } catch (error) {
       showError(error.message);
     }
@@ -165,7 +158,9 @@ const UsersTable = () => {
         Tab: currentTabName,
         SearchData: searchData
       });
+      console.log(response)
       setUsers(response.data.users);
+      console.log(response.data.users)
       setViewedUsers(response.data.users);
       setTotal(response.data.total);
     } finally {
@@ -441,6 +436,7 @@ const UsersTable = () => {
                   setShowDropdown(true);
                   setRecordObj(record.id);
                   setRoles(record.userRoles);
+                  setUser(record);
                   setX(event.pageX);
                   setY(event.pageY);
                 },
@@ -476,6 +472,7 @@ const UsersTable = () => {
           pageY={y}
           onDelete={handleDelete}
           onChange={handleChange}
+          user={user}
           roles={roles}
           inActiveTab={isInactive}
         />
