@@ -74,6 +74,10 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     setVisibleModal(false);
   };
 
+  const backgroundColor = (user: any) => {
+    return user.isInLowerRole ? { backgroundColor : '#D3D3D3' } : { backgroundColor : 'white' };
+  }
+
   const createNotifications = async (userDistinction: UserDistinction) => {
     await NotificationBoxApi.createNotifications(
       [userDistinction.userId],
@@ -189,8 +193,8 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               loading={loadingUserStatus}
             >
               {userData?.map((o) => (
-                <Select.Option key={o.user.id} value={JSON.stringify(o.user)}>
-                  {o.user.firstName + " " + o.user.lastName}
+                <Select.Option key={o.id} value={JSON.stringify(o)} style={backgroundColor(o)}>
+                  {o.firstName + " " + o.lastName}
                 </Select.Option>
               ))}
             </Select>

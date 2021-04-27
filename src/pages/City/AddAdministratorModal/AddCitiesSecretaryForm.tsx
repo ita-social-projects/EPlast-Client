@@ -33,17 +33,10 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   const [startDate, setStartDate] = useState<any>();
   const [users, setUsers] = useState<any[]>([
     {
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-        birthday: "",
-      },
-      regionName: "",
-      cityName: "",
-      clubName: "",
-      userPlastDegreeName: "",
-      userRoles: "",
+      id: "",
+      firstName: "",
+      lastName: "",
+      birthday: "",
     },
   ]);
 
@@ -120,7 +113,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
     const newAdmin: CityAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
       userId: props.admin === undefined
-        ? JSON.parse(values.userId).user.id
+        ? JSON.parse(values.userId).id
         : props.admin.userId,
       user: values.user,
       adminType: {
@@ -189,8 +182,8 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       >
         <Select showSearch className={classes.inputField}>
           {users?.map((o) => (
-            <Select.Option key={o.user.id} value={JSON.stringify(o)}>
-              {o.user.firstName + " " + o.user.lastName}
+            <Select.Option key={o.id} value={JSON.stringify(o)}>
+              {o.firstName + " " + o.lastName}
             </Select.Option>
           ))}
         </Select>

@@ -6,6 +6,8 @@ import{
   emptyInput,
   maxLength,
 } from "../../components/Notifications/Messages"
+import jwt from "jwt-decode";
+import AuthStore from "../../stores/AuthStore";
 
 interface Props {
   record: number;
@@ -35,6 +37,9 @@ const FormEditDecision = ({
     setShowModal(false);
   };
   const handleFinish = async (dec: any) => {
+    let user: any;
+    let curToken = AuthStore.getToken() as string;
+    user = jwt(curToken);
     const newDecision: DecisionPost = {
       id: decision?.id,
       name: dec.name,
@@ -43,6 +48,7 @@ const FormEditDecision = ({
       decisionTarget: decision?.decisionTarget,
       description: dec.description,
       date: decision?.date,
+      userid: user.nameid,
       fileName: decision?.fileName,
     };
     await decisionsApi.put(id, newDecision);
