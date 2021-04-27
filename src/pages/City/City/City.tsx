@@ -470,11 +470,12 @@ const City = () => {
                 )}
             </Row>
             <div className="cityMoreButton">
+              {canEdit ? (
               <PlusSquareFilled
                 type="primary"
                 className="addReportIcon"
                 onClick={() => setvisible(true)}
-              ></PlusSquareFilled>
+              />):null}
               <Button
                 type="primary"
                 className="cityInfoButton"
