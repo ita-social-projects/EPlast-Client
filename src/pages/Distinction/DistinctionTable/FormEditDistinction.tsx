@@ -226,10 +226,10 @@ const FormEditDistinction = ({
                 >
                   {userData?.map((o) => (
                     <Select.Option
-                      key={o.user.id}
-                      value={JSON.stringify(o.user)}
+                      key={o.id}
+                      value={JSON.stringify(o)}
                     >
-                      {o.user.firstName + " " + o.user.lastName}
+                      {o.firstName + " " + o.lastName}
                     </Select.Option>
                   ))}
                 </Select>
