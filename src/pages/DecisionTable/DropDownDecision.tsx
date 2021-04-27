@@ -104,7 +104,7 @@ const fetchData = async () =>{
         }
         }
       >
-        {(canEdit || (regionAdm || cityAdm || clubAdm) && (userId === recordCreatorId)) ? (
+        {(canEdit || ((regionAdm || cityAdm || clubAdm) && (userId === recordCreatorId))) ? (
         <Menu.Item key="1">
           <EditOutlined />
           Редагувати
