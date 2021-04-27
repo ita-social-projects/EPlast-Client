@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
-    Form,
-    DatePicker,
-    Select,
-    Input,
-    Upload,
-    Button,
-    AutoComplete,
-    Row,
-    Col,
-    Mentions
+  Form,
+  DatePicker,
+  Select,
+  Input,
+  Upload,
+  Button,
+  AutoComplete,
+  Row,
+  Col,
+  Mentions
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import AuthStore from "../../stores/AuthStore";
