@@ -77,7 +77,7 @@ type FormAddKadraProps = {
         const newKadra  : any= {
             id: 0,
 
-            userId: JSON.parse(values.userId).user.id,
+            userId: JSON.parse(values.userId).id,
 
             KadraVykhovnykivTypeId:JSON.parse(values.KadraVykhovnykivType).id,
 
