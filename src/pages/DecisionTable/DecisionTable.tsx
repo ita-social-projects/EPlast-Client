@@ -18,6 +18,7 @@ const DecisionTable = () => {
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [recordObj, setRecordObj] = useState<any>(0);
+  const [recordCreator, setRecordCreator] = useState<string>("");
   const [data, setData] = useState<Decision[]>(Array<Decision>());
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
@@ -46,6 +47,9 @@ const DecisionTable = () => {
   }
   const handleAdd = async () => {
     const lastId = data[data.length - 1].id;
+    let user: any;
+    let curToken = AuthStore.getToken() as string;
+    user = jwt_decode(curToken);
     await decisionsApi.getById(lastId + 1).then(res => {
       const dec: Decision = {
         id: res.id,
@@ -55,6 +59,7 @@ const DecisionTable = () => {
         decisionTarget: res.decisionTarget.targetName,
         description: res.description,
         fileName: res.fileName,
+        userId: user.nameid,
         date: res.date
       };
       setData([...data, dec]);
@@ -138,7 +143,7 @@ const DecisionTable = () => {
             rowKey="id"
 
 
-            onRow={(record) => {
+            onRow={(record : Decision) => {
               return {
                 onClick: () => {
                   setShowDropdown(false);
@@ -146,6 +151,7 @@ const DecisionTable = () => {
                 onContextMenu: (event) => {
                   event.preventDefault();
                   setShowDropdown(true);
+                  setRecordCreator(record.userId);
                   setRecordObj(record.id);
                   setX(event.pageX);
                   setY(event.pageY);
@@ -173,6 +179,7 @@ const DecisionTable = () => {
             <DropDown
               showDropdown={showDropdown}
               record={recordObj}
+              recordCreatorId={recordCreator}
               pageX={x}
               pageY={y}
               onDelete={handleDelete}

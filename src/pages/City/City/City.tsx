@@ -81,7 +81,7 @@ const City = () => {
       city.name
     );
     
-    if(member.data.wasRegisteredUser){
+    if(member.data.wasInRegisteredUserRole){
         await NotificationBoxApi.createNotifications(
             [member.data.userId],
             "Тобі надано нову роль: 'Прихильник'",

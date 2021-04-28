@@ -77,7 +77,7 @@ type FormAddKadraProps = {
         const newKadra  : any= {
             id: 0,
 
-            userId: JSON.parse(values.userId).user.id,
+            userId: JSON.parse(values.userId).id,
 
             KadraVykhovnykivTypeId:JSON.parse(values.KadraVykhovnykivType).id,
 
@@ -124,6 +124,10 @@ type FormAddKadraProps = {
         });
     }
 
+  const backgroundColor = (user: any) => {
+    return user.isInLowerRole ? { backgroundColor : '#D3D3D3' } : { backgroundColor : 'white' };
+  }
+   
   const handleCancel = () => {
     form.resetFields();
     showModal(false);
@@ -159,8 +163,13 @@ type FormAddKadraProps = {
           >
             <Select showSearch className={classes.inputField}>
               {users?.map((o) => (
-                <Select.Option key={o.user.id} value={JSON.stringify(o)}>
-                  {o.user.firstName + " " + o.user.lastName}
+                <Select.Option 
+                    key={o.id}
+                    value={JSON.stringify(o)}
+                    style={backgroundColor(o)}
+                    disabled={o.isInLowerRole}
+                    >
+                  {o.firstName + " " + o.lastName}
                 </Select.Option>
               ))}
             </Select>

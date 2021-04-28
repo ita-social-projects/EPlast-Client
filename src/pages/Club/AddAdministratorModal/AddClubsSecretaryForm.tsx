@@ -18,6 +18,7 @@ import {
 import AdminType from "../../../models/Admin/AdminType";
 import regionsApi from "../../../api/regionsApi";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
+import User from "../../Distinction/Interfaces/User";
 
 type AddClubsNewSecretaryForm = {
   onAdd: () => void;
@@ -32,19 +33,11 @@ const AddClubsNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
-  const [users, setUsers] = useState<any[]>([
+  const [users, setUsers] = useState<User[]>([
     {
-      user: {
         id: "",
         firstName: "",
-        lastName: "",
-        birthday: "",
-      },
-      regionName: "",
-      cityName: "",
-      clubName: "",
-      userPlastDegreeName: "",
-      userRoles: "",
+        lastName: ""
     },
   ]);
 
@@ -118,7 +111,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
       },
       clubId: props.clubId,
       userId: props.admin === undefined
-        ? JSON.parse(values.userId).user.id
+        ? JSON.parse(values.userId).id
         : props.admin.userId,
       user: values.user,
       endDate: values.endDate?._d,
@@ -178,8 +171,8 @@ const AddClubsNewSecretaryForm = (props: any) => {
       >
         <Select showSearch className={classes.inputField}>
           {users?.map((o) => (
-            <Select.Option key={o.user.id} value={JSON.stringify(o)}>
-              {o.user.firstName + " " + o.user.lastName}
+            <Select.Option key={o.id} value={JSON.stringify(o)}>
+              {o.firstName + " " + o.lastName}
             </Select.Option>
           ))}
         </Select>
