@@ -482,7 +482,8 @@ const Region = () => {
                   type="primary"
                   className="addReportIcon"
                   onClick={() => setvisible(true)}
-                />):null}
+                />
+                ):null}
                 <Button
                   type="primary"
                   className="cityInfoButton"
