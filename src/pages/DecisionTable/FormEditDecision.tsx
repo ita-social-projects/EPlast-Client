@@ -48,7 +48,7 @@ const FormEditDecision = ({
       decisionTarget: decision?.decisionTarget,
       description: dec.description,
       date: decision?.date,
-      userid: user.nameid,
+      userId: user.nameid,
       fileName: decision?.fileName,
     };
     await decisionsApi.put(id, newDecision);
