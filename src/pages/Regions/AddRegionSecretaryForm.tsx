@@ -11,6 +11,7 @@ import {
   emptyInput,
   successfulEditAction,
 } from "../../components/Notifications/Messages"
+import User from "../Distinction/Interfaces/User";
 
 type AddNewSecretaryForm = {
   onAdd: () => void;
@@ -23,12 +24,11 @@ const AddNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
-  const [users, setUsers] = useState<any[]>([
+  const [users, setUsers] = useState<User[]>([
     {
         id: "",
         firstName: "",
-        lastName: "",
-        birthday: ""
+        lastName: ""
     }
   ]);
 

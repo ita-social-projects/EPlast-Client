@@ -18,6 +18,7 @@ import {
 import CityAdmin from "../../../models/City/CityAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import regionsApi from "../../../api/regionsApi";
+import User from "../../Distinction/Interfaces/User";
 
 type AddCitiesNewSecretaryForm = {
   onAdd: () => void;
@@ -31,12 +32,11 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
-  const [users, setUsers] = useState<any[]>([
+  const [users, setUsers] = useState<User[]>([
     {
       id: "",
       firstName: "",
-      lastName: "",
-      birthday: "",
+      lastName: ""
     },
   ]);
 

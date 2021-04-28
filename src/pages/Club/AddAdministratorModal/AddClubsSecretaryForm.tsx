@@ -18,6 +18,7 @@ import {
 import AdminType from "../../../models/Admin/AdminType";
 import regionsApi from "../../../api/regionsApi";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
+import User from "../../Distinction/Interfaces/User";
 
 type AddClubsNewSecretaryForm = {
   onAdd: () => void;
@@ -32,12 +33,11 @@ const AddClubsNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
-  const [users, setUsers] = useState<any[]>([
+  const [users, setUsers] = useState<User[]>([
     {
         id: "",
         firstName: "",
-        lastName: "",
-        birthday: ""
+        lastName: ""
     },
   ]);
 

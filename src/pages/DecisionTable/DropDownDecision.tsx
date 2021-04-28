@@ -40,7 +40,7 @@ const DropDown = (props: Props) => {
     decisionTarget: {id : 0 ,targetName : ""},
     description: "",
     date: "",
-    userid: "",
+    userId: "",
     fileName: null,
 });
 const fetchUser = async () => {

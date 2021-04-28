@@ -163,7 +163,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
           /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values
             .datepicker._d,
         fileName: fileData.FileName,
-        userid: user.nameid,
+        userId: user.nameid,
       },
       fileAsBase64: fileData.FileAsBase64,
     };
