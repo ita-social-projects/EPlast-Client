@@ -310,8 +310,8 @@ const FormEditPrecaution = ({
                 rules={[
                   {
                     required: true,
-                    max: 250,
-                    message: maxLength(250),
+                    max: 500,
+                    message: maxLength(500),
                   },
                 ]}
               >
@@ -322,7 +322,7 @@ const FormEditPrecaution = ({
                     maxRows: 6,
                   }}
                   className={formclasses.inputField}
-                  maxLength={251}
+                  maxLength={501}
                 />
               </Form.Item>
             </Col>

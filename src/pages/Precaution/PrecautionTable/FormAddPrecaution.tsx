@@ -260,8 +260,8 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             rules={[
               {
                 required: true,
-                max: 250,
-                message: maxLength(250),
+                max: 500,
+                message: maxLength(500),
               },
             ]}
           >
@@ -272,7 +272,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
                 maxRows: 6,
               }}
               className={formclasses.inputField}
-              maxLength={251}
+              maxLength={501}
             />
           </Form.Item>
         </Col>
