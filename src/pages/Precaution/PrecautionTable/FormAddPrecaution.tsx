@@ -138,11 +138,15 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             labelCol={{ span: 24 }}
             name="number"
             rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-            ]}
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+                {
+                  max: 6,
+                  message: maxLength(6),
+                },
+              ]}
           >
             <Input
               type="number"
