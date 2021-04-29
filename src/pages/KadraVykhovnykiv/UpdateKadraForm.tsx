@@ -123,11 +123,15 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 name="numberInRegister"
                 initialValue={currentKadra.numberInRegister}
                 rules={[
-                  {
-                    required: true,
-                    message: emptyInput(),
-                  },
-                ]}
+                    {
+                      required: true,
+                      message: emptyInput(),
+                    },
+                    {
+                      max: 6,
+                      message: maxLength(6),
+                    },
+                  ]}
               >
                 <Input
                   type="number"

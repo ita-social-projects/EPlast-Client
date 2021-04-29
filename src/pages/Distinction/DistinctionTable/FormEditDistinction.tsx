@@ -292,8 +292,8 @@ const FormEditDistinction = ({
                 initialValue={distinction.reason}
                 rules={[
                   {
-                    max: 250,
-                    message: maxLength(250),
+                    max: 1000,
+                    message: maxLength(1000),
                   },
                 ]}
               >
@@ -304,7 +304,7 @@ const FormEditDistinction = ({
                     maxRows: 6,
                   }}
                   className={formclasses.inputField}
-                  maxLength={251}
+                  maxLength={1001}
                 />
               </Form.Item>
             </Col>
