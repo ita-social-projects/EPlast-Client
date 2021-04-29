@@ -17,7 +17,9 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
   maxLength,
-  failCreateAction
+  failCreateAction,
+  maxNumber,
+  minNumber
 } from "../../../components/Notifications/Messages"
 import precautionApi from "../../../api/precautionApi";
 
@@ -144,9 +146,15 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                   message: emptyInput(),
                 },
                 {
-                  max: 6,
-                  message: maxLength(6),
+                  max: 5,
+                  message: maxNumber(99999),
                 },
+                {
+                    validator: (_ : object, value: number) => 
+                        value < 1
+                            ? Promise.reject(minNumber(1)) 
+                            : Promise.resolve()
+                }
               ]}
           >
             <Input

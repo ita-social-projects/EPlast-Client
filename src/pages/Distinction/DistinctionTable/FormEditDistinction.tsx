@@ -17,7 +17,9 @@ import Distinction from "../Interfaces/Distinction";
 import{
   emptyInput,
   maxLength,
-  failEditAction
+  failEditAction,
+  maxNumber,
+  minNumber
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
@@ -165,9 +167,15 @@ const FormEditDistinction = ({
                       message: emptyInput(),
                     },
                     {
-                      max: 6,
-                      message: maxLength(6),
+                      max: 5,
+                      message: maxNumber(99999),
                     },
+                    {
+                        validator: (_ : object, value: number) => 
+                            value < 1
+                                ? Promise.reject(minNumber(1)) 
+                                : Promise.resolve()
+                    }
                   ]}
               >
                 <Input
