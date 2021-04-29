@@ -2,11 +2,25 @@ import Api from './api';
 import AnnualReport from '../pages/AnnualReport/Interfaces/AnnualReport';
 import { AxiosError } from 'axios';
 
+const getCitiesOptions = async () => {
+    return await Api.get('Cities/CitiesOptions')
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
+}
+
 const getCities = async () => {
     return await Api.get('Cities')
         .catch((error: AxiosError) => {
             throw new Error(error.response?.data.message);
         });
+}
+
+const getCityMembers = async (cityId: number)=>{
+    return await Api.get(`AnnualReport/Members/${cityId}`)
+        .catch((error: AxiosError) => {
+        throw new Error(error.response?.data.message);
+    });
 }
 
 const getCityInfo = async (cityId: number) => {
@@ -44,8 +58,22 @@ const getById = async (id: number) => {
         });
 }
 
-const getAll = async () => {
-    return await Api.get('AnnualReport')
+const getAnnualReportEditFormById = async (id: number) => {
+    return await Api.get(`AnnualReport/EditCityAnnualReportForm/${id}`).then((response)=>{console.log(response.data);
+    return response})
+        .catch((error: AxiosError) => {
+            throw new Error(error.response?.data.message);
+        });
+}
+
+const getAll = async (searchedData: string, page: number, pageSize: number, sortKey: number, authReport: boolean) => {
+    return await Api.get('AnnualReport/Cities',
+        {searchedData: searchedData,
+            page: page,
+            pageSize: pageSize,
+            sortKey: sortKey,
+            auth: authReport
+        })
         .catch((error: AxiosError) => {
             throw new Error(error.response?.data.message);
         });
@@ -87,6 +115,6 @@ const remove = async (id: number) => {
 }
 
 export default {
-    getCities, getCityInfo, getCityLegalStatuses, getAnnualReportStatuses, checkCreated,
-    getById, getAll, create, edit, confirm, cancel, remove
+    getCitiesOptions, getCities, getCityInfo, getCityLegalStatuses, getAnnualReportStatuses, checkCreated,
+    getById, getAll, create, edit, confirm, cancel, remove, getAnnualReportEditFormById, getCityMembers
 };

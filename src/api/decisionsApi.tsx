@@ -10,6 +10,7 @@ export type Decision = {
   decisionTarget : string;
   description: string;
   date : string;
+  userId: string;
   fileName: string | null;
 }
 export type FileWrapper = {
@@ -51,6 +52,7 @@ export type DecisionPost  ={
   decisionTarget: decisionTarget;
   description: string;
   date: string;
+  userId: string;
   fileName: string | null;
 };
  export const statusTypePostParser = (statusType: decisionStatusType): number =>{

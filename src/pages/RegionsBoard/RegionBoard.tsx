@@ -175,6 +175,9 @@ const RegionBoard = () => {
 
   const handleAdd = async () => {
     const lastId = decisions[decisions.length - 1].id;
+    let user: any;
+    let curToken = AuthStore.getToken() as string;
+    user = jwt(curToken);
     await decisionsApi
       .getById(lastId + 1)
       .then((res) => {
@@ -186,6 +189,7 @@ const RegionBoard = () => {
           decisionTarget: res.decisionTarget.targetName,
           description: res.description,
           fileName: res.fileName,
+          userId: user.nameid,
           date: res.date,
         };
         setDecisions([...decisions.slice(1), dec]);

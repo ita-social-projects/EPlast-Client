@@ -82,6 +82,12 @@ export const toggleMemberStatus = async (id: number) => {
   });
 }
 
+export const cityNameOfApprovedMember = async(id: string) =>{
+  return api.get(`Cities/CityNameOfApprovedMember/${id}`).catch((error)=>{
+    throw new Error(error)
+  });
+};
+
 export const addFollower = async (cityId: number) => {
   return api.post(`Cities/AddFollower/${cityId}`, cityId).catch((error) => {
     throw new Error(error);
@@ -151,7 +157,7 @@ export const getDocumentTypes = async () => {
 
 
 export const getusersPreviousAdministrations = async(UserId:string)=>{
-  return api.get(`Cities/GetUserPreviousAdmins/${UserId}`).catch((error)=>{
+  return await api.get(`Cities/GetUserPreviousAdmins/${UserId}`).catch((error)=>{
     throw new Error(error);
   })
 }
@@ -162,6 +168,11 @@ export const getUsersAdministrations = async(UserId:string)=>{
   
 }
 
-export const getCities = async()=>{
-  return api.get(`Cities/Cities`);
+export const getCities = async ()=>{
+  return await api.get(`Cities/Cities`).catch(error => {
+    throw new Error(error);
+  });
+}
+export default {
+  getCities, getUsersAdministrations, getusersPreviousAdministrations, getDocumentTypes
 }

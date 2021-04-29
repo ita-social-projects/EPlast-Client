@@ -33,6 +33,9 @@ import Region from "../Statistics/Interfaces/Region";
 import Club from "../AnnualReport/Interfaces/Club";
 import { shouldContain } from "../../components/Notifications/Messages";
 import classes from "./UserTable.module.css";
+import citiesApi from "../../api/citiesApi"
+import {User} from "../userPage/Interface/Interface"
+const { Search } = Input;
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
@@ -43,7 +46,6 @@ const UsersTable = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [searchedData, setSearchedData] = useState("");
   const [users, setUsers] = useState<UserTable[]>([]);
   const [updatedUser, setUpdatedUser] = useState<UserTable[]>([]);
   const [roles, setRoles] = useState<string>();
@@ -51,6 +53,7 @@ const UsersTable = () => {
   const [regions, setRegions] = useState<any>();
   const [clubs, setClubs] = useState<any>();
   const [degrees, setDegrees] = useState<any>();
+  const [searchData, setSearchData] = useState<string>("");
   const [dynamicCities, setDynamicCities] = useState<any[]>([]);
   const [dynamicRegions, setDynamicRegions] = useState<any[]>([]);
   const [dynamicClubs, setDynamicClubs] = useState<any[]>([]);
@@ -60,15 +63,14 @@ const UsersTable = () => {
   const [viewedUsers, setViewedUsers] = useState<UserTable[]>([]);
   const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
   const [isInactive, setIsInactive] = useState(false);
+  const [userArhive, setArhive] = useState();
+  const [user, setUser] = useState<UserTable>();
   const { SHOW_PARENT } = TreeSelect;
+  const {Search} = Input;
+  
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, updatedUser]);
-
-  useEffect(() => {
-    fetchData();
-    onTabChange(currentTabName);
-  }, [currentTabName]);
+  }, [page, pageSize, updatedUser, searchData, userArhive, currentTabName]);
 
   useEffect(() => {
     fetchCities();
@@ -80,16 +82,9 @@ const UsersTable = () => {
 
   const fetchCities = async () => {
     try {
-      let response = await AnnualReportApi.getCities();
+      let response = await citiesApi.getCities();
       let cities = response.data.cities as City[];
-      setCities(
-        cities.map((item) => {
-          return {
-            label: item.name,
-            value: item.id,
-          };
-        })
-      );
+      setCities(cities)
     } catch (error) {
       showError(error.message);
     }
@@ -161,8 +156,11 @@ const UsersTable = () => {
         Clubs: dynamicClubs,
         Degrees: dynamicDegrees,
         Tab: currentTabName,
+        SearchData: searchData
       });
+      console.log(response)
       setUsers(response.data.users);
+      console.log(response.data.users)
       setViewedUsers(response.data.users);
       setTotal(response.data.total);
     } finally {
@@ -170,37 +168,18 @@ const UsersTable = () => {
     }
   };
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPage(1);
-    setSearchedData(event.target.value.toLowerCase());
-  };
+ const handleSearch = (e:any) => {
+   setPage(1)
+   setSearchData(e);
+ } 
 
-  let filteredData = searchedData
-    ? viewedUsers.filter((item) => {
-        return Object.values([
-          item.regionName,
-          item.cityName,
-          item.clubName,
-          item.userPlastDegreeName,
-          item.userRoles,
-          item.userProfileId,
-          item.upuDegree,
-        ]).find((element) => {
-          return String(element).toLowerCase().includes(searchedData);
-        });
-      })
-    : viewedUsers;
+ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+   if(e.target.value.toLowerCase() === '') {
+     setSearchData('')
+   }
+  
+ }
 
-  filteredData = Array.from(filteredData).concat(
-    Array.from(viewedUsers).filter(
-      (item) =>
-        (item.firstName?.toLowerCase()?.includes(searchedData) ||
-          item.lastName?.toLowerCase()?.includes(searchedData) ||
-          item.firstName?.includes(searchedData) ||
-          item.lastName?.includes(searchedData)) &&
-        !filteredData.includes(item)
-    )
-  );
 
   const onSelect = (selectedKeys: any, e: any) => {
     if (e.value == 0) {
@@ -321,6 +300,7 @@ const UsersTable = () => {
           Clubs: dynamicClubs,
           Degrees: dynamicDegrees,
           Tab: currentTabName,
+          SearchData: searchData
         });
         setUsers(response.data.users);
         setViewedUsers(response.data.users);
@@ -349,9 +329,7 @@ const UsersTable = () => {
     setPage(page);
     setPageSize(pageSize);
     setCurrentTabName(key);
-    setViewedUsers(filteredData);
   };
-  useEffect(() => {}, [filteredData]);
 
   return (
     <Layout.Content
@@ -422,7 +400,12 @@ const UsersTable = () => {
           </Form>
         </div>
         <div className={classes.searchArea}>
-          <Input placeholder="Пошук" onChange={handleSearch} allowClear />
+          <Search placeholder="Пошук"
+          enterButton
+          onChange={handleSearchChange}  
+          onSearch={handleSearch}
+          />
+
         </div>
       </div>
       {loading === false ? (
@@ -442,7 +425,7 @@ const UsersTable = () => {
             rowKey="id"
             scroll={{ x: 1450 }}
             columns={ColumnsForUserTable}
-            dataSource={filteredData}
+            dataSource={users}
             onRow={(record) => {
               return {
                 onClick: () => {
@@ -453,6 +436,7 @@ const UsersTable = () => {
                   setShowDropdown(true);
                   setRecordObj(record.id);
                   setRoles(record.userRoles);
+                  setUser(record);
                   setX(event.pageX);
                   setY(event.pageY);
                 },
@@ -488,6 +472,7 @@ const UsersTable = () => {
           pageY={y}
           onDelete={handleDelete}
           onChange={handleChange}
+          user={user}
           roles={roles}
           inActiveTab={isInactive}
         />

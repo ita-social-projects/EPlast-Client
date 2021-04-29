@@ -5,6 +5,7 @@ interface City {
     name: string;
     regionId: number;
     region: Region | null;
+    cityMembers: any | null;
 }
 
 export default City;

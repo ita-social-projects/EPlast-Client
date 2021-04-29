@@ -6,7 +6,7 @@ import './AnnualReportEdit.less';
 import AnnualReportForm from '../AnnualReportForm/AnnualReportForm';
 import AnnualReportApi from '../../../api/AnnualReportApi';
 import AnnualReport from '../Interfaces/AnnualReport';
-import User from '../Interfaces/User';
+import Spinner from "../../Spinner/Spinner";
 
 const AnnualReportEdit = () => {
     const { id } = useParams();
@@ -15,6 +15,7 @@ const AnnualReportEdit = () => {
     const [cityMembers, setCityMembers] = useState<any>();
     const [cityLegalStatuses, setCityLegalStatuses] = useState<any>();
     const [annualReport, setAnnualReport] = useState<AnnualReport>()
+    const [isLoading, setIsLoading]=useState(false);
     const [form] = Form.useForm();
 
     let cityId: number;
@@ -24,15 +25,30 @@ const AnnualReportEdit = () => {
     }, [])
 
     const fetchData = async () => {
-        await fetchAnnualReport();
-        await fetchCityInfo();
-        await fetchLegalStatuses();
+        setIsLoading(true);
+        try {
+            await fetchAnnualReport();
+            await fetchLegalStatuses();
+        }catch (error){
+            showError(error.message);
+        }finally {
+            setIsLoading(false);
+        }
     }
 
     const fetchAnnualReport = async () => {
         try {
-            let annualreport = await AnnualReportApi.getById(id)
+            let annualreport = await AnnualReportApi.getAnnualReportEditFormById(id)
                 .then((response)=>{return response.data.annualReport as AnnualReport});
+            if(annualreport.city)
+            {
+                setTitle(title.concat(' ', annualreport.city.name));
+                setCityMembers((annualreport.city.cityMembers as []).map((item: any) => {
+                    return {
+                        label: String.prototype.concat(item.user.firstName, ' ', item.user.lastName),
+                        value: item.user.id
+                    }}));
+            }
             annualreport.city = null;
             annualreport.newCityAdmin = null;
             cityId = annualreport.cityId;
@@ -42,27 +58,6 @@ const AnnualReportEdit = () => {
         catch (error) {
             showError(error.message)
         }
-    }
-
-    const fetchCityInfo = async () => {
-        try {
-            let response = await AnnualReportApi.getCityInfo(cityId);
-            let cityName = response.data.name;
-            setTitle(title.concat(' ', cityName));
-            setMembers((response.data.members as []).map((item: any) => item.user));
-        }
-        catch (error) {
-            showError(error.message)
-        }
-    }
-
-    const setMembers = (members: User[]) => {
-        setCityMembers(members.map(item => {
-            return {
-                label: String.prototype.concat(item.firstName, ' ', item.lastName),
-                value: item.id
-            }
-        }));
     }
 
     const fetchLegalStatuses = async () => {
@@ -110,25 +105,32 @@ const AnnualReportEdit = () => {
     }
 
     return (
-        <Form
+        <>
+        {isLoading? <Modal>(<Spinner/>)</Modal> : <Form
             onFinish={handleFinish}
             className='annualreport-form'
             form={form} >
-            <AnnualReportForm
-                title={title}
-                cityMembers={cityMembers}
-                cityLegalStatuses={cityLegalStatuses} />
-            <Row justify='center'>
+            <Row>
                 <Col>
-                    <Button
-                        type='primary'
-                        htmlType='submit'>
-                        Редагувати
-                    </Button>
+                    <AnnualReportForm
+                        title={title}
+                        cityMembers={cityMembers}
+                        cityLegalStatuses={cityLegalStatuses} />
+                    <Row justify='center'>
+                        <Col>
+                            <Button
+                                type='primary'
+                                htmlType='submit'>
+                                Редагувати
+                            </Button>
+                        </Col>
+                    </Row>
                 </Col>
             </Row>
         </Form>
+        }
+        </>
     );
-}
+};
 
 export default AnnualReportEdit;

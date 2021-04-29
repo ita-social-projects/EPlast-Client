@@ -4,6 +4,7 @@ import City from './City';
 
 interface AnnualReport {
     id: number;
+    idView: any;
     date: Date;
     status: number;
     numberOfSeatsPtashat: number;

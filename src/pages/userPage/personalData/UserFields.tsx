@@ -10,6 +10,8 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Spinner from "../../Spinner/Spinner";
 import { tryAgain } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
+import {cityNameOfApprovedMember} from "../../../api/citiesApi"
+import {clubNameOfApprovedMember} from "../../../api/clubsApi"
 import Facebook from "../../../assets/images/facebookGreen.svg";
 import Twitter from "../../../assets/images/birdGreen.svg";
 import Instagram from "../../../assets/images/instagramGreen.svg";
@@ -45,11 +47,14 @@ export default function () {
       .catch(() => {
         notificationLogic("error", tryAgain);
       });
+
   };
 
   useEffect(() => {
     fetchData();
   }, [userId]);
+  
+  
 
   return loading === false ? (
     <Spinner />

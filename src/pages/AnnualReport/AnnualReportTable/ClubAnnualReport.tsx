@@ -1,9 +1,14 @@
-import React, { useEffect, useState, PropsWithRef } from "react";
-import { Modal, Table} from 'antd';
-import ClubAnnualReport from '../Interfaces/ClubAnnualReport';
+import React, { useEffect, useState } from "react";
+import {Modal, Table, Tooltip} from 'antd';
 import AuthStore from "../../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
-import { cancelClubAnnualReport, confirmClubAnnualReport, getClubAnnualReport, getClubAnnualReportById, removeClubAnnualReport } from "../../../api/clubsApi";
+import {
+  cancelClubAnnualReport,
+  confirmClubAnnualReport,
+  getSearchedClubAnnualReports,
+  getClubAnnualReportById,
+  removeClubAnnualReport
+} from "../../../api/clubsApi";
 import ClubAnnualReportInformation from "./ClubAnnualReportInformation/ClubAnnualReportInformation";
 import ClickAwayListener from "react-click-away-listener";
 import UnconfirmedDropdown from "./DropdownsForClubAnnualReports/UnconfirmedDropdown/UnconfirmedDropdown";
@@ -12,25 +17,65 @@ import SavedDropdown from "./DropdownsForClubAnnualReports/SavedDropdown/SavedDr
 import{successfulConfirmedAction, successfulDeleteAction, successfulUpdateAction, tryAgain} from "../../../components/Notifications/Messages";
 import notificationLogic from '../../../components/Notifications/Notification';
 import { useHistory } from "react-router-dom";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import {ExclamationCircleOutlined, StarFilled, StarOutlined} from "@ant-design/icons";
+import Spinner from "../../Spinner/Spinner";
 
 interface props {
     columns: any;
-    filteredData: any;
+    searchedData: any;
+    sortKey: any;
   }
 
-  export const ClubAnnualReportTable =({columns, filteredData}:props)=>{
+  export const ClubAnnualReportTable =({columns, searchedData, sortKey}:props)=>{
     const history = useHistory();
-    const [clubAnnualReport, setClubAnnualReport] = useState<ClubAnnualReport>(Object);
-    const [clubAnnualReports, setClubAnnualReports] = useState<ClubAnnualReport[]>(Array());
+    const [clubAnnualReport, setClubAnnualReport] = useState(Object);
+    const [clubAnnualReports, setClubAnnualReports] = useState(Array());
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [total, setTotal] = useState<number>(0);
+    const [count, setCount] = useState<number>(0);
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
+    const [currentSearchedData, setCurrentSearchedData] = useState<string>();
     const [showUnconfirmedDropdown, setShowUnconfirmedDropdown] = useState<boolean>(false);
     const [showConfirmedDropdown, setShowConfirmedDropdown] = useState<boolean>(false);
     const [showSavedDropdown, setShowSavedDropdown] = useState<boolean>(false);
     const [canManage, setCanManage] = useState<boolean>(false);
     const [showClubAnnualReportModal, setShowClubAnnualReportModal] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading]=useState(false);
+    const [authReport, setAuthReport]=useState(false);
+
+    useEffect(()=>{
+      if(currentSearchedData!=searchedData){
+        setCurrentSearchedData(searchedData);
+        setPage(1);
+      }
+      fetchClubAnnualReports();
+      checkAccessToManage();
+    },[searchedData, page, pageSize, sortKey, authReport]);
+
+    const fetchClubAnnualReports = async () => {
+      setIsLoading(true);
+      try {
+        let response = await getSearchedClubAnnualReports(searchedData, page, pageSize, sortKey, authReport);
+        setClubAnnualReports(response.data.clubAnnualReports);
+        setTotal(response.data.clubAnnualReports[0]?.total);
+        setCount(response.data.clubAnnualReports[0]?.count);
+        setPage(1)
+      } catch (error) {
+        showError(error.message);
+      }finally {
+        setIsLoading(false);
+      }
+    };
+
+    const showError = (message: string) => {
+      Modal.error({
+        title: "Помилка!",
+        content: message,
+      });
+    };
 
 
     const checkAccessToManage = () => {
@@ -39,7 +84,7 @@ interface props {
     let roles = decodedJwt[
       "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
     ] as string[];
-    setCanManage(roles.includes("Admin") || roles.includes("Голова Куреня"));
+    setCanManage(roles.includes("Admin"));
     };
 
     const handleClickAway = () => {
@@ -86,7 +131,7 @@ interface props {
         if (error.response?.status === 400) {
           notificationLogic('error', tryAgain);
           history.goBack(); 
-        };
+        }
       }
     }
 
@@ -103,7 +148,7 @@ interface props {
         if (error.response?.status === 400) {
           notificationLogic('error', tryAgain);
           history.goBack(); 
-        };
+        }
       }
     }
 
@@ -158,52 +203,84 @@ interface props {
       hideDropdowns();
       history.push(`/club/editClubAnnualReport/${id}`);
     };
-    
-    const fetchData = async () => {
-    await getClubAnnualReport();
-    setLoading(true);
-    }
 
-    useEffect(() => {
-      checkAccessToManage();
-      fetchData();
-    }, []);
+    const handlePageChange = (page: number) => {
+      hideDropdowns();
+      setPage(page);
+    };
+
+    const handleSizeChange = (page: number, pageSize: number = 10) => {
+      hideDropdowns();
+      setPage(page);
+      setPageSize(pageSize);
+    };
     
     return(
         <div>
-        <Table
-        bordered
-        rowKey="id"
-        columns={columns}
-        scroll={{ x: 1300 }}
-        dataSource={filteredData}
-        onRow={(record) => {
-    return {
-        onClick: () => {hideDropdowns();},
-        onContextMenu: (event) => {
-        event.preventDefault();
-        showDropdown(record.status);
-        setClubAnnualReport(record);
-        setX(event.pageX);
-        setY(event.pageY-200);
-      },
-    };
-  }}
-  onChange={(pagination) => {
-    if (pagination) {
-      window.scrollTo({
-        left: 0,
-        top: 0,
-        behavior: "smooth",
-      });
-    }
-  }}
-  pagination={{
-    showLessItems: true,
-    responsive: true,
-    showSizeChanger: true,
-  }}
-/>
+          {isLoading? (<Spinner/>):(
+              <>
+                <div className={"TableGeneralInfo"}>
+                  <p>
+                    {count? 'Знайдено '+count+'/'+total+' результатів' : 'За вашим запитом нічого не знайдено'}
+                  </p>
+                  {canManage? null: <div className={"AuthReport"}>
+                    <Tooltip
+                        placement="topLeft"
+                        title="Звіти в моєму розпорядженні">
+                      <button onClick={()=>{setPage(1); setAuthReport(!authReport)}} >
+                        {authReport? <StarFilled /> : <StarOutlined />}
+                      </button>
+                    </Tooltip>
+                  </div>}
+                </div>
+                <Table
+              bordered
+              rowKey='id'
+              columns={columns}
+              scroll={{ x: 1300 }}
+              dataSource={clubAnnualReports.map((item:any)=>{
+                if(item.canManage && !canManage)
+                  return{...item, idView: (<>{item.id}    <text style={{color: "#3c5438"}}>
+                      <Tooltip
+                          placement="topLeft"
+                          title="Звіт у моєму розпорядженні">
+                        <StarOutlined />
+                      </Tooltip>
+                  </text></>)};
+                else return {...item, idView: (<>{item.id}</>)};
+              })}
+              onRow={(record) => {
+                return {
+                  onClick: () => {hideDropdowns();},
+                  onContextMenu: (event) => {
+                    event.preventDefault();
+                    showDropdown(record.status);
+                    setClubAnnualReport(record);
+                    setX(event.pageX);
+                    setY(event.pageY-200);
+                  },
+                };
+              }}
+              onChange={(pagination) => {
+                if (pagination) {
+                  window.scrollTo({
+                    left: 0,
+                    top: 0,
+                    behavior: "smooth",
+                  });
+                }
+              }}
+              pagination={{
+                current: page,
+                pageSize: pageSize,
+                total: count,
+                showLessItems: true,
+                responsive: true,
+                showSizeChanger: true,
+                onChange: (page) => handlePageChange(page),
+                onShowSizeChange: (page, size) => handleSizeChange(page, size),
+              }}
+          /></>)}
 <ClickAwayListener onClickAway={hideDropdowns}>
         <UnconfirmedDropdown
           showDropdown={showUnconfirmedDropdown}

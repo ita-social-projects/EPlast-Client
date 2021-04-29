@@ -192,8 +192,8 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               loading={loadingUserStatus}
             >
               {userData?.map((o) => (
-                <Select.Option key={o.user.id} value={JSON.stringify(o.user)}>
-                  {o.user.firstName + " " + o.user.lastName}
+                <Select.Option key={o.id} value={JSON.stringify(o)} >
+                  {o.firstName + " " + o.lastName}
                 </Select.Option>
               ))}
             </Select>

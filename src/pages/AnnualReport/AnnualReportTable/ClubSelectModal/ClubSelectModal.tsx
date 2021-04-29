@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Select, Form, Button, Row, Col } from 'antd';
-import {getClubs,createClubAnnualReport} from '../../../../api/clubsApi';
-import Clubs from '../../Interfaces/ClubAnnualReport'
+import clubsApi, {createClubAnnualReport, getClubsOptions} from '../../../../api/clubsApi';
 import { useHistory } from 'react-router-dom';
 import './ClubSelectModal.less'
 import {emptyInput} from "../../../../components/Notifications/Messages"
@@ -38,14 +37,36 @@ const ClubSelectModal = (props: Props) => {
       }
 
     const fetchClubs = async()=>{
-        let response = await getClubs();
-        let clubs = response.data as Clubs[];
-        setClubOptions(clubs.map(item => {
+        let response = await getClubsOptions();
+        let clubs = response.data.map((item:any) => {
             return {
-                label: item.name,
-                value: item.id
+                label: item.item2,
+                value: item.item1
             }
-        }));
+        })
+        setClubOptions(clubs);
+    }
+
+    const checkCreated = async (id: number) => {
+        try {
+            let response = await clubsApi.checkCreated(id);
+            if (response.data.hasCreated === true) {
+                showError(response.data.message);
+            }
+            else{
+                history.push(`/annualreport/createClubAnnualReport/${id}`)
+            }
+        }
+        catch (error) {
+            showError(error.message)
+        }
+    }
+
+    const showError = (message: string) => {
+        Modal.error({
+            title: 'Помилка!',
+            content: message
+        });
     }
 
     useEffect(() => {
@@ -59,7 +80,9 @@ const ClubSelectModal = (props: Props) => {
             visible={visibleModal}
             footer={null} >
             <Form
-                onFinish={(obj) =>{history.push(`/annualreport/createClubAnnualReport/${obj.clubId}`)}} >
+                onFinish={(obj) =>{
+                    checkCreated(obj.clubId);
+                }} >
                 <Row>
                     <Col
                         span={24} >

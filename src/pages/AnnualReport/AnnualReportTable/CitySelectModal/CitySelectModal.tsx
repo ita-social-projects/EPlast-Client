@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Select, Form, Button, Row, Col } from 'antd';
 import AnnualReportApi from '../../../../api/AnnualReportApi';
-import City from '../../Interfaces/City';
 import { useHistory } from 'react-router-dom';
 import './CitySelectModal.less'
 import {emptyInput} from "../../../../components/Notifications/Messages"
@@ -26,16 +25,37 @@ const CitySelectModal = (props: Props) => {
         fetchCities();
     }, [])
 
+    const checkCreated = async (id: number) => {
+        try {
+            let response = await AnnualReportApi.checkCreated(id);
+            if (response.data.hasCreated === true) {
+                showError(response.data.message);
+            }
+            else {
+                history.push(`/annualreport/create/${id}`)            }
+        }
+        catch (error) {
+            showError(error.message)
+        }
+    }
+
+    const showError = (message: string) => {
+        Modal.error({
+            title: 'Помилка!',
+            content: message
+        });
+    }
+
     const fetchCities = async () => {
         try {
-            let response = await AnnualReportApi.getCities();
-            let cities = response.data.cities as City[];
-            setCityOptions(cities.map(item => {
+            let response = await AnnualReportApi.getCitiesOptions();
+            let cities = response.data.cities.map((item:any) => {
                 return {
-                    label: item.name,
-                    value: item.id
+                    label: item.item2,
+                    value: item.item1
                 }
-            }));
+            })
+            setCityOptions(cities);
         }
         catch (error) {
 
@@ -49,7 +69,8 @@ const CitySelectModal = (props: Props) => {
             visible={visibleModal}
             footer={null} >
             <Form
-                onFinish={(obj) => { history.push(`/annualreport/create/${obj.cityId}`) }} >
+                onFinish={(obj) => {
+                    checkCreated(obj.cityId); }} >
                 <Row>
                     <Col
                         span={24} >

@@ -1,7 +1,6 @@
 import React, { useEffect, useState} from "react";
 import { useHistory } from "react-router-dom";
-import { Table } from 'antd';
-import AnnualReport from '../Interfaces/AnnualReport';
+import {Table, Tooltip} from 'antd';
 import ClickAwayListener from "react-click-away-listener";
 import UnconfirmedDropdown from "./Dropdowns/UnconfirmedDropdown/UnconfirmedDropdown";
 import ConfirmedDropdown from "./Dropdowns/ConfirmedDropdown/ConfirmedDropdown";
@@ -12,28 +11,66 @@ import AnnualReportApi from "../../../api/AnnualReportApi";
 import Modal from "antd/lib/modal";
 import AuthStore from "../../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import {ExclamationCircleOutlined, StarFilled, StarOutlined} from "@ant-design/icons";
 import notificationLogic from "../../../components/Notifications/Notification";
 import { successfulEditAction, tryAgain } from "../../../components/Notifications/Messages";
-import { showError } from "../../Actions/EventsModals";
+import Spinner from "../../Spinner/Spinner";
 
 interface props {
     columns: any;
-    filteredData: any;
+    searchedData: any;
+    sortKey: any;
   }
   
-  export const CityAnnualReportTable =({columns, filteredData}:props)=>{
+  export const CityAnnualReportTable =({columns, searchedData, sortKey}:props)=>{
     const history = useHistory();
-    const [annualReport, setAnnualReport] = useState<AnnualReport>(Object);
-    const [annualReports, setAnnualReports] = useState<AnnualReport[]>(Array());
+    const [annualReport, setAnnualReport] = useState(Object);
+    const [annualReports, setAnnualReports] = useState(Array());
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [total, setTotal] = useState<number>(0);
+    const [count, setCount] = useState<number>(0);
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
-    const [canManage, setCanManage] = useState<boolean>(false);
+    const [canManage, setCanManage] = useState<boolean>();
+    const [currentSearchedData, setCurrentSearchedData] = useState<string>();
     const [showUnconfirmedDropdown, setShowUnconfirmedDropdown] = useState<boolean>(false);
     const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(false);
     const [showConfirmedDropdown, setShowConfirmedDropdown] = useState<boolean>(false);
     const [showAnnualReportModal, setShowAnnualReportModal] = useState<boolean>(false);
     const [showSavedDropdown, setShowSavedDropdown] = useState<boolean>(false);
+    const [isLoading, setIsLoading]=useState(false);
+    const [authReport, setAuthReport]=useState(false);
+
+    useEffect(()=>{
+      if(currentSearchedData!=searchedData){
+        setCurrentSearchedData(searchedData);
+        setPage(1);
+      }
+      checkAccessToManage();
+      fetchAnnualReports();
+    },[searchedData, page, pageSize, sortKey, authReport]);
+
+    const fetchAnnualReports = async () => {
+      setIsLoading(true);
+      try {
+        let response = await AnnualReportApi.getAll(searchedData, page, pageSize, sortKey, authReport);
+        setAnnualReports(response.data.annualReports);
+        setTotal(response.data.annualReports[0]?.total);
+        setCount(response.data.annualReports[0]?.count);
+      } catch (error) {
+        showError(error.message);
+      }finally {
+        setIsLoading(false);
+      }
+    };
+
+    const showError = (message: string) => {
+      Modal.error({
+        title: "Помилка!",
+        content: message,
+      });
+    };
 
     const hideDropdowns = () => {
       setShowUnconfirmedDropdown(false);
@@ -47,7 +84,7 @@ interface props {
       let roles = decodedJwt[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
       ] as string[];
-      setCanManage(roles.includes("Admin") || roles.includes("Голова Регіону"));
+      setCanManage(roles.includes("Admin"));
     };
     
     const showDropdown = (annualReportStatus: number) => {
@@ -75,7 +112,6 @@ interface props {
         setShowAnnualReportModal(true);
       } catch (error) {
         notificationLogic("error", tryAgain);
-            history.goBack(); 
       }
     };
     
@@ -101,10 +137,8 @@ interface props {
           })
         );
         notificationLogic('success', successfulEditAction('Річний звіт', response.data.name));
-        history.goBack(); 
       } catch (error) {
         notificationLogic("error", tryAgain);
-            history.goBack(); 
       }
     };
 
@@ -122,12 +156,12 @@ interface props {
         let response = await AnnualReportApi.remove(id);
         setAnnualReports(annualReports?.filter((item) => item.id !== id));
         notificationLogic('success', successfulEditAction('Річний звіт', response.data.name));
-        history.goBack(); 
+            setTotal(total-1);
+            setCount(count-1);
           }
         });
       } catch (error) {
         notificationLogic("error", tryAgain);
-            history.goBack(); 
       }
     };
 
@@ -144,61 +178,98 @@ interface props {
           })
         );
         notificationLogic('success', successfulEditAction('Річний звіт', response.data.name));
-        history.goBack(); 
       } catch (error) {
         notificationLogic("error", tryAgain);
-            history.goBack(); 
       }
     };
-    
-    useEffect(() => {
-      checkAccessToManage();
-    }, []);
+
+    const handlePageChange = (page: number) => {
+      hideDropdowns();
+      setPage(page);
+    };
+
+    const handleSizeChange = (page: number, pageSize: number = 10) => {
+      hideDropdowns();
+      setPage(page);
+      setPageSize(pageSize);
+    };
 
     return (       
         <div>
-              <Table
-        bordered
-        rowKey="id"
-        columns={columns} 
-        scroll={{ x: 1300 }}
-        dataSource={filteredData}
-        onRow={(record) => {
-          return {
-            onClick: () => {
-              hideDropdowns();
-            },
-            onContextMenu: (event) => {
-              event.preventDefault();
-              showDropdown(record.status);
-              setAnnualReport(record);
-              setX(event.pageX);
-              setY(event.pageY-200);
-            },
-          };
-        }}
-        onChange={(pagination) => {
-          if (pagination) {
-            window.scrollTo({
-              left: 0,
-              top: 0,
-              behavior: "smooth",
-            });
-          }
-        }}
-        pagination={{
-          showLessItems: true,
-          responsive: true,
-          showSizeChanger: true,
-        }}
-      />
+          {isLoading? (<Spinner/>):(
+              <>
+                <div className={"TableGeneralInfo"}>
+                  <p>
+                    {count? 'Знайдено '+count+'/'+total+' результатів' : 'За вашим запитом нічого не знайдено'}
+                  </p>
+                  {canManage? null: <div className={"AuthReport"}>
+                      <Tooltip
+                          placement="topLeft"
+                          title="Звіти в моєму розпорядженні">
+                        <button onClick={()=>{setPage(1); setAuthReport(!authReport)}} >
+                          {authReport? <StarFilled /> : <StarOutlined />}
+                        </button>
+                      </Tooltip>
+                  </div>}
+                </div>
+                <Table
+                    bordered
+                    rowKey="id"
+                    columns={columns}
+                    scroll={{ x: 1300 }}
+                    dataSource={annualReports.map((item:any)=>{
+                      if(item.canManage && !canManage)
+                        return{...item, idView: (<>{item.id}    <text style={{color: "#3c5438"}}>
+                            <Tooltip
+                                placement="topLeft"
+                                title="Звіт у моєму розпорядженні">
+                              <StarOutlined />
+                            </Tooltip>
+                        </text></>)};
+                      else return {...item, idView: (<>{item.id}</>)};
+                    })}
+                    onRow={(record) => {
+                      return {
+                        onClick: () => {
+                          hideDropdowns();
+                        },
+                        onContextMenu: (event) => {
+                          event.preventDefault();
+                          showDropdown(record.status);
+                          setAnnualReport(record);
+                          setX(event.pageX);
+                          setY(event.pageY-200);
+                        },
+                      };
+                    }}
+                    onChange={(pagination) => {
+                      if (pagination) {
+                        window.scrollTo({
+                          left: 0,
+                          top: 0,
+                          behavior: "smooth",
+                        });
+                      }
+                    }}
+                    pagination={{
+                      current: page,
+                      pageSize: pageSize,
+                      total: count,
+                      showLessItems: true,
+                      responsive: true,
+                      showSizeChanger: true,
+                      onChange: (page) => handlePageChange(page),
+                      onShowSizeChange: (page, size) => handleSizeChange(page, size),
+                    }}
+                />
+              </>)}
       <ClickAwayListener onClickAway={hideDropdowns}>
         <UnconfirmedDropdown
           showDropdown={showUnconfirmedDropdown}
           record={annualReport}
           pageX={x}
           pageY={y}
-          canManage={canManage}
+          canManage={canManage!}
           onView={handleView}
           onEdit={handleEdit}
           onConfirm={handleConfirm}
@@ -209,7 +280,7 @@ interface props {
           record={annualReport}
           pageX={x}
           pageY={y}
-          canManage={canManage}
+          canManage={canManage!}
           onView={handleView}
           onCancel={handleCancel}
         />
