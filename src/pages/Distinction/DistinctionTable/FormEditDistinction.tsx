@@ -171,10 +171,10 @@ const FormEditDistinction = ({
                       message: maxNumber(99999),
                     },
                     {
-                        validator: (_ : object, value: number) => 
-                            value < 1
-                                ? Promise.reject(minNumber(1)) 
-                                : Promise.resolve()
+                      validator: (_ : object, value: number) => 
+                          value < 1
+                              ? Promise.reject(minNumber(1)) 
+                              : Promise.resolve()
                     }
                   ]}
               >
