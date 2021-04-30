@@ -142,55 +142,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 />
               </Form.Item>
             </Col>
-          </Row>
-          <Row justify="start" gutter={[12, 0]}>
-            <Col md={24} xs={24}>
-              <Form.Item
-                className={classes.formField}
-                label="Причина надання"
-                labelCol={{ span: 24 }}
-                name="basisOfGranting"
-                initialValue={currentKadra.basisOfGranting}
-                rules={[
-                  {
-                    required: true,
-                    message: emptyInput(),
-                  },
-                  {
-                    max: 100,
-                    message: maxLength(100),
-                  },
-                ]}
-              >
-                <Input
-                  value={currentKadra.basisOfGranting}
-                  className={classes.inputField}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row justify="start" gutter={[12, 0]}>
-            <Col md={24} xs={24}>
-              <Form.Item
-                className={classes.formField}
-                label="Лінк"
-                labelCol={{ span: 24 }}
-                name="link"
-                initialValue={currentKadra.link}
-                rules={[
-                  {
-                    max: 500,
-                    message: maxLength(500),
-                  },
-                ]}
-              >
-                <Input
-                  value={currentKadra.link}
-                  className={classes.inputField}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
+          </Row>          
           <Row justify="start" gutter={[12, 0]}>
             <Col md={24} xs={24}>
               <Form.Item>

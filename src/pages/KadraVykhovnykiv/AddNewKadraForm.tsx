@@ -246,41 +246,7 @@ type FormAddKadraProps = {
             />
           </Form.Item>
         </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            className={classes.formField}
-            label="Причина надання"
-            labelCol={{ span: 24 }}
-            name="basisOfGranting"
-            rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-              { max: 100, message: maxLength(100) },
-            ]}
-          >
-            <Input className={classes.inputField} />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            className={classes.formField}
-            label="Лінк"
-            labelCol={{ span: 24 }}
-            name="link"
-            rules={[
-              { max: 500, message: maxLength(500) },
-            ]}
-          >
-            <Input className={classes.inputField} />
-          </Form.Item>
-        </Col>
-      </Row>
+      </Row>      
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item>
