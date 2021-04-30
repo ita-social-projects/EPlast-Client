@@ -18,6 +18,8 @@ import moment from "moment";
 import{
   emptyInput,
   maxLength,
+  maxNumber,
+  minNumber,
   successfulEditAction
 } from "../../components/Notifications/Messages"
 
@@ -128,9 +130,15 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                       message: emptyInput(),
                     },
                     {
-                      max: 6,
-                      message: maxLength(6),
+                      max: 5,
+                      message: maxNumber(99999),
                     },
+                    {
+                      validator: (_ : object, value: number) => 
+                          value < 1
+                              ? Promise.reject(minNumber(1)) 
+                              : Promise.resolve()
+                    }
                   ]}
               >
                 <Input

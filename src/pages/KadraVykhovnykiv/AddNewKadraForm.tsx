@@ -16,6 +16,8 @@ import NotificationBoxApi from '../../api/NotificationBoxApi';
 import{
   emptyInput,
   maxLength,
+  maxNumber,
+  minNumber,
 } from "../../components/Notifications/Messages"
 
 type FormAddKadraProps = {
@@ -228,15 +230,21 @@ type FormAddKadraProps = {
             labelCol={{ span: 24 }}
             name="numberInRegister"
             rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-              {
-                max: 6,
-                message: maxLength(6),
-              },
-            ]}
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+                {
+                  max: 5,
+                  message: maxNumber(99999),
+                },
+                {
+                  validator: (_ : object, value: number) => 
+                      value < 1
+                          ? Promise.reject(minNumber(1)) 
+                          : Promise.resolve()
+                }
+              ]}
           >
             <Input
               type="number"
