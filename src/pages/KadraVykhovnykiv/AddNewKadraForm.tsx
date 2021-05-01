@@ -76,7 +76,7 @@ type FormAddKadraProps = {
 
      const onUserSelect = async (userId: any) => {
         types.map(async (kt) => {
-            await KadraVykhovnykivApi.doesUserHaveStaff(userId, kt.id).then(response => {
+            await KadraVykhovnykivApi.doesUserHaveStaff(JSON.parse(userId).id, kt.id).then(response => {
                 setUserKadrasMap(new Map(userKadrasMap.set(kt.name, response.data)));
             });
          });
@@ -87,7 +87,7 @@ type FormAddKadraProps = {
         const newKadra  : any= {
             id: 0,
 
-            userId: values.userId,
+            userId: JSON.parse(values.userId).id,
 
             KadraVykhovnykivTypeId:JSON.parse(values.KadraVykhovnykivType).id,
 
@@ -173,13 +173,13 @@ type FormAddKadraProps = {
           >
             <Select 
               showSearch 
-              className={classes.inputField}
+              className={classes.selectField}
               onSelect={onUserSelect}
               >
               {users?.map((o) => (
                 <Select.Option 
                     key={o.id}
-                    value={o.id}
+                    value={JSON.stringify(o)}
                     style={backgroundColor(o)}
                     disabled={o.isInLowerRole}
                     >
