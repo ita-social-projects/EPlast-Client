@@ -15,10 +15,10 @@ import notificationLogic from '../../components/Notifications/Notification';
 import NotificationBoxApi from '../../api/NotificationBoxApi';
 import{
   emptyInput,
-  maxLength,
   maxNumber,
   minNumber,
 } from "../../components/Notifications/Messages"
+import KadraVykhovnykivApi from "../../api/KadraVykhovnykivApi";
 
 type FormAddKadraProps = {
     showModal: (visibleModal: boolean) => void;  
@@ -43,12 +43,11 @@ type FormAddKadraProps = {
         userRoles:''
         
       }])
-
-
     const [types, setTypes] = useState<any[]>([{
         id: '',
         name: '',
       }])
+    const [userKadrasMap, setUserKadrasMap] = useState<Map<string, boolean>>(new Map<string, boolean>());
     const dateFormat = "DD.MM.YYYY";
 
      const createNotifications = async (userId : string, kadraTypeName : string) => {
@@ -73,13 +72,22 @@ type FormAddKadraProps = {
                         );
                 })                
             });
-     } 
+     }
+
+     const onUserSelect = async (userId: any) => {
+        types.map(async (kt) => {
+            await KadraVykhovnykivApi.doesUserHaveStaff(userId, kt.id).then(response => {
+                setUserKadrasMap(new Map(userKadrasMap.set(kt.name, response.data)));
+            });
+         });
+         form.resetFields(['KadraVykhovnykivType']);
+     }
 
       const handleSubmit = async (values : any)=>{
         const newKadra  : any= {
             id: 0,
 
-            userId: JSON.parse(values.userId).id,
+            userId: values.userId,
 
             KadraVykhovnykivTypeId:JSON.parse(values.KadraVykhovnykivType).id,
 
@@ -87,7 +95,7 @@ type FormAddKadraProps = {
 
             numberInRegister: values.numberInRegister,
 
-            basisOfGranting:values.basisOfGranting,
+            basisOfGranting: ' ', //values.basisOfGranting,
 
             link: values.link,
   
@@ -163,11 +171,15 @@ type FormAddKadraProps = {
               },
             ]}
           >
-            <Select showSearch className={classes.inputField}>
+            <Select 
+              showSearch 
+              className={classes.inputField}
+              onSelect={onUserSelect}
+              >
               {users?.map((o) => (
                 <Select.Option 
                     key={o.id}
-                    value={JSON.stringify(o)}
+                    value={o.id}
                     style={backgroundColor(o)}
                     disabled={o.isInLowerRole}
                     >
@@ -194,7 +206,12 @@ type FormAddKadraProps = {
           >
             <Select filterOption={false} className={classes.inputField}>
               {types?.map((o) => (
-                <Select.Option key={o.id} value={JSON.stringify(o)}>
+                <Select.Option 
+                  key={o.id} 
+                  value={JSON.stringify(o)}
+                  disabled={userKadrasMap.get(o.name)}
+                  style={{ backgroundColor: userKadrasMap.get(o.name) ? '#D3D3D3' : 'white' }}
+                  >
                   {o.name}
                 </Select.Option>
               ))}
