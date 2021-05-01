@@ -133,7 +133,7 @@ export const KVTable = ({ current, searchData }: props) => {
             onContextMenu: (event) => {
               event.preventDefault();
               setShowDropdown(true);
-              setRecordObj(record.id);
+              setRecordObj(record);
               setX(event.pageX);
               setY(event.pageY-200);
             },
