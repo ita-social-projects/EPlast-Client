@@ -12,7 +12,8 @@ import {
   Mentions
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
-
+import AuthStore from "../../stores/AuthStore";
+import jwt from "jwt-decode";
 import decisionsApi, {
   DecisionOnCreateData,
   decisionStatusType,
@@ -145,6 +146,9 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
 
   const handleSubmit = async (values: any) => {
     setSubmitLoading(true);
+    let user: any;
+    let curToken = AuthStore.getToken() as string;
+    user = jwt(curToken);
     const newDecision: DecisionWrapper = {
       decision: {
         id: 0,
@@ -159,6 +163,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
           /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values
             .datepicker._d,
         fileName: fileData.FileName,
+        userId: user.nameid,
       },
       fileAsBase64: fileData.FileAsBase64,
     };
