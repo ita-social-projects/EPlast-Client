@@ -170,6 +170,7 @@ const UsersTable = () => {
   };
 
  const handleSearch = (e:any) => {
+   setPage(1)
    setSearchData(e);
  } 
 

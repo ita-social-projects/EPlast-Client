@@ -9,6 +9,7 @@ import {
   AutoComplete,
   Row,
   Col,
+  Mentions
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 
@@ -22,6 +23,8 @@ import decisionsApi, {
   statusTypePostParser,
 } from "../../api/decisionsApi";
 import { getBase64 } from "../userPage/EditUserPage/Services";
+import adminApi from "../../api/adminApi";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
 import notificationLogic from "../../components/Notifications/Notification";
 import formclasses from "./FormAddDecision.module.css";
 import {
@@ -45,18 +48,58 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     FileAsBase64: null,
     FileName: null,
   });
+  const [loadingUserStatus, setLoadingUserStatus] = useState(false);
+  const [userData, setUserData] = useState<any[]>([]);
+  const [search, setSearch] = useState<string>('');
+  const { Option } = Mentions;
   const [form] = Form.useForm();
+  const [mentionedUsers, setMentionedUsers] = useState<any[]>([]);
+
   const normFile = (e: { fileList: any }) => {
     if (Array.isArray(e)) {
       return e;
     }
     return e && e.fileList;
   };
+
+  const onSearch = async (search: string) => {
+    if(search !== "" && search !== null){
+        await adminApi.getShortUserInfo(search).then((response) => {
+        setUserData(response.data);
+        setLoadingUserStatus(false);
+    });
+    }
+  };
+
+  const onSelect = async (select: any) => {
+      var user: any = userData.find(u => u.firstName + ' ' + u.lastName === select.value);
+      setMentionedUsers(old => [...old, user]);
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => [onSearch(search), setLoadingUserStatus(true)], 1000);
+    return () => clearTimeout(timeoutId);
+  }, [search]);
+  
+
+  const notifyMentionedUsers = async (description: string, title: string) => {
+    let usersToNotify = (mentionedUsers.filter(u => description.includes(u.firstName + ' ' + u.lastName)));
+    let uniqueUsersIds = Array.from(new Set(usersToNotify.map(u => u.id)));
+    await NotificationBoxApi.createNotifications(
+        uniqueUsersIds,
+        `Тебе позначили в рішенні: ${title}.`,
+        NotificationBoxApi.NotificationTypes.EventNotifications,
+        `/decisions`,
+        'Перейти до рішень'
+    );
+  }
+
   const handleCancel = () => {
     form.resetFields();
     setFileData({ FileAsBase64: null, FileName: null });
     setVisibleModal(false);
   };
+
   const handleUpload = (info: any) => {
     if (info.file !== null) {
       if (info.file.size <= 3145728) {
@@ -124,6 +167,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     onAdd();
     form.resetFields();
     setSubmitLoading(false);
+    await notifyMentionedUsers(values.description, values.name);
   };
 
   const [data, setData] = useState<DecisionOnCreateData>({
@@ -169,7 +213,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             className={formclasses.formField}
             label="Рішення органу"
             labelCol={{ span: 24 }}
-            name="organization"
+            name="governingBody"
             rules={[{ required: true, message: emptyInput() }]}
           >
             <Select
@@ -232,7 +276,21 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             name="description"
             rules={[{ required: true, message: emptyInput() }]}
           >
-            <Input.TextArea allowClear className={formclasses.inputField} />
+            <Mentions
+                loading={loadingUserStatus}
+                onSearch={(s => setSearch(s))}
+                rows={5}
+                onSelect={onSelect}
+                className={formclasses.formField}
+            >
+                {userData?.map((u) =>
+                    <Option
+                        key={u.id}
+                        value={u.firstName + ' ' + u.lastName}
+                    >
+                        {u.firstName + ' ' + u.lastName}
+                    </Option>)}
+            </Mentions>
           </Form.Item>
         </Col>
       </Row>
