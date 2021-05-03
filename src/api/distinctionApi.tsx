@@ -9,7 +9,7 @@ const getUserDistinctions = async () => {
   return (await api.get(`Distinction/UserDistinctions`)).data;
 };
 
-const getAllDistinctions = async (searchedData: string, page: number, pageSize: number) => {
+const getAllUsersDistinctions = async (searchedData: string, page: number, pageSize: number) => {
     return (await api.get('Distinction/UsersDistinctions',
         {
             searchedData: searchedData,
@@ -55,7 +55,7 @@ const checkNumberExisting = async (number: number) => {
 export default {
   getUserDistinctionById,
   getUserDistinctions,
-  getAllDistinctions,
+  getAllUsersDistinctions,
   getDistinctionById,
   getDistinctions,
   getDistinctionOfGivenUser,

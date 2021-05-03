@@ -8,6 +8,16 @@ const getUserPrecautionById = async (id: number) => {
 const getUserPrecautions = async () => {
     return (await api.get(`Precaution/UserPrecautions`)).data;
 };
+
+const getAllUsersPrecautions = async (searchedData: string, page: number, pageSize: number) => {
+    return (await api.get('Precaution/UsersPrecautions',
+        {
+            searchedData: searchedData,
+            page: page,
+            pageSize: pageSize,
+        })).data;
+}
+
 const getPrecautionById = async (id: number) => {
     return await api.get(`Precaution/${id}`, id);
 };
@@ -49,6 +59,7 @@ const getUsersWithoutPrecautions = async () => {
 export default {
     getUserPrecautionById,
     getUserPrecautions,
+    getAllUsersPrecautions,
     getPrecautionById,
     getPrecautions,
     getPrecautionOfGivenUser,

@@ -176,8 +176,10 @@ const FormEditPrecaution = ({
                       message: emptyInput(),
                     },
                     {
-                      max: 5,
-                      message: maxNumber(99999),
+                      validator: (_ : object, value: number) => 
+                          value > 99999
+                              ? Promise.reject(maxNumber(99999)) 
+                              : Promise.resolve()
                     },
                     {
                       validator: (_ : object, value: number) => 

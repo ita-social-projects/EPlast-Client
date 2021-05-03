@@ -64,7 +64,7 @@ const DistinctionTable = () => {
   useEffect(() => {
       const fetchData = async () => {
       setLoading(true);
-      const res: UserDistinctionTableInfo[] = await distinctionApi.getAllDistinctions(searchedData, page, pageSize);
+      const res: UserDistinctionTableInfo[] = await distinctionApi.getAllUsersDistinctions(searchedData, page, pageSize);
       setTotal(res[0]?.total);
       setCount(res[0]?.count);
       setDistinctions(res);
@@ -89,7 +89,7 @@ const DistinctionTable = () => {
   const handleAdd = async () => {
     setVisibleModal(false);
     setLoading(true);
-    const res: UserDistinctionTableInfo[] = await distinctionApi.getAllDistinctions(searchedData, page, pageSize);
+    const res: UserDistinctionTableInfo[] = await distinctionApi.getAllUsersDistinctions(searchedData, page, pageSize);
     setDistinctions(res);
     setTotal(res[0]?.total);
     setCount(res[0]?.count);

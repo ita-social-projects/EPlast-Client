@@ -28,7 +28,7 @@ const columns = [
   },
   {
     title: 'Перестороги',
-    dataIndex: 'precaution',
+    dataIndex: 'precautionName',
     filters: [{
       text: "Догана",
       value: "Догана",
@@ -42,17 +42,17 @@ const columns = [
       value: "Догана із загрозою виключення з Пласту",
     }],
     onFilter: (value: any, record: any) => record.precaution.name.includes(value),
-    render: (precaution: Precaution) => {
-      return precaution.name
+    render: (precautionName: Precaution) => {
+      return precautionName
     },
   },
   {
     title: 'Ім\'я',
-    dataIndex: 'user',
-    render: (user: CityUser) => {
-      return user.firstName + " " + user.lastName
+    dataIndex: 'userName',
+    render: (userName: string) => {
+      return userName
     },
-    sorter: (a: any, b: any) => a.user.firstName.localeCompare(b.user.firstName),
+    sorter: (a: any, b: any) => a.userName.localeCompare(b.userName),
     sortDirections: ['ascend', 'descend'] as SortOrder[],
   },
   {
