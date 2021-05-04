@@ -20,8 +20,8 @@ import AuthStore from "../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
 import AuthorizeApi from "../../api/authorizeApi";
 import UserApi from "../../api/UserApi";
-import {User} from "../userPage/Interface/Interface"
-
+import { User } from "../userPage/Interface/Interface";
+import ClickAwayListener from "react-click-away-listener";
 
 let authService = new AuthorizeApi();
 
@@ -40,7 +40,15 @@ interface Props {
 const { SubMenu } = Menu;
 
 const DropDown = (props: Props) => {
-  const { record, pageX, pageY, showDropdown, onDelete, onChange, user } = props;
+  const {
+    record,
+    pageX,
+    pageY,
+    showDropdown,
+    onDelete,
+    onChange,
+    user,
+  } = props;
   const [showEditModal, setShowEditModal] = useState(false);
   const [visibleModalDegree, setVisibleModalDegree] = useState<boolean>(false);
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
@@ -51,26 +59,27 @@ const DropDown = (props: Props) => {
   const [cityAdm, setCityAdm] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
   const [userAdmin, setUserAdmin] = useState<User>();
+  const [changeRoles, setChangeRoles] = useState(true);
 
   const fetchUser = async () => {
-    let jwt = await AuthStore.getToken() as string;
+    let jwt = (await AuthStore.getToken()) as string;
     let decodedJwt = jwt_decode(jwt) as any;
-    await UserApi.getById(decodedJwt.nameid).then(async res => setUserAdmin(res.data.user))
+    await UserApi.getById(decodedJwt.nameid).then(async (res) =>
+      setUserAdmin(res.data.user)
+    );
     let roles = decodedJwt[
       "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-    ] as string[]; 
-    console.log(roles)
+    ] as string[];
+    console.log(roles);
     setCanEdit(roles.includes("Admin"));
     setRegionAdm(roles.includes("Голова Округи"));
     setCityAdm(roles.includes("Голова Станиці"));
     setClubAdm(roles.includes("Голова Куреня"));
   };
-  console.log(userAdmin?.city)
 
   useEffect(() => {
     fetchUser();
-  }, [user]);
-
+  }, [user, changeRoles]);
 
 
   const handleItemClick = async (item: any) => {
@@ -107,6 +116,8 @@ const DropDown = (props: Props) => {
     }
     item.key = "0";
   };
+  const handleClick = () => {
+  }
   return (
     <>
       <Menu
@@ -122,7 +133,10 @@ const DropDown = (props: Props) => {
           display: showDropdown ? "block" : "none",
         }}
       >
-        {props.inActiveTab === false  && ((clubAdm === true && userAdmin?.club === user?.clubName || cityAdm === true && userAdmin?.city == user?.cityName ))  ? (
+        {props.inActiveTab === false &&
+        canEdit === true ||
+        ((clubAdm === true && userAdmin?.club === user?.clubName) ||
+          (cityAdm === true && userAdmin?.city == user?.cityName)) ? (
           <Menu.Item key="1">
             <FileSearchOutlined />
             Переглянути профіль
@@ -139,10 +153,10 @@ const DropDown = (props: Props) => {
           <> </>
         )}
         {props.inActiveTab === false &&
-        ((canEdit === true ||
+        (canEdit === true ||
           regionAdm === true ||
           (cityAdm === true && userAdmin?.city == user?.cityName) ||
-          clubAdm === true && userAdmin?.club === user?.clubName)) ? (
+          (clubAdm === true && userAdmin?.club === user?.clubName)) ? (
           <SubMenu
             key="sub"
             icon={<EditOutlined />}
@@ -175,8 +189,8 @@ const DropDown = (props: Props) => {
         {props.inActiveTab === false &&
         (canEdit === true ||
           regionAdm === true ||
-          cityAdm === true && userAdmin?.city == user?.cityName ||
-          clubAdm === true && userAdmin?.club === user?.clubName) ? (
+          (cityAdm === true && userAdmin?.city == user?.cityName) ||
+          (clubAdm === true && userAdmin?.club === user?.clubName)) ? (
           <Menu.Item key="7">
             <PlusCircleOutlined />
             Додати ступінь
@@ -184,11 +198,10 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {props.inActiveTab === false &&
-        (canEdit === true) ||
-          (regionAdm === true ) ||
-          (cityAdm === true && userAdmin?.city == user?.cityName) ||
-          clubAdm === true && userAdmin?.club === user?.clubName  ? (
+        {(props.inActiveTab === false && canEdit === true) ||
+        regionAdm === true ||
+        (cityAdm === true && userAdmin?.city == user?.cityName) ||
+        (clubAdm === true && userAdmin?.club === user?.clubName) ? (
           <Menu.Item key="8">
             <ScissorOutlined />
             Заархівувати користувача
