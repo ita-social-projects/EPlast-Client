@@ -205,7 +205,12 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               loading={loadingUserStatus}
             >
               {userData?.map((o) => (
-                <Select.Option key={o.id} value={JSON.stringify(o)} style={backgroundColor(o)}>
+                <Select.Option 
+                    key={o.id} 
+                    value={JSON.stringify(o)} 
+                    style={backgroundColor(o)}
+                    disabled={o.isInLowerRole}
+                    >
                   {o.firstName + " " + o.lastName}
                 </Select.Option>
               ))}
