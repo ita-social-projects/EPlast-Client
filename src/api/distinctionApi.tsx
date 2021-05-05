@@ -10,7 +10,7 @@ const getUserDistinctions = async () => {
 };
 
 const getAllUsersDistinctions = async (searchedData: string, page: number, pageSize: number) => {
-    return (await api.get('Distinction/UsersDistinctions',
+    return (await api.get('Distinction/UsersDistinctionsForTable',
         {
             searchedData: searchedData,
             page: page,

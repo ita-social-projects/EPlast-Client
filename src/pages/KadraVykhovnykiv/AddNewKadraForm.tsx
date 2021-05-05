@@ -43,6 +43,7 @@ type FormAddKadraProps = {
         userRoles:''
         
       }])
+    const [loadingUserStatus, setLoadingUserStatus] = useState(false);    
     const [types, setTypes] = useState<any[]>([{
         id: '',
         name: '',
@@ -148,8 +149,10 @@ type FormAddKadraProps = {
       await kadrasApi.getAllKVTypes().then((response) => {
         setTypes(response.data);
       });
+      setLoadingUserStatus(true);      
       await adminApi.getUsersForTable().then((response) => {
         setUsers(response.data);
+        setLoadingUserStatus(false);
       });
     };
     fetchData();
@@ -175,6 +178,7 @@ type FormAddKadraProps = {
               showSearch 
               className={classes.selectField}
               onSelect={onUserSelect}
+              loading={loadingUserStatus}              
               >
               {users?.map((o) => (
                 <Select.Option 

@@ -10,7 +10,7 @@ const getUserPrecautions = async () => {
 };
 
 const getAllUsersPrecautions = async (searchedData: string, page: number, pageSize: number) => {
-    return (await api.get('Precaution/UsersPrecautions',
+    return (await api.get('Precaution/UsersPrecautionsForTable',
         {
             searchedData: searchedData,
             page: page,
