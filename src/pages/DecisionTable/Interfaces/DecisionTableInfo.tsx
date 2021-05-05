@@ -7,7 +7,7 @@ export type DecisionTableInfo = {
   decisionStatusType: string;
   decisionTarget : string;
   description: string;
-  date : string;
+  date : Date;
   userId: string;
   fileName: string | null;
 }

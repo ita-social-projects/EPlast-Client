@@ -9,7 +9,7 @@ export type Decision = {
   decisionStatusType: string;
   decisionTarget : string;
   description: string;
-  date : string;
+  date : Date;
   userId: string;
   fileName: string | null;
 }
@@ -51,7 +51,7 @@ export type DecisionPost  ={
   governingBody: GoverningBody;
   decisionTarget: decisionTarget;
   description: string;
-  date: string;
+  date: Date;
   userId: string;
   fileName: string | null;
 };
