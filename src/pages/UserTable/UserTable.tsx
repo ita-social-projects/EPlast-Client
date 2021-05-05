@@ -10,7 +10,8 @@ import {
   Modal,
   Form,
   Card,
-  Typography
+  Typography,
+  Space
 } from "antd";
 import "./Filter.less";
 import { getUsersForTableByPage } from "../../api/adminApi";
@@ -341,8 +342,8 @@ const UsersTable = () => {
       <Title level={4} style={{textAlign: "left", margin: 10}} underline={true}>Загальна кількість користувачів: {total}</Title>
       <div className={classes.searchContainer}>
         <div className={classes.filterContainer}>
-          <Form form={form} onFinish={handleFilter} style={{ height: "20px" }}>
-            <Row justify="center">
+          <Form form={form} onFinish={handleFilter} style={{ height: "20px"}}>
+            <Row>
               <Col span={20}>
                 <Form.Item
                   rules={[
@@ -371,6 +372,7 @@ const UsersTable = () => {
                     }
                     allowClear
                   >
+                  
                     <TreeNode value={0} title="Всі округи">
                       {getDynamicRegions()}
                     </TreeNode>
@@ -386,16 +388,18 @@ const UsersTable = () => {
                   </TreeSelect>
                 </Form.Item>
               </Col>
-
+              <Col>
               <Form.Item>
                 <Button
                   type="primary"
                   htmlType="submit"
-                  style={{ minWidth: "10%" }}
+                  style={{ minWidth: "10%", marginBottom:30}}
                 >
                   OK
                 </Button>
               </Form.Item>
+              </Col>
+
             </Row>
           </Form>
         </div>
@@ -476,7 +480,7 @@ const UsersTable = () => {
           roles={roles}
           inActiveTab={isInactive}
         />
-      </ClickAwayListener>
+        </ClickAwayListener>
     </Layout.Content>
   );
 };
