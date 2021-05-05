@@ -167,4 +167,4 @@ const getFileAsBase64 = async (fileName: string) =>{
     return response;
   };
 
-export default {getById, getAll, getAllDecisionsForTable, getOnCreate,getPdf,getFileAsBase64, post,postForCheckFile, put, remove};
+export default { getById, getAll, getAllDecisionsForTable, getOnCreate, getPdf, getFileAsBase64, post, postForCheckFile, put, remove };

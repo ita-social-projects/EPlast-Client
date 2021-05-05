@@ -83,16 +83,16 @@ export const KadrasTable = () => {
 
     return (
         <>
-            <h1 className={classes.titleTable}>Кадра виховників</h1>
+        <h1 className={classes.titleTable}>Кадра виховників</h1>
             <div className={classes.searchContainer}>
                 {canEdit === true ? (
-                    <>
-                        <Button type="primary" onClick={showModal}>
-                            Додати кадру
+                <>
+                <Button type="primary" onClick={showModal}>
+                    Додати кадру
                 </Button>
                     </>
                 ) : (
-                    <></>
+                <></>
                 )}
                 <Input placeholder="Пошук" onChange={handleSearch} allowClear />
             </div>
@@ -100,13 +100,10 @@ export const KadrasTable = () => {
                 style={{ width: '100%' }}
                 tabList={tabListNoTitle}
                 activeTabKey={noTitleKey}
-
                 onTabChange={key => {
                     onTabChange(key);
-
                 }}
             >
-
                 {contentListNoTitle[noTitleKey]}
             </Card>
             <Drawer width="auto"
@@ -114,7 +111,6 @@ export const KadrasTable = () => {
                 visible={visible}
                 onClose={handleCancel}
                 footer={null}
-
             >
                 <AddNewKadraForm onAdd={renewPage} showModal={setvisible} ></AddNewKadraForm>
             </Drawer>

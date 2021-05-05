@@ -40,7 +40,7 @@ const DistinctionTable = () => {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [searchedData, setSearchedData] = useState<string>("");  
+  const [searchedData, setSearchedData] = useState<string>("");
   const [canEdit] = useState(roles.includes("Admin"));
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -60,7 +60,7 @@ const DistinctionTable = () => {
             date: new Date(),
         }
   ]);
-    
+
   useEffect(() => {
       const fetchData = async () => {
       setLoading(true);

@@ -95,11 +95,6 @@ type FormAddKadraProps = {
             dateOfGranting: values.dateOfGranting,
 
             numberInRegister: values.numberInRegister,
-
-            basisOfGranting: ' ', //values.basisOfGranting,
-
-            link: values.link,
-  
         }
 
          kadrasApi.doesRegisterNumberExist(newKadra.numberInRegister).then(responce=>{
