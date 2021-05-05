@@ -41,7 +41,11 @@ const NotificationBox = ({
               <Button onClick={handleCancel} style={{ width:"50%" }}>
                 Закрити сповіщення
               </Button>
-              <Button onClick={() => {RemoveAllNotifications(userId)}} danger style={{ width:"50%" }}>
+              <Button 
+                onClick={() => {RemoveAllNotifications(userId)}} 
+                danger style={{ width:"50%" }}
+                disabled={!Notifications.length}
+                >
                 Видалити всі сповіщення
               </Button>
             </div>
