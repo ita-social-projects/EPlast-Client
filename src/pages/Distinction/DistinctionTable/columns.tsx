@@ -1,7 +1,5 @@
 import React from 'react';
 import moment from 'moment';
-import CityUser from '../../../models/City/CityUser';
-import Distinction from '../Interfaces/Distinction';
 import { Tooltip } from 'antd';
 import { SortOrder } from 'antd/lib/table/interface';
 import { FormLabelAlign } from 'antd/lib/form/interface';
@@ -19,22 +17,22 @@ const columns = [
     },
     {
         title: 'Відзначення',
-        dataIndex: 'distinction',
-        render: (distinction: Distinction) => {
-            return distinction.name
+        dataIndex: 'distinctionName',
+        render: (distinctionName: string) => {
+            return distinctionName
         },
-        sorter: (a: any, b: any) => a.distinction.name.localeCompare(b.distinction.name),
+        sorter: (a: any, b: any) => a.distinctionName.localeCompare(b.distinctionName),
         sortDirections: ['ascend', 'descend'] as SortOrder[],
         
         
     },
     {
         title: 'Ім\'я',
-        dataIndex: 'user',
-        render: (user: CityUser) => {
-            return user.firstName + " " + user.lastName
+        dataIndex: 'userName',
+        render: (userName: string) => {
+            return userName
         },
-        sorter: (a: any, b: any) => a.user.firstName.localeCompare(b.user.firstName),
+        sorter: (a: any, b: any) => a.userName.localeCompare(b.userName),
         sortDirections: ['ascend', 'descend'] as SortOrder[],
     },
     {

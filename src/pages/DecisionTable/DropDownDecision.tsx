@@ -39,7 +39,7 @@ const DropDown = (props: Props) => {
     governingBody: {id : 0, description: "", phoneNumber: "", email: "" ,governingBodyName: "", logo: ""},
     decisionTarget: {id : 0 ,targetName : ""},
     description: "",
-    date: "",
+    date: new Date(),
     userId: "",
     fileName: null,
 });

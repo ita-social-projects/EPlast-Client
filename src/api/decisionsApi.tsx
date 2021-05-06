@@ -9,7 +9,7 @@ export type Decision = {
   decisionStatusType: string;
   decisionTarget : string;
   description: string;
-  date : string;
+  date : Date;
   userId: string;
   fileName: string | null;
 }
@@ -51,7 +51,7 @@ export type DecisionPost  ={
   governingBody: GoverningBody;
   decisionTarget: decisionTarget;
   description: string;
-  date: string;
+  date: Date;
   userId: string;
   fileName: string | null;
 };
@@ -90,6 +90,16 @@ return new File([u8arr], filename, {type:mime});
     
     return data;
   };
+  
+  const getAllDecisionsForTable = async (searchedData: string, page: number, pageSize: number) => {
+    return (await Api.get('Decisions/DecisionsForTable',
+        {
+            searchedData: searchedData,
+            page: page,
+            pageSize: pageSize,
+        })).data;
+  };
+
   const getOnCreate = async () => {
     const data : DecisionOnCreateData = await (await Api.get(`Decisions/NewDecision`)).data;
    
@@ -157,4 +167,4 @@ const getFileAsBase64 = async (fileName: string) =>{
     return response;
   };
 
-export default {getById, getAll, getOnCreate,getPdf,getFileAsBase64, post,postForCheckFile, put, remove};
+export default { getById, getAll, getAllDecisionsForTable, getOnCreate, getPdf, getFileAsBase64, post, postForCheckFile, put, remove };

@@ -17,7 +17,9 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
   maxLength,
-  failCreateAction
+  failCreateAction,
+  maxNumber,
+  minNumber
 } from "../../../components/Notifications/Messages"
 import precautionApi from "../../../api/precautionApi";
 
@@ -139,11 +141,21 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             labelCol={{ span: 24 }}
             name="number"
             rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-            ]}
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+                {
+                  max: 5,
+                  message: maxNumber(99999),
+                },
+                {
+                  validator: (_ : object, value: number) => 
+                      value < 1
+                          ? Promise.reject(minNumber(1)) 
+                          : Promise.resolve()
+                }
+              ]}
           >
             <Input
               type="number"
@@ -193,7 +205,12 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               loading={loadingUserStatus}
             >
               {userData?.map((o) => (
-                <Select.Option key={o.id} value={JSON.stringify(o)} style={backgroundColor(o)}>
+                <Select.Option 
+                    key={o.id} 
+                    value={JSON.stringify(o)} 
+                    style={backgroundColor(o)}
+                    disabled={o.isInLowerRole}
+                    >
                   {o.firstName + " " + o.lastName}
                 </Select.Option>
               ))}
@@ -248,8 +265,8 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             name="reason"
             rules={[
               {
-                max: 250,
-                message: maxLength(250),
+                max: 1000,
+                message: maxLength(1000),
               },
             ]}
           >
@@ -260,7 +277,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                 maxRows: 6,
               }}
               className={formclasses.inputField}
-              maxLength={251}
+              maxLength={1001}
             />
           </Form.Item>
         </Col>

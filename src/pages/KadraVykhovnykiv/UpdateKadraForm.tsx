@@ -1,60 +1,47 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import classes from "./Form.module.css";
 import {
   Form,
   Input,
   DatePicker,
-  AutoComplete,
-  Select,
   Button,
-  Layout,
   Row,
   Col,
 } from "antd";
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import notificationLogic from "../../components/Notifications/Notification";
-import Spinner from "../Spinner/Spinner";
 import moment from "moment";
 import{
   emptyInput,
-  maxLength,
+  maxNumber,
+  minNumber,
   successfulEditAction
 } from "../../components/Notifications/Messages"
 
 type FormUpdateKadraProps = {
   showModal: (visibleModal: boolean) => void;
   onAdd: () => void;
-  record: number;
+  record: any;
   onEdit: () => void;
 };
 
 const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
   const { onAdd, record, onEdit, showModal } = props;
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const [currentKadra, setCurrentKadra] = useState<any>({
-    dateOfGranting: "",
-
-    numberInRegister: "",
-
-    basisOfGranting: "",
-
-    link: "",
-  });
 
   const handleSubmit = async (values: any) => {
     const newKadra: any = {
-      id: record,
+      id: record.id,
 
       dateOfGranting: values.dateOfGranting,
 
       numberInRegister: values.numberInRegister,
 
-      basisOfGranting: values.basisOfGranting,
+      basisOfGranting: record.basisOfGranting,
 
-      link: values.link,
+      link: record.link,
     };
+
     await kadrasApi
       .doesRegisterNumberExistEdit(newKadra.numberInRegister, newKadra.id)
       .then(async (responce) => {
@@ -72,18 +59,10 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
       });
   };
 
-  const setCurrent = async () => {
-    try {
-      const response = await kadrasApi.GetStaffById(record);
-      setCurrentKadra(response.data);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    setCurrent();
-  }, []);
+    form.resetFields();
+  }, [record]);
+
   const handleCancel = () => {
     form.resetFields();
     showModal(false);
@@ -91,9 +70,6 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
 
   return (
     <div>
-      {currentKadra.numberInRegister === "" ? (
-        <Spinner />
-      ) : (
         <Form name="basic" onFinish={handleSubmit} form={form}>
           <Row justify="start" gutter={[12, 0]}>
             <Col md={24} xs={24}>
@@ -102,7 +78,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 label="Дата вручення"
                 labelCol={{ span: 24 }}
                 name="dateOfGranting"
-                initialValue={moment(currentKadra.dateOfGranting)}
+                initialValue={moment(record.dateOfGranting)}
                 rules={[
                   {
                     required: true,
@@ -121,72 +97,33 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 label="Номер в реєстрі"
                 labelCol={{ span: 24 }}
                 name="numberInRegister"
-                initialValue={currentKadra.numberInRegister}
+                initialValue={record.numberInRegister}
                 rules={[
-                  {
-                    required: true,
-                    message: emptyInput(),
-                  },
-                ]}
+                    {
+                      required: true,
+                      message: emptyInput(),
+                    },
+                    {
+                      max: 5,
+                      message: maxNumber(99999),
+                    },
+                    {
+                      validator: (_ : object, value: number) => 
+                          value < 1
+                              ? Promise.reject(minNumber(1)) 
+                              : Promise.resolve()
+                    }
+                  ]}
               >
                 <Input
                   type="number"
                   min={1}
                   max={999999}
-                  value={currentKadra.numberInRegister}
                   className={classes.inputField}
                 />
               </Form.Item>
             </Col>
-          </Row>
-          <Row justify="start" gutter={[12, 0]}>
-            <Col md={24} xs={24}>
-              <Form.Item
-                className={classes.formField}
-                label="Причина надання"
-                labelCol={{ span: 24 }}
-                name="basisOfGranting"
-                initialValue={currentKadra.basisOfGranting}
-                rules={[
-                  {
-                    required: true,
-                    message: emptyInput(),
-                  },
-                  {
-                    max: 100,
-                    message: maxLength(100),
-                  },
-                ]}
-              >
-                <Input
-                  value={currentKadra.basisOfGranting}
-                  className={classes.inputField}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row justify="start" gutter={[12, 0]}>
-            <Col md={24} xs={24}>
-              <Form.Item
-                className={classes.formField}
-                label="Лінк"
-                labelCol={{ span: 24 }}
-                name="link"
-                initialValue={currentKadra.link}
-                rules={[
-                  {
-                    max: 500,
-                    message: maxLength(500),
-                  },
-                ]}
-              >
-                <Input
-                  value={currentKadra.link}
-                  className={classes.inputField}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
+          </Row>          
           <Row justify="start" gutter={[12, 0]}>
             <Col md={24} xs={24}>
               <Form.Item>
@@ -202,7 +139,6 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
             </Col>
           </Row>
         </Form>
-      )}
     </div>
   );
 };

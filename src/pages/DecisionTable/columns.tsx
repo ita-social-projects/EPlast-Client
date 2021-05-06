@@ -2,7 +2,7 @@ import classes from '*.module.css';
 import { Tooltip } from 'antd';
 import moment from 'moment';
 import React from 'react';
-import decisionsApi from '../../api/decisionsApi';
+import decisionsApi, { statusTypeGetParser } from '../../api/decisionsApi';
 const columns = [
   {
     title: 'ID',
@@ -21,6 +21,9 @@ const columns = [
   {
     title: 'Статус',
     dataIndex: 'decisionStatusType',
+    render: (decisionStatusType: number) => {
+        return statusTypeGetParser(decisionStatusType);
+    }
   },
   {
     title: 'Рішення для',
