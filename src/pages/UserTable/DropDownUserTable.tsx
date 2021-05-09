@@ -70,7 +70,6 @@ const DropDown = (props: Props) => {
     let roles = decodedJwt[
       "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
     ] as string[];
-    console.log(roles);
     setCanEdit(roles.includes("Admin"));
     setRegionAdm(roles.includes("Голова Округи"));
     setCityAdm(roles.includes("Голова Станиці"));
@@ -239,6 +238,7 @@ const DropDown = (props: Props) => {
         <ChangeUserClubModal
           record={record}
           showModal={showClubModal}
+          user={user}
           setShowModal={setShowClubModal}
           onChange={onChange}
         />

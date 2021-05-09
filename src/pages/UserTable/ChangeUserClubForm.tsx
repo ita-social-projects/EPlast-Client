@@ -23,6 +23,7 @@ interface Props {
   showModal: boolean;
   setShowModal: (showModal: boolean) => void;
   onChange: (id: string, userRoles: string) => void;
+  user: any
 }
 
 const ChangeUserClubForm = ({
@@ -30,6 +31,7 @@ const ChangeUserClubForm = ({
   showModal,
   setShowModal,
   onChange,
+  user
 }: Props) => {
   const id = record;
   const [form] = Form.useForm();
@@ -69,6 +71,12 @@ const ChangeUserClubForm = ({
       setFollowers(response.data.followers);
     });
   };
+  const handleClub = (club:any) => {
+      if(user.clubName === club) {
+          return true
+      }
+      return false
+  }
 
   const handleFinish = async (value: any) => {
     const member = members.find((m: any) => m.userId === record);
@@ -114,10 +122,11 @@ const ChangeUserClubForm = ({
         <h4>Оберіть курінь для користувача</h4>
         <Form.Item name="userClub">
           <Select onChange={handleClick}>
-            {clubs.map((item: ClubForAdmin) => (
-              <Option key={item.id} value={item.name}>
-                {item.name}
-              </Option>
+            {clubs.map((item: ClubForAdmin) => (              
+              item.name === user.clubName ? 
+              <Select.Option key={item.id} value={item.name} disabled={handleClub(item)}>
+              {item.name}
+              </Select.Option> : <> </>
             ))}
           </Select>
         </Form.Item>
