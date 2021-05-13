@@ -37,7 +37,7 @@ const ClubSelectModal = (props: Props) => {
       }
 
     const fetchClubs = async()=>{
-        let response = await getClubs();
+        let response = await getClubsOptions();
         let clubs = response.data.map((item:any) => {
             return {
                 label: item.name,

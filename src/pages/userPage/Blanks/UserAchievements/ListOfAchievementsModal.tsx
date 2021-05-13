@@ -14,13 +14,14 @@ interface Props {
     visibleModal: boolean;
     setVisibleModal: (visibleModal: boolean) => void;
     achievementDoc: BlankDocument[];
+    hasAccess?: boolean;
     setAchievementDoc: (document: BlankDocument[]) => void;
     userToken: any;
 }
 
 const ListOfAchievementsModal = (props: Props) => {
     const { userId } = useParams();
-    const [currentUser, setCuurrentUser] = useState(false);
+    //const [currentUser, setCuurrentUser] = useState(false);
     const [loadingMore, setLoadingMore] = useState({
         loading: false,
         hasMore: true
@@ -49,14 +50,6 @@ const ListOfAchievementsModal = (props: Props) => {
         await getAchievementFile(fileBlob, fileName);
     }
 
-    const hideDelete = () => {
-        if (props.userToken.nameid === userId) {
-            setCuurrentUser(false);
-        } else {
-            setCuurrentUser(true);
-        }
-    }
-
     const reviewFile = async (blobName: string, fileName: string) => {
         await openAchievemetFile(blobName, fileName);
     }
@@ -79,10 +72,6 @@ const ListOfAchievementsModal = (props: Props) => {
         getAchievements();
         setPageNumber(++pageNumber);
     }
-
-    useEffect(() => {
-        hideDelete();
-    }, []);
 
     return (
         <Modal
@@ -120,7 +109,7 @@ const ListOfAchievementsModal = (props: Props) => {
                                                 okText="Так"
                                                 cancelText="Ні">
                                                 <DeleteOutlined
-                                                    hidden={currentUser}
+                                                    hidden={!props.hasAccess}
                                                     className={classes.deleteIcon}
                                                 />
                                             </Popconfirm>
@@ -139,7 +128,7 @@ const ListOfAchievementsModal = (props: Props) => {
                                                 okText="Так"
                                                 cancelText="Ні">
                                                 <DeleteOutlined
-                                                    hidden={currentUser}
+                                                    hidden={!props.hasAccess}
                                                     className={classes.deleteIcon}
                                                 />
                                             </Popconfirm>
