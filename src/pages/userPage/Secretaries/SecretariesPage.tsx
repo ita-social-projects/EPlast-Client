@@ -77,7 +77,15 @@ export const Secretaries = () => {
 
                     <div className="avatarWrapper">
                         <StickyContainer className="kadraWrapper">
-                            <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} pseudo={data?.user.pseudo} city={data?.user.city} club={data?.user.club} />
+                            <AvatarAndProgress
+                                imageUrl={data?.user.imagePath}
+                                time={data?.timeToJoinPlast}
+                                firstName={data?.user.firstName}
+                                lastName={data?.user.lastName}
+                                isUserPlastun={data?.isUserPlastun}
+                                pseudo={data?.user.pseudo}
+                                city={data?.user.city}
+                                club={data?.user.club} />
                         </StickyContainer>
                     </div>
 
