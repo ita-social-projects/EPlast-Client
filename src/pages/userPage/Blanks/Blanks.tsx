@@ -263,10 +263,10 @@ export const Blanks = () => {
                                 ) : (
                                         <Col>
                                             {userToken.nameid === userId &&
-                                                <h2>Ви ще не додали виписку</h2>
+                                                <h2>Ви ще не додали Виписку</h2>
                                             }
                                             {userToken.nameid !== userId &&
-                                                <h2>{data?.user.firstName} ще не додав(ла) виписку</h2>
+                                                <h2>{data?.user.firstName} ще не додав(ла) Виписку</h2>
                                             }
                                             {userToken.nameid === userId &&
                                                 <div>

@@ -109,7 +109,7 @@ const ChangeUserClubForm = ({
     clubName &&
       NotificationBoxApi.createNotifications(
         [id],
-        `Вам була присвоєна нова роль: '${userRole}' в станиці: `,
+        `Вам була присвоєна нова роль: '${userRole}' в курені: `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/clubs/${clubId}`,
         clubName
