@@ -81,7 +81,7 @@ const City = () => {
       city.name
     );
     
-    if(member.data.wasRegisteredUser){
+    if(member.data.wasInRegisteredUserRole){
         await NotificationBoxApi.createNotifications(
             [member.data.userId],
             "Тобі надано нову роль: 'Прихильник'",
@@ -472,11 +472,12 @@ const City = () => {
                 )}
             </Row>
             <div className="cityMoreButton">
+              {canEdit ? (
               <PlusSquareFilled
                 type="primary"
                 className="addReportIcon"
                 onClick={() => setvisible(true)}
-              ></PlusSquareFilled>
+              />):null}
               <Button
                 type="primary"
                 className="cityInfoButton"

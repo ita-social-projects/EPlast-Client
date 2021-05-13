@@ -14,6 +14,7 @@ import decisionsApi, { DecisionPost } from '../../api/decisionsApi';
 
 interface Props {
   record: number;
+  recordCreatorId: string;
   pageX: number;
   pageY: number;
   showDropdown: boolean;
@@ -22,8 +23,9 @@ interface Props {
 }
 
 const DropDown = (props: Props) => {
-  const { record, pageX, pageY, showDropdown, onDelete, onEdit } = props;
+  const { record, recordCreatorId, pageX, pageY, showDropdown, onDelete, onEdit } = props;
   const [showEditModal, setShowEditModal] = useState(false);
+  const [userId, setUserId] = useState<string>();
   const [userRole, setUser] = useState<string[]>();
   const [canEdit, setCanEdit] = useState(false);
   const [canSee, setCanSee] = useState(false);
@@ -37,12 +39,14 @@ const DropDown = (props: Props) => {
     governingBody: {id : 0, description: "", phoneNumber: "", email: "" ,governingBodyName: "", logo: ""},
     decisionTarget: {id : 0 ,targetName : ""},
     description: "",
-    date: "",
+    date: new Date(),
+    userId: "",
     fileName: null,
 });
 const fetchUser = async () => {
   let jwt = AuthStore.getToken() as string;
   let decodedJwt = jwt_decode(jwt) as any;
+  setUserId(decodedJwt.nameid);
   let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
   setUser(roles);
   setCanEdit(roles.includes("Admin"));
@@ -100,7 +104,7 @@ const fetchData = async () =>{
         }
         }
       >
-        {(canEdit === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+        {(canEdit || ((regionAdm || cityAdm || clubAdm) && (userId === recordCreatorId))) ? (
         <Menu.Item key="1">
           <EditOutlined />
           Редагувати
@@ -111,7 +115,7 @@ const fetchData = async () =>{
           <FilePdfOutlined />
           Конвертувати в PDF
         </Menu.Item>
-        {(canEdit === true) ? (
+        {(canEdit) ? (
         <Menu.Item key="3">
           <DeleteOutlined />
           Видалити

@@ -458,11 +458,13 @@ const Club = () => {
                 )}
             </Row>
             <div className="clubMoreButton">
+            {canEdit ? (
               <PlusSquareFilled
                 type="primary"
                 className="addReportIcon"
                 onClick={() => setvisible(true)}
-              ></PlusSquareFilled>
+              />
+              ) : null}
               <Button
                 type="primary"
                 className="clubInfoButton"

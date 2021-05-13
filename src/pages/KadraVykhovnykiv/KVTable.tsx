@@ -28,8 +28,6 @@ export const KVTable = ({ current, searchData }: props) => {
     user: '',
     dateOfGranting: '',
     numberInRegister: '',
-    basisOfGranting: '',
-    link: '',
   }]);
 
   const createNotifications = async (userId : string) => {
@@ -92,9 +90,7 @@ export const KVTable = ({ current, searchData }: props) => {
   let filteredData = searchData
   ? data.filter((item) => {
       return Object.values([
-        item.basisOfGranting,
         item.numberInRegister,
-        item.link,
         moment(item.dateOfGranting.toLocaleString()).format("DD.MM.YYYY"),
       ]).find((element) => {
         return String(element).toLowerCase().includes(searchData);
@@ -133,7 +129,7 @@ export const KVTable = ({ current, searchData }: props) => {
             onContextMenu: (event) => {
               event.preventDefault();
               setShowDropdown(true);
-              setRecordObj(record.id);
+              setRecordObj(record);
               setX(event.pageX);
               setY(event.pageY-200);
             },

@@ -15,8 +15,10 @@ import notificationLogic from '../../components/Notifications/Notification';
 import NotificationBoxApi from '../../api/NotificationBoxApi';
 import{
   emptyInput,
-  maxLength,
+  maxNumber,
+  minNumber,
 } from "../../components/Notifications/Messages"
+import KadraVykhovnykivApi from "../../api/KadraVykhovnykivApi";
 
 type FormAddKadraProps = {
     showModal: (visibleModal: boolean) => void;  
@@ -41,12 +43,12 @@ type FormAddKadraProps = {
         userRoles:''
         
       }])
-
-
+    const [loadingUserStatus, setLoadingUserStatus] = useState(false);    
     const [types, setTypes] = useState<any[]>([{
         id: '',
         name: '',
       }])
+    const [userKadrasMap, setUserKadrasMap] = useState<Map<string, boolean>>(new Map<string, boolean>());
     const dateFormat = "DD.MM.YYYY";
 
      const createNotifications = async (userId : string, kadraTypeName : string) => {
@@ -71,24 +73,28 @@ type FormAddKadraProps = {
                         );
                 })                
             });
-     } 
+     }
+
+     const onUserSelect = async (userId: any) => {
+        types.map(async (kt) => {
+            await KadraVykhovnykivApi.doesUserHaveStaff(JSON.parse(userId).id, kt.id).then(response => {
+                setUserKadrasMap(new Map(userKadrasMap.set(kt.name, response.data)));
+            });
+         });
+         form.resetFields(['KadraVykhovnykivType']);
+     }
 
       const handleSubmit = async (values : any)=>{
         const newKadra  : any= {
             id: 0,
 
-            userId: JSON.parse(values.userId).user.id,
+            userId: JSON.parse(values.userId).id,
 
             KadraVykhovnykivTypeId:JSON.parse(values.KadraVykhovnykivType).id,
 
             dateOfGranting: values.dateOfGranting,
 
             numberInRegister: values.numberInRegister,
-
-            basisOfGranting:values.basisOfGranting,
-
-            link: values.link,
-  
         }
 
          kadrasApi.doesRegisterNumberExist(newKadra.numberInRegister).then(responce=>{
@@ -124,6 +130,10 @@ type FormAddKadraProps = {
         });
     }
 
+  const backgroundColor = (user: any) => {
+    return user.isInLowerRole ? { backgroundColor : '#D3D3D3' } : { backgroundColor : 'white' };
+  }
+   
   const handleCancel = () => {
     form.resetFields();
     showModal(false);
@@ -134,8 +144,10 @@ type FormAddKadraProps = {
       await kadrasApi.getAllKVTypes().then((response) => {
         setTypes(response.data);
       });
+      setLoadingUserStatus(true);      
       await adminApi.getUsersForTable().then((response) => {
         setUsers(response.data);
+        setLoadingUserStatus(false);
       });
     };
     fetchData();
@@ -157,10 +169,20 @@ type FormAddKadraProps = {
               },
             ]}
           >
-            <Select showSearch className={classes.inputField}>
+            <Select 
+              showSearch 
+              className={classes.selectField}
+              onSelect={onUserSelect}
+              loading={loadingUserStatus}              
+              >
               {users?.map((o) => (
-                <Select.Option key={o.user.id} value={JSON.stringify(o)}>
-                  {o.user.firstName + " " + o.user.lastName}
+                <Select.Option 
+                    key={o.id}
+                    value={JSON.stringify(o)}
+                    style={backgroundColor(o)}
+                    disabled={o.isInLowerRole}
+                    >
+                  {o.firstName + " " + o.lastName}
                 </Select.Option>
               ))}
             </Select>
@@ -183,7 +205,12 @@ type FormAddKadraProps = {
           >
             <Select filterOption={false} className={classes.inputField}>
               {types?.map((o) => (
-                <Select.Option key={o.id} value={JSON.stringify(o)}>
+                <Select.Option 
+                  key={o.id} 
+                  value={JSON.stringify(o)}
+                  disabled={userKadrasMap.get(o.name)}
+                  style={{ backgroundColor: userKadrasMap.get(o.name) ? '#D3D3D3' : 'white' }}
+                  >
                   {o.name}
                 </Select.Option>
               ))}
@@ -219,15 +246,21 @@ type FormAddKadraProps = {
             labelCol={{ span: 24 }}
             name="numberInRegister"
             rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-              {
-                max: 6,
-                message: maxLength(6),
-              },
-            ]}
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+                {
+                  max: 5,
+                  message: maxNumber(99999),
+                },
+                {
+                  validator: (_ : object, value: number) => 
+                      value < 1
+                          ? Promise.reject(minNumber(1)) 
+                          : Promise.resolve()
+                }
+              ]}
           >
             <Input
               type="number"
@@ -237,41 +270,7 @@ type FormAddKadraProps = {
             />
           </Form.Item>
         </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            className={classes.formField}
-            label="Причина надання"
-            labelCol={{ span: 24 }}
-            name="basisOfGranting"
-            rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-              { max: 100, message: maxLength(100) },
-            ]}
-          >
-            <Input className={classes.inputField} />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            className={classes.formField}
-            label="Лінк"
-            labelCol={{ span: 24 }}
-            name="link"
-            rules={[
-              { max: 500, message: maxLength(500) },
-            ]}
-          >
-            <Input className={classes.inputField} />
-          </Form.Item>
-        </Col>
-      </Row>
+      </Row>      
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item>

@@ -10,7 +10,8 @@ import {
   Modal,
   Form,
   Card,
-  Typography
+  Typography,
+  Space
 } from "antd";
 import "./Filter.less";
 import { getUsersForTableByPage } from "../../api/adminApi";
@@ -33,6 +34,8 @@ import Region from "../Statistics/Interfaces/Region";
 import Club from "../AnnualReport/Interfaces/Club";
 import { shouldContain } from "../../components/Notifications/Messages";
 import classes from "./UserTable.module.css";
+import citiesApi from "../../api/citiesApi"
+import {User} from "../userPage/Interface/Interface"
 const { Search } = Input;
 
 const UsersTable = () => {
@@ -61,16 +64,14 @@ const UsersTable = () => {
   const [viewedUsers, setViewedUsers] = useState<UserTable[]>([]);
   const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
   const [isInactive, setIsInactive] = useState(false);
+  const [userArhive, setArhive] = useState();
+  const [user, setUser] = useState<UserTable>();
   const { SHOW_PARENT } = TreeSelect;
   const {Search} = Input;
+  
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, updatedUser, searchData]);
-
-  useEffect(() => {
-    fetchData();
-    onTabChange(currentTabName);
-  }, [currentTabName]);
+  }, [page, pageSize, updatedUser, searchData, userArhive, currentTabName]);
 
   useEffect(() => {
     fetchCities();
@@ -82,16 +83,9 @@ const UsersTable = () => {
 
   const fetchCities = async () => {
     try {
-      let response = await AnnualReportApi.getCities();
+      let response = await citiesApi.getCities();
       let cities = response.data.cities as City[];
-      setCities(
-        cities.map((item) => {
-          return {
-            label: item.name,
-            value: item.id,
-          };
-        })
-      );
+      setCities(cities)
     } catch (error) {
       showError(error.message);
     }
@@ -165,7 +159,9 @@ const UsersTable = () => {
         Tab: currentTabName,
         SearchData: searchData
       });
+      console.log(response)
       setUsers(response.data.users);
+      console.log(response.data.users)
       setViewedUsers(response.data.users);
       setTotal(response.data.total);
     } finally {
@@ -346,8 +342,8 @@ const UsersTable = () => {
       <Title level={4} style={{textAlign: "left", margin: 10}} underline={true}>Загальна кількість користувачів: {total}</Title>
       <div className={classes.searchContainer}>
         <div className={classes.filterContainer}>
-          <Form form={form} onFinish={handleFilter} style={{ height: "20px" }}>
-            <Row justify="center">
+          <Form form={form} onFinish={handleFilter} style={{ height: "20px"}}>
+            <Row>
               <Col span={20}>
                 <Form.Item
                   rules={[
@@ -376,6 +372,7 @@ const UsersTable = () => {
                     }
                     allowClear
                   >
+                  
                     <TreeNode value={0} title="Всі округи">
                       {getDynamicRegions()}
                     </TreeNode>
@@ -391,16 +388,18 @@ const UsersTable = () => {
                   </TreeSelect>
                 </Form.Item>
               </Col>
-
+              <Col>
               <Form.Item>
                 <Button
                   type="primary"
                   htmlType="submit"
-                  style={{ minWidth: "10%" }}
+                  style={{ minWidth: "10%", marginBottom:30}}
                 >
                   OK
                 </Button>
               </Form.Item>
+              </Col>
+
             </Row>
           </Form>
         </div>
@@ -441,6 +440,7 @@ const UsersTable = () => {
                   setShowDropdown(true);
                   setRecordObj(record.id);
                   setRoles(record.userRoles);
+                  setUser(record);
                   setX(event.pageX);
                   setY(event.pageY);
                 },
@@ -476,10 +476,11 @@ const UsersTable = () => {
           pageY={y}
           onDelete={handleDelete}
           onChange={handleChange}
+          user={user}
           roles={roles}
           inActiveTab={isInactive}
         />
-      </ClickAwayListener>
+        </ClickAwayListener>
     </Layout.Content>
   );
 };

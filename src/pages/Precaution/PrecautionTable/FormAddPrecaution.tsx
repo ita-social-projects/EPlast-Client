@@ -18,7 +18,9 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
   maxLength,
-  failCreateAction
+  failCreateAction,
+  maxNumber,
+  minNumber
 } from "../../../components/Notifications/Messages"
 
 type FormAddPrecautionProps = {
@@ -138,11 +140,21 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             labelCol={{ span: 24 }}
             name="number"
             rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-            ]}
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+                {
+                  max: 5,
+                  message: maxNumber(99999),
+                },
+                {
+                  validator: (_ : object, value: number) => 
+                      value < 1
+                          ? Promise.reject(minNumber(1)) 
+                          : Promise.resolve()
+                }
+              ]}
           >
             <Input
               type="number"
@@ -192,8 +204,8 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               loading={loadingUserStatus}
             >
               {userData?.map((o) => (
-                <Select.Option key={o.user.id} value={JSON.stringify(o.user)}>
-                  {o.user.firstName + " " + o.user.lastName}
+                <Select.Option key={o.id} value={JSON.stringify(o)} >
+                  {o.firstName + " " + o.lastName}
                 </Select.Option>
               ))}
             </Select>
@@ -248,8 +260,8 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             rules={[
               {
                 required: true,
-                max: 250,
-                message: maxLength(250),
+                max: 500,
+                message: maxLength(500),
               },
             ]}
           >
@@ -260,7 +272,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
                 maxRows: 6,
               }}
               className={formclasses.inputField}
-              maxLength={251}
+              maxLength={501}
             />
           </Form.Item>
         </Col>

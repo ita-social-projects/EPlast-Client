@@ -16,7 +16,15 @@ export const minLength = (len:number)=>{
 
 export const maxLength = (len:number)=>{
     return `Максимальна довжина - ${len} символів`
+};
+
+export const maxNumber = (maxLen:number)=>{
+    return `Значення має бути менше або дорівнювати ${maxLen}`
 }; 
+
+export const minNumber = (minLen:number)=>{
+    return `Значення має бути більше або дорівнювати ${minLen}`
+};
 
 export const tryAgain = 'Щось пішло не так. Спробуйте ще раз.'; 
 
