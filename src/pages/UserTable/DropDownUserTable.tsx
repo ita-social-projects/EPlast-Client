@@ -54,10 +54,11 @@ const DropDown = (props: Props) => {
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
-  const [canEdit, setCanEdit] = useState(false);
+  const [superAdmin, setsuperAdmin] = useState(false);
   const [regionAdm, setRegionAdm] = useState(false);
   const [cityAdm, setCityAdm] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
+  const [member, setMember] = useState(false)
   const [userAdmin, setUserAdmin] = useState<User>();
   const [changeRoles, setChangeRoles] = useState(true);
 
@@ -70,10 +71,11 @@ const DropDown = (props: Props) => {
     let roles = decodedJwt[
       "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
     ] as string[];
-    setCanEdit(roles.includes("Admin"));
+    setsuperAdmin(roles.includes("Admin"));
     setRegionAdm(roles.includes("Голова Округи"));
     setCityAdm(roles.includes("Голова Станиці"));
     setClubAdm(roles.includes("Голова Куреня"));
+    setMember(roles.includes("Дійсний член організації"))
   };
 
   useEffect(() => {
@@ -133,8 +135,8 @@ const DropDown = (props: Props) => {
         }}
       >
         {props.inActiveTab === false &&
-        canEdit === true ||
-        ((clubAdm === true && userAdmin?.club === user?.clubName) ||
+        superAdmin === true ||
+        ((clubAdm === true || member === true  && userAdmin?.club === user?.clubName) ||
           (cityAdm === true && userAdmin?.city == user?.cityName)) ? (
           <Menu.Item key="1">
             <FileSearchOutlined />
@@ -143,7 +145,7 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {canEdit === true ? (
+        {superAdmin === true ? (
           <Menu.Item key="2">
             <DeleteOutlined />
             Видалити
@@ -152,7 +154,7 @@ const DropDown = (props: Props) => {
           <> </>
         )}
         {props.inActiveTab === false &&
-        (canEdit === true ||
+        (superAdmin === true ||
           regionAdm === true ||
           (cityAdm === true && userAdmin?.city == user?.cityName) ||
           (clubAdm === true && userAdmin?.club === user?.clubName)) ? (
@@ -161,22 +163,22 @@ const DropDown = (props: Props) => {
             icon={<EditOutlined />}
             title="Змінити права доступу"
           >
-            {canEdit === true || regionAdm === true || cityAdm === true ? (
+            {superAdmin === true || regionAdm === true || cityAdm === true ? (
               <Menu.Item key="3">Провід станиці</Menu.Item>
             ) : (
               <> </>
             )}
-            {canEdit === true || regionAdm === true ? (
+            {superAdmin === true || regionAdm === true ? (
               <Menu.Item key="4">Провід округи</Menu.Item>
             ) : (
               <> </>
             )}
-            {canEdit === true || clubAdm === true ? (
+            {superAdmin === true || clubAdm === true ? (
               <Menu.Item key="5">Провід куреня</Menu.Item>
             ) : (
               <> </>
             )}
-            {canEdit === true || regionAdm === true || cityAdm === true ? (
+            {superAdmin === true || regionAdm === true || cityAdm === true ? (
               <Menu.Item key="6">Поточний стан користувача</Menu.Item>
             ) : (
               <> </>
@@ -186,7 +188,7 @@ const DropDown = (props: Props) => {
           <> </>
         )}
         {props.inActiveTab === false &&
-        (canEdit === true ||
+        (superAdmin === true ||
           regionAdm === true ||
           (cityAdm === true && userAdmin?.city == user?.cityName) ||
           (clubAdm === true && userAdmin?.club === user?.clubName)) ? (
@@ -197,7 +199,7 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {(props.inActiveTab === false && canEdit === true) ||
+        {(props.inActiveTab === false && superAdmin === true) ||
         regionAdm === true ||
         (cityAdm === true && userAdmin?.city == user?.cityName) ||
         (clubAdm === true && userAdmin?.club === user?.clubName) ? (
