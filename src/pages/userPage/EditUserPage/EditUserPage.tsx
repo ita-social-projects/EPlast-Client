@@ -540,7 +540,7 @@ export default function () {
           </div>
           <div className={styles.rowBlock}>
             <Form.Item
-              label="По-батькові"
+              label="По батькові"
               name="fatherName"
               rules={validationSchema.fatherName}
               className={styles.formItem}
