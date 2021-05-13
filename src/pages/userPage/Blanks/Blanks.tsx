@@ -24,10 +24,18 @@ import{
   } from "../../../components/Notifications/Messages"
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 
+const userAdminTypeRoles = [
+    "Admin",
+    "Голова Куреня",
+    "Голова Округи",
+    "Голова Станиці",
+];
+
 export const Blanks = () => {
     const { userId } = useParams();
 
     const [data, setData] = useState<Data>();
+    const [currentUser, setCurrentUser] = useState<Data>();
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
     const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
     const [extractUPU, setExtractUPU] = useState<BlankDocument>(new BlankDocument);
@@ -37,6 +45,7 @@ export const Blanks = () => {
     const [visibleAchievementModal, setvisibleAchievementModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [canEdit, setCanEdit] = useState(false);
+    const [roles, setRoles]=useState<string[]>([]);
     const [userToken, setUserToken] = useState<any>([
         {
             nameid: "",
@@ -49,13 +58,30 @@ export const Blanks = () => {
     const fetchData = async () => {
         const token = AuthStore.getToken() as string;
         setUserToken(jwt(token));
+        const currentUserId=(jwt(token) as { nameid: "" }).nameid;
         let decodedJwt = jwt_decode(token) as any;
-        let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+        setRoles(decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]);
         setCanEdit(roles.includes("Admin"));
         await userApi.getById(userId).then(response => {
             setData(response.data);
         }).catch(() => { notificationLogic('error', tryAgain) })
+
+        await userApi.getById(currentUserId).then(response => {
+            setCurrentUser(response.data);
+        }).catch(() => { notificationLogic('error', tryAgain) })
         setLoading(true);
+    };
+
+    const IsUserHasAnyAdminTypeRoles = (userRoles: Array<string>): boolean => {
+        let IsUserHasAnyAdminRole = false;
+        if (userRoles === null || userRoles === undefined)
+            return IsUserHasAnyAdminRole;
+        userAdminTypeRoles.forEach((role: string) => {
+            if (userRoles.includes(role)) {
+                IsUserHasAnyAdminRole = true;
+            }
+        });
+        return IsUserHasAnyAdminRole;
     };
 
     const getDocument = async () => {
@@ -81,12 +107,12 @@ export const Blanks = () => {
     const removeDocumentById = async (documentId: number) => {
         await removeDocument(documentId);
         notificationLogic('success', successfulDeleteAction("Файл"));
-        getDocument();
+        await getDocument();
     };
     const removeExtractDocument = async (documentId: number) => {
         await removeExtractFromUPUDocument(documentId);
         notificationLogic('success', successfulDeleteAction("Файл"));
-        getExtractFromUPU();
+        await getExtractFromUPU();
     }
 
     const downloadExtractDocument = async (fileBlob: string, fileName: string) => {
@@ -114,11 +140,18 @@ export const Blanks = () => {
         getExtractFromUPU();
     }, [userId, visibleModal, visibleAchievementModal, visibleExtractFromUPUModal]);
 
-    return (loading === false ? (
+    const IsUserHasAccessToManageBlanks = (userRoles: Array<string>): boolean => {
+
+            return (userRoles?.includes("Голова Куреня") && currentUser?.user?.clubId==data?.user?.clubId) ||
+                (userRoles?.includes("Голова Станиці") && currentUser?.user?.cityId==data?.user?.cityId) ||
+                (userRoles?.includes("Голова Округи") && currentUser?.user?.regionId==data?.user?.regionId) ||
+                userRoles?.includes("Admin");
+    };
+
+    return (!loading ? (
         <Spinner />
     ) : (
             <>
-                <p></p>
                 <div className={classes.wrapper}>
                     <div className={classes.wrapperImg}>
                             <AvatarAndProgressStatic imageUrl={data?.user.imagePath}
@@ -134,7 +167,7 @@ export const Blanks = () => {
                         <div className={classes.wrapper}>
                             <div className={classes.wrapper2}>
                                 <Title level={2}>Життєпис</Title>
-                                {document.userId == userId ? (
+                                {(document.userId === userId) ? (
                                     <Col
                                         xs={18}
                                         sm={18}
@@ -167,7 +200,7 @@ export const Blanks = () => {
                                                 onClick={() => openDocument(document.blobName, document.fileName)} />
                                         </Tooltip>
                                         :null}
-                                        {userToken.nameid === userId &&
+                                        {(userToken.nameid === userId || roles.includes("Admin")) &&
                                             <Tooltip title="Видалити">
                                                 <Popconfirm
                                                     title="Видалити цей документ?"
@@ -194,7 +227,7 @@ export const Blanks = () => {
                                             {userToken.nameid !== userId &&
                                                 <h2>{data?.user.firstName} ще не додав(ла) Життєпис</h2>
                                             }
-                                            {userToken.nameid === userId &&
+                                            {(userToken.nameid === userId || roles.includes("Admin")) &&
                                                 <div>
                                                     <Button type="primary"
                                                         className={classes.addIcon}
@@ -210,7 +243,7 @@ export const Blanks = () => {
 
                             <div className={classes.wrapper3}>
                                 <Title level={2}>Виписка з УПЮ</Title>
-                                {extractUPU.userId == userId ? (
+                                {(extractUPU.userId == userId)? (
                                     <Col
                                         xs={18}
                                         sm={18}
@@ -243,7 +276,8 @@ export const Blanks = () => {
                                                 onClick={() => openExtractFromUPUDocument(extractUPU.blobName, extractUPU.fileName)} />
                                         </Tooltip>
                                         :null}
-                                        {userToken.nameid === userId &&
+
+                                        {(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) &&
                                             <Tooltip title="Видалити">
                                                 <Popconfirm
                                                     title="Видалити цей документ?"
@@ -268,7 +302,7 @@ export const Blanks = () => {
                                             {userToken.nameid !== userId &&
                                                 <h2>{data?.user.firstName} ще не додав(ла) виписку</h2>
                                             }
-                                            {userToken.nameid === userId &&
+                                            {(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) &&
                                                 <div>
                                                     <Button type="primary"
                                                         className={classes.addIcon}
@@ -314,7 +348,7 @@ export const Blanks = () => {
                                     )}
                                 <Col>
 
-                                    {userToken.nameid === userId &&
+                                    {(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) &&
                                         <div>
                                             <Button type="primary"
                                                 className={classes.addIcon}
@@ -330,17 +364,14 @@ export const Blanks = () => {
                                 <Title level={2}>Заява для вступу</Title>
                                 <FileTextOutlined
                                     className={classes.documentIcon} />
-                                {canEdit == true || userToken.nameid === userId ? (
+                                {IsUserHasAccessToManageBlanks(roles) || userToken.nameid === userId ? (
                                     <Button
                                         className={classes.addIcon}
                                         type="primary"
                                         onClick={() => getPdf()}>
                                         Згенерувати файл
                                     </Button>
-                                ) : (
-                                        null
-                                    )
-                                }
+                                ) : null}
                             </div>
 
                         </div>
@@ -352,30 +383,27 @@ export const Blanks = () => {
                     visibleModal={visibleListAchievementModal}
                     setVisibleModal={setVisibleListAchievementModal}
                     achievementDoc={achievementDoc}
-                    setAchievementDoc={setAchievementDoc}
-                ></ListOfAchievementsModal>
+                    hasAccess={IsUserHasAccessToManageBlanks(roles) || userToken.nameid === userId}
+                    setAchievementDoc={setAchievementDoc}/>
 
                 <AddAchievementsModal
                     userId={data?.user.id}
                     visibleModal={visibleAchievementModal}
-                    setVisibleModal={setvisibleAchievementModal}
-                ></AddAchievementsModal>
+                    setVisibleModal={setvisibleAchievementModal}/>
 
                 <AddBiographyModal
                     userId={data?.user.id}
                     document={document}
                     setDocument={setDocument}
                     visibleModal={visibleModal}
-                    setVisibleModal={setVisibleModal}
-                ></AddBiographyModal>
+                    setVisibleModal={setVisibleModal}/>
 
                 <AddExtractFromUPUModal
                     userId={data?.user.id}
                     document={extractUPU}
                     setDocument={setExtractUPU}
                     visibleModal={visibleExtractFromUPUModal}
-                    setVisibleModal={setVisibleExtractFromUPUModal}
-                ></AddExtractFromUPUModal>
+                    setVisibleModal={setVisibleExtractFromUPUModal}/>
             </>
 
         )

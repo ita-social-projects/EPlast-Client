@@ -8,10 +8,7 @@ import { Data } from "../Interface/Interface";
 import { useParams, useHistory } from "react-router-dom";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Spinner from "../../Spinner/Spinner";
-import { tryAgain } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
-import {cityNameOfApprovedMember} from "../../../api/citiesApi"
-import {clubNameOfApprovedMember} from "../../../api/clubsApi"
 import Facebook from "../../../assets/images/facebookGreen.svg";
 import Twitter from "../../../assets/images/birdGreen.svg";
 import Instagram from "../../../assets/images/instagramGreen.svg";
@@ -19,16 +16,20 @@ import { StickyContainer } from "react-sticky";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import AvatarAndProgressStatic from "./AvatarAndProgressStatic";
+import jwt_decode from "jwt-decode";
 
 export default function () {
   const { userId } = useParams();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
+  const [roles, setRoles]=useState<string[]>([]);
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
+    let decodedJwt = jwt_decode(token) as any;
+    setRoles(decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]);
     await userApi
       .getUserProfileById(user.nameid, userId)
       .then((response) => {
@@ -44,8 +45,8 @@ export default function () {
               userId
             );
       })
-      .catch(() => {
-        notificationLogic("error", tryAgain);
+      .catch((error) => {
+        notificationLogic("error", error.message);
       });
 
   };
@@ -390,10 +391,10 @@ export default function () {
               <Form.Item className="formItem"></Form.Item>
             ) : null}
           </div>
-
+          {roles != ["Зареєстрований користувач"] &&
           <Button className="confirmBtn" onClick={() => history.push(`/clubs`)}>
             Обрати/змінити курінь
-          </Button>
+          </Button>}
           <Button
             className="confirmBtn"
             onClick={() => history.push(`/cities`)}

@@ -11,6 +11,7 @@ import { getTableAdmins,getTableFollowers, getTableMembers } from './ClubAnnualR
 import { emptyInput, maxLength, successfulCreateAction, tryAgain } from '../../../components/Notifications/Messages';
 import { useHistory } from 'react-router-dom';
 import Spinner from "../../Spinner/Spinner";
+import { Console } from 'console';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -82,13 +83,15 @@ export const ClubAnnualReportCreate = () => {
         setIsLoading(true);
         try {
             let response = await getClubById(id);
+
             setClub(response.data);
-            const admins = await getAllAdmins(id);
-            setAdmins([...admins.data.administration, admins.data.head].filter(a => a != null));
-            const members= await getAllMembers(id);
-            setClubMembers(members.data.members);
-            const followers = await getAllFollowers(id);
-            setFollowers(followers.data.followers);
+
+            setAdmins(response.data.administration.filter((a:any) => a != null));
+
+            setClubMembers(response.data.members);
+
+            setFollowers(response.data.followers);
+
             setId(id);
          }
         catch (error) {

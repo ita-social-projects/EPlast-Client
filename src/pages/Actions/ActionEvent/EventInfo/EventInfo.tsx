@@ -12,6 +12,8 @@ import ParticipantsTable from "./ParticipantsTable";
 import spinClasses from "../EventUser/EventUser.module.css";
 
 import './EventInfo.less';
+import AuthStore from "../../../../stores/AuthStore";
+import jwt_decode from "jwt-decode";
 
 const { Title } = Typography;
 
@@ -94,7 +96,7 @@ const EventInfo = () => {
     const [event, setEvent] = useState<EventDetails>({})
     const { id } = useParams();
     const [visibleDrawer,setVisibleDrawer]= useState(false);
-    const[state, setState] =useState(false); 
+    const[state, setState] =useState(false);
 
     useEffect(() => {
         const fetchData = async () => {

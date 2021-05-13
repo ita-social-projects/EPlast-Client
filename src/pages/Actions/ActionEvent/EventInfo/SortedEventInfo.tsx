@@ -27,6 +27,7 @@ import jwt from "jwt-decode";
 import CreatedEvents from '../../../../models/EventUser/CreatedEvents';
 import EventsUser from '../../../../models/EventUser/EventUser';
 import userApi from "../../../../api/UserApi";
+import jwt_decode from "jwt-decode";
 
 interface Props {
     event: EventDetails;
@@ -37,8 +38,19 @@ interface Props {
     unSubscribeOnEvent: () => void;
 }
 
-const RenderEventIcons = ({
-                              event,
+const GetRoles = () => {
+    let jwt = AuthStore.getToken() as string;
+    let decodedJwt = jwt_decode(jwt) as any;
+    return (decodedJwt[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ]);
+};
+
+const AccessToManage=(roles: string[]):boolean=>{
+    return roles?.includes("Admin" || "Голова Куреня"|| "Голова Станиці" || "Голова Округи" || "Дійсний член організації" || "Прихильник"||"Зареєстрований користувач")
+}
+
+const RenderEventIcons = ({event,
                               isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
                               isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
                           }: EventDetails,
@@ -49,18 +61,18 @@ const RenderEventIcons = ({
                           setAdminsVisibility: (flag: boolean) => void
 ) => {
     const eventIcons: React.ReactNode[] = []
-    if (isUserEventAdmin) {
+    const roles=([] as string[]).concat(GetRoles());
+    if ((isUserEventAdmin && AccessToManage(roles.filter(role=>role!="Зареєстрований користувач" && role!="Прихильник"))) || roles.includes("Admin")) {
         if (event.eventStatus==="Не затверджені"){
-        eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
-            <SettingTwoTone twoToneColor="#3c5438"  onClick={() => showApproveConfirm({
-                               eventId: event?.eventId,
-                               eventName: event?.eventName,
-                               eventStatusId:event?.eventStatus,
-                               eventAdmins:event.eventAdmins,
-                               setState:setState
-                           })}
-                           className="icon" key="setting"/>
-        </Tooltip>)
+            {roles.includes("Admin") && eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
+                <SettingTwoTone twoToneColor="#3c5438"  onClick={() => showApproveConfirm({
+                    eventId: event?.eventId,
+                    eventName: event?.eventName,
+                    eventStatusId:event?.eventStatus,
+                    eventAdmins:event.eventAdmins,
+                    setState:setState
+                })} className="icon" key="setting"/>
+            </Tooltip>)}
         eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
             <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
             onClick={()=> setVisibleDrawer(true)} />      
@@ -88,7 +100,7 @@ const RenderEventIcons = ({
                            })}
                            className="icon" key="delete"/>
         </Tooltip>)}
-        else if(event.eventStatus==="Затверджений(-на)"){
+        else if(event.eventStatus==="Затверджений(-на)" && roles.includes("Admin")){
             eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
             <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
             onClick={()=> setVisibleDrawer(true)} />      
@@ -136,7 +148,7 @@ const RenderEventIcons = ({
                     className="icon" key="unsubscribe"/>
             </Tooltip>)
         }
-    } else if (!isEventFinished) {
+    } else if (!isEventFinished && AccessToManage(roles)) {
         eventIcons.push(<Tooltip title="Зголоситись на подію" key="subscribe">
             <UserAddOutlined onClick={() => showSubscribeConfirm({
                 eventId: event?.eventId,
@@ -217,6 +229,7 @@ const SortedEventInfo = ({event,setState, subscribeOnEvent, unSubscribeOnEvent, 
       ]);
     const [imageBase64, setImageBase64] = useState<string>();
     const [loading, setLoading] = useState(false);
+
     const fetchData = async () => {
         const token = AuthStore.getToken() as string;
         setUserToken(jwt(token));
@@ -232,6 +245,7 @@ const SortedEventInfo = ({event,setState, subscribeOnEvent, unSubscribeOnEvent, 
           setLoading(true);
         });
       };
+
     return <Row >
         <Col className="eventActions">
             <img
