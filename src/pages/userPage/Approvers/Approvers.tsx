@@ -21,6 +21,7 @@ import{
 } from "../../../components/Notifications/Messages"
 import { StickyContainer } from 'react-sticky';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
+import jwt_decode from "jwt-decode";
 
 const Assignments = () => {
   const history = useHistory();
@@ -30,10 +31,15 @@ const Assignments = () => {
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
   const userGenders = ["Чоловік", "Жінка", "Інша"];
+  const [roles, setRoles]=useState<string[]>([]);
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
+      let decodedJwt = jwt_decode(AuthStore.getToken() as string) as any;
+      setRoles(decodedJwt[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ]);
     await userApi.getApprovers(userId, user.nameid).then(response => {
       setData(response.data);
       setLoading(true);
@@ -114,7 +120,7 @@ const fetchApproverName = async (id: string) => {
             <h1>Поручення дійсних членів</h1>
             <div className="approversCard">
               {data?.confirmedUsers.map(p => {
-                if (p.approver.userID == data?.currentUserId) {
+                if (p.approver.userID == data?.currentUserId || roles.includes("Admin")) {
                   return (
                     <div key={p.id}>
                       <Card
@@ -153,7 +159,8 @@ const fetchApproverName = async (id: string) => {
               }
               )}
               <div>
-                {data?.canApprove && (
+                {data?.canApprove && !(roles==["Прихильник"] || roles==["Зареєстований користувач"] || roles==["Прихильник", "Зареєстований користувач"])
+                    && (
                   <div>
                     <Tooltip
                       title="Поручитися за користувача"
@@ -193,7 +200,7 @@ const fetchApproverName = async (id: string) => {
               {(data?.clubApprover != null) ? (
 
                 <div>
-                  {(data.clubApprover.approver.userID == data.currentUserId) ?
+                  {(data.clubApprover.approver.userID == data.currentUserId || roles.includes("Admin")) ?
                     (
                       <Card
                         hoverable
@@ -228,13 +235,13 @@ const fetchApproverName = async (id: string) => {
                     )}
 
                 </div>
-              ) : ((data?.clubApprover == null && data?.currentUserId != data?.user.id && data?.isUserHeadOfClub) ?
+              ) : ((data?.clubApprover == null && (data?.currentUserId != data?.user.id || roles.includes("Admin")) && (data?.isUserHeadOfClub || roles.includes("Admin"))) ?
                 (
                   <div>
                     <Tooltip
                       title="Поручитися за користувача"
                       placement="rightBottom">
-                      <Link to="#" onClick={() => approveClick(data.user.id, true)}>
+                      <Link to="#" onClick={() => approveClick(data?.user.id, roles.includes("Голова Куреня") || roles.includes("Admin"), false)}>
                         <Avatar src={AddUser} 
                           alt="example" size={168}
                           className="avatarEmpty" 
@@ -291,13 +298,13 @@ const fetchApproverName = async (id: string) => {
                     )}
 
                 </div>
-              ) : ((data?.cityApprover == null && data?.currentUserId != data?.user.id && (data?.isUserHeadOfRegion || data?.isUserHeadOfCity)) ?
+              ) : ((data?.cityApprover == null && (data?.currentUserId != data?.user.id || roles.includes("Admin")) && (data?.isUserHeadOfCity || roles.includes("Admin"))) ?
                 (
                   <div>
                     <Tooltip
                       title="Поручитися за користувача"
                       placement="rightBottom">
-                      <Link to="#" onClick={() => approveClick(data.user.id, false, true)}>
+                      <Link to="#" onClick={() => approveClick(data?.user.id, false, roles.includes("Голова Станиці") || roles.includes("Admin"))}>
                         <Avatar 
                             src={AddUser}
                             alt="example" size={168}
