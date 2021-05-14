@@ -13,9 +13,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import "./AboutBase.less";
-import SectionModel from '../../models/AboutBase/SectionModel';
-import SubSectionModel from '../../models/AboutBase/SubsectionModel';
-import Subsections from './Subsections';
+import SubsectionModel from '../../models/AboutBase/SubsectionModel';
 
 const {Content} = Layout;
 const { Panel } = Collapse;
@@ -24,56 +22,42 @@ function callback(key: any) {
     console.log(key);
   }
 
-let count = 1;
-
-const AboutBase = () =>{
+const Subsections = () =>{
     const [regionAdm, setRegionAdm] = useState(false);
     const [loading, setLoading] = useState(false);
     const [canEdit, setCanEdit] = useState(false);
     const [searchedData, setSearchedData] = useState("");
     const [form] = Form.useForm();
-    const [Sections, setData]= useState<SectionModel[]>([
+    const [data, setData]= useState<SubsectionModel[]>([
       {
-        id: 0,
-        title:"",
-        subsection:{
           id:0,
           sectionId:0,
           title:"",
           description:""
-        }
       }
     ]);
 
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchedData(event.target.value.toLowerCase());
-      setLoading(true);
-    };
 
-    const handleDelete = (id:SectionModel['id'])=>{
+    const handleSubDelete=(id:SubsectionModel['id'])=>
+    {
       setData(prev=>prev.filter(item=>item.id!==id))
     }
 
-    const handleEdit = (title: string, id: SectionModel['id']) =>{
+    const handleSubEdit = (title: string, id: SubsectionModel['id']) =>{
       setData(prev=>prev.map(item=>item.id===id?{...item,title}:item))
     }
 
-    const handleAdd = async (index:any) => {
+    const handleSubAdd = async (index:any) => {
       setLoading(false);
-      const newItem = {id:count++, title:'', subsection: JSON.parse(index.subsection)}
+      //const newItem = {id:++, title:'', description:'', sectionId:''}
       // const res: SectionModel[] = await Api.get();
       // setData(res);
-      setData(prev => [...prev.slice(0, index + 1), newItem, ...prev.slice(index + 1)])
+      //setData(prev => [...prev.slice(0, index + 1), newItem, ...prev.slice(index + 1)])
       setLoading(true);
     };
 
-    const handleSubmit = async(values:any)=>{
-      const newSection: SectionModel = {
-        id:0,
-        title:"",
-        subsection:JSON.parse(values.subsection)
-      }
-    }
+    
+    
     const editOtlined = () => (
       <EditOutlined className="editInfoIcon"
         //onClick={() =>history.push(``)}
@@ -98,41 +82,29 @@ const AboutBase = () =>{
     
     return !loading ? (
         <Layout.Content className="aboutbase">
-            <Title level={1}>Про базу</Title>
-            <div className="searchContainer">
-            {
-                <Button type="primary" /*onClick={showModal}*/>
-                  Задати запитання
-                </Button>
-            }
-            <Search
-          placeholder="Пошук"
-          enterButton
-          onChange={handleSearch}
-        />
-            </div>
-    {Sections.map((item,index)=>(
-    <Collapse 
-    onChange={callback} 
-    className="section" key={item.id}
-    >
-    <Panel 
-    header={item.title='Section'} 
-    key="1" 
-    extra={<>{editOtlined()}{deleteOtlined()}</>}
-    >
-    <Subsections></Subsections>
-    </Panel>
-  </Collapse>
-    ))}
-    <div className="addSection">
-  <Input placeholder="➕ Додати розділ"/>
-  <Button type="primary" onClick={()=>handleAdd}>✓</Button>
-  </div>
-        </Layout.Content>
             
+    {data.map((item,index)=>(
+    <><Collapse
+            onChange={callback}
+            className="subsection" key={item.id}
+        >
+            <Panel
+                header={item.title = 'Subsection'}
+                key="1"
+                extra={<>{editOtlined()}{deleteOtlined()}</>}
+            >
+
+            </Panel>
+        </Collapse>
+            <div>
+                <Popup modal trigger={<Button className="addPostButton" type="primary" /*onClick={addPost}*/>Додати допис</Button>}>
+                    <div><TextEditor /></div>
+                </Popup>
+            </div></>
+    ))}
+        </Layout.Content>
     ) : (
         <Spinner />
       );
 };
-export default AboutBase;
+export default Subsections;

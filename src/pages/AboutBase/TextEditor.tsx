@@ -43,8 +43,7 @@ const TextEditor = () => {
           id:0,
           title:values.title,
           sectionId:JSON.parse(values.section).id,
-          descroption:values.description,
-          imagePath:values.description
+          description:values.description
         };
     }
     return (
