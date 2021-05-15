@@ -56,7 +56,7 @@ const columns = [
         return <button type = "button" onClick = {
           async () =>  {
              await decisionsApi.getFileAsBase64(fileName);}}
-             >Скачати додаток</button>;
+             >Завантажити додаток</button>;
       }
       return ""; 
   },}

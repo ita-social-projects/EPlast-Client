@@ -38,7 +38,7 @@ const columns = [
           async () => {
             await documentsApi.getFileAsBase64(fileName);
           }}
-        >Скачати додаток</button>;
+        >Завантажити додаток</button>;
       }
       return "";
     },
