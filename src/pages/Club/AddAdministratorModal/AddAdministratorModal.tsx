@@ -123,8 +123,6 @@ const AddAdministratorModal = (props: Props) => {
         }
       }
     } finally {
-      props.onAdd?.(admin);
-      props.onChange?.(props.admin.userId, values.adminType);
       props.setVisibleModal(false);
       setLoading(false);
     }
