@@ -139,6 +139,19 @@ input,
     margin-bottom: 5px;
 }
 
+@media(max-width: 1240px){
+    .allFields{
+        width: 100%;
+        padding:5px;
+    }
+    .formItem{
+        width: 97%;
+    }
+    .rowBlock{
+        display: contents;
+    }
+}
+
 @media(max-width: 768px){
     .avatarWrapper{
         width: 100%;
@@ -154,7 +167,7 @@ input,
         padding:5px;
     }
     .formItem{
-        width: 100%;
+        width: 97%;
     }
     .rowBlock{
         display: contents;
