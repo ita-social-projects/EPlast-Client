@@ -300,10 +300,6 @@ interface props {
         showError={showError}
         handleOk={() => setShowAnnualReportModal(false)}
       />
-      {/* <CitySelectModal
-        visibleModal={showCitySelectModal}
-        handleOk={() => setShowCitySelectModal(false)}
-      /> */}
-        </div>  
+      </div>  
       )
 }

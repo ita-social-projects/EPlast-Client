@@ -56,8 +56,6 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
           <Menu.Item className="menuItem" key="edit" onClick={() => history.push(`/userpage/edit/${props.id}`)}>
             Редагувати профіль
         </Menu.Item>}
-        { console.log("USERID", )}
-
       </Menu>
     </div>
   );

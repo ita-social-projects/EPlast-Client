@@ -120,10 +120,6 @@ const EventUser = () => {
 
     const [searchedData, setSearchedData] = useState("");
 
-    // const filter = allEvents.createdEvents.filter(item => {
-    //     return item.eventName.toLocaleLowerCase().includes(searchedData.toLocaleLowerCase());
-    // });
-
     const filter = searchedData
         ? allEvents.createdEvents?.filter((item: any) => {
             return Object.values(item).find((element) => {

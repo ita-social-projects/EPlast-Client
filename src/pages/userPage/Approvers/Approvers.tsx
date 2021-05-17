@@ -202,9 +202,6 @@ const fetchApproverName = async (id: string) => {
 
             </div>
             <h1>Поручення куреня УСП/УПС</h1>
-            {console.log("Access levels", accessLevels
-.includes("Зареєстрований користувач")
-            )}
             <div className="approversCard">
               {(data?.clubApprover != null) ? (
 
