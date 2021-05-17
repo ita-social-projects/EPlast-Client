@@ -121,11 +121,6 @@ type FormAddKadraProps = {
                     notificationLogic('error', "Номер реєстру вже зайнятий");
                     form.resetFields();
                     onAdd();
-
-                    notificationLogic(
-                    "success",
-                    "Користувач успішно отримав відзнаку"
-                    );
                 }; 
         });
     }
