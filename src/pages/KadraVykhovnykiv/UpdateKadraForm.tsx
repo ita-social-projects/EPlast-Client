@@ -28,6 +28,7 @@ type FormUpdateKadraProps = {
 const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
   const { onAdd, record, onEdit, showModal } = props;
   const [form] = Form.useForm();
+  const dateFormat = "DD.MM.YYYY";
 
   const handleSubmit = async (values: any) => {
     const newKadra: any = {
@@ -86,7 +87,10 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                   },
                 ]}
               >
-                <DatePicker className={classes.selectField} />
+                <DatePicker 
+                  className={classes.selectField} 
+                  format={dateFormat}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -104,8 +108,10 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                       message: emptyInput(),
                     },
                     {
-                      max: 5,
-                      message: maxNumber(99999),
+                      validator: (_ : object, value: number) => 
+                          value > 99999
+                              ? Promise.reject(maxNumber(99999)) 
+                              : Promise.resolve()
                     },
                     {
                       validator: (_ : object, value: number) => 
