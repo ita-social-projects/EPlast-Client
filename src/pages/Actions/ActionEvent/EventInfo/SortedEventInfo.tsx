@@ -46,9 +46,15 @@ const GetRoles = () => {
         ]);
 };
 
-const AccessToManage=(roles: string[]):boolean=>{
-    return roles?.includes("Admin" || "Голова Куреня"|| "Голова Станиці" || "Голова Округи" || "Дійсний член організації" || "Прихильник"||"Зареєстрований користувач")
-}
+
+const AccessableRoles=["Admin", "Голова Куреня", "Голова Станиці", "Голова Округи", "Дійсний член організації", "Прихильник", "Зареєстрований користувач"];
+
+const AccessToManage=(roles: string[]):boolean=>{ 
+    for(var i = 0; i < roles.length; i++){
+       if(AccessableRoles.includes(roles[i])) return true;
+    }
+    return false;
+  }
 
 const RenderEventIcons = ({event,
                               isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
@@ -148,7 +154,7 @@ const RenderEventIcons = ({event,
                     className="icon" key="unsubscribe"/>
             </Tooltip>)
         }
-    } else if (!isEventFinished && AccessToManage(roles)) {
+    } else if (!isEventFinished && AccessToManage(roles.filter(r=>r!="Зареєстрований користувач"))) {
         eventIcons.push(<Tooltip title="Зголоситись на подію" key="subscribe">
             <UserAddOutlined onClick={() => showSubscribeConfirm({
                 eventId: event?.eventId,

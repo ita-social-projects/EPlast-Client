@@ -21,7 +21,6 @@ interface Props {
 
 const ListOfAchievementsModal = (props: Props) => {
     const { userId } = useParams();
-    //const [currentUser, setCuurrentUser] = useState(false);
     const [loadingMore, setLoadingMore] = useState({
         loading: false,
         hasMore: true
@@ -96,10 +95,12 @@ const ListOfAchievementsModal = (props: Props) => {
                                         [
                                             <DownloadOutlined
                                                 className={classes.downloadIcon}
+                                                hidden={!props.hasAccess}
                                                 onClick={() => downloadFile(item.blobName, item.fileName)}
                                             />,
                                             <EyeOutlined
                                                 className={classes.reviewIcon}
+                                                hidden={!props.hasAccess}
                                                 onClick={() => reviewFile(item.blobName, item.fileName)} />,
                                             <Popconfirm
                                                 title="Видалити цей документ?"
@@ -118,6 +119,7 @@ const ListOfAchievementsModal = (props: Props) => {
                                         [
                                             <DownloadOutlined
                                                 className={classes.downloadIcon}
+                                                hidden={!props.hasAccess}
                                                 onClick={() => downloadFile(item.blobName, item.fileName)}
                                             />,
                                             <Popconfirm

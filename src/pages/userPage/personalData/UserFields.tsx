@@ -24,12 +24,14 @@ export default function () {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
   const [roles, setRoles]=useState<string[]>([]);
+  const [currentUserId, setCurrentUserId]=useState<string>();
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
+    setCurrentUserId(user.nameid);
     let decodedJwt = jwt_decode(token) as any;
-    setRoles(decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]);
+    setRoles([].concat(decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']));
     await userApi
       .getUserProfileById(user.nameid, userId)
       .then((response) => {
@@ -391,12 +393,15 @@ export default function () {
               <Form.Item className="formItem"></Form.Item>
             ) : null}
           </div>
-          {roles != ["Зареєстрований користувач"] &&
-          <Button className="confirmBtn" onClick={() => history.push(`/clubs`)}>
+          <Button 
+          className="confirmBtn" 
+          hidden={!(currentUserId==userId || roles.includes("Admin")) || roles.includes("Зареєстрований користувач")}
+          onClick={() => history.push(`/clubs`)}>
             Обрати/змінити курінь
-          </Button>}
+          </Button>
           <Button
             className="confirmBtn"
+            hidden={!(currentUserId==userId || roles.includes("Admin"))}
             onClick={() => history.push(`/cities`)}
           >
             Обрати/змінити станицю

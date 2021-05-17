@@ -180,19 +180,20 @@ export const Blanks = () => {
                                                 {document.fileName}
                                             </Paragraph>
                                         </div>
+                                        {(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) &&
                                         <Tooltip title="Завантажити">
                                             <DownloadOutlined
-                                                className={classes.downloadIcon}
-                                                key="download"
-                                                onClick={() =>
-                                                    downloadDocument(
-                                                        document.blobName,
-                                                        document.fileName
-                                                    )
-                                                }
-                                            />
-                                        </Tooltip>
-                                        {(documentFormat !== "doc" && documentFormat !== "docx")?
+                                            className={classes.downloadIcon}
+                                            key="download"
+                                            onClick={() =>
+                                                downloadDocument(
+                                                    document.blobName,
+                                                    document.fileName
+                                                )
+                                            }
+                                        /></Tooltip>}
+                                        
+                                        {((userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) && documentFormat !== "doc" && documentFormat !== "docx")?
                                         <Tooltip title="Переглянути">
                                             <EyeOutlined
                                                 className={classes.reviewIcon}
@@ -258,6 +259,7 @@ export const Blanks = () => {
                                         </div>
                                         <Tooltip title="Завантажити">
                                             <DownloadOutlined
+                                                hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles))}
                                                 className={classes.downloadIcon}
                                                 key="download"
                                                 onClick={() =>
@@ -268,31 +270,29 @@ export const Blanks = () => {
                                                 }
                                             />
                                         </Tooltip>
-                                        {(extractUPUFormat !== "doc" && extractUPUFormat !== "docx")?
                                         <Tooltip title="Переглянути">
                                             <EyeOutlined
+                                                hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles) || extractUPUFormat === "doc" || extractUPUFormat === "docx")}
                                                 className={classes.reviewIcon}
                                                 key="review"
                                                 onClick={() => openExtractFromUPUDocument(extractUPU.blobName, extractUPU.fileName)} />
                                         </Tooltip>
-                                        :null}
-
-                                        {(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) &&
-                                            <Tooltip title="Видалити">
-                                                <Popconfirm
-                                                    title="Видалити цей документ?"
-                                                    placement="bottom"
-                                                    icon={false}
-                                                    onConfirm={() => removeExtractDocument(extractUPU.id)}
-                                                    okText="Так"
-                                                    cancelText="Ні">
-                                                    <DeleteOutlined
-                                                        className={classes.deleteIcon}
-                                                        key="close"
-                                                    />
-                                                </Popconfirm>
-                                            </Tooltip>
-                                        }
+                                        <Tooltip title="Видалити">
+                                            <Popconfirm
+                                                title="Видалити цей документ?"
+                                                placement="bottom"
+                                                icon={false}
+                                                onConfirm={() => removeExtractDocument(extractUPU.id)}
+                                                okText="Так"
+                                                cancelText="Ні">
+                                                <DeleteOutlined
+                                                    hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles))}
+                                                    className={classes.deleteIcon}                                                        
+                                                    
+                                                    key="close"
+                                                />
+                                            </Popconfirm>
+                                        </Tooltip>
                                     </Col>
                                 ) : (
                                         <Col>
@@ -302,15 +302,14 @@ export const Blanks = () => {
                                             {userToken.nameid !== userId &&
                                                 <h2>{data?.user.firstName} ще не додав(ла) виписку</h2>
                                             }
-                                            {(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) &&
-                                                <div>
-                                                    <Button type="primary"
-                                                        className={classes.addIcon}
-                                                        onClick={() => setVisibleExtractFromUPUModal(true)}>
-                                                        Додати Виписку
-                                            </Button>
-                                                </div>
-                                            }
+                                            <div>
+                                                <Button type="primary"
+                                                    hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles))}
+                                                    className={classes.addIcon}
+                                                    onClick={() => setVisibleExtractFromUPUModal(true)}>
+                                                    Додати Виписку
+                                                </Button>
+                                            </div>
                                         </Col>
                                     )}
                             </div>
@@ -347,16 +346,14 @@ export const Blanks = () => {
                                         </Col>
                                     )}
                                 <Col>
-
-                                    {(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) &&
-                                        <div>
-                                            <Button type="primary"
-                                                className={classes.addIcon}
-                                                onClick={() => setvisibleAchievementModal(true)}>
-                                                Додати Досягнення
-                                            </Button>
-                                        </div>
-                                    }
+                                    <div>
+                                        <Button type="primary"
+                                            hidden={!(IsUserHasAccessToManageBlanks(roles) || userToken.nameid === userId)}
+                                            className={classes.addIcon}
+                                            onClick={() => setvisibleAchievementModal(true)}>
+                                            Додати Досягнення
+                                        </Button>
+                                    </div>
                                 </Col>
                             </div>
 
@@ -364,14 +361,13 @@ export const Blanks = () => {
                                 <Title level={2}>Заява для вступу</Title>
                                 <FileTextOutlined
                                     className={classes.documentIcon} />
-                                {IsUserHasAccessToManageBlanks(roles) || userToken.nameid === userId ? (
                                     <Button
+                                        hidden={!(IsUserHasAccessToManageBlanks(roles) || userToken.nameid === userId)}
                                         className={classes.addIcon}
                                         type="primary"
                                         onClick={() => getPdf()}>
                                         Згенерувати файл
                                     </Button>
-                                ) : null}
                             </div>
 
                         </div>
