@@ -2,8 +2,8 @@ import React, {useEffect, useState, PropsWithRef} from 'react';
 import {Table, Spin, Input, Empty} from 'antd';
 import columns from './columnsCIties';
 import {getUsersAdministrations, getusersPreviousAdministrations} from "../../../api/citiesApi";
-import {getUsersPreviousAdministrations} from "../../../api/regionsApi";
 import Modal from "antd/lib/modal";
+import SecretaryModel from './SecretaryModel';
 
 
 interface props {
@@ -15,30 +15,8 @@ export const UserCitySecretaryTable = ({UserId}: props) => {
     const [isLoadingActive, setIsLoadingActive] = useState<boolean>(true);
     const [isLoadingPrev, setIsLoadingPrev] = useState<boolean>(true);
 
-    const [data, setData] = useState<any>([{
-        id: '',
-        user: '',
-        adminType: '',
-        startDate: '',
-        endDate: '',
-        city: {
-            id: '',
-            name: ''
-        }
-    }]);
-
-
-    const [prevData, setPrevData] = useState<any>([{
-        id: '',
-        user: '',
-        adminType: '',
-        startDate: '',
-        endDate: '',
-        city: {
-            id: '',
-            name: ''
-        }
-    }]);
+    const [data, setData] = useState<SecretaryModel[]>();
+    const [prevData, setPrevData] = useState<SecretaryModel[]>();
 
     const fetchData = async () => {
         setIsLoadingActive(true);

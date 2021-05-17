@@ -32,7 +32,7 @@ import jwt_decode from "jwt-decode";
 interface Props {
     event: EventDetails;
     visibleDrawer:boolean;
-    setState:(visible:boolean)=>void;
+    setApprovedEvent:(visible:boolean)=>void;
     setVisibleDrawer:(visible:boolean)=>void;
     subscribeOnEvent: () => void;
     unSubscribeOnEvent: () => void;
@@ -60,7 +60,7 @@ const RenderEventIcons = ({event,
                               isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
                               isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
                           }: EventDetails,
-                          setState:(visible:boolean)=>void,
+                          setApprovedEvent:(visible:boolean)=>void,
                           setVisibleDrawer:(visible:boolean)=>void,
                           subscribeOnEvent: () => void,
                           unSubscribeOnEvent: () => void,
@@ -76,7 +76,7 @@ const RenderEventIcons = ({event,
                     eventName: event?.eventName,
                     eventStatusId:event?.eventStatus,
                     eventAdmins:event.eventAdmins,
-                    setState:setState
+                    setApprovedEvent:setApprovedEvent
                 })} className="icon" key="setting"/>
             </Tooltip>)}
         eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
@@ -220,7 +220,7 @@ const RenderAdminCards = (eventAdmins: EventAdmin[],visibleDrawer:any) => {
     />
 }
 
-const SortedEventInfo = ({event,setState, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer ,setVisibleDrawer}: Props) => {
+const SortedEventInfo = ({event, setApprovedEvent, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer ,setVisibleDrawer}: Props) => {
     const [adminsVisible, setAdminsVisibility] = useState(false);
     const {id}= useParams();
     const { userId } = useParams();
@@ -260,7 +260,7 @@ const SortedEventInfo = ({event,setState, subscribeOnEvent, unSubscribeOnEvent, 
                 src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
             />
             <div className="iconsFlex">
-                {RenderEventIcons(event,setState,setVisibleDrawer, subscribeOnEvent, unSubscribeOnEvent, setAdminsVisibility)}
+                {RenderEventIcons(event, setApprovedEvent, setVisibleDrawer, subscribeOnEvent, unSubscribeOnEvent, setAdminsVisibility)}
             </div>
             <div className="rateFlex">
                 {RenderRatingSystem(event)}

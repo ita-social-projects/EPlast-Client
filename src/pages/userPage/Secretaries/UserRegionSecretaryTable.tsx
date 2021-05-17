@@ -5,6 +5,7 @@ import {getUsersAdministrations, getUsersPreviousAdministrations} from "../../..
 import {showError} from "../../Actions/EventsModals";
 import Modal from "antd/lib/modal";
 import Spinner from "../../Spinner/Spinner";
+import SecretaryModel from './SecretaryModel';
 
 
 interface props {
@@ -16,39 +17,8 @@ export const UserRegionSecretaryTable = ({UserId}: props) => {
     const [isLoadingActive, setIsLoadingActive] = useState<boolean>(true);
     const [isLoadingPrev, setIsLoadingPrev] = useState<boolean>(true);
 
-    const [data, setData] = useState<any>([{
-        id: '',
-        user: {
-            firstName: '',
-            lastName: ''
-        },
-        adminType: {
-            adminTypeName: ''
-        },
-        startDate: '',
-        endDate: '',
-        region: {
-            regionName: ''
-        }
-    }]);
-
-
-    const [prevdata, setPrevData] = useState<any>([{
-        id: '',
-        user: {
-            firstName: '',
-            lastName: ''
-        },
-        adminType: {
-            adminTypeName: ''
-        },
-        startDate: '',
-        endDate: '',
-        region: {
-            regionName: ''
-        }
-    }]);
-
+    const [data, setData] = useState<SecretaryModel[]>();
+    const [prevData, setPrevData] = useState<SecretaryModel[]>();
 
     const fetchData = async () => {
         setIsLoadingActive(true);
@@ -107,7 +77,7 @@ export const UserRegionSecretaryTable = ({UserId}: props) => {
                     emptyText: (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Немає колишніх діловодств"/>)
                 }}
                 columns={columns}
-                dataSource={prevdata}
+                dataSource={prevData}
                 scroll={{x: 655}}
             />
 

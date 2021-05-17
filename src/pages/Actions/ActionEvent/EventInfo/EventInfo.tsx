@@ -12,8 +12,6 @@ import ParticipantsTable from "./ParticipantsTable";
 import spinClasses from "../EventUser/EventUser.module.css";
 
 import './EventInfo.less';
-import AuthStore from "../../../../stores/AuthStore";
-import jwt_decode from "jwt-decode";
 
 const { Title } = Typography;
 
@@ -96,7 +94,7 @@ const EventInfo = () => {
     const [event, setEvent] = useState<EventDetails>({})
     const { id } = useParams();
     const [visibleDrawer,setVisibleDrawer]= useState(false);
-    const[state, setState] =useState(false);
+    const[approvedEvent, setApprovedEvent] =useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -105,7 +103,7 @@ const EventInfo = () => {
             setLoading(true);
         };
         fetchData();
-    }, [visibleDrawer, state]);
+    }, [visibleDrawer, approvedEvent]);
 
     const search = (value: any) => {
         const filteredTable = baseData.filter((item: any) =>
@@ -153,7 +151,7 @@ const EventInfo = () => {
                     <Col xs={24} sm={24} md={24} lg={8}>
                         <SortedEventInfo
                             event={event}
-                            setState={setState}
+                            setApprovedEvent={setApprovedEvent}
                             setVisibleDrawer={setVisibleDrawer}
                             visibleDrawer={visibleDrawer}
                             subscribeOnEvent={subscribeOnEvent}

@@ -4,6 +4,7 @@ import columns from './columnsClubs';
 import {getUsersAdministrations, getUsersPreviousAdministrations} from "../../../api/clubsApi";
 import {getusersPreviousAdministrations} from "../../../api/citiesApi";
 import Modal from "antd/lib/modal";
+import SecretaryModel from './SecretaryModel';
 
 
 interface props {
@@ -15,30 +16,8 @@ export const UserClubSecretaryTable = ({UserId}: props) => {
     const [isLoadingActive, setIsLoadingActive] = useState<boolean>(true);
     const [isLoadingPrev, setIsLoadingPrev] = useState<boolean>(true);
 
-    const [data, setData] = useState<any>([{
-        id: '',
-        user: '',
-        adminType: '',
-        startDate: '',
-        endDate: '',
-        club: {
-            id: '',
-            name: ''
-        }
-    }]);
-
-
-    const [prevData, setPrevData] = useState<any>([{
-        id: '',
-        user: '',
-        adminType: '',
-        startDate: '',
-        endDate: '',
-        club: {
-            id: '',
-            name: ''
-        }
-    }]);
+    const [data, setData] = useState<SecretaryModel[]>();
+    const [prevData, setPrevData] = useState<SecretaryModel[]>();
 
     const fetchData = async () => {
         setIsLoadingActive(true);
