@@ -161,7 +161,9 @@ export const Blanks = () => {
                                 isUserPlastun={true}
                                 pseudo={data?.user.pseudo} 
                                 city={data?.user.city} 
-                                club={data?.user.club}/>
+                                club={data?.user.club}
+                                cityId={data?.user.cityId}
+                                clubId={data?.user.clubId}/>
                     </div>
                     <div className={classes.wrapperCol}>
                         <div className={classes.wrapper}>

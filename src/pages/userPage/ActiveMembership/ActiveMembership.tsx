@@ -22,6 +22,8 @@ import {cityNameOfApprovedMember} from "../../../api/citiesApi"
 import notificationLogic from "../../../components/Notifications/Notification";
 import {clubNameOfApprovedMember} from "../../../api/clubsApi";
 import jwt_decode from "jwt-decode";
+import City from "../../City/City/City";
+import { number } from "yup";
 const { Title } = Typography;
 
 const ActiveMembership = () => {
@@ -37,6 +39,8 @@ const ActiveMembership = () => {
   const [datesVisibleModal, setDatesVisibleModal] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<any>([{ nameid: "" }]);
   const [roles, setRoles]=useState<Array<string>>([]);
+  const [city, setCity]=useState<{id: number, name: string}>();
+  const [club, setClub]=useState<{id: number, name: string}>();
   const [endDateVisibleModal, setEndDateVisibleModal] = useState<boolean>(
     false
   );
@@ -98,10 +102,6 @@ const ActiveMembership = () => {
       }).catch((error) => {
         notificationLogic("error", error.message);
       });
-
-    user.city=(await cityNameOfApprovedMember(userId)).data;
-
-    user.club=(await clubNameOfApprovedMember(userId)).data;
 
 
     setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
@@ -197,6 +197,7 @@ const ActiveMembership = () => {
   return (
     <div className={classes.wrapper}>
       <div className={classes.avatarWrapper}>
+        {console.log(">>>>>", user)}
         <AvatarAndProgressStatic
           imageUrl={user.imagePath}
           time={data.timeToJoinPlast}
@@ -206,6 +207,8 @@ const ActiveMembership = () => {
           pseudo={user.pseudo}
           city={user.city}
           club={user.club}
+          cityId={user.cityId}
+          clubId={user.clubId}
         />
         {IsUserHasAccessToManageDegree(roles?.filter(role=>role!="Голова Куреня"))
         && (

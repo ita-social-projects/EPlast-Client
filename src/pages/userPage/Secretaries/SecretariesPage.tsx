@@ -85,7 +85,9 @@ export const Secretaries = () => {
                                 isUserPlastun={data?.isUserPlastun}
                                 pseudo={data?.user.pseudo}
                                 city={data?.user.city}
-                                club={data?.user.club} />
+                                club={data?.user.club} 
+                                cityId={data?.user.cityId}
+                                clubId={data?.user.clubId}/>
                         </StickyContainer>
                     </div>
 

@@ -150,6 +150,8 @@ const EventUser = () => {
                         pseudo={currentUser.pseudo}
                         city={currentUser.city}
                         club={currentUser.club}
+                        cityId={currentUser.cityId}
+                        clubId={currentUser.clubId}
                     />
                 </div>
                 {userToken.nameid === userId && canCreate && (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { Sticky } from "react-sticky";
 
 import { Avatar, Progress, Skeleton, Tooltip, Typography } from "antd";
@@ -28,6 +28,8 @@ class AvatarAndProgressProps {
   pseudo: string | undefined;
   city: string | undefined;
   club: string | undefined;
+  cityId: number | undefined;
+  clubId: number | undefined;
 }
 
 const contentListNoTitle: { [key: string]: any } = {
@@ -57,6 +59,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
   props: AvatarAndProgressProps
 ) => {
   const { userId } = useParams();
+  const history = useHistory();
   const [loading, setLoading] = useState(false);
   const {
     time,
@@ -67,6 +70,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
     pseudo,
     city,
     club,
+    cityId, clubId
   } = props;
   const [imageBase64, setImageBase64] = useState<string>();
   const [UserDistinctions, setData] = useState<UserDistinction[]>([
@@ -176,8 +180,8 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
             {firstName} {lastName}
           </Title>
           <Title level={4}>Псевдо: {pseudo}</Title>
-          <p className="statusText">Станиця: {city} </p>
-          <p className="statusText">Курінь: {club}</p>
+          <p className="statusText">Станиця: <Link className="LinkText" to="#" onClick={() => history.push(`/cities/${cityId}`)}>{ city }</Link></p>
+          <p className="statusText">Курінь: <Link className="LinkText" to="#" onClick={() => history.push(`/clubs/${clubId}`)}>{ club }</Link></p>
           {!isUserPlastun && (
             <div className="progress">
               <p className="statusText">

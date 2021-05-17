@@ -121,7 +121,17 @@ const fetchApproverName = async (id: string) => {
         <div className="displayFlex">
           <div className="avatarWrapper">
             <StickyContainer className="kadraWrapper">
-              <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} pseudo={data?.user.pseudo} city={data?.user.city} club={data?.user.club}/>
+              <AvatarAndProgress 
+              imageUrl={data?.user.imagePath} 
+              time={data?.timeToJoinPlast} 
+              firstName={data?.user.firstName} 
+              lastName={data?.user.lastName} 
+              isUserPlastun={data?.isUserPlastun} 
+              pseudo={data?.user.pseudo} 
+              city={data?.user.city} 
+              club={data?.user.club}
+              cityId={data?.user.cityId}
+              clubId={data?.user.clubId}/>
             </StickyContainer>
           </div>
           <div className="approversContent">

@@ -75,6 +75,8 @@ export default function () {
               pseudo={data?.user.pseudo}
               city={data?.user.city}
               club={data?.user.club}
+              cityId={data?.user.cityId}
+              clubId={data?.user.clubId}
             />
           </StickyContainer>
         </div>
@@ -422,6 +424,8 @@ export default function () {
             pseudo={data?.shortUser.pseudo}
             city={data?.shortUser.city}
             club={data?.shortUser.club}
+            cityId={data.shortUser.cityId}
+            clubId={data.shortUser.clubId}
           />
         </div>
         <div className="shortAllFields">
