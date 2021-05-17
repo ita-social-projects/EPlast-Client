@@ -172,8 +172,8 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
               "100%": "#87d068",
             }}
             percent={Math.round(
-              100 - ((time === undefined ? 0 : time) * 100) / 365
-            )}
+              (100 - ((time === undefined ? 0 : time) * 100) / 365 + Number.EPSILON) * 10
+            ) / 10}
           />
         </div>
       )}
