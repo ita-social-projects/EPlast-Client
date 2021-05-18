@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Form, Input, Button } from "antd";
 import styles from "../ResetPassword/ResetPassword.module.css";
 import AuthorizeApi from "../../api/authorizeApi";
@@ -7,10 +7,7 @@ import { useLocation, useHistory } from "react-router-dom";
 import {
   emptyInput,
   incorrectEmail,
-  minLength,
 } from "../../components/Notifications/Messages";
-import Password from "antd/lib/input/Password";
-import { validateYupSchema } from "formik";
 
 let authService = new AuthorizeApi();
 
@@ -34,7 +31,6 @@ export default function () {
         ],
         ConfirmPassword: [
             { required: true, message: emptyInput() },
-            { validator: checkPassword },
         ]
     };
 
@@ -68,7 +64,7 @@ export default function () {
         <div className={styles.resetPasswordContainer}>
           <p>Скидування пароля. Введіть електронну пошту</p>
         </div>
-        
+
         <Form.Item name="Email" rules={validationSchema.Email}>
           <Input
             className={styles.ResetPasswordInput}
