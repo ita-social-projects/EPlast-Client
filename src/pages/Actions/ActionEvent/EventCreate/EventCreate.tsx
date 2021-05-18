@@ -108,7 +108,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
   }
 
   function disabledEndDate(current:any){
-    return current && current < StartDate.startOf('day');
+    return current && current < StartDate?.startOf('day');
   }
 
   function onChange(e: any) {
