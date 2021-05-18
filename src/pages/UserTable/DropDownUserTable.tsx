@@ -54,13 +54,14 @@ const DropDown = (props: Props) => {
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
-  const [superAdmin, setsuperAdmin] = useState(false);
-  const [regionAdm, setRegionAdm] = useState(false);
-  const [cityAdm, setCityAdm] = useState(false);
-  const [clubAdm, setClubAdm] = useState(false);
-  const [member, setMember] = useState(false)
+  const [superAdmin, setsuperAdmin] = useState<boolean>(false);
+  const [regionAdm, setRegionAdm] = useState<boolean>(false);
+  const [cityAdm, setCityAdm] = useState<boolean>(false);
+  const [clubAdm, setClubAdm] = useState<boolean>(false);
+  const [member, setMember] = useState<boolean>(false)
   const [userAdmin, setUserAdmin] = useState<User>();
-  const [changeRoles, setChangeRoles] = useState(true);
+  const [changeRoles, setChangeRoles] = useState<boolean>(true);
+  const formerUser:string = "Колишній член пласту" 
 
   const fetchUser = async () => {
     let jwt = (await AuthStore.getToken()) as string;
@@ -80,6 +81,7 @@ const DropDown = (props: Props) => {
 
   useEffect(() => {
     fetchUser();
+    console.log(user)
   }, [user, changeRoles]);
 
 
@@ -163,17 +165,17 @@ const DropDown = (props: Props) => {
             icon={<EditOutlined />}
             title="Змінити права доступу"
           >
-            {superAdmin === true || regionAdm === true || cityAdm === true ? (
+            {(superAdmin === true || regionAdm === true || cityAdm === true) && user?.userRoles !== formerUser ? (
               <Menu.Item key="3">Провід станиці</Menu.Item>
             ) : (
               <> </>
             )}
-            {superAdmin === true || regionAdm === true ? (
+            {(superAdmin === true || regionAdm === true) && user?.userRoles !== formerUser ? (
               <Menu.Item key="4">Провід округи</Menu.Item>
             ) : (
               <> </>
             )}
-            {superAdmin === true || clubAdm === true ? (
+            {(superAdmin === true || clubAdm === true) && user?.userRoles !== formerUser ? (
               <Menu.Item key="5">Провід куреня</Menu.Item>
             ) : (
               <> </>
@@ -223,6 +225,7 @@ const DropDown = (props: Props) => {
           showModal={showEditModal}
           setShowModal={setShowEditModal}
           onChange={onChange}
+          user={user}
         />
         <ChangeUserCityModal
           record={record}
