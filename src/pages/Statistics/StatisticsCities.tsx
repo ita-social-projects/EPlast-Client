@@ -122,7 +122,6 @@ const StatisticsCities = () => {
       showError(error.message);
     }
   };
-
   const fetchYears = async () => {
     try {
       const arrayOfYears = [];
@@ -384,7 +383,7 @@ const onClick = (value: Array<Number>) => {
           }}
           label={["count", {
             content: (data) => {
-              return `${data.item}: ${Math.round(data.percent / sumOfIndicators * 100)}%`;
+              return `${data.item}: ${(data.percent / sumOfIndicators * 100).toFixed(2)}%`;
             },
           }]}
         />
