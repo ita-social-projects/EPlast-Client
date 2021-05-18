@@ -44,29 +44,6 @@ const columns = [
     sorter: (a: any, b: any) => a.numberInRegister - b.numberInRegister,
     sortDirections: ['ascend', 'descend'] as SortOrder[],
   },
-  {
-    title: 'Причина вручення',
-    dataIndex: 'basisOfGranting',
-    render:(basisOfGranting:string)=>{
-      return <Tooltip placement="topRight" title={basisOfGranting}>
-          <div>{basisOfGranting}</div>
-    </Tooltip>
-  }
-    
-  },
-  {
-    title: 'Лінк',
-    dataIndex: 'link',
-    ellipsis: {
-      showTitle: false,
-    },
-    render:(link:string)=>{
-      return <Tooltip placement="topRight" title={link}>
-              <a className={classes.link} href={link} target='_blank'>{link}</a>
-        </Tooltip>
-      
-  }
-},
     
 ];
 export default columns;

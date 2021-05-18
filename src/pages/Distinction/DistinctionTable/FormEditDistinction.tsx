@@ -17,7 +17,9 @@ import Distinction from "../Interfaces/Distinction";
 import{
   emptyInput,
   maxLength,
-  failEditAction
+  failEditAction,
+  maxNumber,
+  minNumber
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
@@ -160,11 +162,23 @@ const FormEditDistinction = ({
                 labelCol={{ span: 24 }}
                 name="number"
                 rules={[
-                  {
-                    required: true,
-                    message: emptyInput(),
-                  },
-                ]}
+                    {
+                      required: true,
+                      message: emptyInput(),
+                    },
+                    {
+                      validator: (_ : object, value: number) => 
+                          value > 99999
+                              ? Promise.reject(maxNumber(99999)) 
+                              : Promise.resolve()
+                    },
+                    {
+                      validator: (_ : object, value: number) => 
+                          value < 1
+                              ? Promise.reject(minNumber(1)) 
+                              : Promise.resolve()
+                    }
+                  ]}
               >
                 <Input
                   type="number"
@@ -288,8 +302,8 @@ const FormEditDistinction = ({
                 initialValue={distinction.reason}
                 rules={[
                   {
-                    max: 250,
-                    message: maxLength(250),
+                    max: 1000,
+                    message: maxLength(1000),
                   },
                 ]}
               >
@@ -300,7 +314,7 @@ const FormEditDistinction = ({
                     maxRows: 6,
                   }}
                   className={formclasses.inputField}
-                  maxLength={251}
+                  maxLength={1001}
                 />
               </Form.Item>
             </Col>

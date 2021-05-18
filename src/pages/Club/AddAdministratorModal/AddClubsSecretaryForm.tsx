@@ -87,8 +87,15 @@ const AddClubsNewSecretaryForm = (props: any) => {
 
   const addClubAdmin = async (admin: ClubAdmin) => {
     await addAdministrator(props.clubId, admin);
-    form.resetFields();
     notificationLogic("success", "Користувач успішно доданий в провід");
+    form.resetFields();
+    await NotificationBoxApi.createNotifications(
+      [admin.userId],
+      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/clubs/${props.clubId}`,
+      `цьому курені`
+    );
     props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
     props.onAdd?.(admin);
   };

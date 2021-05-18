@@ -11,6 +11,7 @@ import { getTableAdmins,getTableFollowers, getTableMembers } from './ClubAnnualR
 import { emptyInput, maxLength, successfulCreateAction, tryAgain } from '../../../components/Notifications/Messages';
 import { useHistory } from 'react-router-dom';
 import Spinner from "../../Spinner/Spinner";
+import { Console } from 'console';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -82,13 +83,15 @@ export const ClubAnnualReportCreate = () => {
         setIsLoading(true);
         try {
             let response = await getClubById(id);
+
             setClub(response.data);
-            const admins = await getAllAdmins(id);
-            setAdmins([...admins.data.administration, admins.data.head].filter(a => a != null));
-            const members= await getAllMembers(id);
-            setClubMembers(members.data.members);
-            const followers = await getAllFollowers(id);
-            setFollowers(followers.data.followers);
+
+            setAdmins(response.data.administration.filter((a:any) => a != null));
+
+            setClubMembers(response.data.members);
+
+            setFollowers(response.data.followers);
+
             setId(id);
          }
         catch (error) {
@@ -271,7 +274,7 @@ export const ClubAnnualReportCreate = () => {
                         <Form.Item
                             className='w100'
                             name='clubCenters'
-                            rules={[{ required: true, message: emptyInput() }, { max: 2000, message: maxLength(2000)}]} >
+                            rules={[{ required: true, message: emptyInput() }, { max: 200, message: maxLength(200)}]} >
                             <TextArea />
                         </Form.Item>
                     </Col>
@@ -286,7 +289,7 @@ export const ClubAnnualReportCreate = () => {
                         <Form.Item
                             className='w100'
                             name='kbUSPWishes'
-                            rules={[{ required: true, message: emptyInput() }, { max: 2000, message: maxLength(2000)}]} >
+                            rules={[{ required: true, message: emptyInput() }, { max: 500, message: maxLength(500)}]} >
                             <TextArea />
                         </Form.Item>
                     </Col>
@@ -352,13 +355,18 @@ export const ClubAnnualReportCreate = () => {
                         className="table"
                     />
                 </Col>
-                <Row
-                    justify='center' >
+                <Row className="clubButtons" justify='center'>
                     <Col>
                         <Button
                             type='primary'
                             htmlType='submit'>
                             Подати річний звіт
+                        </Button>
+                        <Button
+                            type="primary"
+                            className="backButton"
+                            onClick={() => history.goBack()}>
+                            Скасувати
                         </Button>
                     </Col>
                 </Row>

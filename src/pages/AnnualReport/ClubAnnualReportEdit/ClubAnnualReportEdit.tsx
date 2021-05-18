@@ -77,9 +77,13 @@ const ClubAnnualReportEdit = () => {
                         maxLength(7)
                         )}
         ],
-        textarea: [
+        textareaClubCenters: [
             { required: true, message: emptyInput() },
-            { max: 2000, message: maxLength(2000) }
+            { max: 200, message: maxLength(200) }
+        ],
+        textareaKbUSPWishes: [
+            { required: true, message: emptyInput() },
+            { max: 500, message: maxLength(500) }
         ]
     }
 
@@ -114,8 +118,14 @@ const ClubAnnualReportEdit = () => {
                         <Form.Item
                             className='w100'
                             name='currentClubMembers'
-                        >{(clubAnnualReport?.clubMembersSummary.split('\n').map((item, key) => {
-                            return <span key={key}>{item}<br/></span>
+                        >{(clubAnnualReport?.clubMembersSummary?.split('\n').map((item, key) => {
+                            if(item!=""){
+                                return <Text key={key}>{key+1}. {
+                                    item?.split(',').map((item, key)=>{
+                                        if(item!="")
+                                            return <Text key={key}>{item}<br/></Text>
+                                    })}<br/></Text>
+                            }
                         }))}
                         </Form.Item>
                     </Col>
@@ -197,7 +207,7 @@ const ClubAnnualReportEdit = () => {
                         <Form.Item
                             className='w100'
                             name='clubCenters'
-                            rules={validationSchema.textarea}>
+                            rules={validationSchema.textareaClubCenters}>
                             <TextArea />
                         </Form.Item>
                     </Col>
@@ -212,7 +222,7 @@ const ClubAnnualReportEdit = () => {
                         <Form.Item
                             className='w100'
                             name='kbUSPWishes'
-                            rules={validationSchema.textarea}>
+                            rules={validationSchema.textareaKbUSPWishes}>
                             <TextArea />
                         </Form.Item>
                     </Col>
@@ -233,12 +243,18 @@ const ClubAnnualReportEdit = () => {
                     </Col>
                 </Row>
 
-                <Row justify='center'>
+                <Row className="clubButtons" justify='center'>
                     <Col>
                         <Button
                             type='primary'
                             htmlType='submit'>
                             Редагувати
+                        </Button>
+                        <Button
+                            type="primary"
+                            className="backButton"
+                            onClick={() => history.goBack()}>
+                            Скасувати
                         </Button>
                     </Col>
                 </Row>

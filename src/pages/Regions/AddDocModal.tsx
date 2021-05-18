@@ -161,25 +161,18 @@ const AddDocumentModal = (props: Props) => {
               </div>
             ) : null}
           </Form.Item>
-
-          <Form.Item className="cancelConfirmButtons">
             <Row justify="end">
-              <Col xs={11} sm={5}>
-                <Button key="back" onClick={handleCancel}>
-                  Відмінити
-                </Button>
-              </Col>
-              <Col
-                className="publishButton"
-                xs={{ span: 11, offset: 2 }}
-                sm={{ span: 6, offset: 1 }}
-              >
-                <Button type="primary" loading={buttonLoading} disabled={disabled} htmlType="submit">
-                  Опублікувати
-                </Button>
+              <Col md={24} xs={24}>
+                <Form.Item style={{ textAlign: "right" }} className="cancelConfirmButtons">
+                  <Button key="back" className="buttons" onClick={handleCancel}>
+                    Відмінити
+                  </Button>
+                    <Button type="primary" className="buttons" loading={buttonLoading} disabled={disabled} htmlType="submit">
+                      Опублікувати
+                    </Button>
+                </Form.Item>
               </Col>
             </Row>
-          </Form.Item>
         </Form>
       </Modal>
     );

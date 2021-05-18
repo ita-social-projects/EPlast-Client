@@ -17,7 +17,9 @@ import Precaution from "../Interfaces/Precaution";
 import {
   emptyInput,
   maxLength,
-  failEditAction
+  failEditAction,
+  maxNumber,
+  minNumber
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
@@ -169,11 +171,23 @@ const FormEditPrecaution = ({
                 labelCol={{ span: 24 }}
                 name="number"
                 rules={[
-                  {
-                    required: true,
-                    message: emptyInput(),
-                  },
-                ]}
+                    {
+                      required: true,
+                      message: emptyInput(),
+                    },
+                    {
+                      validator: (_ : object, value: number) => 
+                          value > 99999
+                              ? Promise.reject(maxNumber(99999)) 
+                              : Promise.resolve()
+                    },
+                    {
+                      validator: (_ : object, value: number) => 
+                          value < 1
+                              ? Promise.reject(minNumber(1)) 
+                              : Promise.resolve()
+                    }
+                  ]}
               >
                 <Input
                   type="number"
@@ -298,8 +312,8 @@ const FormEditPrecaution = ({
                 rules={[
                   {
                     required: true,
-                    max: 250,
-                    message: maxLength(250),
+                    max: 500,
+                    message: maxLength(500),
                   },
                 ]}
               >
@@ -310,7 +324,7 @@ const FormEditPrecaution = ({
                     maxRows: 6,
                   }}
                   className={formclasses.inputField}
-                  maxLength={251}
+                  maxLength={501}
                 />
               </Form.Item>
             </Col>

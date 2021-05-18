@@ -40,14 +40,15 @@ import{
 } from "../../../components/Notifications/Messages"
 import "../EditUserPage/EditUserPage.less"
 import { UpuDegree } from "../Interface/Interface";
+import jwt_decode from "jwt-decode";
 
 export default function () {
+  const { userId } = useParams();
   const history = useHistory();
-  const oneWordPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50})*$/;
-  const manyWordsPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`()0-9]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'"\(\).`()0-9]{0,50})*$/;
-  const addressPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+-=%;₴~№"]{0,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+-=%;₴~№"]{0,50})*$/;
-  const wrongAddressMessage = shouldContain("тільки літери та символи");
-  const message = shouldContain("тільки літери");
+  const onlyLettersPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50})*$/;
+  const allVariantsPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",.0-9]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",.0-9]{0,50})*$/;
+  const wrongOnlyLettersMessage = shouldContain("тільки літери");
+  const wrongAllVariantsMessage = shouldContain("літери, символи та цифри");
   const [form] = Form.useForm();
   const MAX_AGE = 100;
 
@@ -71,8 +72,12 @@ export default function () {
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
+    let decodedJwt = jwt_decode(token) as any;
+    let id=user.nameid;
+    if(user.nameid!=userId || (decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]).includes("Admin"))
+      id=userId
     await userApi
-      .edit(user.nameid)
+      .edit(id)
       .then(async (response) => {
         setData(response.data);
         if (response.data.user.imagePath !== undefined) {
@@ -151,18 +156,18 @@ export default function () {
       { max: 25, message: maxLength(25) },
       { min: 2, message: minLength(2) },
       { required: true, message: emptyInput() },
-      { pattern: oneWordPattern, message: message },
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     surName: [
       { max: 25, message: maxLength(25) },
       { min: 2, message: minLength(2) },
       { required: true, message: emptyInput() },
-      { pattern: oneWordPattern, message: message },
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     fatherName: [
       { max: 25, message: maxLength(25) },
       { min: 2, message: minLength(2) },
-      { pattern: oneWordPattern, message: message }
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     gender: [
       { required: true, message: emptyInput() },
@@ -171,45 +176,46 @@ export default function () {
       { required: true, message: emptyInput() },
     ],
     degree: [
-      { max: 30, message: maxLength(30) },
-      { pattern: manyWordsPattern, message: message },
+      { max: 50, message: maxLength(50) },
+      { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
     ],
     placeOfStudy: [
       { max: 50, message: maxLength(50) },
+      { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
     ],
     speciality: [
       { max: 50, message: maxLength(50) },
-      { pattern: manyWordsPattern, message: message },
+      { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
     ],
     nationality: [
       { max: 25, message: maxLength(25) },
-      { pattern: oneWordPattern, message: message },
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     religion: [
       { max: 25, message: maxLength(25) },
-      { pattern: oneWordPattern, message: message },
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     placeOfWork: [
       { max: 50, message: maxLength(50) },
-      { pattern: oneWordPattern, message: message }
+      { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
     ],
     position: [
-      { max: 30, message: maxLength(30) },
-      { pattern: manyWordsPattern, message: message },
+      { max: 50, message: maxLength(50) },
+      { pattern: allVariantsPattern, message: wrongAllVariantsMessage }
     ],
     address: [
       { max: 50, message: maxLength(50) },
       { required: true, message: emptyInput() },
-      { pattern: addressPattern, message: wrongAddressMessage}
+      { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
     ],
     pseudo: [
-      {max: 30, message: maxLength(30)},
-      {pattern: oneWordPattern, message: message},
-      { min: 2, message: minLength(2) }
+      { max: 25, message: maxLength(25) },
+      { min: 2, message: minLength(2) },
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     publicPoliticalActivity: [
-      {max: 50, message: maxLength(50)},
-      { pattern: manyWordsPattern, message: message },
+      { max: 25, message: maxLength(25) },
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     upuDegree: [
       { required: true, message: emptyInput() },
@@ -220,27 +226,23 @@ export default function () {
     return word.replace(/`/g, '\'');
   };
 
-  const setFirstLettersUpperCased  = (word: string) => {
+  const setFirstLettersUpperCased = (word: string) => {
     if(word.length == 0) {
       return word;
     }
 
-    let parts = word.split('-');
+    let parts = word.split(/[- ]+/);
 
     parts = parts.map( (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase());
-    return parts.join('-');
-  };
-
-  const setLettersLowerCased = (word: string) => {
-    if(word.length == 0) {
-      return word;
+    
+    if(word.includes('-')) {
+      return parts.join('-');
+    } else if(word.includes(' ')) {
+      return parts.join(' ');
+    } else {
+      return parts.join('');
     }
-
-    let parts = word.split(' ');
-
-    parts = parts.map( (part) => part.charAt(0) + part.slice(1).toLowerCase());
-    return parts.join(' ');
-  };  
+  };
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -287,13 +289,13 @@ export default function () {
         id: 0,
         name: value,
       });
-      form.setFieldsValue({ nationalityName: setLettersLowerCased(changeApostropheInWord(value)) });
+      form.setFieldsValue({ nationalityName: setFirstLettersUpperCased(changeApostropheInWord(value)) });
     } else {
       setNationality({
         id: parseInt(event.key),
         name: event.value,
       });
-      form.setFieldsValue({ nationalityName: setLettersLowerCased(changeApostropheInWord(event.value)) });
+      form.setFieldsValue({ nationalityName: setFirstLettersUpperCased(changeApostropheInWord(event.value)) });
     }
   };
 
@@ -314,22 +316,26 @@ export default function () {
   }
 
   const handleOnChangePublicPoliticalActivity = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue({ publicPoliticalActivity: setLettersLowerCased(changeApostropheInWord(event.target.value)) });
+    form.setFieldsValue({ publicPoliticalActivity: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
   }
 
+  const handleOnChangeAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
+    form.setFieldsValue( { address: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
+  }
+  
   const handleOnChangeReligion = (value: any, event: any) => {
     if (event.key === undefined) {
       setReligion({
         id: 0,
         name: value,
       });
-      form.setFieldsValue({ religionName: setLettersLowerCased(changeApostropheInWord(value)) });
+      form.setFieldsValue({ religionName: setFirstLettersUpperCased(changeApostropheInWord(value)) });
     } else {
       setReligion({
         id: parseInt(event.key),
         name: event.value,
       });
-      form.setFieldsValue({ religionName: setLettersLowerCased(changeApostropheInWord(event.value)) });
+      form.setFieldsValue({ religionName: setFirstLettersUpperCased(changeApostropheInWord(event.value)) });
     }
   };
   const handleOnChangeDegree = (value: any, event: any) => {
@@ -540,7 +546,7 @@ export default function () {
           </div>
           <div className={styles.rowBlock}>
             <Form.Item
-              label="По-батькові"
+              label="По батькові"
               name="fatherName"
               rules={validationSchema.fatherName}
               className={styles.formItem}
@@ -572,7 +578,7 @@ export default function () {
               rules={validationSchema.pseudo}
               className={styles.formItem}
             >            
-              <Input className={styles.dataInput} onChange={handleOnChangePseudo} maxLength={31}/>
+              <Input className={styles.dataInput} onChange={handleOnChangePseudo} maxLength={26}/>
             </Form.Item>
             <Form.Item 
               label="Дата народження"
@@ -747,7 +753,7 @@ export default function () {
               rules={validationSchema.address}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} maxLength={51}/>
+              <Input className={styles.dataInput} onChange={handleOnChangeAddress} maxLength={51}/>
             </Form.Item>
             <Form.Item
               label="Громадська, політична діяльність"
@@ -755,7 +761,7 @@ export default function () {
               rules={validationSchema.publicPoliticalActivity}
               className={styles.formItem}
             >            
-              <Input className={styles.dataInput} onChange={handleOnChangePublicPoliticalActivity} maxLength={501}/>
+              <Input className={styles.dataInput} onChange={handleOnChangePublicPoliticalActivity} maxLength={26}/>
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>

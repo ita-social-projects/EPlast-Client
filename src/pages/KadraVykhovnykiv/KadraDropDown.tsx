@@ -17,7 +17,7 @@ import kadrasApi from "../../api/KadraVykhovnykivApi";
 import AuthStore from "../../stores/AuthStore";
 
 interface Props {
-  record: number;
+  record: any;
   pageX: number;
   pageY: number;
   setShowDropdown: (view: boolean) => void;
@@ -68,11 +68,11 @@ const DropDown = (props: Props) => {
         setShowDropdown(false);
         break;
       case "1":
-        deleteConfirm(record, onDelete);
+        deleteConfirm(record.id, onDelete);
         setShowDropdown(false);
         break;
-      case "3":
-        await kadrasApi.findUserByEduStaff(record).then((response) => {
+        case "3":
+        await kadrasApi.findUserByEduStaff(record.id).then((response) => {
           window.open(`/userpage/main/${response.data}`);
         });
 

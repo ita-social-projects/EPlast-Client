@@ -171,6 +171,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     setVisibleModal(false);
     onAdd();
     form.resetFields();
+    setFileData({ FileAsBase64: null, FileName: null });
     setSubmitLoading(false);
     await notifyMentionedUsers(values.description, values.name);
   };
@@ -315,7 +316,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
                 className={formclasses.formField}
                 multiple={false}
                 showUploadList={false}
-                accept=".doc,.docx,.png,.xls,xlsx,.png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                accept=".doc,.docx,.png,.xls,xlsx,.png,.pdf,.jpg,.jpeg,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 headers={{ authorization: "authorization-text" }}
               >
                 <p className="ant-upload-drag-icon">
@@ -384,9 +385,6 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
               htmlType="submit"
               className={formclasses.buttons}
               loading={submitLoading}
-              onClick={() => {
-                setFileData({ FileAsBase64: null, FileName: null });
-              }}
             >
               Опублікувати
             </Button>

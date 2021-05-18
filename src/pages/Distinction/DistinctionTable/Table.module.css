@@ -6,7 +6,6 @@
 
   .searchContainer {
     display: flex;
-    align-items: baseline;
     margin-bottom: 12px;
     width: 700px;
     margin-left: auto; 
