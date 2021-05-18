@@ -4,6 +4,7 @@ import AnnualReportApi from '../../../../api/AnnualReportApi';
 import { useHistory } from 'react-router-dom';
 import './CitySelectModal.less'
 import {emptyInput} from "../../../../components/Notifications/Messages"
+import { getCities } from '../../../../api/citiesApi';
 
 interface Props {
     visibleModal: boolean,
@@ -48,17 +49,17 @@ const CitySelectModal = (props: Props) => {
 
     const fetchCities = async () => {
         try {
-            let response = await AnnualReportApi.getCitiesOptions();
-            let cities = response.data.cities.map((item:any) => {
+            let response = await getCities()
+            let cities = response.data.map((item:any) => {
                 return {
-                    label: item.item2,
-                    value: item.item1
+                    label: item.name,
+                    value: item.id
                 }
             })
             setCityOptions(cities);
         }
         catch (error) {
-
+            showError(error.message)
         }
     }
 

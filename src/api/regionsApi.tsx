@@ -22,6 +22,12 @@ export const GetAllRegions = async () => {
   });
 };
 
+export const GetAllRegionsOptions = async () => {
+  return await api.get("Regions/Options").catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export const GetRegionsBoard = async () => {
   return await api.get("Regions/regionsBoard").catch((error) => {
     throw new Error(error);

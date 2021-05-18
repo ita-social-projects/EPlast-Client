@@ -5,10 +5,11 @@ import FormAddPlastDegree from './FormAddPlastDegree';
 type ModalAddPlastDegreeProps = {
     userId: string;
     visibleModal: boolean;
+    isCityAdmin?:boolean;
     setVisibleModal: (visibleModal: boolean) => void;
     handleAddDegree: () => void;
 }
-const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, userId, handleAddDegree }: ModalAddPlastDegreeProps) => {
+const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, isCityAdmin, userId, handleAddDegree }: ModalAddPlastDegreeProps) => {
     const [availablePlastDegree, setAvailablePlastDegree] = useState<Array<PlastDegree>>([]);
 
     const handleCancel = () => setVisibleModal(false);
@@ -41,6 +42,7 @@ const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, userId, handleAddD
         <FormAddPlastDegree
             handleAddDegree={handleAddDegree}
             userId={userId}
+            isCityAdmin={isCityAdmin!}
             setVisibleModal={setVisibleModal}
             availablePlastDegree={availablePlastDegree}
             resetAvailablePlastDegree={fetchData} />

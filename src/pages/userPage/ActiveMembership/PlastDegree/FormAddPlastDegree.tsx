@@ -15,13 +15,14 @@ type FormAddPlastDegreeProps = {
     handleAddDegree: () => void;
     resetAvailablePlastDegree: () => Promise<void>;
     userId: string;
+    isCityAdmin?:boolean;
 };
 
 const FormAddPlastDegree = ({
     setVisibleModal,
     userId,
     availablePlastDegree,
-    handleAddDegree,
+    handleAddDegree, isCityAdmin,
     resetAvailablePlastDegree }: FormAddPlastDegreeProps) => {
     const [form] = Form.useForm();
     const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -53,7 +54,7 @@ const FormAddPlastDegree = ({
         if (value === "Пласт прият") {
             setFiltredDegrees(availablePlastDegree.filter(item => item.name === "Пласт прият"));
         } else if (value === "Улад Старшого Пластунства") {
-            setFiltredDegrees(availablePlastDegree.filter(item => item.name.includes("Старш")));
+            setFiltredDegrees(availablePlastDegree.filter(item =>item.name.includes("Старш")));
         } else {
             setFiltredDegrees(availablePlastDegree.filter(item => item.name.includes("сеніор")));
         }
@@ -73,7 +74,7 @@ const FormAddPlastDegree = ({
                 onChange={(value) => handleOnChange(value)}
                 placeholder={"Оберіть Улад"}
             >
-                <Select.Option value="Пласт прият">Пласт прият</Select.Option>
+                {!isCityAdmin && <Select.Option value="Пласт прият">Пласт прият</Select.Option>}
                 <Select.Option value="Улад Старшого Пластунства">Улад Старшого Пластунства</Select.Option>
                 <Select.Option value="Улад Пластового Сеніорату">Улад Пластового Сеніорату</Select.Option>
             </Select>
@@ -83,7 +84,12 @@ const FormAddPlastDegree = ({
             rules={[{ required: true, message: emptyInput() }]}>
             <Select
                 placeholder={"Оберіть ступінь"}
-            >{filtredDegrees.map(apd => (<Select.Option key={apd.id} value={apd.id}>{apd.name}</Select.Option>))}</Select>
+            >{
+                filtredDegrees.map(apd => {
+                if((isCityAdmin && (apd.id==1 || apd.id==7)) || !isCityAdmin)
+                    return (<Select.Option key={apd.id} value={apd.id}>{apd.name}</Select.Option>)
+            }
+            )}</Select>
         </Form.Item>
         <Form.Item
             className={classes.formField}

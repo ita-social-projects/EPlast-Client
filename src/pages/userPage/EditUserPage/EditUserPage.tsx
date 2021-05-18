@@ -40,8 +40,10 @@ import{
 } from "../../../components/Notifications/Messages"
 import "../EditUserPage/EditUserPage.less"
 import { UpuDegree } from "../Interface/Interface";
+import jwt_decode from "jwt-decode";
 
 export default function () {
+  const { userId } = useParams();
   const history = useHistory();
   const onlyLettersPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50})*$/;
   const allVariantsPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",.0-9]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",.0-9]{0,50})*$/;
@@ -70,8 +72,12 @@ export default function () {
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
+    let decodedJwt = jwt_decode(token) as any;
+    let id=user.nameid;
+    if(user.nameid!=userId || (decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]).includes("Admin"))
+      id=userId
     await userApi
-      .edit(user.nameid)
+      .edit(id)
       .then(async (response) => {
         setData(response.data);
         if (response.data.user.imagePath !== undefined) {

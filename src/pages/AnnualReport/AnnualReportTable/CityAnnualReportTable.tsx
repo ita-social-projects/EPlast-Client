@@ -32,7 +32,8 @@ interface props {
     const [count, setCount] = useState<number>(0);
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
-    const [canManage, setCanManage] = useState<boolean>();
+    const [isAdmin, setIsAdmin] = useState<boolean>();
+    const [isCityAdmin, setIsCityAdmin] = useState<boolean>();
     const [currentSearchedData, setCurrentSearchedData] = useState<string>();
     const [showUnconfirmedDropdown, setShowUnconfirmedDropdown] = useState<boolean>(false);
     const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(false);
@@ -43,7 +44,7 @@ interface props {
     const [authReport, setAuthReport]=useState(false);
 
     useEffect(()=>{
-      if(currentSearchedData!=searchedData){
+      if(currentSearchedData!==searchedData){
         setCurrentSearchedData(searchedData);
         setPage(1);
       }
@@ -84,7 +85,8 @@ interface props {
       let roles = decodedJwt[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
       ] as string[];
-      setCanManage(roles.includes("Admin"));
+      setIsAdmin(roles.includes("Admin"));
+      setIsCityAdmin(roles.includes("Голова Станиці"));
     };
     
     const showDropdown = (annualReportStatus: number) => {
@@ -124,7 +126,7 @@ interface props {
       hideDropdowns();
       try {
         let response = await AnnualReportApi.confirm(id);
-        let cityId = annualReports.find((item) => item.id == id)?.cityId;
+        let cityId = annualReports.find((item) => item.id === id)?.cityId;
         setAnnualReports(
           annualReports.map((item) => {
             if (
@@ -202,7 +204,7 @@ interface props {
                   <p>
                     {count? 'Знайдено '+count+'/'+total+' результатів' : 'За вашим запитом нічого не знайдено'}
                   </p>
-                  {canManage? null: <div className={"AuthReport"}>
+                  {isCityAdmin? <div className={"AuthReport"}>
                       <Tooltip
                           placement="topLeft"
                           title="Звіти в моєму розпорядженні">
@@ -210,7 +212,7 @@ interface props {
                           {authReport? <StarFilled /> : <StarOutlined />}
                         </button>
                       </Tooltip>
-                  </div>}
+                  </div> : null}
                 </div>
                 <Table
                     bordered
@@ -218,7 +220,7 @@ interface props {
                     columns={columns}
                     scroll={{ x: 1300 }}
                     dataSource={annualReports.map((item:any)=>{
-                      if(item.canManage && !canManage)
+                      if(item.canManage && !isAdmin)
                         return{...item, idView: (<>{item.id}    <text style={{color: "#3c5438"}}>
                             <Tooltip
                                 placement="topLeft"
@@ -269,7 +271,7 @@ interface props {
           record={annualReport}
           pageX={x}
           pageY={y}
-          canManage={canManage!}
+          canManage={isAdmin!}
           onView={handleView}
           onEdit={handleEdit}
           onConfirm={handleConfirm}
@@ -280,7 +282,7 @@ interface props {
           record={annualReport}
           pageX={x}
           pageY={y}
-          canManage={canManage!}
+          canManage={isAdmin!}
           onView={handleView}
           onCancel={handleCancel}
         />
@@ -298,10 +300,6 @@ interface props {
         showError={showError}
         handleOk={() => setShowAnnualReportModal(false)}
       />
-      <CitySelectModal
-        visibleModal={showCitySelectModal}
-        handleOk={() => setShowCitySelectModal(false)}
-      />
-        </div>  
+      </div>  
       )
 }
