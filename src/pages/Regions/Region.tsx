@@ -578,11 +578,12 @@ const Region = () => {
                 >
                   Більше
               </Button>
-
+              {canEdit?(
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
                 />
+                ):null}
               </div>
             </Card>
           </Col>

@@ -98,7 +98,6 @@ const ActiveMembership = () => {
         notificationLogic("error", error.message);
       });
 
-
     setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
 
     await activeMembershipApi.getUserDates(userId).then((response) => {

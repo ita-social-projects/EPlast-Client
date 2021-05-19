@@ -142,23 +142,18 @@ const AddAchievementsModal = (props: Props) => {
             </div>
           ) : null}
         </Form.Item>
-        <Form.Item>
-        <Row justify="end">
-            <Col xs={11} sm={5}>
-              <Button key="back" onClick={handleCancel}>
-                Відмінити
-                  </Button>
-            </Col>
-            <Col
-              xs={{ span: 11, offset: 2 }}
-              sm={{ span: 7, offset: 1 }}
-            >
-              <Button type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
-                Опублікувати
-                  </Button>
+          <Row justify="end">
+            <Col md={24} xs={24}>
+              <Form.Item style={{ textAlign: "right" }}>
+                <Button key="back" onClick={handleCancel}>
+                  Відмінити
+                </Button>
+                <Button  style={{ marginLeft: "7px" }} type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
+                  Опублікувати
+                </Button>
+              </Form.Item>
             </Col>
           </Row>
-        </Form.Item>
       </Form>
     </Modal>
   );

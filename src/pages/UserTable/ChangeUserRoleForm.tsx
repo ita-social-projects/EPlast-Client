@@ -20,22 +20,26 @@ interface Props {
   record: string;
   setShowModal: (showModal: boolean) => void;
   onChange: (id: string, userRoles: string) => void;
+  user:any
 }
 
-const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
+const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => {
   const userId = record;
   const [form] = Form.useForm();
-
   const [roles, setRoles] = useState<Array<string>>([]);
+  const [disabled, setDisabled] = useState<boolean>(false);
+  const { Option } = Select;
 
   useEffect(() => {
-    const fetchData = async () => {
-      await adminApi.getRolesForEdit(userId).then((response) => {
-        setRoles(response.data.userRoles);
-      });
-    };
     fetchData();
+    console.log(record)
   }, []);
+
+  const fetchData = async () => {
+    await adminApi.getRolesForEdit(userId).then((response) => {
+      setRoles(response.data.userRoles);
+    });
+  };
 
   const handleCancel = () => {
     setShowModal(false);
@@ -46,6 +50,9 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
     currentDates.dateEnd = isEmpty ? "0001-01-01T00:00:00" : moment().format();
     await activeMembershipApi.postUserDates(currentDates);
   };
+  const  handleChange = (value:string) => {
+    console.log(`selected ${value}`);
+  }
 
   const handleFinish = async (value: any) => {
     await adminApi.putCurrentRole(userId, value.userRole);
@@ -66,6 +73,13 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
     );
   };
 
+  const handleDisabled = () => {
+    if(user.userRoles === "Колишній член пласту") {
+      return true
+    }
+    return false
+  }
+
   return (
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
@@ -79,14 +93,16 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange }: Props) => {
             },
           ]}
         >
-          <AutoComplete
-            options={[
-              { value: "Прихильник" },
-              { value: "Зацікавлений" },
-              { value: "Дійсний член організації" },
-              { value: "Колишній член пласту" },
-            ]}
-          ></AutoComplete>
+      <Select onChange={handleChange}>
+        <Option value="Прихильник" disabled={handleDisabled()}>Прихильник</Option>
+        <Option value="Зацікавлений" disabled={handleDisabled()}>Зацікавлений</Option>
+        <Option value="Дійсний член організації" disabled={handleDisabled()}>
+          Дійсний член організації
+        </Option>
+        <Option value="Колишній член пласту" disabled={handleDisabled()}>Колишній член пласту</Option>
+        <Option value="Зареєстрований користувач" disabled={disabled}>Зареєстрований користувач</Option>
+        
+      </Select>
         </Form.Item>
         <Form.Item className="cancelConfirmButtons">
           <Row justify="end">

@@ -383,7 +383,7 @@ const StatisticsCities = () => {
                   }}
                   label={["count", {
                     content: (data) => {
-                      return `${data.item}: ${Math.round(data.percent / sumOfIndicators * 100)}%`;
+                      return `${data.item}: ${(data.percent / sumOfIndicators * 100).toFixed(2)}%`;
                     },
                   }]}
                 />

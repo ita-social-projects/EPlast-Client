@@ -21,8 +21,9 @@ const columns = [
   {
     title: 'Статус',
     dataIndex: 'decisionStatusType',
-    render: (decisionStatusType: number) => {
-        return statusTypeGetParser(decisionStatusType);
+    render: (decisionStatusType: any) => {
+        return typeof(decisionStatusType) === "number" ?
+            statusTypeGetParser(decisionStatusType) : decisionStatusType;
     }
   },
   {
@@ -56,7 +57,7 @@ const columns = [
         return <button type = "button" onClick = {
           async () =>  {
              await decisionsApi.getFileAsBase64(fileName);}}
-             >Скачати додаток</button>;
+             >Завантажити додаток</button>;
       }
       return ""; 
   },}
