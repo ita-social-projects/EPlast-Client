@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import classes from "./ActiveMembership.module.css";
 import {Typography, List, Button, Tooltip, Tag, Empty} from "antd";
-
 import "../personalData/PersonalData.less";
 import activeMembershipApi, {
   UserPlastDegree,
@@ -18,12 +17,8 @@ import DeleteDegreeConfirm from "./PlastDegree/DeleteDegreeConfirm";
 import { SafetyCertificateOutlined } from "@ant-design/icons";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
-import {cityNameOfApprovedMember} from "../../../api/citiesApi"
 import notificationLogic from "../../../components/Notifications/Notification";
-import {clubNameOfApprovedMember} from "../../../api/clubsApi";
 import jwt_decode from "jwt-decode";
-import City from "../../City/City/City";
-import { number } from "yup";
 const { Title } = Typography;
 
 const ActiveMembership = () => {
@@ -192,11 +187,10 @@ const ActiveMembership = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [accessLevels]);
   return (
     <div className={classes.wrapper}>
       <div className={classes.avatarWrapper}>
-        {console.log(">>>>>", user)}
         <AvatarAndProgressStatic
           imageUrl={user.imagePath}
           time={data.timeToJoinPlast}
