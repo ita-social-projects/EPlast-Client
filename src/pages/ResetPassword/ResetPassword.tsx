@@ -59,7 +59,6 @@ export default function () {
         initialValues={initialValues}
         form={form}
         onFinish={handleSubmit}
-        autoComplete="off"
       >
         <div className={styles.resetPasswordContainer}>
           <p>Скидування пароля. Введіть електронну пошту</p>
@@ -77,6 +76,7 @@ export default function () {
             visibilityToggle={false}
             className={styles.ResetPasswordInput}
             placeholder="Пароль"
+            autoComplete="new-password"
           />
         </Form.Item>
 
