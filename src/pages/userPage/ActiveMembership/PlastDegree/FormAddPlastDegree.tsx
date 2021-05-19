@@ -26,6 +26,7 @@ const FormAddPlastDegree = ({
     resetAvailablePlastDegree }: FormAddPlastDegreeProps) => {
     const [form] = Form.useForm();
     const [isChecked, setIsChecked] = useState<boolean>(false);
+    const [plastPryiat, setPlastPryiat]=useState<boolean>(false);
     const [filtredDegrees, setFiltredDegrees] = useState<Array<PlastDegree>>([]);
     const handleFinish = async (info: any) => {
         const userPlastDegreePost: UserPlastDegreePost = {
@@ -52,10 +53,13 @@ const FormAddPlastDegree = ({
 
     const handleOnChange = (value: any) => {
         if (value === "Пласт прият") {
+            setPlastPryiat(true);
             setFiltredDegrees(availablePlastDegree.filter(item => item.name === "Пласт прият"));
         } else if (value === "Улад Старшого Пластунства") {
+            setPlastPryiat(false);
             setFiltredDegrees(availablePlastDegree.filter(item =>item.name.includes("Старш")));
         } else {
+            setPlastPryiat(false);
             setFiltredDegrees(availablePlastDegree.filter(item => item.name.includes("сеніор")));
         }
     }
@@ -79,18 +83,19 @@ const FormAddPlastDegree = ({
                 <Select.Option value="Улад Пластового Сеніорату">Улад Пластового Сеніорату</Select.Option>
             </Select>
         </Form.Item>
+        {!plastPryiat &&
         <Form.Item
-            name="plastDegree"
-            rules={[{ required: true, message: emptyInput() }]}>
-            <Select
-                placeholder={"Оберіть ступінь"}
-            >{
-                filtredDegrees.map(apd => {
-                if((isCityAdmin && (apd.id==1 || apd.id==7)) || !isCityAdmin)
-                    return (<Select.Option key={apd.id} value={apd.id}>{apd.name}</Select.Option>)
-            }
-            )}</Select>
-        </Form.Item>
+        name="plastDegree"
+        rules={[{ required: true, message: emptyInput() }]}>
+        <Select
+            placeholder={"Оберіть ступінь"}
+        >{
+            filtredDegrees.map(apd => {
+            if((isCityAdmin && (apd.id==1 || apd.id==7)) || !isCityAdmin)
+                return (<Select.Option key={apd.id} value={apd.id}>{apd.name}</Select.Option>)
+        }
+        )}</Select>
+    </Form.Item>}
         <Form.Item
             className={classes.formField}
             name="datepickerStart"
