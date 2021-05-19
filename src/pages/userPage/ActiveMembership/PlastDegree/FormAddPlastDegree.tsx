@@ -4,10 +4,7 @@ import activeMembershipApi, { PlastDegree, UserPlastDegreePost, UserPlastDegree 
 import classes from "./FormAddPlastDegree.module.css"
 import NotificationBoxApi from '../../../../api/NotificationBoxApi';
 import { emptyInput } from "../../../../components/Notifications/Messages"
-import { setNestedObjectValues } from 'formik';
-import { info } from 'console';
-import { SelectValue } from 'antd/lib/select';
-import { OptionsType, OptionData, OptionGroupData } from 'rc-select/lib/interface';
+
 
 type FormAddPlastDegreeProps = {
     availablePlastDegree: Array<PlastDegree>;
@@ -16,6 +13,7 @@ type FormAddPlastDegreeProps = {
     resetAvailablePlastDegree: () => Promise<void>;
     userId: string;
     isCityAdmin?:boolean;
+    cancel:boolean;
 };
 
 const FormAddPlastDegree = ({
@@ -23,12 +21,15 @@ const FormAddPlastDegree = ({
     userId,
     availablePlastDegree,
     handleAddDegree, isCityAdmin,
-    resetAvailablePlastDegree }: FormAddPlastDegreeProps) => {
+    resetAvailablePlastDegree, cancel }: FormAddPlastDegreeProps) => {
     const [form] = Form.useForm();
     const [isChecked, setIsChecked] = useState<boolean>(false);
-    const [plastPryiat, setPlastPryiat]=useState<boolean>(false);
+    const [visiableDegree, setVisiableDegree]=useState<boolean>(false);
     const [filtredDegrees, setFiltredDegrees] = useState<Array<PlastDegree>>([]);
+
     const handleFinish = async (info: any) => {
+        const plastDegreeId=filtredDegrees.find(item => item.name === "Пласт прият")?.id;
+        info.plastDegree=plastDegreeId? plastDegreeId:info.plastDegree;
         const userPlastDegreePost: UserPlastDegreePost = {
             plastDegreeId: info.plastDegree,
             dateStart: info.datepickerStart._d,
@@ -38,6 +39,7 @@ const FormAddPlastDegree = ({
         };
         await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
         setVisibleModal(false);
+        setVisiableDegree(false);
 
         handleAddDegree();
         form.resetFields();
@@ -53,18 +55,19 @@ const FormAddPlastDegree = ({
 
     const handleOnChange = (value: any) => {
         if (value === "Пласт прият") {
-            setPlastPryiat(true);
+            setVisiableDegree(false);
             setFiltredDegrees(availablePlastDegree.filter(item => item.name === "Пласт прият"));
         } else if (value === "Улад Старшого Пластунства") {
-            setPlastPryiat(false);
+            setVisiableDegree(true);
             setFiltredDegrees(availablePlastDegree.filter(item =>item.name.includes("Старш")));
         } else {
-            setPlastPryiat(false);
+            setVisiableDegree(true);
             setFiltredDegrees(availablePlastDegree.filter(item => item.name.includes("сеніор")));
         }
     }
     useEffect(() => {
-    }, [filtredDegrees]);
+        if(cancel) {form.resetFields(); setVisiableDegree(false);}
+    }, [filtredDegrees, cancel]);
 
     const handleSwitchChange = (e: boolean) => setIsChecked(e);
     return <Form
@@ -78,15 +81,15 @@ const FormAddPlastDegree = ({
                 onChange={(value) => handleOnChange(value)}
                 placeholder={"Оберіть Улад"}
             >
-                {!isCityAdmin && <Select.Option value="Пласт прият">Пласт прият</Select.Option>}
-                <Select.Option value="Улад Старшого Пластунства">Улад Старшого Пластунства</Select.Option>
-                <Select.Option value="Улад Пластового Сеніорату">Улад Пластового Сеніорату</Select.Option>
+                {!isCityAdmin && availablePlastDegree.find(item => item.name === "Пласт прият") && <Select.Option value="Пласт прият">Пласт прият</Select.Option>}
+                {availablePlastDegree.find(item =>item.name.includes("Старш")) && <Select.Option value="Улад Старшого Пластунства">Улад Старшого Пластунства</Select.Option>}
+                {availablePlastDegree.filter(item => item.name.includes("сеніор")) && <Select.Option value="Улад Пластового Сеніорату">Улад Пластового Сеніорату</Select.Option>}
             </Select>
         </Form.Item>
-        {!plastPryiat &&
+        {visiableDegree && 
         <Form.Item
         name="plastDegree"
-        rules={[{ required: true, message: emptyInput() }]}>
+        rules={[{ required: visiableDegree, message: emptyInput() }]}>
         <Select
             placeholder={"Оберіть ступінь"}
         >{
