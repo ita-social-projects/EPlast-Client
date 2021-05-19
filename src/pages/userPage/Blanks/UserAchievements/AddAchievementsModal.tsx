@@ -143,7 +143,7 @@ const AddAchievementsModal = (props: Props) => {
           ) : null}
         </Form.Item>
         <Form.Item>
-          <Row justify="end">
+        <Row justify="end">
             <Col xs={11} sm={5}>
               <Button key="back" onClick={handleCancel}>
                 Відмінити
@@ -151,7 +151,7 @@ const AddAchievementsModal = (props: Props) => {
             </Col>
             <Col
               xs={{ span: 11, offset: 2 }}
-              sm={{ span: 6, offset: 1 }}
+              sm={{ span: 7, offset: 1 }}
             >
               <Button type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
                 Опублікувати

@@ -163,7 +163,7 @@ const AddBiographyModal = (props: Props) => {
               <Col
                 className="publishButton"
                 xs={{ span: 11, offset: 2 }}
-                sm={{ span: 6, offset: 1 }}
+                sm={{ span: 7, offset: 1 }}
               >
                 <Button type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
                   Опублікувати
