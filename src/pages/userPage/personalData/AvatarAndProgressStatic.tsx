@@ -162,8 +162,8 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
         {firstName} {lastName}
       </Title>
       <Title level={4}>Псевдо: {pseudo}</Title>
-      <p className="statusText">Станиця: <Link to="#" className="LinkText" onClick={() => history.push(`/cities/${cityId}`)}>{city}</Link></p>
-      <p className="statusText">Курінь: <Link to="#" className="LinkText" onClick={() => history.push(`/clubs/${clubId}`)}>{club}</Link></p>
+      <p className="statusText">Станиця: <Link to="#" className="LinkText" onClick={() => window.open(`/cities/${cityId}`)}>{city}</Link></p>
+      <p className="statusText">Курінь: <Link to="#" className="LinkText" onClick={() => window.open(`/clubs/${clubId}`)}>{club}</Link></p>
       {!isUserPlastun && (
         <div className="progress">
           <p className="statusText">
