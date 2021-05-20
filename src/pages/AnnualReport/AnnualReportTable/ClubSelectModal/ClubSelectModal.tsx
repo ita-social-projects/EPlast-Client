@@ -40,8 +40,8 @@ const ClubSelectModal = (props: Props) => {
         let response = await getClubsOptions();
         let clubs = response.data.map((item:any) => {
             return {
-                label: item.name,
-                value: item.id
+                label: item.item2,
+                value: item.item1
             }
         })
         setClubOptions(clubs);

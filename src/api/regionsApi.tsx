@@ -187,14 +187,36 @@ export const getAllRegionsReports = async () => {
 
 export const getSearchedRegionsReports = async (searchedData: string, page: number, pageSize: number, sortKey: number) => {
   return api.get(`Regions/RegionsAnnualReports`,
-      {searchedData: searchedData,
-        page: page,
-        pageSize: pageSize,
-        sortKey: sortKey,
-      })
-      .catch((error) => {
-        throw new Error(error);
-      })
+    {
+      searchedData: searchedData,
+      page: page,
+      pageSize: pageSize,
+      sortKey: sortKey,
+    })
+    .catch((error) => {
+      throw new Error(error);
+    })
+}
+
+const confirm = async (id: number) => {
+  return await api.put(`Regions/confirmReport/${id}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+}
+
+const cancel = async (id: number) => {
+  return await api.put(`Regions/cancel/${id}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+}
+
+const removeAnnualReport = async (id: number) => {
+  return await api.remove(`Regions/${id}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
 }
 
 export const getRegionsByPage = async (
@@ -216,6 +238,9 @@ export const getAdminTypeIdByName = async (name: string) => {
 };
 
 export default {
+  removeAnnualReport,
+  cancel,
+  confirm,
   getAllRegionsReports,
   getReportById,
   createRegionAnnualReport,
