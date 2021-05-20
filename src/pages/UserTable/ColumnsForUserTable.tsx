@@ -45,7 +45,7 @@ const ColumnsForUserTable: any = [
     },
     sortDirections: ["descend", "ascend"],
     defaultSortOrder: "ascend",
-    width: 55,
+    width: 65,
   },
   {
     title: "Ім`я",
