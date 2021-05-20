@@ -37,7 +37,7 @@ const setTagColor = (userRoles: string) => {
 const ColumnsForUserTable: any = [
   {
     title: "№",
-    dataIndex: "userProfileId",
+    dataIndex: "userSystemId",
     render: (id: number) => <Text>{id}</Text>,
     fixed: true,
     sorter: {
