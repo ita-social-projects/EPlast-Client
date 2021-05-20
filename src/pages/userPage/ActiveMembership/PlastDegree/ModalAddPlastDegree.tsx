@@ -16,6 +16,7 @@ const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, isCityAdmin, userI
     const handleCancel = () => {setVisibleModal(false); setCancel(true)};
 
     const getAvailablePlastDegree = (allDegrees: Array<PlastDegree>, userPlastDegrees: Array<UserPlastDegree>): Array<PlastDegree> => {
+        setCancel(false);
         const aupd: Array<PlastDegree> = [];
         allDegrees.forEach(d => {
             if (!userPlastDegrees.find(upd => upd.plastDegree.id === d.id)) {
