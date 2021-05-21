@@ -150,16 +150,15 @@ const CreateClub = () => {
   };
 
   const EditClub = async (newClub: ClubProfile) => {
-    notificationLogic("info", "Оновлення...", <LoadingOutlined />);
-
+    try{
     return updateClub(club.id, JSON.stringify(newClub))
       .then(() => {
         notificationLogic("success", successfulUpdateAction("Курінь"));
         history.goBack();
-      })
-      .catch(() => {
+      })}
+      catch(error){
         notificationLogic("error", failUpdateAction("курінь"));
-      });
+      }
   };
 
   return loading && club ? (

@@ -173,8 +173,7 @@ const CreateCity = () => {
   };
 
   const EditCity = async (newCity: CityProfile) => {
-    notificationLogic("info", "Оновлення...", <LoadingOutlined />);
-
+    
     return updateCity(city.id, JSON.stringify(newCity))
       .then(() => {
         notificationLogic("success", successfulUpdateAction("Станицю"));
@@ -182,7 +181,7 @@ const CreateCity = () => {
       })
       .catch(() => {
         notificationLogic("error", failUpdateAction("станицю"));
-      });
+    });
   };
 
   return loading && city ? (
