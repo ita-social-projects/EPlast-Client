@@ -73,7 +73,7 @@ const FormEditPrecaution = ({
   const [userValue, setUserValue] = useState<any>();
   const openNotification = (message: string) => {
     notification.error({
-      message: failEditAction(`пересторога`),
+      message: failEditAction(`пересторогу`),
       description: `${message}`,
       placement: "topLeft",
     });

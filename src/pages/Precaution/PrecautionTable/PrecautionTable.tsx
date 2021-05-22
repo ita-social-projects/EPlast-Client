@@ -209,7 +209,7 @@ const PrecautionTable = () => {
         return d;
       });
     setPrecautions([...editedData]);
-    notificationLogic("success", successfulUpdateAction("Пересторога"));
+    notificationLogic("success", successfulUpdateAction("Пересторогу"));
     CreateEditNotification(userId, precaution.name);
   };
   return (

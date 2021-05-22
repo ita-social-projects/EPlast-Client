@@ -51,7 +51,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
   const dateFormat = "DD.MM.YYYY";
   const openNotification = (message: string) => {
     notification.error({
-      message: failCreateAction(`пересторога`),
+      message: failCreateAction(`пересторогу`),
       description: `${message}`,
       placement: "topLeft",
     });
