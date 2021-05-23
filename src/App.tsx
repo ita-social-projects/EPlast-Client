@@ -62,8 +62,6 @@ import RegionBoardDocuments from "./pages/RegionsBoard/RegionBoardDocuments";
 import GoverningBody from "./pages/GoverningBody/GoverningBody/GoverningBody";
 import CreateGoverningBody from "./pages/GoverningBody/CreateGoverningBody";
 import AboutBase from "./pages/AboutBase/AboutBase";
-/////////////////////TEST////////////////
-import AboutBaseTEST from "./pages/AboutBaseTEST/AboutBaseTEST";
 
 const App: FC = () => (
   <div className="App">
@@ -395,12 +393,6 @@ const App: FC = () => (
             layout={PrivateLayout}
             path="/aboutBase"
             component={AboutBase}
-          />
-          /////////////TEST/////////////
-          <RouteWithLayout
-            layout={PrivateLayout}
-            path="/aboutBaseTEST"
-            component={AboutBaseTEST}
           />
           <RouteWithLayout
             layout={PrivateLayout}
