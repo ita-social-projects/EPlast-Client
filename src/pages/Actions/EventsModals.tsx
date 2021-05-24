@@ -36,7 +36,7 @@ interface EventDataForApproving {
     eventName: string;
     eventStatusId: string;
     eventAdmins:any;
-    setState:(visible:boolean)=>void;
+    setApprovedEvent:(visible:boolean)=>void;
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -198,7 +198,7 @@ export const showDeleteConfirmForSingleEvent = ({eventId, eventName, eventTypeId
     });
 }
 
-export const showApproveConfirm = ({eventId, eventName, eventStatusId, setState, eventAdmins}: EventDataForApproving) => {
+export const showApproveConfirm = ({eventId, eventName, eventStatusId, setApprovedEvent, eventAdmins}: EventDataForApproving) => {
     confirm({
         title: 'Ви впевнені, що хочете затвердити дану подію?',
         icon: <ExclamationCircleOutlined/>,
@@ -208,7 +208,7 @@ export const showApproveConfirm = ({eventId, eventName, eventStatusId, setState,
         onOk() {
             const approveEvent = async () => {
              await eventUserApi.getEventToApprove(eventId);
-             setState(true);
+             setApprovedEvent(true);
             };
             NotificationBoxApi.createNotifications(
                 eventAdmins.map((ad: { userId: any; }) => ad.userId),

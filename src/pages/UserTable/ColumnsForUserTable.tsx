@@ -28,13 +28,16 @@ const setTagColor = (userRoles: string) => {
   if (userRoles?.includes("Колишній член пласту")) {
     color = "black";
   }
+  if (userRoles?.includes("Зареєстрований користувач")) {
+    color = "blue"
+  }
   return color;
 };
 
 const ColumnsForUserTable: any = [
   {
     title: "№",
-    dataIndex: "userProfileId",
+    dataIndex: "userSystemId",
     render: (id: number) => <Text>{id}</Text>,
     fixed: true,
     sorter: {
@@ -42,7 +45,7 @@ const ColumnsForUserTable: any = [
     },
     sortDirections: ["descend", "ascend"],
     defaultSortOrder: "ascend",
-    width: 55,
+    width: 65,
   },
   {
     title: "Ім`я",
@@ -298,6 +301,10 @@ const ColumnsForUserTable: any = [
         text: "Діловод Куреня",
         value: "Діловод Куреня",
       },
+      {
+        text: "Зареєстрований користувач",
+        value: "Зареєстрований користувач"
+      }
     ],
     filterMultiple: false,
     onFilter: (value: any, record: any) => record.userRoles?.includes(value),

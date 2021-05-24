@@ -140,8 +140,8 @@ export const toggleMemberStatus = async (id: number) => {
   });
 }
 
-export const clubNameOfApprovedMember = async(id: string) =>{
-  return api.get(`Club/ClubNameOfApprovedMember/${id}`).catch((error)=>{
+export const clubNameOfApprovedMember = async(memberId: string) =>{
+  return api.get(`Club/ClubNameOfApprovedMember/${memberId}`, {memberId:memberId}).catch((error)=>{
     throw new Error(error)
   });
 }; 

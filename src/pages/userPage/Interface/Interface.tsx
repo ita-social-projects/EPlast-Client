@@ -48,6 +48,9 @@ export type User ={
     email: string;
     city: string;
     club: string;
+    cityId?:number;
+    clubId?: number;
+    regionId?: number;
     publicPoliticalActivity: string;
     upuDegree: UpuDegree;
     facebookLink: string;
@@ -65,6 +68,9 @@ export type ShortUser ={
     pseudo: string;
     city: string;
     club: string;
+    cityId?:number;
+    clubId?: number;
+    regionId?: number;
     upuDegree: UpuDegree;
     facebookLink: string;
     twitterLink: string;
