@@ -31,7 +31,7 @@ const DropDown = (props: Props) => {
     governingBody: {id : 0, description: "", phoneNumber: "", email: "" ,governingBodyName: "", logo: ""},
     type: 0,
     description: "",
-    date: "",
+    date: new Date(),
     fileName: null,
   });
 

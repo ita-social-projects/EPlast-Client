@@ -6,6 +6,6 @@ export type DocumentPost = {
     type: number;
     governingBody: GoverningBody;
     description: string;
-    date: string;
+    date: Date;
     fileName: string | null;
 }
