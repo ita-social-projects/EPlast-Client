@@ -160,7 +160,6 @@ const AddCitiesNewSecretaryForm = (props: any) => {
 
   useEffect(() => {
     if (!props.visibleModal) {
-      console.log("yess   " + props.visibleModal);
       form.resetFields();
     }
     getHead();
