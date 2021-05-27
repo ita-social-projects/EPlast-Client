@@ -19,6 +19,7 @@ import AdminType from "../../../models/Admin/AdminType";
 import regionsApi from "../../../api/regionsApi";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
 import User from "../../Distinction/Interfaces/User";
+import "./AddClubsSecretaryForm.less";
 
 type AddClubsNewSecretaryForm = {
   onAdd: () => void;
@@ -88,7 +89,6 @@ const AddClubsNewSecretaryForm = (props: any) => {
   const addClubAdmin = async (admin: ClubAdmin) => {
     await addAdministrator(props.clubId, admin);
     notificationLogic("success", "Користувач успішно доданий в провід");
-    form.resetFields();
     await NotificationBoxApi.createNotifications(
       [admin.userId],
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
@@ -146,7 +146,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
   };
 
   useEffect(() => {
-    if (props.visibleModal) {
+    if (!props.visibleModal) {
       form.resetFields();
     }
     getClubHead();
@@ -172,7 +172,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: props.admin === undefined ? true : false,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
@@ -195,7 +195,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: true,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
