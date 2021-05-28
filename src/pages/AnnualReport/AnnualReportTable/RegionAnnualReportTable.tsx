@@ -5,13 +5,13 @@ import ClickAwayListener from "react-click-away-listener";
 import regionsApi, {getSearchedRegionsReports} from "../../../api/regionsApi";
 import AuthStore from "../../../stores/AuthStore";
 import ConfirmedRegionDropdown from "./DropdownsForRegionReports/ConfirmedDropdown/ConfirmedRegionDropdown";
-import RegionAnnualReportInformation from "./RegionAnnualReportInformation";
 import Spinner from "../../Spinner/Spinner";
 import notificationLogic from "../../../components/Notifications/Notification";
 import SavedRegionDropdown from "./DropdownsForRegionReports/SavedDropdown/SavedRegionDropdown";
 import UnconfirmedRegionDropdown from "./DropdownsForRegionReports/UnconfirmedDropdown/UnconfirmedRegionDropdown";
 import { successfulEditAction, tryAgain } from "../../../components/Notifications/Messages";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { useHistory } from "react-router-dom";
 
 interface props{
     columns:any;
@@ -43,9 +43,9 @@ export const RegionAnnualReportTable=({columns,searchedData, sortKey}:props)=>{
     const [showConfirmedRegionDropdown, setShowConfirmedRegionDropdown] = useState<boolean>(false);
     const [showUnconfirmedRegionDropdown, setShowUnconfirmedRegionDropdown] = useState<boolean>(false);
     const [showSavedRegionDropdown, setShowSavedRegionDropdown] = useState<boolean>(false);
-    const [showRegionAnnualReportModal, setShowRegionAnnualReportModal] = useState<boolean>(false);
     const [canManage, setCanManage] = useState<boolean>(false);
     const [isLoading, setIsLoading]=useState(false);
+    const history = useHistory();
 
     useEffect(() => {
         if(currentSearchedData!=searchedData){
@@ -96,18 +96,12 @@ export const RegionAnnualReportTable=({columns,searchedData, sortKey}:props)=>{
         
     const handleView = async (id: number, year:number) => {
             hideDropdowns();
-            try {
-              let response = await regionsApi.getReportById(id,year);
-              setRegionAnnualReport(response.data);
-              setShowRegionAnnualReportModal(true);
-            } catch (error) {
-              showError(error.message);
-            }
+            history.push(`/annualreport/region/${id}/${year}`)
           };
 
-          const handleEdit = (id: number) => {
+          const handleEdit = (id: number, year: number) => {
             hideDropdowns();
-            //history.push(`/annualreport/edit/${id}`);
+            history.push(`/annualreport/region/edit/${id}/${year}`);
           };
 
           const handleConfirm = async (id: number) => {
@@ -215,6 +209,7 @@ export const RegionAnnualReportTable=({columns,searchedData, sortKey}:props)=>{
                 dataSource={regionAnnualReports}
                 onRow={(regionRecord) => {
                     return {
+                      onDoubleClick: event => { if (regionRecord.id) history.push(`/annualreport/region/${regionRecord.id}/${(new Date(regionRecord.date)).getFullYear()}`) },
                         onClick: () => {
                             hideDropdowns();
                         },
@@ -276,11 +271,6 @@ export const RegionAnnualReportTable=({columns,searchedData, sortKey}:props)=>{
           pageY={y}
           onView={handleView}
         />
-      <RegionAnnualReportInformation
-        visibleModal={showRegionAnnualReportModal}
-        regionAnnualReport={regionAnnualReport}
-        handleOk={() => setShowRegionAnnualReportModal(false)}
-      />
       </ClickAwayListener>
     </div>
     )

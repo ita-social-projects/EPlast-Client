@@ -49,7 +49,7 @@ const RegionSelectModal = (props: Props) => {
 
     const fetchRegions = async () => {
         try {
-            let response = await regionsApi.GetAllRegions()
+            let response = await regionsApi.getRegions()
             let tempRegions = response.data.map((item:any) => {
                 return {
                     label: item.regionName,
@@ -78,7 +78,7 @@ const RegionSelectModal = (props: Props) => {
             footer={null} >
             <Form
                 onFinish={(obj) => {
-                    history.push(`/annualreport/createRegionAnnualReport/${obj.regionId}`);
+                    history.push(`/annualreport/region/create/${obj.regionId}/${obj.year}`);
                 }} >
                 <Row>
                     <Col md={24} xs={24} >
@@ -104,9 +104,6 @@ const RegionSelectModal = (props: Props) => {
                                 className=''
                                 options={years}
                                 placeholder="Обрати рік"
-                                filterOption={(input, option) =>
-                                    (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                }
                             />
                         </Form.Item></Col>
                 </Row>

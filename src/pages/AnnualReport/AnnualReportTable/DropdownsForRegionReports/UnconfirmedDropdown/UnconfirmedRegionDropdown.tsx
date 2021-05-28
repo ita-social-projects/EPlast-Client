@@ -13,7 +13,7 @@ const UnconfirmedRegionDropdown = (props: Props) => {
                 onView(regionRecord.id, (new Date(regionRecord.date)).getFullYear());
                 break;
             case '2':
-                onEdit(regionRecord.id);
+                onEdit(regionRecord.id, (new Date(regionRecord.date)).getFullYear());
                 break;
             case '3':
                 if (canManage) {

@@ -9,11 +9,11 @@ import RegionAnnualReportForm from '../RegionAnnualReportForm/RegionAnnualReport
 import regionsApi from '../../../api/regionsApi';
 
 export const RegionAnnualReportCreate = () => {
-    const { regionId } = useParams();
+    const { regionId, year } = useParams();
     const history = useHistory();
-    const [title, setTitle] = useState<string>('Річний звіт округи');
+    const [title, setTitle] = useState<string>('');
     const [isLoading, setIsLoading]=useState(false);
-    const [region, setRegion] = useState<any[]>();
+    const [canCreate, setRegion] = useState<any[]>();
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -31,17 +31,6 @@ export const RegionAnnualReportCreate = () => {
         }
     }
 
-    const fetchRegionInfo = async (id: number) => {
-        try {
-            let response = await AnnualReportApi.getCityMembers(id);
-            let cityName = response.data.name;
-            setTitle(title.concat(' ', cityName));
-        }
-        catch (error) {
-            showError(error.message)
-        }
-    }
-
     const fetchRegions = async (id: number) => {
         await regionsApi.getRegionById(id).then(response => {
             setRegion(response.data);
@@ -50,7 +39,7 @@ export const RegionAnnualReportCreate = () => {
             let response = await regionsApi.getRegionById(id).then(response => {
                 return response.data;
             });
-            setTitle(title.concat(' ', response.regionName));
+            setTitle((response.regionName.includes('округ')? response.regionName : response.regionName+' округа').concat(' '+year+' рік'));
         }
         catch (error) {
             showError(error.message)
@@ -60,7 +49,7 @@ export const RegionAnnualReportCreate = () => {
     const handleFinish = async (obj: any) => {
         obj.regionId = regionId;
         try {
-            let response = await AnnualReportApi.create(obj);
+            let response = await regionsApi.createRegionAnnualReport(regionId, year, obj);
             form.resetFields();
             showSuccess(response.data.message);
         }
@@ -93,7 +82,7 @@ export const RegionAnnualReportCreate = () => {
                 <RegionAnnualReportForm
                     title={title}
                     regionId={regionId}
-                    year={2021}
+                    year={year}
                      />
                 <Row
                     justify='center' >

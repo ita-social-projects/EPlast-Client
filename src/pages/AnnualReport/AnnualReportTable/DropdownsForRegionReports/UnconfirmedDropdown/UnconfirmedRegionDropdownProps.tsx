@@ -12,7 +12,7 @@ interface Props {
     canManage: boolean;
     showDropdown: boolean;
     onView: (id: number, year: number) => Promise<void>;
-    onEdit: (id: number) => void;
+    onEdit: (id: number, year: number) => void;
     onConfirm: (id: number) => Promise<void>;
     onRemove: (id: number) => Promise<void>;
 }

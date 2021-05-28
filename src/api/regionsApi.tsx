@@ -60,6 +60,12 @@ export const getRegionById = async (regionId: number) => {
   return await api.get(`Regions/Profile/${regionId}`);
 };
 
+export const getRegionMembersInfo = async (regionId: number, year: number) => {
+  return await api.get(`Regions/MembersInfo/${regionId}/${year}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export const getRegionLogo = async (logoName: string) => {
   return api.get("Regions/LogoBase64", { logoName }).catch((error) => {
     throw new Error(error);
@@ -212,6 +218,13 @@ const cancel = async (id: number) => {
     });
 }
 
+const editReport = async (reportId: number, data: RegionAnnualReportQuestions) => {
+  return await api.put(`Regions/editReport/${reportId}`, data)
+      .catch((error) => {
+        throw new Error(error);
+      });
+}
+
 const removeAnnualReport = async (id: number) => {
   return await api.remove(`Regions/${id}`)
     .catch((error) => {
@@ -238,6 +251,8 @@ export const getAdminTypeIdByName = async (name: string) => {
 };
 
 export default {
+  editReport,
+  getRegionMembersInfo,
   removeAnnualReport,
   cancel,
   confirm,
