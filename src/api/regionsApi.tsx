@@ -60,6 +60,12 @@ export const getRegionById = async (regionId: number) => {
   return await api.get(`Regions/Profile/${regionId}`);
 };
 
+export const getRegionMembersInfo = async (regionId: number, year: number) => {
+  return await api.get(`Regions/MembersInfo/${regionId}/${year}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export const getRegionLogo = async (logoName: string) => {
   return api.get("Regions/LogoBase64", { logoName }).catch((error) => {
     throw new Error(error);
@@ -187,14 +193,43 @@ export const getAllRegionsReports = async () => {
 
 export const getSearchedRegionsReports = async (searchedData: string, page: number, pageSize: number, sortKey: number) => {
   return api.get(`Regions/RegionsAnnualReports`,
-      {searchedData: searchedData,
-        page: page,
-        pageSize: pageSize,
-        sortKey: sortKey,
-      })
+    {
+      searchedData: searchedData,
+      page: page,
+      pageSize: pageSize,
+      sortKey: sortKey,
+    })
+    .catch((error) => {
+      throw new Error(error);
+    })
+}
+
+const confirm = async (id: number) => {
+  return await api.put(`Regions/confirmReport/${id}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+}
+
+const cancel = async (id: number) => {
+  return await api.put(`Regions/cancel/${id}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+}
+
+const editReport = async (reportId: number, data: RegionAnnualReportQuestions) => {
+  return await api.put(`Regions/editReport/${reportId}`, data)
       .catch((error) => {
         throw new Error(error);
-      })
+      });
+}
+
+const removeAnnualReport = async (id: number) => {
+  return await api.remove(`Regions/${id}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
 }
 
 export const getRegionsByPage = async (
@@ -216,6 +251,11 @@ export const getAdminTypeIdByName = async (name: string) => {
 };
 
 export default {
+  editReport,
+  getRegionMembersInfo,
+  removeAnnualReport,
+  cancel,
+  confirm,
   getAllRegionsReports,
   getReportById,
   createRegionAnnualReport,

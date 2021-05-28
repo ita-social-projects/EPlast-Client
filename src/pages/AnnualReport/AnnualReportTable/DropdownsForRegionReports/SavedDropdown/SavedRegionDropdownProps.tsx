@@ -1,3 +1,5 @@
+import RegionAnnualReport from "../../../Interfaces/RegionAnnualReports";
+
 interface Props {
     regionRecord: {
         count: number,
@@ -9,10 +11,8 @@ interface Props {
     };
     pageX: number;
     pageY: number;
-    canManage: boolean;
     showDropdown: boolean;
     onView: (id: number, year: number) => Promise<void>;
-    onCancel: (id: number) => Promise<void>;
 }
 
 export default Props;

@@ -23,6 +23,7 @@ import { RegionAnnualReportTable } from "./RegionAnnualReportTable";
 import ClubSelectModal from "./ClubSelectModal/ClubSelectModal";
 import Search from "antd/lib/input/Search";
 import {CaretUpOutlined, CaretDownOutlined} from "@ant-design/icons";
+import RegionSelectModal from "./RegionSelectModal/RegionSelectModal";
 
 
 const { Title } = Typography;
@@ -181,6 +182,19 @@ const AnnualReportTable = () => {
       title: <>Дата подання<SortDirection sort={3} /></>,
       dataIndex: "date",
       render: (date: any)=>{return SortColumnHighlight(3, moment(date.toLocaleString()).format("DD.MM.YYYY"))},
+    },
+    {
+      title: "Статус",
+      dataIndex: "status",
+      render: (status: any) => {
+        return (
+            <Tag color={setTagColor(status)} key={reportStatusNames[status]}>
+              <Tooltip placement="topLeft" title={reportStatusNames[status]}>
+                {reportStatusNames[status]}
+              </Tooltip>
+            </Tag>
+        );
+      },
     }
   ];
 
@@ -284,7 +298,7 @@ const AnnualReportTable = () => {
         </Card>
 
       </Row>
-      {regionManager? <FormAnnualReportRegion
+      {regionManager? <RegionSelectModal
           visibleModal={showRegionAnnualReports}
           handleOk={() => setShowRegionAnnualReports(false)}
       />: null}

@@ -61,6 +61,11 @@ import RegionBoardAdministration from "./pages/RegionsBoard/RegionBoardAdministr
 import RegionBoardDocuments from "./pages/RegionsBoard/RegionBoardDocuments";
 import GoverningBody from "./pages/GoverningBody/GoverningBody/GoverningBody";
 import CreateGoverningBody from "./pages/GoverningBody/CreateGoverningBody";
+import RegionAnnualReportCreate from "./pages/AnnualReport/RegionAnnualReportCreateEditView/RegionAnnualReportCreate";
+import RegionAnnualReportEdit from "./pages/AnnualReport/RegionAnnualReportCreateEditView/RegionAnnualReportEdit";
+import RegionAnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/RegionAnnualReportInformation";
+import AnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/AnnualReportInformation/AnnualReportInformation";
+import ClubAnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/ClubAnnualReportInformation/ClubAnnualReportInformation";
 
 const App: FC = () => (
   <div className="App">
@@ -210,8 +215,38 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+            path="/annualreport/region/create/:regionId/:year"
+            component={RegionAnnualReportCreate}
+          />
+           <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/region/edit/:annualreportId/:year"
+            component={RegionAnnualReportEdit}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/region/:annualreportId/:year"
+            component={RegionAnnualReportInformation}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/annualreport/edit/:id"
             component={AnnualReportEdit}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/cityAnnualReport/:id"
+            component={AnnualReportInformation}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/clubAnnualReport/:id"
+            component={ClubAnnualReportInformation}
           />
           <RouteWithLayout
             layout={PrivateLayout}
