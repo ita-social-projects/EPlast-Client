@@ -12,6 +12,7 @@ import {
   successfulEditAction,
 } from "../../components/Notifications/Messages"
 import User from "../Distinction/Interfaces/User";
+import "./AddRegionSecretaryForm.less";
 
 type AddNewSecretaryForm = {
   onAdd: () => void;
@@ -106,8 +107,14 @@ const AddNewSecretaryForm = (props: any) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (!props.visibleModal) {
+      form.resetFields();
+    }
+  }, [props]);
+
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form name="basic" onFinish={handleSubmit} form={form} className="formAddSecretaryModal">
       <Form.Item
         className={classes.formField}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
@@ -116,7 +123,7 @@ const AddNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: props.admin === undefined ? true : false,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
@@ -139,7 +146,7 @@ const AddNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: true,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >

@@ -17,6 +17,7 @@ import EditPrecautionModal from "./EditPrecautionModal";
 interface Props {
   record: number;
   userId: string;
+  isRecordActive: boolean;
   pageX: number;
   pageY: number;
   showDropdown: boolean;
@@ -41,6 +42,7 @@ const DropDown = (props: Props) => {
   const {
     record,
     userId,
+    isRecordActive,
     pageX,
     pageY,
     showDropdown,
@@ -110,7 +112,7 @@ const DropDown = (props: Props) => {
           <FileSearchOutlined />
           Переглянути профіль
         </Menu.Item>
-        {canEdit ? (
+        {canEdit && isRecordActive ? (
           <Menu.Item key="3">
             <EditOutlined />
             Редагувати

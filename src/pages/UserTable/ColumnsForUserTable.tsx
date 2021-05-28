@@ -37,7 +37,7 @@ const setTagColor = (userRoles: string) => {
 const ColumnsForUserTable: any = [
   {
     title: "№",
-    dataIndex: "userProfileId",
+    dataIndex: "userSystemId",
     render: (id: number) => <Text>{id}</Text>,
     fixed: true,
     sorter: {
@@ -45,7 +45,7 @@ const ColumnsForUserTable: any = [
     },
     sortDirections: ["descend", "ascend"],
     defaultSortOrder: "ascend",
-    width: 55,
+    width: 65,
   },
   {
     title: "Ім`я",
