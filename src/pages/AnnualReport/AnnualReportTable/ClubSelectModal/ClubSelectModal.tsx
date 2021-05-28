@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Select, Form, Button, Row, Col } from 'antd';
-import clubsApi, {createClubAnnualReport, getClubs, getClubsOptions} from '../../../../api/clubsApi';
+import clubsApi, {getClubsOptions} from '../../../../api/clubsApi';
 import { useHistory } from 'react-router-dom';
 import './ClubSelectModal.less'
 import {emptyInput} from "../../../../components/Notifications/Messages"
-import notificationLogic from "../../../../components/Notifications/Notification";
 
 interface Props {
     visibleModal: boolean,
@@ -15,8 +14,7 @@ const ClubSelectModal = (props: Props) => {
     const { visibleModal, handleOk } = props;
     const history = useHistory();
     const [clubOptions, setClubOptions] = useState<any>();
-    const [form] = Form.useForm();
-    
+
 
     const validationSchema = {
         club: [
@@ -24,24 +22,12 @@ const ClubSelectModal = (props: Props) => {
         ],
     }
 
-    const handleSubmit = async (values : any)=>{
-        createClubAnnualReport(JSON.parse(values.region).id) 
-        .then(() => {
-          notificationLogic("success", "Річний звіт успішно створено");
-          window.location.reload();
-        })
-        .catch(() => {
-          notificationLogic("error", "Щось пішло не так. Можливо даний річний звіт уже створено");
-        });    
-        form.resetFields(); 
-      }
-
     const fetchClubs = async()=>{
-        let response = await getClubsOptions();
+        let response = await clubsApi.getClubs();
         let clubs = response.data.map((item:any) => {
             return {
-                label: item.item2,
-                value: item.item1
+                label: item.name,
+                value: item.id
             }
         })
         setClubOptions(clubs);

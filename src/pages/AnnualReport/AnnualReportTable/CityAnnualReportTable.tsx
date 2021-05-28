@@ -108,13 +108,7 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
 
   const handleView = async (id: number) => {
     hideDropdowns();
-    try {
-      let response = await AnnualReportApi.getById(id);
-      setAnnualReport(response.data.annualReport);
-      setShowAnnualReportModal(true);
-    } catch (error) {
-      notificationLogic("error", tryAgain);
-    }
+    history.push(`/annualreport/cityAnnualReport/${id}`);
   };
 
   const handleEdit = (id: number) => {
@@ -241,6 +235,7 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
         })}
         onRow={(record) => {
           return {
+            onDoubleClick: event => { if (record.id) history.push(`/annualreport/cityAnnualReport/${record.id}`) },
             onClick: () => {
               hideDropdowns();
             },
@@ -302,12 +297,6 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
           onView={handleView}
         />
       </ClickAwayListener>
-      <AnnualReportInformation
-        visibleModal={showAnnualReportModal}
-        annualReport={annualReport}
-        showError={showError}
-        handleOk={() => setShowAnnualReportModal(false)}
-      />
     </div>
   )
 }

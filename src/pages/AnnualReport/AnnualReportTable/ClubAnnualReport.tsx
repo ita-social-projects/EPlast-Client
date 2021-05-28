@@ -63,7 +63,6 @@ export const ClubAnnualReportTable = ({ columns, searchedData, sortKey }: props)
       setClubAnnualReports(response.data.clubAnnualReports);
       setTotal(response.data.clubAnnualReports[0]?.total);
       setCount(response.data.clubAnnualReports[0]?.count);
-      setPage(1)
     } catch (error) {
       showError(error.message);
     } finally {
@@ -124,16 +123,7 @@ export const ClubAnnualReportTable = ({ columns, searchedData, sortKey }: props)
 
   const handleView = async (id: number) => {
     hideDropdowns();
-    try {
-      let response = await getClubAnnualReportById(id);
-      setClubAnnualReport(response.data.annualreport);
-      setShowClubAnnualReportModal(true);
-    } catch (error) {
-      if (error.response?.status === 400) {
-        notificationLogic('error', tryAgain);
-        history.goBack();
-      }
-    }
+    history.push(`/annualreport/clubAnnualReport/${id}`);
   }
 
   const handleCancel = async (id: number) => {
@@ -259,6 +249,7 @@ export const ClubAnnualReportTable = ({ columns, searchedData, sortKey }: props)
         })}
         onRow={(record) => {
           return {
+            onDoubleClick: event => { if (record.id) history.push(`/annualreport/clubAnnualReport/${record.id}`) },
             onClick: () => { hideDropdowns(); },
             onContextMenu: (event) => {
               event.preventDefault();
@@ -318,11 +309,6 @@ export const ClubAnnualReportTable = ({ columns, searchedData, sortKey }: props)
           onView={handleView}
         />
       </ClickAwayListener>
-      <ClubAnnualReportInformation
-        visibleModal={showClubAnnualReportModal}
-        clubAnnualReport={clubAnnualReport}
-        handleOk={() => setShowClubAnnualReportModal(false)}
-      />
     </div>
   )
 }
