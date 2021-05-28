@@ -135,7 +135,11 @@ const DocumentsTable = () => {
 
   return !loading ? (
     <Layout>
-      <Content>
+      <Content
+        onClick={() => {
+          setShowDropdown(false);
+        }}
+      >
         <h1 className={classes.titleTable}>Документація</h1>
         <>
           <div className={classes.searchContainer}>
