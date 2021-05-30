@@ -114,9 +114,9 @@ const Assignments = () => {
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/userpage/main/${data?.currentUserId}`,
       'Переглянути користувача'
-    );
+      );
+    await fetchData();
     isCityAdmin ? setApproveAsCityHeadLoading(false) : isClubAdmin ? setApproveAsHovelHeadLoading(false) : setApproveAsMemberLoading(false);
-    fetchData();
   }
 
   const { Meta } = Card;
