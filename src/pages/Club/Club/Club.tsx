@@ -324,7 +324,7 @@ const Club = () => {
                   <Button
                     type="primary"
                     className="clubInfoButton"
-                    onClick={() => history.push(`/annualreport/table`)}
+                    onClick={() => history.push(`/annualreport/table/hovel`)}
                   >
                     Річні звіти
                   </Button>

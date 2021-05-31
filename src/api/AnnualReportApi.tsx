@@ -10,7 +10,7 @@ const getCitiesOptions = async () => {
 }
 
 const getCities = async () => {
-    return await Api.get('Cities')
+    return await Api.get('Cities/Cities')
         .catch((error: AxiosError) => {
             throw new Error(error.response?.data.message);
         });
