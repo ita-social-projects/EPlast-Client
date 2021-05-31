@@ -110,13 +110,12 @@ const StatisticsCities = () => {
   const fetchCities = async () => {
     try {
       let response = await AnnualReportApi.getCities();
-      let cities = response.data.cities as City[];
-      setCities(cities.map(item => {
+      setCities(response.data.map((item:any) => {
         return {
-          label: item.name,
-          value: item.id
+            label: item.name,
+            value: item.id
         }
-      }));
+    }));
     }
     catch (error) {
       showError(error.message);
