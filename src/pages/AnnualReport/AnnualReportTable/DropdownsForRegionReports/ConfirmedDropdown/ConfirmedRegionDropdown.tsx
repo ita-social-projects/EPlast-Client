@@ -5,7 +5,7 @@ import Props from './ConfirmedRegionDropdownProps';
 import styles from '../Dropdown.module.css';
 
 const ConfirmedRegionDropdown = (props: Props) => {
-    const { regionRecord,  pageX, pageY, canManage, showDropdown, onView, onCancel } = props;
+    const { regionRecord,  pageX, pageY, showDropdown, canManage, onView, onCancel } = props;
 
     const handleClick = (item: any) => {
 
