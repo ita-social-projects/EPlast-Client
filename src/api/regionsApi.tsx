@@ -162,6 +162,13 @@ export const getRegions = async () => {
     });
 };
 
+export const getAccessableRegions = async () => {
+  return api.get(`Regions/RegionOptions`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
 export const redirectCities = async (prevRegId: number, nextRegId: number) => {
   return api
     .put(`Regions/RedirectCities/${prevRegId}/${nextRegId}`)
@@ -191,13 +198,14 @@ export const getAllRegionsReports = async () => {
     })
 }
 
-export const getSearchedRegionsReports = async (searchedData: string, page: number, pageSize: number, sortKey: number) => {
+export const getSearchedRegionsReports = async (searchedData: string, page: number, pageSize: number, sortKey: number, authReport: boolean) => {
   return api.get(`Regions/RegionsAnnualReports`,
     {
       searchedData: searchedData,
       page: page,
       pageSize: pageSize,
       sortKey: sortKey,
+      auth: authReport
     })
     .catch((error) => {
       throw new Error(error);
@@ -254,6 +262,7 @@ export default {
   editReport,
   getRegionMembersInfo,
   removeAnnualReport,
+  getAccessableRegions,
   cancel,
   confirm,
   getAllRegionsReports,

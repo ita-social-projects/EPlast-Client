@@ -49,8 +49,8 @@ const CitySelectModal = (props: Props) => {
 
     const fetchCities = async () => {
         try {
-            let response = await getCities()
-            let cities = response.data.map((item:any) => {
+            let response = await AnnualReportApi.getCitiesOptions()
+            let cities = response.data.cities.map((item:any) => {
                 return {
                     label: item.name,
                     value: item.id
