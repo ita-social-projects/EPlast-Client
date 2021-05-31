@@ -14,7 +14,6 @@ import {
     Row,
     Col,
   } from "antd";
-import TextArea from "antd/lib/input/TextArea";
 
   
 const TextEditor = () => {
@@ -46,6 +45,26 @@ const TextEditor = () => {
           description:values.description
         };
     }
+    const modules = {
+      toolbar:[
+                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                //['blockquote', 'code-block'],
+
+                [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                //[{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+                //[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                //[{ 'direction': 'rtl' }],                         // text direction
+
+                //[{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                [  'image' ],          // add's image support
+                //[{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                //[{ 'font': [] }],
+                [{ 'align': [] }],
+
+                ['clean']
+    ]}
     return (
          <Form className="form" name="basic" onFinish={handleSubmit} form={form}>
              <Row justify="start" gutter={[12, 0]}>
@@ -74,7 +93,11 @@ const TextEditor = () => {
             label="Опис"
             labelCol={{ span: 24 }}
             rules={[{ required: true}]}>
-            <ReactQuill className={formclasses.text} theme="snow" value={value} onChange={setValue}/>
+            <ReactQuill 
+            className={formclasses.text} 
+            theme="snow" value={value} 
+            onChange={setValue}
+            modules={modules}/>
           </Form.Item>
         </Col>
       </Row>
