@@ -34,6 +34,7 @@ const PrecautionTable = () => {
       ] as string[])
       : [""];
   const [recordObj, setRecordObj] = useState<any>(0);
+  const [isRecordActive, setIsRecordActive] = useState<boolean>(false);
   const [userId, setUserId] = useState<any>(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
@@ -208,7 +209,7 @@ const PrecautionTable = () => {
         return d;
       });
     setPrecautions([...editedData]);
-    notificationLogic("success", successfulUpdateAction("Пересторога"));
+    notificationLogic("success", successfulUpdateAction("Пересторогу"));
     CreateEditNotification(userId, precaution.name);
   };
   return (
@@ -254,6 +255,7 @@ const PrecautionTable = () => {
                     event.preventDefault();
                     setShowDropdown(true);
                     setRecordObj(record.id);
+                    setIsRecordActive(record.isActive);
                     setUserId(record.userId);
                     setX(event.pageX);
                     setY(event.pageY);
@@ -279,6 +281,7 @@ const PrecautionTable = () => {
               showDropdown={showDropdown}
               record={recordObj}
               userId={userId}
+              isRecordActive={isRecordActive}
               pageX={x}
               pageY={y}
               canEdit={canEdit}

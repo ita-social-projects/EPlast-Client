@@ -75,10 +75,7 @@ const DecisionTable = () => {
       setTotal(total + 1);
       setCount(count + 1);
       setData([...data, dec]);
-    })
-      .catch(() => {
-        notificationLogic('error', "Рішення не існує");
-      });
+    });
   }
 
   useEffect(() => {

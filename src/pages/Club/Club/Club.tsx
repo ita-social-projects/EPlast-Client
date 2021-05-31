@@ -611,7 +611,8 @@ const Club = () => {
       >
         <AddClubsNewSecretaryForm
           onAdd={handleOk}
-          clubId={+id}>
+          clubId={+id}
+          visibleModal={visible}>
         </AddClubsNewSecretaryForm>
       </Modal>
       <ClubDetailDrawer

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu } from 'antd';
 import {
-  DeleteOutlined,
+  DeleteOutlined, FilePdfOutlined,
 } from '@ant-design/icons';
 import AuthStore from '../../stores/AuthStore';
 import jwt_decode from "jwt-decode";
@@ -31,7 +31,7 @@ const DropDown = (props: Props) => {
     governingBody: {id : 0, description: "", phoneNumber: "", email: "" ,governingBodyName: "", logo: ""},
     type: 0,
     description: "",
-    date: "",
+    date: new Date(),
     fileName: null,
   });
 
@@ -51,7 +51,16 @@ const DropDown = (props: Props) => {
   }, [showEditModal]);
   /* eslint no-param-reassign: "error" */
   const handleItemClick = async (item: any) => {
-    deleteConfirm(record, onDelete);
+    switch (item.key) {
+        case '1':
+          deleteConfirm(record, onDelete);
+          break;
+        case '2':{
+          const pdf = await documentsApi.getPdf(record);
+          window.open(pdf);
+          break;
+        }
+      }
     item.key = '0'
   };
 
@@ -67,12 +76,15 @@ const DropDown = (props: Props) => {
           display: showDropdown ? 'block' : 'none',
         }}
       >
-        {
-          <Menu.Item key="1">
-            <DeleteOutlined />
-          Видалити
+        <Menu.Item key="1">
+          <DeleteOutlined />
+            Видалити
           </Menu.Item>
-        }
+
+        <Menu.Item key="2">
+          <FilePdfOutlined />
+            Переглянути в PDF
+        </Menu.Item>
       </Menu>
     </>
   );

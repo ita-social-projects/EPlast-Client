@@ -628,7 +628,8 @@ const City = () => {
       >
         <AddCitiesNewSecretaryForm
           onAdd={handleOk}
-          cityId={+id}>
+          cityId={+id}
+          visibleModal={visible}>
         </AddCitiesNewSecretaryForm>
       </Modal>
 

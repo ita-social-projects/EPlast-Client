@@ -605,7 +605,10 @@ const Region = () => {
           onCancel={handleOk}
           footer={null}
         >
-          <AddNewSecretaryForm onAdd={handleOk}></AddNewSecretaryForm>
+          <AddNewSecretaryForm 
+            onAdd={handleOk}
+            visibleModal={visible}>
+          </AddNewSecretaryForm>
         </Modal>
 
         <Modal

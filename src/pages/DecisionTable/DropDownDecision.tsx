@@ -113,7 +113,7 @@ const fetchData = async () =>{
         }
         <Menu.Item key="2">
           <FilePdfOutlined />
-          Конвертувати в PDF
+          Переглянути в PDF
         </Menu.Item>
         {(canEdit) ? (
         <Menu.Item key="3">
