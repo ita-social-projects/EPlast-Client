@@ -243,5 +243,6 @@ export const getClubs = async()=>{
 
 export default {
   getClubs,
-  checkCreated
+  checkCreated,
+  getClubsOptions
 }

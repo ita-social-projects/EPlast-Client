@@ -218,7 +218,6 @@ export const ClubAnnualReportTable = ({ columns, searchedData, sortKey }: props)
             placement="topLeft"
             title="Звіти в моєму розпорядженні">
             <button
-              hidden={count == 0 || count == undefined}
               onClick={() => { setPage(1); setAuthReport(!authReport) }} >
               {authReport ? <StarFilled /> : <StarOutlined />}
             </button>
