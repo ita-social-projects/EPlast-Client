@@ -1,4 +1,3 @@
-import { LineHeightOutlined } from "@ant-design/icons";
 import { Tooltip } from "antd";
 import { SortOrder } from "antd/es/table/interface";
 import React from "react";

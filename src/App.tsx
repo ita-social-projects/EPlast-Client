@@ -257,7 +257,7 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/annualreport/table"
+            path="/annualreport/table/:noTitleKey"
             component={AnnualReportTable}
           />
           <RouteWithLayout

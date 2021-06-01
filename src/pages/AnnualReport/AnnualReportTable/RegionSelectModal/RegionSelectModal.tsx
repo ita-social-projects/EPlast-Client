@@ -49,8 +49,8 @@ const RegionSelectModal = (props: Props) => {
 
     const fetchRegions = async () => {
         try {
-            let response = await regionsApi.getRegions()
-            let tempRegions = response.data.map((item:any) => {
+            let response = await regionsApi.getAccessableRegions()
+            let tempRegions = response.data.regions.map((item:any) => {
                 return {
                     label: item.regionName,
                     value: item.id

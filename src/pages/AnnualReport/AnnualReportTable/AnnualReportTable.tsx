@@ -18,12 +18,12 @@ import CitySelectModal from "./CitySelectModal/CitySelectModal";
 import { Card } from 'antd';
 import { CityAnnualReportTable } from "./CityAnnualReportTable";
 import { ClubAnnualReportTable } from "./ClubAnnualReport";
-import FormAnnualReportRegion from "./FormAnnualReportRegion"
 import { RegionAnnualReportTable } from "./RegionAnnualReportTable";
 import ClubSelectModal from "./ClubSelectModal/ClubSelectModal";
 import Search from "antd/lib/input/Search";
 import {CaretUpOutlined, CaretDownOutlined} from "@ant-design/icons";
 import RegionSelectModal from "./RegionSelectModal/RegionSelectModal";
+import { useHistory, useParams } from "react-router-dom";
 
 
 const { Title } = Typography;
@@ -41,20 +41,21 @@ const setTagColor = (status: number) => {
 
 const tabList = [
   {
-    key: 'tab1',
+    key: 'city',
     tab: 'Річні звіти станиць',
   },
   {
-    key: 'tab2',
+    key: 'hovel',
     tab: 'Річні звіти куренів',
   },
   {
-    key: 'tab3',
+    key: 'country',
     tab: 'Річні звіти округ',
   },
 ];
 
 const AnnualReportTable = () => {
+  const { noTitleKey } = useParams();
   const [reportStatusNames, setReportStatusNames] = useState<any[]>(Array());
   const [showRegionAnnualReports, setShowRegionAnnualReports] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
@@ -64,7 +65,7 @@ const AnnualReportTable = () => {
   const [cityManager, setCityManager] = useState<boolean>(false);
   const [clubManager, setClubManager] = useState<boolean>(false);
   const [regionManager, setRegionManager] = useState<boolean>(false);
-  const [noTitleKey, setKey] = useState<string>('tab1');
+  const history = useHistory();
 
   useEffect(() => {
     checkAccessToManage();
@@ -168,7 +169,7 @@ const AnnualReportTable = () => {
   const columnsRegion = [
     {
       title: <>Номер<SortDirection sort={1} /></>,
-      dataIndex: "id",
+      dataIndex: ["idView"],
       width: '8%',
       render: (text: any)=>{return SortColumnHighlight(1, text)},
     },
@@ -231,19 +232,19 @@ const AnnualReportTable = () => {
   ];
 
   const contentList:  { [key: string]: any }  = {
-    tab1: <div><CityAnnualReportTable columns={columns} searchedData={searchedData} sortKey={sortKey}/></div>,
-    tab2: <div><ClubAnnualReportTable columns={columnsClub} searchedData={searchedData} sortKey={sortKey}/></div>,
-    tab3: <div><RegionAnnualReportTable columns={columnsRegion} searchedData={searchedData} sortKey={sortKey}/></div>,
+    city: <div><CityAnnualReportTable columns={columns} searchedData={searchedData} sortKey={sortKey}/></div>,
+    hovel: <div><ClubAnnualReportTable columns={columnsClub} searchedData={searchedData} sortKey={sortKey}/></div>,
+    country: <div><RegionAnnualReportTable columns={columnsRegion} searchedData={searchedData} sortKey={sortKey}/></div>,
   };
 
 
   const  renewPage = ()=>{
-    setKey(noTitleKey);
+    history.push(`/annualreport/table/${noTitleKey}`)
    }
 
    const onTabChange =  (key:string) => {
     setSortKey(1);
-    setKey(key);
+    history.push(`/annualreport/table/${key}`)
  };
 
 

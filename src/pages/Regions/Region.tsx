@@ -389,7 +389,7 @@ const Region = () => {
                       <Button
                         type="primary"
                         className="cityInfoButton"
-                        onClick={() => history.push(`/annualreport/table`)}
+                        onClick={() => history.push(`/annualreport/table/country`)}
                       >
                         Річні звіти
                 </Button>

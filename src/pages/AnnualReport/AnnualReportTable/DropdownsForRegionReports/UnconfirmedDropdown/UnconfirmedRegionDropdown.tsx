@@ -44,7 +44,7 @@ const UnconfirmedRegionDropdown = (props: Props) => {
                     key='1' >
                     <FileSearchOutlined />Переглянути
                 </Menu.Item>
-                {canManage? (
+                {regionRecord.canManage? (
                     <Menu.Item
                         key='2' >
                         <FileSyncOutlined />Редагувати
