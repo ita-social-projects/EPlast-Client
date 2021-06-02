@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { Form, Button, Modal, Row, Col } from 'antd';
+import { Form, Button, Modal, Row, Col, Tooltip } from 'antd';
 import './RegionAnnualReportCreate.less';
-import AnnualReportApi from '../../../api/AnnualReportApi';
 import Spinner from "../../Spinner/Spinner";
 import RegionAnnualReportForm from '../RegionAnnualReportForm/RegionAnnualReportForm';
 import regionsApi from '../../../api/regionsApi';
+import { CloseCircleOutlined } from '@ant-design/icons';
 
 export const RegionAnnualReportEdit = () => {
     const { annualreportId, year } = useParams();
@@ -65,7 +65,14 @@ export const RegionAnnualReportEdit = () => {
 
     return (
         <>
-            {isLoading? <Spinner/> : <Form
+            {isLoading? <Spinner/> : 
+            <>
+            <div className="report-menu">
+                        <Tooltip title="Скасувати редагування звіту">
+                            <div className="report-menu-item" onClick={() => history.goBack()}><CloseCircleOutlined /></div>
+                        </Tooltip>
+                    </div>
+            <Form
                 onFinish={handleFinish}
                 className='annualreport-form'
                 form={form} >
@@ -85,7 +92,8 @@ export const RegionAnnualReportEdit = () => {
                         </Button>
                     </Col>
                 </Row>
-            </Form>}
+            </Form>
+            </>}
         </>
     );
 };

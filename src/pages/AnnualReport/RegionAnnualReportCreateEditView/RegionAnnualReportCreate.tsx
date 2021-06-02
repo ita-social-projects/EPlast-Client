@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { Form, Button, Modal, Row, Col } from 'antd';
+import { Form, Button, Modal, Row, Col, Tooltip } from 'antd';
 import './RegionAnnualReportCreate.less';
-import AnnualReportApi from '../../../api/AnnualReportApi';
 import Spinner from "../../Spinner/Spinner";
 import RegionAnnualReportForm from '../RegionAnnualReportForm/RegionAnnualReportForm';
 import regionsApi from '../../../api/regionsApi';
+import { CloseCircleOutlined } from '@ant-design/icons';
 
 export const RegionAnnualReportCreate = () => {
     const { regionId, year } = useParams();
     const history = useHistory();
     const [title, setTitle] = useState<string>('');
     const [isLoading, setIsLoading]=useState(false);
-    const [canCreate, setRegion] = useState<any[]>();
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -32,9 +31,6 @@ export const RegionAnnualReportCreate = () => {
     }
 
     const fetchRegions = async (id: number) => {
-        await regionsApi.getRegionById(id).then(response => {
-            setRegion(response.data);
-        });
         try {
             let response = await regionsApi.getRegionById(id).then(response => {
                 return response.data;
@@ -75,7 +71,14 @@ export const RegionAnnualReportCreate = () => {
 
     return (
         <>
-            {isLoading? <Spinner/> : <Form
+            {isLoading? <Spinner/> : 
+            <>
+            <div className="report-menu">
+                        <Tooltip title="Скасувати створення звіту">
+                            <div className="report-menu-item" onClick={() => history.goBack()}><CloseCircleOutlined /></div>
+                        </Tooltip>
+                    </div>
+            <Form
                 onFinish={handleFinish}
                 className='annualreport-form'
                 form={form} >
@@ -95,7 +98,8 @@ export const RegionAnnualReportCreate = () => {
                         </Button>
                     </Col>
                 </Row>
-            </Form>}
+            </Form>
+            </>}
         </>
     );
 };
