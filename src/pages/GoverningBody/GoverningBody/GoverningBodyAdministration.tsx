@@ -2,16 +2,18 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout, Skeleton, Spin} from 'antd';
 import {SettingOutlined, CloseOutlined, RollbackOutlined} from '@ant-design/icons';
-import { getAllAdmins, removeAdministrator} from "../../../api/governingBodiesApi";
+import { getAllAdmins, removeAdministrator, getUserAccess} from "../../../api/governingBodiesApi";
 import userApi from "../../../api/UserApi";
 import "../../City/City/City.less";
 import GoverningBodyAdmin from '../../../models/GoverningBody/GoverningBodyAdmin';
 import AddAdministratorModal from '../AddAdministratorModal/AddAdministratorModal';
+import jwt from 'jwt-decode';
 import moment from "moment";
 import "moment/locale/uk";
 import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
+import AuthStore from '../../../stores/AuthStore';
 moment.locale("uk-ua");
 
 const GoverningBodyAdministration = () => {
@@ -21,18 +23,27 @@ const GoverningBodyAdministration = () => {
     const [administration, setAdministration] = useState<GoverningBodyAdmin[]>([]);
     const [visibleModal, setVisibleModal] = useState(false);
     const [admin, setAdmin] = useState<GoverningBodyAdmin>(new GoverningBodyAdmin());
-    const [canEdit, setCanEdit] = useState<Boolean>(false);
+    const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [governingBodyName, setGoverningBodyName] = useState<string>("");
   
+    const getUserAccesses = async () => {
+        let user: any = jwt(AuthStore.getToken() as string);
+        await getUserAccess(user.nameid).then(
+          response => {
+            setUserAccesses(response.data);
+          }
+        );
+      }
+
     const getAdministration = async () => {
       setLoading(true);
+      await getUserAccesses();
       const response = await getAllAdmins(id);
         setPhotosLoading(true);
-        setPhotos([...response.data.administration, response.data.head].filter(a => a != null));
-        setAdministration([...response.data.administration, response.data.head].filter(a => a != null));
-        setCanEdit(response.data.canEdit);
+        setPhotos([response.data.head, ...response.data.admins].filter(a => a != null));
+        setAdministration([response.data.head, ...response.data.admins].filter(a => a != null));
         setGoverningBodyName(response.data.name);
       setLoading(false);
     };
@@ -93,7 +104,7 @@ const GoverningBodyAdministration = () => {
                   title={`${member.adminType.adminTypeName}`}
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit
+                    userAccesses["AddGBSecretary"]
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
                           <CloseOutlined
@@ -139,7 +150,7 @@ const GoverningBodyAdministration = () => {
             Назад
           </Button>
         </div>
-        {canEdit ? (
+        {userAccesses["AddGBSecretary"] ? (
           <AddAdministratorModal
             admin={admin}
             setAdmin={setAdmin}

@@ -7,8 +7,7 @@ import {
   addAdministrator,
   editAdministrator,
   getAllAdmins,
-} from "../../../api/citiesApi";
-import { ReloadOutlined } from "@ant-design/icons";
+} from "../../../api/governingBodiesApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import moment from "moment";
 import {
@@ -17,7 +16,6 @@ import {
 } from "../../../components/Notifications/Messages"
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
-import regionsApi from "../../../api/regionsApi";
 
 type AddGoverningBodiesNewSecretaryForm = {
   onAdd: () => void;
@@ -120,7 +118,7 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
     const newAdmin: GoverningBodyAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
       userId: props.admin === undefined
-        ? JSON.parse(values.userId).user.id
+        ? JSON.parse(values.userId).id
         : props.admin.userId,
       user: values.user,
       adminType: {
@@ -134,7 +132,7 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
     onAdd();
     if (newAdmin.id === 0) {
       try {
-        if (values.AdminType === "Голова Станиці" && head !== null) {
+        if (values.AdminType === "Голова Керівного Органу" && head !== null) {
           if (head?.userId !== newAdmin.userId) {
             showConfirm(newAdmin);
           } else if (head?.userId === newAdmin.userId) {
@@ -213,7 +211,7 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Керывного Органу" },
+            { value: "Голова Керівного Органу" },
             { value: "Голова СПС" },
             { value: "Писар" },
             { value: "Скарбник" },
