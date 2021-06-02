@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { Form, Button, Row, Col } from 'antd';
+import { Form, Button, Row, Col, Tooltip } from 'antd';
 import './ClubAnnualReportEdit.less';
 import ClubAnnualReport from '../Interfaces/ClubAnnualReport';
-import { editClubAnnualReport, getClubAnnualReportById} from '../../../api/clubsApi';
-import { Typography, Input} from 'antd';
+import { editClubAnnualReport, getClubAnnualReportById } from '../../../api/clubsApi';
+import { Typography, Input } from 'antd';
 import {
     emptyInput,
     maxLength,
@@ -16,6 +16,7 @@ import {
 import moment from 'moment';
 import notificationLogic from "../../../components/Notifications/Notification";
 import Spinner from "../../Spinner/Spinner";
+import { CloseCircleOutlined } from '@ant-design/icons';
 
 
 const { Title, Text } = Typography;
@@ -46,8 +47,8 @@ const ClubAnnualReportEdit = () => {
         }
         catch (error) {
             notificationLogic("error", tryAgain);
-            history.goBack(); 
-        }finally {
+            history.goBack();
+        } finally {
             setIsLoading(false);
         }
     }
@@ -58,11 +59,11 @@ const ClubAnnualReportEdit = () => {
         try {
             let response = await editClubAnnualReport(annualReportEdited);
             notificationLogic('success', successfulEditAction('Річний звіт', response.data.name));
-            history.goBack(); 
+            history.goBack();
         }
         catch (error) {
             notificationLogic("error", tryAgain);
-            history.goBack(); 
+            history.goBack();
         }
     }
 
@@ -70,12 +71,14 @@ const ClubAnnualReportEdit = () => {
         number: [
             { required: true, message: emptyInput() },
             { pattern: /^\d+$/, message: shouldContain("додатні цілі числа") },
-            {validator: (_ : object, value : string) =>
+            {
+                validator: (_: object, value: string) =>
                     String(value).length <= 7
                         ? Promise.resolve()
                         : Promise.reject(
-                        maxLength(7)
-                        )}
+                            maxLength(7)
+                        )
+            }
         ],
         textareaClubCenters: [
             { required: true, message: emptyInput() },
@@ -89,176 +92,184 @@ const ClubAnnualReportEdit = () => {
 
     return (
         <>
-            {isLoading? <Spinner/> : <Form
-                onFinish={handleFinish}
-                className='annualreport-form'
-                form={form} >
-                <Title>{title}</Title>
-                <Row
-                    gutter={16}
-                    align='bottom'>
-                    <Col
-                        xs={24} sm={12} md={12} lg={12}
-                        className='container'>
-                        <Text strong={true}>Курінь</Text>
-                        <Form.Item
-                            name='clubName'
-                            className='w100'>
-                            {clubAnnualReport?.clubName}
-                        </Form.Item>
-                    </Col>
-                </Row>
-                <Row
-                    gutter={16}
-                    align='bottom'>
-                    <Col
-                        xs={24} sm={12} md={12} lg={12}
-                        className='container'>
-                        <Text strong={true}>Провід куреня</Text>
-                        <Form.Item
-                            className='w100'
-                            name='currentClubMembers'
-                        >{(clubAnnualReport?.clubMembersSummary?.split('\n').map((item, key) => {
-                            if(item!=""){
-                                return <Text key={key}>{key+1}. {
-                                    item?.split(',').map((item, key)=>{
-                                        if(item!="")
-                                            return <Text key={key}>{item}<br/></Text>
-                                    })}<br/></Text>
-                            }
-                        }))}
-                        </Form.Item>
-                    </Col>
-                </Row>
-                <Row
-                    gutter={16}
-                    align='bottom'>
-                    <Col
-                        xs={24} sm={12} md={12} lg={12}
-                        className='container'>
-                        <Text strong={true}>Контакти:</Text>
-                        {clubAnnualReport?.clubContacts}
-                    </Col>
-                </Row>
-                <Row
-                    gutter={16}
-                    align='bottom'>
-                    <Col
-                        xs={24} sm={12} md={12} lg={12}
-                        className='container'>
-                        <Text strong={true}>Сайт/сторінка в інтернеті:</Text>
-                        <Form.Item
-                            className='w100'
-                            name='clubPage'>
-                            {clubAnnualReport?.clubPage}
-                        </Form.Item>
-                    </Col>
-                </Row>
-                <Row
-                    gutter={16}
-                    align='bottom'>
-                    <Col
-                        xs={24} sm={12} md={12} lg={12}
-                        className='container'>
-                        <Text strong={true}>Дані про членів куреня</Text>
+            {isLoading ? <Spinner /> :
+                <>
+                    <div className="report-menu">
+                        <Tooltip title="Скасувати редагування звіту">
+                            <div className="report-menu-item" onClick={() => history.goBack()}><CloseCircleOutlined /></div>
+                        </Tooltip>
+                    </div>
+                    <Form
+                        onFinish={handleFinish}
+                        className='annualreport-form'
+                        form={form} >
+                        <Title>{title}</Title>
+                        <Row
+                            gutter={16}
+                            align='bottom'>
+                            <Col
+                                xs={24} sm={12} md={12} lg={12}
+                                className='container'>
+                                <Text strong={true}>Курінь</Text>
+                                <Form.Item
+                                    name='clubName'
+                                    className='w100'>
+                                    {clubAnnualReport?.clubName}
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row
+                            gutter={16}
+                            align='bottom'>
+                            <Col
+                                xs={24} sm={12} md={12} lg={12}
+                                className='container'>
+                                <Text strong={true}>Провід куреня</Text>
+                                <Form.Item
+                                    className='w100'
+                                    name='currentClubMembers'
+                                >{(clubAnnualReport?.clubMembersSummary?.split('\n').map((item, key) => {
+                                    if (item != "") {
+                                        return <Text key={key}>{key + 1}. {
+                                            item?.split(',').map((item, key) => {
+                                                if (item != "")
+                                                    return <Text key={key}>{item}<br /></Text>
+                                            })}<br /></Text>
+                                    }
+                                }))}
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row
+                            gutter={16}
+                            align='bottom'>
+                            <Col
+                                xs={24} sm={12} md={12} lg={12}
+                                className='container'>
+                                <Text strong={true}>Контакти:</Text>
+                                {clubAnnualReport?.clubContacts}
+                            </Col>
+                        </Row>
+                        <Row
+                            gutter={16}
+                            align='bottom'>
+                            <Col
+                                xs={24} sm={12} md={12} lg={12}
+                                className='container'>
+                                <Text strong={true}>Сайт/сторінка в інтернеті:</Text>
+                                <Form.Item
+                                    className='w100'
+                                    name='clubPage'>
+                                    {clubAnnualReport?.clubPage}
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row
+                            gutter={16}
+                            align='bottom'>
+                            <Col
+                                xs={24} sm={12} md={12} lg={12}
+                                className='container'>
+                                <Text strong={true}>Дані про членів куреня</Text>
 
-                        <p>Дійсних членів куреня - {clubAnnualReport?.currentClubMembers}</p>
-                        <p>Прихильників куреня - {clubAnnualReport?.currentClubFollowers}</p>
+                                <p>Дійсних членів куреня - {clubAnnualReport?.currentClubMembers}</p>
+                                <p>Прихильників куреня - {clubAnnualReport?.currentClubFollowers}</p>
 
-                    </Col>
-                </Row>
-                <Row
-                    gutter={16}
-                    align='bottom'>
-                    <Col
-                        xs={24} sm={12} md={12} lg={12}
-                        className='container'>
-                        <Text strong={true}>До куреня приєдналось за звітній період</Text>
-                        <Form.Item
-                            className='w100'
-                            name='clubEnteredMembersCount'
-                            rules={validationSchema.number}>
-                            <Input  type="number" min="0" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
-                        </Form.Item>
-                    </Col>
-                </Row>
-                <Row
-                    gutter={16}
-                    align='bottom'>
-                    <Col
-                        xs={24} sm={12} md={12} lg={12}
-                        className='container'>
-                        <Text strong={true}>Вибули з куреня за звітній період</Text>
-                        <Form.Item
-                            className='w100'
-                            name='clubLeftMembersCount'
-                            rules={validationSchema.number}>
-                            <Input  type="number" min="0"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode===188) && e.preventDefault() }  />
-                        </Form.Item>
-                    </Col>
-                </Row>
-                <Row
-                    gutter={16}
-                    align='bottom'>
-                    <Col
-                        xs={24} sm={12} md={12} lg={12}
-                        className='container'>
-                        <Text strong={true}>Географія куреня. Осередки в Україні:</Text>
-                        <Form.Item
-                            className='w100'
-                            name='clubCenters'
-                            rules={validationSchema.textareaClubCenters}>
-                            <TextArea />
-                        </Form.Item>
-                    </Col>
-                </Row>
-                <Row
-                    gutter={16}
-                    align='bottom'>
-                    <Col
-                        xs={24} sm={12} md={12} lg={12}
-                        className='container'>
-                        <Text strong={true}>Вкажіть побажання до КБ УСП</Text>
-                        <Form.Item
-                            className='w100'
-                            name='kbUSPWishes'
-                            rules={validationSchema.textareaKbUSPWishes}>
-                            <TextArea />
-                        </Form.Item>
-                    </Col>
-                </Row>
-                <Row
-                    gutter={16}
-                    align='bottom'>
-                    <Col
-                        xs={24} sm={12} md={12} lg={12}
-                        className='container'>
-                        <Text strong={true}>Дата заповнення</Text>
-                        <Form.Item
-                            className='w100'
-                            name='date'
-                        >
-                            {moment().format("DD.MM.YYYY")}
-                        </Form.Item>
-                    </Col>
-                </Row>
+                            </Col>
+                        </Row>
+                        <Row
+                            gutter={16}
+                            align='bottom'>
+                            <Col
+                                xs={24} sm={12} md={12} lg={12}
+                                className='container'>
+                                <Text strong={true}>До куреня приєдналось за звітній період</Text>
+                                <Form.Item
+                                    className='w100'
+                                    name='clubEnteredMembersCount'
+                                    rules={validationSchema.number}>
+                                    <Input type="number" min="0" onKeyDown={e => (e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode === 188) && e.preventDefault()} />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row
+                            gutter={16}
+                            align='bottom'>
+                            <Col
+                                xs={24} sm={12} md={12} lg={12}
+                                className='container'>
+                                <Text strong={true}>Вибули з куреня за звітній період</Text>
+                                <Form.Item
+                                    className='w100'
+                                    name='clubLeftMembersCount'
+                                    rules={validationSchema.number}>
+                                    <Input type="number" min="0" onKeyDown={e => (e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode === 188) && e.preventDefault()} />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row
+                            gutter={16}
+                            align='bottom'>
+                            <Col
+                                xs={24} sm={12} md={12} lg={12}
+                                className='container'>
+                                <Text strong={true}>Географія куреня. Осередки в Україні:</Text>
+                                <Form.Item
+                                    className='w100'
+                                    name='clubCenters'
+                                    rules={validationSchema.textareaClubCenters}>
+                                    <TextArea />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row
+                            gutter={16}
+                            align='bottom'>
+                            <Col
+                                xs={24} sm={12} md={12} lg={12}
+                                className='container'>
+                                <Text strong={true}>Вкажіть побажання до КБ УСП</Text>
+                                <Form.Item
+                                    className='w100'
+                                    name='kbUSPWishes'
+                                    rules={validationSchema.textareaKbUSPWishes}>
+                                    <TextArea />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row
+                            gutter={16}
+                            align='bottom'>
+                            <Col
+                                xs={24} sm={12} md={12} lg={12}
+                                className='container'>
+                                <Text strong={true}>Дата заповнення</Text>
+                                <Form.Item
+                                    className='w100'
+                                    name='date'
+                                >
+                                    {moment().format("DD.MM.YYYY")}
+                                </Form.Item>
+                            </Col>
+                        </Row>
 
-                <Row className="clubButtons" justify='center'>
-                    <Col>
-                        <Button
-                            type='primary'
-                            htmlType='submit'>
-                            Редагувати
+                        <Row className="clubButtons" justify='center'>
+                            <Col>
+                                <Button
+                                    type='primary'
+                                    htmlType='submit'>
+                                    Редагувати
                         </Button>
-                        <Button
-                            type="primary"
-                            className="backButton"
-                            onClick={() => history.goBack()}>
-                            Скасувати
+                                <Button
+                                    type="primary"
+                                    className="backButton"
+                                    onClick={() => history.goBack()}>
+                                    Скасувати
                         </Button>
-                    </Col>
-                </Row>
-            </Form>}
+                            </Col>
+                        </Row>
+                    </Form>
+                </>}
         </>
     );
 }
