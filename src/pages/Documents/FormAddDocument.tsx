@@ -120,6 +120,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
     setVisibleModal(false);
     onAdd();
     form.resetFields();
+    setFileData({ FileAsBase64: null, FileName: null });
     setSubmitLoading(false);
   };
 

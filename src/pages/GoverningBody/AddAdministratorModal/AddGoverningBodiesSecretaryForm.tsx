@@ -29,6 +29,7 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
+  const [usersLoading, setUsersLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<any[]>([
     {
       user: {
@@ -156,8 +157,10 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setUsersLoading(true);
       await adminApi.getUsersForTable().then((response) => {
         setUsers(response.data);
+        setUsersLoading(false);
       });
     };
     fetchData();
@@ -185,7 +188,7 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
           },
         ]}
       >
-        <Select showSearch className={classes.inputField}>
+        <Select showSearch loading={usersLoading} className={classes.inputField}>
           {users?.map((o) => (
             <Select.Option key={o.id} value={JSON.stringify(o)}>
               {o.firstName + " " + o.lastName}

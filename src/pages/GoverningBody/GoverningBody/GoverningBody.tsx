@@ -148,7 +148,7 @@ const GoverningBody = () => {
       <Row gutter={[0, 15]}>
         <Col span={8} offset={1}></Col>
       </Row>
-      <Row className="governingBodyRow" gutter={[0, 48]}>
+      <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
             <div>
@@ -177,7 +177,7 @@ const GoverningBody = () => {
                 />
               </Col>
             </Row>
-            <Row className="cityInfo">
+            <Row className="governingBodyInfo">
               <Col md={13} sm={24} xs={24}>
                 {governingBody.head ? (
                   <div>
@@ -307,8 +307,8 @@ const GoverningBody = () => {
         </Col>
         
         <Col
-          xl={{ span: 7 }}
-          md={11}
+          xl={{ span: 7, offset: 0 }}
+          md={{ span: 11, offset: 2 }}
           sm={24}
           xs={24}
         >
@@ -389,7 +389,12 @@ const GoverningBody = () => {
           </Card>
         </Col>
 
-        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
+        <Col
+          xl={{ span: 7, offset: 1 }}
+          md={{ span: 11, offset: 2 }}
+          sm={24}
+          xs={24}
+        >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Документообіг Керівного Органу</Title>
             <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
