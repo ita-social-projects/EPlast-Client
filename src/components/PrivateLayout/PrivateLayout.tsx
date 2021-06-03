@@ -166,7 +166,7 @@ const PrivateLayout = ({ children }: any) => {
 
             {(canEdit === true || regionAdm === true || cityAdm === true || clubAdm===true) ? (
               <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
-                <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push('/annualreport/table'); }} key="9">Річні звіти</Menu.Item>
+                <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="9">Річні звіти</Menu.Item>
                 <SubMenu
                   key="sub2.1"
                   icon={<PieChartOutlined />}

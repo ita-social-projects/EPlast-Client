@@ -5,8 +5,6 @@ import ClickAwayListener from "react-click-away-listener";
 import UnconfirmedDropdown from "./Dropdowns/UnconfirmedDropdown/UnconfirmedDropdown";
 import ConfirmedDropdown from "./Dropdowns/ConfirmedDropdown/ConfirmedDropdown";
 import SavedDropdown from "./Dropdowns/SavedDropdown/SavedDropdown";
-import AnnualReportInformation from "./AnnualReportInformation/AnnualReportInformation";
-import CitySelectModal from "./CitySelectModal/CitySelectModal";
 import AnnualReportApi from "../../../api/AnnualReportApi";
 import Modal from "antd/lib/modal";
 import AuthStore from "../../../stores/AuthStore";
@@ -14,7 +12,6 @@ import jwt_decode from "jwt-decode";
 import { ExclamationCircleOutlined, StarFilled, StarOutlined } from "@ant-design/icons";
 import notificationLogic from "../../../components/Notifications/Notification";
 import { successfulEditAction, tryAgain } from "../../../components/Notifications/Messages";
-import Spinner from "../../Spinner/Spinner";
 
 interface props {
   columns: any;
@@ -36,9 +33,7 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
   const [isCityAdmin, setIsCityAdmin] = useState<boolean>();
   const [currentSearchedData, setCurrentSearchedData] = useState<string>();
   const [showUnconfirmedDropdown, setShowUnconfirmedDropdown] = useState<boolean>(false);
-  const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(false);
   const [showConfirmedDropdown, setShowConfirmedDropdown] = useState<boolean>(false);
-  const [showAnnualReportModal, setShowAnnualReportModal] = useState<boolean>(false);
   const [showSavedDropdown, setShowSavedDropdown] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [authReport, setAuthReport] = useState(false);
@@ -204,7 +199,6 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
             title="Звіти в моєму розпорядженні">
               
             <button
-              hidden={count==0 || count==undefined}
               onClick={() => { setPage(1); setAuthReport(!authReport) }} >
               {authReport ? <StarFilled /> : <StarOutlined />}
             </button>

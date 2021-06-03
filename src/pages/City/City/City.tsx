@@ -340,7 +340,7 @@ const City = () => {
                   <Button
                     type="primary"
                     className="cityInfoButton"
-                    onClick={() => history.push(`/annualreport/table`)}
+                    onClick={() => history.push(`/annualreport/table/city`)}
                   >
                     Річні звіти
                   </Button>
