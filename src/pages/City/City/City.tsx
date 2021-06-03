@@ -195,6 +195,7 @@ const City = () => {
       const admins = [
         ...response.data.administration,
         response.data.head,
+        response.data.headDeputy,
       ].filter((a) => a !== null);
 
       setPhotos(

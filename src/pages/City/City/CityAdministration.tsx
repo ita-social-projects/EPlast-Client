@@ -30,8 +30,8 @@ const CityAdministration = () => {
       setLoading(true);
       const response = await getAllAdmins(id);
         setPhotosLoading(true);
-        setPhotos([...response.data.administration, response.data.head].filter(a => a != null));
-        setAdministration([...response.data.administration, response.data.head].filter(a => a != null));
+        setPhotos([...response.data.administration, response.data.head, response.data.headDeputy].filter(a => a != null));
+        setAdministration([...response.data.administration, response.data.head, response.data.headDeputy].filter(a => a != null));
         setCanEdit(response.data.canEdit);
         setCityName(response.data.name);
       setLoading(false);
