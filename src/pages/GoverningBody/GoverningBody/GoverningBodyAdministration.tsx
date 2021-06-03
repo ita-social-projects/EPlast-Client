@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Skeleton, Spin} from 'antd';
-import {SettingOutlined, CloseOutlined, RollbackOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Layout, Modal, Skeleton, Spin} from 'antd';
+import {SettingOutlined, CloseOutlined, RollbackOutlined, DeleteOutlined} from '@ant-design/icons';
 import { getAllAdmins, removeAdministrator, getUserAccess} from "../../../api/governingBodiesApi";
 import userApi from "../../../api/UserApi";
-import "../../City/City/City.less";
+import "./GoverningBody.less";
+import classes from "./GoverningBodyAdministration.module.css";
 import GoverningBodyAdmin from '../../../models/GoverningBody/GoverningBodyAdmin';
 import AddAdministratorModal from '../AddAdministratorModal/AddAdministratorModal';
 import jwt from 'jwt-decode';
@@ -17,9 +18,9 @@ import AuthStore from '../../../stores/AuthStore';
 moment.locale("uk-ua");
 
 const GoverningBodyAdministration = () => {
+    const confirm = Modal.confirm;
     const {id} = useParams();
     const history = useHistory();
-
     const [administration, setAdministration] = useState<GoverningBodyAdmin[]>([]);
     const [visibleModal, setVisibleModal] = useState(false);
     const [admin, setAdmin] = useState<GoverningBodyAdmin>(new GoverningBodyAdmin());
@@ -53,6 +54,21 @@ const GoverningBodyAdministration = () => {
       setAdministration(administration.filter((u) => u.id !== admin.id));
       await createNotification(admin.userId, `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в керівному органі`);
     };
+
+    const showConfirm = (admin: GoverningBodyAdmin) => {
+        confirm({
+            title: "Дійсно видалити користувача з проводу?",
+            content: (
+              <div>
+                {admin.adminType.adminTypeName} {admin.user.firstName} {admin.user.lastName} буде видалений з проводу!
+              </div>
+            ),
+            onCancel() { },
+            onOk() {
+              removeAdmin(admin);
+            },
+          });
+      };
     
     const createNotification = async(userId : string, message : string) => {
       await NotificationBoxApi.createNotifications(
@@ -91,11 +107,11 @@ const GoverningBodyAdministration = () => {
 
     return (
       <Layout.Content>
-        <Title level={2}>Провід керівного органу</Title>
+        <Title level={2}>Провід Керівного Органу</Title>
         {loading ? (
           <Spinner />
         ) : (
-          <div className="cityMoreItems">
+          <div className="governingBodyMoreItems">
             {administration.length > 0 ? (
               administration.map((member: GoverningBodyAdmin) => (
                 <Card
@@ -106,9 +122,12 @@ const GoverningBodyAdministration = () => {
                   actions={
                     userAccesses["AddGBSecretary"]
                       ? [
-                          <SettingOutlined onClick={() => showModal(member)} />,
-                          <CloseOutlined
-                            onClick={() => removeAdmin(member)}
+                          <SettingOutlined
+                            className={classes.governingBodyAdminSettingsIcon}
+                            onClick={() => showModal(member)} />,
+                          <DeleteOutlined
+                            className={classes.governingBodyAdminDeleteIcon}
+                            onClick={() => showConfirm(member)}
                           />,
                         ]
                       : undefined
@@ -118,7 +137,7 @@ const GoverningBodyAdministration = () => {
                     onClick={() =>
                       history.push(`/userpage/main/${member.userId}`)
                     }
-                    className="cityMember"
+                    className="governingBodyMember"
                   >
                     <div>
                       {photosLoading ? (
@@ -139,7 +158,7 @@ const GoverningBodyAdministration = () => {
             )}
           </div>
         )}
-        <div className="cityMoreItems">
+        <div className="governingBodyMoreItems">
           <Button
             className="backButton"
             icon={<RollbackOutlined />}

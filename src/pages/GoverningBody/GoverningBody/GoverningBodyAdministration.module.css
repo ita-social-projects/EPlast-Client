@@ -1,0 +1,11 @@
+.governingBodyAdminSettingsIcon>* {
+    font-size: 20px ;
+}
+.governingBodyAdminDeleteIcon>*{
+    font-size: 20px ;
+    color: #910202 ;
+}
+.governingBodyAdminDeleteIcon :hover{
+    color: #690606 ;
+}
+

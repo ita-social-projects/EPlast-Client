@@ -34,7 +34,7 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
-import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddGoverningBodiesSecretaryForm";
+import AddGoverningBodiesSecretaryForm from "../AddAdministratorModal/AddGoverningBodiesSecretaryForm";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from 'jwt-decode';
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
@@ -56,6 +56,7 @@ const GoverningBody = () => {
   const [visible, setvisible] = useState<boolean>(false);
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   const [admins, setAdmins] = useState<GoverningBodyAdmin[]>([]);
+  const [governingBodyHead, setGoverningBodyHead] = useState<GoverningBodyAdmin>();
   const [adminsCount, setAdminsCount] = useState<number>();
 
   const deleteGoverningBody = async () => {
@@ -121,6 +122,7 @@ const GoverningBody = () => {
       );
       setGoverningBody(response.data);
       setAdmins(admins);
+      setGoverningBodyHead(response.data.head)
       setAdminsCount(admins.length);
     } finally {
       setLoading(false);
@@ -179,22 +181,22 @@ const GoverningBody = () => {
             </Row>
             <Row className="governingBodyInfo">
               <Col md={13} sm={24} xs={24}>
-                {governingBody.head ? (
+                {governingBodyHead ? (
                   <div>
                     <Paragraph>
-                      <b>Голова Керівного Органу:</b> {governingBody.head.user.firstName}{" "}
-                      {governingBody.head.user.lastName}
+                      <b>Голова Керівного Органу:</b> {governingBodyHead.user.firstName}{" "}
+                      {governingBodyHead.user.lastName}
                     </Paragraph>
-                    {governingBody.head.endDate ? (
+                    {governingBodyHead.endDate ? (
                       <Paragraph>
                         <b>Час правління:</b>{" "}
-                        {moment(governingBody.head.startDate).format("DD.MM.YYYY")}{" - "}
-                        {moment(governingBody.head.endDate).format("DD.MM.YYYY")}
+                        {moment(governingBodyHead.startDate).format("DD.MM.YYYY")}{" - "}
+                        {moment(governingBodyHead.endDate).format("DD.MM.YYYY")}
                       </Paragraph>
                     ) : (
                         <Paragraph>
                           <b>Початок правління:</b>{" "}
-                          {moment(governingBody.head.startDate).format("DD.MM.YYYY")}
+                          {moment(governingBodyHead.startDate).format("DD.MM.YYYY")}
                         </Paragraph>
                       )}
                   </div>
@@ -429,10 +431,13 @@ const GoverningBody = () => {
         onCancel={handleOk}
         footer={null}
       >
-        <AddCitiesNewSecretaryForm
+        <AddGoverningBodiesSecretaryForm
           onAdd={handleOk}
+          admins={admins}
+          setAdmins={setAdmins}
+          setGoverningBodyHead={setGoverningBodyHead}
           governingBodyId={+id}>
-        </AddCitiesNewSecretaryForm>
+        </AddGoverningBodiesSecretaryForm>
       </Modal>
     </Layout.Content>
   ) : (

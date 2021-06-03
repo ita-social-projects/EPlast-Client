@@ -9,6 +9,7 @@ import {
   getAllAdmins,
 } from "../../../api/governingBodiesApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import userApi from "../../../api/UserApi";
 import moment from "moment";
 import {
   emptyInput,
@@ -17,16 +18,17 @@ import {
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 
-type AddGoverningBodiesNewSecretaryForm = {
+type AddGoverningBodiesSecretaryForm = {
   onAdd: () => void;
-  onCancel: () => void;
+  setAdmins: React.Dispatch<React.SetStateAction<GoverningBodyAdmin[]>>;
+  setGoverningBodyHead: React.Dispatch<React.SetStateAction<GoverningBodyAdmin | undefined>>;
   governingBodyId: number;
   admin?: any;
 };
 const confirm = Modal.confirm;
-const AddGoverningBodiesNewSecretaryForm = (props: any) => {
+const AddGoverningBodiesSecretaryForm = (props: any) => {
   const [head, setHead] = useState<GoverningBodyAdmin>();
-  const { onAdd, onCancel } = props;
+  const { onAdd, setAdmins, setGoverningBodyHead } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [usersLoading, setUsersLoading] = useState<boolean>(false);
@@ -63,6 +65,13 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
 
   const addGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
     await addAdministrator(admin.governingBodyId, admin);
+    admin.user.imagePath =  (
+        await userApi.getImage(admin.user.imagePath)
+      ).data;
+    if (admin.adminType.adminTypeName == "Голова Керівного Органу") {
+      setGoverningBodyHead(admin);        
+    }
+    setAdmins((old: GoverningBodyAdmin[]) => [...old, admin]);
     notificationLogic("success", "Користувач успішно доданий в провід");
     form.resetFields();
     await NotificationBoxApi.createNotifications(
@@ -121,7 +130,7 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
       userId: props.admin === undefined
         ? JSON.parse(values.userId).id
         : props.admin.userId,
-      user: values.user,
+      user: JSON.parse(values.userId),
       adminType: {
         ...new AdminType(),
         adminTypeName: values.AdminType,
@@ -129,7 +138,7 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
       governingBodyId: props.governingBodyId,
       startDate: values.startDate,
       endDate: values.endDate,
-    };
+      };
     onAdd();
     if (newAdmin.id === 0) {
       try {
@@ -269,4 +278,4 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
   );
 };
 
-export default AddGoverningBodiesNewSecretaryForm;
+export default AddGoverningBodiesSecretaryForm;
