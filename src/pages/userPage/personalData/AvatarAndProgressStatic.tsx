@@ -166,9 +166,15 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       <p className="statusText">Курінь: <Link to="#" className="LinkText" onClick={() => window.open(`/clubs/${clubId}`)}>{club}</Link></p>
       {!isUserPlastun && (
         <div className="progress">
-          <p className="statusText">
-            {time} дні і {firstName} {lastName} - Дійсний член організації :)
+          {time !== 0 ? (
+            <p className="statusText">
+              {time} дні і {firstName} {lastName} - Дійсний член організації :)
           </p>
+          ) : (
+            <p className="statusText">
+              Менше 1 дня і {firstName} {lastName} - Дійсний член організації :)
+          </p>
+          )}
           <Progress
             type="circle"
             className="progressBar"
