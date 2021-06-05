@@ -26,7 +26,6 @@ import {
 } from "../../api/governingBodiesApi";
 import "../City/CreateCity/CreateCity.less";
 import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfile";
-import RegionBoardProfile from "../../models/RegionBoard/RegionBoardProfile";
 import notificationLogic from "../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
@@ -99,20 +98,11 @@ const CreateGoverningBody = () => {
       setLoading(true);
       let response = await getGoverningBodyById(+id);
 
-      if (response.data.logo !== undefined) {
-        const logo = await getGoverningBodyLogo(response.data.governingBody.logo);
+      if (response.data.logo !== null) {
+        const logo = await getGoverningBodyLogo(response.data.logo);
         response.data.logo = logo.data;
       }
-      
-      setGoverningBody(response.data.governingBody);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getRegionsBoard = async () => {
-    try {
-      setLoading(true);
+      setGoverningBody(response.data);
     } finally {
       setLoading(false);
     }
@@ -120,9 +110,7 @@ const CreateGoverningBody = () => {
 
   useEffect(() => {
     if (+id) {
-      getGoverningBody().then(() => getRegionsBoard());
-    } else {
-      getRegionsBoard();
+      getGoverningBody();
     }
   }, [id]);
 
