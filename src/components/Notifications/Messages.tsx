@@ -50,6 +50,10 @@ export const successfulConfirmedAction = (name:string, itemName?:string)=>{
     return itemName ? `${name} ${itemName} успішно затверджено` : `${name} успішно затверджено`;
 }; 
 
+export const successfulCancelAction = (name:string, itemName?:string)=>{
+    return itemName ? `${name} ${itemName} скасовано` : `${name} скасовано`;
+}; 
+
 export const failCreateAction = (name:string)=>{
     return `Не вдалося створити ${name}`;
 }; 

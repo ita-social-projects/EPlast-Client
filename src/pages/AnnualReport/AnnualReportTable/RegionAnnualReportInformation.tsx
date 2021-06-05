@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Card, Modal, Space, Form, Row, Col } from 'antd';
-import { useHistory, useParams } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import Spinner from '../../Spinner/Spinner';
+import userApi from '../../../api/UserApi';
 import regionsApi from '../../../api/regionsApi';
 import RegionMembersTable from './RegionMembersTable/RegionMembersTable';
+import notificationLogic from "../../../components/Notifications/Notification";
+import { successfulCancelAction, successfulConfirmedAction, successfulDeleteAction } from '../../../components/Notifications/Messages';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import AnnualReportMenu from '../AnnualReportMenu';
+import AuthStore from '../../../stores/AuthStore';
+import jwt_decode from 'jwt-decode';
+import jwt from "jwt-decode";
+import StatusStamp from '../AnnualReportStatus';
 
 const { Title, Text } = Typography;
 
@@ -13,8 +22,13 @@ const RegionAnnualReportInformation = () => {
     const history = useHistory();
     const [regionAnnualReport, setRegionAnnualReport] = useState(Object);
     const [isLoading, setIsLoading] = useState(false);
+    const [status, setStatus] = useState<number>();
+    const [isAdmin, setIsAdmin] = useState<boolean>();
+    const [isRegionAdmin, setIsRegionAdmin] = useState<boolean>();
+    const [userRegionId, setUserRegionId] = useState<number>();
 
     useEffect(() => {
+        checkAccessToManage();
         fetchRegionReports(annualreportId, year);
     }, [])
 
@@ -23,6 +37,7 @@ const RegionAnnualReportInformation = () => {
         try {
             let response = await regionsApi.getReportById(annualreportId, year);
             setRegionAnnualReport(response.data)
+            setStatus(response.data.status);
         }
         catch (error) {
             showError(error.message)
@@ -30,6 +45,63 @@ const RegionAnnualReportInformation = () => {
             setIsLoading(false);
         }
     }
+
+    const checkAccessToManage = async () => {
+        setIsLoading(true);
+        try {
+            let token = AuthStore.getToken() as string;
+            let decodedJwt = jwt_decode(token) as any;
+            let roles = decodedJwt[
+                "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+            ] as string[];
+            setIsAdmin(roles.includes("Admin"));
+            setIsRegionAdmin(roles.includes("Голова Округи"));
+            const user: any = jwt(token);
+            var regionId = await userApi.getById(user.nameid).then((response) => {
+                return response.data?.user.regionId
+            })
+                .catch((error) => {
+                    notificationLogic("error", error.message);
+                });
+            setUserRegionId(regionId);
+        } catch (error) {
+            showError(error.message)
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleEdit = (id: number) => {
+        history.push(`/annualreport/region/edit/${id}/${year}`);
+    };
+
+    const handleConfirm = async (id: number) => {
+        let response = await regionsApi.confirm(id);
+        setStatus(1);
+        notificationLogic('success', successfulConfirmedAction('Річний звіт', response.data.name));
+    };
+
+    const handleCancel = async (id: number) => {
+        let response = await regionsApi.cancel(id);
+        setStatus(0);
+        notificationLogic('success', successfulCancelAction('Річний звіт', response.data.name));
+    };
+
+    const handleRemove = async (id: number) => {
+        Modal.confirm({
+            title: "Ви дійсно хочете видалити річний звіт?",
+            icon: <ExclamationCircleOutlined />,
+            okText: 'Так, видалити',
+            okType: 'danger',
+            cancelText: 'Скасувати',
+            maskClosable: true,
+            async onOk() {
+                let response = await regionsApi.removeAnnualReport(id);
+                notificationLogic('success', successfulDeleteAction('Річний звіт', response.data.name));
+                history.goBack()
+            }
+        });
+    };
 
     const showError = (message: string) => {
         Modal.error({
@@ -41,7 +113,19 @@ const RegionAnnualReportInformation = () => {
 
     return (
         <>
-            {isLoading ? <Spinner /> : <Form
+            {isLoading ? <Spinner /> : 
+            <>
+            <AnnualReportMenu
+                        record={{ ...regionAnnualReport, canManage: isRegionAdmin && regionAnnualReport.regionId == userRegionId }}
+                        isAdmin={isAdmin!}
+                        status={status!}
+                        setStatus={setStatus}
+                        handleEdit={handleEdit}
+                        handleConfirm={handleConfirm}
+                        handleCancel={handleCancel}
+                        handleRemove={handleRemove}
+                    />
+            <Form
                 onFinish={() => history.goBack()}
                 className='annualreport-form'>
                 <Title
@@ -49,6 +133,10 @@ const RegionAnnualReportInformation = () => {
                     level={3} >
                     {`Річний звіт округи ${regionAnnualReport.regionName} за 
                     ${year} рік`}</Title>
+                <StatusStamp  status={status!} />
+                <Link className="LinkText" style={{ fontSize: "14px" }} to="#" onClick={() => window.open(`/regions/${regionAnnualReport.regionId}`)}>Перейти на профіль округи {regionAnnualReport.regionName}</Link>
+                        <br />
+                        <br />
                 <Card>
                     <Row
                         gutter={16}
@@ -208,7 +296,8 @@ const RegionAnnualReportInformation = () => {
                     </Card.Grid>
                 </Card>
 
-            </Form>}
+            </Form>
+            </>}
         </>
     );
 }
