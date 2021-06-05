@@ -203,6 +203,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
           className={classes.inputField}
           options={[
             { value: "Голова Куреня" },
+            { value: "Заступник Голови Куреня" },
             { value: "Голова СПС" },
             { value: "Фотограф" },
             { value: "Писар" },

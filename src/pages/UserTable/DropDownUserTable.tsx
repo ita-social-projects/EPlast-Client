@@ -59,6 +59,7 @@ const DropDown = (props: Props) => {
   const [cityAdm, setCityAdm] = useState<boolean>(false);
   const [cityAdmDeputy, setCityAdmDeputy] = useState<boolean>(false);
   const [clubAdm, setClubAdm] = useState<boolean>(false);
+  const [clubAdmDeputy, setClubAdmDeputy] = useState<boolean>(false);
   const [member, setMember] = useState<boolean>(false)
   const [userAdmin, setUserAdmin] = useState<User>();
   const [changeRoles, setChangeRoles] = useState<boolean>(true);
@@ -78,6 +79,7 @@ const DropDown = (props: Props) => {
     setCityAdm(roles.includes("Голова Станиці"));
     setCityAdmDeputy(roles.includes("Заступник Голови Станиці"));
     setClubAdm(roles.includes("Голова Куреня"));
+    setClubAdmDeputy(roles.includes("Заступник Голови Куреня"));
     setMember(roles.includes("Дійсний член організації"))
   };
 
@@ -141,6 +143,7 @@ const DropDown = (props: Props) => {
         {props.inActiveTab === false &&
         superAdmin === true ||
         ((clubAdm === true || member === true  && userAdmin?.club === user?.clubName) ||
+          (clubAdmDeputy === true || member === true  && userAdmin?.club === user?.clubName) ||
           (cityAdm === true && userAdmin?.city == user?.cityName) ||
           (cityAdmDeputy === true && userAdmin?.city == user?.cityName)) ? (
           <Menu.Item key="1">
@@ -163,7 +166,8 @@ const DropDown = (props: Props) => {
           regionAdm === true ||
           (cityAdm === true && userAdmin?.city == user?.cityName) ||
           (cityAdmDeputy === true && userAdmin?.city == user?.cityName) ||
-          (clubAdm === true && userAdmin?.club === user?.clubName)) ? (
+          (clubAdm === true && userAdmin?.club === user?.clubName) ||
+          (clubAdmDeputy === true && userAdmin?.club === user?.clubName)) ? (
           <SubMenu
             key="sub"
             icon={<EditOutlined />}
@@ -179,7 +183,7 @@ const DropDown = (props: Props) => {
             ) : (
               <> </>
             )}
-            {(superAdmin === true || clubAdm === true) && user?.userRoles !== formerUser ? (
+            {(superAdmin === true || clubAdm === true || clubAdmDeputy === true) && user?.userRoles !== formerUser ? (
               <Menu.Item key="5">Провід куреня</Menu.Item>
             ) : (
               <> </>
@@ -198,7 +202,8 @@ const DropDown = (props: Props) => {
           regionAdm === true ||
           (cityAdm === true && userAdmin?.city == user?.cityName) ||
           (cityAdmDeputy === true && userAdmin?.city == user?.cityName) ||
-          (clubAdm === true && userAdmin?.club === user?.clubName)) ? (
+          (clubAdm === true && userAdmin?.club === user?.clubName) ||
+          (clubAdmDeputy === true && userAdmin?.club === user?.clubName)) ? (
           <Menu.Item key="7">
             <PlusCircleOutlined />
             Додати ступінь
@@ -210,7 +215,8 @@ const DropDown = (props: Props) => {
         regionAdm === true ||
         (cityAdm === true && userAdmin?.city == user?.cityName) ||
         (cityAdmDeputy === true && userAdmin?.city == user?.cityName) ||
-        (clubAdm === true && userAdmin?.club === user?.clubName) ? (
+        (clubAdm === true && userAdmin?.club === user?.clubName) ||
+        (clubAdmDeputy === true && userAdmin?.club === user?.clubName) ? (
           <Menu.Item key="8">
             <ScissorOutlined />
             Заархівувати користувача
