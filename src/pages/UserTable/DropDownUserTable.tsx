@@ -56,6 +56,7 @@ const DropDown = (props: Props) => {
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
   const [superAdmin, setsuperAdmin] = useState<boolean>(false);
   const [regionAdm, setRegionAdm] = useState<boolean>(false);
+  const [regionAdmDeputy, setRegionAdmDeputy] = useState<boolean>(false);
   const [cityAdm, setCityAdm] = useState<boolean>(false);
   const [cityAdmDeputy, setCityAdmDeputy] = useState<boolean>(false);
   const [clubAdm, setClubAdm] = useState<boolean>(false);
@@ -76,6 +77,7 @@ const DropDown = (props: Props) => {
     ] as string[];
     setsuperAdmin(roles.includes("Admin"));
     setRegionAdm(roles.includes("Голова Округи"));
+    setRegionAdmDeputy(roles.includes("Заступник Голови Округи"));
     setCityAdm(roles.includes("Голова Станиці"));
     setCityAdmDeputy(roles.includes("Заступник Голови Станиці"));
     setClubAdm(roles.includes("Голова Куреня"));
@@ -164,6 +166,7 @@ const DropDown = (props: Props) => {
         {props.inActiveTab === false &&
         (superAdmin === true ||
           regionAdm === true ||
+          regionAdmDeputy === true ||
           (cityAdm === true && userAdmin?.city == user?.cityName) ||
           (cityAdmDeputy === true && userAdmin?.city == user?.cityName) ||
           (clubAdm === true && userAdmin?.club === user?.clubName) ||
@@ -173,12 +176,13 @@ const DropDown = (props: Props) => {
             icon={<EditOutlined />}
             title="Змінити права доступу"
           >
-            {(superAdmin === true || regionAdm === true || cityAdm === true || cityAdmDeputy === true) && user?.userRoles !== formerUser ? (
+            {(superAdmin === true || regionAdm === true || regionAdmDeputy === true || cityAdm === true || cityAdmDeputy === true) 
+            && user?.userRoles !== formerUser ? (
               <Menu.Item key="3">Провід станиці</Menu.Item>
             ) : (
               <> </>
             )}
-            {(superAdmin === true || regionAdm === true) && user?.userRoles !== formerUser ? (
+            {(superAdmin === true || regionAdm === true || regionAdmDeputy === true) && user?.userRoles !== formerUser ? (
               <Menu.Item key="4">Провід округи</Menu.Item>
             ) : (
               <> </>
@@ -188,7 +192,7 @@ const DropDown = (props: Props) => {
             ) : (
               <> </>
             )}
-            {superAdmin === true || regionAdm === true || cityAdm === true || cityAdmDeputy === true ? (
+            {superAdmin === true || regionAdm === true || regionAdmDeputy === true || cityAdm === true || cityAdmDeputy === true ? (
               <Menu.Item key="6">Поточний стан користувача</Menu.Item>
             ) : (
               <> </>
@@ -200,6 +204,7 @@ const DropDown = (props: Props) => {
         {props.inActiveTab === false &&
         (superAdmin === true ||
           regionAdm === true ||
+          regionAdmDeputy === true ||
           (cityAdm === true && userAdmin?.city == user?.cityName) ||
           (cityAdmDeputy === true && userAdmin?.city == user?.cityName) ||
           (clubAdm === true && userAdmin?.club === user?.clubName) ||
@@ -213,6 +218,7 @@ const DropDown = (props: Props) => {
         )}
         {(props.inActiveTab === false && superAdmin === true) ||
         regionAdm === true ||
+        regionAdmDeputy === true ||
         (cityAdm === true && userAdmin?.city == user?.cityName) ||
         (cityAdmDeputy === true && userAdmin?.city == user?.cityName) ||
         (clubAdm === true && userAdmin?.club === user?.clubName) ||

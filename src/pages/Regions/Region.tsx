@@ -199,7 +199,7 @@ const Region = () => {
       setSixMembers(response.data.cities, 6);
 
       setPhotosLoading(true);
-      setSixAdmins(response1.data, 6);
+      setSixAdmins(response1.data, 7);
       setAdminsCount(response1.data.length);
 
       setRegionLogoLoading(true);
@@ -236,7 +236,7 @@ const Region = () => {
   };
 
   const setSixAdmins = (admin: any[], amount: number) => {
-    if (admin.length > 6) {
+    if (admin.length > 7) {
       for (let i = 0; i < amount; i++) {
         admins[i] = admin[i];
       }
