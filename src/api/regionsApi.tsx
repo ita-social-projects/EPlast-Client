@@ -84,6 +84,12 @@ export const getHead = async (regionId: number) => {
   });
 };
 
+export const getHeadDeputy = async (regionId: number) => {
+  return api.get(`Regions/GetHeadDeputy/${regionId}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export const removeAdmin = async (id: number) => {
   return api.remove(`Regions/RemoveAdministration/${id}`, id).catch((error) => {
     throw new Error(error);
