@@ -7,9 +7,9 @@ import {
   addAdministrator,
   editAdministrator,
   getAllAdmins,
-} from "../../../api/citiesApi";
-import { ReloadOutlined } from "@ant-design/icons";
+} from "../../../api/governingBodiesApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import userApi from "../../../api/UserApi";
 import moment from "moment";
 import {
   emptyInput,
@@ -17,20 +17,21 @@ import {
 } from "../../../components/Notifications/Messages"
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
-import regionsApi from "../../../api/regionsApi";
 
-type AddGoverningBodiesNewSecretaryForm = {
+type AddGoverningBodiesSecretaryForm = {
   onAdd: () => void;
-  onCancel: () => void;
+  setAdmins: React.Dispatch<React.SetStateAction<GoverningBodyAdmin[]>>;
+  setGoverningBodyHead: React.Dispatch<React.SetStateAction<GoverningBodyAdmin | undefined>>;
   governingBodyId: number;
   admin?: any;
 };
 const confirm = Modal.confirm;
-const AddGoverningBodiesNewSecretaryForm = (props: any) => {
+const AddGoverningBodiesSecretaryForm = (props: any) => {
   const [head, setHead] = useState<GoverningBodyAdmin>();
-  const { onAdd, onCancel } = props;
+  const { onAdd, setAdmins, setGoverningBodyHead } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
+  const [usersLoading, setUsersLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<any[]>([
     {
       user: {
@@ -64,6 +65,13 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
 
   const addGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
     await addAdministrator(admin.governingBodyId, admin);
+    admin.user.imagePath =  (
+        await userApi.getImage(admin.user.imagePath)
+      ).data;
+    if (admin.adminType.adminTypeName == "Голова Керівного Органу") {
+      setGoverningBodyHead(admin);        
+    }
+    setAdmins((old: GoverningBodyAdmin[]) => [...old, admin]);
     notificationLogic("success", "Користувач успішно доданий в провід");
     form.resetFields();
     await NotificationBoxApi.createNotifications(
@@ -120,9 +128,9 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
     const newAdmin: GoverningBodyAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
       userId: props.admin === undefined
-        ? JSON.parse(values.userId).user.id
+        ? JSON.parse(values.userId).id
         : props.admin.userId,
-      user: values.user,
+      user: JSON.parse(values.userId),
       adminType: {
         ...new AdminType(),
         adminTypeName: values.AdminType,
@@ -130,11 +138,11 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
       governingBodyId: props.governingBodyId,
       startDate: values.startDate,
       endDate: values.endDate,
-    };
+      };
     onAdd();
     if (newAdmin.id === 0) {
       try {
-        if (values.AdminType === "Голова Станиці" && head !== null) {
+        if (values.AdminType === "Голова Керівного Органу" && head !== null) {
           if (head?.userId !== newAdmin.userId) {
             showConfirm(newAdmin);
           } else if (head?.userId === newAdmin.userId) {
@@ -158,8 +166,10 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setUsersLoading(true);
       await adminApi.getUsersForTable().then((response) => {
         setUsers(response.data);
+        setUsersLoading(false);
       });
     };
     fetchData();
@@ -187,7 +197,7 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
           },
         ]}
       >
-        <Select showSearch className={classes.inputField}>
+        <Select showSearch loading={usersLoading} className={classes.inputField}>
           {users?.map((o) => (
             <Select.Option key={o.id} value={JSON.stringify(o)}>
               {o.firstName + " " + o.lastName}
@@ -213,7 +223,7 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Керывного Органу" },
+            { value: "Голова Керівного Органу" },
             { value: "Голова СПС" },
             { value: "Писар" },
             { value: "Скарбник" },
@@ -268,4 +278,4 @@ const AddGoverningBodiesNewSecretaryForm = (props: any) => {
   );
 };
 
-export default AddGoverningBodiesNewSecretaryForm;
+export default AddGoverningBodiesSecretaryForm;

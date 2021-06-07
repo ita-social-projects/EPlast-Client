@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../City/AddAdministrationModal/AddAdministrationModal.less";
+import "./AddAdministrationModal.less";
 import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
@@ -10,9 +10,7 @@ import {
 } from "../../../api/governingBodiesApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import moment from "moment";
-import "../GoverningBody/node_modules/moment/locale/uk";
 import{emptyInput} from "../../../components/Notifications/Messages"
-moment.locale("uk-ua");
 
 const confirm = Modal.confirm;
 

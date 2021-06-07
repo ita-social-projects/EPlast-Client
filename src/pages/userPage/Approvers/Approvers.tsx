@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Button, Avatar, Tooltip } from 'antd';
+import { Card, Button, Avatar, Tooltip, Spin } from 'antd';
 import './Approvers.less';
 import AvatarAndProgress from '../../../../src/pages/userPage/personalData/AvatarAndProgress';
 import AddUser from "../../../assets/images/user_add.png";
@@ -28,11 +28,14 @@ const Assignments = () => {
   const history = useHistory();
   const { userId } = useParams();
   const [loading, setLoading] = useState(false);
+  const [approveAsMemberLoading, setApproveAsMemberLoading] = useState(false);
+  const [approveAsHovelHeadLoading, setApproveAsHovelHeadLoading] = useState(false);
+  const [approveAsCityHeadLoading, setApproveAsCityHeadLoading] = useState(false);
   const [data, setData] = useState<ApproversData>();
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
   const [accessLevels, setAccessLevels] = useState<string[]>([]);
-  const userGenders = ["Чоловік", "Жінка", "Інша"];
+  const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
   const AccessableRoles = ["Admin", "Голова Куреня", "Голова Станиці", "Голова Округи", "Дійсний член організації", "Прихильник", "Зареєстрований користувач"];
   const [roles, setRoles] = useState<string[]>([]);
 
@@ -99,6 +102,7 @@ const Assignments = () => {
   }
 
   const approveClick = async (userId: string, isClubAdmin: boolean = false, isCityAdmin: boolean = false) => {
+    isCityAdmin ? setApproveAsCityHeadLoading(true) : isClubAdmin ? setApproveAsHovelHeadLoading(true) : setApproveAsMemberLoading(true);
     await userApi.approveUser(userId, isClubAdmin, isCityAdmin).
       then(() => { notificationLogic('success', successfulCreateAction("Поручення")) }).
       catch(() => { notificationLogic('error', "Не вдалося поручитися") });
@@ -110,8 +114,9 @@ const Assignments = () => {
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/userpage/main/${data?.currentUserId}`,
       'Переглянути користувача'
-    );
-    fetchData();
+      );
+    await fetchData();
+    isCityAdmin ? setApproveAsCityHeadLoading(false) : isClubAdmin ? setApproveAsHovelHeadLoading(false) : setApproveAsMemberLoading(false);
   }
 
   const { Meta } = Card;
@@ -152,7 +157,7 @@ const Assignments = () => {
                     <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="titleText" />
                     <Button className="cardButton" danger onClick={() => deleteApprove(p.id)}>
                       Відкликати
-                            </Button>
+                    </Button>
                   </Card>
                 </div>
               )
@@ -178,34 +183,29 @@ const Assignments = () => {
           }
           )}
           <div>
-            <div>
-              <Tooltip
-                title="Поручитися за користувача"
-                placement="bottom">
-                <Link to="#" onClick={() => approveClick(data?.user.id)}>
-                  <Card
-                    hidden={!(data?.canApprove && AccessToManage(roles.filter(r => r != "Прихильник" && r != "Зареєстрований користувач")))}
-                    hoverable
-                    className="cardStyles"
-                    cover={<Avatar
-                      src={AddUser}
-                      alt="example" size={166}
-                      shape="square"
-                      className="avatar"
-                    />}
-                  >
-                    <p className="cardP" />
-                    <p className="cardP" />
-                  </Card>
-                </Link>
+            {data?.canApprove && AccessToManage(roles.filter(r => r != "Прихильник" && r != "Зареєстрований користувач")) && (
+              <div>
+                <Tooltip
+                  title="Поручитися за користувача"
+                  placement="bottom">
+                    <Spin spinning={approveAsMemberLoading}>
+                        <Link to="#" onClick={() => approveClick(data?.user.id)}>
+                            <Avatar src={AddUser}
+                            alt="example" size={168}
+                            className="avatarEmpty"
+                            shape="square"                            
+                            />
+                        </Link>
+                    </Spin>
               </Tooltip>
-            </div>
+            </div>)
+            }
             <div
               hidden={data?.confirmedUsers.length != 0 || (data?.canApprove && AccessToManage(roles.filter(r => r != "Прихильник" && r != "Зареєстований користувач")))}>
               <br />
-              <br />
+                <br />
                     На жаль, поруки відсутні
-                    <br />
+                <br />
               <br />
             </div>
           </div>
@@ -257,20 +257,22 @@ const Assignments = () => {
                 <Tooltip
                   title="Поручитися за користувача"
                   placement="rightBottom">
-                  <Link to="#" onClick={() => approveClick(data?.user.id, roles.includes("Голова Куреня") || roles.includes("Admin"), false)}>
-                    <Avatar src={AddUser}
-                      alt="example" size={168}
-                      className="avatarEmpty"
-                      shape="square" />
-                  </Link>
+                    <Spin spinning={approveAsHovelHeadLoading}>
+                        <Link to="#" onClick={() => approveClick(data?.user.id, roles.includes("Голова Куреня") || roles.includes("Admin"), false)}>
+                            <Avatar src={AddUser}
+                            alt="example" size={168}
+                            className="avatarEmpty"
+                            shape="square" />
+                        </Link>
+                    </Spin>
                 </Tooltip>
               </div>
             ) : (
               <div>
                 <br />
-                <br />
-            На жаль, поруки відсутні
-                <br />
+                  <br />
+                    На жаль, поруки відсутні
+                  <br />
                 <br />
               </div>
             )
@@ -320,6 +322,7 @@ const Assignments = () => {
                 <Tooltip
                   title="Поручитися за користувача"
                   placement="rightBottom">
+                  <Spin spinning={approveAsCityHeadLoading}>
                   <Link to="#" onClick={() => approveClick(data?.user.id, false, roles.includes("Голова Станиці") || roles.includes("Admin"))}>
                     <Avatar
                       src={AddUser}
@@ -327,14 +330,15 @@ const Assignments = () => {
                       className="avatarEmpty"
                       shape="square" />
                   </Link>
+                  </Spin>
                 </Tooltip>
               </div>
             ) : (
               <div>
                 <br />
-                <br />
-            На жаль, поруки відсутні
-                <br />
+                  <br />
+                    На жаль, поруки відсутні
+                  <br />
                 <br />
               </div>
             )
