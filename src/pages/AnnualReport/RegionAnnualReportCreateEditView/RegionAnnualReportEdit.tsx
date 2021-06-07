@@ -12,8 +12,8 @@ export const RegionAnnualReportEdit = () => {
     const { annualreportId, year } = useParams();
     const history = useHistory();
     const [title, setTitle] = useState<string>('');
-    const [regionId, setRegionId]=useState<number>(0);
-    const [isLoading, setIsLoading]=useState(false);
+    const [regionId, setRegionId] = useState<number>(0);
+    const [isLoading, setIsLoading] = useState(false);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -23,15 +23,15 @@ export const RegionAnnualReportEdit = () => {
     const fetchRegionReports = async (annualreportId: number, year: number) => {
         setIsLoading(true);
         try {
-            let response = await regionsApi.getReportById(annualreportId,year);
+            let response = await regionsApi.getReportById(annualreportId, year);
             setRegionId(response.data.regionId)
-            
-            setTitle((response.data.regionName.includes('округ')? response.data.regionName : response.data.regionName+' округа').concat(' '+year+' рік'));
+
+            setTitle((response.data.regionName.includes('округ') ? response.data.regionName : response.data.regionName + ' округа').concat(' ' + year + ' рік'));
             form.setFieldsValue(response.data);
         }
         catch (error) {
             showError(error.message)
-        }finally {
+        } finally {
             setIsLoading(false);
         }
     }
@@ -65,35 +65,35 @@ export const RegionAnnualReportEdit = () => {
 
     return (
         <>
-            {isLoading? <Spinner/> : 
-            <>
-            <div className="report-menu">
+            {isLoading ? <Spinner /> :
+                <>
+                    <div className="report-menu">
                         <Tooltip title="Скасувати редагування звіту">
                             <div className="report-menu-item" onClick={() => history.goBack()}><CloseCircleOutlined /></div>
                         </Tooltip>
                     </div>
-            <Form
-                onFinish={handleFinish}
-                className='annualreport-form'
-                form={form} >
-                <RegionAnnualReportForm
-                    title={title}
-                    regionId={regionId}
-                    year={year}
-                     />
-                <Row
-                    justify='center' >
-                    <Col>
-                        <Button
-                            loading={isLoading}
-                            type='primary'
-                            htmlType='submit'>
-                            Зберегти зміни
+                    <Form
+                        onFinish={handleFinish}
+                        className='annualreport-form'
+                        form={form} >
+                        <RegionAnnualReportForm
+                            title={title}
+                            regionId={regionId}
+                            year={year}
+                        />
+                        <Row
+                            justify='center' >
+                            <Col>
+                                <Button
+                                    loading={isLoading}
+                                    type='primary'
+                                    htmlType='submit'>
+                                    Зберегти зміни
                         </Button>
-                    </Col>
-                </Row>
-            </Form>
-            </>}
+                            </Col>
+                        </Row>
+                    </Form>
+                </>}
         </>
     );
 };
