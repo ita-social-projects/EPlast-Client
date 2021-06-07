@@ -39,7 +39,7 @@ const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, isCityAdmin, userI
     return <Modal
         visible={visibleModal}
         onCancel={handleCancel}
-        title="Надання пластового ступеня"
+        title="Надання Пластового ступеня"
         footer={null}>
         <FormAddPlastDegree
             handleAddDegree={handleAddDegree}

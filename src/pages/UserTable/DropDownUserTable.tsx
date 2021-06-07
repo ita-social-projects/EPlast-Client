@@ -61,7 +61,7 @@ const DropDown = (props: Props) => {
   const [member, setMember] = useState<boolean>(false)
   const [userAdmin, setUserAdmin] = useState<User>();
   const [changeRoles, setChangeRoles] = useState<boolean>(true);
-  const formerUser:string = "Колишній член пласту" 
+  const formerUser:string = "Колишній член Пласту" 
 
   const fetchUser = async () => {
     let jwt = (await AuthStore.getToken()) as string;

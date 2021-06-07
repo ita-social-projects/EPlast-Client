@@ -25,7 +25,7 @@ const setTagColor = (userRoles: string) => {
   if (userRoles?.includes("Зацікавлений")) {
     color = "yellow";
   }
-  if (userRoles?.includes("Колишній член пласту")) {
+  if (userRoles?.includes("Колишній член Пласту")) {
     color = "black";
   }
   if (userRoles?.includes("Зареєстрований користувач")) {
@@ -266,8 +266,8 @@ const ColumnsForUserTable: any = [
         value: "Дійсний член організації",
       },
       {
-        text: "Колишній член пласту",
-        value: "Колишній член пласту",
+        text: "Колишній член Пласту",
+        value: "Колишній член Пласту",
       },
       {
         text: "Зацікавлений",
