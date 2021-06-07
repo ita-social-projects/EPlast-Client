@@ -8,7 +8,6 @@ const ConfirmedDropdown = (props: Props) => {
     const { record, pageX, pageY, showDropdown, onView } = props;
 
     const handleClick = (item: any) => {
-        console.log(item)
         switch (item.key) {
             case '1':
                 onView(record.id);

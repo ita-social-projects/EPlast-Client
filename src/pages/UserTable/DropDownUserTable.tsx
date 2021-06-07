@@ -81,7 +81,6 @@ const DropDown = (props: Props) => {
 
   useEffect(() => {
     fetchUser();
-    console.log(user)
   }, [user, changeRoles]);
 
 

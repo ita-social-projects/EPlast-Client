@@ -493,7 +493,6 @@ const Club = () => {
                     <div>
                       <FileTextOutlined className="documentIcon" />
                       <p className="documentText">
-                        {console.log(document)}
                         {document.clubDocumentType.name}
                       </p>
                     </div>

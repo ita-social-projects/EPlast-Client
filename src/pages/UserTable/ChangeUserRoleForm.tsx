@@ -32,7 +32,6 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
 
   useEffect(() => {
     fetchData();
-    console.log(record)
   }, []);
 
   const fetchData = async () => {
