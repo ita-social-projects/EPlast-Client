@@ -282,14 +282,8 @@ const ClubAnnualReportEdit = () => {
                                 <Button
                                     type='primary'
                                     htmlType='submit'>
-                                    Редагувати
-                        </Button>
-                                <Button
-                                    type="primary"
-                                    className="backButton"
-                                    onClick={() => history.goBack()}>
-                                    Скасувати
-                        </Button>
+                                    Зберегти зміни
+                                </Button>
                             </Col>
                         </Row>
                     </Form>

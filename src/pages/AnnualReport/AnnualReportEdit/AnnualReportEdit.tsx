@@ -129,7 +129,7 @@ const AnnualReportEdit = () => {
                                         <Button
                                             type='primary'
                                             htmlType='submit'>
-                                            Редагувати
+                                            Зберегти зміни
                             </Button>
                                     </Col>
                                 </Row>
