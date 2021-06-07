@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Select, Form, Button, Row, Col } from 'antd';
+import { Modal, Select, Form, Button, Row, Col, Tooltip } from 'antd';
 import { useHistory } from 'react-router-dom';
 import './RegionSelectModal.less'
 import { emptyInput } from "../../../../components/Notifications/Messages"
 import regionsApi from '../../../../api/regionsApi';
+import { ClearOutlined, LoadingOutlined } from '@ant-design/icons';
 
 interface Props {
     visibleModal: boolean,
@@ -13,11 +14,16 @@ interface Props {
 const RegionSelectModal = (props: Props) => {
     const { visibleModal, handleOk } = props;
     const history = useHistory();
+    const [isLoadingRegions, setIsLoadingRegions] = useState<boolean>(false);
+    const [form] = Form.useForm();
     const [years, setYears] = useState<any>();
-    const [regions, setRegions] = useState<any[]>([{
+    const [regions, setRegions] = useState<{
         id: '',
-        regionName: ''
-    }]);
+        name: '',
+        yearsHasReport: number[],
+    }[]>();
+    const [year, setYear] = useState<number>(0);
+    const [region, setRegion] = useState<any>(0);
 
     const validationSchema = {
         region: [
@@ -48,19 +54,41 @@ const RegionSelectModal = (props: Props) => {
     }
 
     const fetchRegions = async () => {
+        setIsLoadingRegions(true)
         try {
-            let response = await regionsApi.getAccessableRegions()
-            let tempRegions = response.data.regions.map((item:any) => {
+            let response = await regionsApi.getAccessableRegions();
+            let tempRegions = response.data.regions.map((item: any) => {
                 return {
-                    label: item.regionName,
-                    value: item.id
+                    id: item.id,
+                    name: item.regionName,
+                    yearsHasReport: item.yearsHasReport
                 }
             })
             setRegions(tempRegions);
         }
         catch (error) {
             showError(error.message)
+        } finally { setIsLoadingRegions(false) }
+    }
+
+    const onYearSelect = async (year: any) => {
+        if (region == 0) {
+            form.resetFields(['region']);
+            setYear(year);
         }
+    }
+
+    const onRegionSelect = async (regionId: any) => {
+        if (year == 0) {
+            form.resetFields(['year']);
+            setRegion(regions?.find((x: any) => x.id == regionId));
+        }
+    }
+
+    const onFormClear = () => {
+        form.resetFields();
+        setYear(0);
+        setRegion(0);
     }
 
     const showError = (message: string) => {
@@ -77,21 +105,50 @@ const RegionSelectModal = (props: Props) => {
             visible={visibleModal}
             footer={null} >
             <Form
+                form={form}
                 onFinish={(obj) => {
-                    history.push(`/annualreport/region/create/${obj.regionId}/${obj.year}`);
+                    history.push(`/annualreport/region/create/${obj.region}/${obj.year}`);
                 }} >
                 <Row>
+                    <Row>
+                        <Tooltip title={"Очистити"}>
+                            <ClearOutlined
+                                onClick={onFormClear}
+                                style={{
+                                    marginLeft: "5px",
+                                    marginTop: "-10px",
+                                    float: "right",
+                                    fontSize: "large",
+                                    cursor: "pointer",
+                                    marginBottom: "10px"
+                                }} />
+                        </Tooltip>
+                    </Row>
                     <Col md={24} xs={24} >
                         <Form.Item
-                            name='regionId'
+                            name='region'
                             rules={validationSchema.region} >
                             <Select
                                 showSearch
+                                placeholder={<span>Обрати округу {isLoadingRegions && <LoadingOutlined />}</span>}
                                 className=''
-                                options={regions}
-                                placeholder='Обрати округу'
+                                onSelect={onRegionSelect}
+                                options={regions?.map((item: any) => {
+                                    return {
+                                        label: <>
+                                            {item.name}
+                                            <div
+                                                hidden={!item.yearsHasReport?.includes(year)}
+                                                style={{ float: "right", fontSize: "12px", marginTop: "2px", marginRight: "10px" }}>
+                                                Округа вже має звіт за {year} рік
+                                            </div>
+                                        </>,
+                                        value: item.id,
+                                        disabled: item.yearsHasReport?.includes(year)
+                                    }
+                                })}
                                 filterOption={(input, option) =>
-                                    (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    (regions?.find((x: any) => x.id == option?.value)?.name as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
                                 } />
                         </Form.Item>
                     </Col>
@@ -102,7 +159,23 @@ const RegionSelectModal = (props: Props) => {
                             <Select
                                 showSearch
                                 className=''
-                                options={years}
+                                onSelect={onYearSelect}
+                                options={years?.map((item: any) => {
+                                    return {
+                                        label: <>
+                                            {item.lable}
+                                            <div
+                                                hidden={!region?.yearsHasReport?.includes(item.value)}
+                                                style={{ float: "right", fontSize: "12px", marginTop: "2px", marginRight: "10px" }}>
+                                                {region.name} округа вже має звіт за цей рік
+                                            </div>
+                                        </>,
+                                        value: item.value,
+                                        disabled: region?.yearsHasReport?.includes(item.value)
+                                    }
+                                })}
+                                filterOption={(input, option) =>
+                                    (years?.find((x: any) => x.value == option?.value)?.lable as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
                                 placeholder="Обрати рік"
                             />
                         </Form.Item></Col>

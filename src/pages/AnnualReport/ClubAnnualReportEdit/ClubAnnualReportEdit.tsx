@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { Form, Button, Row, Col, Tooltip } from 'antd';
+import { Form, Button, Row, Col, Tooltip, Modal } from 'antd';
 import './ClubAnnualReportEdit.less';
 import ClubAnnualReport from '../Interfaces/ClubAnnualReport';
-import { editClubAnnualReport, getClubAnnualReportById } from '../../../api/clubsApi';
+import { editClubAnnualReport, getClubAnnualReportById, getClubById } from '../../../api/clubsApi';
 import { Typography, Input } from 'antd';
 import {
     emptyInput,
@@ -17,6 +17,9 @@ import moment from 'moment';
 import notificationLogic from "../../../components/Notifications/Notification";
 import Spinner from "../../Spinner/Spinner";
 import { CloseCircleOutlined } from '@ant-design/icons';
+import AuthStore from '../../../stores/AuthStore';
+import jwt_decode from 'jwt-decode';
+import jwt from "jwt-decode";
 
 
 const { Title, Text } = Typography;
@@ -41,9 +44,22 @@ const ClubAnnualReportEdit = () => {
     const fetchClubAnnualReport = async () => {
         setIsLoading(true)
         try {
+            let token = AuthStore.getToken() as string;
+            let decodedJwt = jwt_decode(token) as any;
+            let roles = decodedJwt[
+                "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+            ] as string[];
             let response = await getClubAnnualReportById(id);
-            setClubAnnualReport(response.data.annualreport);
-            form.setFieldsValue(response.data.annualreport);
+
+            let club = await getClubById(response.data.annualreport.clubId);
+            const user: any = jwt(token);
+            if (!((roles.includes("Admin") ||
+                (roles.includes("Голова Куреня") && club.data.head?.userId == user.nameid))
+                && response.data.annualreport.status == 0)) { showError('Немає доступу до редагування звіту.'); }
+            else {
+                setClubAnnualReport(response.data.annualreport);
+                form.setFieldsValue(response.data.annualreport);
+            }
         }
         catch (error) {
             notificationLogic("error", tryAgain);
@@ -51,6 +67,14 @@ const ClubAnnualReportEdit = () => {
         } finally {
             setIsLoading(false);
         }
+    }
+
+    const showError = (message: string) => {
+        Modal.error({
+            title: 'Помилка!',
+            content: message,
+            onOk: () => { history.goBack(); }
+        });
     }
 
     const handleFinish = async (obj: any) => {

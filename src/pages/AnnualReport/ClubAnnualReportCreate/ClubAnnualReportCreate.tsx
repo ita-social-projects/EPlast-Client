@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
-import { Form, Button, Row, Col, Typography, Input, Table, Card, Tooltip } from 'antd';
+import { Form, Button, Row, Col, Typography, Input, Table, Card, Tooltip, Modal } from 'antd';
 import './ClubAnnualReportCreate.less';
-import { getClubById, createClubAnnualReport } from '../../../api/clubsApi';
+import { getClubById, createClubAnnualReport, checkCreated } from '../../../api/clubsApi';
 import moment from 'moment';
 import ClubAdmin from '../../../models/Club/ClubAdmin';
 import ClubMember from '../../../models/Club/ClubMember';
@@ -40,7 +40,11 @@ export const ClubAnnualReportCreate = () => {
     const fetchData = async (id: any) => {
         setIsLoading(true);
         try {
-            let response = await getClubById(id);
+            let created = await checkCreated(id);
+            if (created.data.hasCreated === true) {
+                showError(created.data.message);
+            }else{
+                let response = await getClubById(id);
 
             setClub(response.data);
 
@@ -51,12 +55,21 @@ export const ClubAnnualReportCreate = () => {
             setFollowers(response.data.followers);
 
             setId(id);
+            }
         }
         catch (error) {
             notificationLogic("error", tryAgain);
         } finally {
             setIsLoading(false);
         }
+    }
+
+    const showError = (message: string) => {
+        Modal.error({
+            title: 'Помилка!',
+            content: message,
+            onOk: () => { history.goBack(); }
+        });
     }
 
     const handleFinish = async (obj: any) => {

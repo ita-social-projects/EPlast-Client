@@ -17,7 +17,6 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import AuthStore from '../../../../stores/AuthStore';
 import jwt from "jwt-decode";
 import jwt_decode from 'jwt-decode';
-import AdminType from '../../../../models/Admin/AdminType';
 
 
 const { Title, Text } = Typography;
@@ -139,7 +138,7 @@ const ClubAnnualReportInformation = () => {
                     <AnnualReportMenu
                         record={{
                             ...clubAnnualReport,
-                            canManage: (isClubAdmin && club.head.userId == userId)
+                            canManage: (isClubAdmin && club.head?.userId == userId)
                         }}
                         isAdmin={isAdmin!}
                         status={status!}
@@ -164,13 +163,13 @@ const ClubAnnualReportInformation = () => {
                         <Card>
                             <Row
                                 gutter={16}
-                                align='bottom'>
+                                align='bottom'
+                                style={{}}>
                                 <Col xs={24} sm={12} md={12} lg={12}>
                                     <Card.Grid
                                         className='container'>
-                                        <Title
-                                            level={4}>Географія куреня. Осередки в Україні:  </Title>
-                                        <Text>{clubAnnualReport.clubCenters}</Text>
+                                        <Title level={4}>Географія куреня. Осередки в Україні:  </Title>
+                                        <Text style={{wordBreak: "break-word"}}>{clubAnnualReport.clubCenters}</Text>
                                     </Card.Grid>
                                 </Col>
 
@@ -179,7 +178,7 @@ const ClubAnnualReportInformation = () => {
                                         className='container'>
                                         <Title
                                             level={4}>Побажання до КБ УСП:  </Title>
-                                        <Text>{clubAnnualReport.kbUSPWishes}</Text>
+                                        <Text style={{wordBreak: "break-word"}}>{clubAnnualReport.kbUSPWishes}</Text>
                                     </Card.Grid>
 
                                 </Col>

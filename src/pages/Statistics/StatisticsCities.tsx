@@ -12,7 +12,6 @@ import {
   TreeSelect
 } from "antd";
 import StatisticsApi from "../../api/StatisticsApi";
-import City from "./Interfaces/City";
 import StatisticsItemIndicator from "./Interfaces/StatisticsItemIndicator";
 import AnnualReportApi from "../../api/AnnualReportApi";
 import CityStatistics from "./Interfaces/CityStatistics";
@@ -28,6 +27,7 @@ import {
 } from "bizcharts";
 import "./StatisticsCities.less";
 import{ shouldContain } from "../../components/Notifications/Messages"
+import { LoadingOutlined } from "@ant-design/icons";
 
 const StatisticsCities = () => {
 
@@ -47,6 +47,8 @@ const StatisticsCities = () => {
   const [selectableSeigneurPart, setSelectableSeigneurPart] = useState<boolean>(true);
   const [selectableSeigneurZahalom, setSelectableSeigneurZahalom] = useState<boolean>(true);
   const [onClickRow, setOnClickRow] = useState<any>();
+  const [isLoadingCities, setIsLoadingCities]=useState<boolean>(false);
+
   
   const constColumns = [
     {
@@ -108,9 +110,10 @@ const StatisticsCities = () => {
   }, []);
     
   const fetchCities = async () => {
+    setIsLoadingCities(true);
     try {
-      let response = await AnnualReportApi.getCities();
-      setCities(response.data.map((item:any) => {
+      let response = await AnnualReportApi.getCitiesOptions();
+      setCities(response.data.cities.map((item:any) => {
         return {
             label: item.name,
             value: item.id
@@ -119,8 +122,9 @@ const StatisticsCities = () => {
     }
     catch (error) {
       showError(error.message);
-    }
+    }finally{setIsLoadingCities(false)}
   };
+
   const fetchYears = async () => {
     try {
       const arrayOfYears = [];
@@ -294,7 +298,7 @@ const onClick = (value: Array<Number>) => {
                         allowClear
                         mode="multiple"
                         options={cities}
-                        placeholder="Обрати станицю"
+                        placeholder={<span>Обрати станицю {isLoadingCities && <LoadingOutlined />}</span>}
                         filterOption={(input, option) => (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
                       />
                       </Form.Item>

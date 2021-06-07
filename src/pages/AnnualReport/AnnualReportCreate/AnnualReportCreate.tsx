@@ -37,7 +37,11 @@ export const AnnualReportCreate = () => {
 
     const fetchCityInfo = async (id: number) => {
         try {
-            let response = await AnnualReportApi.getCityMembers(id);
+            let created=await AnnualReportApi.checkCreated(id);
+            if (created.data.hasCreated === true) {
+                showError(created.data.message);
+            }else{
+                let response = await AnnualReportApi.getCityMembers(id);
             let cityName = response.data.name;
             setTitle(title.concat(' ', cityName));
             setCityMembers(response.data.cityMembers.map((item: any) => {
@@ -46,6 +50,7 @@ export const AnnualReportCreate = () => {
                     value: item.user.id
                 }
             }))
+            }
         }
         catch (error) {
             showError(error.message)
