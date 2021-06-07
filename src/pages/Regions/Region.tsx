@@ -567,7 +567,7 @@ const Region = () => {
                     </Col>
                   ))
                 ) : (
-                    <Paragraph>Ще немає документів Округи</Paragraph>
+                    <Paragraph>Ще немає документів округи</Paragraph>
                   )}
               </Row>
               <div className="cityMoreButton">
