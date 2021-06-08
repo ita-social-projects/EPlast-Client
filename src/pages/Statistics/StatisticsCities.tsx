@@ -9,7 +9,8 @@ import {
   Row,
   Typography,
   Col,
-  TreeSelect
+  TreeSelect,
+  Tooltip as AntTooltip
 } from "antd";
 import StatisticsApi from "../../api/StatisticsApi";
 import StatisticsItemIndicator from "./Interfaces/StatisticsItemIndicator";
@@ -27,10 +28,11 @@ import {
 } from "bizcharts";
 import "./StatisticsCities.less";
 import{ shouldContain } from "../../components/Notifications/Messages"
-import { LoadingOutlined } from "@ant-design/icons";
+import { ClearOutlined, LoadingOutlined } from '@ant-design/icons';
 
 const StatisticsCities = () => {
 
+  const [form] = Form.useForm();
   const [years, setYears] = useState<any>();
   const [cities, setCities] = useState<any>();
   const [dataForTable, setDataForTable] = useState<DataFromResponse[]>(Array());
@@ -283,7 +285,17 @@ const onClick = (value: Array<Number>) => {
         <Title level={2}>Статистика станиць</Title>
           <div className = "formAndChart">
             <div className = "form"> 
-              <Form onFinish={onSubmit}>
+              <Form 
+              form={form}
+              onFinish={onSubmit}>
+                <Row style={{float: "right", marginRight: "20px", marginTop: "-50px"}}>
+                  <AntTooltip title="Очистити">
+                    <ClearOutlined onClick={()=>form.resetFields()} style={{
+                                    fontSize: "x-large",
+                                    cursor: "pointer",
+                                }} />
+                  </AntTooltip>   
+                </Row>
                 <Row justify="center">
                   <Col
                     span={20}>
