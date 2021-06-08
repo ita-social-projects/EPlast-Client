@@ -114,7 +114,7 @@ export const ClubAnnualReportCreate = () => {
                             level={3} >
                             {`Річний звіт куреня ${club.name} за 
                     ${moment(club.date).year()} рік`}</Title>
-                        <Link className="LinkText" style={{ fontSize: "14px" }} to="#" onClick={() => window.open(`/clubs/${clubId}`)}>Перейти на профіль куреня {club.name}</Link>
+                        <Link className="LinkText" style={{ fontSize: "14px" }} to={"/clubs/"+clubId} target="blank">Перейти на профіль куреня {club.name}</Link>
                         <br />
                         <br />
                         <Card>

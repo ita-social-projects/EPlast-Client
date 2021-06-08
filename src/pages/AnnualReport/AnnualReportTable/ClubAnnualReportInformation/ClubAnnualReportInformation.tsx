@@ -157,7 +157,7 @@ const ClubAnnualReportInformation = () => {
                             {`Річний звіт куреня ${clubAnnualReport.clubName} за 
                     ${moment(clubAnnualReport.date).year()} рік`}</Title>
                         <StatusStamp status={status!} />
-                        <Link className="LinkText" style={{ fontSize: "14px" }} to="#" onClick={() => window.open(`/clubs/${clubAnnualReport.clubId}`)}>Перейти на профіль куреня {clubAnnualReport.clubName}</Link>
+                        <Link className="LinkText" style={{ fontSize: "14px" }} to={"/clubs/"+clubAnnualReport.clubId} target="blank">Перейти на профіль куреня {clubAnnualReport.clubName}</Link>
                         <br />
                         <br />
                         <Card>

@@ -134,7 +134,7 @@ const RegionAnnualReportInformation = () => {
                     {`Річний звіт округи ${regionAnnualReport.regionName} за 
                     ${year} рік`}</Title>
                 <StatusStamp  status={status!} />
-                <Link className="LinkText" style={{ fontSize: "14px" }} to="#" onClick={() => window.open(`/regions/${regionAnnualReport.regionId}`)}>Перейти на профіль округи {regionAnnualReport.regionName}</Link>
+                <Link className="LinkText" style={{ fontSize: "14px" }} to={"/regions/"+regionAnnualReport.regionId} target="blank">Перейти на профіль округи {regionAnnualReport.regionName}</Link>
                         <br />
                         <br />
                 <Card>
