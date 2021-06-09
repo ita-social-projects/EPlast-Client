@@ -108,7 +108,7 @@ const ColumnsForUserTable: any = [
         );
       } else {
         return (
-          <Tooltip title="Інша  ">
+          <Tooltip title="Не маю бажання вказувати">
               <img src={Transgender} alt="Transgender"/>
           </Tooltip>
         )

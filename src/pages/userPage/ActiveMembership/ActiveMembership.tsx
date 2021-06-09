@@ -52,7 +52,7 @@ const ActiveMembership = () => {
     "Голова Округи",
     "Голова Станиці",
   ];
-  const userGenders = ["Чоловік", "Жінка", "Інша"];
+  const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
   const handleAddDegree = async () => {
     await activeMembershipApi.getUserPlastDegrees(userId).then((response) => {

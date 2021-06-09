@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Button, Avatar, Tooltip } from 'antd';
+import { Card, Button, Avatar, Tooltip, Spin } from 'antd';
 import './Approvers.less';
 import AvatarAndProgress from '../../../../src/pages/userPage/personalData/AvatarAndProgress';
 import AddUser from "../../../assets/images/user_add.png";
@@ -23,21 +23,19 @@ import { StickyContainer } from 'react-sticky';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import jwt_decode from "jwt-decode";
 import activeMembershipApi from '../../../api/activeMembershipApi';
-import Title from 'antd/lib/skeleton/Title';
 
 const Assignments = () => {
   const history = useHistory();
   const { userId } = useParams();
   const [loading, setLoading] = useState(false);
-  const [loadingMemberApprove, setLoadingMemberApprove] = useState(false);
-  const [loadingClubApprove, setLoadingClubApprove] = useState(false);
-  const [loadingCityApprove, setLoadingCityApprove] = useState(false);
-  const [loadingDeleteApprove, setLoadingDeleteApprove] = useState(false);
+  const [approveAsMemberLoading, setApproveAsMemberLoading] = useState(false);
+  const [approveAsHovelHeadLoading, setApproveAsHovelHeadLoading] = useState(false);
+  const [approveAsCityHeadLoading, setApproveAsCityHeadLoading] = useState(false);
   const [data, setData] = useState<ApproversData>();
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
   const [accessLevels, setAccessLevels] = useState<string[]>([]);
-  const userGenders = ["Чоловік", "Жінка", "Інша"];
+  const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
   const AccessableRoles = ["Admin", "Голова Куреня", "Голова Станиці", "Голова Округи", "Дійсний член організації", "Прихильник", "Зареєстрований користувач"];
   const [roles, setRoles] = useState<string[]>([]);
 
@@ -88,8 +86,6 @@ const Assignments = () => {
   }
 
   const deleteApprove = async (event: number) => {
-    setLoadingDeleteApprove(true);
-    try {
       await userApi.deleteApprove(event).
         then(() => { notificationLogic('success', successfulDeleteAction("Поручення")) }).
         catch(() => { notificationLogic('error', failDeleteAction("поручення")) });
@@ -103,30 +99,25 @@ const Assignments = () => {
         'Переглянути користувача'
       );
       fetchData();
-    } finally { setLoadingDeleteApprove(false); }
   }
 
   const approveClick = async (userId: string, isClubAdmin: boolean = false, isCityAdmin: boolean = false) => {
-    isClubAdmin ? setLoadingClubApprove(true) : isCityAdmin ? setLoadingCityApprove(true) : setLoadingMemberApprove(true);
-    try {
-      await userApi.approveUser(userId, isClubAdmin, isCityAdmin).
-        then(() => { notificationLogic('success', successfulCreateAction("Поручення")) }).
-        catch(() => { notificationLogic('error', "Не вдалося поручитися") });
-      await NotificationBoxApi.createNotifications(
-        [userId],
-        `${setGreeting()}, повідомляємо, що користувач 
+
+    isCityAdmin ? setApproveAsCityHeadLoading(true) : isClubAdmin ? setApproveAsHovelHeadLoading(true) : setApproveAsMemberLoading(true);
+    await userApi.approveUser(userId, isClubAdmin, isCityAdmin).
+      then(() => { notificationLogic('success', successfulCreateAction("Поручення")) }).
+      catch(() => { notificationLogic('error', "Не вдалося поручитися") });
+    await NotificationBoxApi.createNotifications(
+      [userId],
+      `${setGreeting()}, повідомляємо, що користувач 
         ${approverName} поручився за тебе.
         Будь тією зміною, яку хочеш бачити у світі!`,
-        NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/userpage/main/${data?.currentUserId}`,
-        'Переглянути користувача'
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/userpage/main/${data?.currentUserId}`,
+      'Переглянути користувача'
       );
-      fetchData();
-    } finally {
-      setLoadingClubApprove(false);
-      setLoadingCityApprove(false);
-      setLoadingMemberApprove(false);
-    }
+    await fetchData();
+    isCityAdmin ? setApproveAsCityHeadLoading(false) : isClubAdmin ? setApproveAsHovelHeadLoading(false) : setApproveAsMemberLoading(false);
   }
 
   const { Meta } = Card;
@@ -169,7 +160,7 @@ const Assignments = () => {
                       </Link>
                     </Tooltip>
                     <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
-                    <Button className="cardButton" danger onClick={() => !loadingDeleteApprove ? deleteApprove(p.id) : null}>
+                    <Button className="cardButton" danger onClick={() => deleteApprove(p.id)}>
                       Відкликати
                     </Button>
                   </Card>
@@ -199,27 +190,30 @@ const Assignments = () => {
           }
           )}
           <div>
-            <div>
-              <Tooltip
-                title="Поручитися за користувача"
-                placement="bottom">
-                <Link to="#" onClick={() => !loadingMemberApprove ? approveClick(data?.user.id) : null}>
-                  {(data?.canApprove && AccessToManage(roles.filter(r => r != "Прихильник" && r != "Зареєстрований користувач"))) && <Avatar
-                    src={AddUser}
-                    style={data?.confirmedUsers?.length != 0 ? { top: "-125px" } : {}}
-                    alt="example" size={166}
-                    shape="square"
-                    className="avatarEmpty"
-                  />}
-                </Link>
+
+            {data?.canApprove && AccessToManage(roles.filter(r => r != "Прихильник" && r != "Зареєстрований користувач")) && (
+              <div>
+                <Tooltip
+                  title="Поручитися за користувача"
+                  placement="bottom">
+                    <Spin spinning={approveAsMemberLoading}>
+                        <Link to="#" onClick={() => approveClick(data?.user.id)}>
+                            <Avatar src={AddUser}
+                            alt="example" size={166}
+                            className="avatarEmpty"
+                            shape="square"                            
+                            />
+                        </Link>
+                    </Spin>
               </Tooltip>
-            </div>
+            </div>)
+            }
             <div
               hidden={data?.confirmedUsers.length != 0 || (data?.canApprove && AccessToManage(roles.filter(r => r != "Прихильник" && r != "Зареєстований користувач")))}>
               <br />
-              <br />
-              На жаль, поруки відсутні
-              <br />
+                <br />
+                    На жаль, поруки відсутні
+                <br />
               <br />
             </div>
           </div>
@@ -247,7 +241,7 @@ const Assignments = () => {
                       </Link>
                     </Tooltip>
                     <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
-                    <Button className="cardButton" danger onClick={() => !loadingDeleteApprove ? deleteApprove(data.clubApprover.id) : null} value={data.clubApprover.id}>
+                    <Button className="cardButton" danger onClick={() => deleteApprove(data.clubApprover.id)} value={data.clubApprover.id}>
                       Відкликати
                     </Button>
                   </Card>
@@ -277,20 +271,22 @@ const Assignments = () => {
                 <Tooltip
                   title="Поручитися за користувача"
                   placement="rightBottom">
-                  <Link to="#" onClick={() => !loadingClubApprove ? approveClick(data?.user.id, roles.includes("Голова Куреня") || roles.includes("Admin"), false) : null}>
-                    <Avatar src={AddUser}
-                      alt="example" size={168}
-                      className="avatarEmpty"
-                      shape="square" />
-                  </Link>
+                    <Spin spinning={approveAsHovelHeadLoading}>
+                        <Link to="#" onClick={() => approveClick(data?.user.id, roles.includes("Голова Куреня") || roles.includes("Admin"), false)}>
+                            <Avatar src={AddUser}
+                            alt="example" size={168}
+                            className="avatarEmpty"
+                            shape="square" />
+                        </Link>
+                    </Spin>
                 </Tooltip>
               </div>
             ) : (
               <div>
                 <br />
-                <br />
-            На жаль, поруки відсутні
-                <br />
+                  <br />
+                    На жаль, поруки відсутні
+                  <br />
                 <br />
               </div>
             )
@@ -316,7 +312,7 @@ const Assignments = () => {
                     </Link>
                   </Tooltip>
                   <Meta title={moment(data.cityApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
-                  <Button className="cardButton" danger onClick={() => !loadingDeleteApprove ? deleteApprove(data.cityApprover.id) : null} value={data.cityApprover.id}>
+                  <Button className="cardButton" danger onClick={() => deleteApprove(data.cityApprover.id)} value={data.cityApprover.id}>
                     Відкликати
                     </Button>
                 </Card>
@@ -346,21 +342,24 @@ const Assignments = () => {
                 <Tooltip
                   title="Поручитися за користувача"
                   placement="rightBottom">
-                  <Link to="#" onClick={() => !loadingCityApprove ? approveClick(data?.user.id, false, roles.includes("Голова Станиці") || roles.includes("Admin")) : null}>
+
+                  <Spin spinning={approveAsCityHeadLoading}>
+                  <Link to="#" onClick={() => approveClick(data?.user.id, false, roles.includes("Голова Станиці") || roles.includes("Admin"))}>
                     <Avatar
                       src={AddUser}
                       alt="example" size={168}
                       className="avatarEmpty"
                       shape="square" />
                   </Link>
+                  </Spin>
                 </Tooltip>
               </div>
             ) : (
               <div>
                 <br />
-                <br />
-            На жаль, поруки відсутні
-                <br />
+                  <br />
+                    На жаль, поруки відсутні
+                  <br />
                 <br />
               </div>
             )

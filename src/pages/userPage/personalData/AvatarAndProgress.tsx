@@ -184,9 +184,15 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
           <p className="statusText">Курінь: <Link className="LinkText" to={"/clubs/"+clubId} target="blank">{ club }</Link></p>
           {!isUserPlastun && (
             <div className="progress">
-              <p className="statusText">
-                {time} дні і {firstName} {lastName} - Дійсний член організації :)
-              </p>
+              {time !== 0 ? (
+                <p className="statusText">
+                  {time} дні і {firstName} {lastName} - Дійсний член організації :)
+                </p>
+              ) : (
+                <p className="statusText">
+                  Менше 1 дня і {firstName} {lastName} - Дійсний член організації :)
+                </p>
+              )}
               <Progress
                 type="circle"
                 className="progressBar"
