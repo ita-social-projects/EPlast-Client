@@ -38,6 +38,7 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey }: prop
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [isAdmin, setIsAdmin] = useState<boolean>();
+  const [canView, setCanView] = useState<boolean>();
   const [currentSearchedData, setCurrentSearchedData] = useState<string>();
   const [showConfirmedRegionDropdown, setShowConfirmedRegionDropdown] = useState<boolean>(false);
   const [showUnconfirmedRegionDropdown, setShowUnconfirmedRegionDropdown] = useState<boolean>(false);
@@ -182,6 +183,7 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey }: prop
     ] as string[];
     setIsRegionAdmin(roles.includes("Голова Округи"));
     setIsAdmin(roles.includes("Admin"));
+    setCanView(roles.includes("Голова Станиці") || roles.includes("Голова Округи") || roles.includes("Admin"));
   };
 
   const handlePageChange = (page: number) => {
@@ -239,16 +241,18 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey }: prop
         })}
         onRow={(regionRecord) => {
           return {
-            onDoubleClick: event => { if (regionRecord.id) history.push(`/annualreport/region/${regionRecord.id}/${(new Date(regionRecord.date)).getFullYear()}`) },
+            onDoubleClick: event => { if (regionRecord.id && canView) history.push(`/annualreport/region/${regionRecord.id}/${(new Date(regionRecord.date)).getFullYear()}`) },
             onClick: () => {
               hideDropdowns();
             },
             onContextMenu: (event) => {
               event.preventDefault();
-              showDropdown(regionRecord.status);
-              setRegionAnnualReport(regionRecord);
-              setX(event.pageX);
-              setY(event.pageY - 200);
+              if (canView){
+                showDropdown(regionRecord.status);
+                setRegionAnnualReport(regionRecord);
+                setX(event.pageX);
+                setY(event.pageY - 200);
+              }else{hideDropdowns();}
             },
           };
         }}

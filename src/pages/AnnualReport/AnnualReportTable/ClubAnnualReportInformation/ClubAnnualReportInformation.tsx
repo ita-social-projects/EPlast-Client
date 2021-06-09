@@ -6,7 +6,7 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 import { getClubAnnualReportById, getClubById, confirmClubAnnualReport, cancelClubAnnualReport, removeClubAnnualReport } from '../../../../api/clubsApi';
 import { useEffect } from 'react';
 import Spinner from '../../../Spinner/Spinner';
-import { administrationsColumns, followersColumns, getTableAdmins, getTableFollowers, getTableMembers } from '../../ClubAnnualReportCreate/ClubAnnualReportTableColumns';
+import { administrationsColumns, followersColumns, getTableAdmins, getTableFollowers, getTableMembers } from '../../ClubAnnualReportForm/ClubAnnualReportTableColumns';
 import ClubAdmin from '../../../../models/Club/ClubAdmin';
 import ClubMember from '../../../../models/Club/ClubMember';
 import AnnualReportMenu from '../../AnnualReportMenu';
@@ -141,6 +141,7 @@ const ClubAnnualReportInformation = () => {
                             canManage: (isClubAdmin && club.head?.userId == userId)
                         }}
                         isAdmin={isAdmin!}
+                        ViewPDF={true}
                         status={status!}
                         setStatus={setStatus}
                         handleEdit={handleEdit}

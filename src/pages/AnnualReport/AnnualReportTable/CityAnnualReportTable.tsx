@@ -31,6 +31,7 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
   const [y, setY] = useState(0);
   const [isAdmin, setIsAdmin] = useState<boolean>();
   const [isCityAdmin, setIsCityAdmin] = useState<boolean>();
+  const [canView, setCanView] = useState<boolean>();
   const [currentSearchedData, setCurrentSearchedData] = useState<string>();
   const [showUnconfirmedDropdown, setShowUnconfirmedDropdown] = useState<boolean>(false);
   const [showConfirmedDropdown, setShowConfirmedDropdown] = useState<boolean>(false);
@@ -82,6 +83,7 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
     ] as string[];
     setIsAdmin(roles.includes("Admin"));
     setIsCityAdmin(roles.includes("Голова Станиці"));
+    setCanView(roles.includes("Голова Станиці") || roles.includes("Голова Округи") || roles.includes("Admin"));
   };
 
   const showDropdown = (annualReportStatus: number) => {
@@ -197,7 +199,7 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
           <Tooltip
             placement="topLeft"
             title="Звіти в моєму розпорядженні">
-              
+
             <button
               onClick={() => { setPage(1); setAuthReport(!authReport) }} >
               {authReport ? <StarFilled /> : <StarOutlined />}
@@ -229,16 +231,20 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
         })}
         onRow={(record) => {
           return {
-            onDoubleClick: event => { if (record.id) history.push(`/annualreport/cityAnnualReport/${record.id}`) },
+            onDoubleClick: event => { if (record.id && canView) history.push(`/annualreport/cityAnnualReport/${record.id}`) },
             onClick: () => {
               hideDropdowns();
             },
             onContextMenu: (event) => {
               event.preventDefault();
-              showDropdown(record.status);
-              setAnnualReport(record);
-              setX(event.pageX);
-              setY(event.pageY - 200);
+              if (canView) {
+                showDropdown(record.status);
+                setAnnualReport(record);
+                setX(event.pageX);
+                setY(event.pageY - 200);
+              }else{
+                hideDropdowns();
+              }
             },
           };
         }}

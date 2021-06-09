@@ -135,6 +135,7 @@ const AnnualReportInformation = () => {
                     <AnnualReportMenu
                         record={{ ...cityAnnualReport, canManage: isCityAdmin && cityAnnualReport.cityId == userCityId }}
                         isAdmin={isAdmin!}
+                        ViewPDF={true}
                         status={status!}
                         setStatus={setStatus}
                         handleEdit={handleEdit}

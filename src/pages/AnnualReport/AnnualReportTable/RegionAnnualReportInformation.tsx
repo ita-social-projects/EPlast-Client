@@ -118,6 +118,7 @@ const RegionAnnualReportInformation = () => {
             <AnnualReportMenu
                         record={{ ...regionAnnualReport, canManage: isRegionAdmin && regionAnnualReport.regionId == userRegionId }}
                         isAdmin={isAdmin!}
+                        ViewPDF={false}
                         status={status!}
                         setStatus={setStatus}
                         handleEdit={handleEdit}
