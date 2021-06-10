@@ -29,6 +29,7 @@ import {
 import "./StatisticsCities.less";
 import{ shouldContain } from "../../components/Notifications/Messages"
 import { ClearOutlined, LoadingOutlined } from '@ant-design/icons';
+import City from "./Interfaces/City";
 
 const StatisticsCities = () => {
 
@@ -114,11 +115,12 @@ const StatisticsCities = () => {
   const fetchCities = async () => {
     setIsLoadingCities(true);
     try {
-      let response = await AnnualReportApi.getCitiesOptions();
-      setCities(response.data.cities.map((item:any) => {
+      let response = await AnnualReportApi.getCities();
+      let cities = response.data as City[];
+      setCities(cities.map(item => {
         return {
-            label: item.name,
-            value: item.id
+          label: item.name,
+          value: item.id
         }
     }));
     }

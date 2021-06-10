@@ -8,7 +8,7 @@ import ConfirmedRegionDropdown from "./DropdownsForRegionReports/ConfirmedDropdo
 import notificationLogic from "../../../components/Notifications/Notification";
 import SavedRegionDropdown from "./DropdownsForRegionReports/SavedDropdown/SavedRegionDropdown";
 import UnconfirmedRegionDropdown from "./DropdownsForRegionReports/UnconfirmedDropdown/UnconfirmedRegionDropdown";
-import { successfulEditAction, tryAgain } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, successfulEditAction, tryAgain } from "../../../components/Notifications/Messages";
 import { ExclamationCircleOutlined, StarFilled, StarOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 
@@ -140,7 +140,7 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey }: prop
         async onOk() {
           let response = await regionsApi.removeAnnualReport(id);
           setRegionsAnnualReports(regionAnnualReports?.filter((item) => item.id !== id));
-          notificationLogic('success', successfulEditAction('Річний звіт', response.data.name));
+          notificationLogic('success', successfulDeleteAction('Річний звіт', response.data.name));
           setTotal(total - 1);
           setCount(count - 1);
         }

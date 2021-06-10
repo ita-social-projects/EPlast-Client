@@ -29,7 +29,7 @@ import {
   Coordinate,
   Interaction
 } from "bizcharts";
-import { ClearOutlined } from "@ant-design/icons";
+import { ClearOutlined, LoadingOutlined } from "@ant-design/icons";
 
 const StatisticsCities = () => {
 
@@ -50,6 +50,8 @@ const StatisticsCities = () => {
   const [selectableSeigneurPart, setSelectableSeigneurPart] = useState<boolean>(true);
   const [selectableSeigneurZahalom, setSelectableSeigneurZahalom] = useState<boolean>(true);
   const [onClickRow, setOnClickRow] = useState<any>();
+  const [isLoadingRegions, setIsLoadingRegions]=useState<boolean>(false);
+
 
   const constColumns = [
     {
@@ -108,6 +110,7 @@ const StatisticsCities = () => {
   }, []);
 
   const fetchRegions = async () => {
+    setIsLoadingRegions(true);
     try {
       let response = await RegionsApi.getRegions();
       let regions = response.data as Region[];
@@ -120,6 +123,8 @@ const StatisticsCities = () => {
     }
     catch (error) {
       showError(error.message);
+    }finally{
+      setIsLoadingRegions(false);
     }
   };
 
@@ -306,7 +311,7 @@ const StatisticsCities = () => {
                       allowClear
                       mode="multiple"
                       options={regions}
-                      placeholder="Обрати округу"
+                      placeholder={<span>Обрати округу {isLoadingRegions && <LoadingOutlined />}</span>}
                       filterOption={(input, option) => (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
                     />
                   </Form.Item>

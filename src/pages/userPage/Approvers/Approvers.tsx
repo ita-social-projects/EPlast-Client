@@ -23,6 +23,7 @@ import { StickyContainer } from 'react-sticky';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import jwt_decode from "jwt-decode";
 import activeMembershipApi from '../../../api/activeMembershipApi';
+import DeleteApproveButton from './DeleteApproveButton';
 
 const Assignments = () => {
   const history = useHistory();
@@ -160,9 +161,7 @@ const Assignments = () => {
                       </Link>
                     </Tooltip>
                     <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
-                    <Button className="cardButton" danger onClick={() => deleteApprove(p.id)}>
-                      Відкликати
-                    </Button>
+                    <DeleteApproveButton approverId={p.id} deleteApprove={deleteApprove}/>
                   </Card>
                 </div>
               )
@@ -241,9 +240,7 @@ const Assignments = () => {
                       </Link>
                     </Tooltip>
                     <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
-                    <Button className="cardButton" danger onClick={() => deleteApprove(data.clubApprover.id)} value={data.clubApprover.id}>
-                      Відкликати
-                    </Button>
+                    <DeleteApproveButton approverId={data.clubApprover.id} deleteApprove={deleteApprove}/>
                   </Card>
                 ) : (
                   <Card
@@ -312,9 +309,7 @@ const Assignments = () => {
                     </Link>
                   </Tooltip>
                   <Meta title={moment(data.cityApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
-                  <Button className="cardButton" danger onClick={() => deleteApprove(data.cityApprover.id)} value={data.cityApprover.id}>
-                    Відкликати
-                    </Button>
+                  <DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove}/>
                 </Card>
               ) : (
                 <Card

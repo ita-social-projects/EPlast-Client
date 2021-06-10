@@ -11,7 +11,7 @@ import AuthStore from "../../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
 import { ExclamationCircleOutlined, StarFilled, StarOutlined } from "@ant-design/icons";
 import notificationLogic from "../../../components/Notifications/Notification";
-import { successfulEditAction, tryAgain } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, successfulEditAction, tryAgain } from "../../../components/Notifications/Messages";
 
 interface props {
   columns: any;
@@ -148,7 +148,7 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
         async onOk() {
           let response = await AnnualReportApi.remove(id);
           setAnnualReports(annualReports?.filter((item) => item.id !== id));
-          notificationLogic('success', successfulEditAction('Річний звіт', response.data.name));
+          notificationLogic('success', successfulDeleteAction('Річний звіт', response.data.name));
           setTotal(total - 1);
           setCount(count - 1);
         }
