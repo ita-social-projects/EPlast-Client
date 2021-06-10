@@ -63,6 +63,14 @@ const StatisticsCities = () => {
       width: 55
     },
     {
+      title: "Рік",
+      dataIndex: "year",
+      key: "year",
+      fixed: "left",
+      sorter: { compare: (a: any, b: any) => a.year - b.year },
+      width: 100
+    },
+    {
       title: "Округа",
       dataIndex: "regionName",
       key: "regionName",
@@ -74,14 +82,6 @@ const StatisticsCities = () => {
       sortDirections: ["ascend", "descend"] as SortOrder[],
       width: 100
     },
-    {
-      title: "Рік",
-      dataIndex: "year",
-      key: "year",
-      fixed: "left",
-      sorter: { compare: (a: any, b: any) => a.year - b.year },
-      width: 100
-    }    
   ];
 
   const indicatorsArray = [

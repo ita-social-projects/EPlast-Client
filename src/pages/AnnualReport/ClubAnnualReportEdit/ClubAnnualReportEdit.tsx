@@ -39,6 +39,7 @@ const ClubAnnualReportEdit = () => {
         email: "",
     });
     const [isLoading, setIsLoading] = useState(false)
+    const [isLoadingSaveChanges, setIsLoadingSaveChanges]=useState(false);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -94,6 +95,7 @@ const ClubAnnualReportEdit = () => {
     }
 
     const handleFinish = async (obj: any) => {
+        setIsLoadingSaveChanges(true);
         obj.date = moment();
         let annualReportEdited: ClubAnnualReport = Object.assign(clubAnnualReport, obj);
         try {
@@ -104,7 +106,7 @@ const ClubAnnualReportEdit = () => {
         catch (error) {
             notificationLogic("error", tryAgain);
             history.goBack();
-        }
+        }finally{setIsLoadingSaveChanges(false);}
     }
 
     return (
@@ -137,6 +139,7 @@ const ClubAnnualReportEdit = () => {
                         <Row justify='center'>
                             <Col>
                                 <Button
+                                    loading={isLoadingSaveChanges}
                                     type='primary'
                                     htmlType='submit'>
                                     Зберегти зміни

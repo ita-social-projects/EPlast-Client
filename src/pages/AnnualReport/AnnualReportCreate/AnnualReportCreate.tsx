@@ -16,6 +16,7 @@ export const AnnualReportCreate = () => {
     const [cityMembers, setCityMembers] = useState<any>();
     const [cityLegalStatuses, setCityLegalStatuses] = useState<any>();
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingSave, setIsLoadingSave]=useState(false);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -73,6 +74,7 @@ export const AnnualReportCreate = () => {
     }
 
     const handleFinish = async (obj: any) => {
+        setIsLoadingSave(true);
         obj.cityId = id;
         try {
             let response = await AnnualReportApi.create(obj);
@@ -81,7 +83,7 @@ export const AnnualReportCreate = () => {
         }
         catch (error) {
             showError(error.message)
-        }
+        }finally{setIsLoadingSave(false);}
     }
 
     const showSuccess = (message: string) => {
@@ -120,7 +122,7 @@ export const AnnualReportCreate = () => {
                             justify='center' >
                             <Col>
                                 <Button
-                                    loading={isLoading}
+                                    loading={isLoadingSave}
                                     type='primary'
                                     htmlType='submit'>
                                     Подати річний звіт

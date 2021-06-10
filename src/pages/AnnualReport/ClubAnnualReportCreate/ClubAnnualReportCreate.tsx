@@ -23,6 +23,7 @@ export const ClubAnnualReportCreate = () => {
     const [members, setClubMembers] = useState<ClubMember[]>([]);
     const [followers, setFollowers] = useState<ClubMember[]>([]);
     const [isLoading, setIsLoading] = useState(false)
+    const [isLoadingSave, setIsLoadingSave]=useState(false);
     const [club, setClub] = useState<any>({
         id: 0,
         name: "",
@@ -75,7 +76,7 @@ export const ClubAnnualReportCreate = () => {
         obj.currentClubFollowers = followers.length
         obj.currentClubMembers = members.length
         obj.date = moment()
-        setIsLoading(true);
+        setIsLoadingSave(true);
         try {
             let response = await createClubAnnualReport(obj);
             form.resetFields();
@@ -88,7 +89,7 @@ export const ClubAnnualReportCreate = () => {
                 history.goBack();
             }
         } finally {
-            setIsLoading(false);
+            setIsLoadingSave(false);
         }
     }
 
@@ -121,6 +122,7 @@ export const ClubAnnualReportCreate = () => {
                         <Row justify='center'>
                             <Col>
                                 <Button
+                                    loading={isLoadingSave}
                                     type='primary'
                                     htmlType='submit'>
                                     Подати річний звіт

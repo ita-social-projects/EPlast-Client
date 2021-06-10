@@ -55,16 +55,12 @@ const StatisticsCities = () => {
   
   const constColumns = [
     {
-      title: "Станиця",
-      dataIndex: "cityName",
-      key: "cityName",
+      title: "№",
+      dataIndex: "id",
+      key: "id",
       fixed: "left",
-      ellipsis: {
-        showTitle: true,
-      },
-      sorter: (a: any, b: any) => a.cityName.localeCompare(b.cityName),
-      sortDirections: ["ascend", "descend"] as SortOrder[],
-      width: 150
+      sorter: { compare: (a: any, b: any) => a.id - b.id },
+      width: 55
     },
     {
       title: "Рік",
@@ -84,7 +80,19 @@ const StatisticsCities = () => {
       sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
       sortDirections: ["ascend", "descend"] as SortOrder[],
       width: 150
-    }
+    },
+    {
+      title: "Станиця",
+      dataIndex: "cityName",
+      key: "cityName",
+      fixed: "left",
+      ellipsis: {
+        showTitle: true,
+      },
+      sorter: (a: any, b: any) => a.cityName.localeCompare(b.cityName),
+      sortDirections: ["ascend", "descend"] as SortOrder[],
+      width: 150
+    },
   ];
 
   const indicatorsArray = [

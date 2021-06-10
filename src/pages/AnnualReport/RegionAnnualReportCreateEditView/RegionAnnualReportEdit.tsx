@@ -14,6 +14,7 @@ export const RegionAnnualReportEdit = () => {
     const [title, setTitle] = useState<string>('');
     const [regionId, setRegionId] = useState<number>(0);
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingSaveChanges, setIsLoadingSaveChanges]=useState(false);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -37,6 +38,7 @@ export const RegionAnnualReportEdit = () => {
     }
 
     const handleFinish = async (obj: any) => {
+        setIsLoadingSaveChanges(true);
         obj.regionId = regionId;
         try {
             let response = await regionsApi.editReport(annualreportId, obj);
@@ -45,7 +47,7 @@ export const RegionAnnualReportEdit = () => {
         }
         catch (error) {
             showError(error.message)
-        }
+        }finally{setIsLoadingSaveChanges(false);}
     }
 
     const showSuccess = (message: string) => {
@@ -85,7 +87,7 @@ export const RegionAnnualReportEdit = () => {
                             justify='center' >
                             <Col>
                                 <Button
-                                    loading={isLoading}
+                                    loading={isLoadingSaveChanges}
                                     type='primary'
                                     htmlType='submit'>
                                     Зберегти зміни

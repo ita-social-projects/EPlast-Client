@@ -26,6 +26,28 @@ interface Props {
 export const ClubAnnualReportForm = (props: Props) => {
     const { club, admins, members, followers } = props;
 
+    const validationSchema = {
+        number: [
+            { required: true, message: emptyInput() },
+            {
+                validator: (_: object, value: string) =>
+                    String(value).length <= 7
+                        ? Promise.resolve()
+                        : Promise.reject(
+                            maxLength(7)
+                        )
+            }
+        ],
+        textareaClubCenters: [
+            { required: true, message: emptyInput() },
+            { max: 200, message: maxLength(200) }
+        ],
+        textareaKbUSPWishes: [
+            { required: true, message: emptyInput() },
+            { max: 500, message: maxLength(500) }
+        ]
+    }
+
     return (
         <>
             <Card>
@@ -63,8 +85,7 @@ export const ClubAnnualReportForm = (props: Props) => {
                             <Form.Item
                                 className='w100'
                                 name='clubEnteredMembersCount'
-                                rules={[{ required: true, message: emptyInput() },
-                                { max: 7, message: maxLength(7) }]}>
+                                rules={validationSchema.number}>
                                 <Input style={{ width: 150 }} type="number" min="0" onKeyDown={e => (e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode === 188) && e.preventDefault()} />
                             </Form.Item>
                         </Col>
@@ -80,8 +101,7 @@ export const ClubAnnualReportForm = (props: Props) => {
                             <Form.Item
                                 className='w100'
                                 name='clubLeftMembersCount'
-                                rules={[{ required: true, message: emptyInput() },
-                                { max: 7, message: maxLength(7) }]}>
+                                rules={validationSchema.number}>
                                 <Input style={{ width: 150 }} type="number" min="0" onKeyDown={e => (e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189 || e.keyCode === 188) && e.preventDefault()} />
                             </Form.Item>
                         </Col>
@@ -97,7 +117,7 @@ export const ClubAnnualReportForm = (props: Props) => {
                             <Form.Item
                                 className='w100'
                                 name='clubCenters'
-                                rules={[{ required: true, message: emptyInput() }, { max: 200, message: maxLength(200) }]} >
+                                rules={validationSchema.textareaClubCenters} >
                                 <TextArea style={{ width: "700px", height: "100px" }} />
                             </Form.Item>
                         </Col>
@@ -112,7 +132,7 @@ export const ClubAnnualReportForm = (props: Props) => {
                             <Form.Item
                                 className='w100'
                                 name='kbUSPWishes'
-                                rules={[{ required: true, message: emptyInput() }, { max: 500, message: maxLength(500) }]} >
+                                rules={validationSchema.textareaKbUSPWishes} >
                                 <TextArea style={{ width: "700px", height: "100px" }} />
                             </Form.Item>
                         </Col>
