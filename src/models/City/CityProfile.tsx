@@ -14,6 +14,7 @@ export default class CityProfile {
   officeNumber: string;
   postIndex: string;
   head: CityAdmin;
+  headDeputy: CityAdmin;
 
   constructor() {
     this.id = 0;
@@ -29,5 +30,6 @@ export default class CityProfile {
     this.officeNumber = "";
     this.postIndex = "";
     this.head = new CityAdmin();
+    this.headDeputy = new CityAdmin();
   }
 }
