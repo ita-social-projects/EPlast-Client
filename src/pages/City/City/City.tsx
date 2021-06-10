@@ -551,7 +551,6 @@ const City = () => {
                 )}
             </Row>
             <div className="cityMoreButton">
-              {console.log("city: " + city.name)}{console.log("user city: " + activeUserCity)}
               {canEdit || ((activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")) && city.name == activeUserCity)
                 ? (
                   <Button
