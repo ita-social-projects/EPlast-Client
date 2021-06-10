@@ -23,6 +23,7 @@ import {
 import moment from "moment";
 import {
   addFollower,
+  cityNameOfApprovedMember,
   getCityById,
   getLogo,
   removeCity,
@@ -70,6 +71,8 @@ const City = () => {
   const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
   const [visible, setvisible] = useState<boolean>(false);
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const [activeUserCity, setActiveUserCity] = useState<string>();
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
 
@@ -190,6 +193,9 @@ const City = () => {
     setLoading(true);
     try {
       const response = await getCityById(+id);
+      const responce1 = await cityNameOfApprovedMember(userApi.getActiveUserId());
+      setCity(response.data);
+      setActiveUserCity(responce1.data);
       setPhotosLoading(true);
       setCityLogoLoading(true);
       const admins = [
@@ -202,7 +208,6 @@ const City = () => {
         [...admins, ...response.data.members, ...response.data.followers],
         response.data.logo
       );
-      setCity(response.data);
       setAdmins(admins);
       setMembers(response.data.members);
       setFollowers(response.data.followers);
@@ -213,7 +218,9 @@ const City = () => {
       setMembersCount(response.data.memberCount);
       setAdminsCount(response.data.administrationCount);
       setFollowersCount(response.data.followerCount);
-    } finally {
+      setActiveUserRoles(userApi.getActiveUserRoles);
+    } 
+    finally {
       setLoading(false);
     }
   };
@@ -428,8 +435,9 @@ const City = () => {
                     sm={8}
                   >
                     <div
-                      onClick={() =>
-                        history.push(`/userpage/main/${member.userId}`)
+                      onClick={() => canEdit || activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")
+                        ? history.push(`/userpage/main/${member.userId}`) 
+                        : undefined
                       }
                     >
                       {photosLoading ? (
@@ -479,8 +487,9 @@ const City = () => {
                 admins.map((admin) => (
                   <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                     <div
-                      onClick={() =>
-                        history.push(`/userpage/main/${admin.userId}`)
+                      onClick={() => canEdit || activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")
+                        ? history.push(`/userpage/main/${admin.userId}`)
+                        : undefined
                       }
                     >
                       {photosLoading ? (
@@ -542,13 +551,18 @@ const City = () => {
                 )}
             </Row>
             <div className="cityMoreButton">
-              <Button
-                type="primary"
-                className="cityInfoButton"
-                onClick={() => history.push(`/cities/documents/${city.id}`)}
-              >
-                Більше
-              </Button>
+              {console.log("city: " + city.name)}{console.log("user city: " + activeUserCity)}
+              {canEdit || ((activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")) && city.name == activeUserCity)
+                ? (
+                  <Button
+                    type="primary"
+                    className="cityInfoButton"
+                    onClick={() => history.push(`/cities/documents/${city.id}`)}
+                  >
+                    Більше
+                  </Button>
+                ) : null
+              }
               {canEdit ? (
                 <PlusSquareFilled
                   className="addReportIcon"
@@ -603,8 +617,9 @@ const City = () => {
                   >
                     <div>
                       <div
-                        onClick={() =>
-                          history.push(`/userpage/main/${followers.userId}`)
+                        onClick={() => canEdit || activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")
+                          ? history.push(`/userpage/main/${followers.userId}`)
+                          : undefined
                         }
                       >
                         {photosLoading ? (

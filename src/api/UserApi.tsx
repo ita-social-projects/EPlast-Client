@@ -56,6 +56,14 @@ const getActiveUserRoles = () => {
     return roles;
 };
 
+const getActiveUserId = () => {
+    const token = AuthStore.getToken() as string;
+    const user: any = jwt_decode(token);
+    const userId = user.nameid as string;
+
+    return userId;
+};
+
 export default {
     getById,
     getUserProfileById,
@@ -66,4 +74,5 @@ export default {
     deleteApprove,
     approveUser,
     getActiveUserRoles,
+    getActiveUserId,
 };

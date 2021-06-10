@@ -97,7 +97,8 @@ const CityAdministration = () => {
                   title={`${member.adminType.adminTypeName}`}
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit && (!activeUserRoles.includes("Заступник Голови Станиці") || member.adminType.adminTypeName !== "Голова Станиці")
+                    canEdit && (activeUserRoles.includes("Голова Округи") || activeUserRoles.includes("Голова Станиці")) 
+                      && (!activeUserRoles.includes("Заступник Голови Станиці") || member.adminType.adminTypeName !== "Голова Станиці")
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
                           <CloseOutlined onClick={() => removeAdmin(member)} />,
@@ -106,8 +107,9 @@ const CityAdministration = () => {
                   }
                 >
                   <div
-                    onClick={() =>
-                      history.push(`/userpage/main/${member.userId}`)
+                    onClick={() => canEdit || (activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації"))
+                      ? history.push(`/userpage/main/${member.userId}`)
+                      : undefined
                     }
                     className="cityMember"
                   >
