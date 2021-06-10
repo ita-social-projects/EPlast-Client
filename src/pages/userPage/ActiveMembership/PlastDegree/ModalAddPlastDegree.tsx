@@ -35,7 +35,7 @@ const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, isCityAdmin, userI
     }
     useEffect(() => {
         fetchData();
-    }, [userId, availablePlastDegree]);
+    }, [userId]);
     return <Modal
         visible={visibleModal}
         onCancel={handleCancel}
