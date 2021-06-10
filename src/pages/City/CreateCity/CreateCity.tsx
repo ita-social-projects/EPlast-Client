@@ -138,6 +138,7 @@ const CreateCity = () => {
       description: values.description,
       email: values.email,
       head: city.head,
+      headDeputy: city.headDeputy,
       houseNumber: values.houseNumber,
       id: city.id,
       logo: city.logo?.length === 0 ? null : city.logo,

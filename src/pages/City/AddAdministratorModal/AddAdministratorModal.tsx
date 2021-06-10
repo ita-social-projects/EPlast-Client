@@ -163,6 +163,7 @@ const AddAdministratorModal = (props: Props) => {
             className="adminTypeSelect"
             options={[
               { value: "Голова Станиці" },
+              { value: "Заступник Голови Станиці"},
               { value: "Голова СПС" },
               { value: "Писар" },
               { value: "Скарбник" },
