@@ -28,8 +28,11 @@ const PrivateLayout = ({ children }: any) => {
   const [canSee, setCanSee] = useState(false);
   const [canAccess, setCanAccess] = useState(false);
   const [regionAdm, setRegionAdm] = useState(false);
+  const [regionAdmDeputy, setRegionAdmDeputy] = useState(false);
   const [cityAdm, setCityAdm] = useState(false);
+  const [cityAdmDeputy, setCityAdmDeputy] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
+  const [clubAdmDeputy, setClubAdmDeputy] = useState(false);
   const [id, setId] = useState<string>("");
   const [onlyRegistered, setOnlyRegistered] = useState(false);
 
@@ -70,8 +73,11 @@ const PrivateLayout = ({ children }: any) => {
     setUser(roles);
     setCanEdit(roles.includes("Admin"));
     setRegionAdm(roles.includes("Голова Округи"));
+    setRegionAdmDeputy(roles.includes("Заступник Голови Округи"));
     setCityAdm(roles.includes("Голова Станиці"));
+    setCityAdmDeputy(roles.includes("Заступник Голови Станиці"));
     setClubAdm(roles.includes("Голова Куреня"));
+    setClubAdmDeputy(roles.includes("Заступник Голови Куреня"));
     setCanSee(roles.includes("Дійсний член організації"));
     setCanAccess(roles.includes("Прихильник"));
     setOnlyRegistered(roles.includes("Зареєстрований користувач"));
@@ -104,7 +110,8 @@ const PrivateLayout = ({ children }: any) => {
               /></Link>
           </div>
           <Menu theme="dark" mode="inline" className={classes.leftMenu}>
-            {(canEdit === true || canSee === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+            {(canEdit === true || canSee === true || regionAdm === true || regionAdmDeputy === true || cityAdm === true || cityAdmDeputy === true 
+            || clubAdm === true || clubAdmDeputy === true) ? (
               <Menu.Item
                 key="1"
                 icon={<SolutionOutlined />}
@@ -115,7 +122,8 @@ const PrivateLayout = ({ children }: any) => {
               </Menu.Item>
             ) : (<> </>)
             }
-            {(canEdit === true || canSee === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+            {(canEdit === true || canSee === true || regionAdm === true || regionAdmDeputy === true || cityAdm === true || cityAdmDeputy === true 
+            || clubAdm === true || clubAdmDeputy === true) ? (
               <Menu.Item
                 key="1"
                 icon={<BankOutlined />}
@@ -127,7 +135,8 @@ const PrivateLayout = ({ children }: any) => {
             ) : (<> </>)
             }
             <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Довідник">
-              {(canEdit === true || canSee === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+              {(canEdit === true || canSee === true || regionAdm === true || regionAdmDeputy === true || cityAdm === true || cityAdmDeputy === true 
+              || clubAdm === true || clubAdmDeputy === true) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
                   Таблиця користувачів
                 </Menu.Item>
@@ -139,23 +148,27 @@ const PrivateLayout = ({ children }: any) => {
               <Menu.Item onClick={() => { handleClickAway(); history.push("/cities"); }} key="4">
                 Станиці
             </Menu.Item>
-              {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+              {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || regionAdmDeputy === true || cityAdm === true 
+              || cityAdmDeputy === true || clubAdm === true || clubAdmDeputy === true) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/clubs'); }} key="5">Курені</Menu.Item>) : (<> </>)
               }
 
               <Menu.Item onClick={() => { handleClickAway(); history.push('/events/types'); }} key="6">
                 Події
             </Menu.Item>
-              {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+              {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || regionAdmDeputy === true || cityAdm === true 
+              || cityAdmDeputy === true || clubAdm === true || clubAdmDeputy === true) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/distinctions'); }} key="7">Відзначення</Menu.Item>) : (<> </>)
               }
-              {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+              {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || regionAdmDeputy === true || cityAdm === true 
+              || cityAdmDeputy === true || clubAdm === true || clubAdmDeputy === true) ? (
                 <Menu.Item onClick={() => {
                   handleClickAway();
                   history.push('/precautions');
                 }} key="15">Перестороги</Menu.Item>) : (<> </>)
               }
-              {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+              {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || regionAdmDeputy === true || cityAdm === true 
+              || cityAdmDeputy === true || clubAdm === true || clubAdmDeputy === true) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/kadra'); }} key="8">Кадра виховників</Menu.Item>)
                 : (<> </>)
               }
@@ -164,7 +177,8 @@ const PrivateLayout = ({ children }: any) => {
                 </Menu.Item>
             </SubMenu>
 
-            {(canEdit === true || regionAdm === true || cityAdm === true || clubAdm===true) ? (
+            {(canEdit === true || regionAdm === true || regionAdmDeputy === true || cityAdm === true || cityAdmDeputy === true 
+            || clubAdm===true || clubAdmDeputy === true) ? (
               <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
                 <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="9">Річні звіти</Menu.Item>
                 <SubMenu

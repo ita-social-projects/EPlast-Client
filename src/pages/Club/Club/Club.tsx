@@ -158,7 +158,7 @@ const Club = () => {
 
       setPhotosLoading(true);
       setClubLogoLoading(true);
-      const admins = [...response.data.administration, response.data.head]
+      const admins = [...response.data.administration, response.data.head, response.data.headDeputy]
         .filter(a => a !== null);
 
       setPhotos([
@@ -250,27 +250,49 @@ const Club = () => {
                     <Paragraph>
                       {club.head.endDate === null ?
                         (<div>
-                          <b>
-                            Початок правління:
-                                        </b>
+                          <b>Початок правління:</b>
                           {` ${moment(club.head.startDate).format("DD.MM.YYYY")}`}
                         </div>
                         )
                         :
                         (<div>
-                          <b>
-                            Термін правління:
-                                      </b>
+                          <b>Термін правління:</b>
                           {` ${moment(club.head.startDate).format("DD.MM.YYYY")} - ${moment(club.head.endDate).format("DD.MM.YYYY")}`}
                         </div>
                         )
-
                       }
                     </Paragraph>
                   </div>
                 ) : (
                     <Paragraph>
                       <b>Немає голови куреня</b>
+                    </Paragraph>
+                  )}
+                  {club.headDeputy ? (
+                  <div>
+                    <Paragraph>
+                      <b>Заступник Голови Куреня:</b> {club.headDeputy.user.firstName}{" "}
+                      {club.headDeputy.user.lastName}
+                    </Paragraph>
+                    <Paragraph>
+                      {club.headDeputy.endDate === null ?
+                        (<div>
+                          <b>Початок правління:</b>
+                          {` ${moment(club.headDeputy.startDate).format("DD.MM.YYYY")}`}
+                        </div>
+                        )
+                        :
+                        (<div>
+                          <b>Термін правління:</b>
+                          {` ${moment(club.headDeputy.startDate).format("DD.MM.YYYY")} - ${moment(club.headDeputy.endDate).format("DD.MM.YYYY")}`}
+                        </div>
+                        )
+                      }
+                    </Paragraph>
+                  </div>
+                ) : (
+                    <Paragraph>
+                      <b>Немає заступника голови куреня</b>
                     </Paragraph>
                   )}
               </Col>

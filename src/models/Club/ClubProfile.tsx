@@ -13,6 +13,7 @@ export default class ClubProfile {
   officeNumber: string;
   postIndex: string;
   head: ClubAdmin;
+  headDeputy: ClubAdmin;
 
   constructor() {
     this.id = 0;
@@ -27,5 +28,6 @@ export default class ClubProfile {
     this.officeNumber = "";
     this.postIndex = "";
     this.head = new ClubAdmin();
+    this.headDeputy = new ClubAdmin();
   }
 }
