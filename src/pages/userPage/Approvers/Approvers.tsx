@@ -23,6 +23,7 @@ import { StickyContainer } from 'react-sticky';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import jwt_decode from "jwt-decode";
 import activeMembershipApi from '../../../api/activeMembershipApi';
+import DeleteApproveButton from './DeleteApproveButton';
 
 const Assignments = () => {
   const history = useHistory();
@@ -86,22 +87,23 @@ const Assignments = () => {
   }
 
   const deleteApprove = async (event: number) => {
-    await userApi.deleteApprove(event).
-      then(() => { notificationLogic('success', successfulDeleteAction("Поручення")) }).
-      catch(() => { notificationLogic('error', failDeleteAction("поручення")) });
-    await NotificationBoxApi.createNotifications(
-      [userId],
-      `${setGreeting()}, повідомляємо, що користувач 
+      await userApi.deleteApprove(event).
+        then(() => { notificationLogic('success', successfulDeleteAction("Поручення")) }).
+        catch(() => { notificationLogic('error', failDeleteAction("поручення")) });
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        `${setGreeting()}, повідомляємо, що користувач 
         ${approverName} скасував своє поручення за тебе.
         Будь тією зміною, яку хочеш бачити у світі!`,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/userpage/main/${data?.currentUserId}`,
-      'Переглянути користувача'
-    );
-    fetchData();
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/userpage/main/${data?.currentUserId}`,
+        'Переглянути користувача'
+      );
+      fetchData();
   }
 
   const approveClick = async (userId: string, isClubAdmin: boolean = false, isCityAdmin: boolean = false) => {
+
     isCityAdmin ? setApproveAsCityHeadLoading(true) : isClubAdmin ? setApproveAsHovelHeadLoading(true) : setApproveAsMemberLoading(true);
     await userApi.approveUser(userId, isClubAdmin, isCityAdmin).
       then(() => { notificationLogic('success', successfulCreateAction("Поручення")) }).
@@ -153,11 +155,13 @@ const Assignments = () => {
                     className="cardStyles"
                     cover={<Avatar alt="example" src={p.approver.user.imagePath} className="avatar" />}
                   >
-                    <Meta title={p.approver.user.firstName + " " + p.approver.user.lastName} className="titleText" />
-                    <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="titleText" />
-                    <Button className="cardButton" danger onClick={() => deleteApprove(p.id)}>
-                      Відкликати
-                    </Button>
+                    <Tooltip title={p.approver.user.firstName + " " + p.approver.user.lastName}>
+                      <Link to={"/userpage/main/" + p.approver.userID} onClick={() => history.push(`/userpage/main/${p.approver.userID}`)}>
+                        <Meta title={p.approver.user.firstName + " " + p.approver.user.lastName} className="titleText" />
+                      </Link>
+                    </Tooltip>
+                    <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                    <DeleteApproveButton approverId={p.id} deleteApprove={deleteApprove}/>
                   </Card>
                 </div>
               )
@@ -165,24 +169,27 @@ const Assignments = () => {
             else {
               return (
                 <div key={p.id}>
-                  <Link to="#" onClick={() => history.push(`/userpage/main/${p.approver.userID}`)}>
-                    <Card
-                      key={p.id}
-                      hoverable
-                      className="cardStyles"
-                      cover={<Avatar alt="example" src={p.approver.user.imagePath} className="avatar" />}
-                    >
-                      <Meta title={p.approver.user.firstName + " " + p.approver.user.lastName} className="titleText" />
-                      <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="titleText" />
-                      <p className="cardP" />
-                    </Card>
-                  </Link>
+                  <Card
+                    key={p.id}
+                    hoverable
+                    className="cardStyles"
+                    cover={<Avatar alt="example" src={p.approver.user.imagePath} className="avatar" />}>
+                    <Tooltip title={p.approver.user.firstName + " " + p.approver.user.lastName}>
+                      <Link to={"/userpage/main/" + p.approver.userID} onClick={() => history.push(`/userpage/main/${p.approver.userID}`)}>
+                        <Meta title={p.approver.user.firstName + " " + p.approver.user.lastName} className="titleText" />
+                      </Link>
+                    </Tooltip>
+
+                    <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                    <p className="cardP" />
+                  </Card>
                 </div>
               )
             }
           }
           )}
           <div>
+
             {data?.canApprove && AccessToManage(roles.filter(r => r != "Прихильник" && r != "Зареєстрований користувач")) && (
               <div>
                 <Tooltip
@@ -191,7 +198,7 @@ const Assignments = () => {
                     <Spin spinning={approveAsMemberLoading}>
                         <Link to="#" onClick={() => approveClick(data?.user.id)}>
                             <Avatar src={AddUser}
-                            alt="example" size={168}
+                            alt="example" size={166}
                             className="avatarEmpty"
                             shape="square"                            
                             />
@@ -227,27 +234,31 @@ const Assignments = () => {
                       className="avatar"
                     />}
                   >
-                    <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
-                    <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="titleText" />
-                    <Button className="cardButton" danger onClick={() => deleteApprove(data.clubApprover.id)} value={data.clubApprover.id}>
-                      Відкликати
-                    </Button>
+                    <Tooltip title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName}>
+                      <Link to={"/userpage/main/" + data.clubApprover.approver.userID} onClick={() => history.push(`/userpage/main/${data.clubApprover.approver.userID}`)}>
+                        <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
+                      </Link>
+                    </Tooltip>
+                    <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                    <DeleteApproveButton approverId={data.clubApprover.id} deleteApprove={deleteApprove}/>
                   </Card>
                 ) : (
-                  <Link to="#" onClick={() => history.push(`/userpage/main/${data.clubApprover.approver.userID}`)}>
-                    <Card
-                      hoverable
-                      className="cardStyles"
-                      cover={<Avatar
-                        src={data.clubApprover.approver.user.imagePath}
-                        alt="example"
-                        className="avatar"
-                      />}
-                    >
-                      <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
-                      <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="titleText" />
-                    </Card>
-                  </Link>
+                  <Card
+                    hoverable
+                    className="cardStyles"
+                    cover={<Avatar
+                      src={data.clubApprover.approver.user.imagePath}
+                      alt="example"
+                      className="avatar"
+                    />}
+                  >
+                    <Tooltip title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName}>
+                      <Link to={"/userpage/main/" + data.clubApprover.approver.userID} onClick={() => history.push(`/userpage/main/${data.clubApprover.approver.userID}`)}>
+                        <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
+                      </Link>
+                    </Tooltip>
+                    <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                  </Card>
                 )}
 
             </div>
@@ -292,27 +303,31 @@ const Assignments = () => {
                     className="avatar"
                   />}
                 >
-                  <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
-                  <Meta title={moment(data.cityApprover.confirmDate).format("DD.MM.YYYY")} className="titleText" />
-                  <Button className="cardButton" danger onClick={() => deleteApprove(data.cityApprover.id)} value={data.cityApprover.id}>
-                    Відкликати
-                    </Button>
+                  <Tooltip title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName}>
+                    <Link to={"/userpage/main/" + data.cityApprover.approver.userID} onClick={() => history.push(`/userpage/main/${data.cityApprover.approver.userID}`)}>
+                      <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
+                    </Link>
+                  </Tooltip>
+                  <Meta title={moment(data.cityApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                  <DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove}/>
                 </Card>
               ) : (
-                <Link to="#" onClick={() => history.push(`/userpage/main/${data.cityApprover.approver.userID}`)}>
-                  <Card
-                    hoverable
-                    className="cardStyles"
-                    cover={<Avatar
-                      src={data.cityApprover.approver.user.imagePath}
-                      alt="example"
-                      className="avatar"
-                    />}
-                  >
-                    <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
-                    <Meta title={moment(data.cityApprover.confirmDate).format("DD.MM.YYYY")} className="titleText" />
-                  </Card>
-                </Link>
+                <Card
+                  hoverable
+                  className="cardStyles"
+                  cover={<Avatar
+                    src={data.cityApprover.approver.user.imagePath}
+                    alt="example"
+                    className="avatar"
+                  />}
+                >
+                  <Tooltip title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName}>
+                    <Link to={"/userpage/main/" + data.cityApprover.approver.userID} onClick={() => history.push(`/userpage/main/${data.cityApprover.approver.userID}`)}>
+                      <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
+                    </Link>
+                  </Tooltip>
+                  <Meta title={moment(data.cityApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                </Card>
               )}
 
             </div>
@@ -322,6 +337,7 @@ const Assignments = () => {
                 <Tooltip
                   title="Поручитися за користувача"
                   placement="rightBottom">
+
                   <Spin spinning={approveAsCityHeadLoading}>
                   <Link to="#" onClick={() => approveClick(data?.user.id, false, roles.includes("Голова Станиці") || roles.includes("Admin"))}>
                     <Avatar

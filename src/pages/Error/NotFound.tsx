@@ -8,7 +8,7 @@ const NotFoundPage = () => {
             status="404"
             title="404"
             subTitle="Вибачте, ця сторінка не існує."
-            extra={<Button href="/" className={classes.button}>На головну</Button>}
+            extra={<Button href="/" className={classes.button} style={{padding:"4px"}}>На головну</Button>}
         />
     )
 }

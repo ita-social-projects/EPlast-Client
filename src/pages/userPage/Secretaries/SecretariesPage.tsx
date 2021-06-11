@@ -46,20 +46,7 @@ export const Secretaries = () => {
         fetchData();
     }, [userId]);
 
-
-
-
-
-    const onTabChange =  (key:string) => {
-        console.log(noTitleKey)
-        setKey(key);
-       
-       console.log(noTitleKey)
-       
-     };
-
-
-
+    const onTabChange =  (key:string) => { setKey(key) };
 
      const contentListNoTitle: { [key: string]: any } = {
         1: <div key='1'><UserRegionSecretaryTable UserId={userId}/></div>,

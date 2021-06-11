@@ -32,7 +32,6 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
 
   useEffect(() => {
     fetchData();
-    console.log(record)
   }, []);
 
   const fetchData = async () => {
@@ -57,9 +56,9 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
   const handleFinish = async (value: any) => {
     await adminApi.putCurrentRole(userId, value.userRole);
 
-    if (value.userRole === "Колишній член пласту") {
+    if (value.userRole === "Колишній член Пласту") {
       await addEndDate(false);
-    } else if (roles.includes("Колишній член пласту")) {
+    } else if (roles.includes("Колишній член Пласту")) {
       await addEndDate(true);
     }
 
@@ -74,7 +73,7 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
   };
 
   const handleDisabled = () => {
-    if(user.userRoles === "Колишній член пласту") {
+    if(user.userRoles === "Колишній член Пласту") {
       return true
     }
     return false
@@ -99,7 +98,7 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
         <Option value="Дійсний член організації" disabled={handleDisabled()}>
           Дійсний член організації
         </Option>
-        <Option value="Колишній член пласту" disabled={handleDisabled()}>Колишній член пласту</Option>
+        <Option value="Колишній член Пласту" disabled={handleDisabled()}>Колишній член Пласту</Option>
         <Option value="Зареєстрований користувач" disabled={disabled}>Зареєстрований користувач</Option>
         
       </Select>

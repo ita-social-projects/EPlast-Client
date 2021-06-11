@@ -30,6 +30,7 @@ const userAdminTypeRoles = [
     "Голова Округи",
     "Голова Станиці",
 ];
+const userGenders = ["Чоловік", "Жінка", "Інша"];
 
 export const Blanks = () => {
     const { userId } = useParams();
@@ -72,17 +73,13 @@ export const Blanks = () => {
         setLoading(true);
     };
 
-    const IsUserHasAnyAdminTypeRoles = (userRoles: Array<string>): boolean => {
-        let IsUserHasAnyAdminRole = false;
-        if (userRoles === null || userRoles === undefined)
-            return IsUserHasAnyAdminRole;
-        userAdminTypeRoles.forEach((role: string) => {
-            if (userRoles.includes(role)) {
-                IsUserHasAnyAdminRole = true;
-            }
-        });
-        return IsUserHasAnyAdminRole;
-    };
+    const getAppropriateToGenderVerb = () => {
+        if (userGenders[0] === data?.user.gender?.name)
+            return "додав";
+        if (userGenders[1] === data?.user.gender?.name) 
+          return "додала";
+        return "додав(ла)";
+      };
 
     const getDocument = async () => {
         const response = await getDocumentByUserId(userId);
@@ -237,7 +234,7 @@ export const Blanks = () => {
                                             <h2>Ви ще не додали Життєпис</h2>
                                         }
                                         {userToken.nameid !== userId &&
-                                            <h2>{data?.user.firstName} ще не додав(ла) Життєпис</h2>
+                                            <h2>{data?.user.firstName} ще не {getAppropriateToGenderVerb()} Життєпис</h2>
                                         }
                                         {(userToken.nameid === userId || roles.includes("Admin")) &&
                                             <div>
@@ -321,7 +318,7 @@ export const Blanks = () => {
                                         <h2>Ви ще не додали Виписку</h2>
                                     }
                                     {userToken.nameid !== userId &&
-                                        <h2>{data?.user.firstName} ще не додав(ла) Виписку</h2>
+                                        <h2>{data?.user.firstName} ще не {getAppropriateToGenderVerb()} Виписку</h2>
                                     }
                                     <div>
                                         <Button type="primary"
@@ -362,7 +359,7 @@ export const Blanks = () => {
                                         <h2>Ви ще не додали жодного Досягнення</h2>
                                     }
                                     {userToken.nameid !== userId &&
-                                        <h2>{data?.user.firstName} ще не додав(ла) жодного Досягнення</h2>
+                                        <h2>{data?.user.firstName} ще не {getAppropriateToGenderVerb()} жодного Досягнення</h2>
                                     }
                                 </Col>
                             )}

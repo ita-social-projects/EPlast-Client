@@ -42,7 +42,7 @@ const ModalAddEndDatePlastDegree = ({
     return <Modal
         visible={endDateVisibleModal}
         onCancel = {handleCancel}
-        title = "Надання дати завершення для пластового ступеня"
+        title = "Надання дати завершення для Пластового ступеня"
         footer = {null}>
     <Form
      name="basic"
