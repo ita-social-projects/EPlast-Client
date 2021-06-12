@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { Form, Button, Modal, Row, Col } from 'antd';
+import { Form, Button, Modal, Row, Col, Tooltip } from 'antd';
 import './AnnualReportCreate.less';
 import AnnualReportForm from '../AnnualReportForm/AnnualReportForm';
 import AnnualReportApi from '../../../api/AnnualReportApi';
 import Spinner from "../../Spinner/Spinner";
+import { CloseCircleOutlined } from '@ant-design/icons';
 
 export const AnnualReportCreate = () => {
     const { cityId } = useParams();
@@ -14,7 +15,8 @@ export const AnnualReportCreate = () => {
     const [id, setId] = useState<number>();
     const [cityMembers, setCityMembers] = useState<any>();
     const [cityLegalStatuses, setCityLegalStatuses] = useState<any>();
-    const [isLoading, setIsLoading]=useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingSave, setIsLoadingSave]=useState(false);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -26,9 +28,9 @@ export const AnnualReportCreate = () => {
         try {
             await fetchCityInfo(id);
             await fetchLegalStatuses();
-        }catch (error) {
+        } catch (error) {
             showError(error.message)
-        }finally {
+        } finally {
             setId(cityId);
             setIsLoading(false);
         }
@@ -36,7 +38,11 @@ export const AnnualReportCreate = () => {
 
     const fetchCityInfo = async (id: number) => {
         try {
-            let response = await AnnualReportApi.getCityMembers(id);
+            let created=await AnnualReportApi.checkCreated(id);
+            if (created.data.hasCreated === true) {
+                showError(created.data.message);
+            }else{
+                let response = await AnnualReportApi.getCityMembers(id);
             let cityName = response.data.name;
             setTitle(title.concat(' ', cityName));
             setCityMembers(response.data.cityMembers.map((item: any) => {
@@ -45,6 +51,7 @@ export const AnnualReportCreate = () => {
                     value: item.user.id
                 }
             }))
+            }
         }
         catch (error) {
             showError(error.message)
@@ -67,6 +74,7 @@ export const AnnualReportCreate = () => {
     }
 
     const handleFinish = async (obj: any) => {
+        setIsLoadingSave(true);
         obj.cityId = id;
         try {
             let response = await AnnualReportApi.create(obj);
@@ -75,7 +83,7 @@ export const AnnualReportCreate = () => {
         }
         catch (error) {
             showError(error.message)
-        }
+        }finally{setIsLoadingSave(false);}
     }
 
     const showSuccess = (message: string) => {
@@ -95,26 +103,34 @@ export const AnnualReportCreate = () => {
 
     return (
         <>
-            {isLoading? <Spinner/> : <Form
-                onFinish={handleFinish}
-                className='annualreport-form'
-                form={form} >
-                <AnnualReportForm
-                    title={title}
-                    cityMembers={cityMembers}
-                    cityLegalStatuses={cityLegalStatuses} />
-                <Row
-                    justify='center' >
-                    <Col>
-                        <Button
-                            loading={isLoading}
-                            type='primary'
-                            htmlType='submit'>
-                            Подати річний звіт
+            {isLoading ? <Spinner /> :
+                <>
+                    <div className="report-menu">
+                        <Tooltip title="Скасувати створення звіту">
+                            <div className="report-menu-item" onClick={() => history.goBack()}><CloseCircleOutlined /></div>
+                        </Tooltip>
+                    </div>
+                    <Form
+                        onFinish={handleFinish}
+                        className='annualreport-form'
+                        form={form} >
+                        <AnnualReportForm
+                            title={title}
+                            cityMembers={cityMembers}
+                            cityLegalStatuses={cityLegalStatuses} />
+                        <Row
+                            justify='center' >
+                            <Col>
+                                <Button
+                                    loading={isLoadingSave}
+                                    type='primary'
+                                    htmlType='submit'>
+                                    Подати річний звіт
                         </Button>
-                    </Col>
-                </Row>
-            </Form>}
+                            </Col>
+                        </Row>
+                    </Form>
+                </>}
         </>
     );
 };

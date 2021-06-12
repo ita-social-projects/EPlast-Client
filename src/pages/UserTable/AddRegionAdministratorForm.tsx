@@ -126,6 +126,7 @@ const AddNewAdministratorForm = ({
             onChange={handleClick}
             options={[
               { value: "Голова Округи" },
+              { value: "Заступник Голови Округи"},
               { value: "Писар" },
               { value: "Бунчужний" },
               { value: "Скарбник" },

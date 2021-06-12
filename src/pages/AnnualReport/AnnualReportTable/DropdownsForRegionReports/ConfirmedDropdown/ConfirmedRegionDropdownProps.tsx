@@ -4,13 +4,15 @@ interface Props {
         date: Date,
         id: number,
         regionName: string,
+        status: number,
         total: number
     };
     pageX: number;
     pageY: number;
-    canManage: boolean;
     showDropdown: boolean;
+    canManage: boolean;
     onView: (id: number, year: number) => Promise<void>;
+    onCancel: (id: number) => Promise<void>;
 }
 
 export default Props;

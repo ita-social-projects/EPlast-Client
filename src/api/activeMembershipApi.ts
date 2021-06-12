@@ -35,13 +35,13 @@ const getAccessLevelById = async (id : string) => {
     return response.data;
 };
 
-const getAllPlastDegrees = async () : Promise<Array<PlastDegree>>=> {
+const getAllPlastDegrees = async () => {
     const response = await Api.get(`ActiveMembership/degree`);
 
-    return response.data;
+    return response.data as PlastDegree[];
 };
 
- const getUserPlastDegrees = async (id : string) :Promise<Array<UserPlastDegree>>=> {
+ const getUserPlastDegrees = async (id : string) : Promise<Array<UserPlastDegree>> => {
     const response = await Api.get(`ActiveMembership/degree/${id}`);
 
     return response.data;

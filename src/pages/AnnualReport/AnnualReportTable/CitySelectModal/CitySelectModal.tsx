@@ -4,6 +4,7 @@ import AnnualReportApi from '../../../../api/AnnualReportApi';
 import { useHistory } from 'react-router-dom';
 import './CitySelectModal.less'
 import {emptyInput} from "../../../../components/Notifications/Messages"
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface Props {
     visibleModal: boolean,
@@ -14,6 +15,9 @@ const CitySelectModal = (props: Props) => {
     const { visibleModal, handleOk } = props;
     const history = useHistory();
     const [cityOptions, setCityOptions] = useState<any>();
+    const [cities, setCities]=useState<any>();
+    const [isLoadingCities, setIsLoadingCities]=useState<boolean>(false);
+
 
     const validationSchema = {
         city: [
@@ -47,19 +51,26 @@ const CitySelectModal = (props: Props) => {
     }
 
     const fetchCities = async () => {
+        setIsLoadingCities(true);
         try {
-            let response = await AnnualReportApi.getCitiesOptions();
+            let response = await AnnualReportApi.getCitiesOptions()
+            setCities([].concat(response.data.cities));
             let cities = response.data.cities.map((item:any) => {
                 return {
-                    label: item.item2,
-                    value: item.item1
+                    label: <>{item.name}<div 
+                    hidden={!item.hasReport}
+                    style={{float:"right", fontSize:"12px", marginTop:"2px", marginRight:"10px"}}>
+                        Станиця вже має створений звіт
+                        </div></>,
+                    value: item.id,
+                    disabled: item.hasReport
                 }
             })
             setCityOptions(cities);
         }
         catch (error) {
-
-        }
+            showError(error.message)
+        }finally{setIsLoadingCities(false)}
     }
 
     return (
@@ -70,7 +81,7 @@ const CitySelectModal = (props: Props) => {
             footer={null} >
             <Form
                 onFinish={(obj) => {
-                    checkCreated(obj.cityId); }} >
+                    history.push(`/annualreport/create/${obj.cityId}`) }} >
                 <Row>
                     <Col
                         span={24} >
@@ -81,9 +92,9 @@ const CitySelectModal = (props: Props) => {
                                 showSearch
                                 className=''
                                 options={cityOptions}
-                                placeholder='Обрати станицю'
+                                placeholder={<span>Обрати станицю {isLoadingCities && <LoadingOutlined />}</span>}
                                 filterOption={(input, option) =>
-                                    (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    (cities.find((x:any)=>x.id==option?.value).name as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
                                 } />
                         </Form.Item>
                     </Col>

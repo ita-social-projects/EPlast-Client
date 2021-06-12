@@ -18,6 +18,7 @@ import {
 import CityAdmin from "../../../models/City/CityAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import CityMember from "../../../models/City/CityMember";
+import "./AddCitiesSecretaryForm.less";
 
 type AddCitiesNewSecretaryForm = {
   onAdd: () => void;
@@ -59,7 +60,6 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   const addClubAdmin = async (admin: CityAdmin) => {
     await addAdministrator(admin.cityId, admin);
     notificationLogic("success", "Користувач успішно доданий в провід");
-    form.resetFields();
     await NotificationBoxApi.createNotifications(
       [admin.userId],
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
@@ -72,7 +72,6 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   const editClubAdmin = async (admin: CityAdmin) => {
     await editAdministrator(props.cityId, admin);
     notificationLogic("success", successfulEditAction("Адміністратора"));
-    form.resetFields();
     await NotificationBoxApi.createNotifications(
       [admin.userId],
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
@@ -151,7 +150,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   };
 
   useEffect(() => {
-    if (props.visibleModal) {
+    if (!props.visibleModal) {
       form.resetFields();
     }
     getMembers();
@@ -159,7 +158,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   }, [props]);
 
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form name="basic" onFinish={handleSubmit} form={form} className="formAddSecretaryModal">
       <Form.Item
         className={classes.formField}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
@@ -168,7 +167,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: props.admin === undefined ? true : false,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
@@ -191,7 +190,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: true,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
@@ -199,6 +198,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
           className={classes.inputField}
           options={[
             { value: "Голова Станиці" },
+            { value: "Заступник Голови Станиці"},
             { value: "Голова СПС" },
             { value: "Писар" },
             { value: "Скарбник" },

@@ -9,10 +9,10 @@ import {
   Row,
   Typography,
   Col,
-  TreeSelect
+  TreeSelect,
+  Tooltip as AntTooltip
 } from "antd";
 import StatisticsApi from "../../api/StatisticsApi";
-import City from "./Interfaces/City";
 import StatisticsItemIndicator from "./Interfaces/StatisticsItemIndicator";
 import AnnualReportApi from "../../api/AnnualReportApi";
 import CityStatistics from "./Interfaces/CityStatistics";
@@ -28,9 +28,12 @@ import {
 } from "bizcharts";
 import "./StatisticsCities.less";
 import{ shouldContain } from "../../components/Notifications/Messages"
+import { ClearOutlined, LoadingOutlined } from '@ant-design/icons';
+import City from "./Interfaces/City";
 
 const StatisticsCities = () => {
 
+  const [form] = Form.useForm();
   const [years, setYears] = useState<any>();
   const [cities, setCities] = useState<any>();
   const [dataForTable, setDataForTable] = useState<DataFromResponse[]>(Array());
@@ -47,19 +50,17 @@ const StatisticsCities = () => {
   const [selectableSeigneurPart, setSelectableSeigneurPart] = useState<boolean>(true);
   const [selectableSeigneurZahalom, setSelectableSeigneurZahalom] = useState<boolean>(true);
   const [onClickRow, setOnClickRow] = useState<any>();
+  const [isLoadingCities, setIsLoadingCities]=useState<boolean>(false);
+
   
   const constColumns = [
     {
-      title: "Станиця",
-      dataIndex: "cityName",
-      key: "cityName",
+      title: "№",
+      dataIndex: "id",
+      key: "id",
       fixed: "left",
-      ellipsis: {
-        showTitle: true,
-      },
-      sorter: (a: any, b: any) => a.cityName.localeCompare(b.cityName),
-      sortDirections: ["ascend", "descend"] as SortOrder[],
-      width: 150
+      sorter: { compare: (a: any, b: any) => a.id - b.id },
+      width: 55
     },
     {
       title: "Рік",
@@ -79,7 +80,19 @@ const StatisticsCities = () => {
       sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
       sortDirections: ["ascend", "descend"] as SortOrder[],
       width: 150
-    }
+    },
+    {
+      title: "Станиця",
+      dataIndex: "cityName",
+      key: "cityName",
+      fixed: "left",
+      ellipsis: {
+        showTitle: true,
+      },
+      sorter: (a: any, b: any) => a.cityName.localeCompare(b.cityName),
+      sortDirections: ["ascend", "descend"] as SortOrder[],
+      width: 150
+    },
   ];
 
   const indicatorsArray = [
@@ -108,19 +121,20 @@ const StatisticsCities = () => {
   }, []);
     
   const fetchCities = async () => {
+    setIsLoadingCities(true);
     try {
       let response = await AnnualReportApi.getCities();
-      let cities = response.data.cities as City[];
+      let cities = response.data as City[];
       setCities(cities.map(item => {
         return {
           label: item.name,
           value: item.id
         }
-      }));
+    }));
     }
     catch (error) {
       showError(error.message);
-    }
+    }finally{setIsLoadingCities(false)}
   };
 
   const fetchYears = async () => {
@@ -281,7 +295,17 @@ const onClick = (value: Array<Number>) => {
         <Title level={2}>Статистика станиць</Title>
           <div className = "formAndChart">
             <div className = "form"> 
-              <Form onFinish={onSubmit}>
+              <Form 
+              form={form}
+              onFinish={onSubmit}>
+                <Row style={{float: "right", marginRight: "20px", marginTop: "-50px"}}>
+                  <AntTooltip title="Очистити">
+                    <ClearOutlined onClick={()=>form.resetFields()} style={{
+                                    fontSize: "x-large",
+                                    cursor: "pointer",
+                                }} />
+                  </AntTooltip>   
+                </Row>
                 <Row justify="center">
                   <Col
                     span={20}>
@@ -296,7 +320,7 @@ const onClick = (value: Array<Number>) => {
                         allowClear
                         mode="multiple"
                         options={cities}
-                        placeholder="Обрати станицю"
+                        placeholder={<span>Обрати станицю {isLoadingCities && <LoadingOutlined />}</span>}
                         filterOption={(input, option) => (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
                       />
                       </Form.Item>
@@ -384,7 +408,7 @@ const onClick = (value: Array<Number>) => {
           }}
           label={["count", {
             content: (data) => {
-              return `${data.item}: ${Math.round(data.percent / sumOfIndicators * 100)}%`;
+              return `${data.item}: ${(data.percent / sumOfIndicators * 100).toFixed(2)}%`;
             },
           }]}
         />

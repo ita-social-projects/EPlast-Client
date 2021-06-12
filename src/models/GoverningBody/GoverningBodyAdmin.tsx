@@ -1,7 +1,7 @@
 import AdminType from '../Admin/AdminType';
 import GoverningBodyUser from './GoverningBodyUser';
 
-export default class GoverningBody {
+export default class GoverningBodyAdmin {
   id: number;
   userId: string;
   user: GoverningBodyUser;

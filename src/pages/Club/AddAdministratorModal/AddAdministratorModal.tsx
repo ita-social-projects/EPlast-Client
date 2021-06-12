@@ -123,8 +123,6 @@ const AddAdministratorModal = (props: Props) => {
         }
       }
     } finally {
-      props.onAdd?.(admin);
-      props.onChange?.(props.admin.userId, values.adminType);
       props.setVisibleModal(false);
       setLoading(false);
     }
@@ -167,6 +165,7 @@ const AddAdministratorModal = (props: Props) => {
             className="adminTypeSelect"
             options={[
               { value: "Голова Куреня" },
+              { value: "Заступник Голови Куреня" },
               { value: "Голова СПС" },
               { value: "Фотограф" },
               { value: "Писар" },

@@ -4,6 +4,6 @@ export type Document = {
     type: string;
     governingBody: string;
     description: string;
-    date: string;
+    date: Date;
     fileName: string | null;
 }

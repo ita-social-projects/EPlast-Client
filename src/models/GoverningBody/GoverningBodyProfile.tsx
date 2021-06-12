@@ -2,19 +2,20 @@ import GoverningBodyAdmin from './GoverningBodyAdmin';
 
 export default class GoverningBodyProfile {
   id: number;
+  description: string;
+  email: string;
   governingBodyName: string;
   logo: string | null;
-  description: string;
   phoneNumber: string;
-  email: string;
-
+  head: GoverningBodyAdmin;
 
   constructor() {
     this.id = 0;
+    this.description = "";
+    this.email = "";
     this.governingBodyName = "";
     this.logo = "";
-    this.description = "";
     this.phoneNumber = "";
-    this.email = "";
+    this.head = new GoverningBodyAdmin();
   }
 }

@@ -51,7 +51,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
   const dateFormat = "DD.MM.YYYY";
   const openNotification = (message: string) => {
     notification.error({
-      message: failCreateAction(`пересторога`),
+      message: failCreateAction(`пересторогу`),
       description: `${message}`,
       placement: "topLeft",
     });
@@ -70,6 +70,10 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
     };
     fetchData();
   }, []);
+
+  const backgroundColor = (user: any) => {
+    return user.isInLowerRole ? { backgroundColor : '#D3D3D3' } : { backgroundColor : 'white' };
+  }    
 
   const handleCancel = () => {
     form.resetFields();
@@ -204,7 +208,12 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               loading={loadingUserStatus}
             >
               {userData?.map((o) => (
-                <Select.Option key={o.id} value={JSON.stringify(o)} >
+                <Select.Option 
+                    key={o.id} 
+                    value={JSON.stringify(o)} 
+                    style={backgroundColor(o)}
+                    disabled={o.isInLowerRole}
+                    >
                   {o.firstName + " " + o.lastName}
                 </Select.Option>
               ))}

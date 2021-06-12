@@ -26,6 +26,7 @@ import {
   getRegionAdministration,
   getRegionDocuments,
   getHead,
+  getHeadDeputy,
 } from "../../api/regionsApi";
 import "./Region.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
@@ -135,6 +136,15 @@ boolean
     endDate: "",
   });
 
+  const [headDeputy, setHeadDeputy] = useState<any>({
+    user: {
+      firstName: "",
+      lastName: "",
+    },
+    startDate: "",
+    endDate: "",
+  });
+
   const setPhotos = async (members: any[], admins: any[]) => {
     for (let i = 0; i < admins.length; i++) {
       admins[i].user.imagePath = (
@@ -193,13 +203,15 @@ boolean
       const response1 = await getRegionAdministration(id);
 
       const responseHead = await getHead(id);
+      const responseHeadDeputy = await getHeadDeputy(id);
 
       setHead(responseHead.data);
+      setHeadDeputy(responseHeadDeputy.data);
       setMembersCount(response.data.cities.length);
       setSixMembers(response.data.cities, 6);
 
       setPhotosLoading(true);
-      setSixAdmins(response1.data, 6);
+      setSixAdmins(response1.data, 7);
       setAdminsCount(response1.data.length);
 
       setRegionLogoLoading(true);
@@ -242,7 +254,7 @@ boolean
   };
 
   const setSixAdmins = (admin: any[], amount: number) => {
-    if (admin.length > 6) {
+    if (admin.length > 7) {
       for (let i = 0; i < amount; i++) {
         admins[i] = admin[i];
       }
@@ -322,7 +334,7 @@ boolean
                   {head.user ? (
                     <div>
                       <Paragraph>
-                        <b>Голова округи:</b> {head.user.firstName}{" "}
+                        <b>Голова Округи:</b> {head.user.firstName}{" "}
                         {head.user.lastName}
                       </Paragraph>
                       {head.endDate ? (
@@ -340,6 +352,28 @@ boolean
                     </div>
                   ) : (
                       <p>Ще немає голови округи</p>
+                    )}
+                    {headDeputy.user ? (
+                    <div>
+                      <Paragraph>
+                        <b>Заступник Голови Округи:</b> {headDeputy.user.firstName}{" "}
+                        {headDeputy.user.lastName}
+                      </Paragraph>
+                      {headDeputy.endDate ? (
+                        <Paragraph>
+                          <b>Час правління:</b>{" "}
+                          {moment(headDeputy.startDate).format("DD.MM.YYYY")}{" - "}
+                          {moment(headDeputy.endDate).format("DD.MM.YYYY")}
+                        </Paragraph>
+                      ) : (
+                          <Paragraph>
+                            <b>Початок правління:</b>{" "}
+                            {moment(headDeputy.startDate).format("DD.MM.YYYY")}
+                          </Paragraph>
+                        )}
+                    </div>
+                  ) : (
+                      <p>Ще немає заступника голови округи</p>
                     )}
                 </Col>
 
@@ -395,7 +429,7 @@ boolean
                       <Button
                         type="primary"
                         className="cityInfoButton"
-                        onClick={() => history.push(`/annualreport/table`)}
+                        onClick={() => history.push(`/annualreport/table/country`)}
                       >
                         Річні звіти
                 </Button>
@@ -573,7 +607,7 @@ boolean
                     </Col>
                   ))
                 ) : (
-                    <Paragraph>Ще немає документів Округи</Paragraph>
+                    <Paragraph>Ще немає документів округи</Paragraph>
                   )}
               </Row>
               <div className="cityMoreButton">
@@ -584,11 +618,12 @@ boolean
                 >
                   Більше
               </Button>
-
+              {canEdit?(
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
                 />
+                ):null}
               </div>
             </Card>
           </Col>
@@ -613,6 +648,7 @@ boolean
           <AddNewSecretaryForm 
               onAdd={handleOk}
               regionID={region.id}
+              visibleModal={visible}
           >
           </AddNewSecretaryForm>
         </Modal>

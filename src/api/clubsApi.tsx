@@ -140,8 +140,8 @@ export const toggleMemberStatus = async (id: number) => {
   });
 }
 
-export const clubNameOfApprovedMember = async(id: string) =>{
-  return api.get(`Club/ClubNameOfApprovedMember/${id}`).catch((error)=>{
+export const clubNameOfApprovedMember = async(memberId: string) =>{
+  return api.get(`Club/ClubNameOfApprovedMember/${memberId}`, {memberId:memberId}).catch((error)=>{
     throw new Error(error)
   });
 }; 
@@ -219,7 +219,7 @@ export const getClubsOptions = async () => {
   });
 }
 
-const checkCreated = async (clubId: number) => {
+export const checkCreated = async (clubId: number) => {
   return await Api.get(`AnnualReport/checkCreatedClubReport/${clubId}`)
       .catch((error: AxiosError) => {
         throw new Error(error.response?.data.message);
@@ -243,5 +243,6 @@ export const getClubs = async()=>{
 
 export default {
   getClubs,
-  checkCreated
+  checkCreated,
+  getClubsOptions
 }

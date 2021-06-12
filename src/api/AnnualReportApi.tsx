@@ -10,17 +10,17 @@ const getCitiesOptions = async () => {
 }
 
 const getCities = async () => {
-    return await Api.get('Cities')
+    return await Api.get('Cities/Cities')
         .catch((error: AxiosError) => {
             throw new Error(error.response?.data.message);
         });
 }
 
-const getCityMembers = async (cityId: number)=>{
+const getCityMembers = async (cityId: number) => {
     return await Api.get(`AnnualReport/Members/${cityId}`)
         .catch((error: AxiosError) => {
-        throw new Error(error.response?.data.message);
-    });
+            throw new Error(error.response?.data.message);
+        });
 }
 
 const getCityInfo = async (cityId: number) => {
@@ -59,8 +59,9 @@ const getById = async (id: number) => {
 }
 
 const getAnnualReportEditFormById = async (id: number) => {
-    return await Api.get(`AnnualReport/EditCityAnnualReportForm/${id}`).then((response)=>{console.log(response.data);
-    return response})
+    return await Api.get(`AnnualReport/EditCityAnnualReportForm/${id}`).then((response) => {
+        return response
+    })
         .catch((error: AxiosError) => {
             throw new Error(error.response?.data.message);
         });

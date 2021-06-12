@@ -159,9 +159,7 @@ const UsersTable = () => {
         Tab: currentTabName,
         SearchData: searchData
       });
-      console.log(response)
       setUsers(response.data.users);
-      console.log(response.data.users)
       setViewedUsers(response.data.users);
       setTotal(response.data.total);
     } finally {
@@ -343,7 +341,7 @@ const UsersTable = () => {
       <div className={classes.searchContainer}>
         <div className={classes.filterContainer}>
           <Form form={form} onFinish={handleFilter} style={{ height: "20px"}}>
-            <Row>
+            <Row style={{flexFlow: "nowrap"}}>
               <Col span={20}>
                 <Form.Item
                   rules={[

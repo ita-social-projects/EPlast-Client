@@ -120,6 +120,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
     setVisibleModal(false);
     onAdd();
     form.resetFields();
+    setFileData({ FileAsBase64: null, FileName: null });
     setSubmitLoading(false);
   };
 
@@ -186,7 +187,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             className={formclasses.formField}
             label="Орган, що видав документ"
             labelCol={{ span: 24 }}
-            name="organization"
+            name="governingBody"
             rules={[{ required: true, message: emptyInput() }]}
           >
             <Select
@@ -248,7 +249,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
                 className={formclasses.formField}
                 multiple={false}
                 showUploadList={false}
-                accept=".doc,.docx,.png,.xls,xlsx,.png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                accept=".doc,.docx,.png,.xls,xlsx,.png,.pdf,.jpg,.jpeg,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 headers={{ authorization: "authorization-text" }}
               >
                 <p className="ant-upload-drag-icon">

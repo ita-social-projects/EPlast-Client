@@ -40,15 +40,15 @@ import{
 } from "../../../components/Notifications/Messages"
 import "../EditUserPage/EditUserPage.less"
 import { UpuDegree } from "../Interface/Interface";
+import jwt_decode from "jwt-decode";
 
 export default function () {
+  const { userId } = useParams();
   const history = useHistory();
-  const lettersWithFirstUpperLetterPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{1,50})*$/;
-  const allVariantsPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",0-9]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",0-9]{1,50})*$/;
-  const allVariantsWithFirstUpperLetterPattern = /^([a-zа-яієїґ]{0,10}[.][\s])?([0-9]+|[A-ZА-ЯІЄЇҐ])[a-zа-яієїґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",0-9]{0,49}((\s|-)([a-zа-яієїґ]{0,10}[.][\s])?([0-9]+|[A-ZА-ЯІЄЇҐ])[a-zа-яієїґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",0-9]{0,49})*$/;
-  const wrongLettersWithFirstUpperLetterMessage = shouldContain("тільки літери та один спец. символ між словами");
-  const wrongAllVariantsMessage = shouldContain("тільки один спец. символ між словами");
-  const wrongallVariantsWithFirstUpperLetterMessage = shouldContain("великі літери лише на початку слів та тільки один спец. символ між словами");
+  const onlyLettersPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50})*$/;
+  const allVariantsPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",.0-9]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",.0-9]{0,50})*$/;
+  const wrongOnlyLettersMessage = shouldContain("тільки літери");
+  const wrongAllVariantsMessage = shouldContain("літери, символи та цифри");
   const [form] = Form.useForm();
   const MAX_AGE = 100;
 
@@ -72,8 +72,12 @@ export default function () {
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
+    let decodedJwt = jwt_decode(token) as any;
+    let id=user.nameid;
+    if(user.nameid!=userId || (decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]).includes("Admin"))
+      id=userId
     await userApi
-      .edit(user.nameid)
+      .edit(id)
       .then(async (response) => {
         setData(response.data);
         if (response.data.user.imagePath !== undefined) {
@@ -152,18 +156,18 @@ export default function () {
       { max: 25, message: maxLength(25) },
       { min: 2, message: minLength(2) },
       { required: true, message: emptyInput() },
-      { pattern: lettersWithFirstUpperLetterPattern, message: wrongLettersWithFirstUpperLetterMessage },
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     surName: [
       { max: 25, message: maxLength(25) },
       { min: 2, message: minLength(2) },
       { required: true, message: emptyInput() },
-      { pattern: lettersWithFirstUpperLetterPattern, message: wrongLettersWithFirstUpperLetterMessage },
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     fatherName: [
       { max: 25, message: maxLength(25) },
       { min: 2, message: minLength(2) },
-      { pattern: lettersWithFirstUpperLetterPattern, message: wrongLettersWithFirstUpperLetterMessage },
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     gender: [
       { required: true, message: emptyInput() },
@@ -185,11 +189,11 @@ export default function () {
     ],
     nationality: [
       { max: 25, message: maxLength(25) },
-      { pattern: lettersWithFirstUpperLetterPattern, message: wrongLettersWithFirstUpperLetterMessage },
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     religion: [
       { max: 25, message: maxLength(25) },
-      { pattern: lettersWithFirstUpperLetterPattern, message: wrongLettersWithFirstUpperLetterMessage },
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     placeOfWork: [
       { max: 50, message: maxLength(50) },
@@ -202,16 +206,16 @@ export default function () {
     address: [
       { max: 50, message: maxLength(50) },
       { required: true, message: emptyInput() },
-      { pattern: allVariantsWithFirstUpperLetterPattern, message: wrongallVariantsWithFirstUpperLetterMessage},
+      { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
     ],
     pseudo: [
       { max: 25, message: maxLength(25) },
       { min: 2, message: minLength(2) },
-      { pattern: lettersWithFirstUpperLetterPattern, message: wrongLettersWithFirstUpperLetterMessage },
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     publicPoliticalActivity: [
       { max: 25, message: maxLength(25) },
-      { pattern: lettersWithFirstUpperLetterPattern, message: wrongLettersWithFirstUpperLetterMessage },
+      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
     upuDegree: [
       { required: true, message: emptyInput() },
@@ -227,7 +231,7 @@ export default function () {
       return word;
     }
 
-    let parts = word.split(/[- ]/);
+    let parts = word.split(/[- ]+/);
 
     parts = parts.map( (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase());
     
@@ -315,6 +319,10 @@ export default function () {
     form.setFieldsValue({ publicPoliticalActivity: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
   }
 
+  const handleOnChangeAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
+    form.setFieldsValue( { address: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
+  }
+  
   const handleOnChangeReligion = (value: any, event: any) => {
     if (event.key === undefined) {
       setReligion({
@@ -538,7 +546,7 @@ export default function () {
           </div>
           <div className={styles.rowBlock}>
             <Form.Item
-              label="По-батькові"
+              label="По батькові"
               name="fatherName"
               rules={validationSchema.fatherName}
               className={styles.formItem}
@@ -570,7 +578,7 @@ export default function () {
               rules={validationSchema.pseudo}
               className={styles.formItem}
             >            
-              <Input className={styles.dataInput} onChange={handleOnChangePseudo} maxLength={31}/>
+              <Input className={styles.dataInput} onChange={handleOnChangePseudo} maxLength={26}/>
             </Form.Item>
             <Form.Item 
               label="Дата народження"
@@ -745,7 +753,7 @@ export default function () {
               rules={validationSchema.address}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} maxLength={51}/>
+              <Input className={styles.dataInput} onChange={handleOnChangeAddress} maxLength={51}/>
             </Form.Item>
             <Form.Item
               label="Громадська, політична діяльність"
@@ -753,7 +761,7 @@ export default function () {
               rules={validationSchema.publicPoliticalActivity}
               className={styles.formItem}
             >            
-              <Input className={styles.dataInput} onChange={handleOnChangePublicPoliticalActivity} maxLength={501}/>
+              <Input className={styles.dataInput} onChange={handleOnChangePublicPoliticalActivity} maxLength={26}/>
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>

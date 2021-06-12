@@ -25,8 +25,11 @@ const setTagColor = (userRoles: string) => {
   if (userRoles?.includes("Зацікавлений")) {
     color = "yellow";
   }
-  if (userRoles?.includes("Колишній член пласту")) {
+  if (userRoles?.includes("Колишній член Пласту")) {
     color = "black";
+  }
+  if (userRoles?.includes("Зареєстрований користувач")) {
+    color = "blue"
   }
   return color;
 };
@@ -34,7 +37,7 @@ const setTagColor = (userRoles: string) => {
 const ColumnsForUserTable: any = [
   {
     title: "№",
-    dataIndex: "userProfileId",
+    dataIndex: "userSystemId",
     render: (id: number) => <Text>{id}</Text>,
     fixed: true,
     sorter: {
@@ -42,7 +45,7 @@ const ColumnsForUserTable: any = [
     },
     sortDirections: ["descend", "ascend"],
     defaultSortOrder: "ascend",
-    width: 55,
+    width: 65,
   },
   {
     title: "Ім`я",
@@ -105,7 +108,7 @@ const ColumnsForUserTable: any = [
         );
       } else {
         return (
-          <Tooltip title="Інша  ">
+          <Tooltip title="Не маю бажання вказувати">
               <img src={Transgender} alt="Transgender"/>
           </Tooltip>
         )
@@ -263,8 +266,8 @@ const ColumnsForUserTable: any = [
         value: "Дійсний член організації",
       },
       {
-        text: "Колишній член пласту",
-        value: "Колишній член пласту",
+        text: "Колишній член Пласту",
+        value: "Колишній член Пласту",
       },
       {
         text: "Зацікавлений",
@@ -298,6 +301,10 @@ const ColumnsForUserTable: any = [
         text: "Діловод Куреня",
         value: "Діловод Куреня",
       },
+      {
+        text: "Зареєстрований користувач",
+        value: "Зареєстрований користувач"
+      }
     ],
     filterMultiple: false,
     onFilter: (value: any, record: any) => record.userRoles?.includes(value),

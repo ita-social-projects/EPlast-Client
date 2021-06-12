@@ -46,20 +46,7 @@ export const Secretaries = () => {
         fetchData();
     }, [userId]);
 
-
-
-
-
-    const onTabChange =  (key:string) => {
-        console.log(noTitleKey)
-        setKey(key);
-       
-       console.log(noTitleKey)
-       
-     };
-
-
-
+    const onTabChange =  (key:string) => { setKey(key) };
 
      const contentListNoTitle: { [key: string]: any } = {
         1: <div key='1'><UserRegionSecretaryTable UserId={userId}/></div>,
@@ -77,7 +64,17 @@ export const Secretaries = () => {
 
                     <div className="avatarWrapper">
                         <StickyContainer className="kadraWrapper">
-                            <AvatarAndProgress imageUrl={data?.user.imagePath} time={data?.timeToJoinPlast} firstName={data?.user.firstName} lastName={data?.user.lastName} isUserPlastun={data?.isUserPlastun} pseudo={data?.user.pseudo} city={data?.user.city} club={data?.user.club} />
+                            <AvatarAndProgress
+                                imageUrl={data?.user.imagePath}
+                                time={data?.timeToJoinPlast}
+                                firstName={data?.user.firstName}
+                                lastName={data?.user.lastName}
+                                isUserPlastun={data?.isUserPlastun}
+                                pseudo={data?.user.pseudo}
+                                city={data?.user.city}
+                                club={data?.user.club} 
+                                cityId={data?.user.cityId}
+                                clubId={data?.user.clubId}/>
                         </StickyContainer>
                     </div>
 

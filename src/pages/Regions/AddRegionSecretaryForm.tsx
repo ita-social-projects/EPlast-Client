@@ -11,6 +11,8 @@ import {
 } from "../../components/Notifications/Messages"
 import RegionUser from "../../models/Region/RegionUser";
 
+import User from "../Distinction/Interfaces/User";
+import "./AddRegionSecretaryForm.less";
 
 type AddNewSecretaryForm = {
   onAdd: () => void;
@@ -102,8 +104,14 @@ const AddNewSecretaryForm = (props: any) => {
     fetchData();
   }, [props]);
 
+  useEffect(() => {
+    if (!props.visibleModal) {
+      form.resetFields();
+    }
+  }, [props]);
+
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form name="basic" onFinish={handleSubmit} form={form} className="formAddSecretaryModal">
       <Form.Item
         className={classes.formField}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
@@ -112,7 +120,7 @@ const AddNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: props.admin === undefined ? true : false,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
@@ -135,7 +143,7 @@ const AddNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: true,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
@@ -143,6 +151,7 @@ const AddNewSecretaryForm = (props: any) => {
           className={classes.inputField}
           options={[
             { value: "Голова Округи" },
+            { value: "Заступник Голови Округи"},
             { value: "Писар" },
             { value: "Бунчужний" },
             { value: "Скарбник" },

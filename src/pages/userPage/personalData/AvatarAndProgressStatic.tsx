@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 
 import { Avatar, Progress, Skeleton, Tooltip, Typography } from "antd";
 import "./PersonalData.less";
@@ -27,6 +27,8 @@ class AvatarAndProgressStaticProps {
   pseudo: string | undefined;
   city: string | undefined;
   club: string | undefined;
+  cityId: number|undefined;
+  clubId: number|undefined;
 }
 
 const contentListNoTitle: { [key: string]: any } = {
@@ -56,6 +58,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
   props: AvatarAndProgressStaticProps
 ) => {
   const { userId } = useParams();
+  const history = useHistory();
   const [loading, setLoading] = useState(false);
   const {
     time,
@@ -66,6 +69,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     pseudo,
     city,
     club,
+    cityId, clubId
   } = props;
   const [imageBase64, setImageBase64] = useState<string>();
   const [UserDistinctions, setData] = useState<UserDistinction[]>([
@@ -152,18 +156,25 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     </div>
   ) : (
     <div className="kadraWrapper">
+      
       <Avatar src={imageBase64} className="img" />
       <Title level={2}>
         {firstName} {lastName}
       </Title>
       <Title level={4}>Псевдо: {pseudo}</Title>
-      <p className="statusText">Станиця: {city} </p>
-      <p className="statusText">Курінь: {club}</p>
+      <p className="statusText">Станиця: <Link to={"/cities/"+cityId} target="blank" className="LinkText">{city}</Link></p>
+      <p className="statusText">Курінь: <Link to={"/clubs/"+clubId} target="blank" className="LinkText">{club}</Link></p>
       {!isUserPlastun && (
         <div className="progress">
-          <p className="statusText">
-            {time} дні і {firstName} {lastName} - Дійсний член організації :)
+          {time !== 0 ? (
+            <p className="statusText">
+              {time} дні і {firstName} {lastName} - Дійсний член організації :)
           </p>
+          ) : (
+            <p className="statusText">
+              Менше 1 дня і {firstName} {lastName} - Дійсний член організації :)
+          </p>
+          )}
           <Progress
             type="circle"
             className="progressBar"
@@ -172,8 +183,8 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
               "100%": "#87d068",
             }}
             percent={Math.round(
-              100 - ((time === undefined ? 0 : time) * 100) / 365
-            )}
+              (100 - ((time === undefined ? 0 : time) * 100) / 365 + Number.EPSILON) * 10
+            ) / 10}
           />
         </div>
       )}
