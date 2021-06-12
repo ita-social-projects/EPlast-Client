@@ -209,6 +209,12 @@ export const getAdminTypeIdByName = async (name: string) => {
   });
 };
 
+export const getRegionUsers = async (regionId: number) => {
+  return api.get(`Regions/RegionUsers/${regionId}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export default {
   getAllRegionsReports,
   getReportById,
@@ -232,5 +238,6 @@ export default {
   GetAllRegions,
   createRegion,
   getRegions,
-  GetRegionsBoard
+  GetRegionsBoard,
+  getRegionUsers
 };

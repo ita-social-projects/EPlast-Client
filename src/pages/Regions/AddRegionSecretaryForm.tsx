@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
 import classes from "./Form.module.css";
-import { Form, Input, DatePicker, AutoComplete, Select, Button } from "antd";
-import adminApi from "../../api/adminApi";
+import {Form, DatePicker, AutoComplete, Select, Button } from "antd";
 import notificationLogic from "../../components/Notifications/Notification";
 import regionsApi from "../../api/regionsApi";
-import { ReloadOutlined } from "@ant-design/icons";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import moment from "moment";
 import {
   emptyInput,
   successfulEditAction,
 } from "../../components/Notifications/Messages"
-import User from "../Distinction/Interfaces/User";
+import RegionUser from "../../models/Region/RegionUser";
+
 
 type AddNewSecretaryForm = {
   onAdd: () => void;
   onCancel: () => void;
   admin?: any;
+  regionID?:any;
 };
 
 const AddNewSecretaryForm = (props: any) => {
@@ -24,14 +24,7 @@ const AddNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
-  const [users, setUsers] = useState<User[]>([
-    {
-        id: "",
-        firstName: "",
-        lastName: ""
-    }
-  ]);
-
+  const [users, setUsers] = useState<Array<RegionUser>>([]);
   const [types, setTypes] = useState<any[]>([
     {
       id: "",
@@ -93,9 +86,12 @@ const AddNewSecretaryForm = (props: any) => {
       await regionsApi.getAdminTypes().then((response) => {
         setTypes(response.data);
       });
-      await adminApi.getUsersForTable().then((response) => {
+      if(props.regionID !== undefined)
+      {
+      await regionsApi.getRegionUsers(props.regionID).then((response) => { 
         setUsers(response.data);
       });
+      }
     };
     setCurrentRegion(
       Number(
@@ -104,7 +100,7 @@ const AddNewSecretaryForm = (props: any) => {
       )
     );
     fetchData();
-  }, []);
+  }, [props]);
 
   return (
     <Form name="basic" onFinish={handleSubmit} form={form}>

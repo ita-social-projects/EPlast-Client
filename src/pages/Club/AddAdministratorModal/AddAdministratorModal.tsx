@@ -139,7 +139,7 @@ const AddAdministratorModal = (props: Props) => {
       form.resetFields();
     }
     getClubHead();
-  }, [props]);
+  }, []);
 
   return (
     <Modal
@@ -174,10 +174,6 @@ const AddAdministratorModal = (props: Props) => {
               { value: "Домівкар" },
               { value: "Член СПР" },
             ]}
-            filterOption={(inputValue, option) =>
-              option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
-              -1
-            }
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}
           ></AutoComplete>

@@ -116,7 +116,7 @@ const Region = () => {
   ]);
 
   const [memberRedirectVisibility, setMemberRedirectVisibility] = useState<
-    boolean
+boolean
   >(false);
 
   const [canCreate, setCanCreate] = useState(false);
@@ -216,9 +216,15 @@ const Region = () => {
     }
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
     setvisible(false);
     setMemberRedirectVisibility(false);
+    const response =  await getRegionAdministration(id);
+    setSixAdmins(response.data, 6);
+    setAdminsCount(response.data.length);
+    setPhotosLoading(true);
+    setPhotos([], [...response.data]);
+
   };
 
   const setSixMembers = (member: any[], amount: number) => {
@@ -604,7 +610,11 @@ const Region = () => {
           onCancel={handleOk}
           footer={null}
         >
-          <AddNewSecretaryForm onAdd={handleOk}></AddNewSecretaryForm>
+          <AddNewSecretaryForm 
+              onAdd={handleOk}
+              regionID={region.id}
+          >
+          </AddNewSecretaryForm>
         </Modal>
 
         <Modal

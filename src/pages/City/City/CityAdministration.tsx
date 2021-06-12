@@ -25,7 +25,8 @@ const CityAdministration = () => {
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [cityName, setCityName] = useState<string>("");
-  
+    const [reload, setReload] = useState<boolean>(false);
+
     const getAdministration = async () => {
       setLoading(true);
       const response = await getAllAdmins(id);
@@ -72,11 +73,12 @@ const CityAdministration = () => {
       administration[index] = newAdmin;
       await createNotification(newAdmin.userId, `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в станиці`);
       setAdministration(administration);
+      setReload(!reload);
     };
 
     useEffect(() => {
         getAdministration();
-    }, []);
+    }, [reload]);
 
     return (
       <Layout.Content>
