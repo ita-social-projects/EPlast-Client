@@ -98,7 +98,7 @@ const RegionAnnualReportForm = (props: Props) => {
           </Form.Item></Col>
       </Row>
 
-      <Form.Item style={{ textAlign: "right" }}>
+      <Form.Item>
         <RegionMembersTable
           regionId={regionId}
           year={year}

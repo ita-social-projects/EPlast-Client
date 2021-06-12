@@ -154,6 +154,7 @@ const AddNewSecretaryForm = (props: any) => {
           className={classes.inputField}
           options={[
             { value: "Голова Округи" },
+            { value: "Заступник Голови Округи"},
             { value: "Писар" },
             { value: "Бунчужний" },
             { value: "Скарбник" },

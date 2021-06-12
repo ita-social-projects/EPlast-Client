@@ -135,6 +135,7 @@ const AnnualReportInformation = () => {
                     <AnnualReportMenu
                         record={{ ...cityAnnualReport, canManage: isCityAdmin && cityAnnualReport.cityId == userCityId }}
                         isAdmin={isAdmin!}
+                        ViewPDF={true}
                         status={status!}
                         setStatus={setStatus}
                         handleEdit={handleEdit}
@@ -151,7 +152,7 @@ const AnnualReportInformation = () => {
                             {`Річний звіт станиці ${cityAnnualReport.city?.name} за 
                     ${moment(cityAnnualReport.date).year()} рік`}</Title>
                         <StatusStamp status={status!} />
-                        <Link className="LinkText" style={{ fontSize: "14px" }} to="#" onClick={() => window.open(`/cities/${cityAnnualReport.city?.id}`)}>Перейти на профіль станиці {cityAnnualReport.city?.name}</Link>
+                        <Link className="LinkText" style={{ fontSize: "14px" }} to={"/cities/"+cityAnnualReport.city?.id} target="blank">Перейти на профіль станиці {cityAnnualReport.city?.name}</Link>
                         <br />
                         <br />
                         <Card>
@@ -164,7 +165,7 @@ const AnnualReportInformation = () => {
                                         <Title
                                             level={4}>Голова новообраної старшини</Title>
                                         {cityAnnualReport.newCityAdmin == null ? <Text>Відсутній</Text> :
-                                            <Link className="LinkText" style={{ fontSize: "18px" }} to="#" onClick={() => window.open(`/userpage/main/${cityAnnualReport.newCityAdmin.id}`)}>{cityAnnualReport.newCityAdmin.firstName} {cityAnnualReport.newCityAdmin.lastName}</Link>}
+                                            <Link className="LinkText" style={{ fontSize: "18px" }} to={"/userpage/main/"+cityAnnualReport.newCityAdmin.id} target="blank">{cityAnnualReport.newCityAdmin.firstName} {cityAnnualReport.newCityAdmin.lastName}</Link>}
                                     </Card.Grid></Col>
 
                                 <Col xs={24} sm={12} md={12} lg={12}>

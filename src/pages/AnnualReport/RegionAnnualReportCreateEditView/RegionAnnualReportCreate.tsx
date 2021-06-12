@@ -13,6 +13,7 @@ export const RegionAnnualReportCreate = () => {
     const history = useHistory();
     const [title, setTitle] = useState<string>('');
     const [isLoading, setIsLoading]=useState(false);
+    const [isLoadingSave, setIsLoadingSave]=useState(false);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -43,6 +44,7 @@ export const RegionAnnualReportCreate = () => {
     }
 
     const handleFinish = async (obj: any) => {
+        setIsLoadingSave(true);
         obj.regionId = regionId;
         try {
             let response = await regionsApi.createRegionAnnualReport(regionId, year, obj);
@@ -51,7 +53,7 @@ export const RegionAnnualReportCreate = () => {
         }
         catch (error) {
             showError(error.message)
-        }
+        }finally{setIsLoadingSave(false);}
     }
 
     const showSuccess = (message: string) => {
@@ -91,7 +93,7 @@ export const RegionAnnualReportCreate = () => {
                     justify='center' >
                     <Col>
                         <Button
-                            loading={isLoading}
+                            loading={isLoadingSave}
                             type='primary'
                             htmlType='submit'>
                             Подати річний звіт

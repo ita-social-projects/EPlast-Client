@@ -195,6 +195,7 @@ const City = () => {
       const admins = [
         ...response.data.administration,
         response.data.head,
+        response.data.headDeputy,
       ].filter((a) => a !== null);
 
       setPhotos(
@@ -272,7 +273,7 @@ const City = () => {
                 {city.head ? (
                   <div>
                     <Paragraph>
-                      <b>Станичний:</b> {city.head.user.firstName}{" "}
+                      <b>Голова Станиці:</b> {city.head.user.firstName}{" "}
                       {city.head.user.lastName}
                     </Paragraph>
                     {city.head.endDate ? (
@@ -291,6 +292,31 @@ const City = () => {
                 ) : (
                     <Paragraph>
                       <b>Немає голови станиці</b>
+                    </Paragraph>
+                  )}
+                  
+                  {city.headDeputy ? (
+                  <div>
+                    <Paragraph>
+                      <b>Заступник Голови Станиці:</b> {city.headDeputy.user.firstName}{" "}
+                      {city.headDeputy.user.lastName}
+                    </Paragraph>
+                    {city.headDeputy.endDate ? (
+                      <Paragraph>
+                        <b>Час правління:</b>{" "}
+                        {moment(city.headDeputy.startDate).format("DD.MM.YYYY")}{" - "}
+                        {moment(city.headDeputy.endDate).format("DD.MM.YYYY")}
+                      </Paragraph>
+                    ) : (
+                        <Paragraph>
+                          <b>Початок правління:</b>{" "}
+                          {moment(city.headDeputy.startDate).format("DD.MM.YYYY")}
+                        </Paragraph>
+                      )}
+                  </div>
+                ) : (
+                    <Paragraph>
+                      <b>Немає заступника голови станиці</b>
                     </Paragraph>
                   )}
               </Col>

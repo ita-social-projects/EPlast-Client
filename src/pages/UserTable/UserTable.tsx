@@ -159,9 +159,7 @@ const UsersTable = () => {
         Tab: currentTabName,
         SearchData: searchData
       });
-      console.log(response)
       setUsers(response.data.users);
-      console.log(response.data.users)
       setViewedUsers(response.data.users);
       setTotal(response.data.total);
     } finally {

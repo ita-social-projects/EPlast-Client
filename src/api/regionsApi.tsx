@@ -60,8 +60,11 @@ export const getRegionById = async (regionId: number) => {
   return await api.get(`Regions/Profile/${regionId}`);
 };
 
-export const getRegionMembersInfo = async (regionId: number, year: number) => {
-  return await api.get(`Regions/MembersInfo/${regionId}/${year}`).catch((error) => {
+export const getRegionMembersInfo = async (regionId: number, year: number, page: number, pageSize: number) => {
+  return await api.get(`Regions/MembersInfo/${regionId}/${year}`, {
+    page: page,
+    pageSize: pageSize,
+  }).catch((error) => {
     throw new Error(error);
   });
 };
@@ -80,6 +83,12 @@ export const removeRegion = async (id: number) => {
 
 export const getHead = async (regionId: number) => {
   return api.get(`Regions/GetHead/${regionId}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const getHeadDeputy = async (regionId: number) => {
+  return api.get(`Regions/GetHeadDeputy/${regionId}`).catch((error) => {
     throw new Error(error);
   });
 };

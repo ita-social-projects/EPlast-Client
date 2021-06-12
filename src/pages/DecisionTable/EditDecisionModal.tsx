@@ -17,7 +17,7 @@ const EditDecisionModal = ({ record, showModal, setShowModal, onEdit, decision }
   return (
     <Drawer
       width="auto"
-      title="Редагування рішення пластового проводу"
+      title="Редагування рішення Пластового проводу"
       visible={showModal}
       onClose={handleCancel}
       footer = {null}

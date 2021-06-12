@@ -120,6 +120,7 @@ const CreateClub = () => {
       description: values.description,
       email: values.email,
       head: club.head,
+      headDeputy: club.headDeputy,
       houseNumber: values.houseNumber,
       id: club.id,
       logo: club.logo?.length === 0 ? null : club.logo,
