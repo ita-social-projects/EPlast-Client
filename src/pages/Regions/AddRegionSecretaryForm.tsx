@@ -6,6 +6,7 @@ import notificationLogic from "../../components/Notifications/Notification";
 import regionsApi from "../../api/regionsApi";
 import { ReloadOutlined } from "@ant-design/icons";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
+import userApi from "../../api/UserApi";
 import moment from "moment";
 import {
   emptyInput,
@@ -25,6 +26,7 @@ const AddNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [users, setUsers] = useState<User[]>([
     {
         id: "",
@@ -111,6 +113,8 @@ const AddNewSecretaryForm = (props: any) => {
     if (!props.visibleModal) {
       form.resetFields();
     }
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
   }, [props]);
 
   return (
@@ -153,7 +157,7 @@ const AddNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Округи" },
+            { value: "Голова Округи", disabled: activeUserRoles.includes("Заступник Голови Округи") ? true : false },
             { value: "Заступник Голови Округи"},
             { value: "Писар" },
             { value: "Бунчужний" },
