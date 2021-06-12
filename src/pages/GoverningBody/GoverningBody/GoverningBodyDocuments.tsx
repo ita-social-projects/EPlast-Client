@@ -2,29 +2,39 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout, Spin} from 'antd';
 import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined} from '@ant-design/icons';
-import {getAllDocuments, getFile, removeDocument} from "../../../api/citiesApi";
+import {getAllDocuments, getFile, removeDocument, getUserAccess} from "../../../api/governingBodiesApi";
 import "../../City/City/City.less";
 import GoverningBodyDocument from '../../../models/GoverningBody/GoverningBodyDocument';
 import Title from 'antd/lib/typography/Title';
 import moment from "moment";
 import Spinner from '../../Spinner/Spinner';
+import AuthStore from '../../../stores/AuthStore';
+import jwt from 'jwt-decode';
 
 const GoverningBodyDocuments = () => {
     const {id} = useParams();
     const history = useHistory();
 
     const [documents, setDocuments] = useState<GoverningBodyDocument[]>([]);
-    const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
 
     const getDocuments = async () => {
       setLoading(true);
       const response = await getAllDocuments(id);
-
+      await getUserAccesses();
       setDocuments(response.data.documents);
-      setCanEdit(response.data.canEdit);
       setLoading(false);
     };
+
+    const getUserAccesses = async () => {
+        let user: any = jwt(AuthStore.getToken() as string);
+        await getUserAccess(user.nameid).then(
+          response => {
+            setUserAccesses(response.data);
+          }
+        );
+      }
 
     const downloadDocument = async (fileBlob: string, fileName: string) => {
       await getFile(fileBlob, fileName);
@@ -59,8 +69,7 @@ const GoverningBodyDocuments = () => {
                   }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit
-                      ? [
+                    userAccesses["ManipulateDocument"] ? [
                           <DownloadOutlined
                             key="download"
                             onClick={() =>
@@ -96,7 +105,7 @@ const GoverningBodyDocuments = () => {
                 </Card>
               ))
             ) : (
-              <Title level={4}>Ще немає документів керівного органу</Title>
+              <Title level={4}>Ще немає документів Керівного Органу</Title>
             )}
           </div>
         )}

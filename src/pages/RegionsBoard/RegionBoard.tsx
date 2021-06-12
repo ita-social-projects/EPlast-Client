@@ -389,7 +389,7 @@ const RegionBoard = () => {
           </Card>
         </Col>
 
-        {userAccesses["ViewDecisions"] ?  
+        {userAccesses["ViewDecisions"] ?
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
         <Card hoverable className="cityCard">
           <Title level={4}>
