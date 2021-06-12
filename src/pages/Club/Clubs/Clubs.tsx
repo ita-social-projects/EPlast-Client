@@ -24,7 +24,6 @@ const Clubs = () => {
   const [searchedData, setSearchedData] = useState("");
 
   const setPhotos = async (clubs: ClubProfile[]) => {
-    console.log(clubs);
     for await (const club of clubs) {
       if (club.logo === null) {
         club.logo = ClubDefaultLogo;

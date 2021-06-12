@@ -180,8 +180,8 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
             {firstName} {lastName}
           </Title>
           <Title level={4}>Псевдо: {pseudo}</Title>
-          <p className="statusText">Станиця: <Link className="LinkText" to="#" onClick={() => window.open(`/cities/${cityId}`)}>{ city }</Link></p>
-          <p className="statusText">Курінь: <Link className="LinkText" to="#" onClick={() => window.open(`/clubs/${clubId}`)}>{ club }</Link></p>
+          <p className="statusText">Станиця: <Link className="LinkText" to={"/cities/"+cityId} target="blank">{ city }</Link></p>
+          <p className="statusText">Курінь: <Link className="LinkText" to={"/clubs/"+clubId} target="blank">{ club }</Link></p>
           {!isUserPlastun && (
             <div className="progress">
               {time !== 0 ? (

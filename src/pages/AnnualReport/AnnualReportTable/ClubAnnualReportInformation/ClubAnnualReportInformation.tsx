@@ -6,7 +6,7 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 import { getClubAnnualReportById, getClubById, confirmClubAnnualReport, cancelClubAnnualReport, removeClubAnnualReport } from '../../../../api/clubsApi';
 import { useEffect } from 'react';
 import Spinner from '../../../Spinner/Spinner';
-import { administrationsColumns, followersColumns, getTableAdmins, getTableFollowers, getTableMembers } from '../../ClubAnnualReportCreate/ClubAnnualReportTableColumns';
+import { administrationsColumns, followersColumns, getTableAdmins, getTableFollowers, getTableMembers } from '../../ClubAnnualReportForm/ClubAnnualReportTableColumns';
 import ClubAdmin from '../../../../models/Club/ClubAdmin';
 import ClubMember from '../../../../models/Club/ClubMember';
 import AnnualReportMenu from '../../AnnualReportMenu';
@@ -17,7 +17,6 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import AuthStore from '../../../../stores/AuthStore';
 import jwt from "jwt-decode";
 import jwt_decode from 'jwt-decode';
-import AdminType from '../../../../models/Admin/AdminType';
 
 
 const { Title, Text } = Typography;
@@ -139,9 +138,10 @@ const ClubAnnualReportInformation = () => {
                     <AnnualReportMenu
                         record={{
                             ...clubAnnualReport,
-                            canManage: (isClubAdmin && club.head.userId == userId)
+                            canManage: (isClubAdmin && club.head?.userId == userId)
                         }}
                         isAdmin={isAdmin!}
+                        ViewPDF={true}
                         status={status!}
                         setStatus={setStatus}
                         handleEdit={handleEdit}
@@ -158,19 +158,19 @@ const ClubAnnualReportInformation = () => {
                             {`Річний звіт куреня ${clubAnnualReport.clubName} за 
                     ${moment(clubAnnualReport.date).year()} рік`}</Title>
                         <StatusStamp status={status!} />
-                        <Link className="LinkText" style={{ fontSize: "14px" }} to="#" onClick={() => window.open(`/clubs/${clubAnnualReport.clubId}`)}>Перейти на профіль куреня {clubAnnualReport.clubName}</Link>
+                        <Link className="LinkText" style={{ fontSize: "14px" }} to={"/clubs/"+clubAnnualReport.clubId} target="blank">Перейти на профіль куреня {clubAnnualReport.clubName}</Link>
                         <br />
                         <br />
                         <Card>
                             <Row
                                 gutter={16}
-                                align='bottom'>
+                                align='bottom'
+                                style={{}}>
                                 <Col xs={24} sm={12} md={12} lg={12}>
                                     <Card.Grid
                                         className='container'>
-                                        <Title
-                                            level={4}>Географія куреня. Осередки в Україні:  </Title>
-                                        <Text>{clubAnnualReport.clubCenters}</Text>
+                                        <Title level={4}>Географія куреня. Осередки в Україні:  </Title>
+                                        <Text style={{wordBreak: "break-word"}}>{clubAnnualReport.clubCenters}</Text>
                                     </Card.Grid>
                                 </Col>
 
@@ -179,7 +179,7 @@ const ClubAnnualReportInformation = () => {
                                         className='container'>
                                         <Title
                                             level={4}>Побажання до КБ УСП:  </Title>
-                                        <Text>{clubAnnualReport.kbUSPWishes}</Text>
+                                        <Text style={{wordBreak: "break-word"}}>{clubAnnualReport.kbUSPWishes}</Text>
                                     </Card.Grid>
 
                                 </Col>

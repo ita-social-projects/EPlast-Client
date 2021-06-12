@@ -65,7 +65,7 @@ const DropDown = (props: Props) => {
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
   const [changeRoles, setChangeRoles] = useState<boolean>(true);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const formerUser:string = "Колишній член пласту" 
+  const formerUser:string = "Колишній член пласту"
 
   const fetchUser = async () => {
     const activeUser = await UserApi.getActiveUserProfile();

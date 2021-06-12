@@ -6,10 +6,8 @@ import {
   cancelClubAnnualReport,
   confirmClubAnnualReport,
   getSearchedClubAnnualReports,
-  getClubAnnualReportById,
   removeClubAnnualReport
 } from "../../../api/clubsApi";
-import ClubAnnualReportInformation from "./ClubAnnualReportInformation/ClubAnnualReportInformation";
 import ClickAwayListener from "react-click-away-listener";
 import UnconfirmedDropdown from "./DropdownsForClubAnnualReports/UnconfirmedDropdown/UnconfirmedDropdown";
 import ConfirmedDropdown from "./DropdownsForClubAnnualReports/ConfirmedDropdown/ConfirmedDropdown";
@@ -18,7 +16,6 @@ import { successfulConfirmedAction, successfulDeleteAction, successfulUpdateActi
 import notificationLogic from '../../../components/Notifications/Notification';
 import { useHistory } from "react-router-dom";
 import { ExclamationCircleOutlined, StarFilled, StarOutlined } from "@ant-design/icons";
-import Spinner from "../../Spinner/Spinner";
 
 interface props {
   columns: any;
@@ -42,8 +39,7 @@ export const ClubAnnualReportTable = ({ columns, searchedData, sortKey }: props)
   const [showSavedDropdown, setShowSavedDropdown] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isClubAdmin, setIsClubAdmin] = useState<boolean>();
-  const [showClubAnnualReportModal, setShowClubAnnualReportModal] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [canView, setCanView] = useState<boolean>();
   const [isLoading, setIsLoading] = useState(false);
   const [authReport, setAuthReport] = useState(false);
 
@@ -86,13 +82,8 @@ export const ClubAnnualReportTable = ({ columns, searchedData, sortKey }: props)
     ] as string[];
     setIsAdmin(roles.includes("Admin"));
     setIsClubAdmin(roles.includes("Голова Куреня"));
+    setCanView(roles.includes("Голова Станиці") || roles.includes("Голова Округи") || roles.includes("Admin"));
   };
-
-  const handleClickAway = () => {
-    setShowUnconfirmedDropdown(false);
-    setShowConfirmedDropdown(false);
-    setShowSavedDropdown(false);
-  }
 
   const hideDropdowns = () => {
     setShowUnconfirmedDropdown(false);
@@ -128,7 +119,6 @@ export const ClubAnnualReportTable = ({ columns, searchedData, sortKey }: props)
 
   const handleCancel = async (id: number) => {
     hideDropdowns();
-    setLoading(true);
     try {
       let response = await cancelClubAnnualReport(id);
       setClubAnnualReports(clubAnnualReports?.filter((item) => item.id !== id));
@@ -144,7 +134,6 @@ export const ClubAnnualReportTable = ({ columns, searchedData, sortKey }: props)
 
   const handleConfirm = async (id: number) => {
     hideDropdowns();
-    setLoading(false);
     try {
       let response = await confirmClubAnnualReport(id);
       setClubAnnualReports(
@@ -248,14 +237,16 @@ export const ClubAnnualReportTable = ({ columns, searchedData, sortKey }: props)
         })}
         onRow={(record) => {
           return {
-            onDoubleClick: event => { if (record.id) history.push(`/annualreport/clubAnnualReport/${record.id}`) },
+            onDoubleClick: event => { if (record.id && (canView || record.canManage)) history.push(`/annualreport/clubAnnualReport/${record.id}`) },
             onClick: () => { hideDropdowns(); },
             onContextMenu: (event) => {
               event.preventDefault();
+              if (record.id && (canView || record.canManage)){
               showDropdown(record.status);
               setClubAnnualReport(record);
               setX(event.pageX);
               setY(event.pageY - 200);
+              }else{hideDropdowns();}
             },
           };
         }}
