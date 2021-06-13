@@ -16,6 +16,7 @@ export const AnnualReportCreate = () => {
     const [cityMembers, setCityMembers] = useState<any>();
     const [cityLegalStatuses, setCityLegalStatuses] = useState<any>();
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingSave, setIsLoadingSave]=useState(false);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -37,7 +38,11 @@ export const AnnualReportCreate = () => {
 
     const fetchCityInfo = async (id: number) => {
         try {
-            let response = await AnnualReportApi.getCityMembers(id);
+            let created=await AnnualReportApi.checkCreated(id);
+            if (created.data.hasCreated === true) {
+                showError(created.data.message);
+            }else{
+                let response = await AnnualReportApi.getCityMembers(id);
             let cityName = response.data.name;
             setTitle(title.concat(' ', cityName));
             setCityMembers(response.data.cityMembers.map((item: any) => {
@@ -46,6 +51,7 @@ export const AnnualReportCreate = () => {
                     value: item.user.id
                 }
             }))
+            }
         }
         catch (error) {
             showError(error.message)
@@ -68,6 +74,7 @@ export const AnnualReportCreate = () => {
     }
 
     const handleFinish = async (obj: any) => {
+        setIsLoadingSave(true);
         obj.cityId = id;
         try {
             let response = await AnnualReportApi.create(obj);
@@ -76,7 +83,7 @@ export const AnnualReportCreate = () => {
         }
         catch (error) {
             showError(error.message)
-        }
+        }finally{setIsLoadingSave(false);}
     }
 
     const showSuccess = (message: string) => {
@@ -115,7 +122,7 @@ export const AnnualReportCreate = () => {
                             justify='center' >
                             <Col>
                                 <Button
-                                    loading={isLoading}
+                                    loading={isLoadingSave}
                                     type='primary'
                                     htmlType='submit'>
                                     Подати річний звіт

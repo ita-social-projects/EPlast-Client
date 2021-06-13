@@ -219,7 +219,7 @@ export const getClubsOptions = async () => {
   });
 }
 
-const checkCreated = async (clubId: number) => {
+export const checkCreated = async (clubId: number) => {
   return await Api.get(`AnnualReport/checkCreatedClubReport/${clubId}`)
       .catch((error: AxiosError) => {
         throw new Error(error.response?.data.message);

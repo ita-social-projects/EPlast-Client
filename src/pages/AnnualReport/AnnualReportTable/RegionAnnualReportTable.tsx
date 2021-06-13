@@ -8,7 +8,7 @@ import ConfirmedRegionDropdown from "./DropdownsForRegionReports/ConfirmedDropdo
 import notificationLogic from "../../../components/Notifications/Notification";
 import SavedRegionDropdown from "./DropdownsForRegionReports/SavedDropdown/SavedRegionDropdown";
 import UnconfirmedRegionDropdown from "./DropdownsForRegionReports/UnconfirmedDropdown/UnconfirmedRegionDropdown";
-import { successfulEditAction, tryAgain } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, successfulEditAction, tryAgain } from "../../../components/Notifications/Messages";
 import { ExclamationCircleOutlined, StarFilled, StarOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 
@@ -38,6 +38,7 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey }: prop
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [isAdmin, setIsAdmin] = useState<boolean>();
+  const [canView, setCanView] = useState<boolean>();
   const [currentSearchedData, setCurrentSearchedData] = useState<string>();
   const [showConfirmedRegionDropdown, setShowConfirmedRegionDropdown] = useState<boolean>(false);
   const [showUnconfirmedRegionDropdown, setShowUnconfirmedRegionDropdown] = useState<boolean>(false);
@@ -139,7 +140,7 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey }: prop
         async onOk() {
           let response = await regionsApi.removeAnnualReport(id);
           setRegionsAnnualReports(regionAnnualReports?.filter((item) => item.id !== id));
-          notificationLogic('success', successfulEditAction('Річний звіт', response.data.name));
+          notificationLogic('success', successfulDeleteAction('Річний звіт', response.data.name));
           setTotal(total - 1);
           setCount(count - 1);
         }
@@ -182,6 +183,7 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey }: prop
     ] as string[];
     setIsRegionAdmin(roles.includes("Голова Округи"));
     setIsAdmin(roles.includes("Admin"));
+    setCanView(roles.includes("Голова Станиці") || roles.includes("Голова Округи") || roles.includes("Admin"));
   };
 
   const handlePageChange = (page: number) => {
@@ -239,16 +241,18 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey }: prop
         })}
         onRow={(regionRecord) => {
           return {
-            onDoubleClick: event => { if (regionRecord.id) history.push(`/annualreport/region/${regionRecord.id}/${(new Date(regionRecord.date)).getFullYear()}`) },
+            onDoubleClick: event => { if (regionRecord.id && canView) history.push(`/annualreport/region/${regionRecord.id}/${(new Date(regionRecord.date)).getFullYear()}`) },
             onClick: () => {
               hideDropdowns();
             },
             onContextMenu: (event) => {
               event.preventDefault();
-              showDropdown(regionRecord.status);
-              setRegionAnnualReport(regionRecord);
-              setX(event.pageX);
-              setY(event.pageY - 200);
+              if (canView){
+                showDropdown(regionRecord.status);
+                setRegionAnnualReport(regionRecord);
+                setX(event.pageX);
+                setY(event.pageY - 200);
+              }else{hideDropdowns();}
             },
           };
         }}

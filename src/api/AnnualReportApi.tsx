@@ -60,7 +60,6 @@ const getById = async (id: number) => {
 
 const getAnnualReportEditFormById = async (id: number) => {
     return await Api.get(`AnnualReport/EditCityAnnualReportForm/${id}`).then((response) => {
-        console.log(response.data);
         return response
     })
         .catch((error: AxiosError) => {

@@ -9,7 +9,8 @@ import {
   Row,
   Col,
   TreeSelect,
-  Typography
+  Typography,
+  Tooltip as AntTooltip
 } from "antd";
 import StatisticsApi from "../../api/StatisticsApi";
 import StatisticsItemIndicator from "./Interfaces/StatisticsItemIndicator";
@@ -28,9 +29,11 @@ import {
   Coordinate,
   Interaction
 } from "bizcharts";
+import { ClearOutlined, LoadingOutlined } from "@ant-design/icons";
 
 const StatisticsCities = () => {
 
+  const [form] = Form.useForm();
   const [years, setYears] = useState<any>();
   const [result, setResult] = useState<DataFromResponse[]>(Array());
   const [showTable, setShowTable] = useState(false);
@@ -47,6 +50,8 @@ const StatisticsCities = () => {
   const [selectableSeigneurPart, setSelectableSeigneurPart] = useState<boolean>(true);
   const [selectableSeigneurZahalom, setSelectableSeigneurZahalom] = useState<boolean>(true);
   const [onClickRow, setOnClickRow] = useState<any>();
+  const [isLoadingRegions, setIsLoadingRegions]=useState<boolean>(false);
+
 
   const constColumns = [
     {
@@ -56,6 +61,14 @@ const StatisticsCities = () => {
       fixed: "left",
       sorter: { compare: (a: any, b: any) => a.id - b.id },
       width: 55
+    },
+    {
+      title: "Рік",
+      dataIndex: "year",
+      key: "year",
+      fixed: "left",
+      sorter: { compare: (a: any, b: any) => a.year - b.year },
+      width: 100
     },
     {
       title: "Округа",
@@ -69,14 +82,6 @@ const StatisticsCities = () => {
       sortDirections: ["ascend", "descend"] as SortOrder[],
       width: 100
     },
-    {
-      title: "Рік",
-      dataIndex: "year",
-      key: "year",
-      fixed: "left",
-      sorter: { compare: (a: any, b: any) => a.year - b.year },
-      width: 100
-    }    
   ];
 
   const indicatorsArray = [
@@ -105,6 +110,7 @@ const StatisticsCities = () => {
   }, []);
 
   const fetchRegions = async () => {
+    setIsLoadingRegions(true);
     try {
       let response = await RegionsApi.getRegions();
       let regions = response.data as Region[];
@@ -117,6 +123,8 @@ const StatisticsCities = () => {
     }
     catch (error) {
       showError(error.message);
+    }finally{
+      setIsLoadingRegions(false);
     }
   };
 
@@ -279,7 +287,17 @@ const StatisticsCities = () => {
         <Title level={2}>Статистика округ</Title>
         <div className = "formGlobal">
           <div className = "form">
-            <Form onFinish={onSubmit}>
+            <Form 
+            form={form}
+            onFinish={onSubmit}>
+            <Row style={{float: "right", marginRight: "20px", marginTop: "-50px"}}>
+                  <AntTooltip title="Очистити">
+                    <ClearOutlined onClick={()=>form.resetFields()} style={{
+                                    fontSize: "x-large",
+                                    cursor: "pointer",
+                                }} />
+                  </AntTooltip>   
+                </Row>
               <Row justify="center">
                 <Col span={20}>
                   <Form.Item
@@ -293,7 +311,7 @@ const StatisticsCities = () => {
                       allowClear
                       mode="multiple"
                       options={regions}
-                      placeholder="Обрати округу"
+                      placeholder={<span>Обрати округу {isLoadingRegions && <LoadingOutlined />}</span>}
                       filterOption={(input, option) => (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
                     />
                   </Form.Item>
