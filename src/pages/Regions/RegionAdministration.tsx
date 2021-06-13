@@ -42,6 +42,16 @@ const RegionAdministration = () => {
   const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
+
+  const setIsRegionAdmin = (admin: any[], userId: string) => {
+    for(let i = 0; i < admin.length; i++){
+      if(admin[i].userId == userId){
+        setIsActiveUserRegionAdmin(true);
+      }
+    }
+  }
 
   const getAdministration = async () => {
     setLoading(true);
@@ -49,6 +59,8 @@ const RegionAdministration = () => {
     setPhotosLoading(true);
     setPhotos([...response.data].filter((a) => a != null));
     setAdministration([...response.data].filter((a) => a != null));
+    setActiveUserRoles(userApi.getActiveUserRoles());
+    setIsRegionAdmin([...response.data].filter((a) => a != null), userApi.getActiveUserId());
     setLoading(false);
   };
 
@@ -105,21 +117,29 @@ const RegionAdministration = () => {
         <Spinner />
       ) : (
         <div className="cityMoreItems">
+          {console.log("user Roles: " + activeUserRoles)}{console.log("region admin: " + isActiveUserRegionAdmin)}
           {administration.length > 0 ? (
             administration.map((member: any) => (
               <Card
                 key={member.id}
                 className="detailsCard"
                 title={`${member.adminType.adminTypeName}`}
-                headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={[
+                headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}          
+                actions={
+                  activeUserRoles.includes("Admin") || (activeUserRoles.includes("Голова Округи") && isActiveUserRegionAdmin)
+                  ?
+                  [
                   <SettingOutlined onClick={() => showModal(member)} />,
                   <CloseOutlined onClick={() => removeAdministrator(member)} />,
-                ]}
+                  ]
+                  : undefined
+                }
               >
                 <div
                   onClick={() =>
-                    history.push(`/userpage/main/${member.userId}`)
+                    !activeUserRoles.includes("Зареєстрований користувач")
+                    ? history.push(`/userpage/main/${member.userId}`)
+                    : undefined 
                   }
                   className="cityMember"
                 >
