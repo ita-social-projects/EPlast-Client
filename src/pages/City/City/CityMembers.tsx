@@ -28,6 +28,7 @@ const CityMembers = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [cityName, setCityName] = useState<string>("");
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   
   const getMembers = async () => {
     setLoading(true);
@@ -38,6 +39,7 @@ const CityMembers = () => {
     setMembers(responseMembers.data.members);
     setCanEdit(responseMembers.data.canEdit);
     setCityName(responseMembers.data.name);
+    setActiveUserRoles(userApi.getActiveUserRoles);
 
     const responseAdmins = await getAllAdmins(id);
     setAdmins(responseAdmins.data.administration);
@@ -133,7 +135,10 @@ const CityMembers = () => {
               }
             >
               <div
-                onClick={() => history.push(`/userpage/main/${member.userId}`)}
+                onClick={() => canEdit || (activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")) 
+                  ? history.push(`/userpage/main/${member.userId}`) 
+                  : undefined
+                }
                 className="cityMember"
               >
                 {photosLoading ? (
