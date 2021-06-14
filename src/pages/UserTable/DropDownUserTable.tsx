@@ -16,12 +16,8 @@ import adminApi from "../../api/adminApi";
 import ModalAddPlastDegree from "../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
 import ChangeUserRegionModal from "./ChangeUserRegionModal";
 import ChangeUserClubModal from "./ChangeUserClubModal";
-import AuthStore from "../../stores/AuthStore";
-import jwt_decode from "jwt-decode";
 import AuthorizeApi from "../../api/authorizeApi";
 import UserApi from "../../api/UserApi";
-import { User } from "../userPage/Interface/Interface";
-import ClickAwayListener from "react-click-away-listener";
 
 let authService = new AuthorizeApi();
 
@@ -35,6 +31,8 @@ interface Props {
   roles: string | undefined;
   inActiveTab: boolean;
   user: any;
+  currentUser: any;
+  canView: boolean;
 }
 
 const { SubMenu } = Menu;
@@ -48,44 +46,62 @@ const DropDown = (props: Props) => {
     onDelete,
     onChange,
     user,
+    currentUser,
+    canView
   } = props;
   const [showEditModal, setShowEditModal] = useState(false);
   const [visibleModalDegree, setVisibleModalDegree] = useState<boolean>(false);
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
+
   const [superAdmin, setsuperAdmin] = useState<boolean>(false);
-  const [regionAdm, setRegionAdm] = useState<boolean>(false);
-  const [regionAdmDeputy, setRegionAdmDeputy] = useState<boolean>(false);
-  const [cityAdm, setCityAdm] = useState<boolean>(false);
-  const [cityAdmDeputy, setCityAdmDeputy] = useState<boolean>(false);
-  const [clubAdm, setClubAdm] = useState<boolean>(false);
-  const [clubAdmDeputy, setClubAdmDeputy] = useState<boolean>(false);
-  const [member, setMember] = useState<boolean>(false)
-  const [activeUserProfile, setActiveUserProfile] = useState<User>();
-  const [changeRoles, setChangeRoles] = useState<boolean>(true);
-  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const formerUser:string = "Колишній член пласту"
+  const [governingBodyHead, setGoverningBodyHead]=useState<boolean>(true);
+  const [canChangeCityAdministration, setCanChangeCityAdministration]=useState<boolean>(false);
+  const [canChangeClubAdministration, setCanChangeClubAdministration]=useState<boolean>(false);
+  const [canChangeRegionAdministration, setCanChangeRegionAdministration]=useState<boolean>(false);
+  const [canChangeGoverningBodyAdministration, setCanChangeGoverningBodyAdministration]=useState<boolean>(false);
+  const [canChangeUserAccess, setCanChangeUserAccess]=useState<boolean>(false);
+  const [canAddDegree, setCanAddDegree]=useState<boolean>(false);
+  const [canArchivate, setCanArchivate]=useState<boolean>(false);
 
   const fetchUser = async () => {
-    const activeUser = await UserApi.getActiveUserProfile();
-      setActiveUserProfile(activeUser)
-    const userRoles = UserApi.getActiveUserRoles();
-      setActiveUserRoles(userRoles);
-    
-    setsuperAdmin(userRoles.includes("Admin"));
-    setRegionAdm(userRoles.includes("Голова Округи"));
-    setRegionAdmDeputy(userRoles.includes("Заступник Голови Округи"));
-    setCityAdm(userRoles.includes("Голова Станиці"));
-    setCityAdmDeputy(userRoles.includes("Заступник Голови Станиці"));
-    setClubAdm(userRoles.includes("Голова Куреня"));
-    setClubAdmDeputy(userRoles.includes("Заступник Голови Куреня"));
-    setMember(userRoles.includes("Дійсний член організації"))
+
+    let roles=UserApi.getActiveUserRoles();
+
+    setCanChangeCityAdministration(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
+    || ((roles.includes("Голова Округи") || roles.includes("Заступник Голови Округи")) && currentUser?.regionId==user?.regionId)
+    || ((roles.includes("Голова Станиці") || roles.includes("Заступник Голови Станиці"))&& currentUser?.cityId==user?.cityId));
+
+    setCanChangeClubAdministration(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
+    || ((roles.includes("Голова Куреня") || roles.includes("Заступник Голови Куреня"))&& currentUser?.clubId==user?.clubId));
+
+    setCanChangeRegionAdministration(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
+    || ((roles.includes("Голова Округи") || roles.includes("Заступник Голови Округи")) && currentUser?.regionId==user?.regionId));
+
+    setCanChangeGoverningBodyAdministration(roles.includes("Admin") || roles.includes("Голова Керівного Органу"));
+
+    setCanChangeUserAccess(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
+    || ((roles.includes("Голова Округи") || roles.includes("Заступник Голови Округи")) && currentUser?.regionId==user?.regionId)
+    || ((roles.includes("Голова Станиці") || roles.includes("Заступник Голови Станиці"))&& currentUser?.cityId==user?.cityId));
+
+    setCanAddDegree(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
+    || ((roles.includes("Голова Округи") || roles.includes("Заступник Голови Округи")) && currentUser?.regionId==user?.regionId)
+    || ((roles.includes("Голова Станиці") || roles.includes("Заступник Голови Станиці"))&& currentUser?.cityId==user?.cityId)
+    || ((roles.includes("Голова Куреня") || roles.includes("Заступник Голови Куреня"))&& currentUser?.clubId==user?.clubId));
+
+    setCanArchivate(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
+    || ((roles.includes("Голова Округи") || roles.includes("Заступник Голови Округи")) && currentUser?.regionId==user?.regionId)
+    || ((roles.includes("Голова Станиці") || roles.includes("Заступник Голови Станиці"))&& currentUser?.cityId==user?.cityId)
+    || ((roles.includes("Голова Куреня") || roles.includes("Заступник Голови Куреня"))&& currentUser?.clubId==user?.clubId));
+
+    setsuperAdmin(roles.includes("Admin"));
+    setGoverningBodyHead(roles.includes("Голова Керівного Органу"));
   };
 
   useEffect(() => {
     fetchUser();
-  }, [user, changeRoles]);
+  }, [user]);
 
 
   const handleItemClick = async (item: any) => {
@@ -122,10 +138,10 @@ const DropDown = (props: Props) => {
     }
     item.key = "0";
   };
-
+  
   return (
     <>
-      <Menu
+    {canView? <Menu
         theme="dark"
         className={classes.menu}
         onClick={handleItemClick}
@@ -138,12 +154,7 @@ const DropDown = (props: Props) => {
           display: showDropdown ? "block" : "none",
         }}
       >
-        {props.inActiveTab === false &&
-        superAdmin === true ||
-        ((clubAdm === true || member === true  && activeUserProfile?.club === user?.clubName) ||
-          (clubAdmDeputy === true || member === true  && activeUserProfile?.club === user?.clubName) ||
-          (cityAdm === true && activeUserProfile?.city == user?.cityName) ||
-          (cityAdmDeputy === true && activeUserProfile?.city == user?.cityName)) ? (
+        {props.inActiveTab === false && canView ? (
           <Menu.Item key="1">
             <FileSearchOutlined />
             Переглянути профіль
@@ -151,7 +162,7 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {superAdmin === true ? (
+        {superAdmin || governingBodyHead ? (
           <Menu.Item key="2">
             <DeleteOutlined />
             Видалити
@@ -159,41 +170,31 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {props.inActiveTab === false &&
-        (superAdmin === true ||
-          regionAdm === true ||
-          regionAdmDeputy === true ||
-          (cityAdm === true && activeUserProfile?.city == user?.cityName) ||
-          (cityAdmDeputy === true && activeUserProfile?.city == user?.cityName) ||
-          (clubAdm === true && activeUserProfile?.club === user?.clubName) ||
-          (clubAdmDeputy === true && activeUserProfile?.club === user?.clubName)) ? (
+        {!props.inActiveTab &&
+        (canChangeCityAdministration || canChangeClubAdministration || canChangeRegionAdministration 
+          || canChangeGoverningBodyAdministration || canChangeUserAccess) ? (
           <SubMenu
             key="sub"
             icon={<EditOutlined />}
             title="Змінити права доступу"
+            onTitleClick={()=>{}}
           >
-            {(superAdmin === true || regionAdm === true || regionAdmDeputy === true || cityAdm === true || cityAdmDeputy === true) 
-            && user?.userRoles !== formerUser 
-            && (!user?.userRoles.includes("Голова Станиці") || !activeUserRoles.includes("Заступник Голови Станиці")) ? (
+            {canChangeCityAdministration ? (
               <Menu.Item key="3">Провід станиці</Menu.Item>
             ) : (
               <> </>
             )}
-            {(superAdmin === true || regionAdm === true || regionAdmDeputy === true) 
-            && user?.userRoles !== formerUser
-            && (!user?.userRoles.includes("Голова Округи") || !activeUserRoles.includes("Заступник Голови Округи")) ? (
+            {canChangeRegionAdministration ? (
               <Menu.Item key="4">Провід округи</Menu.Item>
             ) : (
               <> </>
             )}
-            {(superAdmin === true || clubAdm === true || clubAdmDeputy === true) 
-            && user?.userRoles !== formerUser 
-            && (!user?.userRoles.includes("Голова Куреня") || !activeUserRoles.includes("Заступник Голови Куреня")) ? (
+            {canChangeClubAdministration ? (
               <Menu.Item key="5">Провід куреня</Menu.Item>
             ) : (
               <> </>
             )}
-            {superAdmin === true || regionAdm === true || regionAdmDeputy === true || cityAdm === true || cityAdmDeputy === true ? (
+            {canChangeUserAccess ? (
               <Menu.Item key="6">Поточний стан користувача</Menu.Item>
             ) : (
               <> </>
@@ -202,14 +203,7 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {props.inActiveTab === false &&
-        (superAdmin === true ||
-          regionAdm === true ||
-          regionAdmDeputy === true ||
-          (cityAdm === true && activeUserProfile?.city == user?.cityName) ||
-          (cityAdmDeputy === true && activeUserProfile?.city == user?.cityName) ||
-          (clubAdm === true && activeUserProfile?.club === user?.clubName) ||
-          (clubAdmDeputy === true && activeUserProfile?.club === user?.clubName)) ? (
+        {!props.inActiveTab && canAddDegree ? (
           <Menu.Item key="7">
             <PlusCircleOutlined />
             Додати ступінь
@@ -217,13 +211,7 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {(props.inActiveTab === false && superAdmin === true) ||
-        regionAdm === true ||
-        regionAdmDeputy === true ||
-        (cityAdm === true && activeUserProfile?.city == user?.cityName) ||
-        (cityAdmDeputy === true && activeUserProfile?.city == user?.cityName) ||
-        (clubAdm === true && activeUserProfile?.club === user?.clubName) ||
-        (clubAdmDeputy === true && activeUserProfile?.club === user?.clubName) ? (
+        {!props.inActiveTab && canArchivate ? (
           <Menu.Item key="8">
             <ScissorOutlined />
             Заархівувати користувача
@@ -231,7 +219,7 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {props.inActiveTab === true ? (
+        {props.inActiveTab && superAdmin ? (
           <Menu.Item key="9">
             <MailOutlined />
             Активувати
@@ -272,7 +260,7 @@ const DropDown = (props: Props) => {
           visibleModal={visibleModalDegree}
           setVisibleModal={setVisibleModalDegree}
         />
-      </Menu>
+      </Menu> : null}
     </>
   );
 };

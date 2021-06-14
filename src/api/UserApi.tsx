@@ -1,6 +1,4 @@
-
 import axios from 'axios';
-import Api from './api'
 import BASE_URL from '../config';
 import AuthStore from '../stores/AuthStore';
 import jwt_decode from 'jwt-decode';
