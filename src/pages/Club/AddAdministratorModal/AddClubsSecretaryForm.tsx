@@ -1,26 +1,24 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
 import { Form, Input, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
-import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
   addAdministrator,
   editAdministrator,
   getAllAdmins,
+  getAllMembers,
 } from "../../../api/clubsApi";
-import { ReloadOutlined } from "@ant-design/icons";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import moment from "moment";
-import {
-  emptyInput,
-  successfulEditAction,
-} from "../../../components/Notifications/Messages"
+import {emptyInput,} from "../../../components/Notifications/Messages"
 import AdminType from "../../../models/Admin/AdminType";
-import regionsApi from "../../../api/regionsApi";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
+import ClubMember from "../../../models/Club/ClubMember";
 import User from "../../Distinction/Interfaces/User";
 import "./AddClubsSecretaryForm.less";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
+
 import userApi from "../../../api/UserApi";
+
 
 type AddClubsNewSecretaryForm = {
   onAdd: () => void;
@@ -35,15 +33,17 @@ const AddClubsNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
-  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const [users, setUsers] = useState<User[]>([
-    {
-        id: "",
-        firstName: "",
-        lastName: ""
-    },
-  ]);
 
+  const [members, setMembers] = useState<ClubMember[]>([]);
+  
+  const getMembers = async () => {
+    setLoading(true);
+    const responseMembers = await getAllMembers(props.clubId);
+    setMembers(responseMembers.data.members);
+    setLoading(false);
+  };
+    
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const getClubHead = async () => {
     if (props.clubId !== 0) {
       const responseAdmins = await getAllAdmins(props.clubId);
@@ -151,20 +151,11 @@ const AddClubsNewSecretaryForm = (props: any) => {
     if (!props.visibleModal) {
       form.resetFields();
     }
+    getMembers();
     getClubHead();
     const userRoles = userApi.getActiveUserRoles();
       setActiveUserRoles(userRoles);
   }, [props]);
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await adminApi.getUsersForTable().then((response) => {
-        setUsers(response.data);
-      });
-    };
-    fetchData();
-  }, []);
 
   return (
     <Form name="basic" onFinish={handleSubmit} form={form} className="formAddSecretaryModal">
@@ -181,9 +172,9 @@ const AddClubsNewSecretaryForm = (props: any) => {
         ]}
       >
         <Select showSearch className={classes.inputField}>
-          {users?.map((o) => (
-            <Select.Option key={o.id} value={JSON.stringify(o)}>
-              {o.firstName + " " + o.lastName}
+          {members?.map((o) => (
+            <Select.Option key={o.userId} value={JSON.stringify(o.user)}>
+              {o.user.firstName + " " + o.user.lastName}
             </Select.Option>
           ))}
         </Select>
