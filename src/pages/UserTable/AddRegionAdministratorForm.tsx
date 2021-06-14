@@ -129,7 +129,7 @@ const AddNewAdministratorForm = ({
             className={classes.inputField}
             onChange={handleClick}
             options={[
-              { value: "Голова Округи", disabled: activeUserRoles.includes("Заступник Голови Округи") ? true : false },
+              { value: "Голова Округи", disabled: activeUserRoles.includes("Заступник Голови Округи") },
               { value: "Заступник Голови Округи"},
               { value: "Писар" },
               { value: "Бунчужний" },

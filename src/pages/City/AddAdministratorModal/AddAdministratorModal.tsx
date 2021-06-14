@@ -166,7 +166,7 @@ const AddAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: "Голова Станиці", disabled: activeUserRoles.includes("Заступник Голови Станиці") ? true : false },
+              { value: "Голова Станиці", disabled: activeUserRoles.includes("Заступник Голови Станиці") },
               { value: "Заступник Голови Станиці"},
               { value: "Голова СПС" },
               { value: "Писар" },
