@@ -42,6 +42,7 @@ const RegionAdministration = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [reload, setReload] = useState(false);
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const getAdministration = async () => {
     setLoading(true);
@@ -49,6 +50,8 @@ const RegionAdministration = () => {
     setPhotosLoading(true);
     setPhotos([...response.data].filter((a) => a != null));
     setAdministration([...response.data].filter((a) => a != null));
+    const userRoles = userApi.getActiveUserRoles();
+        setActiveUserRoles(userRoles);
     setLoading(false);
   };
 
@@ -113,10 +116,14 @@ const RegionAdministration = () => {
                 className="detailsCard"
                 title={`${member.adminType.adminTypeName}`}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={[
+                actions={
+                  (!activeUserRoles.includes("Заступник Голови Округи") || member.adminType.adminTypeName !== "Голова Округи")
+                  ? [
                   <SettingOutlined onClick={() => showModal(member)} />,
                   <CloseOutlined onClick={() => removeAdministrator(member)} />,
-                ]}
+                    ]
+                  : undefined
+                }
               >
                 <div
                   onClick={() =>

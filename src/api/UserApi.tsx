@@ -1,6 +1,4 @@
-
 import axios from 'axios';
-import Api from './api'
 import BASE_URL from '../config';
 import AuthStore from '../stores/AuthStore';
 import jwt_decode from 'jwt-decode';
@@ -56,6 +54,14 @@ const getActiveUserRoles = () => {
     return roles;
 };
 
+const getActiveUserProfile = async () => {
+    let jwt = AuthStore.getToken() as string;
+    let decodedJwt = jwt_decode(jwt) as any;
+
+    const res = await getById(decodedJwt.nameid);
+    return res.data.user;
+}
+
 export default {
     getById,
     getUserProfileById,
@@ -66,4 +72,5 @@ export default {
     deleteApprove,
     approveUser,
     getActiveUserRoles,
+    getActiveUserProfile,
 };

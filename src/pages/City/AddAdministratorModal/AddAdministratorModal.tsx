@@ -11,6 +11,7 @@ import {
 import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
 import "moment/locale/uk";
+import userApi from "../../../api/UserApi";
 import{emptyInput} from "../../../components/Notifications/Messages"
 moment.locale("uk-ua");
 
@@ -32,6 +33,7 @@ const AddAdministratorModal = (props: Props) => {
   const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
   const [head, setHead] = useState<CityAdmin>();
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const getCityHead = async () => {
     if (props.cityId !== 0) {
@@ -132,9 +134,11 @@ const AddAdministratorModal = (props: Props) => {
   };
 
   useEffect(() => {
-    if (props.visibleModal) {
+    if (!props.visibleModal) {
       form.resetFields();
     }
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
   }, [props]);
 
   return (
@@ -162,7 +166,7 @@ const AddAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: "Голова Станиці" },
+              { value: "Голова Станиці", disabled: activeUserRoles.includes("Заступник Голови Станиці") },
               { value: "Заступник Голови Станиці"},
               { value: "Голова СПС" },
               { value: "Писар" },

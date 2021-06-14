@@ -17,6 +17,9 @@ import User from "../../Distinction/Interfaces/User";
 import "./AddClubsSecretaryForm.less";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
+import userApi from "../../../api/UserApi";
+
+
 type AddClubsNewSecretaryForm = {
   onAdd: () => void;
   onCancel: () => void;
@@ -30,6 +33,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
+
   const [members, setMembers] = useState<ClubMember[]>([]);
   
   const getMembers = async () => {
@@ -38,7 +42,8 @@ const AddClubsNewSecretaryForm = (props: any) => {
     setMembers(responseMembers.data.members);
     setLoading(false);
   };
-
+    
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const getClubHead = async () => {
     if (props.clubId !== 0) {
       const responseAdmins = await getAllAdmins(props.clubId);
@@ -148,6 +153,8 @@ const AddClubsNewSecretaryForm = (props: any) => {
     }
     getMembers();
     getClubHead();
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
   }, [props]);
 
   return (
@@ -190,7 +197,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Куреня" },
+            { value: "Голова Куреня", disabled: activeUserRoles.includes("Заступник Голови Куреня") },
             { value: "Заступник Голови Куреня" },
             { value: "Голова СПС" },
             { value: "Фотограф" },

@@ -26,6 +26,7 @@ const ClubAdministration = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [reload, setReload] = useState<boolean>(false);
     const [clubName, setClubName] = useState<string>("");
+    const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   
     const getAdministration = async () => {
       setLoading(true);
@@ -35,6 +36,9 @@ const ClubAdministration = () => {
         setAdministration([...response.data.administration, response.data.head, response.data.headDeputy].filter(a => a != null));
         setCanEdit(response.data.canEdit);
         setClubName(response.data.name);
+
+      const userRoles = userApi.getActiveUserRoles();
+        setActiveUserRoles(userRoles);
       setLoading(false);
     };
 
@@ -95,12 +99,10 @@ const ClubAdministration = () => {
                   title={`${member.adminType.adminTypeName}`}
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit
+                    canEdit && (!activeUserRoles.includes("Заступник Голови Куреня") || member.adminType.adminTypeName !== "Голова Куреня")
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
-                          <CloseOutlined
-                            onClick={() => removeAdmin(member)}
-                          />,
+                          <CloseOutlined onClick={() => removeAdmin(member)} />,
                         ]
                       : undefined
                   }

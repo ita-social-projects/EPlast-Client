@@ -142,7 +142,7 @@ const Assignments = () => {
         </StickyContainer>
       </div>
       <div className="approversContent">
-        <hr />
+        <br />
         <h1>Поручення дійсних членів</h1>
         <div className="approversCard">
           {data?.confirmedUsers.map(p => {
@@ -293,7 +293,7 @@ const Assignments = () => {
         <div className="approversCard">
           {(data?.cityApprover != null) ? (
             <div>
-              {(data.cityApprover.approver.userID == data.currentUserId) ? (
+              {(data.cityApprover.approver.userID == data.currentUserId || roles.includes("Admin")) ? (
                 <Card
                   hoverable
                   className="cardStyles"
