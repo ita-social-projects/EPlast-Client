@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Spin} from 'antd';
+import {Avatar, Button, Card, Layout, Modal, Spin} from 'antd';
 import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined} from '@ant-design/icons';
 import {getAllDocuments, getFile, removeDocument, getUserAccess} from "../../../api/governingBodiesApi";
 import "../../City/City/City.less";
@@ -12,6 +12,7 @@ import AuthStore from '../../../stores/AuthStore';
 import jwt from 'jwt-decode';
 
 const GoverningBodyDocuments = () => {
+    const confirm = Modal.confirm;
     const {id} = useParams();
     const history = useHistory();
 
@@ -40,10 +41,20 @@ const GoverningBodyDocuments = () => {
       await getFile(fileBlob, fileName);
     }
 
-    const removeDocumentById = async (documentId: number) => {
-      await removeDocument(documentId);
-
-      setDocuments(documents.filter((d) => d.id !== documentId));
+    const deleteDocument = async (document: GoverningBodyDocument) => {
+        confirm({
+            title: `Дійсно видалити документ ${document.fileName.split('.')[0]}?`,
+            content: (
+              <div>
+                {document.governingBodyDocumentType.name} буде видалений!
+              </div>
+            ),
+            onCancel() { },
+            async onOk() {
+              await removeDocument(document.id);
+              setDocuments(documents.filter((d) => d.id !== document.id));
+            },
+        });
     };
 
     useEffect(() => {
@@ -81,7 +92,7 @@ const GoverningBodyDocuments = () => {
                           />,
                           <CloseOutlined
                             key="close"
-                            onClick={() => removeDocumentById(document.id)}
+                            onClick={() => deleteDocument(document)}
                           />,
                         ]
                       : [
