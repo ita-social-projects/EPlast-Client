@@ -9,14 +9,11 @@ import {
   TreeSelect,
   Modal,
   Form,
-  Card,
-  Typography,
-  Space
+  Card
 } from "antd";
 import "./Filter.less";
 import { getUsersForTableByPage } from "../../api/adminApi";
 import clubsApi from "../../api/clubsApi";
-import adminApi from "../../api/adminApi";
 import DropDownUserTable from "./DropDownUserTable";
 import Title from "antd/lib/typography/Title";
 import ColumnsForUserTable from "./ColumnsForUserTable";
@@ -24,7 +21,6 @@ import UserTable from "../../models/UserTable/UserTable";
 import Spinner from "../Spinner/Spinner";
 import ClickAwayListener from "react-click-away-listener";
 import { TreeNode } from "antd/lib/tree-select";
-import AnnualReportApi from "../../api/AnnualReportApi";
 import City from "../Statistics/Interfaces/City";
 import activeMembershipApi, {
   PlastDegree,
@@ -35,8 +31,10 @@ import Club from "../AnnualReport/Interfaces/Club";
 import { shouldContain } from "../../components/Notifications/Messages";
 import classes from "./UserTable.module.css";
 import citiesApi from "../../api/citiesApi"
-import {User} from "../userPage/Interface/Interface"
-const { Search } = Input;
+import userApi from "../../api/UserApi";
+import User from "../Distinction/Interfaces/User";
+import AuthStore from "../../stores/AuthStore";
+import jwt_decode from "jwt-decode";
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
@@ -60,11 +58,12 @@ const UsersTable = () => {
   const [dynamicClubs, setDynamicClubs] = useState<any[]>([]);
   const [dynamicDegrees, setDynamicDegrees] = useState<any[]>([]);
   const [form] = Form.useForm();
+  const [canView, setCanView]=useState<boolean>(false);
   const [, forceUpdate] = useState({});
-  const [viewedUsers, setViewedUsers] = useState<UserTable[]>([]);
   const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
   const [isInactive, setIsInactive] = useState(false);
   const [userArhive, setArhive] = useState();
+  const [currentUser, setCurrentUser] = useState<User>();
   const [user, setUser] = useState<UserTable>();
   const { SHOW_PARENT } = TreeSelect;
   const {Search} = Input;
@@ -84,8 +83,13 @@ const UsersTable = () => {
   const fetchCities = async () => {
     try {
       let response = await citiesApi.getCities();
-      let cities = response.data.cities as City[];
-      setCities(cities)
+      let cities = response.data as City[];
+      setCities( cities.map((item) => {
+        return {
+          label: item.name,
+          value: item.id,
+        };
+      }))
     } catch (error) {
       showError(error.message);
     }
@@ -159,8 +163,17 @@ const UsersTable = () => {
         Tab: currentTabName,
         SearchData: searchData
       });
+      let jwt = AuthStore.getToken() as string;
+      let user = jwt_decode(jwt) as any;
+      setCurrentUser((await userApi.getUserProfileById(user.nameid, user.nameid)).data.user);
+      let roles=userApi.getActiveUserRoles();
+      setCanView(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
+        || roles.includes("Голова Округи") || roles.includes("Заступник Голови Округи")
+        || roles.includes("Голова Станиці") || roles.includes("Заступник Голови Станиці")
+        || roles.includes("Голова Куреня") || roles.includes("Заступник Голови Куреня")
+        || roles.includes("Дійсний член організації")
+        || roles.includes("Прихильник"));
       setUsers(response.data.users);
-      setViewedUsers(response.data.users);
       setTotal(response.data.total);
     } finally {
       setLoading(true);
@@ -302,7 +315,6 @@ const UsersTable = () => {
           SearchData: searchData
         });
         setUsers(response.data.users);
-        setViewedUsers(response.data.users);
         setTotal(response.data.total);
       } finally {
         setLoading(true);
@@ -331,11 +343,7 @@ const UsersTable = () => {
   };
 
   return (
-    <Layout.Content
-      onClick={() => {
-        setShowDropdown(false);
-      }}
-    >
+    <Layout.Content>
       <Title level={2}>Таблиця користувачів</Title>
       <Title level={4} style={{textAlign: "left", margin: 10}} underline={true}>Загальна кількість користувачів: {total}</Title>
       <div className={classes.searchContainer}>
@@ -369,6 +377,13 @@ const UsersTable = () => {
                         .indexOf(input.toLowerCase()) >= 0
                     }
                     allowClear
+                    onChange={(event: any) => {
+                      if(event.length==0) {setDynamicRegions([]);
+                      setDynamicCities([]);
+                      setDynamicClubs([]);
+                      setDynamicDegrees([]);
+                    }
+                    }}
                   >
                   
                     <TreeNode value={0} title="Всі округи">
@@ -430,17 +445,19 @@ const UsersTable = () => {
             dataSource={users}
             onRow={(record) => {
               return {
-                onClick: () => {
-                  setShowDropdown(false);
-                },
+                onDoubleClick: () => { if (record.id && canView) window.open(`/userpage/main/${record.id}`);
+              },
                 onContextMenu: (event) => {
                   event.preventDefault();
+                  setShowDropdown(false);
+                  if(canView){
                   setShowDropdown(true);
                   setRecordObj(record.id);
                   setRoles(record.userRoles);
-                  setUser(record);
+                  setUser(users.find(x=>x.id==record.id));
                   setX(event.pageX);
                   setY(event.pageY);
+                  }
                 },
               };
             }}
@@ -477,6 +494,8 @@ const UsersTable = () => {
           user={user}
           roles={roles}
           inActiveTab={isInactive}
+          currentUser={currentUser}
+          canView={canView}
         />
         </ClickAwayListener>
     </Layout.Content>
