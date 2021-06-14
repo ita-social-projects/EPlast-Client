@@ -16,7 +16,8 @@ import {
   EditOutlined,
   PlusSquareFilled,
   DeleteOutlined,
-  ExclamationCircleOutlined
+  ExclamationCircleOutlined,
+  FileTextOutlined
 } from "@ant-design/icons";
 import {
   getGoverningBodyById,
@@ -41,6 +42,8 @@ import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin
 import Paragraph from "antd/lib/typography/Paragraph";
 import userApi from "../../../api/UserApi";
 import moment from "moment";
+import GoverningBodyDocument from "../../../models/GoverningBody/GoverningBodyDocument";
+import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
 
 const GoverningBody = () => {
   const history = useHistory();
@@ -49,6 +52,8 @@ const GoverningBody = () => {
   const [loading, setLoading] = useState(false);
   const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(new GoverningBodyProfile());
   const [governingBodyLogo64, setGoverningBodyLogo64] = useState<string>("");
+  const [documents, setDocuments] = useState<GoverningBodyDocument[]>([]);
+  const [document, setDocument] = useState<GoverningBodyDocument>(new GoverningBodyDocument());
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [governingBodyLogoLoading, setGoverningBodyLogoLoading] = useState<boolean>(false);
@@ -81,6 +86,12 @@ const GoverningBody = () => {
       setGoverningBodyLogo64(response.data);
     }
     setGoverningBodyLogoLoading(false);
+  };
+
+  const onAdd = (newDocument: GoverningBodyDocument) => {
+    if (documents.length < 6) {
+      setDocuments([...documents, newDocument]);
+    }
   };
 
   function seeDeleteModal() {
@@ -124,6 +135,7 @@ const GoverningBody = () => {
       setAdmins(admins);
       setGoverningBodyHead(response.data.head)
       setAdminsCount(admins.length);
+      setDocuments(response.data.documents);
     } finally {
       setLoading(false);
     }
@@ -400,6 +412,25 @@ const GoverningBody = () => {
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Документообіг Керівного Органу</Title>
             <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
+                {documents.length !== 0 ? (
+                    documents.map((d) => (
+                    <Col
+                        className="governingBodyMemberItem"
+                        xs={12}
+                        sm={8}
+                        key={d.id}
+                    >
+                        <div>
+                        <FileTextOutlined className="documentIcon" />
+                        <p className="documentText">
+                            {d.governingBodyDocumentType.name}
+                        </p>
+                        </div>
+                    </Col>
+                    ))
+                ) : (
+                    <Paragraph>Ще немає документів станиці</Paragraph>
+                    )}
             </Row>
             <div className="governingBodyMoreButton">
               <Button
@@ -439,6 +470,16 @@ const GoverningBody = () => {
           governingBodyId={+id}>
         </AddGoverningBodiesSecretaryForm>
       </Modal>
+      {userAccesses["ManipulateDocument"] ? (
+        <AddDocumentModal
+          governingBodyId={+id}
+          document={document}
+          setDocument={setDocument}
+          visibleModal={visibleModal}
+          setVisibleModal={setVisibleModal}
+          onAdd={onAdd}
+        ></AddDocumentModal>
+      ) : null}
     </Layout.Content>
   ) : (
         <Title level={2}>Керівний Орган не знайдено</Title>
