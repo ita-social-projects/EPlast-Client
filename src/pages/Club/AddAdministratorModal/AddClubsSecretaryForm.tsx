@@ -20,6 +20,7 @@ import regionsApi from "../../../api/regionsApi";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
 import User from "../../Distinction/Interfaces/User";
 import "./AddClubsSecretaryForm.less";
+import userApi from "../../../api/UserApi";
 
 type AddClubsNewSecretaryForm = {
   onAdd: () => void;
@@ -34,6 +35,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [users, setUsers] = useState<User[]>([
     {
         id: "",
@@ -150,6 +152,8 @@ const AddClubsNewSecretaryForm = (props: any) => {
       form.resetFields();
     }
     getClubHead();
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
   }, [props]);
 
 
@@ -202,7 +206,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Куреня" },
+            { value: "Голова Куреня", disabled: activeUserRoles.includes("Заступник Голови Куреня") },
             { value: "Заступник Голови Куреня" },
             { value: "Голова СПС" },
             { value: "Фотограф" },
