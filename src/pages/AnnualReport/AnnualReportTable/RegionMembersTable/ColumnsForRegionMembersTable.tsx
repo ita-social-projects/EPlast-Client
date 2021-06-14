@@ -23,7 +23,6 @@ const columns = [
         render: (id: any) => {
             return id ? (<p>{id}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.id - b.id },
         width: 65
     },
     {
@@ -31,107 +30,94 @@ const columns = [
         dataIndex: "cityName",
         fixed: "left",
         ellipsis: true,
-        sorter: (a: any, b: any) => a.cityName.localeCompare(b.cityName),
-        sortDirections: ["ascend", "descend"] as SortOrder[],
         width: 100
     },
     {
         title: SliceTitle("Кількість пташат"),
-        dataIndex: ["membersStatistic", "numberOfPtashata"],
+        dataIndex: "numberOfPtashata",
         render: (numberOfPtashata: any) => {
             return numberOfPtashata ? (<p>{numberOfPtashata}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfPtashata - b.numberOfPtashata },
         width: 100
     },
     {
         title: SliceTitle("Кількість новацтва"),
-        dataIndex: ["membersStatistic", "numberOfNovatstva"],
+        dataIndex: "numberOfNovatstva",
         render: (numberOfNovatstva: any) => {
             return numberOfNovatstva ? (<p>{numberOfNovatstva}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfNovatstva - b.numberOfNovatstva },
         width: 100
     },
     {
         title: SliceTitle("Кількість неіменованих"),
-        dataIndex: ["membersStatistic", "numberOfUnatstvaNoname"],
+        dataIndex: "numberOfUnatstvaNoname",
         render: (numberOfUnatstvaNoname: any) => {
             return numberOfUnatstvaNoname ? (<p>{numberOfUnatstvaNoname}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfUnatstvaNoname - b.numberOfUnatstvaNoname },
         width: 100
     },
     {
         title: SliceTitle("Кількість прихильників"),
-        dataIndex: ["membersStatistic", "numberOfUnatstvaSupporters"],
+        dataIndex: "numberOfUnatstvaSupporters",
         render: (numberOfUnatstvaSupporters: any) => {
             return numberOfUnatstvaSupporters ? (<p>{numberOfUnatstvaSupporters}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfUnatstvaSupporters - b.numberOfUnatstvaSupporters },
         width: 100
     },
     {
         title: SliceTitle("Кількість учасників"),
-        dataIndex: ["membersStatistic", "numberOfUnatstvaMembers"],
+        dataIndex: "numberOfUnatstvaMembers",
         render: (numberOfUnatstvaMembers: any) => {
             return numberOfUnatstvaMembers ? (<p>{numberOfUnatstvaMembers}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfUnatstvaMembers - b.numberOfUnatstvaMembers },
         width: 100
     },
     {
         title: SliceTitle("Кількість розвідувачів"),
-        dataIndex: ["membersStatistic", "numberOfUnatstvaProspectors"],
+        dataIndex: "numberOfUnatstvaProspectors",
         render: (numberOfUnatstvaProspectors: any) => {
             return numberOfUnatstvaProspectors ? (<p>{numberOfUnatstvaProspectors}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfUnatstvaProspectors - b.numberOfUnatstvaProspectors },
         width: 100
     },
     {
         title: SliceTitle("Кількість скобів/вірлиць"),
-        dataIndex: ["membersStatistic", "numberOfUnatstvaSkobVirlyts"],
+        dataIndex: "numberOfUnatstvaSkobVirlyts",
         render: (numberOfUnatstvaSkobVirlyts: any) => {
             return numberOfUnatstvaSkobVirlyts ? (<p>{numberOfUnatstvaSkobVirlyts}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfUnatstvaSkobVirlyts - b.numberOfUnatstvaSkobVirlyts },
         width: 100
     },
     {
         title: SliceTitle("Кількість старших пластунів прихильників"),
-        dataIndex: ["membersStatistic", "numberOfSeniorPlastynSupporters"],
+        dataIndex: "numberOfSeniorPlastynSupporters",
         render: (numberOfSeniorPlastynSupporters: any) => {
             return numberOfSeniorPlastynSupporters ? (<p>{numberOfSeniorPlastynSupporters}</p>) : "";
         },        
-        sorter: { compare: (a: any, b: any) => a.numberOfSeniorPlastynSupporters - b.numberOfSeniorPlastynSupporters },
         width: 100
     },
     {
         title: SliceTitle("Кількість старших пластунів учасників"),
-        dataIndex: ["membersStatistic", "numberOfSeniorPlastynMembers"],
+        dataIndex: "numberOfSeniorPlastynMembers",
         render: (numberOfSeniorPlastynMembers: any) => {
             return numberOfSeniorPlastynMembers ? (<p>{numberOfSeniorPlastynMembers}</p>) : "";
         }, 
-        sorter: { compare: (a: any, b: any) => a.numberOfSeniorPlastynMembers - b.numberOfSeniorPlastynMembers },
         width: 100
     },
     {
         title: SliceTitle("Кількість сеньйорів пластунів прихильників"),
-        dataIndex: ["membersStatistic", "numberOfSeigneurSupporters"],
+        dataIndex: "numberOfSeigneurSupporters",
         render: (numberOfSeigneurSupporters: any) => {
             return numberOfSeigneurSupporters ? (<p>{numberOfSeigneurSupporters}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfSeigneurSupporters - b.numberOfSeigneurSupporters },
         width: 100
     },
     {
         title: SliceTitle("Кількість сеньйорів пластунів учасників"),
-        dataIndex: ["membersStatistic", "numberOfSeigneurMembers"],
+        dataIndex: "numberOfSeigneurMembers",
         render: (numberOfSeigneurMembers: any) => {
             return numberOfSeigneurMembers ? (<p>{numberOfSeigneurMembers}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfSeigneurMembers - b.numberOfSeigneurMembers },
         width: 100
     },
     {
@@ -140,7 +126,6 @@ const columns = [
         render: (numberOfSeatsPtashat: any) => {
             return numberOfSeatsPtashat ? (<p>{numberOfSeatsPtashat}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfSeatsPtashat - b.numberOfSeatsPtashat },
         width: 100
     },
     {
@@ -149,7 +134,6 @@ const columns = [
         render: (numberOfIndependentRiy: any) => {
             return numberOfIndependentRiy ? (<p>{numberOfIndependentRiy}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfIndependentRiy - b.numberOfIndependentRiy },
         width: 100
     },
     {
@@ -158,7 +142,6 @@ const columns = [
         render: (numberOfClubs: any) => {
             return numberOfClubs ? (<p>{numberOfClubs}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfClubs - b.numberOfClubs },
         width: 100
     },
     {
@@ -167,7 +150,6 @@ const columns = [
         render: (numberOfIndependentGroups: any) => {
             return numberOfIndependentGroups ? (<p>{numberOfIndependentGroups}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfIndependentGroups - b.numberOfIndependentGroups },
         width: 100
     },
     {
@@ -176,7 +158,6 @@ const columns = [
         render: (numberOfTeachers: any) => {
             return numberOfTeachers ? (<p>{numberOfTeachers}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfTeachers - b.numberOfTeachers },
         width: 100
     },
     {
@@ -185,7 +166,6 @@ const columns = [
         render: (numberOfAdministrators: any) => {
             return numberOfAdministrators ? (<p>{numberOfAdministrators}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfAdministrators - b.numberOfAdministrators },
         width: 100
     },
     {
@@ -194,7 +174,6 @@ const columns = [
         render: (numberOfTeacherAdministrators: any) => {
             return numberOfTeacherAdministrators ? (<p>{numberOfTeacherAdministrators}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfTeacherAdministrators - b.numberOfTeacherAdministrators },
         width: 100
     },
     {
@@ -203,7 +182,6 @@ const columns = [
         render: (numberOfBeneficiaries: any) => {
             return numberOfBeneficiaries ? (<p>{numberOfBeneficiaries}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfBeneficiaries - b.numberOfBeneficiaries },
         width: 100
     },
     {
@@ -212,7 +190,6 @@ const columns = [
         render: (numberOfPlastpryiatMembers: any) => {
             return numberOfPlastpryiatMembers ? (<p>{numberOfPlastpryiatMembers}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfPlastpryiatMembers - b.numberOfPlastpryiatMembers },
         width: 100
     },
     {
@@ -221,7 +198,6 @@ const columns = [
         render: (numberOfHonoraryMembers: any) => {
             return numberOfHonoraryMembers ? (<p>{numberOfHonoraryMembers}</p>) : "";
         },
-        sorter: { compare: (a: any, b: any) => a.numberOfHonoraryMembers - b.numberOfHonoraryMembers },
         width: 100
     },
 ];

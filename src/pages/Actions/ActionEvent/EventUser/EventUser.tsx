@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {useHistory, useParams} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import {
     Modal,
     Button,
@@ -29,9 +29,10 @@ import EventCalendar from "../EventCalendar/EventCalendar";
 import Spinner from "../../../Spinner/Spinner";
 import CreatedEvents from "../../../../models/EventUser/CreatedEvents";
 import AvatarAndProgressStatic from "../../../userPage/personalData/AvatarAndProgressStatic";
-import {string} from "yup";
 
-const {Title} = Typography;
+const { Title } = Typography;
+const userGenders = ["Чоловік", "Жінка", "Інша"];
+
 
 const EventUser = () => {
     let user: any;
@@ -39,7 +40,7 @@ const EventUser = () => {
     user = jwt(curToken);
     let roles = user[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] as string[];
+    ] as string[];
 
     const history = useHistory();
     const [loading, setLoading] = useState(false);
@@ -47,7 +48,7 @@ const EventUser = () => {
     const [createdEventsModal, setCreatedEventsModal] = useState(false);
     const [plannedEventsModal, setPlannedEventsModal] = useState(false);
     const [visitedEventsModal, setVisitedEventsModal] = useState(false);
-    const {userId} = useParams();
+    const { userId } = useParams();
     const [allEvents, setAllEvents] = useState<EventsUser>(new EventsUser());
     const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
         new CreatedEvents(),
@@ -136,7 +137,7 @@ const EventUser = () => {
 
     const newLocal = "#3c5438";
     return loading === false ? (
-        <Spinner/>
+        <Spinner />
     ) : (
         <div className={classes.wrapper}>
             <div className={classes.wrapperImg}>
@@ -158,7 +159,7 @@ const EventUser = () => {
                     <Button
                         type="primary"
                         className={classes.buttonInside}
-                        style={{marginBottom: "15px"}}
+                        style={{ marginBottom: "15px" }}
                         onClick={() => setShowEventCreateDrawer(true)}
                     >
                         Створити подію
@@ -171,23 +172,25 @@ const EventUser = () => {
                     <div className={classes.wrapper2}>
                         <Title level={2}> Відвідані події </Title>
                         {allEvents.visitedEvents?.length === 0 &&
-                        userToken.nameid !== userId && (
-                            <h2>
-                                {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
-                                відвідав(ла) жодної події
-                            </h2>
-                        )}
+                            userToken.nameid !== userId && (
+                                <h2>
+                                    {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
+                                    { userGenders[0] === currentUser.gender?.name ? (<> відвідав</>) :
+                                        userGenders[1] === currentUser.gender?.name ? (<> відвідала</>) :
+                                            (<> відвідав(ла)</>)} жодної події
+                                </h2>
+                            )}
                         {allEvents?.visitedEvents?.length === 0 &&
-                        userToken.nameid === userId && (
-                            <h2>Ви ще не відвідали жодної події</h2>
-                        )}
+                            userToken.nameid === userId && (
+                                <h2>Ви ще не відвідали жодної події</h2>
+                            )}
                         {allEvents?.visitedEvents?.length !== 0 && (
                             <div>
                                 <Badge
                                     count={allEvents?.visitedEvents?.length}
-                                    style={{backgroundColor: newLocal}}
+                                    style={{ backgroundColor: newLocal }}
                                 />
-                                <br/>
+                                <br />
                                 <Button
                                     type="primary"
                                     className={classes.buttonInside}
@@ -207,7 +210,7 @@ const EventUser = () => {
                                 <Button
                                     type="primary"
                                     className={classes.buttonSmall}
-                                    style={{marginRight: "110px", marginLeft: "110px"}}
+                                    style={{ marginRight: "110px", marginLeft: "110px" }}
                                     onClick={() => setVisitedEventsModal(false)}
                                 >
                                     Закрити
@@ -236,7 +239,7 @@ const EventUser = () => {
                                     >
                                         Деталі
                                     </Button>
-                                    <hr/>
+                                    <hr />
                                 </div>
                             ))}
                         </Modal>
@@ -244,26 +247,26 @@ const EventUser = () => {
                     <div className={classes.wrapper3}>
                         <Title level={2}> Створені події </Title>
                         {allEvents.createdEvents.length === 0 &&
-                        userToken.nameid === userId && (
-                            <div>
-                                <h2>Ви ще не створили жодної події</h2>
-                                {canCreate &&
-                                <Button
-                                    type="primary"
-                                    className={classes.buttonInside}
-                                    style={{marginBottom: "15px"}}
-                                    onClick={() => setShowEventCreateDrawer(true)}>
-                                    Створити подію
+                            userToken.nameid === userId && (
+                                <div>
+                                    <h2>Ви ще не створили жодної події</h2>
+                                    {canCreate &&
+                                        <Button
+                                            type="primary"
+                                            className={classes.buttonInside}
+                                            style={{ marginBottom: "15px" }}
+                                            onClick={() => setShowEventCreateDrawer(true)}>
+                                            Створити подію
                                 </Button>}
-                            </div>
-                        )}
+                                </div>
+                            )}
                         {allEvents.createdEvents.length !== 0 && (
                             <div>
                                 <Badge
                                     count={allEvents.createdEvents.length}
-                                    style={{backgroundColor: "#3c5438"}}
+                                    style={{ backgroundColor: "#3c5438" }}
                                 />
-                                <br/>
+                                <br />
                                 <Button
                                     type="primary"
                                     className={classes.buttonInside}
@@ -281,14 +284,16 @@ const EventUser = () => {
                         />
 
                         {userToken.nameid !== userId &&
-                        allEvents.createdEvents.length === 0 && (
-                            <div>
-                                <h2>
-                                    {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
-                                    створив(ла) жодної події
+                            allEvents.createdEvents.length === 0 && (
+                                <div>
+                                    <h2>
+                                        {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
+                                        {userGenders[0] === currentUser.gender?.name ? (<> створив</>) :
+                                            userGenders[1] === currentUser.gender?.name ? (<> створила</>) :
+                                                (<> створив(ла)</>)} жодної події
                                 </h2>
-                            </div>
-                        )}
+                                </div>
+                            )}
                         <Modal
                             title="Створені події"
                             centered
@@ -300,7 +305,7 @@ const EventUser = () => {
                                     <Button
                                         type="primary"
                                         className={classes.buttonSmall}
-                                        style={{marginRight: "110px", marginLeft: "110px"}}
+                                        style={{ marginRight: "110px", marginLeft: "110px" }}
                                         onClick={() => setCreatedEventsModal(false)}
                                     >
                                         Закрити
@@ -389,20 +394,20 @@ const EventUser = () => {
                                         Деталі
                                     </Button>
                                     {item.eventStatusID !== 1 && userToken.nameid === userId &&
-                                    !(roles==["Прихильник"] || roles==["Зареєстований користувач"] || roles==["Прихильник", "Зареєстований користувач"]) &&
+                                        !(roles == ["Прихильник"] || roles == ["Зареєстований користувач"] || roles == ["Прихильник", "Зареєстований користувач"]) &&
                                         (
-                                        <Button
-                                            type="primary"
-                                            className={classes.buttonSmall}
-                                            onClick={() => {
-                                                setShowEventEditDrawer(true);
-                                                setEventId(item.id);
-                                            }}
-                                        >
-                                            Редагувати
-                                        </Button>
-                                    )}
-                                    <hr/>
+                                            <Button
+                                                type="primary"
+                                                className={classes.buttonSmall}
+                                                onClick={() => {
+                                                    setShowEventEditDrawer(true);
+                                                    setEventId(item.id);
+                                                }}
+                                            >
+                                                Редагувати
+                                            </Button>
+                                        )}
+                                    <hr />
                                 </div>
                             ))}
                             <EventEditDrawer
@@ -421,31 +426,33 @@ const EventUser = () => {
                             Заплановані події{" "}
                         </Title>
                         {allEvents?.planedEvents?.length === 0 &&
-                        userToken.nameid === userId && (
-                            <div>
-                                <h2>Ви ще не запланували жодної події</h2>
-                                {roles != ["Зареєстрований користувач"] && <Button
-                                    type="primary"
-                                    className={classes.buttonInside}
-                                    onClick={() => history.push("/events/types")}>
-                                    Зголоситись на подію
+                            userToken.nameid === userId && (
+                                <div>
+                                    <h2>Ви ще не запланували жодної події</h2>
+                                    {roles != ["Зареєстрований користувач"] && <Button
+                                        type="primary"
+                                        className={classes.buttonInside}
+                                        onClick={() => history.push("/events/types")}>
+                                        Зголоситись на подію
                                 </Button>}
-                            </div>
-                        )}
+                                </div>
+                            )}
                         {allEvents?.planedEvents?.length === 0 &&
-                        userToken.nameid !== userId && (
-                            <h2>
-                                {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
-                                запланував(ла) жодної події
-                            </h2>
-                        )}
+                            userToken.nameid !== userId && (
+                                <h2>
+                                    {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
+                                    {userGenders[0] === currentUser.gender?.name ? (<> запланував</>) :
+                                            userGenders[1] === currentUser.gender?.name ? (<> запланувала</>) :
+                                                (<> запланував(ла)</>)} жодної події
+                                </h2>
+                            )}
                         {allEvents?.planedEvents?.length !== 0 && (
                             <div>
                                 <Badge
                                     count={allEvents?.planedEvents?.length}
-                                    style={{backgroundColor: "#3c5438"}}
+                                    style={{ backgroundColor: "#3c5438" }}
                                 />
-                                <br/>
+                                <br />
                                 <Button
                                     type="primary"
                                     className={classes.buttonInside}
@@ -465,7 +472,7 @@ const EventUser = () => {
                                 <Button
                                     type="primary"
                                     className={classes.buttonSmall}
-                                    style={{marginRight: "110px", marginLeft: "110px"}}
+                                    style={{ marginRight: "110px", marginLeft: "110px" }}
                                     onClick={() => history.push("/events/types")}
                                 >
                                     Зголоситись на подію
@@ -473,7 +480,7 @@ const EventUser = () => {
                                 <Button
                                     type="primary"
                                     className={classes.buttonSmall}
-                                    style={{marginRight: "110px", marginLeft: "110px"}}
+                                    style={{ marginRight: "110px", marginLeft: "110px" }}
                                     onClick={() => setPlannedEventsModal(false)}
                                 >
                                     Закрити
@@ -502,7 +509,7 @@ const EventUser = () => {
                                     >
                                         Деталі
                                     </Button>
-                                    <hr/>
+                                    <hr />
                                 </div>
                             ))}
                         </Modal>
@@ -513,7 +520,7 @@ const EventUser = () => {
                             Календар подій{" "}
                         </Title>
                         <CalendarOutlined
-                            style={{fontSize: "23px", marginBottom: "7.5px"}}
+                            style={{ fontSize: "23px", marginBottom: "7.5px" }}
                         />
                         <Button
                             type="primary"
@@ -531,7 +538,7 @@ const EventUser = () => {
                         footer={null}
                         forceRender={true}
                     >
-                        <EventCalendar/>
+                        <EventCalendar />
                     </Drawer>
                 </div>
             </div>

@@ -56,13 +56,13 @@ const getActiveUserRoles = () => {
     return roles;
 };
 
-const getActiveUserId = () => {
-    const token = AuthStore.getToken() as string;
-    const user: any = jwt_decode(token);
-    const userId = user.nameid as string;
+const getActiveUserProfile = async () => {
+    let jwt = AuthStore.getToken() as string;
+    let decodedJwt = jwt_decode(jwt) as any;
 
-    return userId;
-};
+    const res = await getById(decodedJwt.nameid);
+    return res.data.user;
+}
 
 export default {
     getById,
@@ -74,5 +74,5 @@ export default {
     deleteApprove,
     approveUser,
     getActiveUserRoles,
-    getActiveUserId,
+    getActiveUserProfile,
 };

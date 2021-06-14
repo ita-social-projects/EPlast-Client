@@ -20,6 +20,7 @@ import AdminType from "../../../models/Admin/AdminType";
 import regionsApi from "../../../api/regionsApi";
 import User from "../../Distinction/Interfaces/User";
 import "./AddCitiesSecretaryForm.less";
+import userApi from "../../../api/UserApi";
 
 type AddCitiesNewSecretaryForm = {
   onAdd: () => void;
@@ -33,6 +34,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [users, setUsers] = useState<User[]>([
     {
       id: "",
@@ -163,6 +165,8 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       form.resetFields();
     }
     getHead();
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
   }, [props]);
 
   return (
@@ -205,7 +209,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Станиці" },
+            { value: "Голова Станиці", disabled: activeUserRoles.includes("Заступник Голови Станиці") },
             { value: "Заступник Голови Станиці"},
             { value: "Голова СПС" },
             { value: "Писар" },

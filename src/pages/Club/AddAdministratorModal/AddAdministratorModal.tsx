@@ -13,6 +13,7 @@ import{
 } from "../../../components/Notifications/Messages"
 import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
+import userApi from "../../../api/UserApi";
 import "moment/locale/uk";
 moment.locale("uk-ua");
 
@@ -34,6 +35,7 @@ const AddAdministratorModal = (props: Props) => {
   const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
   const [head, setHead] = useState<ClubAdmin>();
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -137,6 +139,8 @@ const AddAdministratorModal = (props: Props) => {
       form.resetFields();
     }
     getClubHead();
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
   }, [props]);
 
   return (
@@ -164,7 +168,7 @@ const AddAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: "Голова Куреня" },
+              { value: "Голова Куреня", disabled: activeUserRoles.includes("Заступник Голови Куреня") },
               { value: "Заступник Голови Куреня" },
               { value: "Голова СПС" },
               { value: "Фотограф" },

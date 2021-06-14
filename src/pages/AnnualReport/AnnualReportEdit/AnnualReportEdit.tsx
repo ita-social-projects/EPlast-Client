@@ -17,6 +17,7 @@ const AnnualReportEdit = () => {
     const [cityLegalStatuses, setCityLegalStatuses] = useState<any>();
     const [annualReport, setAnnualReport] = useState<AnnualReport>()
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingSaveChanges, setIsLoadingSaveChanges]=useState(false);
     const [form] = Form.useForm();
 
     let cityId: number;
@@ -77,6 +78,7 @@ const AnnualReportEdit = () => {
     }
 
     const handleFinish = async (obj: any) => {
+        setIsLoadingSaveChanges(true);
         let membersStatistic = Object.assign(annualReport?.membersStatistic, obj.membersStatistic);
         let annualReportEdited: AnnualReport = Object.assign(annualReport, obj);
         annualReportEdited.membersStatistic = membersStatistic;
@@ -87,7 +89,7 @@ const AnnualReportEdit = () => {
         }
         catch (error) {
             showError(error.message)
-        }
+        }finally{setIsLoadingSaveChanges(false);}
     }
 
     const showSuccess = (message: string) => {
@@ -107,7 +109,7 @@ const AnnualReportEdit = () => {
 
     return (
         <>
-            {isLoading ? <Modal>(<Spinner />)</Modal> :
+            {isLoading ? <Spinner /> :
                 <>
                     <div className="report-menu">
                         <Tooltip title="Скасувати редагування звіту">
@@ -127,9 +129,10 @@ const AnnualReportEdit = () => {
                                 <Row justify='center'>
                                     <Col>
                                         <Button
+                                            loading={isLoadingSaveChanges}
                                             type='primary'
                                             htmlType='submit'>
-                                            Редагувати
+                                            Зберегти зміни
                             </Button>
                                     </Col>
                                 </Row>

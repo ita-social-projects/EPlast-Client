@@ -13,7 +13,6 @@ import moment from "moment";
 import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
-import AddAdministratorModal from "../City/AddAdministratorModal/AddAdministratorModal";
 import CityAdmin from "../../models/City/CityAdmin";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
@@ -42,6 +41,7 @@ const RegionAdministration = () => {
   const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const getAdministration = async () => {
     setLoading(true);
@@ -49,6 +49,8 @@ const RegionAdministration = () => {
     setPhotosLoading(true);
     setPhotos([...response.data].filter((a) => a != null));
     setAdministration([...response.data].filter((a) => a != null));
+    const userRoles = userApi.getActiveUserRoles();
+        setActiveUserRoles(userRoles);
     setLoading(false);
   };
 
@@ -112,10 +114,14 @@ const RegionAdministration = () => {
                 className="detailsCard"
                 title={`${member.adminType.adminTypeName}`}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={[
+                actions={
+                  (!activeUserRoles.includes("Заступник Голови Округи") || member.adminType.adminTypeName !== "Голова Округи")
+                  ? [
                   <SettingOutlined onClick={() => showModal(member)} />,
                   <CloseOutlined onClick={() => removeAdministrator(member)} />,
-                ]}
+                    ]
+                  : undefined
+                }
               >
                 <div
                   onClick={() =>

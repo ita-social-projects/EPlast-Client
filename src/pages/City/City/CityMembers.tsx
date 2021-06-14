@@ -44,6 +44,8 @@ const CityMembers = () => {
     const responseAdmins = await getAllAdmins(id);
     setAdmins(responseAdmins.data.administration);
     setHead(responseAdmins.data.head);
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
     setLoading(false);
   };
 
@@ -126,7 +128,7 @@ const CityMembers = () => {
               key={member.id}
               className="detailsCard"
               actions={
-                canEdit
+                canEdit && (member.user.id !== head.user.id || !activeUserRoles.includes("Заступник Голови Станиці"))
                   ? [
                       <SettingOutlined onClick={() => showModal(member)} />,
                       <CloseOutlined onClick={() => removeMember(member)} />,
