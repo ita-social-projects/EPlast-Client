@@ -32,9 +32,9 @@ export default function () {
     };
 
     const initialValues = {
-        Email: '',
-        Password: '',
-        ConfirmPassword: ''
+        CurrentPassword: "",
+        NewPassword: "",
+        ConfirmPassword: "",
     };
 
     return (
