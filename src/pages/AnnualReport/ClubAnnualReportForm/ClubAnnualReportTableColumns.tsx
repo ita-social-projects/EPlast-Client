@@ -1,5 +1,5 @@
 import ClubAdmin from "../../../models/Club/ClubAdmin";
-import ClubMember from './../../../models/Club/ClubMember';
+import ClubMember from '../../../models/Club/ClubMember';
 
 
 

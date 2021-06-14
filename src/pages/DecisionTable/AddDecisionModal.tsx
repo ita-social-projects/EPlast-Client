@@ -16,7 +16,7 @@ const AddDecisionModal = ({ visibleModal, setVisibleModal, onAdd }: Props) => {
   return (
     <Drawer
       width="auto"
-      title="Додати рішення пластового проводу"
+      title="Додати рішення Пластового проводу"
       visible={visibleModal}
       onClose={handleCancel}
       footer={null}

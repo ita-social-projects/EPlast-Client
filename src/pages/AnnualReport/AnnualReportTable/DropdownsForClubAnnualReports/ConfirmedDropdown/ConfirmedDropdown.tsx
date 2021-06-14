@@ -1,6 +1,6 @@
 import React from 'react';
 import { Menu } from 'antd';
-import { FileSearchOutlined, FileExcelOutlined } from '@ant-design/icons';
+import { FileSearchOutlined, FileExcelOutlined, FilePdfOutlined } from '@ant-design/icons';
 import Props from './ConfirmedDropdownProps';
 import styles from '../Dropdown.module.css';
 
@@ -13,6 +13,8 @@ const ConfirmedDropdown = (props: Props) => {
                 onView(record.id);
                 break;
             case '2':
+                break;
+            case '3':
                 if (canManage) {
                     onCancel(record.id);
                 }
@@ -36,9 +38,13 @@ const ConfirmedDropdown = (props: Props) => {
                     key='1' >
                     <FileSearchOutlined />Переглянути
                 </Menu.Item>
+                <Menu.Item
+                    key='2' >
+                    <FilePdfOutlined />Переглянути у форматі PDF
+                </Menu.Item>
                 {canManage ? (
                     <Menu.Item
-                        key='2' >
+                        key='3' >
                         <FileExcelOutlined />Скасувати
                     </Menu.Item>
                 ) : null}

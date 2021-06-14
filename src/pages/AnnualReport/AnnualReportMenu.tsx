@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react"
 import './AnnualReportMenu.less';
-import { Modal, Tooltip } from 'antd';
-import { CloseCircleOutlined, DeleteOutlined, EditOutlined, ExclamationCircleOutlined, FileDoneOutlined, FileExcelOutlined, FilePdfOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
+import { CloseCircleOutlined, DeleteOutlined, EditOutlined, FileDoneOutlined, FileExcelOutlined, FilePdfOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useHistory } from "react-router-dom";
-import AnnualReportApi from "../../api/AnnualReportApi";
-import { successfulCancelAction, successfulConfirmedAction, successfulDeleteAction, tryAgain } from "../../components/Notifications/Messages";
+import { tryAgain } from "../../components/Notifications/Messages";
 import notificationLogic from "../../components/Notifications/Notification";
-import Spinner from "../Spinner/Spinner";
 
 interface Props {
     record: {
@@ -15,6 +13,7 @@ interface Props {
         canManage: boolean;
     };
     isAdmin: boolean;
+    ViewPDF: boolean;
     status: number;
     setStatus: (status: number) => void;
     handleEdit: (id: number) => void;
@@ -25,7 +24,7 @@ interface Props {
 
 
 const AnnualReportMenu = (props: Props) => {
-    const { record, isAdmin, status, handleEdit, handleConfirm, handleCancel, handleRemove } = props;
+    const { record, isAdmin, ViewPDF, status, handleEdit, handleConfirm, handleCancel, handleRemove } = props;
     const [isLoadingConfirm, setIsLoadingConfirm] = useState(false);
     const [isLoadingCancel, setIsLoadingCancel] = useState(false);
     const [isLoadingDelete, setIsLoadingDelete] = useState(false);
@@ -68,45 +67,33 @@ const AnnualReportMenu = (props: Props) => {
             <Tooltip title="Закрити звіт">
                 <div className="report-menu-item" onClick={() => history.goBack()}><CloseCircleOutlined /></div>
             </Tooltip>
-            <Tooltip title="Редагувати звіт">
-                <div
-                    hidden={!(status == 0 && (record.canManage || isAdmin))}
-                    className="report-menu-item"
-                    onClick={() => handleEdit(record.id)}>
-                    <EditOutlined />
-                </div>
-            </Tooltip>
-            <Tooltip title="Підтвердити звіт">
-                <div
-                    hidden={!(status == 0 && isAdmin)}
-                    className="report-menu-item"
-                    onClick={Confirm}>
-                    {isLoadingConfirm ? <LoadingOutlined /> : <FileDoneOutlined />}
-                </div>
-            </Tooltip>
-            <Tooltip title="Скасувати звіт">
-                <div
-                    hidden={!(status == 1 && isAdmin)}
-                    className="report-menu-item"
-                    onClick={Cancel}>
-                    {isLoadingCancel ? <LoadingOutlined /> : <FileExcelOutlined />}
-                </div>
-            </Tooltip>
-            <Tooltip title="Переглянути у форматі PDF">
-                <div
-                    className="report-menu-item">
+            {ViewPDF && <Tooltip title="Переглянути у форматі PDF">
+                <div className="report-menu-item">
                     <FilePdfOutlined />
                 </div>
-            </Tooltip>
-            <Tooltip title="Видалити звіт">
-                <div
-                    hidden={!(status == 0 && isAdmin)}
-                    className="report-menu-item"
-                    onClick={Remove}>
+            </Tooltip>}
+            {status == 0 && (record.canManage || isAdmin) && <Tooltip title="Редагувати звіт">
+                <div className="report-menu-item" onClick={() => handleEdit(record.id)}>
+                    <EditOutlined />
+                </div>
+            </Tooltip>}
+            {status == 0 && isAdmin && <Tooltip title="Підтвердити звіт">
+                <div className="report-menu-item" onClick={Confirm}>
+                    {isLoadingConfirm ? <LoadingOutlined /> : <FileDoneOutlined />}
+                </div>
+            </Tooltip>}
+            
+            {status == 1 && isAdmin &&<Tooltip title="Скасувати звіт">
+                <div className="report-menu-item" onClick={Cancel}>
+                    {isLoadingCancel ? <LoadingOutlined /> : <FileExcelOutlined />}
+                </div>
+            </Tooltip>}
+            {status == 0 && isAdmin && <Tooltip title="Видалити звіт">
+                <div className="report-menu-item" onClick={Remove}>
                     {isLoadingDelete ? <LoadingOutlined /> : <DeleteOutlined />}
 
                 </div>
-            </Tooltip>
+            </Tooltip>}
         </div>
     )
 }
