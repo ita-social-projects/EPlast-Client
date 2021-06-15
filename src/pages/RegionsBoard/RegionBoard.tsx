@@ -16,6 +16,7 @@ import {
   EditOutlined,
   PlusSquareFilled,
   FileDoneOutlined,
+  LockOutlined,
 } from "@ant-design/icons";
 import {
   getRegionDocuments,
@@ -106,7 +107,9 @@ const RegionBoard = () => {
     try {
       const response = await GetRegionsBoard();
       await getUserAccesses();
-      setRegionDecisions();
+      if (userAccesses["ViewDecisions"]) {        
+        setRegionDecisions();
+      }
       setRegionOrgs();
       setRegionDocs(response.data.id);
       setRegion(response.data);
@@ -214,7 +217,7 @@ const RegionBoard = () => {
     <Spinner />
   ) : (
     <Layout.Content className="cityProfile">
-      <Row gutter={[0, 48]}>
+      <Row style={{justifyContent:"center"}} gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="cityCard">
             <div>
@@ -389,40 +392,47 @@ const RegionBoard = () => {
           </Card>
         </Col>
 
-        {userAccesses["ViewDecisions"] ?  
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
         <Card hoverable className="cityCard">
-          <Title level={4}>
-            Рішення{" "}
-            <a onClick={() => history.push(`/decisions`)}>
-              {decisions.length !== 0 ? (
-                <Badge
-                  count={decisionsCount}
-                  style={{ backgroundColor: "#3c5438" }}
-                />
-              ) : null}
-            </a>
-          </Title>
-          <Row className="cityItems" justify="center" gutter={[0, 16]}>
-            {decisions.length !== 0 ? (
-              decisions.map((decision) => (
-                <Col
-                  className="cityMemberItem"
-                  xs={12}
-                  sm={8}
-                  key={decision.id}
-                  onClick={() => openPDF(decision)}
-                >
-                  <div>
-                    <FileDoneOutlined className="documentIcon" />
-                    <p className="documentText">{decision.name}</p>
-                  </div>
-                </Col>
-              ))
-            ) : (
-              <Paragraph>Ще немає рішень</Paragraph>
-            )}
-          </Row>
+            <Title level={4}>
+                Рішення{" "}
+                <a onClick={() => history.push(`/decisions`)}>
+                {decisions.length !== 0 ? (
+                    <Badge
+                    count={decisionsCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                    />
+                    ) : null}
+                </a>
+            </Title>
+            {userAccesses["ViewDecisions"] ? 
+              <>
+                <Row className="cityItems" justify="center" gutter={[0, 16]}>
+                    {decisions.length !== 0 ? (
+                    decisions.map((decision) => (
+                        <Col
+                        className="cityMemberItem"
+                        xs={12}
+                        sm={8}
+                        key={decision.id}
+                        onClick={() => openPDF(decision)}
+                        >
+                        <div>
+                            <FileDoneOutlined className="documentIcon" />
+                            <p className="documentText">{decision.name}</p>
+                        </div>
+                        </Col>
+                    ))
+                    ) : (
+                    <Paragraph>Ще немає рішень</Paragraph>
+                    )}
+                </Row>
+              </>
+            :  <>
+                 <Paragraph strong>У тебе немає доступу до рішень!</Paragraph>
+                 <LockOutlined style={{ fontSize:"150px" }} />
+               </>
+            }
           <div className="cityMoreButton">
             {userAccesses["AddDecision"] ? (
               <PlusSquareFilled
@@ -431,16 +441,17 @@ const RegionBoard = () => {
                 onClick={() => setVisibleDecisionModal(true)}
               ></PlusSquareFilled>
             ) : null}
-            <Button
+            {userAccesses["ViewDecisions"] ? (<Button
               type="primary"
               className="cityInfoButton"
               onClick={() => history.push(`/decisions`)}
+              disabled={!userAccesses["ViewDecisions"]}
             >
               Більше
-            </Button>
+            </Button>) : null}
           </div>
         </Card>
-      </Col> : null}
+      </Col>
 
         <Col
           xl={{ span: 7, offset: 1 }}

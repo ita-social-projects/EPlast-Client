@@ -224,11 +224,11 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           className={classes.inputField}
           options={[
             { value: "Голова Керівного Органу" },
-            { value: "Голова СПС" },
-            { value: "Писар" },
-            { value: "Скарбник" },
-            { value: "Домівкар" },
-            { value: "Член СПР" },
+            { value: "Голова КПР" },
+            { value: "Секретар КПР" },
+            { value: "Член КПР з питань організаційного розвитку" },
+            { value: "Член КПР з соціального напрямку" },
+            { value: "Член КПР відповідальний за зовнішні зв'язки" },
           ]}
           placeholder={"Тип адміністрування"}
         ></AutoComplete>

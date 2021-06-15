@@ -7,8 +7,8 @@ import {
   addAdministrator,
   editAdministrator,
   getAllAdmins,
+  getAllMembers,
 } from "../../../api/citiesApi";
-import { ReloadOutlined } from "@ant-design/icons";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import moment from "moment";
 import {
@@ -17,8 +17,7 @@ import {
 } from "../../../components/Notifications/Messages"
 import CityAdmin from "../../../models/City/CityAdmin";
 import AdminType from "../../../models/Admin/AdminType";
-import regionsApi from "../../../api/regionsApi";
-import User from "../../Distinction/Interfaces/User";
+import CityMember from "../../../models/City/CityMember";
 import "./AddCitiesSecretaryForm.less";
 import userApi from "../../../api/UserApi";
 
@@ -34,14 +33,18 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
+  const [members, setMembers] = useState<CityMember[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const getMembers = async () => {
+    setLoading(true);
+    const responseMembers = await getAllMembers(props.cityId);
+    setMembers(responseMembers.data.members);
+    setLoading(false);
+  };
+
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: "",
-      firstName: "",
-      lastName: ""
-    },
-  ]);
+
 
   const getHead = async () => {
     if (props.cityId !== 0) {
@@ -151,19 +154,10 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      await adminApi.getUsersForTable().then((response) => {
-        setUsers(response.data);
-      });
-    };
-    fetchData();
-  }, []);
-
-
-  useEffect(() => {
     if (!props.visibleModal) {
       form.resetFields();
     }
+    getMembers();
     getHead();
     const userRoles = userApi.getActiveUserRoles();
       setActiveUserRoles(userRoles);
@@ -184,9 +178,9 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         ]}
       >
         <Select showSearch className={classes.inputField}>
-          {users?.map((o) => (
-            <Select.Option key={o.id} value={JSON.stringify(o)}>
-              {o.firstName + " " + o.lastName}
+          {members?.map((o) => (
+            <Select.Option key={o.user.id} value={JSON.stringify(o.user)}>
+              {o.user.firstName + " " + o.user.lastName}
             </Select.Option>
           ))}
         </Select>

@@ -41,6 +41,7 @@ const RegionAdministration = () => {
   const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [reload, setReload] = useState(false);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const getAdministration = async () => {
@@ -73,6 +74,7 @@ const RegionAdministration = () => {
 
   const handleOk = () => {
     setVisibleModal(false);
+    setReload(!reload);
   };
 
   const onAdd = async (newAdmin: any) => {
@@ -98,7 +100,7 @@ const RegionAdministration = () => {
 
   useEffect(() => {
     getAdministration();
-  }, []);
+  }, [reload]);
 
   return (
     <Layout.Content>
@@ -169,7 +171,7 @@ const RegionAdministration = () => {
       >
         <AddNewSecretaryForm
           onAdd={handleOk}
-          admin={admin}
+          admin={admin} 
         ></AddNewSecretaryForm>
       </Modal>
     </Layout.Content>

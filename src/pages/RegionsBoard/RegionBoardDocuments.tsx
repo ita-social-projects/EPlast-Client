@@ -16,6 +16,9 @@ import "../Regions/Region.less";
 import Title from "antd/lib/typography/Title";
 import moment from "moment";
 import Spinner from "../Spinner/Spinner";
+import AuthStore from '../../stores/AuthStore';
+import jwt from 'jwt-decode';
+import { getUserAccess } from "../../api/regionsBoardApi";
 
 const RegionBoardDocuments = () => {
   const { id } = useParams();
@@ -30,15 +33,18 @@ const RegionBoardDocuments = () => {
       regionId: "",
     },
   ]);
-  const [canEdit, setCanEdit] = useState<Boolean>(false);
+    
   const [loading, setLoading] = useState<boolean>(false);
+  const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
 
-  const getDocuments = async () => {
-    setLoading(true);
-    const response = await getRegionDocuments(id);
-    setCanEdit(response.data.canEdit);
-    setLoading(false);
-  };
+  const getUserAccesses = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    await getUserAccess(user.nameid).then(
+      response => {
+        setUserAccesses(response.data);
+      }
+    );
+  }
 
   const setRegionDocs = async () => {
     try {
@@ -58,8 +64,8 @@ const RegionBoardDocuments = () => {
   };
 
   useEffect(() => {
+    getUserAccesses();
     setRegionDocs();
-    getDocuments();
   }, []);
 
   return (
@@ -80,18 +86,34 @@ const RegionBoardDocuments = () => {
                     : "Немає дати"
                 }
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={[
-                  <DownloadOutlined
-                    key="download"
-                    onClick={() =>
-                      downloadDocument(document.blobName, document.fileName)
-                    }
-                  />,
-                  <CloseOutlined
-                    key="close"
-                    onClick={() => removeDocumentById(document.id)}
-                  />,
-                ]}
+                actions={
+                    userAccesses["ManipulateDocument"] ? [
+                        <DownloadOutlined
+                          key="download"
+                          onClick={() =>
+                            downloadDocument(
+                              document.blobName,
+                              document.fileName
+                            )
+                          }
+                        />,
+                        <CloseOutlined
+                          key="close"
+                          onClick={() => removeDocumentById(document.id)}
+                        />,
+                      ]
+                    : [
+                        <DownloadOutlined
+                          key="download"
+                          onClick={() =>
+                            downloadDocument(
+                              document.blobName,
+                              document.fileName
+                            )
+                          }
+                        />,
+                      ]
+                }
               >
                 <Avatar size={86} icon={<FileTextOutlined />} />
                 <Card.Meta className="detailsMeta" title={document.fileName} />
