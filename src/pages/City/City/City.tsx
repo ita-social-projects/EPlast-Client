@@ -225,8 +225,18 @@ const City = () => {
     }
   };
 
-  const handleOk = () => {
+  const handleOk = async() => {
     setvisible(false);
+    const response = await getCityById(+id);
+    setAdminsCount(response.data.administrationCount);
+    const admins = [
+      ...response.data.administration,
+      response.data.head,
+      response.data.headDeputy,
+    ].filter((a) => a !== null);
+    setAdmins(admins);
+    setPhotosLoading(true);
+    setPhotos([...admins],response.data.logo);
   };
 
   useEffect(() => {

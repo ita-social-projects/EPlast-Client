@@ -128,7 +128,7 @@ const CityMembers = () => {
               key={member.id}
               className="detailsCard"
               actions={
-                canEdit && (member.user.id !== head.user.id || !activeUserRoles.includes("Заступник Голови Станиці"))
+                canEdit && (member?.user.id !== head?.user.id || !activeUserRoles.includes("Заступник Голови Станиці"))
                   ? [
                       <SettingOutlined onClick={() => showModal(member)} />,
                       <CloseOutlined onClick={() => removeMember(member)} />,

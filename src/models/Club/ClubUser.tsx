@@ -21,6 +21,6 @@ export default class ClubUser {
     this.phoneNumber = "";
     this.userRole = '';
     this.cityName = '';
-    this.plastDegree={id:-1, name:""}
+    this.plastDegree={id:-1, name:"None"}
   }
 }
