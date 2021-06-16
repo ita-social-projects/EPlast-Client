@@ -41,6 +41,7 @@ import{
 import "../EditUserPage/EditUserPage.less"
 import { UpuDegree } from "../Interface/Interface";
 import jwt_decode from "jwt-decode";
+import { Roles } from "../../../models/Roles/Roles";
 
 export default function () {
   const { userId } = useParams();
@@ -74,7 +75,7 @@ export default function () {
     const user: any = jwt(token);
     let decodedJwt = jwt_decode(token) as any;
     let id=user.nameid;
-    if(user.nameid!=userId || (decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]).includes("Admin"))
+    if(user.nameid!=userId || (decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]).includes(Roles.Admin))
       id=userId
     await userApi
       .edit(id)

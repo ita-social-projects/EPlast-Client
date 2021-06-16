@@ -14,6 +14,7 @@ import jwt_decode from 'jwt-decode';
 import jwt from "jwt-decode";
 import { successfulCancelAction, successfulConfirmedAction, successfulDeleteAction } from '../../../../components/Notifications/Messages';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Roles } from '../../../../models/Roles/Roles';
 
 
 const { Title, Text } = Typography;
@@ -57,8 +58,8 @@ const AnnualReportInformation = () => {
             let roles = decodedJwt[
                 "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
             ] as string[];
-            setIsAdmin(roles.includes("Admin"));
-            setIsCityAdmin(roles.includes("Голова Станиці"));
+            setIsAdmin(roles.includes(Roles.Admin));
+            setIsCityAdmin(roles.includes(Roles.CityHead));
             const user: any = jwt(token);
             var cityId = await userApi.getById(user.nameid).then((response) => {
                 return response.data?.user.cityId

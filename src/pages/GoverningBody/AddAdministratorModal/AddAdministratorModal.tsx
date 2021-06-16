@@ -11,6 +11,7 @@ import {
 import notificationLogic from "../../../components/Notifications/Notification";
 import moment from "moment";
 import{emptyInput} from "../../../components/Notifications/Messages"
+import { Roles } from "../../../models/Roles/Roles";
 
 const confirm = Modal.confirm;
 
@@ -106,7 +107,7 @@ const AddAdministratorModal = (props: Props) => {
     };
 
     try {
-      if (values.adminType === "Голова Керівного Органу" && head !== null) {
+      if (values.adminType === Roles.GoverningBodyHead && head !== null) {
         if (head?.userId !== admin.userId) {
           showConfirm(admin);
         } else {
@@ -160,7 +161,7 @@ const AddAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: "Голова Керівного Органу" },
+              { value: Roles.GoverningBodyHead },
               { value: "Голова СПС" },
               { value: "Писар" },
               { value: "Скарбник" },

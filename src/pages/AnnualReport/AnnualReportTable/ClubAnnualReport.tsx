@@ -16,6 +16,7 @@ import { successfulConfirmedAction, successfulDeleteAction, successfulUpdateActi
 import notificationLogic from '../../../components/Notifications/Notification';
 import { useHistory } from "react-router-dom";
 import { ExclamationCircleOutlined, StarFilled, StarOutlined } from "@ant-design/icons";
+import { Roles } from "../../../models/Roles/Roles";
 
 interface props {
   columns: any;
@@ -80,9 +81,9 @@ export const ClubAnnualReportTable = ({ columns, searchedData, sortKey }: props)
     let roles = decodedJwt[
       "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
     ] as string[];
-    setIsAdmin(roles.includes("Admin"));
-    setIsClubAdmin(roles.includes("Голова Куреня"));
-    setCanView(roles.includes("Голова Станиці") || roles.includes("Голова Округи") || roles.includes("Admin"));
+    setIsAdmin(roles.includes(Roles.Admin));
+    setIsClubAdmin(roles.includes(Roles.KurinHead));
+    setCanView(roles.includes(Roles.CityHead) || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.Admin));
   };
 
   const hideDropdowns = () => {

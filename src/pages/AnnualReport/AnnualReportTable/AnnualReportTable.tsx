@@ -24,6 +24,7 @@ import Search from "antd/lib/input/Search";
 import {CaretUpOutlined, CaretDownOutlined} from "@ant-design/icons";
 import RegionSelectModal from "./RegionSelectModal/RegionSelectModal";
 import { useHistory, useParams } from "react-router-dom";
+import { Roles } from "../../../models/Roles/Roles";
 
 
 const { Title } = Typography;
@@ -89,9 +90,9 @@ const AnnualReportTable = () => {
     let roles = decodedJwt[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
         ] as string[];
-    setCityManager(roles.includes("Admin") || roles.includes("Голова Станиці"));
-    setClubManager(roles.includes("Admin") || roles.includes("Голова Куреня"));
-    setRegionManager(roles.includes("Admin") || roles.includes("Голова Округи") || roles.includes("Голова Округу"));
+    setCityManager(roles.includes("Admin") || roles.includes(Roles.CityHead));
+    setClubManager(roles.includes("Admin") || roles.includes(Roles.KurinHead));
+    setRegionManager(roles.includes("Admin") || roles.includes(Roles.OkrugaHead) || roles.includes("Голова Округу"));
   };
 
   const handleSearch = (event: any) => {

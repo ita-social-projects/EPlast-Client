@@ -23,12 +23,13 @@ import {
     tryAgain
 } from "../../../components/Notifications/Messages"
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
+import { Roles } from "../../../models/Roles/Roles";
 
 const userAdminTypeRoles = [
-    "Admin",
-    "Голова Куреня",
-    "Голова Округи",
-    "Голова Станиці",
+    Roles.Admin,
+    Roles.KurinHead,
+    Roles.OkrugaHead,
+    Roles.CityHead,
 ];
 const userGenders = ["Чоловік", "Жінка", "Інша"];
 
@@ -62,7 +63,7 @@ export const Blanks = () => {
         const currentUserId = (jwt(token) as { nameid: "" }).nameid;
         let decodedJwt = jwt_decode(token) as any;
         setRoles(decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]);
-        setCanEdit(roles.includes("Admin"));
+        setCanEdit(roles.includes(Roles.Admin));
         await userApi.getById(userId).then(response => {
             setData(response.data);
         }).catch(() => { notificationLogic('error', tryAgain) })
@@ -139,10 +140,10 @@ export const Blanks = () => {
 
     const IsUserHasAccessToManageBlanks = (userRoles: Array<string>): boolean => {
 
-        return (userRoles?.includes("Голова Куреня") && currentUser?.user?.clubId == data?.user?.clubId) ||
-            (userRoles?.includes("Голова Станиці") && currentUser?.user?.cityId == data?.user?.cityId) ||
-            (userRoles?.includes("Голова Округи") && currentUser?.user?.regionId == data?.user?.regionId) ||
-            userRoles?.includes("Admin");
+        return (userRoles?.includes(Roles.KurinHead) && currentUser?.user?.clubId == data?.user?.clubId) ||
+            (userRoles?.includes(Roles.CityHead) && currentUser?.user?.cityId == data?.user?.cityId) ||
+            (userRoles?.includes(Roles.OkrugaHead) && currentUser?.user?.regionId == data?.user?.regionId) ||
+            userRoles?.includes(Roles.Admin);
     };
 
     return (!loading ? (
@@ -209,7 +210,7 @@ export const Blanks = () => {
                                                 onClick={() => openDocument(document.blobName, document.fileName)} />
                                         </Tooltip>
                                         : null}
-                                    {(userToken.nameid === userId || roles.includes("Admin")) &&
+                                    {(userToken.nameid === userId || roles.includes(Roles.Admin)) &&
                                         <Tooltip title="Видалити">
                                             <Popconfirm
                                                 title="Видалити цей документ?"
@@ -236,7 +237,7 @@ export const Blanks = () => {
                                         {userToken.nameid !== userId &&
                                             <h2>{data?.user.firstName} ще не {getAppropriateToGenderVerb()} Життєпис</h2>
                                         }
-                                        {(userToken.nameid === userId || roles.includes("Admin")) &&
+                                        {(userToken.nameid === userId || roles.includes(Roles.Admin)) &&
                                             <div>
                                                 <Button type="primary"
                                                     className={classes.addIcon}

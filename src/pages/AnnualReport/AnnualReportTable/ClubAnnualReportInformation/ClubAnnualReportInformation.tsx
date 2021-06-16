@@ -17,6 +17,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import AuthStore from '../../../../stores/AuthStore';
 import jwt from "jwt-decode";
 import jwt_decode from 'jwt-decode';
+import { Roles } from '../../../../models/Roles/Roles';
 
 
 const { Title, Text } = Typography;
@@ -79,8 +80,8 @@ const ClubAnnualReportInformation = () => {
             let roles = decodedJwt[
                 "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
             ] as string[];
-            setIsAdmin(roles.includes("Admin"));
-            setIsClubAdmin(roles.includes("Голова Куреня"));
+            setIsAdmin(roles.includes(Roles.Admin));
+            setIsClubAdmin(roles.includes(Roles.KurinHead));
             const user: any = jwt(token);
             setUserId(user.nameid);
         } catch (error) {

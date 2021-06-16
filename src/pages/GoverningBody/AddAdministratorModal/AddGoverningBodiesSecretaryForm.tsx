@@ -17,6 +17,7 @@ import {
 } from "../../../components/Notifications/Messages"
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
+import { Roles } from "../../../models/Roles/Roles";
 
 type AddGoverningBodiesSecretaryForm = {
   onAdd: () => void;
@@ -68,7 +69,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     admin.user.imagePath =  (
         await userApi.getImage(admin.user.imagePath)
       ).data;
-    if (admin.adminType.adminTypeName == "Голова Керівного Органу") {
+    if (admin.adminType.adminTypeName == Roles.GoverningBodyHead) {
       setGoverningBodyHead(admin);        
     }
     setAdmins((old: GoverningBodyAdmin[]) => [...old, admin]);
@@ -142,7 +143,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     onAdd();
     if (newAdmin.id === 0) {
       try {
-        if (values.AdminType === "Голова Керівного Органу" && head !== null) {
+        if (values.AdminType === Roles.GoverningBodyHead && head !== null) {
           if (head?.userId !== newAdmin.userId) {
             showConfirm(newAdmin);
           } else if (head?.userId === newAdmin.userId) {
@@ -223,7 +224,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Керівного Органу" },
+            { value: Roles.GoverningBodyHead },
             { value: "Голова КПР" },
             { value: "Секретар КПР" },
             { value: "Член КПР з питань організаційного розвитку" },

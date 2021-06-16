@@ -18,6 +18,7 @@ import ChangeUserRegionModal from "./ChangeUserRegionModal";
 import ChangeUserClubModal from "./ChangeUserClubModal";
 import AuthorizeApi from "../../api/authorizeApi";
 import UserApi from "../../api/UserApi";
+import { Roles } from "../../models/Roles/Roles";
 
 let authService = new AuthorizeApi();
 
@@ -69,34 +70,34 @@ const DropDown = (props: Props) => {
 
     let roles=UserApi.getActiveUserRoles();
 
-    setCanChangeCityAdministration(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
-    || ((roles.includes("Голова Округи") || roles.includes("Заступник Голови Округи")) && currentUser?.regionId==user?.regionId)
-    || ((roles.includes("Голова Станиці") || roles.includes("Заступник Голови Станиці"))&& currentUser?.cityId==user?.cityId));
+    setCanChangeCityAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
+    || ((roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId)
+    || ((roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy))&& currentUser?.cityId==user?.cityId));
 
-    setCanChangeClubAdministration(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
-    || ((roles.includes("Голова Куреня") || roles.includes("Заступник Голови Куреня"))&& currentUser?.clubId==user?.clubId));
+    setCanChangeClubAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
+    || ((roles.includes(Roles.KurinHead) || roles.includes(Roles.KurinHeadDeputy))&& currentUser?.clubId==user?.clubId));
 
-    setCanChangeRegionAdministration(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
-    || ((roles.includes("Голова Округи") || roles.includes("Заступник Голови Округи")) && currentUser?.regionId==user?.regionId));
+    setCanChangeRegionAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
+    || ((roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId));
 
-    setCanChangeGoverningBodyAdministration(roles.includes("Admin") || roles.includes("Голова Керівного Органу"));
+    setCanChangeGoverningBodyAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead));
 
-    setCanChangeUserAccess(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
-    || ((roles.includes("Голова Округи") || roles.includes("Заступник Голови Округи")) && currentUser?.regionId==user?.regionId)
-    || ((roles.includes("Голова Станиці") || roles.includes("Заступник Голови Станиці"))&& currentUser?.cityId==user?.cityId));
+    setCanChangeUserAccess(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
+    || ((roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId)
+    || ((roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy))&& currentUser?.cityId==user?.cityId));
 
-    setCanAddDegree(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
-    || ((roles.includes("Голова Округи") || roles.includes("Заступник Голови Округи")) && currentUser?.regionId==user?.regionId)
-    || ((roles.includes("Голова Станиці") || roles.includes("Заступник Голови Станиці"))&& currentUser?.cityId==user?.cityId)
-    || ((roles.includes("Голова Куреня") || roles.includes("Заступник Голови Куреня"))&& currentUser?.clubId==user?.clubId));
+    setCanAddDegree(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
+    || ((roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId)
+    || ((roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy))&& currentUser?.cityId==user?.cityId)
+    || ((roles.includes(Roles.KurinHead) || roles.includes(Roles.KurinHeadDeputy))&& currentUser?.clubId==user?.clubId));
 
-    setCanArchivate(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
-    || ((roles.includes("Голова Округи") || roles.includes("Заступник Голови Округи")) && currentUser?.regionId==user?.regionId)
-    || ((roles.includes("Голова Станиці") || roles.includes("Заступник Голови Станиці"))&& currentUser?.cityId==user?.cityId)
-    || ((roles.includes("Голова Куреня") || roles.includes("Заступник Голови Куреня"))&& currentUser?.clubId==user?.clubId));
+    setCanArchivate(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
+    || ((roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId)
+    || ((roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy))&& currentUser?.cityId==user?.cityId)
+    || ((roles.includes(Roles.KurinHead) || roles.includes(Roles.KurinHeadDeputy))&& currentUser?.clubId==user?.clubId));
 
-    setsuperAdmin(roles.includes("Admin"));
-    setGoverningBodyHead(roles.includes("Голова Керівного Органу"));
+    setsuperAdmin(roles.includes(Roles.Admin));
+    setGoverningBodyHead(roles.includes(Roles.GoverningBodyHead));
   };
 
   useEffect(() => {

@@ -16,6 +16,7 @@ import Spinner from "../Spinner/Spinner";
 import CityAdmin from "../../models/City/CityAdmin";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
+import { Roles } from "../../models/Roles/Roles";
 moment.locale("uk-ua");
 
 const RegionAdministration = () => {
@@ -117,7 +118,7 @@ const RegionAdministration = () => {
                 title={`${member.adminType.adminTypeName}`}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                 actions={
-                  (!activeUserRoles.includes("Заступник Голови Округи") || member.adminType.adminTypeName !== "Голова Округи")
+                  (!activeUserRoles.includes(Roles.OkrugaHeadDeputy) || member.adminType.adminTypeName !== Roles.OkrugaHead)
                   ? [
                   <SettingOutlined onClick={() => showModal(member)} />,
                   <CloseOutlined onClick={() => removeAdministrator(member)} />,

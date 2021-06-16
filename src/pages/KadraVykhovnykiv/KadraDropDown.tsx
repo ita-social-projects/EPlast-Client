@@ -15,6 +15,7 @@ import ClickAwayListener from "react-click-away-listener";
 import jwt from "jwt-decode";
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import AuthStore from "../../stores/AuthStore";
+import { Roles } from "../../models/Roles/Roles";
 
 interface Props {
   record: any;
@@ -48,7 +49,7 @@ const DropDown = (props: Props) => {
     setShowDropdown,
     onEdit,
   } = props;
-  const [canEdit] = useState(roles.includes("Admin"));
+  const [canEdit] = useState(roles.includes(Roles.Admin));
   const [visibleEdit, setvisibleEdit] = useState<boolean>(false);
 
   const [selectUserId, SetselectUserId] = useState<string>();

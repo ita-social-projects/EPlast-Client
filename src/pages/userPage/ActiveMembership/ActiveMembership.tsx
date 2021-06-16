@@ -19,6 +19,7 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 import notificationLogic from "../../../components/Notifications/Notification";
 import jwt_decode from "jwt-decode";
+import { Roles } from "../../../models/Roles/Roles";
 const { Title } = Typography;
 
 const ActiveMembership = () => {
@@ -47,10 +48,10 @@ const ActiveMembership = () => {
   );
 
   const userAdminTypeRoles = [
-    "Admin",
-    "Голова Куреня",
-    "Голова Округи",
-    "Голова Станиці",
+    Roles.Admin,
+    Roles.KurinHead,
+    Roles.OkrugaHead,
+    Roles.CityHead,
   ];
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
@@ -122,10 +123,10 @@ const ActiveMembership = () => {
 
 
   const IsUserHasAccessToManageDegree = (userRoles: Array<string>): boolean => {
-    return (userRoles?.includes("Голова Куреня") && currentUser.clubId==user.clubId) ||
-        (userRoles?.includes("Голова Станиці") && currentUser.cityId==user.cityId) ||
-        (userRoles?.includes("Голова Округи") && currentUser.regionId==user.regionId) ||
-        userRoles?.includes("Admin");
+    return (userRoles?.includes(Roles.KurinHead) && currentUser.clubId==user.clubId) ||
+        (userRoles?.includes(Roles.CityHead) && currentUser.cityId==user.cityId) ||
+        (userRoles?.includes(Roles.OkrugaHead) && currentUser.regionId==user.regionId) ||
+        userRoles?.includes(Roles.Admin);
   };
 
   const IsUserHasAnyAdminTypeRoles = (userRoles: Array<string>): boolean => {
@@ -203,7 +204,7 @@ const ActiveMembership = () => {
           cityId={user.cityId}
           clubId={user.clubId}
         />
-        {IsUserHasAccessToManageDegree(roles?.filter(role=>role!="Голова Куреня"))
+        {IsUserHasAccessToManageDegree(roles?.filter(role=>role!=Roles.KurinHead))
         && (
           <div>
             <Button
@@ -313,7 +314,7 @@ const ActiveMembership = () => {
                       </div>
                     )}
                     {IsUserHasAccessToManageDegree(roles?.map((role:any)=>{
-                      if(!(role==="Голова Куреня" || role==="Голова Станиці"))
+                      if(!(role===Roles.KurinHead || role===Roles.CityHead))
                         return role
                     })) && (
                       <div className={classes.buttons}>
@@ -368,7 +369,7 @@ const ActiveMembership = () => {
       <ModalAddPlastDegree
         handleAddDegree={handleAddDegree}
         userId={userId}
-        isCityAdmin={!IsUserHasAnyAdminTypeRoles(roles?.map((role:any)=>{if(role!="Голова Станиці") return role}))}
+        isCityAdmin={!IsUserHasAnyAdminTypeRoles(roles?.map((role:any)=>{if(role!=Roles.CityHead) return role}))}
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
       />

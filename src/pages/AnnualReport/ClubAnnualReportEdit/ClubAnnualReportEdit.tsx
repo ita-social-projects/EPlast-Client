@@ -20,6 +20,7 @@ import jwt from "jwt-decode";
 import ClubAdmin from '../../../models/Club/ClubAdmin';
 import ClubMember from '../../../models/Club/ClubMember';
 import ClubAnnualReportForm from '../ClubAnnualReportForm/ClubAnnualReportForm';
+import { Roles } from '../../../models/Roles/Roles';
 
 
 const { Title } = Typography;
@@ -70,8 +71,8 @@ const ClubAnnualReportEdit = () => {
             setFollowers(club.data.followers);
 
             const user: any = jwt(token);
-            if (!((roles.includes("Admin") ||
-                (roles.includes("Голова Куреня") && club.data.head?.userId == user.nameid))
+            if (!((roles.includes(Roles.Admin) ||
+                (roles.includes(Roles.KurinHead) && club.data.head?.userId == user.nameid))
                 && response.data.annualreport.status == 0)) { showError('Немає доступу до редагування звіту.'); }
             else {
                 setClubAnnualReport(response.data.annualreport);

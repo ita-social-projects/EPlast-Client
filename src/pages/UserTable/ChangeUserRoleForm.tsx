@@ -15,6 +15,7 @@ import NotificationBoxApi from "../../api/NotificationBoxApi";
 import activeMembershipApi from "../../api/activeMembershipApi";
 import moment from "moment";
 import{ emptyInput } from "../../components/Notifications/Messages";
+import { Roles } from "../../models/Roles/Roles";
 
 interface Props {
   record: string;
@@ -56,9 +57,9 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
   const handleFinish = async (value: any) => {
     await adminApi.putCurrentRole(userId, value.userRole);
 
-    if (value.userRole === "Колишній член Пласту") {
+    if (value.userRole === Roles.FormerPlastMember) {
       await addEndDate(false);
-    } else if (roles.includes("Колишній член Пласту")) {
+    } else if (roles.includes(Roles.FormerPlastMember)) {
       await addEndDate(true);
     }
 
@@ -73,7 +74,7 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
   };
 
   const handleDisabled = () => {
-    if(user.userRoles === "Колишній член Пласту") {
+    if(user.userRoles === Roles.FormerPlastMember) {
       return true
     }
     return false
@@ -93,13 +94,13 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
           ]}
         >
       <Select onChange={handleChange}>
-        <Option value="Прихильник" disabled={handleDisabled()}>Прихильник</Option>
-        <Option value="Зацікавлений" disabled={handleDisabled()}>Зацікавлений</Option>
-        <Option value="Дійсний член організації" disabled={handleDisabled()}>
+        <Option value={Roles.Supporter} disabled={handleDisabled()}>Прихильник</Option>
+        <Option value={Roles.Interested} disabled={handleDisabled()}>Зацікавлений</Option>
+        <Option value={Roles.PlastMember} disabled={handleDisabled()}>
           Дійсний член організації
         </Option>
-        <Option value="Колишній член Пласту" disabled={handleDisabled()}>Колишній член Пласту</Option>
-        <Option value="Зареєстрований користувач" disabled={disabled}>Зареєстрований користувач</Option>
+        <Option value={Roles.FormerPlastMember} disabled={handleDisabled()}>Колишній член Пласту</Option>
+        <Option value={Roles.RegisteredUser} disabled={disabled}>Зареєстрований користувач</Option>
         
       </Select>
         </Form.Item>
