@@ -24,6 +24,7 @@ const ClubAdministration = () => {
     const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [reload, setReload] = useState<boolean>(false);
     const [clubName, setClubName] = useState<string>("");
     const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   
@@ -76,11 +77,12 @@ const ClubAdministration = () => {
       administration[index] = newAdmin;
       await createNotification(newAdmin.userId, `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`);
       setAdministration(administration);
+      setReload(!reload);
     };
 
     useEffect(() => {
         getAdministration();
-    }, []);
+    }, [reload]);
 
     return (
       <Layout.Content>

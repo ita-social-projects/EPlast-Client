@@ -67,6 +67,7 @@ import RegionAnnualReportInformation from "./pages/AnnualReport/AnnualReportTabl
 import AnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/AnnualReportInformation/AnnualReportInformation";
 import ClubAnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/ClubAnnualReportInformation/ClubAnnualReportInformation";
 import GoverningBodyAdministration from "./pages/GoverningBody/GoverningBody/GoverningBodyAdministration";
+import GoverningBodyDocuments from "./pages/GoverningBody/GoverningBody/GoverningBodyDocuments";
 
 const App: FC = () => (
   <div className="App">
@@ -327,6 +328,12 @@ const App: FC = () => (
             exact
             path="/regionsBoard/documents/:id"
             component={RegionBoardDocuments}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/governingBodies/documents/:id"
+            component={GoverningBodyDocuments}
           />
           <RouteWithLayout
             layout={PrivateLayout}
