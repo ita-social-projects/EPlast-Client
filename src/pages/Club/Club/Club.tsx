@@ -183,9 +183,18 @@ const Club = () => {
       setLoading(false);
     }
   };
-  const handleOk = () => {
+  
+  const handleOk = async() => {
+    const response =  await getClubById(+id);
+    const admins = [...response.data.administration, response.data.head, response.data.headDeputy]
+    .filter(a => a !== null);
+    setAdmins(admins);
+    setPhotosLoading(true);
+    setAdminsCount(response.data.administrationCount);
+    setPhotos([...admins,], response.data.logo);
     setvisible(false);
   };
+
   useEffect(() => {
     getClub();
   }, []);
