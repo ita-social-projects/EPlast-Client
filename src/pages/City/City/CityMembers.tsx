@@ -39,6 +39,7 @@ const CityMembers = () => {
     setMembers(responseMembers.data.members);
     setCanEdit(responseMembers.data.canEdit);
     setCityName(responseMembers.data.name);
+    setActiveUserRoles(userApi.getActiveUserRoles);
 
     const responseAdmins = await getAllAdmins(id);
     setAdmins(responseAdmins.data.administration);
@@ -127,7 +128,7 @@ const CityMembers = () => {
               key={member.id}
               className="detailsCard"
               actions={
-                canEdit && (member.user.id !== head.user.id || !activeUserRoles.includes("Заступник Голови Станиці"))
+                canEdit && (member?.user.id !== head?.user.id || !activeUserRoles.includes("Заступник Голови Станиці"))
                   ? [
                       <SettingOutlined onClick={() => showModal(member)} />,
                       <CloseOutlined onClick={() => removeMember(member)} />,
@@ -136,7 +137,10 @@ const CityMembers = () => {
               }
             >
               <div
-                onClick={() => history.push(`/userpage/main/${member.userId}`)}
+                onClick={() => canEdit || (activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")) 
+                  ? history.push(`/userpage/main/${member.userId}`) 
+                  : undefined
+                }
                 className="cityMember"
               >
                 {photosLoading ? (

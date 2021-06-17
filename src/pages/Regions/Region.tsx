@@ -28,6 +28,9 @@ import {
   getHead,
   getHeadDeputy,
 } from "../../api/regionsApi";
+import {
+  cityNameOfApprovedMember,
+} from "../../api/citiesApi";
 import "./Region.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import Title from "antd/lib/typography/Title";
@@ -108,6 +111,7 @@ const Region = () => {
       endDate: "",
     },
   ]);
+
   const [members, setMembers] = useState<any[]>([
     {
       id: "",
@@ -117,7 +121,7 @@ const Region = () => {
   ]);
 
   const [memberRedirectVisibility, setMemberRedirectVisibility] = useState<
-    boolean
+boolean
   >(false);
 
   const [canCreate, setCanCreate] = useState(false);
@@ -126,7 +130,10 @@ const Region = () => {
   const [membersCount, setMembersCount] = useState<number>();
   const [adminsCount, setAdminsCount] = useState<number>();
   const [visible, setvisible] = useState<boolean>(false);
-
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
+  const [isActiveUserFromRegion, setIsActiveUserFromRegion] = useState<boolean>(false);
+  
   const [head, setHead] = useState<any>({
     user: {
       firstName: "",
@@ -201,10 +208,12 @@ const Region = () => {
     try {
       const response = await getRegionById(id);
       const response1 = await getRegionAdministration(id);
+      const responce2 = await cityNameOfApprovedMember(userApi.getActiveUserId());
 
       const responseHead = await getHead(id);
       const responseHeadDeputy = await getHeadDeputy(id);
-
+      
+      setActiveUserRoles(userApi.getActiveUserRoles());
       setHead(responseHead.data);
       setHeadDeputy(responseHeadDeputy.data);
       setMembersCount(response.data.cities.length);
@@ -219,6 +228,8 @@ const Region = () => {
 
       setRegion(response.data);
       setCanEdit(response.data.canEdit);
+      setIsFromRegion(response.data.cities, responce2.data);
+      setIsRegionAdmin(response1.data, userApi.getActiveUserId());
 
       if (response.data.logo === null) {
         setPhotoStatus(false);
@@ -228,10 +239,34 @@ const Region = () => {
     }
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
     setvisible(false);
     setMemberRedirectVisibility(false);
+    const response =  await getRegionAdministration(id);
+    setSixAdmins(response.data, 6);
+    setAdminsCount(response.data.length);
+    setPhotosLoading(true);
+    setPhotos([], [...response.data]);
+
   };
+
+  const setIsFromRegion = (members: any[], city: string) => {
+    for(let i = 0; i < members.length; i++){
+      if(members[i].name == city){
+        setIsActiveUserFromRegion(true);
+        return;
+      }
+    }
+  }
+
+  const setIsRegionAdmin = (admins: any[], userId: string) => {
+    for(let i = 0; i < admins.length; i++){
+      if(admins[i].userId == userId){
+        setIsActiveUserRegionAdmin(true);
+        return;
+      }
+    }
+  }
 
   const setSixMembers = (member: any[], amount: number) => {
     if (member.length > 6) {
@@ -428,7 +463,8 @@ const Region = () => {
                         Річні звіти
                 </Button>
                     </Col>
-                    <Col xs={24} sm={4} style={{ display: canCreate || canEdit ? "block" : "none" }}>
+                    <Col xs={24} sm={4} style={{ display: canEdit && ( isActiveUserRegionAdmin
+                      || activeUserRoles.includes("Admin")) ? "block" : "none" }}>
                       <Row
                         className="cityIcons"
                         justify={canCreate ? "center" : "start"}
@@ -443,15 +479,19 @@ const Region = () => {
                             />
                           </Tooltip>
                         </Col>
-
-                        <Col offset={1}>
-                          <Tooltip title="Видалити округу">
-                            <DeleteOutlined
-                              className="cityInfoIconDelete"
-                              onClick={() => seeDeleteModal()}
-                            />
-                          </Tooltip>
-                        </Col>
+                        
+                        {
+                          activeUserRoles.includes("Admin") ? 
+                            <Col offset={1}>
+                              <Tooltip title="Видалити округу">
+                                <DeleteOutlined
+                                  className="cityInfoIconDelete"
+                                  onClick={() => seeDeleteModal()}
+                                />
+                              </Tooltip>
+                            </Col>
+                          : null
+                        }
                       </Row>
                     </Col>
                   </>
@@ -493,7 +533,9 @@ const Region = () => {
                     <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                       <div
                         onClick={() =>
-                          history.push(`/userpage/main/${admin.userId}`)
+                          !activeUserRoles.includes("Зареєстрований користувач")
+                          ? history.push(`/userpage/main/${admin.userId}`)
+                          : undefined
                         }
                       >
                         {photosLoading ? (
@@ -511,13 +553,14 @@ const Region = () => {
                   )}
               </Row>
               <div className="cityMoreButton">
-                {canEdit?(
-                <PlusSquareFilled
-                  type="primary"
-                  className="addReportIcon"
-                  onClick={() => setvisible(true)}
-                />
-                ):null}
+                {canEdit && (activeUserRoles.includes("Admin") || isActiveUserRegionAdmin) 
+                ?(
+                  <PlusSquareFilled
+                    type="primary"
+                    className="addReportIcon"
+                    onClick={() => setvisible(true)}
+                  />
+                ) : null}
                 <Button
                   type="primary"
                   className="cityInfoButton"
@@ -605,14 +648,20 @@ const Region = () => {
                   )}
               </Row>
               <div className="cityMoreButton">
-                <Button
-                  type="primary"
-                  className="cityInfoButton"
-                  onClick={() => history.push(`/regions/documents/${region.id}`)}
-                >
-                  Більше
-              </Button>
-              {canEdit?(
+                {
+                  canEdit || activeUserRoles.includes("Голова Куреня") || activeUserRoles.includes("Голова Станиці")
+                  || (!activeUserRoles.includes("Зареєстрований користувач") && isActiveUserFromRegion)
+                  ? <Button
+                      type="primary"
+                      className="cityInfoButton"
+                      onClick={() => history.push(`/regions/documents/${region.id}`)}
+                    > 
+                      Більше
+                    </Button>
+                  : null
+                }
+              {activeUserRoles.includes("Admin") || (activeUserRoles.includes("Голова Округи") && isActiveUserRegionAdmin)
+              ?(
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
@@ -640,8 +689,10 @@ const Region = () => {
           footer={null}
         >
           <AddNewSecretaryForm 
-            onAdd={handleOk}
-            visibleModal={visible}>
+              onAdd={handleOk}
+              regionID={region.id}
+              visibleModal={visible}
+          >
           </AddNewSecretaryForm>
         </Modal>
 
