@@ -130,7 +130,7 @@ const DecisionTable = () => {
             setShowDropdown(false);
           }}
       >
-        <h1 className={classes.titleTable}>Рішення керівних органів</h1>
+        <h1 className={classes.titleTable}>Рішення Керівних Органів</h1>
         <>
           <div className={classes.searchContainer}>
             {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
