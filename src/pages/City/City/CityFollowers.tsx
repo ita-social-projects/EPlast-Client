@@ -19,6 +19,7 @@ const CityFollowers = () => {
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [cityName, setCityName] = useState<string>("");
+    const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
     const getFollowers = async () => {
       setLoading(true);
@@ -29,6 +30,7 @@ const CityFollowers = () => {
       setFollowers(response.data.followers);
       setCanEdit(response.data.canEdit);
       setCityName(response.data.name);
+      setActiveUserRoles(userApi.getActiveUserRoles);
       setLoading(false);
     };
 
@@ -92,8 +94,9 @@ const CityFollowers = () => {
                   }
                 >
                   <div
-                    onClick={() =>
-                      history.push(`/userpage/main/${follower.userId}`)
+                    onClick={() => canEdit || activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")
+                      ? history.push(`/userpage/main/${follower.userId}`)
+                      : undefined
                     }
                     className="cityMember"
                   >
