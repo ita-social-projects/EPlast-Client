@@ -17,19 +17,11 @@ import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import ListOfAchievementsModal from "./UserAchievements/ListOfAchievementsModal";
 import AddExtractFromUPUModal from "./UserExtractFromUPU/AddExtractFromUPUModal";
-import jwt_decode from "jwt-decode";
 import {
     successfulDeleteAction,
     tryAgain
 } from "../../../components/Notifications/Messages"
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
-
-const userAdminTypeRoles = [
-    "Admin",
-    "Голова Куреня",
-    "Голова Округи",
-    "Голова Станиці",
-];
 const userGenders = ["Чоловік", "Жінка", "Інша"];
 
 export const Blanks = () => {
@@ -60,8 +52,7 @@ export const Blanks = () => {
         const token = AuthStore.getToken() as string;
         setUserToken(jwt(token));
         const currentUserId = (jwt(token) as { nameid: "" }).nameid;
-        let decodedJwt = jwt_decode(token) as any;
-        setRoles(decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]);
+        setRoles(userApi.getActiveUserRoles());
         setCanEdit(roles.includes("Admin"));
         await userApi.getById(userId).then(response => {
             setData(response.data);
@@ -157,8 +148,10 @@ export const Blanks = () => {
                         lastName={data?.user.lastName}
                         isUserPlastun={true}
                         pseudo={data?.user.pseudo}
+                        region={data?.user.region}
                         city={data?.user.city}
                         club={data?.user.club}
+                        regionId={data?.user.regionId}
                         cityId={data?.user.cityId}
                         clubId={data?.user.clubId} />
                 </div>

@@ -127,6 +127,7 @@ const ClubMembers = () => {
               key={member.id}
               className="detailsCard"
               actions={
+
                 canEdit && (member?.user?.id !== head?.user?.id || !activeUserRoles.includes("Заступник Голови Куреня"))
                   ? [
                       <SettingOutlined onClick={() => showModal(member)} />,
