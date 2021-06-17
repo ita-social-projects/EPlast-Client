@@ -198,8 +198,10 @@ const ActiveMembership = () => {
           lastName={user.lastName}
           isUserPlastun={true}
           pseudo={user.pseudo}
+          region={user.region}
           city={user.city}
           club={user.club}
+          regionId={user.regionId}
           cityId={user.cityId}
           clubId={user.clubId}
         />

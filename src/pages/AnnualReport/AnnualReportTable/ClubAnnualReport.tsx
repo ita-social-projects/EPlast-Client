@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Empty, Modal, Table, Tooltip } from 'antd';
-import AuthStore from "../../../stores/AuthStore";
-import jwt_decode from "jwt-decode";
 import {
   cancelClubAnnualReport,
   confirmClubAnnualReport,
@@ -16,6 +14,7 @@ import { successfulConfirmedAction, successfulDeleteAction, successfulUpdateActi
 import notificationLogic from '../../../components/Notifications/Notification';
 import { useHistory } from "react-router-dom";
 import { ExclamationCircleOutlined, StarFilled, StarOutlined } from "@ant-design/icons";
+import UserApi from "../../../api/UserApi";
 
 interface props {
   columns: any;
@@ -75,11 +74,7 @@ export const ClubAnnualReportTable = ({ columns, searchedData, sortKey }: props)
 
 
   const checkAccessToManage = () => {
-    let jwt = AuthStore.getToken() as string;
-    let decodedJwt = jwt_decode(jwt) as any;
-    let roles = decodedJwt[
-      "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-    ] as string[];
+    let roles = UserApi.getActiveUserRoles();
     setIsAdmin(roles.includes("Admin"));
     setIsClubAdmin(roles.includes("Голова Куреня"));
     setCanView(roles.includes("Голова Станиці") || roles.includes("Голова Округи") || roles.includes("Admin"));

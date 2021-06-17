@@ -35,12 +35,7 @@ const userGenders = ["Чоловік", "Жінка", "Інша"];
 
 
 const EventUser = () => {
-    let user: any;
-    let curToken = AuthStore.getToken() as string;
-    user = jwt(curToken);
-    let roles = user[
-        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-    ] as string[];
+    let roles = userApi.getActiveUserRoles();
 
     const history = useHistory();
     const [loading, setLoading] = useState(false);
@@ -149,10 +144,12 @@ const EventUser = () => {
                         lastName={currentUser.lastName}
                         isUserPlastun={true}
                         pseudo={currentUser.pseudo}
+                        region={currentUser.region}
                         city={currentUser.city}
                         club={currentUser.club}
                         cityId={currentUser.cityId}
                         clubId={currentUser.clubId}
+                        regionId={currentUser.regionId}
                     />
                 </div>
                 {userToken.nameid === userId && canCreate && (

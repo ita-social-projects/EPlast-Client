@@ -1,8 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import {Row, Col, Table, Tooltip, Modal, Card, List, Rate, notification} from 'antd';
+import React, {useState} from 'react';
+import {Row, Col, Tooltip, Modal, Card, List, Rate} from 'antd';
 import {
-    TeamOutlined,
-    CameraOutlined,
     IdcardOutlined,
     EditTwoTone,
     DeleteTwoTone,
@@ -13,7 +11,6 @@ import {
     UserDeleteOutlined,
     UserAddOutlined
 } from '@ant-design/icons';
-// eslint-disable-next-line import/no-cycle,import/no-duplicates
 import {EventDetails, EventAdmin} from "./EventInfo";
 import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirmForSingleEvent, showApproveConfirm} from "../../EventsModals";
 import EventAdminLogo from "../../../../assets/images/EventAdmin.png"
@@ -21,13 +18,10 @@ import './EventInfo.less';
 import eventsApi from "../../../../api/eventsApi";
 import { useHistory, useParams } from 'react-router-dom';
 import EventEditDrawer from '../EventEdit/EventEditDrawer';
-import AuthStore from '../../../../stores/AuthStore';
 import eventUserApi from '../../../../api/eventUserApi';
-import jwt from "jwt-decode";
 import CreatedEvents from '../../../../models/EventUser/CreatedEvents';
 import EventsUser from '../../../../models/EventUser/EventUser';
 import userApi from "../../../../api/UserApi";
-import jwt_decode from "jwt-decode";
 
 interface Props {
     event: EventDetails;
@@ -37,15 +31,6 @@ interface Props {
     subscribeOnEvent: () => void;
     unSubscribeOnEvent: () => void;
 }
-
-const GetRoles = () => {
-    let jwt = AuthStore.getToken() as string;
-    let decodedJwt = jwt_decode(jwt) as any;
-    return (decodedJwt[
-        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ]);
-};
-
 
 const AccessableRoles=["Admin", "Голова Куреня", "Голова Станиці", "Голова Округи", "Дійсний член організації", "Прихильник", "Зареєстрований користувач"];
 
@@ -67,7 +52,7 @@ const RenderEventIcons = ({event,
                           setAdminsVisibility: (flag: boolean) => void
 ) => {
     const eventIcons: React.ReactNode[] = []
-    const roles=([] as string[]).concat(GetRoles());
+    const roles=([] as string[]).concat(userApi.getActiveUserRoles());
     if ((isUserEventAdmin && AccessToManage(roles.filter(role=>role!="Зареєстрований користувач" && role!="Прихильник"))) || roles.includes("Admin")) {
         if (event.eventStatus==="Не затверджені"){
             {roles.includes("Admin") && eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
@@ -228,17 +213,10 @@ const SortedEventInfo = ({event, setApprovedEvent, subscribeOnEvent, unSubscribe
         new CreatedEvents(),
       ]);
     const [allEvents, setAllEvents] = useState<EventsUser>(new EventsUser());
-    const [userToken, setUserToken] = useState<any>([
-        {
-          nameid: "",
-        },
-      ]);
     const [imageBase64, setImageBase64] = useState<string>();
     const [loading, setLoading] = useState(false);
 
     const fetchData = async () => {
-        const token = AuthStore.getToken() as string;
-        setUserToken(jwt(token));
         await eventUserApi.getEventsUser(userId).then(async (response) => {
           setCreatedEvents(response.data);
           setAllEvents(response.data);

@@ -15,7 +15,6 @@ import classes from "./PrivateLayout.module.css";
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
-import jwt_decode from "jwt-decode";
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -67,9 +66,7 @@ const PrivateLayout = ({ children }: any) => {
   };
 
   const fetchUser = async () => {
-    let jwt = AuthStore.getToken() as string;
-    let decodedJwt = jwt_decode(jwt) as any;
-    let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+    let roles = userApi.getActiveUserRoles();
     setUser(roles);
     setCanEdit(roles.includes("Admin"));
     setRegionAdm(roles.includes("Голова Округи"));

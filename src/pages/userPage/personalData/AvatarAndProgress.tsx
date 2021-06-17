@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Sticky } from "react-sticky";
 
 import { Avatar, Progress, Skeleton, Tooltip, Typography } from "antd";
@@ -26,8 +26,10 @@ class AvatarAndProgressProps {
   lastName: string | undefined;
   isUserPlastun: boolean | undefined;
   pseudo: string | undefined;
+  region: string | undefined;
   city: string | undefined;
   club: string | undefined;
+  regionId: number | undefined;
   cityId: number | undefined;
   clubId: number | undefined;
 }
@@ -59,7 +61,6 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
   props: AvatarAndProgressProps
 ) => {
   const { userId } = useParams();
-  const history = useHistory();
   const [loading, setLoading] = useState(false);
   const {
     time,
@@ -68,9 +69,10 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
     lastName,
     isUserPlastun,
     pseudo,
+    region,
     city,
     club,
-    cityId, clubId
+    cityId, clubId, regionId
   } = props;
   const [imageBase64, setImageBase64] = useState<string>();
   const [UserDistinctions, setData] = useState<UserDistinction[]>([
@@ -180,8 +182,9 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
             {firstName} {lastName}
           </Title>
           <Title level={4}>Псевдо: {pseudo}</Title>
-          <p className="statusText">Станиця: <Link className="LinkText" to={"/cities/"+cityId} target="blank">{ city }</Link></p>
-          <p className="statusText">Курінь: <Link className="LinkText" to={"/clubs/"+clubId} target="blank">{ club }</Link></p>
+          <p className="statusText">Округа: <Link to={"/regions/"+regionId} target="_blank" className="LinkText">{region}</Link></p>
+          <p className="statusText">Станиця: <Link to={"/cities/"+cityId} target="_blank" className="LinkText">{city}</Link></p>
+          <p className="statusText">Курінь: <Link to={"/clubs/"+clubId} target="_blank" className="LinkText">{club}</Link></p>
           {!isUserPlastun && (
             <div className="progress">
               {time !== 0 ? (
