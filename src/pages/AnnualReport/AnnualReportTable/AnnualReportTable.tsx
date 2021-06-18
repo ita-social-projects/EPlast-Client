@@ -90,9 +90,9 @@ const AnnualReportTable = () => {
     let roles = decodedJwt[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
         ] as string[];
-    setCityManager(roles.includes("Admin") || roles.includes(Roles.CityHead));
-    setClubManager(roles.includes("Admin") || roles.includes(Roles.KurinHead));
-    setRegionManager(roles.includes("Admin") || roles.includes(Roles.OkrugaHead) || roles.includes("Голова Округу"));
+    setCityManager(roles.includes(Roles.Admin) || roles.includes(Roles.CityHead));
+    setClubManager(roles.includes(Roles.Admin) || roles.includes(Roles.KurinHead));
+    setRegionManager(roles.includes(Roles.Admin) || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHead ));
   };
 
   const handleSearch = (event: any) => {

@@ -119,7 +119,7 @@ const getCitiesForUserAdmins = async (userId : string) : Promise<CityRegionAdmin
                 {
                     cityName : c.name,
                     cityAdminId : c.cityAdministration.reverse().find((ca : any) => ca.adminType.adminTypeName===Roles.CityHead)?.userId,
-                    regionAdminId : c.region.administration.reverse().find((ra : any) => ra.adminType.adminTypeName==="Голова Округу")?.userId
+                    regionAdminId : c.region.administration.reverse().find((ra : any) => ra.adminType.adminTypeName===Roles.OkrugaHead )?.userId
                 }
             );
             });
