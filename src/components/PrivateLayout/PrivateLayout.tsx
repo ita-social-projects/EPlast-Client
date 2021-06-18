@@ -15,11 +15,8 @@ import classes from "./PrivateLayout.module.css";
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
-<<<<<<< HEAD
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../models/Roles/Roles";
-=======
->>>>>>> master
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
