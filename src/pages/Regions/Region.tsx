@@ -46,6 +46,7 @@ import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
+import { Roles } from "../../models/Roles/Roles";
 
 const Region = () => {
   const history = useHistory();
@@ -464,7 +465,7 @@ boolean
                 </Button>
                     </Col>
                     <Col xs={24} sm={4} style={{ display: canEdit && ( isActiveUserRegionAdmin
-                      || activeUserRoles.includes("Admin")) ? "block" : "none" }}>
+                      || activeUserRoles.includes(Roles.Admin)) ? "block" : "none" }}>
                       <Row
                         className="cityIcons"
                         justify={canCreate ? "center" : "start"}
@@ -481,7 +482,7 @@ boolean
                         </Col>
                         
                         {
-                          activeUserRoles.includes("Admin") ? 
+                          activeUserRoles.includes(Roles.Admin) ? 
                             <Col offset={1}>
                               <Tooltip title="Видалити округу">
                                 <DeleteOutlined
@@ -533,7 +534,7 @@ boolean
                     <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                       <div
                         onClick={() =>
-                          !activeUserRoles.includes("Зареєстрований користувач")
+                          !activeUserRoles.includes(Roles.RegisteredUser)
                           ? history.push(`/userpage/main/${admin.userId}`)
                           : undefined
                         }
@@ -553,7 +554,7 @@ boolean
                   )}
               </Row>
               <div className="cityMoreButton">
-                {canEdit && (activeUserRoles.includes("Admin") || isActiveUserRegionAdmin) 
+                {canEdit && (activeUserRoles.includes(Roles.Admin) || isActiveUserRegionAdmin) 
                 ?(
                   <PlusSquareFilled
                     type="primary"
@@ -649,8 +650,8 @@ boolean
               </Row>
               <div className="cityMoreButton">
                 {
-                  canEdit || activeUserRoles.includes("Голова Куреня") || activeUserRoles.includes("Голова Станиці")
-                  || (!activeUserRoles.includes("Зареєстрований користувач") && isActiveUserFromRegion)
+                  canEdit || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+                  || (!activeUserRoles.includes(Roles.RegisteredUser) && isActiveUserFromRegion)
                   ? <Button
                       type="primary"
                       className="cityInfoButton"
@@ -660,7 +661,7 @@ boolean
                     </Button>
                   : null
                 }
-              {activeUserRoles.includes("Admin") || (activeUserRoles.includes("Голова Округи") && isActiveUserRegionAdmin)
+              {activeUserRoles.includes(Roles.Admin) || (activeUserRoles.includes(Roles.OkrugaHead) && isActiveUserRegionAdmin)
               ?(
                 <PlusSquareFilled
                   className="addReportIcon"

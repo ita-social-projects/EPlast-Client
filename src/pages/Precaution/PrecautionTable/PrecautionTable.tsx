@@ -19,6 +19,7 @@ import {
   successfulDeleteAction,
   successfulUpdateAction
 } from "../../../components/Notifications/Messages"
+import { Roles } from "../../../models/Roles/Roles";
 const { Content } = Layout;
 
 const PrecautionTable = () => {
@@ -43,7 +44,7 @@ const PrecautionTable = () => {
   const [y, setY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [searchedData, setSearchedData] = useState("");
-  const [canEdit] = useState(roles.includes("Admin"));
+  const [canEdit] = useState(roles.includes(Roles.Admin));
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);

@@ -16,6 +16,7 @@ import Spinner from "../Spinner/Spinner";
 import CityAdmin from "../../models/City/CityAdmin";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
+import { Roles } from "../../models/Roles/Roles";
 moment.locale("uk-ua");
 
 const RegionAdministration = () => {
@@ -127,8 +128,8 @@ const RegionAdministration = () => {
                 title={`${member.adminType.adminTypeName}`}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}          
                 actions={
-                  activeUserRoles.includes("Admin") || (activeUserRoles.includes("Голова Округи") && isActiveUserRegionAdmin)
-                  || ((!activeUserRoles.includes("Заступник Голови Округи") || member.adminType.adminTypeName !== "Голова Округи")
+                  activeUserRoles.includes(Roles.Admin) || (activeUserRoles.includes(Roles.OkrugaHead) && isActiveUserRegionAdmin)
+                  || ((!activeUserRoles.includes(Roles.OkrugaHeadDeputy) || member.adminType.adminTypeName !== Roles.OkrugaHead)
                   && isActiveUserRegionAdmin)
                   ?
                   [
@@ -140,7 +141,7 @@ const RegionAdministration = () => {
               >
                 <div
                   onClick={() =>
-                    !activeUserRoles.includes("Зареєстрований користувач")
+                    !activeUserRoles.includes(Roles.RegisteredUser)
                     ? history.push(`/userpage/main/${member.userId}`)
                     : undefined 
                   }

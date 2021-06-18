@@ -12,6 +12,7 @@ import "moment/locale/uk";
 import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
+import { Roles } from '../../../models/Roles/Roles';
 moment.locale("uk-ua");
 
 const CityAdministration = () => {
@@ -98,8 +99,8 @@ const CityAdministration = () => {
                   title={`${member.adminType.adminTypeName}`}
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit && (activeUserRoles.includes("Admin") || activeUserRoles.includes("Голова Округи") || activeUserRoles.includes("Голова Станиці")) 
-                      && (!activeUserRoles.includes("Заступник Голови Станиці") || member.adminType.adminTypeName !== "Голова Станиці")
+                    canEdit && (activeUserRoles.includes(Roles.Admin) || activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.CityHead)) 
+                      && (!activeUserRoles.includes(Roles.CityHeadDeputy) || member.adminType.adminTypeName !== Roles.CityHead)
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
                           <CloseOutlined onClick={() => removeAdmin(member)} />,
@@ -108,7 +109,7 @@ const CityAdministration = () => {
                   }
                 >
                   <div
-                    onClick={() => canEdit || (activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації"))
+                    onClick={() => canEdit || (activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember))
                       ? history.push(`/userpage/main/${member.userId}`)
                       : undefined
                     }

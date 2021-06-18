@@ -23,6 +23,7 @@ import {CaretUpOutlined, CaretDownOutlined} from "@ant-design/icons";
 import RegionSelectModal from "./RegionSelectModal/RegionSelectModal";
 import { useHistory, useParams } from "react-router-dom";
 import UserApi from "../../../api/UserApi";
+import { Roles } from "../../../models/Roles/Roles";
 
 
 const { Title } = Typography;
@@ -84,9 +85,9 @@ const AnnualReportTable = () => {
 
   const checkAccessToManage = () => {
     let roles = UserApi.getActiveUserRoles();
-    setCityManager(roles.includes("Admin") || roles.includes("Голова Станиці"));
-    setClubManager(roles.includes("Admin") || roles.includes("Голова Куреня"));
-    setRegionManager(roles.includes("Admin") || roles.includes("Голова Округи") || roles.includes("Голова Округу"));
+    setCityManager(roles.includes(Roles.Admin) || roles.includes(Roles.CityHead));
+    setClubManager(roles.includes(Roles.Admin) || roles.includes(Roles.KurinHead));
+    setRegionManager(roles.includes(Roles.Admin) || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHead));
   };
 
   const handleSearch = (event: any) => {

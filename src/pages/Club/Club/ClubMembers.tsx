@@ -13,6 +13,7 @@ import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import { Roles } from "../../../models/Roles/Roles";
 moment.locale("uk-ua");
 
 const ClubMembers = () => {
@@ -128,7 +129,7 @@ const ClubMembers = () => {
               className="detailsCard"
               actions={
 
-                canEdit && (member?.user?.id !== head?.user?.id || !activeUserRoles.includes("Заступник Голови Куреня"))
+                canEdit && (member?.user?.id !== head?.user?.id || !activeUserRoles.includes(Roles.KurinHeadDeputy))
                   ? [
                       <SettingOutlined onClick={() => showModal(member)} />,
                       <CloseOutlined onClick={() => removeMember(member)} />,

@@ -11,6 +11,7 @@ import AuthStore from '../../stores/AuthStore';
 import jwt_decode from "jwt-decode";
 import Search from 'antd/lib/input/Search';
 import { DecisionTableInfo } from './Interfaces/DecisionTableInfo';
+import { Roles } from '../../models/Roles/Roles';
 const classes = require('./Table.module.css');
 
 const { Content } = Layout;
@@ -90,10 +91,10 @@ const DecisionTable = () => {
       setData(res);
       setLoading(false);
       setUser(roles);
-      setCanEdit(roles.includes("Admin"));
-      setRegionAdm(roles.includes("Голова Округи"));
-      setCityAdm(roles.includes("Голова Станиці"));
-      setClubAdm(roles.includes("Голова Куреня"));
+      setCanEdit(roles.includes(Roles.Admin));
+      setRegionAdm(roles.includes(Roles.OkrugaHead));
+      setCityAdm(roles.includes(Roles.CityHead));
+      setClubAdm(roles.includes(Roles.KurinHead));
     };
     fetchData();
   }, [searchedData, page, pageSize]);

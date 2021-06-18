@@ -35,6 +35,7 @@ import userApi from "../../api/UserApi";
 import User from "../Distinction/Interfaces/User";
 import AuthStore from "../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
+import { Roles } from "../../models/Roles/Roles";
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
@@ -167,12 +168,12 @@ const UsersTable = () => {
       let user = jwt_decode(jwt) as any;
       setCurrentUser((await userApi.getUserProfileById(user.nameid, user.nameid)).data.user);
       let roles=userApi.getActiveUserRoles();
-      setCanView(roles.includes("Admin") || roles.includes("Голова Керівного Органу") 
-        || roles.includes("Голова Округи") || roles.includes("Заступник Голови Округи")
-        || roles.includes("Голова Станиці") || roles.includes("Заступник Голови Станиці")
-        || roles.includes("Голова Куреня") || roles.includes("Заступник Голови Куреня")
-        || roles.includes("Дійсний член організації")
-        || roles.includes("Прихильник"));
+      setCanView(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
+        || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)
+        || roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy)
+        || roles.includes(Roles.KurinHead) || roles.includes(Roles.KurinHeadDeputy)
+        || roles.includes(Roles.PlastMember)
+        || roles.includes(Roles.Supporter));
       setUsers(response.data.users);
       setTotal(response.data.total);
     } finally {

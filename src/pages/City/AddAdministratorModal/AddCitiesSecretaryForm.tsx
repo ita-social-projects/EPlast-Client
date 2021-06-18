@@ -20,6 +20,7 @@ import AdminType from "../../../models/Admin/AdminType";
 import CityMember from "../../../models/City/CityMember";
 import "./AddCitiesSecretaryForm.less";
 import userApi from "../../../api/UserApi";
+import { Roles } from "../../../models/Roles/Roles";
 
 type AddCitiesNewSecretaryForm = {
   onAdd: () => void;
@@ -131,7 +132,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
     onAdd();
     if (newAdmin.id === 0) {
       try {
-        if (values.AdminType === "Голова Станиці" && head !== null) {
+        if (values.AdminType === Roles.CityHead && head !== null) {
           if (head?.userId !== newAdmin.userId) {
             showConfirm(newAdmin);
           } else if (head?.userId === newAdmin.userId) {
@@ -203,8 +204,8 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Станиці", disabled: activeUserRoles.includes("Заступник Голови Станиці") },
-            { value: "Заступник Голови Станиці"},
+            { value: Roles.CityHead, disabled: activeUserRoles.includes(Roles.CityHeadDeputy) },
+            { value: Roles.CityHeadDeputy},
             { value: "Голова СПС" },
             { value: "Писар" },
             { value: "Скарбник" },

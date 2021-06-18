@@ -12,6 +12,7 @@ import "moment/locale/uk";
 import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
+import { Roles } from '../../../models/Roles/Roles';
 moment.locale("uk-ua");
 
 const ClubAdministration = () => {
@@ -99,7 +100,7 @@ const ClubAdministration = () => {
                   title={`${member.adminType.adminTypeName}`}
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit && (!activeUserRoles.includes("Заступник Голови Куреня") || member.adminType.adminTypeName !== "Голова Куреня")
+                    canEdit && (!activeUserRoles.includes(Roles.KurinHeadDeputy) || member.adminType.adminTypeName !== Roles.KurinHead)
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
                           <CloseOutlined onClick={() => removeAdmin(member)} />,
