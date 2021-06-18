@@ -193,7 +193,7 @@ const Assignments = () => {
           )}
           <div>
 
-            {data?.canApprovePlastMember && AccessToManage(roles.filter(r => r != "Прихильник" && r != "Зареєстрований користувач")) && (
+            {data?.canApprovePlastMember && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser)) && (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
@@ -265,7 +265,7 @@ const Assignments = () => {
                 )}
 
             </div>
-          ) : ((data?.clubApprover == null  && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes("Admin")) && (data?.isUserHeadOfClub || roles.includes("Admin"))) ?
+          ) : ((data?.clubApprover == null  && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin)) && (data?.isUserHeadOfClub || roles.includes(Roles.Admin))) ?
             (
               <div>
                 <Tooltip
@@ -334,7 +334,7 @@ const Assignments = () => {
               )}
 
             </div>
-          ) : ((data?.cityApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes("Admin")) && (data?.isUserHeadOfCity || roles.includes("Admin"))) ?
+          ) : ((data?.cityApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin)) && (data?.isUserHeadOfCity || roles.includes(Roles.Admin))) ?
             (
               <div>
                 <Tooltip

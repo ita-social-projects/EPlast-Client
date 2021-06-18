@@ -138,7 +138,7 @@ const CityMembers = () => {
               }
             >
               <div
-                onClick={() => canEdit || (activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")) 
+                onClick={() => canEdit || (activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) 
                   ? history.push(`/userpage/main/${member.userId}`) 
                   : undefined
                 }

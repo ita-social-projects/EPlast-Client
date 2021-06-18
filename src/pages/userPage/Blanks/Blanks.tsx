@@ -22,6 +22,7 @@ import {
     tryAgain
 } from "../../../components/Notifications/Messages"
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
+import { Roles } from "../../../models/Roles/Roles";
 const userGenders = ["Чоловік", "Жінка", "Інша"];
 
 export const Blanks = () => {
@@ -53,7 +54,7 @@ export const Blanks = () => {
         setUserToken(jwt(token));
         const currentUserId = (jwt(token) as { nameid: "" }).nameid;
         setRoles(userApi.getActiveUserRoles());
-        setCanEdit(roles.includes("Admin"));
+        setCanEdit(roles.includes(Roles.Admin));
         await userApi.getById(userId).then(response => {
             setData(response.data);
         }).catch(() => { notificationLogic('error', tryAgain) })

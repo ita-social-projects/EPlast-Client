@@ -22,6 +22,7 @@ import eventUserApi from '../../../../api/eventUserApi';
 import CreatedEvents from '../../../../models/EventUser/CreatedEvents';
 import EventsUser from '../../../../models/EventUser/EventUser';
 import userApi from "../../../../api/UserApi";
+import { Roles } from '../../../../models/Roles/Roles';
 
 interface Props {
     event: EventDetails;
@@ -32,7 +33,7 @@ interface Props {
     unSubscribeOnEvent: () => void;
 }
 
-const AccessableRoles=["Admin", "Голова Куреня", "Голова Станиці", "Голова Округи", "Дійсний член організації", "Прихильник", "Зареєстрований користувач"];
+const AccessableRoles=[Roles.Admin.toString(), Roles.KurinHead.toString(), Roles.CityHead.toString(), Roles.OkrugaHead.toString(), Roles.PlastMember.toString(), Roles.Supporter.toString(), Roles.RegisteredUser.toString()];
 
 const AccessToManage=(roles: string[]):boolean=>{ 
     for(var i = 0; i < roles.length; i++){
@@ -53,7 +54,7 @@ const RenderEventIcons = ({event,
 ) => {
     const eventIcons: React.ReactNode[] = []
     const roles=([] as string[]).concat(userApi.getActiveUserRoles());
-    if ((isUserEventAdmin && AccessToManage(roles.filter(role=>role!="Зареєстрований користувач" && role!="Прихильник"))) || roles.includes("Admin")) {
+    if ((isUserEventAdmin && AccessToManage(roles.filter(role=>role!=Roles.RegisteredUser && role!=Roles.Supporter))) || roles.includes(Roles.Admin)) {
         if (event.eventStatus==="Не затверджені"){
             {roles.includes(Roles.Admin) && eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
                 <SettingTwoTone twoToneColor="#3c5438"  onClick={() => showApproveConfirm({

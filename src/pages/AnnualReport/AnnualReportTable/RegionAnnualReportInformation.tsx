@@ -51,8 +51,8 @@ const RegionAnnualReportInformation = () => {
         try {
             let token = AuthStore.getToken() as string;
             let roles = userApi.getActiveUserRoles();
-            setIsAdmin(roles.includes("Admin"));
-            setIsRegionAdmin(roles.includes("Голова Округи"));
+            setIsAdmin(roles.includes(Roles.Admin));
+            setIsRegionAdmin(roles.includes(Roles.OkrugaHead));
             const user: any = jwt(token);
             var regionId = await userApi.getById(user.nameid).then((response) => {
                 return response.data?.user.regionId
