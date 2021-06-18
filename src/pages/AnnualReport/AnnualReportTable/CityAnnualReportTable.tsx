@@ -7,12 +7,10 @@ import ConfirmedDropdown from "./Dropdowns/ConfirmedDropdown/ConfirmedDropdown";
 import SavedDropdown from "./Dropdowns/SavedDropdown/SavedDropdown";
 import AnnualReportApi from "../../../api/AnnualReportApi";
 import Modal from "antd/lib/modal";
-import AuthStore from "../../../stores/AuthStore";
-import jwt_decode from "jwt-decode";
 import { ExclamationCircleOutlined, StarFilled, StarOutlined } from "@ant-design/icons";
 import notificationLogic from "../../../components/Notifications/Notification";
 import { successfulDeleteAction, successfulEditAction, tryAgain } from "../../../components/Notifications/Messages";
-import { Roles } from "../../../models/Roles/Roles";
+import UserApi from "../../../api/UserApi";
 
 interface props {
   columns: any;
@@ -77,14 +75,10 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
   };
 
   const checkAccessToManage = () => {
-    let jwt = AuthStore.getToken() as string;
-    let decodedJwt = jwt_decode(jwt) as any;
-    let roles = decodedJwt[
-      "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-    ] as string[];
-    setIsAdmin(roles.includes(Roles.Admin));
-    setIsCityAdmin(roles.includes(Roles.CityHead));
-    setCanView(roles.includes(Roles.CityHead) || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.Admin));
+    let roles = UserApi.getActiveUserRoles();
+    setIsAdmin(roles.includes("Admin"));
+    setIsCityAdmin(roles.includes("Голова Станиці"));
+    setCanView(roles.includes("Голова Станиці") || roles.includes("Голова Округи") || roles.includes("Admin"));
   };
 
   const showDropdown = (annualReportStatus: number) => {

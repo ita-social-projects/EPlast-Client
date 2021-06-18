@@ -2,11 +2,15 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout, Spin} from 'antd';
 import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined} from '@ant-design/icons';
-import {getRegionDocuments, getFile, removeDocument} from "../../api/regionsApi";
+import {getRegionById, getRegionDocuments, getFile, removeDocument} from "../../api/regionsApi";
 import "./Region.less";
 import Title from 'antd/lib/typography/Title';
 import moment from "moment";
 import Spinner from '../Spinner/Spinner';
+import userApi from "./../../api/UserApi";
+import {
+  cityNameOfApprovedMember,
+} from "../../api/citiesApi";
 
 
 const RegionDocuments = () => {
@@ -20,18 +24,38 @@ const RegionDocuments = () => {
         fileName:'',
         regionId:''
       }]);
-    const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+    const [isActiveUserFromRegion, setIsActiveUserFromRegion] = useState<boolean>(false);
+    const [canEdit, setCanEdit] = useState<boolean>(false);
 
     const getDocuments = async () => {
       setLoading(true);
       const response = await getRegionDocuments(id);
-
+      const responce1 = await cityNameOfApprovedMember(userApi.getActiveUserId());
+      const response2 = await getRegionById(id);
       
-      setCanEdit(response.data.canEdit);
+      setActiveUserRoles(userApi.getActiveUserRoles);
+      setIsFromRegion(response2.data.cities, responce1.data);
+      setIsAdminOfSomeTeritory(userApi.getActiveUserRoles());
       setLoading(false);
     };
 
+    const setIsAdminOfSomeTeritory = (roles: string[]) => {
+      roles.includes("Admin") || roles.includes("Голова Округи")
+      || roles.includes("Голова Станиці") || roles.includes("Голова Куреня")
+      ? setCanEdit(true)
+      : setCanEdit(false)
+    }
+
+    const setIsFromRegion = (members: any[], city: string) => {
+      for(let i = 0; i < members.length; i++){
+        if(members[i].name == city){
+          setIsActiveUserFromRegion(true);
+          return;
+        }
+      }
+    }  
 
     const setRegionDocs = async ()=>{
         try{
@@ -78,23 +102,35 @@ const RegionDocuments = () => {
                   }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    
-                       [
-                          <DownloadOutlined
-                            key="download"
-                            onClick={() =>
-                              downloadDocument(
-                                document.blobName,
-                                document.fileName
-                              )
-                            }
-                          />,
-                          <CloseOutlined
-                            key="close"
-                            onClick={() => removeDocumentById(document.id)}
-                          />,
-                        ]
-                     
+                    activeUserRoles.includes("Admin") || (activeUserRoles.includes("Голова Округи") && isActiveUserFromRegion)
+                    ? [ 
+                        <DownloadOutlined
+                              key="download"
+                              onClick={() =>
+                                downloadDocument(
+                                  document.blobName,
+                                  document.fileName
+                                )
+                              }
+                            />,
+                            <CloseOutlined
+                              key="close"
+                              onClick={() => removeDocumentById(document.id)}
+                            />,
+                      ]
+                    : canEdit || (!activeUserRoles.includes("Зареєстрований користувач") && isActiveUserFromRegion)
+                    ? [
+                        <DownloadOutlined
+                          key="download"
+                          onClick={() =>
+                            downloadDocument(
+                              document.blobName,
+                              document.fileName
+                            )
+                          }
+                        />
+                      ]
+                    : undefined
                   }
                 >
                   <Avatar size={86} icon={<FileTextOutlined />} />

@@ -19,7 +19,8 @@ import {
   maxLength,
   failCreateAction,
   maxNumber,
-  minNumber
+  minNumber,
+  incorrectData
 } from "../../../components/Notifications/Messages"
 import precautionApi from "../../../api/precautionApi";
 
@@ -247,7 +248,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             name="date"
             label="Дата затвердження"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[{ required: true, message: incorrectData }]}
           >
             <DatePicker
               format={dateFormat}

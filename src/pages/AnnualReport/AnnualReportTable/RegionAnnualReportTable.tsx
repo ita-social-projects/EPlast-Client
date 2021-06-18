@@ -1,9 +1,7 @@
 import { Empty, Modal, Table, Tooltip } from "antd";
-import jwt_decode from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import ClickAwayListener from "react-click-away-listener";
 import regionsApi, { getSearchedRegionsReports } from "../../../api/regionsApi";
-import AuthStore from "../../../stores/AuthStore";
 import ConfirmedRegionDropdown from "./DropdownsForRegionReports/ConfirmedDropdown/ConfirmedRegionDropdown";
 import notificationLogic from "../../../components/Notifications/Notification";
 import SavedRegionDropdown from "./DropdownsForRegionReports/SavedDropdown/SavedRegionDropdown";
@@ -11,7 +9,7 @@ import UnconfirmedRegionDropdown from "./DropdownsForRegionReports/UnconfirmedDr
 import { successfulDeleteAction, successfulEditAction, tryAgain } from "../../../components/Notifications/Messages";
 import { ExclamationCircleOutlined, StarFilled, StarOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
-import { Roles } from "../../../models/Roles/Roles";
+import UserApi from "../../../api/UserApi";
 
 interface props {
   columns: any;
@@ -177,14 +175,10 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey }: prop
   };
 
   const checkAccessToManage = () => {
-    let jwt = AuthStore.getToken() as string;
-    let decodedJwt = jwt_decode(jwt) as any;
-    let roles = decodedJwt[
-      "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-    ] as string[];
-    setIsRegionAdmin(roles.includes(Roles.OkrugaHead));
-    setIsAdmin(roles.includes(Roles.Admin));
-    setCanView(roles.includes(Roles.CityHead) || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.Admin));
+    let roles = UserApi.getActiveUserRoles();
+    setIsRegionAdmin(roles.includes("Голова Округи"));
+    setIsAdmin(roles.includes("Admin"));
+    setCanView(roles.includes("Голова Станиці") || roles.includes("Голова Округи") || roles.includes("Admin"));
   };
 
   const handlePageChange = (page: number) => {

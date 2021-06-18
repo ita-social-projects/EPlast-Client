@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Button, Avatar, Tooltip, Spin } from 'antd';
+import { Card, Avatar, Tooltip, Spin } from 'antd';
 import './Approvers.less';
 import AvatarAndProgress from '../../../../src/pages/userPage/personalData/AvatarAndProgress';
 import AddUser from "../../../assets/images/user_add.png";
@@ -21,8 +21,6 @@ import {
 } from "../../../components/Notifications/Messages"
 import { StickyContainer } from 'react-sticky';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
-import jwt_decode from "jwt-decode";
-import activeMembershipApi from '../../../api/activeMembershipApi';
 import DeleteApproveButton from './DeleteApproveButton';
 import { Roles } from '../../../models/Roles/Roles';
 
@@ -36,7 +34,6 @@ const Assignments = () => {
   const [data, setData] = useState<ApproversData>();
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
-  const [accessLevels, setAccessLevels] = useState<string[]>([]);
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
   const AccessableRoles = [Roles.Admin.toString(),
                            Roles.KurinHead.toString(),
@@ -51,15 +48,11 @@ const Assignments = () => {
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
-    let decodedJwt = jwt_decode(AuthStore.getToken() as string) as any;
-    setRoles([].concat(decodedJwt[
-      "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-    ]));
+    setRoles(userApi.getActiveUserRoles());
     await userApi.getApprovers(userId, user.nameid).then(response => {
       setData(response.data);
       setLoading(true);
     }).catch(() => { notificationLogic('error', fileIsNotUpload("даних")) });
-    setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
     fetchApproverName(user.nameid);
   };
 
@@ -143,10 +136,12 @@ const Assignments = () => {
             lastName={data?.user.lastName}
             isUserPlastun={data?.isUserPlastun}
             pseudo={data?.user.pseudo}
+            region={data?.user.region}
             city={data?.user.city}
             club={data?.user.club}
             cityId={data?.user.cityId}
-            clubId={data?.user.clubId} />
+            clubId={data?.user.clubId}
+            regionId={data?.user.regionId} />
         </StickyContainer>
       </div>
       <div className="approversContent">
@@ -198,7 +193,7 @@ const Assignments = () => {
           )}
           <div>
 
-            {data?.canApprove && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser)) && (
+            {data?.canApprovePlastMember && AccessToManage(roles.filter(r => r != "Прихильник" && r != "Зареєстрований користувач")) && (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
@@ -270,7 +265,7 @@ const Assignments = () => {
                 )}
 
             </div>
-          ) : ((data?.clubApprover == null && !accessLevels.includes(Roles.RegisteredUser) && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin)) && (data?.isUserHeadOfClub || roles.includes(Roles.Admin))) ?
+          ) : ((data?.clubApprover == null  && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes("Admin")) && (data?.isUserHeadOfClub || roles.includes("Admin"))) ?
             (
               <div>
                 <Tooltip
@@ -339,7 +334,7 @@ const Assignments = () => {
               )}
 
             </div>
-          ) : ((data?.cityApprover == null && !accessLevels.includes(Roles.RegisteredUser) && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin)) && (data?.isUserHeadOfCity || roles.includes(Roles.Admin))) ?
+          ) : ((data?.cityApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes("Admin")) && (data?.isUserHeadOfCity || roles.includes("Admin"))) ?
             (
               <div>
                 <Tooltip

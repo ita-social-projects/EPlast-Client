@@ -10,7 +10,6 @@ import { successfulCancelAction, successfulConfirmedAction, successfulDeleteActi
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import AnnualReportMenu from '../AnnualReportMenu';
 import AuthStore from '../../../stores/AuthStore';
-import jwt_decode from 'jwt-decode';
 import jwt from "jwt-decode";
 import StatusStamp from '../AnnualReportStatus';
 import { Roles } from '../../../models/Roles/Roles';
@@ -51,12 +50,9 @@ const RegionAnnualReportInformation = () => {
         setIsLoading(true);
         try {
             let token = AuthStore.getToken() as string;
-            let decodedJwt = jwt_decode(token) as any;
-            let roles = decodedJwt[
-                "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-            ] as string[];
-            setIsAdmin(roles.includes(Roles.Admin));
-            setIsRegionAdmin(roles.includes(Roles.OkrugaHead));
+            let roles = userApi.getActiveUserRoles();
+            setIsAdmin(roles.includes("Admin"));
+            setIsRegionAdmin(roles.includes("Голова Округи"));
             const user: any = jwt(token);
             var regionId = await userApi.getById(user.nameid).then((response) => {
                 return response.data?.user.regionId

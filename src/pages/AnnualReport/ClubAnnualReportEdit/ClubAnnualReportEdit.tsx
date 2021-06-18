@@ -15,12 +15,11 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Spinner from "../../Spinner/Spinner";
 import { CloseCircleOutlined } from '@ant-design/icons';
 import AuthStore from '../../../stores/AuthStore';
-import jwt_decode from 'jwt-decode';
 import jwt from "jwt-decode";
 import ClubAdmin from '../../../models/Club/ClubAdmin';
 import ClubMember from '../../../models/Club/ClubMember';
 import ClubAnnualReportForm from '../ClubAnnualReportForm/ClubAnnualReportForm';
-import { Roles } from '../../../models/Roles/Roles';
+import UserApi from '../../../api/UserApi';
 
 
 const { Title } = Typography;
@@ -55,10 +54,7 @@ const ClubAnnualReportEdit = () => {
         setIsLoading(true)
         try {
             let token = AuthStore.getToken() as string;
-            let decodedJwt = jwt_decode(token) as any;
-            let roles = decodedJwt[
-                "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-            ] as string[];
+            let roles = UserApi.getActiveUserRoles();
             let response = await getClubAnnualReportById(id);
 
             let club = await getClubById(response.data.annualreport.clubId);

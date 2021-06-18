@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import userApi from '../../../api/UserApi';
 import AvatarAndProgress from '../personalData/AvatarAndProgress';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Data } from '../Interface/Interface';
 import notificationLogic from '../../../components/Notifications/Notification';
-import { Card, Form, Input } from 'antd';
+import { Card, Form } from 'antd';
 import './Secretaries.less'
 import {UserCitySecretaryTable} from './UserCitySecretaryTable';
 import { UserRegionSecretaryTable } from './UserRegionSecretaryTable';
@@ -71,10 +71,12 @@ export const Secretaries = () => {
                                 lastName={data?.user.lastName}
                                 isUserPlastun={data?.isUserPlastun}
                                 pseudo={data?.user.pseudo}
+                                region={data?.user.region}
                                 city={data?.user.city}
                                 club={data?.user.club} 
                                 cityId={data?.user.cityId}
-                                clubId={data?.user.clubId}/>
+                                clubId={data?.user.clubId}
+                                regionId={data?.user.regionId}/>
                         </StickyContainer>
                     </div>
 

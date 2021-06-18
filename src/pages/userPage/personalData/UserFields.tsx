@@ -74,10 +74,12 @@ export default function () {
               lastName={data?.user.lastName}
               isUserPlastun={data?.isUserPlastun}
               pseudo={data?.user.pseudo}
+              region={data?.user.region}
               city={data?.user.city}
               club={data?.user.club}
               cityId={data?.user.cityId}
               clubId={data?.user.clubId}
+              regionId={data?.user.regionId}
             />
           </StickyContainer>
         </div>
@@ -423,8 +425,10 @@ export default function () {
             lastName={data?.shortUser.lastName}
             isUserPlastun={data?.isUserPlastun}
             pseudo={data?.shortUser.pseudo}
+            region={data.shortUser.region}
             city={data?.shortUser.city}
             club={data?.shortUser.club}
+            regionId={data.shortUser.regionId}
             cityId={data.shortUser.cityId}
             clubId={data.shortUser.clubId}
           />

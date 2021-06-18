@@ -12,8 +12,6 @@ import {
 import moment from "moment";
 import AnnualReportApi from "../../../api/AnnualReportApi";
 import "./AnnualReportTable.less";
-import AuthStore from "../../../stores/AuthStore";
-import jwt_decode from "jwt-decode";
 import CitySelectModal from "./CitySelectModal/CitySelectModal";
 import { Card } from 'antd';
 import { CityAnnualReportTable } from "./CityAnnualReportTable";
@@ -24,7 +22,7 @@ import Search from "antd/lib/input/Search";
 import {CaretUpOutlined, CaretDownOutlined} from "@ant-design/icons";
 import RegionSelectModal from "./RegionSelectModal/RegionSelectModal";
 import { useHistory, useParams } from "react-router-dom";
-import { Roles } from "../../../models/Roles/Roles";
+import UserApi from "../../../api/UserApi";
 
 
 const { Title } = Typography;
@@ -85,14 +83,10 @@ const AnnualReportTable = () => {
   };
 
   const checkAccessToManage = () => {
-    let jwt = AuthStore.getToken() as string;
-    let decodedJwt = jwt_decode(jwt) as any;
-    let roles = decodedJwt[
-        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] as string[];
-    setCityManager(roles.includes(Roles.Admin) || roles.includes(Roles.CityHead));
-    setClubManager(roles.includes(Roles.Admin) || roles.includes(Roles.KurinHead));
-    setRegionManager(roles.includes(Roles.Admin) || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHead ));
+    let roles = UserApi.getActiveUserRoles();
+    setCityManager(roles.includes("Admin") || roles.includes("Голова Станиці"));
+    setClubManager(roles.includes("Admin") || roles.includes("Голова Куреня"));
+    setRegionManager(roles.includes("Admin") || roles.includes("Голова Округи") || roles.includes("Голова Округу"));
   };
 
   const handleSearch = (event: any) => {
