@@ -41,13 +41,13 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
         <Menu.Item className="menuItem" key="activeMembership" onClick={() => history.push(`/userpage/activeMembership/${props.id}`)}>Дійсне членство</Menu.Item>
         <Menu.Item className="menuItem" key="secretaries" onClick={()=>history.push(`/userpage/secretaries/${props.id}`)}>Діловодства</Menu.Item>
         {(props.id===user?.nameid ||
-        (props.id!==user?.nameid && !(roles==[Roles.Supporter] || roles==["Зареєстований користувач"] || roles==[Roles.Supporter, "Зареєстований користувач"])))
+        (props.id!==user?.nameid && !(roles==[Roles.Supporter] || roles==[Roles.RegisteredUser] || roles==[Roles.Supporter, Roles.RegisteredUser])))
             && <Menu.Item className="menuItem" key="eventuser" onClick={() => history.push(`/userpage/eventuser/${props.id}`)}>
           Події
         </Menu.Item>
         }
         {(props.id===user?.nameid ||
-            (props.id!==user?.nameid && !(roles==[Roles.Supporter] || roles==["Зареєстований користувач"] || roles==[Roles.Supporter, "Зареєстований користувач"])))
+            (props.id!==user?.nameid && !(roles==[Roles.Supporter] || roles==[Roles.RegisteredUser] || roles==[Roles.Supporter, Roles.RegisteredUser])))
         && <Menu.Item className="menuItem" key="blank"onClick={() => history.push(`/userpage/blank/${props.id}`)}>
           Бланки
         </Menu.Item>

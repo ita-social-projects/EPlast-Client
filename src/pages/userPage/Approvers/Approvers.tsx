@@ -211,7 +211,7 @@ const Assignments = () => {
             </div>)
             }
             <div
-              hidden={data?.confirmedUsers.length != 0 || (data?.canApprove && AccessToManage(roles.filter(r => r != Roles.Supporter && r != "Зареєстований користувач")))}>
+              hidden={data?.confirmedUsers.length != 0 || (data?.canApprove && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser)))}>
               <br />
                 <br />
                     На жаль, поруки відсутні

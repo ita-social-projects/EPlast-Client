@@ -392,7 +392,7 @@ const EventUser = () => {
                                         Деталі
                                     </Button>
                                     {item.eventStatusID !== 1 && userToken.nameid === userId &&
-                                        !(roles == [Roles.Supporter] || roles == ["Зареєстований користувач"] || roles == [Roles.Supporter, "Зареєстований користувач"]) &&
+                                        !(roles == [Roles.Supporter] || roles == [Roles.RegisteredUser] || roles == [Roles.Supporter, Roles.RegisteredUser]) &&
                                         (
                                             <Button
                                                 type="primary"
