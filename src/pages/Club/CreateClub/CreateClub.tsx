@@ -151,8 +151,7 @@ const CreateClub = () => {
   };
 
   const EditClub = async (newClub: ClubProfile) => {
-    notificationLogic("info", "Оновлення...", <LoadingOutlined />);
-
+  
     return updateClub(club.id, JSON.stringify(newClub))
       .then(() => {
         notificationLogic("success", successfulUpdateAction("Курінь"));
