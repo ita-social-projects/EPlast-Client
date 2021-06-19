@@ -22,6 +22,7 @@ import {
 import { StickyContainer } from 'react-sticky';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import DeleteApproveButton from './DeleteApproveButton';
+import { Roles } from '../../../models/Roles/Roles';
 
 const Assignments = () => {
   const history = useHistory();
@@ -34,7 +35,14 @@ const Assignments = () => {
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
-  const AccessableRoles = ["Admin", "Голова Куреня", "Голова Станиці", "Голова Округи", "Дійсний член організації", "Прихильник", "Зареєстрований користувач"];
+  const AccessableRoles = [Roles.Admin.toString(),
+                           Roles.KurinHead.toString(),
+                           Roles.CityHead.toString(),
+                           Roles.OkrugaHead.toString(),
+                           Roles.PlastMember.toString(),
+                           Roles.Supporter.toString(),
+                           Roles.RegisteredUser.toString()
+                          ];
   const [roles, setRoles] = useState<string[]>([]);
 
   const fetchData = async () => {
@@ -141,7 +149,7 @@ const Assignments = () => {
         <h1>Поручення дійсних членів</h1>
         <div className="approversCard">
           {data?.confirmedUsers.map(p => {
-            if (p.approver.userID == data?.currentUserId || roles.includes("Admin")) {
+            if (p.approver.userID == data?.currentUserId || roles.includes(Roles.Admin)) {
               return (
                 <div key={p.id}>
                   <Card
@@ -185,7 +193,7 @@ const Assignments = () => {
           )}
           <div>
 
-            {data?.canApprovePlastMember && AccessToManage(roles.filter(r => r != "Прихильник" && r != "Зареєстрований користувач")) && (
+            {data?.canApprovePlastMember && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser)) && (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
@@ -203,7 +211,7 @@ const Assignments = () => {
             </div>)
             }
             <div
-              hidden={data?.confirmedUsers.length != 0 || (data?.canApprove && AccessToManage(roles.filter(r => r != "Прихильник" && r != "Зареєстований користувач")))}>
+              hidden={data?.confirmedUsers.length != 0 || (data?.canApprove && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser)))}>
               <br />
                 <br />
                     На жаль, поруки відсутні
@@ -218,7 +226,7 @@ const Assignments = () => {
           {(data?.clubApprover != null) ? (
 
             <div>
-              {(data.clubApprover.approver.userID == data.currentUserId || roles.includes("Admin")) ?
+              {(data.clubApprover.approver.userID == data.currentUserId || roles.includes(Roles.Admin)) ?
                 (
                   <Card
                     hoverable
@@ -257,14 +265,14 @@ const Assignments = () => {
                 )}
 
             </div>
-          ) : ((data?.clubApprover == null  && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes("Admin")) && (data?.isUserHeadOfClub || roles.includes("Admin"))) ?
+          ) : ((data?.clubApprover == null  && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin)) && (data?.isUserHeadOfClub || roles.includes(Roles.Admin))) ?
             (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
                   placement="rightBottom">
                     <Spin spinning={approveAsHovelHeadLoading}>
-                        <Link to="#" onClick={() => approveClick(data?.user.id, roles.includes("Голова Куреня") || roles.includes("Admin"), false)}>
+                        <Link to="#" onClick={() => approveClick(data?.user.id, roles.includes(Roles.KurinHead) || roles.includes(Roles.Admin), false)}>
                             <Avatar src={AddUser}
                             alt="example" size={168}
                             className="avatarEmpty"
@@ -288,7 +296,7 @@ const Assignments = () => {
         <div className="approversCard">
           {(data?.cityApprover != null) ? (
             <div>
-              {(data.cityApprover.approver.userID == data.currentUserId || roles.includes("Admin")) ? (
+              {(data.cityApprover.approver.userID == data.currentUserId || roles.includes(Roles.Admin)) ? (
                 <Card
                   hoverable
                   className="cardStyles"
@@ -326,7 +334,7 @@ const Assignments = () => {
               )}
 
             </div>
-          ) : ((data?.cityApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes("Admin")) && (data?.isUserHeadOfCity || roles.includes("Admin"))) ?
+          ) : ((data?.cityApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin)) && (data?.isUserHeadOfCity || roles.includes(Roles.Admin))) ?
             (
               <div>
                 <Tooltip
@@ -334,7 +342,7 @@ const Assignments = () => {
                   placement="rightBottom">
 
                   <Spin spinning={approveAsCityHeadLoading}>
-                  <Link to="#" onClick={() => approveClick(data?.user.id, false, roles.includes("Голова Станиці") || roles.includes("Admin"))}>
+                  <Link to="#" onClick={() => approveClick(data?.user.id, false, roles.includes(Roles.CityHead) || roles.includes(Roles.Admin))}>
                     <Avatar
                       src={AddUser}
                       alt="example" size={168}

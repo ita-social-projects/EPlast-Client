@@ -17,6 +17,7 @@ import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import AvatarAndProgressStatic from "./AvatarAndProgressStatic";
 import jwt_decode from "jwt-decode";
+import { Roles } from "../../../models/Roles/Roles";
 
 export default function () {
   const { userId } = useParams();
@@ -399,13 +400,13 @@ export default function () {
           </div>
           <Button 
           className="confirmBtn" 
-          hidden={!(currentUserId==userId || roles.includes("Admin")) || roles.includes("Зареєстрований користувач")}
+          hidden={!(currentUserId==userId || roles.includes(Roles.Admin)) || roles.includes(Roles.RegisteredUser)}
           onClick={() => history.push(`/clubs`)}>
             Обрати/змінити курінь
           </Button>
           <Button
             className="confirmBtn"
-            hidden={!(currentUserId==userId || roles.includes("Admin"))}
+            hidden={!(currentUserId==userId || roles.includes(Roles.Admin))}
             onClick={() => history.push(`/cities`)}
           >
             Обрати/змінити станицю

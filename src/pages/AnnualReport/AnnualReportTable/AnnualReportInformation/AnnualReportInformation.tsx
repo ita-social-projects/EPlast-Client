@@ -14,6 +14,7 @@ import jwt from "jwt-decode";
 import { successfulCancelAction, successfulConfirmedAction, successfulDeleteAction } from '../../../../components/Notifications/Messages';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import UserApi from '../../../../api/UserApi';
+import { Roles } from '../../../../models/Roles/Roles';
 
 
 const { Title, Text } = Typography;
@@ -54,8 +55,8 @@ const AnnualReportInformation = () => {
         try {
             let token = AuthStore.getToken() as string;
             let roles = UserApi.getActiveUserRoles();
-            setIsAdmin(roles.includes("Admin"));
-            setIsCityAdmin(roles.includes("Голова Станиці"));
+            setIsAdmin(roles.includes(Roles.Admin));
+            setIsCityAdmin(roles.includes(Roles.CityHead));
             const user: any = jwt(token);
             var cityId = await userApi.getById(user.nameid).then((response) => {
                 return response.data?.user.cityId

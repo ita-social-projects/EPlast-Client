@@ -19,6 +19,7 @@ import {
   successfulDeleteAction,
   successfulUpdateAction
 } from "../../../components/Notifications/Messages"
+import { Roles } from "../../../models/Roles/Roles";
 const { Content } = Layout;
 const DistinctionTable = () => {
   const classes = require("./Table.module.css");
@@ -41,7 +42,7 @@ const DistinctionTable = () => {
   const [y, setY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [searchedData, setSearchedData] = useState<string>("");
-  const [canEdit] = useState(roles.includes("Admin"));
+  const [canEdit] = useState(roles.includes(Roles.Admin));
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);

@@ -13,6 +13,7 @@ import moment from "moment";
 import "moment/locale/uk";
 import userApi from "../../../api/UserApi";
 import{emptyInput} from "../../../components/Notifications/Messages"
+import { Roles } from "../../../models/Roles/Roles";
 moment.locale("uk-ua");
 
 const confirm = Modal.confirm;
@@ -110,7 +111,7 @@ const AddAdministratorModal = (props: Props) => {
     };
 
     try {
-      if (values.adminType === "Голова Станиці" && head !== null) {
+      if (values.adminType === Roles.CityHead && head !== null) {
         if (head?.userId !== admin.userId) {
           showConfirm(admin);
         } else {
@@ -166,8 +167,8 @@ const AddAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: "Голова Станиці", disabled: activeUserRoles.includes("Заступник Голови Станиці") },
-              { value: "Заступник Голови Станиці"},
+              { value: Roles.CityHead, disabled: activeUserRoles.includes(Roles.CityHeadDeputy) },
+              { value: Roles.CityHeadDeputy},
               { value: "Голова СПС" },
               { value: "Писар" },
               { value: "Скарбник" },

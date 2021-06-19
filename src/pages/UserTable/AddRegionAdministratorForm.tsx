@@ -7,6 +7,7 @@ import ConfirmRegionAdminModal from "./ConfirmRegionAdministrationModal";
 import moment from "moment";
 import userApi from "../../api/UserApi";
 import{ emptyInput } from "../../components/Notifications/Messages"
+import { Roles } from "../../models/Roles/Roles";
 
 interface Props {
   userId: string;
@@ -90,7 +91,7 @@ const AddNewAdministratorForm = ({
       endDate: values.endDate,
       regionId: regionId,
     };
-    if (oldAdmin !== undefined && values.AdminType === "Голова Округи") {
+    if (oldAdmin !== undefined && values.AdminType === Roles.OkrugaHead) {
       setShowAdministratorModal(false);
       setShowConfirmModal(true);
     } else {
@@ -124,13 +125,13 @@ const AddNewAdministratorForm = ({
           },
         ]}
       >
-        {roles?.includes("Дійсний член організації") ? (
+        {roles?.includes(Roles.PlastMember) ? (
           <AutoComplete
             className={classes.inputField}
             onChange={handleClick}
             options={[
-              { value: "Голова Округи", disabled: activeUserRoles.includes("Заступник Голови Округи") },
-              { value: "Заступник Голови Округи"},
+              { value: Roles.OkrugaHead, disabled: activeUserRoles.includes(Roles.OkrugaHeadDeputy) },
+              { value: Roles.OkrugaHeadDeputy},
               { value: "Писар" },
               { value: "Бунчужний" },
               { value: "Скарбник" },

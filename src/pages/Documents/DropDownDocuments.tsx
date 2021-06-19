@@ -10,6 +10,7 @@ import deleteConfirm from './DeleteConfirm';
 import documentsApi from '../../api/documentsApi';
 import { destroyFns } from 'antd/lib/modal/Modal';
 import { DocumentPost } from '../../models/Documents/DocumentPost';
+import { Roles } from '../../models/Roles/Roles';
 interface Props {
   record: number;
   pageX: number;
@@ -42,9 +43,9 @@ const DropDown = (props: Props) => {
         let jwt = AuthStore.getToken() as string;
         let decodedJwt = jwt_decode(jwt) as any;
         let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
-        setRegionAdm(roles.includes("Голова Округи"));
-        setCityAdm(roles.includes("Голова Станиці"));
-        setClubAdm(roles.includes("Голова Куреня"));
+        setRegionAdm(roles.includes(Roles.OkrugaHead));
+        setCityAdm(roles.includes(Roles.CityHead));
+        setClubAdm(roles.includes(Roles.KurinHead));
       }
       fetchData();
     }

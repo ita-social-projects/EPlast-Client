@@ -15,6 +15,8 @@ import classes from "./PrivateLayout.module.css";
 import jwt from 'jwt-decode';
 import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
+import jwt_decode from "jwt-decode";
+import { Roles } from "../../models/Roles/Roles";
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -68,16 +70,16 @@ const PrivateLayout = ({ children }: any) => {
   const fetchUser = async () => {
     let roles = userApi.getActiveUserRoles();
     setUser(roles);
-    setCanEdit(roles.includes("Admin"));
-    setRegionAdm(roles.includes("Голова Округи"));
-    setRegionAdmDeputy(roles.includes("Заступник Голови Округи"));
-    setCityAdm(roles.includes("Голова Станиці"));
-    setCityAdmDeputy(roles.includes("Заступник Голови Станиці"));
-    setClubAdm(roles.includes("Голова Куреня"));
-    setClubAdmDeputy(roles.includes("Заступник Голови Куреня"));
-    setCanSee(roles.includes("Дійсний член організації"));
-    setCanAccess(roles.includes("Прихильник"));
-    setOnlyRegistered(roles.includes("Зареєстрований користувач"));
+    setCanEdit(roles.includes(Roles.Admin));
+    setRegionAdm(roles.includes(Roles.OkrugaHead));
+    setRegionAdmDeputy(roles.includes(Roles.OkrugaHeadDeputy));
+    setCityAdm(roles.includes(Roles.CityHead));
+    setCityAdmDeputy(roles.includes(Roles.CityHeadDeputy));
+    setClubAdm(roles.includes(Roles.KurinHead));
+    setClubAdmDeputy(roles.includes(Roles.KurinHeadDeputy));
+    setCanSee(roles.includes(Roles.PlastMember));
+    setCanAccess(roles.includes(Roles.Supporter));
+    setOnlyRegistered(roles.includes(Roles.RegisteredUser));
   }
 
   useEffect(() => {

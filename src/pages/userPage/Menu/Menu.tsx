@@ -5,6 +5,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import jwt from 'jwt-decode';
 import AuthStore from '../../../stores/AuthStore';
 import jwt_decode from "jwt-decode";
+import { Roles } from '../../../models/Roles/Roles';
 
 type CustomMenuProps = {
   id: string;
@@ -40,19 +41,19 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
         <Menu.Item className="menuItem" key="activeMembership" onClick={() => history.push(`/userpage/activeMembership/${props.id}`)}>Дійсне членство</Menu.Item>
         <Menu.Item className="menuItem" key="secretaries" onClick={()=>history.push(`/userpage/secretaries/${props.id}`)}>Діловодства</Menu.Item>
         {(props.id===user?.nameid ||
-        (props.id!==user?.nameid && !(roles==["Прихильник"] || roles==["Зареєстований користувач"] || roles==["Прихильник", "Зареєстований користувач"])))
+        (props.id!==user?.nameid && !(roles==[Roles.Supporter] || roles==[Roles.RegisteredUser] || roles==[Roles.Supporter, Roles.RegisteredUser])))
             && <Menu.Item className="menuItem" key="eventuser" onClick={() => history.push(`/userpage/eventuser/${props.id}`)}>
           Події
         </Menu.Item>
         }
         {(props.id===user?.nameid ||
-            (props.id!==user?.nameid && !(roles==["Прихильник"] || roles==["Зареєстований користувач"] || roles==["Прихильник", "Зареєстований користувач"])))
+            (props.id!==user?.nameid && !(roles==[Roles.Supporter] || roles==[Roles.RegisteredUser] || roles==[Roles.Supporter, Roles.RegisteredUser])))
         && <Menu.Item className="menuItem" key="blank"onClick={() => history.push(`/userpage/blank/${props.id}`)}>
           Бланки
         </Menu.Item>
         }
         <Menu.Item className="menuItem" key="approvers" onClick={() => history.push(`/userpage/approvers/${props.id}`)}>Поручення</Menu.Item>
-        {(props.id == user?.nameid || roles.includes("Admin")) &&
+        {(props.id == user?.nameid || roles.includes(Roles.Admin)) &&
           <Menu.Item className="menuItem" key="edit" onClick={() => history.push(`/userpage/edit/${props.id}`)}>
             Редагувати профіль
         </Menu.Item>}

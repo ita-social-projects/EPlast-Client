@@ -9,6 +9,7 @@ import CityMember from '../../../models/City/CityMember';
 import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
+import { Roles } from '../../../models/Roles/Roles';
 
 const CityFollowers = () => {
     const {id} = useParams();
@@ -94,7 +95,7 @@ const CityFollowers = () => {
                   }
                 >
                   <div
-                    onClick={() => canEdit || activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")
+                    onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
                       ? history.push(`/userpage/main/${follower.userId}`)
                       : undefined
                     }

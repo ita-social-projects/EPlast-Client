@@ -47,6 +47,7 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
+import { Roles } from "../../../models/Roles/Roles";
 
 const City = () => {
   const history = useHistory();
@@ -445,7 +446,7 @@ const City = () => {
                     sm={8}
                   >
                     <div
-                      onClick={() => canEdit || activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")
+                      onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
                         ? history.push(`/userpage/main/${member.userId}`) 
                         : undefined
                       }
@@ -497,7 +498,7 @@ const City = () => {
                 admins.map((admin) => (
                   <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                     <div
-                      onClick={() => canEdit || activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")
+                      onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
                         ? history.push(`/userpage/main/${admin.userId}`)
                         : undefined
                       }
@@ -561,7 +562,7 @@ const City = () => {
                 )}
             </Row>
             <div className="cityMoreButton">
-              {canEdit || ((activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")) && city.name == activeUserCity)
+              {canEdit || ((activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) && city.name == activeUserCity)
                 ? (
                   <Button
                     type="primary"
@@ -626,7 +627,7 @@ const City = () => {
                   >
                     <div>
                       <div
-                        onClick={() => canEdit || activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")
+                        onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
                           ? history.push(`/userpage/main/${followers.userId}`)
                           : undefined
                         }

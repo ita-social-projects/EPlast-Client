@@ -9,6 +9,7 @@ import Title from 'antd/lib/typography/Title';
 import moment from "moment";
 import Spinner from '../../Spinner/Spinner';
 import userApi from "../../../api/UserApi";
+import { Roles } from '../../../models/Roles/Roles';
 
 const CityDocuments = () => {
     const {id} = useParams();
@@ -78,7 +79,7 @@ const CityDocuments = () => {
                           onClick={() => removeDocumentById(document.id)}
                         />                          
                       ]                                                                                                            
-                    : activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації") ?
+                    : activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember) ?
                       [
                         <DownloadOutlined
                           key="download"

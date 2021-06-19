@@ -13,6 +13,7 @@ import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import { Roles } from "../../../models/Roles/Roles";
 moment.locale("uk-ua");
 
 const CityMembers = () => {
@@ -128,7 +129,7 @@ const CityMembers = () => {
               key={member.id}
               className="detailsCard"
               actions={
-                canEdit && (member?.user.id !== head?.user.id || !activeUserRoles.includes("Заступник Голови Станиці"))
+                canEdit && (member?.user.id !== head?.user.id || !activeUserRoles.includes(Roles.CityHeadDeputy))
                   ? [
                       <SettingOutlined onClick={() => showModal(member)} />,
                       <CloseOutlined onClick={() => removeMember(member)} />,
@@ -137,7 +138,7 @@ const CityMembers = () => {
               }
             >
               <div
-                onClick={() => canEdit || (activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")) 
+                onClick={() => canEdit || (activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) 
                   ? history.push(`/userpage/main/${member.userId}`) 
                   : undefined
                 }
