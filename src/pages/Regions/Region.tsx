@@ -633,7 +633,7 @@ boolean
                 {documents.length !== 0 ? (
                   documents.map((document) => (
                     <Col
-                      className="cityMemberItem"
+                      className="cityDocumentItem"
                       xs={12}
                       sm={8}
                       key={document.id}

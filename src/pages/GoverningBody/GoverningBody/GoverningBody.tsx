@@ -415,7 +415,7 @@ const GoverningBody = () => {
                 {documents.length !== 0 ? (
                     documents.map((d) => (
                     <Col
-                        className="governingBodyMemberItem"
+                        className="governingBodyDocumentItem"
                         xs={12}
                         sm={8}
                         key={d.id}

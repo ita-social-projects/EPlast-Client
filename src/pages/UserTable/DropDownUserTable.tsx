@@ -68,17 +68,17 @@ const DropDown = (props: Props) => {
 
   const fetchUser = async () => {
 
-    let roles=UserApi.getActiveUserRoles();
+    let roles = UserApi.getActiveUserRoles();
 
     setCanChangeCityAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
-    || ((roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId)
-    || ((roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy))&& currentUser?.cityId==user?.cityId));
+    || ((!user?.userRoles.includes(Roles.OkrugaHead) || !roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId)
+    || ((!user?.userRoles.includes(Roles.CityHead) || !roles.includes(Roles.CityHeadDeputy))&& currentUser?.cityId==user?.cityId));
 
     setCanChangeClubAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
-    || ((roles.includes(Roles.KurinHead) || roles.includes(Roles.KurinHeadDeputy))&& currentUser?.clubId==user?.clubId));
+    || ((!user?.userRoles.includes(Roles.KurinHead) || !roles.includes(Roles.KurinHeadDeputy))&& currentUser?.clubId==user?.clubId));
 
     setCanChangeRegionAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
-    || ((roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId));
+    || ((!user?.userRoles.includes(Roles.OkrugaHead) || !roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId));
 
     setCanChangeGoverningBodyAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead));
 

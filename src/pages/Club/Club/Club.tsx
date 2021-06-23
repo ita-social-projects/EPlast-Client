@@ -516,7 +516,7 @@ const Club = () => {
               {documents.length !== 0 ? (
                 documents.map((document) => (
                   <Col
-                    className="clubMemberItem"
+                    className="clubDocumentItem"
                     xs={12}
                     sm={8}
                     key={document.id}
