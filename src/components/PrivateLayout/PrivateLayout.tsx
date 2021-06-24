@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { Avatar, Layout, Menu, Button } from "antd";
 import ClickAwayListener from 'react-click-away-listener';
@@ -17,6 +17,7 @@ import AuthStore from '../../stores/AuthStore';
 import userApi from '../../api/UserApi';
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../models/Roles/Roles";
+import useOnClickOutside from "./useOneClickOutside";
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -36,6 +37,12 @@ const PrivateLayout = ({ children }: any) => {
   const [clubAdmDeputy, setClubAdmDeputy] = useState(false);
   const [id, setId] = useState<string>("");
   const [onlyRegistered, setOnlyRegistered] = useState(false);
+  const ref = useRef(null)
+
+  const handleClickOutside = () => {
+    setCollapsed(true);
+  }
+  useOnClickOutside(ref, handleClickOutside)
 
 
   const onCollapse = (collValue: boolean) => {
@@ -89,7 +96,7 @@ const PrivateLayout = ({ children }: any) => {
 
   return (
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
-      <ClickAwayListener onClickAway={handleClickAway}>
+    <div ref={ref}>
         <Sider
           collapsible
           collapsed={collapsed}
@@ -112,7 +119,7 @@ const PrivateLayout = ({ children }: any) => {
             {(canEdit === true || canSee === true || regionAdm === true || regionAdmDeputy === true || cityAdm === true || cityAdmDeputy === true 
             || clubAdm === true || clubAdmDeputy === true) ? (
               <Menu.Item
-                key="1"
+                key="0"
                 icon={<SolutionOutlined />}
                 onClick={() => { handleClickAway(); history.push("/decisions"); }}
                 style={{ color: "white" }}
@@ -200,8 +207,7 @@ const PrivateLayout = ({ children }: any) => {
 
           </Menu>
         </Sider>
-      </ClickAwayListener>
-
+      </div>
       <Layout className="site-layout">
         <Content style={{ margin: "0 16px" }} key="content">
           <div
