@@ -1,6 +1,7 @@
 import React,{ useEffect} from 'react';
 import { Drawer, List, Empty, Button} from 'antd';
 import classes from './NotificationBox.module.css';
+import "./NotificationBox.less";
 import NotificationBoxApi, {UserNotification } from '../../api/NotificationBoxApi';
 import moment from 'moment';
 import { CloseOutlined } from '@ant-design/icons';
@@ -35,10 +36,10 @@ const NotificationBox = ({
         closable={true}
         onClose={handleCancel}
         visible={VisibleDrawer}
-        width={450}
+        width = {450}           
         footer={
             <div className={classes.Footer}>
-              <Button onClick={handleCancel} style={{ width:"50%" }}>
+              <Button onClick={handleCancel} style={{ width:"50%"}}  >
                 Закрити сповіщення
               </Button>
               <Button 
