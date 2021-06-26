@@ -140,9 +140,9 @@ const Club = () => {
 
   function seeJoinModal() {
     return Modal.confirm({
-      title: "Ви впевнені, що хочете долучитися до даного куреня?",
+      title: "Ви впевнені, що хочете доєднатися до даного куреня?",
       icon: <ExclamationCircleOutlined />,
-      okText: 'Так, долучитися',
+      okText: 'Так, доєднатися',
       okType: 'primary',
       cancelText: 'Скасувати',
       maskClosable: true,
