@@ -13,7 +13,9 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import "./AboutBase.less";
+import "./Subsections.css";
 import SubsectionModel from '../../models/AboutBase/SubsectionModel';
+
 
 const {Content} = Layout;
 const { Panel } = Collapse;
@@ -84,7 +86,9 @@ const Subsections = () =>{
         <Layout.Content className="aboutbase">
             
     {data.map((item,index)=>(
-    <><Collapse
+    <>
+    <div>
+    <Collapse
             onChange={callback}
             className="subsection" key={item.id}
         >
@@ -95,12 +99,13 @@ const Subsections = () =>{
             >
 
             </Panel>
-        </Collapse>
-            <div>
-                <Popup modal trigger={<Button className="addPostButton" type="primary" /*onClick={addPost}*/>Додати допис</Button>}>
-                    <div><TextEditor /></div>
-                </Popup>
-            </div></>
+    </Collapse>
+    </div>
+    <div className="modalDiv"> 
+    <Popup modal trigger={<Button className="addPostButton" type="primary" /*onClick={addPost}*/>Додати допис</Button>}>
+    <div><TextEditor /></div>
+    </Popup>
+    </div></>
     ))}
         </Layout.Content>
     ) : (

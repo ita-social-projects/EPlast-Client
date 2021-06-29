@@ -6,11 +6,8 @@ import SectionModel from '../../models/AboutBase/SectionModel';
 import formclasses from './TextEditor.css';
 import {
     Form,
-    DatePicker,
-    Select,
     Input,
     Button,
-    notification,
     Row,
     Col,
   } from "antd";
@@ -48,27 +45,21 @@ const TextEditor = () => {
     const modules = {
       toolbar:[
                 ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-                //['blockquote', 'code-block'],
-
                 [{ 'header': 1 }, { 'header': 2 }],               // custom button values
                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                //[{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-                //[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-                //[{ 'direction': 'rtl' }],                         // text direction
-
-                //[{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
                 [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
                 [  'image' ],          // add's image support
-                //[{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-                //[{ 'font': [] }],
                 [{ 'align': [] }],
-
                 ['clean']
     ]}
     return (
-         <Form className="form" name="basic" onFinish={handleSubmit} form={form}>
-             <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
+         <Form 
+         className="form" 
+         name="basic" 
+         onFinish={handleSubmit} 
+         layout="vertical"
+         form={form}>
+             
           <Form.Item
             className={formclasses.formField}
             label="Заголовок"
@@ -83,11 +74,7 @@ const TextEditor = () => {
               className={formclasses.inputField}
             />
           </Form.Item>
-        </Col>
-      </Row>
-      
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
+        
           <Form.Item
             className={formclasses.formField}
             label="Опис"
@@ -99,10 +86,7 @@ const TextEditor = () => {
             onChange={setValue}
             modules={modules}/>
           </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
+        
           <Form.Item>
             <div className={formclasses.cardButton}>
               <Button key="back" onClick={handleCancel} className={formclasses.buttons}>
@@ -113,8 +97,7 @@ const TextEditor = () => {
               </Button>
             </div>
           </Form.Item>
-        </Col>
-      </Row>
+        
       
          </Form>
          

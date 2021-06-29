@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import Spinner from '../Spinner/Spinner';
 import Search from "antd/lib/input/Search";
 import Title from "antd/lib/typography/Title";
+import AskQuestionModal from './AskQuestionModal';
 import Popup from "reactjs-popup";
 import TextEditor from './TextEditor';
 import {
@@ -29,6 +30,7 @@ let count = 1;
 const AboutBase = () =>{
     const [regionAdm, setRegionAdm] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [visibleModal, setVisibleModal] = useState(false);
     const [canEdit, setCanEdit] = useState(false);
     const [searchedData, setSearchedData] = useState("");
     const [form] = Form.useForm();
@@ -94,14 +96,14 @@ const AboutBase = () =>{
         }}
     />
     );
-
+    const showModal = () => setVisibleModal(true);
     
     return !loading ? (
         <Layout.Content className="aboutbase">
             <Title level={1}>Про базу</Title>
             <div className="searchContainer">
             {
-                <Button type="primary" /*onClick={showModal}*/>
+                <Button type="primary" onClick={showModal}>
                   Задати запитання
                 </Button>
             }
@@ -121,7 +123,7 @@ const AboutBase = () =>{
     key="1" 
     extra={<>{editOtlined()}{deleteOtlined()}</>}
     >
-    <Subsections></Subsections>
+    <Subsections/>
     </Panel>
   </Collapse>
     ))}
@@ -129,6 +131,11 @@ const AboutBase = () =>{
   <Input placeholder="➕ Додати розділ"/>
   <Button type="primary" onClick={()=>handleAdd}>✓</Button>
   </div>
+  <AskQuestionModal
+            setVisibleModal={setVisibleModal}
+            visibleModal={visibleModal}
+            //onAdd={handleAdd}
+          />
         </Layout.Content>
             
     ) : (
