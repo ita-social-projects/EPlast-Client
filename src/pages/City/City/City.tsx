@@ -178,9 +178,9 @@ const City = () => {
 
   function seeJoinModal() {
     return Modal.confirm({
-      title: "Ви впевнені, що хочете долучитися до даної станиці?",
+      title: "Ви впевнені, що хочете доєднатися до даної станиці?",
       icon: <ExclamationCircleOutlined />,
-      okText: "Так, долучитися",
+      okText: "Так, доєднатися",
       okType: "primary",
       cancelText: "Скасувати",
       maskClosable: true,

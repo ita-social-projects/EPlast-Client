@@ -651,6 +651,7 @@ boolean
               <div className="cityMoreButton">
                 {
                   canEdit || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+                  || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy)
                   || (!activeUserRoles.includes(Roles.RegisteredUser) && isActiveUserFromRegion)
                   ? <Button
                       type="primary"
@@ -661,8 +662,10 @@ boolean
                     </Button>
                   : null
                 }
-              {activeUserRoles.includes(Roles.Admin) || (activeUserRoles.includes(Roles.OkrugaHead) && isActiveUserRegionAdmin)
-              ?(
+                {activeUserRoles.includes(Roles.Admin)
+                || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
+                    && isActiveUserRegionAdmin)
+                ?(
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
