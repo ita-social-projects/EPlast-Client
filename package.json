@@ -23,6 +23,7 @@
     "antd-mask-input": "^0.1.13",
     "axios": "^0.21.1",
     "bizcharts": "^4.0.15",
+    "caniuse-lite": "^1.0.30001228",
     "craco-less": "^1.17.0",
     "formik": "^2.1.4",
     "from-antd-datepicker": "^0.2.10",
