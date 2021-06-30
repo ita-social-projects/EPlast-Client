@@ -10,6 +10,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import{
   emptyInput,
   fileIsUpload,
+  fileIsAdded,
   fileIsNotUpload, 
   possibleFileExtensions, 
   fileIsTooBig, 
@@ -103,6 +104,7 @@ const AddDocumentModal = (props: Props) => {
 
       await addDocument(props.ClubId, newDocument);
       props.onAdd(newDocument);
+      notificationLogic("success", fileIsAdded());
       props.setVisibleModal(false);
       form.resetFields();
       setLoading(false);

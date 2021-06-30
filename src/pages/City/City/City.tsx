@@ -42,7 +42,7 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulDeleteAction } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, fileIsAdded } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
@@ -157,8 +157,9 @@ const City = () => {
 
   const onAdd = (newDocument: CityDocument) => {
     if (documents.length < 6) {
-      setDocuments([...documents, newDocument]);
+      setDocuments([...documents, newDocument]); 
     }
+    notificationLogic("success", fileIsAdded());
   };
 
   function seeDeleteModal() {
