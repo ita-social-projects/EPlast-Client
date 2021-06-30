@@ -13,6 +13,7 @@ interface Props {
     showDropdown: boolean;
     canManage: boolean;
     onView: (id: number) => Promise<void>;
+    onViewPDF: (id: number) => Promise<void>;
     onEdit: (id: number) => void;
     onConfirm: (id: number) => Promise<void>;
     onRemove: (id: number) => Promise<void>;

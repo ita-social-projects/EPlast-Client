@@ -10,8 +10,7 @@ import {
   Skeleton,
   Card,
   Tooltip,
-  Badge,
-} from "antd";
+  Badge } from "antd";
 import {
   FileTextOutlined,
   EditOutlined,
@@ -19,7 +18,7 @@ import {
   UserAddOutlined,
   PlusOutlined,
   DeleteOutlined,
-  ExclamationCircleOutlined} from "@ant-design/icons";
+  ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import {
   addFollower,
@@ -27,8 +26,7 @@ import {
   getCityById,
   getLogo,
   removeCity,
-  toggleMemberStatus,
-} from "../../../api/citiesApi";
+  toggleMemberStatus } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -44,7 +42,7 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulDeleteAction } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, fileIsAdded } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
@@ -69,6 +67,7 @@ const City = () => {
   const [membersCount, setMembersCount] = useState<number>();
   const [adminsCount, setAdminsCount] = useState<number>();
   const [followersCount, setFollowersCount] = useState<number>();
+  const [documentsCount, setDocumentsCount] = useState<number>();
   const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
   const [visible, setvisible] = useState<boolean>(false);
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
@@ -158,8 +157,9 @@ const City = () => {
 
   const onAdd = (newDocument: CityDocument) => {
     if (documents.length < 6) {
-      setDocuments([...documents, newDocument]);
+      setDocuments([...documents, newDocument]); 
     }
+    notificationLogic("success", fileIsAdded());
   };
 
   function seeDeleteModal() {
@@ -219,6 +219,7 @@ const City = () => {
       setMembersCount(response.data.memberCount);
       setAdminsCount(response.data.administrationCount);
       setFollowersCount(response.data.followerCount);
+      setDocumentsCount(response.data.documentsCount);
       setActiveUserRoles(userApi.getActiveUserRoles);
     } 
     finally {
@@ -539,7 +540,15 @@ const City = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={4}>Документообіг станиці</Title>
+            <Title level={4}>Документообіг станиці <a onClick={() => history.push(`/cities/documents/${city.id}`)}>
+              {documentsCount !== 0 ?
+                <Badge
+                  count={documentsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a>
+            </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
                 documents.map((document) => (

@@ -3,7 +3,7 @@ import { Typography, Card, Modal, Space, Form, Row, Col, Table } from 'antd';
 import moment from 'moment';
 import './ClubAnnualReportInformation.less';
 import { Link, useHistory, useParams } from 'react-router-dom';
-import { getClubAnnualReportById, getClubById, confirmClubAnnualReport, cancelClubAnnualReport, removeClubAnnualReport } from '../../../../api/clubsApi';
+import { getClubAnnualReportById, getClubMembersInfo, confirmClubAnnualReport, cancelClubAnnualReport, removeClubAnnualReport } from '../../../../api/clubsApi';
 import { useEffect } from 'react';
 import Spinner from '../../../Spinner/Spinner';
 import { administrationsColumns, followersColumns, getTableAdmins, getTableFollowers, getTableMembers } from '../../ClubAnnualReportForm/ClubAnnualReportTableColumns';
@@ -55,7 +55,7 @@ const ClubAnnualReportInformation = () => {
             setClubAnnualReport(clubReport.data.annualreport);
             setStatus(clubReport.data.annualreport.status);
 
-            let response = await getClubById(clubReport.data.annualreport.clubId);
+            let response = await getClubMembersInfo(clubReport.data.annualreport.clubId);
 
             setClub(response.data);
 
