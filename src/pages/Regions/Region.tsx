@@ -130,6 +130,7 @@ boolean
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
   const [membersCount, setMembersCount] = useState<number>();
   const [adminsCount, setAdminsCount] = useState<number>();
+  const [documentsCount, setDocumentsCount] = useState<number>();
   const [visible, setvisible] = useState<boolean>(false);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
@@ -220,6 +221,9 @@ boolean
       setMembersCount(response.data.cities.length);
       setSixMembers(response.data.cities, 6);
 
+      setDocuments(response.data.documents);
+      setDocumentsCount(response.data.documentsCount);
+
       setPhotosLoading(true);
       setSixAdmins(response1.data, 7);
       setAdminsCount(response1.data.length);
@@ -303,16 +307,7 @@ boolean
     }
   };
 
-  const setRegionDocs = async () => {
-    try {
-      const response = await getRegionDocuments(id);
-      setDocuments(response.data);
-    } finally {
-    }
-  };
-
   useEffect(() => {
-    setRegionDocs();
     getRegion();
   }, []);
 
@@ -628,7 +623,15 @@ boolean
             xs={24}
           >
             <Card hoverable className="cityCard">
-              <Title level={4}>Документообіг округи</Title>
+              <Title level={4}>Документообіг округи <a onClick={() => history.push(`/regions/documents/${region.id}`)}>
+              {documentsCount !== 0 ?
+                <Badge
+                  count={documentsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a>
+              </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
                 {documents.length !== 0 ? (
                   documents.map((document) => (
@@ -651,6 +654,7 @@ boolean
               <div className="cityMoreButton">
                 {
                   canEdit || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+                  || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy)
                   || (!activeUserRoles.includes(Roles.RegisteredUser) && isActiveUserFromRegion)
                   ? <Button
                       type="primary"
@@ -661,8 +665,10 @@ boolean
                     </Button>
                   : null
                 }
-              {activeUserRoles.includes(Roles.Admin) || (activeUserRoles.includes(Roles.OkrugaHead) && isActiveUserRegionAdmin)
-              ?(
+                {activeUserRoles.includes(Roles.Admin)
+                || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
+                    && isActiveUserRegionAdmin)
+                ?(
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}

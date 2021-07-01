@@ -5,13 +5,14 @@ import Props from './UnconfirmedDropdownProps';
 import styles from '../Dropdown.module.css';
 
 const UnconfirmedDropdown = (props: Props) => {
-    const { record, pageX, pageY, showDropdown, canManage, onView, onEdit, onConfirm, onRemove } = props;
+    const { record, pageX, pageY, showDropdown, canManage, onView, onViewPDF, onEdit, onConfirm, onRemove } = props;
     const handleClick = (item: any) => {
         switch (item.key) {
             case '1':
                 onView(record.id);
                 break;
             case '2':
+                onViewPDF(record.id);
                 break;
             case '3':
                 if (record.canManage){

@@ -4,7 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { Form, Button, Row, Col, Tooltip, Modal } from 'antd';
 import './ClubAnnualReportEdit.less';
 import ClubAnnualReport from '../Interfaces/ClubAnnualReport';
-import { editClubAnnualReport, getClubAnnualReportById, getClubById } from '../../../api/clubsApi';
+import { editClubAnnualReport, getClubAnnualReportById, getClubMembersInfo } from '../../../api/clubsApi';
 import { Typography } from 'antd';
 import {
     successfulEditAction,
@@ -58,7 +58,7 @@ const ClubAnnualReportEdit = () => {
             let roles = UserApi.getActiveUserRoles();
             let response = await getClubAnnualReportById(id);
 
-            let club = await getClubById(response.data.annualreport.clubId);
+            let club = await getClubMembersInfo(response.data.annualreport.clubId);
             setClub(club.data);
 
             setAdmins(club.data.administration.filter((a: any) => a != null));

@@ -15,6 +15,7 @@ interface Props {
     isAdmin: boolean;
     ViewPDF: boolean;
     status: number;
+    handleViewPDF?: (id: number) => Promise<void>;
     setStatus: (status: number) => void;
     handleEdit: (id: number) => void;
     handleConfirm: (id: number) => Promise<void>;
@@ -24,7 +25,7 @@ interface Props {
 
 
 const AnnualReportMenu = (props: Props) => {
-    const { record, isAdmin, ViewPDF, status, handleEdit, handleConfirm, handleCancel, handleRemove } = props;
+    const { record, isAdmin, ViewPDF, status, handleViewPDF, handleEdit, handleConfirm, handleCancel, handleRemove } = props;
     const [isLoadingConfirm, setIsLoadingConfirm] = useState(false);
     const [isLoadingCancel, setIsLoadingCancel] = useState(false);
     const [isLoadingDelete, setIsLoadingDelete] = useState(false);
@@ -68,7 +69,7 @@ const AnnualReportMenu = (props: Props) => {
                 <div className="report-menu-item" onClick={() => history.goBack()}><CloseCircleOutlined /></div>
             </Tooltip>
             {ViewPDF && <Tooltip title="Переглянути у форматі PDF">
-                <div className="report-menu-item">
+                <div className="report-menu-item"  onClick={() => handleViewPDF? handleViewPDF(record.id):null}>
                     <FilePdfOutlined />
                 </div>
             </Tooltip>}

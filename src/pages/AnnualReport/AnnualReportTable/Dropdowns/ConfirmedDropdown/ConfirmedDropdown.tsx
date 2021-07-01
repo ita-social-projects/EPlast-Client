@@ -5,7 +5,7 @@ import Props from './ConfirmedDropdownProps';
 import styles from '../Dropdown.module.css';
 
 const ConfirmedDropdown = (props: Props) => {
-    const { record, pageX, pageY, showDropdown, canManage, onView, onCancel } = props;
+    const { record, pageX, pageY, showDropdown, canManage, onView, onViewPDF, onCancel } = props;
 
     const handleClick = (item: any) => {
         switch (item.key) {
@@ -13,6 +13,7 @@ const ConfirmedDropdown = (props: Props) => {
                 onView(record.id);
                 break;
             case '2':
+                onViewPDF(record.id);
                 break;
             case '3':
                 if (canManage) {

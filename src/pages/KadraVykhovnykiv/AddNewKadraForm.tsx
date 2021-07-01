@@ -149,7 +149,7 @@ type FormAddKadraProps = {
   }, []);
 
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
@@ -168,7 +168,8 @@ type FormAddKadraProps = {
               showSearch 
               className={classes.selectField}
               onSelect={onUserSelect}
-              loading={loadingUserStatus}              
+              loading={loadingUserStatus}        
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}      
               >
               {users?.map((o) => (
                 <Select.Option 
@@ -198,7 +199,11 @@ type FormAddKadraProps = {
               },
             ]}
           >
-            <Select filterOption={false} className={classes.inputField}>
+            <Select 
+              filterOption={false} 
+              className={classes.inputField}
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+            >
               {types?.map((o) => (
                 <Select.Option 
                   key={o.id} 
@@ -229,7 +234,10 @@ type FormAddKadraProps = {
           >
             <DatePicker 
                 format={dateFormat}
-                className={classes.selectField}/>
+                className={classes.selectField}
+                getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
+                popupStyle={{position: 'absolute'}}
+            />
           </Form.Item>
         </Col>
       </Row>

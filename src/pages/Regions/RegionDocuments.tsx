@@ -103,7 +103,9 @@ const RegionDocuments = () => {
                   }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    activeUserRoles.includes(Roles.Admin) || (activeUserRoles.includes(Roles.OkrugaHead) && isActiveUserFromRegion)
+                    activeUserRoles.includes(Roles.Admin)
+                    || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
+                        && isActiveUserFromRegion)
                     ? [ 
                         <DownloadOutlined
                               key="download"
@@ -119,7 +121,9 @@ const RegionDocuments = () => {
                               onClick={() => removeDocumentById(document.id)}
                             />,
                       ]
-                    : canEdit || (!activeUserRoles.includes(Roles.RegisteredUser) && isActiveUserFromRegion)
+                    : canEdit || activeUserRoles.includes(Roles.OkrugaHeadDeputy) 
+                    || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy)
+                    || (!activeUserRoles.includes(Roles.RegisteredUser) && isActiveUserFromRegion)
                     ? [
                         <DownloadOutlined
                           key="download"
