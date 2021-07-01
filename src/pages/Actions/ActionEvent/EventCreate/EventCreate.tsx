@@ -145,6 +145,8 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
     <Form name="basic"
       form={form}
       onFinish={handleFinish}
+      id='area' 
+      style={{position: 'relative'}}
     >
       < div className={classes.radio} >
         <Form.Item name="EventTypeID" rules={[{ required: true, message: isNotChosen("Тип події") }]} className={classes.radio}>
@@ -156,7 +158,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Категорія </h3>
         < Form.Item name="EventCategoryID" className={classes.input} rules={[{ required: true, message: emptyInput() }]} >
-          <Select notFoundContent="Спочатку оберіть тип події" showSearch optionFilterProp="children" >
+          <Select notFoundContent="Спочатку оберіть тип події" showSearch optionFilterProp="children" getPopupContainer={(triggerNode) => triggerNode.parentNode}>
             {categories.map((item: any) => (<Select.Option key={item.eventCategoryId} value={item.eventCategoryId} > {item.eventCategoryName} </Select.Option>))}
           </Select>
         </ Form.Item>
@@ -170,7 +172,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Комендант </h3>
         < Form.Item name="commandantId" className={classes.select} rules={[{ required: true, message: emptyInput() }]} >
-          <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(0, e)}  >
+          <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(0, e)} getPopupContainer={(triggerNode) => triggerNode.parentNode} >
             {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.id} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
           </Select>
         </ Form.Item>
@@ -178,7 +180,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Заступник коменданта </h3>
         < Form.Item name="alternateId" className={classes.select} rules={[{ required: true, message: emptyInput() }]} >
-          <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(1, e)} >
+          <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(1, e)} getPopupContainer={(triggerNode) => triggerNode.parentNode}>
             {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
           </Select>
         </Form.Item>
@@ -186,7 +188,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Бунчужний </h3>
         < Form.Item name="bunchuzhnyiId" className={classes.select} rules={[{ required: true, message: emptyInput() }]} >
-          <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(2, e)}>
+          <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(2, e)} getPopupContainer={(triggerNode) => triggerNode.parentNode}>
             {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
           </Select>
         </Form.Item>
@@ -194,7 +196,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Писар </h3>
         < Form.Item name="pysarId" className={classes.select} rules={[{ required: true, message: emptyInput() }]} >
-          <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(3, e)}>
+          <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(3, e)} getPopupContainer={(triggerNode) => triggerNode.parentNode}>
             {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id} > {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
           </Select>
         </Form.Item>
@@ -202,13 +204,29 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         <h3>Дата початку </h3>
         < Form.Item name="EventDateStart" rules={[{ required: true, message: emptyInput() }]} >
-          <DatePicker showTime disabledDate={disabledDate} placeholder="Оберіть дату початку" format={dateFormat} className={classes.select} onChange={setStartDate}/>
+          <DatePicker 
+            showTime 
+            disabledDate={disabledDate} 
+            placeholder="Оберіть дату початку" 
+            format={dateFormat} 
+            className={classes.select} 
+            onChange={setStartDate} 
+            getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
+            popupStyle={{position: 'absolute'}}/>
         </ Form.Item>
       </ div>
       < div className={classes.row} >
         <h3>Дата завершення </h3>
         < Form.Item name="EventDateEnd" rules={[{ required: true, message: emptyInput() }]} >
-          <DatePicker showTime disabledDate={disabledEndDate} placeholder="Оберіть дату завершення" format={dateFormat} className={classes.select} />
+          <DatePicker 
+            showTime 
+            disabledDate={disabledEndDate} 
+            placeholder="Оберіть дату завершення" 
+            format={dateFormat} 
+            className={classes.select} 
+            getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
+            popupStyle={{position: 'absolute'}}
+          />
         </ Form.Item>
       </ div>
       < div className={classes.row} >

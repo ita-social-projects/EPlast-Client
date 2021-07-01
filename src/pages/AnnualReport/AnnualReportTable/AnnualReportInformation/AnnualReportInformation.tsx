@@ -11,7 +11,7 @@ import AnnualReportMenu from '../../AnnualReportMenu';
 import StatusStamp from '../../AnnualReportStatus';
 import AuthStore from '../../../../stores/AuthStore';
 import jwt from "jwt-decode";
-import { successfulCancelAction, successfulConfirmedAction, successfulDeleteAction } from '../../../../components/Notifications/Messages';
+import { successfulCancelAction, successfulConfirmedAction, successfulDeleteAction, tryAgain } from '../../../../components/Notifications/Messages';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import UserApi from '../../../../api/UserApi';
 import { Roles } from '../../../../models/Roles/Roles';
@@ -126,6 +126,17 @@ const AnnualReportInformation = () => {
         });
     }
 
+    const handleViewPDF = async (id: number) => {
+        try {
+          {
+            const pdf = await AnnualReportApi.getPdf(id);
+            window.open(pdf);
+          }
+        } catch (error) {
+          notificationLogic("error", tryAgain);
+        }
+      };
+
     return (
         <>
             {isLoading ? <Spinner /> :
@@ -135,6 +146,7 @@ const AnnualReportInformation = () => {
                         isAdmin={isAdmin!}
                         ViewPDF={true}
                         status={status!}
+                        handleViewPDF={handleViewPDF}
                         setStatus={setStatus}
                         handleEdit={handleEdit}
                         handleConfirm={handleConfirm}
@@ -328,8 +340,8 @@ const AnnualReportInformation = () => {
                                     level={4}>Вкажіть, що вам допоможе ефективніше залучати волонтерів
                             та створювати виховні частини (гнізда, курені)</Title>
                                 <Space direction='vertical'>
-                                    <Text>{cityAnnualReport.improvementNeeds === null ? 'Інформація відсутня'
-                                        : cityAnnualReport.improvementNeeds}</Text>
+                                    <Text>{cityAnnualReport.listProperty === null ? 'Інформація відсутня'
+                                        : cityAnnualReport.listProperty}</Text>
                                 </Space>
                             </Card.Grid>
                             <Card.Grid
@@ -337,8 +349,8 @@ const AnnualReportInformation = () => {
                                 <Title
                                     level={4}>Вкажіть перелік майна, що є в станиці</Title>
                                 <Space direction='vertical'>
-                                    <Text>{cityAnnualReport.listProperty === null ? 'Інформація відсутня'
-                                        : cityAnnualReport.listProperty}</Text>
+                                    <Text>{cityAnnualReport.improvementNeeds === null ? 'Інформація відсутня'
+                                        : cityAnnualReport.improvementNeeds}</Text>
                                 </Space>
                             </Card.Grid>
                         </Card>
