@@ -53,7 +53,7 @@ const AddAchievementsModal = (props: Props) => {
   };
 
   const checkFile = (fileName: string, fileSize:number): boolean => {
-    const extension = fileName.split(".").reverse()[0];
+    const extension = fileName.split(".").reverse()[0].toLowerCase();
     const isCorrectExtension =
       extension.indexOf("pdf") !== -1 ||
       extension.indexOf("jpg") !== -1 ||

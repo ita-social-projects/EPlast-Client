@@ -67,7 +67,7 @@ const AddDocumentModal = (props: Props) => {
     };
 
     const checkFile = (fileSize: number, fileName: string): boolean => {
-      const extension = fileName.split(".").reverse()[0];
+      const extension = fileName.split(".").reverse()[0].toLowerCase();
       const isCorrectExtension =
         extension.indexOf("pdf") !== -1 ||
         extension.indexOf("doc") !== -1 ||
