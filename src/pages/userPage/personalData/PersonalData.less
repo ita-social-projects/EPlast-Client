@@ -35,20 +35,39 @@
 
 .formContainer{
     display: flex;
+    justify-content: space-between;
     width: 100%;
 }
 
-.avatarWrapper{
-    width: calc(60% - 30px) !important;
+.wrapperContainer {
+    width: calc(45% - 30px) !important;
     height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    margin:0 40px 20px 0;
+    justify-content: flex-start;
+    //margin:0 0 0 0;
+    //box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    //transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+    //min-height: 300px !important;
+    //margin-right: 20px;
+    //margin-left: 10px;
+}
+
+.alertWrapper {
+    width: 100% !important;
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
-    min-height: 300px !important;
+    margin-bottom: 10px;
+}
+
+.avatarWrapperf {
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+    width: 100% !important;
+    height: 100%;
+    padding-top: 20px;
+    margin-bottom: 20px;
 }
 
 .kadraWrapper{
@@ -58,19 +77,24 @@
 }
 
 .allFields{
-    width: calc(60% - 30px);
+    width: calc(55% - 30px);
     height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
+    //margin-bottom: 20px;
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+    //margin-right: 10px;
+    //margin-left: 20px;
+    margin-bottom: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .shortAllFields{
-    width: calc(60% - 30px);
+    width: calc(55% - 30px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -82,7 +106,7 @@
 }
 
 
-.avatarWrapper:hover,
+.avatarWrapperf:hover,
 .allFields:hover,
 .shortAllFields:hover{
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
@@ -140,11 +164,17 @@
     height: 10px;
     margin-bottom: 5px;
 }
-@media(max-width: 1340px){
-    .avatarWrapper{
+@media(max-width: 1330px) {
+    .wrapperContainer {
+        width: 750px !important;
+        margin-right: auto;
+        margin-left: auto;
+        margin-bottom: 20px;
+    }
+    .avatarWrapperf{
         width: 100% !important;
-        padding-top:5px;
-        padding-bottom: 5px;
+        padding-top: 20px;
+        padding-bottom: 20px;
         margin: auto !important;
     }
     .kadraWrapper{
@@ -154,7 +184,8 @@
     .allFields,
     .shortAllFields{
         width: 750px;
-        padding: 5px;
+        padding-top: 10px;
+        padding-bottom: 10px;
         margin: auto !important;
     }
     .formItem,
@@ -172,17 +203,24 @@
         padding: 10px;
     }
  }
- @media(max-width: 1120px){
-    .avatarWrapper{
+ @media(max-width: 1120px) {
+    .wrapperContainer {
+        width: 600px !important;
+        margin-right: auto;
+        margin-left: auto;
+        margin-bottom: 20px;
+    }
+    .avatarWrapperf{
         width: 100% !important;
-        padding-top:5px;
-        padding-bottom: 5px;
+        padding-top: 20px;
+        padding-bottom: 20px;
         margin: auto !important;
     }
     .allFields,
     .shortAllFields{
         width: 600px;
-        padding: 5px;
+        padding-top: 10px;
+        padding-bottom: 10px;
         margin: auto !important;
     }
     .formItem,
@@ -200,16 +238,23 @@
         padding: 10px;
     }
  }
-@media(max-width: 768px){
-    .avatarWrapper{
+@media(max-width: 768px) {
+    .wrapperContainer {
+        width: 100% !important;
+        margin-right: auto;
+        margin-left: auto;
+        margin-bottom: 20px;
+    }
+    .avatarWrapperf{
        width: 100% !important;
-       padding-top:5px;
-       padding-bottom: 5px;
+       padding-top: 20px;
+       padding-bottom: 20px;
    }
    .allFields,
    .shortAllFields{
        width: 100%;
-       padding: 5px;
+       padding-top: 10px;
+       padding-bottom: 10px;
    }
    .formItem,
    .shortFormItem{
@@ -247,7 +292,7 @@
 }
 
 .confirmBtn{
-    margin: 5px 0 5px;
+    margin: 5px 10px 10px;
     background: #3C5438;
     justify-content: center;
     color: white;
@@ -261,6 +306,16 @@
     width: 192px;
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+}
+
+.buttonWrapper {
+    text-align: center;
+}
+
+.kadraWrapper{
+    .confirmBtn{
+        margin: 5px 10px 15px !important;
+    } 
 }
 
 .confirmBtn:hover{
