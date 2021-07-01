@@ -9,7 +9,7 @@ import CityDocumentType from '../../../models/City/CityDocumentType';
 import { InboxOutlined } from "@ant-design/icons";
 import moment from "moment";
 import "moment/locale/uk";
-import{emptyInput, fileIsUpload, fileIsNotUpload, possibleFileExtensions, fileIsTooBig, successfulDeleteAction} from "../../../components/Notifications/Messages"
+import{emptyInput, fileIsUpload, fileIsNotUpload, possibleFileExtensions, fileIsTooBig, successfulDeleteAction, fileIsEmpty} from "../../../components/Notifications/Messages"
 moment.locale("uk-ua");
 
 interface Props {
@@ -69,6 +69,10 @@ const AddDocumentModal = (props: Props) => {
         notificationLogic("error", possibleFileExtensions("pdf, doc, docx"));
         setDisabled(true);
       }
+
+      const isEmptyFile = fileSize !== 0;
+      if (!isEmptyFile)
+      notificationLogic("error", fileIsEmpty());
       
       const isSmaller3mb = fileSize < 3145728;
       if (!isSmaller3mb) {
@@ -76,7 +80,7 @@ const AddDocumentModal = (props: Props) => {
         setDisabled(true);
       }
 
-      return isSmaller3mb && isCorrectExtension;
+      return isSmaller3mb && isEmptyFile && isCorrectExtension;
     };
 
     const handleSubmit = async (values: any) => {
