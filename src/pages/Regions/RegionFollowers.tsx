@@ -78,7 +78,7 @@ const RegionFollowers = () => {
         setFollowers(followers.filter(u => u.id !== follower.id));
     }
 
-    const removeMember = async (follower: RegionFollower) => {
+    const deleteFollower = async (follower: RegionFollower) => {
         await removeFollower(follower.id);
         await createNotification(follower.userId, "Нажаль, вашу заяву на створення станиці відхилено. Для з'ясування причин відмови зверніться до голови округу");
         setFollowers(followers.filter(u => u.id !== follower.id));
@@ -109,7 +109,7 @@ const RegionFollowers = () => {
                           onClick={() => addMember(follower)}
                         />,
                         <CloseOutlined
-                          onClick={() => removeMember(follower)}
+                          onClick={() => deleteFollower(follower)}
                         />,
                     ]
                     : undefined

@@ -280,13 +280,13 @@ export const getRegionFollowers = async (regionId: number) => {
 };
 
 export const removeFollower = async (followerId: number) => {
-  return api.remove(`Regions/RemoveFollower/${followerId}`, followerId).catch((error) => {
+  return api.remove(`Regions/RemoveFollower/${followerId}`).catch((error) => {
     throw new Error(error);
   });
 }
 
 export const toggleMemberStatus = async (regionId: number) => {
-  return api.put(`Regions/ChangeApproveStatus/${regionId}`, regionId).catch((error) => {
+  return api.put(`Regions/ChangeApproveStatus/${regionId}`).catch((error) => {
     throw new Error(error);
   });
 }
