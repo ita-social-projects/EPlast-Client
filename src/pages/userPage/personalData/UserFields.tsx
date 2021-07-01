@@ -85,7 +85,7 @@ export default function () {
             showIcon
           />}
           
-          <div className="avatarWrapperf">
+          <div className="avatarWrapperUserFields">
 
           <StickyContainer className="kadraWrapper">
               <AvatarAndProgress
