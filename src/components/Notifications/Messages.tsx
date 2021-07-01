@@ -88,6 +88,10 @@ export const fileIsNotUpload = (name?:string)=>{
     return name ? `Проблема з завантаженням ${name}` : `Проблема з завантаженням файлу`;
 }; 
 
+export const fileIsEmpty = (name?:string)=>{
+    return name ? `Файл порожній ${name}` : `Ви намагаєтесь завантажити порожній файл`;
+};
+
 export const isNotChosen = (name:string)=>{
     return `${name} не вибрано`;
 }; 
