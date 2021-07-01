@@ -18,6 +18,7 @@ import {
   PlusSquareFilled,
   DeleteOutlined,
   ExclamationCircleOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import {
@@ -27,6 +28,7 @@ import {
   getRegionDocuments,
   getHead,
   getHeadDeputy,
+  getRegionFollowers,
 } from "../../api/regionsApi";
 import {
   cityNameOfApprovedMember,
@@ -47,6 +49,7 @@ import NotificationBoxApi from "../../api/NotificationBoxApi";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
+import RegionFollower from "../../models/Region/RegionFollower";
 
 const Region = () => {
   const history = useHistory();
@@ -125,6 +128,8 @@ const Region = () => {
 boolean
   >(false);
 
+  const [followers, setFollowers] = useState<RegionFollower[]>([]);
+  const [followersCount, setFollowersCount] = useState<number>();
   const [canCreate, setCanCreate] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
@@ -154,7 +159,7 @@ boolean
     endDate: "",
   });
 
-  const setPhotos = async (members: any[], admins: any[]) => {
+  const setPhotos = async (members: any[], admins: any[], followers: RegionFollower[]) => {
     for (let i = 0; i < admins.length; i++) {
       admins[i].user.imagePath = (
         await userApi.getImage(admins[i].user.imagePath)
@@ -166,6 +171,12 @@ boolean
         members[i].logo = (await getLogo(members[i].logo)).data;
       } else {
         members[i].logo = CityDefaultLogo;
+      }
+    }
+
+    for(let i = 0; i < followers.length; i++) {
+      if (followers[i].logo === null) {
+        followers[i].logo = CityDefaultLogo;
       }
     }
 
@@ -204,6 +215,41 @@ boolean
     });
   }
 
+  /*const handleSubmit = async (values: RegionFollower) => {
+  *  const newCity: CityProfile = {
+  *    cityURL: values.cityURL,
+  *    description: values.cityDescription,
+  *    email: values.email,
+  *    head: new CityAdmin(),
+  *    headDeputy: city.headDeputy,
+  *    houseNumber: values.houseNumber,
+  *    id: city.id,
+  *    logo: city.logo?.length === 0 ? null : city.logo,
+  *    officeNumber: values.officeNumber,
+  *    name: values.name,
+  *    phoneNumber: values.phoneNumber,
+  *    postIndex: values.postIndex,
+  *    region: values.region,
+  *    street: values.street,
+    };*/
+
+
+  function seeAddFollowerModal(follower: RegionFollower) {
+    return Modal.confirm({
+      title: `Ви впевнені, що хочете підтвердити заявку на створення станиці ${follower.cityName}?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, створити",
+      okType: "danger",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        {
+          //await handleSubmit(follower);
+        }
+      },
+    });
+  }
+
   const getRegion = async () => {
     setLoading(true);
 
@@ -211,6 +257,7 @@ boolean
       const response = await getRegionById(id);
       const response1 = await getRegionAdministration(id);
       const responce2 = await cityNameOfApprovedMember(userApi.getActiveUserId());
+      const response3 = await getRegionFollowers(id);
 
       const responseHead = await getHead(id);
       const responseHeadDeputy = await getHeadDeputy(id);
@@ -229,12 +276,14 @@ boolean
       setAdminsCount(response1.data.length);
 
       setRegionLogoLoading(true);
-      setPhotos([...response.data.cities], [...response1.data]);
+      setPhotos([...response.data.cities], [...response1.data], response3.data);
 
       setRegion(response.data);
       setCanEdit(response.data.canEdit);
       setIsFromRegion(response.data.cities, responce2.data);
       setIsRegionAdmin(response1.data, userApi.getActiveUserId());
+      setSixFollowers(response3.data);
+      setFollowersCount(response3.data.length);
 
       if (response.data.logo === null) {
         setPhotoStatus(false);
@@ -251,8 +300,7 @@ boolean
     setSixAdmins(response.data, 6);
     setAdminsCount(response.data.length);
     setPhotosLoading(true);
-    setPhotos([], [...response.data]);
-
+    setPhotos([], [...response.data], []);
   };
 
   const setIsFromRegion = (members: any[], city: string) => {
@@ -272,6 +320,21 @@ boolean
       }
     }
   }
+
+  const setSixFollowers = (_followers: any[]) => {
+    if (_followers.length !== 0) {
+      if (_followers.length > 6) {
+        for (let i = 0; i < 6; i++) {
+          followers[i] = _followers[i];
+        }
+      } 
+      else {
+        for (let i = 0; i < _followers.length; i++) {
+          followers[i] = _followers[i];
+        }
+      }  
+    }
+  };
 
   const setSixMembers = (member: any[], amount: number) => {
     if (member.length > 6) {
@@ -492,18 +555,53 @@ boolean
                     </Col>
                   </>
                 ) : null}
-
-
               </Row>
             </Card>
           </Col>
 
           <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
             <Card hoverable className="cityCard">
-              <Title level={4}>Опис округи</Title>
+              <Title level={4}>Члени округи <a onClick={() => history.push(`/regions/members/${id}`)}>
+                {membersCount !== 0 ?
+                  <Badge
+                    count={membersCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  /> : null
+                }
+                </a>
+              </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
-                <div className="regionDesc">{region.description}</div>
+                {members[0].name !== "" ? (
+                  members.map((member) => (
+                    <Col
+                      className="cityMemberItem"
+                      key={member.id}
+                      xs={12}
+                      sm={8}
+                    >
+                      <div onClick={() => history.push(`/cities/${member.id}`)}>
+                        {photosLoading ? (
+                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        ) : (
+                            <Avatar size={64} src={member.logo} />
+                          )}
+                        <p className="userName">{member.name}</p>
+                      </div>
+                    </Col>
+                  ))
+                ) : (
+                    <Paragraph>Ще немає членів округи</Paragraph>
+                  )}
               </Row>
+              <div className="cityMoreButton">
+                <Button
+                  type="primary"
+                  className="cityInfoButton"
+                  onClick={() => history.push(`/regions/members/${id}`)}
+                >
+                  Більше
+              </Button>
+              </div>
             </Card>
           </Col>
 
@@ -572,66 +670,7 @@ boolean
 
           <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
             <Card hoverable className="cityCard">
-              <Title level={4}>Члени округи <a onClick={() => history.push(`/regions/members/${id}`)}>
-                {membersCount !== 0 ?
-                  <Badge
-                    count={membersCount}
-                    style={{ backgroundColor: "#3c5438" }}
-                  /> : null
-                }
-              </a>
-              </Title>
-              <Row className="cityItems" justify="center" gutter={[0, 16]}>
-                {members[0].name !== "" ? (
-                  members.map((member) => (
-                    <Col
-                      className="cityMemberItem"
-                      key={member.id}
-                      xs={12}
-                      sm={8}
-                    >
-                      <div onClick={() => history.push(`/cities/${member.id}`)}>
-                        {photosLoading ? (
-                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
-                        ) : (
-                            <Avatar size={64} src={member.logo} />
-                          )}
-                        <p className="userName">{member.name}</p>
-                      </div>
-                    </Col>
-                  ))
-                ) : (
-                    <Paragraph>Ще немає членів округи</Paragraph>
-                  )}
-              </Row>
-              <div className="cityMoreButton">
-                <Button
-                  type="primary"
-                  className="cityInfoButton"
-                  onClick={() => history.push(`/regions/members/${id}`)}
-                >
-                  Більше
-              </Button>
-              </div>
-            </Card>
-          </Col>
-
-          <Col
-            xl={{ span: 7, offset: 1 }}
-            md={{ span: 11, offset: 2 }}
-            sm={24}
-            xs={24}
-          >
-            <Card hoverable className="cityCard">
-              <Title level={4}>Документообіг округи <a onClick={() => history.push(`/regions/documents/${region.id}`)}>
-              {documentsCount !== 0 ?
-                <Badge
-                  count={documentsCount}
-                  style={{ backgroundColor: "#3c5438" }}
-                /> : null
-              }
-            </a>
-              </Title>
+              <Title level={4}>Документообіг округи</Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
                 {documents.length !== 0 ? (
                   documents.map((document) => (
@@ -674,6 +713,83 @@ boolean
                   onClick={() => setVisibleModal(true)}
                 />
                 ):null}
+              </div>
+            </Card>
+          </Col>
+
+          <Col
+            xl={{ span: 7, offset: 1 }}
+            md={{ span: 11, offset: 2 }}
+            sm={24}
+            xs={24}
+          >
+            <Card hoverable className="cityCard">
+              <Title level={4}>Прихильники округи <a onClick={() => history.push(`/regions/followers/${region.id}`)}>
+                {followersCount !== 0 ?
+                  <Badge
+                    count={followersCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  /> : null
+                }
+                </a>
+              </Title>
+              <Row className="cityItems" justify="center" gutter={[0, 16]}>
+                {followers.length !== 0 ? (
+                  followers.slice(0, 6).map((followers) => (
+                    <Col
+                      className="cityMemberItem"
+                      xs={12}
+                      sm={8}
+                      key={followers.id}
+                    >
+                    <div>
+                      <div
+                        onClick={() => activeUserRoles.includes(Roles.Admin) 
+                          || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
+                              && isActiveUserRegionAdmin)
+                          ? history.push(`/cities/new`)
+                          : undefined
+                        }
+                      >
+                        {photosLoading ? (
+                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        ) : (
+                            <Avatar size={64} src={followers.logo} />
+                          )}
+                        <p className="userName">{followers.cityName}</p>
+                      </div>
+                      { 
+                        activeUserRoles.includes(Roles.Admin) 
+                        || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
+                            && isActiveUserRegionAdmin) 
+                      ? (
+                          <PlusOutlined
+                            className="approveIcon"
+                            /*onClick={() => changeApproveStatus(followers.id)}*/
+                          />
+                        ) 
+                      : null}
+                    </div>
+                    </Col>
+                  ) )
+                ) 
+                : (
+                    <Paragraph>Ще немає прихильників округи</Paragraph>
+                  )}
+              </Row>
+              <div className="cityMoreButton">
+                <Button
+                  type="primary"
+                  className="cityInfoButton"
+                  onClick={() => activeUserRoles.includes(Roles.Admin) 
+                    || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
+                        && isActiveUserRegionAdmin) 
+                    ? history.push(`/regions/followers/${region.id}`) 
+                    : undefined
+                  }
+                >
+                Більше
+                </Button>
               </div>
             </Card>
           </Col>

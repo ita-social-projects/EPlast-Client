@@ -48,6 +48,7 @@ import AddNewRegionFormPage from "./pages/Regions/AddRegion";
 import RegionAdministration from "./pages/Regions/RegionAdministration";
 import RegionDocuments from "./pages/Regions/RegionDocuments";
 import RegionMembers from "./../src/pages/Regions/RegionMembers";
+import RegionFollowers from "./../src/pages/Regions/RegionFollowers";
 import StatisticsCities from "./pages/Statistics/StatisticsCities";
 import StatisticsRegions from "./pages/Statistics/StatisticsRegions";
 import NotAuthorizedPage from "./pages/Error/NotAuthorized";
@@ -104,6 +105,12 @@ const App: FC = () => (
             exact
             path="/regions/members/:id"
             component={RegionMembers}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regions/followers/:id"
+            component={RegionFollowers}
           />
           <RouteWithLayout
             layout={PrivateLayout}
