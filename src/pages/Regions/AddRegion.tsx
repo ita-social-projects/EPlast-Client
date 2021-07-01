@@ -54,11 +54,11 @@ const AddNewRegionFormPage = () => {
     await RegionsApi.createRegion(newRegion);
     form.resetFields();
 
-    notificationLogic("success", successfulCreateAction("Округа"));
+    notificationLogic("success", successfulCreateAction("Округу"));
     history.push("/regions");
   }
   catch(error){
-    notificationLogic("error", failCreateAction("округа"));
+    notificationLogic("error", failCreateAction("округу"));
   }
   };
 
