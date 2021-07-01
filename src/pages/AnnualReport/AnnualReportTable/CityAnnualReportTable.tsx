@@ -172,6 +172,18 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
     }
   };
 
+  const handleViewPDF = async (id: number) => {
+    hideDropdowns();
+    try {
+      {
+        const pdf = await AnnualReportApi.getPdf(id);
+        window.open(pdf);
+      }
+    } catch (error) {
+      notificationLogic("error", tryAgain);
+    }
+  };
+
   const handlePageChange = (page: number) => {
     hideDropdowns();
     setPage(page);
@@ -191,7 +203,7 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
         <p>
           {count ? 'Знайдено ' + count + '/' + total + ' результатів' : ''}
         </p>
-        {isCityAdmin ? <div className={"AuthReport"}>
+        {isCityAdmin && !isAdmin ? <div className={"AuthReport"}>
           <Tooltip
             placement="topLeft"
             title="Звіти в моєму розпорядженні">
@@ -272,6 +284,7 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
           pageY={y}
           canManage={isAdmin!}
           onView={handleView}
+          onViewPDF={handleViewPDF}
           onEdit={handleEdit}
           onConfirm={handleConfirm}
           onRemove={handleRemove}
@@ -283,6 +296,7 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
           pageY={y}
           canManage={isAdmin!}
           onView={handleView}
+          onViewPDF={handleViewPDF}
           onCancel={handleCancel}
         />
         <SavedDropdown
@@ -291,6 +305,7 @@ export const CityAnnualReportTable = ({ columns, searchedData, sortKey }: props)
           pageX={x}
           pageY={y}
           onView={handleView}
+          onViewPDF={handleViewPDF}
         />
       </ClickAwayListener>
     </div>

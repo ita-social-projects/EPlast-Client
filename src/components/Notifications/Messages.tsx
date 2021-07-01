@@ -80,6 +80,10 @@ export const fileIsUpload = (name?:string)=>{
     return name ? `${name} завантажено` : `Файл завантажено`;
 }; 
 
+export const fileIsAdded= (name?:string)=>{
+    return name ? `${name} завантажено` : `Файл успішно додано`;
+}; 
+
 export const fileIsNotUpload = (name?:string)=>{
     return name ? `Проблема з завантаженням ${name}` : `Проблема з завантаженням файлу`;
 }; 

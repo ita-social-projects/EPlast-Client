@@ -101,13 +101,14 @@
 }
 
  .addIcon {
+    width : 157.8px;
     background:#3c5438;
     color: white;
     top: 30px;
     height: 40px;
 }
 .listButton{
-    width : 157px;
+    width : 157.8px;
     background:#3c5438;
     color: white;
     top: 15px;

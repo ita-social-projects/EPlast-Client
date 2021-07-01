@@ -43,6 +43,7 @@ const Club = () => {
   const [membersCount, setMembersCount] = useState<number>();
   const [adminsCount, setAdminsCount] = useState<number>();
   const [followersCount, setFollowersCount] = useState<number>();
+  const [documentsCount, setDocumentsCount] = useState<number>();
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [clubLogoLoading, setClubLogoLoading] = useState<boolean>(false);
   const [document, setDocument] = useState<ClubDocument>(new ClubDocument());
@@ -179,6 +180,8 @@ const Club = () => {
       setMembersCount(response.data.memberCount);
       setAdminsCount(response.data.administrationCount);
       setFollowersCount(response.data.followerCount)
+      setDocumentsCount(response.data.documentsCount);
+      console.log(response.data);
     } finally {
       setLoading(false);
     }
@@ -511,7 +514,14 @@ const Club = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="clubCard">
-            <Title level={4}>Документообіг куреня</Title>
+            <Title level={4}>Документообіг куреня <a onClick={() => history.push(`/clubs/documents/${club.id}`)}>
+              {documentsCount !== 0 ?
+                <Badge
+                  count={documentsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a></Title>
             <Row className="clubItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
                 documents.map((document) => (
