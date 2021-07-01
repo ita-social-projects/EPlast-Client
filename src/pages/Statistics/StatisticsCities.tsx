@@ -74,6 +74,7 @@ const StatisticsCities = () => {
       title: "Округа",
       dataIndex: "regionName",
       key: "regionName",
+      fixed: "left",
       ellipsis: {
         showTitle: true,
       },
