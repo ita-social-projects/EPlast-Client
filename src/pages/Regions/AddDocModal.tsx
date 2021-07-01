@@ -8,6 +8,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import moment from "moment";
 import{
   fileIsUpload,
+  fileIsAdded,
   fileIsNotUpload, 
   possibleFileExtensions, 
   fileIsTooBig, 
@@ -86,9 +87,10 @@ const AddDocumentModal = (props: Props) => {
         submitDate: values.datepicker?._d,
         regionId: props.regionId
       };
-
+    
       await addDocument(newDocument);
       props.onAdd(newDocument);
+      notificationLogic("success", fileIsAdded()); 
       props.setVisibleModal(false);
       form.resetFields();
       setLoading(false);
