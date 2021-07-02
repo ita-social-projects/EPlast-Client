@@ -58,7 +58,7 @@ const getActiveUserId = () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt_decode(token);
 
-    return user.nameid as string;;
+    return user.nameid as string;
 };
 
 const getActiveUserProfile = async () => {
