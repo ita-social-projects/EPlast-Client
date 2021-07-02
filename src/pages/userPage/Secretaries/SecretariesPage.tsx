@@ -62,7 +62,7 @@ export const Secretaries = () => {
             <div className="container">
                 <Form name="basic" className="formContainer">
 
-                    <div className="avatarWrapper">
+                    <div className="avatarWrapperSecretaries">
                         <StickyContainer className="kadraWrapper">
                             <AvatarAndProgress
                                 imageUrl={data?.user.imagePath}
@@ -80,8 +80,8 @@ export const Secretaries = () => {
                         </StickyContainer>
                     </div>
 
-                    <div className="allFields">
-                        <div className="rowBlock">
+                    <div className="allFieldsSecretaries">
+                        <div className="rowBlockSecretaries">
                             <Card
                                 style={{ width: '100%' }}
                                 tabList={tabList}
