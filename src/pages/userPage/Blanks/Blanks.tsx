@@ -282,13 +282,15 @@ export const Blanks = () => {
                                             }
                                         />
                                     </Tooltip>
-                                    <Tooltip title="Переглянути">
-                                        <EyeOutlined
-                                            hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles) || extractUPUFormat === "doc" || extractUPUFormat === "docx")}
-                                            className={classes.reviewIcon}
-                                            key="review"
-                                            onClick={() => openExtractFromUPUDocument(extractUPU.blobName, extractUPU.fileName)} />
-                                    </Tooltip>
+                                    {(documentFormat !== "doc" && documentFormat !== "docx") ?
+                                        <Tooltip title="Переглянути">
+                                            <EyeOutlined
+                                                hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles) || extractUPUFormat === "doc" || extractUPUFormat === "docx")}
+                                                className={classes.reviewIcon}
+                                                key="review"
+                                                onClick={() => openExtractFromUPUDocument(extractUPU.blobName, extractUPU.fileName)} />
+                                        </Tooltip>
+                                    : null}
                                     <Tooltip title="Видалити">
                                         <Popconfirm
                                             title="Видалити цей документ?"
