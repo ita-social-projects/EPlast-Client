@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
-import { Form, Input, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
-import adminApi from "../../../api/adminApi";
-import notificationLogic from "../../../components/Notifications/Notification";
+import { Form, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
 import {
-  addAdministrator,
-  editAdministrator,
   getAllAdmins,
   getAllMembers,
 } from "../../../api/citiesApi";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import moment from "moment";
 import {
   emptyInput,
-  successfulEditAction,
 } from "../../../components/Notifications/Messages"
 import CityAdmin from "../../../models/City/CityAdmin";
 import AdminType from "../../../models/Admin/AdminType";
@@ -23,36 +17,25 @@ import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
 
 type AddCitiesNewSecretaryForm = {
-  onAdd: () => void;
+  onAdd: (admin: CityAdmin) => void;
   onCancel: () => void;
   cityId: number;
   admin?: any;
 };
-const confirm = Modal.confirm;
 const AddCitiesNewSecretaryForm = (props: any) => {
-  const [head, setHead] = useState<CityAdmin>();
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [members, setMembers] = useState<CityMember[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const getMembers = async () => {
-    setLoading(true);
     const responseMembers = await getAllMembers(props.cityId);
     setMembers(responseMembers.data.members);
-    setLoading(false);
   };
 
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
 
-  const getHead = async () => {
-    if (props.cityId !== 0) {
-      const responseAdmins = await getAllAdmins(props.cityId);
-      setHead(responseAdmins.data.head);
-    }
-  };
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -62,57 +45,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
     return current && current > moment();
   };
 
-  const addClubAdmin = async (admin: CityAdmin) => {
-    await addAdministrator(admin.cityId, admin);
-    notificationLogic("success", "Користувач успішно доданий в провід");
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${props.cityId}`,
-      `цій станиці`
-    );
-  };
 
-  const editClubAdmin = async (admin: CityAdmin) => {
-    await editAdministrator(props.cityId, admin);
-    notificationLogic("success", successfulEditAction("Адміністратора"));
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${props.cityId}`,
-      `цій станиці`);
-  };
-
-
-  const showConfirm = (admin: CityAdmin) => {
-    confirm({
-      title: "Призначити даного користувача на цю посаду?",
-      content: (
-        <div style={{ margin: 10 }}>
-          <b>
-            {head?.user.firstName} {head?.user.lastName}
-          </b>{" "}
-          є Головою Станиці, час правління закінчується{" "}
-          <b>
-            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
-              ? "ще не скоро"
-              : moment(head?.endDate).format("DD.MM.YYYY")}
-          </b>
-          .
-        </div>
-      ),
-      onCancel() { },
-      onOk() {
-        if (admin.id === 0) {
-          addClubAdmin(admin);
-        } else {
-          editClubAdmin(admin);
-        }
-      },
-    });
-  };
 
   const handleSubmit = async (values: any) => {
     const newAdmin: CityAdmin = {
@@ -129,29 +62,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       startDate: values.startDate,
       endDate: values.endDate,
     };
-    onAdd();
-    if (newAdmin.id === 0) {
-      try {
-        if (values.AdminType === Roles.CityHead && head !== null) {
-          if (head?.userId !== newAdmin.userId) {
-            showConfirm(newAdmin);
-          } else if (head?.userId === newAdmin.userId) {
-          }
-          else {
-            editClubAdmin(newAdmin);
-          }
-        } else {
-          if (newAdmin.id === 0) {
-            addClubAdmin(newAdmin);
-          }
-          else {
-            editClubAdmin(newAdmin);
-          }
-        }
-      } finally {
-        onAdd();
-      }
-    }
+    onAdd(newAdmin);
   };
 
   useEffect(() => {
@@ -159,7 +70,6 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       form.resetFields();
     }
     getMembers();
-    getHead();
     const userRoles = userApi.getActiveUserRoles();
       setActiveUserRoles(userRoles);
   }, [props]);
