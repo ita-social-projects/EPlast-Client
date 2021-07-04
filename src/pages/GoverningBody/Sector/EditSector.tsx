@@ -17,37 +17,34 @@ import {
 } from "@ant-design/icons/lib";
 import ReactInputMask from "react-input-mask";
 import { RcCustomRequestOptions } from "antd/lib/upload/interface";
-import GoverningBodyDefaultLogo from "../../assets/images/default_city_image.jpg";
+import DefaultLogo from "../../../assets/images/default_city_image.jpg";
 import {
-  createGoverningBody,
-  getGoverningBodyById,
-  getGoverningBodyLogo,
-  updateGoverningBody,
-} from "../../api/governingBodiesApi";
-import "../City/CreateCity/CreateCity.less";
-import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfile";
-import notificationLogic from "../../components/Notifications/Notification";
+  getSectorById,
+  getSectorLogo,
+  updateSector,
+} from "../../../api/governingBodySectorsApi";
+import "../../City/CreateCity/CreateCity.less";
+import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
+import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
-import Spinner from "../Spinner/Spinner";
+import Spinner from "../../Spinner/Spinner";
 import{
   fileIsUpload,
-  fileIsNotUpload, 
-  possibleFileExtensions, 
-  fileIsTooBig, 
-  successfulDeleteAction, 
-  successfulCreateAction, 
-  successfulUpdateAction, 
-  failCreateAction,
+  fileIsNotUpload,
+  possibleFileExtensions,
+  fileIsTooBig,
+  successfulDeleteAction,
+  successfulUpdateAction,
   failUpdateAction,
-} from "../../components/Notifications/Messages"
-import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
+} from "../../../components/Notifications/Messages"
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
-const CreateGoverningBody = () => {
-  const { id } = useParams();
+const EditSector = () => {
+  const { governingBodyId, sectorId } = useParams();
   const history = useHistory();
 
   const [loading, setLoading] = useState(false);
-  const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(new GoverningBodyProfile());
+  const [sector, setSector] = useState<SectorProfile>(new SectorProfile());
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -77,7 +74,7 @@ const CreateGoverningBody = () => {
     if (info !== null) {
       if (checkFile(info.file.size, info.file.name)) {
         getBase64(info.file, (base64: string) => {
-          setGoverningBody({ ...governingBody, logo: base64 });
+          setSector({ ...sector, logo: base64 });
         });
         notificationLogic("success", fileIsUpload("Фото"));
       }
@@ -87,106 +84,87 @@ const CreateGoverningBody = () => {
   };
 
   const removeLogo = (event: any) => {
-    setGoverningBody({ ...governingBody, logo: null });
+    setSector({ ...sector, logo: null });
     notificationLogic("success", successfulDeleteAction("Фото"));
     event.stopPropagation();
   };
 
-  const getGoverningBody = async () => {
+  const getSector = async () => {
     try {
       setLoading(true);
-      let response = await getGoverningBodyById(+id);
+      let response = await getSectorById(+sectorId);
 
       if (response.data.logo !== null && response.data.logo !== '') {
-        const logo = await getGoverningBodyLogo(response.data.logo);
+        const logo = await getSectorLogo(response.data.logo);
         response.data.logo = logo.data;
       }
-      setGoverningBody(response.data);
+      setSector(response.data);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (+id) {
-      getGoverningBody();
+    if (+sectorId) {
+      getSector();
     }
-  }, [id]);
+  }, [sectorId]);
 
   const handleSubmit = async (values: any) => {
-    const newGoverningBody: GoverningBodyProfile = {
-      id: governingBody.id,
+    const newSector: SectorProfile = {
+      id: sector.id,
+      governingBodyId: governingBodyId,
       description: values.description,
       email: values.email,
-      governingBodyName: values.name,
-      logo: governingBody.logo?.length === 0 ? null : governingBody.logo,
+      name: values.name,
+      logo: sector.logo?.length === 0 ? null : sector.logo,
       phoneNumber: values.phoneNumber,
-      head: governingBody.head,
+      head: sector.head,
     };
 
-    if (!governingBody.id) {
-      CreateGoverningBody(newGoverningBody);
-    } else {
-      EditGoverningBody(newGoverningBody);
-    }
+    await EditSector(newSector);
   };
 
-  const CreateGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
-    notificationLogic("info", "Створення...", <LoadingOutlined />);
-    const responsePromise = createGoverningBody(JSON.stringify(newGoverningBody));
-    const response = await responsePromise;
-    governingBody.id = response.data;
-
-    return responsePromise
-      .then(() => {
-        notificationLogic("success", successfulCreateAction("Керівний орган"));
-        history.push(`${governingBody.id}`);
-      })
-      .catch(() => {
-        notificationLogic("error", failCreateAction("керівний орган"));
-      });
-  };
-
-  const EditGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
+  const EditSector = async (newSector: SectorProfile) => {
     notificationLogic("info", "Оновлення...", <LoadingOutlined />);
 
-    return updateGoverningBody(governingBody.id, JSON.stringify(newGoverningBody))
+    return updateSector(newSector.id, JSON.stringify(newSector))
       .then(() => {
-        notificationLogic("success", successfulUpdateAction("Керівний орган"));
+        notificationLogic("success", successfulUpdateAction("Напрям керівного органу"));
         history.goBack();
       })
       .catch(() => {
-        notificationLogic("error", failUpdateAction("керівний орган"));
+        notificationLogic("error", failUpdateAction("напрям керівного органу"));
       });
   };
 
-  return loading && governingBody ? (
+  return loading && sector ? (
     <Spinner />
   ) : (
     <Layout.Content className="createCity">
       <Card hoverable className="createCityCard">
-        {governingBody.id ? (
-          <Title level={2}>Редагування керівного органу</Title>
+        {sector.id ? (
+          <Title level={2}>Редагування напряму керівного органу</Title>
         ) : (
-          <Title level={2}>Створення керівного органу</Title>
+          <Title level={2}>Створення напряму керівного органу</Title>
         )}
         <Form onFinish={handleSubmit}>
-          <Form.Item name="logo" initialValue={governingBody.logo}>
-          <Upload
+          <Form.Item name="logo" initialValue={sector.logo}>
+            <Upload
               name="avatar"
               listType="picture-card"
               showUploadList={false}
               accept=".jpeg,.jpg,.png"
               customRequest={handleUpload}
             >
-              {governingBody.logo?.length! > 0 ? (
+              {sector.logo?.length! > 0 ? (
                 <DeleteOutlined onClick={removeLogo} />
               ) : (
                 <PlusOutlined />
               )}
               <img
-                src={governingBody?.logo ? governingBody.logo : GoverningBodyDefaultLogo}
-                alt="GoverningBody"
+                src={sector?.logo ? sector.logo : DefaultLogo}
+                alt="GoverningBodySector"
                 className="cityLogo"
               />
             </Upload>
@@ -197,10 +175,10 @@ const CreateGoverningBody = () => {
                 name="name"
                 label="Назва"
                 labelCol={{ span: 24 }}
-                initialValue={governingBody.governingBodyName}
+                initialValue={sector.name}
                 rules={descriptionValidation.Name}
               >
-                <Input value={governingBody.governingBodyName} maxLength={51} />
+                <Input value={sector.name} maxLength={51} />
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
@@ -208,10 +186,10 @@ const CreateGoverningBody = () => {
                 name="description"
                 label="Опис"
                 labelCol={{ span: 24 }}
-                initialValue={governingBody.description}
+                initialValue={sector.description}
                 rules={[descriptionValidation.Description]}
               >
-                <Input value={governingBody.description} maxLength={1001} />
+                <Input value={sector.description} maxLength={1001} />
               </Form.Item>
             </Col>
             <Col md={11} xs={24}>
@@ -219,13 +197,13 @@ const CreateGoverningBody = () => {
                 name="phoneNumber"
                 label="Номер телефону"
                 labelCol={{ span: 24 }}
-                initialValue={governingBody.phoneNumber}
+                initialValue={sector.phoneNumber}
                 rules={[descriptionValidation.Phone]}
               >
                 <ReactInputMask
                   mask="+380(99)-999-99-99"
                   maskChar={null}
-                  value={governingBody.phoneNumber}
+                  value={sector.phoneNumber}
                 >
                   {(inputProps: any) => <Input {...inputProps} />}
                 </ReactInputMask>
@@ -236,10 +214,10 @@ const CreateGoverningBody = () => {
                 name="email"
                 label="Електронна пошта"
                 labelCol={{ span: 24 }}
-                initialValue={governingBody.email}
+                initialValue={sector.email}
                 rules={descriptionValidation.Email}
               >
-                <Input value={governingBody.email} maxLength={51} />
+                <Input value={sector.email} maxLength={51} />
               </Form.Item>
             </Col>
           </Row>
@@ -265,4 +243,4 @@ const CreateGoverningBody = () => {
   );
 };
 
-export default CreateGoverningBody;
+export default EditSector;

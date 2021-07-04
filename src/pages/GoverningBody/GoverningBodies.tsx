@@ -35,7 +35,8 @@ const GoverningBodies = () => {
     setPhotosLoading(false);
   };
   
-  if(photosLoading) setPhotos();
+  if(photosLoading)
+    setPhotos();
 
   const getGoverningBodies = async () => {
     setLoading(true);
