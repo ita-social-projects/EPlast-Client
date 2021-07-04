@@ -21,8 +21,10 @@ import {
   ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import {
+  addAdministrator,
   addFollower,
   cityNameOfApprovedMember,
+  editAdministrator,
   getCityById,
   getLogo,
   removeCity,
@@ -42,10 +44,11 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulDeleteAction, fileIsAdded } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, fileIsAdded, successfulEditAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
+import "moment/locale/uk";
 
 const City = () => {
   const history = useHistory();
@@ -74,7 +77,8 @@ const City = () => {
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
   const changeApproveStatus = async (memberId: number) => {
-    const member = await toggleMemberStatus(memberId);
+  const member = await toggleMemberStatus(memberId);
+    moment.locale("uk-ua");
 
     await NotificationBoxApi.createNotifications(
       [member.data.userId],
@@ -226,9 +230,7 @@ const City = () => {
       setLoading(false);
     }
   };
-
-  const handleOk = async() => {
-    setvisible(false);
+  const updateAdmins = async () => {
     const response = await getCityById(+id);
     setAdminsCount(response.data.administrationCount);
     const admins = [
@@ -236,20 +238,100 @@ const City = () => {
       response.data.head,
       response.data.headDeputy,
     ].filter((a) => a !== null);
+    setCity(response.data);
     setAdmins(admins);
     setPhotosLoading(true);
     setPhotos([...admins],response.data.logo);
+  }
+
+  const addCityAdmin = async (admin: CityAdmin) => {
+    await addAdministrator(admin.cityId, admin);
+    await updateAdmins();
+    notificationLogic("success", "Користувач успішно доданий в провід");
+    await NotificationBoxApi.createNotifications(
+      [admin.userId],
+      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/cities/${id}`,
+      `цій станиці`
+    );
   };
 
-  useEffect(() => {
-    getCity();
-  }, []);
+  const editCityAdmin = async (admin: CityAdmin) => {
+    await editAdministrator(id, admin);
+    await updateAdmins();
+    notificationLogic("success", successfulEditAction("Адміністратора"));
+    await NotificationBoxApi.createNotifications(
+      [admin.userId],
+      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/cities/${id}`,
+      `цій станиці`);
+  };
+
+  const showConfirmCityAdmin  = async (admin: CityAdmin) => {
+    return Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (
+        <div style={{ margin: 10 }}>
+          <b>
+            {city.head.user.firstName} {city.head.user.lastName}
+          </b>{" "}
+          є Головою Станиці, час правління закінчується{" "}
+          <b>
+            {moment(city.head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(city.head.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onCancel() { },
+      async onOk() {
+        if (admin.id === 0) {
+         await addCityAdmin(admin);
+        } else {
+         await editCityAdmin(admin);
+        }
+      },
+    });
+  };
+
+  const handleOk = async(admin: CityAdmin) => {
+    if (admin.id === 0) {
+      try {
+        if (admin.adminType.adminTypeName === Roles.CityHead && city.head !== null) {
+          if (city.head?.userId !== admin.userId) {
+          await  showConfirmCityAdmin(admin);
+          } else if (city.head?.userId === admin.userId) {
+          }
+          else {
+            editCityAdmin(admin);
+          }
+        } else {
+          if (admin.id === 0) {
+            addCityAdmin(admin);
+          }
+          else {
+            editCityAdmin(admin);
+          }
+        }
+      } finally {
+        setvisible(false);
+      }
+    }
+  };
+
+  const handleClose = async() => {
+    setvisible(false);
+  };
 
   useEffect(() => {
     if (city.name.length !== 0) {
       PsevdonimCreator.setPseudonimLocation(`cities/${city.name}`, `cities/${id}`);
     }
-  }, [city])
+    getCity();
+  }, [])
 
   return loading ? (
     <Spinner />
@@ -682,8 +764,7 @@ const City = () => {
       <Modal
         title="Додати діловода"
         visible={visible}
-        onOk={handleOk}
-        onCancel={handleOk}
+        onCancel={handleClose}
         footer={null}
       >
         <AddCitiesNewSecretaryForm
