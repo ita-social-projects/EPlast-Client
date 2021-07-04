@@ -11,6 +11,13 @@
   display: flex;
 }
 
+.cardButtonDocuments {
+  display: flex;
+  width: 100%;
+  max-width: 370px;
+  justify-content:flex-end;
+}
+
 .selectField {
   max-width: 370px;
   min-width: 370px;
