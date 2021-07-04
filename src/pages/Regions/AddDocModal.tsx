@@ -8,10 +8,12 @@ import { InboxOutlined } from "@ant-design/icons";
 import moment from "moment";
 import{
   fileIsUpload,
+  fileIsAdded,
   fileIsNotUpload, 
   possibleFileExtensions, 
   fileIsTooBig, 
   successfulDeleteAction,
+  fileIsEmpty,
 } from "../../components/Notifications/Messages"
 import "moment/locale/uk";
 moment.locale("uk-ua");
@@ -68,12 +70,16 @@ const AddDocumentModal = (props: Props) => {
         setDisabled(true);
       }
       
+      const isEmptyFile = fileSize !== 0;
+      if (!isEmptyFile)
+      notificationLogic("error", fileIsEmpty());
+      
       const isSmaller3mb = fileSize < 3145728;
       if (!isSmaller3mb) {
         notificationLogic("error", fileIsTooBig(3));
         setDisabled(true);
       }
-      return isSmaller3mb && isCorrectExtension;
+      return isSmaller3mb && isEmptyFile && isCorrectExtension;
     };
 
     const handleSubmit = async (values: any) => {
@@ -86,9 +92,10 @@ const AddDocumentModal = (props: Props) => {
         submitDate: values.datepicker?._d,
         regionId: props.regionId
       };
-
+    
       await addDocument(newDocument);
       props.onAdd(newDocument);
+      notificationLogic("success", fileIsAdded()); 
       props.setVisibleModal(false);
       form.resetFields();
       setLoading(false);

@@ -15,7 +15,7 @@ export default function ({
     params: { specify },
   },
 }: any) {
-  const { userId } = useParams();
+  const { userId } = useParams<{ userId:string }>();
 
   return (
     <div className="mainContainer">
@@ -50,7 +50,7 @@ export default function ({
         </div>
       ) : (
         <div className="content">
-          <EditUserPage />
+          <UserFields />
         </div>
       )}
     </div>

@@ -2,26 +2,33 @@
   display: flex;
   width: 100%;
   max-width: 370px;
+  justify-content:flex-end;
+  float: right;
 }
 
 .formField {
   max-width: 370px;
+  display: flex;
 }
 
 .selectField {
   max-width: 370px;
   min-width: 370px;
+  position: absolute;
 }
 
 @media(max-width: 400px) {
 .formField{ 
   max-width: 100%;
   min-width: 100%;
+  position: absolute;
 }
 .selectField {
   max-width: 100%;
   min-width: 100%;
-}
+  display: flex;
+  position: absolute;
+  }
 }
 .buttons
   {

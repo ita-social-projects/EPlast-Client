@@ -145,6 +145,8 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
     <Form name="basic"
       form={form}
       onFinish={handleFinish}
+      id='area' 
+      style={{position: 'relative'}}
     >
       < div className={classes.row} >
         <Form.Item label="Тип події" name="EventTypeID" rules={[{ required: true, message: isNotChosen("Тип події") }]} className={classes.radio}>
