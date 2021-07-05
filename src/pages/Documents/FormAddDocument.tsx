@@ -10,7 +10,6 @@ import {
   Col,
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
-
 import documentsApi, {
   TypePostParser
 } from "../../api/documentsApi";
@@ -275,7 +274,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
               {fileData.FileAsBase64 !== null && (
                 <div>
                   <Button
-                    className={formclasses.cardButton}
+                    className={formclasses.cardButtonDocuments}
                     onClick={() => {
                       setFileData({ FileAsBase64: null, FileName: null });
                       notificationLogic("success", successfulDeleteAction("Файл"));
