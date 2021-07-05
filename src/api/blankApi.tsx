@@ -50,7 +50,7 @@ export const removeExtractFromUPUDocument = async (documentId: number) => {
 }
 
 const openFile = async(base64: string, format: string)=>{
-  if (format === "png" || format === "jpg" || format === "jpeg") {
+  if (format.toLowerCase() === "png" || format.toLowerCase() === "jpg" || format.toLowerCase() === "jpeg") {
     var image = new Image();
     image.src = `data:image/${format};base64,` + base64;
     var w = window.open("");
