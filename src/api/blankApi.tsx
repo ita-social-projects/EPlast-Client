@@ -1,16 +1,16 @@
 import api from "./api";
 
-export const addDocument = async (userId: number, data: any) => {
+export const addDocument = async (userId: string, data: any) => {
   return api.post(`Blanks/AddDocument/${userId}`, data).catch((error) => {
     throw new Error(error);
   });
 }
-export const addAchievementDocuments = async (userId: number, data: any) => {
+export const addAchievementDocuments = async (userId: string, data: any) => {
   return api.post(`Blanks/AddAchievementDocumet/${userId}`, data).catch((error) => {
     throw new Error(error);
   });
 }
-export const addExtractFromUPU = async (userId: number, data: any) => {
+export const addExtractFromUPU = async (userId: string, data: any) => {
   return api.post(`Blanks/AddExtractFromUPUDocument/${userId}`, data).catch((error) => {
     throw new Error(error);
   });
