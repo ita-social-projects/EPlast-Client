@@ -21,27 +21,6 @@ type FormAskQuestionProps = {
   const FormAskQuestion: React.FC<FormAskQuestionProps> = (props: any) => {
     const [form] = Form.useForm();
     const history = useHistory();
-
-    const data = [
-      {
-        avatar: (
-          <EnvironmentOutlined id={styles.environmentOutlined} />
-        ),
-        title: "Україна",
-      },
-      {
-        avatar: (
-          <PhoneOutlined id={styles.environmentOutlined} />
-        ),
-        title: "+38 (099)-999-99-99",
-      },
-      {
-        avatar: (
-          <MailOutlined id={styles.environmentOutlined} />
-        ),
-        title: "info@plast.ua",
-      },
-    ];
   
     const handleSubmit = async (values: any) => {
       if(values.PhoneNumber === "")

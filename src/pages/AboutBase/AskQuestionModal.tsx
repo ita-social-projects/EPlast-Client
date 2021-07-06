@@ -7,7 +7,6 @@ import FormAskQuestion from './FormAskQuestion';
 interface Props {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
-  //onAdd: () => void;
 }
 
 const AskQuestionModal = ({ visibleModal, setVisibleModal}: Props) => {
