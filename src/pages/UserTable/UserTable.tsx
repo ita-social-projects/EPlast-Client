@@ -54,6 +54,8 @@ const UsersTable = () => {
   const [clubs, setClubs] = useState<any>();
   const [degrees, setDegrees] = useState<any>();
   const [searchData, setSearchData] = useState<string>("");
+  const [sortKey, setSortKey]=useState<number>(1);
+  const [filter, setFilter]=useState<string>("");
   const [dynamicCities, setDynamicCities] = useState<any[]>([]);
   const [dynamicRegions, setDynamicRegions] = useState<any[]>([]);
   const [dynamicClubs, setDynamicClubs] = useState<any[]>([]);
@@ -71,7 +73,7 @@ const UsersTable = () => {
   
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, updatedUser, searchData, userArhive, currentTabName]);
+  }, [page, pageSize, updatedUser, searchData, sortKey, filter, userArhive, currentTabName]);
 
   useEffect(() => {
     fetchCities();
@@ -162,6 +164,8 @@ const UsersTable = () => {
         Clubs: dynamicClubs,
         Degrees: dynamicDegrees,
         Tab: currentTabName,
+        SortKey:sortKey,
+        FilterRoles:filter,
         SearchData: searchData
       });
       let jwt = AuthStore.getToken() as string;
@@ -313,6 +317,7 @@ const UsersTable = () => {
           Clubs: dynamicClubs,
           Degrees: dynamicDegrees,
           Tab: currentTabName,
+          SortKey:sortKey,
           SearchData: searchData
         });
         setUsers(response.data.users);
@@ -426,9 +431,7 @@ const UsersTable = () => {
 
         </div>
       </div>
-      {loading === false ? (
-        <Spinner />
-      ) : (
+      
         <Card
           style={{ width: "100%" }}
           tabList={tabList}
@@ -438,11 +441,18 @@ const UsersTable = () => {
           }}
         >
           <Table
+          loading={!loading}
             className={classes.table}
             bordered
             rowKey="id"
             scroll={{ x: 1450 }}
-            columns={ColumnsForUserTable}
+            columns={ColumnsForUserTable(
+              {
+                sortKey: sortKey,
+                setSortKey: setSortKey,
+                setFilter: setFilter,
+                filterRole: filter,
+              })}
             dataSource={users}
             onRow={(record) => {
               return {
@@ -483,7 +493,6 @@ const UsersTable = () => {
             }}
           />
         </Card>
-      )}
       <ClickAwayListener onClickAway={handleClickAway}>
         <DropDownUserTable
           showDropdown={showDropdown}
