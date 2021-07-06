@@ -426,7 +426,7 @@ const EventUser = () => {
                             userToken.nameid === userId && (
                                 <div>
                                     <h2>Ви ще не запланували жодної події</h2>
-                                    {roles != [Roles.RegisteredUser] && <Button
+                                    {roles.filter(r => r != Roles.RegisteredUser).length!=0 && <Button
                                         type="primary"
                                         className={classes.buttonInside}
                                         onClick={() => history.push("/events/types")}>
