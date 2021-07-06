@@ -26,7 +26,7 @@ import { Roles } from "../../../models/Roles/Roles";
 const userGenders = ["Чоловік", "Жінка", "Інша"];
 
 export const Blanks = () => {
-    const { userId } = useParams();
+    const { userId } = useParams<{ userId:string}>();
 
     const [data, setData] = useState<Data>();
     const [currentUser, setCurrentUser] = useState<Data>();
@@ -282,10 +282,9 @@ export const Blanks = () => {
                                             }
                                         />
                                     </Tooltip>
-                                    {(documentFormat !== "doc" && documentFormat !== "docx") ?
+                                    {((userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) && extractUPUFormat !== "doc" && extractUPUFormat !== "docx") ?
                                         <Tooltip title="Переглянути">
                                             <EyeOutlined
-                                                hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles) || extractUPUFormat === "doc" || extractUPUFormat === "docx")}
                                                 className={classes.reviewIcon}
                                                 key="review"
                                                 onClick={() => openExtractFromUPUDocument(extractUPU.blobName, extractUPU.fileName)} />
