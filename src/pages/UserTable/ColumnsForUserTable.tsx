@@ -137,6 +137,11 @@ const ColumnsForUserTable: any = [
     dataIndex: "regionName",
     width: 100,
     render: (regionName: any) => {
+      if(!regionName){
+        return (
+        ""
+        );
+      }
       if (regionName?.length > 9) {
         return (
           <Tag color={"blue"} key={regionName}>
@@ -145,20 +150,15 @@ const ColumnsForUserTable: any = [
             </Tooltip>
           </Tag>
         );
-      }
-      if (regionName?.length < 9) {
-        return (
-          <Tag color={"blue"} key={regionName}>
-            <Tooltip placement="topLeft" title={regionName}>
-              {regionName}
-            </Tooltip>
-          </Tag>
-        );
-      }
+      }     
       return (
-        {regionName}
-      );
-    },
+        <Tag color={"blue"} key={regionName}>
+          <Tooltip placement="topLeft" title={regionName}>
+            {regionName}
+          </Tooltip>
+        </Tag>
+      );    
+    },      
     sorter: (a: any, b: any) => {
       a = a.regionName || " ";
       b = b.regionName || " ";
@@ -171,6 +171,11 @@ const ColumnsForUserTable: any = [
     dataIndex: "cityName",
     width: 120,
     render: (cityName: any) => {
+      if(!cityName){
+        return (
+        ""
+        );
+      }
       if (cityName?.length > 13) {
         return (
           <Tag color={"purple"} key={cityName}>
@@ -180,17 +185,12 @@ const ColumnsForUserTable: any = [
           </Tag>
         );
       }
-      if (cityName?.length < 13) {
-        return (
-          <Tag color={"purple"} key={cityName}>
-            <Tooltip placement="topLeft" title={cityName}>
-              {cityName}
-            </Tooltip>
-          </Tag>
-        );
-      }
       return (
-        {cityName}
+        <Tag color={"purple"} key={cityName}>
+          <Tooltip placement="topLeft" title={cityName}>
+            {cityName}
+          </Tooltip>
+        </Tag>
       );
     },
     sorter: (a: any, b: any) => {
@@ -205,6 +205,11 @@ const ColumnsForUserTable: any = [
     dataIndex: "clubName",
     width: 150,
     render: (clubName: any) => {
+      if(!clubName){
+        return (
+        ""
+        );
+      }
       if (clubName?.length > 20) {
         return (
           <Tag color={"pink"} key={clubName}>
@@ -214,17 +219,12 @@ const ColumnsForUserTable: any = [
           </Tag>
         );
       }
-      if (clubName?.length < 20) {
-        return (
-          <Tag color={"pink"} key={clubName}>
-            <Tooltip placement="topLeft" title={clubName}>
-              {clubName}
-            </Tooltip>
-          </Tag>
-        );
-      }
       return (
-        {clubName}
+        <Tag color={"pink"} key={clubName}>
+          <Tooltip placement="topLeft" title={clubName}>
+            {clubName}
+          </Tooltip>
+        </Tag>
       );
     },    
     sorter: (a: any, b: any) => {
