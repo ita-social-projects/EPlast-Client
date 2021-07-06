@@ -142,32 +142,30 @@ const ColumnsForUserTable=(props: Props):any[] => {
     title: <>Округа<SortDirection sort={5} /></>,
     dataIndex: "regionName",
     width: 110,
-    render: (regionName: any)=>{if (regionName?.length > 0)
-      return SortColumnHighlight(5, <Tag color={"blue"} key={regionName}>
-      {regionName}
+    render: (regionName: any)=>{return SortColumnHighlight(5, regionName==null? "":<Tag color={"blue"} key={regionName}>
+      {(regionName?.length > 13)? <Tooltip title={regionName}>
+        <span>{regionName.slice(0,12)+"..."}</span>
+        </Tooltip> : regionName}
     </Tag>)},
   },
   {
     title: <>Станиця<SortDirection sort={6} /></>,
     dataIndex: "cityName",
     width: 120,
-    render: (cityName: any)=>{if (cityName?.length > 0)
-      return SortColumnHighlight(6, <Tag color={"purple"} key={cityName}>
-      {cityName}
+    render: (cityName: any)=>{return SortColumnHighlight(6, cityName==null? "": <Tag color={"purple"} key={cityName}>
+      {(cityName?.length > 13)? <Tooltip title={cityName}>
+        <span>{cityName.slice(0,12)+"..."}</span>
+        </Tooltip> : cityName}
     </Tag>)},
   },
   {
     title: <>Курінь<SortDirection sort={7} /></>,
     dataIndex: "clubName",
     width: 150,
-    render: (clubName: any)=>{if (clubName?.length > 0)
-      return SortColumnHighlight(7, <Tag color={"pink"} key={clubName}>
-      <Tooltip
-        placement="topLeft"
-        title={clubName?.split("/")[0]}
-      >
-        {clubName?.split("/")[0]?.slice(0, 20)}
-      </Tooltip>
+    render: (clubName: any)=>{return SortColumnHighlight(7, clubName==null? "": <Tag color={"pink"} key={clubName}>
+      {(clubName?.length > 17)? <Tooltip title={clubName}>
+        <span>{clubName.slice(0,16)+"..."}</span>
+        </Tooltip> : clubName}
   </Tag>)},
   },
   {

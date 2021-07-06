@@ -85,7 +85,6 @@ const AddDocumentModal = (props: Props) => {
       submitDate: values.datepicker?._d,
       regionId: props.regionId,
     };
-    console.log(newDocument);
     await addDocument(newDocument);
     props.onAdd(newDocument);
     props.setVisibleModal(false);

@@ -31,7 +31,6 @@ const getAll = async () => {
 };
 const getOnCreate = async () => {
     const data: DocumentOnCreateData = await (await Api.get(`MethodicDocuments/NewMethodicDocument`)).data;
-    console.log(data);
     return data;
 };
 
