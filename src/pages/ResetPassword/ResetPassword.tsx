@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Form, Input, Button } from "antd";
 import styles from "../ResetPassword/ResetPassword.module.css";
 import AuthorizeApi from "../../api/authorizeApi";
-import { checkEmail } from "../SignUp/verification";
+import { checkEmail, checkPassword } from "../SignUp/verification";
 import { useLocation, useHistory } from "react-router-dom";
 import {
   emptyInput,
   incorrectEmail,
-  minLength,
 } from "../../components/Notifications/Messages";
 
 let authService = new AuthorizeApi();
@@ -28,11 +27,10 @@ export default function () {
         ],
         Password: [
             { required: true, message: emptyInput() },
-            { min: 8, message: minLength(8) },
+            { validator: checkPassword },
         ],
         ConfirmPassword: [
             { required: true, message: emptyInput() },
-            { min: 8, message: minLength(8) },
         ]
     };
 
@@ -63,8 +61,9 @@ export default function () {
         onFinish={handleSubmit}
       >
         <div className={styles.resetPasswordContainer}>
-          <p>Скидування пароля. Введіть електронну пошту</p>
+          <p>Скидання пароля. Введіть електронну пошту</p>
         </div>
+
         <Form.Item name="Email" rules={validationSchema.Email}>
           <Input
             className={styles.ResetPasswordInput}
@@ -76,7 +75,8 @@ export default function () {
           <Input.Password
             visibilityToggle={false}
             className={styles.ResetPasswordInput}
-            placeholder=" Пароль"
+            placeholder="Пароль"
+            autoComplete="new-password"
           />
         </Form.Item>
 

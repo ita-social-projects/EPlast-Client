@@ -7,6 +7,10 @@ export default class ClubUser {
   phoneNumber:string;
   userRole: string;
   cityName: string;
+  plastDegree:{
+    id: number;
+    name:string;
+  };
 
   constructor() {
     this.id = "";
@@ -17,5 +21,6 @@ export default class ClubUser {
     this.phoneNumber = "";
     this.userRole = '';
     this.cityName = '';
+    this.plastDegree={id:-1, name:"None"}
   }
 }

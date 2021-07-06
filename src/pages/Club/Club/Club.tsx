@@ -43,6 +43,7 @@ const Club = () => {
   const [membersCount, setMembersCount] = useState<number>();
   const [adminsCount, setAdminsCount] = useState<number>();
   const [followersCount, setFollowersCount] = useState<number>();
+  const [documentsCount, setDocumentsCount] = useState<number>();
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [clubLogoLoading, setClubLogoLoading] = useState<boolean>(false);
   const [document, setDocument] = useState<ClubDocument>(new ClubDocument());
@@ -140,9 +141,9 @@ const Club = () => {
 
   function seeJoinModal() {
     return Modal.confirm({
-      title: "Ви впевнені, що хочете долучитися до даного куреня?",
+      title: "Ви впевнені, що хочете доєднатися до даного куреня?",
       icon: <ExclamationCircleOutlined />,
-      okText: 'Так, долучитися',
+      okText: 'Так, доєднатися',
       okType: 'primary',
       cancelText: 'Скасувати',
       maskClosable: true,
@@ -158,7 +159,7 @@ const Club = () => {
 
       setPhotosLoading(true);
       setClubLogoLoading(true);
-      const admins = [...response.data.administration, response.data.head]
+      const admins = [...response.data.administration, response.data.head, response.data.headDeputy]
         .filter(a => a !== null);
 
       setPhotos([
@@ -179,13 +180,24 @@ const Club = () => {
       setMembersCount(response.data.memberCount);
       setAdminsCount(response.data.administrationCount);
       setFollowersCount(response.data.followerCount)
+      setDocumentsCount(response.data.documentsCount);
+      console.log(response.data);
     } finally {
       setLoading(false);
     }
   };
-  const handleOk = () => {
+  
+  const handleOk = async() => {
+    const response =  await getClubById(+id);
+    const admins = [...response.data.administration, response.data.head, response.data.headDeputy]
+    .filter(a => a !== null);
+    setAdmins(admins);
+    setPhotosLoading(true);
+    setAdminsCount(response.data.administrationCount);
+    setPhotos([...admins,], response.data.logo);
     setvisible(false);
   };
+
   useEffect(() => {
     getClub();
   }, []);
@@ -250,27 +262,49 @@ const Club = () => {
                     <Paragraph>
                       {club.head.endDate === null ?
                         (<div>
-                          <b>
-                            Початок правління:
-                                        </b>
+                          <b>Початок правління:</b>
                           {` ${moment(club.head.startDate).format("DD.MM.YYYY")}`}
                         </div>
                         )
                         :
                         (<div>
-                          <b>
-                            Термін правління:
-                                      </b>
+                          <b>Термін правління:</b>
                           {` ${moment(club.head.startDate).format("DD.MM.YYYY")} - ${moment(club.head.endDate).format("DD.MM.YYYY")}`}
                         </div>
                         )
-
                       }
                     </Paragraph>
                   </div>
                 ) : (
                     <Paragraph>
                       <b>Немає голови куреня</b>
+                    </Paragraph>
+                  )}
+                  {club.headDeputy ? (
+                  <div>
+                    <Paragraph>
+                      <b>Заступник Голови Куреня:</b> {club.headDeputy.user.firstName}{" "}
+                      {club.headDeputy.user.lastName}
+                    </Paragraph>
+                    <Paragraph>
+                      {club.headDeputy.endDate === null ?
+                        (<div>
+                          <b>Початок правління:</b>
+                          {` ${moment(club.headDeputy.startDate).format("DD.MM.YYYY")}`}
+                        </div>
+                        )
+                        :
+                        (<div>
+                          <b>Термін правління:</b>
+                          {` ${moment(club.headDeputy.startDate).format("DD.MM.YYYY")} - ${moment(club.headDeputy.endDate).format("DD.MM.YYYY")}`}
+                        </div>
+                        )
+                      }
+                    </Paragraph>
+                  </div>
+                ) : (
+                    <Paragraph>
+                      <b>Немає заступника голови куреня</b>
                     </Paragraph>
                   )}
               </Col>
@@ -324,7 +358,7 @@ const Club = () => {
                   <Button
                     type="primary"
                     className="clubInfoButton"
-                    onClick={() => history.push(`/annualreport/table`)}
+                    onClick={() => history.push(`/annualreport/table/hovel`)}
                   >
                     Річні звіти
                   </Button>
@@ -458,11 +492,13 @@ const Club = () => {
                 )}
             </Row>
             <div className="clubMoreButton">
+            {canEdit ? (
               <PlusSquareFilled
                 type="primary"
                 className="addReportIcon"
                 onClick={() => setvisible(true)}
-              ></PlusSquareFilled>
+              />
+              ) : null}
               <Button
                 type="primary"
                 className="clubInfoButton"
@@ -478,12 +514,19 @@ const Club = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="clubCard">
-            <Title level={4}>Документообіг куреня</Title>
+            <Title level={4}>Документообіг куреня <a onClick={() => history.push(`/clubs/documents/${club.id}`)}>
+              {documentsCount !== 0 ?
+                <Badge
+                  count={documentsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a></Title>
             <Row className="clubItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
                 documents.map((document) => (
                   <Col
-                    className="clubMemberItem"
+                    className="clubDocumentItem"
                     xs={12}
                     sm={8}
                     key={document.id}
@@ -491,7 +534,6 @@ const Club = () => {
                     <div>
                       <FileTextOutlined className="documentIcon" />
                       <p className="documentText">
-                        {console.log(document)}
                         {document.clubDocumentType.name}
                       </p>
                     </div>
@@ -609,7 +651,8 @@ const Club = () => {
       >
         <AddClubsNewSecretaryForm
           onAdd={handleOk}
-          clubId={+id}>
+          clubId={+id}
+          visibleModal={visible}>
         </AddClubsNewSecretaryForm>
       </Modal>
       <ClubDetailDrawer

@@ -12,6 +12,7 @@ import "moment/locale/uk";
 import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
+import { Roles } from '../../../models/Roles/Roles';
 moment.locale("uk-ua");
 
 const ClubAdministration = () => {
@@ -24,16 +25,21 @@ const ClubAdministration = () => {
     const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [reload, setReload] = useState<boolean>(false);
     const [clubName, setClubName] = useState<string>("");
+    const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   
     const getAdministration = async () => {
       setLoading(true);
       const response = await getAllAdmins(id);
         setPhotosLoading(true);
-        setPhotos([...response.data.administration, response.data.head].filter(a => a != null));
-        setAdministration([...response.data.administration, response.data.head].filter(a => a != null));
+        setPhotos([...response.data.administration, response.data.head, response.data.headDeputy].filter(a => a != null));
+        setAdministration([...response.data.administration, response.data.head, response.data.headDeputy].filter(a => a != null));
         setCanEdit(response.data.canEdit);
         setClubName(response.data.name);
+
+      const userRoles = userApi.getActiveUserRoles();
+        setActiveUserRoles(userRoles);
       setLoading(false);
     };
 
@@ -72,11 +78,12 @@ const ClubAdministration = () => {
       administration[index] = newAdmin;
       await createNotification(newAdmin.userId, `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`);
       setAdministration(administration);
+      setReload(!reload);
     };
 
     useEffect(() => {
         getAdministration();
-    }, []);
+    }, [reload]);
 
     return (
       <Layout.Content>
@@ -93,12 +100,10 @@ const ClubAdministration = () => {
                   title={`${member.adminType.adminTypeName}`}
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit
+                    canEdit && (!activeUserRoles.includes(Roles.KurinHeadDeputy) || member.adminType.adminTypeName !== Roles.KurinHead)
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
-                          <CloseOutlined
-                            onClick={() => removeAdmin(member)}
-                          />,
+                          <CloseOutlined onClick={() => removeAdmin(member)} />,
                         ]
                       : undefined
                   }

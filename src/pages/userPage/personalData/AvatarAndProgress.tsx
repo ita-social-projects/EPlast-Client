@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Sticky } from "react-sticky";
 
 import { Avatar, Progress, Skeleton, Tooltip, Typography } from "antd";
@@ -26,8 +26,12 @@ class AvatarAndProgressProps {
   lastName: string | undefined;
   isUserPlastun: boolean | undefined;
   pseudo: string | undefined;
+  region: string | undefined;
   city: string | undefined;
   club: string | undefined;
+  regionId: number | undefined;
+  cityId: number | undefined;
+  clubId: number | undefined;
 }
 
 const contentListNoTitle: { [key: string]: any } = {
@@ -56,7 +60,7 @@ const contentListNoTitle: { [key: string]: any } = {
 const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
   props: AvatarAndProgressProps
 ) => {
-  const { userId } = useParams();
+  const { userId } = useParams<{ userId:string }>();
   const [loading, setLoading] = useState(false);
   const {
     time,
@@ -65,8 +69,10 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
     lastName,
     isUserPlastun,
     pseudo,
+    region,
     city,
     club,
+    cityId, clubId, regionId
   } = props;
   const [imageBase64, setImageBase64] = useState<string>();
   const [UserDistinctions, setData] = useState<UserDistinction[]>([
@@ -147,7 +153,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
       {({ style, isSticky }) => (
         <div
           style={
-            window.innerWidth > 1321
+            window.innerWidth > 1340
               ? { ...style, marginTop: isSticky ? "80px" : "0" }
               : undefined
           }
@@ -166,7 +172,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
       {({ style, isSticky }) => (
         <div
           style={
-            window.innerWidth > 1321 && isSticky
+            window.innerWidth > 1340 && isSticky
               ? { ...style, marginTop: "80px", paddingBottom: "80px" }
               : undefined
           }
@@ -176,13 +182,20 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
             {firstName} {lastName}
           </Title>
           <Title level={4}>Псевдо: {pseudo}</Title>
-          <p className="statusText">Станиця: {city} </p>
-          <p className="statusText">Курінь: {club}</p>
+          <p className="statusText">Округа: <Link to={"/regions/"+regionId} target="_blank" className="LinkText">{region}</Link></p>
+          <p className="statusText">Станиця: <Link to={"/cities/"+cityId} target="_blank" className="LinkText">{city}</Link></p>
+          <p className="statusText">Курінь: <Link to={"/clubs/"+clubId} target="_blank" className="LinkText">{club}</Link></p>
           {!isUserPlastun && (
             <div className="progress">
-              <p className="statusText">
-                {time} дні і {firstName} {lastName} - Дійсний член організації :)
-              </p>
+              {time !== 0 ? (
+                <p className="statusText">
+                  {time} дні і {firstName} {lastName} - Дійсний член організації :)
+                </p>
+              ) : (
+                <p className="statusText">
+                  Менше 1 дня і {firstName} {lastName} - Дійсний член організації :)
+                </p>
+              )}
               <Progress
                 type="circle"
                 className="progressBar"
@@ -191,8 +204,8 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
                   "100%": "#87d068",
                 }}
                 percent={Math.round(
-                  100 - ((time === undefined ? 0 : time) * 100) / 365
-                )}
+                  (100 - ((time === undefined ? 0 : time) * 100) / 365 + Number.EPSILON) * 10
+                ) / 10}
               />
             </div>
           )}

@@ -8,6 +8,8 @@ import CityDocument from '../../../models/City/CityDocument';
 import Title from 'antd/lib/typography/Title';
 import moment from "moment";
 import Spinner from '../../Spinner/Spinner';
+import userApi from "../../../api/UserApi";
+import { Roles } from '../../../models/Roles/Roles';
 
 const CityDocuments = () => {
     const {id} = useParams();
@@ -16,6 +18,7 @@ const CityDocuments = () => {
     const [documents, setDocuments] = useState<CityDocument[]>([]);
     const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
     const getDocuments = async () => {
       setLoading(true);
@@ -23,6 +26,7 @@ const CityDocuments = () => {
 
       setDocuments(response.data.documents);
       setCanEdit(response.data.canEdit);
+      setActiveUserRoles(userApi.getActiveUserRoles);
       setLoading(false);
     };
 
@@ -59,33 +63,35 @@ const CityDocuments = () => {
                   }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit
-                      ? [
-                          <DownloadOutlined
-                            key="download"
-                            onClick={() =>
-                              downloadDocument(
-                                document.blobName,
-                                document.fileName
-                              )
-                            }
-                          />,
-                          <CloseOutlined
-                            key="close"
-                            onClick={() => removeDocumentById(document.id)}
-                          />,
-                        ]
-                      : [
-                          <DownloadOutlined
-                            key="download"
-                            onClick={() =>
-                              downloadDocument(
-                                document.blobName,
-                                document.fileName
-                              )
-                            }
-                          />,
-                        ]
+                    canEdit ? 
+                      [
+                        <DownloadOutlined
+                          key="download"
+                          onClick={() =>
+                            downloadDocument(
+                              document.blobName,
+                              document.fileName
+                            )
+                          }
+                        />,
+                        <CloseOutlined
+                          key="close"
+                          onClick={() => removeDocumentById(document.id)}
+                        />                          
+                      ]                                                                                                            
+                    : activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember) ?
+                      [
+                        <DownloadOutlined
+                          key="download"
+                          onClick={() =>
+                            downloadDocument(
+                              document.blobName,
+                              document.fileName
+                            )
+                          }
+                        />    
+                      ]
+                      : undefined
                   }
                 >
                   <Avatar size={86} icon={<FileTextOutlined />} />

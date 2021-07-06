@@ -1,17 +1,22 @@
 import React from 'react';
 import { Menu } from 'antd';
-import { FileSearchOutlined } from '@ant-design/icons';
+import { FileExcelOutlined, FileSearchOutlined } from '@ant-design/icons';
 import Props from './ConfirmedRegionDropdownProps';
 import styles from '../Dropdown.module.css';
-import moment from 'moment';
 
 const ConfirmedRegionDropdown = (props: Props) => {
-    const { regionRecord,  pageX, pageY, showDropdown, onView } = props;
+    const { regionRecord,  pageX, pageY, showDropdown, canManage, onView, onCancel } = props;
 
     const handleClick = (item: any) => {
+
         switch (item.key) {
             case '1':
-                onView(regionRecord.regionId, Number(JSON.stringify(regionRecord).slice(17, 21)));
+                onView(regionRecord.id, (new Date(regionRecord.date)).getFullYear());
+                break;
+            case '2':
+                if (canManage) {
+                    onCancel(regionRecord.id);
+                }
                 break;
             default:
                 break;
@@ -31,6 +36,12 @@ const ConfirmedRegionDropdown = (props: Props) => {
                     key='1' >
                     <FileSearchOutlined />Переглянути
                 </Menu.Item>
+                {canManage ? (
+                    <Menu.Item
+                        key='2' >
+                        <FileExcelOutlined />Скасувати
+                    </Menu.Item>
+                ) : null}
             </Menu>
     );
 }

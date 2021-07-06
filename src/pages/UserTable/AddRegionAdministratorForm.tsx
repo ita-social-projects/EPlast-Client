@@ -5,7 +5,9 @@ import regionsApi, { getRegionAdministration } from "../../api/regionsApi";
 import notificationLogic from "../../components/Notifications/Notification";
 import ConfirmRegionAdminModal from "./ConfirmRegionAdministrationModal";
 import moment from "moment";
+import userApi from "../../api/UserApi";
 import{ emptyInput } from "../../components/Notifications/Messages"
+import { Roles } from "../../models/Roles/Roles";
 
 interface Props {
   userId: string;
@@ -48,6 +50,7 @@ const AddNewAdministratorForm = ({
   const [endDayOld, setEndDayOld] = useState<any>();
   const [oldAdminFirstName, setOldAdminFirstName] = useState<string>();
   const [oldAdminLastName, setOldAdminLastName] = useState<string>();
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const disabledEndDate = (current: any) => {
     return current && current < startDay;
@@ -88,7 +91,7 @@ const AddNewAdministratorForm = ({
       endDate: values.endDate,
       regionId: regionId,
     };
-    if (oldAdmin !== undefined && values.AdminType === "Голова Округи") {
+    if (oldAdmin !== undefined && values.AdminType === Roles.OkrugaHead) {
       setShowAdministratorModal(false);
       setShowConfirmModal(true);
     } else {
@@ -105,6 +108,8 @@ const AddNewAdministratorForm = ({
     setCurrentRegion(regionId);
     getAdministration();
     fetchData();
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
   }, []);
 
   return (
@@ -120,12 +125,13 @@ const AddNewAdministratorForm = ({
           },
         ]}
       >
-        {roles?.includes("Дійсний член організації") ? (
+        {roles?.includes(Roles.PlastMember) ? (
           <AutoComplete
             className={classes.inputField}
             onChange={handleClick}
             options={[
-              { value: "Голова Округи" },
+              { value: Roles.OkrugaHead, disabled: activeUserRoles.includes(Roles.OkrugaHeadDeputy) },
+              { value: Roles.OkrugaHeadDeputy},
               { value: "Писар" },
               { value: "Бунчужний" },
               { value: "Скарбник" },

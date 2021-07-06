@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../City/AddAdministrationModal/AddAdministrationModal.less";
+import "./AddAdministrationModal.less";
 import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
@@ -10,9 +10,8 @@ import {
 } from "../../../api/governingBodiesApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import moment from "moment";
-import "../GoverningBody/node_modules/moment/locale/uk";
 import{emptyInput} from "../../../components/Notifications/Messages"
-moment.locale("uk-ua");
+import { Roles } from "../../../models/Roles/Roles";
 
 const confirm = Modal.confirm;
 
@@ -108,7 +107,7 @@ const AddAdministratorModal = (props: Props) => {
     };
 
     try {
-      if (values.adminType === "Голова Керівного Органу" && head !== null) {
+      if (values.adminType === Roles.GoverningBodyHead && head !== null) {
         if (head?.userId !== admin.userId) {
           showConfirm(admin);
         } else {
@@ -162,7 +161,7 @@ const AddAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: "Голова Керівного Органу" },
+              { value: Roles.GoverningBodyHead },
               { value: "Голова СПС" },
               { value: "Писар" },
               { value: "Скарбник" },

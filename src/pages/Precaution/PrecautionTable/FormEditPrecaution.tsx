@@ -17,7 +17,9 @@ import Precaution from "../Interfaces/Precaution";
 import {
   emptyInput,
   maxLength,
-  failEditAction
+  failEditAction,
+  maxNumber,
+  minNumber
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
@@ -71,7 +73,7 @@ const FormEditPrecaution = ({
   const [userValue, setUserValue] = useState<any>();
   const openNotification = (message: string) => {
     notification.error({
-      message: failEditAction(`пересторога`),
+      message: failEditAction(`пересторогу`),
       description: `${message}`,
       placement: "topLeft",
     });
@@ -98,6 +100,10 @@ const FormEditPrecaution = ({
     setDistValue(Precaution.precaution);
     setUserValue(Precaution.user);
   }, [Precaution]);
+
+  const backgroundColor = (user: any) => {
+    return user.isInLowerRole ? { backgroundColor : '#D3D3D3' } : { backgroundColor : 'white' };
+  }    
 
   const handleCancel = () => {
     form.resetFields();
@@ -169,11 +175,23 @@ const FormEditPrecaution = ({
                 labelCol={{ span: 24 }}
                 name="number"
                 rules={[
-                  {
-                    required: true,
-                    message: emptyInput(),
-                  },
-                ]}
+                    {
+                      required: true,
+                      message: emptyInput(),
+                    },
+                    {
+                      validator: (_ : object, value: number) => 
+                          value > 99999
+                              ? Promise.reject(maxNumber(99999)) 
+                              : Promise.resolve()
+                    },
+                    {
+                      validator: (_ : object, value: number) => 
+                          value < 1
+                              ? Promise.reject(minNumber(1)) 
+                              : Promise.resolve()
+                    }
+                  ]}
               >
                 <Input
                   type="number"
@@ -234,12 +252,14 @@ const FormEditPrecaution = ({
                   loading={loadingUserStatus}
                 >
                   {userData?.map((o) => (
-                    <Select.Option
-                      key={o.user.id}
-                      value={JSON.stringify(o.user)}
-                    >
-                      {o.user.firstName + " " + o.user.lastName}
-                    </Select.Option>
+                      <Select.Option 
+                          key={o.id} 
+                          value={JSON.stringify(o)} 
+                          style={backgroundColor(o)}
+                          disabled={o.isInLowerRole}
+                          >
+                      {o.firstName + " " + o.lastName}
+                      </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
@@ -283,7 +303,6 @@ const FormEditPrecaution = ({
                 <DatePicker
                   format={dateFormat}
                   className={formclasses.selectField}
-                  disabled
                 />
               </Form.Item>
             </Col>
@@ -299,8 +318,8 @@ const FormEditPrecaution = ({
                 rules={[
                   {
                     required: true,
-                    max: 250,
-                    message: maxLength(250),
+                    max: 500,
+                    message: maxLength(500),
                   },
                 ]}
               >
@@ -311,7 +330,7 @@ const FormEditPrecaution = ({
                     maxRows: 6,
                   }}
                   className={formclasses.inputField}
-                  maxLength={251}
+                  maxLength={501}
                 />
               </Form.Item>
             </Col>

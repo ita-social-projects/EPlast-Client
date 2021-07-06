@@ -13,6 +13,7 @@ import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import { Roles } from "../../../models/Roles/Roles";
 moment.locale("uk-ua");
 
 const CityMembers = () => {
@@ -28,6 +29,7 @@ const CityMembers = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [cityName, setCityName] = useState<string>("");
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   
   const getMembers = async () => {
     setLoading(true);
@@ -38,10 +40,13 @@ const CityMembers = () => {
     setMembers(responseMembers.data.members);
     setCanEdit(responseMembers.data.canEdit);
     setCityName(responseMembers.data.name);
+    setActiveUserRoles(userApi.getActiveUserRoles);
 
     const responseAdmins = await getAllAdmins(id);
     setAdmins(responseAdmins.data.administration);
     setHead(responseAdmins.data.head);
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
     setLoading(false);
   };
 
@@ -124,7 +129,7 @@ const CityMembers = () => {
               key={member.id}
               className="detailsCard"
               actions={
-                canEdit
+                canEdit && (member?.user.id !== head?.user.id || !activeUserRoles.includes(Roles.CityHeadDeputy))
                   ? [
                       <SettingOutlined onClick={() => showModal(member)} />,
                       <CloseOutlined onClick={() => removeMember(member)} />,
@@ -133,7 +138,10 @@ const CityMembers = () => {
               }
             >
               <div
-                onClick={() => history.push(`/userpage/main/${member.userId}`)}
+                onClick={() => canEdit || (activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) 
+                  ? history.push(`/userpage/main/${member.userId}`) 
+                  : undefined
+                }
                 className="cityMember"
               >
                 {photosLoading ? (

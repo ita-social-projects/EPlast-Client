@@ -7,26 +7,30 @@ import {
 } from "@ant-design/icons";
 import "./Filter.less";
 import Transgender from '../../assets/images/lgbt.svg'
+import { Roles } from "../../models/Roles/Roles";
 const { Text } = Typography;
 
 const setTagColor = (userRoles: string) => {
   let color = "";
-  if (userRoles?.includes("Admin")) {
+  if (userRoles?.includes(Roles.Admin)) {
     color = "red";
   }
 
-  if (userRoles?.includes("Дійсний член організації")) {
+  if (userRoles?.includes(Roles.PlastMember)) {
 
     color = "green";
   }
-  if (userRoles?.includes("Прихильник")) {
+  if (userRoles?.includes(Roles.Supporter)) {
     color = "orange";
   }
-  if (userRoles?.includes("Зацікавлений")) {
+  if (userRoles?.includes(Roles.Interested)) {
     color = "yellow";
   }
-  if (userRoles?.includes("Колишній член пласту")) {
+  if (userRoles?.includes(Roles.FormerPlastMember)) {
     color = "black";
+  }
+  if (userRoles?.includes(Roles.RegisteredUser)) {
+    color = "blue"
   }
   return color;
 };
@@ -34,7 +38,7 @@ const setTagColor = (userRoles: string) => {
 const ColumnsForUserTable: any = [
   {
     title: "№",
-    dataIndex: "userProfileId",
+    dataIndex: "userSystemId",
     render: (id: number) => <Text>{id}</Text>,
     fixed: true,
     sorter: {
@@ -42,7 +46,7 @@ const ColumnsForUserTable: any = [
     },
     sortDirections: ["descend", "ascend"],
     defaultSortOrder: "ascend",
-    width: 55,
+    width: 65,
   },
   {
     title: "Ім`я",
@@ -105,7 +109,7 @@ const ColumnsForUserTable: any = [
         );
       } else {
         return (
-          <Tooltip title="Інша  ">
+          <Tooltip title="Не маю бажання вказувати">
               <img src={Transgender} alt="Transgender"/>
           </Tooltip>
         )
@@ -176,7 +180,12 @@ const ColumnsForUserTable: any = [
       if (clubName?.length > 0) {
         return (
           <Tag color={"pink"} key={clubName}>
-            {clubName}
+              <Tooltip
+                placement="topLeft"
+                title={clubName?.split("/")[0]}
+              >
+                {clubName?.split("/")[0]?.slice(0, 20)}
+              </Tooltip>
           </Tag>
         );
       }
@@ -254,45 +263,49 @@ const ColumnsForUserTable: any = [
     ellipsis: false,
     filters: [
       {
-        text: "Дійсний член організації",
-        value: "Дійсний член організації",
+        text: Roles.PlastMember,
+        value: Roles.PlastMember,
       },
       {
-        text: "Колишній член пласту",
-        value: "Колишній член пласту",
+        text: Roles.FormerPlastMember,
+        value: Roles.FormerPlastMember,
       },
       {
-        text: "Зацікавлений",
-        value: "Зацікавлений",
+        text: Roles.Interested,
+        value: Roles.Interested,
       },
       {
-        text: "Прихильник",
-        value: "Прихильник",
+        text: Roles.Supporter,
+        value: Roles.Supporter,
       },
       {
-        text: "Голова Округи",
-        value: "Голова Округи",
+        text: Roles.OkrugaHead,
+        value: Roles.OkrugaHead,
       },
       {
-        text: "Діловод Округи",
-        value: "Діловод Округи",
+        text: Roles.OkrugaSecretary,
+        value: Roles.OkrugaSecretary,
       },
       {
-        text: "Голова Станиці",
-        value: "Голова Станиці",
+        text: Roles.CityHead,
+        value: Roles.CityHead,
       },
       {
-        text: "Діловод Станиці",
-        value: "Діловод Станиці",
+        text: Roles.CitySecretary,
+        value: Roles.CitySecretary,
       },
       {
-        text: "Голова Куреня",
-        value: "Голова Куреня",
+        text: Roles.KurinHead,
+        value: Roles.KurinHead,
       },
       {
-        text: "Діловод Куреня",
-        value: "Діловод Куреня",
+        text: Roles.KurinSecretary,
+        value: Roles.KurinSecretary,
       },
+      {
+        text: Roles.RegisteredUser,
+        value: Roles.RegisteredUser
+      }
     ],
     filterMultiple: false,
     onFilter: (value: any, record: any) => record.userRoles?.includes(value),

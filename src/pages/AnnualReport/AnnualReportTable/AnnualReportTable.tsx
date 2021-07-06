@@ -1,46 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 import {
-  Table,
   Button,
   Layout,
   Modal,
-  Input,
   Row,
   Col,
   Typography,
-  Select,
-  Drawer,
-  message,
   Tag,
   Tooltip,
 } from "antd";
 import moment from "moment";
 import AnnualReportApi from "../../../api/AnnualReportApi";
-import {getClubAnnualReport} from "../../../api/clubsApi";
-import AnnualReport from "../Interfaces/AnnualReport";
-import ClubAnnualReport from "../Interfaces/ClubAnnualReport"
-import User from "../Interfaces/User";
-import City from "../Interfaces/City";
-import Region from "../Interfaces/Region";
-import AnnualReportInformation from "./AnnualReportInformation/AnnualReportInformation";
-import UnconfirmedDropdown from "./Dropdowns/UnconfirmedDropdown/UnconfirmedDropdown";
-import ConfirmedDropdown from "./Dropdowns/ConfirmedDropdown/ConfirmedDropdown";
-import SavedDropdown from "./Dropdowns/SavedDropdown/SavedDropdown";
-import Filters from "./Filters";
 import "./AnnualReportTable.less";
-import AuthStore from "../../../stores/AuthStore";
-import jwt_decode from "jwt-decode";
 import CitySelectModal from "./CitySelectModal/CitySelectModal";
-import ClickAwayListener from "react-click-away-listener";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Card } from 'antd';
 import { CityAnnualReportTable } from "./CityAnnualReportTable";
 import { ClubAnnualReportTable } from "./ClubAnnualReport";
-import FormAnnualReportRegion from "./FormAnnualReportRegion"
-import { getAllRegionsReports } from "../../../api/regionsApi";
 import { RegionAnnualReportTable } from "./RegionAnnualReportTable";
 import ClubSelectModal from "./ClubSelectModal/ClubSelectModal";
+import Search from "antd/lib/input/Search";
+import {CaretUpOutlined, CaretDownOutlined} from "@ant-design/icons";
+import RegionSelectModal from "./RegionSelectModal/RegionSelectModal";
+import { useHistory, useParams } from "react-router-dom";
+import UserApi from "../../../api/UserApi";
+import { Roles } from "../../../models/Roles/Roles";
 
 
 const { Title } = Typography;
@@ -56,47 +39,40 @@ const setTagColor = (status: number) => {
   return color;
 };
 
+const tabList = [
+  {
+    key: 'city',
+    tab: 'Річні звіти станиць',
+  },
+  {
+    key: 'hovel',
+    tab: 'Річні звіти куренів',
+  },
+  {
+    key: 'country',
+    tab: 'Річні звіти округ',
+  },
+];
+
 const AnnualReportTable = () => {
+  const { noTitleKey } = useParams();
   const [reportStatusNames, setReportStatusNames] = useState<any[]>(Array());
-  const [annualReports, setAnnualReports] = useState<AnnualReport[]>(Array());
-  const [clubAnnualReports, setClubAnnualReports] = useState<ClubAnnualReport[]>(Array());
-  const [regionAnnualReports, setRegionsAnnualReports]= useState<[]>([]);
   const [showRegionAnnualReports, setShowRegionAnnualReports] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
-  const [visible, setvisible]= useState<boolean>(false) ;
-  const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(
-    false
-  );
-  const [showClubSelectModal, setShowClubSelectModal] = useState<boolean>(
-    false
-  );
-  const [canManage, setCanManage] = useState<boolean>(false);
-  const {
-    idFilter,
-    userFilter,
-    cityFilter,
-    regionFilter,
-    dateFilter,
-    statusFilter,
-  } = Filters;
+  const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(false);
+  const [showClubSelectModal, setShowClubSelectModal] = useState<boolean>(false);
+  const [sortKey, setSortKey]=useState<number>(1);
+  const [cityManager, setCityManager] = useState<boolean>(false);
+  const [clubManager, setClubManager] = useState<boolean>(false);
+  const [regionManager, setRegionManager] = useState<boolean>(false);
+  const history = useHistory();
 
   useEffect(() => {
-    fetchAnnualReportStatuses();
-    fetchAnnualReports();
-    fetchClubAnnualReports();
-    fetchRegionAnnualReports();
     checkAccessToManage();
+    fetchAnnualReportStatuses();
+    setSearchedData(searchedData);
     renewPage();
-  }, []);
-
-  const checkAccessToManage = () => {
-    let jwt = AuthStore.getToken() as string;
-    let decodedJwt = jwt_decode(jwt) as any;
-    let roles = decodedJwt[
-      "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-    ] as string[];
-    setCanManage(roles.includes("Admin") || roles.includes("Голова Регіону"));
-  };
+  }, [searchedData, sortKey]);
 
   const fetchAnnualReportStatuses = async () => {
     try {
@@ -107,50 +83,20 @@ const AnnualReportTable = () => {
     }
   };
 
-  const fetchAnnualReports = async () => {
-    try {
-      let response = await AnnualReportApi.getAll();
-      setAnnualReports(response.data.annualReports);
-    } catch (error) {
-      showError(error.message);
-    }
-  };
-  
-  const fetchClubAnnualReports = async () => {
-    try {
-      let response = await getClubAnnualReport();
-      setClubAnnualReports(response.data.clubAnnualReports);
-
-    } catch (error) {
-      showError(error.message);
-    }
+  const checkAccessToManage = () => {
+    let roles = UserApi.getActiveUserRoles();
+    setCityManager(roles.includes(Roles.Admin) || roles.includes(Roles.CityHead));
+    setClubManager(roles.includes(Roles.Admin) || roles.includes(Roles.KurinHead));
+    setRegionManager(roles.includes(Roles.Admin) || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHead));
   };
 
-  const fetchRegionAnnualReports = async () => {
-    try {
-      let response = await getAllRegionsReports();
-      setRegionsAnnualReports(response.data);
-    } catch (error) {
-      showError(error.message);
-    }
+  const handleSearch = (event: any) => {
+    setSearchedData(event);
   };
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchedData(event.target.value);
-  };
-
-  const filteredCityData =
-    searchedData !== ""
-      ? annualReports.filter(
-          (item) =>
-            idFilter(item.id, searchedData) ||
-            userFilter(item.creator as User, searchedData) ||
-            cityFilter(item.city as City, searchedData) ||
-            dateFilter(item.date, searchedData) ||
-            regionFilter(item.city?.region as Region, searchedData) ||
-            statusFilter(item.status, reportStatusNames, searchedData)
-        )
-      : annualReports;
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if(event.target.value.toLowerCase()==='') setSearchedData('');
+  }
 
 
   const showError = (message: string) => {
@@ -160,145 +106,111 @@ const AnnualReportTable = () => {
     });
   };
 
-  const columnsRegion = [
-    {
-      title: "Номер",
-      dataIndex: "id",
-      sorter:{
-        compare: (a: any, b: any) => a.id - b.id,
-      },
-      sortDirections: ["descend", "ascend"],
-      defaultSortOrder: "ascend",
-    },
+  const SortDirection=(props:{sort: number})=>{
+    return<>
+      <div className={"TableHeader"}>
+        <button onClick={()=>{setSortKey(props.sort)}} className={sortKey===props.sort? "sortDirection":""}><CaretUpOutlined /></button>
+        <button onClick={()=>{setSortKey(-props.sort)}} className={sortKey===-props.sort? "sortDirection":""}><CaretDownOutlined /></button>
+      </div>
+    </>
+  }
 
-    {
-      title: "Округа",
-      dataIndex: ["regionName"],
-      sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
-      sortDirections: ["descend", "ascend"],
-    },
-    {
-      title: "Дата подання",
-      dataIndex: "date",
-      render: (date: Date) => {
-        return moment(date.toLocaleString()).format("DD.MM.YYYY");
+  const SortColumnHighlight =(sort: number, text: any)=>{
+    return {
+      props: {
+        style: { background: (sortKey===sort || sortKey===-sort)? "#fafafa" : "", }
       },
-      sorter: (a: any, b: any) => {
-        a = a.date || " ";
-        b = b.date || " ";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["descend", "ascend"],
-    }
-  ];
+      children: <div>{text}</div>
+    };
+  }
 
-  
   const columns = [
     {
-      title: "Номер",
-      dataIndex: "id",
-      sorter:{
-        compare: (a: any, b: any) => a.id - b.id,
-      },
-      sortDirections: ["descend", "ascend"],
-      defaultSortOrder: "ascend",
+      title: <>Номер<SortDirection sort={1} /></>,
+      dataIndex: ["idView"],
+      width: '8%',
+      render: (text: any)=>{return SortColumnHighlight(1, text)},
     },
 
     {
-      title: "Станиця",
-      dataIndex: ["city", "name"],
-      sorter: (a: any, b: any) => {
-        a = a.city.name || " ";
-        b = b.city.name || " ";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["descend", "ascend"],
+      title: <>Станиця<SortDirection sort={2} /></>,
+      dataIndex: ["cityName"],
+      render: (text: any)=>{return SortColumnHighlight(2, text)},
     },
     {
-      title: "Регіон",
-      dataIndex: ["city", "region", "regionName"],
-      sorter: (a: any, b: any) => {
-        a = a.city.region.regionName || " ";
-        b = b.city.region.regionName || " ";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["descend", "ascend"],
+      title: <>Округа<SortDirection sort={3} /></>,
+      dataIndex: ["regionName"],
+      render: (text: any)=>{return SortColumnHighlight(3, text)},
     },
     {
-      title: "Дата подання",
+      title: <>Дата подання<SortDirection sort={4} /></>,
       dataIndex: "date",
-      render: (date: Date) => {
-        return moment(date.toLocaleString()).format("DD.MM.YYYY");
-      },
-      sorter: (a: any, b: any) => {
-        a = a.date || " ";
-        b = b.date || " ";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["descend", "ascend"],
+      render: (date: any)=>{return SortColumnHighlight(4, moment(date.toLocaleString()).format("DD.MM.YYYY"))},
     },
     {
       title: "Статус",
       dataIndex: "status",
       render: (status: any) => {
         return (
-          <Tag color={setTagColor(status)} key={reportStatusNames[status]}>
-            <Tooltip placement="topLeft" title={reportStatusNames[status]}>
-        {reportStatusNames[status]}
-            </Tooltip>
-          </Tag>
+            <Tag color={setTagColor(status)} key={reportStatusNames[status]}>
+              <Tooltip placement="topLeft" title={reportStatusNames[status]}>
+                {reportStatusNames[status]}
+              </Tooltip>
+            </Tag>
         );
-    },
-  }
+      },
+    }
   ];
 
-  const tabList = [
+  const columnsRegion = [
     {
-      key: 'tab1',
-      tab: 'Річні звіти станиць',
+      title: <>Номер<SortDirection sort={1} /></>,
+      dataIndex: ["idView"],
+      width: '8%',
+      render: (text: any)=>{return SortColumnHighlight(1, text)},
+    },
+
+    {
+      title: <>Округа<SortDirection sort={2} /></>,
+      dataIndex: ["regionName"],
+      render: (text: any)=>{return SortColumnHighlight(2, text)},
     },
     {
-      key: 'tab2',
-      tab: 'Річні звіти куренів',
+      title: <>Дата подання<SortDirection sort={3} /></>,
+      dataIndex: "date",
+      render: (date: any)=>{return SortColumnHighlight(3, moment(date.toLocaleString()).format("DD.MM.YYYY"))},
     },
     {
-      key: 'tab3',
-      tab: 'Річні звіти округ',
-    },
+      title: "Статус",
+      dataIndex: "status",
+      render: (status: any) => {
+        return (
+            <Tag color={setTagColor(status)} key={reportStatusNames[status]}>
+              <Tooltip placement="topLeft" title={reportStatusNames[status]}>
+                {reportStatusNames[status]}
+              </Tooltip>
+            </Tag>
+        );
+      },
+    }
   ];
 
   const columnsClub=[
     {
-      title: "Номер",
-      dataIndex: "id",
-      sorter:{
-        compare: (a: any, b: any) => a.id - b.id,
-      },
-      sortDirections: ["descend", "ascend"],
-      defaultSortOrder: "ascend",
+      title: <>Номер<SortDirection sort={1} /></>,
+      dataIndex: ["idView"],
+      width: '8%',
+      render: (text: any)=>{return SortColumnHighlight(1, text)},
     },
     {
-      title: "Курінь",
+      title: <>Курінь<SortDirection sort={2} /></>,
       dataIndex: ["clubName"],
-      sorter: (a: any, b: any) => {
-        a = a.clubName || " ";
-        b = b.clubName || " ";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["descend", "ascend"],
+      render: (text: any)=>{return SortColumnHighlight(2, text)},
     },
     {
-      title: "Дата подання",
+      title: <>Дата подання<SortDirection sort={3} /></>,
       dataIndex: "date",
-      render: (date: Date) => {
-        return moment(date.toLocaleString()).format("DD.MM.YYYY");
-      },
-      sorter: (a: any, b: any) => {
-        a = a.date || " ";
-        b = b.date || " ";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["descend", "ascend"],
+      render: (date: any)=>{return SortColumnHighlight(3, moment(date.toLocaleString()).format("DD.MM.YYYY"))},
     },
     {
       title: "Статус",
@@ -316,25 +228,19 @@ const AnnualReportTable = () => {
   ];
 
   const contentList:  { [key: string]: any }  = {
-    tab1: <div><CityAnnualReportTable columns={columns} filteredData={annualReports}/></div>,
-    tab2: <div><ClubAnnualReportTable columns={columnsClub} filteredData={clubAnnualReports}/></div>,
-    tab3: <div><RegionAnnualReportTable columns={columnsRegion} filteredData={regionAnnualReports}/></div>,
+    city: <div><CityAnnualReportTable columns={columns} searchedData={searchedData} sortKey={sortKey}/></div>,
+    hovel: <div><ClubAnnualReportTable columns={columnsClub} searchedData={searchedData} sortKey={sortKey}/></div>,
+    country: <div><RegionAnnualReportTable columns={columnsRegion} searchedData={searchedData} sortKey={sortKey}/></div>,
   };
 
 
-  const [noTitleKey, setKey] = useState<string>('tab1');
-
-
   const  renewPage = ()=>{
-    const key = noTitleKey; 
-    setKey('tab1');
-    setKey('tab2');
-    setKey(key);
-    setvisible(false);
+    history.push(`/annualreport/table/${noTitleKey}`)
    }
 
    const onTabChange =  (key:string) => {
-    setKey(key); 
+    setSortKey(1);
+    history.push(`/annualreport/table/${key}`)
  };
 
 
@@ -343,32 +249,37 @@ const AnnualReportTable = () => {
       <Title level={2}>Річні звіти</Title>
       <Row className="searchContainer" gutter={16}>
         <Col >
-          <Input placeholder="Пошук" onChange={handleSearch} />
+          <Search
+              placeholder="Пошук"
+              enterButton
+              onChange={handleSearchChange}
+              onSearch={handleSearch}
+          />
         </Col>
-        <Col>
+        {cityManager? (<Col>
           <Button
-            type="primary"
-            onClick={() => setShowCitySelectModal(true)}
+              type="primary"
+              onClick={() => setShowCitySelectModal(true)}
           >
             Подати річний звіт станиці
           </Button>
-          </Col>
-          <Col>
+        </Col>): null }
+        {clubManager? (<Col>
           <Button
-            type="primary"
-            onClick={() => setShowClubSelectModal(true)}
+              type="primary"
+              onClick={() => setShowClubSelectModal(true)}
           >
             Подати річний звіт куреня
           </Button>
-          </Col>
-        <Col>
+        </Col>) : null}
+        {regionManager? (<Col>
           <Button
-            type="primary"
-            onClick={() => setShowRegionAnnualReports(true)}
+              type="primary"
+              onClick={() => setShowRegionAnnualReports(true)}
           >
             Подати річний звіт округи
           </Button>
-          </Col>
+        </Col>) : null}
       </Row>
 
       <Row>
@@ -384,18 +295,18 @@ const AnnualReportTable = () => {
         </Card>
 
       </Row>
-        <FormAnnualReportRegion
-        visibleModal={showRegionAnnualReports}
-        handleOk={() => setShowRegionAnnualReports(false)}
-        />
-        <CitySelectModal
-        visibleModal={showCitySelectModal}
-        handleOk={() => setShowCitySelectModal(false)}
-        />
-        <ClubSelectModal
-        visibleModal={showClubSelectModal}
-        handleOk={() => setShowClubSelectModal(false)}
-        />
+      {regionManager? <RegionSelectModal
+          visibleModal={showRegionAnnualReports}
+          handleOk={() => setShowRegionAnnualReports(false)}
+      />: null}
+      {cityManager? <CitySelectModal
+          visibleModal={showCitySelectModal}
+          handleOk={() => setShowCitySelectModal(false)}
+      />:null}
+      {clubManager? <ClubSelectModal
+          visibleModal={showClubSelectModal}
+          handleOk={() => setShowClubSelectModal(false)}
+      />:null}
     </Layout.Content>
 
     

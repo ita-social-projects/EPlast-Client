@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import classes from "./ActiveMembership.module.css";
-import { Typography, List, Button, Tooltip, Tag } from "antd";
-
+import {Typography, List, Button, Tooltip, Tag, Empty} from "antd";
 import "../personalData/PersonalData.less";
 import activeMembershipApi, {
-  UserDates,
   UserPlastDegree,
 } from "../../../api/activeMembershipApi";
 import userApi from "../../../api/UserApi";
@@ -19,7 +17,9 @@ import DeleteDegreeConfirm from "./PlastDegree/DeleteDegreeConfirm";
 import { SafetyCertificateOutlined } from "@ant-design/icons";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
-
+import notificationLogic from "../../../components/Notifications/Notification";
+import jwt_decode from "jwt-decode";
+import { Roles } from "../../../models/Roles/Roles";
 const { Title } = Typography;
 
 const ActiveMembership = () => {
@@ -28,11 +28,15 @@ const ActiveMembership = () => {
   const [accessLevels, setAccessLevels] = useState([]);
   const [dates, setDates] = useState<any>({});
   const [user, setUser] = useState<any>({});
+  const [currentUser, setCurrentUser] = useState<any>({});
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
   const [plastDegrees, setPlastDegrees] = useState<Array<UserPlastDegree>>([]);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [datesVisibleModal, setDatesVisibleModal] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<any>([{ nameid: "" }]);
+  const [roles, setRoles]=useState<Array<string>>([]);
+  const [city, setCity]=useState<{id: number, name: string}>();
+  const [club, setClub]=useState<{id: number, name: string}>();
   const [endDateVisibleModal, setEndDateVisibleModal] = useState<boolean>(
     false
   );
@@ -44,17 +48,12 @@ const ActiveMembership = () => {
   );
 
   const userAdminTypeRoles = [
-    "Admin",
-    "Голова Пласту",
-    "Адміністратор подій",
-    "Голова Куреня",
-    "Діловод Куреня",
-    "Голова Округи",
-    "Діловод Округи",
-    "Голова Станиці",
-    "Діловод Станиці",
+    Roles.Admin,
+    Roles.KurinHead,
+    Roles.OkrugaHead,
+    Roles.CityHead,
   ];
-  const userGenders = ["Чоловік", "Жінка", "Інша"];
+  const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
   const handleAddDegree = async () => {
     await activeMembershipApi.getUserPlastDegrees(userId).then((response) => {
@@ -62,9 +61,9 @@ const ActiveMembership = () => {
     });
   };
   const getAppropriateToGenderDegree = (plastDegreeName: string): string => {
-    if (userGenders[0] === user.gender.name) {
+    if (userGenders[0] === user.gender?.name && plastDegreeName.includes("/")) {
       return plastDegreeName.split("/")[0];
-    } else if (userGenders[1] === user.gender.name) {
+    } else if (userGenders[1] === user.gender?.name && plastDegreeName.includes("/")) {
       return plastDegreeName.split("/")[1];
     } else return plastDegreeName;
   };
@@ -81,13 +80,24 @@ const ActiveMembership = () => {
     });
     setPlastDegrees(upd);
   };
+
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
     setUserToken(jwt(token));
-
+    const currentUserId=(jwt(token) as { nameid: "" }).nameid;
+    let decodedJwt = jwt_decode(token) as any;
+    setRoles([].concat(decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']));
     await userApi.getById(userId).then(async (response) => {
       setUser(response.data.user);
+    }).catch((error) => {
+      notificationLogic("error", error.message);
     });
+
+      await userApi.getById(currentUserId).then(async (response) => {
+        setCurrentUser(response.data.user);
+      }).catch((error) => {
+        notificationLogic("error", error.message);
+      });
 
     setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
 
@@ -110,6 +120,15 @@ const ActiveMembership = () => {
       setData(response.data);
     });
   };
+
+
+  const IsUserHasAccessToManageDegree = (userRoles: Array<string>): boolean => {
+    return (userRoles?.includes(Roles.KurinHead) && currentUser.clubId==user.clubId) ||
+        (userRoles?.includes(Roles.CityHead) && currentUser.cityId==user.cityId) ||
+        (userRoles?.includes(Roles.OkrugaHead) && currentUser.regionId==user.regionId) ||
+        userRoles?.includes(Roles.Admin);
+  };
+
   const IsUserHasAnyAdminTypeRoles = (userRoles: Array<string>): boolean => {
     let IsUserHasAnyAdminRole = false;
     if (userRoles === null || userRoles === undefined)
@@ -121,8 +140,9 @@ const ActiveMembership = () => {
     });
     return IsUserHasAnyAdminRole;
   };
+
   const handleDelete = async (plastDegreeId: number) => {
-    var currentPlastDegree = plastDegrees.find(
+    const currentPlastDegree = plastDegrees.find(
       (p) => p.plastDegree.id === plastDegreeId
     );
     if (currentPlastDegree) {
@@ -136,8 +156,9 @@ const ActiveMembership = () => {
         `Дійсному членстві`
       );
     }
-    fetchData();
+    await fetchData();
   };
+
   const setTagColor = (userRoles: string) => {
     let color = "";
     if (userRoles.includes("Доступ члена проводу організації")) {
@@ -154,16 +175,20 @@ const ActiveMembership = () => {
     }
     return color;
   };
+
   const handleAddEndDate = async () => {
-    fetchData();
+    await fetchData();
   };
+
   const handleChangeDates = async () => {
-    fetchData();
+    await fetchData();
   };
+
   const showModal = () => setVisibleModal(true);
+
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [accessLevels]);
   return (
     <div className={classes.wrapper}>
       <div className={classes.avatarWrapper}>
@@ -174,15 +199,15 @@ const ActiveMembership = () => {
           lastName={user.lastName}
           isUserPlastun={true}
           pseudo={user.pseudo}
+          region={user.region}
           city={user.city}
           club={user.club}
+          regionId={user.regionId}
+          cityId={user.cityId}
+          clubId={user.clubId}
         />
-
-        {IsUserHasAnyAdminTypeRoles(
-          userToken[
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-          ]
-        ) && (
+        {IsUserHasAccessToManageDegree(roles?.filter(role=>role!=Roles.KurinHead))
+        && (
           <div>
             <Button
               type="primary"
@@ -229,11 +254,7 @@ const ActiveMembership = () => {
                     </li>
                   </ul>
 
-                  {IsUserHasAnyAdminTypeRoles(
-                    userToken[
-                      "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-                    ]
-                  ) && (
+                  {IsUserHasAccessToManageDegree(roles) && (
                     <Button
                       type="primary"
                       className={classes.buttonChange}
@@ -277,7 +298,7 @@ const ActiveMembership = () => {
           <div className={classes.wrapperScrollDegree}>
             <div className={classes.wrapperPlastDegree}>
               <Title level={2}> Ступені користувача </Title>
-              {plastDegrees.map((pd) => (
+              {plastDegrees.length===0? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Без ступеня"/> : plastDegrees.map((pd) => (
                 <React.Fragment key={pd.id}>
                   <div style={{ marginBottom: "7px" }}>
                     <div className={classes.textFieldsMain}>
@@ -294,11 +315,10 @@ const ActiveMembership = () => {
                         {moment(pd.dateFinish).format("DD.MM.YYYY")}
                       </div>
                     )}
-                    {IsUserHasAnyAdminTypeRoles(
-                      userToken[
-                        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-                      ]
-                    ) && (
+                    {IsUserHasAccessToManageDegree(roles?.map((role:any)=>{
+                      if(!(role===Roles.KurinHead || role===Roles.CityHead))
+                        return role
+                    })) && (
                       <div className={classes.buttons}>
                         <button
                           onClick={() => {
@@ -351,6 +371,7 @@ const ActiveMembership = () => {
       <ModalAddPlastDegree
         handleAddDegree={handleAddDegree}
         userId={userId}
+        isCityAdmin={!IsUserHasAnyAdminTypeRoles(roles?.map((role:any)=>{if(role!=Roles.CityHead) return role}))}
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
       />

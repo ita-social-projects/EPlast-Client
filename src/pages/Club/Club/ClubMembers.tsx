@@ -13,6 +13,7 @@ import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import { Roles } from "../../../models/Roles/Roles";
 moment.locale("uk-ua");
 
 const ClubMembers = () => {
@@ -28,6 +29,7 @@ const ClubMembers = () => {
   const [canEdit, setCanEdit] = useState<Boolean>(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   
   const getMembers = async () => {
     setLoading(true);
@@ -42,6 +44,8 @@ const ClubMembers = () => {
     const responseAdmins = await getAllAdmins(id);
     setAdmins(responseAdmins.data.administration);
     setHead(responseAdmins.data.head);
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
     setLoading(false);
   };
 
@@ -124,7 +128,8 @@ const ClubMembers = () => {
               key={member.id}
               className="detailsCard"
               actions={
-                canEdit
+
+                canEdit && (member?.user?.id !== head?.user?.id || !activeUserRoles.includes(Roles.KurinHeadDeputy))
                   ? [
                       <SettingOutlined onClick={() => showModal(member)} />,
                       <CloseOutlined onClick={() => removeMember(member)} />,

@@ -22,6 +22,12 @@ export const GetAllRegions = async () => {
   });
 };
 
+export const GetAllRegionsOptions = async () => {
+  return await api.get("Regions/Options").catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export const GetRegionsBoard = async () => {
   return await api.get("Regions/regionsBoard").catch((error) => {
     throw new Error(error);
@@ -54,6 +60,15 @@ export const getRegionById = async (regionId: number) => {
   return await api.get(`Regions/Profile/${regionId}`);
 };
 
+export const getRegionMembersInfo = async (regionId: number, year: number, page: number, pageSize: number) => {
+  return await api.get(`Regions/MembersInfo/${regionId}/${year}`, {
+    page: page,
+    pageSize: pageSize,
+  }).catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export const getRegionLogo = async (logoName: string) => {
   return api.get("Regions/LogoBase64", { logoName }).catch((error) => {
     throw new Error(error);
@@ -68,6 +83,12 @@ export const removeRegion = async (id: number) => {
 
 export const getHead = async (regionId: number) => {
   return api.get(`Regions/GetHead/${regionId}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const getHeadDeputy = async (regionId: number) => {
+  return api.get(`Regions/GetHeadDeputy/${regionId}`).catch((error) => {
     throw new Error(error);
   });
 };
@@ -150,6 +171,13 @@ export const getRegions = async () => {
     });
 };
 
+export const getAccessableRegions = async () => {
+  return api.get(`Regions/RegionOptions`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
 export const redirectCities = async (prevRegId: number, nextRegId: number) => {
   return api
     .put(`Regions/RedirectCities/${prevRegId}/${nextRegId}`)
@@ -179,6 +207,48 @@ export const getAllRegionsReports = async () => {
     })
 }
 
+export const getSearchedRegionsReports = async (searchedData: string, page: number, pageSize: number, sortKey: number, authReport: boolean) => {
+  return api.get(`Regions/RegionsAnnualReports`,
+    {
+      searchedData: searchedData,
+      page: page,
+      pageSize: pageSize,
+      sortKey: sortKey,
+      auth: authReport
+    })
+    .catch((error) => {
+      throw new Error(error);
+    })
+}
+
+const confirm = async (id: number) => {
+  return await api.put(`Regions/confirmReport/${id}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+}
+
+const cancel = async (id: number) => {
+  return await api.put(`Regions/cancel/${id}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+}
+
+const editReport = async (reportId: number, data: RegionAnnualReportQuestions) => {
+  return await api.put(`Regions/editReport/${reportId}`, data)
+      .catch((error) => {
+        throw new Error(error);
+      });
+}
+
+const removeAnnualReport = async (id: number) => {
+  return await api.remove(`Regions/${id}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+}
+
 export const getRegionsByPage = async (
   page: number,
   pageSize: number,
@@ -197,7 +267,19 @@ export const getAdminTypeIdByName = async (name: string) => {
   });
 };
 
+export const getRegionUsers = async (regionId: number) => {
+  return api.get(`Regions/RegionUsers/${regionId}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export default {
+  editReport,
+  getRegionMembersInfo,
+  removeAnnualReport,
+  getAccessableRegions,
+  cancel,
+  confirm,
   getAllRegionsReports,
   getReportById,
   createRegionAnnualReport,
@@ -220,5 +302,6 @@ export default {
   GetAllRegions,
   createRegion,
   getRegions,
-  GetRegionsBoard
+  GetRegionsBoard,
+  getRegionUsers
 };

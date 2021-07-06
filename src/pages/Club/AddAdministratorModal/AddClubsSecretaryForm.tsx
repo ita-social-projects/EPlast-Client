@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
 import { Form, Input, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
-import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
   addAdministrator,
   editAdministrator,
   getAllAdmins,
+  getAllMembers,
 } from "../../../api/clubsApi";
-import { ReloadOutlined } from "@ant-design/icons";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import moment from "moment";
-import {
-  emptyInput,
-  successfulEditAction,
-} from "../../../components/Notifications/Messages"
+import {emptyInput,} from "../../../components/Notifications/Messages"
 import AdminType from "../../../models/Admin/AdminType";
-import regionsApi from "../../../api/regionsApi";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
+import ClubMember from "../../../models/Club/ClubMember";
+import User from "../../Distinction/Interfaces/User";
+import "./AddClubsSecretaryForm.less";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
+
+import userApi from "../../../api/UserApi";
+import { Roles } from "../../../models/Roles/Roles";
+
 
 type AddClubsNewSecretaryForm = {
   onAdd: () => void;
@@ -32,22 +34,17 @@ const AddClubsNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
-  const [users, setUsers] = useState<any[]>([
-    {
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-        birthday: "",
-      },
-      regionName: "",
-      cityName: "",
-      clubName: "",
-      userPlastDegreeName: "",
-      userRoles: "",
-    },
-  ]);
 
+  const [members, setMembers] = useState<ClubMember[]>([]);
+  
+  const getMembers = async () => {
+    setLoading(true);
+    const responseMembers = await getAllMembers(props.clubId);
+    setMembers(responseMembers.data.members);
+    setLoading(false);
+  };
+    
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const getClubHead = async () => {
     if (props.clubId !== 0) {
       const responseAdmins = await getAllAdmins(props.clubId);
@@ -94,8 +91,14 @@ const AddClubsNewSecretaryForm = (props: any) => {
 
   const addClubAdmin = async (admin: ClubAdmin) => {
     await addAdministrator(props.clubId, admin);
-    form.resetFields();
     notificationLogic("success", "Користувач успішно доданий в провід");
+    await NotificationBoxApi.createNotifications(
+      [admin.userId],
+      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/clubs/${props.clubId}`,
+      `цьому курені`
+    );
     props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
     props.onAdd?.(admin);
   };
@@ -118,7 +121,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
       },
       clubId: props.clubId,
       userId: props.admin === undefined
-        ? JSON.parse(values.userId).user.id
+        ? JSON.parse(values.userId).id
         : props.admin.userId,
       user: values.user,
       endDate: values.endDate?._d,
@@ -126,7 +129,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
     };
 
     try {
-      if (values.AdminType === "Голова Куреня" && head !== null) {
+      if (values.AdminType === Roles.KurinHead && head !== null) {
         if (head?.userId !== admin.userId) {
           showConfirm(admin);
         } else if (head?.userId === admin.userId) {
@@ -146,24 +149,17 @@ const AddClubsNewSecretaryForm = (props: any) => {
   };
 
   useEffect(() => {
-    if (props.visibleModal) {
+    if (!props.visibleModal) {
       form.resetFields();
     }
+    getMembers();
     getClubHead();
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
   }, [props]);
 
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await adminApi.getUsersForTable().then((response) => {
-        setUsers(response.data);
-      });
-    };
-    fetchData();
-  }, []);
-
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form name="basic" onFinish={handleSubmit} form={form} className="formAddSecretaryModal">
       <Form.Item
         className={classes.formField}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
@@ -172,13 +168,13 @@ const AddClubsNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: props.admin === undefined ? true : false,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
         <Select showSearch className={classes.inputField}>
-          {users?.map((o) => (
-            <Select.Option key={o.user.id} value={JSON.stringify(o)}>
+          {members?.map((o) => (
+            <Select.Option key={o.userId} value={JSON.stringify(o.user)}>
               {o.user.firstName + " " + o.user.lastName}
             </Select.Option>
           ))}
@@ -195,14 +191,15 @@ const AddClubsNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: true,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Куреня" },
+            { value: Roles.KurinHead, disabled: activeUserRoles.includes(Roles.KurinHeadDeputy) },
+            { value: Roles.KurinHeadDeputy },
             { value: "Голова СПС" },
             { value: "Фотограф" },
             { value: "Писар" },

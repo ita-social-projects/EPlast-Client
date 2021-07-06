@@ -11,9 +11,11 @@ import classes from './Table.module.css';
 import EditDecisionModal from './EditDecisionModal';
 import deleteConfirm from './DeleteConfirm';
 import decisionsApi, { DecisionPost } from '../../api/decisionsApi';
+import { Roles } from '../../models/Roles/Roles';
 
 interface Props {
   record: number;
+  recordCreatorId: string;
   pageX: number;
   pageY: number;
   showDropdown: boolean;
@@ -22,8 +24,9 @@ interface Props {
 }
 
 const DropDown = (props: Props) => {
-  const { record, pageX, pageY, showDropdown, onDelete, onEdit } = props;
+  const { record, recordCreatorId, pageX, pageY, showDropdown, onDelete, onEdit } = props;
   const [showEditModal, setShowEditModal] = useState(false);
+  const [userId, setUserId] = useState<string>();
   const [userRole, setUser] = useState<string[]>();
   const [canEdit, setCanEdit] = useState(false);
   const [canSee, setCanSee] = useState(false);
@@ -37,19 +40,21 @@ const DropDown = (props: Props) => {
     governingBody: {id : 0, description: "", phoneNumber: "", email: "" ,governingBodyName: "", logo: ""},
     decisionTarget: {id : 0 ,targetName : ""},
     description: "",
-    date: "",
+    date: new Date(),
+    userId: "",
     fileName: null,
 });
 const fetchUser = async () => {
   let jwt = AuthStore.getToken() as string;
   let decodedJwt = jwt_decode(jwt) as any;
+  setUserId(decodedJwt.nameid);
   let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
   setUser(roles);
-  setCanEdit(roles.includes("Admin"));
-  setRegionAdm(roles.includes("Голова Округи"));
-  setCityAdm(roles.includes("Голова Станиці"));
-  setClubAdm(roles.includes("Голова Куреня"));
-  setCanSee(roles.includes("Дійсний член організації"));
+  setCanEdit(roles.includes(Roles.Admin));
+  setRegionAdm(roles.includes(Roles.OkrugaHead));
+  setCityAdm(roles.includes(Roles.CityHead));
+  setClubAdm(roles.includes(Roles.KurinHead));
+  setCanSee(roles.includes(Roles.PlastMember));
 }
 const fetchData = async () =>{
   await decisionsApi.getById(record).then(res => setData(res));
@@ -100,7 +105,7 @@ const fetchData = async () =>{
         }
         }
       >
-        {(canEdit === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+        {(canEdit || ((regionAdm || cityAdm || clubAdm) && (userId === recordCreatorId))) ? (
         <Menu.Item key="1">
           <EditOutlined />
           Редагувати
@@ -109,9 +114,9 @@ const fetchData = async () =>{
         }
         <Menu.Item key="2">
           <FilePdfOutlined />
-          Конвертувати в PDF
+          Переглянути в PDF
         </Menu.Item>
-        {(canEdit === true) ? (
+        {(canEdit) ? (
         <Menu.Item key="3">
           <DeleteOutlined />
           Видалити

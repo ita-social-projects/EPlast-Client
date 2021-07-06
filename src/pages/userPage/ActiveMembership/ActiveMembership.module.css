@@ -65,7 +65,7 @@
 }
 
 .avatarWrapper{
-    width: calc(60% - 30px) !important;
+    width: calc(45% - 30px) !important;
     height: auto;
     display: flex;
     flex-direction: column;

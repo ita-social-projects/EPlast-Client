@@ -1,7 +1,8 @@
-import React,{ useEffect} from 'react';
-import { Drawer, List, Empty, Button} from 'antd';
+import React from 'react';
+import { Drawer, List, Empty, Button } from 'antd';
 import classes from './NotificationBox.module.css';
-import NotificationBoxApi, {UserNotification } from '../../api/NotificationBoxApi';
+import "./NotificationBox.less";
+import NotificationBoxApi, { UserNotification } from '../../api/NotificationBoxApi';
 import moment from 'moment';
 import { CloseOutlined } from '@ant-design/icons';
 type props = {
@@ -9,10 +10,9 @@ type props = {
     Notifications : Array<UserNotification>;
     VisibleDrawer : boolean;
     setVisibleDrawer : (visibleDrawer: boolean) => void;
-    handleNotificationBox :() => void;
+    handleNotificationBox : () => void;
     RemoveNotification : (notificationId : number) => void;
     RemoveAllNotifications : (userId : string) => void;
-
 }
 const NotificationBox = ({
     userId,
@@ -22,7 +22,7 @@ const NotificationBox = ({
     handleNotificationBox,
     RemoveNotification,
     RemoveAllNotifications
-    }: props) =>{
+    }: props) => {
     const handleCancel = () => {
         setVisibleDrawer(false);
         handleNotificationBox();
@@ -30,51 +30,57 @@ const NotificationBox = ({
 
     return (   
     <Drawer
-        title="Ваші сповіщення"
-        placement="right"
-        closable={true}
-        onClose={handleCancel}
-        visible={VisibleDrawer}
-        width={450}
-        footer={
-            <div className={classes.Footer}>
-              <Button onClick={handleCancel} style={{ width:"50%" }}>
+        title = "Ваші сповіщення"
+        placement = "right"
+        closable = { true }
+        onClose = { handleCancel }
+        visible = { VisibleDrawer }
+        width = { 450 }           
+        footer = {
+            <div className = { classes.Footer }>
+              <Button
+               onClick = { handleCancel } 
+               style = {{ width:"50%" }}
+              >
                 Закрити сповіщення
               </Button>
-              <Button onClick={() => {RemoveAllNotifications(userId)}} danger style={{ width:"50%" }}>
+              <Button 
+                onClick = {() => { RemoveAllNotifications(userId) }} 
+                danger style = {{ width:"50%" }}
+                disabled = { !Notifications.length }
+              >
                 Видалити всі сповіщення
               </Button>
             </div>
           }
     >
-        
+
         {Notifications.length !== 0 ? 
             (
                 <List
-                itemLayout="vertical"
-                dataSource={Notifications}
+                itemLayout = "vertical"
+                dataSource = { Notifications }
                 bordered
-                renderItem={(item, index) => (
-                  <List.Item
-                  >
-                    <div className={classes.NotificationItem}>
-                        <div className={classes.NotificationTextBox}>
-                            <div className={classes.Text}>
-                                {item.message + " "}
-                                {item.senderName && item.senderLink &&
-                                    <a className={classes.Link} href={item.senderLink}>{item.senderName}</a>
+                renderItem = { (item, index) => (
+                  <List.Item>
+                    <div className = { classes.NotificationItem }>
+                        <div className = { classes.NotificationTextBox }>
+                            <div className = { classes.Text }>
+                                { item.message + " " }
+                                { item.senderName && item.senderLink &&
+                                    <a className = { classes.Link } href = { item.senderLink }>{ item.senderName }</a>
                                 }
                             </div> 
-                            <p className={classes.Date}>
-                                {moment(item.createdAt).format("DD.MM.YYYY HH:mm")}
+                            <p className = { classes.Date }>
+                                { moment(item.createdAt).format("DD.MM.YYYY HH:mm") }
                             </p>
                         </div> 
-                        <div className={classes.Button}> 
+                        <div className = { classes.Button }> 
                             <Button 
-                                icon={<CloseOutlined style={{ fontSize: "12px" }} />} 
-                                onClick={() => RemoveNotification(item.id)} 
-                                size="small" 
-                                type="primary"
+                                icon = { <CloseOutlined style = {{ fontSize: "12px" }}/> } 
+                                onClick = { () => RemoveNotification(item.id) } 
+                                size = "small" 
+                                type = "primary"
                             > 
                             </Button>
                         </div>
@@ -83,7 +89,7 @@ const NotificationBox = ({
                 )}
               />
             )
-            : ( <Empty description="Сповіщень немає" image={Empty.PRESENTED_IMAGE_SIMPLE} /> )
+            : ( <Empty description = "Сповіщень немає" image = { Empty.PRESENTED_IMAGE_SIMPLE }/> )
         }
     </Drawer>)
 }

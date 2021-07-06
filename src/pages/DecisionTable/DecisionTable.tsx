@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Input, Button, Layout, Pagination } from 'antd';
+import { Table, Button, Layout, Pagination } from 'antd';
 import columns from './columns';
 import DropDown from './DropDownDecision';
 import AddDecisionModal from './AddDecisionModal';
 import decisionsApi, { Decision, statusTypeGetParser } from '../../api/decisionsApi';
 import notificationLogic from '../../components/Notifications/Notification';
 import ClickAwayListener from 'react-click-away-listener';
-import moment from "moment";
 import Spinner from '../Spinner/Spinner';
 import AuthStore from '../../stores/AuthStore';
 import jwt_decode from "jwt-decode";
+import Search from 'antd/lib/input/Search';
+import { DecisionTableInfo } from './Interfaces/DecisionTableInfo';
+import { Roles } from '../../models/Roles/Roles';
 const classes = require('./Table.module.css');
 
 const { Content } = Layout;
@@ -18,7 +20,8 @@ const DecisionTable = () => {
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [recordObj, setRecordObj] = useState<any>(0);
-  const [data, setData] = useState<Decision[]>(Array<Decision>());
+  const [recordCreator, setRecordCreator] = useState<string>("");
+  const [data, setData] = useState<DecisionTableInfo[]>(Array<DecisionTableInfo>());
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [searchedData, setSearchedData] = useState('');
@@ -28,9 +31,16 @@ const DecisionTable = () => {
   const [regionAdm, setRegionAdm] = useState(false);
   const [cityAdm, setCityAdm] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState<number>(0);
+  const [count, setCount] = useState<number>(0);
+  
   const handleDelete = (id: number) => {
     const filteredData = data.filter(d => d.id !== id);
     setData([...filteredData]);
+    setTotal(total-1);
+    setCount(count-1);
   }
   const handleEdit = (id: number, name: string, description: string) => {
     /* eslint no-param-reassign: "error" */
@@ -46,8 +56,11 @@ const DecisionTable = () => {
   }
   const handleAdd = async () => {
     const lastId = data[data.length - 1].id;
+    let user: any;
+    let curToken = AuthStore.getToken() as string;
+    user = jwt_decode(curToken);
     await decisionsApi.getById(lastId + 1).then(res => {
-      const dec: Decision = {
+      const dec: DecisionTableInfo = {
         id: res.id,
         name: res.name,
         governingBody: res.governingBody.governingBodyName,
@@ -55,13 +68,15 @@ const DecisionTable = () => {
         decisionTarget: res.decisionTarget.targetName,
         description: res.description,
         fileName: res.fileName,
-        date: res.date
+        userId: user.nameid,
+        date: res.date,
+        total: total + 1,
+        count: count + 1
       };
+      setTotal(total + 1);
+      setCount(count + 1);
       setData([...data, dec]);
-    })
-      .catch(() => {
-        notificationLogic('error', "Рішення не існує");
-      });
+    });
   }
 
   useEffect(() => {
@@ -70,39 +85,37 @@ const DecisionTable = () => {
       let decodedJwt = jwt_decode(jwt) as any;
       let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
       setLoading(true);
-      const res: Decision[] = await decisionsApi.getAll();
+      const res: DecisionTableInfo[] = await decisionsApi.getAllDecisionsForTable(searchedData, page, pageSize);
+      setTotal(res[0]?.total);
+      setCount(res[0]?.count);
       setData(res);
       setLoading(false);
       setUser(roles);
-      setCanEdit(roles.includes("Admin"));
-      setRegionAdm(roles.includes("Голова Округи"));
-      setCityAdm(roles.includes("Голова Станиці"));
-      setClubAdm(roles.includes("Голова Куреня"));
+      setCanEdit(roles.includes(Roles.Admin));
+      setRegionAdm(roles.includes(Roles.OkrugaHead));
+      setCityAdm(roles.includes(Roles.CityHead));
+      setClubAdm(roles.includes(Roles.KurinHead));
     };
     fetchData();
-  }, []);
+  }, [searchedData, page, pageSize]);
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchedData(event.target.value.toLowerCase());
+  const handleSearch = (event: any) => {
+    setPage(1);
+    setSearchedData(event);
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if(event.target.value.toLowerCase()==='') setSearchedData('');
+  }
+  
+  const handlePageChange = (page: number) => {
+    setPage(page);
+  };
 
-  const filteredData = searchedData
-    ? data.filter((item) => {
-      return Object.values([
-        item.name,
-        item.governingBody,
-        item.id,
-        item.description,
-        item.decisionStatusType,
-        item.decisionTarget,
-        moment(item.date.toLocaleString()).format("DD.MM.YYYY"),
-      ]).find((element) => {
-        return String(element).toLowerCase().includes(searchedData);
-      });
-    })
-    : data;
-
+  const handleSizeChange = (page: number, pageSize: number = 10) => {
+    setPage(page);
+    setPageSize(pageSize);
+  };
 
   const handleClickAway = () => {
     setShowDropdown(false);
@@ -111,7 +124,7 @@ const DecisionTable = () => {
 
   const showModal = () => setVisibleModal(true);
 
-  return !loading ? (
+  return (
     <Layout>
       <Content
         onClick={() => {
@@ -127,18 +140,23 @@ const DecisionTable = () => {
               </Button>
             ) : (<> </>)
             }
-            <Input placeholder="Пошук" onChange={handleSearch} allowClear />
+            <Search
+                enterButton
+                placeholder="Пошук"
+                onChange={handleSearchChange}
+                onSearch={handleSearch}                
+               />
           </div>
-          <Table
+          {loading ? (<Spinner />) : (<Table
             className={classes.table}
-            dataSource={filteredData}
+            dataSource={data}
             scroll={{ x: 1300 }}
             columns={columns}
             bordered
             rowKey="id"
 
 
-            onRow={(record) => {
+            onRow={(record : Decision) => {
               return {
                 onClick: () => {
                   setShowDropdown(false);
@@ -146,6 +164,7 @@ const DecisionTable = () => {
                 onContextMenu: (event) => {
                   event.preventDefault();
                   setShowDropdown(true);
+                  setRecordCreator(record.userId);
                   setRecordObj(record.id);
                   setX(event.pageX);
                   setY(event.pageY);
@@ -163,16 +182,22 @@ const DecisionTable = () => {
             }}
             pagination={
               {
+                current: page,
+                pageSize: pageSize,
+                total: count,
                 showLessItems: true,
                 responsive: true,
                 showSizeChanger: true,
+                onChange: (page) => handlePageChange(page),
+                onShowSizeChange: (page, size) => handleSizeChange(page, size),
               }
             }
-          />
+          />)}
           <ClickAwayListener onClickAway={handleClickAway}>
             <DropDown
               showDropdown={showDropdown}
               record={recordObj}
+              recordCreatorId={recordCreator}
               pageX={x}
               pageY={y}
               onDelete={handleDelete}
@@ -187,9 +212,7 @@ const DecisionTable = () => {
         </>
       </Content>
     </Layout>
-  ) : (
-      <Spinner />
-    );
+  )
 };
 
 export default DecisionTable;

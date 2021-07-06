@@ -1,7 +1,7 @@
-
 import axios from 'axios';
-import Api from './api'
 import BASE_URL from '../config';
+import AuthStore from '../stores/AuthStore';
+import jwt_decode from 'jwt-decode';
 
 const getById = async (id: string | undefined) => {
     const response = await axios.get(`${`${BASE_URL}User/`}${id}`);
@@ -44,6 +44,31 @@ const approveUser = async (userId: string, isClubAdmin: boolean, isCityAdmin: bo
     return response;
 };
 
+const getActiveUserRoles = ():string[] => {
+    let jwt = AuthStore.getToken() as string;
+    let decodedJwt = jwt_decode(jwt) as any;
+    let roles = [].concat(decodedJwt[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+    ]);
+
+    return roles;
+};
+
+const getActiveUserId = () => {
+    const token = AuthStore.getToken() as string;
+    const user: any = jwt_decode(token);
+
+    return user.nameid as string;
+};
+
+const getActiveUserProfile = async () => {
+    let jwt = AuthStore.getToken() as string;
+    let decodedJwt = jwt_decode(jwt) as any;
+
+    const res = await getById(decodedJwt.nameid);
+    return res.data.user;
+}
+
 export default {
     getById,
     getUserProfileById,
@@ -53,4 +78,7 @@ export default {
     getApprovers,
     deleteApprove,
     approveUser,
+    getActiveUserRoles,
+    getActiveUserId,
+    getActiveUserProfile,
 };

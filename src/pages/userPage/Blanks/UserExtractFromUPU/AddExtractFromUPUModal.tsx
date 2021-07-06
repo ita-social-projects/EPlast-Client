@@ -52,7 +52,7 @@ const AddExtractFromUPUModal = (props: Props) => {
     };
 
     const checkFile = (fileSize: number, fileName: string): boolean => {
-      const extension = fileName.split(".").reverse()[0];
+      const extension = fileName.split(".").reverse()[0].toLowerCase();
       const isCorrectExtension =
       extension.indexOf("pdf") !== -1 ||
       extension.indexOf("jpg") !== -1 ||
@@ -153,24 +153,18 @@ const AddExtractFromUPUModal = (props: Props) => {
             ) : null}
           </Form.Item>
 
-          <Form.Item className="cancelConfirmButtons">
-            <Row justify="end">
-              <Col xs={11} sm={5}>
+          <Row justify="end">
+            <Col md={24} xs={24}>
+              <Form.Item style={{ textAlign: "right" }}>
                 <Button key="back" onClick={handleCancel}>
                   Відмінити
                 </Button>
-              </Col>
-              <Col
-                className="publishButton"
-                xs={{ span: 11, offset: 2 }}
-                sm={{ span: 6, offset: 1 }}
-              >
-                <Button type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
+                <Button  style={{ marginLeft: "7px" }} type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
                   Опублікувати
                 </Button>
-              </Col>
-            </Row>
-          </Form.Item>
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Modal>
     );

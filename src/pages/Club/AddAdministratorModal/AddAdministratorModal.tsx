@@ -13,7 +13,9 @@ import{
 } from "../../../components/Notifications/Messages"
 import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
+import userApi from "../../../api/UserApi";
 import "moment/locale/uk";
+import { Roles } from "../../../models/Roles/Roles";
 moment.locale("uk-ua");
 
 const confirm = Modal.confirm;
@@ -34,6 +36,7 @@ const AddAdministratorModal = (props: Props) => {
   const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
   const [head, setHead] = useState<ClubAdmin>();
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -109,7 +112,7 @@ const AddAdministratorModal = (props: Props) => {
     };
 
     try {
-      if (values.adminType === "Голова Куреня" && head !== null) {
+      if (values.adminType === Roles.KurinHead && head !== null) {
         if (head?.userId !== admin.userId) {
           showConfirm(admin);
         } else {
@@ -123,8 +126,6 @@ const AddAdministratorModal = (props: Props) => {
         }
       }
     } finally {
-      props.onAdd?.(admin);
-      props.onChange?.(props.admin.userId, values.adminType);
       props.setVisibleModal(false);
       setLoading(false);
     }
@@ -139,6 +140,8 @@ const AddAdministratorModal = (props: Props) => {
       form.resetFields();
     }
     getClubHead();
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
   }, [props]);
 
   return (
@@ -166,7 +169,8 @@ const AddAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: "Голова Куреня" },
+              { value: Roles.KurinHead, disabled: activeUserRoles.includes(Roles.KurinHeadDeputy) },
+              { value: Roles.KurinHeadDeputy },
               { value: "Голова СПС" },
               { value: "Фотограф" },
               { value: "Писар" },
@@ -174,10 +178,6 @@ const AddAdministratorModal = (props: Props) => {
               { value: "Домівкар" },
               { value: "Член СПР" },
             ]}
-            filterOption={(inputValue, option) =>
-              option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
-              -1
-            }
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}
           ></AutoComplete>

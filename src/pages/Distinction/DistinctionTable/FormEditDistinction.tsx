@@ -17,7 +17,9 @@ import Distinction from "../Interfaces/Distinction";
 import{
   emptyInput,
   maxLength,
-  failEditAction
+  failEditAction,
+  maxNumber,
+  minNumber
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
@@ -96,6 +98,10 @@ const FormEditDistinction = ({
     setUserValue(distinction.user);
   }, [distinction]);
 
+  const backgroundColor = (user: any) => {
+    return user.isInLowerRole ? { backgroundColor : '#D3D3D3' } : { backgroundColor : 'white' };
+  }    
+
   const handleCancel = () => {
     form.resetFields();
     setShowModal(false);
@@ -160,11 +166,23 @@ const FormEditDistinction = ({
                 labelCol={{ span: 24 }}
                 name="number"
                 rules={[
-                  {
-                    required: true,
-                    message: emptyInput(),
-                  },
-                ]}
+                    {
+                      required: true,
+                      message: emptyInput(),
+                    },
+                    {
+                      validator: (_ : object, value: number) => 
+                          value > 99999
+                              ? Promise.reject(maxNumber(99999)) 
+                              : Promise.resolve()
+                    },
+                    {
+                      validator: (_ : object, value: number) => 
+                          value < 1
+                              ? Promise.reject(minNumber(1)) 
+                              : Promise.resolve()
+                    }
+                  ]}
               >
                 <Input
                   type="number"
@@ -225,12 +243,14 @@ const FormEditDistinction = ({
                   loading={loadingUserStatus}
                 >
                   {userData?.map((o) => (
-                    <Select.Option
-                      key={o.user.id}
-                      value={JSON.stringify(o.user)}
-                    >
-                      {o.user.firstName + " " + o.user.lastName}
-                    </Select.Option>
+                      <Select.Option 
+                          key={o.id} 
+                          value={JSON.stringify(o)} 
+                          style={backgroundColor(o)}
+                          disabled={o.isInLowerRole}
+                          >
+                      {o.firstName + " " + o.lastName}
+                      </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
@@ -288,8 +308,8 @@ const FormEditDistinction = ({
                 initialValue={distinction.reason}
                 rules={[
                   {
-                    max: 250,
-                    message: maxLength(250),
+                    max: 1000,
+                    message: maxLength(1000),
                   },
                 ]}
               >
@@ -300,7 +320,7 @@ const FormEditDistinction = ({
                     maxRows: 6,
                   }}
                   className={formclasses.inputField}
-                  maxLength={251}
+                  maxLength={1001}
                 />
               </Form.Item>
             </Col>

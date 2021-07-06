@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Select, Form, Button, Row, Col } from 'antd';
-import {getClubs,createClubAnnualReport} from '../../../../api/clubsApi';
-import Clubs from '../../Interfaces/ClubAnnualReport'
+import clubsApi from '../../../../api/clubsApi';
 import { useHistory } from 'react-router-dom';
 import './ClubSelectModal.less'
 import {emptyInput} from "../../../../components/Notifications/Messages"
-import notificationLogic from "../../../../components/Notifications/Notification";
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface Props {
     visibleModal: boolean,
@@ -16,8 +15,9 @@ const ClubSelectModal = (props: Props) => {
     const { visibleModal, handleOk } = props;
     const history = useHistory();
     const [clubOptions, setClubOptions] = useState<any>();
-    const [form] = Form.useForm();
-    
+    const [clubs, setClubs]=useState<any>();
+    const [isLoadingClubs, setIsLoadingClubs]=useState<boolean>(false);
+
 
     const validationSchema = {
         club: [
@@ -25,27 +25,48 @@ const ClubSelectModal = (props: Props) => {
         ],
     }
 
-    const handleSubmit = async (values : any)=>{
-        createClubAnnualReport(JSON.parse(values.region).id) 
-        .then(() => {
-          notificationLogic("success", "Річний звіт успішно створено");
-          window.location.reload();
-        })
-        .catch(() => {
-          notificationLogic("error", "Щось пішло не так. Можливо даний річний звіт уже створено");
-        });    
-        form.resetFields(); 
-      }
-
     const fetchClubs = async()=>{
-        let response = await getClubs();
-        let clubs = response.data as Clubs[];
-        setClubOptions(clubs.map(item => {
+        setIsLoadingClubs(true);
+        try{
+            let response = await clubsApi.getClubsOptions();
+        setClubs(response.data);
+        let clubs = response.data.map((item:any) => {
             return {
-                label: item.name,
-                value: item.id
+                label: <>{item.name}<div 
+                hidden={!item.hasReport}
+                style={{float:"right", fontSize:"12px", marginTop:"2px", marginRight:"10px"}}>
+                    Курінь вже має створений звіт
+                    </div></>,
+                value: item.id,
+                disabled: item.hasReport
             }
-        }));
+        })
+        setClubOptions(clubs);
+        }catch (error) {
+            showError(error.message)
+        } finally { setIsLoadingClubs(false) }
+    }
+
+    const checkCreated = async (id: number) => {
+        try {
+            let response = await clubsApi.checkCreated(id);
+            if (response.data.hasCreated === true) {
+                showError(response.data.message);
+            }
+            else{
+                history.push(`/annualreport/createClubAnnualReport/${id}`)
+            }
+        }
+        catch (error) {
+            showError(error.message)
+        }
+    }
+
+    const showError = (message: string) => {
+        Modal.error({
+            title: 'Помилка!',
+            content: message
+        });
     }
 
     useEffect(() => {
@@ -59,7 +80,9 @@ const ClubSelectModal = (props: Props) => {
             visible={visibleModal}
             footer={null} >
             <Form
-                onFinish={(obj) =>{history.push(`/annualreport/createClubAnnualReport/${obj.clubId}`)}} >
+                onFinish={(obj) =>{
+                    checkCreated(obj.clubId);
+                }} >
                 <Row>
                     <Col
                         span={24} >
@@ -70,9 +93,9 @@ const ClubSelectModal = (props: Props) => {
                                 showSearch
                                 className=''
                                 options={clubOptions}
-                                placeholder='Обрати курінь'
+                                placeholder={<span>Обрати курінь {isLoadingClubs && <LoadingOutlined />}</span>}
                                 filterOption={(input, option) =>
-                                    (option?.label as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    (clubs.find((x:any)=>x.id==option?.value).name as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
                                 } />
                         </Form.Item>
                     </Col>

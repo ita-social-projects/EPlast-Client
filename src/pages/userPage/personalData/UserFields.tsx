@@ -1,34 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Input } from "antd";
-import "./PersonalData.less";
+import { Alert, Button, Form, Input } from "antd";
 import userApi from "../../../api/UserApi";
 import moment from "moment";
 import AvatarAndProgress from "./AvatarAndProgress";
-import { Data } from "../Interface/Interface";
+import { Data, User } from "../Interface/Interface";
 import { useParams, useHistory } from "react-router-dom";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Spinner from "../../Spinner/Spinner";
-import { tryAgain } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import Facebook from "../../../assets/images/facebookGreen.svg";
 import Twitter from "../../../assets/images/birdGreen.svg";
 import Instagram from "../../../assets/images/instagramGreen.svg";
-import { StickyContainer } from "react-sticky";
-import AuthStore from "../../../stores/AuthStore";
-import jwt from "jwt-decode";
+import { Sticky, StickyContainer } from "react-sticky";
 import AvatarAndProgressStatic from "./AvatarAndProgressStatic";
+import { Roles } from "../../../models/Roles/Roles";
+import UserApi from "../../../api/UserApi";
 
 export default function () {
-  const { userId } = useParams();
+  const { userId } = useParams<{userId:string}>();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
+  const [activeUserRoles, setActiveUserRoles]=useState<string[]>([]);
+  const [activeUserId, setActiveUserId]=useState<string>("");
+  const [activeUserProfile, setActiveUserProfile] = useState<User>();
 
   const fetchData = async () => {
-    const token = AuthStore.getToken() as string;
-    const user: any = jwt(token);
+
+    const actUserId = await UserApi.getActiveUserId();
+      setActiveUserId(actUserId);
+
+    const userRoles = UserApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
+
+    const userProfile = await UserApi.getActiveUserProfile();
+     setActiveUserProfile(userProfile);
+
     await userApi
-      .getUserProfileById(user.nameid, userId)
+      .getUserProfileById(actUserId, userId)
       .then((response) => {
         setLoading(true);
         setData(response.data);
@@ -42,34 +51,62 @@ export default function () {
               userId
             );
       })
-      .catch(() => {
-        notificationLogic("error", tryAgain);
+      .catch((error) => {
+        notificationLogic("error", error.message);
       });
   };
 
   useEffect(() => {
     fetchData();
   }, [userId]);
-
+  
   return loading === false ? (
     <Spinner />
   ) : data?.user !== null ? (
     <div className="container">
       <Form name="basic" className="formContainer">
-        <div className="avatarWrapper">
+      
+        <div className="wrapperContainer">
+
+          {activeUserProfile?.gender.name === null &&
+          <Alert
+            className="alertWrapper"
+            message="Попередження"
+            description="Заповніть обов'язкові поля профілю українською мовою"
+            type="warning"
+            showIcon
+          />}
+          {activeUserProfile?.city === null &&
+          <Alert
+            className="alertWrapper"
+            message="Попередження"
+            description="Оберіть станицю та доєднайтеся до неї"
+            type="warning"
+            showIcon
+          />}
+          
+          <div className="avatarWrapperUserFields">
+
           <StickyContainer className="kadraWrapper">
-            <AvatarAndProgress
-              imageUrl={data?.user.imagePath}
-              time={data?.timeToJoinPlast}
-              firstName={data?.user.firstName}
-              lastName={data?.user.lastName}
-              isUserPlastun={data?.isUserPlastun}
-              pseudo={data?.user.pseudo}
-              city={data?.user.city}
-              club={data?.user.club}
-            />
-          </StickyContainer>
+              <AvatarAndProgress
+                imageUrl={data?.user.imagePath}
+                time={data?.timeToJoinPlast}
+                firstName={data?.user.firstName}
+                lastName={data?.user.lastName}
+                isUserPlastun={data?.isUserPlastun}
+                pseudo={data?.user.pseudo}
+                region={data?.user.region}
+                city={data?.user.city}
+                club={data?.user.club}
+                cityId={data?.user.cityId}
+                clubId={data?.user.clubId}
+                regionId={data?.user.regionId}
+              />
+            </StickyContainer>
+
+          </div>
         </div>
+      
         <div className="allFields">
           <div className="rowBlock">
             <Form.Item label="Ім`я" className="formItem">
@@ -385,16 +422,29 @@ export default function () {
               <Form.Item className="formItem"></Form.Item>
             ) : null}
           </div>
-
-          <Button className="confirmBtn" onClick={() => history.push(`/clubs`)}>
-            Обрати/змінити курінь
-          </Button>
-          <Button
-            className="confirmBtn"
-            onClick={() => history.push(`/cities`)}
-          >
-            Обрати/змінити станицю
-          </Button>
+          <div className="buttonWrapper">
+            <Button
+              className="confirmBtn"
+              hidden={!(activeUserId === userId || activeUserRoles.includes(Roles.Admin))}
+              onClick={() => history.push(`/userpage/edit/${userId}`)}
+            >
+              Редагувати профіль
+            </Button>
+            <Button
+              className="confirmBtn"
+              hidden={!(activeUserId === userId || activeUserRoles.includes(Roles.Admin))}
+              onClick={() => history.push(`/cities`)}
+            >
+              Обрати/змінити станицю
+            </Button>
+            <Button
+              className="confirmBtn" 
+              hidden={!(activeUserId === userId || activeUserRoles.includes(Roles.Admin)) || activeUserRoles.includes(Roles.RegisteredUser)}
+              onClick={() => history.push(`/clubs`)}
+            >
+              Обрати/змінити курінь
+            </Button>
+          </div>
         </div>
       </Form>
     </div>
@@ -409,8 +459,12 @@ export default function () {
             lastName={data?.shortUser.lastName}
             isUserPlastun={data?.isUserPlastun}
             pseudo={data?.shortUser.pseudo}
+            region={data.shortUser.region}
             city={data?.shortUser.city}
             club={data?.shortUser.club}
+            regionId={data.shortUser.regionId}
+            cityId={data.shortUser.cityId}
+            clubId={data.shortUser.clubId}
           />
         </div>
         <div className="shortAllFields">

@@ -1,58 +1,41 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
-import { Form, Input, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
-import adminApi from "../../../api/adminApi";
-import notificationLogic from "../../../components/Notifications/Notification";
+import { Form, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
 import {
-  addAdministrator,
-  editAdministrator,
   getAllAdmins,
+  getAllMembers,
 } from "../../../api/citiesApi";
-import { ReloadOutlined } from "@ant-design/icons";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import moment from "moment";
 import {
   emptyInput,
-  successfulEditAction,
 } from "../../../components/Notifications/Messages"
 import CityAdmin from "../../../models/City/CityAdmin";
 import AdminType from "../../../models/Admin/AdminType";
-import regionsApi from "../../../api/regionsApi";
+import CityMember from "../../../models/City/CityMember";
+import "./AddCitiesSecretaryForm.less";
+import userApi from "../../../api/UserApi";
+import { Roles } from "../../../models/Roles/Roles";
 
 type AddCitiesNewSecretaryForm = {
-  onAdd: () => void;
+  onAdd: (admin: CityAdmin) => void;
   onCancel: () => void;
   cityId: number;
   admin?: any;
 };
-const confirm = Modal.confirm;
 const AddCitiesNewSecretaryForm = (props: any) => {
-  const [head, setHead] = useState<CityAdmin>();
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
-  const [users, setUsers] = useState<any[]>([
-    {
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-        birthday: "",
-      },
-      regionName: "",
-      cityName: "",
-      clubName: "",
-      userPlastDegreeName: "",
-      userRoles: "",
-    },
-  ]);
+  const [members, setMembers] = useState<CityMember[]>([]);
 
-  const getHead = async () => {
-    if (props.cityId !== 0) {
-      const responseAdmins = await getAllAdmins(props.cityId);
-      setHead(responseAdmins.data.head);
-    }
+  const getMembers = async () => {
+    const responseMembers = await getAllMembers(props.cityId);
+    setMembers(responseMembers.data.members);
   };
+
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+
+
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -62,65 +45,13 @@ const AddCitiesNewSecretaryForm = (props: any) => {
     return current && current > moment();
   };
 
-  const addClubAdmin = async (admin: CityAdmin) => {
-    await addAdministrator(admin.cityId, admin);
-    notificationLogic("success", "Користувач успішно доданий в провід");
-    form.resetFields();
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${props.cityId}`,
-      `цій станиці`
-    );
-  };
 
-  const editClubAdmin = async (admin: CityAdmin) => {
-    await editAdministrator(props.cityId, admin);
-    notificationLogic("success", successfulEditAction("Адміністратора"));
-    form.resetFields();
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${props.cityId}`,
-      `цій станиці`);
-  };
-
-
-  const showConfirm = (admin: CityAdmin) => {
-    confirm({
-      title: "Призначити даного користувача на цю посаду?",
-      content: (
-        <div style={{ margin: 10 }}>
-          <b>
-            {head?.user.firstName} {head?.user.lastName}
-          </b>{" "}
-          є Головою Станиці, час правління закінчується{" "}
-          <b>
-            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
-              ? "ще не скоро"
-              : moment(head?.endDate).format("DD.MM.YYYY")}
-          </b>
-          .
-        </div>
-      ),
-      onCancel() { },
-      onOk() {
-        if (admin.id === 0) {
-          addClubAdmin(admin);
-        } else {
-          editClubAdmin(admin);
-        }
-      },
-    });
-  };
 
   const handleSubmit = async (values: any) => {
     const newAdmin: CityAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
       userId: props.admin === undefined
-        ? JSON.parse(values.userId).user.id
+        ? JSON.parse(values.userId).id
         : props.admin.userId,
       user: values.user,
       adminType: {
@@ -131,50 +62,20 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       startDate: values.startDate,
       endDate: values.endDate,
     };
-    onAdd();
-    if (newAdmin.id === 0) {
-      try {
-        if (values.AdminType === "Голова Станиці" && head !== null) {
-          if (head?.userId !== newAdmin.userId) {
-            showConfirm(newAdmin);
-          } else if (head?.userId === newAdmin.userId) {
-          }
-          else {
-            editClubAdmin(newAdmin);
-          }
-        } else {
-          if (newAdmin.id === 0) {
-            addClubAdmin(newAdmin);
-          }
-          else {
-            editClubAdmin(newAdmin);
-          }
-        }
-      } finally {
-        onAdd();
-      }
-    }
+    onAdd(newAdmin);
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      await adminApi.getUsersForTable().then((response) => {
-        setUsers(response.data);
-      });
-    };
-    fetchData();
-  }, []);
-
-
-  useEffect(() => {
-    if (props.visibleModal) {
+    if (!props.visibleModal) {
       form.resetFields();
     }
-    getHead();
+    getMembers();
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
   }, [props]);
 
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form name="basic" onFinish={handleSubmit} form={form} className="formAddSecretaryModal">
       <Form.Item
         className={classes.formField}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
@@ -183,13 +84,13 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: props.admin === undefined ? true : false,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
         <Select showSearch className={classes.inputField}>
-          {users?.map((o) => (
-            <Select.Option key={o.user.id} value={JSON.stringify(o)}>
+          {members?.map((o) => (
+            <Select.Option key={o.user.id} value={JSON.stringify(o.user)}>
               {o.user.firstName + " " + o.user.lastName}
             </Select.Option>
           ))}
@@ -206,14 +107,15 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: true,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Станиці" },
+            { value: Roles.CityHead, disabled: activeUserRoles.includes(Roles.CityHeadDeputy) },
+            { value: Roles.CityHeadDeputy},
             { value: "Голова СПС" },
             { value: "Писар" },
             { value: "Скарбник" },

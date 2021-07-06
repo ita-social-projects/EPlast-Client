@@ -7,6 +7,7 @@ interface Props {
     showDropdown: boolean;
     canManage: boolean;
     onView: (id: number) => Promise<void>;
+    onViewPDF: (id: number) => Promise<void>;
     onCancel: (id: number) => Promise<void>;
 }
 

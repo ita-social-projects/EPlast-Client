@@ -1,6 +1,6 @@
 import React from 'react';
 import { Menu } from 'antd';
-import { FileSearchOutlined, FileSyncOutlined, FileDoneOutlined, DeleteOutlined } from '@ant-design/icons';
+import { FileSearchOutlined, FileSyncOutlined, FileDoneOutlined, DeleteOutlined, FilePdfOutlined } from '@ant-design/icons';
 import Props from './UnconfirmedDropdownProps';
 import styles from '../Dropdown.module.css';
 
@@ -13,14 +13,16 @@ const UnconfirmedDropdown = (props: Props) => {
                 onView(record.id);
                 break;
             case '2':
-                onEdit(record.id);
                 break;
             case '3':
+                onEdit(record.id);
+                break;
+            case '4':
                 if (canManage) {
                     onConfirm(record.id);
                 }
                 break;
-            case '4':
+            case '5':
                 if (canManage) {
                     onRemove(record.id);
                 }
@@ -46,17 +48,23 @@ const UnconfirmedDropdown = (props: Props) => {
                 </Menu.Item>
                 <Menu.Item
                     key='2' >
-                    <FileSyncOutlined />Редагувати
+                    <FilePdfOutlined />Переглянути у форматі PDF
                 </Menu.Item>
-                {canManage ? (
+                {record.canManage? (
                     <Menu.Item
                         key='3' >
+                        <FileSyncOutlined />Редагувати
+                    </Menu.Item>
+                ):null}
+                {canManage ? (
+                    <Menu.Item
+                        key='4' >
                         <FileDoneOutlined />Підтвердити
                     </Menu.Item>
                 ) : null}
                 {canManage ? (
                     <Menu.Item
-                        key='4' >
+                        key='5' >
                         <DeleteOutlined />Видалити
                     </Menu.Item>
                 ) : null}

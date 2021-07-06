@@ -30,7 +30,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   res => res,
   err => {
-    if (err.response.status === 401) {
+    if (err.response?.status === 401) {
       cancelToken: new CancelToken(function executor(c) {
         cancel = c;
       })
@@ -45,7 +45,7 @@ axios.interceptors.response.use(
       window.location.reload();
 
     }
-    if(err.response.status === 403){
+    if(err.response?.status === 403){
       history.push("/notAuthorized");
       window.location.reload();
     }

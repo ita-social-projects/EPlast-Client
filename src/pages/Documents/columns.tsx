@@ -16,7 +16,7 @@ const columns = [
   },
   {
     title: 'Керівний орган',
-    dataIndex: 'governingBody',
+    dataIndex: 'organization',
   },
   {
     title: 'Короткий зміст',
@@ -26,7 +26,7 @@ const columns = [
     title: 'Дата',
     dataIndex: 'date',
     render: (date: Date) => {
-      return moment(date.toLocaleString()).format('DD.MM.YYYY');
+      return moment.utc(date).local().format('DD.MM.YYYY');
     },
   },
   {
@@ -38,7 +38,7 @@ const columns = [
           async () => {
             await documentsApi.getFileAsBase64(fileName);
           }}
-        >Скачати додаток</button>;
+        >Завантажити додаток</button>;
       }
       return "";
     },

@@ -1,20 +1,19 @@
 .displayFlex {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
-.avatarWrapper {
-  min-width: 600px;
-  max-width: 750px;
-  min-height: 550px;
-  width: auto;
+.avatarWrapperApprovers {
+  width: calc(45% - 30px) !important;
   height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  padding: 20px;
+  transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+  padding-top: 20px;
 }
 
 .kadraWrapper{
@@ -23,25 +22,21 @@
   text-align: center;
 }
 
-.approversContent {
-  min-width: 600px;
-  max-width: 750px;
-  min-height: 550px;
-  width: auto;
+.approversContentApprovers {
+  width: calc(55% - 30px);
   height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: top;
+  justify-content: center;
   box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  padding: 20px;
-  margin-bottom: 20px;
+  transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
 .approversCard {
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
 }
 
 .cardStyles {
@@ -75,6 +70,10 @@
   text-decoration: underline;
 }
 
+.title-not-link{
+  text-align: center;
+}
+
 .avatar {
   height: 168px;
 }
@@ -83,12 +82,9 @@
   margin: 0 0 20px 0;
 }
 
-.avatarEmpty:hover {
-  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-}
-
-.approversContent:hover {
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+.avatarWrapperApprovers:hover,
+.approversContentApprovers:hover{
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
 .line {
@@ -97,44 +93,22 @@
   height: 10px;
   margin-bottom: 5px;
 }
-@media (max-width: 1320px) {
+@media (max-width: 1330px) {
   .displayFlex {
     display: flex;
-    margin-left: 150px;
-    margin-right: 150px;
     flex-direction: column;
   }
-  .avatarWrapper {
-    margin-left: auto;
+  .avatarWrapperApprovers {
+    width: 750px !important;
     margin-right: auto;
-    width: auto;
-    min-width: 750px;
-    max-width: 750px;
-    min-height: 750px;
+    margin-left: auto;
+    margin-bottom: 20px;
+  }
+  .approversContentApprovers {
     width: 750px;
-    height: 750px;
-  }
-}
-@media (max-width: 1120px) {
-  .displayFlex {
-    display: flex;
-    margin-left: auto;
-    margin-right: auto;
-    flex-direction: column;
-  }
-  .avatarWrapper {
-    margin-left: auto;
-    margin-right: auto;
-    min-width: 600px;
-    max-width: 750px;
-    min-height: 750px;
-    width: 750px;
-    height: 750px;
-  }
-  .approversContent {
-    margin-left: auto;
-    margin-right: auto;
-    width: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: auto !important;
   }
 }
 
@@ -146,33 +120,30 @@
     height: auto;
     width: auto;
   }
-  .avatarWrapper {
-    height: auto;
-    width: auto;
+  .avatarWrapperApprovers {
+    width: 600px !important;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 20px;
   }
-  .approversContent {
-    height: auto;
-    width: auto;
+  .approversContentApprovers {
+    width: 600px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: auto !important;
   }
 }
-@media (max-width: 700px) {
-  .avatarWrapper {
-    margin-left: auto;
+@media (max-width: 768px) {
+  .avatarWrapperApprovers {
+    width: 100% !important;
     margin-right: auto;
-    justify-content: center;
-    height: auto;
-    width: auto;
-    min-width: auto;
-    max-width: auto;
+    margin-left: auto;
+    margin-bottom: 20px;
   }
-  .approversContent {
-    margin-left: auto;
-    margin-right: auto;
-    justify-content: center;
-    height: auto;
-    width: auto;
-    min-width: auto;
-    max-width: auto;
+  .approversContentApprovers {
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
   .displayFlex {
     margin-left: auto;

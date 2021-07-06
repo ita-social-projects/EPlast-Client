@@ -46,8 +46,12 @@ export type User ={
     work: Work;
     pseudo: string;
     email: string;
+    region: string;
     city: string;
     club: string;
+    cityId?:number;
+    clubId?: number;
+    regionId?: number;
     publicPoliticalActivity: string;
     upuDegree: UpuDegree;
     facebookLink: string;
@@ -63,8 +67,12 @@ export type ShortUser ={
     fatherName:string;
     imagePath:string;
     pseudo: string;
+    region: string;
     city: string;
     club: string;
+    cityId?:number;
+    clubId?: number;
+    regionId?: number;
     upuDegree: UpuDegree;
     facebookLink: string;
     twitterLink: string;
@@ -97,6 +105,7 @@ export  interface Data {
       user:User;
       confirmedUsers:ConfirmedUser[];
       canApprove:boolean;
+      canApprovePlastMember:boolean;
       timeToJoinPlast:number;
       clubApprover:ConfirmedUser;
       cityApprover:ConfirmedUser;

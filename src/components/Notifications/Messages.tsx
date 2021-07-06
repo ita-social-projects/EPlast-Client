@@ -6,7 +6,9 @@ export const emptyInput = (name?:string)=>{
     return name ? `Поле ${name} є обов'язковим` : `Поле є обов'язковим`;
 }; 
 
-export const incorrectPhone = 'Неправильний формат телефонного номера'; 
+export const incorrectPhone = 'Неправильний формат телефонного номера';
+
+export const incorrectData = 'Ви вказали неправильний формат дати'; 
 
 export const onlyPositiveNumber = `Поле не може бути від'ємним`; 
 
@@ -16,7 +18,15 @@ export const minLength = (len:number)=>{
 
 export const maxLength = (len:number)=>{
     return `Максимальна довжина - ${len} символів`
+};
+
+export const maxNumber = (maxLen:number)=>{
+    return `Значення має бути менше або дорівнювати ${maxLen}`
 }; 
+
+export const minNumber = (minLen:number)=>{
+    return `Значення має бути більше або дорівнювати ${minLen}`
+};
 
 export const tryAgain = 'Щось пішло не так. Спробуйте ще раз.'; 
 
@@ -40,6 +50,10 @@ export const successfulUpdateAction = (name:string, itemName?:string)=>{
 
 export const successfulConfirmedAction = (name:string, itemName?:string)=>{
     return itemName ? `${name} ${itemName} успішно затверджено` : `${name} успішно затверджено`;
+}; 
+
+export const successfulCancelAction = (name:string, itemName?:string)=>{
+    return itemName ? `${name} ${itemName} скасовано` : `${name} скасовано`;
 }; 
 
 export const failCreateAction = (name:string)=>{
@@ -66,9 +80,17 @@ export const fileIsUpload = (name?:string)=>{
     return name ? `${name} завантажено` : `Файл завантажено`;
 }; 
 
+export const fileIsAdded= (name?:string)=>{
+    return name ? `${name} завантажено` : `Файл успішно додано`;
+}; 
+
 export const fileIsNotUpload = (name?:string)=>{
     return name ? `Проблема з завантаженням ${name}` : `Проблема з завантаженням файлу`;
 }; 
+
+export const fileIsEmpty = (name?:string)=>{
+    return name ? `Файл порожній ${name}` : `Ви намагаєтесь завантажити порожній файл`;
+};
 
 export const isNotChosen = (name:string)=>{
     return `${name} не вибрано`;

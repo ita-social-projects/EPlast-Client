@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import '../City/AddDocumentModal/AddDocumentModal.less';
+import './AddDocumentModal.less';
 import { Button, Col, DatePicker, Form, Modal, Row, Select, Upload } from "antd";
-import { getBase64 } from '../userPage/EditUserPage/Services';
-import notificationLogic from '../../components/Notifications/Notification';
-import GoverningBodyDocument from '../../models/GoverningBody/GoverningBodyDocument';
-import { addDocument, getDocumentTypes } from "../../api/governingBodiesApi";
-import GoverningBodyDocumentType from '../../models/GoverningBody/GoverningBodyDocumentType';
+import { getBase64 } from '../../userPage/EditUserPage/Services';
+import notificationLogic from '../../../components/Notifications/Notification';
+import GoverningBodyDocument from '../../../models/GoverningBody/GoverningBodyDocument';
+import { addDocument, getDocumentTypes } from "../../../api/governingBodiesApi";
+import GoverningBodyDocumentType from '../../../models/GoverningBody/GoverningBodyDocumentType';
 import { InboxOutlined } from "@ant-design/icons";
 import moment from "moment";
 import "moment/locale/uk";
-import{emptyInput, fileIsUpload, fileIsNotUpload, possibleFileExtensions, fileIsTooBig, successfulDeleteAction} from "../../components/Notifications/Messages"
+import{emptyInput, fileIsUpload, fileIsNotUpload, possibleFileExtensions, fileIsTooBig, successfulDeleteAction} from "../../../components/Notifications/Messages"
 moment.locale("uk-ua");
 
 interface Props {
@@ -31,7 +31,6 @@ const AddDocumentModal = (props: Props) => {
 
     const getAllDocumenTypes = async () => {
         const response = await getDocumentTypes();
-
         setDocumentTypes(response.data);
     }
 
@@ -50,7 +49,7 @@ const AddDocumentModal = (props: Props) => {
               props.setDocument({...props.document, blobName: base64});
               setFileName(info.file.name);
             });
-            notificationLogic("success", fileIsUpload());   
+            notificationLogic("success", fileIsUpload());
             setDisabled(false); 
         }
       } else {
@@ -60,7 +59,7 @@ const AddDocumentModal = (props: Props) => {
     };
 
     const checkFile = (fileSize: number, fileName: string): boolean => {
-      const extension = fileName.split(".").reverse()[0];
+      const extension = fileName.split(".").reverse()[0].toLowerCase();
       const isCorrectExtension =
         extension.indexOf("pdf") !== -1 ||
         extension.indexOf("doc") !== -1 ||
@@ -93,7 +92,6 @@ const AddDocumentModal = (props: Props) => {
         submitDate: values.datepicker?._d,
         governingBodyId: props.governingBodyId
       };
-
       await addDocument(props.governingBodyId, newDocument);
       props.onAdd(newDocument);
       props.setVisibleModal(false);
@@ -197,24 +195,18 @@ const AddDocumentModal = (props: Props) => {
             ) : null}
           </Form.Item>
 
-          <Form.Item className="cancelConfirmButtons">
-            <Row justify="end">
-              <Col xs={11} sm={5}>
+          <Row justify="end">
+            <Col md={24} xs={24} >
+              <Form.Item style={{ textAlign: "right" }}>
                 <Button key="back" onClick={handleCancel}>
                   Відмінити
                 </Button>
-              </Col>
-              <Col
-                className="publishButton"
-                xs={{ span: 11, offset: 2 }}
-                sm={{ span: 6, offset: 1 }}
-              >
-                <Button type="primary" loading={buttonLoading} disabled={disabled} htmlType="submit">
+                <Button  style={{ marginLeft: "7px" }} type="primary" loading={buttonLoading} disabled={disabled} htmlType="submit">
                   Опублікувати
                 </Button>
-              </Col>
-            </Row>
-          </Form.Item>
+                </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Modal>
     );

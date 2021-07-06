@@ -18,7 +18,9 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
   maxLength,
-  failCreateAction
+  failCreateAction,
+  maxNumber,
+  minNumber
 } from "../../../components/Notifications/Messages"
 
 type FormAddPrecautionProps = {
@@ -49,7 +51,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
   const dateFormat = "DD.MM.YYYY";
   const openNotification = (message: string) => {
     notification.error({
-      message: failCreateAction(`пересторога`),
+      message: failCreateAction(`пересторогу`),
       description: `${message}`,
       placement: "topLeft",
     });
@@ -68,6 +70,10 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
     };
     fetchData();
   }, []);
+
+  const backgroundColor = (user: any) => {
+    return user.isInLowerRole ? { backgroundColor : '#D3D3D3' } : { backgroundColor : 'white' };
+  }    
 
   const handleCancel = () => {
     form.resetFields();
@@ -129,7 +135,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
     }
   };
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
@@ -138,11 +144,21 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             labelCol={{ span: 24 }}
             name="number"
             rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-            ]}
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+                {
+                  max: 5,
+                  message: maxNumber(99999),
+                },
+                {
+                  validator: (_ : object, value: number) => 
+                      value < 1
+                          ? Promise.reject(minNumber(1)) 
+                          : Promise.resolve()
+                }
+              ]}
           >
             <Input
               type="number"
@@ -167,7 +183,10 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               },
             ]}
           >
-            <Select className={formclasses.selectField} showSearch>
+            <Select 
+              className={formclasses.selectField} showSearch
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+            >
               {distData?.map((o) => (
                 <Select.Option key={o.id} value={JSON.stringify(o)}>
                   {o.name}
@@ -190,10 +209,16 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               className={formclasses.selectField}
               showSearch
               loading={loadingUserStatus}
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
               {userData?.map((o) => (
-                <Select.Option key={o.user.id} value={JSON.stringify(o.user)}>
-                  {o.user.firstName + " " + o.user.lastName}
+                <Select.Option 
+                    key={o.id} 
+                    value={JSON.stringify(o)} 
+                    style={backgroundColor(o)}
+                    disabled={o.isInLowerRole}
+                    >
+                  {o.firstName + " " + o.lastName}
                 </Select.Option>
               ))}
             </Select>
@@ -234,6 +259,8 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             <DatePicker
               format={dateFormat}
               className={formclasses.selectField}
+              getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
+              popupStyle={{position: 'absolute'}}
             />
           </Form.Item>
         </Col>
@@ -248,8 +275,8 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             rules={[
               {
                 required: true,
-                max: 250,
-                message: maxLength(250),
+                max: 500,
+                message: maxLength(500),
               },
             ]}
           >
@@ -260,7 +287,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
                 maxRows: 6,
               }}
               className={formclasses.inputField}
-              maxLength={251}
+              maxLength={501}
             />
           </Form.Item>
         </Col>
@@ -279,7 +306,11 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               },
             ]}
           >
-            <Select className={formclasses.selectField} showSearch>
+            <Select 
+              className={formclasses.selectField} 
+              showSearch
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+            >
               <Select.Option key="9" value="Прийнято">Прийнято</Select.Option>
               <Select.Option key="10" value="Потверджено">Потверджено</Select.Option>
               <Select.Option key="11" value="Скасовано">Скасовано</Select.Option>

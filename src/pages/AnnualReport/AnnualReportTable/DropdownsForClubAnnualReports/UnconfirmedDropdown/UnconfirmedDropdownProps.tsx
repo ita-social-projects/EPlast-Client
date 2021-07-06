@@ -1,7 +1,11 @@
-import ClubAnnualReport from "../../../Interfaces/ClubAnnualReport";
-
 interface Props {
-    record: ClubAnnualReport;
+    record: {
+        id: number;
+        status: number;
+        clubId: number;
+        clubName:string;
+        date: Date;
+        canManage: boolean; };
     pageX: number;
     pageY: number;
     showDropdown: boolean;

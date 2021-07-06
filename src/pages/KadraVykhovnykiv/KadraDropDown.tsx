@@ -15,9 +15,10 @@ import ClickAwayListener from "react-click-away-listener";
 import jwt from "jwt-decode";
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import AuthStore from "../../stores/AuthStore";
+import { Roles } from "../../models/Roles/Roles";
 
 interface Props {
-  record: number;
+  record: any;
   pageX: number;
   pageY: number;
   setShowDropdown: (view: boolean) => void;
@@ -48,7 +49,7 @@ const DropDown = (props: Props) => {
     setShowDropdown,
     onEdit,
   } = props;
-  const [canEdit] = useState(roles.includes("Admin"));
+  const [canEdit] = useState(roles.includes(Roles.Admin));
   const [visibleEdit, setvisibleEdit] = useState<boolean>(false);
 
   const [selectUserId, SetselectUserId] = useState<string>();
@@ -68,11 +69,11 @@ const DropDown = (props: Props) => {
         setShowDropdown(false);
         break;
       case "1":
-        deleteConfirm(record, onDelete);
+        deleteConfirm(record.id, onDelete);
         setShowDropdown(false);
         break;
-      case "3":
-        await kadrasApi.findUserByEduStaff(record).then((response) => {
+        case "3":
+        await kadrasApi.findUserByEduStaff(record.id).then((response) => {
           window.open(`/userpage/main/${response.data}`);
         });
 

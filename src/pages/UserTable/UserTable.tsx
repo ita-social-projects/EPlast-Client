@@ -9,13 +9,11 @@ import {
   TreeSelect,
   Modal,
   Form,
-  Card,
-  Typography
+  Card
 } from "antd";
 import "./Filter.less";
 import { getUsersForTableByPage } from "../../api/adminApi";
 import clubsApi from "../../api/clubsApi";
-import adminApi from "../../api/adminApi";
 import DropDownUserTable from "./DropDownUserTable";
 import Title from "antd/lib/typography/Title";
 import ColumnsForUserTable from "./ColumnsForUserTable";
@@ -23,7 +21,6 @@ import UserTable from "../../models/UserTable/UserTable";
 import Spinner from "../Spinner/Spinner";
 import ClickAwayListener from "react-click-away-listener";
 import { TreeNode } from "antd/lib/tree-select";
-import AnnualReportApi from "../../api/AnnualReportApi";
 import City from "../Statistics/Interfaces/City";
 import activeMembershipApi, {
   PlastDegree,
@@ -33,6 +30,12 @@ import Region from "../Statistics/Interfaces/Region";
 import Club from "../AnnualReport/Interfaces/Club";
 import { shouldContain } from "../../components/Notifications/Messages";
 import classes from "./UserTable.module.css";
+import citiesApi from "../../api/citiesApi"
+import userApi from "../../api/UserApi";
+import User from "../Distinction/Interfaces/User";
+import AuthStore from "../../stores/AuthStore";
+import jwt_decode from "jwt-decode";
+import { Roles } from "../../models/Roles/Roles";
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
@@ -43,7 +46,6 @@ const UsersTable = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [searchedData, setSearchedData] = useState("");
   const [users, setUsers] = useState<UserTable[]>([]);
   const [updatedUser, setUpdatedUser] = useState<UserTable[]>([]);
   const [roles, setRoles] = useState<string>();
@@ -51,24 +53,25 @@ const UsersTable = () => {
   const [regions, setRegions] = useState<any>();
   const [clubs, setClubs] = useState<any>();
   const [degrees, setDegrees] = useState<any>();
+  const [searchData, setSearchData] = useState<string>("");
   const [dynamicCities, setDynamicCities] = useState<any[]>([]);
   const [dynamicRegions, setDynamicRegions] = useState<any[]>([]);
   const [dynamicClubs, setDynamicClubs] = useState<any[]>([]);
   const [dynamicDegrees, setDynamicDegrees] = useState<any[]>([]);
   const [form] = Form.useForm();
+  const [canView, setCanView]=useState<boolean>(false);
   const [, forceUpdate] = useState({});
-  const [viewedUsers, setViewedUsers] = useState<UserTable[]>([]);
   const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
   const [isInactive, setIsInactive] = useState(false);
+  const [userArhive, setArhive] = useState();
+  const [currentUser, setCurrentUser] = useState<User>();
+  const [user, setUser] = useState<UserTable>();
   const { SHOW_PARENT } = TreeSelect;
+  const {Search} = Input;
+  
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, updatedUser]);
-
-  useEffect(() => {
-    fetchData();
-    onTabChange(currentTabName);
-  }, [currentTabName]);
+  }, [page, pageSize, updatedUser, searchData, userArhive, currentTabName]);
 
   useEffect(() => {
     fetchCities();
@@ -80,16 +83,14 @@ const UsersTable = () => {
 
   const fetchCities = async () => {
     try {
-      let response = await AnnualReportApi.getCities();
-      let cities = response.data.cities as City[];
-      setCities(
-        cities.map((item) => {
-          return {
-            label: item.name,
-            value: item.id,
-          };
-        })
-      );
+      let response = await citiesApi.getCities();
+      let cities = response.data as City[];
+      setCities( cities.map((item) => {
+        return {
+          label: item.name,
+          value: item.id,
+        };
+      }))
     } catch (error) {
       showError(error.message);
     }
@@ -161,46 +162,37 @@ const UsersTable = () => {
         Clubs: dynamicClubs,
         Degrees: dynamicDegrees,
         Tab: currentTabName,
+        SearchData: searchData
       });
+      let jwt = AuthStore.getToken() as string;
+      let user = jwt_decode(jwt) as any;
+      setCurrentUser((await userApi.getUserProfileById(user.nameid, user.nameid)).data.user);
+      let roles=userApi.getActiveUserRoles();
+      setCanView(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
+        || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)
+        || roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy)
+        || roles.includes(Roles.KurinHead) || roles.includes(Roles.KurinHeadDeputy)
+        || roles.includes(Roles.PlastMember)
+        || roles.includes(Roles.Supporter));
       setUsers(response.data.users);
-      setViewedUsers(response.data.users);
       setTotal(response.data.total);
     } finally {
       setLoading(true);
     }
   };
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPage(1);
-    setSearchedData(event.target.value.toLowerCase());
-  };
+ const handleSearch = (e:any) => {
+   setPage(1)
+   setSearchData(e);
+ } 
 
-  let filteredData = searchedData
-    ? viewedUsers.filter((item) => {
-        return Object.values([
-          item.regionName,
-          item.cityName,
-          item.clubName,
-          item.userPlastDegreeName,
-          item.userRoles,
-          item.userProfileId,
-          item.upuDegree,
-        ]).find((element) => {
-          return String(element).toLowerCase().includes(searchedData);
-        });
-      })
-    : viewedUsers;
+ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+   if(e.target.value.toLowerCase() === '') {
+     setSearchData('')
+   }
+  
+ }
 
-  filteredData = Array.from(filteredData).concat(
-    Array.from(viewedUsers).filter(
-      (item) =>
-        (item.firstName?.toLowerCase()?.includes(searchedData) ||
-          item.lastName?.toLowerCase()?.includes(searchedData) ||
-          item.firstName?.includes(searchedData) ||
-          item.lastName?.includes(searchedData)) &&
-        !filteredData.includes(item)
-    )
-  );
 
   const onSelect = (selectedKeys: any, e: any) => {
     if (e.value == 0) {
@@ -321,9 +313,9 @@ const UsersTable = () => {
           Clubs: dynamicClubs,
           Degrees: dynamicDegrees,
           Tab: currentTabName,
+          SearchData: searchData
         });
         setUsers(response.data.users);
-        setViewedUsers(response.data.users);
         setTotal(response.data.total);
       } finally {
         setLoading(true);
@@ -349,22 +341,16 @@ const UsersTable = () => {
     setPage(page);
     setPageSize(pageSize);
     setCurrentTabName(key);
-    setViewedUsers(filteredData);
   };
-  useEffect(() => {}, [filteredData]);
 
   return (
-    <Layout.Content
-      onClick={() => {
-        setShowDropdown(false);
-      }}
-    >
+    <Layout.Content>
       <Title level={2}>Таблиця користувачів</Title>
       <Title level={4} style={{textAlign: "left", margin: 10}} underline={true}>Загальна кількість користувачів: {total}</Title>
       <div className={classes.searchContainer}>
         <div className={classes.filterContainer}>
-          <Form form={form} onFinish={handleFilter} style={{ height: "20px" }}>
-            <Row justify="center">
+          <Form form={form} onFinish={handleFilter} style={{ height: "20px"}}>
+            <Row style={{flexFlow: "nowrap"}}>
               <Col span={20}>
                 <Form.Item
                   rules={[
@@ -392,7 +378,15 @@ const UsersTable = () => {
                         .indexOf(input.toLowerCase()) >= 0
                     }
                     allowClear
+                    onChange={(event: any) => {
+                      if(event.length==0) {setDynamicRegions([]);
+                      setDynamicCities([]);
+                      setDynamicClubs([]);
+                      setDynamicDegrees([]);
+                    }
+                    }}
                   >
+                  
                     <TreeNode value={0} title="Всі округи">
                       {getDynamicRegions()}
                     </TreeNode>
@@ -408,21 +402,28 @@ const UsersTable = () => {
                   </TreeSelect>
                 </Form.Item>
               </Col>
-
+              <Col>
               <Form.Item>
                 <Button
                   type="primary"
                   htmlType="submit"
-                  style={{ minWidth: "10%" }}
+                  style={{ minWidth: "10%", marginBottom:30}}
                 >
                   OK
                 </Button>
               </Form.Item>
+              </Col>
+
             </Row>
           </Form>
         </div>
         <div className={classes.searchArea}>
-          <Input placeholder="Пошук" onChange={handleSearch} allowClear />
+          <Search placeholder="Пошук"
+          enterButton
+          onChange={handleSearchChange}  
+          onSearch={handleSearch}
+          />
+
         </div>
       </div>
       {loading === false ? (
@@ -442,19 +443,22 @@ const UsersTable = () => {
             rowKey="id"
             scroll={{ x: 1450 }}
             columns={ColumnsForUserTable}
-            dataSource={filteredData}
+            dataSource={users}
             onRow={(record) => {
               return {
-                onClick: () => {
-                  setShowDropdown(false);
-                },
+                onDoubleClick: () => { if (record.id && canView) window.open(`/userpage/main/${record.id}`);
+              },
                 onContextMenu: (event) => {
                   event.preventDefault();
+                  setShowDropdown(false);
+                  if(canView){
                   setShowDropdown(true);
                   setRecordObj(record.id);
                   setRoles(record.userRoles);
+                  setUser(users.find(x=>x.id==record.id));
                   setX(event.pageX);
                   setY(event.pageY);
+                  }
                 },
               };
             }}
@@ -488,10 +492,13 @@ const UsersTable = () => {
           pageY={y}
           onDelete={handleDelete}
           onChange={handleChange}
+          user={user}
           roles={roles}
           inActiveTab={isInactive}
+          currentUser={currentUser}
+          canView={canView}
         />
-      </ClickAwayListener>
+        </ClickAwayListener>
     </Layout.Content>
   );
 };

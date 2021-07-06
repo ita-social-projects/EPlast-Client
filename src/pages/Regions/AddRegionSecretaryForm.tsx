@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from "react";
 import classes from "./Form.module.css";
-import { Form, Input, DatePicker, AutoComplete, Select, Button } from "antd";
-import adminApi from "../../api/adminApi";
+import {Form, DatePicker, AutoComplete, Select, Button } from "antd";
 import notificationLogic from "../../components/Notifications/Notification";
 import regionsApi from "../../api/regionsApi";
-import { ReloadOutlined } from "@ant-design/icons";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
+import userApi from "../../api/UserApi";
 import moment from "moment";
 import {
   emptyInput,
   successfulEditAction,
 } from "../../components/Notifications/Messages"
+import RegionUser from "../../models/Region/RegionUser";
+
+import User from "../Distinction/Interfaces/User";
+import "./AddRegionSecretaryForm.less";
+import { Roles } from "../../models/Roles/Roles";
 
 type AddNewSecretaryForm = {
   onAdd: () => void;
   onCancel: () => void;
   admin?: any;
+  regionID?:any;
 };
 
 const AddNewSecretaryForm = (props: any) => {
@@ -23,21 +28,9 @@ const AddNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
-  const [users, setUsers] = useState<any[]>([
-    {
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-        birthday: "",
-      },
-      regionName: "",
-      cityName: "",
-      clubName: "",
-      userPlastDegreeName: "",
-      userRoles: "",
-    },
-  ]);
+  const [users, setUsers] = useState<Array<RegionUser>>([]);
+
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const [types, setTypes] = useState<any[]>([
     {
@@ -59,7 +52,7 @@ const AddNewSecretaryForm = (props: any) => {
       id: props.admin === undefined ? 0 : props.admin.id,
       userId:
         props.admin === undefined
-          ? JSON.parse(values.userId).user.id
+          ? JSON.parse(values.userId).id
           : props.admin.userId,
       AdminTypeId: await (
         await regionsApi.getAdminTypeIdByName(values.AdminType)
@@ -100,9 +93,12 @@ const AddNewSecretaryForm = (props: any) => {
       await regionsApi.getAdminTypes().then((response) => {
         setTypes(response.data);
       });
-      await adminApi.getUsersForTable().then((response) => {
+      if(props.regionID !== undefined)
+      {
+      await regionsApi.getRegionUsers(props.regionID).then((response) => { 
         setUsers(response.data);
       });
+      }
     };
     setCurrentRegion(
       Number(
@@ -111,10 +107,18 @@ const AddNewSecretaryForm = (props: any) => {
       )
     );
     fetchData();
-  }, []);
+  }, [props]);
+
+  useEffect(() => {
+    if (!props.visibleModal) {
+      form.resetFields();
+    }
+    const userRoles = userApi.getActiveUserRoles();
+      setActiveUserRoles(userRoles);
+  }, [props]);
 
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form name="basic" onFinish={handleSubmit} form={form} className="formAddSecretaryModal">
       <Form.Item
         className={classes.formField}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
@@ -123,14 +127,14 @@ const AddNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: props.admin === undefined ? true : false,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
         <Select showSearch className={classes.inputField}>
           {users?.map((o) => (
-            <Select.Option key={o.user.id} value={JSON.stringify(o)}>
-              {o.user.firstName + " " + o.user.lastName}
+            <Select.Option key={o.id} value={JSON.stringify(o)}>
+              {o.firstName + " " + o.lastName}
             </Select.Option>
           ))}
         </Select>
@@ -146,14 +150,15 @@ const AddNewSecretaryForm = (props: any) => {
         rules={[
           {
             required: true,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Округи" },
+            { value: Roles.OkrugaHead, disabled: activeUserRoles.includes(Roles.OkrugaHeadDeputy) },
+            { value: Roles.OkrugaHeadDeputy},
             { value: "Писар" },
             { value: "Бунчужний" },
             { value: "Скарбник" },

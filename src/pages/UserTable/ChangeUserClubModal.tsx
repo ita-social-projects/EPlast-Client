@@ -1,18 +1,21 @@
 import React from "react";
 import { Modal } from "antd";
 import ChangeUserClubForm from "./ChangeUserClubForm";
+import User from "../Distinction/Interfaces/User";
 
 interface Props {
   record: string;
   showModal: boolean;
   setShowModal: (showModal: any) => void;
   onChange: (id: string, userRoles: string) => void;
+  user: User
 }
 const ChangeUserClubModal = ({
   record,
   showModal,
   setShowModal,
   onChange,
+  user
 }: Props) => {
   return (
     <Modal
@@ -27,6 +30,7 @@ const ChangeUserClubModal = ({
         showModal={showModal}
         setShowModal={setShowModal}
         onChange={onChange}
+        user={user}
       />
     </Modal>
   );

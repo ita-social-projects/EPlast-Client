@@ -61,7 +61,16 @@ import RegionBoardAdministration from "./pages/RegionsBoard/RegionBoardAdministr
 import RegionBoardDocuments from "./pages/RegionsBoard/RegionBoardDocuments";
 import GoverningBody from "./pages/GoverningBody/GoverningBody/GoverningBody";
 import CreateGoverningBody from "./pages/GoverningBody/CreateGoverningBody";
+
 import AboutBase from "./pages/AboutBase/AboutBase";
+import RegionAnnualReportCreate from "./pages/AnnualReport/RegionAnnualReportCreateEditView/RegionAnnualReportCreate";
+import RegionAnnualReportEdit from "./pages/AnnualReport/RegionAnnualReportCreateEditView/RegionAnnualReportEdit";
+import RegionAnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/RegionAnnualReportInformation";
+import AnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/AnnualReportInformation/AnnualReportInformation";
+import ClubAnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/ClubAnnualReportInformation/ClubAnnualReportInformation";
+import GoverningBodyAdministration from "./pages/GoverningBody/GoverningBody/GoverningBodyAdministration";
+import GoverningBodyDocuments from "./pages/GoverningBody/GoverningBody/GoverningBodyDocuments";
+
 
 const App: FC = () => (
   <div className="App">
@@ -211,8 +220,38 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+            path="/annualreport/region/create/:regionId/:year"
+            component={RegionAnnualReportCreate}
+          />
+           <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/region/edit/:annualreportId/:year"
+            component={RegionAnnualReportEdit}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/region/:annualreportId/:year"
+            component={RegionAnnualReportInformation}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/annualreport/edit/:id"
             component={AnnualReportEdit}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/cityAnnualReport/:id"
+            component={AnnualReportInformation}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/annualreport/clubAnnualReport/:id"
+            component={ClubAnnualReportInformation}
           />
           <RouteWithLayout
             layout={PrivateLayout}
@@ -223,7 +262,7 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/annualreport/table"
+            path="/annualreport/table/:noTitleKey"
             component={AnnualReportTable}
           />
           <RouteWithLayout
@@ -292,6 +331,18 @@ const App: FC = () => (
             exact
             path="/regionsBoard/documents/:id"
             component={RegionBoardDocuments}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/governingBodies/documents/:id"
+            component={GoverningBodyDocuments}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/governingBodies/administration/:id"
+            component={GoverningBodyAdministration}
           />
           <RouteWithLayout
             layout={PrivateLayout}

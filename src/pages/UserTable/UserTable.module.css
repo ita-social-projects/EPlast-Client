@@ -17,20 +17,26 @@
   width: 400px;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 765px) {
   .table {
     overflow-x: scroll;
   }
+
   .searchContainer {
-    width: 100%;
-    display: block;
-  }
-  .searchArea {
-    width: 90%;
-    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    flex-flow: wrap;
+    justify-content: left;
+    width: auto;
   }
   .filterContainer {
-    width: 90%;
-    margin: auto;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    width: 100%;
   }
+  .searchArea {
+    width: 100%;
+  }
+
 }

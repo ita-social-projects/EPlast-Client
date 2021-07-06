@@ -2,7 +2,7 @@ import classes from '*.module.css';
 import { Tooltip } from 'antd';
 import moment from 'moment';
 import React from 'react';
-import decisionsApi from '../../api/decisionsApi';
+import decisionsApi, { statusTypeGetParser } from '../../api/decisionsApi';
 const columns = [
   {
     title: 'ID',
@@ -21,6 +21,10 @@ const columns = [
   {
     title: 'Статус',
     dataIndex: 'decisionStatusType',
+    render: (decisionStatusType: any) => {
+        return typeof(decisionStatusType) === "number" ?
+            statusTypeGetParser(decisionStatusType) : decisionStatusType;
+    }
   },
   {
     title: 'Рішення для',
@@ -53,7 +57,7 @@ const columns = [
         return <button type = "button" onClick = {
           async () =>  {
              await decisionsApi.getFileAsBase64(fileName);}}
-             >Скачати додаток</button>;
+             >Завантажити додаток</button>;
       }
       return ""; 
   },}

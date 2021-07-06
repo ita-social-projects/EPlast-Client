@@ -13,10 +13,10 @@ import moment from "moment";
 import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
-import AddAdministratorModal from "../City/AddAdministratorModal/AddAdministratorModal";
 import CityAdmin from "../../models/City/CityAdmin";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
+import { Roles } from "../../models/Roles/Roles";
 moment.locale("uk-ua");
 
 const RegionAdministration = () => {
@@ -42,6 +42,17 @@ const RegionAdministration = () => {
   const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [reload, setReload] = useState(false);
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
+
+  const setIsRegionAdmin = (admin: any[], userId: string) => {
+    for(let i = 0; i < admin.length; i++){
+      if(admin[i].userId == userId){
+        setIsActiveUserRegionAdmin(true);
+      }
+    }
+  }
 
   const getAdministration = async () => {
     setLoading(true);
@@ -49,6 +60,8 @@ const RegionAdministration = () => {
     setPhotosLoading(true);
     setPhotos([...response.data].filter((a) => a != null));
     setAdministration([...response.data].filter((a) => a != null));
+    setActiveUserRoles(userApi.getActiveUserRoles());
+    setIsRegionAdmin([...response.data].filter((a) => a != null), userApi.getActiveUserId());
     setLoading(false);
   };
 
@@ -71,6 +84,7 @@ const RegionAdministration = () => {
 
   const handleOk = () => {
     setVisibleModal(false);
+    setReload(!reload);
   };
 
   const onAdd = async (newAdmin: any) => {
@@ -96,7 +110,7 @@ const RegionAdministration = () => {
 
   useEffect(() => {
     getAdministration();
-  }, []);
+  }, [reload]);
 
   return (
     <Layout.Content>
@@ -105,21 +119,31 @@ const RegionAdministration = () => {
         <Spinner />
       ) : (
         <div className="cityMoreItems">
+          {console.log("user Roles: " + activeUserRoles)}{console.log("region admin: " + isActiveUserRegionAdmin)}
           {administration.length > 0 ? (
             administration.map((member: any) => (
               <Card
                 key={member.id}
                 className="detailsCard"
                 title={`${member.adminType.adminTypeName}`}
-                headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={[
+                headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}          
+                actions={
+                  activeUserRoles.includes(Roles.Admin) || (activeUserRoles.includes(Roles.OkrugaHead) && isActiveUserRegionAdmin)
+                  || ((!activeUserRoles.includes(Roles.OkrugaHeadDeputy) || member.adminType.adminTypeName !== Roles.OkrugaHead)
+                  && isActiveUserRegionAdmin)
+                  ?
+                  [
                   <SettingOutlined onClick={() => showModal(member)} />,
                   <CloseOutlined onClick={() => removeAdministrator(member)} />,
-                ]}
+                  ]
+                  : undefined
+                }
               >
                 <div
                   onClick={() =>
-                    history.push(`/userpage/main/${member.userId}`)
+                    !activeUserRoles.includes(Roles.RegisteredUser)
+                    ? history.push(`/userpage/main/${member.userId}`)
+                    : undefined 
                   }
                   className="cityMember"
                 >
@@ -163,7 +187,7 @@ const RegionAdministration = () => {
       >
         <AddNewSecretaryForm
           onAdd={handleOk}
-          admin={admin}
+          admin={admin} 
         ></AddNewSecretaryForm>
       </Modal>
     </Layout.Content>

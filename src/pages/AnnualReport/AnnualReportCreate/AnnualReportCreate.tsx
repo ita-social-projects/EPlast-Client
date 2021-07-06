@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { Form, Button, Modal, Row, Col } from 'antd';
+import { Form, Button, Modal, Row, Col, Tooltip } from 'antd';
 import './AnnualReportCreate.less';
 import AnnualReportForm from '../AnnualReportForm/AnnualReportForm';
 import AnnualReportApi from '../../../api/AnnualReportApi';
-import User from '../Interfaces/User';
-import City from '../Interfaces/City';
+import Spinner from "../../Spinner/Spinner";
+import { CloseCircleOutlined } from '@ant-design/icons';
 
 export const AnnualReportCreate = () => {
     const { cityId } = useParams();
@@ -15,69 +15,47 @@ export const AnnualReportCreate = () => {
     const [id, setId] = useState<number>();
     const [cityMembers, setCityMembers] = useState<any>();
     const [cityLegalStatuses, setCityLegalStatuses] = useState<any>();
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingSave, setIsLoadingSave]=useState(false);
     const [form] = Form.useForm();
 
     useEffect(() => {
-        if (cityId === undefined) {
-            fetchCity();
-        }
-        else {
-            setId(cityId);
-            checkCreated(cityId);
-        }
+        fetchData(cityId);
     }, [])
 
-    const fetchCity = async () => {
-        try {
-            let response = await AnnualReportApi.getCities();
-            let cities = response.data.cities as City[];
-            setId(cities[0].id)
-            checkCreated(cities[0].id);
-        }
-        catch (error) {
-            showError(error.message)
-        }
-    }
-
-    const checkCreated = async (id: number) => {
-        try {
-            let response = await AnnualReportApi.checkCreated(id);
-            if (response.data.hasCreated === false) {
-                fetchData(id);
-            }
-            else {
-                showError(response.data.message);
-            }
-        }
-        catch (error) {
-            showError(error.message)
-        }
-    }
-
     const fetchData = async (id: number) => {
-        await fetchCityInfo(id);
-        await fetchLegalStatuses();
+        setIsLoading(true);
+        try {
+            await fetchCityInfo(id);
+            await fetchLegalStatuses();
+        } catch (error) {
+            showError(error.message)
+        } finally {
+            setId(cityId);
+            setIsLoading(false);
+        }
     }
 
     const fetchCityInfo = async (id: number) => {
         try {
-            let response = await AnnualReportApi.getCityInfo(id);
+            let created=await AnnualReportApi.checkCreated(id);
+            if (created.data.hasCreated === true) {
+                showError(created.data.message);
+            }else{
+                let response = await AnnualReportApi.getCityMembers(id);
             let cityName = response.data.name;
             setTitle(title.concat(' ', cityName));
-            setMembers((response.data.members as []).map((item: any) => item.user));
+            setCityMembers(response.data.cityMembers.map((item: any) => {
+                return {
+                    label: String.prototype.concat(item.user.firstName, ' ', item.user.lastName),
+                    value: item.user.id
+                }
+            }))
+            }
         }
         catch (error) {
             showError(error.message)
         }
-    }
-
-    const setMembers = (members: User[]) => {
-        setCityMembers(members.map(item => {
-            return {
-                label: String.prototype.concat(item.firstName, ' ', item.lastName),
-                value: item.id
-            }
-        }));
     }
 
     const fetchLegalStatuses = async () => {
@@ -96,6 +74,7 @@ export const AnnualReportCreate = () => {
     }
 
     const handleFinish = async (obj: any) => {
+        setIsLoadingSave(true);
         obj.cityId = id;
         try {
             let response = await AnnualReportApi.create(obj);
@@ -104,7 +83,7 @@ export const AnnualReportCreate = () => {
         }
         catch (error) {
             showError(error.message)
-        }
+        }finally{setIsLoadingSave(false);}
     }
 
     const showSuccess = (message: string) => {
@@ -123,26 +102,37 @@ export const AnnualReportCreate = () => {
     }
 
     return (
-        <Form
-            onFinish={handleFinish}
-            className='annualreport-form'
-            form={form} >
-            <AnnualReportForm
-                title={title}
-                cityMembers={cityMembers}
-                cityLegalStatuses={cityLegalStatuses} />
-            <Row
-                justify='center' >
-                <Col>
-                    <Button
-                        type='primary'
-                        htmlType='submit'>
-                        Подати річний звіт
-                    </Button>
-                </Col>
-            </Row>
-        </Form>
+        <>
+            {isLoading ? <Spinner /> :
+                <>
+                    <div className="report-menu">
+                        <Tooltip title="Скасувати створення звіту">
+                            <div className="report-menu-item" onClick={() => history.goBack()}><CloseCircleOutlined /></div>
+                        </Tooltip>
+                    </div>
+                    <Form
+                        onFinish={handleFinish}
+                        className='annualreport-form'
+                        form={form} >
+                        <AnnualReportForm
+                            title={title}
+                            cityMembers={cityMembers}
+                            cityLegalStatuses={cityLegalStatuses} />
+                        <Row
+                            justify='center' >
+                            <Col>
+                                <Button
+                                    loading={isLoadingSave}
+                                    type='primary'
+                                    htmlType='submit'>
+                                    Подати річний звіт
+                        </Button>
+                            </Col>
+                        </Row>
+                    </Form>
+                </>}
+        </>
     );
-}
+};
 
 export default AnnualReportCreate;

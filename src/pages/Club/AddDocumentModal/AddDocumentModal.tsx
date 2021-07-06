@@ -10,10 +10,12 @@ import { InboxOutlined } from "@ant-design/icons";
 import{
   emptyInput,
   fileIsUpload,
+  fileIsAdded,
   fileIsNotUpload, 
   possibleFileExtensions, 
   fileIsTooBig, 
-  successfulDeleteAction
+  successfulDeleteAction,
+  fileIsEmpty
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
@@ -67,7 +69,7 @@ const AddDocumentModal = (props: Props) => {
     };
 
     const checkFile = (fileSize: number, fileName: string): boolean => {
-      const extension = fileName.split(".").reverse()[0];
+      const extension = fileName.split(".").reverse()[0].toLowerCase();
       const isCorrectExtension =
         extension.indexOf("pdf") !== -1 ||
         extension.indexOf("doc") !== -1 ||
@@ -76,6 +78,10 @@ const AddDocumentModal = (props: Props) => {
         notificationLogic("error", possibleFileExtensions("pdf, doc, docx"));
         setDisabled(true);
       }
+
+      const isEmptyFile = fileSize !== 0;
+      if (!isEmptyFile)
+      notificationLogic("error", fileIsEmpty());
       
       const isSmaller3mb = fileSize < 3145728;
       if (!isSmaller3mb) {
@@ -83,7 +89,7 @@ const AddDocumentModal = (props: Props) => {
       setDisabled(true);
       }
 
-      return isSmaller3mb && isCorrectExtension;
+      return isSmaller3mb && isEmptyFile && isCorrectExtension;
     };
 
     const handleSubmit = async (values: any) => {
@@ -103,6 +109,7 @@ const AddDocumentModal = (props: Props) => {
 
       await addDocument(props.ClubId, newDocument);
       props.onAdd(newDocument);
+      notificationLogic("success", fileIsAdded());
       props.setVisibleModal(false);
       form.resetFields();
       setLoading(false);
@@ -203,24 +210,18 @@ const AddDocumentModal = (props: Props) => {
             ) : null}
           </Form.Item>
 
-          <Form.Item className="cancelConfirmButtons">
-            <Row justify="end">
-              <Col xs={11} sm={5}>
-                <Button key="back" onClick={handleCancel}>
+          <Row justify="end">
+            <Col md={24} xs={24} >
+              <Form.Item style={{ textAlign: "right" }}>
+                <Button  key="back" onClick={handleCancel}>
                   Відмінити
                 </Button>
-              </Col>
-              <Col
-                className="publishButton"
-                xs={{ span: 11, offset: 2 }}
-                sm={{ span: 6, offset: 1 }}
-              >
-                <Button type="primary" loading={buttonLoading} disabled={disabled} htmlType="submit">
+                <Button style={{ marginLeft: "7px" }} type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
                   Опублікувати
                 </Button>
-              </Col>
-            </Row>
-          </Form.Item>
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Modal>
     );
