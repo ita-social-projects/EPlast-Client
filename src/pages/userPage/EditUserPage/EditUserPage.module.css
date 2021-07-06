@@ -6,7 +6,7 @@
     width: 100%;
 }
 .avatarWrapper{
-    width:  calc(60% - 30px);
+    width:  calc(45% - 30px);
     height: auto;
     display: flex;
     flex-direction: column;
@@ -24,7 +24,7 @@
 }
 
 .allFields{
-    width:  calc(60% - 30px);
+    width:  calc(55% - 30px);
     height: auto;
     display: flex;
     flex-direction: column;
@@ -33,6 +33,8 @@
     margin-bottom: 20px;
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .avatarWrapper:hover,
