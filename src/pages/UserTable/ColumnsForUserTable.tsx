@@ -1,6 +1,6 @@
 import React from "react";
 import moment from "moment";
-import { Typography, Tooltip, Tag } from "antd";
+import { Tooltip, Tag, Row, Col } from "antd";
 import {
   WomanOutlined,
   ManOutlined,
@@ -11,7 +11,6 @@ import "./Filter.less";
 import Transgender from '../../assets/images/lgbt.svg'
 import { Roles } from "../../models/Roles/Roles";
 import "../AnnualReport/AnnualReportTable/AnnualReportTable.less";
-const { Text } = Typography;
 
 const setTagColor = (userRoles: string) => {
   let color = "";
@@ -50,7 +49,7 @@ const ColumnsForUserTable=(props: Props):any[] => {
   
   const SortDirection=(props:{sort: number})=>{
     return<>
-      <div className={"TableHeader"}>
+      <div className={"tableHeaderSorting"}>
         <button onClick={()=>{setSortKey(props.sort)}} className={sortKey===props.sort? "sortDirection":""}><CaretUpOutlined /></button>
         <button onClick={()=>{setSortKey(-props.sort)}} className={sortKey===-props.sort? "sortDirection":""}><CaretDownOutlined /></button>
       </div>
@@ -60,14 +59,14 @@ const ColumnsForUserTable=(props: Props):any[] => {
   const SortColumnHighlight =(sort: number, text: any)=>{
     return {
       props: {
-        style: { background: (sortKey===sort || sortKey===-sort)? "#fafafa" : "", }
+        style: { backgroundColor: (sortKey===sort || sortKey===-sort)? "#fafafa" : "", }
       },
       children: <div>{text}</div>
     };
   }
   return [
   {
-    title: <>№<SortDirection sort={1} /></>,
+    title: <Row className="tableHeader"><Col>№</Col><Col><SortDirection sort={1} /></Col></Row>,
       render: (text: any)=>{return SortColumnHighlight(1, text)},
 
     dataIndex: "userSystemId",
@@ -75,24 +74,24 @@ const ColumnsForUserTable=(props: Props):any[] => {
     width: 75,
   },
   {
-    title: <>Ім'я<SortDirection sort={2} /></>,
+    title: <Row className="tableHeader"><Col>Ім'я</Col><Col><SortDirection sort={2} /></Col></Row>,
     dataIndex: "firstName",
     width: 150,
     render: (text: any)=>{return SortColumnHighlight(2, text)},
 
   },
   {
-    title: <>Прізвище<SortDirection sort={3} /></>,
+    title: <Row className="tableHeader"><Col>Прізвище</Col><Col><SortDirection sort={3} /></Col></Row>,
     dataIndex: "lastName",
     width: 150,
     render: (text: any)=>{return SortColumnHighlight(3, text)},
   },
   {
-    title: <><span>Дата народження</span><SortDirection sort={4} /></>,
+    title: <Row className="tableHeader"><Col>Дата народження</Col><Col><SortDirection sort={4} /></Col></Row>,
     dataIndex: "birthday",
     width: 130,
-    render: (date: Date)=>{if (date !== null)
-      return SortColumnHighlight(4, moment(date.toLocaleString()).format("DD.MM.YYYY"))},
+    render: (date: Date)=>{
+      return SortColumnHighlight(4, <>{date !== null? moment(date.toLocaleString()).format("DD.MM.YYYY") : ""}</>)},
   },
   {
     title: "Стать",
@@ -139,7 +138,7 @@ const ColumnsForUserTable=(props: Props):any[] => {
     },
   },
   {
-    title: <>Округа<SortDirection sort={5} /></>,
+    title: <Row className="tableHeader"><Col>Округа</Col><Col><SortDirection sort={5} /></Col></Row>,
     dataIndex: "regionName",
     width: 110,
     render: (regionName: any)=>{return SortColumnHighlight(5, regionName==null? "":<Tag color={"blue"} key={regionName}>
@@ -149,7 +148,7 @@ const ColumnsForUserTable=(props: Props):any[] => {
     </Tag>)},
   },
   {
-    title: <>Станиця<SortDirection sort={6} /></>,
+    title: <Row className="tableHeader"><Col>Станиця</Col><Col><SortDirection sort={6} /></Col></Row>,
     dataIndex: "cityName",
     width: 120,
     render: (cityName: any)=>{return SortColumnHighlight(6, cityName==null? "": <Tag color={"purple"} key={cityName}>
@@ -159,7 +158,7 @@ const ColumnsForUserTable=(props: Props):any[] => {
     </Tag>)},
   },
   {
-    title: <>Курінь<SortDirection sort={7} /></>,
+    title: <Row className="tableHeader"><Col>Курінь</Col><Col><SortDirection sort={7} /></Col></Row>,
     dataIndex: "clubName",
     width: 150,
     render: (clubName: any)=>{return SortColumnHighlight(7, clubName==null? "": <Tag color={"pink"} key={clubName}>
@@ -169,7 +168,7 @@ const ColumnsForUserTable=(props: Props):any[] => {
   </Tag>)},
   },
   {
-    title: <>Ступінь<SortDirection sort={8} /></>,
+    title: <Row className="tableHeader"><Col>Ступінь</Col><Col><SortDirection sort={8} /></Col></Row>,
     dataIndex: "userPlastDegreeName",
     width: 150,
     render: (userPlastDegreeName: any, record: any)=>{
@@ -205,10 +204,12 @@ const ColumnsForUserTable=(props: Props):any[] => {
           </Tooltip>
         </Tag>)
         }
+      } else{
+        return SortColumnHighlight(8, "")
       }},
   },
   {
-    title: <>Ступінь в УПЮ<SortDirection sort={9} /></>,
+    title: <Row className="tableHeader"><Col>Ступінь в УПЮ</Col><Col><SortDirection sort={9} /></Col></Row>,
     dataIndex: "upuDegree",
     width: 210,
     render: (upuDegree: any)=>{
