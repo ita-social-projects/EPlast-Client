@@ -19,7 +19,7 @@ const { Dragger } = Upload;
 interface Props {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
-  userId: number;
+  userId: string;
 }
 const AddAchievementsModal = (props: Props) => {
 
