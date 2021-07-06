@@ -37,14 +37,12 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
         <Menu.Item className="menuItem" key="main" onClick={() => history.push(`/userpage/main/${props.id}`)}>
           Персональні дані
         </Menu.Item>
-        {(props.id === activeUserId && activeUserProfile?.city) &&
         <Menu.Item className="menuItem" key="activeMembership" onClick={() => history.push(`/userpage/activeMembership/${props.id}`)}>
           Дійсне членство
-        </Menu.Item>}
-        {(props.id === activeUserId && activeUserProfile?.city) &&
+        </Menu.Item>
         <Menu.Item className="menuItem" key="secretaries" onClick={()=>history.push(`/userpage/secretaries/${props.id}`)}>
           Діловодства
-        </Menu.Item>}
+        </Menu.Item>
         {((props.id === activeUserId && activeUserProfile?.city) ||
           (props.id !== activeUserId && !(activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.RegisteredUser)))) && 
         <Menu.Item className="menuItem" key="eventuser" onClick={() => history.push(`/userpage/eventuser/${props.id}`)}>
@@ -55,10 +53,9 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
         <Menu.Item className="menuItem" key="blank"onClick={() => history.push(`/userpage/blank/${props.id}`)}>
           Бланки
         </Menu.Item>}
-        {(props.id === activeUserId && activeUserProfile?.city) &&
         <Menu.Item className="menuItem" key="approvers" onClick={() => history.push(`/userpage/approvers/${props.id}`)}>
           Поручення
-        </Menu.Item>}
+        </Menu.Item>
       </Menu>
     </div>
   );
