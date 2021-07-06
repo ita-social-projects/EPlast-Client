@@ -137,13 +137,27 @@ const ColumnsForUserTable: any = [
     dataIndex: "regionName",
     width: 100,
     render: (regionName: any) => {
-      if (regionName?.length > 0) {
+      if (regionName?.length > 9) {
         return (
           <Tag color={"blue"} key={regionName}>
-            {regionName}
+            <Tooltip placement="topLeft" title={regionName}>
+              {regionName.slice(0, 9)}
+            </Tooltip>
           </Tag>
         );
       }
+      if (regionName?.length < 9) {
+        return (
+          <Tag color={"blue"} key={regionName}>
+            <Tooltip placement="topLeft" title={regionName}>
+              {regionName}
+            </Tooltip>
+          </Tag>
+        );
+      }
+      return (
+        {regionName}
+      );
     },
     sorter: (a: any, b: any) => {
       a = a.regionName || " ";
@@ -157,13 +171,27 @@ const ColumnsForUserTable: any = [
     dataIndex: "cityName",
     width: 120,
     render: (cityName: any) => {
-      if (cityName?.length > 0) {
+      if (cityName?.length > 13) {
         return (
           <Tag color={"purple"} key={cityName}>
-            {cityName}
+            <Tooltip placement="topLeft" title={cityName}>
+              {cityName.slice(0, 13)}
+            </Tooltip>
           </Tag>
         );
       }
+      if (cityName?.length < 13) {
+        return (
+          <Tag color={"purple"} key={cityName}>
+            <Tooltip placement="topLeft" title={cityName}>
+              {cityName}
+            </Tooltip>
+          </Tag>
+        );
+      }
+      return (
+        {cityName}
+      );
     },
     sorter: (a: any, b: any) => {
       a = a.cityName || " ";
@@ -177,19 +205,28 @@ const ColumnsForUserTable: any = [
     dataIndex: "clubName",
     width: 150,
     render: (clubName: any) => {
-      if (clubName?.length > 0) {
+      if (clubName?.length > 20) {
         return (
           <Tag color={"pink"} key={clubName}>
-              <Tooltip
-                placement="topLeft"
-                title={clubName?.split("/")[0]}
-              >
-                {clubName?.split("/")[0]?.slice(0, 20)}
-              </Tooltip>
+            <Tooltip placement="topLeft" title={clubName}>
+              {clubName.slice(0, 20)}
+            </Tooltip>
           </Tag>
         );
       }
-    },
+      if (clubName?.length < 20) {
+        return (
+          <Tag color={"pink"} key={clubName}>
+            <Tooltip placement="topLeft" title={clubName}>
+              {clubName}
+            </Tooltip>
+          </Tag>
+        );
+      }
+      return (
+        {clubName}
+      );
+    },    
     sorter: (a: any, b: any) => {
       a = a.clubName || " ";
       b = b.clubName || " ";
@@ -269,10 +306,6 @@ const ColumnsForUserTable: any = [
       {
         text: Roles.FormerPlastMember,
         value: Roles.FormerPlastMember,
-      },
-      {
-        text: Roles.Interested,
-        value: Roles.Interested,
       },
       {
         text: Roles.Supporter,
