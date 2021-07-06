@@ -60,7 +60,7 @@ const contentListNoTitle: { [key: string]: any } = {
 const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
   props: AvatarAndProgressProps
 ) => {
-  const { userId } = useParams();
+  const { userId } = useParams<{ userId:string }>();
   const [loading, setLoading] = useState(false);
   const {
     time,
@@ -160,7 +160,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
       {({ style, isSticky }) => (
         <div
           style={
-            window.innerWidth > 1321
+            window.innerWidth > 1340
               ? { ...style, marginTop: isSticky ? "80px" : "0" }
               : undefined
           }
@@ -179,7 +179,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
       {({ style, isSticky }) => (
         <div
           style={
-            window.innerWidth > 1321 && isSticky
+            window.innerWidth > 1340 && isSticky
               ? { ...style, marginTop: "80px", paddingBottom: "80px" }
               : undefined
           }
