@@ -36,7 +36,8 @@ const PrivateLayout = ({ children }: any) => {
   const [clubAdmDeputy, setClubAdmDeputy] = useState(false);
   const [id, setId] = useState<string>("");
   const [onlyRegistered, setOnlyRegistered] = useState(false);
-  const [activeUerProfile, setActiveUserProfile]= useState<User>();
+  const [activeUserProfile, setActiveUserProfile] = useState<User>();
+  const [plastMember, setPlastMember] = useState(false);
   const ref = useRef(null)
 
   const handleClickOutside = () => {
@@ -87,6 +88,7 @@ const PrivateLayout = ({ children }: any) => {
       setCanSee(roles.includes(Roles.PlastMember));
       setCanAccess(roles.includes(Roles.Supporter));
       setOnlyRegistered(roles.includes(Roles.RegisteredUser));
+      setPlastMember(roles.includes(Roles.PlastMember));
     let userProfile = await UserApi.getActiveUserProfile();
       setActiveUserProfile(userProfile);
   }
@@ -129,7 +131,7 @@ const PrivateLayout = ({ children }: any) => {
               </Menu.Item>
               ) : (<> </>)
             }
-            {activeUerProfile?.city ? (
+            {activeUserProfile?.city ? (
               <Menu.Item
                 key="1"
                 icon={<BankOutlined />}
@@ -140,16 +142,17 @@ const PrivateLayout = ({ children }: any) => {
               </Menu.Item>
               ) : (<> </>)
             }
+            
             <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Довідник">
-              {(canEdit || canSee || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy) ? (
+              {(canEdit || canSee || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy || plastMember) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
                   Таблиця користувачів
                 </Menu.Item>
                 ) : (<> </>)
               }
-              {activeUerProfile?.city ? (
-                <Menu.Item onClick={() => { handleClickAway(); history.push("/regions"); }} key="3">
-                  Округи
+              {activeUserProfile?.city ? (
+                <Menu.Item onClick={() => { handleClickAway(); history.push("/regions"); }} key="3" >
+                  Округи                  
                 </Menu.Item>
                 ) : (<> </>)
               }
@@ -162,7 +165,7 @@ const PrivateLayout = ({ children }: any) => {
                 </Menu.Item>
                 ) : (<> </>)
               }
-              {activeUerProfile?.city ? (
+              {activeUserProfile?.city ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/events/types'); }} key="6">
                   Події
                 </Menu.Item>
@@ -189,7 +192,7 @@ const PrivateLayout = ({ children }: any) => {
                 </Menu.Item>)
                 : (<> </>)
               }
-              {(canEdit || canSee || canAccess || regionAdm || cityAdm || clubAdm || activeUerProfile?.city) ? (
+              {(canEdit || canSee || canAccess || regionAdm || cityAdm || clubAdm || activeUserProfile?.city) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/legislation'); }} key="14">
                   Репозитарій
                 </Menu.Item>)
