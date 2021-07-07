@@ -653,7 +653,10 @@ const City = () => {
                 )}
             </Row>
             <div className="cityMoreButton">
-              {canEdit || ((activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) && city.name == activeUserCity)
+              {canEdit || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+                  || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy) 
+                  || ((activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember))
+                   && city.name == activeUserCity)
                 ? (
                   <Button
                     type="primary"
