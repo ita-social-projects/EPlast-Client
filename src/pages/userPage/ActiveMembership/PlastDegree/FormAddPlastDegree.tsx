@@ -26,7 +26,7 @@ const FormAddPlastDegree = ({
     const [isChecked, setIsChecked] = useState<boolean>(false);
     const [visiableDegree, setVisiableDegree]=useState<boolean>(false);
     const [filtredDegrees, setFiltredDegrees] = useState<Array<PlastDegree>>([]);
-
+  
     const handleFinish = async (info: any) => {
         const plastDegreeId=filtredDegrees.find(item => item.name === "Пласт прият")?.id;
         info.plastDegree=plastDegreeId? plastDegreeId:info.plastDegree;
@@ -40,7 +40,6 @@ const FormAddPlastDegree = ({
         await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
         setVisibleModal(false);
         setVisiableDegree(false);
-
         handleAddDegree();
         form.resetFields();
         resetAvailablePlastDegree();
@@ -69,7 +68,7 @@ const FormAddPlastDegree = ({
         if(cancel) {form.resetFields(); setVisiableDegree(false);}
     }, [filtredDegrees, cancel]);
 
-    const handleSwitchChange = (e: boolean) => setIsChecked(e);
+
     return <Form
         name="basic"
         onFinish={handleFinish}
@@ -110,13 +109,10 @@ const FormAddPlastDegree = ({
             />
         </Form.Item>
 
-        <Form.Item name="isCurrent" label="Обрати поточним" valuePropName="checked">
-            <Switch onChange={handleSwitchChange} />
-        </Form.Item>
         <Form.Item>
             <Button
                 className={classes.cardButton}
-                type="primary" htmlType="submit"
+                type="primary"  htmlType="submit"
             >
                 Додати
         </Button>
