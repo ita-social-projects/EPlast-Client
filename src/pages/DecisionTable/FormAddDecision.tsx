@@ -122,7 +122,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     }
   };
   const checkFile = (fileName: string): boolean => {
-    const extension = fileName.split(".").reverse()[0];
+    const extension = fileName.split(".").reverse()[0].toLowerCase();
     const isCorrectExtension =
       extension.indexOf("pdf") !== -1 ||
       extension.indexOf("jpg") !== -1 ||
@@ -344,7 +344,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
               {fileData.FileAsBase64 !== null && (
                 <div>
                   <Button
-                    className={formclasses.cardButton}
+                    className={formclasses.cardButtonDocuments}
                     onClick={() => {
                       setFileData({ FileAsBase64: null, FileName: null });
                       notificationLogic("success", successfulDeleteAction("Файл"));

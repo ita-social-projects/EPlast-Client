@@ -21,7 +21,7 @@ const ActionEvent = () => {
     return (
         
         <div className={classes.background}>
-            <p className={classes.swapper}>Показати лише дійсні події : <Switch onChange={onChange}/></p>  
+            <p className={classes.swapper}> Показати лише дійсні події : <Switch onChange={onChange}/></p>  
             <div className={classes.actionsWrapper}>
                 <SortedEvents eventCategoryId={categoryId} typeId={typeId} switcher={SwitchValue} />
             </div>

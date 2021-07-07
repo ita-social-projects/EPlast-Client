@@ -69,7 +69,7 @@ const AddDocumentModal = (props: Props) => {
     };
 
     const checkFile = (fileSize: number, fileName: string): boolean => {
-      const extension = fileName.split(".").reverse()[0];
+      const extension = fileName.split(".").reverse()[0].toLowerCase();
       const isCorrectExtension =
         extension.indexOf("pdf") !== -1 ||
         extension.indexOf("doc") !== -1 ||
@@ -213,10 +213,10 @@ const AddDocumentModal = (props: Props) => {
           <Row justify="end">
             <Col md={24} xs={24} >
               <Form.Item style={{ textAlign: "right" }}>
-                <Button className="buttons" key="back" onClick={handleCancel}>
+                <Button  key="back" onClick={handleCancel}>
                   Відмінити
                 </Button>
-                <Button className="buttons" type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
+                <Button style={{ marginLeft: "7px" }} type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
                   Опублікувати
                 </Button>
               </Form.Item>
