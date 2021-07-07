@@ -18,7 +18,7 @@ interface Props {
     setVisibleModal: (visibleModal: boolean) => void;
     document: BlankDocument;
     setDocument: (document: BlankDocument) => void;
-    userId: number;
+    userId: string;
 }
   
 const AddExtractFromUPUModal = (props: Props) => {
