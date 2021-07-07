@@ -14,6 +14,7 @@
     color: white;
     border: none;
     font-size: 16px;
+    margin-top: -0.5px !important;
 }
 
 .MenuWidth {
@@ -31,7 +32,7 @@
 .headerItem,
 .headerDropDownItem {
     border: none !important;
-    user-select: none;
+    user-select: none;  
 }
 
 .headerItem:hover,
