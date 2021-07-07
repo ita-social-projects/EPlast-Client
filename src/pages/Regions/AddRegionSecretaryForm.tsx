@@ -110,7 +110,7 @@ const AddNewSecretaryForm = (props: any) => {
   }, [props]);
 
   useEffect(() => {
-    if (props.visibleModal) {
+    if (!props.visibleModal) {
       form.resetFields();
     }
     const userRoles = userApi.getActiveUserRoles();
