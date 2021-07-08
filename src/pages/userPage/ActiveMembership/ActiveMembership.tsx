@@ -11,7 +11,6 @@ import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import ModalAddPlastDegree from "./PlastDegree/ModalAddPlastDegree";
 import moment from "moment";
-import ModalAddEndDatePlastDegree from "./PlastDegree/ModalAddEndDatePlastDegree";
 import ModalChangeUserDates from "./UserDates/ModalChangeUserDates";
 import DeleteDegreeConfirm from "./PlastDegree/DeleteDegreeConfirm";
 import { SafetyCertificateOutlined } from "@ant-design/icons";
@@ -37,15 +36,9 @@ const ActiveMembership = () => {
   const [roles, setRoles]=useState<Array<string>>([]);
   const [city, setCity]=useState<{id: number, name: string}>();
   const [club, setClub]=useState<{id: number, name: string}>();
-  const [endDateVisibleModal, setEndDateVisibleModal] = useState<boolean>(
-    false
-  );
-  const [plastDegreeIdToAddEndDate, setPlastDegreeIdToAddEndDate] = useState<
-    number
-  >(0);
-  const [startDateToAddEndDate, setStartDateToAddEndDate] = useState<string>(
-    ""
-  );
+  const [endDateVisibleModal, setEndDateVisibleModal] = useState<boolean>(false);
+  const [plastDegreeIdToAddEndDate, setPlastDegreeIdToAddEndDate] = useState<number>(0);
+  const [startDateToAddEndDate, setStartDateToAddEndDate] = useState<string>("");
 
   const userAdminTypeRoles = [
     Roles.Admin,
@@ -66,19 +59,6 @@ const ActiveMembership = () => {
     } else if (userGenders[1] === user.gender?.name && plastDegreeName.includes("/")) {
       return plastDegreeName.split("/")[1];
     } else return plastDegreeName;
-  };
-
-  const handleChangeAsCurrent = (plastDegreeIdToSetAsCurrent: number) => {
-    const upd: Array<UserPlastDegree> = plastDegrees.map((pd) => {
-      if (pd.isCurrent) {
-        pd.isCurrent = !pd.isCurrent;
-      }
-      if (pd.plastDegree.id === plastDegreeIdToSetAsCurrent) {
-        pd.isCurrent = !pd.isCurrent;
-      }
-      return pd;
-    });
-    setPlastDegrees(upd);
   };
 
   const fetchData = async () => {
@@ -176,16 +156,17 @@ const ActiveMembership = () => {
     return color;
   };
 
-  const handleAddEndDate = async () => {
-    await fetchData();
-  };
-
   const handleChangeDates = async () => {
     await fetchData();
   };
 
-  const showModal = () => setVisibleModal(true);
-
+  const AppropriateButtonText=():string=>{
+    const amount= plastDegrees.length;
+    if(amount === 1) return "Змінити ступінь"
+    else if(amount === 0) return "Додати ступінь"
+    return "Додати ступінь"
+  }
+  
   useEffect(() => {
     fetchData();
   }, [accessLevels]);
@@ -206,18 +187,6 @@ const ActiveMembership = () => {
           cityId={user.cityId}
           clubId={user.clubId}
         />
-        {IsUserHasAccessToManageDegree(roles?.filter(role=>role!=Roles.KurinHead))
-        && (
-          <div>
-            <Button
-              type="primary"
-              onClick={showModal}
-              className={classes.buttonChange}
-            >
-              Додати ступінь
-            </Button>
-          </div>
-        )}
       </div>
 
       <div className={classes.wrapperCol}>
@@ -302,7 +271,7 @@ const ActiveMembership = () => {
                 <React.Fragment key={pd.id}>
                   <div style={{ marginBottom: "7px" }}>
                     <div className={classes.textFieldsMain}>
-                      {pd.isCurrent && <SafetyCertificateOutlined />}{" "}
+                    {<SafetyCertificateOutlined />}{" "}
                       {getAppropriateToGenderDegree(pd.plastDegree.name)}
                     </div>
                     <div className={classes.textFieldsOthers}>
@@ -332,56 +301,34 @@ const ActiveMembership = () => {
                         >
                           Видалити
                         </button>
-                        <button
-                          onClick={() => {
-                            setPlastDegreeIdToAddEndDate(pd.plastDegree.id);
-                            setStartDateToAddEndDate(pd.dateStart);
-                            setEndDateVisibleModal(true);
-                          }}
-                          className={classes.button}
-                        >
-                          Надати дату завершення
-                        </button>
-                        {!pd.isCurrent && pd.dateFinish === null && (
-                          <button
-                            onClick={async () => {
-                              await activeMembershipApi
-                                .setPlastDegreeAsCurrent(
-                                  userId,
-                                  pd.plastDegree.id
-                                )
-                                .then(() => {
-                                  handleChangeAsCurrent(pd.plastDegree.id);
-                                });
-                            }}
-                            className={classes.button}
-                          >
-                            Обрати поточним
-                          </button>
-                        )}
                       </div>
                     )}
                   </div>
                 </React.Fragment>
               ))}
+              {IsUserHasAccessToManageDegree(roles?.filter(role=>role!=Roles.KurinHead))
+                        && (
+                          <div className={classes.buttons}>
+                            <button
+                              onClick={() => {
+                                setVisibleModal(true);
+                              }}
+                              className={classes.button}
+                            >
+                              {AppropriateButtonText()}
+                            </button>
+                          </div>
+                        )}
             </div>
           </div>
         </div>
       </div>
       <ModalAddPlastDegree
-        handleAddDegree={handleAddDegree}
         userId={userId}
         isCityAdmin={!IsUserHasAnyAdminTypeRoles(roles?.map((role:any)=>{if(role!=Roles.CityHead) return role}))}
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
-      />
-      <ModalAddEndDatePlastDegree
-        userId={userId}
-        plastDegreeId={plastDegreeIdToAddEndDate}
-        dateOfStart={startDateToAddEndDate}
-        endDateVisibleModal={endDateVisibleModal}
-        setEndDateVisibleModal={setEndDateVisibleModal}
-        handleAddEndDate={handleAddEndDate}
+        handleAddDegree={handleAddDegree}
       />
       <ModalChangeUserDates
         userId={userId}
@@ -389,6 +336,7 @@ const ActiveMembership = () => {
         datesVisibleModal={datesVisibleModal}
         setDatesVisibleModal={setDatesVisibleModal}
         handleChangeDates={handleChangeDates}
+      
       />
     </div>
   );

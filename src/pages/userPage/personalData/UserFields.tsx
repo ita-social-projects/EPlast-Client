@@ -451,7 +451,7 @@ export default function () {
   ) : data.shortUser !== null ? (
     <div className="container">
       <Form name="basic" className="formContainer">
-        <div className="avatarWrapper">
+        <div className="shortAvatarWrapperUserFields">
           <AvatarAndProgressStatic
             imageUrl={data?.shortUser.imagePath}
             time={data?.timeToJoinPlast}
