@@ -247,11 +247,6 @@ const ColumnsForUserTable: any = [
       if (userPlastDegreeName?.length > 20 ) {
         if (record.gender?.name !== null && record.gender?.name == "Чоловік") {
           return (
-         /*   <Tag color={"blue"} key={userPlastDegreeName}>
-            <Tooltip placement="topLeft" title={userPlastDegreeName}>
-              {userPlastDegreeName?.slice(0, 20)}
-            </Tooltip>
-          </Tag>*/
             <Tag color={"blue"} key={userPlastDegreeName}>
               <Tooltip
                 placement="topLeft"
