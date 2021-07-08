@@ -6,7 +6,6 @@ import {
   getRegionFollowers, 
   getRegionAdministration, 
   getRegionById, removeFollower, 
-  toggleMemberStatus
 } from "../../api/regionsApi";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import userApi from "../../api/UserApi";
@@ -62,26 +61,20 @@ const RegionFollowers = () => {
       setPhotosLoading(false);
     }
     
-    const createNotification = async(userId : string, message : string) => {
-      await NotificationBoxApi.createNotifications(
-        [userId],
-        message + ": ",
-        NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/regions/${id}`,
-        regionName
-        );
-    }
-
-    const addMember = async (follower: RegionFollower) => {
-        await toggleMemberStatus (follower.id);
-        await createNotification(follower.userId, `Вітаємо, вашу заяву на створення станиці схвалено. Станиця ${follower.cityName} тепер є членом округу`);
-        setFollowers(followers.filter(u => u.id !== follower.id));
-    }
+    //const createNotification = async(userId : string, message : string) => {
+    //  await NotificationBoxApi.createNotifications(
+    //    [userId],
+    //    message + ": ",
+    //    NotificationBoxApi.NotificationTypes.UserNotifications,
+    //    `/regions/${id}`,
+    //    regionName
+    //    );
+    //}
 
     const deleteFollower = async (follower: RegionFollower) => {
-        await removeFollower(follower.id);
-        await createNotification(follower.userId, "Нажаль, вашу заяву на створення станиці відхилено. Для з'ясування причин відмови зверніться до голови округу");
-        setFollowers(followers.filter(u => u.id !== follower.id));
+      await removeFollower(follower.id);
+      //await createNotification(follower.userId, `Нажаль, вашу заяву на створення станиці ${follower.cityName} відхилено. Для з'ясування причин відмови зверніться до голови округу`);
+      setFollowers(followers.filter(u => u.id !== follower.id));
     }
 
     useEffect(() => {
@@ -105,14 +98,10 @@ const RegionFollowers = () => {
                     || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
                         && isActiveUserRegionAdmin)   
                     ? [
-                        <PlusOutlined
-                          onClick={() => addMember(follower)}
-                        />,
                         <CloseOutlined
                           onClick={() => deleteFollower(follower)}
                         />,
-                    ]
-                    : undefined
+                    ] : undefined
                   }
                 >
                   <div
@@ -120,7 +109,7 @@ const RegionFollowers = () => {
                         activeUserRoles.includes(Roles.Admin) 
                         || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
                             && isActiveUserRegionAdmin)   
-                        ? history.push(`/cities/new`)
+                        ? history.push(`/regions/follower/edit/${follower.id}`)
                         : undefined
                     }
                     className="cityMember"

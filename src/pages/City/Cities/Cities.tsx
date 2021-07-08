@@ -9,6 +9,8 @@ import CityProfile from "../../../models/City/CityProfile";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import Search from "antd/lib/input/Search";
+import userApi from "../../../api/UserApi";
+import { Roles } from "../../../models/Roles/Roles";
 
 const Cities = () => {
   const history = useHistory();
@@ -22,6 +24,7 @@ const Cities = () => {
   const [total, setTotal] = useState(0);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const setPhotos = async (cities: CityProfile[]) => {
     for await (const city of cities) {
@@ -46,6 +49,7 @@ const Cities = () => {
       );
 
       setPhotosLoading(true);
+      setActiveUserRoles(userApi.getActiveUserRoles);
       setPhotos(response.data.cities);
       setCities(response.data.cities);
       setCanCreate(response.data.canCreate);
@@ -89,7 +93,7 @@ const Cities = () => {
       ) : (
           <div>
             <div className="cityWrapper">
-              {canCreate && page === 1 && searchedData.length === 0 ? (
+              {activeUserRoles.includes(Roles.Admin) && page === 1 && searchedData.length === 0 ? (
                 <Card
                   hoverable
                   className="cardStyles addCity"
@@ -101,7 +105,19 @@ const Cities = () => {
                     title="Створити нову станицю"
                   />
                 </Card>
-              ) : null}
+              ) : page === 1 && searchedData.length === 0 ?(
+                <Card
+                  hoverable
+                  className="cardStyles addCity"
+                  cover={<img src={Add} alt="AddRegionFollower" />}
+                  onClick={() => history.push(`/regions/follower/new`)}
+                >
+                  <Card.Meta
+                    className="titleText"
+                    title={<div className="createFollowerTitleText">Подати заяву на створення нової станиці</div>}
+                  />
+                </Card>
+              ) : null }
 
               {cities.length === 0 && searchedData.length !== 0 ? (
                 <div>

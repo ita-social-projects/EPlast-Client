@@ -231,24 +231,24 @@ boolean
   *    postIndex: values.postIndex,
   *    region: values.region,
   *    street: values.street,
-    };*/
+  };*/
 
 
-  function seeAddFollowerModal(follower: RegionFollower) {
-    return Modal.confirm({
-      title: `Ви впевнені, що хочете підтвердити заявку на створення станиці ${follower.cityName}?`,
-      icon: <ExclamationCircleOutlined />,
-      okText: "Так, створити",
-      okType: "danger",
-      cancelText: "Скасувати",
-      maskClosable: true,
-      onOk() {
-        {
-          //await handleSubmit(follower);
-        }
-      },
-    });
-  }
+  /*function seeAddFollowerModal(follower: RegionFollower) {
+  *  return Modal.confirm({
+  *    title: `Ви впевнені, що хочете підтвердити заявку на створення станиці ${follower.cityName}?`,
+  *    icon: <ExclamationCircleOutlined />,
+  *    okText: "Так, створити",
+  *    okType: "danger",
+  *    cancelText: "Скасувати",
+  *    maskClosable: true,
+  *    onOk() {
+  *      {
+  *        //await handleSubmit(follower);
+  *      }
+  *    },
+  *  });
+  }*/
 
   const getRegion = async () => {
     setLoading(true);
@@ -758,17 +758,6 @@ boolean
                           )}
                         <p className="userName">{followers.cityName}</p>
                       </div>
-                      { 
-                        activeUserRoles.includes(Roles.Admin) 
-                        || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
-                            && isActiveUserRegionAdmin) 
-                      ? (
-                          <PlusOutlined
-                            className="approveIcon"
-                            /*onClick={() => changeApproveStatus(followers.id)}*/
-                          />
-                        ) 
-                      : null}
                     </div>
                     </Col>
                   ) )

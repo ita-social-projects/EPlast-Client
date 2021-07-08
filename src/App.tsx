@@ -127,6 +127,18 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+            path="/regions/follower/new"
+            component={CreateCity}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regions/follower/edit/:id"
+            component={CreateCity}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/cities/members/:id"
             component={CityMembers}
           />

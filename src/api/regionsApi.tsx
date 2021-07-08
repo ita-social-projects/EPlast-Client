@@ -279,14 +279,20 @@ export const getRegionFollowers = async (regionId: number) => {
   });
 };
 
-export const removeFollower = async (followerId: number) => {
-  return api.remove(`Regions/RemoveFollower/${followerId}`).catch((error) => {
+export const getRegionFollowerById = async (followerId: number) => {
+  return api.get(`Regions/GetFollower/${followerId}`).catch((error) => {
     throw new Error(error);
   });
-}
+};
 
-export const toggleMemberStatus = async (regionId: number) => {
-  return api.put(`Regions/ChangeApproveStatus/${regionId}`).catch((error) => {
+export const createRegionFollower = async (data: any) => {
+  return api.post("Regions/CreateFollower", data).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const removeFollower = async (followerId: number) => {
+  return api.remove(`Regions/RemoveFollower/${followerId}`).catch((error) => {
     throw new Error(error);
   });
 }
@@ -324,5 +330,6 @@ export default {
   getRegionUsers,
   getRegionFollowers,
   removeFollower,
-  toggleMemberStatus
+  getRegionFollowerById,
+  createRegionFollower
 };
