@@ -66,7 +66,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   };
 
   useEffect(() => {
-    if (!props.visibleModal) {
+    if (props.visibleModal) {
       form.resetFields();
     }
     getMembers();
