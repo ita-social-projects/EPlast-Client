@@ -169,7 +169,7 @@ const HeaderContainer = () => {
         <>
           <Menu mode="horizontal" className={classes.headerMenu + " " + classes.MenuWidth}>
             <Button ghost
-              icon={<BellOutlined style={{ fontSize: "24px" }} />}
+              icon={<BellOutlined style={{ fontSize: "24px", margin: "auto" }} />}
               onClick={ShowNotifications}
             >
             </Button>
@@ -189,7 +189,7 @@ const HeaderContainer = () => {
                     size={36}
                     src={imageBase64}
                     alt="User"
-                    style={{ marginRight: "10px" }}
+                    style={{ marginRight: "10px", marginTop: "-5px"  }}
                   />
                   Привіт, {name !== undefined ? (name?.length > 12 ? name.slice(0, 10) + "..." : name) : ""}
                 </NavLink>
