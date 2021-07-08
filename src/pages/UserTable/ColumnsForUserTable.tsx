@@ -239,7 +239,12 @@ const ColumnsForUserTable: any = [
     dataIndex: "userPlastDegreeName",
     width: 150,
     render: (userPlastDegreeName: any, record: any) => {
-      if (userPlastDegreeName !== null && userPlastDegreeName.length > 0) {
+      if(!userPlastDegreeName){
+        return (
+        ""
+        );
+      }
+      if (userPlastDegreeName?.length > 20 ) {
         if (record.gender?.name !== null && record.gender?.name == "Чоловік") {
           return (
             <Tag color={"blue"} key={userPlastDegreeName}>
@@ -247,7 +252,7 @@ const ColumnsForUserTable: any = [
                 placement="topLeft"
                 title={userPlastDegreeName?.split("/")[0]}
               >
-                {userPlastDegreeName?.split("/")[0]?.slice(0, 20)}
+                {userPlastDegreeName?.split("/")[0]?.slice(0, 15)}
               </Tooltip>
             </Tag>
           );
@@ -261,7 +266,7 @@ const ColumnsForUserTable: any = [
                 placement="topLeft"
                 title={userPlastDegreeName?.split("/")[1]}
               >
-                {userPlastDegreeName?.split("/")[1]?.slice(0, 20)}
+                {userPlastDegreeName?.split("/")[1]?.slice(0, 17)}
               </Tooltip>
             </Tag>
           );

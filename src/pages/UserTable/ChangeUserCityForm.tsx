@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Select, Typography, Row, Col } from "antd";
+import { Form, Input, Button, Select, Typography, Row, Col, AutoComplete } from "antd";
 import {
   getAllFollowers,
   getAllMembers,
@@ -109,15 +109,15 @@ const ChangeUserCityForm = ({
   return (
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
-        <h4>Оберіть станицю для користувача</h4>
+        <h4>Оберіть станицю для користувача</h4> 
         <Form.Item name="userCity">
-          <Select onChange={handleClick}>
-            {cities.map((item: CityForAdmin) => (
-              <Option key={item.id} value={item.name}>
+          <AutoComplete filterOption={true}>
+            {cities?.map((item: CityForAdmin) => (
+              <Select.Option key={item.id} value={item.name}>
                 {item.name}
-              </Option>
+              </Select.Option>
             ))}
-          </Select>
+          </AutoComplete>
         </Form.Item>
         <Form.Item className="cancelConfirmButtons">
           <Row justify="end">
