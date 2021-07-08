@@ -33,9 +33,6 @@ const columns = [
   {
     title: 'Рішення',
     dataIndex: 'description',
-    ellipsis: {
-      showTitle: false,
-    },
     render: (description: any) => (
       <Tooltip placement="topLeft" title={description.substring(0, 400)}>
         {description}

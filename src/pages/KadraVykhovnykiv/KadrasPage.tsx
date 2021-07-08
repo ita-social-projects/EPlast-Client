@@ -4,6 +4,7 @@ import { KVTable } from './KVTable';
 import jwt from "jwt-decode";
 import AddNewKadraForm from './AddNewKadraForm';
 import AuthStore from '../../stores/AuthStore';
+import { Roles } from '../../models/Roles/Roles';
 
 const classes = require('./Table.module.css');
 
@@ -49,7 +50,7 @@ export const KadrasTable = () => {
 
     const [visible, setvisible] = useState<boolean>(false);
     const [noTitleKey, setKey] = useState<string>('KV1N');
-    const [canEdit] = useState(roles.includes("Admin"));
+    const [canEdit] = useState(roles.includes(Roles.Admin));
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchedData(event.target.value);

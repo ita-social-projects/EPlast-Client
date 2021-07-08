@@ -4,7 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { Form, Button, Row, Col, Tooltip, Modal } from 'antd';
 import './ClubAnnualReportEdit.less';
 import ClubAnnualReport from '../Interfaces/ClubAnnualReport';
-import { editClubAnnualReport, getClubAnnualReportById, getClubById } from '../../../api/clubsApi';
+import { editClubAnnualReport, getClubAnnualReportById, getClubMembersInfo } from '../../../api/clubsApi';
 import { Typography } from 'antd';
 import {
     successfulEditAction,
@@ -20,6 +20,7 @@ import ClubAdmin from '../../../models/Club/ClubAdmin';
 import ClubMember from '../../../models/Club/ClubMember';
 import ClubAnnualReportForm from '../ClubAnnualReportForm/ClubAnnualReportForm';
 import UserApi from '../../../api/UserApi';
+import { Roles } from '../../../models/Roles/Roles';
 
 
 const { Title } = Typography;
@@ -57,7 +58,7 @@ const ClubAnnualReportEdit = () => {
             let roles = UserApi.getActiveUserRoles();
             let response = await getClubAnnualReportById(id);
 
-            let club = await getClubById(response.data.annualreport.clubId);
+            let club = await getClubMembersInfo(response.data.annualreport.clubId);
             setClub(club.data);
 
             setAdmins(club.data.administration.filter((a: any) => a != null));
@@ -67,8 +68,8 @@ const ClubAnnualReportEdit = () => {
             setFollowers(club.data.followers);
 
             const user: any = jwt(token);
-            if (!((roles.includes("Admin") ||
-                (roles.includes("Голова Куреня") && club.data.head?.userId == user.nameid))
+            if (!((roles.includes(Roles.Admin) ||
+                (roles.includes(Roles.KurinHead) && club.data.head?.userId == user.nameid))
                 && response.data.annualreport.status == 0)) { showError('Немає доступу до редагування звіту.'); }
             else {
                 setClubAnnualReport(response.data.annualreport);

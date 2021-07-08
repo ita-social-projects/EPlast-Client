@@ -10,6 +10,7 @@ import { successfulDeleteAction, successfulEditAction, tryAgain } from "../../..
 import { ExclamationCircleOutlined, StarFilled, StarOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import UserApi from "../../../api/UserApi";
+import { Roles } from "../../../models/Roles/Roles";
 
 interface props {
   columns: any;
@@ -176,9 +177,9 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey }: prop
 
   const checkAccessToManage = () => {
     let roles = UserApi.getActiveUserRoles();
-    setIsRegionAdmin(roles.includes("Голова Округи"));
-    setIsAdmin(roles.includes("Admin"));
-    setCanView(roles.includes("Голова Станиці") || roles.includes("Голова Округи") || roles.includes("Admin"));
+    setIsRegionAdmin(roles.includes(Roles.OkrugaHead));
+    setIsAdmin(roles.includes(Roles.Admin));
+    setCanView(roles.includes(Roles.CityHead) || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.Admin));
   };
 
   const handlePageChange = (page: number) => {

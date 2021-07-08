@@ -1,8 +1,8 @@
 .wrapper {
     display: flex;
-    align-items: flex-start;
     justify-content: space-between;
     width: 100%;
+    height: 100%;
 }
 
 .wrapperCol {
@@ -58,27 +58,17 @@
 }
 
 .wrapper2,
-.wrapper4{
-    width: calc(100% - 30px);
-    height: 250px;
-    box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding-top: 20px;
-}
-
 .wrapper3,
+.wrapper4,
 .wrapper5 {
-    width: calc(100% - 30px);
-    height: 250px;
+    width: calc(50% - 30px);
+    min-height: 280px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding-top: 20px;
+    justify-content: center;
 }
 
 .wrapper6 {
@@ -101,13 +91,14 @@
 }
 
  .addIcon {
+    width : 157.8px;
     background:#3c5438;
     color: white;
     top: 30px;
     height: 40px;
 }
 .listButton{
-    width : 157px;
+    width : 157.8px;
     background:#3c5438;
     color: white;
     top: 15px;
@@ -175,4 +166,8 @@
         height: 200px !important;
         width: 200px !important;
     }
+}
+
+.colBlank {
+    flex: none !important;
 }

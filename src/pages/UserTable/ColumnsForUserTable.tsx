@@ -7,28 +7,29 @@ import {
 } from "@ant-design/icons";
 import "./Filter.less";
 import Transgender from '../../assets/images/lgbt.svg'
+import { Roles } from "../../models/Roles/Roles";
 const { Text } = Typography;
 
 const setTagColor = (userRoles: string) => {
   let color = "";
-  if (userRoles?.includes("Admin")) {
+  if (userRoles?.includes(Roles.Admin)) {
     color = "red";
   }
 
-  if (userRoles?.includes("Дійсний член організації")) {
+  if (userRoles?.includes(Roles.PlastMember)) {
 
     color = "green";
   }
-  if (userRoles?.includes("Прихильник")) {
+  if (userRoles?.includes(Roles.Supporter)) {
     color = "orange";
   }
-  if (userRoles?.includes("Зацікавлений")) {
+  if (userRoles?.includes(Roles.Interested)) {
     color = "yellow";
   }
-  if (userRoles?.includes("Колишній член Пласту")) {
+  if (userRoles?.includes(Roles.FormerPlastMember)) {
     color = "black";
   }
-  if (userRoles?.includes("Зареєстрований користувач")) {
+  if (userRoles?.includes(Roles.RegisteredUser)) {
     color = "blue"
   }
   return color;
@@ -136,14 +137,28 @@ const ColumnsForUserTable: any = [
     dataIndex: "regionName",
     width: 100,
     render: (regionName: any) => {
-      if (regionName?.length > 0) {
+      if(!regionName){
         return (
-          <Tag color={"blue"} key={regionName}>
-            {regionName}
-          </Tag>
+        ""
         );
       }
-    },
+      if (regionName?.length > 9) {
+        return (
+          <Tag color={"blue"} key={regionName}>
+            <Tooltip placement="topLeft" title={regionName}>
+              {regionName.slice(0, 9)}
+            </Tooltip>
+          </Tag>
+        );
+      }     
+      return (
+        <Tag color={"blue"} key={regionName}>
+          <Tooltip placement="topLeft" title={regionName}>
+            {regionName}
+          </Tooltip>
+        </Tag>
+      );    
+    },      
     sorter: (a: any, b: any) => {
       a = a.regionName || " ";
       b = b.regionName || " ";
@@ -156,13 +171,27 @@ const ColumnsForUserTable: any = [
     dataIndex: "cityName",
     width: 120,
     render: (cityName: any) => {
-      if (cityName?.length > 0) {
+      if(!cityName){
+        return (
+        ""
+        );
+      }
+      if (cityName?.length > 13) {
         return (
           <Tag color={"purple"} key={cityName}>
-            {cityName}
+            <Tooltip placement="topLeft" title={cityName}>
+              {cityName.slice(0, 13)}
+            </Tooltip>
           </Tag>
         );
       }
+      return (
+        <Tag color={"purple"} key={cityName}>
+          <Tooltip placement="topLeft" title={cityName}>
+            {cityName}
+          </Tooltip>
+        </Tag>
+      );
     },
     sorter: (a: any, b: any) => {
       a = a.cityName || " ";
@@ -176,19 +205,28 @@ const ColumnsForUserTable: any = [
     dataIndex: "clubName",
     width: 150,
     render: (clubName: any) => {
-      if (clubName?.length > 0) {
+      if(!clubName){
+        return (
+        ""
+        );
+      }
+      if (clubName?.length > 20) {
         return (
           <Tag color={"pink"} key={clubName}>
-              <Tooltip
-                placement="topLeft"
-                title={clubName?.split("/")[0]}
-              >
-                {clubName?.split("/")[0]?.slice(0, 20)}
-              </Tooltip>
+            <Tooltip placement="topLeft" title={clubName}>
+              {clubName.slice(0, 20)}
+            </Tooltip>
           </Tag>
         );
       }
-    },
+      return (
+        <Tag color={"pink"} key={clubName}>
+          <Tooltip placement="topLeft" title={clubName}>
+            {clubName}
+          </Tooltip>
+        </Tag>
+      );
+    },    
     sorter: (a: any, b: any) => {
       a = a.clubName || " ";
       b = b.clubName || " ";
@@ -262,48 +300,44 @@ const ColumnsForUserTable: any = [
     ellipsis: false,
     filters: [
       {
-        text: "Дійсний член організації",
-        value: "Дійсний член організації",
+        text: Roles.PlastMember,
+        value: Roles.PlastMember,
       },
       {
-        text: "Колишній член Пласту",
-        value: "Колишній член Пласту",
+        text: Roles.FormerPlastMember,
+        value: Roles.FormerPlastMember,
       },
       {
-        text: "Зацікавлений",
-        value: "Зацікавлений",
+        text: Roles.Supporter,
+        value: Roles.Supporter,
       },
       {
-        text: "Прихильник",
-        value: "Прихильник",
+        text: Roles.OkrugaHead,
+        value: Roles.OkrugaHead,
       },
       {
-        text: "Голова Округи",
-        value: "Голова Округи",
+        text: Roles.OkrugaSecretary,
+        value: Roles.OkrugaSecretary,
       },
       {
-        text: "Діловод Округи",
-        value: "Діловод Округи",
+        text: Roles.CityHead,
+        value: Roles.CityHead,
       },
       {
-        text: "Голова Станиці",
-        value: "Голова Станиці",
+        text: Roles.CitySecretary,
+        value: Roles.CitySecretary,
       },
       {
-        text: "Діловод Станиці",
-        value: "Діловод Станиці",
+        text: Roles.KurinHead,
+        value: Roles.KurinHead,
       },
       {
-        text: "Голова Куреня",
-        value: "Голова Куреня",
+        text: Roles.KurinSecretary,
+        value: Roles.KurinSecretary,
       },
       {
-        text: "Діловод Куреня",
-        value: "Діловод Куреня",
-      },
-      {
-        text: "Зареєстрований користувач",
-        value: "Зареєстрований користувач"
+        text: Roles.RegisteredUser,
+        value: Roles.RegisteredUser
       }
     ],
     filterMultiple: false,

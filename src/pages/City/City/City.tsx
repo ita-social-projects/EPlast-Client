@@ -10,8 +10,7 @@ import {
   Skeleton,
   Card,
   Tooltip,
-  Badge,
-} from "antd";
+  Badge } from "antd";
 import {
   FileTextOutlined,
   EditOutlined,
@@ -19,16 +18,17 @@ import {
   UserAddOutlined,
   PlusOutlined,
   DeleteOutlined,
-  ExclamationCircleOutlined} from "@ant-design/icons";
+  ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import {
+  addAdministrator,
   addFollower,
   cityNameOfApprovedMember,
+  editAdministrator,
   getCityById,
   getLogo,
   removeCity,
-  toggleMemberStatus,
-} from "../../../api/citiesApi";
+  toggleMemberStatus } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -44,9 +44,11 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulDeleteAction } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, fileIsAdded, successfulEditAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
+import { Roles } from "../../../models/Roles/Roles";
+import "moment/locale/uk";
 
 const City = () => {
   const history = useHistory();
@@ -68,13 +70,15 @@ const City = () => {
   const [membersCount, setMembersCount] = useState<number>();
   const [adminsCount, setAdminsCount] = useState<number>();
   const [followersCount, setFollowersCount] = useState<number>();
+  const [documentsCount, setDocumentsCount] = useState<number>();
   const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
   const [visible, setvisible] = useState<boolean>(false);
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
   const changeApproveStatus = async (memberId: number) => {
-    const member = await toggleMemberStatus(memberId);
+  const member = await toggleMemberStatus(memberId);
+    moment.locale("uk-ua");
 
     await NotificationBoxApi.createNotifications(
       [member.data.userId],
@@ -157,8 +161,9 @@ const City = () => {
 
   const onAdd = (newDocument: CityDocument) => {
     if (documents.length < 6) {
-      setDocuments([...documents, newDocument]);
+      setDocuments([...documents, newDocument]); 
     }
+    notificationLogic("success", fileIsAdded());
   };
 
   function seeDeleteModal() {
@@ -177,9 +182,9 @@ const City = () => {
 
   function seeJoinModal() {
     return Modal.confirm({
-      title: "Ви впевнені, що хочете долучитися до даної станиці?",
+      title: "Ви впевнені, що хочете доєднатися до даної станиці?",
       icon: <ExclamationCircleOutlined />,
-      okText: "Так, долучитися",
+      okText: "Так, доєднатися",
       okType: "primary",
       cancelText: "Скасувати",
       maskClosable: true,
@@ -218,15 +223,14 @@ const City = () => {
       setMembersCount(response.data.memberCount);
       setAdminsCount(response.data.administrationCount);
       setFollowersCount(response.data.followerCount);
+      setDocumentsCount(response.data.documentsCount);
       setActiveUserRoles(userApi.getActiveUserRoles);
     } 
     finally {
       setLoading(false);
     }
   };
-
-  const handleOk = async() => {
-    setvisible(false);
+  const updateAdmins = async () => {
     const response = await getCityById(+id);
     setAdminsCount(response.data.administrationCount);
     const admins = [
@@ -234,20 +238,100 @@ const City = () => {
       response.data.head,
       response.data.headDeputy,
     ].filter((a) => a !== null);
+    setCity(response.data);
     setAdmins(admins);
     setPhotosLoading(true);
     setPhotos([...admins],response.data.logo);
+  }
+
+  const addCityAdmin = async (admin: CityAdmin) => {
+    await addAdministrator(admin.cityId, admin);
+    await updateAdmins();
+    notificationLogic("success", "Користувач успішно доданий в провід");
+    await NotificationBoxApi.createNotifications(
+      [admin.userId],
+      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/cities/${id}`,
+      `цій станиці`
+    );
   };
 
-  useEffect(() => {
-    getCity();
-  }, []);
+  const editCityAdmin = async (admin: CityAdmin) => {
+    await editAdministrator(id, admin);
+    await updateAdmins();
+    notificationLogic("success", successfulEditAction("Адміністратора"));
+    await NotificationBoxApi.createNotifications(
+      [admin.userId],
+      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/cities/${id}`,
+      `цій станиці`);
+  };
+
+  const showConfirmCityAdmin  = async (admin: CityAdmin) => {
+    return Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (
+        <div style={{ margin: 10 }}>
+          <b>
+            {city.head.user.firstName} {city.head.user.lastName}
+          </b>{" "}
+          є Головою Станиці, час правління закінчується{" "}
+          <b>
+            {moment(city.head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(city.head.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onCancel() { },
+      async onOk() {
+        if (admin.id === 0) {
+         await addCityAdmin(admin);
+        } else {
+         await editCityAdmin(admin);
+        }
+      },
+    });
+  };
+
+  const handleOk = async(admin: CityAdmin) => {
+    if (admin.id === 0) {
+      try {
+        if (admin.adminType.adminTypeName === Roles.CityHead && city.head !== null) {
+          if (city.head?.userId !== admin.userId) {
+          await  showConfirmCityAdmin(admin);
+          } else if (city.head?.userId === admin.userId) {
+          }
+          else {
+            editCityAdmin(admin);
+          }
+        } else {
+          if (admin.id === 0) {
+            addCityAdmin(admin);
+          }
+          else {
+            editCityAdmin(admin);
+          }
+        }
+      } finally {
+        setvisible(false);
+      }
+    }
+  };
+
+  const handleClose = async() => {
+    setvisible(false);
+  };
 
   useEffect(() => {
     if (city.name.length !== 0) {
       PsevdonimCreator.setPseudonimLocation(`cities/${city.name}`, `cities/${id}`);
     }
-  }, [city])
+    getCity();
+  }, [])
 
   return loading ? (
     <Spinner />
@@ -445,7 +529,7 @@ const City = () => {
                     sm={8}
                   >
                     <div
-                      onClick={() => canEdit || activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")
+                      onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
                         ? history.push(`/userpage/main/${member.userId}`) 
                         : undefined
                       }
@@ -497,7 +581,7 @@ const City = () => {
                 admins.map((admin) => (
                   <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                     <div
-                      onClick={() => canEdit || activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")
+                      onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
                         ? history.push(`/userpage/main/${admin.userId}`)
                         : undefined
                       }
@@ -538,12 +622,20 @@ const City = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={4}>Документообіг станиці</Title>
+            <Title level={4}>Документообіг станиці <a onClick={() => history.push(`/cities/documents/${city.id}`)}>
+              {documentsCount !== 0 ?
+                <Badge
+                  count={documentsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a>
+            </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
                 documents.map((document) => (
                   <Col
-                    className="cityMemberItem"
+                    className="cityDocumentItem"
                     xs={12}
                     sm={8}
                     key={document.id}
@@ -561,7 +653,10 @@ const City = () => {
                 )}
             </Row>
             <div className="cityMoreButton">
-              {canEdit || ((activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")) && city.name == activeUserCity)
+              {canEdit || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+                  || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy) 
+                  || ((activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember))
+                   && city.name == activeUserCity)
                 ? (
                   <Button
                     type="primary"
@@ -626,7 +721,7 @@ const City = () => {
                   >
                     <div>
                       <div
-                        onClick={() => canEdit || activeUserRoles.includes("Прихильник") || activeUserRoles.includes("Дійсний член організації")
+                        onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
                           ? history.push(`/userpage/main/${followers.userId}`)
                           : undefined
                         }
@@ -672,8 +767,7 @@ const City = () => {
       <Modal
         title="Додати діловода"
         visible={visible}
-        onOk={handleOk}
-        onCancel={handleOk}
+        onCancel={handleClose}
         footer={null}
       >
         <AddCitiesNewSecretaryForm

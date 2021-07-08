@@ -18,7 +18,7 @@ interface Props {
     setVisibleModal: (visibleModal: boolean) => void;
     document: BlankDocument;
     setDocument: (document: BlankDocument) => void;
-    userId: number;
+    userId: string;
 }
   
 const AddExtractFromUPUModal = (props: Props) => {
@@ -52,7 +52,7 @@ const AddExtractFromUPUModal = (props: Props) => {
     };
 
     const checkFile = (fileSize: number, fileName: string): boolean => {
-      const extension = fileName.split(".").reverse()[0];
+      const extension = fileName.split(".").reverse()[0].toLowerCase();
       const isCorrectExtension =
       extension.indexOf("pdf") !== -1 ||
       extension.indexOf("jpg") !== -1 ||

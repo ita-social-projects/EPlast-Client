@@ -1,3 +1,4 @@
+import { Roles } from '../models/Roles/Roles';
 import User from '../models/UserTable/User';
 import adminApi from './adminApi';
 import Api from './api';
@@ -117,8 +118,8 @@ const getCitiesForUserAdmins = async (userId : string) : Promise<CityRegionAdmin
             cityRegionAdminsOfUser.cityRegionAdmins.push(
                 {
                     cityName : c.name,
-                    cityAdminId : c.cityAdministration.reverse().find((ca : any) => ca.adminType.adminTypeName==="Голова Станиці")?.userId,
-                    regionAdminId : c.region.administration.reverse().find((ra : any) => ra.adminType.adminTypeName==="Голова Округу")?.userId
+                    cityAdminId : c.cityAdministration.reverse().find((ca : any) => ca.adminType.adminTypeName===Roles.CityHead)?.userId,
+                    regionAdminId : c.region.administration.reverse().find((ra : any) => ra.adminType.adminTypeName===Roles.OkrugaHead )?.userId
                 }
             );
             });

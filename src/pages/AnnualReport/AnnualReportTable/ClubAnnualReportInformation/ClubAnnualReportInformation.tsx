@@ -3,7 +3,7 @@ import { Typography, Card, Modal, Space, Form, Row, Col, Table } from 'antd';
 import moment from 'moment';
 import './ClubAnnualReportInformation.less';
 import { Link, useHistory, useParams } from 'react-router-dom';
-import { getClubAnnualReportById, getClubById, confirmClubAnnualReport, cancelClubAnnualReport, removeClubAnnualReport } from '../../../../api/clubsApi';
+import { getClubAnnualReportById, getClubMembersInfo, confirmClubAnnualReport, cancelClubAnnualReport, removeClubAnnualReport } from '../../../../api/clubsApi';
 import { useEffect } from 'react';
 import Spinner from '../../../Spinner/Spinner';
 import { administrationsColumns, followersColumns, getTableAdmins, getTableFollowers, getTableMembers } from '../../ClubAnnualReportForm/ClubAnnualReportTableColumns';
@@ -17,6 +17,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import AuthStore from '../../../../stores/AuthStore';
 import jwt from "jwt-decode";
 import UserApi from '../../../../api/UserApi';
+import { Roles } from '../../../../models/Roles/Roles';
 
 
 const { Title, Text } = Typography;
@@ -54,7 +55,7 @@ const ClubAnnualReportInformation = () => {
             setClubAnnualReport(clubReport.data.annualreport);
             setStatus(clubReport.data.annualreport.status);
 
-            let response = await getClubById(clubReport.data.annualreport.clubId);
+            let response = await getClubMembersInfo(clubReport.data.annualreport.clubId);
 
             setClub(response.data);
 
@@ -76,8 +77,8 @@ const ClubAnnualReportInformation = () => {
         try {
             let token = AuthStore.getToken() as string;
             let roles = UserApi.getActiveUserRoles();
-            setIsAdmin(roles.includes("Admin"));
-            setIsClubAdmin(roles.includes("Голова Куреня"));
+            setIsAdmin(roles.includes(Roles.Admin));
+            setIsClubAdmin(roles.includes(Roles.KurinHead));
             const user: any = jwt(token);
             setUserId(user.nameid);
         } catch (error) {

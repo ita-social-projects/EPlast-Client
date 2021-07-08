@@ -56,7 +56,7 @@ const CreateClub = () => {
   };
 
   const checkFile = (size: number, fileName: string) => {
-    const extension = fileName.split(".").reverse()[0];
+    const extension = fileName.split(".").reverse()[0].toLowerCase();
     const isCorrectExtension =
       extension.indexOf("jpeg") !== -1 ||
       extension.indexOf("jpg") !== -1 ||
@@ -151,8 +151,7 @@ const CreateClub = () => {
   };
 
   const EditClub = async (newClub: ClubProfile) => {
-    notificationLogic("info", "Оновлення...", <LoadingOutlined />);
-
+  
     return updateClub(club.id, JSON.stringify(newClub))
       .then(() => {
         notificationLogic("success", successfulUpdateAction("Курінь"));

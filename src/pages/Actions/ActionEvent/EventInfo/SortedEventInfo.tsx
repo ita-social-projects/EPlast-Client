@@ -22,6 +22,7 @@ import eventUserApi from '../../../../api/eventUserApi';
 import CreatedEvents from '../../../../models/EventUser/CreatedEvents';
 import EventsUser from '../../../../models/EventUser/EventUser';
 import userApi from "../../../../api/UserApi";
+import { Roles } from '../../../../models/Roles/Roles';
 
 interface Props {
     event: EventDetails;
@@ -32,7 +33,7 @@ interface Props {
     unSubscribeOnEvent: () => void;
 }
 
-const AccessableRoles=["Admin", "Голова Куреня", "Голова Станиці", "Голова Округи", "Дійсний член організації", "Прихильник", "Зареєстрований користувач"];
+const AccessableRoles=[Roles.Admin.toString(), Roles.KurinHead.toString(), Roles.CityHead.toString(), Roles.OkrugaHead.toString(), Roles.PlastMember.toString(), Roles.Supporter.toString(), Roles.RegisteredUser.toString()];
 
 const AccessToManage=(roles: string[]):boolean=>{ 
     for(var i = 0; i < roles.length; i++){
@@ -53,9 +54,9 @@ const RenderEventIcons = ({event,
 ) => {
     const eventIcons: React.ReactNode[] = []
     const roles=([] as string[]).concat(userApi.getActiveUserRoles());
-    if ((isUserEventAdmin && AccessToManage(roles.filter(role=>role!="Зареєстрований користувач" && role!="Прихильник"))) || roles.includes("Admin")) {
+    if ((isUserEventAdmin && AccessToManage(roles.filter(role=>role!=Roles.RegisteredUser && role!=Roles.Supporter))) || roles.includes(Roles.Admin)) {
         if (event.eventStatus==="Не затверджені"){
-            {roles.includes("Admin") && eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
+            {roles.includes(Roles.Admin) && eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
                 <SettingTwoTone twoToneColor="#3c5438"  onClick={() => showApproveConfirm({
                     eventId: event?.eventId,
                     eventName: event?.eventName,
@@ -91,7 +92,7 @@ const RenderEventIcons = ({event,
                            })}
                            className="icon" key="delete"/>
         </Tooltip>)}
-        else if(event.eventStatus==="Затверджений(-на)" && roles.includes("Admin")){
+        else if(event.eventStatus==="Затверджений(-на)" && roles.includes(Roles.Admin)){
             eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
             <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
             onClick={()=> setVisibleDrawer(true)} />      
@@ -139,7 +140,7 @@ const RenderEventIcons = ({event,
                     className="icon" key="unsubscribe"/>
             </Tooltip>)
         }
-    } else if (!isEventFinished && AccessToManage(roles.filter(r=>r!="Зареєстрований користувач"))) {
+    } else if (!isEventFinished && AccessToManage(roles.filter(r=>r!=Roles.RegisteredUser))) {
         eventIcons.push(<Tooltip title="Зголоситись на подію" key="subscribe">
             <UserAddOutlined onClick={() => showSubscribeConfirm({
                 eventId: event?.eventId,

@@ -29,6 +29,7 @@ import EventCalendar from "../EventCalendar/EventCalendar";
 import Spinner from "../../../Spinner/Spinner";
 import CreatedEvents from "../../../../models/EventUser/CreatedEvents";
 import AvatarAndProgressStatic from "../../../userPage/personalData/AvatarAndProgressStatic";
+import { Roles } from "../../../../models/Roles/Roles";
 
 const { Title } = Typography;
 const userGenders = ["Чоловік", "Жінка", "Інша"];
@@ -53,8 +54,8 @@ const EventUser = () => {
     const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
     const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
     const [eventId, setEventId] = useState<number>();
-    const [canCreate] = useState(!((roles == ["Прихильник"] || roles == ["Зареєстрований користувач"])
-        || (roles.length === 2 && roles.includes("Прихильник") && roles.includes("Зареєстрований користувач"))));
+    const [canCreate] = useState(!((roles == [Roles.Supporter] || roles == [Roles.RegisteredUser])
+        || (roles.length === 2 && roles.includes(Roles.Supporter) && roles.includes(Roles.RegisteredUser))));
     const [userToken, setUserToken] = useState<any>([
         {
             nameid: "",
@@ -391,7 +392,7 @@ const EventUser = () => {
                                         Деталі
                                     </Button>
                                     {item.eventStatusID !== 1 && userToken.nameid === userId &&
-                                        !(roles == ["Прихильник"] || roles == ["Зареєстований користувач"] || roles == ["Прихильник", "Зареєстований користувач"]) &&
+                                        !(roles == [Roles.Supporter] || roles == [Roles.RegisteredUser] || roles == [Roles.Supporter, Roles.RegisteredUser]) &&
                                         (
                                             <Button
                                                 type="primary"
@@ -426,7 +427,7 @@ const EventUser = () => {
                             userToken.nameid === userId && (
                                 <div>
                                     <h2>Ви ще не запланували жодної події</h2>
-                                    {roles != ["Зареєстрований користувач"] && <Button
+                                    {roles != [Roles.RegisteredUser] && <Button
                                         type="primary"
                                         className={classes.buttonInside}
                                         onClick={() => history.push("/events/types")}>

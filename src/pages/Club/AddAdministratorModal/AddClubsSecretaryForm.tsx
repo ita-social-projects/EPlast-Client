@@ -18,6 +18,7 @@ import "./AddClubsSecretaryForm.less";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 import userApi from "../../../api/UserApi";
+import { Roles } from "../../../models/Roles/Roles";
 
 
 type AddClubsNewSecretaryForm = {
@@ -128,7 +129,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
     };
 
     try {
-      if (values.AdminType === "Голова Куреня" && head !== null) {
+      if (values.AdminType === Roles.KurinHead && head !== null) {
         if (head?.userId !== admin.userId) {
           showConfirm(admin);
         } else if (head?.userId === admin.userId) {
@@ -148,7 +149,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
   };
 
   useEffect(() => {
-    if (!props.visibleModal) {
+    if (props.visibleModal) {
       form.resetFields();
     }
     getMembers();
@@ -197,8 +198,8 @@ const AddClubsNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Куреня", disabled: activeUserRoles.includes("Заступник Голови Куреня") },
-            { value: "Заступник Голови Куреня" },
+            { value: Roles.KurinHead, disabled: activeUserRoles.includes(Roles.KurinHeadDeputy) },
+            { value: Roles.KurinHeadDeputy },
             { value: "Голова СПС" },
             { value: "Фотограф" },
             { value: "Писар" },

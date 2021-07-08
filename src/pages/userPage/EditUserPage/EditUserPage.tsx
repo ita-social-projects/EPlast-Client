@@ -41,9 +41,10 @@ import{
 import "../EditUserPage/EditUserPage.less"
 import { UpuDegree } from "../Interface/Interface";
 import jwt_decode from "jwt-decode";
+import { Roles } from "../../../models/Roles/Roles";
 
 export default function () {
-  const { userId } = useParams();
+  const { userId } = useParams<{ userId:string }>();
   const history = useHistory();
   const onlyLettersPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50})*$/;
   const allVariantsPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",.0-9]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",.0-9]{0,50})*$/;
@@ -74,7 +75,7 @@ export default function () {
     const user: any = jwt(token);
     let decodedJwt = jwt_decode(token) as any;
     let id=user.nameid;
-    if(user.nameid!=userId || (decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]).includes("Admin"))
+    if(user.nameid!=userId || (decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]).includes(Roles.Admin))
       id=userId
     await userApi
       .edit(id)
@@ -251,7 +252,7 @@ export default function () {
   };
   
   const checkFile = (size: number, fileName: string) => {
-    const extension = fileName.split(".").reverse()[0];
+    const extension = fileName.split(".").reverse()[0].toLowerCase();
     const isCorrectExtension =
       extension.indexOf("jpeg") !== -1 ||
       extension.indexOf("jpg") !== -1 ||
@@ -471,9 +472,7 @@ export default function () {
       .put(newUserProfile)
       .then(() => {
         notificationLogic("success", successfulEditAction("Дані"));
-        history.replace(`/userpage/main/${newUserProfile.user.id}`);
-        window.location.reload();
-        
+        history.goBack();        
       })
       .catch(() => {
         notificationLogic("error", tryAgain);
@@ -806,9 +805,14 @@ export default function () {
               <Input className={styles.dataInput}/>            
             </Form.Item>
           </div>
-          <Button className={styles.confirmBtn} htmlType="submit">
-            Підтвердити
-          </Button>
+          <div className="buttons">
+            <Button className={styles.confirmBtn} htmlType="submit">
+              Підтвердити
+            </Button>
+            <Button className={styles.confirmBtn} htmlType="submit" onClick={() => history.push(`/userpage/main/${userId}`)}>
+              Відмінити
+            </Button>
+          </div>
         </div>
       </Form>
     </div>

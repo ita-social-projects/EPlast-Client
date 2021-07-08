@@ -46,6 +46,7 @@ import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
+import { Roles } from "../../models/Roles/Roles";
 
 const Region = () => {
   const history = useHistory();
@@ -129,6 +130,7 @@ boolean
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
   const [membersCount, setMembersCount] = useState<number>();
   const [adminsCount, setAdminsCount] = useState<number>();
+  const [documentsCount, setDocumentsCount] = useState<number>();
   const [visible, setvisible] = useState<boolean>(false);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
@@ -219,6 +221,9 @@ boolean
       setMembersCount(response.data.cities.length);
       setSixMembers(response.data.cities, 6);
 
+      setDocuments(response.data.documents);
+      setDocumentsCount(response.data.documentsCount);
+
       setPhotosLoading(true);
       setSixAdmins(response1.data, 7);
       setAdminsCount(response1.data.length);
@@ -302,16 +307,7 @@ boolean
     }
   };
 
-  const setRegionDocs = async () => {
-    try {
-      const response = await getRegionDocuments(id);
-      setDocuments(response.data);
-    } finally {
-    }
-  };
-
   useEffect(() => {
-    setRegionDocs();
     getRegion();
   }, []);
 
@@ -464,7 +460,7 @@ boolean
                 </Button>
                     </Col>
                     <Col xs={24} sm={4} style={{ display: canEdit && ( isActiveUserRegionAdmin
-                      || activeUserRoles.includes("Admin")) ? "block" : "none" }}>
+                      || activeUserRoles.includes(Roles.Admin)) ? "block" : "none" }}>
                       <Row
                         className="cityIcons"
                         justify={canCreate ? "center" : "start"}
@@ -481,7 +477,7 @@ boolean
                         </Col>
                         
                         {
-                          activeUserRoles.includes("Admin") ? 
+                          activeUserRoles.includes(Roles.Admin) ? 
                             <Col offset={1}>
                               <Tooltip title="Видалити округу">
                                 <DeleteOutlined
@@ -533,7 +529,7 @@ boolean
                     <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                       <div
                         onClick={() =>
-                          !activeUserRoles.includes("Зареєстрований користувач")
+                          !activeUserRoles.includes(Roles.RegisteredUser)
                           ? history.push(`/userpage/main/${admin.userId}`)
                           : undefined
                         }
@@ -553,7 +549,7 @@ boolean
                   )}
               </Row>
               <div className="cityMoreButton">
-                {canEdit && (activeUserRoles.includes("Admin") || isActiveUserRegionAdmin) 
+                {canEdit && (activeUserRoles.includes(Roles.Admin) || isActiveUserRegionAdmin) 
                 ?(
                   <PlusSquareFilled
                     type="primary"
@@ -627,12 +623,20 @@ boolean
             xs={24}
           >
             <Card hoverable className="cityCard">
-              <Title level={4}>Документообіг округи</Title>
+              <Title level={4}>Документообіг округи <a onClick={() => history.push(`/regions/documents/${region.id}`)}>
+              {documentsCount !== 0 ?
+                <Badge
+                  count={documentsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a>
+              </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
                 {documents.length !== 0 ? (
                   documents.map((document) => (
                     <Col
-                      className="cityMemberItem"
+                      className="cityDocumentItem"
                       xs={12}
                       sm={8}
                       key={document.id}
@@ -649,8 +653,9 @@ boolean
               </Row>
               <div className="cityMoreButton">
                 {
-                  canEdit || activeUserRoles.includes("Голова Куреня") || activeUserRoles.includes("Голова Станиці")
-                  || (!activeUserRoles.includes("Зареєстрований користувач") && isActiveUserFromRegion)
+                  canEdit || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+                  || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy)
+                  || (!activeUserRoles.includes(Roles.RegisteredUser) && isActiveUserFromRegion)
                   ? <Button
                       type="primary"
                       className="cityInfoButton"
@@ -660,8 +665,10 @@ boolean
                     </Button>
                   : null
                 }
-              {activeUserRoles.includes("Admin") || (activeUserRoles.includes("Голова Округи") && isActiveUserRegionAdmin)
-              ?(
+                {activeUserRoles.includes(Roles.Admin)
+                || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
+                    && isActiveUserRegionAdmin)
+                ?(
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}

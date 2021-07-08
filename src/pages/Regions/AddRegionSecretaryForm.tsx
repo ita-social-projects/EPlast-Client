@@ -14,6 +14,7 @@ import RegionUser from "../../models/Region/RegionUser";
 
 import User from "../Distinction/Interfaces/User";
 import "./AddRegionSecretaryForm.less";
+import { Roles } from "../../models/Roles/Roles";
 
 type AddNewSecretaryForm = {
   onAdd: () => void;
@@ -156,8 +157,8 @@ const AddNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: "Голова Округи", disabled: activeUserRoles.includes("Заступник Голови Округи") },
-            { value: "Заступник Голови Округи"},
+            { value: Roles.OkrugaHead, disabled: activeUserRoles.includes(Roles.OkrugaHeadDeputy) },
+            { value: Roles.OkrugaHeadDeputy},
             { value: "Писар" },
             { value: "Бунчужний" },
             { value: "Скарбник" },

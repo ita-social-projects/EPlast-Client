@@ -11,6 +11,7 @@ import classes from './Table.module.css';
 import EditDecisionModal from './EditDecisionModal';
 import deleteConfirm from './DeleteConfirm';
 import decisionsApi, { DecisionPost } from '../../api/decisionsApi';
+import { Roles } from '../../models/Roles/Roles';
 
 interface Props {
   record: number;
@@ -49,11 +50,11 @@ const fetchUser = async () => {
   setUserId(decodedJwt.nameid);
   let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
   setUser(roles);
-  setCanEdit(roles.includes("Admin"));
-  setRegionAdm(roles.includes("Голова Округи"));
-  setCityAdm(roles.includes("Голова Станиці"));
-  setClubAdm(roles.includes("Голова Куреня"));
-  setCanSee(roles.includes("Дійсний член організації"));
+  setCanEdit(roles.includes(Roles.Admin));
+  setRegionAdm(roles.includes(Roles.OkrugaHead));
+  setCityAdm(roles.includes(Roles.CityHead));
+  setClubAdm(roles.includes(Roles.KurinHead));
+  setCanSee(roles.includes(Roles.PlastMember));
 }
 const fetchData = async () =>{
   await decisionsApi.getById(record).then(res => setData(res));
