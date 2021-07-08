@@ -181,7 +181,6 @@ const Club = () => {
       setAdminsCount(response.data.administrationCount);
       setFollowersCount(response.data.followerCount)
       setDocumentsCount(response.data.documentsCount);
-      console.log(response.data);
     } finally {
       setLoading(false);
     }

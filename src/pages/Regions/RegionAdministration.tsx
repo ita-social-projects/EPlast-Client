@@ -119,7 +119,6 @@ const RegionAdministration = () => {
         <Spinner />
       ) : (
         <div className="cityMoreItems">
-          {console.log("user Roles: " + activeUserRoles)}{console.log("region admin: " + isActiveUserRegionAdmin)}
           {administration.length > 0 ? (
             administration.map((member: any) => (
               <Card
