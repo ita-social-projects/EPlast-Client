@@ -623,7 +623,14 @@ boolean
             xs={24}
           >
             <Card hoverable className="cityCard">
-              <Title level={4}>Документообіг округи <a onClick={() => history.push(`/regions/documents/${region.id}`)}>
+              <Title level={4}>Документообіг округи <a onClick={() => 
+                 canEdit || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+                 || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy)
+                 || (!activeUserRoles.includes(Roles.RegisteredUser) && isActiveUserFromRegion)
+                 ? 
+                history.push(`/regions/documents/${region.id}`)
+                : undefined
+              }>
               {documentsCount !== 0 ?
                 <Badge
                   count={documentsCount}
