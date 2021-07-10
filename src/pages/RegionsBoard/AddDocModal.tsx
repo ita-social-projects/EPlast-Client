@@ -12,6 +12,8 @@ import {
   possibleFileExtensions,
   fileIsTooBig,
   successfulDeleteAction,
+  emptyInput,
+  maxLength,
 } from "../../components/Notifications/Messages";
 import "moment/locale/uk";
 moment.locale("uk-ua");
@@ -40,15 +42,39 @@ const AddDocumentModal = (props: Props) => {
     return e && e.fileList;
   };
 
+  const getExtension = (fileName: string) => {
+    let splittedFileName = fileName.split('.');
+    return '.' + splittedFileName[splittedFileName.length - 1];
+  }
+
+  const onFileNameChange = (e: any) => {
+    if (fileName == "") {
+      setFileName(e.target.value);
+    } else {
+      let extension: string = getExtension(fileName);
+      setFileName(e.target.value + extension);
+      setDisabled(false);
+    }
+  }
+
   const handleUpload = (info: any) => {
     if (info.file !== null) {
       if (checkFile(info.file.size, info.file.name)) {
         getBase64(info.file, (base64: string) => {
           props.setDocument({ ...props.document, blobName: base64 });
 
-          let splittedFileName = info.file.name.split('.');
-          let extension: string = splittedFileName[splittedFileName.length - 1];
-          setFileName(fileName + '.' + extension);
+          if (fileName != "") {
+            let extension: string = getExtension(fileName);
+            let fileNameWithoutExtension: string = fileName.replace(extension, '');
+
+            let newExtension: string = getExtension(info.file.name);
+            setFileName(fileNameWithoutExtension + newExtension);
+
+            setDisabled(false);
+          } else {
+            setFileName(info.file.name);
+            setDisabled(true);
+          }
         });
         notificationLogic("success", fileIsUpload());
         setDisabled(false);
@@ -120,8 +146,14 @@ const AddDocumentModal = (props: Props) => {
     >
       <Form name="basic" onFinish={handleSubmit} form={form}>
         <div className="formFields">
-          <Form.Item name="documentName" label="Назва документу">
-            <Input placeholder="Введіть назву документу" onChange={e => setFileName(e.target.value)}/>
+          <Form.Item
+            name="documentName"
+            label="Назва документу"
+            rules={[
+              {required: true, message: emptyInput()},
+              {max: 255, message: maxLength(255)}]}
+          >
+            <Input placeholder="Введіть назву документу" onChange={onFileNameChange}/>
           </Form.Item>
           <Form.Item name="datepicker" label="Дата документу">
             <DatePicker format="DD.MM.YYYY" className="formSelect" />
