@@ -263,9 +263,8 @@ const ActiveMembership = () => {
             </div>
           </div>
         </div>
-        <div className={classes.wrapper}>
-          <div className={classes.wrapperScrollDegree}>
-            <div className={classes.wrapperPlastDegree}>
+          <div className={classes.wrapper}>
+            <div className={classes.wrapperGeneralInfo}>
               <Title level={2}> Ступені користувача </Title>
               {plastDegrees.length===0? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Без ступеня"/> : plastDegrees.map((pd) => (
                 <React.Fragment key={pd.id}>
@@ -321,7 +320,6 @@ const ActiveMembership = () => {
                         )}
             </div>
           </div>
-        </div>
       </div>
       <ModalAddPlastDegree
         userId={userId}
