@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../Regions/AddDocumentModal.less";
-import { Button, Col, DatePicker, Form, Modal, Row, Upload } from "antd";
+import { Button, Col, DatePicker, Form, Modal, Row, Upload, Input } from "antd";
 import { getBase64 } from "../userPage/EditUserPage/Services";
 import notificationLogic from "../../components/Notifications/Notification";
 import { addDocument } from "../../api/regionsApi";
@@ -45,7 +45,10 @@ const AddDocumentModal = (props: Props) => {
       if (checkFile(info.file.size, info.file.name)) {
         getBase64(info.file, (base64: string) => {
           props.setDocument({ ...props.document, blobName: base64 });
-          setFileName(info.file.name);
+
+          let splittedFileName = info.file.name.split('.');
+          let extension: string = splittedFileName[splittedFileName.length - 1];
+          setFileName(fileName + '.' + extension);
         });
         notificationLogic("success", fileIsUpload());
         setDisabled(false);
@@ -117,6 +120,9 @@ const AddDocumentModal = (props: Props) => {
     >
       <Form name="basic" onFinish={handleSubmit} form={form}>
         <div className="formFields">
+          <Form.Item name="documentName" label="Назва документу">
+            <Input placeholder="Введіть назву документу" onChange={e => setFileName(e.target.value)}/>
+          </Form.Item>
           <Form.Item name="datepicker" label="Дата документу">
             <DatePicker format="DD.MM.YYYY" className="formSelect" />
           </Form.Item>
