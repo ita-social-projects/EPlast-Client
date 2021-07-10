@@ -10,6 +10,7 @@
     width: 60%;
     margin-left: 20px;
 }
+
 .wrapperGeneralInfo {
     padding: 20px 0px;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
@@ -27,49 +28,24 @@
     flex-direction: column;
 }
 
-.wrapperScrollDegree{
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-    padding: 20px 0px;
-    box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
-    width: 100%;
-}
-
-.wrapperPlastDegree{
-    min-width: 650px;
-    height: auto;
-    min-height: 200px;
-    max-height: 700px;
-    display: flex;
-    flex-direction: column;
-    align-items: normal;
-    text-align: center;
-    justify-content: center;
-}
-
 .wrapperGeneralInfo:hover,
-.wrapperScrollDegree:hover,
 .avatarWrapper:hover {
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
 .wrapperGeneralInfo,
-.wrapperScrollDegree,
 .avatarWrapper {
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
-.wrapperGeneralInfo,
-.wrapperScrollDegree {
+.wrapperGeneralInfo {
     margin: 0px 0px 20px 20px;
     display: flex;
     justify-content: center;
-
 }
 
-.avatarWrapper{
+.avatarWrapper {
     width: calc(45% - 30px) !important;
     height: auto;
     display: flex;
@@ -82,33 +58,30 @@
     padding-top: 20px;
 }
 
-@media (min-width: 875px) and (max-width: 1516px){
-    .date::after{
+@media (min-width: 875px) and (max-width: 1516px) {
+    .date::after {
         content: "\A";
         white-space: pre;
     }
 }
 
-@media (max-width: 875px){
-    .textListItem
-    {
+@media (max-width: 875px) {
+    .textListItem {
         padding: 6px 0px;
         clear: left;
     }
 }
 
-
-@media (min-width: 769px) and (max-width: 1048px){
+@media (min-width: 769px) and (max-width: 1048px) {
     .wrapperGeneralInfo,
     .wrapperScrollDegree {
         margin: 0px 0px 20px 10px;
     }
-    .avatarWrapper{
+    .avatarWrapper {
         width:  calc(50% - 30px) !important;
         padding-top:5px;
         padding-bottom: 5px;
     }
-    
     .textBlock {
         padding: 10px 10px 10px;
     }
@@ -121,13 +94,13 @@
     .wrapper {
         width: 99%;
     }
-    .buttonChange{
+    .buttonChange {
         width: 170px !important;
     }
 }
-@media (max-width: 768px) {
 
-    .avatarWrapper{
+@media (max-width: 768px) {
+    .avatarWrapper {
         width: 100% !important;
         padding-top:5px;
         padding-bottom: 5px;
@@ -135,38 +108,30 @@
     .wrapper {
         flex-direction: column;
     }
-    
     .wrapperCol,
-    .wrapperGeneralInfo,
-    .wrapperScrollDegree {
+    .wrapperGeneralInfo {
         width: 100%;
         margin: 0;
     }
-    .wrapperGeneralInfo,
-    .wrapperScrollDegree {
+    .wrapperGeneralInfo {
         margin: 10px 0;
     }  
-    .buttonChange{
+    .buttonChange {
         width: 170px !important;
     }
 }
 
-.textList
-{
+.textList {
     list-style-type: none;
     margin: 0 auto;
     padding: 0;
-    
 }
 
-.textListItem
-{
+.textListItem {
     font-size : 16px;
     padding: 4px 10px;
     float: left;
 }
-
-
 
 .buttonChange {
     margin-top: 10px;
@@ -194,7 +159,7 @@
     margin-bottom: 5px;
 }
 
-#line{
+#line {
     margin-bottom: 125px;
 }
 
@@ -216,7 +181,7 @@
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
-.buttons{
+.buttons {
     display : flex;
     justify-content: center;
 }
@@ -233,12 +198,12 @@
     align-items: center;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
-#subcribeButton{
+#subcribeButton {
     width: auto;
 }
 
 .button:hover,
-.buttonCansel:hover {
+.buttonCancel:hover {
     border: none;
     outline: none;
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
@@ -246,7 +211,7 @@
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
-.buttonCansel {
+.buttonCancel {
     width: auto;
     margin-top: 10px;
     background: #3C5438;
@@ -262,14 +227,12 @@
 }
 
 .textFieldsMain,
-.textFieldsOthers
-{
+.textFieldsOthers {
     margin-left : auto;
     margin-right : auto;
 }
 
-.textGeneralInfo
-{
+.textGeneralInfo {
     text-align : left;
     margin-left : 0px;
     margin-right: auto;
@@ -277,10 +240,11 @@
     font-size : 16px;
 }
 
-.textFieldsMain{
-    font-size : 18px;
+.textFieldsMain {
+    font-size : 18px; 
 }
-.textFieldsOthers{
+
+.textFieldsOthers {
     font-size : 16px;
 }
 
@@ -289,7 +253,7 @@
     align-self: center;
 }
 
-.icon{
+.icon {
     display: flex;
     justify-content: center;
 }
