@@ -183,7 +183,7 @@ const GoverningBody = () => {
   ) : governingBody.id !== 0 ? (
     <Layout.Content className="governingBodyProfile">
       <Row gutter={[0, 15]}>
-        <Col span={8} offset={1}></Col>
+        <Col span={8} offset={1} />
       </Row>
       <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
@@ -338,7 +338,7 @@ const GoverningBody = () => {
                       }
                     >
                       {sectorsPhotosLoading ? (
-                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        <Skeleton.Avatar active size={64} />
                       ) : (
                         <Avatar size={64} src={sector.logo === null ? undefined : sector.logo} />
                       )}
@@ -351,11 +351,14 @@ const GoverningBody = () => {
               )}
             </Row>
             <div className="governingBodyMoreButton">
-              <PlusSquareFilled
+              {userAccesses["AddGBSector"] ? (
+                <PlusSquareFilled
                 type="primary"
                 className="addReportIcon"
                 onClick={() => history.push(id + '/sectors/new')}
-              ></PlusSquareFilled>
+                />
+                ) : null
+              }
               <Button
                 type="primary"
                 className="governingBodyInfoButton"
@@ -395,7 +398,7 @@ const GoverningBody = () => {
                       }
                     >
                       {adminsPhotosLoading ? (
-                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        <Skeleton.Avatar active size={64} />
                       ) : (
                           <Avatar size={64} src={admin.user.imagePath} />
                         )}
@@ -503,7 +506,7 @@ const GoverningBody = () => {
         governingBody={governingBody}
         setVisibleDrawer={setVisibleDrawer}
         visibleDrawer={visibleDrawer}
-      ></GoverningBodyDetailDrawer>
+      />
       <Modal
         title="Додати діловода"
         visible={visible}
@@ -527,7 +530,7 @@ const GoverningBody = () => {
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
           onAdd={onAdd}
-        ></AddDocumentModal>
+        />
       ) : null}
     </Layout.Content>
   ) : (
