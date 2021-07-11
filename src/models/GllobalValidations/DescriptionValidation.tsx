@@ -89,7 +89,7 @@ import{
     [
         {
             validator: (_ : object, value : string) => 
-            String(value).length == 0
+            value == undefined || String(value).length == 0
                 ? Promise.resolve()
                 : String(value).length == 5
                     ? Promise.resolve()
