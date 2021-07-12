@@ -31,8 +31,13 @@ const AddDocumentModal = (props: Props) => {
   const [form] = Form.useForm();
   const [fileName, setFileName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [disabled, setDisabled] = useState(true);
-  const [buttonLoading, setButtonLoading] = useState(false);
+  const [disabled, setDisabled] = useState<boolean>(true);
+  const [buttonLoading, setButtonLoading] = useState<boolean>(false);
+  const [fileUploaded, setFileUploaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    setFileUploaded(false);
+  }, [props.visibleModal]);
 
   const normFile = (e: { fileList: any }) => {
     if (Array.isArray(e)) {
@@ -53,7 +58,9 @@ const AddDocumentModal = (props: Props) => {
     } else {
       let extension: string = getExtension(fileName);
       setFileName(e.target.value + extension);
-      setDisabled(false);
+      if (fileUploaded) {
+        setDisabled(false);
+      }
     }
   }
 
@@ -75,6 +82,8 @@ const AddDocumentModal = (props: Props) => {
             setFileName(info.file.name);
             setDisabled(true);
           }
+
+          setFileUploaded(true);
         });
         notificationLogic("success", fileIsUpload());
         setDisabled(false);
@@ -151,7 +160,7 @@ const AddDocumentModal = (props: Props) => {
             label="Назва документу"
             rules={[
               {required: true, message: emptyInput()},
-              {max: 255, message: maxLength(255)}]}
+              {max: 50, message: maxLength(50)}]}
           >
             <Input placeholder="Введіть назву документу" onChange={onFileNameChange}/>
           </Form.Item>
@@ -188,6 +197,7 @@ const AddDocumentModal = (props: Props) => {
                 onClick={() => {
                   removeFile();
                   notificationLogic("success", successfulDeleteAction("Файл"));
+                  setFileUploaded(false);
                 }}
               >
                 Видалити файл
