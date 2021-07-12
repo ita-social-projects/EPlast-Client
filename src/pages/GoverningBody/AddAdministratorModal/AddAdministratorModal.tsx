@@ -175,7 +175,7 @@ const AddAdministratorModal = (props: Props) => {
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}
             onChange={getGoverningBodyHead}
-          ></AutoComplete>
+          />
         </Form.Item>
         <Row>
           <Col span={11}>
