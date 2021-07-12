@@ -76,6 +76,8 @@ const City = () => {
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
+  const [reload, setReload] = useState<boolean>(false);
+  
   const changeApproveStatus = async (memberId: number) => {
   const member = await toggleMemberStatus(memberId);
     moment.locale("uk-ua");
@@ -164,6 +166,7 @@ const City = () => {
       setDocuments([...documents, newDocument]); 
     }
     notificationLogic("success", fileIsAdded());
+    setReload(!reload);
   };
 
   function seeDeleteModal() {
@@ -331,7 +334,7 @@ const City = () => {
       PsevdonimCreator.setPseudonimLocation(`cities/${city.name}`, `cities/${id}`);
     }
     getCity();
-  }, [])
+  }, [reload])
 
   return loading ? (
     <Spinner />

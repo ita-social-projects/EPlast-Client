@@ -717,7 +717,7 @@ boolean
           onCancel={handleOk}
           footer={null}
         >
-          <CitiesRedirectForm onAdd={handleOk} />
+          <CitiesRedirectForm regionId = {region.id} onAdd={handleOk} />
         </Modal>
 
         <RegionDetailDrawer
