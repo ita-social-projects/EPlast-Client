@@ -202,6 +202,7 @@ const AddDocumentModal = (props: Props) => {
                 onClick={() => {
                   removeFile();
                   notificationLogic("success", successfulDeleteAction("Файл"));
+                  setFileUploaded(false);
                 }}
               >
                 Видалити файл
