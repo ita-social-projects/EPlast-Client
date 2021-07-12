@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../Regions/AddDocumentModal.less";
 import { Button, Col, DatePicker, Form, Modal, Row, Upload, Input } from "antd";
 import { getBase64 } from "../userPage/EditUserPage/Services";
@@ -35,6 +35,8 @@ const AddDocumentModal = (props: Props) => {
   const [buttonLoading, setButtonLoading] = useState<boolean>(false);
   const [fileUploaded, setFileUploaded] = useState<boolean>(false);
 
+  const maxNameLength: number = 50;
+
   useEffect(() => {
     setFileUploaded(false);
   }, [props.visibleModal]);
@@ -53,11 +55,14 @@ const AddDocumentModal = (props: Props) => {
   }
 
   const onFileNameChange = (e: any) => {
+    let input = e.target.value.slice(0, maxNameLength);
+
     if (fileName == "") {
-      setFileName(e.target.value);
+      setFileName(input);
     } else {
       let extension: string = getExtension(fileName);
-      setFileName(e.target.value + extension);
+      setFileName(input + extension);
+
       if (fileUploaded) {
         setDisabled(false);
       }
@@ -160,7 +165,7 @@ const AddDocumentModal = (props: Props) => {
             label="Назва документу"
             rules={[
               {required: true, message: emptyInput()},
-              {max: 50, message: maxLength(50)}]}
+              {max: maxNameLength, message: maxLength(maxNameLength)}]}
           >
             <Input placeholder="Введіть назву документу" onChange={onFileNameChange}/>
           </Form.Item>
@@ -187,7 +192,7 @@ const AddDocumentModal = (props: Props) => {
             <p className="ant-upload-hint">
               Клікніть або перетягніть файл для завантаження
             </p>
-            {props.document.blobName !== null && <div>{fileName}</div>}
+            {props.document.blobName !== null && <div>{fileUploaded ? fileName : null}</div>}
           </Upload.Dragger>
 
           {props.document.blobName ? (
@@ -197,7 +202,6 @@ const AddDocumentModal = (props: Props) => {
                 onClick={() => {
                   removeFile();
                   notificationLogic("success", successfulDeleteAction("Файл"));
-                  setFileUploaded(false);
                 }}
               >
                 Видалити файл
