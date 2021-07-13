@@ -147,14 +147,6 @@ export const getDocumentTypes = async () => {
   });
 };
 
-export const getusersPreviousAdministrations = async (UserId: string) => {
-  return api
-    .get(`GoverningBodies/GetUserPreviousAdmins/${UserId}`)
-    .catch((error) => {
-      throw new Error(error);
-    });
-};
-
 export const getUserAccess = async (userId: string) => {
   return await api.get(`GoverningBodies/GetUserAccesses/${userId}`, userId)
   .catch( error => {
@@ -165,8 +157,4 @@ export const getUserAccess = async (userId: string) => {
 
 export const getUsersAdministrations = async (UserId: string) => {
   return api.get(`GoverningBodies/GetUserAdmins/${UserId}`);
-};
-
-export const getGoverningBodies = async () => {
-  return api.get(`GoverningBodies/GoverningBodies`);
 };

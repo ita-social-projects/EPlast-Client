@@ -54,6 +54,8 @@ const UsersTable = () => {
   const [clubs, setClubs] = useState<any>();
   const [degrees, setDegrees] = useState<any>();
   const [searchData, setSearchData] = useState<string>("");
+  const [sortKey, setSortKey]=useState<number>(1);
+  const [filter, setFilter]=useState<string>("");
   const [dynamicCities, setDynamicCities] = useState<any[]>([]);
   const [dynamicRegions, setDynamicRegions] = useState<any[]>([]);
   const [dynamicClubs, setDynamicClubs] = useState<any[]>([]);
@@ -71,7 +73,7 @@ const UsersTable = () => {
   
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, updatedUser, searchData, userArhive, currentTabName]);
+  }, [page, pageSize, updatedUser, searchData, sortKey, filter, userArhive, currentTabName]);
 
   useEffect(() => {
     fetchCities();
@@ -162,6 +164,8 @@ const UsersTable = () => {
         Clubs: dynamicClubs,
         Degrees: dynamicDegrees,
         Tab: currentTabName,
+        SortKey:sortKey,
+        FilterRoles:filter,
         SearchData: searchData
       });
       let jwt = AuthStore.getToken() as string;
@@ -196,46 +200,46 @@ const UsersTable = () => {
 
   const onSelect = (selectedKeys: any, e: any) => {
     if (e.value == 0) {
-      setDynamicRegions([...dynamicRegions, e.title]);
+      setDynamicRegions([-10]);
     } else if (e.value == 1) {
-      setDynamicCities([...dynamicCities, e.title]);
+      setDynamicCities([-1]);
     } else if (e.value == 2) {
-      setDynamicClubs([...dynamicClubs, e.title]);
+      setDynamicClubs([-2]);
     } else if (e.value == 3) {
-      setDynamicDegrees([...dynamicDegrees, e.title]);
+      setDynamicDegrees([-3]);
     } else if (e.value.startsWith("value1")) {
-      setDynamicCities([...dynamicCities, e.title]);
+      setDynamicCities([...dynamicCities, e.value.split(' ')[1] as number]);
     } else if (e.value.startsWith("value2")) {
-      setDynamicRegions([...dynamicRegions, e.title]);
+      setDynamicRegions([...dynamicRegions, e.value.split(' ')[1] as number]);
     } else if (e.value.startsWith("value3")) {
-      setDynamicDegrees([...dynamicDegrees, e.title]);
+      setDynamicDegrees([...dynamicDegrees, e.value.split(' ')[1] as number]);
     } else if (e.value.startsWith("value4")) {
-      setDynamicClubs([...dynamicClubs, e.title]);
+      setDynamicClubs([...dynamicClubs, e.value.split(' ')[1] as number]);
     }
   };
   const ondeSelect = (selectedKeys: any, e: any) => {
     if (e.value == 0) {
-      setDynamicRegions((prev) => prev.filter((item) => item !== e.title));
+      setDynamicRegions((prev) => prev.filter((item) => item !== -10));
     } else if (e.value == 1) {
-      setDynamicCities((prev) => prev.filter((item) => item !== e.title));
+      setDynamicCities((prev) => prev.filter((item) => item !== -1));
     } else if (e.value == 2) {
-      setDynamicClubs((prev) => prev.filter((item) => item !== e.title));
+      setDynamicClubs((prev) => prev.filter((item) => item !== -2));
     } else if (e.value == 3) {
-      setDynamicDegrees((prev) => prev.filter((item) => item !== e.title));
+      setDynamicDegrees((prev) => prev.filter((item) => item !== -3));
     } else if (e.value.includes("value1")) {
-      setDynamicCities((prev) => prev.filter((item) => item !== e.title));
+      setDynamicCities((prev) => prev.filter((item) => item !== e.value.split(' ')[1] as number));
     } else if (e.value.includes("value2")) {
-      setDynamicRegions((prev) => prev.filter((item) => item !== e.title));
+      setDynamicRegions((prev) => prev.filter((item) => item !== e.value.split(' ')[1] as number));
     } else if (e.value.includes("value3")) {
-      setDynamicDegrees((prev) => prev.filter((item) => item !== e.title));
+      setDynamicDegrees((prev) => prev.filter((item) => e.value.split(' ')[1] as number));
     } else if (e.value.includes("value4")) {
-      setDynamicClubs((prev) => prev.filter((item) => item !== e.title));
+      setDynamicClubs((prev) => prev.filter((item) => e.value.split(' ')[1] as number));
     }
   };
   const getDynamicCities = () => {
     var results = [];
     for (let x = 0; x < cities?.length; x++) {
-      results.push(<TreeNode value={"value1" + x} title={cities[x].label} />);
+      results.push(<TreeNode value={"value1 " + cities[x].value} title={cities[x].label} />);
     }
     return results;
   };
@@ -243,14 +247,14 @@ const UsersTable = () => {
     var results = [];
 
     for (let x = 0; x < regions?.length; x++) {
-      results.push(<TreeNode value={"value2" + x} title={regions[x].label} />);
+      results.push(<TreeNode value={"value2 " + regions[x].value} title={regions[x].label} />);
     }
     return results;
   };
   const getDynamicDegrees = () => {
     var results = [];
     for (let x = 0; x < degrees?.length; x++) {
-      results.push(<TreeNode value={"value3" + x} title={degrees[x].label} />);
+      results.push(<TreeNode value={"value3 " + degrees[x].value} title={degrees[x].label} />);
     }
     return results;
   };
@@ -258,7 +262,7 @@ const UsersTable = () => {
     var results = [];
 
     for (let x = 0; x < clubs?.length; x++) {
-      results.push(<TreeNode value={"value4" + x} title={clubs[x].label} />);
+      results.push(<TreeNode value={"value4 " + clubs[x].value} title={clubs[x].label} />);
     }
     return results;
   };
@@ -313,6 +317,7 @@ const UsersTable = () => {
           Clubs: dynamicClubs,
           Degrees: dynamicDegrees,
           Tab: currentTabName,
+          SortKey:sortKey,
           SearchData: searchData
         });
         setUsers(response.data.users);
@@ -426,9 +431,7 @@ const UsersTable = () => {
 
         </div>
       </div>
-      {loading === false ? (
-        <Spinner />
-      ) : (
+      
         <Card
           style={{ width: "100%" }}
           tabList={tabList}
@@ -438,11 +441,18 @@ const UsersTable = () => {
           }}
         >
           <Table
+          loading={!loading}
             className={classes.table}
             bordered
             rowKey="id"
             scroll={{ x: 1450 }}
-            columns={ColumnsForUserTable}
+            columns={ColumnsForUserTable(
+              {
+                sortKey: sortKey,
+                setSortKey: setSortKey,
+                setFilter: setFilter,
+                filterRole: filter,
+              })}
             dataSource={users}
             onRow={(record) => {
               return {
@@ -483,7 +493,6 @@ const UsersTable = () => {
             }}
           />
         </Card>
-      )}
       <ClickAwayListener onClickAway={handleClickAway}>
         <DropDownUserTable
           showDropdown={showDropdown}

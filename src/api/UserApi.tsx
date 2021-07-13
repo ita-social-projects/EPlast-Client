@@ -44,12 +44,12 @@ const approveUser = async (userId: string, isClubAdmin: boolean, isCityAdmin: bo
     return response;
 };
 
-const getActiveUserRoles = () => {
+const getActiveUserRoles = ():string[] => {
     let jwt = AuthStore.getToken() as string;
     let decodedJwt = jwt_decode(jwt) as any;
-    let roles = decodedJwt[
+    let roles = [].concat(decodedJwt[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-    ] as string[];
+    ]);
 
     return roles;
 };
@@ -58,7 +58,7 @@ const getActiveUserId = () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt_decode(token);
 
-    return user.nameid as string;;
+    return user.nameid as string;
 };
 
 const getActiveUserProfile = async () => {

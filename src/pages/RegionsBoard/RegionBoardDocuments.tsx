@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Spin } from "antd";
+import {Avatar, Button, Card, Layout, Modal} from "antd";
 import {
   FileTextOutlined,
   CloseOutlined,
@@ -58,9 +58,15 @@ const RegionBoardDocuments = () => {
     await getFile(fileBlob, fileName);
   };
 
-  const removeDocumentById = async (documentId: number) => {
-    await removeDocument(documentId);
-    setDocuments(documents.filter((d) => d.id !== documentId));
+  const onClickRemoveDocument = async (document: any) => {
+    Modal.confirm({
+      title: `Видалити документ ${document.fileName.split('.')[0]}?`,
+      onCancel() { },
+      async onOk() {
+        await removeDocument(document.id);
+        setDocuments(documents.filter((d) => d.id !== document.id));
+      }
+    });
   };
 
   useEffect(() => {
@@ -99,7 +105,7 @@ const RegionBoardDocuments = () => {
                         />,
                         <CloseOutlined
                           key="close"
-                          onClick={() => removeDocumentById(document.id)}
+                          onClick={() => onClickRemoveDocument(document)}
                         />,
                       ]
                     : [

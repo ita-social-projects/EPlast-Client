@@ -54,8 +54,7 @@ const EventUser = () => {
     const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
     const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
     const [eventId, setEventId] = useState<number>();
-    const [canCreate] = useState(!((roles == [Roles.Supporter] || roles == [Roles.RegisteredUser])
-        || (roles.length === 2 && roles.includes(Roles.Supporter) && roles.includes(Roles.RegisteredUser))));
+    const [canCreate] = useState(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser).length!=0);
     const [userToken, setUserToken] = useState<any>([
         {
             nameid: "",
@@ -427,7 +426,7 @@ const EventUser = () => {
                             userToken.nameid === userId && (
                                 <div>
                                     <h2>Ви ще не запланували жодної події</h2>
-                                    {roles != [Roles.RegisteredUser] && <Button
+                                    {roles.filter(r => r != Roles.RegisteredUser).length!=0 && <Button
                                         type="primary"
                                         className={classes.buttonInside}
                                         onClick={() => history.push("/events/types")}>

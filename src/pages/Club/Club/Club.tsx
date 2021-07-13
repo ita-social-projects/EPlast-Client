@@ -3,7 +3,7 @@ import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip, Badge } from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined, RollbackOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getClubById, getLogo, removeClub, toggleMemberStatus } from "../../../api/clubsApi";
+import { addFollower, getClubById, getLogo, removeClub, toggleMemberStatus, clubNameOfApprovedMember } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
 import ClubDefaultLogo from "../../../assets/images/default_club_image.jpg";
@@ -20,6 +20,7 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
+import { Roles } from "../../../models/Roles/Roles";
 
 
 const Club = () => {
@@ -43,9 +44,12 @@ const Club = () => {
   const [membersCount, setMembersCount] = useState<number>();
   const [adminsCount, setAdminsCount] = useState<number>();
   const [followersCount, setFollowersCount] = useState<number>();
+  const [documentsCount, setDocumentsCount] = useState<number>();
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [clubLogoLoading, setClubLogoLoading] = useState<boolean>(false);
   const [document, setDocument] = useState<ClubDocument>(new ClubDocument());
+  const [activeUserClub, setActiveUserClub] = useState<string>();
 
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
@@ -140,9 +144,9 @@ const Club = () => {
 
   function seeJoinModal() {
     return Modal.confirm({
-      title: "Ви впевнені, що хочете долучитися до даного куреня?",
+      title: "Ви впевнені, що хочете доєднатися до даного куреня?",
       icon: <ExclamationCircleOutlined />,
-      okText: 'Так, долучитися',
+      okText: 'Так, доєднатися',
       okType: 'primary',
       cancelText: 'Скасувати',
       maskClosable: true,
@@ -155,7 +159,8 @@ const Club = () => {
 
     try {
       const response = await getClubById(+id);
-
+      const responce1 = await clubNameOfApprovedMember(userApi.getActiveUserId());
+      setActiveUserClub(responce1.data);
       setPhotosLoading(true);
       setClubLogoLoading(true);
       const admins = [...response.data.administration, response.data.head, response.data.headDeputy]
@@ -168,8 +173,9 @@ const Club = () => {
 
       ], response.data.logo);
 
-      setClub(response.data);
+      setActiveUserRoles(userApi.getActiveUserRoles);
       setAdmins(admins);
+      setClub(response.data);
       setMembers(response.data.members);
       setFollowers(response.data.followers);
       setDocuments(response.data.documents);
@@ -179,6 +185,7 @@ const Club = () => {
       setMembersCount(response.data.memberCount);
       setAdminsCount(response.data.administrationCount);
       setFollowersCount(response.data.followerCount)
+      setDocumentsCount(response.data.documentsCount);
     } finally {
       setLoading(false);
     }
@@ -511,12 +518,28 @@ const Club = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="clubCard">
-            <Title level={4}>Документообіг куреня</Title>
+            <Title level={4}>Документообіг куреня <a onClick={() => 
+            canEdit || (!activeUserRoles.includes(Roles.RegisteredUser)  
+            && club.name == activeUserClub) ||
+            (activeUserRoles.includes(Roles.CityHead)|| activeUserRoles.includes(Roles.CityHeadDeputy))
+            ||
+            (activeUserRoles.includes(Roles.KurinHead)|| activeUserRoles.includes(Roles.KurinHeadDeputy))
+              ?
+              history.push(`/clubs/documents/${club.id}`)
+              : undefined
+              }>
+              {documentsCount !== 0 ?
+                <Badge
+                  count={documentsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a></Title>
             <Row className="clubItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
                 documents.map((document) => (
                   <Col
-                    className="clubMemberItem"
+                    className="clubDocumentItem"
                     xs={12}
                     sm={8}
                     key={document.id}
@@ -534,19 +557,27 @@ const Club = () => {
                 )}
             </Row>
             <div className="clubMoreButton">
-              <Button
+            {canEdit || (!activeUserRoles.includes(Roles.RegisteredUser) 
+              && club.name == activeUserClub) ||
+              (activeUserRoles.includes(Roles.CityHead)|| activeUserRoles.includes(Roles.CityHeadDeputy))
+              ||
+              (activeUserRoles.includes(Roles.KurinHead)|| activeUserRoles.includes(Roles.KurinHeadDeputy))
+                ? (
+             <Button
                 type="primary"
                 className="clubInfoButton"
                 onClick={() => history.push(`/clubs/documents/${club.id}`)}
               >
                 Більше
               </Button>
-              {canEdit ? (
+                ): null}
+                {(activeUserRoles.includes(Roles.Admin)) || (activeUserRoles.includes(Roles.KurinHead)|| activeUserRoles.includes(Roles.KurinHeadDeputy)
+                && club.name == activeUserClub)? (
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
                 />
-              ) : null}
+                 ):null}
             </div>
           </Card>
         </Col>

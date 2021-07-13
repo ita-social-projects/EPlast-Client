@@ -2,6 +2,7 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
+    height: 100%;
 }
 
 .wrapperCol {
@@ -125,7 +126,7 @@
 }
 
 .button:hover,
-.buttonCansel:hover {
+.buttonCancel:hover {
     border: none;
     outline: none;
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
@@ -133,7 +134,7 @@
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
-.buttonCansel {
+.buttonCancel {
     width: auto;
     margin-top: 10px;
     background: #3C5438;
@@ -159,7 +160,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding-top: 20px;
+    justify-content: center;
 }
 
 .wrapper2:hover,

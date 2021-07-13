@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Skeleton, Spin} from 'antd';
-import {SettingOutlined, CloseOutlined, RollbackOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Layout, Modal, Skeleton, Spin} from 'antd';
+import {SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import { getAllAdmins, removeAdministrator} from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
@@ -41,7 +41,20 @@ const CityAdministration = () => {
         setActiveUserRoles(userApi.getActiveUserRoles());
       setLoading(false);
     };
-
+    
+    function seeDeleteModal(admin: CityAdmin) {
+      return Modal.confirm({
+        title: "Ви впевнені, що хочете видалити даного користувача із Проводу?",
+        icon: <ExclamationCircleOutlined />,
+        okText: "Так, Видалити",
+        okType: "primary",
+        cancelText: "Скасувати",
+        maskClosable: true,
+        onOk() {
+           removeAdmin(admin);
+        },
+      });
+    }
     const removeAdmin = async (admin: CityAdmin) => {
       await removeAdministrator(admin.id);
       setAdministration(administration.filter((u) => u.id !== admin.id));
@@ -99,11 +112,11 @@ const CityAdministration = () => {
                   title={`${member.adminType.adminTypeName}`}
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit && (activeUserRoles.includes(Roles.Admin) || activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.CityHead)) 
-                      && (!activeUserRoles.includes(Roles.CityHeadDeputy) || member.adminType.adminTypeName !== Roles.CityHead)
+                    canEdit || (activeUserRoles.includes(Roles.CityHead)|| activeUserRoles.includes(Roles.CityHeadDeputy)) 
+                      && (!activeUserRoles.includes(Roles.CityHead) || member.adminType.adminTypeName !== Roles.CityHeadDeputy)
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
-                          <CloseOutlined onClick={() => removeAdmin(member)} />,
+                          <CloseOutlined onClick={() => seeDeleteModal(member)} />,
                         ]
                       : undefined
                   }

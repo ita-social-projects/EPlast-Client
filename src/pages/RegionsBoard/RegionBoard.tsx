@@ -211,7 +211,6 @@ const RegionBoard = () => {
     getRegion();
   }, []);
 
-  console.log(userAccesses);
 
   return loading ? (
     <Spinner />
@@ -465,7 +464,7 @@ const RegionBoard = () => {
               {documents.length !== 0 ? (
                 documents.map((document) => (
                   <Col
-                    className="cityMemberItem"
+                    className="cityDocumentItem"
                     xs={12}
                     sm={8}
                     key={document.id}

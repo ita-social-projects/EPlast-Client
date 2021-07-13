@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ReactDOM from "react-dom";
 import {
   Form,
   DatePicker,
@@ -121,7 +122,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     }
   };
   const checkFile = (fileName: string): boolean => {
-    const extension = fileName.split(".").reverse()[0];
+    const extension = fileName.split(".").reverse()[0].toLowerCase();
     const isCorrectExtension =
       extension.indexOf("pdf") !== -1 ||
       extension.indexOf("jpg") !== -1 ||
@@ -175,7 +176,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     setSubmitLoading(false);
     await notifyMentionedUsers(values.description, values.name);
   };
-
+ 
   const [data, setData] = useState<DecisionOnCreateData>({
     governingBodies: Array<GoverningBody>(),
     decisionStatusTypeListItems: Array<decisionStatusType>(),
@@ -190,7 +191,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     fetchData();
   }, []);
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form name="basic" onFinish={handleSubmit} form={form}  id='area' style={{position: 'relative'}}>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
@@ -215,16 +216,21 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
-          <Form.Item
+          <Form.Item          
             className={formclasses.formField}
             label="Рішення органу"
             labelCol={{ span: 24 }}
             name="governingBody"
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[{ 
+              required: true, 
+              message: emptyInput() 
+            }]}
           >
             <Select
               placeholder="Оберіть орган"
-              className={formclasses.selectField}
+              className={formclasses.selectField}     
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              showSearch
             >
               {data?.governingBodies.map((g) => (
                 <Select.Option key={g.id} value={JSON.stringify(g)}>
@@ -266,6 +272,8 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             <DatePicker
               format="DD.MM.YYYY"
               className={formclasses.selectField}
+              getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
+              popupStyle={{position: 'absolute'}}
             />
           </Form.Item>
         </Col>
@@ -333,7 +341,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
               {fileData.FileAsBase64 !== null && (
                 <div>
                   <Button
-                    className={formclasses.cardButton}
+                    className={formclasses.cardButtonDocuments}
                     onClick={() => {
                       setFileData({ FileAsBase64: null, FileName: null });
                       notificationLogic("success", successfulDeleteAction("Файл"));
@@ -357,7 +365,10 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             name="decisionStatusType"
             rules={[{ required: true, message: emptyInput() }]}
           >
-            <Select className={formclasses.selectField}>
+            <Select 
+              className={formclasses.selectField}
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+            >
               {data?.decisionStatusTypeListItems.map((dst) => (
                 <Select.Option key={dst.value} value={JSON.stringify(dst)}>
                   {dst.text}
