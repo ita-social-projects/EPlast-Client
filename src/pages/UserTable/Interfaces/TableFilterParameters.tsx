@@ -6,6 +6,8 @@ interface TableFilterParameters {
     Clubs?: Array<string>;
     Degrees?: Array<string>;
     Tab: string;
+    SortKey: number;
+    FilterRoles?: string;
     SearchData: string
 }
 

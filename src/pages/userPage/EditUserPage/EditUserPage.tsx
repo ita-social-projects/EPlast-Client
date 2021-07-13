@@ -252,7 +252,7 @@ export default function () {
   };
   
   const checkFile = (size: number, fileName: string) => {
-    const extension = fileName.split(".").reverse()[0];
+    const extension = fileName.split(".").reverse()[0].toLowerCase();
     const isCorrectExtension =
       extension.indexOf("jpeg") !== -1 ||
       extension.indexOf("jpg") !== -1 ||
@@ -472,9 +472,7 @@ export default function () {
       .put(newUserProfile)
       .then(() => {
         notificationLogic("success", successfulEditAction("Дані"));
-        history.replace(`/userpage/main/${newUserProfile.user.id}`);
-        window.location.reload();
-        
+        history.goBack();        
       })
       .catch(() => {
         notificationLogic("error", tryAgain);
@@ -807,9 +805,14 @@ export default function () {
               <Input className={styles.dataInput}/>            
             </Form.Item>
           </div>
-          <Button className={styles.confirmBtn} htmlType="submit">
-            Підтвердити
-          </Button>
+          <div className="buttons">
+            <Button className={styles.confirmBtn} htmlType="submit">
+              Підтвердити
+            </Button>
+            <Button className={styles.confirmBtn} htmlType="submit" onClick={() => history.push(`/userpage/main/${userId}`)}>
+              Відмінити
+            </Button>
+          </div>
         </div>
       </Form>
     </div>

@@ -10,7 +10,6 @@ import {
   Col,
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
-
 import documentsApi, {
   TypePostParser
 } from "../../api/documentsApi";
@@ -77,7 +76,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
     }
   };
   const checkFile = (fileName: string): boolean => {
-    const extension = fileName.split(".").reverse()[0];
+    const extension = fileName.split(".").reverse()[0].toLowerCase();
     const isCorrectExtension =
       extension.indexOf("pdf") !== -1 ||
       extension.indexOf("jpg") !== -1 ||
@@ -141,7 +140,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
   }, []);
 
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
@@ -151,7 +150,10 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             name="methodicDocumentType"
             rules={[{ required: true, message: emptyInput() }]}
           >
-            <Select className={formclasses.selectField}>
+            <Select 
+              className={formclasses.selectField}
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+            >
               {data?.methodicDocumentTypesItems.map((dst) => (
                 <Select.Option key={dst.value} value={JSON.stringify(dst)}>
                   {dst.text}
@@ -196,6 +198,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
               showSearch
               placeholder="Оберіть орган"
               className={formclasses.selectField}
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
               {data?.governingBodies.map((g) => (
                 <Select.Option key={g.id} value={JSON.stringify(g)}>
@@ -218,6 +221,8 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             <DatePicker
               format="DD.MM.YYYY"
               className={formclasses.selectField}
+              getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
+              popupStyle={{position: 'absolute'}}
             />
           </Form.Item>
         </Col>
@@ -271,7 +276,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
               {fileData.FileAsBase64 !== null && (
                 <div>
                   <Button
-                    className={formclasses.cardButton}
+                    className={formclasses.cardButtonDocuments}
                     onClick={() => {
                       setFileData({ FileAsBase64: null, FileName: null });
                       notificationLogic("success", successfulDeleteAction("Файл"));

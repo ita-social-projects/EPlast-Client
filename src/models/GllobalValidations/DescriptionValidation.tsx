@@ -89,11 +89,13 @@ import{
     [
         {
             validator: (_ : object, value : string) => 
-            String(value).length == 5
+            value == undefined || String(value).length == 0
                 ? Promise.resolve()
-                : Promise.reject(
-                    `Довжина поштового індексу - 5 символів!`
-                    )
+                : String(value).length == 5
+                    ? Promise.resolve()
+                    : Promise.reject(
+                        "Довжина поштового індексу - 5 символів!"
+                        )
         },
         {
             validator: (_ : object, value : string) => 

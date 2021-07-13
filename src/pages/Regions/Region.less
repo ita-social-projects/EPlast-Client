@@ -127,18 +127,6 @@ h4.ant-typography {
                     color: #3c5438;
                 }
 
-                .documentIcon {
-                    font-size: 60px;
-                }
-
-                .documentText {
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    display: -webkit-box;
-                    -webkit-line-clamp: 3;
-                    -webkit-box-orient: vertical;
-                }
-
                 .approveIcon {
                     color: #3c5438;
                     position: absolute;
@@ -155,6 +143,22 @@ h4.ant-typography {
 
             .cityMemberItem :hover {
                 text-decoration: underline;
+            }
+
+            .cityDocumentItem {
+                cursor: pointer;
+
+                .documentIcon {
+                    font-size: 60px;
+                }
+
+                .documentText {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 3;
+                    -webkit-box-orient: vertical;
+                }
             }
 
             .userName {

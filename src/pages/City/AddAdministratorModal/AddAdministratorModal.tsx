@@ -135,7 +135,7 @@ const AddAdministratorModal = (props: Props) => {
   };
 
   useEffect(() => {
-    if (!props.visibleModal) {
+    if (props.visibleModal) {
       form.resetFields();
     }
     const userRoles = userApi.getActiveUserRoles();

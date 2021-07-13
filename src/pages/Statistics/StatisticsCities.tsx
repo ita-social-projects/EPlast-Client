@@ -74,6 +74,7 @@ const StatisticsCities = () => {
       title: "Округа",
       dataIndex: "regionName",
       key: "regionName",
+      fixed: "left",
       ellipsis: {
         showTitle: true,
       },
@@ -232,7 +233,7 @@ if(dataFromRow != undefined)
       percent: value    
     }}
   })]
-  let indicatorsForChart = allDataForChart.slice(0, columns.length - 3);
+  let indicatorsForChart = allDataForChart.slice(0, columns.length - 4);
   setTitle(dataFromRow);
   setDataChart(indicatorsForChart);
   setDataFromRow(undefined);
