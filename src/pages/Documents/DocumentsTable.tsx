@@ -159,7 +159,7 @@ const DocumentsTable = () => {
   };
 
 
-  return !loading ? (
+  return (
     <Layout>
       <Content
         onClick={() => {
@@ -184,7 +184,7 @@ const DocumentsTable = () => {
                />
              </div>
 
-          <Card
+             {loading ? (<Spinner />) :<Card
             style={{ width: '100%' }}
             tabList={tabList}
             activeTabKey={status}
@@ -236,6 +236,7 @@ const DocumentsTable = () => {
               }
             />
           </Card>
+          }
           <ClickAwayListener onClickAway={handleClickAway}>
             <DropDown
               showDropdown={showDropdown}
@@ -254,9 +255,7 @@ const DocumentsTable = () => {
         </>
       </Content>
     </Layout>
-  ) : (
-      <Spinner />
-    );
-};
+  
+  )};
 
 export default DocumentsTable;

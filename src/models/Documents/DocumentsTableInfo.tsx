@@ -5,7 +5,7 @@ type DocumentsTableInfo = {
     name: string;
     governingBody: string;
     description: string;
-    date: string;
+    date: Date;
     fileName: string | null;
     type: string;
 }

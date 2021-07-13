@@ -12,8 +12,6 @@ import { destroyFns } from 'antd/lib/modal/Modal';
 import { DocumentPost } from '../../models/Documents/DocumentPost';
 import { Roles } from '../../models/Roles/Roles';
 
-import EditDocumentsModal from './EditDocumentsModal';
-
 
 interface Props {
   record: number;
@@ -119,12 +117,6 @@ const DropDown = (props: Props) => {
         </Menu.Item>
 
       </Menu>
-      <EditDocumentsModal
-           id = {record}
-           setVisibleModal = {setShowEditModal}
-           visibleModal = {showEditModal}
-           record = {record}
-          />
     </>
   );
 };

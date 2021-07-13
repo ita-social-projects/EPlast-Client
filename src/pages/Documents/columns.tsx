@@ -25,8 +25,8 @@ const columns = [
   {
     title: 'Дата',
     dataIndex: 'date',
-    render: (date: string) => {
-      return date;
+    render: (date: Date) => {
+      return moment(date.toLocaleString()).format('DD.MM.YYYY');
     },
   },
   {
