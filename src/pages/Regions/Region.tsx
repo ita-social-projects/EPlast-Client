@@ -53,7 +53,7 @@ const Region = () => {
   const { url } = useRouteMatch();
 
   const { id } = useParams();
-  const [visibleModal, setVisibleModal] = useState(false);
+  const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
 
   const [photoStatus, setPhotoStatus] = useState(true);
@@ -121,9 +121,7 @@ const Region = () => {
     },
   ]);
 
-  const [memberRedirectVisibility, setMemberRedirectVisibility] = useState<
-boolean
-  >(false);
+  const [memberRedirectVisibility, setMemberRedirectVisibility] = useState<boolean>(false);
 
   const [canCreate, setCanCreate] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
@@ -131,7 +129,7 @@ boolean
   const [membersCount, setMembersCount] = useState<number>();
   const [adminsCount, setAdminsCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
-  const [visible, setvisible] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
   const [isActiveUserFromRegion, setIsActiveUserFromRegion] = useState<boolean>(false);
@@ -245,8 +243,9 @@ boolean
   };
 
   const handleOk = async () => {
-    setvisible(false);
+    setVisible(false);
     setMemberRedirectVisibility(false);
+    setVisibleModal(false);
     const response =  await getRegionAdministration(id);
     setSixAdmins(response.data, 6);
     setAdminsCount(response.data.length);
@@ -301,7 +300,9 @@ boolean
     }
   };
 
-  const onAdd = (newDocument: CityDocument) => {
+  const onAdd =  async (newDocument: CityDocument) => {
+    const response = await getRegionById(id);
+    setDocumentsCount(response.data.documentsCount);
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
@@ -554,7 +555,7 @@ boolean
                   <PlusSquareFilled
                     type="primary"
                     className="addReportIcon"
-                    onClick={() => setvisible(true)}
+                    onClick={() => setVisible(true)}
                   />
                 ) : null}
                 <Button
