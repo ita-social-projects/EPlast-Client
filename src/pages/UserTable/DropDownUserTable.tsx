@@ -67,38 +67,133 @@ const DropDown = (props: Props) => {
 
   const fetchUser = async () => {
 
-    let roles = UserApi.getActiveUserRoles();
+    const roles = UserApi.getActiveUserRoles();
     console.log(roles);
 
-    setCanChangeCityAdministration(roles.includes(Roles.Admin)
-      || roles.includes(Roles.GoverningBodyHead)
-      || (user?.userRoles.includes(Roles.OkrugaHead) && currentUser?.regionId == user?.regionId)
-      || (roles.includes(Roles.OkrugaHeadDeputy) && currentUser?.regionId == user?.regionId)
-      || (user?.userRoles.includes(Roles.CityHead) && currentUser?.cityId == user?.cityId)
-      || (roles.includes(Roles.CityHeadDeputy) && currentUser?.cityId == user?.cityId));
+    console.log(roles.includes(Roles.Admin));
+    console.log(roles.includes(Roles.GoverningBodyHead));
+    console.log(!user?.userRoles.includes(Roles.OkrugaHead) && currentUser?.regionId == user?.regionId)
+    console.log(roles.includes(Roles.OkrugaHeadDeputy) && currentUser?.regionId == user?.regionId)
+    console.log(!user?.userRoles.includes(Roles.CityHead) && currentUser?.cityId == user?.cityId)
 
-    setCanChangeClubAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead)
-      || ((user?.userRoles.includes(Roles.KurinHead) || roles.includes(Roles.KurinHeadDeputy)) && currentUser?.clubId == user?.clubId));
+    setCanChangeCityAdministration((): boolean => {
+      console.log(user);
+      console.log(currentUser);
+      const isCurrentUserAdmin = roles.includes(Roles.Admin);
+      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead) 
+        /*&& user == !isCurrentUserAdmin;*/
+      const isUserFromSameCityAndRegion = /*user?.userRoles*/roles.includes(Roles.OkrugaHead)
+        /*&& currentUser?.regionId == user?.regionId*/
+        && currentUser?.cityId == user?.cityId
+        /*&& user == !isCurrentUserAdmin;*/
+      const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
+        && currentUser?.regionId == user?.regionId;
+      const isUserCityHead = roles.includes(Roles.CityHead) 
+        && currentUser?.cityId == user?.cityId;
+      const isUserCityHeadDeputy = roles.includes(Roles.CityHeadDeputy) 
+        && currentUser?.cityId == user?.cityId;
+      /*const isUserFromSameCity = !user?.userRoles.includes(Roles.CityHead) && currentUser?.cityId == user?.cityId;*/
+      return isCurrentUserAdmin ||
+      isCurrentUserGoverningBodyHead ||
+      isUserFromSameCityAndRegion ||
+      isCurrentUserRegionHeadDeputy ||
+      isUserCityHead ||
+      isUserCityHeadDeputy;
+    });
 
-    setCanChangeRegionAdministration(
-      roles.includes(Roles.Admin)
-      || roles.includes(Roles.GoverningBodyHead)
-      || (user?.userRoles.includes(Roles.OkrugaHead) && currentUser?.regionId == user?.regionId)
-      || (roles.includes(Roles.OkrugaHeadDeputy) && currentUser?.regionId == user?.regionId));
+    setCanChangeClubAdministration((): boolean => {
+      const isCurrentUserAdmin = roles.includes(Roles.Admin);
+      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead) 
+        /*&& user == !isCurrentUserAdmin;*/
+      const isCurrentUserKurinHeadDeputy = roles.includes(Roles.KurinHeadDeputy) 
+        && currentUser?.clubId == user?.clubId
+        /*&& user == !isCurrentUserAdmin;*/
+      const isCurrentUserKurinHead = roles.includes(Roles.KurinHead) 
+        && currentUser?.clubId == user?.clubId
+        /*&& user == !isCurrentUserAdmin;*/
+      return isCurrentUserAdmin ||
+      isCurrentUserGoverningBodyHead ||
+      isCurrentUserKurinHeadDeputy ||
+      isCurrentUserKurinHead;
+    });
+      
+    setCanChangeRegionAdministration((): boolean => {
+      const isCurrentUserAdmin = roles.includes(Roles.Admin);
+      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
+       //&& user == !isCurrentUserAdmin;
+      /*const isUserFromSameRegion = user?.userRoles.includes(Roles.OkrugaHead)
+        && currentUser?.regionId == user?.regionId;*/
+      const isCurrentUserRegionHead = roles.includes(Roles.OkrugaHead) 
+        && currentUser?.regionId == user?.regionId;
+        /*&& user == !isCurrentUserAdmin;*/
+      const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
+        && currentUser?.regionId == user?.regionId;
+        /*&& user == !isCurrentUserAdmin;*/
+      /*const isCurrentUserNotAdmin = roles.includes(Roles.GoverningBodyHead && Roles.KurinHead && Roles.OkrugaHead) 
+        && user == !isCurrentUserAdmin;*/
+       
+      return isCurrentUserAdmin ||
+      isCurrentUserGoverningBodyHead ||      
+      isCurrentUserRegionHead ||      
+      isCurrentUserRegionHeadDeputy;
+      
+      /*isUserFromSameRegion ||
+      isCurrentUserNotAdmin ||*/
+    });
 
     setCanChangeGoverningBodyAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead));
 
-    setCanChangeUserAccess(
-      roles.includes(Roles.Admin)
-      || roles.includes(Roles.GoverningBodyHead)
-      || ((roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId == user?.regionId)
-      || ((roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy)) && currentUser?.cityId == user?.cityId)
-      || ((roles.includes(Roles.KurinHead) || roles.includes(Roles.KurinHeadDeputy)) && currentUser?.clubId == user?.clubId));
+    setCanChangeUserAccess((): boolean => {
+      const isCurrentUserAdmin = roles.includes(Roles.Admin);
+      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
+      const isCurrentUserRegionHead = roles.includes(Roles.OkrugaHead) 
+        && currentUser?.regionId == user?.regionId;
+      const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
+        && currentUser?.regionId == user?.regionId;
+      const isCurrentUserKurinHeadDeputy = roles.includes(Roles.KurinHeadDeputy) 
+        && currentUser?.clubId == user?.clubId;
+      const isCurrentUserKurinHead = roles.includes(Roles.KurinHead) 
+        && currentUser?.clubId == user?.clubId;
+      const isUserCityHead = roles.includes(Roles.CityHead) 
+        && currentUser?.cityId == user?.cityId;
+      const isUserCityHeadDeputy = roles.includes(Roles.CityHeadDeputy) 
+        && currentUser?.cityId == user?.cityId;
 
-    setCanAddDegree(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead)
-      || ((roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId == user?.regionId)
-      || ((roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy)) && currentUser?.cityId == user?.cityId)
-      || ((roles.includes(Roles.KurinHead) || roles.includes(Roles.KurinHeadDeputy)) && currentUser?.clubId == user?.clubId));
+      return isCurrentUserAdmin ||
+      isCurrentUserGoverningBodyHead ||      
+      isCurrentUserRegionHead ||      
+      isCurrentUserRegionHeadDeputy ||
+      isCurrentUserKurinHeadDeputy ||
+      isCurrentUserKurinHead ||
+      isUserCityHead ||
+      isUserCityHeadDeputy;
+    });
+
+    setCanAddDegree((): boolean => {
+      const isCurrentUserAdmin = roles.includes(Roles.Admin);
+      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
+      const isCurrentUserRegionHead = roles.includes(Roles.OkrugaHead) 
+        && currentUser?.regionId == user?.regionId;
+      const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
+        && currentUser?.regionId == user?.regionId;
+      const isCurrentUserKurinHeadDeputy = roles.includes(Roles.KurinHeadDeputy) 
+        && currentUser?.clubId == user?.clubId;
+      const isCurrentUserKurinHead = roles.includes(Roles.KurinHead) 
+        && currentUser?.clubId == user?.clubId;
+      const isUserCityHead = roles.includes(Roles.CityHead) 
+        && currentUser?.cityId == user?.cityId;
+      const isUserCityHeadDeputy = roles.includes(Roles.CityHeadDeputy) 
+        && currentUser?.cityId == user?.cityId;
+
+      return isCurrentUserAdmin ||
+      isCurrentUserGoverningBodyHead ||      
+      isCurrentUserRegionHead ||      
+      isCurrentUserRegionHeadDeputy ||
+      isCurrentUserKurinHeadDeputy ||
+      isCurrentUserKurinHead ||
+      isUserCityHead ||
+      isUserCityHeadDeputy;
+    });
 
     setsuperAdmin(roles.includes(Roles.Admin));
     setGoverningBodyHead(roles.includes(Roles.GoverningBodyHead));
