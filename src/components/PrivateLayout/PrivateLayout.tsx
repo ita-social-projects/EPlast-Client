@@ -168,7 +168,7 @@ const PrivateLayout = ({ children }: any) => {
                 : (<> </>)
               }
               {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true || onlyRegistered===true) ? (
-                <Menu.Item onClick={() => { handleClickAway(); history.push('/legislation')}} key="14">
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/legislation'); }} key="14">
                 Репозитарій
                 </Menu.Item>)
                 : (<> </>)
