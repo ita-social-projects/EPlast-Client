@@ -29,8 +29,8 @@ const DropDown = (props: Props) => {
   const [cityAdm, setCityAdm] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
-  const [userRole, setUser] = useState<string[]>();
-  console.log(props);
+  const [userRole, setUserRole] = useState<string[]>();
+
 
   const [data, setData] = useState<DocumentPost>({
     id: 0,
@@ -51,10 +51,9 @@ const DropDown = (props: Props) => {
       let jwt = AuthStore.getToken() as string;
       let decodedJwt = jwt_decode(jwt) as any;
       let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
-      console.log(roles);
       const res: Document[] = await documentsApi.getAll();
       setData(data);
-      setUser(roles);
+      setUserRole(roles);
       setCanEdit(roles.includes(Roles.Admin));
       setRegionAdm(roles.includes(Roles.OkrugaHead));
       setCityAdm(roles.includes(Roles.CityHead));
