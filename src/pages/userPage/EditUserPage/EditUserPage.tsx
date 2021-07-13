@@ -44,7 +44,7 @@ import jwt_decode from "jwt-decode";
 import { Roles } from "../../../models/Roles/Roles";
 
 export default function () {
-  const { userId } = useParams();
+  const userId = useParams();
   const history = useHistory();
   const onlyLettersPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50})*$/;
   const allVariantsPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",.0-9]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",.0-9]{0,50})*$/;

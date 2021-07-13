@@ -180,13 +180,13 @@ const DropDown = (props: Props) => {
             title="Змінити права доступу"
             onTitleClick={()=>{}}
           >
-            {canChangeCityAdministration ? (
-              <Menu.Item key="3">Провід станиці</Menu.Item>
+            {canChangeRegionAdministration ? (
+              <Menu.Item key="3">Провід округи</Menu.Item>
             ) : (
               <> </>
             )}
-            {canChangeRegionAdministration ? (
-              <Menu.Item key="4">Провід округи</Menu.Item>
+            {canChangeCityAdministration ? (
+              <Menu.Item key="4">Провід станиці</Menu.Item>
             ) : (
               <> </>
             )}

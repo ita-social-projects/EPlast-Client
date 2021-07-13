@@ -282,7 +282,7 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
             < div className={classes.row} >
                 <h3>Приблизна кількість учасників </h3>
                 < Form.Item name="NumberOfPartisipants">
-                    <Input className={classes.input} type="number"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  />
+                    <Input className={classes.input} type="number"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  min="2" max="100"/>
                 </Form.Item>
             </ div>
             < div className={classes.row} >

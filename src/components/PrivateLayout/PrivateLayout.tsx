@@ -69,6 +69,7 @@ const PrivateLayout = ({ children }: any) => {
 
   const fetchUser = async () => {
     let roles = userApi.getActiveUserRoles();
+    console.log(roles);
     setUser(roles);
     setCanEdit(roles.includes(Roles.Admin));
     setRegionAdm(roles.includes(Roles.OkrugaHead));
@@ -168,7 +169,7 @@ const PrivateLayout = ({ children }: any) => {
                 : (<> </>)
               }
               {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true || onlyRegistered===true) ? (
-                <Menu.Item onClick={() => { handleClickAway(); history.push('/legislation'); }} key="14">
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/legislation');console.log(canAccess,canSee,canEdit,regionAdm,cityAdm,clubAdm,onlyRegistered) }} key="14">
                 Репозитарій
                 </Menu.Item>)
                 : (<> </>)

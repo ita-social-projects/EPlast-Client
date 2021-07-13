@@ -10,7 +10,7 @@ import {
   Col,
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
-
+import { Modal, Drawer } from 'antd';
 import documentsApi, {
   TypePostParser
 } from "../../api/documentsApi";
@@ -30,118 +30,37 @@ import { DocumentOnCreateData } from "../../models/Documents/DocumentOnCreateDat
 import { MethodicDocumentType } from "../../models/Documents/MethodicDocumentType"
 import { FileWrapper, GoverningBody } from "../../api/decisionsApi";
 import { DocumentWrapper } from "../../models/Documents/DocumentWraper";
-type FormAddDocumentsProps = {
+interface Props {
+  id:Number;
   setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: () => void;
-};
-const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
-  const { setVisibleModal, onAdd } = props;
-  const [submitLoading, setSubmitLoading] = useState(false);
-  const [fileData, setFileData] = useState<FileWrapper>({
-    FileAsBase64: null,
-    FileName: null,
-  });
+  visibleModal: boolean;
+   record :any 
+ 
+}
+
+const EditDocumentsModal = ({id,setVisibleModal,visibleModal,record}: Props) => {
   const [form] = Form.useForm();
-  const normFile = (e: { fileList: any }) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
-
   
+console.log(record);
+const handleCancel = () => {
+  setVisibleModal(false);
+  form.resetFields();
+}
 
-  const handleCancel = () => {
-    form.resetFields();
-    setFileData({ FileAsBase64: null, FileName: null });
-    setVisibleModal(false);
-  };
 
-  const handleUpload = (info: any) => {
-    if (info.file !== null) {
-      if (info.file.size <= 3145728) {
-        if (checkFile(info.file.name)) {
-          getBase64(info.file, (base64: string) => {
-            setFileData({
-              FileAsBase64: base64.split(",")[1],
-              FileName: info.file.name,
-            });
-          });
-          notificationLogic("success", fileIsUpload());
-        }
-      } else {
-        notificationLogic("error", fileIsTooBig(3));
-      }
-    } else {
-      notificationLogic("error", fileIsNotUpload());
-    }
-  };
-  const checkFile = (fileName: string): boolean => {
-    const extension = fileName.split(".").reverse()[0];
-    const isCorrectExtension =
-      extension.indexOf("pdf") !== -1 ||
-      extension.indexOf("jpg") !== -1 ||
-      extension.indexOf("jpeg") !== -1 ||
-      extension.indexOf("png") !== -1 ||
-      extension.indexOf("docx") !== -1 ||
-      extension.indexOf("doc") !== -1 ||
-      extension.indexOf("txt") !== -1 ||
-      extension.indexOf("csv") !== -1 ||
-      extension.indexOf("xls") !== -1 ||
-      extension.indexOf("xml") !== -1 ||
-      extension.indexOf("odt") !== -1 ||
-      extension.indexOf("ods") !== -1;
-    if (!isCorrectExtension) {
-      notificationLogic(
-        "error",
-        possibleFileExtensions("pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods.")
-      );
-    }
-    return isCorrectExtension;
-  };
 
-  const handleSubmit = async (values: any) => {
-    setSubmitLoading(true);
-    const newDocument: DocumentWrapper = {
-      MethodicDocument: {
-        id: 0,
-        name: values.name,
-        type: TypePostParser(
-          JSON.parse(values.methodicDocumentType)
-        ),
-        governingBody: JSON.parse(values.governingBody),
-        description: values.description,
-        date:
-          /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values
-            .datepicker._d,
-        fileName: fileData.FileName,
-      },
-      fileAsBase64: fileData.FileAsBase64,
-    };
-    await documentsApi.post(newDocument);
-    setVisibleModal(false);
-    onAdd();
-    form.resetFields();
-    setFileData({ FileAsBase64: null, FileName: null });
-    setSubmitLoading(false);
-  };
 
-  const [data, setData] = useState<DocumentOnCreateData>({
-    governingBodies: Array<GoverningBody>(),
-    methodicDocumentTypesItems: Array<MethodicDocumentType>(),
-  });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await documentsApi
-        .getOnCreate()
-        .then((d: DocumentOnCreateData) => setData(d));
-    };
-    fetchData();
-  }, []);
 
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Drawer
+    width="auto"
+    title="Додати документ"
+    visible={visibleModal}
+    onClose={handleCancel}
+    footer={null}
+  >
+    <Form name="basic">
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
@@ -152,11 +71,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             rules={[{ required: true, message: emptyInput() }]}
           >
             <Select className={formclasses.selectField}>
-              {data?.methodicDocumentTypesItems.map((dst) => (
-                <Select.Option key={dst.value} value={JSON.stringify(dst)}>
-                  {dst.text}
-                </Select.Option>
-              ))}
+             
             </Select>
           </Form.Item>
         </Col>
@@ -188,6 +103,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
           <Form.Item
             className={formclasses.formField}
             label="Орган, що видав документ"
+            initialValue = {record.dateOfGranting}
             labelCol={{ span: 24 }}
             name="governingBody"
             rules={[{ required: true, message: emptyInput() }]}
@@ -197,11 +113,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
               placeholder="Оберіть орган"
               className={formclasses.selectField}
             >
-              {data?.governingBodies.map((g) => (
-                <Select.Option key={g.id} value={JSON.stringify(g)}>
-                  {g.governingBodyName}
-                </Select.Option>
-              ))}
+             
             </Select>
           </Form.Item>
         </Col>
@@ -242,12 +154,10 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
               className={formclasses.formField}
               name="dragger"
               valuePropName="fileList"
-              getValueFromEvent={normFile}
               noStyle
             >
               <Upload.Dragger
                 name="file"
-                customRequest={handleUpload}
                 className={formclasses.formField}
                 multiple={false}
                 showUploadList={false}
@@ -261,27 +171,9 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
                   Клікніть або перетягніть файл для завантаження
                 </p>
 
-                {fileData.FileAsBase64 !== null && (
-                  <div>
-                    <div>{fileData.FileName}</div>{" "}
-                  </div>
-                )}
               </Upload.Dragger>
 
-              {fileData.FileAsBase64 !== null && (
-                <div>
-                  <Button
-                    className={formclasses.cardButton}
-                    onClick={() => {
-                      setFileData({ FileAsBase64: null, FileName: null });
-                      notificationLogic("success", successfulDeleteAction("Файл"));
-                    }}
-                  >
-                    {" "}
-                    Видалити файл
-                  </Button>{" "}
-                </div>
-              )}
+             
             </Form.Item>
           </Form.Item>
         </Col>
@@ -291,7 +183,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
           <Form.Item style={{ textAlign: "right" }} className={formclasses.formField}>
             <Button
               key="back"
-              onClick={handleCancel}
+              onClick={alert}
               className={formclasses.buttons}
             >
               Відмінити
@@ -300,7 +192,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
               type="primary"
               htmlType="submit"
               className={formclasses.buttons}
-              loading={submitLoading}
+              
             >
               Опублікувати
             </Button>
@@ -308,7 +200,9 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
         </Col>
       </Row>
     </Form>
+    </Drawer>
   );
+  
 };
 
-export default FormAddDocument;
+export default EditDocumentsModal;

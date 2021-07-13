@@ -231,21 +231,21 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </div>
       < div className={classes.row} >
         <h3>Приблизна кількість учасників </h3>
-        < Form.Item name="NumberOfPartisipants" rules={[{ required: true, message: emptyInput() }, { max: 6, message: maxLength(6)}]} >
-          <Input className={classes.input} type="number" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() } min="1" max="999999"/>
+        < Form.Item name="NumberOfPartisipants" rules={[{ required: true, message: emptyInput() }, { max: 3, message: "Можлива кількість учасників: 2-100"}]} >
+          <Input className={classes.input} type="number" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() } min="2" max="100"/>
         </Form.Item>
       </ div>
       < div className={classes.row} >
         <h3>Питання / побажання до булави </h3>
         < Form.Item name="Questions" rules={[{ required: true, message: emptyInput() },
-        { max: 50, message: maxLength(50) }]}>
+        { max: 200, message: maxLength(200) }]}>
           <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>
       < div className={classes.row} >
         <h3>Опис події</h3>
         < Form.Item name="Description" rules={[{ required: true, message: emptyInput() },
-        { max: 50, message: maxLength(50) }]}>
+        { max: 200, message: maxLength(200) }]}>
           <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>

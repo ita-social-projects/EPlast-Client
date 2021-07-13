@@ -270,7 +270,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               {
                 required: true,
                 max: 500,
-                message: maxLength(500),
+                message: "Це поле має бути заповненим",
               },
             ]}
           >

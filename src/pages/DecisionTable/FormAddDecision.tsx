@@ -244,10 +244,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             name="decisionTarget"
             rules={[{ required: true, message: emptyInput() }]}
           >
-            <AutoComplete
-              filterOption={true}
-              className={formclasses.selectField}
-            >
+            <AutoComplete>
               {data?.decisionTargets.map((dt) => (
                 <Select.Option key={dt.id} value={dt.targetName}>
                   {dt.targetName}
