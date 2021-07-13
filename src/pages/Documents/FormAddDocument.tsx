@@ -47,9 +47,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
       return e;
     }
     return e && e.fileList;
-  };
-
-  
+  };  
 
   const handleCancel = () => {
     form.resetFields();
