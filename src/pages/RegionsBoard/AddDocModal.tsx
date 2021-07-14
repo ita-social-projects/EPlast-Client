@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../Regions/AddDocumentModal.less";
-import { Button, Col, DatePicker, Form, Modal, Row, Upload } from "antd";
+import { Button, Col, DatePicker, Form, Modal, Row, Upload, Input } from "antd";
 import { getBase64 } from "../userPage/EditUserPage/Services";
 import notificationLogic from "../../components/Notifications/Notification";
 import { addDocument } from "../../api/regionsApi";
@@ -12,6 +12,8 @@ import {
   possibleFileExtensions,
   fileIsTooBig,
   successfulDeleteAction,
+  emptyInput,
+  maxLength,
 } from "../../components/Notifications/Messages";
 import "moment/locale/uk";
 moment.locale("uk-ua");
@@ -29,8 +31,15 @@ const AddDocumentModal = (props: Props) => {
   const [form] = Form.useForm();
   const [fileName, setFileName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [disabled, setDisabled] = useState(true);
-  const [buttonLoading, setButtonLoading] = useState(false);
+  const [disabled, setDisabled] = useState<boolean>(true);
+  const [buttonLoading, setButtonLoading] = useState<boolean>(false);
+  const [fileUploaded, setFileUploaded] = useState<boolean>(false);
+
+  const maxNameLength: number = 50;
+
+  useEffect(() => {
+    setFileUploaded(false);
+  }, [props.visibleModal]);
 
   const normFile = (e: { fileList: any }) => {
     if (Array.isArray(e)) {
@@ -40,12 +49,46 @@ const AddDocumentModal = (props: Props) => {
     return e && e.fileList;
   };
 
+  const getExtension = (fileName: string) => {
+    let splittedFileName = fileName.split('.');
+    return '.' + splittedFileName[splittedFileName.length - 1];
+  }
+
+  const onFileNameChange = (e: any) => {
+    let input = e.target.value.slice(0, maxNameLength);
+
+    if (fileName == "") {
+      setFileName(input);
+    } else {
+      let extension: string = getExtension(fileName);
+      setFileName(input + extension);
+
+      if (fileUploaded) {
+        setDisabled(false);
+      }
+    }
+  }
+
   const handleUpload = (info: any) => {
     if (info.file !== null) {
       if (checkFile(info.file.size, info.file.name)) {
         getBase64(info.file, (base64: string) => {
           props.setDocument({ ...props.document, blobName: base64 });
-          setFileName(info.file.name);
+
+          if (fileName != "") {
+            let extension: string = getExtension(fileName);
+            let fileNameWithoutExtension: string = fileName.replace(extension, '');
+
+            let newExtension: string = getExtension(info.file.name);
+            setFileName(fileNameWithoutExtension + newExtension);
+
+            setDisabled(false);
+          } else {
+            setFileName(info.file.name);
+            setDisabled(true);
+          }
+
+          setFileUploaded(true);
         });
         notificationLogic("success", fileIsUpload());
         setDisabled(false);
@@ -85,7 +128,6 @@ const AddDocumentModal = (props: Props) => {
       submitDate: values.datepicker?._d,
       regionId: props.regionId,
     };
-    console.log(newDocument);
     await addDocument(newDocument);
     props.onAdd(newDocument);
     props.setVisibleModal(false);
@@ -118,6 +160,15 @@ const AddDocumentModal = (props: Props) => {
     >
       <Form name="basic" onFinish={handleSubmit} form={form}>
         <div className="formFields">
+          <Form.Item
+            name="documentName"
+            label="Назва документу"
+            rules={[
+              {required: true, message: emptyInput()},
+              {max: maxNameLength, message: maxLength(maxNameLength)}]}
+          >
+            <Input placeholder="Введіть назву документу" onChange={onFileNameChange}/>
+          </Form.Item>
           <Form.Item name="datepicker" label="Дата документу">
             <DatePicker format="DD.MM.YYYY" className="formSelect" />
           </Form.Item>
@@ -141,7 +192,7 @@ const AddDocumentModal = (props: Props) => {
             <p className="ant-upload-hint">
               Клікніть або перетягніть файл для завантаження
             </p>
-            {props.document.blobName !== null && <div>{fileName}</div>}
+            {props.document.blobName !== null && <div>{fileUploaded ? fileName : null}</div>}
           </Upload.Dragger>
 
           {props.document.blobName ? (
@@ -151,6 +202,7 @@ const AddDocumentModal = (props: Props) => {
                 onClick={() => {
                   removeFile();
                   notificationLogic("success", successfulDeleteAction("Файл"));
+                  setFileUploaded(false);
                 }}
               >
                 Видалити файл

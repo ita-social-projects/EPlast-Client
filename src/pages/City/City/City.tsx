@@ -76,6 +76,8 @@ const City = () => {
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
+  const [reload, setReload] = useState<boolean>(false);
+  
   const changeApproveStatus = async (memberId: number) => {
   const member = await toggleMemberStatus(memberId);
     moment.locale("uk-ua");
@@ -164,6 +166,7 @@ const City = () => {
       setDocuments([...documents, newDocument]); 
     }
     notificationLogic("success", fileIsAdded());
+    setReload(!reload);
   };
 
   function seeDeleteModal() {
@@ -331,7 +334,7 @@ const City = () => {
       PsevdonimCreator.setPseudonimLocation(`cities/${city.name}`, `cities/${id}`);
     }
     getCity();
-  }, [])
+  }, [reload])
 
   return loading ? (
     <Spinner />
@@ -622,7 +625,15 @@ const City = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={4}>Документообіг станиці <a onClick={() => history.push(`/cities/documents/${city.id}`)}>
+            <Title level={4}>Документообіг станиці <a onClick={() => 
+              canEdit || activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy) 
+              || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+              || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy) 
+              || (!activeUserRoles.includes(Roles.RegisteredUser) && city.name == activeUserCity)
+            ?
+              history.push(`/cities/documents/${city.id}`)
+            : undefined
+            }>
               {documentsCount !== 0 ?
                 <Badge
                   count={documentsCount}
@@ -653,9 +664,10 @@ const City = () => {
                 )}
             </Row>
             <div className="cityMoreButton">
-              {canEdit || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+              {canEdit || activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy) 
+                  || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
                   || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy) 
-                  || ((activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember))
+                  || (!activeUserRoles.includes(Roles.RegisteredUser)
                    && city.name == activeUserCity)
                 ? (
                   <Button
