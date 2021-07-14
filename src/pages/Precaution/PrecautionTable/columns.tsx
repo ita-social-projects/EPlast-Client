@@ -5,6 +5,7 @@ import Precaution from "../Interfaces/Precaution";
 import { DatePicker, Tooltip } from 'antd';
 import { SortOrder } from 'antd/lib/table/interface';
 import { FormLabelAlign } from 'antd/lib/form/interface';
+import "./Filter.less";
 
 
 const fetchYears = () => {
@@ -25,6 +26,7 @@ const columns = [
     fixed: true,
     defaultSortOrder: 'ascend' as SortOrder,
     sorter: (a: any, b: any) => a.number - b.number,
+    
   },
   {
     title: 'Перестороги',
