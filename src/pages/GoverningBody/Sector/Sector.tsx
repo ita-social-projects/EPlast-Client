@@ -423,7 +423,7 @@ const Sector = () => {
                   </Col>
                 ))
               ) : (
-                <Paragraph>Ще немає документів Керівного Органу</Paragraph>
+                <Paragraph>Ще немає документів Напряму</Paragraph>
               )}
             </Row>
             <div className="governingBodyMoreButton">
