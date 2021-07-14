@@ -70,8 +70,6 @@ const DropDown = (props: Props) => {
     const roles = UserApi.getActiveUserRoles();
 
     setCanChangeCityAdministration((): boolean => {
-      console.log(user);
-      console.log(currentUser);
       const isCurrentUserAdmin = roles.includes(Roles.Admin);
       const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
       const isUserFromSameCityAndRegion = roles.includes(Roles.OkrugaHead)
