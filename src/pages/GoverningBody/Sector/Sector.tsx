@@ -163,7 +163,7 @@ const Sector = () => {
   ) : sector.id !== 0 ? (
     <Layout.Content className="governingBodyProfile">
       <Row gutter={[0, 15]}>
-        <Col span={8} offset={1}></Col>
+        <Col span={8} offset={1} />
       </Row>
       <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
@@ -333,7 +333,7 @@ const Sector = () => {
                       }
                     >
                       {photosLoading ? (
-                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        <Skeleton.Avatar active size={64} />
                       ) : (
                         <Avatar size={64} src={admin.user.imagePath} />
                       )}
@@ -397,12 +397,19 @@ const Sector = () => {
           xs={24}
         >
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Документообіг</Title>
+            <Title level={4}>Документообіг <a onClick={() => history.push(`/governingBodies/${governingBodyId}/sectors/${sector.id}/documents`)}>
+              {documents.length !== 0 ?
+                <Badge
+                  count={documents.length}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a></Title>
             <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
                 documents.map((d) => (
                   <Col
-                    className="governingBodyMemberItem"
+                    className="governingBodyDocumentItem"
                     xs={12}
                     sm={8}
                     key={d.id}
@@ -416,7 +423,7 @@ const Sector = () => {
                   </Col>
                 ))
               ) : (
-                <Paragraph>Ще немає документів Напряму</Paragraph>
+                <Paragraph>Ще немає документів Керівного Органу</Paragraph>
               )}
             </Row>
             <div className="governingBodyMoreButton">
@@ -441,7 +448,7 @@ const Sector = () => {
         setVisibleDrawer={setVisibleDrawer}
         visibleDrawer={visibleDrawer}
         sector={sector}
-      ></SectorDetailDrawer>
+      />
       <Modal
         title="Цей функціонал ще не готовий"
         visible={visible}
@@ -465,7 +472,7 @@ const Sector = () => {
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
           onAdd={onAdd}
-        ></AddDocumentModal>
+        />
       ) : null}
     </Layout.Content>
   ) : (
