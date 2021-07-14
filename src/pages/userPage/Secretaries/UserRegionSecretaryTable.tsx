@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Table, Empty} from 'antd';
-import columns from './columnsRegions';
+import columns from './columnsregions';
 import {getUsersAdministrations, getUsersPreviousAdministrations} from "../../../api/regionsApi";
 import Modal from "antd/lib/modal";
 import SecretaryModel from './SecretaryModel';
