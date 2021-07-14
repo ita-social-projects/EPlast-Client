@@ -34,6 +34,8 @@ const DocumentsTable = () => {
   const [cityAdm, setCityAdm] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
   const [supporter, setSupporter] = useState(false);
+  const [plastMember, setPlastMember] = useState(false);
+  
   const [noTitleKey, setKey] = useState<string>('tab1');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -103,6 +105,7 @@ const DocumentsTable = () => {
       setCityAdm(roles.includes(Roles.CityHead));
       setClubAdm(roles.includes(Roles.KurinHead));
       setSupporter(roles.includes(Roles.Supporter));
+      setPlastMember(roles.includes(Roles.PlastMember));
     };
     fetchData();
   }, [searchedData, page, pageSize, status]);
@@ -175,6 +178,7 @@ const DocumentsTable = () => {
               </Button>
             ) : (<> </>)
             }
+            {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true || supporter == true || plastMember == true) ? (
              <Search
                 enterButton
                 placeholder="Пошук"
@@ -182,16 +186,25 @@ const DocumentsTable = () => {
                 onChange={handleSearchChange}
                 onSearch={handleSearch}                
                />
-             </div>
+            ) : (<> </>)
+            }
+            </div>
 
-             {loading ? (<Spinner />) :<Card
+          {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true || supporter == true || plastMember == true) ? (
+          <Card
             style={{ width: '100%' }}
             tabList={tabList}
             activeTabKey={status}
             onTabChange={(key) => {
             onTabChange(key);
-            }}
-          >
+            }} 
+          /> ) : (
+          <Card
+              style={{ width: '100%' }}
+              activeTabKey={status}
+          />)
+            }
+            {loading ? (<Spinner />) : (
             <Table
               className={classes.table}
               dataSource={data}
@@ -235,8 +248,8 @@ const DocumentsTable = () => {
                 }
               }
             />
-          </Card>
-          }
+            )}
+
           <ClickAwayListener onClickAway={handleClickAway}>
             <DropDown
               showDropdown={showDropdown}
@@ -254,8 +267,7 @@ const DocumentsTable = () => {
           />
         </>
       </Content>
-    </Layout>
-  
+    </Layout>  
   )};
 
 export default DocumentsTable;

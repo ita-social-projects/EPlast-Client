@@ -29,7 +29,10 @@ const DropDown = (props: Props) => {
   const [cityAdm, setCityAdm] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
+  const [supporter, setSupporter] = useState(false);
+  const [plastMember, setPlastMember] = useState(false);
   const [userRole, setUserRole] = useState<string[]>();
+  
 
 
   const [data, setData] = useState<DocumentPost>({
@@ -58,6 +61,9 @@ const DropDown = (props: Props) => {
       setRegionAdm(roles.includes(Roles.OkrugaHead));
       setCityAdm(roles.includes(Roles.CityHead));
       setClubAdm(roles.includes(Roles.KurinHead));
+      setCanEdit(roles.includes(Roles.Admin));
+      setSupporter(roles.includes(Roles.Supporter));
+      setPlastMember(roles.includes(Roles.PlastMember));
       };
     fetchData();
   }, []);
