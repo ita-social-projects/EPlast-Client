@@ -190,10 +190,8 @@ const UsersTable = () => {
  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
    if(e.target.value.toLowerCase() === '') {
      setSearchData('')
-   }
-  
+   }  
  }
-
 
   const onSelect = (selectedKeys: any, e: any) => {
     if (e.value == 0) {
@@ -425,7 +423,6 @@ const UsersTable = () => {
             onChange={handleSearchChange}  
             onSearch={handleSearch}
             />
-
           </div>
         </div>
         {loading === false ? (
