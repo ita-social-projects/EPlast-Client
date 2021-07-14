@@ -166,6 +166,7 @@ const GoverningBody = () => {
 
   const handleOk = () => {
     setVisible(false);
+    setAdminsCount(admins.length + 1);
   };
 
   useEffect(() => {
@@ -511,7 +512,7 @@ const GoverningBody = () => {
         title="Додати діловода"
         visible={visible}
         onOk={handleOk}
-        onCancel={handleOk}
+        onCancel={() => setVisible(false)}
         footer={null}
       >
         <AddGoverningBodiesSecretaryForm
