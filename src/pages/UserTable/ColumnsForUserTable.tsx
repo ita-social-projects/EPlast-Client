@@ -1,14 +1,16 @@
 import React from "react";
 import moment from "moment";
-import { Typography, Tooltip, Tag } from "antd";
+import { Tooltip, Tag, Row, Col } from "antd";
 import {
   WomanOutlined,
   ManOutlined,
+  CaretUpOutlined,
+  CaretDownOutlined,
 } from "@ant-design/icons";
 import "./Filter.less";
 import Transgender from '../../assets/images/lgbt.svg'
 import { Roles } from "../../models/Roles/Roles";
-const { Text } = Typography;
+import "../AnnualReport/AnnualReportTable/AnnualReportTable.less";
 
 const setTagColor = (userRoles: string) => {
   let color = "";
@@ -35,58 +37,61 @@ const setTagColor = (userRoles: string) => {
   return color;
 };
 
-const ColumnsForUserTable: any = [
+interface Props {
+  sortKey: number;
+  setSortKey: any;
+  setFilter: any;
+  filterRole: string;
+}
+
+const ColumnsForUserTable=(props: Props):any[] => {
+  const { sortKey, setSortKey, setFilter, filterRole } = props;
+  
+  const SortDirection=(props:{sort: number})=>{
+    return<>
+      <div className={"tableHeaderSorting"}>
+        <button onClick={()=>{setSortKey(props.sort)}} className={sortKey===props.sort? "sortDirection":""}><CaretUpOutlined /></button>
+        <button onClick={()=>{setSortKey(-props.sort)}} className={sortKey===-props.sort? "sortDirection":""}><CaretDownOutlined /></button>
+      </div>
+    </>
+  }
+
+  const SortColumnHighlight =(sort: number, text: any)=>{
+    return {
+      props: {
+        style: { backgroundColor: (sortKey===sort || sortKey===-sort)? "#fafafa" : "", }
+      },
+      children: <div>{text}</div>
+    };
+  }
+  return [
   {
-    title: "№",
+    title: <Row className="tableHeader"><Col>№</Col><Col><SortDirection sort={1} /></Col></Row>,
+      render: (text: any)=>{return SortColumnHighlight(1, text)},
+
     dataIndex: "userSystemId",
-    render: (id: number) => <Text>{id}</Text>,
     fixed: true,
-    sorter: {
-      compare: (a: any, b: any) => a.userProfileId - b.userProfileId,
-    },
-    sortDirections: ["descend", "ascend"],
-    defaultSortOrder: "ascend",
-    width: 65,
+    width: 75,
   },
   {
-    title: "Ім`я",
+    title: <Row className="tableHeader"><Col>Ім'я</Col><Col><SortDirection sort={2} /></Col></Row>,
     dataIndex: "firstName",
     width: 150,
-    render: (text: any) => (
-      <Text underline strong>
-        {text}
-      </Text>
-    ),
-    sorter: (a: any, b: any) => a.firstName.localeCompare(b.firstName),
-    sortDirections: ["descend", "ascend"],
+    render: (text: any)=>{return SortColumnHighlight(2, text)},
+
   },
   {
-    title: "Прізвище",
+    title: <Row className="tableHeader"><Col>Прізвище</Col><Col><SortDirection sort={3} /></Col></Row>,
     dataIndex: "lastName",
     width: 150,
-    render: (text: any | null) => (
-      <Text underline strong>
-        {text}
-      </Text>
-    ),
-    sorter: (a: any, b: any) => a.lastName.localeCompare(b.lastName),
-    sortDirections: ["descend", "ascend"],
+    render: (text: any)=>{return SortColumnHighlight(3, text)},
   },
   {
-    title: "Дата народження",
+    title: <Row className="tableHeader"><Col>Дата народження</Col><Col><SortDirection sort={4} /></Col></Row>,
     dataIndex: "birthday",
     width: 130,
-    render: (date: Date) => {
-      if (date !== null) {
-        return moment(date).format("DD.MM.YYYY");
-      }
-    },
-    sorter: (a: any, b: any) => {
-      a = a.birthday || " ";
-      b = b.birthday || " ";
-      return a.localeCompare(b);
-    },
-    sortDirections: ["descend", "ascend"],
+    render: (date: Date)=>{
+      return SortColumnHighlight(4, <>{date !== null? moment(date.toLocaleString()).format("DD.MM.YYYY") : ""}</>)},
   },
   {
     title: "Стать",
@@ -133,176 +138,89 @@ const ColumnsForUserTable: any = [
     },
   },
   {
-    title: "Округа",
+    title: <Row className="tableHeader"><Col>Округа</Col><Col><SortDirection sort={5} /></Col></Row>,
     dataIndex: "regionName",
-    width: 100,
-    render: (regionName: any) => {
-      if(!regionName){
-        return (
-        ""
-        );
-      }
-      if (regionName?.length > 9) {
-        return (
-          <Tag color={"blue"} key={regionName}>
-            <Tooltip placement="topLeft" title={regionName}>
-              {regionName.slice(0, 9)}
-            </Tooltip>
-          </Tag>
-        );
-      }     
-      return (
-        <Tag color={"blue"} key={regionName}>
-          <Tooltip placement="topLeft" title={regionName}>
-            {regionName}
-          </Tooltip>
-        </Tag>
-      );    
-    },      
-    sorter: (a: any, b: any) => {
-      a = a.regionName || " ";
-      b = b.regionName || " ";
-      return a.localeCompare(b);
-    },
-    sortDirections: ["descend", "ascend"],
+    width: 110,
+    render: (regionName: any)=>{return SortColumnHighlight(5, regionName==null? "":<Tag color={"blue"} key={regionName}>
+      {(regionName?.length > 13)? <Tooltip title={regionName}>
+        <span>{regionName.slice(0,12)+"..."}</span>
+        </Tooltip> : regionName}
+    </Tag>)},
   },
   {
-    title: "Станиця",
+    title: <Row className="tableHeader"><Col>Станиця</Col><Col><SortDirection sort={6} /></Col></Row>,
     dataIndex: "cityName",
     width: 120,
-    render: (cityName: any) => {
-      if(!cityName){
-        return (
-        ""
-        );
-      }
-      if (cityName?.length > 13) {
-        return (
-          <Tag color={"purple"} key={cityName}>
-            <Tooltip placement="topLeft" title={cityName}>
-              {cityName.slice(0, 13)}
-            </Tooltip>
-          </Tag>
-        );
-      }
-      return (
-        <Tag color={"purple"} key={cityName}>
-          <Tooltip placement="topLeft" title={cityName}>
-            {cityName}
-          </Tooltip>
-        </Tag>
-      );
-    },
-    sorter: (a: any, b: any) => {
-      a = a.cityName || " ";
-      b = b.cityName || " ";
-      return a.localeCompare(b);
-    },
-    sortDirections: ["descend", "ascend"],
+    render: (cityName: any)=>{return SortColumnHighlight(6, cityName==null? "": <Tag color={"purple"} key={cityName}>
+      {(cityName?.length > 13)? <Tooltip title={cityName}>
+        <span>{cityName.slice(0,12)+"..."}</span>
+        </Tooltip> : cityName}
+    </Tag>)},
   },
   {
-    title: "Курінь",
+    title: <Row className="tableHeader"><Col>Курінь</Col><Col><SortDirection sort={7} /></Col></Row>,
     dataIndex: "clubName",
     width: 150,
-    render: (clubName: any) => {
-      if(!clubName){
-        return (
-        ""
-        );
-      }
-      if (clubName?.length > 20) {
-        return (
-          <Tag color={"pink"} key={clubName}>
-            <Tooltip placement="topLeft" title={clubName}>
-              {clubName.slice(0, 20)}
-            </Tooltip>
-          </Tag>
-        );
-      }
-      return (
-        <Tag color={"pink"} key={clubName}>
-          <Tooltip placement="topLeft" title={clubName}>
-            {clubName}
-          </Tooltip>
-        </Tag>
-      );
-    },    
-    sorter: (a: any, b: any) => {
-      a = a.clubName || " ";
-      b = b.clubName || " ";
-      return a.localeCompare(b);
-    },
-    sortDirections: ["descend", "ascend"],
+    render: (clubName: any)=>{return SortColumnHighlight(7, clubName==null? "": <Tag color={"pink"} key={clubName}>
+      {(clubName?.length > 17)? <Tooltip title={clubName}>
+        <span>{clubName.slice(0,16)+"..."}</span>
+        </Tooltip> : clubName}
+  </Tag>)},
   },
   {
-    title: "Ступінь",
+    title: <Row className="tableHeader"><Col>Ступінь</Col><Col><SortDirection sort={8} /></Col></Row>,
     dataIndex: "userPlastDegreeName",
     width: 150,
-    render: (userPlastDegreeName: any, record: any) => {
-      if(!userPlastDegreeName){
-        return (
-        ""
-        );
-      }
-      if (userPlastDegreeName?.length > 20 ) {
-        if (record.gender?.name !== null && record.gender?.name == "Чоловік") {
-          return (
-            <Tag color={"blue"} key={userPlastDegreeName}>
-              <Tooltip
-                placement="topLeft"
-                title={userPlastDegreeName?.split("/")[0]}
-              >
-                {userPlastDegreeName?.split("/")[0]?.slice(0, 15)}
-              </Tooltip>
-            </Tag>
-          );
+    render: (userPlastDegreeName: any, record: any)=>{
+      if (userPlastDegreeName !== null && userPlastDegreeName.length > 0)
+      {
+        if (record.gender?.name !== null && record.gender?.name == "Чоловік")
+        {
+          return SortColumnHighlight(8, <Tag color={"blue"} key={userPlastDegreeName}>
+      <Tooltip
+        placement="topLeft"
+        title={userPlastDegreeName?.includes("/")? userPlastDegreeName?.split("/")[0]: userPlastDegreeName}
+      >
+        {userPlastDegreeName?.includes("/")? userPlastDegreeName?.split("/")[0]?.slice(0, 20): userPlastDegreeName}
+      </Tooltip>
+    </Tag>)
         } else if (
           record.gender?.name !== null &&
           record.gender?.name == "Жінка"
-        ) {
-          return (
-            <Tag color={"red"} key={userPlastDegreeName}>
-              <Tooltip
-                placement="topLeft"
-                title={userPlastDegreeName?.split("/")[1]}
-              >
-                {userPlastDegreeName?.split("/")[1]?.slice(0, 17)}
-              </Tooltip>
-            </Tag>
-          );
-        } else {
-          return (
-            <Tag color={"yellow"} key={userPlastDegreeName}>
-              <Tooltip placement="topLeft" title={userPlastDegreeName}>
-                {userPlastDegreeName?.slice(0, 20)}
-              </Tooltip>
-            </Tag>
-          );
+        )
+        {
+          return SortColumnHighlight(8, <Tag color={"red"} key={userPlastDegreeName}>
+          <Tooltip
+            placement="topLeft"
+            title={userPlastDegreeName?.includes("/")? userPlastDegreeName?.split("/")[1]: userPlastDegreeName}
+          >
+            {userPlastDegreeName?.includes("/")? userPlastDegreeName?.split("/")[1].slice(0, 20): userPlastDegreeName}
+          </Tooltip>
+        </Tag>)
+        } else{
+          return SortColumnHighlight(8, <Tag color={"yellow"} key={userPlastDegreeName}>
+          <Tooltip placement="topLeft" title={userPlastDegreeName}>
+            {userPlastDegreeName?.slice(0, 20)}
+          </Tooltip>
+        </Tag>)
         }
-      }
-    },
-    sorter: (a: any, b: any) => {
-      a = a.userPlastDegreeName || " ";
-      b = b.userPlastDegreeName || " ";
-      return a.localeCompare(b);
-    },
-    sortDirections: ["descend", "ascend"],
+      } else{
+        return SortColumnHighlight(8, "")
+      }},
   },
   {
-    title: "Ступінь в УПЮ",
+    title: <Row className="tableHeader"><Col>Ступінь в УПЮ</Col><Col><SortDirection sort={9} /></Col></Row>,
     dataIndex: "upuDegree",
     width: 210,
-    render: (upuDegree: any) => {
-      return <Tag color={"blue"}>{upuDegree}</Tag>;
-    },
-    sorter: (a: any, b: any) => a.upuDegree.localeCompare(b.upuDegree),
-    sortDirections: ["descend", "ascend"],
+    render: (upuDegree: any)=>{
+      return SortColumnHighlight(9, <Tag color={"blue"}>{upuDegree}</Tag>)},
   },
   {
     title: "Права доступу",
     dataIndex: "userRoles",
     width: 170,
     ellipsis: false,
+    filteredValue: [filterRole],
     filters: [
       {
         text: Roles.PlastMember,
@@ -346,7 +264,8 @@ const ColumnsForUserTable: any = [
       }
     ],
     filterMultiple: false,
-    onFilter: (value: any, record: any) => record.userRoles?.includes(value),
+    onFilter: (value: any, record: any) => {if(value!=filterRole) setFilter(value) 
+      else {return true}},
     render: (userRoles: any) => {
       if (userRoles?.length > 20) {
         return (
@@ -366,6 +285,6 @@ const ColumnsForUserTable: any = [
       );
     },
   },
-];
+]};
 
 export default ColumnsForUserTable;

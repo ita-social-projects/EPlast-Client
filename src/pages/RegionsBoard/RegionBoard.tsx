@@ -211,7 +211,6 @@ const RegionBoard = () => {
     getRegion();
   }, []);
 
-  console.log(userAccesses);
 
   return loading ? (
     <Spinner />

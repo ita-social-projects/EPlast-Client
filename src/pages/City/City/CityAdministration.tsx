@@ -112,8 +112,8 @@ const CityAdministration = () => {
                   title={`${member.adminType.adminTypeName}`}
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit && (activeUserRoles.includes(Roles.Admin) || activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.CityHead)) 
-                      && (!activeUserRoles.includes(Roles.CityHeadDeputy) || member.adminType.adminTypeName !== Roles.CityHead)
+                    canEdit || (activeUserRoles.includes(Roles.CityHead)|| activeUserRoles.includes(Roles.CityHeadDeputy)) 
+                      && (!activeUserRoles.includes(Roles.CityHead) || member.adminType.adminTypeName !== Roles.CityHeadDeputy)
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
                           <CloseOutlined onClick={() => seeDeleteModal(member)} />,

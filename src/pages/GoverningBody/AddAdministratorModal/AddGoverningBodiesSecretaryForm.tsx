@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
-import { Form, Input, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
+import { Form, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
@@ -193,7 +193,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         name="userId"
         rules={[
           {
-            required: props.admin === undefined ? true : false,
+            required: props.admin === undefined,
             message: emptyInput(),
           },
         ]}
@@ -232,7 +232,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
             { value: "Член КПР відповідальний за зовнішні зв'язки" },
           ]}
           placeholder={"Тип адміністрування"}
-        ></AutoComplete>
+        />
       </Form.Item>
 
       <Form.Item
