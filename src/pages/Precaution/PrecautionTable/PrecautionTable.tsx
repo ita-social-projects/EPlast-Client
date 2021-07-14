@@ -20,6 +20,7 @@ import {
   successfulUpdateAction
 } from "../../../components/Notifications/Messages"
 import { Roles } from "../../../models/Roles/Roles";
+import "./Filter.less";
 const { Content } = Layout;
 
 const PrecautionTable = () => {

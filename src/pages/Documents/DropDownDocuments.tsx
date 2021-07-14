@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu } from 'antd';
 import {
-  DeleteOutlined, FilePdfOutlined,
+  DeleteOutlined, EditOutlined, FilePdfOutlined,
 } from '@ant-design/icons';
 import AuthStore from '../../stores/AuthStore';
 import jwt_decode from "jwt-decode";
@@ -11,6 +11,8 @@ import documentsApi from '../../api/documentsApi';
 import { destroyFns } from 'antd/lib/modal/Modal';
 import { DocumentPost } from '../../models/Documents/DocumentPost';
 import { Roles } from '../../models/Roles/Roles';
+
+
 interface Props {
   record: number;
   pageX: number;
@@ -26,6 +28,13 @@ const DropDown = (props: Props) => {
   const [regionAdm, setRegionAdm] = useState(false);
   const [cityAdm, setCityAdm] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
+  const [supporter, setSupporter] = useState(false);
+  const [plastMember, setPlastMember] = useState(false);
+  const [userRole, setUserRole] = useState<string[]>();
+  
+
+
   const [data, setData] = useState<DocumentPost>({
     id: 0,
     name: "",
@@ -36,22 +45,34 @@ const DropDown = (props: Props) => {
     fileName: null,
   });
 
+
+  const EditModal = ()=> setShowEditModal(true);
+
+  
   useEffect(() => {
-    if (showEditModal) {
-      const fetchData = async () => {
-        await documentsApi.getById(record).then(res => setData(res));
-        let jwt = AuthStore.getToken() as string;
-        let decodedJwt = jwt_decode(jwt) as any;
-        let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
-        setRegionAdm(roles.includes(Roles.OkrugaHead));
-        setCityAdm(roles.includes(Roles.CityHead));
-        setClubAdm(roles.includes(Roles.KurinHead));
-      }
-      fetchData();
-    }
-  }, [showEditModal]);
+    const fetchData = async () => {
+      let jwt = AuthStore.getToken() as string;
+      let decodedJwt = jwt_decode(jwt) as any;
+      let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+      const res: Document[] = await documentsApi.getAll();
+      setData(data);
+      setUserRole(roles);
+      setCanEdit(roles.includes(Roles.Admin));
+      setRegionAdm(roles.includes(Roles.OkrugaHead));
+      setCityAdm(roles.includes(Roles.CityHead));
+      setClubAdm(roles.includes(Roles.KurinHead));
+      setCanEdit(roles.includes(Roles.Admin));
+      setSupporter(roles.includes(Roles.Supporter));
+      setPlastMember(roles.includes(Roles.PlastMember));
+      };
+    fetchData();
+  }, []);
+
+  
+
   /* eslint no-param-reassign: "error" */
   const handleItemClick = async (item: any) => {
+    
     switch (item.key) {
         case '1':
           deleteConfirm(record, onDelete);
@@ -61,13 +82,17 @@ const DropDown = (props: Props) => {
           window.open(pdf);
           break;
         }
+        case '3':
+          EditModal();
+          break;
       }
     item.key = '0'
   };
 
   return (
     <>
-      <Menu
+    
+      <Menu 
         theme="dark"
         onClick={handleItemClick}
         className={classes.menu}
@@ -77,15 +102,25 @@ const DropDown = (props: Props) => {
           display: showDropdown ? 'block' : 'none',
         }}
       >
-        <Menu.Item key="1">
+        {(canEdit == true) ? (
+        <Menu.Item key="1" >
           <DeleteOutlined />
             Видалити
           </Menu.Item>
-
+          ) : (<> </>)
+          }
+          
         <Menu.Item key="2">
-          <FilePdfOutlined />
+          <FilePdfOutlined  />
             Переглянути в PDF
         </Menu.Item>
+
+
+        <Menu.Item key="3">
+          <EditOutlined  />
+            Редагувати
+        </Menu.Item>
+
       </Menu>
     </>
   );
