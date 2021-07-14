@@ -463,7 +463,14 @@ const GoverningBody = () => {
           xs={24}
         >
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Документообіг Керівного Органу</Title>
+            <Title level={4}>Документообіг Керівного Органу <a onClick={() => history.push(`/governingBodies/documents/${governingBody.id}`)}>
+              {documents.length !== 0 ?
+                <Badge
+                  count={documents.length}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a></Title>
             <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
                 {documents.length !== 0 ? (
                     documents.map((d) => (
