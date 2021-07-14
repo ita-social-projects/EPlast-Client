@@ -37,7 +37,6 @@ import AuthStore from "../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../models/Roles/Roles";
 
-const { Content } = Layout;
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -194,8 +193,10 @@ const UsersTable = () => {
  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
    if(e.target.value.toLowerCase() === '') {
      setSearchData('')
-   }  
+   }
+  
  }
+
 
   const onSelect = (selectedKeys: any, e: any) => {
     if (e.value == 0) {
@@ -348,153 +349,166 @@ const UsersTable = () => {
   };
 
   return (
-    <Layout>
-      <Content>
-        <Title level={2}>Таблиця користувачів</Title>
-        <Title level={4} style={{textAlign: "left", margin: 10}} underline={true}>Загальна кількість користувачів: {total}</Title>
-        <div className={classes.searchContainer}>
-          <div className={classes.filterContainer}>
-            <Form form={form} onFinish={handleFilter} style={{ height: "20px", position: 'relative'}}>
-              <Row style={{flexFlow: "nowrap"}}>
-                <Col span={20}>
-                  <Form.Item
-                    rules={[
-                      {
-                        required: true,
-                        message: shouldContain("хоча б одна опція"),
-                        type: "array",
-                      },
-                    ]}
-                  >
-                    <TreeSelect
-                      placeholder="Фільтр"
-                      maxTagCount={2}
-                      showSearch
-                      multiple
-                      onDeselect={ondeSelect}
-                      onSelect={onSelect}
-                      className={classes.treeSelect}
-                      treeCheckable={true}
-                      showCheckedStrategy={SHOW_PARENT}
-                      style={{ minWidth: "75%", height: "32px", maxWidth: "95%" }}
-                      filterTreeNode={(input, option) =>
-                        (option?.title as string)
-                          .toLowerCase()
-                          .indexOf(input.toLowerCase()) >= 0
-                      }
-                      allowClear
-                      onChange={(event: any) => {
-                        if(event.length==0) {setDynamicRegions([]);
-                        setDynamicCities([]);
-                        setDynamicClubs([]);
-                        setDynamicDegrees([]);
-                      }
-                      }}
-                    >
-                    
-                      <TreeNode value={0} title="Всі округи">
-                        {getDynamicRegions()}
-                      </TreeNode>
-                      <TreeNode value={1} title="Всі станиці">
-                        {getDynamicCities()}
-                      </TreeNode>
-                      <TreeNode value={2} title="Всі курені">
-                        {getDynamicClubs()}
-                      </TreeNode>
-                      <TreeNode value={3} title="Всі ступені УПС/УСП">
-                        {getDynamicDegrees()}
-                      </TreeNode>
-                    </TreeSelect>
-                  </Form.Item>
-                </Col>
-                <Col>
-                <Form.Item>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{ minWidth: "10%", marginBottom:30}}
-                  >
-                    OK
-                  </Button>
-                </Form.Item>
-                </Col>
-
-              </Row>
-            </Form>
-          </div>
-          <div className={classes.searchArea}>
-            <Search placeholder="Пошук"
-            enterButton
-            onChange={handleSearchChange}  
-            onSearch={handleSearch}
-            />
-          </div>
-        </div>
-        
-            }}
-          >
-            <Table
-              className={classes.table}
-              bordered
-              rowKey="id"
-              scroll={{ x: 1450 }}
-              columns={ColumnsForUserTable}
-              dataSource={users}
-              onRow={(record) => {
-                return {
-                  onDoubleClick: () => { if (record.id && canView) window.open(`/userpage/main/${record.id}`);
-                },
-                  onContextMenu: (event) => {
-                    event.preventDefault();
-                    setShowDropdown(false);
-                    if(canView){
-                      setShowDropdown(true);
-                      setRecordObj(record.id);
-                      setRoles(record.userRoles);
-                      setUser(users.find(x=>x.id==record.id));
-                      setX(event.pageX);
-                      setY(event.pageY);
+    <Layout.Content>
+      <Title level={2}>Таблиця користувачів</Title>
+      <Title level={4} style={{textAlign: "left", margin: 10}} underline={true}>Загальна кількість користувачів: {total}</Title>
+      <div className={classes.searchContainer}>
+        <div className={classes.filterContainer}>
+          <Form form={form} onFinish={handleFilter} style={{ height: "20px"}}>
+            <Row style={{flexFlow: "nowrap"}}>
+              <Col span={20}>
+                <Form.Item
+                  rules={[
+                    {
+                      required: true,
+                      message: shouldContain("хоча б одна опція"),
+                      type: "array",
+                    },
+                  ]}
+                >
+                  <TreeSelect
+                    placeholder="Фільтр"
+                    maxTagCount={2}
+                    showSearch
+                    multiple
+                    onDeselect={ondeSelect}
+                    onSelect={onSelect}
+                    className={classes.treeSelect}
+                    treeCheckable={true}
+                    showCheckedStrategy={SHOW_PARENT}
+                    style={{ minWidth: "75%", height: "32px", maxWidth: "95%" }}
+                    filterTreeNode={(input, option) =>
+                      (option?.title as string)
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
                     }
-                  },
-                };
-              }}
-              onChange={(pagination) => {
-                if (pagination) {
-                  window.scrollTo({
-                    left: 0,
-                    top: 0,
-                    behavior: "smooth",
-                  });
-                }
-              }}
-              pagination={{
-                current: page,
-                pageSize: pageSize,
-                total: total,
-                showLessItems: true,
-                responsive: true,
-                showSizeChanger: true,
-                onChange: (page) => handlePageChange(page),
-                onShowSizeChange: (page, size) => handleSizeChange(page, size),
-              }}
-            />
-          </Card>
-        )}
-        <ClickAwayListener onClickAway={handleClickAway}>
-          <DropDownUserTable
-            showDropdown={showDropdown}
-            record={recordObj}
-            pageX={x}
-            pageY={y}
-            onDelete={handleDelete}
-            onChange={handleChange}
-            user={user}
-            roles={roles}
-            inActiveTab={isInactive}
-            currentUser={currentUser}
-            canView={canView}
+                    allowClear
+                    onChange={(event: any) => {
+                      if(event.length==0) {setDynamicRegions([]);
+                      setDynamicCities([]);
+                      setDynamicClubs([]);
+                      setDynamicDegrees([]);
+                    }
+                    }}
+                  >
+                  
+                    <TreeNode value={0} title="Всі округи">
+                      {getDynamicRegions()}
+                    </TreeNode>
+                    <TreeNode value={1} title="Всі станиці">
+                      {getDynamicCities()}
+                    </TreeNode>
+                    <TreeNode value={2} title="Всі курені">
+                      {getDynamicClubs()}
+                    </TreeNode>
+                    <TreeNode value={3} title="Всі ступені УПС/УСП">
+                      {getDynamicDegrees()}
+                    </TreeNode>
+                  </TreeSelect>
+                </Form.Item>
+              </Col>
+              <Col>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{ minWidth: "10%", marginBottom:30}}
+                >
+                  OK
+                </Button>
+              </Form.Item>
+              </Col>
+
+            </Row>
+          </Form>
+        </div>
+        <div className={classes.searchArea}>
+          <Search placeholder="Пошук"
+          enterButton
+          onChange={handleSearchChange}  
+          onSearch={handleSearch}
           />
 
+        </div>
+      </div>
+      
+        <Card
+          style={{ width: "100%" }}
+          tabList={tabList}
+          activeTabKey={currentTabName}
+          onTabChange={(key) => {
+            onTabChange(key);
+          }}
+        >
+          <Table
+          loading={!loading}
+            className={classes.table}
+            bordered
+            rowKey="id"
+            scroll={{ x: 1450 }}
+            columns={ColumnsForUserTable(
+              {
+                sortKey: sortKey,
+                setSortKey: setSortKey,
+                setFilter: setFilter,
+                filterRole: filter,
+              })}
+            dataSource={users}
+            onRow={(record) => {
+              return {
+                onDoubleClick: () => { if (record.id && canView) window.open(`/userpage/main/${record.id}`);
+              },
+                onContextMenu: (event) => {
+                  event.preventDefault();
+                  setShowDropdown(false);
+                  if(canView){
+                  setShowDropdown(true);
+                  setRecordObj(record.id);
+                  setRoles(record.userRoles);
+                  setUser(users.find(x=>x.id==record.id));
+                  setX(event.pageX);
+                  setY(event.pageY);
+                  }
+                },
+              };
+            }}
+            onChange={(pagination) => {
+              if (pagination) {
+                window.scrollTo({
+                  left: 0,
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }
+            }}
+            pagination={{
+              current: page,
+              pageSize: pageSize,
+              total: total,
+              showLessItems: true,
+              responsive: true,
+              showSizeChanger: true,
+              onChange: (page) => handlePageChange(page),
+              onShowSizeChange: (page, size) => handleSizeChange(page, size),
+            }}
+          />
+        </Card>
+      <ClickAwayListener onClickAway={handleClickAway}>
+        <DropDownUserTable
+          showDropdown={showDropdown}
+          record={recordObj}
+          pageX={x}
+          pageY={y}
+          onDelete={handleDelete}
+          onChange={handleChange}
+          user={user}
+          roles={roles}
+          inActiveTab={isInactive}
+          currentUser={currentUser}
+          canView={canView}
+        />
+        </ClickAwayListener>
+    </Layout.Content>
   );
 };
 export default UsersTable;
