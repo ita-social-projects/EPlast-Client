@@ -525,7 +525,7 @@ const Region = () => {
               </a>
               </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
-                {admins.length !== 0 ? (
+                {adminsCount !== 0 ? (
                   admins.map((admin) => (
                     <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                       <div
