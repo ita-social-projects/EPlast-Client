@@ -1,13 +1,11 @@
-import React, {useEffect, useState, PropsWithRef} from 'react';
-import {Table, Spin, Input, Empty} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Table, Empty} from 'antd';
 import columns from './columnsCIties';
 import {getUsersAdministrations, getusersPreviousAdministrations} from "../../../api/citiesApi";
 import Modal from "antd/lib/modal";
 import SecretaryModel from './SecretaryModel';
 
-
 interface props {
-
     UserId: string;
 }
 

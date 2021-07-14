@@ -2,13 +2,10 @@ import React, {useEffect, useState, PropsWithRef} from 'react';
 import {Table, Spin, Input, Empty} from 'antd';
 import columns from './columnsClubs';
 import {getUsersAdministrations, getUsersPreviousAdministrations} from "../../../api/clubsApi";
-import {getusersPreviousAdministrations} from "../../../api/citiesApi";
 import Modal from "antd/lib/modal";
 import SecretaryModel from './SecretaryModel';
 
-
 interface props {
-
     UserId: string;
 }
 

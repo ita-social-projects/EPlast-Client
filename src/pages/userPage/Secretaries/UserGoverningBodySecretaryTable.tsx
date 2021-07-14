@@ -1,7 +1,10 @@
-import React, {useEffect, useState, PropsWithRef} from 'react';
-import {Table, Spin, Input, Empty} from 'antd';
-import columns from './columnsRegions';
-import {getUsersAdministrations, getUsersPreviousAdministrations} from "../../../api/regionsApi";
+import React, {useEffect, useState} from 'react';
+import {Table, Empty} from 'antd';
+import columns from './columnsGoverningBodies';
+import {
+    getUsersAdministrations,
+    getUsersPreviousAdministrations
+} from "../../../api/governingBodiesApi";
 import Modal from "antd/lib/modal";
 import SecretaryModel from './SecretaryModel';
 
@@ -9,7 +12,7 @@ interface props {
     UserId: string;
 }
 
-export const UserRegionSecretaryTable = ({UserId}: props) => {
+export const UserGoverningBodySecretaryTable = ({UserId}: props) => {
     const [isLoadingActive, setIsLoadingActive] = useState<boolean>(true);
     const [isLoadingPrev, setIsLoadingPrev] = useState<boolean>(true);
 
@@ -53,7 +56,7 @@ export const UserRegionSecretaryTable = ({UserId}: props) => {
 
     return (
         <div>
-            <h1>Дійсні діловодства округи</h1>
+            <h1>Дійсні діловодства краю</h1>
             <br/>
             <Table
                 {...{loading:isLoadingActive}}
@@ -65,7 +68,7 @@ export const UserRegionSecretaryTable = ({UserId}: props) => {
                 scroll={{x: 655}}
             />
 
-            <h1>Колишні діловодства округи</h1>
+             <h1>Колишні діловодства краю</h1>
             <br/>
             <Table
                 {...{loading:isLoadingPrev}}
@@ -75,8 +78,9 @@ export const UserRegionSecretaryTable = ({UserId}: props) => {
                 columns={columns}
                 dataSource={prevData}
                 scroll={{x: 655}}
-            />
+            /> 
 
         </div>
+
     )
 }
