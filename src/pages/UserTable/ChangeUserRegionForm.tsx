@@ -71,13 +71,13 @@ const ChangeUserRegionForm = ({
       <Form name="basic" onFinish={handleFinish} form={form}>
         <h4>Оберіть округу для користувача</h4>
         <Form.Item name="userRegion">
-          <AutoComplete filterOption={true}>
-          {regions.map((item: RegionForAdmin) => (
-              <Select.Option key={item.id} value={item.regionName}>
+        <Select onChange={handleClick}>
+            {regions.map((item: RegionForAdmin) => (
+              <Option key={item.id} value={item.regionName}>
                 {item.regionName}
-              </Select.Option>
+              </Option>
             ))}
-          </AutoComplete>
+          </Select>
         </Form.Item>
         <Form.Item className="cancelConfirmButtons">
           <Row justify="end">

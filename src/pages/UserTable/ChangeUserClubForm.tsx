@@ -121,13 +121,14 @@ const ChangeUserClubForm = ({
       <Form name="basic" onFinish={handleFinish} form={form}>
         <h4>Оберіть курінь для користувача</h4>
         <Form.Item name="userClub">         
-          <AutoComplete filterOption={true}>
-            {clubs.map((item: ClubForAdmin) => (   
-                <Select.Option key={item.id} value={item.name} disabled={handleClub(item)}>
-                  {item.name}
-                </Select.Option>
-              ))}
-          </AutoComplete>
+        <Select onChange={handleClick}>
+            {clubs.map((item: ClubForAdmin) => (              
+              item.name === user.clubName ? 
+              <Select.Option key={item.id} value={item.name} disabled={handleClub(item)}>
+              {item.name}
+              </Select.Option> : <> </>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item className="cancelConfirmButtons">
           <Row justify="end">
@@ -141,7 +142,7 @@ const ChangeUserClubForm = ({
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" onClick={handleClick}>
                 Призначити
               </Button>
             </Col>
