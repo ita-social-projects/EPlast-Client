@@ -147,7 +147,7 @@ const GoverningBodyAdministration = () => {
                       )}
                       <Card.Meta
                         className="detailsMeta"
-                        title={`${member.user.firstName} ${member.user.lastName}\n ${member.user.email}`}
+                        title={`${member.user.firstName} ${member.user.lastName}\n ${member.workEmail == null || member.workEmail == "" ? member.user.email : member.workEmail}`}
                       />
                     </div>
                   </div>
