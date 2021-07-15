@@ -13,13 +13,14 @@ import userApi from "../../../api/UserApi";
 import moment from "moment";
 import {
   emptyInput,
+  incorrectEmail,
+  maxLength,
   successfulEditAction,
 } from "../../../components/Notifications/Messages"
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
 import "./AddAdministrationModal.less"
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 const confirm = Modal.confirm;
 
@@ -248,7 +249,20 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         name="workEmail"
         className={classes.formField}
         label="Електронна пошта"
-        rules={descriptionValidation.RegionEmail}
+        rules={[
+            {
+              pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
+              message: <div className="formItemExplain">{incorrectEmail}</div>,
+            },
+            {
+              max: 50,
+              message: <div className="formItemExplain">{maxLength(50)}</div>,
+            },
+            {
+              required: true,
+              message: <div className="formItemExplain">{emptyInput()}</div>,
+            }
+        ]}
       >
         <Input
           placeholder="Електронна пошта"
