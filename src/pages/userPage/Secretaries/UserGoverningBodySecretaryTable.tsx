@@ -17,7 +17,7 @@ export const UserGoverningBodySecretaryTable = ({UserId}: props) => {
     const [isLoadingPrev, setIsLoadingPrev] = useState<boolean>(true);
 
     const [governingBodyAdmins, setGoverningBodyAdmins] = useState<SecretaryModel[]>();
-    const [governingBodyPrevAdmins, setPrevGoverningBodyAdmins] = useState<SecretaryModel[]>();
+    const [prevGoverningBodyAdmins, setPrevGoverningBodyAdmins] = useState<SecretaryModel[]>();
 
     const fetchData = async () => {
         setIsLoadingActive(true);
@@ -76,7 +76,7 @@ export const UserGoverningBodySecretaryTable = ({UserId}: props) => {
                     emptyText: (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Немає колишніх діловодств"/>)
                 }}
                 columns={columns}
-                dataSource={governingBodyPrevAdmins}
+                dataSource={prevGoverningBodyAdmins}
                 scroll={{x: 655}}
             /> 
 
