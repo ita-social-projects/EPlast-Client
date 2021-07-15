@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
-import { Form, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
+import { Form, DatePicker, AutoComplete, Select, Modal, Button, Input } from "antd";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
@@ -166,7 +166,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   const onUserSelect = (value: any) => {
     const email: string = JSON.parse(value.toString()).email;
     setWorkEmail(email);
-    form.setFieldsValue({workEmail: value});
+    form.setFieldsValue({workEmail: email});
   }
 
   useEffect(() => {
