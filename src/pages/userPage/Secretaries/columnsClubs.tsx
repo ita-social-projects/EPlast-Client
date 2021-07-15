@@ -1,6 +1,6 @@
 import React from "react";
 
-import CityUser from "../../../models/City/CityUser";
+import ClubUser from "../../../models/Club/ClubUser";
 import moment from "moment";
 
 const columns = [
@@ -11,7 +11,7 @@ const columns = [
   {
     title: "Користувач",
     dataIndex: "user",
-    render: (user: CityUser) => {
+    render: (user: ClubUser) => {
       return user.firstName + " " + user.lastName;
     },
   },

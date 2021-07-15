@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
-import {Form, DatePicker, AutoComplete, Select, Modal, Button, Input} from "antd";
+import { Form, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
@@ -18,6 +18,7 @@ import {
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
+import "./AddAdministrationModal.less"
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 const confirm = Modal.confirm;
@@ -122,8 +123,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   };
 
   const handleSubmit = async (values: any) => {
-    console.log(values);
-
     const newAdmin: GoverningBodyAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
       userId: props.admin === undefined
@@ -141,7 +140,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     };
 
     onAdd();
-
     if (newAdmin.id === 0) {
       try {
         if (values.AdminType === Roles.GoverningBodyHead && head !== null) {
@@ -200,7 +198,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         rules={[
           {
             required: props.admin === undefined,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >

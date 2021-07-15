@@ -2,13 +2,10 @@ import React, {useEffect, useState, PropsWithRef} from 'react';
 import {Table, Spin, Input, Empty} from 'antd';
 import columns from './columnsClubs';
 import {getUsersAdministrations, getUsersPreviousAdministrations} from "../../../api/clubsApi";
-import {getusersPreviousAdministrations} from "../../../api/citiesApi";
 import Modal from "antd/lib/modal";
 import SecretaryModel from './SecretaryModel';
 
-
 interface props {
-
     UserId: string;
 }
 
@@ -16,14 +13,14 @@ export const UserClubSecretaryTable = ({UserId}: props) => {
     const [isLoadingActive, setIsLoadingActive] = useState<boolean>(true);
     const [isLoadingPrev, setIsLoadingPrev] = useState<boolean>(true);
 
-    const [data, setData] = useState<SecretaryModel[]>();
-    const [prevData, setPrevData] = useState<SecretaryModel[]>();
+    const [clubAdmins, setClubAdmins] = useState<SecretaryModel[]>();
+    const [prevClubAdmins, setPrevClubAdmins] = useState<SecretaryModel[]>();
 
     const fetchData = async () => {
         setIsLoadingActive(true);
         try {
             await getUsersAdministrations(UserId).then(response => {
-                setData(response.data);
+                setClubAdmins(response.data);
             })
         } catch (error) {
             showError(error.message);
@@ -34,7 +31,7 @@ export const UserClubSecretaryTable = ({UserId}: props) => {
         setIsLoadingPrev(true);
         try {
             await getUsersPreviousAdministrations(UserId).then(response => {
-                setPrevData(response.data);
+                setPrevClubAdmins(response.data);
             })
         } catch (error) {
             showError(error.message);
@@ -65,7 +62,7 @@ export const UserClubSecretaryTable = ({UserId}: props) => {
                     emptyText: (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Немає дійсних діловодств"/>)
                 }}
                 columns={columns}
-                dataSource={data}
+                dataSource={clubAdmins}
                 scroll={{x: 655}}
             />
 
@@ -77,7 +74,7 @@ export const UserClubSecretaryTable = ({UserId}: props) => {
                     emptyText: (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Немає колишніх діловодств"/>)
                 }}
                 columns={columns}
-                dataSource={prevData}
+                dataSource={prevClubAdmins}
                 scroll={{x: 655}}
             />
         </div>
