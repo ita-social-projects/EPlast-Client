@@ -66,6 +66,7 @@ const Club = () => {
       await userApi.getImage(member.data.user.imagePath)
     ).data;
     const response = await getClubById(+id);
+    setFollowersCount(response.data.followerCount);
     setMembersCount(response.data.memberCount);
     if (members.length < 9) {
       setMembers([...members, member.data]);
