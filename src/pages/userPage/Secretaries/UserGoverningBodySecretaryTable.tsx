@@ -16,14 +16,14 @@ export const UserGoverningBodySecretaryTable = ({UserId}: props) => {
     const [isLoadingActive, setIsLoadingActive] = useState<boolean>(true);
     const [isLoadingPrev, setIsLoadingPrev] = useState<boolean>(true);
 
-    const [data, setData] = useState<SecretaryModel[]>();
-    const [prevData, setPrevData] = useState<SecretaryModel[]>();
+    const [governingBodyAdmins, setGoverningBodyAdmins] = useState<SecretaryModel[]>();
+    const [governingBodyPrevAdmins, setPrevGoverningBodyAdmins] = useState<SecretaryModel[]>();
 
     const fetchData = async () => {
         setIsLoadingActive(true);
         try {
             await getUsersAdministrations(UserId).then(response => {
-                setData(response.data);
+                setGoverningBodyAdmins(response.data);
             })
         } catch (error) {
             showError(error.message);
@@ -33,8 +33,8 @@ export const UserGoverningBodySecretaryTable = ({UserId}: props) => {
 
         setIsLoadingPrev(true);
         try {
-            await getUsersPreviousAdministrations(UserId).then(resp => {
-                setPrevData(resp.data)
+            await getUsersPreviousAdministrations(UserId).then(response => {
+                setPrevGoverningBodyAdmins(response.data)
             })
         } catch (error) {
             showError(error.message);
@@ -64,7 +64,7 @@ export const UserGoverningBodySecretaryTable = ({UserId}: props) => {
                     emptyText: (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Немає дійсних діловодств"/>)
                 }}
                 columns={columns}
-                dataSource={data}
+                dataSource={governingBodyAdmins}
                 scroll={{x: 655}}
             />
 
@@ -76,7 +76,7 @@ export const UserGoverningBodySecretaryTable = ({UserId}: props) => {
                     emptyText: (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Немає колишніх діловодств"/>)
                 }}
                 columns={columns}
-                dataSource={prevData}
+                dataSource={governingBodyPrevAdmins}
                 scroll={{x: 655}}
             /> 
 
