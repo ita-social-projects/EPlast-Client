@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import {useHistory} from "react-router-dom";
-import {Card, Tooltip, Switch} from 'antd';
+import {Card, Tooltip} from 'antd';
 import EventLogo from '../../../../assets/images/handshake.png'
+import userApi from "../../../../api/UserApi";
 
 import {
     EditTwoTone,
@@ -21,6 +22,7 @@ import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirm} from ".
 
 // eslint-disable-next-line import/no-cycle
 import {CardProps} from "../SortedEvents";
+import { Roles } from '../../../../models/Roles/Roles';
 
 
 
@@ -46,6 +48,8 @@ const EventCard = ({
                    }: Props) => {
     const {Meta} = Card;
     const history = useHistory();
+    const [canSubscribe] = useState(userApi.getActiveUserRoles().filter(r => r != Roles.Supporter && r != Roles.RegisteredUser).length!=0);
+
 
     const RenderEventsIcons = (): React.ReactNode[] => {
         const eventIcons: React.ReactNode[] = []
@@ -96,7 +100,7 @@ const EventCard = ({
                                         key="unsubscribe"/>
                 </Tooltip>)
             }
-        } else if (!isEventFinished) {
+        } else if (!isEventFinished && canSubscribe) {
             eventIcons.push(<Tooltip title="Зголоситись на подію">
                 <UserAddOutlined onClick={() => showSubscribeConfirm({
                     eventId,

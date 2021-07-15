@@ -3,7 +3,7 @@ import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip, Badge } from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined, RollbackOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getClubById, getLogo, removeClub, toggleMemberStatus } from "../../../api/clubsApi";
+import { addFollower, getClubById, getLogo, removeClub, toggleMemberStatus, clubNameOfApprovedMember } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
 import ClubDefaultLogo from "../../../assets/images/default_club_image.jpg";
@@ -20,6 +20,7 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
+import { Roles } from "../../../models/Roles/Roles";
 
 
 const Club = () => {
@@ -45,8 +46,10 @@ const Club = () => {
   const [followersCount, setFollowersCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [clubLogoLoading, setClubLogoLoading] = useState<boolean>(false);
   const [document, setDocument] = useState<ClubDocument>(new ClubDocument());
+  const [activeUserClub, setActiveUserClub] = useState<string>();
 
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
@@ -62,7 +65,8 @@ const Club = () => {
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
     ).data;
-
+    const response = await getClubById(+id);
+    setMembersCount(response.data.memberCount);
     if (members.length < 9) {
       setMembers([...members, member.data]);
     }
@@ -83,7 +87,8 @@ const Club = () => {
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
-
+    const response = await getClubById(+id);
+    setFollowersCount(response.data.followerCount);
     if (followers.length < 6) {
       setFollowers([...followers, follower.data]);
     }
@@ -121,7 +126,9 @@ const Club = () => {
     setClubLogoLoading(false);
   };
 
-  const onAdd = (newDocument: ClubDocument) => {
+  const onAdd = async (newDocument: ClubDocument) => {
+    const response = await getClubById(+id);
+    setDocumentsCount(response.data.documentsCount);
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
@@ -156,7 +163,8 @@ const Club = () => {
 
     try {
       const response = await getClubById(+id);
-
+      const responce1 = await clubNameOfApprovedMember(userApi.getActiveUserId());
+      setActiveUserClub(responce1.data);
       setPhotosLoading(true);
       setClubLogoLoading(true);
       const admins = [...response.data.administration, response.data.head, response.data.headDeputy]
@@ -169,8 +177,9 @@ const Club = () => {
 
       ], response.data.logo);
 
-      setClub(response.data);
+      setActiveUserRoles(userApi.getActiveUserRoles);
       setAdmins(admins);
+      setClub(response.data);
       setMembers(response.data.members);
       setFollowers(response.data.followers);
       setDocuments(response.data.documents);
@@ -181,7 +190,6 @@ const Club = () => {
       setAdminsCount(response.data.administrationCount);
       setFollowersCount(response.data.followerCount)
       setDocumentsCount(response.data.documentsCount);
-      console.log(response.data);
     } finally {
       setLoading(false);
     }
@@ -514,7 +522,16 @@ const Club = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="clubCard">
-            <Title level={4}>Документообіг куреня <a onClick={() => history.push(`/clubs/documents/${club.id}`)}>
+            <Title level={4}>Документообіг куреня <a onClick={() => 
+            canEdit || (!activeUserRoles.includes(Roles.RegisteredUser)  
+            && club.name == activeUserClub) ||
+            (activeUserRoles.includes(Roles.CityHead)|| activeUserRoles.includes(Roles.CityHeadDeputy))
+            ||
+            (activeUserRoles.includes(Roles.KurinHead)|| activeUserRoles.includes(Roles.KurinHeadDeputy))
+              ?
+              history.push(`/clubs/documents/${club.id}`)
+              : undefined
+              }>
               {documentsCount !== 0 ?
                 <Badge
                   count={documentsCount}
@@ -544,19 +561,27 @@ const Club = () => {
                 )}
             </Row>
             <div className="clubMoreButton">
-              <Button
+            {canEdit || (!activeUserRoles.includes(Roles.RegisteredUser) 
+              && club.name == activeUserClub) ||
+              (activeUserRoles.includes(Roles.CityHead)|| activeUserRoles.includes(Roles.CityHeadDeputy))
+              ||
+              (activeUserRoles.includes(Roles.KurinHead)|| activeUserRoles.includes(Roles.KurinHeadDeputy))
+                ? (
+             <Button
                 type="primary"
                 className="clubInfoButton"
                 onClick={() => history.push(`/clubs/documents/${club.id}`)}
               >
                 Більше
               </Button>
-              {canEdit ? (
+                ): null}
+                {(activeUserRoles.includes(Roles.Admin)) || (activeUserRoles.includes(Roles.KurinHead)|| activeUserRoles.includes(Roles.KurinHeadDeputy)
+                && club.name == activeUserClub)? (
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
                 />
-              ) : null}
+                 ):null}
             </div>
           </Card>
         </Col>

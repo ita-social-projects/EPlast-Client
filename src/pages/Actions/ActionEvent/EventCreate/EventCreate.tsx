@@ -227,13 +227,14 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </ div>
       < div className={classes.row} >
         < Form.Item label="Питання / побажання до булави" className={classes.formItem} name="Questions" rules={[{ required: true, message: emptyInput() },
-        { max: 50, message: maxLength(50) }]}>
+        { max: 200, message: maxLength(200) }]}>
           <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>
       < div className={classes.row} >
-        < Form.Item label="Опис події" name="Description" className={classes.formItem} rules={[{ required: true, message: emptyInput() },
-        { max: 50, message: maxLength(50) }]}>
+
+      < Form.Item label="Опис події" name="Description" className={classes.formItem} rules={[{ required: true, message: emptyInput() },
+        { max: 200, message: maxLength(200) }]}>
           <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
         </Form.Item>
       </div>

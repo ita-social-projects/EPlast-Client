@@ -56,7 +56,7 @@ const Region = () => {
   const { url } = useRouteMatch();
 
   const { id } = useParams();
-  const [visibleModal, setVisibleModal] = useState(false);
+  const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
 
   const [photoStatus, setPhotoStatus] = useState(true);
@@ -124,9 +124,7 @@ const Region = () => {
     },
   ]);
 
-  const [memberRedirectVisibility, setMemberRedirectVisibility] = useState<
-boolean
-  >(false);
+  const [memberRedirectVisibility, setMemberRedirectVisibility] = useState<boolean>(false);
 
   const [followers, setFollowers] = useState<RegionFollower[]>([]);
   const [followersCount, setFollowersCount] = useState<number>();
@@ -136,7 +134,7 @@ boolean
   const [membersCount, setMembersCount] = useState<number>();
   const [adminsCount, setAdminsCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
-  const [visible, setvisible] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
   const [isActiveUserFromRegion, setIsActiveUserFromRegion] = useState<boolean>(false);
@@ -294,8 +292,9 @@ boolean
   };
 
   const handleOk = async () => {
-    setvisible(false);
+    setVisible(false);
     setMemberRedirectVisibility(false);
+    setVisibleModal(false);
     const response =  await getRegionAdministration(id);
     setSixAdmins(response.data, 6);
     setAdminsCount(response.data.length);
@@ -364,7 +363,9 @@ boolean
     }
   };
 
-  const onAdd = (newDocument: CityDocument) => {
+  const onAdd =  async (newDocument: CityDocument) => {
+    const response = await getRegionById(id);
+    setDocumentsCount(response.data.documentsCount);
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
@@ -622,7 +623,7 @@ boolean
               </a>
               </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
-                {admins.length !== 0 ? (
+                {adminsCount !== 0 ? (
                   admins.map((admin) => (
                     <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                       <div
@@ -652,7 +653,7 @@ boolean
                   <PlusSquareFilled
                     type="primary"
                     className="addReportIcon"
-                    onClick={() => setvisible(true)}
+                    onClick={() => setVisible(true)}
                   />
                 ) : null}
                 <Button
@@ -670,7 +671,73 @@ boolean
 
           <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
             <Card hoverable className="cityCard">
-              <Title level={4}>Документообіг округи</Title>
+              <Title level={4}>Члени округи <a onClick={() => history.push(`/regions/members/${id}`)}>
+                {membersCount !== 0 ?
+                  <Badge
+                    count={membersCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  /> : null
+                }
+              </a>
+              </Title>
+              <Row className="cityItems" justify="center" gutter={[0, 16]}>
+                {members[0].name !== "" ? (
+                  members.map((member) => (
+                    <Col
+                      className="cityMemberItem"
+                      key={member.id}
+                      xs={12}
+                      sm={8}
+                    >
+                      <div onClick={() => history.push(`/cities/${member.id}`)}>
+                        {photosLoading ? (
+                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        ) : (
+                            <Avatar size={64} src={member.logo} />
+                          )}
+                        <p className="userName">{member.name}</p>
+                      </div>
+                    </Col>
+                  ))
+                ) : (
+                    <Paragraph>Ще немає членів округи</Paragraph>
+                  )}
+              </Row>
+              <div className="cityMoreButton">
+                <Button
+                  type="primary"
+                  className="cityInfoButton"
+                  onClick={() => history.push(`/regions/members/${id}`)}
+                >
+                  Більше
+              </Button>
+              </div>
+            </Card>
+          </Col>
+
+          <Col
+            xl={{ span: 7, offset: 1 }}
+            md={{ span: 11, offset: 2 }}
+            sm={24}
+            xs={24}
+          >
+            <Card hoverable className="cityCard">
+              <Title level={4}>Документообіг округи <a onClick={() => 
+                 canEdit || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+                 || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy)
+                 || (!activeUserRoles.includes(Roles.RegisteredUser) && isActiveUserFromRegion)
+                 ? 
+                history.push(`/regions/documents/${region.id}`)
+                : undefined
+              }>
+              {documentsCount !== 0 ?
+                <Badge
+                  count={documentsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a>
+              </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
                 {documents.length !== 0 ? (
                   documents.map((document) => (
@@ -815,7 +882,7 @@ boolean
           onCancel={handleOk}
           footer={null}
         >
-          <CitiesRedirectForm onAdd={handleOk} />
+          <CitiesRedirectForm regionId = {region.id} onAdd={handleOk} />
         </Modal>
 
         <RegionDetailDrawer

@@ -161,7 +161,7 @@ export const Blanks = () => {
                         <div className={classes.wrapper2}>
                             <Title level={2}>Життєпис</Title>
                             {(document.userId === userId) ? (
-                                <Col
+                                <Col className={classes.colBlank}
                                     xs={18}
                                     sm={18}
                                     key={document.id}
@@ -223,7 +223,7 @@ export const Blanks = () => {
                                 </Col>
                             )
                                 : (
-                                    <Col>
+                                    <Col className={classes.colBlank}>
                                         {userToken.nameid === userId &&
                                             <h2>Ви ще не додали Життєпис</h2>
                                         }
@@ -247,7 +247,7 @@ export const Blanks = () => {
                         <div className={classes.wrapper3}>
                             <Title level={2}>Виписка з УПЮ</Title>
                             {(extractUPU.userId == userId) ? (
-                                <Col
+                                <Col className={classes.colBlank}
                                     xs={18}
                                     sm={18}
                                     key={document.id}
@@ -308,7 +308,7 @@ export const Blanks = () => {
                                     </Tooltip>
                                 </Col>
                             ) : (
-                                <Col>
+                                <Col className={classes.colBlank}>
                                     {userToken.nameid === userId &&
                                         <h2>Ви ще не додали Виписку</h2>
                                     }

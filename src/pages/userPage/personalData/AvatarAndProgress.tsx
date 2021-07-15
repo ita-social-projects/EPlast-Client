@@ -123,6 +123,13 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
     },
   ]);
 
+  const AppropriateProgressText=(time:number):string=>{
+    const lastNumber=time%10;
+    if(lastNumber==1) return "день"
+    else if(lastNumber<=4 && lastNumber>1) return "дні"
+    return "днів"
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       await kadrasApi.getAllKVsOfGivenUser(userId).then((responce) => {
@@ -189,7 +196,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
             <div className="progress">
               {time !== 0 ? (
                 <p className="statusText">
-                  {time} дні і {firstName} {lastName} - Дійсний член організації :)
+                  {time} {AppropriateProgressText(time!)} і {firstName} {lastName} - Дійсний член організації :)
                 </p>
               ) : (
                 <p className="statusText">

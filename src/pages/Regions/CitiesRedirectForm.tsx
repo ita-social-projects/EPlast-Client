@@ -21,12 +21,7 @@ const CitiesRedirectForm  = (props: any)=>{
     const { id } = useParams();
     const history = useHistory();
 
-    const [regions, setRegions] = useState<any[]>([{
-        id:'',
-        regionName:''
-    }])
-     
-
+    const [regions, setRegions] = useState<any[]>([])
       const handleSubmit = async (values : any)=>{
         const newRegion  : any= {
             id: 0,
@@ -46,12 +41,12 @@ const CitiesRedirectForm  = (props: any)=>{
       useEffect(() => {
         const fetchData = async () => {
             await GetAllRegions().then(response => {
-                setRegions(response.data);
+                const res = response.data.filter((obj:any) => obj.id !== props.regionId ) 
+                setRegions(res);
             })
         }
         fetchData();
       }, [])
-
 
 
     return <Form
@@ -75,7 +70,6 @@ const CitiesRedirectForm  = (props: any)=>{
         showSearch
         className={classes.inputField}
         >
-           
         {regions?.map((o) => ( <Select.Option key={o.id} value={JSON.stringify(o)}>{o.regionName}</Select.Option>))}
         </Select>
              

@@ -32,7 +32,7 @@ import ClubMembers from "./pages/Club/Club/ClubMembers";
 import ClubFollowers from "./pages/Club/Club/ClubFollowers";
 import ClubAdministration from "./pages/Club/Club/ClubAdministration";
 import ClubDocuments from "./pages/Club/Club/ClubDocuments";
-import { Demo } from "../src/pages/WebChat/Demo";
+import { Demo } from "./pages/WebChat/Demo";
 import EventTypes from "./pages/Actions/EventTypes/EventTypes";
 import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
 import AnnualReportTable from "./pages/AnnualReport/AnnualReportTable/AnnualReportTable";
@@ -62,6 +62,7 @@ import RegionBoardAdministration from "./pages/RegionsBoard/RegionBoardAdministr
 import RegionBoardDocuments from "./pages/RegionsBoard/RegionBoardDocuments";
 import GoverningBody from "./pages/GoverningBody/GoverningBody/GoverningBody";
 import CreateGoverningBody from "./pages/GoverningBody/CreateGoverningBody";
+import CreateGoverningBodySector from "./pages/GoverningBody/Sector/CreateSector";
 import RegionAnnualReportCreate from "./pages/AnnualReport/RegionAnnualReportCreateEditView/RegionAnnualReportCreate";
 import RegionAnnualReportEdit from "./pages/AnnualReport/RegionAnnualReportCreateEditView/RegionAnnualReportEdit";
 import RegionAnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/RegionAnnualReportInformation";
@@ -69,6 +70,10 @@ import AnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/Annu
 import ClubAnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/ClubAnnualReportInformation/ClubAnnualReportInformation";
 import GoverningBodyAdministration from "./pages/GoverningBody/GoverningBody/GoverningBodyAdministration";
 import GoverningBodyDocuments from "./pages/GoverningBody/GoverningBody/GoverningBodyDocuments";
+import GoverningBodySectors from "./pages/GoverningBody/Sector/Sectors";
+import GoverningBodySector from "./pages/GoverningBody/Sector/Sector";
+import EditGoverningBodySector from "./pages/GoverningBody/Sector/EditSector";
+import GoverningBodySectorDocuments from "./pages/GoverningBody/Sector/SectorDocuments"
 
 const App: FC = () => (
   <div className="App">
@@ -371,6 +376,36 @@ const App: FC = () => (
             exact
             path="/governingBodies/:id"
             component={GoverningBody}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/governingBodies/:governingBodyId/sectors"
+            component={GoverningBodySectors}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/governingBodies/:governingBodyId/sectors/new"
+            component={CreateGoverningBodySector}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/governingBodies/:governingBodyId/sectors/:sectorId"
+            component={GoverningBodySector}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/governingBodies/:governingBodyId/sectors/edit/:sectorId"
+            component={EditGoverningBodySector}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/governingBodies/:governingBodyId/sectors/:sectorId/documents"
+            component={GoverningBodySectorDocuments}
           />
           <RouteWithLayout
             layout={PrivateLayout}
