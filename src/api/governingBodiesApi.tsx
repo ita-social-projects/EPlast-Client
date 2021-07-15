@@ -158,3 +158,9 @@ export const getUserAccess = async (userId: string) => {
 export const getUsersAdministrations = async (UserId: string) => {
   return api.get(`GoverningBodies/GetUserAdmins/${UserId}`);
 };
+
+export const getUsersPreviousAdministrations = async(UserId:string)=>{
+  return await api.get(`GoverningBodies/GetUserPreviousAdmins/${UserId}`).catch((error)=>{
+    throw new Error(error);
+  })
+}

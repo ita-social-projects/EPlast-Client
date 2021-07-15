@@ -95,12 +95,14 @@ export default function () {
                 lastName={data?.user.lastName}
                 isUserPlastun={data?.isUserPlastun}
                 pseudo={data?.user.pseudo}
+                governingBody={data?.user.governingBody}
                 region={data?.user.region}
                 city={data?.user.city}
                 club={data?.user.club}
                 cityId={data?.user.cityId}
                 clubId={data?.user.clubId}
                 regionId={data?.user.regionId}
+                governingBodyId={data?.user.governingBodyId}
               />
             </StickyContainer>
 
