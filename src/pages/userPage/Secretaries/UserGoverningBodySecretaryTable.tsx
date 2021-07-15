@@ -58,7 +58,7 @@ export const UserGoverningBodySecretaryTable = ({UserId}: props) => {
         <div>
             <h1>Дійсні діловодства краю</h1>
             <br/>
-            <Table
+            <Table 
                 {...{loading:isLoadingActive}}
                 locale={{
                     emptyText: (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Немає дійсних діловодств"/>)
@@ -66,6 +66,13 @@ export const UserGoverningBodySecretaryTable = ({UserId}: props) => {
                 columns={columns}
                 dataSource={governingBodyAdmins}
                 scroll={{x: 655}}
+                pagination={
+                    {
+                      showLessItems: true,
+                      responsive:true,
+                      pageSize: 3
+                    }
+                  }
             />
 
              <h1>Колишні діловодства краю</h1>
@@ -78,6 +85,13 @@ export const UserGoverningBodySecretaryTable = ({UserId}: props) => {
                 columns={columns}
                 dataSource={prevGoverningBodyAdmins}
                 scroll={{x: 655}}
+                pagination={
+                    {
+                      showLessItems: true,
+                      responsive:true,
+                      pageSize: 3
+                    }
+                  }
             /> 
 
         </div>

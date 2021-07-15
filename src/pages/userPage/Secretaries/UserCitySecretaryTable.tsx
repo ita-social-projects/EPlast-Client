@@ -64,6 +64,13 @@ export const UserCitySecretaryTable = ({UserId}: props) => {
                 columns={columns}
                 dataSource={cityAdmins}
                 scroll={{x: 655}}
+                pagination={
+                    {
+                      showLessItems: true,
+                      responsive:true,
+                      pageSize: 3
+                    }
+                  }
             />
 
             <h1>Колишні діловодства станиці</h1>
@@ -76,6 +83,13 @@ export const UserCitySecretaryTable = ({UserId}: props) => {
                 columns={columns}
                 dataSource={prevCityAdmins}
                 scroll={{x: 655}}
+                pagination={
+                    {
+                      showLessItems: true,
+                      responsive:true,
+                      pageSize: 3
+                    }
+                  }
             />
         </div>
     )
