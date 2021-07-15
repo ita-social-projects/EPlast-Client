@@ -18,14 +18,8 @@ import {
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
+import "./AddAdministrationModal.less"
 
-type AddGoverningBodiesSecretaryForm = {
-  onAdd: () => void;
-  setAdmins: React.Dispatch<React.SetStateAction<GoverningBodyAdmin[]>>;
-  setGoverningBodyHead: React.Dispatch<React.SetStateAction<GoverningBodyAdmin | undefined>>;
-  governingBodyId: number;
-  admin?: any;
-};
 const confirm = Modal.confirm;
 const AddGoverningBodiesSecretaryForm = (props: any) => {
   const [head, setHead] = useState<GoverningBodyAdmin>();
@@ -194,7 +188,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         rules={[
           {
             required: props.admin === undefined,
-            message: emptyInput(),
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
