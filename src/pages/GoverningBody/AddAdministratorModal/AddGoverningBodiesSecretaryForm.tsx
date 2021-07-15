@@ -165,6 +165,12 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     }
   };
 
+  const onUserSelect = (value: any) => {
+    const email: string = JSON.parse(value.toString()).email;
+    setWorkEmail(email);
+    form.setFieldsValue({workEmail: value});
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       setUsersLoading(true);
@@ -202,7 +208,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           showSearch
           loading={usersLoading}
           className={classes.inputField}
-          onChange={value => setWorkEmail(JSON.parse(value.toString()).email)}
+          onChange={value => onUserSelect(value)}
         >
           {users?.map((o) => (
             <Select.Option key={o.id} value={JSON.stringify(o)}>
@@ -241,6 +247,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
+        name="workEmail"
         className={classes.formField}
         label="Електронна пошта"
         rules={descriptionValidation.RegionEmail}
