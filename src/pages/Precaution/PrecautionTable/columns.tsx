@@ -43,7 +43,7 @@ const columns = [
       text: "Догана із загрозою виключення з Пласту",
       value: "Догана із загрозою виключення з Пласту",
     }],
-    onFilter: (value: any, record: any) => record.precaution.name.includes(value),
+    onFilter: (value: any, record: any) => record.precautionName.includes(value),
     render: (precautionName: Precaution) => {
       return precautionName
     },
