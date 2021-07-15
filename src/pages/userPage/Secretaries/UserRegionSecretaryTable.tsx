@@ -62,6 +62,13 @@ export const UserRegionSecretaryTable = ({UserId}: props) => {
                 columns={columns}
                 dataSource={regionAdmins}
                 scroll={{x: 655}}
+                pagination={
+                    {
+                      showLessItems: true,
+                      responsive:true,
+                      pageSize: 3
+                    }
+                  }
             />
 
             <h1>Колишні діловодства округи</h1>
@@ -74,6 +81,13 @@ export const UserRegionSecretaryTable = ({UserId}: props) => {
                 columns={columns}
                 dataSource={prevRegionAdmins}
                 scroll={{x: 655}}
+                pagination={
+                    {
+                      showLessItems: true,
+                      responsive:true,
+                      pageSize: 3
+                    }
+                  }
             />
 
         </div>

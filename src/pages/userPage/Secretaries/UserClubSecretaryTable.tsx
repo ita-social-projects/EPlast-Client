@@ -64,6 +64,13 @@ export const UserClubSecretaryTable = ({UserId}: props) => {
                 columns={columns}
                 dataSource={clubAdmins}
                 scroll={{x: 655}}
+                pagination={
+                    {
+                      showLessItems: true,
+                      responsive:true,
+                      pageSize: 3
+                    }
+                  }
             />
 
             <h1>Колишні діловодства куреня</h1>
@@ -76,6 +83,13 @@ export const UserClubSecretaryTable = ({UserId}: props) => {
                 columns={columns}
                 dataSource={prevClubAdmins}
                 scroll={{x: 655}}
+                pagination={
+                    {
+                      showLessItems: true,
+                      responsive:true,
+                      pageSize: 3
+                    }
+                  }
             />
         </div>
     )
