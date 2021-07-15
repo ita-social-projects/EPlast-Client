@@ -65,7 +65,9 @@ const Club = () => {
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
     ).data;
-
+    const response = await getClubById(+id);
+    setFollowersCount(response.data.followerCount);
+    setMembersCount(response.data.memberCount);
     if (members.length < 9) {
       setMembers([...members, member.data]);
     }
@@ -86,7 +88,8 @@ const Club = () => {
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
-
+    const response = await getClubById(+id);
+    setFollowersCount(response.data.followerCount);
     if (followers.length < 6) {
       setFollowers([...followers, follower.data]);
     }
@@ -124,7 +127,9 @@ const Club = () => {
     setClubLogoLoading(false);
   };
 
-  const onAdd = (newDocument: ClubDocument) => {
+  const onAdd = async (newDocument: ClubDocument) => {
+    const response = await getClubById(+id);
+    setDocumentsCount(response.data.documentsCount);
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }

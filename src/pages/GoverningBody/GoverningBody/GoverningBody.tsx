@@ -166,6 +166,7 @@ const GoverningBody = () => {
 
   const handleOk = () => {
     setVisible(false);
+    setAdminsCount(admins.length + 1);
   };
 
   useEffect(() => {
@@ -183,7 +184,7 @@ const GoverningBody = () => {
   ) : governingBody.id !== 0 ? (
     <Layout.Content className="governingBodyProfile">
       <Row gutter={[0, 15]}>
-        <Col span={8} offset={1}></Col>
+        <Col span={8} offset={1} />
       </Row>
       <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
@@ -338,7 +339,7 @@ const GoverningBody = () => {
                       }
                     >
                       {sectorsPhotosLoading ? (
-                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        <Skeleton.Avatar active size={64} />
                       ) : (
                         <Avatar size={64} src={sector.logo === null ? undefined : sector.logo} />
                       )}
@@ -351,11 +352,14 @@ const GoverningBody = () => {
               )}
             </Row>
             <div className="governingBodyMoreButton">
-              <PlusSquareFilled
+              {userAccesses["AddGBSector"] ? (
+                <PlusSquareFilled
                 type="primary"
                 className="addReportIcon"
                 onClick={() => history.push(id + '/sectors/new')}
-              ></PlusSquareFilled>
+                />
+                ) : null
+              }
               <Button
                 type="primary"
                 className="governingBodyInfoButton"
@@ -395,7 +399,7 @@ const GoverningBody = () => {
                       }
                     >
                       {adminsPhotosLoading ? (
-                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        <Skeleton.Avatar active size={64} />
                       ) : (
                           <Avatar size={64} src={admin.user.imagePath} />
                         )}
@@ -459,7 +463,14 @@ const GoverningBody = () => {
           xs={24}
         >
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Документообіг Керівного Органу</Title>
+            <Title level={4}>Документообіг Керівного Органу <a onClick={() => history.push(`/governingBodies/documents/${governingBody.id}`)}>
+              {documents.length !== 0 ?
+                <Badge
+                  count={documents.length}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a></Title>
             <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
                 {documents.length !== 0 ? (
                     documents.map((d) => (
@@ -503,12 +514,12 @@ const GoverningBody = () => {
         governingBody={governingBody}
         setVisibleDrawer={setVisibleDrawer}
         visibleDrawer={visibleDrawer}
-      ></GoverningBodyDetailDrawer>
+      />
       <Modal
         title="Додати діловода"
         visible={visible}
         onOk={handleOk}
-        onCancel={handleOk}
+        onCancel={() => setVisible(false)}
         footer={null}
       >
         <AddGoverningBodiesSecretaryForm
@@ -527,7 +538,7 @@ const GoverningBody = () => {
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
           onAdd={onAdd}
-        ></AddDocumentModal>
+        />
       ) : null}
     </Layout.Content>
   ) : (
