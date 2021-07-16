@@ -18,6 +18,10 @@ interface SecretaryModel{
         id: number,
         name: string
     }
+    governingBody?: {
+        id: number,
+        name: string
+    }
 }
 
 export default SecretaryModel;

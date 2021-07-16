@@ -26,9 +26,11 @@ class AvatarAndProgressProps {
   lastName: string | undefined;
   isUserPlastun: boolean | undefined;
   pseudo: string | undefined;
+  governingBody: string | undefined;
   region: string | undefined;
   city: string | undefined;
   club: string | undefined;
+  governingBodyId: number | undefined;
   regionId: number | undefined;
   cityId: number | undefined;
   clubId: number | undefined;
@@ -69,10 +71,11 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
     lastName,
     isUserPlastun,
     pseudo,
+    governingBody,
     region,
     city,
     club,
-    cityId, clubId, regionId
+    cityId, clubId, regionId, governingBodyId
   } = props;
   const [imageBase64, setImageBase64] = useState<string>();
   const [UserDistinctions, setData] = useState<UserDistinction[]>([

@@ -46,12 +46,14 @@ export type User ={
     work: Work;
     pseudo: string;
     email: string;
+    governingBody: string,
     region: string;
     city: string;
     club: string;
     cityId?:number;
     clubId?: number;
     regionId?: number;
+    governingBodyId?: number;
     publicPoliticalActivity: string;
     upuDegree: UpuDegree;
     facebookLink: string;
@@ -67,12 +69,14 @@ export type ShortUser ={
     fatherName:string;
     imagePath:string;
     pseudo: string;
+    governingBody: string;
     region: string;
     city: string;
     club: string;
     cityId?:number;
     clubId?: number;
     regionId?: number;
+    governingBodyId?: number;
     upuDegree: UpuDegree;
     facebookLink: string;
     twitterLink: string;
