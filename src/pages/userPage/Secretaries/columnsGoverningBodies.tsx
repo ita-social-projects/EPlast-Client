@@ -1,6 +1,4 @@
-import React from "react";
-
-import RegionUser from "../../../models/Region/RegionUser";
+import GoverningBodyUser from "../../../models/GoverningBody/GoverningBodyUser";
 import moment from "moment";
 
 const columns = [
@@ -11,7 +9,7 @@ const columns = [
   {
     title: "Користувач",
     dataIndex: "user",
-    render: (user: RegionUser) => {
+    render: (user: GoverningBodyUser) => {
       return user.firstName + " " + user.lastName;
     },
   },
@@ -39,10 +37,10 @@ const columns = [
     },
   },
   {
-    title: "Округа",
-    dataIndex: "region",
-    render: (region: any) => {
-      return region.regionName;
+    title: "Край",
+    dataIndex: "governingBody",
+    render: (governingBody: any) => {
+      return governingBody.governingBodyName;
     },
   },
 ];

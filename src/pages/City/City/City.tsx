@@ -102,6 +102,7 @@ const City = () => {
     ).data;
     const response = await getCityById(+id);
     setMembersCount(response.data.memberCount);
+    setFollowersCount(response.data.followerCount);
     if (members.length < 9) {
       setMembers([...members, member.data]);
     }
