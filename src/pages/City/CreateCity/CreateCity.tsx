@@ -106,7 +106,7 @@ const CreateCity = () => {
       if (checkFile(info.file.size, info.file.name)) {
         getBase64(info.file, (base64: string) => {
           if (isFollowerPath) {
-            setRegionFollower({...regionFollower, logo: undefined});
+            setRegionFollower({...regionFollower, logo: base64});
           } else {
             setCity({ ...city, logo: base64 });
           }
@@ -129,12 +129,22 @@ const CreateCity = () => {
     event.stopPropagation();
   };
 
-  const getRegionFollower = async () => {
+  const getApplicant = async (applicantId: string) => {
+    try{
+      setLoading(true);
+      const applicantResponse = await UserApi.getById(applicantId);
+      setApplicant(applicantResponse.data.user);  
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getRegionFollower = async (followerId: number) => {
     try {
       setLoading(true);
-
-      let response = await getRegionFollowerById(+id);
-      setRegionFollower(response.data);
+      const followerResponse = await getRegionFollowerById(followerId);
+      setRegionFollower(followerResponse.data);
+      await getApplicant(followerResponse.data.userId);
     } finally {
       setLoading(false);
     }
@@ -166,20 +176,10 @@ const CreateCity = () => {
     }
   };
 
-  const getApplicant = async (userId: string) => {
-    try{
-      setLoading(true);
-      const response = await UserApi.getById(userId);
-      setApplicant(response.data.user);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   const getActiveUser = async () => {
     try{
       setLoading(true);
-      const activeUserId =  await UserApi.getActiveUserId();
+      const activeUserId = UserApi.getActiveUserId();
       const response = await UserApi.getById(activeUserId);
       setActiveUser(response.data.user);
     } finally {
@@ -187,18 +187,20 @@ const CreateCity = () => {
     }
   }
 
-  useEffect(() => {
+  useEffect (() => {
     if (isFollowerPath) {
       if (location.pathname.startsWith(followerPath + "edit")) {
-        getRegionFollower().then(() => getApplicant(regionFollower.userId)).finally(() => getRegions());
+        getRegionFollower(id); 
       } else {
-        getActiveUser().then(() => getRegions());
+        getActiveUser();
       }
-    }
-    if (+id) {
-      getCity().then(() => getRegions());
-    } else {
       getRegions();
+    } else {
+      if (+id) {
+        getCity().then(() => getRegions());
+      } else {
+        getRegions();
+      }
     }
   }, [id, location]);
 
@@ -221,8 +223,6 @@ const CreateCity = () => {
         phoneNumber: values.phoneNumber
       }; 
       
-      console.log(newRegionFollower);
-
       if (!regionFollower.id) {
         CreateRegionFollower(newRegionFollower);
       } else {

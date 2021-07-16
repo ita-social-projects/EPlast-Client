@@ -669,52 +669,6 @@ const Region = () => {
             </Card>
           </Col>
 
-          <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
-            <Card hoverable className="cityCard">
-              <Title level={4}>Члени округи <a onClick={() => history.push(`/regions/members/${id}`)}>
-                {membersCount !== 0 ?
-                  <Badge
-                    count={membersCount}
-                    style={{ backgroundColor: "#3c5438" }}
-                  /> : null
-                }
-              </a>
-              </Title>
-              <Row className="cityItems" justify="center" gutter={[0, 16]}>
-                {members[0].name !== "" ? (
-                  members.map((member) => (
-                    <Col
-                      className="cityMemberItem"
-                      key={member.id}
-                      xs={12}
-                      sm={8}
-                    >
-                      <div onClick={() => history.push(`/cities/${member.id}`)}>
-                        {photosLoading ? (
-                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
-                        ) : (
-                            <Avatar size={64} src={member.logo} />
-                          )}
-                        <p className="userName">{member.name}</p>
-                      </div>
-                    </Col>
-                  ))
-                ) : (
-                    <Paragraph>Ще немає членів округи</Paragraph>
-                  )}
-              </Row>
-              <div className="cityMoreButton">
-                <Button
-                  type="primary"
-                  className="cityInfoButton"
-                  onClick={() => history.push(`/regions/members/${id}`)}
-                >
-                  Більше
-              </Button>
-              </div>
-            </Card>
-          </Col>
-
           <Col
             xl={{ span: 7, offset: 1 }}
             md={{ span: 11, offset: 2 }}
@@ -802,28 +756,28 @@ const Region = () => {
               </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
                 {followers.length !== 0 ? (
-                  followers.slice(0, 6).map((followers) => (
+                  followers.slice(0, 6).map((follower) => (
                     <Col
                       className="cityMemberItem"
                       xs={12}
                       sm={8}
-                      key={followers.id}
+                      key={follower.id}
                     >
                     <div>
                       <div
                         onClick={() => activeUserRoles.includes(Roles.Admin) 
                           || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
                               && isActiveUserRegionAdmin)
-                          ? history.push(`/cities/new`)
+                          ? history.push(`/regions/follower/edit/${follower.id}`)
                           : undefined
                         }
                       >
                         {photosLoading ? (
                           <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                         ) : (
-                            <Avatar size={64} src={followers.logo} />
+                            <Avatar size={64} src={follower.logo} />
                           )}
-                        <p className="userName">{followers.cityName}</p>
+                        <p className="userName">{follower.cityName}</p>
                       </div>
                     </div>
                     </Col>

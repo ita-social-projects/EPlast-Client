@@ -329,7 +329,7 @@ export default {
   GetRegionsBoard,
   getRegionUsers,
   getRegionFollowers,
-  removeFollower,
   getRegionFollowerById,
-  createRegionFollower
+  createRegionFollower,
+  removeFollower  
 };
