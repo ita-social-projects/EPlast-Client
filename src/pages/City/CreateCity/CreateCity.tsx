@@ -27,7 +27,7 @@ import {
   toggleMemberStatus,
   updateCity,
 } from "../../../api/citiesApi";
-import { createRegionFollower, GetAllRegions, getRegionFollowerById, removeFollower } from "../../../api/regionsApi";
+import { createRegionFollower, GetAllRegions, getRegionById, getRegionFollowerById, removeFollower } from "../../../api/regionsApi";
 import "./CreateCity.less";
 import CityProfile from "../../../models/City/CityProfile";
 import RegionProfile from "../../../models/Region/RegionProfile";
@@ -60,6 +60,7 @@ const CreateCity = () => {
   const followerPath = "/regions/follower/";
 
   const [loading, setLoading] = useState(false);
+  const [appealRegion, setAppealRegion] = useState<RegionProfile>(new RegionProfile());
   const [regionFollower, setRegionFollower] = useState<RegionFollower>(new RegionFollower());
   const [city, setCity] = useState<CityProfile>(new CityProfile());
   const [regions, setRegions] = useState<RegionProfile[]>([]);
@@ -76,6 +77,23 @@ const CreateCity = () => {
   //    cityName
   //    );
   //}
+
+  useEffect (() => {
+    if (isFollowerPath) {
+      if (location.pathname.startsWith(followerPath + "edit")) {
+        getRegionFollower(id); 
+      } else {
+        getActiveUser();
+      }
+      getRegions();
+    } else {
+      if (+id) {
+        getCity().then(() => getRegions());
+      } else {
+        getRegions();
+      }
+    }
+  }, [id, regionFollower]);
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -129,29 +147,22 @@ const CreateCity = () => {
     event.stopPropagation();
   };
 
-  const getApplicant = async (applicantId: string) => {
-    try{
-      setLoading(true);
-      const applicantResponse = await UserApi.getById(applicantId);
-      setApplicant(applicantResponse.data.user);  
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const getRegionFollower = async (followerId: number) => {
-    try {
+    try{
       setLoading(true);
       const followerResponse = await getRegionFollowerById(followerId);
       setRegionFollower(followerResponse.data);
-      await getApplicant(followerResponse.data.userId);
+      const applicantResponse = await UserApi.getById(followerResponse.data.userId);
+      setApplicant(applicantResponse.data.user);
+      const regionResponse = await getRegionById(followerResponse.data.regionId);
+      setAppealRegion(regionResponse.data);    
     } finally {
       setLoading(false);
     }
   };
 
   const getCity = async () => {
-    try {
+    try{
       setLoading(true);
       let response = await getCityById(+id);
 
@@ -159,18 +170,18 @@ const CreateCity = () => {
         const logo = await getLogo(response.data.logo);
         response.data.logo = logo.data;
       }
-
-      setCity(response.data);
+  
+      setCity(response.data);  
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   };
 
   const getRegions = async () => {
-    try {
+    try{
       setLoading(true);
       const response = await GetAllRegions();
-      setRegions(response.data);
+      setRegions(response.data);  
     } finally {
       setLoading(false);
     }
@@ -181,28 +192,11 @@ const CreateCity = () => {
       setLoading(true);
       const activeUserId = UserApi.getActiveUserId();
       const response = await UserApi.getById(activeUserId);
-      setActiveUser(response.data.user);
+      setActiveUser(response.data.user);  
     } finally {
       setLoading(false);
     }
   }
-
-  useEffect (() => {
-    if (isFollowerPath) {
-      if (location.pathname.startsWith(followerPath + "edit")) {
-        getRegionFollower(id); 
-      } else {
-        getActiveUser();
-      }
-      getRegions();
-    } else {
-      if (+id) {
-        getCity().then(() => getRegions());
-      } else {
-        getRegions();
-      }
-    }
-  }, [id, location]);
 
   const handleSubmit = async (values: any) => {
     if (isFollowerPath) {
@@ -247,7 +241,7 @@ const CreateCity = () => {
       }; 
       
       if (!city.id) {
-        CreateCity(newCity);
+        CreateCity(newCity, -1);
       } else {
         EditCity(newCity);
       }  
@@ -273,8 +267,8 @@ const CreateCity = () => {
       cityURL: newRegionFollower.cityURL,
       description: newRegionFollower.cityDescription,
       email: newRegionFollower.email,
-      head: new CityAdmin(),
-      headDeputy: new CityAdmin(),
+      head: city.head,
+      headDeputy: city.headDeputy,
       houseNumber: newRegionFollower.houseNumber,
       id: city.id,
       logo: newRegionFollower.logo?.length === 0 ? null : newRegionFollower.logo!,
@@ -282,22 +276,14 @@ const CreateCity = () => {
       name: newRegionFollower.cityName,
       phoneNumber: newRegionFollower.phoneNumber,
       postIndex: newRegionFollower.postIndex,
-      region: newRegionFollower.regionId.toString(),
+      region: appealRegion.regionName,
       street: newRegionFollower.street,
     }; 
 
-    try{
-      const response = await createCity(JSON.stringify(newCity));
-      city.id = response.data;
-    } catch {
-      notificationLogic("error", failCreateAction("станицю"));
-    }
-    notificationLogic("success", successfulCreateAction("Станицю"));
-    removeFollower(newRegionFollower.id);  
-    history.push(`/cities/${city.id}`);
+    CreateCity(newCity, regionFollower.id);
   };
 
-  const CreateCity = async (newCity: CityProfile) => {
+  const CreateCity = async (newCity: CityProfile, regionFollowerId: number) => {
     notificationLogic("info", "Створення...", <LoadingOutlined />);
     const responsePromise = createCity(JSON.stringify(newCity));
     const response = await responsePromise;
@@ -305,8 +291,14 @@ const CreateCity = () => {
 
     return responsePromise
       .then(() => {
-        notificationLogic("success", successfulCreateAction("Станицю"));
-        history.push(`${city.id}`);
+        if(location.pathname.startsWith(followerPath + "edit")){
+          notificationLogic("success", successfulCreateAction("Станицю"));
+          removeFollower(regionFollowerId);
+          history.push(`/cities/${city.id}`);      
+        } else {
+          notificationLogic("success", successfulCreateAction("Станицю"));
+          history.push(`${city.id}`);  
+        }
       })
       .catch(() => {
         notificationLogic("error", failCreateAction("станицю"));
@@ -469,7 +461,7 @@ const CreateCity = () => {
                 name="region"
                 label="Округа"
                 labelCol={{ span: 24 }}
-                initialValue={isFollowerPath ? regionFollower.regionId : city.region}
+                initialValue={isFollowerPath ? appealRegion.regionName : city.region}
                 rules={[{ required: true, message: emptyInput("округа") }]}
               >
                 <Select
@@ -477,7 +469,7 @@ const CreateCity = () => {
                   optionFilterProp="children"
                 >
                   {regions.map((item: RegionProfile) => (
-                    <Select.Option key={item.id} value={item.id}>
+                    <Select.Option key={item.id} value={isFollowerPath ? item.id : item.regionName}>
                       {item.regionName}
                     </Select.Option>
                   ))}
