@@ -806,7 +806,7 @@ export default function () {
             </Form.Item>
           </div>
           <div className="buttons">
-            <Button className={styles.confirmBtn} htmlType="submit">
+            <Button className={styles.confirmBtn} htmlType="submit" onClick={() => history.push(`/userpage/main/${userId}`)}>
               Підтвердити
             </Button>
             <Button className={styles.confirmBtn} htmlType="submit" onClick={() => history.push(`/userpage/main/${userId}`)}>
