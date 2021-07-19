@@ -28,6 +28,7 @@ const GoverningBodyAdministration = () => {
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [governingBodyName, setGoverningBodyName] = useState<string>("");
+    const [updated, setUpdated] = useState<boolean>(false);
   
     const getUserAccesses = async () => {
         let user: any = jwt(AuthStore.getToken() as string);
@@ -105,6 +106,10 @@ const GoverningBodyAdministration = () => {
         getAdministration();
     }, []);
 
+    useEffect(() => {
+      getAdministration();
+    }, [updated]);
+
     return (
       <Layout.Content>
         <Title level={2}>Провід Керівного Органу</Title>
@@ -177,6 +182,7 @@ const GoverningBodyAdministration = () => {
             setVisibleModal={setVisibleModal}
             governingBodyId={+id}
             onAdd={onAdd}
+            onChange={() => setUpdated(true)}
           />
         ) : null}
       </Layout.Content>

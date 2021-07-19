@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./AddAdministrationModal.less";
-import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
+import {AutoComplete, Button, Col, DatePicker, Form, Input, Modal, Row} from "antd";
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import {
@@ -12,6 +12,7 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import moment from "moment";
 import{emptyInput} from "../../../components/Notifications/Messages"
 import { Roles } from "../../../models/Roles/Roles";
+import {descriptionValidation} from "../../../models/GllobalValidations/DescriptionValidation";
 
 const confirm = Modal.confirm;
 
@@ -83,6 +84,7 @@ const EditAdministratorModal = (props: Props) => {
     props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
     props.onAdd?.(admin);
   };
+
   const editGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
     admin = (await editAdministrator(props.admin.governingBodyId, admin)).data;
     notificationLogic("success", "Адміністратор успішно відредагований");
@@ -104,6 +106,7 @@ const EditAdministratorModal = (props: Props) => {
       userId: props.admin.userId,
       endDate: values.endDate?._d,
       startDate: values.startDate?._d,
+      workEmail: values.workEmail
     };
 
     try {
@@ -111,13 +114,13 @@ const EditAdministratorModal = (props: Props) => {
         if (head?.userId !== admin.userId) {
           showConfirm(admin);
         } else {
-          editGoverningBodyAdmin(admin);
+          await editGoverningBodyAdmin(admin);
         }
       } else {
         if (admin.id === 0) {
-          addGoverningBodyAdmin(admin);
+          await addGoverningBodyAdmin(admin);
         } else {
-          editGoverningBodyAdmin(admin);
+          await editGoverningBodyAdmin(admin);
         }
       }
     } finally {
@@ -135,6 +138,10 @@ const EditAdministratorModal = (props: Props) => {
       form.resetFields();
     }
   }, [props]);
+
+  useEffect(() => {
+    getGoverningBodyHead();
+  }, []);
 
   return (
     <Modal
@@ -162,11 +169,11 @@ const EditAdministratorModal = (props: Props) => {
             className="adminTypeSelect"
             options={[
               { value: Roles.GoverningBodyHead },
-              { value: "Голова СПС" },
-              { value: "Писар" },
-              { value: "Скарбник" },
-              { value: "Домівкар" },
-              { value: "Член СПР" },
+              { value: "Голова КПР" },
+              { value: "Секретар КПР" },
+              { value: "Член КПР з питань організаційного розвитку" },
+              { value: "Член КПР з соціального напрямку" },
+              { value: "Член КПР відповідальний за зовнішні зв'язки" },
             ]}
             filterOption={(inputValue, option) =>
               option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
@@ -174,9 +181,18 @@ const EditAdministratorModal = (props: Props) => {
             }
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}
-            onChange={getGoverningBodyHead}
           />
         </Form.Item>
+
+        <Form.Item
+          label="Електронна пошта"
+          name="workEmail"
+          initialValue={props.admin.workEmail}
+          rules={descriptionValidation.RegionEmail}
+        >
+          <Input placeholder="Електронна пошта" />
+        </Form.Item>
+
         <Row>
           <Col span={11}>
             <Form.Item
