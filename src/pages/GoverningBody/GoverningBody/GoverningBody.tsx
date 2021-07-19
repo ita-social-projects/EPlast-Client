@@ -278,7 +278,7 @@ const GoverningBody = () => {
                   <Button
                     type="primary"
                     className="governingBodyInfoButton"
-                    onClick={() => history.push(`/annualreport/table/city`)}
+                    onClick={() => history.push(`/decisions`)}
                   >
                     Додати рішення
                   </Button>
