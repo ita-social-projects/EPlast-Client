@@ -303,8 +303,7 @@ const ActiveMembership = () => {
                 </React.Fragment>
               ))}
               {IsUserHasAccessToManageDegree(roles?.map((role:any)=>{
-                      if(!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy || 
-                        role === Roles.CityHeadDeputy || role === Roles.CityHead))
+                      if(!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ))
                         return role
                        })) && (
                   <div className={classes.buttons}>
