@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./AddAdministrationModal.less";
+import "../AddAdministratorModal/AddAdministrationModal.less";
 import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
 import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
 import AdminType from "../../../models/Admin/AdminType";
@@ -83,6 +83,7 @@ const EditAdminModal = (props: Props) => {
     props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
     props.onAdd?.(admin);
   };
+
   const editSectorAdmin = async (admin: SectorAdmin) => {
     admin = (await editAdministrator(props.admin.sectorId, admin)).data;
     notificationLogic("success", "Адміністратор успішно відредагований");
