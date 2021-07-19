@@ -22,6 +22,7 @@ import {
   maxNumber,
   minNumber
 } from "../../../components/Notifications/Messages"
+import moment from "moment";
 
 type FormAddPrecautionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -57,6 +58,10 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
     });
   };
 
+  const disabledStartDate = (current: any) => {
+    return current && current > moment();
+  };
+  
   useEffect(() => {
     const fetchData = async () => {
       await precautionApi.getPrecautions().then((response) => {
@@ -259,6 +264,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             <DatePicker
               format={dateFormat}
               className={formclasses.selectField}
+              disabledDate={disabledStartDate}
               getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
               popupStyle={{position: 'absolute'}}
             />
