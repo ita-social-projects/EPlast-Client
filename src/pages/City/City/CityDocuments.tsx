@@ -27,9 +27,9 @@ const CityDocuments = () => {
       setLoading(true);
       try {
         const response = await getCityById(+id);
-        const response1 = await cityNameOfApprovedMember(userApi.getActiveUserId());
+        const cityNameResponse = await cityNameOfApprovedMember(userApi.getActiveUserId());
 
-        setActiveUserCity(response1.data);
+        setActiveUserCity(cityNameResponse.data);
         setActiveUserRoles(userApi.getActiveUserRoles);
         setCity(response.data);
        } 

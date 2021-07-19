@@ -164,8 +164,8 @@ const Club = () => {
 
     try {
       const response = await getClubById(+id);
-      const response1 = await clubNameOfApprovedMember(userApi.getActiveUserId());
-      setActiveUserClub(response1.data);
+      const clubNameResponse = await clubNameOfApprovedMember(userApi.getActiveUserId());
+      setActiveUserClub(clubNameResponse.data);
       setPhotosLoading(true);
       setClubLogoLoading(true);
       const admins = [...response.data.administration, response.data.head, response.data.headDeputy]

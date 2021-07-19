@@ -29,9 +29,9 @@ const ClubDocuments = () => {
       setLoading(true);
       try {
         const response = await getClubById(+id);
-        const response1 = await clubNameOfApprovedMember(userApi.getActiveUserId());
+        const clubNameResponse = await clubNameOfApprovedMember(userApi.getActiveUserId());
 
-        setActiveUserClub(response1.data);
+        setActiveUserClub(clubNameResponse.data);
         setActiveUserRoles(userApi.getActiveUserRoles);
         setClub(response.data);
        } 
