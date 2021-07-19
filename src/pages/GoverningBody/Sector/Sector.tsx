@@ -43,6 +43,7 @@ import userApi from "../../../api/UserApi";
 import moment from "moment";
 import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument";
 import AddDocumentModal from "./AddDocumentModal";
+import AddSectorAdminForm from "./AddSectorAdminForm";
 
 const Sector = () => {
   const history = useHistory();
@@ -358,7 +359,7 @@ const Sector = () => {
                 type="primary"
                 className="governingBodyInfoButton"
                 onClick={() =>
-                  history.push('/governingBodies/${governingBodyId}/sectors/${sector.id}/administration')
+                  history.push('/governingBodies/' + governingBodyId + '/sectors/' + sector.id + '/administration')
                 }
               >
                 Більше
@@ -450,19 +451,19 @@ const Sector = () => {
         sector={sector}
       />
       <Modal
-        title="Цей функціонал ще не готовий"
+        title="Додати діловода"
         visible={visible}
         onOk={handleOk}
         onCancel={handleOk}
         footer={null}
       >
-        {/*<AddGoverningBodiesSecretaryForm*/}
-        {/*  onAdd={handleOk}*/}
-        {/*  admins={admins}*/}
-        {/*  setAdmins={setAdmins}*/}
-        {/*  setGoverningBodyHead={setSectorHead}*/}
-        {/*  governingBodyId={+sectorId}>*/}
-        {/*</AddGoverningBodiesSecretaryForm>*/}
+        <AddSectorAdminForm
+          onAdd={handleOk}
+          admins={admins}
+          setAdmins={setAdmins}
+          setSectorHead={setSectorHead}
+          sectorId={+sectorId}>
+        </AddSectorAdminForm>
       </Modal>
       {userAccesses["ManipulateDocument"] ? (
         <AddDocumentModal

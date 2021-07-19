@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./AddAdministrationModal.less";
 import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
-import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
+import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import {
   addAdministrator,
   editAdministrator,
   getAllAdmins,
-} from "../../../api/governingBodiesApi";
+} from "../../../api/governingBodySectorsApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import moment from "moment";
 import{emptyInput} from "../../../components/Notifications/Messages"
@@ -18,23 +18,23 @@ const confirm = Modal.confirm;
 interface Props {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
-  admin: GoverningBodyAdmin;
-  setAdmin: (admin: GoverningBodyAdmin) => void;
-  governingBodyId: number;
-  onAdd?: (admin?: GoverningBodyAdmin) => void;
+  admin: SectorAdmin;
+  setAdmin: (admin: SectorAdmin) => void;
+  sectorId: number;
+  onAdd?: (admin?: SectorAdmin) => void;
   onChange?: (id: string, userRoles: string) => void;
 }
 
-const AddAdministratorModal = (props: Props) => {
+const EditAdminModal = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState<any>();
   const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
-  const [head, setHead] = useState<GoverningBodyAdmin>();
+  const [head, setHead] = useState<SectorAdmin>();
 
-  const getGoverningBodyHead = async () => {
-    if (props.governingBodyId !== 0) {
-      await getAllAdmins(props.governingBodyId).then((response) => {
+  const getSectorHead = async () => {
+    if (props.sectorId !== 0) {
+      await getAllAdmins(props.sectorId).then((response) => {
         setHead(response.data.head);
       });
       setLoading(false);
@@ -49,7 +49,7 @@ const AddAdministratorModal = (props: Props) => {
     return current && current > moment();
   };
 
-  const showConfirm = (admin: GoverningBodyAdmin) => {
+  const showConfirm = (admin: SectorAdmin) => {
     confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
@@ -57,7 +57,7 @@ const AddAdministratorModal = (props: Props) => {
           <b>
             {head?.user.firstName} {head?.user.lastName}
           </b>{" "}
-          є Головою Керівного Органу, час правління закінчується{" "}
+          є Головою Напряму, час правління закінчується{" "}
           <b>
             {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
@@ -69,22 +69,22 @@ const AddAdministratorModal = (props: Props) => {
       onCancel() {},
       onOk() {
         if (admin.id === 0) {
-          addGoverningBodyAdmin(admin);
+          addSectorAdmin(admin);
         } else {
-          editGoverningBodyAdmin(admin);
+          editSectorAdmin(admin);
         }
       },
     });
   };
 
-  const addGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
-    admin = (await addAdministrator(props.admin.governingBodyId, admin)).data;
+  const addSectorAdmin = async (admin: SectorAdmin) => {
+    admin = (await addAdministrator(props.admin.sectorId, admin)).data;
     notificationLogic("success", "Користувач успішно доданий в провід");
     props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
     props.onAdd?.(admin);
   };
-  const editGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
-    admin = (await editAdministrator(props.admin.governingBodyId, admin)).data;
+  const editSectorAdmin = async (admin: SectorAdmin) => {
+    admin = (await editAdministrator(props.admin.sectorId, admin)).data;
     notificationLogic("success", "Адміністратор успішно відредагований");
     props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
     props.onAdd?.(admin);
@@ -93,13 +93,13 @@ const AddAdministratorModal = (props: Props) => {
   const handleSubmit = async (values: any) => {
     setLoading(true);
 
-    let admin: GoverningBodyAdmin = {
+    let admin: SectorAdmin = {
       id: props.admin.id,
       adminType: {
         ...new AdminType(),
         adminTypeName: values.adminType,
       },
-      governingBodyId: props.governingBodyId,
+      sectorId: props.sectorId,
       user: props.admin.user,
       userId: props.admin.userId,
       endDate: values.endDate?._d,
@@ -111,13 +111,13 @@ const AddAdministratorModal = (props: Props) => {
         if (head?.userId !== admin.userId) {
           showConfirm(admin);
         } else {
-          editGoverningBodyAdmin(admin);
+          editSectorAdmin(admin);
         }
       } else {
         if (admin.id === 0) {
-          addGoverningBodyAdmin(admin);
+          addSectorAdmin(admin);
         } else {
-          editGoverningBodyAdmin(admin);
+          editSectorAdmin(admin);
         }
       }
     } finally {
@@ -140,7 +140,7 @@ const AddAdministratorModal = (props: Props) => {
     <Modal
       title={
         props.admin.id === 0
-          ? "Додати в провід керівного органу"
+          ? "Додати в провід напряму"
           : "Редагувати адміністратора"
       }
       visible={props.visibleModal}
@@ -161,12 +161,12 @@ const AddAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: Roles.GoverningBodyHead },
-              { value: "Голова СПС" },
-              { value: "Писар" },
-              { value: "Скарбник" },
-              { value: "Домівкар" },
-              { value: "Член СПР" },
+              { value: Roles.GoverningBodySectorHead },
+              { value: "Голова КПР" },
+              { value: "Секретар КПР" },
+              { value: "Член КПР з питань організаційного розвитку" },
+              { value: "Член КПР з соціального напрямку" },
+              { value: "Член КПР відповідальний за зовнішні зв'язки" },
             ]}
             filterOption={(inputValue, option) =>
               option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
@@ -174,7 +174,6 @@ const AddAdministratorModal = (props: Props) => {
             }
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}
-            onChange={getGoverningBodyHead}
           />
         </Form.Item>
         <Row>
@@ -247,4 +246,4 @@ const AddAdministratorModal = (props: Props) => {
   );
 };
 
-export default AddAdministratorModal;
+export default EditAdminModal;
