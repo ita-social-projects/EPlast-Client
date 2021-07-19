@@ -306,18 +306,18 @@ const ActiveMembership = () => {
                 </React.Fragment>
               ))}
               {IsUserHasAccessToManageDegree(roles?.filter(role=>role!=Roles.KurinHead))
-                        && (
-                          <div className={classes.buttons}>
-                            <button
-                              onClick={() => {
-                                setVisibleModal(true);
-                              }}
-                              className={classes.button}
-                            >
-                              {AppropriateButtonText()}
-                            </button>
-                          </div>
-                        )}
+                && (
+                  <div className={classes.buttons}>
+                    <button
+                      onClick={() => {
+                        setVisibleModal(true);
+                      }}
+                      className={classes.button}
+                    >
+                      {AppropriateButtonText()}
+                    </button>
+                  </div>
+               )}
             </div>
           </div>
       </div>
