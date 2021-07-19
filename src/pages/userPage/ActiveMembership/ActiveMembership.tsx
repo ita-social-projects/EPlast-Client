@@ -34,17 +34,16 @@ const ActiveMembership = () => {
   const [datesVisibleModal, setDatesVisibleModal] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<any>([{ nameid: "" }]);
   const [roles, setRoles]=useState<Array<string>>([]);
-  const [city, setCity]=useState<{id: number, name: string}>();
-  const [club, setClub]=useState<{id: number, name: string}>();
-  const [endDateVisibleModal, setEndDateVisibleModal] = useState<boolean>(false);
-  const [plastDegreeIdToAddEndDate, setPlastDegreeIdToAddEndDate] = useState<number>(0);
-  const [startDateToAddEndDate, setStartDateToAddEndDate] = useState<string>("");
 
   const userAdminTypeRoles = [
     Roles.Admin,
-    Roles.KurinHead,
     Roles.OkrugaHead,
+    Roles.OkrugaHeadDeputy,
     Roles.CityHead,
+    Roles.CityHeadDeputy,
+    Roles.KurinHead,
+    Roles.KurinHeadDeputy,
+    Roles.RegionBoardHead
   ];
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
@@ -60,6 +59,7 @@ const ActiveMembership = () => {
       return plastDegreeName.split("/")[1];
     } else return plastDegreeName;
   };
+
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
@@ -103,10 +103,12 @@ const ActiveMembership = () => {
 
 
   const IsUserHasAccessToManageDegree = (userRoles: Array<string>): boolean => {
-    return (userRoles?.includes(Roles.KurinHead) && currentUser.clubId==user.clubId) ||
-        (userRoles?.includes(Roles.CityHead) && currentUser.cityId==user.cityId) ||
-        (userRoles?.includes(Roles.OkrugaHead) && currentUser.regionId==user.regionId) ||
-        userRoles?.includes(Roles.Admin);
+    return (userRoles?.includes(Roles.CityHead) && currentUser.cityId==user.cityId) ||
+           (userRoles?.includes(Roles.CityHeadDeputy) && currentUser.cityId==user.cityId) ||
+           (userRoles?.includes(Roles.OkrugaHead) && currentUser.regionId==user.regionId) ||
+           (userRoles?.includes(Roles.OkrugaHeadDeputy) && currentUser.regionId==user.regionId) ||
+           userRoles?.includes(Roles.RegionBoardHead) ||
+           userRoles?.includes(Roles.Admin);
   };
 
   const IsUserHasAnyAdminTypeRoles = (userRoles: Array<string>): boolean => {
@@ -277,14 +279,9 @@ const ActiveMembership = () => {
                       Дата початку ступеню:{" "}
                       {moment(pd.dateStart).format("DD.MM.YYYY")}
                     </div>
-                    {pd.dateFinish !== null && (
-                      <div className={classes.textFieldsOthers}>
-                        Дата завершення ступеню:{" "}
-                        {moment(pd.dateFinish).format("DD.MM.YYYY")}
-                      </div>
-                    )}
                     {IsUserHasAccessToManageDegree(roles?.map((role:any)=>{
-                      if(!(role===Roles.KurinHead || role===Roles.CityHead))
+                      if(!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy || 
+                        role === Roles.CityHead || role === Roles.CityHeadDeputy))
                         return role
                     })) && (
                       <div className={classes.buttons}>
@@ -305,8 +302,11 @@ const ActiveMembership = () => {
                   </div>
                 </React.Fragment>
               ))}
-              {IsUserHasAccessToManageDegree(roles?.filter(role=>role!=Roles.KurinHead))
-                && (
+              {IsUserHasAccessToManageDegree(roles?.map((role:any)=>{
+                      if(!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy || 
+                        role === Roles.CityHeadDeputy || role === Roles.CityHead))
+                        return role
+                       })) && (
                   <div className={classes.buttons}>
                     <button
                       onClick={() => {
