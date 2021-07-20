@@ -100,7 +100,7 @@ const PrecautionTable = () => {
     setPrecautions(res);
     setTotal(res[0]?.total);
     setCount(res[0]?.count);
-    notificationLogic("success", successfulCreateAction("Відзначення"));
+    notificationLogic("success", successfulCreateAction("Пересторогу"));
     setLoading(false);
   };
 
@@ -177,7 +177,7 @@ const PrecautionTable = () => {
       setPrecautions([...filteredData]);
       setTotal(total-1);
       setCount(count-1);
-      notificationLogic("success", successfulDeleteAction("Відзначення"));
+      notificationLogic("success", successfulDeleteAction("Пересторогу"));
       CreateDeleteNotification(id);
   };
   
