@@ -64,7 +64,6 @@ const GoverningBody = () => {
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   const [admins, setAdmins] = useState<GoverningBodyAdmin[]>([]);
   const [governingBodyHead, setGoverningBodyHead] = useState<GoverningBodyAdmin>();
-  const [adminsCount, setAdminsCount] = useState<number>();
   const [sectors, setSectors] = useState<SectorProfile[]>([]);
   const [sectorsPhotosLoading, setSectorsPhotosLoading] = useState<boolean>(false);
 
@@ -156,7 +155,6 @@ const GoverningBody = () => {
       setGoverningBody(response.data);
       setAdmins(admins);
       setGoverningBodyHead(response.data.head)
-      setAdminsCount(admins.length);
       setDocuments(response.data.documents);
       setSectors(response.data.sectors);
     } finally {
@@ -166,6 +164,7 @@ const GoverningBody = () => {
 
   const handleAdminAdd = () => {
     setVisible(false);
+
   };
 
   useEffect(() => {
@@ -380,9 +379,9 @@ const GoverningBody = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Провід Керівного Органу <a onClick={() => history.push(`/governingBodies/administration/${governingBody.id}`)}>
-            {adminsCount !== 0 ?
+            {admins.length !== 0 ?
                 <Badge
-                  count={adminsCount}
+                  count={admins.length}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }

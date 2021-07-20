@@ -62,7 +62,6 @@ const Sector = () => {
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   const [admins, setAdmins] = useState<SectorAdmin[]>([]);
   const [sectorHead, setSectorHead] = useState<SectorAdmin>();
-  const [adminsCount, setAdminsCount] = useState<number>(0);
 
   const deleteSector = async () => {
     await removeSector(sector.id);
@@ -87,7 +86,7 @@ const Sector = () => {
     setSectorLogoLoading(false);
   };
 
-  const onAdd = (newDocument: SectorDocument) => {
+  const onDocumentAdd = (newDocument: SectorDocument) => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
@@ -136,16 +135,14 @@ const Sector = () => {
       setSector(response.data);
       setAdmins(admins);
       setSectorHead(response.data.head)
-      setAdminsCount(admins.length);
       setDocuments(response.data.documents);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOk = () => {
+  const handleAdminAdd = () => {
     setVisible(false);
-    setAdminsCount(adminsCount + 1);
   };
 
   useEffect(() => {
@@ -157,8 +154,6 @@ const Sector = () => {
       PsevdonimCreator.setPseudonimLocation(`sectors/${sector.name}`, `sectors/${sectorId}`);
     }
   }, [sector]);
-
-  console.log(userAccesses);
 
   return loading ? (
     <Spinner />
@@ -317,9 +312,9 @@ const Sector = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Провід <a onClick={() => history.push(`/governingBodies/${governingBodyId}/sectors/${sector.id}/administration`)}>
-              {adminsCount !== 0 ?
+              {admins.length !== 0 ?
                 <Badge
-                  count={adminsCount}
+                  count={admins.length}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
@@ -454,12 +449,12 @@ const Sector = () => {
       <Modal
         title="Додати діловода"
         visible={visible}
-        onOk={handleOk}
-        onCancel={handleOk}
+        onOk={handleAdminAdd}
+        onCancel={handleAdminAdd}
         footer={null}
       >
         <AddSectorAdminForm
-          onAdd={handleOk}
+          onAdd={handleAdminAdd}
           admins={admins}
           setAdmins={setAdmins}
           setSectorHead={setSectorHead}
@@ -473,7 +468,7 @@ const Sector = () => {
           setDocument={setDocument}
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
-          onAdd={onAdd}
+          onAdd={onDocumentAdd}
         />
       ) : null}
     </Layout.Content>

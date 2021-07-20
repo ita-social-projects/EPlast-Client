@@ -153,8 +153,7 @@ const AddSectorAdminForm = (props: any) => {
         } else {
           if (newAdmin.id === 0) {
             addGoverningBodyAdmin(newAdmin);
-          }
-          else {
+          } else {
             editGoverningBodyAdmin(newAdmin);
           }
         }
