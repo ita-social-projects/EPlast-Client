@@ -54,16 +54,16 @@ const AddNewRegionFormPage = () => {
     await RegionsApi.createRegion(newRegion);
     form.resetFields();
 
-    notificationLogic("success", successfulCreateAction("Округа"));
+    notificationLogic("success", successfulCreateAction("Округу"));
     history.push("/regions");
   }
   catch(error){
-    notificationLogic("error", failCreateAction("округа"));
+    notificationLogic("error", failCreateAction("округу"));
   }
   };
 
   const checkFile = (size: number, fileName: string) => {
-    const extension = fileName.split(".").reverse()[0];
+    const extension = fileName.split(".").reverse()[0].toLowerCase();
     const isCorrectExtension =
       extension.indexOf("jpeg") !== -1 ||
       extension.indexOf("jpg") !== -1 ||

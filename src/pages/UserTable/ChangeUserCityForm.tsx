@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Select, Typography, Row, Col } from "antd";
+import { Form, Input, Button, Select, Typography, Row, Col, AutoComplete } from "antd";
 import {
   getAllFollowers,
   getAllMembers,
@@ -109,15 +109,15 @@ const ChangeUserCityForm = ({
   return (
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
-        <h4>Оберіть станицю для користувача</h4>
+        <h4>Оберіть станицю для користувача</h4> 
         <Form.Item name="userCity">
-          <Select onChange={handleClick}>
+        <Select onChange={handleClick}>
             {cities.map((item: CityForAdmin) => (
               <Option key={item.id} value={item.name}>
                 {item.name}
               </Option>
             ))}
-          </Select>
+          </Select>                  
         </Form.Item>
         <Form.Item className="cancelConfirmButtons">
           <Row justify="end">
@@ -131,7 +131,7 @@ const ChangeUserCityForm = ({
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" onClick={handleClick}>
                 Призначити
               </Button>
             </Col>

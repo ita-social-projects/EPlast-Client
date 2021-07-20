@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form, Input, Layout, List, Select } from "antd";
-import { EnvironmentOutlined, PhoneOutlined, MailOutlined, InfoOutlined } from "@ant-design/icons";
+import { EnvironmentOutlined, PhoneOutlined, MailOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import styles from "./Contacts.module.css";
 import AuthorizeApi from "../../api/authorizeApi";
 import { useHistory } from 'react-router-dom';
@@ -69,8 +69,8 @@ export default function () {
     <Layout.Content className={styles.contacts}>
       <section className={styles.contactsList}>
         <h1>
-          <InfoOutlined id={styles.InfoOut} />
-          Контакти
+          <InfoCircleOutlined id={styles.InfoOut} />
+           Контакти
         </h1>
         <List
           itemLayout="horizontal"

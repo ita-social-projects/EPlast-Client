@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Select, Typography, Row, Col } from "antd";
+import { Form, Input, Button, Select, Typography, Row, Col, AutoComplete } from "antd";
 import adminApi from "../../api/adminApi";
 import ClubForAdmin from "../../models/Club/ClubForAdmin";
 import {
@@ -120,8 +120,8 @@ const ChangeUserClubForm = ({
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
         <h4>Оберіть курінь для користувача</h4>
-        <Form.Item name="userClub">
-          <Select onChange={handleClick}>
+        <Form.Item name="userClub">         
+        <Select onChange={handleClick}>
             {clubs.map((item: ClubForAdmin) => (              
               item.name === user.clubName ? 
               <Select.Option key={item.id} value={item.name} disabled={handleClub(item)}>
@@ -142,7 +142,7 @@ const ChangeUserClubForm = ({
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" onClick={handleClick}>
                 Призначити
               </Button>
             </Col>

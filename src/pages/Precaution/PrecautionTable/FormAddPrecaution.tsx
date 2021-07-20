@@ -22,6 +22,7 @@ import {
   maxNumber,
   minNumber
 } from "../../../components/Notifications/Messages"
+import moment from "moment";
 
 type FormAddPrecautionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -57,6 +58,10 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
     });
   };
 
+  const disabledStartDate = (current: any) => {
+    return current && current > moment();
+  };
+  
   useEffect(() => {
     const fetchData = async () => {
       await precautionApi.getPrecautions().then((response) => {
@@ -135,7 +140,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
     }
   };
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
@@ -183,7 +188,10 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               },
             ]}
           >
-            <Select className={formclasses.selectField} showSearch>
+            <Select 
+              className={formclasses.selectField} showSearch
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+            >
               {distData?.map((o) => (
                 <Select.Option key={o.id} value={JSON.stringify(o)}>
                   {o.name}
@@ -206,6 +214,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               className={formclasses.selectField}
               showSearch
               loading={loadingUserStatus}
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
               {userData?.map((o) => (
                 <Select.Option 
@@ -255,6 +264,9 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             <DatePicker
               format={dateFormat}
               className={formclasses.selectField}
+              disabledDate={disabledStartDate}
+              getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
+              popupStyle={{position: 'absolute'}}
             />
           </Form.Item>
         </Col>
@@ -270,7 +282,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               {
                 required: true,
                 max: 500,
-                message: maxLength(500),
+                message: "Це поле має бути заповненим",
               },
             ]}
           >
@@ -300,7 +312,11 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               },
             ]}
           >
-            <Select className={formclasses.selectField} showSearch>
+            <Select 
+              className={formclasses.selectField} 
+              showSearch
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+            >
               <Select.Option key="9" value="Прийнято">Прийнято</Select.Option>
               <Select.Option key="10" value="Потверджено">Потверджено</Select.Option>
               <Select.Option key="11" value="Скасовано">Скасовано</Select.Option>

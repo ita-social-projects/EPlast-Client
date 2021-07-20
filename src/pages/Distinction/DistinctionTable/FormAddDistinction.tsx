@@ -133,7 +133,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     }
   };
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
@@ -181,7 +181,10 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               },
             ]}
           >
-            <Select className={formclasses.selectField} showSearch>
+            <Select 
+              className={formclasses.selectField} showSearch
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+            >
               {distData?.map((o) => (
                 <Select.Option key={o.id} value={JSON.stringify(o)}>
                   {o.name}
@@ -204,6 +207,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               className={formclasses.selectField}
               showSearch
               loading={loadingUserStatus}
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
               {userData?.map((o) => (
                 <Select.Option 
@@ -226,7 +230,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Подання від"
             labelCol={{ span: 24 }}
             name="reporter"
-            rules={[
+            rules={[ { required: true, message: emptyInput() },
               {
                 max: 100,
                 message: maxLength(100),
@@ -253,6 +257,8 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             <DatePicker
               format={dateFormat}
               className={formclasses.selectField}
+              getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
+              popupStyle={{position: 'absolute'}}
             />
           </Form.Item>
         </Col>
@@ -264,7 +270,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Обгрунтування"
             labelCol={{ span: 24 }}
             name="reason"
-            rules={[
+            rules={[ { required: true, message: emptyInput() },
               {
                 max: 1000,
                 message: maxLength(1000),

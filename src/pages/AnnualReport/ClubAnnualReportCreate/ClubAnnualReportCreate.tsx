@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { Form, Button, Row, Col, Typography, Tooltip, Modal } from 'antd';
 import './ClubAnnualReportCreate.less';
-import { getClubById, createClubAnnualReport, checkCreated } from '../../../api/clubsApi';
+import { getClubMembersInfo, createClubAnnualReport, checkCreated } from '../../../api/clubsApi';
 import moment from 'moment';
 import ClubAdmin from '../../../models/Club/ClubAdmin';
 import ClubMember from '../../../models/Club/ClubMember';
@@ -43,7 +43,7 @@ export const ClubAnnualReportCreate = () => {
             if (created.data.hasCreated === true) {
                 showError(created.data.message);
             } else {
-                let response = await getClubById(id);
+                let response = await getClubMembersInfo(id);
 
                 setClub(response.data);
 

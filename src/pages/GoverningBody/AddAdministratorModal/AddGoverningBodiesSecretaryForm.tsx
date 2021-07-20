@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
-import { Form, Input, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
+import { Form, DatePicker, AutoComplete, Select, Modal, Button, Input } from "antd";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
@@ -13,20 +13,17 @@ import userApi from "../../../api/UserApi";
 import moment from "moment";
 import {
   emptyInput,
+  incorrectEmail,
+  maxLength,
   successfulEditAction,
 } from "../../../components/Notifications/Messages"
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
+import "./AddAdministrationModal.less"
 
-type AddGoverningBodiesSecretaryForm = {
-  onAdd: () => void;
-  setAdmins: React.Dispatch<React.SetStateAction<GoverningBodyAdmin[]>>;
-  setGoverningBodyHead: React.Dispatch<React.SetStateAction<GoverningBodyAdmin | undefined>>;
-  governingBodyId: number;
-  admin?: any;
-};
 const confirm = Modal.confirm;
+
 const AddGoverningBodiesSecretaryForm = (props: any) => {
   const [head, setHead] = useState<GoverningBodyAdmin>();
   const { onAdd, setAdmins, setGoverningBodyHead } = props;
@@ -48,6 +45,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       userRoles: "",
     },
   ]);
+  const [workEmail, setWorkEmail] = useState<string>("");
 
   const getHead = async () => {
     if (props.governingBodyId !== 0) {
@@ -139,7 +137,9 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       governingBodyId: props.governingBodyId,
       startDate: values.startDate,
       endDate: values.endDate,
-      };
+      workEmail: workEmail
+    };
+
     onAdd();
     if (newAdmin.id === 0) {
       try {
@@ -147,8 +147,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           if (head?.userId !== newAdmin.userId) {
             showConfirm(newAdmin);
           } else if (head?.userId === newAdmin.userId) {
-          }
-          else {
+          } else {
             editGoverningBodyAdmin(newAdmin);
           }
         } else {
@@ -164,6 +163,12 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       }
     }
   };
+
+  const onUserSelect = (value: any) => {
+    const email: string = JSON.parse(value.toString()).email;
+    setWorkEmail(email);
+    form.setFieldsValue({workEmail: email});
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -193,12 +198,17 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         name="userId"
         rules={[
           {
-            required: props.admin === undefined ? true : false,
-            message: emptyInput(),
+            required: props.admin === undefined,
+            message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
       >
-        <Select showSearch loading={usersLoading} className={classes.inputField}>
+        <Select
+          showSearch
+          loading={usersLoading}
+          className={classes.inputField}
+          onChange={value => onUserSelect(value)}
+        >
           {users?.map((o) => (
             <Select.Option key={o.id} value={JSON.stringify(o)}>
               {o.firstName + " " + o.lastName}
@@ -232,7 +242,34 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
             { value: "Член КПР відповідальний за зовнішні зв'язки" },
           ]}
           placeholder={"Тип адміністрування"}
-        ></AutoComplete>
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="workEmail"
+        className={classes.formField}
+        label="Електронна пошта"
+        rules={[
+            {
+              pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
+              message: <div className="formItemExplain">{incorrectEmail}</div>,
+            },
+            {
+              max: 50,
+              message: <div className="formItemExplain">{maxLength(50)}</div>,
+            },
+            {
+              required: true,
+              message: <div className="formItemExplain">{emptyInput()}</div>,
+            }
+        ]}
+      >
+        <Input
+          placeholder="Електронна пошта"
+          className={classes.inputField}
+          value={workEmail}
+          onChange={e => setWorkEmail(e.target.value)}
+        />
       </Form.Item>
 
       <Form.Item

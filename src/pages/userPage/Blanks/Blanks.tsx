@@ -26,7 +26,7 @@ import { Roles } from "../../../models/Roles/Roles";
 const userGenders = ["Чоловік", "Жінка", "Інша"];
 
 export const Blanks = () => {
-    const { userId } = useParams();
+    const { userId } = useParams<{ userId:string}>();
 
     const [data, setData] = useState<Data>();
     const [currentUser, setCurrentUser] = useState<Data>();
@@ -161,7 +161,7 @@ export const Blanks = () => {
                         <div className={classes.wrapper2}>
                             <Title level={2}>Життєпис</Title>
                             {(document.userId === userId) ? (
-                                <Col
+                                <Col className={classes.colBlank}
                                     xs={18}
                                     sm={18}
                                     key={document.id}
@@ -223,7 +223,7 @@ export const Blanks = () => {
                                 </Col>
                             )
                                 : (
-                                    <Col>
+                                    <Col className={classes.colBlank}>
                                         {userToken.nameid === userId &&
                                             <h2>Ви ще не додали Життєпис</h2>
                                         }
@@ -247,7 +247,7 @@ export const Blanks = () => {
                         <div className={classes.wrapper3}>
                             <Title level={2}>Виписка з УПЮ</Title>
                             {(extractUPU.userId == userId) ? (
-                                <Col
+                                <Col className={classes.colBlank}
                                     xs={18}
                                     sm={18}
                                     key={document.id}
@@ -282,13 +282,14 @@ export const Blanks = () => {
                                             }
                                         />
                                     </Tooltip>
-                                    <Tooltip title="Переглянути">
-                                        <EyeOutlined
-                                            hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles) || extractUPUFormat === "doc" || extractUPUFormat === "docx")}
-                                            className={classes.reviewIcon}
-                                            key="review"
-                                            onClick={() => openExtractFromUPUDocument(extractUPU.blobName, extractUPU.fileName)} />
-                                    </Tooltip>
+                                    {((userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) && extractUPUFormat !== "doc" && extractUPUFormat !== "docx") ?
+                                        <Tooltip title="Переглянути">
+                                            <EyeOutlined
+                                                className={classes.reviewIcon}
+                                                key="review"
+                                                onClick={() => openExtractFromUPUDocument(extractUPU.blobName, extractUPU.fileName)} />
+                                        </Tooltip>
+                                    : null}
                                     <Tooltip title="Видалити">
                                         <Popconfirm
                                             title="Видалити цей документ?"
@@ -307,7 +308,7 @@ export const Blanks = () => {
                                     </Tooltip>
                                 </Col>
                             ) : (
-                                <Col>
+                                <Col className={classes.colBlank}>
                                     {userToken.nameid === userId &&
                                         <h2>Ви ще не додали Виписку</h2>
                                     }

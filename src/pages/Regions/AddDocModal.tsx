@@ -8,10 +8,12 @@ import { InboxOutlined } from "@ant-design/icons";
 import moment from "moment";
 import{
   fileIsUpload,
+  fileIsAdded,
   fileIsNotUpload, 
   possibleFileExtensions, 
   fileIsTooBig, 
   successfulDeleteAction,
+  fileIsEmpty,
 } from "../../components/Notifications/Messages"
 import "moment/locale/uk";
 moment.locale("uk-ua");
@@ -58,7 +60,7 @@ const AddDocumentModal = (props: Props) => {
     };
 
     const checkFile = (fileSize: number, fileName: string): boolean => {
-      const extension = fileName.split(".").reverse()[0];
+      const extension = fileName.split(".").reverse()[0].toLowerCase();
       const isCorrectExtension =
         extension.indexOf("pdf") !== -1 ||
         extension.indexOf("doc") !== -1 ||
@@ -68,12 +70,16 @@ const AddDocumentModal = (props: Props) => {
         setDisabled(true);
       }
       
+      const isEmptyFile = fileSize !== 0;
+      if (!isEmptyFile)
+      notificationLogic("error", fileIsEmpty());
+      
       const isSmaller3mb = fileSize < 3145728;
       if (!isSmaller3mb) {
         notificationLogic("error", fileIsTooBig(3));
         setDisabled(true);
       }
-      return isSmaller3mb && isCorrectExtension;
+      return isSmaller3mb && isEmptyFile && isCorrectExtension;
     };
 
     const handleSubmit = async (values: any) => {
@@ -86,9 +92,10 @@ const AddDocumentModal = (props: Props) => {
         submitDate: values.datepicker?._d,
         regionId: props.regionId
       };
-
+    
       await addDocument(newDocument);
       props.onAdd(newDocument);
+      notificationLogic("success", fileIsAdded()); 
       props.setVisibleModal(false);
       form.resetFields();
       setLoading(false);
@@ -164,10 +171,10 @@ const AddDocumentModal = (props: Props) => {
             <Row justify="end">
               <Col md={24} xs={24}>
                 <Form.Item style={{ textAlign: "right" }} className="cancelConfirmButtons">
-                  <Button key="back" className="buttons" onClick={handleCancel}>
+                  <Button key="back" onClick={handleCancel}>
                     Відмінити
                   </Button>
-                    <Button type="primary" className="buttons" loading={buttonLoading} disabled={disabled} htmlType="submit">
+                    <Button style={{ marginLeft: "7px" }} type="primary" loading={buttonLoading} disabled={disabled} htmlType="submit">
                       Опублікувати
                     </Button>
                 </Form.Item>

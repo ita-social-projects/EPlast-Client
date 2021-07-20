@@ -16,7 +16,7 @@ const columns = [
   },
   {
     title: 'Керівний орган',
-    dataIndex: 'organization',
+    dataIndex: 'governingBody',
   },
   {
     title: 'Короткий зміст',
@@ -26,7 +26,7 @@ const columns = [
     title: 'Дата',
     dataIndex: 'date',
     render: (date: Date) => {
-      return moment(date.toLocaleString()).format('DD.MM.YYYY');
+      return moment.utc(date).local().format('DD.MM.YYYY');
     },
   },
   {

@@ -12,6 +12,8 @@ import AuthStore from '../../stores/AuthStore';
 import jwt_decode from "jwt-decode";
 import AddDocumentsModal from './AddDocumetsModal';
 import { Roles } from '../../models/Roles/Roles';
+import DocumentsTableInfo from '../../models/Documents/DocumentsTableInfo';
+import Search from 'antd/lib/input/Search';
 const classes = require('./Table.module.css');
 
 const { Content } = Layout;
@@ -20,22 +22,33 @@ const DocumentsTable = () => {
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [recordObj, setRecordObj] = useState<any>(0);
-  const [data, setData] = useState<Document[]>(Array<Document>());
-  const [viewedData, setViewedData] = useState<Document[]>(Array<Document>());
+  const [data, setData] = useState<DocumentsTableInfo[]>(Array<DocumentsTableInfo>());
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [searchedData, setSearchedData] = useState('');
   const [visibleModal, setVisibleModal] = useState(false);
   const [userRole, setUser] = useState<string[]>();
+  const [viewData, setViewData] = useState<DocumentsTableInfo[]>(Array<DocumentsTableInfo>());
   const [canEdit, setCanEdit] = useState(false);
   const [regionAdm, setRegionAdm] = useState(false);
   const [cityAdm, setCityAdm] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
+  const [supporter, setSupporter] = useState(false);
+  const [plastMember, setPlastMember] = useState(false);
+  
   const [noTitleKey, setKey] = useState<string>('tab1');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState<number>(0);
+  const [count, setCount] = useState<number>(0);
+  const [status, setStatus] = useState<string>('legislation');
+  
 
   const handleDelete = (id: number) => {
     const filteredData = data.filter(d => d.id !== id);
     setData([...filteredData]);
+    setTotal(total-1);
+    setCount(count-1);
   }
 
   const handleEdit = (id: number, name: string, description: string) => {
@@ -50,24 +63,30 @@ const DocumentsTable = () => {
     );
     setData([...filteredData]);
   }
+
   const handleAdd = async () => {
     const lastId = data[data.length - 1].id;
     await documentsApi.getById(lastId + 1).then(res => {
-      const dec: Document = {
+      const dec: DocumentsTableInfo = {
         id: res.id,
         name: res.name,
         governingBody: res.governingBody.governingBodyName,
         type: TypeGetParser(res.type),
         description: res.description,
         fileName: res.fileName,
-        date: res.date
+        date: res.date,
+        total: total + 1,
+        count: count + 1
       };
+      setTotal(total + 1);
+      setCount(count + 1);
       setData([...data, dec]);
     })
       .catch(() => {
         notificationLogic('error', "Документу не існує");
-      });
+      });  
   }
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -75,7 +94,9 @@ const DocumentsTable = () => {
       let decodedJwt = jwt_decode(jwt) as any;
       let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
       setLoading(true);
-      const res: Document[] = await documentsApi.getAll();
+      const res: DocumentsTableInfo[] = await documentsApi.getAllDocuments(searchedData, page, pageSize, status);
+      setTotal(res[0]?.total);
+      setCount(res[0]?.count);
       setData(res);
       setLoading(false);
       setUser(roles);
@@ -83,25 +104,33 @@ const DocumentsTable = () => {
       setRegionAdm(roles.includes(Roles.OkrugaHead));
       setCityAdm(roles.includes(Roles.CityHead));
       setClubAdm(roles.includes(Roles.KurinHead));
+      setSupporter(roles.includes(Roles.Supporter));
+      setPlastMember(roles.includes(Roles.PlastMember));
     };
     fetchData();
-  }, []);
+  }, [searchedData, page, pageSize, status]);
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchedData(event.target.value.toLowerCase());
-    setViewedData(searchedData
-      ? viewedData.filter((item) => {
-        return Object.values([
-          item.name,
-          item.governingBody,
-          item.id,
-          item.description,
-          moment(item.date.toLocaleString()).format("DD.MM.YYYY"),
-        ]).find((element) => {
-          return String(element).toLowerCase().includes(searchedData);
-        });
-      })
-      : viewedData)
+
+  const handleSearch = (event: any) => {
+    
+    setPage(1);
+    setSearchedData(event);
+    setData(data);
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    
+    if(event.target.value.toLowerCase()==='') setSearchedData('');
+    setData(data);
+  }
+  
+  const handlePageChange = (page: number) => {
+    setPage(page);
+  };
+
+  const handleSizeChange = (page: number, pageSize: number = 10) => {
+    setPage(page);
+    setPageSize(pageSize);
   };
 
   const handleClickAway = () => {
@@ -113,28 +142,27 @@ const DocumentsTable = () => {
 
   const tabList = [
     {
-      key: 'tab1',
+      key: 'legislation',
       tab: 'Нормативні акти',
     },
     {
-      key: 'tab2',
+      key: 'Methodics',
       tab: 'Методичні документи',
     },
     {
-      key: 'tab3',
+      key: 'Other',
       tab: 'Різне',
     },
   ];
 
   const onTabChange = (key: string) => {
     setKey(key);
-    setViewedData(key == 'tab1' ? data.filter(x => x.type == "Нормативний акт") : key == 'tab2' ? data.filter(x => x.type == "Методичний документ") : data.filter(x => x.type == "Інше"));
+    setPageSize(pageSize);
+    setStatus(key);
   };
 
-  useEffect(() => { onTabChange('tab1') }, [data])
 
-
-  return !loading ? (
+  return (
     <Layout>
       <Content
         onClick={() => {
@@ -144,26 +172,42 @@ const DocumentsTable = () => {
         <h1 className={classes.titleTable}>Документація</h1>
         <>
           <div className={classes.searchContainer}>
-            {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+            {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true || supporter == true) ? (
               <Button type="primary" onClick={showModal}>
-                Додати документ
+                Додати документ 
               </Button>
             ) : (<> </>)
             }
-            <Input placeholder="Пошук" onChange={handleSearch} allowClear />
-          </div>
+            {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true || supporter == true || plastMember == true) ? (
+             <Search
+                enterButton
+                placeholder="Пошук"
+                allowClear
+                onChange={handleSearchChange}
+                onSearch={handleSearch}                
+               />
+            ) : (<> </>)
+            }
+            </div>
 
+          {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true || supporter == true || plastMember == true) ? (
           <Card
             style={{ width: '100%' }}
             tabList={tabList}
-            activeTabKey={noTitleKey}
+            activeTabKey={status}
             onTabChange={(key) => {
-              onTabChange(key);
-            }}
-          >
+            onTabChange(key);
+            }} 
+          /> ) : (
+          <Card
+              style={{ width: '100%' }}
+              activeTabKey={status}
+          />)
+            }
+            {loading ? (<Spinner />) : (
             <Table
               className={classes.table}
-              dataSource={viewedData}
+              dataSource={data}
               scroll={{ x: 1300 }}
               columns={columns}
               bordered
@@ -193,13 +237,19 @@ const DocumentsTable = () => {
               }}
               pagination={
                 {
+                  current: page,
+                  pageSize: pageSize,
+                  total: count,
                   showLessItems: true,
                   responsive: true,
                   showSizeChanger: true,
+                  onChange: (page) => handlePageChange(page),
+                  onShowSizeChange: (page, size) => handleSizeChange(page, size),
                 }
               }
             />
-          </Card>
+            )}
+
           <ClickAwayListener onClickAway={handleClickAway}>
             <DropDown
               showDropdown={showDropdown}
@@ -217,12 +267,7 @@ const DocumentsTable = () => {
           />
         </>
       </Content>
-    </Layout>
-  ) : (
-      <Spinner />
-    );
-};
+    </Layout>  
+  )};
 
 export default DocumentsTable;
-
-

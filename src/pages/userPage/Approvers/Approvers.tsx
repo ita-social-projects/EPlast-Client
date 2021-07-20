@@ -127,7 +127,7 @@ const Assignments = () => {
     <Spinner />
   ) : (
     <div className="displayFlex">
-      <div className="avatarWrapper">
+      <div className="avatarWrapperApprovers">
         <StickyContainer className="kadraWrapper">
           <AvatarAndProgress
             imageUrl={data?.user.imagePath}
@@ -136,15 +136,17 @@ const Assignments = () => {
             lastName={data?.user.lastName}
             isUserPlastun={data?.isUserPlastun}
             pseudo={data?.user.pseudo}
+            governingBody={data?.user.governingBody}
             region={data?.user.region}
             city={data?.user.city}
             club={data?.user.club}
             cityId={data?.user.cityId}
             clubId={data?.user.clubId}
-            regionId={data?.user.regionId} />
+            regionId={data?.user.regionId}
+            governingBodyId={data?.user.governingBodyId} />
         </StickyContainer>
       </div>
-      <div className="approversContent">
+      <div className="approversContentApprovers">
         <br />
         <h1>Поручення дійсних членів</h1>
         <div className="approversCard">

@@ -26,9 +26,11 @@ class AvatarAndProgressProps {
   lastName: string | undefined;
   isUserPlastun: boolean | undefined;
   pseudo: string | undefined;
+  governingBody: string | undefined;
   region: string | undefined;
   city: string | undefined;
   club: string | undefined;
+  governingBodyId: number | undefined;
   regionId: number | undefined;
   cityId: number | undefined;
   clubId: number | undefined;
@@ -60,7 +62,7 @@ const contentListNoTitle: { [key: string]: any } = {
 const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
   props: AvatarAndProgressProps
 ) => {
-  const { userId } = useParams();
+  const { userId } = useParams<{ userId:string }>();
   const [loading, setLoading] = useState(false);
   const {
     time,
@@ -69,10 +71,11 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
     lastName,
     isUserPlastun,
     pseudo,
+    governingBody,
     region,
     city,
     club,
-    cityId, clubId, regionId
+    cityId, clubId, regionId, governingBodyId
   } = props;
   const [imageBase64, setImageBase64] = useState<string>();
   const [UserDistinctions, setData] = useState<UserDistinction[]>([
@@ -123,6 +126,13 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
     },
   ]);
 
+  const AppropriateProgressText=(time:number):string=>{
+    const lastNumber=time%10;
+    if(lastNumber==1) return "день"
+    else if(lastNumber<=4 && lastNumber>1) return "дні"
+    return "днів"
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       await kadrasApi.getAllKVsOfGivenUser(userId).then((responce) => {
@@ -153,7 +163,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
       {({ style, isSticky }) => (
         <div
           style={
-            window.innerWidth > 1321
+            window.innerWidth > 1340
               ? { ...style, marginTop: isSticky ? "80px" : "0" }
               : undefined
           }
@@ -172,7 +182,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
       {({ style, isSticky }) => (
         <div
           style={
-            window.innerWidth > 1321 && isSticky
+            window.innerWidth > 1340 && isSticky
               ? { ...style, marginTop: "80px", paddingBottom: "80px" }
               : undefined
           }
@@ -189,7 +199,7 @@ const AvatarAndProgress: React.FC<AvatarAndProgressProps> = (
             <div className="progress">
               {time !== 0 ? (
                 <p className="statusText">
-                  {time} дні і {firstName} {lastName} - Дійсний член організації :)
+                  {time} {AppropriateProgressText(time!)} і {firstName} {lastName} - Дійсний член організації :)
                 </p>
               ) : (
                 <p className="statusText">
