@@ -472,7 +472,7 @@ export default function () {
       .put(newUserProfile)
       .then(() => {
         notificationLogic("success", successfulEditAction("Дані"));
-        history.goBack();        
+        history.push(`/userpage/main/${userId}`);       
       })
       .catch(() => {
         notificationLogic("error", tryAgain);
@@ -806,7 +806,7 @@ export default function () {
             </Form.Item>
           </div>
           <div className="buttons">
-            <Button className={styles.confirmBtn} htmlType="submit">
+            <Button className={styles.confirmBtn} htmlType="submit" >
               Підтвердити
             </Button>
             <Button className={styles.confirmBtn} htmlType="submit" onClick={() => history.push(`/userpage/main/${userId}`)}>
