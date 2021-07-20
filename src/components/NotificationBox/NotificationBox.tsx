@@ -40,13 +40,21 @@ const NotificationBox = ({
             <div className = { classes.Footer }>
               <Button
                onClick = { handleCancel } 
-               style = {{ width:"50%" }}
+               style = {{ 
+                 width:"50%",
+                 whiteSpace: "normal",
+                 height:'auto',
+                 marginBottom:'10px'}}
               >
                 Закрити сповіщення
               </Button>
-              <Button 
+              <Button
                 onClick = {() => { RemoveAllNotifications(userId) }} 
-                danger style = {{ width:"50%" }}
+                danger style = {{ 
+                  width:"50%",
+                  whiteSpace: "normal",
+                  height:'auto',
+                  marginBottom:'10px'}}
                 disabled = { !Notifications.length }
               >
                 Видалити всі сповіщення

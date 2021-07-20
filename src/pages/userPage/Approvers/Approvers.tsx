@@ -148,8 +148,7 @@ const Assignments = () => {
       </div>
       <div className="approversContentApprovers">
         <br />
-        <h1>Поручення дійсних членів</h1>
-        <div className="approversCard">
+        <h1 className="approversCard">Поручення дійсних членів</h1>
           {data?.confirmedUsers.map(p => {
             if (p.approver.userID == data?.currentUserId || roles.includes(Roles.Admin)) {
               return (
@@ -222,9 +221,7 @@ const Assignments = () => {
             </div>
           </div>
 
-        </div>
-        <h1>Поручення куреня УСП/УПС</h1>
-        <div className="approversCard">
+        <h1 className="approversCard">Поручення куреня УСП/УПС</h1>
           {(data?.clubApprover != null) ? (
 
             <div>
@@ -293,9 +290,8 @@ const Assignments = () => {
               </div>
             )
           )}
-        </div>
+
         <h1 className="approversCard">Поручення Голови осередку/Осередкового УСП/УПС</h1>
-        <div className="approversCard">
           {(data?.cityApprover != null) ? (
             <div>
               {(data.cityApprover.approver.userID == data.currentUserId || roles.includes(Roles.Admin)) ? (
@@ -364,7 +360,6 @@ const Assignments = () => {
               </div>
             )
           )}
-        </div>
       </div>
     </div>
   );

@@ -100,10 +100,12 @@ const ActiveMembership = () => {
 
 
   const IsUserHasAccessToManageDegree = (userRoles: Array<string>): boolean => {
-    return (userRoles?.includes(Roles.CityHead) && currentUser.cityId==data?.user.cityId) ||
-           (userRoles?.includes(Roles.CityHeadDeputy) && currentUser.cityId==data?.user.cityId) ||
-           (userRoles?.includes(Roles.OkrugaHead) && currentUser.regionId==data?.user.regionId) ||
-           (userRoles?.includes(Roles.OkrugaHeadDeputy) && currentUser.regionId==data?.user.regionId) ||
+    return (userRoles?.includes(Roles.KurinHead) && currentUser.clubId == data?.user.clubId) ||
+           (userRoles?.includes(Roles.KurinHeadDeputy) && currentUser.clubId == data?.user.clubId) ||
+           (userRoles?.includes(Roles.CityHead) && currentUser.cityId == data?.user.cityId) ||
+           (userRoles?.includes(Roles.CityHeadDeputy) && currentUser.cityId == data?.user.cityId) ||
+           (userRoles?.includes(Roles.OkrugaHead) && currentUser.regionId == data?.user.regionId) ||
+           (userRoles?.includes(Roles.OkrugaHeadDeputy) && currentUser.regionId == data?.user.regionId) ||
            userRoles?.includes(Roles.RegionBoardHead) ||
            userRoles?.includes(Roles.Admin);
   };
@@ -285,7 +287,7 @@ const ActiveMembership = () => {
                       Дата початку ступеню:{" "}
                       {moment(pd.dateStart).format("DD.MM.YYYY")}
                     </div>
-                    {IsUserHasAccessToManageDegree(roles?.map((role:any)=>{
+                    {IsUserHasAccessToManageDegree(roles?.map((role:any) => {
                       if(!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy || 
                         role === Roles.CityHead || role === Roles.CityHeadDeputy))
                         return role
@@ -308,10 +310,10 @@ const ActiveMembership = () => {
                   </div>
                 </React.Fragment>
               ))}
-              {IsUserHasAccessToManageDegree(roles?.map((role:any)=>{
-                      if(!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ))
+               {IsUserHasAccessToManageDegree(roles?.map((role:any) => {
+                      if(!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy))
                         return role
-                       })) && (
+                    })) && (
                   <div className={classes.buttons}>
                     <button
                       onClick={() => {
@@ -328,7 +330,8 @@ const ActiveMembership = () => {
       </div>
       <ModalAddPlastDegree
         userId={userId}
-        isCityAdmin={!IsUserHasAnyAdminTypeRoles(roles?.map((role:any)=>{if(role!=Roles.CityHead) return role}))}
+        isCityAdmin={!IsUserHasAnyAdminTypeRoles(roles?.map((role:any) => {
+          if(!(role === Roles.CityHead || role === Roles.CityHeadDeputy)) return role}))}
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
         handleAddDegree={handleAddDegree}

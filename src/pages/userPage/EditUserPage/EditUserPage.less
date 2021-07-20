@@ -1,16 +1,21 @@
-.ant-popover-message-title
-{
+.ant-popover-message-title{
     padding-left: 0px !important;
 }
 
-.buttons {
+.buttons{
     display: flex;
     justify-content: center;
     padding-top: 10px;
 }
 
-.buttons Button {
+.buttons Button{
     margin-right: 10px;
     margin-left: 10px;
     width: 200px;
+}
+
+@media(max-width: 768px){
+    .buttons{
+        flex-direction: column; 
+    }
 }
