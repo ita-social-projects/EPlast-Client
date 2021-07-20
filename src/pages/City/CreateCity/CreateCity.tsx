@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 import {
   Button,
@@ -10,9 +10,11 @@ import {
   Col,
   Select,
   Card,
+  Modal,
 } from "antd";
 import {
   DeleteOutlined,
+  ExclamationCircleOutlined,
   LoadingOutlined,
   PlusOutlined,
 } from "@ant-design/icons/lib";
@@ -20,11 +22,9 @@ import ReactInputMask from "react-input-mask";
 import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import {
-  addFollowerWithId,
   createCity,
   getCityById,
   getLogo,
-  toggleMemberStatus,
   updateCity,
 } from "../../../api/citiesApi";
 import { createRegionFollower, GetAllRegions, getRegionById, getRegionFollowerById, removeFollower } from "../../../api/regionsApi";
@@ -51,7 +51,6 @@ import RegionFollower from "../../../models/Region/RegionFollower";
 import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
 import TextArea from "antd/lib/input/TextArea";
-import CityAdmin from "../../../models/City/CityAdmin";
 
 const CreateCity = () => {
   const { id } = useParams();
@@ -68,16 +67,6 @@ const CreateCity = () => {
   const [activeUser, setActiveUser] = useState<User>(new User());
   const [isFollowerPath, setIsFollowerPath] = useState<boolean>(location.pathname.includes(followerPath));
 
-  //const createNotification = async(userId : string, message : string) => {
-  //  await NotificationBoxApi.createNotifications(
-  //    [userId],
-  //    message + ": ",
-  //    NotificationBoxApi.NotificationTypes.UserNotifications,
-  //    `/cities/${id}`,
-  //    cityName
-  //    );
-  //}
-
   useEffect (() => {
     if (isFollowerPath) {
       if (location.pathname.startsWith(followerPath + "edit")) {
@@ -93,7 +82,7 @@ const CreateCity = () => {
         getRegions();
       }
     }
-  }, [id, regionFollower]);
+  }, [applicant, appealRegion]);
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -196,7 +185,7 @@ const CreateCity = () => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const handleSubmit = async (values: any) => {
     if (isFollowerPath) {
@@ -218,9 +207,9 @@ const CreateCity = () => {
       }; 
       
       if (!regionFollower.id) {
-        CreateRegionFollower(newRegionFollower);
+        seeAddFollowerModal(newRegionFollower);
       } else {
-        ConfirmRegionFollower(newRegionFollower);
+        seeConfirmFollowerModal(newRegionFollower);
       }  
     } else {
       const newCity: CityProfile = {
@@ -317,21 +306,55 @@ const CreateCity = () => {
       });
   };
 
-    /*function seeAddFollowerModal(follower: RegionFollower) {
-  *  return Modal.confirm({
-  *    title: `Ви впевнені, що хочете підтвердити заявку на створення станиці ${follower.cityName}?`,
-  *    icon: <ExclamationCircleOutlined />,
-  *    okText: "Так, створити",
-  *    okType: "danger",
-  *    cancelText: "Скасувати",
-  *    maskClosable: true,
-  *    onOk() {
-  *      {
-  *        //await handleSubmit(follower);
-  *      }
-  *    },
-  *  });
-  }*/
+  function seeAddFollowerModal(newRegionFollower: RegionFollower) {
+    return Modal.confirm({
+      title: `Ви впевнені, що хочете надіслати заявку на створення станиці ${newRegionFollower.cityName}?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, надіслати!",
+      okType: "danger",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        {
+          CreateRegionFollower(newRegionFollower);
+        }
+      },
+    });
+  }
+
+  function seeDeleteFollowerModal() {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете відхилити заяву?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, відхилити",
+      okType: "danger",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        {
+          removeFollower(regionFollower.id);
+          notificationLogic("success", successfulDeleteAction("Заяву"));
+          history.push(`/regions/followers/${regionFollower.regionId}`);
+        }
+      },
+    });
+  }
+
+  function seeConfirmFollowerModal(regionFollower: RegionFollower) {
+    return Modal.confirm({
+      title: `Ви впевнені, що хочете підтвердити заявку на створення станиці ${regionFollower.cityName}?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, підтвердити!",
+      okType: "danger",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        {
+          ConfirmRegionFollower(regionFollower);
+        }
+      },
+    });
+  }
 
   return loading && (city || regionFollower) ? (
     <Spinner />
@@ -539,13 +562,22 @@ const CreateCity = () => {
           </Row>
           <Row className="cityButtons" justify="center" gutter={[0, 6]}>
             <Col xs={24} sm={12}>
-              <Button
-                type="primary"
-                className="backButton"
-                onClick={() => history.goBack()}
-              >
-                Назад
-              </Button>
+              {location.pathname.startsWith(followerPath + "edit") ? (                
+                <Button
+                  type="primary"
+                  className="backButton"
+                  onClick={() => seeDeleteFollowerModal()}
+                >
+                  Відхилити
+                </Button>) : (
+                <Button
+                  type="primary"
+                  className="backButton"
+                  onClick={() => history.goBack()}
+                >
+                  Назад
+                </Button>
+              )}
             </Col>
             <Col xs={24} sm={12}>
               {location.pathname.startsWith(followerPath + "edit") ? (

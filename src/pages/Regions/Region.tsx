@@ -18,14 +18,12 @@ import {
   PlusSquareFilled,
   DeleteOutlined,
   ExclamationCircleOutlined,
-  PlusOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import {
   getRegionById,
   removeRegion,
   getRegionAdministration,
-  getRegionDocuments,
   getHead,
   getHeadDeputy,
   getRegionFollowers,

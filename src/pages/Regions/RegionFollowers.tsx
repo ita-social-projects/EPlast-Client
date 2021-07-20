@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Skeleton, Spin} from 'antd';
-import {CloseOutlined, PlusOutlined, RollbackOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Layout, Modal, Skeleton, Spin} from 'antd';
+import {CloseOutlined, ExclamationCircleOutlined, PlusOutlined, RollbackOutlined} from '@ant-design/icons';
 import {
   getRegionFollowers, 
   getRegionAdministration, 
@@ -13,7 +13,6 @@ import "./Region.less";
 import RegionFollower from '../../models/Region/RegionFollower';
 import Title from 'antd/lib/typography/Title';
 import Spinner from '../Spinner/Spinner';
-import NotificationBoxApi from '../../api/NotificationBoxApi';
 import { Roles } from '../../models/Roles/Roles';
 
 const RegionFollowers = () => {
@@ -61,21 +60,26 @@ const RegionFollowers = () => {
       setPhotosLoading(false);
     }
     
-    //const createNotification = async(userId : string, message : string) => {
-    //  await NotificationBoxApi.createNotifications(
-    //    [userId],
-    //    message + ": ",
-    //    NotificationBoxApi.NotificationTypes.UserNotifications,
-    //    `/regions/${id}`,
-    //    regionName
-    //    );
-    //}
-
     const deleteFollower = async (follower: RegionFollower) => {
       await removeFollower(follower.id);
-      //await createNotification(follower.userId, `Нажаль, вашу заяву на створення станиці ${follower.cityName} відхилено. Для з'ясування причин відмови зверніться до голови округу`);
       setFollowers(followers.filter(u => u.id !== follower.id));
     }
+
+    function seeDeleteFollowerModal(regionFollower: RegionFollower) {
+      return Modal.confirm({
+        title: "Ви впевнені, що хочете відхилити заяву?",
+        icon: <ExclamationCircleOutlined />,
+        okText: "Так, відхилити",
+        okType: "danger",
+        cancelText: "Скасувати",
+        maskClosable: true,
+        onOk() {
+          {
+            deleteFollower(regionFollower);
+          }
+        },
+      });
+    }  
 
     useEffect(() => {
         getFollowers();
@@ -99,7 +103,7 @@ const RegionFollowers = () => {
                         && isActiveUserRegionAdmin)   
                     ? [
                         <CloseOutlined
-                          onClick={() => deleteFollower(follower)}
+                          onClick={() => seeDeleteFollowerModal(follower)}
                         />,
                     ] : undefined
                   }
