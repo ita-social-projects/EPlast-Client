@@ -103,7 +103,9 @@ const ActiveMembership = () => {
 
 
   const IsUserHasAccessToManageDegree = (userRoles: Array<string>): boolean => {
-    return (userRoles?.includes(Roles.CityHead) && currentUser.cityId==user.cityId) ||
+    return (userRoles?.includes(Roles.KurinHead) && currentUser.kurinId==user.kurinId) ||
+           (userRoles?.includes(Roles.KurinHeadDeputy) && currentUser.kurinId==user.kurinId) ||
+           (userRoles?.includes(Roles.CityHead) && currentUser.cityId==user.cityId) ||
            (userRoles?.includes(Roles.CityHeadDeputy) && currentUser.cityId==user.cityId) ||
            (userRoles?.includes(Roles.OkrugaHead) && currentUser.regionId==user.regionId) ||
            (userRoles?.includes(Roles.OkrugaHeadDeputy) && currentUser.regionId==user.regionId) ||
@@ -302,10 +304,10 @@ const ActiveMembership = () => {
                   </div>
                 </React.Fragment>
               ))}
-              {IsUserHasAccessToManageDegree(roles?.map((role:any)=>{
-                      if(!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ))
+               {IsUserHasAccessToManageDegree(roles?.map((role:any)=>{
+                      if(!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy))
                         return role
-                       })) && (
+                    })) && (
                   <div className={classes.buttons}>
                     <button
                       onClick={() => {
@@ -322,7 +324,7 @@ const ActiveMembership = () => {
       </div>
       <ModalAddPlastDegree
         userId={userId}
-        isCityAdmin={!IsUserHasAnyAdminTypeRoles(roles?.map((role:any)=>{if(role!=Roles.CityHead) return role}))}
+        isCityAdmin={!IsUserHasAnyAdminTypeRoles(roles?.map((role:any)=>{if(!(role === Roles.CityHead || role === Roles.CityHeadDeputy)) return role}))}
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
         handleAddDegree={handleAddDegree}
