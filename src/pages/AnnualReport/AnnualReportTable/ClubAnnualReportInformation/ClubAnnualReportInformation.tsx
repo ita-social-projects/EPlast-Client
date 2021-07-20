@@ -6,7 +6,7 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 import { getClubAnnualReportById, getClubMembersInfo, confirmClubAnnualReport, cancelClubAnnualReport, removeClubAnnualReport } from '../../../../api/clubsApi';
 import { useEffect } from 'react';
 import Spinner from '../../../Spinner/Spinner';
-import { administrationsColumns, followersColumns, getTableAdmins, getTableFollowers, getTableMembers } from '../../ClubAnnualReportForm/ClubAnnualReportTableColumns';
+import { administrationsColumns, followersColumns, getTableAdmins, getTableMembers } from '../../ClubAnnualReportForm/ClubAnnualReportTableColumns';
 import ClubAdmin from '../../../../models/Club/ClubAdmin';
 import ClubMember from '../../../../models/Club/ClubMember';
 import AnnualReportMenu from '../../AnnualReportMenu';
@@ -202,7 +202,7 @@ const ClubAnnualReportInformation = () => {
                             <Card.Grid className='container'>
                                 <Title level={4}>Провід куреня</Title>
                                 <Table
-                                    dataSource={getTableAdmins(admins, club.head)}
+                                    dataSource={getTableAdmins(admins)}
                                     columns={administrationsColumns}
                                     pagination={{ defaultPageSize: 4 }}
                                     className="table"
@@ -216,7 +216,7 @@ const ClubAnnualReportInformation = () => {
                             <Card.Grid className='container'>
                                 <Title level={4}>Члени куреня</Title>
                                 <Table
-                                    dataSource={getTableMembers(members, admins, club.head)}
+                                    dataSource={getTableMembers(members)}
                                     columns={followersColumns}
                                     pagination={{ defaultPageSize: 4 }}
                                     className="table"
@@ -232,7 +232,7 @@ const ClubAnnualReportInformation = () => {
                             <Card.Grid className='container'>
                                 <Title level={4}>Прихильники куреня</Title>
                                 <Table
-                                    dataSource={getTableFollowers(followers)}
+                                    dataSource={getTableMembers(followers)}
                                     columns={followersColumns}
                                     pagination={{ defaultPageSize: 4 }}
                                     className="table"

@@ -20,10 +20,13 @@ export const ClubAnnualReportCreate = () => {
     const { clubId } = useParams();
     const [form] = Form.useForm();
     const [admins, setAdmins] = useState<ClubAdmin[]>([]);
+    const [clubHead, setClubHead] = useState<ClubAdmin>({} as ClubAdmin);
     const [members, setClubMembers] = useState<ClubMember[]>([]);
     const [followers, setFollowers] = useState<ClubMember[]>([]);
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingSave, setIsLoadingSave]=useState(false);
+    const [countUsersPerYear, setCountUsersPerYear] = useState({}as number);
+    const [countDeletedUsersPerYear, setCountDeletedUsersPerYear] = useState({}as number);
     const [club, setClub] = useState<any>({
         id: 0,
         name: "",
@@ -44,14 +47,13 @@ export const ClubAnnualReportCreate = () => {
                 showError(created.data.message);
             } else {
                 let response = await getClubMembersInfo(id);
-
-                setClub(response.data);
-
-                setAdmins(response.data.administration.filter((a: any) => a != null));
-
+                setClub(response.data.club);
+                setAdmins(response.data.admins);
+                setClubHead(response.data.head);
                 setClubMembers(response.data.members);
-
                 setFollowers(response.data.followers);
+                setCountUsersPerYear(response.data.countUsersPerYear);
+                setCountDeletedUsersPerYear(response.data.countDeletedUsersPerYear);
             }
         }
         catch (error) {
@@ -68,28 +70,44 @@ export const ClubAnnualReportCreate = () => {
             onOk: () => { history.goBack(); }
         });
     }
+    function seeDeleteModal() {
+        return Modal.confirm({
+          title: "Роман ще додае функціонал на зберігання",
+          okText: "Так, Прискорити Романа",
+          okType: "primary",
+          cancelText: "Скасувати",
+          maskClosable: true,
+          onOk() {
+          },
+        });
+      }
+
+
 
     const handleFinish = async (obj: any) => {
-        obj.clubId = clubId
-        obj.name = club.name
-        obj.clubPage = club.clubURL
-        obj.currentClubFollowers = followers.length
-        obj.currentClubMembers = members.length
-        obj.date = moment()
-        setIsLoadingSave(true);
-        try {
-            let response = await createClubAnnualReport(obj);
-            form.resetFields();
-            notificationLogic('success', successfulCreateAction('Річний звіт', response.data.name));
-            history.goBack();
-        }
-        catch (error) {
-            if (error.response.status === 400 || error.response.status === 404) {
-                notificationLogic('error', tryAgain);
+        seeDeleteModal();
+        if (false) {
+            obj.clubId = clubId
+            obj.name = club.name
+            obj.clubPage = club.clubURL
+            obj.currentClubFollowers = followers.length
+            obj.currentClubMembers = members.length
+            obj.date = moment()
+            setIsLoadingSave(true);
+            try {
+                let response = await createClubAnnualReport(obj);
+                form.resetFields();
+                notificationLogic('success', successfulCreateAction('Річний звіт', response.data.name));
                 history.goBack();
             }
-        } finally {
-            setIsLoadingSave(false);
+            catch (error) {
+                if (error.response.status === 400 || error.response.status === 404) {
+                    notificationLogic('error', tryAgain);
+                    history.goBack();
+                }
+            } finally {
+                setIsLoadingSave(false);
+            }
         }
     }
 
@@ -105,20 +123,33 @@ export const ClubAnnualReportCreate = () => {
                     <Form
                         onFinish={handleFinish}
                         className='annualreport-form'
-                        form={form} >
+                        form={form} 
+                    >
                         <Title
                             className='textCenter'
                             level={3} >
-                            {`Річний звіт куреня ${club.name} за 
-                    ${moment(club.date).year()} рік`}</Title>
-                        <Link className="LinkText" style={{ fontSize: "14px" }} to={"/clubs/" + clubId} target="blank">Перейти на профіль куреня {club.name}</Link>
+                            {`Річний звіт куреня ${club.name} за  ${moment(club.date).year()} рік`}
+                        </Title>
+
+                        <Link
+                         className="LinkText" 
+                         style={{ fontSize: "14px" }} 
+                         to={"/clubs/" + clubId} target="blank">Перейти на профіль куреня {club.name}
+                         </Link>
+
                         <br />
                         <br />
+
                         <ClubAnnualReportForm
                             club={club}
                             admins={admins}
                             members={members}
-                            followers={followers} />
+                            followers={followers} 
+                            head={clubHead}
+                            countUsersPerYear={countUsersPerYear}
+                            countdeletedUsersPerYear={countDeletedUsersPerYear}
+                        />
+
                         <Row justify='center'>
                             <Col>
                                 <Button
@@ -129,7 +160,6 @@ export const ClubAnnualReportCreate = () => {
                                 </Button>
                             </Col>
                         </Row>
-
                     </Form>
                 </>}
         </>
