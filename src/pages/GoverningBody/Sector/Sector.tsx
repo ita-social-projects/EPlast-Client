@@ -156,7 +156,7 @@ const Sector = () => {
     if (sector.name.length != 0) {
       PsevdonimCreator.setPseudonimLocation(`sectors/${sector.name}`, `sectors/${sectorId}`);
     }
-  }, [sector])
+  }, [sector]);
 
   console.log(userAccesses);
 

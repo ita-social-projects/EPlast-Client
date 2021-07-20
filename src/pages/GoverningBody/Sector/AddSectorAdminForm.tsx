@@ -67,7 +67,7 @@ const AddSectorAdminForm = (props: any) => {
     admin.user.imagePath =  (
       await userApi.getImage(admin.user.imagePath)
     ).data;
-    if (admin.adminType.adminTypeName == Roles.GoverningBodyHead) {
+    if (admin.adminType.adminTypeName == Roles.GoverningBodySectorHead) {
       setSectorHead(admin);
     }
     setAdmins((old: SectorAdmin[]) => [...old, admin]);
@@ -78,7 +78,7 @@ const AddSectorAdminForm = (props: any) => {
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/governingBodies/${props.governingBodyId}`,
-      `цьому керівному органі`
+      `цьому напрямі`
     );
   };
 
@@ -143,7 +143,7 @@ const AddSectorAdminForm = (props: any) => {
     onAdd();
     if (newAdmin.id === 0) {
       try {
-        if (values.AdminType === Roles.GoverningBodyHead && head !== null) {
+        if (values.AdminType === Roles.GoverningBodySectorHead && head !== null) {
           if (head?.userId !== newAdmin.userId) {
             showConfirm(newAdmin);
           } else if (head?.userId === newAdmin.userId) {

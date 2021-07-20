@@ -103,7 +103,7 @@ const GoverningBody = () => {
     setSectorsPhotosLoading(false);
   };
 
-  const onAdd = (newDocument: GoverningBodyDocument) => {
+  const onDocumentAdd = (newDocument: GoverningBodyDocument) => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
@@ -164,9 +164,8 @@ const GoverningBody = () => {
     }
   };
 
-  const handleOk = () => {
+  const handleAdminAdd = () => {
     setVisible(false);
-    getGoverningBody();
   };
 
   useEffect(() => {
@@ -518,12 +517,12 @@ const GoverningBody = () => {
       <Modal
         title="Додати діловода"
         visible={visible}
-        onOk={handleOk}
+        onOk={handleAdminAdd}
         onCancel={() => setVisible(false)}
         footer={null}
       >
         <AddGoverningBodiesSecretaryForm
-          onAdd={handleOk}
+          onAdd={handleAdminAdd}
           admins={admins}
           setAdmins={setAdmins}
           setGoverningBodyHead={setGoverningBodyHead}
@@ -537,7 +536,7 @@ const GoverningBody = () => {
           setDocument={setDocument}
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
-          onAdd={onAdd}
+          onAdd={onDocumentAdd}
         />
       ) : null}
     </Layout.Content>
