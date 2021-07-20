@@ -62,7 +62,7 @@ const Sector = () => {
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   const [admins, setAdmins] = useState<SectorAdmin[]>([]);
   const [sectorHead, setSectorHead] = useState<SectorAdmin>();
-  const [adminsCount, setAdminsCount] = useState<number>();
+  const [adminsCount, setAdminsCount] = useState<number>(0);
 
   const deleteSector = async () => {
     await removeSector(sector.id);
@@ -145,6 +145,7 @@ const Sector = () => {
 
   const handleOk = () => {
     setVisible(false);
+    setAdminsCount(adminsCount + 1);
   };
 
   useEffect(() => {

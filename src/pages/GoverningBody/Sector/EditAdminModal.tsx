@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../AddAdministratorModal/AddAdministrationModal.less";
-import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
-import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
+import { AutoComplete, Button, Col, DatePicker, Form, Input, Modal, Row } from "antd";
 import AdminType from "../../../models/Admin/AdminType";
 import {
   addAdministrator,
@@ -12,6 +11,8 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import moment from "moment";
 import{emptyInput} from "../../../components/Notifications/Messages"
 import { Roles } from "../../../models/Roles/Roles";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
 
 const confirm = Modal.confirm;
 
@@ -25,7 +26,7 @@ interface Props {
   onChange?: (id: string, userRoles: string) => void;
 }
 
-const EditAdminModal = (props: Props) => {
+const EditAdministratorModal = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState<any>();
   const [endDate, setEndDate] = useState<any>();
@@ -57,7 +58,7 @@ const EditAdminModal = (props: Props) => {
           <b>
             {head?.user.firstName} {head?.user.lastName}
           </b>{" "}
-          є Головою Напряму, час правління закінчується{" "}
+          є Головою Напряму Керівного Органу, час правління закінчується{" "}
           <b>
             {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
@@ -105,20 +106,21 @@ const EditAdminModal = (props: Props) => {
       userId: props.admin.userId,
       endDate: values.endDate?._d,
       startDate: values.startDate?._d,
+      workEmail: values.workEmail
     };
 
     try {
-      if (values.adminType === Roles.GoverningBodyHead && head !== null) {
+      if (values.adminType === Roles.GoverningBodySectorHead && head !== null) {
         if (head?.userId !== admin.userId) {
           showConfirm(admin);
         } else {
-          editSectorAdmin(admin);
+          await editSectorAdmin(admin);
         }
       } else {
         if (admin.id === 0) {
-          addSectorAdmin(admin);
+          await addSectorAdmin(admin);
         } else {
-          editSectorAdmin(admin);
+          await editSectorAdmin(admin);
         }
       }
     } finally {
@@ -136,6 +138,10 @@ const EditAdminModal = (props: Props) => {
       form.resetFields();
     }
   }, [props]);
+
+  useEffect(() => {
+    getSectorHead();
+  }, []);
 
   return (
     <Modal
@@ -177,6 +183,16 @@ const EditAdminModal = (props: Props) => {
             value={props.admin.adminType.adminTypeName}
           />
         </Form.Item>
+
+        <Form.Item
+          label="Електронна пошта"
+          name="workEmail"
+          initialValue={props.admin.workEmail}
+          rules={descriptionValidation.RegionEmail}
+        >
+          <Input placeholder="Електронна пошта" />
+        </Form.Item>
+
         <Row>
           <Col span={11}>
             <Form.Item
@@ -247,4 +263,4 @@ const EditAdminModal = (props: Props) => {
   );
 };
 
-export default EditAdminModal;
+export default EditAdministratorModal;

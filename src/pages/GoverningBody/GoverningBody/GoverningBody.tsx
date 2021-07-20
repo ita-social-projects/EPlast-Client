@@ -166,7 +166,7 @@ const GoverningBody = () => {
 
   const handleOk = () => {
     setVisible(false);
-    setAdminsCount(admins.length + 1);
+    getGoverningBody();
   };
 
   useEffect(() => {
