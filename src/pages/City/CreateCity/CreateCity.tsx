@@ -317,6 +317,22 @@ const CreateCity = () => {
       });
   };
 
+    /*function seeAddFollowerModal(follower: RegionFollower) {
+  *  return Modal.confirm({
+  *    title: `Ви впевнені, що хочете підтвердити заявку на створення станиці ${follower.cityName}?`,
+  *    icon: <ExclamationCircleOutlined />,
+  *    okText: "Так, створити",
+  *    okType: "danger",
+  *    cancelText: "Скасувати",
+  *    maskClosable: true,
+  *    onOk() {
+  *      {
+  *        //await handleSubmit(follower);
+  *      }
+  *    },
+  *  });
+  }*/
+
   return loading && (city || regionFollower) ? (
     <Spinner />
   ) : (

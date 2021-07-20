@@ -213,77 +213,41 @@ const Region = () => {
     });
   }
 
-  /*const handleSubmit = async (values: RegionFollower) => {
-  *  const newCity: CityProfile = {
-  *    cityURL: values.cityURL,
-  *    description: values.cityDescription,
-  *    email: values.email,
-  *    head: new CityAdmin(),
-  *    headDeputy: city.headDeputy,
-  *    houseNumber: values.houseNumber,
-  *    id: city.id,
-  *    logo: city.logo?.length === 0 ? null : city.logo,
-  *    officeNumber: values.officeNumber,
-  *    name: values.name,
-  *    phoneNumber: values.phoneNumber,
-  *    postIndex: values.postIndex,
-  *    region: values.region,
-  *    street: values.street,
-  };*/
-
-
-  /*function seeAddFollowerModal(follower: RegionFollower) {
-  *  return Modal.confirm({
-  *    title: `Ви впевнені, що хочете підтвердити заявку на створення станиці ${follower.cityName}?`,
-  *    icon: <ExclamationCircleOutlined />,
-  *    okText: "Так, створити",
-  *    okType: "danger",
-  *    cancelText: "Скасувати",
-  *    maskClosable: true,
-  *    onOk() {
-  *      {
-  *        //await handleSubmit(follower);
-  *      }
-  *    },
-  *  });
-  }*/
-
   const getRegion = async () => {
     setLoading(true);
 
     try {
-      const response = await getRegionById(id);
-      const response1 = await getRegionAdministration(id);
-      const responce2 = await cityNameOfApprovedMember(userApi.getActiveUserId());
-      const response3 = await getRegionFollowers(id);
-
+      const regionResponse = await getRegionById(id);
+      const regionAdministrationResp = await getRegionAdministration(id);
+      const cityNameResp = await cityNameOfApprovedMember(userApi.getActiveUserId());
+      const regionFollowersResp = await getRegionFollowers(id);
       const responseHead = await getHead(id);
       const responseHeadDeputy = await getHeadDeputy(id);
       
       setActiveUserRoles(userApi.getActiveUserRoles());
       setHead(responseHead.data);
       setHeadDeputy(responseHeadDeputy.data);
-      setMembersCount(response.data.cities.length);
-      setSixMembers(response.data.cities, 6);
+      setMembersCount(regionResponse.data.cities.length);
+      setSixMembers(regionResponse.data.cities, 6);
 
-      setDocuments(response.data.documents);
-      setDocumentsCount(response.data.documentsCount);
+      setDocuments(regionResponse.data.documents);
+      setDocumentsCount(regionResponse.data.documentsCount);
 
       setPhotosLoading(true);
-      setSixAdmins(response1.data, 7);
-      setAdminsCount(response1.data.length);
+      setSixAdmins(regionAdministrationResp.data, 7);
+      setAdminsCount(regionAdministrationResp.data.length);
 
       setRegionLogoLoading(true);
-      setPhotos([...response.data.cities], [...response1.data], response3.data);
+      setPhotos([...regionResponse.data.cities], [...regionAdministrationResp.data], regionFollowersResp.data);
 
-      setRegion(response.data);
-      setCanEdit(response.data.canEdit);
-      setIsFromRegion(response.data.cities, responce2.data);
-      setIsRegionAdmin(response1.data, userApi.getActiveUserId());
-      setSixFollowers(response3.data);
-      setFollowersCount(response3.data.length);
+      setRegion(regionResponse.data);
+      setCanEdit(regionResponse.data.canEdit);
+      setIsFromRegion(regionResponse.data.cities, cityNameResp.data);
+      setIsRegionAdmin(regionAdministrationResp.data, userApi.getActiveUserId());
+      setSixFollowers(regionFollowersResp.data);
+      setFollowersCount(regionFollowersResp.data.length);
 
-      if (response.data.logo === null) {
+      if (regionResponse.data.logo === null) {
         setPhotoStatus(false);
       }
     } finally {

@@ -29,16 +29,16 @@ const RegionFollowers = () => {
 
     const getFollowers = async () => {
       setLoading(true);
-      const response = await getRegionById(id)
-      const response1 = await getRegionFollowers(id);
-      const response2 = await getRegionAdministration(id);
+      const regionResponse = await getRegionById(id)
+      const regionFollowersResp = await getRegionFollowers(id);
+      const regionAdministrationResp = await getRegionAdministration(id);
 
-      setRegionName(response.data.name);
-      setFollowers(response1.data);
+      setRegionName(regionResponse.data.name);
+      setFollowers(regionFollowersResp.data);
       setActiveUserRoles(userApi.getActiveUserRoles);
-      setIsRegionAdmin(response2.data, userApi.getActiveUserId());
+      setIsRegionAdmin(regionAdministrationResp.data, userApi.getActiveUserId());
       setPhotosLoading(true);
-      setPhotos(response1.data);
+      setPhotos(regionFollowersResp.data);
       setLoading(false);
     };
 
