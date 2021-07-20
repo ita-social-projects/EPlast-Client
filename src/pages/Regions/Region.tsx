@@ -231,6 +231,9 @@ const Region = () => {
       setDocuments(regionResponse.data.documents);
       setDocumentsCount(regionResponse.data.documentsCount);
 
+      setDocuments(response.data.documents);
+      setDocumentsCount(response.data.documentsCount);
+
       setPhotosLoading(true);
       setSixAdmins(regionAdministrationResp.data, 7);
       setAdminsCount(regionAdministrationResp.data.length);
