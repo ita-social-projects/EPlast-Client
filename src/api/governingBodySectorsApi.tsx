@@ -94,7 +94,6 @@ export const getAllDocuments = async (sectorId: number) => {
 };
 
 export const addAdministrator = async (sectorId: number, data: any) => {
-  console.log(data);
   return api
     .post('GoverningBodies/Sectors/AddAdmin/' + sectorId, data)
     .catch((error) => {
