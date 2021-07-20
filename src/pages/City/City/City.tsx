@@ -76,6 +76,7 @@ const City = () => {
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
+
   const changeApproveStatus = async (memberId: number) => {
   const member = await toggleMemberStatus(memberId);
     moment.locale("uk-ua");
@@ -99,11 +100,12 @@ const City = () => {
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
     ).data;
-
+    const response = await getCityById(+id);
+    setMembersCount(response.data.memberCount);
+    setFollowersCount(response.data.followerCount);
     if (members.length < 9) {
       setMembers([...members, member.data]);
     }
-
     setFollowers(followers.filter((f) => f.id !== memberId));
   };
 
@@ -120,7 +122,8 @@ const City = () => {
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
-
+    const response = await getCityById(+id);
+    setFollowersCount(response.data.followerCount);
     if (followers.length < 6) {
       setFollowers([...followers, follower.data]);
     }
@@ -159,7 +162,9 @@ const City = () => {
     setCityLogoLoading(false);
   };
 
-  const onAdd = (newDocument: CityDocument) => {
+  const onAdd = async (newDocument: CityDocument) => {
+    const response = await getCityById(+id);
+    setDocumentsCount(response.data.documentsCount);
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]); 
     }
@@ -622,7 +627,15 @@ const City = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={4}>Документообіг станиці <a onClick={() => history.push(`/cities/documents/${city.id}`)}>
+            <Title level={4}>Документообіг станиці <a onClick={() => 
+              canEdit || activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy) 
+              || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+              || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy) 
+              || (!activeUserRoles.includes(Roles.RegisteredUser) && city.name == activeUserCity)
+            ?
+              history.push(`/cities/documents/${city.id}`)
+            : undefined
+            }>
               {documentsCount !== 0 ?
                 <Badge
                   count={documentsCount}
@@ -653,7 +666,11 @@ const City = () => {
                 )}
             </Row>
             <div className="cityMoreButton">
-              {canEdit || ((activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) && city.name == activeUserCity)
+              {canEdit || activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy) 
+                  || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+                  || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy) 
+                  || (!activeUserRoles.includes(Roles.RegisteredUser)
+                   && city.name == activeUserCity)
                 ? (
                   <Button
                     type="primary"

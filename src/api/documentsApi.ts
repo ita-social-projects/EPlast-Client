@@ -4,6 +4,8 @@ import { successfulCreateAction, successfulEditAction, successfulDeleteAction } 
 import { DocumentOnCreateData } from "../models/Documents/DocumentOnCreateData";
 import { DocumentPost } from "../models/Documents/DocumentPost";
 import { MethodicDocumentType } from "../models/Documents/MethodicDocumentType";
+import { string } from "yup";
+import { stat } from "fs";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
     const arr = dataurl.split(',');
@@ -29,9 +31,19 @@ const getAll = async () => {
 
     return data;
 };
+
+const getAllDocuments = async (searchedData: string, page: number, pageSize: number, status: string) => {
+    return (await Api.get('MethodicDocuments/DocumentsForTable',
+        {
+            searchedData: searchedData,
+            page: page,
+            pageSize: pageSize,
+            status: status
+        })).data;
+}
+
 const getOnCreate = async () => {
     const data: DocumentOnCreateData = await (await Api.get(`MethodicDocuments/NewMethodicDocument`)).data;
-    console.log(data);
     return data;
 };
 
@@ -113,4 +125,17 @@ export const TypeGetParser = (Type: number): string => {
 };
 
 
-export default { getById, getAll, getOnCreate, getPdf, getFileAsBase64, post, postForCheckFile, put, remove, TypePostParser, TypeGetParser };
+export default { 
+    getById, 
+    getAll, 
+    getAllDocuments,
+    getOnCreate, 
+    getPdf, 
+    getFileAsBase64, 
+    post, 
+    postForCheckFile, 
+    put, 
+    remove, 
+    TypePostParser, 
+    TypeGetParser 
+};

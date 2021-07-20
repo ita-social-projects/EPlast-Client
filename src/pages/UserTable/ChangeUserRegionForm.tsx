@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Select, Typography, Row, Col } from "antd";
+import { Form, Input, Button, Select, Typography, Row, Col, AutoComplete } from "antd";
 import RegionForAdmin from "../../models/Region/RegionForAdmin";
 import { getRegions } from "../../api/regionsApi";
 import AddRegionAdministratorModal from "./AddRegionAdministratorModal";
@@ -71,7 +71,7 @@ const ChangeUserRegionForm = ({
       <Form name="basic" onFinish={handleFinish} form={form}>
         <h4>Оберіть округу для користувача</h4>
         <Form.Item name="userRegion">
-          <Select onChange={handleClick}>
+        <Select onChange={handleClick}>
             {regions.map((item: RegionForAdmin) => (
               <Option key={item.id} value={item.regionName}>
                 {item.regionName}

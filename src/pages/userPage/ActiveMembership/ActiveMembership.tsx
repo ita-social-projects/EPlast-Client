@@ -8,9 +8,9 @@ import activeMembershipApi, {
 } from "../../../api/activeMembershipApi";
 import userApi from "../../../api/UserApi";
 import AuthStore from "../../../stores/AuthStore";
+import jwt from "jwt-decode";
 import ModalAddPlastDegree from "./PlastDegree/ModalAddPlastDegree";
 import moment from "moment";
-import ModalAddEndDatePlastDegree from "./PlastDegree/ModalAddEndDatePlastDegree";
 import ModalChangeUserDates from "./UserDates/ModalChangeUserDates";
 import DeleteDegreeConfirm from "./PlastDegree/DeleteDegreeConfirm";
 import { SafetyCertificateOutlined } from "@ant-design/icons";
@@ -27,27 +27,23 @@ const ActiveMembership = () => {
   const [accessLevels, setAccessLevels] = useState([]);
   const [dates, setDates] = useState<any>({});
   const [data, setUserData] = useState<Data>();
-
+  const [currentUser, setCurrentUser] = useState<any>({});
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
   const [plastDegrees, setPlastDegrees] = useState<Array<UserPlastDegree>>([]);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [datesVisibleModal, setDatesVisibleModal] = useState<boolean>(false);
   const [roles, setRoles]=useState<Array<string>>([]);
-  const [endDateVisibleModal, setEndDateVisibleModal] = useState<boolean>(
-    false
-  );
-  const [plastDegreeIdToAddEndDate, setPlastDegreeIdToAddEndDate] = useState<
-    number
-  >(0);
-  const [startDateToAddEndDate, setStartDateToAddEndDate] = useState<string>(
-    ""
-  );
+  const [userToken, setUserToken] = useState<any>([{ nameid: "" }]);
 
   const userAdminTypeRoles = [
     Roles.Admin,
-    Roles.KurinHead,
     Roles.OkrugaHead,
+    Roles.OkrugaHeadDeputy,
     Roles.CityHead,
+    Roles.CityHeadDeputy,
+    Roles.KurinHead,
+    Roles.KurinHeadDeputy,
+    Roles.RegionBoardHead
   ];
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
@@ -64,23 +60,20 @@ const ActiveMembership = () => {
     } else return plastDegreeName;
   };
 
-  const handleChangeAsCurrent = (plastDegreeIdToSetAsCurrent: number) => {
-    const upd: Array<UserPlastDegree> = plastDegrees.map((pd) => {
-      if (pd.isCurrent) {
-        pd.isCurrent = !pd.isCurrent;
-      }
-      if (pd.plastDegree.id === plastDegreeIdToSetAsCurrent) {
-        pd.isCurrent = !pd.isCurrent;
-      }
-      return pd;
-    });
-    setPlastDegrees(upd);
-  };
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
+    setUserToken(jwt(token));
+    const currentUserId=(jwt(token) as { nameid: "" }).nameid;
     let decodedJwt = jwt_decode(token) as any;
     setRoles([].concat(decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']));
+
+    await userApi.getById(currentUserId).then(async (response) => {
+      setCurrentUser(response.data.user);
+    }).catch((error) => {
+      notificationLogic("error", error.message);
+    });
+
     await userApi.getById(userId).then(async (response) => {
       setUserData(response.data);
     }).catch((error) => {
@@ -107,10 +100,12 @@ const ActiveMembership = () => {
 
 
   const IsUserHasAccessToManageDegree = (userRoles: Array<string>): boolean => {
-    return (userRoles?.includes(Roles.KurinHead) && data?.user.clubId==data?.user.clubId) ||
-        (userRoles?.includes(Roles.CityHead) && data?.user.cityId==data?.user.cityId) ||
-        (userRoles?.includes(Roles.OkrugaHead) && data?.user.regionId==data?.user.regionId) ||
-        userRoles?.includes(Roles.Admin);
+    return (userRoles?.includes(Roles.CityHead) && currentUser.cityId==data?.user.cityId) ||
+           (userRoles?.includes(Roles.CityHeadDeputy) && currentUser.cityId==data?.user.cityId) ||
+           (userRoles?.includes(Roles.OkrugaHead) && currentUser.regionId==data?.user.regionId) ||
+           (userRoles?.includes(Roles.OkrugaHeadDeputy) && currentUser.regionId==data?.user.regionId) ||
+           userRoles?.includes(Roles.RegionBoardHead) ||
+           userRoles?.includes(Roles.Admin);
   };
 
   const IsUserHasAnyAdminTypeRoles = (userRoles: Array<string>): boolean => {
@@ -160,16 +155,17 @@ const ActiveMembership = () => {
     return color;
   };
 
-  const handleAddEndDate = async () => {
-    await fetchData();
-  };
-
   const handleChangeDates = async () => {
     await fetchData();
   };
 
-  const showModal = () => setVisibleModal(true);
-
+  const AppropriateButtonText=():string=>{
+    const amount= plastDegrees.length;
+    if(amount === 1) return "Змінити ступінь"
+    else if(amount === 0) return "Додати ступінь"
+    return "Додати ступінь"
+  }
+  
   useEffect(() => {
     fetchData();
   }, []);
@@ -199,18 +195,6 @@ const ActiveMembership = () => {
           cityId={data?.user.cityId}
           clubId={data?.user.clubId}
         />
-        {IsUserHasAccessToManageDegree(roles?.filter(role=>role!=Roles.KurinHead))
-        && (
-          <div>
-            <Button
-              type="primary"
-              onClick={showModal}
-              className={classes.buttonChange}
-            >
-              Додати ступінь
-            </Button>
-          </div>
-        )}
       </div>
 
       <div className={classes.wrapperCol}>
@@ -287,29 +271,23 @@ const ActiveMembership = () => {
             </div>
           </div>
         </div>
-        <div className={classes.wrapper}>
-          <div className={classes.wrapperScrollDegree}>
-            <div className={classes.wrapperPlastDegree}>
+          <div className={classes.wrapper}>
+            <div className={classes.wrapperGeneralInfo}>
               <Title level={2}> Ступені користувача </Title>
               {plastDegrees.length===0? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Без ступеня"/> : plastDegrees.map((pd) => (
                 <React.Fragment key={pd.id}>
                   <div style={{ marginBottom: "7px" }}>
                     <div className={classes.textFieldsMain}>
-                      {pd.isCurrent && <SafetyCertificateOutlined />}{" "}
+                    {<SafetyCertificateOutlined />}{" "}
                       {getAppropriateToGenderDegree(pd.plastDegree.name)}
                     </div>
                     <div className={classes.textFieldsOthers}>
                       Дата початку ступеню:{" "}
                       {moment(pd.dateStart).format("DD.MM.YYYY")}
                     </div>
-                    {pd.dateFinish !== null && (
-                      <div className={classes.textFieldsOthers}>
-                        Дата завершення ступеню:{" "}
-                        {moment(pd.dateFinish).format("DD.MM.YYYY")}
-                      </div>
-                    )}
                     {IsUserHasAccessToManageDegree(roles?.map((role:any)=>{
-                      if(!(role===Roles.KurinHead || role===Roles.CityHead))
+                      if(!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy || 
+                        role === Roles.CityHead || role === Roles.CityHeadDeputy))
                         return role
                     })) && (
                       <div className={classes.buttons}>
@@ -325,56 +303,35 @@ const ActiveMembership = () => {
                         >
                           Видалити
                         </button>
-                        <button
-                          onClick={() => {
-                            setPlastDegreeIdToAddEndDate(pd.plastDegree.id);
-                            setStartDateToAddEndDate(pd.dateStart);
-                            setEndDateVisibleModal(true);
-                          }}
-                          className={classes.button}
-                        >
-                          Надати дату завершення
-                        </button>
-                        {!pd.isCurrent && pd.dateFinish === null && (
-                          <button
-                            onClick={async () => {
-                              await activeMembershipApi
-                                .setPlastDegreeAsCurrent(
-                                  userId,
-                                  pd.plastDegree.id
-                                )
-                                .then(() => {
-                                  handleChangeAsCurrent(pd.plastDegree.id);
-                                });
-                            }}
-                            className={classes.button}
-                          >
-                            Обрати поточним
-                          </button>
-                        )}
                       </div>
                     )}
                   </div>
                 </React.Fragment>
               ))}
+              {IsUserHasAccessToManageDegree(roles?.map((role:any)=>{
+                      if(!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ))
+                        return role
+                       })) && (
+                  <div className={classes.buttons}>
+                    <button
+                      onClick={() => {
+                        setVisibleModal(true);
+                      }}
+                      className={classes.button}
+                    >
+                      {AppropriateButtonText()}
+                    </button>
+                  </div>
+               )}
             </div>
           </div>
-        </div>
       </div>
       <ModalAddPlastDegree
-        handleAddDegree={handleAddDegree}
         userId={userId}
         isCityAdmin={!IsUserHasAnyAdminTypeRoles(roles?.map((role:any)=>{if(role!=Roles.CityHead) return role}))}
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
-      />
-      <ModalAddEndDatePlastDegree
-        userId={userId}
-        plastDegreeId={plastDegreeIdToAddEndDate}
-        dateOfStart={startDateToAddEndDate}
-        endDateVisibleModal={endDateVisibleModal}
-        setEndDateVisibleModal={setEndDateVisibleModal}
-        handleAddEndDate={handleAddEndDate}
+        handleAddDegree={handleAddDegree}
       />
       <ModalChangeUserDates
         userId={userId}
@@ -382,6 +339,7 @@ const ActiveMembership = () => {
         datesVisibleModal={datesVisibleModal}
         setDatesVisibleModal={setDatesVisibleModal}
         handleChangeDates={handleChangeDates}
+      
       />
     </div>
   );

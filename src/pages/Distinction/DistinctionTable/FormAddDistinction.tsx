@@ -230,7 +230,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Подання від"
             labelCol={{ span: 24 }}
             name="reporter"
-            rules={[
+            rules={[ { required: true, message: emptyInput() },
               {
                 max: 100,
                 message: maxLength(100),
@@ -270,7 +270,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Обгрунтування"
             labelCol={{ span: 24 }}
             name="reason"
-            rules={[
+            rules={[ { required: true, message: emptyInput() },
               {
                 max: 1000,
                 message: maxLength(1000),

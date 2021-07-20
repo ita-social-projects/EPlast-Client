@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Modal, Skeleton, Spin} from 'antd';
-import {SettingOutlined, CloseOutlined, RollbackOutlined, DeleteOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Layout, Modal, Skeleton} from 'antd';
+import {SettingOutlined, RollbackOutlined, DeleteOutlined} from '@ant-design/icons';
 import { getAllAdmins, removeAdministrator, getUserAccess} from "../../../api/governingBodiesApi";
 import userApi from "../../../api/UserApi";
 import "./GoverningBody.less";
@@ -28,6 +28,7 @@ const GoverningBodyAdministration = () => {
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [governingBodyName, setGoverningBodyName] = useState<string>("");
+    const [updated, setUpdated] = useState<boolean>(false);
   
     const getUserAccesses = async () => {
         let user: any = jwt(AuthStore.getToken() as string);
@@ -43,7 +44,7 @@ const GoverningBodyAdministration = () => {
       await getUserAccesses();
       const response = await getAllAdmins(id);
         setPhotosLoading(true);
-        setPhotos([response.data.head, ...response.data.admins].filter(a => a != null));
+        await setPhotos([response.data.head, ...response.data.admins].filter(a => a != null));
         setAdministration([response.data.head, ...response.data.admins].filter(a => a != null));
         setGoverningBodyName(response.data.name);
       setLoading(false);
@@ -105,6 +106,10 @@ const GoverningBodyAdministration = () => {
         getAdministration();
     }, []);
 
+    useEffect(() => {
+      getAdministration();
+    }, [updated]);
+
     return (
       <Layout.Content>
         <Title level={2}>Провід Керівного Органу</Title>
@@ -141,13 +146,13 @@ const GoverningBodyAdministration = () => {
                   >
                     <div>
                       {photosLoading ? (
-                        <Skeleton.Avatar active size={86}></Skeleton.Avatar>
+                        <Skeleton.Avatar active size={86} />
                       ) : (
                         <Avatar size={86} src={member.user.imagePath} />
                       )}
                       <Card.Meta
                         className="detailsMeta"
-                        title={`${member.user.firstName} ${member.user.lastName}`}
+                        title={`${member.user.firstName} ${member.user.lastName}\n ${member.workEmail == null || member.workEmail == "" ? member.user.email : member.workEmail}`}
                       />
                     </div>
                   </div>
@@ -177,7 +182,8 @@ const GoverningBodyAdministration = () => {
             setVisibleModal={setVisibleModal}
             governingBodyId={+id}
             onAdd={onAdd}
-          ></AddAdministratorModal>
+            onChange={() => setUpdated(true)}
+          />
         ) : null}
       </Layout.Content>
     );

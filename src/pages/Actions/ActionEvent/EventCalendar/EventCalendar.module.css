@@ -40,7 +40,7 @@
     transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
-.buttonCansel {
+.buttonCancel {
     width: auto;
     height: 40px;
     outline: none;

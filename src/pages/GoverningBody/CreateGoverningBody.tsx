@@ -30,7 +30,6 @@ import notificationLogic from "../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
 import{
-  emptyInput,
   fileIsUpload,
   fileIsNotUpload, 
   possibleFileExtensions, 
@@ -98,7 +97,7 @@ const CreateGoverningBody = () => {
       setLoading(true);
       let response = await getGoverningBodyById(+id);
 
-      if (response.data.logo !== null) {
+      if (response.data.logo !== null && response.data.logo !== '') {
         const logo = await getGoverningBodyLogo(response.data.logo);
         response.data.logo = logo.data;
       }

@@ -1,9 +1,6 @@
-import React from 'react';
-import Api from '../../api/KadraVykhovnykivApi';
+
 import CityUser from '../../models/City/CityUser';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
-import { Tooltip } from 'antd';
 import { FormLabelAlign } from 'antd/lib/form/interface';
 import { SortOrder } from 'antd/lib/table/interface';
 

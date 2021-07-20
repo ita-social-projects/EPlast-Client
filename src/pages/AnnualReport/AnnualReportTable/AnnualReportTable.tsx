@@ -250,6 +250,7 @@ const AnnualReportTable = () => {
       <Row className="searchContainer" gutter={16}>
         <Col >
           <Search
+              style={{ marginBottom: "7px"}}
               placeholder="Пошук"
               enterButton
               onChange={handleSearchChange}
@@ -258,6 +259,7 @@ const AnnualReportTable = () => {
         </Col>
         {cityManager? (<Col>
           <Button
+              style={{ marginBottom: "7px"}} 
               type="primary"
               onClick={() => setShowCitySelectModal(true)}
           >
@@ -266,6 +268,7 @@ const AnnualReportTable = () => {
         </Col>): null }
         {clubManager? (<Col>
           <Button
+              style={{ marginBottom: "7px"}} 
               type="primary"
               onClick={() => setShowClubSelectModal(true)}
           >
@@ -274,6 +277,7 @@ const AnnualReportTable = () => {
         </Col>) : null}
         {regionManager? (<Col>
           <Button
+              style={{ marginBottom: "7px"}} 
               type="primary"
               onClick={() => setShowRegionAnnualReports(true)}
           >

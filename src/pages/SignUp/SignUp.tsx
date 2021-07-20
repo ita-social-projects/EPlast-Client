@@ -43,7 +43,7 @@ export default function () {
     setAvailabe(false);
     await authService.register(values);
     setAvailabe(true);
-    history.push('/signup')
+    history.push('/signin')
   };
 
   const initialValues = {

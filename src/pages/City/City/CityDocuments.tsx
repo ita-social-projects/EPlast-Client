@@ -2,9 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout, Spin} from 'antd';
 import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined} from '@ant-design/icons';
-import {getAllDocuments, getFile, removeDocument} from "../../../api/citiesApi";
+import {getAllDocuments, getFile, removeDocument, getCityById, cityNameOfApprovedMember} from "../../../api/citiesApi";
 import "./City.less";
 import CityDocument from '../../../models/City/CityDocument';
+import CityProfile from "../../../models/City/CityProfile";
 import Title from 'antd/lib/typography/Title';
 import moment from "moment";
 import Spinner from '../../Spinner/Spinner';
@@ -15,11 +16,27 @@ const CityDocuments = () => {
     const {id} = useParams();
     const history = useHistory();
 
+    const [activeUserCity, setActiveUserCity] = useState<string>();
     const [documents, setDocuments] = useState<CityDocument[]>([]);
+    const [city, setCity] = useState<CityProfile>(new CityProfile());
     const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
+    const getCity = async () => {
+      setLoading(true);
+      try {
+        const response = await getCityById(+id);
+        const cityNameResponse = await cityNameOfApprovedMember(userApi.getActiveUserId());
+
+        setActiveUserCity(cityNameResponse.data);
+        setActiveUserRoles(userApi.getActiveUserRoles);
+        setCity(response.data);
+       } 
+    finally {
+      setLoading(false);
+    }
+  }
     const getDocuments = async () => {
       setLoading(true);
       const response = await getAllDocuments(id);
@@ -42,6 +59,7 @@ const CityDocuments = () => {
 
     useEffect(() => {
         getDocuments();
+        getCity()
     }, []);
 
     return (
@@ -50,7 +68,7 @@ const CityDocuments = () => {
         {loading ? (
           <Spinner />
         ) : (
-          <div className="cityMoreItems">
+          <div className="cityMoreItems">           
             {documents.length > 0 ? (
               documents.map((document: CityDocument) => (
                 <Card
@@ -79,7 +97,10 @@ const CityDocuments = () => {
                           onClick={() => removeDocumentById(document.id)}
                         />                          
                       ]                                                                                                            
-                    : activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember) ?
+                    : ((activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) 
+                    && city.name == activeUserCity )
+                     
+                    ?
                       [
                         <DownloadOutlined
                           key="download"
