@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import ReactQuill, {Quill} from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import SubsectionModel from '../../models/AboutBase/SubsectionModel';
 import SectionModel from '../../models/AboutBase/SectionModel';
 import formclasses from './TextEditor.css';
@@ -14,7 +12,6 @@ import {
 
   
 const TextEditor = () => {
-  
     const [form] = Form.useForm();
     const [value, setValue] = useState('');
     const [sectionData, setSectionData] = useState<any[]>([
@@ -79,12 +76,20 @@ const TextEditor = () => {
             className={formclasses.formField}
             label="Опис"
             labelCol={{ span: 24 }}
+<<<<<<< HEAD
             rules={[{ required: true}]}>
             <ReactQuill 
             className={formclasses.text} 
             theme="snow" value={value} 
             onChange={setValue}
             modules={modules}/>
+=======
+            rules={[{ required: true}]}
+          >
+            <TextArea
+              className={formclasses.text}
+            ></TextArea>
+>>>>>>> parent of bff11ced (added quill text redactor)
           </Form.Item>
         
           <Form.Item>
@@ -97,8 +102,12 @@ const TextEditor = () => {
               </Button>
             </div>
           </Form.Item>
+<<<<<<< HEAD
+=======
+        </Col>
+      </Row>
+>>>>>>> parent of bff11ced (added quill text redactor)
          </Form>
-         
     )
 };
         
