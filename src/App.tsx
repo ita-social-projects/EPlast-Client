@@ -48,6 +48,7 @@ import AddNewRegionFormPage from "./pages/Regions/AddRegion";
 import RegionAdministration from "./pages/Regions/RegionAdministration";
 import RegionDocuments from "./pages/Regions/RegionDocuments";
 import RegionMembers from "./../src/pages/Regions/RegionMembers";
+import RegionFollowers from "./../src/pages/Regions/RegionFollowers";
 import StatisticsCities from "./pages/Statistics/StatisticsCities";
 import StatisticsRegions from "./pages/Statistics/StatisticsRegions";
 import NotAuthorizedPage from "./pages/Error/NotAuthorized";
@@ -72,7 +73,8 @@ import GoverningBodyDocuments from "./pages/GoverningBody/GoverningBody/Governin
 import GoverningBodySectors from "./pages/GoverningBody/Sector/Sectors";
 import GoverningBodySector from "./pages/GoverningBody/Sector/Sector";
 import EditGoverningBodySector from "./pages/GoverningBody/Sector/EditSector";
-import GoverningBodySectorDocuments from "./pages/GoverningBody/Sector/SectorDocuments"
+import GoverningBodySectorDocuments from "./pages/GoverningBody/Sector/SectorDocuments";
+import GoverningBodySectorAdministration from "./pages/GoverningBody/Sector/SectorAdministration";
 
 const App: FC = () => (
   <div className="App">
@@ -113,6 +115,12 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+            path="/regions/followers/:id"
+            component={RegionFollowers}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/cities/new"
             component={CreateCity}
           />
@@ -120,6 +128,18 @@ const App: FC = () => (
             layout={PrivateLayout}
             exact
             path="/cities/edit/:id"
+            component={CreateCity}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regions/follower/new"
+            component={CreateCity}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regions/follower/edit/:id"
             component={CreateCity}
           />
           <RouteWithLayout
@@ -387,6 +407,12 @@ const App: FC = () => (
             exact
             path="/governingBodies/:governingBodyId/sectors/:sectorId/documents"
             component={GoverningBodySectorDocuments}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/governingBodies/:governingBodyId/sectors/:sectorId/administration"
+            component={GoverningBodySectorAdministration}
           />
           <RouteWithLayout
             layout={PrivateLayout}

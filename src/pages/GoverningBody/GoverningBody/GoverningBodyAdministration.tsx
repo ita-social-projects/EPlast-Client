@@ -7,7 +7,7 @@ import userApi from "../../../api/UserApi";
 import "./GoverningBody.less";
 import classes from "./GoverningBodyAdministration.module.css";
 import GoverningBodyAdmin from '../../../models/GoverningBody/GoverningBodyAdmin';
-import AddAdministratorModal from '../AddAdministratorModal/AddAdministratorModal';
+import EditAdministratorModal from '../AddAdministratorModal/EditAdministratorModal';
 import jwt from 'jwt-decode';
 import moment from "moment";
 import "moment/locale/uk";
@@ -175,7 +175,7 @@ const GoverningBodyAdministration = () => {
           </Button>
         </div>
         {userAccesses["AddGBSecretary"] ? (
-          <AddAdministratorModal
+          <EditAdministratorModal
             admin={admin}
             setAdmin={setAdmin}
             visibleModal={visibleModal}

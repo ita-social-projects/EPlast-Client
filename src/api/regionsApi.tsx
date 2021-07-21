@@ -273,6 +273,30 @@ export const getRegionUsers = async (regionId: number) => {
   });
 };
 
+export const getRegionFollowers = async (regionId: number) => {
+  return api.get(`Regions/Followers/${regionId}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const getRegionFollowerById = async (followerId: number) => {
+  return api.get(`Regions/GetFollower/${followerId}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const createRegionFollower = async (data: any) => {
+  return api.post("Regions/CreateFollower", data).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const removeFollower = async (followerId: number) => {
+  return api.remove(`Regions/RemoveFollower/${followerId}`).catch((error) => {
+    throw new Error(error);
+  });
+}
+
 export default {
   editReport,
   getRegionMembersInfo,
@@ -303,5 +327,9 @@ export default {
   createRegion,
   getRegions,
   GetRegionsBoard,
-  getRegionUsers
+  getRegionUsers,
+  getRegionFollowers,
+  getRegionFollowerById,
+  createRegionFollower,
+  removeFollower  
 };

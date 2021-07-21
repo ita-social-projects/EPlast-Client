@@ -55,6 +55,7 @@ const GoverningBody = () => {
   const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(new GoverningBodyProfile());
   const [governingBodyLogo64, setGoverningBodyLogo64] = useState<string>("");
   const [documents, setDocuments] = useState<GoverningBodyDocument[]>([]);
+  const [documentsCount, setDocumentsCount] = useState<number>(0);
   const [document, setDocument] = useState<GoverningBodyDocument>(new GoverningBodyDocument());
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
@@ -64,7 +65,6 @@ const GoverningBody = () => {
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   const [admins, setAdmins] = useState<GoverningBodyAdmin[]>([]);
   const [governingBodyHead, setGoverningBodyHead] = useState<GoverningBodyAdmin>();
-  const [adminsCount, setAdminsCount] = useState<number>();
   const [sectors, setSectors] = useState<SectorProfile[]>([]);
   const [sectorsPhotosLoading, setSectorsPhotosLoading] = useState<boolean>(false);
 
@@ -103,10 +103,11 @@ const GoverningBody = () => {
     setSectorsPhotosLoading(false);
   };
 
-  const onAdd = (newDocument: GoverningBodyDocument) => {
+  const onDocumentAdd = (newDocument: GoverningBodyDocument) => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
+    setDocumentsCount(documentsCount + 1);
   };
 
   function seeDeleteModal() {
@@ -137,36 +138,37 @@ const GoverningBody = () => {
     try {
       await getUserAccesses();
       const response = await getGoverningBodyById(+id);
+      const governingBodyViewModel = response.data.governingBodyViewModel;
 
       const admins = [
-        ...response.data.administration,
-        response.data.head,
+        ...governingBodyViewModel.administration,
+        governingBodyViewModel.head,
       ].filter(a => a !== null);
 
-      const responseSectors = response.data.sectors;
+      const responseSectors = governingBodyViewModel.sectors;
 
       setGoverningBodyLogoLoading(true);
       setSectorsPhotosLoading(true);
       await setPhotos(
         [...admins],
-        response.data.logo,
+        governingBodyViewModel.logo,
         responseSectors
       );
 
-      setGoverningBody(response.data);
+      setGoverningBody(governingBodyViewModel);
       setAdmins(admins);
-      setGoverningBodyHead(response.data.head)
-      setAdminsCount(admins.length);
-      setDocuments(response.data.documents);
-      setSectors(response.data.sectors);
+      setGoverningBodyHead(governingBodyViewModel.head)
+      setDocuments(governingBodyViewModel.documents);
+      setDocumentsCount(response.data.documentsCount);
+      setSectors(governingBodyViewModel.sectors);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOk = () => {
+  const handleAdminAdd = () => {
     setVisible(false);
-    setAdminsCount(admins.length + 1);
+
   };
 
   useEffect(() => {
@@ -381,9 +383,9 @@ const GoverningBody = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Провід Керівного Органу <a onClick={() => history.push(`/governingBodies/administration/${governingBody.id}`)}>
-            {adminsCount !== 0 ?
+            {admins.length !== 0 ?
                 <Badge
-                  count={adminsCount}
+                  count={admins.length}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
@@ -464,9 +466,9 @@ const GoverningBody = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Документообіг Керівного Органу <a onClick={() => history.push(`/governingBodies/documents/${governingBody.id}`)}>
-              {documents.length !== 0 ?
+              {documentsCount !== 0 ?
                 <Badge
-                  count={documents.length}
+                  count={documentsCount}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
@@ -518,12 +520,12 @@ const GoverningBody = () => {
       <Modal
         title="Додати діловода"
         visible={visible}
-        onOk={handleOk}
+        onOk={handleAdminAdd}
         onCancel={() => setVisible(false)}
         footer={null}
       >
         <AddGoverningBodiesSecretaryForm
-          onAdd={handleOk}
+          onAdd={handleAdminAdd}
           admins={admins}
           setAdmins={setAdmins}
           setGoverningBodyHead={setGoverningBodyHead}
@@ -537,7 +539,7 @@ const GoverningBody = () => {
           setDocument={setDocument}
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
-          onAdd={onAdd}
+          onAdd={onDocumentAdd}
         />
       ) : null}
     </Layout.Content>
