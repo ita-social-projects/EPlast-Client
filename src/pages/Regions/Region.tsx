@@ -260,7 +260,7 @@ const Region = () => {
       content: (
         <div style={{ margin: 10 }}>
           <b>
-            {head.firstName} {head.lastName}
+            {head.user.firstName} {head.user.lastName}
           </b>{" "}
           є Головою Куреня, час правління закінчується{" "}
           <b>
