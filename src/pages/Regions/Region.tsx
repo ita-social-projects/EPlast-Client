@@ -297,7 +297,7 @@ const Region = () => {
   const handleOk = async(admin: RegionAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.OkrugaHead) {
-        if (head == null) {
+        if (head === '') {
           checkAdminId(admin);
         }else {
           if (head.userId !== admin.userId) {
@@ -307,7 +307,7 @@ const Region = () => {
           }
         }
       } else if(admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy) {
-        if (headDeputy == null) {
+        if (headDeputy === '') {
           checkAdminId(admin);
         }else{
           checkAdminId(admin);
