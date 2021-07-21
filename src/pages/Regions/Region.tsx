@@ -27,6 +27,9 @@ import {
   getRegionDocuments,
   getHead,
   getHeadDeputy,
+  AddAdmin,
+  EditAdmin,
+  removeAdmin
 } from "../../api/regionsApi";
 import {
   cityNameOfApprovedMember,
@@ -36,14 +39,18 @@ import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../Spinner/Spinner";
+import RegionAdmin  from "../../models/Region/RegionAdmin";
+import RegionDocument from "../../models/Region/RegionDocument";
+import RegionProfile from "../../models/Region/RegionProfile";
 import AddDocumentModal from "./AddDocModal";
-import CityDocument from "../../models/City/CityDocument";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
 import userApi from "./../../api/UserApi";
 import { getLogo } from "./../../api/citiesApi";
 import CitiesRedirectForm from "./CitiesRedirectForm";
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
+import notificationLogic from "../../components/Notifications/Notification";
+import { successfulDeleteAction, fileIsAdded, successfulEditAction } from "../../components/Notifications/Messages";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
@@ -59,58 +66,15 @@ const Region = () => {
   const [photoStatus, setPhotoStatus] = useState(true);
   const [canEdit, setCanEdit] = useState(false);
 
-  const [document, setDocument] = useState<any>({
-    ID: "",
-    SubmitDate: "",
-    BlobName: "",
-    FileName: "",
-    RegionId: "",
-  });
+  const [document, setDocument] = useState<RegionDocument>(new RegionDocument());
 
-  const [documents, setDocuments] = useState<any[]>([
-    {
-      id: "",
-      submitDate: "",
-      blobName: "",
-      fileName: "",
-      regionId: "",
-    },
-  ]);
+  const [documents, setDocuments] = useState<RegionDocument[]>([]);
 
-  const [region, setRegion] = useState<any>({
-    id: "",
-    regionName: "",
-    description: "",
-    logo: "",
-    administration: [{}],
-    cities: [{}],
-    phoneNumber: "",
-    email: "",
-    link: "",
-    documents: [{}],
-    postIndex: "",
-    city: "",
-  });
+  const [region, setRegion] = useState<RegionProfile>(new RegionProfile());
 
   const [visibleDrawer, setVisibleDrawer] = useState(false);
-  const [admins, setAdmins] = useState<any[]>([
-    {
-      id: "",
-      userId: "",
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-        imagePath: "",
-        email: "",
-        phoneNumber: "",
-      },
-      adminType: {
-        adminTypeName: "",
-      },
-      startDate: "",
-      endDate: "",
-    },
+  const [admins, setAdmins] = useState<RegionAdmin[]>([
+    
   ]);
 
   const [members, setMembers] = useState<any[]>([
@@ -177,7 +141,7 @@ const Region = () => {
     admins.map(async (ad) => {
       await NotificationBoxApi.createNotifications(
         [ad.userId],
-        `На жаль регіон: '${region.name}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
+        `На жаль регіон: '${region.regionName}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
         NotificationBoxApi.NotificationTypes.UserNotifications
       );
     });
@@ -207,13 +171,17 @@ const Region = () => {
 
     try {
       const response = await getRegionById(id);
-      const response1 = await getRegionAdministration(id);
+      const responseAdmins = await getRegionAdministration(id);
       const responce2 = await cityNameOfApprovedMember(userApi.getActiveUserId());
 
       const responseHead = await getHead(id);
       const responseHeadDeputy = await getHeadDeputy(id);
       
+      const admins = [...response.data.administration, response.data.head, response.data.headDeputy]
+        .filter(a => a !== null);
+
       setActiveUserRoles(userApi.getActiveUserRoles());
+      setAdmins(responseAdmins.data);
       setHead(responseHead.data);
       setHeadDeputy(responseHeadDeputy.data);
       setMembersCount(response.data.cities.length);
@@ -223,16 +191,16 @@ const Region = () => {
       setDocumentsCount(response.data.documentsCount);
 
       setPhotosLoading(true);
-      setSixAdmins(response1.data, 7);
-      setAdminsCount(response1.data.length);
+      setSixAdmins(responseAdmins.data, 7);
+      setAdminsCount(responseAdmins.data.length);
 
       setRegionLogoLoading(true);
-      setPhotos([...response.data.cities], [...response1.data]);
+      setPhotos([...response.data.cities], [...responseAdmins.data]);
 
       setRegion(response.data);
       setCanEdit(response.data.canEdit);
       setIsFromRegion(response.data.cities, responce2.data);
-      setIsRegionAdmin(response1.data, userApi.getActiveUserId());
+      setIsRegionAdmin(responseAdmins.data, userApi.getActiveUserId());
 
       if (response.data.logo === null) {
         setPhotoStatus(false);
@@ -242,16 +210,119 @@ const Region = () => {
     }
   };
 
-  const handleOk = async () => {
-    setVisible(false);
-    setMemberRedirectVisibility(false);
-    setVisibleModal(false);
-    const response =  await getRegionAdministration(id);
-    setSixAdmins(response.data, 6);
-    setAdminsCount(response.data.length);
+  const updateAdmins = async () => {
+    const response = await getRegionById(id);
+    const responseAdmins = await getRegionAdministration(id);
+    const responseHead = await getHead(id);
+    const responseHeadDeputy = await getHeadDeputy(id);
+    setHead(responseHead.data);
+    setHeadDeputy(responseHeadDeputy.data);
+    setAdminsCount(responseAdmins.data.administrationCount);
+    const admins = [
+      ...response.data.administration,
+      response.data.head,
+      response.data.headDeputy,
+    ].filter((a) => a !== null);
+    setRegion(response.data);
+    setAdmins(responseAdmins.data);
     setPhotosLoading(true);
-    setPhotos([], [...response.data]);
+    setPhotos([...response.data.cities], [...responseAdmins.data]);
+  }
 
+  const addRegionAdmin = async (admin: RegionAdmin) => {
+    await AddAdmin(admin);
+    await updateAdmins();
+    notificationLogic("success", "Користувач успішно доданий в провід");
+    await NotificationBoxApi.createNotifications(
+      [admin.userId],
+      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/cities/${id}`,
+      `цій станиці`
+    );
+  };
+
+  const editRegionAdmin = async (admin: RegionAdmin) => {
+    await EditAdmin(admin);
+    await updateAdmins();
+    notificationLogic("success", successfulEditAction("Адміністратора"));
+    await NotificationBoxApi.createNotifications(
+      [admin.userId],
+      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/clubs/${id}`,
+      `цьому курені`);
+  };
+
+  const showConfirmClubAdmin  = async (admin: RegionAdmin) => {
+    return Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (
+        <div style={{ margin: 10 }}>
+          <b>
+            {head.firstName} {head.lastName}
+          </b>{" "}
+          є Головою Куреня, час правління закінчується{" "}
+          <b>
+            {moment(head.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(head.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onCancel() { },
+      async onOk() {
+        if (admin.id === 0) {
+         await addRegionAdmin(admin);
+        } else {
+         await editRegionAdmin(admin);
+        }
+      },
+    });
+  };
+  
+  const checkAdminId = async (admin: RegionAdmin)=> {
+    if (admin.id === 0) {
+      await addRegionAdmin(admin);
+    } else {
+      await editRegionAdmin(admin);
+    }
+  }
+
+  const handleConfirm = async () => {
+    setVisible(false);
+  };
+
+  const handleOk = async(admin: RegionAdmin) => {
+    try {
+      if (admin.adminType.adminTypeName === Roles.OkrugaHead) {
+        if (head == null) {
+          checkAdminId(admin);
+        }else {
+          if (head.userId !== admin.userId) {
+            showConfirmClubAdmin(admin);
+          }else {
+            checkAdminId(admin);
+          }
+        }
+      } else if(admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy) {
+        if (headDeputy == null) {
+          checkAdminId(admin);
+        }else{
+          checkAdminId(admin);
+        }
+      }
+      else {
+          await addRegionAdmin(admin);
+      }
+    } finally {
+      setVisible(false);
+    }
+  };
+
+  const handleClose = async() => {
+    setVisible(false);
   };
 
   const setIsFromRegion = (members: any[], city: string) => {
@@ -300,7 +371,7 @@ const Region = () => {
     }
   };
 
-  const onAdd =  async (newDocument: CityDocument) => {
+  const onAdd =  async (newDocument: RegionDocument) => {
     const response = await getRegionById(id);
     setDocumentsCount(response.data.documentsCount);
     if (documents.length < 6) {
@@ -699,13 +770,14 @@ const Region = () => {
         <Modal
           title="Додати діловода"
           visible={visible}
-          onOk={handleOk}
-          onCancel={handleOk}
+          onCancel={handleClose}
           footer={null}
         >
           <AddNewSecretaryForm 
               onAdd={handleOk}
-              regionID={region.id}
+              regionId={region.id}
+              head={head}
+              headDeputy={headDeputy}
               visibleModal={visible}
           >
           </AddNewSecretaryForm>
@@ -714,11 +786,11 @@ const Region = () => {
         <Modal
           title="Оберіть округу до якої належатимуть станиці-члени:"
           visible={memberRedirectVisibility}
-          onOk={handleOk}
-          onCancel={handleOk}
+          onOk={handleConfirm}
+          onCancel={handleConfirm}
           footer={null}
         >
-          <CitiesRedirectForm regionId = {region.id} onAdd={handleOk} />
+          <CitiesRedirectForm regionId = {region.id} onAdd={handleConfirm} />
         </Modal>
 
         <RegionDetailDrawer

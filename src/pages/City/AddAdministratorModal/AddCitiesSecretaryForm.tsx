@@ -17,10 +17,14 @@ import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
 
 type AddCitiesNewSecretaryForm = {
+  setVisibleModal: (visibleModal: boolean) => void;
+  visibleModal: boolean;
   onAdd: (admin: CityAdmin) => void;
   onCancel: () => void;
   cityId: number;
   admin?: any;
+  head?: CityAdmin;
+  headDeputy?: CityAdmin;
 };
 const AddCitiesNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
@@ -47,22 +51,35 @@ const AddCitiesNewSecretaryForm = (props: any) => {
 
 
 
-  const handleSubmit = async (values: any) => {
-    const newAdmin: CityAdmin = {
-      id: props.admin === undefined ? 0 : props.admin.id,
-      userId: props.admin === undefined
-        ? JSON.parse(values.userId).id
-        : props.admin.userId,
-      user: values.user,
+  const SetAdmin =  (property: any, value: any) => {
+    let admin: CityAdmin = {
+      id: property === undefined ? 0 : property.id,
       adminType: {
         ...new AdminType(),
-        adminTypeName: values.AdminType,
+        adminTypeName: value.AdminType,
       },
       cityId: props.cityId,
-      startDate: values.startDate,
-      endDate: values.endDate,
+      userId: property === undefined
+        ? JSON.parse(value.userId).id
+        : property.userId,
+      user: value.user,
+      endDate: value.endDate,
+      startDate: value.startDate,
     };
-    onAdd(newAdmin);
+    return admin;
+  }
+
+  const handleSubmit = async (values: any) => {
+    if(JSON.parse(values.userId).id == props.head?.userId ) {
+      const newAdmin = SetAdmin(props.head, values);
+      onAdd(newAdmin);  
+    }else if(JSON.parse(values.userId).id == props.headDeputy?.userId){
+      const newAdmin = SetAdmin(props.headDeputy, values);
+      onAdd(newAdmin);  
+    } else if (JSON.parse(values.userId).id != props.head?.userId && JSON.parse(values.userId).id != props.headDeputy?.userId) {
+      const newAdmin = SetAdmin(props.admin, values);
+      onAdd(newAdmin);
+    }
   };
 
   useEffect(() => {
@@ -90,7 +107,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       >
         <Select showSearch className={classes.inputField}>
           {members?.map((o) => (
-            <Select.Option key={o.user.id} value={JSON.stringify(o.user)}>
+            <Select.Option key={o.userId} value={JSON.stringify(o.user)}>
               {o.user.firstName + " " + o.user.lastName}
             </Select.Option>
           ))}

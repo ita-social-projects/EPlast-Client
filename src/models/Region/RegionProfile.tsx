@@ -1,7 +1,7 @@
 export default class RegionProfile {
   id: number;
   regionName: string;
-  logo: string | null;
+  logo: string | undefined;
   description: string;
   link: string;
   phoneNumber: string;
