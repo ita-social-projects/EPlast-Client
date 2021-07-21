@@ -26,7 +26,7 @@ interface Props {
   onChange?: (id: string, userRoles: string) => void;
 }
 
-const AddAdministratorModal = (props: Props) => {
+const EditAdministratorModal = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState<any>();
   const [endDate, setEndDate] = useState<any>();
@@ -263,4 +263,4 @@ const AddAdministratorModal = (props: Props) => {
   );
 };
 
-export default AddAdministratorModal;
+export default EditAdministratorModal;

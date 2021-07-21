@@ -73,7 +73,8 @@ import GoverningBodyDocuments from "./pages/GoverningBody/GoverningBody/Governin
 import GoverningBodySectors from "./pages/GoverningBody/Sector/Sectors";
 import GoverningBodySector from "./pages/GoverningBody/Sector/Sector";
 import EditGoverningBodySector from "./pages/GoverningBody/Sector/EditSector";
-import GoverningBodySectorDocuments from "./pages/GoverningBody/Sector/SectorDocuments"
+import GoverningBodySectorDocuments from "./pages/GoverningBody/Sector/SectorDocuments";
+import GoverningBodySectorAdministration from "./pages/GoverningBody/Sector/SectorAdministration";
 
 const App: FC = () => (
   <div className="App">
@@ -406,6 +407,12 @@ const App: FC = () => (
             exact
             path="/governingBodies/:governingBodyId/sectors/:sectorId/documents"
             component={GoverningBodySectorDocuments}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/governingBodies/:governingBodyId/sectors/:sectorId/administration"
+            component={GoverningBodySectorAdministration}
           />
           <RouteWithLayout
             layout={PrivateLayout}

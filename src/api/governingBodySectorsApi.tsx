@@ -70,26 +70,32 @@ export const removeSector = async (id: number) => {
 };
 
 export const getSectorLogo = async (logoName: string | null) => {
-  return await axios.get(BASE_URL + 'GoverningBodies/Sectors/LogoBase64/' + logoName, { params: logoName }).catch((error) => {
+  return await axios
+    .get(BASE_URL + 'GoverningBodies/Sectors/LogoBase64/' + logoName, { params: logoName })
+    .catch((error) => {
     throw new Error(error);
   });
 };
 
 export const getAllAdmins = async (sectorId: number) => {
-  return api.get(`GoverningBodies/Sectors/Admins/${sectorId}`).catch((error) => {
+  return api
+    .get('GoverningBodies/Sectors/Admins/' + sectorId, sectorId)
+    .catch((error) => {
     throw new Error(error);
   });
 };
 
 export const getAllDocuments = async (sectorId: number) => {
-  return api.get(`GoverningBodies/Sectors/Documents/${sectorId}`).catch((error) => {
+  return api
+    .get(`GoverningBodies/Sectors/Documents/${sectorId}`)
+    .catch((error) => {
     throw new Error(error);
   });
 };
 
 export const addAdministrator = async (sectorId: number, data: any) => {
   return api
-    .post(`GoverningBodies/Sectors/AddAdmin/${sectorId}`, data)
+    .post('GoverningBodies/Sectors/AddAdmin/' + sectorId, data)
     .catch((error) => {
       throw new Error(error);
     });
@@ -143,14 +149,16 @@ export const getFile = async (fileBlob: string, fileName: string) => {
 };
 
 export const getDocumentTypes = async () => {
-  return api.get(`GoverningBodies/Sectors/GetDocumentTypes`)
+  return api
+    .get(`GoverningBodies/Sectors/GetDocumentTypes`)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const getUserAccess = async (userId: string) => {
-  return await api.get(`GoverningBodies/Sectors/GetUserAccesses/${userId}`, userId)
+  return await api
+    .get(`GoverningBodies/Sectors/GetUserAccesses/${userId}`, userId)
     .catch( error => {
         throw error;
     });
