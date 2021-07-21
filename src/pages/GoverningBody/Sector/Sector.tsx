@@ -53,6 +53,7 @@ const Sector = () => {
   const [sector, setSector] = useState<SectorProfile>(new SectorProfile());
   const [sectorLogo64, setSectorLogo64] = useState<string>("");
   const [documents, setDocuments] = useState<SectorDocument[]>([]);
+  const [documentsCount, setDocumentsCount] = useState<number>(0);
   const [document, setDocument] = useState<SectorDocument>(new SectorDocument());
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
@@ -90,6 +91,7 @@ const Sector = () => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
+    setDocumentsCount(documentsCount + 1);
   };
 
   function seeDeleteModal() {
@@ -119,23 +121,25 @@ const Sector = () => {
     setLoading(true);
     try {
       const response = await getSectorById(+sectorId);
+      const sectorViewModel = response.data.sectorViewModel
       await getUserAccesses();
 
       setSectorLogoLoading(true);
       const admins = [
-        ...response.data.administration,
-        response.data.head,
+        ...sectorViewModel.administration,
+        sectorViewModel.head,
       ].filter(a => a !== null);
 
       await setPhotos(
         [...admins],
-        response.data.logo
+        sectorViewModel.logo
       );
 
-      setSector(response.data);
+      setSector(sectorViewModel);
       setAdmins(admins);
-      setSectorHead(response.data.head)
-      setDocuments(response.data.documents);
+      setSectorHead(sectorViewModel.head)
+      setDocuments(sectorViewModel.documents);
+      setDocumentsCount(response.data.documentsCount);
     } finally {
       setLoading(false);
     }
@@ -395,9 +399,9 @@ const Sector = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Документообіг <a onClick={() => history.push(`/governingBodies/${governingBodyId}/sectors/${sector.id}/documents`)}>
-              {documents.length !== 0 ?
+              {documentsCount !== 0 ?
                 <Badge
-                  count={documents.length}
+                  count={documentsCount}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
