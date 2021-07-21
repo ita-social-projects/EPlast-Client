@@ -81,12 +81,16 @@ import{
     officeNumber:
     [
         {
+            required: true,
             max: 5,
             message: maxLength(5),
         },
     ],
     postIndex:
     [
+        {
+            required: true,
+        },
         {
             validator: (_ : object, value : string) => 
             value == undefined || String(value).length == 0
