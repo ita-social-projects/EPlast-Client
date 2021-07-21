@@ -64,7 +64,6 @@ const GoverningBody = () => {
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   const [admins, setAdmins] = useState<GoverningBodyAdmin[]>([]);
   const [governingBodyHead, setGoverningBodyHead] = useState<GoverningBodyAdmin>();
-  const [adminsCount, setAdminsCount] = useState<number>();
   const [sectors, setSectors] = useState<SectorProfile[]>([]);
   const [sectorsPhotosLoading, setSectorsPhotosLoading] = useState<boolean>(false);
 
@@ -103,7 +102,7 @@ const GoverningBody = () => {
     setSectorsPhotosLoading(false);
   };
 
-  const onAdd = (newDocument: GoverningBodyDocument) => {
+  const onDocumentAdd = (newDocument: GoverningBodyDocument) => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
@@ -156,7 +155,6 @@ const GoverningBody = () => {
       setGoverningBody(response.data);
       setAdmins(admins);
       setGoverningBodyHead(response.data.head)
-      setAdminsCount(admins.length);
       setDocuments(response.data.documents);
       setSectors(response.data.sectors);
     } finally {
@@ -164,9 +162,9 @@ const GoverningBody = () => {
     }
   };
 
-  const handleOk = () => {
+  const handleAdminAdd = () => {
     setVisible(false);
-    setAdminsCount(admins.length + 1);
+
   };
 
   useEffect(() => {
@@ -381,9 +379,9 @@ const GoverningBody = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Провід Керівного Органу <a onClick={() => history.push(`/governingBodies/administration/${governingBody.id}`)}>
-            {adminsCount !== 0 ?
+            {admins.length !== 0 ?
                 <Badge
-                  count={adminsCount}
+                  count={admins.length}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
@@ -518,12 +516,12 @@ const GoverningBody = () => {
       <Modal
         title="Додати діловода"
         visible={visible}
-        onOk={handleOk}
+        onOk={handleAdminAdd}
         onCancel={() => setVisible(false)}
         footer={null}
       >
         <AddGoverningBodiesSecretaryForm
-          onAdd={handleOk}
+          onAdd={handleAdminAdd}
           admins={admins}
           setAdmins={setAdmins}
           setGoverningBodyHead={setGoverningBodyHead}
@@ -537,7 +535,7 @@ const GoverningBody = () => {
           setDocument={setDocument}
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
-          onAdd={onAdd}
+          onAdd={onDocumentAdd}
         />
       ) : null}
     </Layout.Content>

@@ -43,6 +43,7 @@ import userApi from "../../../api/UserApi";
 import moment from "moment";
 import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument";
 import AddDocumentModal from "./AddDocumentModal";
+import AddSectorAdminForm from "./AddSectorAdminForm";
 
 const Sector = () => {
   const history = useHistory();
@@ -61,7 +62,6 @@ const Sector = () => {
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   const [admins, setAdmins] = useState<SectorAdmin[]>([]);
   const [sectorHead, setSectorHead] = useState<SectorAdmin>();
-  const [adminsCount, setAdminsCount] = useState<number>();
 
   const deleteSector = async () => {
     await removeSector(sector.id);
@@ -86,7 +86,7 @@ const Sector = () => {
     setSectorLogoLoading(false);
   };
 
-  const onAdd = (newDocument: SectorDocument) => {
+  const onDocumentAdd = (newDocument: SectorDocument) => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
@@ -135,14 +135,13 @@ const Sector = () => {
       setSector(response.data);
       setAdmins(admins);
       setSectorHead(response.data.head)
-      setAdminsCount(admins.length);
       setDocuments(response.data.documents);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOk = () => {
+  const handleAdminAdd = () => {
     setVisible(false);
   };
 
@@ -154,9 +153,7 @@ const Sector = () => {
     if (sector.name.length != 0) {
       PsevdonimCreator.setPseudonimLocation(`sectors/${sector.name}`, `sectors/${sectorId}`);
     }
-  }, [sector])
-
-  console.log(userAccesses);
+  }, [sector]);
 
   return loading ? (
     <Spinner />
@@ -315,9 +312,9 @@ const Sector = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Провід <a onClick={() => history.push(`/governingBodies/${governingBodyId}/sectors/${sector.id}/administration`)}>
-              {adminsCount !== 0 ?
+              {admins.length !== 0 ?
                 <Badge
-                  count={adminsCount}
+                  count={admins.length}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
@@ -358,7 +355,7 @@ const Sector = () => {
                 type="primary"
                 className="governingBodyInfoButton"
                 onClick={() =>
-                  history.push('/governingBodies/${governingBodyId}/sectors/${sector.id}/administration')
+                  history.push('/governingBodies/' + governingBodyId + '/sectors/' + sector.id + '/administration')
                 }
               >
                 Більше
@@ -450,19 +447,21 @@ const Sector = () => {
         sector={sector}
       />
       <Modal
-        title="Цей функціонал ще не готовий"
+        title="Додати діловода"
         visible={visible}
-        onOk={handleOk}
-        onCancel={handleOk}
+        onOk={handleAdminAdd}
+        onCancel={handleAdminAdd}
         footer={null}
       >
-        {/*<AddGoverningBodiesSecretaryForm*/}
-        {/*  onAdd={handleOk}*/}
-        {/*  admins={admins}*/}
-        {/*  setAdmins={setAdmins}*/}
-        {/*  setGoverningBodyHead={setSectorHead}*/}
-        {/*  governingBodyId={+sectorId}>*/}
-        {/*</AddGoverningBodiesSecretaryForm>*/}
+        <AddSectorAdminForm
+          onAdd={handleAdminAdd}
+          admins={admins}
+          setAdmins={setAdmins}
+          setSectorHead={setSectorHead}
+          sectorId={+sectorId}
+          governingBodyId={+governingBodyId}
+        >
+        </AddSectorAdminForm>
       </Modal>
       {userAccesses["ManipulateDocument"] ? (
         <AddDocumentModal
@@ -471,7 +470,7 @@ const Sector = () => {
           setDocument={setDocument}
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
-          onAdd={onAdd}
+          onAdd={onDocumentAdd}
         />
       ) : null}
     </Layout.Content>
