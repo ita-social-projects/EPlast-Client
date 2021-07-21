@@ -55,6 +55,7 @@ const GoverningBody = () => {
   const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(new GoverningBodyProfile());
   const [governingBodyLogo64, setGoverningBodyLogo64] = useState<string>("");
   const [documents, setDocuments] = useState<GoverningBodyDocument[]>([]);
+  const [documentsCount, setDocumentsCount] = useState<number>(0);
   const [document, setDocument] = useState<GoverningBodyDocument>(new GoverningBodyDocument());
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
@@ -106,6 +107,7 @@ const GoverningBody = () => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
+    setDocumentsCount(documentsCount + 1);
   };
 
   function seeDeleteModal() {
@@ -136,27 +138,29 @@ const GoverningBody = () => {
     try {
       await getUserAccesses();
       const response = await getGoverningBodyById(+id);
+      const governingBodyViewModel = response.data.governingBodyViewModel;
 
       const admins = [
-        ...response.data.administration,
-        response.data.head,
+        ...governingBodyViewModel.administration,
+        governingBodyViewModel.head,
       ].filter(a => a !== null);
 
-      const responseSectors = response.data.sectors;
+      const responseSectors = governingBodyViewModel.sectors;
 
       setGoverningBodyLogoLoading(true);
       setSectorsPhotosLoading(true);
       await setPhotos(
         [...admins],
-        response.data.logo,
+        governingBodyViewModel.logo,
         responseSectors
       );
 
-      setGoverningBody(response.data);
+      setGoverningBody(governingBodyViewModel);
       setAdmins(admins);
-      setGoverningBodyHead(response.data.head)
-      setDocuments(response.data.documents);
-      setSectors(response.data.sectors);
+      setGoverningBodyHead(governingBodyViewModel.head)
+      setDocuments(governingBodyViewModel.documents);
+      setDocumentsCount(response.data.documentsCount);
+      setSectors(governingBodyViewModel.sectors);
     } finally {
       setLoading(false);
     }
@@ -462,9 +466,9 @@ const GoverningBody = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Документообіг Керівного Органу <a onClick={() => history.push(`/governingBodies/documents/${governingBody.id}`)}>
-              {documents.length !== 0 ?
+              {documentsCount !== 0 ?
                 <Badge
-                  count={documents.length}
+                  count={documentsCount}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
