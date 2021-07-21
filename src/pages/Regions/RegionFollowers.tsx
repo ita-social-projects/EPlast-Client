@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Modal, Skeleton, Spin} from 'antd';
-import {CloseOutlined, ExclamationCircleOutlined, PlusOutlined, RollbackOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Layout, Modal, Skeleton} from 'antd';
+import {CloseOutlined, ExclamationCircleOutlined, RollbackOutlined} from '@ant-design/icons';
 import {
   getRegionFollowers, 
   getRegionAdministration, 
@@ -14,6 +14,8 @@ import RegionFollower from '../../models/Region/RegionFollower';
 import Title from 'antd/lib/typography/Title';
 import Spinner from '../Spinner/Spinner';
 import { Roles } from '../../models/Roles/Roles';
+import { successfulDeleteAction } from '../../components/Notifications/Messages';
+import notificationLogic from "../../components/Notifications/Notification";
 
 const RegionFollowers = () => {
     const {id} = useParams();
@@ -21,7 +23,6 @@ const RegionFollowers = () => {
 
     const [loading, setLoading] = useState<boolean>(false);
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
-    const [regionName, setRegionName] = useState<string>("");
     const [followers, setFollowers] = useState<RegionFollower[]>([]);
     const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
     const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
@@ -32,7 +33,6 @@ const RegionFollowers = () => {
       const regionFollowersResp = await getRegionFollowers(id);
       const regionAdministrationResp = await getRegionAdministration(id);
 
-      setRegionName(regionResponse.data.name);
       setFollowers(regionFollowersResp.data);
       setActiveUserRoles(userApi.getActiveUserRoles);
       setIsRegionAdmin(regionAdministrationResp.data, userApi.getActiveUserId());
@@ -63,6 +63,7 @@ const RegionFollowers = () => {
     const deleteFollower = async (follower: RegionFollower) => {
       await removeFollower(follower.id);
       setFollowers(followers.filter(u => u.id !== follower.id));
+      notificationLogic("success", successfulDeleteAction("Заяву"));
     }
 
     function seeDeleteFollowerModal(regionFollower: RegionFollower) {

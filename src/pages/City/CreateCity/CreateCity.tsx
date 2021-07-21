@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 import {
   Button,
@@ -60,11 +60,11 @@ const CreateCity = () => {
 
   const [loading, setLoading] = useState(false);
   const [appealRegion, setAppealRegion] = useState<RegionProfile>(new RegionProfile());
-  const [regionFollower, setRegionFollower] = useState<RegionFollower>(new RegionFollower());
+  const [regionFollower, setRegionFollower] = useState<RegionFollower>({} as RegionFollower);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
   const [regions, setRegions] = useState<RegionProfile[]>([]);
-  const [applicant, setApplicant] = useState<User>(new User());
-  const [activeUser, setActiveUser] = useState<User>(new User());
+  const [applicant, setApplicant] = useState<User>({} as User);
+  const [activeUser, setActiveUser] = useState<User>({} as User);
   const [isFollowerPath, setIsFollowerPath] = useState<boolean>(location.pathname.includes(followerPath));
 
   useEffect (() => {
@@ -82,7 +82,7 @@ const CreateCity = () => {
         getRegions();
       }
     }
-  }, [applicant, appealRegion]);
+  }, []);
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -137,17 +137,18 @@ const CreateCity = () => {
   };
 
   const getRegionFollower = async (followerId: number) => {
-    try{
-      setLoading(true);
-      const followerResponse = await getRegionFollowerById(followerId);
+    setLoading(true);
+    await getRegionFollowerById(followerId).then(async (followerResponse) =>{
       setRegionFollower(followerResponse.data);
-      const applicantResponse = await UserApi.getById(followerResponse.data.userId);
-      setApplicant(applicantResponse.data.user);
-      const regionResponse = await getRegionById(followerResponse.data.regionId);
-      setAppealRegion(regionResponse.data);    
-    } finally {
+      await UserApi.getById(followerResponse.data.userId).then((applicantResponse) => {
+        setApplicant(applicantResponse.data.user);
+      });
+      await getRegionById(followerResponse.data.regionId).then((regionResponse) => {
+        setAppealRegion(regionResponse.data); 
+      });
+    }).finally(() => {
       setLoading(false);
-    }
+    });
   };
 
   const getCity = async () => {
@@ -168,11 +169,9 @@ const CreateCity = () => {
 
   const getRegions = async () => {
     try{
-      setLoading(true);
       const response = await GetAllRegions();
       setRegions(response.data);  
     } finally {
-      setLoading(false);
     }
   };
 
@@ -356,7 +355,7 @@ const CreateCity = () => {
     });
   }
 
-  return loading && (city || regionFollower) ? (
+  return loading ? (
     <Spinner />
   ) : (
     <Layout.Content className="createCity">
@@ -429,7 +428,7 @@ const CreateCity = () => {
                   initialValue={regionFollower.appeal}
                   rules={[{ required: true, message: emptyInput("заява") }]}
                 >
-                  <TextArea value={regionFollower.appeal} maxLength={1001} />
+                  <Input value={regionFollower.appeal} maxLength={1001} />
                 </Form.Item>
               </Col>
               ) : null
