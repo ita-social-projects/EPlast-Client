@@ -458,7 +458,9 @@ const Sector = () => {
           admins={admins}
           setAdmins={setAdmins}
           setSectorHead={setSectorHead}
-          sectorId={+sectorId}>
+          sectorId={+sectorId}
+          governingBodyId={+governingBodyId}
+        >
         </AddSectorAdminForm>
       </Modal>
       {userAccesses["ManipulateDocument"] ? (

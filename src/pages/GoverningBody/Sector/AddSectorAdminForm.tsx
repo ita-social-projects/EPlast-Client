@@ -62,7 +62,7 @@ const AddSectorAdminForm = (props: any) => {
     return current && current > moment();
   };
 
-  const addGoverningBodyAdmin = async (admin: SectorAdmin) => {
+  const addSectorAdmin = async (admin: SectorAdmin) => {
     await addAdministrator(admin.sectorId, admin);
     admin.user.imagePath =  (
       await userApi.getImage(admin.user.imagePath)
@@ -77,21 +77,21 @@ const AddSectorAdminForm = (props: any) => {
       [admin.userId],
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/governingBodies/${props.governingBodyId}`,
-      `цьому напрямі`
+      `/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
+      `цьому напрямі керівного органу`
     );
   };
 
-  const editGoverningBodyAdmin = async (admin: SectorAdmin) => {
-    await editAdministrator(props.governingBodyId, admin);
+  const editSectorAdmin = async (admin: SectorAdmin) => {
+    await editAdministrator(props.sectorId, admin);
     notificationLogic("success", successfulEditAction("Адміністратора"));
     form.resetFields();
     await NotificationBoxApi.createNotifications(
       [admin.userId],
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/governingBodies/${props.governingBodyId}`,
-      `цьому керівному органі`);
+      `/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
+      `цьому напрямі керівного органу`);
   };
 
 
@@ -103,7 +103,7 @@ const AddSectorAdminForm = (props: any) => {
           <b>
             {head?.user.firstName} {head?.user.lastName}
           </b>{" "}
-          є Головою Керівного Органу, час правління закінчується{" "}
+          є Головою Напряму Керівного Органу, час правління закінчується{" "}
           <b>
             {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
@@ -115,9 +115,9 @@ const AddSectorAdminForm = (props: any) => {
       onCancel() { },
       onOk() {
         if (admin.id === 0) {
-          addGoverningBodyAdmin(admin);
+          addSectorAdmin(admin);
         } else {
-          editGoverningBodyAdmin(admin);
+          editSectorAdmin(admin);
         }
       },
     });
@@ -146,20 +146,15 @@ const AddSectorAdminForm = (props: any) => {
         if (values.AdminType === Roles.GoverningBodySectorHead && head !== null) {
           if (head?.userId !== newAdmin.userId) {
             showConfirm(newAdmin);
-          } else if (head?.userId === newAdmin.userId) {
-          } else {
-            editGoverningBodyAdmin(newAdmin);
           }
         } else {
-          if (newAdmin.id === 0) {
-            addGoverningBodyAdmin(newAdmin);
-          } else {
-            editGoverningBodyAdmin(newAdmin);
-          }
+          addSectorAdmin(newAdmin);
         }
       } finally {
         onAdd();
       }
+    } else {
+      editSectorAdmin(newAdmin);
     }
   };
 

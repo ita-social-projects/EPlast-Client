@@ -146,21 +146,15 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         if (values.AdminType === Roles.GoverningBodyHead && head !== null) {
           if (head?.userId !== newAdmin.userId) {
             showConfirm(newAdmin);
-          } else if (head?.userId === newAdmin.userId) {
-          } else {
-            editGoverningBodyAdmin(newAdmin);
           }
         } else {
-          if (newAdmin.id === 0) {
-            addGoverningBodyAdmin(newAdmin);
-          }
-          else {
-            editGoverningBodyAdmin(newAdmin);
-          }
+          addGoverningBodyAdmin(newAdmin);
         }
       } finally {
         onAdd();
       }
+    } else {
+      editGoverningBodyAdmin(newAdmin);
     }
   };
 
