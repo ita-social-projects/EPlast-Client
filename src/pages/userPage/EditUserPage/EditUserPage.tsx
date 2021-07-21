@@ -493,7 +493,7 @@ export default function () {
         <div className={styles.avatarWrapper}>
           <div className={styles.kadraWrapper}>
             <Avatar size={300} src={userAvatar} className="avatarElem" />
-            <div className={styles.buttons}>
+            <div className={styles.buttonsImage}>
             <Upload
               name="avatar"
               className={styles.changeAvatar}
