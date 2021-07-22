@@ -5,7 +5,6 @@ import {
   Select,
   Input,
   Button,
-  notification,
   Row,
   Col,
 } from "antd";
@@ -18,7 +17,6 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
   maxLength,
-  failCreateAction,
   maxNumber,
   minNumber
 } from "../../../components/Notifications/Messages"
@@ -50,13 +48,6 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
   const [distData, setDistData] = useState<Precaution[]>(Array<Precaution>());
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
   const dateFormat = "DD.MM.YYYY";
-  const openNotification = (message: string) => {
-    notification.error({
-      message: failCreateAction(`пересторогу`),
-      description: `${message}`,
-      placement: "topLeft",
-    });
-  };
 
   const disabledStartDate = (current: any) => {
     return current && current > moment();

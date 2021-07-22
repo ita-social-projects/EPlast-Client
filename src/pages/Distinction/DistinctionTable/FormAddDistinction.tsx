@@ -5,7 +5,6 @@ import {
   Select,
   Input,
   Button,
-  notification,
   Row,
   Col,
 } from "antd";
@@ -17,7 +16,6 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
   maxLength,
-  failCreateAction,
   maxNumber,
   minNumber,
   incorrectData
@@ -50,13 +48,6 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
   const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
   const dateFormat = "DD.MM.YYYY";
-  const openNotification = (message: string) => {
-    notification.error({
-      message: failCreateAction(`відзначення`),
-      description: `${message}`,
-      placement: "topLeft",
-    });
-  };
 
   useEffect(() => {
     const fetchData = async () => {
