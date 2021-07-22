@@ -3,9 +3,6 @@ import classes from "../../Regions/Form.module.css";
 import { Form, Input, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
-  addAdministrator,
-  editAdministrator,
-  getAllAdmins,
   getAllMembers,
 } from "../../../api/clubsApi";
 import moment from "moment";
@@ -22,36 +19,27 @@ import { Roles } from "../../../models/Roles/Roles";
 
 
 type AddClubsNewSecretaryForm = {
-  onAdd: () => void;
+  visibleModal: boolean;
+  setVisibleModal: (visibleModal: boolean) => void;
+  onAdd: (admin: ClubAdmin) => void;
   onCancel: () => void;
   clubId: number;
   admin?: any;
+  head?: ClubAdmin;
+  headDeputy?: ClubAdmin;
 };
-const confirm = Modal.confirm;
 const AddClubsNewSecretaryForm = (props: any) => {
-  const [head, setHead] = useState<ClubAdmin>();
-  const [loading, setLoading] = useState(false);
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
-
   const [members, setMembers] = useState<ClubMember[]>([]);
   
   const getMembers = async () => {
-    setLoading(true);
     const responseMembers = await getAllMembers(props.clubId);
     setMembers(responseMembers.data.members);
-    setLoading(false);
   };
     
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const getClubHead = async () => {
-    if (props.clubId !== 0) {
-      const responseAdmins = await getAllAdmins(props.clubId);
-      setHead(responseAdmins.data.head);
-      setLoading(false);
-    }
-  };
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -61,91 +49,36 @@ const AddClubsNewSecretaryForm = (props: any) => {
     return current && current > moment();
   };
 
-  const showConfirm = (admin: ClubAdmin) => {
-    confirm({
-      title: "Призначити даного користувача на цю посаду?",
-      content: (
-        <div style={{ margin: 10 }}>
-          <b>
-            {head?.user.firstName} {head?.user.lastName}
-          </b>{" "}
-          є Головою Куреня, час правління закінчується{" "}
-          <b>
-            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
-              ? "ще не скоро"
-              : moment(head?.endDate).format("DD.MM.YYYY")}
-          </b>
-          .
-        </div>
-      ),
-      onCancel() { },
-      onOk() {
-        if (admin.id === 0) {
-          addClubAdmin(admin);
-        } else {
-          editClubAdmin(admin);
-        }
-      },
-    });
-  };
-
-  const addClubAdmin = async (admin: ClubAdmin) => {
-    await addAdministrator(props.clubId, admin);
-    notificationLogic("success", "Користувач успішно доданий в провід");
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/clubs/${props.clubId}`,
-      `цьому курені`
-    );
-    props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
-    props.onAdd?.(admin);
-  };
-  const editClubAdmin = async (admin: ClubAdmin) => {
-    admin = (await editAdministrator(props.clubId, admin)).data;
-    notificationLogic("success", "Адміністратор успішно відредагований");
-    props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
-    props.onAdd?.(admin);
-  };
-
-
-  const handleSubmit = async (values: any) => {
-    setLoading(true);
-
+  const SetAdmin =  (property: any, value: any) => {
     let admin: ClubAdmin = {
-      id: props.admin === undefined ? 0 : props.admin.id,
+      id: property === undefined ? 0 : property.id,
       adminType: {
         ...new AdminType(),
-        adminTypeName: values.AdminType,
+        adminTypeName: value.AdminType,
       },
       clubId: props.clubId,
-      userId: props.admin === undefined
-        ? JSON.parse(values.userId).id
-        : props.admin.userId,
-      user: values.user,
-      endDate: values.endDate?._d,
-      startDate: values.startDate?._d,
+      userId: property === undefined
+        ? JSON.parse(value.userId).id
+        : property.userId,
+      user: value.user,
+      endDate: value.endDate,
+      startDate: value.startDate,
     };
+    return admin;
+  }
 
-    try {
-      if (values.AdminType === Roles.KurinHead && head !== null) {
-        if (head?.userId !== admin.userId) {
-          showConfirm(admin);
-        } else if (head?.userId === admin.userId) {
-        } else {
-          editClubAdmin(admin);
-        }
-      } else {
-        if (admin.id === 0) {
-          addClubAdmin(admin);
-        } else {
-          editClubAdmin(admin);
-        }
-      }
-    } finally {
-      onAdd();
+  const handleSubmit = async (values: any) => {
+    if(JSON.parse(values.userId).id == props.head?.userId ) {
+      const newAdmin = SetAdmin(props.head, values);
+      onAdd(newAdmin);
+    }else if(JSON.parse(values.userId).id == props.headDeputy?.userId){
+      const newAdmin = SetAdmin(props.headDeputy, values);
+      onAdd(newAdmin);  
+    } else if (JSON.parse(values.userId).id != props.head?.userId && JSON.parse(values.userId).id != props.headDeputy?.userId) {
+      const newAdmin = SetAdmin(props.admin, values);
+      onAdd(newAdmin);
     }
+     
   };
 
   useEffect(() => {
@@ -153,7 +86,6 @@ const AddClubsNewSecretaryForm = (props: any) => {
       form.resetFields();
     }
     getMembers();
-    getClubHead();
     const userRoles = userApi.getActiveUserRoles();
       setActiveUserRoles(userRoles);
   }, [props]);

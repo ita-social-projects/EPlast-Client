@@ -8,19 +8,22 @@ import userApi from "../../api/UserApi";
 import moment from "moment";
 import {
   emptyInput,
-  successfulEditAction,
 } from "../../components/Notifications/Messages"
+import AdminType from "../../models/Admin/AdminType";
 import RegionUser from "../../models/Region/RegionUser";
-
 import User from "../Distinction/Interfaces/User";
 import "./AddRegionSecretaryForm.less";
 import { Roles } from "../../models/Roles/Roles";
 
 type AddNewSecretaryForm = {
-  onAdd: () => void;
+  visibleModal: boolean;
+  setVisibleModal: (visibleModal: boolean) => void;
+  onAdd: (admin: any) => void;
   onCancel: () => void;
   admin?: any;
-  regionID?:any;
+  regionId: any;
+  head?: any;
+  headDeputy?: any;
 };
 
 const AddNewSecretaryForm = (props: any) => {
@@ -47,59 +50,55 @@ const AddNewSecretaryForm = (props: any) => {
     return current && current > moment();
   };
 
-  const handleSubmit = async (values: any) => {
-    const newAdmin: any = {
-      id: props.admin === undefined ? 0 : props.admin.id,
-      userId:
-        props.admin === undefined
-          ? JSON.parse(values.userId).id
-          : props.admin.userId,
+  const SetAdmin = async  (property: any, value: any) => {
+    let admin: any = {
+      id: property === undefined ? 0 : property.id,
+      adminType: {
+        ...new AdminType(),
+        adminTypeName: value.AdminType,
+      },
+      regionId: props.regionId,
       AdminTypeId: await (
-        await regionsApi.getAdminTypeIdByName(values.AdminType)
+        await regionsApi.getAdminTypeIdByName(value.AdminType)
       ).data,
-      startDate: values.startDate,
-      endDate: values.endDate,
-      regionId: currentRegion,
+      userId: property === undefined
+        ? JSON.parse(value.userId).id
+        : property.userId,
+      user: value.user,
+      endDate: value.endDate,
+      startDate: value.startDate,
     };
-    if (newAdmin.id === 0) {
-      await regionsApi.AddAdmin(newAdmin);
-      notificationLogic("success", "Користувач успішно доданий в провід");
-      form.resetFields();
-      await NotificationBoxApi.createNotifications(
-        [newAdmin.userId],
-        `Вам була присвоєна адміністративна роль: '${values.AdminType}' в `,
-        NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/regions/${currentRegion}`,
-        `цій окрузі`
-      );
-      onAdd();
-    } else {
-      await regionsApi.EditAdmin(newAdmin);
-      notificationLogic("success", successfulEditAction("Адміністратора"));
-      form.resetFields();
-      await NotificationBoxApi.createNotifications(
-        [newAdmin.userId],
-        `Вам була відредагована адміністративна роль: '${values.AdminType}' в `,
-        NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/regions/${currentRegion}`,
-        `цій окрузі`
-      );
-      onAdd();
+    return admin;
+  }
+
+  const handleSubmit = async (values: any) => {
+    console.log(values);
+    if(JSON.parse(values.userId).id == props.head?.userId ) {
+      const newAdmin = await SetAdmin(props.head, values);
+      console.log(newAdmin)
+      onAdd(newAdmin);  
+    }else if(JSON.parse(values.userId).id == props.headDeputy?.userId){
+      const newAdmin = await SetAdmin(props.headDeputy, values);
+      console.log(newAdmin)
+      onAdd(newAdmin);  
+    } else if (JSON.parse(values.userId).id != props.head?.userId && JSON.parse(values.userId).id != props.headDeputy?.userId) {
+      const newAdmin = await SetAdmin(props.admin, values);
+      console.log(newAdmin)
+      onAdd(newAdmin);
     }
   };
-
+  const fetchData = async () => {
+    await regionsApi.getAdminTypes().then((response) => {
+      setTypes(response.data);
+    });
+    if(props.regionId !== undefined)
+    {
+    await regionsApi.getRegionUsers(props.regionId).then((response) => { 
+      setUsers(response.data);
+    });
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      await regionsApi.getAdminTypes().then((response) => {
-        setTypes(response.data);
-      });
-      if(props.regionID !== undefined)
-      {
-      await regionsApi.getRegionUsers(props.regionID).then((response) => { 
-        setUsers(response.data);
-      });
-      }
-    };
     setCurrentRegion(
       Number(
         window.location.hash.substring(1) ||
