@@ -155,7 +155,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
                           ? Promise.reject(minNumber(1)) 
                           : await precautionApi
                               .checkNumberExisting(value)
-                              .then((response) => response.data === false)
+                              .then(response => response.data === false)
                               ? Promise.resolve()
                               : Promise.reject('Цей номер уже зайнятий')
                 }

@@ -117,20 +117,12 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       reason: values.reason,
       number: values.number,
     };
-    if (
-      await distinctionApi
-        .checkNumberExisting(newDistinction.number)
-        .then((response) => response.data === false)
-    ) {
-      await distinctionApi.addUserDistinction(newDistinction);
-      setVisibleModal(false);
-      form.resetFields();
-      onAdd();
-      await createNotifications(newDistinction);
-    } else {
-      openNotification(`Номер ${values.number} вже зайнятий`);
-      form.resetFields(["number"]);
-    }
+
+    await distinctionApi.addUserDistinction(newDistinction);
+    setVisibleModal(false);
+    form.resetFields();
+    onAdd();
+    await createNotifications(newDistinction);
   };
   return (
     <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
@@ -151,10 +143,14 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                   message: maxNumber(99999),
                 },
                 {
-                  validator: (_ : object, value: number) => 
+                  validator: async (_ : object, value: number) =>
                       value < 1
                           ? Promise.reject(minNumber(1)) 
-                          : Promise.resolve()
+                          : await distinctionApi
+                              .checkNumberExisting(value)
+                              .then(response => response.data === false)
+                              ? Promise.resolve()
+                              : Promise.reject('Цей номер уже зайнятий')
                 }
               ]}
           >
