@@ -68,10 +68,10 @@ const AddClubsNewSecretaryForm = (props: any) => {
   }
 
   const handleSubmit = async (values: any) => {
-    if(JSON.parse(values.userId).id == props.head?.userId ) {
+    if (JSON.parse(values.userId).id == props.head?.userId ) {
       const newAdmin = SetAdmin(props.head, values);
       onAdd(newAdmin);
-    }else if(JSON.parse(values.userId).id == props.headDeputy?.userId){
+    } else if (JSON.parse(values.userId).id == props.headDeputy?.userId){
       const newAdmin = SetAdmin(props.headDeputy, values);
       onAdd(newAdmin);  
     } else if (JSON.parse(values.userId).id != props.head?.userId && JSON.parse(values.userId).id != props.headDeputy?.userId) {

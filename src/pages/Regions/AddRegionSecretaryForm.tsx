@@ -73,11 +73,11 @@ const AddNewSecretaryForm = (props: any) => {
 
   const handleSubmit = async (values: any) => {
     console.log(values);
-    if(JSON.parse(values.userId).id == props.head?.userId ) {
+    if (JSON.parse(values.userId).id == props.head?.userId ) {
       const newAdmin = await SetAdmin(props.head, values);
       console.log(newAdmin)
       onAdd(newAdmin);  
-    }else if(JSON.parse(values.userId).id == props.headDeputy?.userId){
+    } else if (JSON.parse(values.userId).id == props.headDeputy?.userId){
       const newAdmin = await SetAdmin(props.headDeputy, values);
       console.log(newAdmin)
       onAdd(newAdmin);  
@@ -91,7 +91,7 @@ const AddNewSecretaryForm = (props: any) => {
     await regionsApi.getAdminTypes().then((response) => {
       setTypes(response.data);
     });
-    if(props.regionId !== undefined)
+    if (props.regionId !== undefined)
     {
     await regionsApi.getRegionUsers(props.regionId).then((response) => { 
       setUsers(response.data);

@@ -316,21 +316,20 @@ const City = () => {
         if (city.head == null) {
           
           checkAdminId(admin);
-        }else {
+        } else {
           if (city.head?.userId !== admin.userId) {
             showConfirmCityAdmin(admin);
-          }else {
+          } else {
             checkAdminId(admin);
           }
         }
-      } else if(admin.adminType.adminTypeName === Roles.CityHeadDeputy) {
+      } else if (admin.adminType.adminTypeName === Roles.CityHeadDeputy) {
         if (city.headDeputy == null) {
           checkAdminId(admin);
-        }else{
+        } else {
           checkAdminId(admin);
         }
-      }
-      else {
+      } else {
           await addCityAdmin(admin);
       }
     } finally {

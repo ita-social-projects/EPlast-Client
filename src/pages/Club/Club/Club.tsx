@@ -99,7 +99,6 @@ const Club = () => {
     if (followers.length < 6) {
       setFollowers([...followers, follower.data]);
     }
-
     setCanJoin(false);
   };
 
@@ -167,7 +166,6 @@ const Club = () => {
 
   const getClub = async () => {
     setLoading(true);
-
     try {
       const response = await getClubById(+id);
       const clubNameResponse = await clubNameOfApprovedMember(userApi.getActiveUserId());
@@ -283,21 +281,20 @@ const Club = () => {
       if (admin.adminType.adminTypeName === Roles.KurinHead) {
         if (club.head == null) {
           checkAdminId(admin);
-        }else {
+        } else {
           if (club.head?.userId !== admin.userId) {
             showConfirmClubAdmin(admin);
-          }else {
+          } else {
             checkAdminId(admin);
           }
         }
-      } else if(admin.adminType.adminTypeName === Roles.KurinHeadDeputy) {
+      } else if (admin.adminType.adminTypeName === Roles.KurinHeadDeputy) {
         if (club.headDeputy == null) {
           checkAdminId(admin);
-        }else{
+        } else {
           checkAdminId(admin);
         }
-      }
-      else {
+      } else {
           await addClubAdmin(admin);
       }
     } finally {

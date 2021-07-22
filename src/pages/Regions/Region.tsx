@@ -313,21 +313,20 @@ const Region = () => {
       if (admin.adminType.adminTypeName === Roles.OkrugaHead) {
         if (head == ' ') {
           checkAdminId(admin);
-        }else {
+        } else {
           if (head.userId !== admin.userId) {
             showConfirmClubAdmin(admin);
-          }else {
+          } else {
             checkAdminId(admin);
           }
         }
-      } else if(admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy) {
+      } else if (admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy) {
         if (headDeputy == 'null') {
           checkAdminId(admin);
-        }else{
+        } else {
           checkAdminId(admin);
         }
-      }
-      else {
+      } else {
           await addRegionAdmin(admin);
       }
     } finally {
@@ -340,8 +339,8 @@ const Region = () => {
   };
 
   const setIsFromRegion = (members: any[], city: string) => {
-    for(let i = 0; i < members.length; i++){
-      if(members[i].name == city){
+    for (let i = 0; i < members.length; i++){
+      if (members[i].name == city){
         setIsActiveUserFromRegion(true);
         return;
       }
@@ -349,8 +348,8 @@ const Region = () => {
   }
 
   const setIsRegionAdmin = (admins: any[], userId: string) => {
-    for(let i = 0; i < admins.length; i++){
-      if(admins[i].userId == userId){
+    for (let i = 0; i < admins.length; i++){
+      if (admins[i].userId == userId){
         setIsActiveUserRegionAdmin(true);
         return;
       }
@@ -363,8 +362,7 @@ const Region = () => {
         for (let i = 0; i < 6; i++) {
           followers[i] = _followers[i];
         }
-      } 
-      else {
+      } else {
         for (let i = 0; i < _followers.length; i++) {
           followers[i] = _followers[i];
         }
