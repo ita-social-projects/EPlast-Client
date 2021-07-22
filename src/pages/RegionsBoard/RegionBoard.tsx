@@ -67,6 +67,7 @@ const RegionBoard = () => {
       regionId: "",
     },
   ]);
+  const [documentsCount, setDocumentsCount] = useState<number>(0);
 
   const [region, setRegion] = useState<any>({
     id: "",
@@ -108,16 +109,16 @@ const RegionBoard = () => {
       const response = await GetRegionsBoard();
       await getUserAccesses();
       if (userAccesses["ViewDecisions"]) {        
-        setRegionDecisions();
+        await setRegionDecisions();
       }
-      setRegionOrgs();
-      setRegionDocs(response.data.id);
+      await setRegionOrgs();
+      await setRegionDocs(response.data.id);
       setRegion(response.data);
       if (response.data.logo == null) {
         setPhotoStatus(false);
       }
-      } finally {
-        setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -146,16 +147,15 @@ const RegionBoard = () => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
+    setDocumentsCount(documentsCount + 1);
   };
 
   const setRegionDocs = async (id: number) => {
-    try {
-      const response: [] = await (await getRegionDocuments(id)).data;
-      setDocuments(
-        response.length > 6 ? response.slice(response.length - 6) : response
-      );
-    } finally {
-    }
+    const response: [] = await (await getRegionDocuments(id)).data;
+    setDocumentsCount(response.length);
+    setDocuments(
+      response.length > 6 ? response.slice(response.length - 6) : response
+    );
   };
 
   const setRegionOrgs = async () => {
@@ -360,7 +360,7 @@ const RegionBoard = () => {
                       {gbPhotosAreLoading ? (
                         <Skeleton.Avatar active size={64} />
                       ) : (
-                        <Avatar size={64} src={governingBody.logo == null ? undefined : governingBody.logo} />
+                        <Avatar size={64} src={governingBody.logo == null ? CityDefaultLogo : governingBody.logo} />
                       )}
                       <p className="userName">
                         {governingBody.governingBodyName}
@@ -460,9 +460,9 @@ const RegionBoard = () => {
         >
           <Card hoverable className="cityCard">
             <Title level={4}>Документообіг <a onClick={() => history.push('/regionsBoard/documents/' + region.id)}>
-              {documents.length !== 0 ? (
+              {documentsCount !== 0 ? (
                 <Badge
-                  count={documents.length}
+                  count={documentsCount}
                   style={{ backgroundColor: "#3c5438" }}
                 />
               ) : null}

@@ -108,7 +108,7 @@ const AnnualReportTable = () => {
 
   const SortDirection=(props:{sort: number})=>{
     return<>
-      <div className={"TableHeader"}>
+      <div className={"tableHeaderSorting"}>
         <button onClick={()=>{setSortKey(props.sort)}} className={sortKey===props.sort? "sortDirection":""}><CaretUpOutlined /></button>
         <button onClick={()=>{setSortKey(-props.sort)}} className={sortKey===-props.sort? "sortDirection":""}><CaretDownOutlined /></button>
       </div>

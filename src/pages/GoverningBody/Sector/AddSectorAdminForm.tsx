@@ -7,7 +7,7 @@ import {
   addAdministrator,
   editAdministrator,
   getAllAdmins,
-} from "../../../api/governingBodiesApi";
+} from "../../../api/governingBodySectorsApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import userApi from "../../../api/UserApi";
 import moment from "moment";
@@ -17,16 +17,16 @@ import {
   maxLength,
   successfulEditAction,
 } from "../../../components/Notifications/Messages"
-import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
+import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
-import "./AddAdministrationModal.less"
+import "../AddAdministratorModal/AddAdministrationModal.less";
 
 const confirm = Modal.confirm;
 
-const AddGoverningBodiesSecretaryForm = (props: any) => {
-  const [head, setHead] = useState<GoverningBodyAdmin>();
-  const { onAdd, setAdmins, setGoverningBodyHead } = props;
+const AddSectorAdminForm = (props: any) => {
+  const [head, setHead] = useState<SectorAdmin>();
+  const { onAdd, setAdmins, setSectorHead } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [usersLoading, setUsersLoading] = useState<boolean>(false);
@@ -48,8 +48,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   const [workEmail, setWorkEmail] = useState<string>("");
 
   const getHead = async () => {
-    if (props.governingBodyId !== 0) {
-      const responseAdmins = await getAllAdmins(props.governingBodyId);
+    if (props.sectorId !== 0) {
+      const responseAdmins = await getAllAdmins(props.sectorId);
       setHead(responseAdmins.data.head);
     }
   };
@@ -62,40 +62,40 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     return current && current > moment();
   };
 
-  const addGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
-    await addAdministrator(admin.governingBodyId, admin);
+  const addSectorAdmin = async (admin: SectorAdmin) => {
+    await addAdministrator(admin.sectorId, admin);
     admin.user.imagePath =  (
-        await userApi.getImage(admin.user.imagePath)
-      ).data;
-    if (admin.adminType.adminTypeName == Roles.GoverningBodyHead) {
-      setGoverningBodyHead(admin);        
+      await userApi.getImage(admin.user.imagePath)
+    ).data;
+    if (admin.adminType.adminTypeName == Roles.GoverningBodySectorHead) {
+      setSectorHead(admin);
     }
-    setAdmins((old: GoverningBodyAdmin[]) => [...old, admin]);
+    setAdmins((old: SectorAdmin[]) => [...old, admin]);
     notificationLogic("success", "Користувач успішно доданий в провід");
     form.resetFields();
     await NotificationBoxApi.createNotifications(
       [admin.userId],
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/governingBodies/${props.governingBodyId}`,
-      `цьому керівному органі`
+      `/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
+      `цьому напрямі керівного органу`
     );
   };
 
-  const editGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
-    await editAdministrator(props.governingBodyId, admin);
+  const editSectorAdmin = async (admin: SectorAdmin) => {
+    await editAdministrator(props.sectorId, admin);
     notificationLogic("success", successfulEditAction("Адміністратора"));
     form.resetFields();
     await NotificationBoxApi.createNotifications(
       [admin.userId],
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/governingBodies/${props.governingBodyId}`,
-      `цьому керівному органі`);
+      `/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
+      `цьому напрямі керівного органу`);
   };
 
 
-  const showConfirm = (admin: GoverningBodyAdmin) => {
+  const showConfirm = (admin: SectorAdmin) => {
     confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
@@ -103,7 +103,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           <b>
             {head?.user.firstName} {head?.user.lastName}
           </b>{" "}
-          є Головою Керівного Органу, час правління закінчується{" "}
+          є Головою Напряму Керівного Органу, час правління закінчується{" "}
           <b>
             {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
@@ -115,16 +115,16 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       onCancel() { },
       onOk() {
         if (admin.id === 0) {
-          addGoverningBodyAdmin(admin);
+          addSectorAdmin(admin);
         } else {
-          editGoverningBodyAdmin(admin);
+          editSectorAdmin(admin);
         }
       },
     });
   };
 
   const handleSubmit = async (values: any) => {
-    const newAdmin: GoverningBodyAdmin = {
+    const newAdmin: SectorAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
       userId: props.admin === undefined
         ? JSON.parse(values.userId).id
@@ -134,7 +134,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         ...new AdminType(),
         adminTypeName: values.AdminType,
       },
-      governingBodyId: props.governingBodyId,
+      sectorId: props.sectorId,
       startDate: values.startDate,
       endDate: values.endDate,
       workEmail: workEmail
@@ -143,18 +143,18 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     onAdd();
     if (newAdmin.id === 0) {
       try {
-        if (values.AdminType === Roles.GoverningBodyHead && head !== null) {
+        if (values.AdminType === Roles.GoverningBodySectorHead && head !== null) {
           if (head?.userId !== newAdmin.userId) {
             showConfirm(newAdmin);
           }
         } else {
-          addGoverningBodyAdmin(newAdmin);
+          addSectorAdmin(newAdmin);
         }
       } finally {
         onAdd();
       }
     } else {
-      editGoverningBodyAdmin(newAdmin);
+      editSectorAdmin(newAdmin);
     }
   };
 
@@ -228,7 +228,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: Roles.GoverningBodyHead },
+            { value: Roles.GoverningBodySectorHead },
             { value: "Голова КПР" },
             { value: "Секретар КПР" },
             { value: "Член КПР з питань організаційного розвитку" },
@@ -244,18 +244,18 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         className={classes.formField}
         label="Електронна пошта"
         rules={[
-            {
-              pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-              message: <div className="formItemExplain">{incorrectEmail}</div>,
-            },
-            {
-              max: 50,
-              message: <div className="formItemExplain">{maxLength(50)}</div>,
-            },
-            {
-              required: true,
-              message: <div className="formItemExplain">{emptyInput()}</div>,
-            }
+          {
+            pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
+            message: <div className="formItemExplain">{incorrectEmail}</div>,
+          },
+          {
+            max: 50,
+            message: <div className="formItemExplain">{maxLength(50)}</div>,
+          },
+          {
+            required: true,
+            message: <div className="formItemExplain">{emptyInput()}</div>,
+          }
         ]}
       >
         <Input
@@ -290,8 +290,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           props.admin === undefined
             ? undefined
             : props.admin.endDate === null
-              ? undefined
-              : moment(props.admin.endDate)
+            ? undefined
+            : moment(props.admin.endDate)
         }
       >
         <DatePicker
@@ -310,4 +310,4 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   );
 };
 
-export default AddGoverningBodiesSecretaryForm;
+export default AddSectorAdminForm;

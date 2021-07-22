@@ -82,9 +82,9 @@ const FormAddPlastDegree = ({
                 onChange = {(value) => handleOnChange(value)}
                 placeholder = {"Оберіть Улад"}
             >
-                {!isCityAdmin && availablePlastDegree.find(item => item.name === "Пласт прият") && <Select.Option value="Пласт прият">Пласт прият</Select.Option>}
-                {availablePlastDegree.find(item =>item.name.includes("Старш")) && <Select.Option value="Улад Старшого Пластунства">Улад Старшого Пластунства</Select.Option>}
-                {availablePlastDegree.filter(item => item.name.includes("сеніор")) && <Select.Option value="Улад Пластового Сеніорату">Улад Пластового Сеніорату</Select.Option>}
+                { availablePlastDegree.find(item => item.name === "Пласт прият") && <Select.Option value="Пласт прият">Пласт прият</Select.Option>}
+                {!isCityAdmin && availablePlastDegree.find(item => item.name.includes("Старш")) && <Select.Option value="Улад Старшого Пластунства">Улад Старшого Пластунства</Select.Option>}
+                {!isCityAdmin && availablePlastDegree.filter(item => item.name.includes("сеніор")) && <Select.Option value="Улад Пластового Сеніорату">Улад Пластового Сеніорату</Select.Option>}
             </Select>
         </Form.Item>
         {visiableDegree && 
