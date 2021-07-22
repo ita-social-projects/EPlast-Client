@@ -124,20 +124,12 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
       reason: values.reason,
       number: values.number,
     };
-    if (
-      await precautionApi
-        .checkNumberExisting(newPrecaution.number)
-        .then((response) => response.data === false)
-    ) {
-      await precautionApi.addUserPrecaution(newPrecaution);
-      setVisibleModal(false);
-      form.resetFields();
-      onAdd();
-      await createNotifications(newPrecaution);
-    } else {
-      openNotification(`Номер ${values.number} вже зайнятий`);
-      form.resetFields(["number"]);
-    }
+
+    await precautionApi.addUserPrecaution(newPrecaution);
+    setVisibleModal(false);
+    form.resetFields();
+    onAdd();
+    await createNotifications(newPrecaution);
   };
   return (
     <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
@@ -158,10 +150,14 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
                   message: maxNumber(99999),
                 },
                 {
-                  validator: (_ : object, value: number) => 
+                  validator: async (_ : object, value: number) =>
                       value < 1
                           ? Promise.reject(minNumber(1)) 
-                          : Promise.resolve()
+                          : await precautionApi
+                              .checkNumberExisting(value)
+                              .then((response) => response.data === false)
+                              ? Promise.resolve()
+                              : Promise.reject('Цей номер уже зайнятий')
                 }
               ]}
           >
