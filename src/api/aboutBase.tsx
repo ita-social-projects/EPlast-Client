@@ -1,5 +1,5 @@
 import Section from "../models/AboutBase/SectionModel";
-import Subsection from "../models/AboutBase/SubSectionModel";
+import Subsection from "../models/AboutBase/SubsectionModel";
 import api from "./api";
 
 const getAboutBaseSectionById = async (id:number)=>{
