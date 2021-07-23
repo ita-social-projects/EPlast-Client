@@ -93,12 +93,13 @@ const EditSector = () => {
     try {
       setLoading(true);
       let response = await getSectorById(+sectorId);
+      const sectorViewModel = response.data.sectorViewModel;
 
-      if (response.data.logo !== null && response.data.logo !== '') {
-        const logo = await getSectorLogo(response.data.logo);
-        response.data.logo = logo.data;
+      if (sectorViewModel.logo !== null && sectorViewModel.logo !== '') {
+        const logo = await getSectorLogo(sectorViewModel.logo);
+        sectorViewModel.logo = logo.data;
       }
-      setSector(response.data);
+      setSector(sectorViewModel);
     } finally {
       setLoading(false);
     }
