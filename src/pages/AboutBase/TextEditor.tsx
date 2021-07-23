@@ -87,7 +87,7 @@ const TextEditor = () => {
             modules={modules}/> */}
           </Form.Item>
         
-          <Form.Item>
+          {/* <Form.Item>
             <div className={formclasses.cardButton}>
               <Button key="back" onClick={handleCancel} className={formclasses.buttons}>
                 Відмінити
@@ -96,7 +96,7 @@ const TextEditor = () => {
                 Опублікувати
               </Button>
             </div>
-          </Form.Item>
+          </Form.Item> */}
          </Form>
          
     )

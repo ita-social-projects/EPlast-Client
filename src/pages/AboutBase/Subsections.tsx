@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import {Form,Input, Button, Layout, Collapse} from 'antd';
+import {Form,Input, Modal, Button, Layout, Collapse} from 'antd';
 import { useHistory } from "react-router-dom";
 import Spinner from '../Spinner/Spinner';
 import Search from "antd/lib/input/Search";
 import Title from "antd/lib/typography/Title";
-import Popup from "reactjs-popup";
 import TextEditor from './TextEditor';
 import {
   EditOutlined,
@@ -30,6 +29,7 @@ const Subsections = () =>{
     const [canEdit, setCanEdit] = useState(false);
     const [searchedData, setSearchedData] = useState("");
     const [form] = Form.useForm();
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const [data, setData]= useState<SubsectionModel[]>([
       {
           id:0,
@@ -39,7 +39,16 @@ const Subsections = () =>{
       }
     ]);
 
-
+    const showModal = () => {
+      setIsModalVisible(true);
+    };
+    const handleOk = () => {
+      setIsModalVisible(false);
+    };
+  
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
     const handleSubDelete=(id:SubsectionModel['id'])=>
     {
       setData(prev=>prev.filter(item=>item.id!==id))
@@ -84,16 +93,15 @@ const Subsections = () =>{
     
     return !loading ? (
         <Layout.Content className="aboutbase">
-            
-    {data.map((item,index)=>(
+     {
     <>
     <div>
     <Collapse
             onChange={callback}
-            className="subsection" key={item.id}
+            className="subsection" 
         >
             <Panel
-                header={item.title = 'Subsection'}
+                header={'Subsection'}
                 key="1"
                 extra={<>{editOtlined()}{deleteOtlined()}</>}
             >
@@ -101,12 +109,16 @@ const Subsections = () =>{
             </Panel>
     </Collapse>
     </div>
-    <div className="modalDiv"> 
-    <Popup modal trigger={<Button className="addPostButton" type="primary" /*onClick={addPost}*/>Додати допис</Button>}>
-    <div><TextEditor /></div>
-    </Popup>
-    </div></>
-    ))}
+
+     <div className="modalDiv"> 
+     <Button className="addPostButton" type="primary" onClick={showModal}>Додати допис</Button>
+     <Modal  visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+    {/* <div><TextEditor /></div> */}
+     </Modal>
+    </div> 
+    
+    </>
+    }
         </Layout.Content>
     ) : (
         <Spinner />
