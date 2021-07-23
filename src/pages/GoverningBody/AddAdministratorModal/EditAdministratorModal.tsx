@@ -175,12 +175,7 @@ const EditAdministratorModal = (props: Props) => {
               { value: "Член КПР з соціального напрямку" },
               { value: "Член КПР відповідальний за зовнішні зв'язки" },
             ]}
-            filterOption={(inputValue, option) =>
-              option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
-              -1
-            }
             placeholder={"Тип адміністрування"}
-            value={props.admin.adminType.adminTypeName}
           />
         </Form.Item>
 

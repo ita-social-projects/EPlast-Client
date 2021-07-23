@@ -302,28 +302,38 @@ const City = () => {
     });
   };
 
-  const handleOk = async(admin: CityAdmin) => {
+  const checkAdminId = async (admin: CityAdmin)=> {
     if (admin.id === 0) {
-      try {
-        if (admin.adminType.adminTypeName === Roles.CityHead && city.head !== null) {
-          if (city.head?.userId !== admin.userId) {
-          await  showConfirmCityAdmin(admin);
-          } else if (city.head?.userId === admin.userId) {
-          }
-          else {
-            editCityAdmin(admin);
-          }
+      await addCityAdmin(admin);
+    } else {
+      await editCityAdmin(admin);
+    }
+  }
+
+  const handleOk = async(admin: CityAdmin) => {
+    try {
+      if (admin.adminType.adminTypeName === Roles.CityHead) {
+        if (city.head == null) {
+          
+          checkAdminId(admin);
         } else {
-          if (admin.id === 0) {
-            addCityAdmin(admin);
-          }
-          else {
-            editCityAdmin(admin);
+          if (city.head?.userId !== admin.userId) {
+            showConfirmCityAdmin(admin);
+          } else {
+            checkAdminId(admin);
           }
         }
-      } finally {
-        setvisible(false);
+      } else if (admin.adminType.adminTypeName === Roles.CityHeadDeputy) {
+        if (city.headDeputy == null) {
+          checkAdminId(admin);
+        } else {
+          checkAdminId(admin);
+        }
+      } else {
+          await addCityAdmin(admin);
       }
+    } finally {
+      setvisible(false);
     }
   };
 
@@ -787,6 +797,8 @@ const City = () => {
         <AddCitiesNewSecretaryForm
           onAdd={handleOk}
           cityId={+id}
+          head={city.head}
+          headDeputy={city.headDeputy}
           visibleModal={visible}>
         </AddCitiesNewSecretaryForm>
       </Modal>

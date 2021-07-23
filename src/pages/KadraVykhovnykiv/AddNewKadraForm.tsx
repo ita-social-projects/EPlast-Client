@@ -121,7 +121,7 @@ type FormAddKadraProps = {
                     notificationLogic('error', "Номер реєстру вже зайнятий");
                     form.resetFields();
                     onAdd();
-                }; 
+                }
         });
     }
 
@@ -258,10 +258,14 @@ type FormAddKadraProps = {
                   message: maxNumber(99999),
                 },
                 {
-                  validator: (_ : object, value: number) => 
+                  validator: async (_ : object, value: number) =>
                       value < 1
                           ? Promise.reject(minNumber(1)) 
-                          : Promise.resolve()
+                          : await KadraVykhovnykivApi
+                              .doesRegisterNumberExist(value)
+                              .then(response => response.data === false)
+                              ? Promise.resolve()
+                              : Promise.reject('Цей номер уже зайнятий')
                 }
               ]}
           >
