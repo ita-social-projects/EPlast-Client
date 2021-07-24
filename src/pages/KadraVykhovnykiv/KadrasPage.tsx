@@ -5,6 +5,7 @@ import jwt from "jwt-decode";
 import AddNewKadraForm from './AddNewKadraForm';
 import AuthStore from '../../stores/AuthStore';
 import { Roles } from '../../models/Roles/Roles';
+import Search from 'antd/lib/input/Search';
 
 const classes = require('./Table.module.css');
 
@@ -95,7 +96,12 @@ export const KadrasTable = () => {
                 ) : (
                 <></>
                 )}
-                <Input placeholder="Пошук" onChange={handleSearch} allowClear />
+                <Search
+                enterButton
+                placeholder="Пошук"
+                allowClear
+                onChange={handleSearch}               
+               />
             </div>
             <Card
                 style={{ width: '100%' }}

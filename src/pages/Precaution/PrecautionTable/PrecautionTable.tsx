@@ -230,7 +230,6 @@ const PrecautionTable = () => {
                 <Button type="primary" onClick={showModal}>
                   Додати пересторогу
                 </Button>
-                <span />
               </>
             ) : (
               <></>
@@ -238,6 +237,7 @@ const PrecautionTable = () => {
             <Search
                 enterButton
                 placeholder="Пошук"
+                allowClear
                 onChange={handleSearchChange}
                 onSearch={handleSearch}                
                />

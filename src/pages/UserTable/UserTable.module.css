@@ -1,42 +1,41 @@
-.menu {
+.menu{
   box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
   position: absolute;
 }
-.searchContainer {
+.searchContainer{
   margin-bottom: 12px;
   display: flex;
 }
-.searchContainer > input {
+.searchContainer > input{
   width: 300px;
 }
-.searchArea {
-  width: 300px;
+.searchArea{
+  width: 240px;
   margin-left: auto;
 }
-.filterContainer {
+.filterContainer{
   width: 400px;
 }
 
-@media (max-width: 765px) {
-  .table {
+@media (max-width: 765px){
+  .table{
     overflow-x: scroll;
   }
 
-  .searchContainer {
+  .searchContainer{
     display: flex;
     flex-wrap: wrap;
     flex-flow: wrap;
     justify-content: left;
     width: auto;
   }
-  .filterContainer {
+  .filterContainer{
     display: flex;
     flex-direction: column;
     margin-bottom: 30px;
     width: 100%;
   }
-  .searchArea {
+  .searchArea{
     width: 100%;
   }
-
 }
