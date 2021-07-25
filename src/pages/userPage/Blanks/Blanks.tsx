@@ -140,10 +140,10 @@ export const Blanks = () => {
     return loading === false ? (
     <div className="kadraWrapper">
         <Skeleton.Avatar
-        size={220}
-        active={true}
-        shape="circle"
-        className="img"
+            size={220}
+            active={true}
+            shape="circle"
+            className="img"
         />
     </div>
     ) : ( 

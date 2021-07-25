@@ -372,7 +372,7 @@ const Assignments = () => {
               </div>
             )
           )}
-            </div>
+        </div>
       </div>
     </div>
   );
