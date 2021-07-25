@@ -329,9 +329,11 @@ const Sector = () => {
                 admins.map((admin) => (
                   <Col className="governingBodyMemberItem" key={admin.id} xs={12} sm={8}>
                     <div
-                      onClick={() =>
-                        history.push(`/userpage/main/${admin.userId}`)
-                      }
+                      onClick={() => {
+                        if (userAccesses["GoToSecretaryProfile"]) {
+                          history.push(`/userpage/main/${admin.userId}`)
+                        }
+                      }}
                     >
                       {photosLoading ? (
                         <Skeleton.Avatar active size={64} />
