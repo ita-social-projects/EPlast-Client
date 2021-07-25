@@ -20,6 +20,7 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../../models/Roles/Roles";
 import { Data } from '../Interface/Interface';
+import { successfulAddDegree, successfulDeleteDegree } from "../../../components/Notifications/Messages";
 const { Title } = Typography;
 
 const ActiveMembership = () => {
@@ -51,6 +52,7 @@ const ActiveMembership = () => {
     await activeMembershipApi.getUserPlastDegrees(userId).then((response) => {
       setPlastDegrees(response);
     });
+    notificationLogic("success", successfulAddDegree());
   };
   const getAppropriateToGenderDegree = (plastDegreeName: string): string => {
     if (userGenders[0] === data?.user.gender?.name && plastDegreeName.includes("/")) {
@@ -138,6 +140,7 @@ const ActiveMembership = () => {
       );
     }
     await fetchData();
+    notificationLogic("error", successfulDeleteDegree());
   };
 
   const setTagColor = (userRoles: string) => {
@@ -188,11 +191,13 @@ const ActiveMembership = () => {
           imageUrl={data?.user.imagePath}
           firstName={data?.user.firstName}
           lastName={data?.user.lastName}
-          isUserPlastun={data?.isUserPlastun}
+          isUserPlastun={true}
           pseudo={data?.user.pseudo}
+          governingBody={data?.user.governingBody}
           region={data?.user.region}
           city={data?.user.city}
           club={data?.user.club}
+          governingBodyId={data?.user.governingBodyId}
           regionId={data?.user.regionId}
           cityId={data?.user.cityId}
           clubId={data?.user.clubId}
@@ -293,7 +298,8 @@ const ActiveMembership = () => {
                         return role
                     })) && (
                       <div className={classes.buttons}>
-                        <button
+                        <Button type="primary"
+                          className={classes.buttonChange}
                           onClick={() => {
                             DeleteDegreeConfirm(
                               userId,
@@ -301,10 +307,9 @@ const ActiveMembership = () => {
                               handleDelete
                             );
                           }}
-                          className={classes.button}
                         >
                           Видалити
-                        </button>
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -315,14 +320,14 @@ const ActiveMembership = () => {
                         return role
                     })) && (
                   <div className={classes.buttons}>
-                    <button
-                      onClick={() => {
-                        setVisibleModal(true);
-                      }}
-                      className={classes.button}
+                    <Button type="primary"
+                      className={classes.buttonChange}
+                      onClick={() =>
+                        setVisibleModal(true)
+                      }
                     >
                       {AppropriateButtonText()}
-                    </button>
+                    </Button>
                   </div>
                )}
             </div>

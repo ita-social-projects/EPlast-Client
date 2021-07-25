@@ -4,7 +4,7 @@ import { Data } from "../Interface/Interface";
 import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
 import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId, openBiographyFile, getExtractFromUPUByUserId, removeExtractFromUPUDocument, getExtractFromUPUFile, openExtractFromUPUFile, openGenerationFile } from "../../../api/blankApi";
-import { Badge, Button, Col, Popconfirm, Tooltip } from "antd";
+import { Badge, Button, Col, Popconfirm, Skeleton, Tooltip } from "antd";
 import classes from "./Blanks.module.css";
 import Title from "antd/lib/typography/Title";
 import { DeleteOutlined, DownloadOutlined, EyeOutlined, FileImageOutlined, FilePdfOutlined, FileTextOutlined } from "@ant-design/icons";
@@ -137,21 +137,31 @@ export const Blanks = () => {
             userRoles?.includes(Roles.Admin);
     };
 
-    return (!loading ? (
-        <Spinner />
-    ) : (
+    return loading === false ? (
+    <div className="kadraWrapper">
+        <Skeleton.Avatar
+        size={220}
+        active={true}
+        shape="circle"
+        className="img"
+        />
+    </div>
+    ) : ( 
         <>
             <div className={classes.wrapper}>
                 <div className={classes.wrapperImg}>
-                    <AvatarAndProgressStatic imageUrl={data?.user.imagePath}
+                    <AvatarAndProgressStatic 
+                        imageUrl={data?.user.imagePath}
                         time={data?.timeToJoinPlast}
                         firstName={data?.user.firstName}
                         lastName={data?.user.lastName}
                         isUserPlastun={true}
                         pseudo={data?.user.pseudo}
+                        governingBody={data?.user.governingBody}
                         region={data?.user.region}
                         city={data?.user.city}
                         club={data?.user.club}
+                        governingBodyId={data?.user.governingBodyId}
                         regionId={data?.user.regionId}
                         cityId={data?.user.cityId}
                         clubId={data?.user.clubId} />
@@ -414,7 +424,5 @@ export const Blanks = () => {
                 visibleModal={visibleExtractFromUPUModal}
                 setVisibleModal={setVisibleExtractFromUPUModal} />
         </>
-
-    )
     )
 }

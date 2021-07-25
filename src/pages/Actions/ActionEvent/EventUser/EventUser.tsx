@@ -9,6 +9,7 @@ import {
     Drawer,
     Tag,
     Input,
+    Skeleton,
 } from "antd";
 import eventUserApi from "../../../../api/eventUserApi";
 import EventsUser from "../../../../models/EventUser/EventUser";
@@ -26,9 +27,9 @@ import moment from "moment";
 import EventCreateDrawer from "../EventCreate/EventCreateDrawer";
 import EventEditDrawer from "../EventEdit/EventEditDrawer";
 import EventCalendar from "../EventCalendar/EventCalendar";
-import Spinner from "../../../Spinner/Spinner";
 import CreatedEvents from "../../../../models/EventUser/CreatedEvents";
 import AvatarAndProgressStatic from "../../../userPage/personalData/AvatarAndProgressStatic";
+import { Data } from '../../../userPage/Interface/Interface'
 import { Roles } from "../../../../models/Roles/Roles";
 
 const { Title } = Typography;
@@ -49,7 +50,7 @@ const EventUser = () => {
     const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
         new CreatedEvents(),
     ]);
-    const [currentUser, setCurrentUser] = useState<any>({});
+    const [currentUser, setCurrentUser] = useState<Data>();
     const [showEventCreateDrawer, setShowEventCreateDrawer] = useState(false);
     const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
     const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
@@ -63,7 +64,7 @@ const EventUser = () => {
 
     useEffect(() => {
         userApi.getById(userId).then(async (response) => {
-            setCurrentUser(response.data.user);
+            setCurrentUser(response.data);
         });
         fetchData();
     }, []);
@@ -74,11 +75,6 @@ const EventUser = () => {
         await eventUserApi.getEventsUser(userId).then(async (response) => {
             setCreatedEvents(response.data);
             setAllEvents(response.data);
-            await userApi
-                .getImage(response.data.user.imagePath)
-                .then((response: { data: any }) => {
-                    setImageBase64(response.data);
-                });
 
             setLoading(true);
         });
@@ -131,25 +127,35 @@ const EventUser = () => {
     };
 
     const newLocal = "#3c5438";
+
     return loading === false ? (
-        <Spinner />
-    ) : (
+    <div className="kadraWrapper">
+        <Skeleton.Avatar
+        size={220}
+        active={true}
+        shape="circle"
+        className="img"
+        />
+    </div>
+    ) : ( 
         <div className={classes.wrapper}>
             <div className={classes.wrapperImg}>
                 <div className={classes.avatarWrapper}>
                     <AvatarAndProgressStatic
-                        imageUrl={currentUser.imagePath}
-                        time={currentUser.timeToJoinPlast}
-                        firstName={currentUser.firstName}
-                        lastName={currentUser.lastName}
+                        imageUrl={currentUser?.user.imagePath}
+                        time={currentUser?.timeToJoinPlast}
+                        firstName={currentUser?.user.firstName}
+                        lastName={currentUser?.user.lastName}
                         isUserPlastun={true}
-                        pseudo={currentUser.pseudo}
-                        region={currentUser.region}
-                        city={currentUser.city}
-                        club={currentUser.club}
-                        cityId={currentUser.cityId}
-                        clubId={currentUser.clubId}
-                        regionId={currentUser.regionId}
+                        pseudo={currentUser?.user.pseudo}
+                        governingBody={currentUser?.user.governingBody}
+                        region={currentUser?.user.region}
+                        city={currentUser?.user.city}
+                        club={currentUser?.user.club}
+                        governingBodyId={currentUser?.user.governingBodyId}
+                        cityId={currentUser?.user.cityId}
+                        clubId={currentUser?.user.clubId}
+                        regionId={currentUser?.user.regionId}
                     />
                 </div>
                 {userToken.nameid === userId && canCreate && (
@@ -172,8 +178,8 @@ const EventUser = () => {
                             userToken.nameid !== userId && (
                                 <h2>
                                     {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
-                                    { userGenders[0] === currentUser.gender?.name ? (<> відвідав</>) :
-                                        userGenders[1] === currentUser.gender?.name ? (<> відвідала</>) :
+                                    { userGenders[0] === currentUser?.user.gender?.name ? (<> відвідав</>) :
+                                        userGenders[1] === currentUser?.user.gender?.name ? (<> відвідала</>) :
                                             (<> відвідав(ла)</>)} жодної події
                                 </h2>
                             )}
@@ -285,8 +291,8 @@ const EventUser = () => {
                                 <div>
                                     <h2>
                                         {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
-                                        {userGenders[0] === currentUser.gender?.name ? (<> створив</>) :
-                                            userGenders[1] === currentUser.gender?.name ? (<> створила</>) :
+                                        {userGenders[0] === currentUser?.user.gender?.name ? (<> створив</>) :
+                                            userGenders[1] === currentUser?.user.gender?.name ? (<> створила</>) :
                                                 (<> створив(ла)</>)} жодної події
                                 </h2>
                                 </div>
@@ -438,8 +444,8 @@ const EventUser = () => {
                             userToken.nameid !== userId && (
                                 <h2>
                                     {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
-                                    {userGenders[0] === currentUser.gender?.name ? (<> запланував</>) :
-                                            userGenders[1] === currentUser.gender?.name ? (<> запланувала</>) :
+                                    {userGenders[0] === currentUser?.user.gender?.name ? (<> запланував</>) :
+                                            userGenders[1] === currentUser?.user.gender?.name ? (<> запланувала</>) :
                                                 (<> запланував(ла)</>)} жодної події
                                 </h2>
                             )}

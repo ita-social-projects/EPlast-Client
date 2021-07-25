@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Avatar, Tooltip, Spin } from 'antd';
+import { Card, Avatar, Tooltip, Spin, Skeleton } from 'antd';
 import './Approvers.less';
-import AvatarAndProgress from '../../../../src/pages/userPage/personalData/AvatarAndProgress';
 import AddUser from "../../../assets/images/user_add.png";
 import { ApproversData } from '../Interface/Interface';
 import jwt from 'jwt-decode';
@@ -23,6 +22,7 @@ import { StickyContainer } from 'react-sticky';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import DeleteApproveButton from './DeleteApproveButton';
 import { Roles } from '../../../models/Roles/Roles';
+import AvatarAndProgressStatic from '../personalData/AvatarAndProgressStatic';
 
 const Assignments = () => {
   const history = useHistory();
@@ -124,12 +124,19 @@ const Assignments = () => {
 
   const { Meta } = Card;
   return loading === false ? (
-    <Spinner />
-  ) : (
+    <div className="kadraWrapper">
+      <Skeleton.Avatar
+        size={220}
+        active={true}
+        shape="circle"
+        className="img"
+      />
+    </div>
+  ) : ( 
     <div className="displayFlex">
       <div className="avatarWrapperApprovers">
         <StickyContainer className="kadraWrapper">
-          <AvatarAndProgress
+          <AvatarAndProgressStatic
             imageUrl={data?.user.imagePath}
             time={data?.timeToJoinPlast}
             firstName={data?.user.firstName}
