@@ -133,7 +133,7 @@ const SectorAdministration = () => {
                 title={`${member.adminType.adminTypeName}`}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                 actions={
-                  userAccesses["AddGBSecretary"]
+                  userAccesses["AddSecretary"]
                     ? [
                       <SettingOutlined
                         className={classes.governingBodyAdminSettingsIcon}
@@ -147,9 +147,11 @@ const SectorAdministration = () => {
                 }
               >
                 <div
-                  onClick={() =>
-                    history.push(`/userpage/main/${member.userId}`)
-                  }
+                  onClick={() => {
+                    if (userAccesses["GoToSecretaryProfile"]) {
+                      history.push(`/userpage/main/${member.userId}`)
+                    }
+                  }}
                   className="governingBodyMember"
                 >
                   <div>
@@ -183,7 +185,7 @@ const SectorAdministration = () => {
           Назад
         </Button>
       </div>
-      {userAccesses["AddGBSecretary"] ? (
+      {userAccesses["AddSecretary"] ? (
         <EditAdministratorModal
           admin={admin}
           setAdmin={setAdmin}

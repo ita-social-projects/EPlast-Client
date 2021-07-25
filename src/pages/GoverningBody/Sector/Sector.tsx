@@ -253,13 +253,13 @@ const Sector = () => {
                   Деталі
                 </Button>
               </Col>
-              {userAccesses["EditGB"] ? (
+              {userAccesses["EditSector"] ? (
                 <Col xs={24} sm={4}>
                   <Row
                     className="governingBodyIcons"
                     justify={userAccesses["DeleteGB"] ? "center" : "start"}
                   >
-                    {userAccesses["EditGB"] ? (
+                    {userAccesses["EditSector"] ? (
                       <Col>
                         <Tooltip title="Редагувати Напрям Керівного Органу">
                           <EditOutlined
@@ -271,7 +271,7 @@ const Sector = () => {
                         </Tooltip>
                       </Col>
                     ) : null}
-                    {userAccesses["DeleteGB"] ? (
+                    {userAccesses["DeleteSector"] ? (
                       <Col offset={1}>
                         <Tooltip title="Видалити Напрям Керівного Органу">
                           <DeleteOutlined
@@ -348,7 +348,7 @@ const Sector = () => {
               )}
             </Row>
             <div className="governingBodyMoreButton">
-              {userAccesses["AddGBSecretary"] ? (
+              {userAccesses["AddSecretary"] ? (
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
