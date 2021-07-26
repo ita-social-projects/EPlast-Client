@@ -5,7 +5,6 @@ import Spinner from '../Spinner/Spinner';
 import Search from "antd/lib/input/Search";
 import Title from "antd/lib/typography/Title";
 import AskQuestionModal from './AskQuestionModal';
-import Popup from "reactjs-popup";
 import TextEditor from './TextEditor';
 import {
   EditOutlined,
