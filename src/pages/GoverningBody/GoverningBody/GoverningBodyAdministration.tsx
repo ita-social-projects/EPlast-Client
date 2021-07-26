@@ -153,9 +153,11 @@ const GoverningBodyAdministration = () => {
                   }
                 >
                   <div
-                    onClick={() =>
-                      history.push(`/userpage/main/${member.userId}`)
-                    }
+                    onClick={() => {
+                      if (userAccesses["GoToSecretaryProfile"]) {
+                        history.push(`/userpage/main/${member.userId}`)
+                      }
+                    }}
                     className="governingBodyMember"
                   >
                     <div>
