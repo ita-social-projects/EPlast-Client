@@ -5,6 +5,7 @@ import jwt from "jwt-decode";
 import AddNewKadraForm from './AddNewKadraForm';
 import AuthStore from '../../stores/AuthStore';
 import { Roles } from '../../models/Roles/Roles';
+import Search from 'antd/lib/input/Search';
 
 const classes = require('./Table.module.css');
 
@@ -88,14 +89,22 @@ export const KadrasTable = () => {
             <div className={classes.searchContainer}>
                 {canEdit === true ? (
                 <>
-                <Button type="primary" onClick={showModal}>
+                <Button 
+                    type="primary" 
+                    onClick={showModal}
+                >
                     Додати кадру
                 </Button>
                     </>
                 ) : (
                 <></>
                 )}
-                <Input placeholder="Пошук" onChange={handleSearch} allowClear />
+                <Search
+                    enterButton
+                    placeholder="Пошук"
+                    allowClear
+                    onChange={handleSearch}               
+                />
             </div>
             <Card
                 style={{ width: '100%' }}
@@ -107,7 +116,8 @@ export const KadrasTable = () => {
             >
                 {contentListNoTitle[noTitleKey]}
             </Card>
-            <Drawer width="auto"
+            <Drawer 
+                width="auto"
                 title="Надати кадру виховників"
                 visible={visible}
                 onClose={handleCancel}

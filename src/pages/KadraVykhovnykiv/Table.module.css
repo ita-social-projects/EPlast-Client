@@ -1,13 +1,13 @@
-.titleTable {
+.titleTable{
     text-align: center;
     margin-bottom: 15px;
   }
 
-  .searchContainer {
+  .searchContainer{
     display: flex;
     align-items: baseline;
     margin-bottom: 12px;
-    width: 425px;
+    width: 376px;
     margin-left: auto; 
   }
   .searchContainer>input{
@@ -30,7 +30,6 @@
     .searchContainer{
       width: 100%;
       flex-direction: column;
-      
     }
     .searchContainer>*{
       width: 100%;
@@ -41,9 +40,7 @@
       width: 100%;
       margin-bottom: 10px;
       margin-left: auto; 
-
     }
-
   }
  
 .link{
@@ -60,14 +57,13 @@
   text-align: center;
 }
 
-  .menu {
-    box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
-    position: absolute;
-  }
+.menu{
+  box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
+  position: absolute;
+}
 
-  @media (max-width: 1350px){
-    .table{
-      overflow-x: scroll;
-    }
+@media (max-width: 1350px){
+  .table{
+    overflow-x: scroll;
   }
-
+}

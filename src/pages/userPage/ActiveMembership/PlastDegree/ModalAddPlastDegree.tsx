@@ -9,7 +9,13 @@ type ModalAddPlastDegreeProps = {
     setVisibleModal: (visibleModal: boolean) => void;
     handleAddDegree: () => void;
 }
-const ModalAddPlastDegree = ({ visibleModal, setVisibleModal, isCityAdmin, userId, handleAddDegree }: ModalAddPlastDegreeProps) => {
+const ModalAddPlastDegree = ({ 
+    visibleModal, 
+    setVisibleModal, 
+    isCityAdmin, 
+    userId, 
+    handleAddDegree 
+    }: ModalAddPlastDegreeProps) => {
     const [availablePlastDegree, setAvailablePlastDegree] = useState<Array<PlastDegree>>([]);
     const [cancel, setCancel]=useState<boolean>(false);
 

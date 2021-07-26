@@ -218,11 +218,10 @@ const DistinctionTable = () => {
                 <>
                   <Button type="primary" onClick={showModal}>
                     Додати відзначення
-                </Button>
+                  </Button>
                   <Button type="primary" onClick={showModalEditTypes}>
                     Редагування типів відзначень
-                </Button>
-                  <span />
+                  </Button>
                 </>
               ) : (
                   <></>
@@ -230,6 +229,7 @@ const DistinctionTable = () => {
               <Search
                 enterButton
                 placeholder="Пошук"
+                allowClear
                 onChange={handleSearchChange}
                 onSearch={handleSearch}                
                />
