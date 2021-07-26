@@ -168,7 +168,6 @@ const HeaderContainer = () => {
           </div>
         </Menu.Item>
       </Menu>
-      {console.log("signed in: " + signedIn)}
       {signedIn && userState.current ? (
         <>
           <Menu mode="horizontal" className={classes.headerMenu + " " + classes.MenuWidth}>
