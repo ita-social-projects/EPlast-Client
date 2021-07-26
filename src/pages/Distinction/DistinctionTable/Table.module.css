@@ -1,13 +1,14 @@
-.titleTable {
+.titleTable{
     text-align: center;
     margin-bottom: 15px;
   }
-  /* Search container */
 
-  .searchContainer {
+  /* Search container */
+  .searchContainer{
     display: flex;
     margin-bottom: 12px;
-    width: 700px;
+    align-items: baseline;
+    width: 660px;
     margin-left: auto; 
   }
   .searchContainer>input{
@@ -23,23 +24,22 @@
   }
   .searchContainer>* {
     margin-left: 12px;
-  }
-  
+  } 
+
   /* Context menu right click */
   @media(max-width: 800px){
     .searchContainer{
       width: 100%;
-      flex-direction: column;
-      
+      flex-direction: column; 
     }
     .searchContainer>*{
       width: 100%;
       margin-bottom: 5px;
       margin-left: auto; 
     }
-
   }
-  .menu {
+
+  .menu{
     box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
     position: absolute;
   }

@@ -4,7 +4,6 @@ import {
   Layout,
   Modal,
   Row,
-  Col,
   Typography,
   Tag,
   Tooltip,
@@ -247,44 +246,39 @@ const AnnualReportTable = () => {
   return (
     <Layout.Content className="annualreport-table">
       <Title level={2}>Річні звіти</Title>
-      <Row className="searchContainer" gutter={16}>
-        <Col >
-          <Search
-              style={{ marginBottom: "7px"}}
-              placeholder="Пошук"
-              enterButton
-              onChange={handleSearchChange}
-              onSearch={handleSearch}
-          />
-        </Col>
-        {cityManager? (<Col>
+      <div className="searchContainer">
+      {cityManager? (
           <Button
-              style={{ marginBottom: "7px"}} 
               type="primary"
               onClick={() => setShowCitySelectModal(true)}
           >
             Подати річний звіт станиці
           </Button>
-        </Col>): null }
-        {clubManager? (<Col>
+        ): null }
+        {clubManager? (
           <Button
-              style={{ marginBottom: "7px"}} 
               type="primary"
               onClick={() => setShowClubSelectModal(true)}
           >
             Подати річний звіт куреня
           </Button>
-        </Col>) : null}
-        {regionManager? (<Col>
+        ) : null}
+        {regionManager? (
           <Button
-              style={{ marginBottom: "7px"}} 
               type="primary"
               onClick={() => setShowRegionAnnualReports(true)}
           >
             Подати річний звіт округи
           </Button>
-        </Col>) : null}
-      </Row>
+        ) : null}
+          <Search
+              placeholder="Пошук"
+              enterButton
+              allowClear
+              onChange={handleSearchChange}
+              onSearch={handleSearch}
+          />
+      </div>
 
       <Row>
       <Card

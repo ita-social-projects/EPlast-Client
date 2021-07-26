@@ -56,6 +56,14 @@ export const successfulCancelAction = (name:string, itemName?:string)=>{
     return itemName ? `${name} ${itemName} скасовано` : `${name} скасовано`;
 }; 
 
+export const successfulAddDegree = ()=>{
+    return `Вам було надано новий ступінь `;
+}; 
+
+export const successfulDeleteDegree = ()=>{
+    return `На жаль Ваc було позбавлено ступеня `;
+};
+
 export const failCreateAction = (name:string)=>{
     return `Не вдалося створити ${name}`;
 }; 

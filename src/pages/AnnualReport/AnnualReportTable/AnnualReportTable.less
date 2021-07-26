@@ -1,7 +1,17 @@
-.annualreport-table {
-    .searchContainer {
-        margin: 10px 0;
-    }
+.searchContainer{
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 12px;
+    width: 890px;
+    margin-left: auto; 
+}
+.searchContainer>input{
+    max-width: 300px;
+    margin-left: auto; 
+}
+
+.searchContainer>* {
+    margin-left: 12px;
 }
 
 .manageRow{
@@ -58,4 +68,19 @@
     color: rgba(0, 0, 0, 0.85) !important;
 }
 
-
+@media(max-width: 800px){
+  .searchContainer{
+    width: 100%;
+    flex-direction: column; 
+  }
+  .searchContainer>*{
+    width: 100%;
+    margin-bottom: 5px;
+    margin-left: auto; 
+  }
+  .searchContainer>button{
+    width: 100%;
+    margin-bottom: 10px;
+    margin-left: auto; 
+  }
+}
