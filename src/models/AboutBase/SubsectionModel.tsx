@@ -8,5 +8,4 @@ export default class Subsection{
         this.sectionId = 0;
         this.title = "";
         this.description = "";
-    }
-}
+    }}
