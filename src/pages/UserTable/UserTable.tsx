@@ -467,12 +467,12 @@ const UsersTable = () => {
                 event.preventDefault();
                 setShowDropdown(false);
                 if (canView) {
-                  setShowDropdown(true);
                   setRecordObj(record.id);
                   setRoles(record.userRoles);
                   setUser(users.find(x => x.id == record.id));
                   setX(event.pageX);
                   setY(event.pageY);
+                  setShowDropdown(true);
                 }
               },
             };

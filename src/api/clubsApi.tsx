@@ -156,12 +156,6 @@ export const addFollower = async (clubId: number) => {
   });
 }
 
-export const addFollowerWithId = async (clubId: number, userId: string) => {
-  return api.post(`Club/AddFollowerWithId/${clubId}/${userId}`).catch((error) => {
-    throw new Error(error);
-  });
-}
-
 export const removeFollower = async (followerId: number) => {
   return api.remove(`Club/RemoveFollower/${followerId}`, followerId).catch((error) => {
     throw new Error(error);
