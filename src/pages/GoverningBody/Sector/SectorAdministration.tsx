@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { Avatar, Button, Card, Layout, Modal, Skeleton } from 'antd';
+import {Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip} from 'antd';
 import { SettingOutlined, RollbackOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getAllAdmins, removeAdministrator, getUserAccess } from "../../../api/governingBodySectorsApi";
 import userApi from "../../../api/UserApi";
@@ -100,6 +100,20 @@ const SectorAdministration = () => {
     setAdministration(administration);
   };
 
+  const processEmail = (email: string) => {
+    if (email.length > 23) {
+      return (
+        <div className='emailDiv'>
+          <Tooltip title={email} placement='right'>
+            <span>{email.slice(0, 23) + "..."}</span>
+          </Tooltip>
+        </div>
+      );
+    } else {
+      return <div className='emailDiv'>{email}</div>;
+    }
+  }
+
   useEffect(() => {
     getAdministration();
   }, []);
@@ -119,7 +133,7 @@ const SectorAdministration = () => {
                 title={`${member.adminType.adminTypeName}`}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                 actions={
-                  userAccesses["AddGBSecretary"]
+                  userAccesses["AddSecretary"]
                     ? [
                       <SettingOutlined
                         className={classes.governingBodyAdminSettingsIcon}
@@ -133,9 +147,11 @@ const SectorAdministration = () => {
                 }
               >
                 <div
-                  onClick={() =>
-                    history.push(`/userpage/main/${member.userId}`)
-                  }
+                  onClick={() => {
+                    if (userAccesses["GoToSecretaryProfile"]) {
+                      history.push(`/userpage/main/${member.userId}`)
+                    }
+                  }}
                   className="governingBodyMember"
                 >
                   <div>
@@ -146,8 +162,9 @@ const SectorAdministration = () => {
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={`${member.user.firstName} ${member.user.lastName}\n ${member.workEmail == null || member.workEmail == "" ? member.user.email : member.workEmail}`}
+                      title={`${member.user.firstName} ${member.user.lastName}`}
                     />
+                    {processEmail(member.workEmail == null || member.workEmail == "" ? member.user.email : member.workEmail)}
                   </div>
                 </div>
               </Card>
@@ -168,7 +185,7 @@ const SectorAdministration = () => {
           Назад
         </Button>
       </div>
-      {userAccesses["AddGBSecretary"] ? (
+      {userAccesses["AddSecretary"] ? (
         <EditAdministratorModal
           admin={admin}
           setAdmin={setAdmin}

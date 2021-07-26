@@ -94,7 +94,7 @@ const RegionMembers = () => {
           ))
         ) : (
           <Title level={4}>
-            Ще немає членів станиці
+            Ще немає членів округи
           </Title>
         )}
       </div>)}

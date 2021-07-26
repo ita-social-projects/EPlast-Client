@@ -227,10 +227,12 @@ const PrecautionTable = () => {
           <div className={classes.searchContainer}>
             {canEdit === true ? (
               <>
-                <Button type="primary" onClick={showModal}>
+                <Button 
+                  type="primary" 
+                  onClick={showModal}
+                >
                   Додати пересторогу
                 </Button>
-                <span />
               </>
             ) : (
               <></>
@@ -238,9 +240,10 @@ const PrecautionTable = () => {
             <Search
                 enterButton
                 placeholder="Пошук"
+                allowClear
                 onChange={handleSearchChange}
                 onSearch={handleSearch}                
-               />
+            />
           </div>
           {loading ? (<Spinner />) : (<div>
             <Table

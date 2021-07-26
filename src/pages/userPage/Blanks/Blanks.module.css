@@ -168,6 +168,7 @@
     }
 }
 
-.colBlank {
+.colBlank{
     flex: none !important;
+    word-wrap: break-word;
 }

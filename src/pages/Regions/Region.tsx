@@ -27,6 +27,8 @@ import {
   getHead,
   getHeadDeputy,
   getRegionFollowers,
+  AddAdmin,
+  EditAdmin,
 } from "../../api/regionsApi";
 import {
   cityNameOfApprovedMember,
@@ -37,13 +39,15 @@ import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../Spinner/Spinner";
 import AddDocumentModal from "./AddDocModal";
-import CityDocument from "../../models/City/CityDocument";
+import RegionDocument from "../../models/Region/RegionDocument";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
 import userApi from "./../../api/UserApi";
 import { getLogo } from "./../../api/citiesApi";
 import CitiesRedirectForm from "./CitiesRedirectForm";
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
+import notificationLogic from "../../components/Notifications/Notification";
+import { successfulEditAction } from "../../components/Notifications/Messages";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
@@ -60,23 +64,9 @@ const Region = () => {
   const [photoStatus, setPhotoStatus] = useState(true);
   const [canEdit, setCanEdit] = useState(false);
 
-  const [document, setDocument] = useState<any>({
-    ID: "",
-    SubmitDate: "",
-    BlobName: "",
-    FileName: "",
-    RegionId: "",
-  });
+  const [document, setDocument] = useState<RegionDocument>(new RegionDocument());
 
-  const [documents, setDocuments] = useState<any[]>([
-    {
-      id: "",
-      submitDate: "",
-      blobName: "",
-      fileName: "",
-      regionId: "",
-    },
-  ]);
+  const [documents, setDocuments] = useState<RegionDocument[]>([]);
 
   const [region, setRegion] = useState<any>({
     id: "",
@@ -94,25 +84,7 @@ const Region = () => {
   });
 
   const [visibleDrawer, setVisibleDrawer] = useState(false);
-  const [admins, setAdmins] = useState<any[]>([
-    {
-      id: "",
-      userId: "",
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-        imagePath: "",
-        email: "",
-        phoneNumber: "",
-      },
-      adminType: {
-        adminTypeName: "",
-      },
-      startDate: "",
-      endDate: "",
-    },
-  ]);
+  const [admins, setAdmins] = useState<any[]>([]);
 
   const [members, setMembers] = useState<any[]>([
     {
@@ -253,20 +225,122 @@ const Region = () => {
     }
   };
 
-  const handleOk = async () => {
-    setVisible(false);
-    setMemberRedirectVisibility(false);
-    setVisibleModal(false);
-    const response =  await getRegionAdministration(id);
-    setSixAdmins(response.data, 6);
-    setAdminsCount(response.data.length);
+  const updateAdmins = async () => {
+    const regionResponse = await getRegionById(id);
+    const regionAdministrationResp = await getRegionAdministration(id);
+    const regionFollowersResp = await getRegionFollowers(id);
+    const responseHead = await getHead(id);
+    const responseHeadDeputy = await getHeadDeputy(id);
+    setHead(responseHead.data);
+    setHeadDeputy(responseHeadDeputy.data);
+    setRegion(regionResponse.data);
     setPhotosLoading(true);
-    setPhotos([], [...response.data], []);
+    setSixAdmins(regionAdministrationResp.data, 7);
+    setAdminsCount(regionAdministrationResp.data.length);
+    setPhotos([...regionResponse.data.cities], [...regionAdministrationResp.data], regionFollowersResp.data);
+    if (regionResponse.data.logo === null) {
+      setPhotoStatus(false);
+    }
+  }
+
+  const addRegionAdmin = async (admin: any) => {
+    await AddAdmin(admin);
+    await updateAdmins();
+    notificationLogic("success", "Користувач успішно доданий в провід");
+    await NotificationBoxApi.createNotifications(
+      [admin.userId],
+      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/cities/${id}`,
+      `цій станиці`
+    );
+  };
+
+  const editRegionAdmin = async (admin: any) => {
+    await EditAdmin(admin);
+    await updateAdmins();
+    notificationLogic("success", successfulEditAction("Адміністратора"));
+    await NotificationBoxApi.createNotifications(
+      [admin.userId],
+      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/clubs/${id}`,
+      `цьому курені`);
+  };
+
+  const showConfirmClubAdmin  = async (admin: any) => {
+    return Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (
+        <div style={{ margin: 10 }}>
+          <b>
+            {head?.user.firstName} {head?.user.lastName}
+          </b>{" "}
+          є Головою Куреня, час правління закінчується{" "}
+          <b>
+            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(head?.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onCancel() { },
+      async onOk() {
+        if (admin.id === 0) {
+         await addRegionAdmin(admin);
+        } else {
+         await editRegionAdmin(admin);
+        }
+      },
+    });
+  };
+  
+  const checkAdminId = async (admin: any)=> {
+    if (admin.id === 0) {
+      await addRegionAdmin(admin);
+    } else {
+      await editRegionAdmin(admin);
+    }
+  }
+
+  const handleConfirm = async () => {
+    setVisible(false);
+  };
+
+  const handleOk = async(admin: any) => {
+    try {
+      if (admin.adminType.adminTypeName === Roles.OkrugaHead) {
+        if (head == ' ') {
+          checkAdminId(admin);
+        } else {
+          if (head.userId !== admin.userId) {
+            showConfirmClubAdmin(admin);
+          } else {
+            checkAdminId(admin);
+          }
+        }
+      } else if (admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy) {
+        if (headDeputy == 'null') {
+          checkAdminId(admin);
+        } else {
+          checkAdminId(admin);
+        }
+      } else {
+          await addRegionAdmin(admin);
+      }
+    } finally {
+      setVisible(false);
+    }
+  };
+
+  const handleClose = async() => {
+    setVisible(false);
   };
 
   const setIsFromRegion = (members: any[], city: string) => {
-    for(let i = 0; i < members.length; i++){
-      if(members[i].name == city){
+    for (let i = 0; i < members.length; i++){
+      if (members[i].name == city){
         setIsActiveUserFromRegion(true);
         return;
       }
@@ -274,8 +348,8 @@ const Region = () => {
   }
 
   const setIsRegionAdmin = (admins: any[], userId: string) => {
-    for(let i = 0; i < admins.length; i++){
-      if(admins[i].userId == userId){
+    for (let i = 0; i < admins.length; i++){
+      if (admins[i].userId == userId){
         setIsActiveUserRegionAdmin(true);
         return;
       }
@@ -288,8 +362,7 @@ const Region = () => {
         for (let i = 0; i < 6; i++) {
           followers[i] = _followers[i];
         }
-      } 
-      else {
+      } else {
         for (let i = 0; i < _followers.length; i++) {
           followers[i] = _followers[i];
         }
@@ -325,7 +398,7 @@ const Region = () => {
     }
   };
 
-  const onAdd =  async (newDocument: CityDocument) => {
+  const onAdd =  async (newDocument: RegionDocument) => {
     const response = await getRegionById(id);
     setDocumentsCount(response.data.documentsCount);
     if (documents.length < 6) {
@@ -779,13 +852,12 @@ const Region = () => {
         <Modal
           title="Додати діловода"
           visible={visible}
-          onOk={handleOk}
-          onCancel={handleOk}
+          onCancel={handleClose}
           footer={null}
         >
           <AddNewSecretaryForm 
               onAdd={handleOk}
-              regionID={region.id}
+              regionId={region.id}
               visibleModal={visible}
           >
           </AddNewSecretaryForm>
@@ -794,8 +866,8 @@ const Region = () => {
         <Modal
           title="Оберіть округу до якої належатимуть станиці-члени:"
           visible={memberRedirectVisibility}
-          onOk={handleOk}
-          onCancel={handleOk}
+          onOk={handleConfirm}
+          onCancel={handleConfirm}
           footer={null}
         >
           <CitiesRedirectForm regionId = {region.id} onAdd={handleOk} />

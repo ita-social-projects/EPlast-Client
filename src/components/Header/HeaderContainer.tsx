@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Layout, Menu, Dropdown, Avatar, Badge, Button, Drawer } from "antd";
 import { LoginOutlined, LogoutOutlined, BellOutlined, EditOutlined, HistoryOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
@@ -24,7 +24,7 @@ const HeaderContainer = () => {
   const [id, setId] = useState<string>("");
   const token = AuthStore.getToken() as string;
   const signedIn = AuthorizeApi.isSignedIn();
-  const [userState, setUserState] = useState(signedIn);
+  const userState = useRef(signedIn);
   const [notificationTypes, setNotificationTypes] = useState<Array<NotificationType>>([]);
   const [notifications, setNotifications] = useState<Array<UserNotification>>([]);
   const [visibleDrawer, setVisibleDrawer] = useState<boolean>(false);
@@ -37,7 +37,7 @@ const HeaderContainer = () => {
       await userApi.getById(user.nameid).then(async response => {
         setName(response.data.user.firstName);
         if (name !== undefined) {
-          setUserState(true);
+          userState.current = true;
         }
         setId(response.data.user.id);
 
@@ -106,12 +106,15 @@ const HeaderContainer = () => {
   }
 
   useEffect(() => {
+    if((location.includes("signin") || location.includes("signup")) && signedIn){
+      onLogoutClick();
+    }
     fetchData();
-  }, []);
+  }, [location]);
 
   const onLogoutClick = async () => {
     await authService.logout();
-    setUserState(false);
+    userState.current = false;
   }
 
   const primaryMenu = (
@@ -165,7 +168,7 @@ const HeaderContainer = () => {
           </div>
         </Menu.Item>
       </Menu>
-      {signedIn && userState ? (
+      {signedIn && userState.current ? (
         <>
           <Menu mode="horizontal" className={classes.headerMenu + " " + classes.MenuWidth}>
             <Button ghost

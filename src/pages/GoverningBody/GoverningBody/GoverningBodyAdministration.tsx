@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Modal, Skeleton} from 'antd';
+import {Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip} from 'antd';
 import {SettingOutlined, RollbackOutlined, DeleteOutlined} from '@ant-design/icons';
 import { getAllAdmins, removeAdministrator, getUserAccess} from "../../../api/governingBodiesApi";
 import userApi from "../../../api/UserApi";
@@ -102,6 +102,20 @@ const GoverningBodyAdministration = () => {
       setAdministration(administration);
     };
 
+    const processEmail = (email: string) => {
+      if (email.length > 23) {
+        return (
+          <div className='emailDiv'>
+            <Tooltip title={email} placement='right'>
+              <span>{email.slice(0, 23) + "..."}</span>
+            </Tooltip>
+          </div>
+        );
+      } else {
+        return <div className='emailDiv'>{email}</div>;
+      }
+    }
+
     useEffect(() => {
         getAdministration();
     }, []);
@@ -139,9 +153,11 @@ const GoverningBodyAdministration = () => {
                   }
                 >
                   <div
-                    onClick={() =>
-                      history.push(`/userpage/main/${member.userId}`)
-                    }
+                    onClick={() => {
+                      if (userAccesses["GoToSecretaryProfile"]) {
+                        history.push(`/userpage/main/${member.userId}`)
+                      }
+                    }}
                     className="governingBodyMember"
                   >
                     <div>
@@ -152,8 +168,9 @@ const GoverningBodyAdministration = () => {
                       )}
                       <Card.Meta
                         className="detailsMeta"
-                        title={`${member.user.firstName} ${member.user.lastName}\n ${member.workEmail == null || member.workEmail == "" ? member.user.email : member.workEmail}`}
+                        title={`${member.user.firstName} ${member.user.lastName}`}
                       />
+                      {processEmail(member.workEmail == null || member.workEmail == "" ? member.user.email : member.workEmail)}
                     </div>
                   </div>
                 </Card>
