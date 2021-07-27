@@ -54,14 +54,14 @@ const UsersTable = () => {
   const [clubs, setClubs] = useState<any>();
   const [degrees, setDegrees] = useState<any>();
   const [searchData, setSearchData] = useState<string>("");
-  const [sortKey, setSortKey]=useState<number>(1);
-  const [filter, setFilter]=useState<string>("");
+  const [sortKey, setSortKey] = useState<number>(1);
+  const [filter, setFilter] = useState<string>("");
   const [dynamicCities, setDynamicCities] = useState<any[]>([]);
   const [dynamicRegions, setDynamicRegions] = useState<any[]>([]);
   const [dynamicClubs, setDynamicClubs] = useState<any[]>([]);
   const [dynamicDegrees, setDynamicDegrees] = useState<any[]>([]);
   const [form] = Form.useForm();
-  const [canView, setCanView]=useState<boolean>(false);
+  const [canView, setCanView] = useState<boolean>(false);
   const [, forceUpdate] = useState({});
   const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
   const [isInactive, setIsInactive] = useState(false);
@@ -69,8 +69,8 @@ const UsersTable = () => {
   const [currentUser, setCurrentUser] = useState<User>();
   const [user, setUser] = useState<UserTable>();
   const { SHOW_PARENT } = TreeSelect;
-  const {Search} = Input;
-  
+  const { Search } = Input;
+
   useEffect(() => {
     fetchData();
   }, [page, pageSize, updatedUser, searchData, sortKey, filter, userArhive, currentTabName]);
@@ -87,7 +87,7 @@ const UsersTable = () => {
     try {
       let response = await citiesApi.getCities();
       let cities = response.data as City[];
-      setCities( cities.map((item) => {
+      setCities(cities.map((item) => {
         return {
           label: item.name,
           value: item.id,
@@ -164,15 +164,15 @@ const UsersTable = () => {
         Clubs: dynamicClubs,
         Degrees: dynamicDegrees,
         Tab: currentTabName,
-        SortKey:sortKey,
-        FilterRoles:filter,
+        SortKey: sortKey,
+        FilterRoles: filter,
         SearchData: searchData
       });
       let jwt = AuthStore.getToken() as string;
       let user = jwt_decode(jwt) as any;
       setCurrentUser((await userApi.getUserProfileById(user.nameid, user.nameid)).data.user);
-      let roles=userApi.getActiveUserRoles();
-      setCanView(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
+      let roles = userApi.getActiveUserRoles();
+      setCanView(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead)
         || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)
         || roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy)
         || roles.includes(Roles.KurinHead) || roles.includes(Roles.KurinHeadDeputy)
@@ -185,18 +185,16 @@ const UsersTable = () => {
     }
   };
 
- const handleSearch = (e:any) => {
-   setPage(1)
-   setSearchData(e);
- } 
+  const handleSearch = (e: any) => {
+    setPage(1)
+    setSearchData(e);
+  };
 
- const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-   if(e.target.value.toLowerCase() === '') {
-     setSearchData('')
-   }
-  
- }
-
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.toLowerCase() === '') {
+      setSearchData('')
+    };
+  };
 
   const onSelect = (selectedKeys: any, e: any) => {
     if (e.value == 0) {
@@ -217,6 +215,7 @@ const UsersTable = () => {
       setDynamicClubs([...dynamicClubs, e.value.split(' ')[1] as number]);
     }
   };
+
   const ondeSelect = (selectedKeys: any, e: any) => {
     if (e.value == 0) {
       setDynamicRegions((prev) => prev.filter((item) => item !== -10));
@@ -236,6 +235,7 @@ const UsersTable = () => {
       setDynamicClubs((prev) => prev.filter((item) => e.value.split(' ')[1] as number));
     }
   };
+
   const getDynamicCities = () => {
     var results = [];
     for (let x = 0; x < cities?.length; x++) {
@@ -243,6 +243,7 @@ const UsersTable = () => {
     }
     return results;
   };
+
   const getDynamicRegions = () => {
     var results = [];
 
@@ -251,6 +252,7 @@ const UsersTable = () => {
     }
     return results;
   };
+
   const getDynamicDegrees = () => {
     var results = [];
     for (let x = 0; x < degrees?.length; x++) {
@@ -258,6 +260,7 @@ const UsersTable = () => {
     }
     return results;
   };
+
   const getDynamicClubs = () => {
     var results = [];
 
@@ -287,6 +290,7 @@ const UsersTable = () => {
     setUpdatedUser([...filteredData]);
     setUsers([...filteredData]);
   };
+
   const handlePageChange = (page: number) => {
     setPage(page);
     setCurrentTabName(currentTabName);
@@ -296,6 +300,7 @@ const UsersTable = () => {
     setPage(page);
     setPageSize(pageSize);
   };
+
   const handleFilter = async () => {
     setPage(1);
     setCurrentTabName(currentTabName);
@@ -317,7 +322,7 @@ const UsersTable = () => {
           Clubs: dynamicClubs,
           Degrees: dynamicDegrees,
           Tab: currentTabName,
-          SortKey:sortKey,
+          SortKey: sortKey,
           SearchData: searchData
         });
         setUsers(response.data.users);
@@ -327,6 +332,7 @@ const UsersTable = () => {
       }
     }
   };
+
   const tabList = [
     {
       key: "confirmed",
@@ -351,11 +357,11 @@ const UsersTable = () => {
   return (
     <Layout.Content>
       <Title level={2}>Таблиця користувачів</Title>
-      <Title level={4} style={{textAlign: "left", margin: 10}} underline={true}>Загальна кількість користувачів: {total}</Title>
+      <Title level={4} style={{ textAlign: "left", margin: 10 }} underline={true}>Загальна кількість користувачів: {total}</Title>
       <div className={classes.searchContainer}>
         <div className={classes.filterContainer}>
-          <Form form={form} onFinish={handleFilter} style={{ height: "20px"}}>
-            <Row style={{flexFlow: "nowrap"}}>
+          <Form form={form} onFinish={handleFilter} style={{ height: "20px" }}>
+            <Row style={{ flexFlow: "nowrap" }}>
               <Col span={20}>
                 <Form.Item
                   rules={[
@@ -384,14 +390,14 @@ const UsersTable = () => {
                     }
                     allowClear
                     onChange={(event: any) => {
-                      if(event.length==0) {setDynamicRegions([]);
-                      setDynamicCities([]);
-                      setDynamicClubs([]);
-                      setDynamicDegrees([]);
-                    }
+                      if (event.length == 0) {
+                        setDynamicRegions([]);
+                        setDynamicCities([]);
+                        setDynamicClubs([]);
+                        setDynamicDegrees([]);
+                      }
                     }}
                   >
-                  
                     <TreeNode value={0} title="Всі округи">
                       {getDynamicRegions()}
                     </TreeNode>
@@ -408,91 +414,91 @@ const UsersTable = () => {
                 </Form.Item>
               </Col>
               <Col>
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{ minWidth: "10%", marginBottom:30}}
-                >
-                  OK
-                </Button>
-              </Form.Item>
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ minWidth: "10%", marginBottom: 30 }}
+                  >
+                    OK
+                  </Button>
+                </Form.Item>
               </Col>
-
             </Row>
           </Form>
         </div>
         <div className={classes.searchArea}>
           <Search placeholder="Пошук"
-          enterButton
-          onChange={handleSearchChange}  
-          onSearch={handleSearch}
+            allowClear
+            enterButton
+            onChange={handleSearchChange}
+            onSearch={handleSearch}
           />
-
         </div>
       </div>
-      
-        <Card
-          style={{ width: "100%" }}
-          tabList={tabList}
-          activeTabKey={currentTabName}
-          onTabChange={(key) => {
-            onTabChange(key);
-          }}
-        >
-          <Table
+
+      <Card
+        style={{ width: "100%" }}
+        tabList={tabList}
+        activeTabKey={currentTabName}
+        onTabChange={(key) => {
+          onTabChange(key);
+        }}
+      >
+        <Table
           loading={!loading}
-            className={classes.table}
-            bordered
-            rowKey="id"
-            scroll={{ x: 1450 }}
-            columns={ColumnsForUserTable(
-              {
-                sortKey: sortKey,
-                setSortKey: setSortKey,
-                setFilter: setFilter,
-                filterRole: filter,
-              })}
-            dataSource={users}
-            onRow={(record) => {
-              return {
-                onDoubleClick: () => { if (record.id && canView) window.open(`/userpage/main/${record.id}`);
+          className={classes.table}
+          bordered
+          rowKey="id"
+          scroll={{ x: 1450 }}
+          columns={ColumnsForUserTable(
+            {
+              sortKey: sortKey,
+              setSortKey: setSortKey,
+              setFilter: setFilter,
+              filterRole: filter,
+            })}
+          dataSource={users}
+          onRow={(record) => {
+            return {
+              onDoubleClick: () => {
+                if (record.id && canView) window.open(`/userpage/main/${record.id}`);
               },
-                onContextMenu: (event) => {
-                  event.preventDefault();
-                  setShowDropdown(false);
-                  if(canView){
+              onContextMenu: (event) => {
+                event.preventDefault();
+                setShowDropdown(false);
+                if (canView) {
                   setShowDropdown(true);
                   setRecordObj(record.id);
                   setRoles(record.userRoles);
-                  setUser(users.find(x=>x.id==record.id));
+                  setUser(users.find(x => x.id == record.id));
                   setX(event.pageX);
                   setY(event.pageY);
-                  }
-                },
-              };
-            }}
-            onChange={(pagination) => {
-              if (pagination) {
-                window.scrollTo({
-                  left: 0,
-                  top: 0,
-                  behavior: "smooth",
-                });
-              }
-            }}
-            pagination={{
-              current: page,
-              pageSize: pageSize,
-              total: total,
-              showLessItems: true,
-              responsive: true,
-              showSizeChanger: true,
-              onChange: (page) => handlePageChange(page),
-              onShowSizeChange: (page, size) => handleSizeChange(page, size),
-            }}
-          />
-        </Card>
+                }
+              },
+            };
+          }}
+          onChange={(pagination) => {
+            if (pagination) {
+              window.scrollTo({
+                left: 0,
+                top: 0,
+                behavior: "smooth",
+              });
+            }
+          }}
+          pagination={{
+            current: page,
+            pageSize: pageSize,
+            total: total,
+            showLessItems: true,
+            responsive: true,
+            showSizeChanger: true,
+            onChange: (page) => handlePageChange(page),
+            onShowSizeChange: (page, size) => handleSizeChange(page, size),
+          }}
+        />
+      </Card>
       <ClickAwayListener onClickAway={handleClickAway}>
         <DropDownUserTable
           showDropdown={showDropdown}
@@ -507,7 +513,7 @@ const UsersTable = () => {
           currentUser={currentUser}
           canView={canView}
         />
-        </ClickAwayListener>
+      </ClickAwayListener>
     </Layout.Content>
   );
 };

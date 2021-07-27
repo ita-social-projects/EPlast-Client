@@ -32,6 +32,7 @@ const ClubAnnualReportEdit = () => {
     const [admins, setAdmins] = useState<ClubAdmin[]>([]);
     const [members, setClubMembers] = useState<ClubMember[]>([]);
     const [followers, setFollowers] = useState<ClubMember[]>([]);
+    const [clubHead, setClubHead] = useState<ClubAdmin>({} as ClubAdmin );
     const [club, setClub] = useState<any>({
         id: 0,
         name: "",
@@ -60,7 +61,7 @@ const ClubAnnualReportEdit = () => {
 
             let club = await getClubMembersInfo(response.data.annualreport.clubId);
             setClub(club.data);
-
+            setClubHead(response.data);
             setAdmins(club.data.administration.filter((a: any) => a != null));
 
             setClubMembers(club.data.members);
@@ -132,7 +133,11 @@ const ClubAnnualReportEdit = () => {
                             club={club}
                             admins={admins}
                             members={members}
-                            followers={followers} />
+                            followers={followers} 
+                            head={clubHead}
+                            countUsersPerYear={0}
+                            countdeletedUsersPerYear={0}
+                        />
 
                         <Row justify='center'>
                             <Col>

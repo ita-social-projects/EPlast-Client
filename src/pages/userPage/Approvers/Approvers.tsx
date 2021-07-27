@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Avatar, Tooltip, Spin } from 'antd';
+import { Card, Avatar, Tooltip, Spin, Skeleton } from 'antd';
 import './Approvers.less';
-import AvatarAndProgress from '../../../../src/pages/userPage/personalData/AvatarAndProgress';
 import AddUser from "../../../assets/images/user_add.png";
 import { ApproversData } from '../Interface/Interface';
 import jwt from 'jwt-decode';
@@ -23,6 +22,7 @@ import { StickyContainer } from 'react-sticky';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import DeleteApproveButton from './DeleteApproveButton';
 import { Roles } from '../../../models/Roles/Roles';
+import AvatarAndProgressStatic from '../personalData/AvatarAndProgressStatic';
 
 const Assignments = () => {
   const history = useHistory();
@@ -124,29 +124,38 @@ const Assignments = () => {
 
   const { Meta } = Card;
   return loading === false ? (
-    <Spinner />
-  ) : (
+    <div className="kadraWrapper">
+      <Skeleton.Avatar
+        size={220}
+        active={true}
+        shape="circle"
+        className="img"
+      />
+    </div>
+  ) : ( 
     <div className="displayFlex">
       <div className="avatarWrapperApprovers">
         <StickyContainer className="kadraWrapper">
-          <AvatarAndProgress
+          <AvatarAndProgressStatic
             imageUrl={data?.user.imagePath}
             time={data?.timeToJoinPlast}
             firstName={data?.user.firstName}
             lastName={data?.user.lastName}
             isUserPlastun={data?.isUserPlastun}
             pseudo={data?.user.pseudo}
+            governingBody={data?.user.governingBody}
             region={data?.user.region}
             city={data?.user.city}
             club={data?.user.club}
             cityId={data?.user.cityId}
             clubId={data?.user.clubId}
-            regionId={data?.user.regionId} />
+            regionId={data?.user.regionId}
+            governingBodyId={data?.user.governingBodyId} />
         </StickyContainer>
       </div>
       <div className="approversContentApprovers">
         <br />
-        <h1>Поручення дійсних членів</h1>
+        <h1 className="approversCard">Поручення дійсних членів</h1>
         <div className="approversCard">
           {data?.confirmedUsers.map(p => {
             if (p.approver.userID == data?.currentUserId || roles.includes(Roles.Admin)) {
@@ -220,8 +229,8 @@ const Assignments = () => {
             </div>
           </div>
 
-        </div>
-        <h1>Поручення куреня УСП/УПС</h1>
+          </div>
+        <h1 className="approversCard">Поручення куреня УСП/УПС</h1>
         <div className="approversCard">
           {(data?.clubApprover != null) ? (
 
@@ -291,9 +300,10 @@ const Assignments = () => {
               </div>
             )
           )}
-        </div>
+      </div>
+
         <h1 className="approversCard">Поручення Голови осередку/Осередкового УСП/УПС</h1>
-        <div className="approversCard">
+        <div>
           {(data?.cityApprover != null) ? (
             <div>
               {(data.cityApprover.approver.userID == data.currentUserId || roles.includes(Roles.Admin)) ? (

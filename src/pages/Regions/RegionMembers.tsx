@@ -21,7 +21,7 @@ const RegionMembers = () => {
     id: '',
     name: '',
     logo: ''
-  }]);
+  },]);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   
@@ -30,11 +30,10 @@ const RegionMembers = () => {
     const response = await getRegionById(id);
 
     setPhotosLoading(true);
+    setMembers(response.data.cities);
     setPhotos(response.data.cities);
-
     setLoading(false);
   };
-
 
   const setPhotos = async (member: any[]) => {
 
@@ -95,7 +94,7 @@ const RegionMembers = () => {
           ))
         ) : (
           <Title level={4}>
-            Ще немає членів станиці
+            Ще немає членів округи
           </Title>
         )}
       </div>)}

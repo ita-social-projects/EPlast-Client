@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Select, Button, DatePicker, Checkbox, Switch, AutoComplete } from 'antd';
+import { Form, Select, Button, DatePicker } from 'antd';
 import activeMembershipApi, { PlastDegree, UserPlastDegreePost, UserPlastDegree } from '../../../../api/activeMembershipApi';
 import classes from "./FormAddPlastDegree.module.css"
 import NotificationBoxApi from '../../../../api/NotificationBoxApi';
@@ -19,8 +19,11 @@ const FormAddPlastDegree = ({
     setVisibleModal,
     userId,
     availablePlastDegree,
-    handleAddDegree, isCityAdmin,
-    resetAvailablePlastDegree, cancel }: FormAddPlastDegreeProps) => {
+    handleAddDegree, 
+    isCityAdmin,
+    resetAvailablePlastDegree, 
+    cancel 
+    }: FormAddPlastDegreeProps) => {
     const [form] = Form.useForm();
     const [isChecked, setIsChecked] = useState<boolean>(false);
     const [visiableDegree, setVisiableDegree] = useState<boolean>(false);
@@ -36,9 +39,9 @@ const FormAddPlastDegree = ({
             isCurrent: isChecked,
             userId: userId
         };
-        await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
         setVisibleModal(false);
         setVisiableDegree(false);
+        await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
         handleAddDegree();
         form.resetFields();
         resetAvailablePlastDegree();
@@ -82,9 +85,9 @@ const FormAddPlastDegree = ({
                 onChange = {(value) => handleOnChange(value)}
                 placeholder = {"Оберіть Улад"}
             >
-                {!isCityAdmin && availablePlastDegree.find(item => item.name === "Пласт прият") && <Select.Option value="Пласт прият">Пласт прият</Select.Option>}
-                {availablePlastDegree.find(item =>item.name.includes("Старш")) && <Select.Option value="Улад Старшого Пластунства">Улад Старшого Пластунства</Select.Option>}
-                {availablePlastDegree.filter(item => item.name.includes("сеніор")) && <Select.Option value="Улад Пластового Сеніорату">Улад Пластового Сеніорату</Select.Option>}
+                { availablePlastDegree.find(item => item.name === "Пласт прият") && <Select.Option value="Пласт прият">Пласт прият</Select.Option>}
+                {!isCityAdmin && availablePlastDegree.find(item => item.name.includes("Старш")) && <Select.Option value="Улад Старшого Пластунства">Улад Старшого Пластунства</Select.Option>}
+                {!isCityAdmin && availablePlastDegree.filter(item => item.name.includes("сеніор")) && <Select.Option value="Улад Пластового Сеніорату">Улад Пластового Сеніорату</Select.Option>}
             </Select>
         </Form.Item>
         {visiableDegree && 

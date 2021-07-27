@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Modal, Skeleton, Spin} from 'antd';
-import {SettingOutlined, CloseOutlined, RollbackOutlined, DeleteOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip} from 'antd';
+import {SettingOutlined, RollbackOutlined, DeleteOutlined} from '@ant-design/icons';
 import { getAllAdmins, removeAdministrator, getUserAccess} from "../../../api/governingBodiesApi";
 import userApi from "../../../api/UserApi";
 import "./GoverningBody.less";
 import classes from "./GoverningBodyAdministration.module.css";
 import GoverningBodyAdmin from '../../../models/GoverningBody/GoverningBodyAdmin';
-import AddAdministratorModal from '../AddAdministratorModal/AddAdministratorModal';
+import EditAdministratorModal from '../AddAdministratorModal/EditAdministratorModal';
 import jwt from 'jwt-decode';
 import moment from "moment";
 import "moment/locale/uk";
@@ -28,6 +28,7 @@ const GoverningBodyAdministration = () => {
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [governingBodyName, setGoverningBodyName] = useState<string>("");
+    const [updated, setUpdated] = useState<boolean>(false);
   
     const getUserAccesses = async () => {
         let user: any = jwt(AuthStore.getToken() as string);
@@ -43,7 +44,7 @@ const GoverningBodyAdministration = () => {
       await getUserAccesses();
       const response = await getAllAdmins(id);
         setPhotosLoading(true);
-        setPhotos([response.data.head, ...response.data.admins].filter(a => a != null));
+        await setPhotos([response.data.head, ...response.data.admins].filter(a => a != null));
         setAdministration([response.data.head, ...response.data.admins].filter(a => a != null));
         setGoverningBodyName(response.data.name);
       setLoading(false);
@@ -101,9 +102,27 @@ const GoverningBodyAdministration = () => {
       setAdministration(administration);
     };
 
+    const processEmail = (email: string) => {
+      if (email.length > 23) {
+        return (
+          <div className='emailDiv'>
+            <Tooltip title={email} placement='right'>
+              <span>{email.slice(0, 23) + "..."}</span>
+            </Tooltip>
+          </div>
+        );
+      } else {
+        return <div className='emailDiv'>{email}</div>;
+      }
+    }
+
     useEffect(() => {
         getAdministration();
     }, []);
+
+    useEffect(() => {
+      getAdministration();
+    }, [updated]);
 
     return (
       <Layout.Content>
@@ -134,14 +153,16 @@ const GoverningBodyAdministration = () => {
                   }
                 >
                   <div
-                    onClick={() =>
-                      history.push(`/userpage/main/${member.userId}`)
-                    }
+                    onClick={() => {
+                      if (userAccesses["GoToSecretaryProfile"]) {
+                        history.push(`/userpage/main/${member.userId}`)
+                      }
+                    }}
                     className="governingBodyMember"
                   >
                     <div>
                       {photosLoading ? (
-                        <Skeleton.Avatar active size={86}></Skeleton.Avatar>
+                        <Skeleton.Avatar active size={86} />
                       ) : (
                         <Avatar size={86} src={member.user.imagePath} />
                       )}
@@ -149,6 +170,7 @@ const GoverningBodyAdministration = () => {
                         className="detailsMeta"
                         title={`${member.user.firstName} ${member.user.lastName}`}
                       />
+                      {processEmail(member.workEmail == null || member.workEmail == "" ? member.user.email : member.workEmail)}
                     </div>
                   </div>
                 </Card>
@@ -170,14 +192,15 @@ const GoverningBodyAdministration = () => {
           </Button>
         </div>
         {userAccesses["AddGBSecretary"] ? (
-          <AddAdministratorModal
+          <EditAdministratorModal
             admin={admin}
             setAdmin={setAdmin}
             visibleModal={visibleModal}
             setVisibleModal={setVisibleModal}
             governingBodyId={+id}
             onAdd={onAdd}
-          ></AddAdministratorModal>
+            onChange={() => setUpdated(true)}
+          />
         ) : null}
       </Layout.Content>
     );

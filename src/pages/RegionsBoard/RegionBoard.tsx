@@ -67,6 +67,7 @@ const RegionBoard = () => {
       regionId: "",
     },
   ]);
+  const [documentsCount, setDocumentsCount] = useState<number>(0);
 
   const [region, setRegion] = useState<any>({
     id: "",
@@ -108,16 +109,16 @@ const RegionBoard = () => {
       const response = await GetRegionsBoard();
       await getUserAccesses();
       if (userAccesses["ViewDecisions"]) {        
-        setRegionDecisions();
+        await setRegionDecisions();
       }
-      setRegionOrgs();
-      setRegionDocs(response.data.id);
+      await setRegionOrgs();
+      await setRegionDocs(response.data.id);
       setRegion(response.data);
       if (response.data.logo == null) {
         setPhotoStatus(false);
       }
-      } finally {
-        setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -146,16 +147,15 @@ const RegionBoard = () => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
+    setDocumentsCount(documentsCount + 1);
   };
 
   const setRegionDocs = async (id: number) => {
-    try {
-      const response: [] = await (await getRegionDocuments(id)).data;
-      setDocuments(
-        response.length > 6 ? response.slice(response.length - 6) : response
-      );
-    } finally {
-    }
+    const response: [] = await (await getRegionDocuments(id)).data;
+    setDocumentsCount(response.length);
+    setDocuments(
+      response.length > 6 ? response.slice(response.length - 6) : response
+    );
   };
 
   const setRegionOrgs = async () => {
@@ -294,7 +294,7 @@ const RegionBoard = () => {
                 <>
                   <Col
                     style={{ display: userAccesses["EditRB"] ? "block" : "none" }}
-                  ></Col>
+                  />
                   <Col
                     xs={24}
                     sm={4}
@@ -358,9 +358,9 @@ const RegionBoard = () => {
                       onClick={() => history.push(`/governingBodies/${governingBody.id}`)}
                     >
                       {gbPhotosAreLoading ? (
-                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        <Skeleton.Avatar active size={64} />
                       ) : (
-                        <Avatar size={64} src={governingBody.logo == null ? undefined : governingBody.logo} />
+                        <Avatar size={64} src={governingBody.logo == null ? CityDefaultLogo : governingBody.logo} />
                       )}
                       <p className="userName">
                         {governingBody.governingBodyName}
@@ -378,7 +378,7 @@ const RegionBoard = () => {
                   type="primary"
                   className="addReportIcon"
                   onClick={() => history.push(`/regionsBoard/new`)}
-                ></PlusSquareFilled>
+                />
               ) : null}
               <Button
                 type="primary"
@@ -438,7 +438,7 @@ const RegionBoard = () => {
                 type="primary"
                 className="addReportIcon"
                 onClick={() => setVisibleDecisionModal(true)}
-              ></PlusSquareFilled>
+              />
             ) : null}
             {userAccesses["ViewDecisions"] ? (<Button
               type="primary"
@@ -459,7 +459,14 @@ const RegionBoard = () => {
           xs={24}
         >
           <Card hoverable className="cityCard">
-            <Title level={4}>Документообіг</Title>
+            <Title level={4}>Документообіг <a onClick={() => history.push('/regionsBoard/documents/' + region.id)}>
+              {documentsCount !== 0 ? (
+                <Badge
+                  count={documentsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                />
+              ) : null}
+            </a></Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
                 documents.map((document) => (
@@ -507,7 +514,7 @@ const RegionBoard = () => {
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
         onAdd={onAdd}
-      ></AddDocumentModal>
+      />
       <AddDecisionModal
         setVisibleModal={setVisibleDecisionModal}
         visibleModal={visibleDecisionModal}
@@ -517,7 +524,7 @@ const RegionBoard = () => {
         region={region}
         setVisibleDrawer={setVisibleDrawer}
         visibleDrawer={visibleDrawer}
-      ></RegionDetailDrawer>
+      />
     </Layout.Content>
   );
 };

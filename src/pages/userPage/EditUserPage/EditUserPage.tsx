@@ -472,7 +472,7 @@ export default function () {
       .put(newUserProfile)
       .then(() => {
         notificationLogic("success", successfulEditAction("Дані"));
-        history.goBack();        
+        history.push(`/userpage/main/${userId}`);       
       })
       .catch(() => {
         notificationLogic("error", tryAgain);
@@ -493,7 +493,7 @@ export default function () {
         <div className={styles.avatarWrapper}>
           <div className={styles.kadraWrapper}>
             <Avatar size={300} src={userAvatar} className="avatarElem" />
-            <div className={styles.buttons}>
+            <div className={styles.buttonsImage}>
             <Upload
               name="avatar"
               className={styles.changeAvatar}
@@ -806,7 +806,7 @@ export default function () {
             </Form.Item>
           </div>
           <div className="buttons">
-            <Button className={styles.confirmBtn} htmlType="submit">
+            <Button className={styles.confirmBtn} htmlType="submit" >
               Підтвердити
             </Button>
             <Button className={styles.confirmBtn} htmlType="submit" onClick={() => history.push(`/userpage/main/${userId}`)}>

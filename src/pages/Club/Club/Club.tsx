@@ -3,9 +3,13 @@ import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import { Avatar, Row, Col, Button, Spin, Layout, Modal, Skeleton, Divider, Card, Tooltip, Badge } from "antd";
 import { FileTextOutlined, EditOutlined, PlusSquareFilled, UserAddOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleOutlined, RollbackOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getClubById, getLogo, removeClub, toggleMemberStatus, clubNameOfApprovedMember } from "../../../api/clubsApi";
+import { addFollower, getClubById, getLogo, removeClub, toggleMemberStatus, clubNameOfApprovedMember, removeAdministrator } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
+import {
+  addAdministrator,
+  editAdministrator,
+} from "../../../api/clubsApi";
 import ClubDefaultLogo from "../../../assets/images/default_club_image.jpg";
 import ClubProfile from "../../../models/Club/ClubProfile";
 import ClubMember from '../../../models/Club/ClubMember';
@@ -17,6 +21,8 @@ import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
 import ClubDetailDrawer from "../ClubDetailDrawer/ClubDetailDrawer";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import notificationLogic from "../../../components/Notifications/Notification";
+import { successfulDeleteAction, fileIsAdded, successfulEditAction } from "../../../components/Notifications/Messages";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
@@ -65,7 +71,9 @@ const Club = () => {
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
     ).data;
-
+    const response = await getClubById(+id);
+    setFollowersCount(response.data.followerCount);
+    setMembersCount(response.data.memberCount);
     if (members.length < 9) {
       setMembers([...members, member.data]);
     }
@@ -86,17 +94,17 @@ const Club = () => {
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
-
+    const response = await getClubById(+id);
+    setFollowersCount(response.data.followerCount);
     if (followers.length < 6) {
       setFollowers([...followers, follower.data]);
     }
-
     setCanJoin(false);
   };
 
   const deleteClub = async () => {
     await removeClub(club.id);
-
+    notificationLogic("success", successfulDeleteAction("Курінь"));
     admins.map(async (ad) => {
       await NotificationBoxApi.createNotifications(
         [ad.userId],
@@ -124,7 +132,9 @@ const Club = () => {
     setClubLogoLoading(false);
   };
 
-  const onAdd = (newDocument: ClubDocument) => {
+  const onAdd = async (newDocument: ClubDocument) => {
+    const response = await getClubById(+id);
+    setDocumentsCount(response.data.documentsCount);
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
@@ -156,11 +166,10 @@ const Club = () => {
 
   const getClub = async () => {
     setLoading(true);
-
     try {
       const response = await getClubById(+id);
-      const responce1 = await clubNameOfApprovedMember(userApi.getActiveUserId());
-      setActiveUserClub(responce1.data);
+      const clubNameResponse = await clubNameOfApprovedMember(userApi.getActiveUserId());
+      setActiveUserClub(clubNameResponse.data);
       setPhotosLoading(true);
       setClubLogoLoading(true);
       const admins = [...response.data.administration, response.data.head, response.data.headDeputy]
@@ -191,14 +200,109 @@ const Club = () => {
     }
   };
   
-  const handleOk = async() => {
-    const response =  await getClubById(+id);
-    const admins = [...response.data.administration, response.data.head, response.data.headDeputy]
-    .filter(a => a !== null);
+  const updateAdmins = async () => {
+    const response = await getClubById(+id);
+    setAdminsCount(response.data.administrationCount);
+    const admins = [
+      ...response.data.administration,
+      response.data.head,
+      response.data.headDeputy,
+    ].filter((a) => a !== null);
+    setClub(response.data);
     setAdmins(admins);
     setPhotosLoading(true);
-    setAdminsCount(response.data.administrationCount);
-    setPhotos([...admins,], response.data.logo);
+    setPhotos([...admins],response.data.logo);
+  }
+
+  const addClubAdmin = async (admin: ClubAdmin) => {
+    await addAdministrator(admin.clubId, admin);
+    await updateAdmins();
+    notificationLogic("success", "Користувач успішно доданий в провід");
+    await NotificationBoxApi.createNotifications(
+      [admin.userId],
+      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/cities/${id}`,
+      `цій станиці`
+    );
+  };
+
+  const editClubAdmin = async (admin: ClubAdmin) => {
+    await editAdministrator(admin.id, admin);
+    await updateAdmins();
+    notificationLogic("success", successfulEditAction("Адміністратора"));
+    await NotificationBoxApi.createNotifications(
+      [admin.userId],
+      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/clubs/${id}`,
+      `цьому курені`);
+  };
+
+  const showConfirmClubAdmin  = async (admin: ClubAdmin) => {
+    return Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (
+        <div style={{ margin: 10 }}>
+          <b>
+            {club.head.user.firstName} {club.head.user.lastName}
+          </b>{" "}
+          є Головою Куреня, час правління закінчується{" "}
+          <b>
+            {moment(club.head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(club.head.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onCancel() { },
+      async onOk() {
+        if (admin.id === 0) {
+         await addClubAdmin(admin);
+        } else {
+         await editClubAdmin(admin);
+        }
+      },
+    });
+  };
+  
+  const checkAdminId = async (admin: ClubAdmin)=> {
+    if (admin.id === 0) {
+      await addClubAdmin(admin);
+    } else {
+      await editClubAdmin(admin);
+    }
+  }
+
+  const handleOk = async(admin: ClubAdmin) => {
+    console.log(admin.adminType, admin.id)
+    try {
+      if (admin.adminType.adminTypeName === Roles.KurinHead) {
+        if (club.head == null) {
+          checkAdminId(admin);
+        } else {
+          if (club.head?.userId !== admin.userId) {
+            showConfirmClubAdmin(admin);
+          } else {
+            checkAdminId(admin);
+          }
+        }
+      } else if (admin.adminType.adminTypeName === Roles.KurinHeadDeputy) {
+        if (club.headDeputy == null) {
+          checkAdminId(admin);
+        } else {
+          checkAdminId(admin);
+        }
+      } else {
+          await addClubAdmin(admin);
+      }
+    } finally {
+      setvisible(false);
+    }
+  };
+
+  const handleClose = async() => {
     setvisible(false);
   };
 
@@ -666,12 +770,13 @@ const Club = () => {
       <Modal
         title="Додати діловода"
         visible={visible}
-        onOk={handleOk}
-        onCancel={handleOk}
+        onCancel={handleClose}
         footer={null}
       >
         <AddClubsNewSecretaryForm
           onAdd={handleOk}
+          head={club.head}
+          headDeputy={club.headDeputy}
           clubId={+id}
           visibleModal={visible}>
         </AddClubsNewSecretaryForm>

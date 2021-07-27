@@ -57,44 +57,119 @@ const DropDown = (props: Props) => {
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
 
   const [superAdmin, setsuperAdmin] = useState<boolean>(false);
-  const [governingBodyHead, setGoverningBodyHead]=useState<boolean>(true);
-  const [canChangeCityAdministration, setCanChangeCityAdministration]=useState<boolean>(false);
-  const [canChangeClubAdministration, setCanChangeClubAdministration]=useState<boolean>(false);
-  const [canChangeRegionAdministration, setCanChangeRegionAdministration]=useState<boolean>(false);
-  const [canChangeGoverningBodyAdministration, setCanChangeGoverningBodyAdministration]=useState<boolean>(false);
-  const [canChangeUserAccess, setCanChangeUserAccess]=useState<boolean>(false);
-  const [canAddDegree, setCanAddDegree]=useState<boolean>(false);
-  const [canArchivate, setCanArchivate]=useState<boolean>(false);
+  const [governingBodyHead, setGoverningBodyHead] = useState<boolean>(true);
+  const [canChangeCityAdministration, setCanChangeCityAdministration] = useState<boolean>(false);
+  const [canChangeClubAdministration, setCanChangeClubAdministration] = useState<boolean>(false);
+  const [canChangeRegionAdministration, setCanChangeRegionAdministration] = useState<boolean>(false);
+  const [canChangeGoverningBodyAdministration, setCanChangeGoverningBodyAdministration] = useState<boolean>(false);
+  const [canChangeUserAccess, setCanChangeUserAccess] = useState<boolean>(false);
+  const [canAddDegree, setCanAddDegree] = useState<boolean>(false);
 
   const fetchUser = async () => {
 
-    let roles = UserApi.getActiveUserRoles();
+    const roles = UserApi.getActiveUserRoles();
 
-    setCanChangeCityAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
-    || ((!user?.userRoles.includes(Roles.OkrugaHead) || !roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId)
-    || ((!user?.userRoles.includes(Roles.CityHead) || !roles.includes(Roles.CityHeadDeputy))&& currentUser?.cityId==user?.cityId));
+    setCanChangeCityAdministration((): boolean => {
+      const isCurrentUserAdmin = roles.includes(Roles.Admin);
+      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
+      const isUserFromSameCityAndRegion = roles.includes(Roles.OkrugaHead)
+        && currentUser?.cityId == user?.cityId;
+      const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
+        && currentUser?.regionId == user?.regionId;
+      const isUserCityHead = roles.includes(Roles.CityHead) 
+        && currentUser?.cityId == user?.cityId;
+      const isUserCityHeadDeputy = roles.includes(Roles.CityHeadDeputy) 
+        && currentUser?.cityId == user?.cityId;
 
-    setCanChangeClubAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
-    || ((!user?.userRoles.includes(Roles.KurinHead) || !roles.includes(Roles.KurinHeadDeputy))&& currentUser?.clubId==user?.clubId));
+      return isCurrentUserAdmin ||
+      isCurrentUserGoverningBodyHead ||
+      isUserFromSameCityAndRegion ||
+      isCurrentUserRegionHeadDeputy ||
+      isUserCityHead ||
+      isUserCityHeadDeputy;
+    });
 
-    setCanChangeRegionAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
-    || ((!user?.userRoles.includes(Roles.OkrugaHead) || !roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId));
+    setCanChangeClubAdministration((): boolean => {
+      const isCurrentUserAdmin = roles.includes(Roles.Admin);
+      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
+      const isCurrentUserKurinHeadDeputy = roles.includes(Roles.KurinHeadDeputy) 
+        && currentUser?.clubId == user?.clubId;
+      const isCurrentUserKurinHead = roles.includes(Roles.KurinHead) 
+        && currentUser?.clubId == user?.clubId;
+
+      return isCurrentUserAdmin ||
+      isCurrentUserGoverningBodyHead ||
+      isCurrentUserKurinHeadDeputy ||
+      isCurrentUserKurinHead;
+    });
+      
+    setCanChangeRegionAdministration((): boolean => {
+      const isCurrentUserAdmin = roles.includes(Roles.Admin);
+      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
+      const isCurrentUserRegionHead = roles.includes(Roles.OkrugaHead) 
+        && currentUser?.regionId == user?.regionId;
+      const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
+        && currentUser?.regionId == user?.regionId;
+       
+      return isCurrentUserAdmin ||
+      isCurrentUserGoverningBodyHead ||      
+      isCurrentUserRegionHead ||      
+      isCurrentUserRegionHeadDeputy;
+    });
 
     setCanChangeGoverningBodyAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead));
 
-    setCanChangeUserAccess(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
-    || ((roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId)
-    || ((roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy))&& currentUser?.cityId==user?.cityId));
+    setCanChangeUserAccess((): boolean => {
+      const isCurrentUserAdmin = roles.includes(Roles.Admin);
+      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
+      const isCurrentUserRegionHead = roles.includes(Roles.OkrugaHead) 
+        && currentUser?.regionId == user?.regionId;
+      const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
+        && currentUser?.regionId == user?.regionId;
+      const isCurrentUserKurinHeadDeputy = roles.includes(Roles.KurinHeadDeputy) 
+        && currentUser?.clubId == user?.clubId;
+      const isCurrentUserKurinHead = roles.includes(Roles.KurinHead) 
+        && currentUser?.clubId == user?.clubId;
+      const isUserCityHead = roles.includes(Roles.CityHead) 
+        && currentUser?.cityId == user?.cityId;
+      const isUserCityHeadDeputy = roles.includes(Roles.CityHeadDeputy) 
+        && currentUser?.cityId == user?.cityId;
 
-    setCanAddDegree(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
-    || ((roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId)
-    || ((roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy))&& currentUser?.cityId==user?.cityId)
-    || ((roles.includes(Roles.KurinHead) || roles.includes(Roles.KurinHeadDeputy))&& currentUser?.clubId==user?.clubId));
+      return isCurrentUserAdmin ||
+      isCurrentUserGoverningBodyHead ||      
+      isCurrentUserRegionHead ||      
+      isCurrentUserRegionHeadDeputy ||
+      isCurrentUserKurinHeadDeputy ||
+      isCurrentUserKurinHead ||
+      isUserCityHead ||
+      isUserCityHeadDeputy;
+    });
 
-    setCanArchivate(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead) 
-    || ((roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)) && currentUser?.regionId==user?.regionId)
-    || ((roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy))&& currentUser?.cityId==user?.cityId)
-    || ((roles.includes(Roles.KurinHead) || roles.includes(Roles.KurinHeadDeputy))&& currentUser?.clubId==user?.clubId));
+    setCanAddDegree((): boolean => {
+      const isCurrentUserAdmin = roles.includes(Roles.Admin);
+      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
+      const isCurrentUserRegionHead = roles.includes(Roles.OkrugaHead) 
+        && currentUser?.regionId == user?.regionId;
+      const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
+        && currentUser?.regionId == user?.regionId;
+      const isCurrentUserKurinHeadDeputy = roles.includes(Roles.KurinHeadDeputy) 
+        && currentUser?.clubId == user?.clubId;
+      const isCurrentUserKurinHead = roles.includes(Roles.KurinHead) 
+        && currentUser?.clubId == user?.clubId;
+      const isUserCityHead = roles.includes(Roles.CityHead) 
+        && currentUser?.cityId == user?.cityId;
+      const isUserCityHeadDeputy = roles.includes(Roles.CityHeadDeputy) 
+        && currentUser?.cityId == user?.cityId;
+
+      return isCurrentUserAdmin ||
+      isCurrentUserGoverningBodyHead ||      
+      isCurrentUserRegionHead ||      
+      isCurrentUserRegionHeadDeputy ||
+      isCurrentUserKurinHeadDeputy ||
+      isCurrentUserKurinHead ||
+      isUserCityHead ||
+      isUserCityHeadDeputy;
+    });
 
     setsuperAdmin(roles.includes(Roles.Admin));
     setGoverningBodyHead(roles.includes(Roles.GoverningBodyHead));
@@ -139,10 +214,10 @@ const DropDown = (props: Props) => {
     }
     item.key = "0";
   };
-  
+
   return (
     <>
-    {canView? <Menu
+      {canView ? <Menu
         theme="dark"
         className={classes.menu}
         onClick={handleItemClick}
@@ -172,13 +247,13 @@ const DropDown = (props: Props) => {
           <> </>
         )}
         {!props.inActiveTab &&
-        (canChangeCityAdministration || canChangeClubAdministration || canChangeRegionAdministration 
-          || canChangeGoverningBodyAdministration || canChangeUserAccess) ? (
+          (canChangeCityAdministration || canChangeClubAdministration || canChangeRegionAdministration
+            || canChangeGoverningBodyAdministration || canChangeUserAccess) ? (
           <SubMenu
             key="sub"
             icon={<EditOutlined />}
             title="Змінити права доступу"
-            onTitleClick={()=>{}}
+            onTitleClick={() => { }}
           >
             {canChangeRegionAdministration ? (
               <Menu.Item key="3">Провід округи</Menu.Item>
@@ -191,7 +266,7 @@ const DropDown = (props: Props) => {
               <> </>
             )}
             {canChangeClubAdministration ? (
-              <Menu.Item key="5">Провід куреня</Menu.Item>
+              <Menu.Item key="5" >Провід куреня </Menu.Item>
             ) : (
               <> </>
             )}
@@ -208,14 +283,6 @@ const DropDown = (props: Props) => {
           <Menu.Item key="7">
             <PlusCircleOutlined />
             Додати ступінь
-          </Menu.Item>
-        ) : (
-          <> </>
-        )}
-        {!props.inActiveTab && canArchivate ? (
-          <Menu.Item key="8">
-            <ScissorOutlined />
-            Заархівувати користувача
           </Menu.Item>
         ) : (
           <> </>
@@ -256,7 +323,7 @@ const DropDown = (props: Props) => {
           onChange={onChange}
         />
         <ModalAddPlastDegree
-          handleAddDegree={() => {}}
+          handleAddDegree={() => { }}
           userId={record}
           visibleModal={visibleModalDegree}
           setVisibleModal={setVisibleModalDegree}

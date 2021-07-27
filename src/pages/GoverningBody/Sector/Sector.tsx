@@ -43,6 +43,7 @@ import userApi from "../../../api/UserApi";
 import moment from "moment";
 import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument";
 import AddDocumentModal from "./AddDocumentModal";
+import AddSectorAdminForm from "./AddSectorAdminForm";
 
 const Sector = () => {
   const history = useHistory();
@@ -52,6 +53,7 @@ const Sector = () => {
   const [sector, setSector] = useState<SectorProfile>(new SectorProfile());
   const [sectorLogo64, setSectorLogo64] = useState<string>("");
   const [documents, setDocuments] = useState<SectorDocument[]>([]);
+  const [documentsCount, setDocumentsCount] = useState<number>(0);
   const [document, setDocument] = useState<SectorDocument>(new SectorDocument());
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
@@ -61,7 +63,6 @@ const Sector = () => {
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   const [admins, setAdmins] = useState<SectorAdmin[]>([]);
   const [sectorHead, setSectorHead] = useState<SectorAdmin>();
-  const [adminsCount, setAdminsCount] = useState<number>();
 
   const deleteSector = async () => {
     await removeSector(sector.id);
@@ -86,10 +87,11 @@ const Sector = () => {
     setSectorLogoLoading(false);
   };
 
-  const onAdd = (newDocument: SectorDocument) => {
+  const onDocumentAdd = (newDocument: SectorDocument) => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
+    setDocumentsCount(documentsCount + 1);
   };
 
   function seeDeleteModal() {
@@ -119,30 +121,31 @@ const Sector = () => {
     setLoading(true);
     try {
       const response = await getSectorById(+sectorId);
+      const sectorViewModel = response.data.sectorViewModel
       await getUserAccesses();
 
       setSectorLogoLoading(true);
       const admins = [
-        ...response.data.administration,
-        response.data.head,
+        ...sectorViewModel.administration,
+        sectorViewModel.head,
       ].filter(a => a !== null);
 
       await setPhotos(
         [...admins],
-        response.data.logo
+        sectorViewModel.logo
       );
 
-      setSector(response.data);
+      setSector(sectorViewModel);
       setAdmins(admins);
-      setSectorHead(response.data.head)
-      setAdminsCount(admins.length);
-      setDocuments(response.data.documents);
+      setSectorHead(sectorViewModel.head)
+      setDocuments(sectorViewModel.documents);
+      setDocumentsCount(response.data.documentsCount);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOk = () => {
+  const handleAdminAdd = () => {
     setVisible(false);
   };
 
@@ -154,16 +157,14 @@ const Sector = () => {
     if (sector.name.length != 0) {
       PsevdonimCreator.setPseudonimLocation(`sectors/${sector.name}`, `sectors/${sectorId}`);
     }
-  }, [sector])
-
-  console.log(userAccesses);
+  }, [sector]);
 
   return loading ? (
     <Spinner />
   ) : sector.id !== 0 ? (
     <Layout.Content className="governingBodyProfile">
       <Row gutter={[0, 15]}>
-        <Col span={8} offset={1}></Col>
+        <Col span={8} offset={1} />
       </Row>
       <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
@@ -252,13 +253,13 @@ const Sector = () => {
                   Деталі
                 </Button>
               </Col>
-              {userAccesses["EditGB"] ? (
+              {userAccesses["EditSector"] ? (
                 <Col xs={24} sm={4}>
                   <Row
                     className="governingBodyIcons"
                     justify={userAccesses["DeleteGB"] ? "center" : "start"}
                   >
-                    {userAccesses["EditGB"] ? (
+                    {userAccesses["EditSector"] ? (
                       <Col>
                         <Tooltip title="Редагувати Напрям Керівного Органу">
                           <EditOutlined
@@ -270,7 +271,7 @@ const Sector = () => {
                         </Tooltip>
                       </Col>
                     ) : null}
-                    {userAccesses["DeleteGB"] ? (
+                    {userAccesses["DeleteSector"] ? (
                       <Col offset={1}>
                         <Tooltip title="Видалити Напрям Керівного Органу">
                           <DeleteOutlined
@@ -315,9 +316,9 @@ const Sector = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Провід <a onClick={() => history.push(`/governingBodies/${governingBodyId}/sectors/${sector.id}/administration`)}>
-              {adminsCount !== 0 ?
+              {admins.length !== 0 ?
                 <Badge
-                  count={adminsCount}
+                  count={admins.length}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
@@ -328,12 +329,14 @@ const Sector = () => {
                 admins.map((admin) => (
                   <Col className="governingBodyMemberItem" key={admin.id} xs={12} sm={8}>
                     <div
-                      onClick={() =>
-                        history.push(`/userpage/main/${admin.userId}`)
-                      }
+                      onClick={() => {
+                        if (userAccesses["GoToSecretaryProfile"]) {
+                          history.push(`/userpage/main/${admin.userId}`)
+                        }
+                      }}
                     >
                       {photosLoading ? (
-                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        <Skeleton.Avatar active size={64} />
                       ) : (
                         <Avatar size={64} src={admin.user.imagePath} />
                       )}
@@ -347,7 +350,7 @@ const Sector = () => {
               )}
             </Row>
             <div className="governingBodyMoreButton">
-              {userAccesses["AddGBSecretary"] ? (
+              {userAccesses["AddSecretary"] ? (
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
@@ -358,7 +361,7 @@ const Sector = () => {
                 type="primary"
                 className="governingBodyInfoButton"
                 onClick={() =>
-                  history.push('/governingBodies/${governingBodyId}/sectors/${sector.id}/administration')
+                  history.push('/governingBodies/' + governingBodyId + '/sectors/' + sector.id + '/administration')
                 }
               >
                 Більше
@@ -397,12 +400,19 @@ const Sector = () => {
           xs={24}
         >
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Документообіг</Title>
+            <Title level={4}>Документообіг <a onClick={() => history.push(`/governingBodies/${governingBodyId}/sectors/${sector.id}/documents`)}>
+              {documentsCount !== 0 ?
+                <Badge
+                  count={documentsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a></Title>
             <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
                 documents.map((d) => (
                   <Col
-                    className="governingBodyMemberItem"
+                    className="governingBodyDocumentItem"
                     xs={12}
                     sm={8}
                     key={d.id}
@@ -441,21 +451,23 @@ const Sector = () => {
         setVisibleDrawer={setVisibleDrawer}
         visibleDrawer={visibleDrawer}
         sector={sector}
-      ></SectorDetailDrawer>
+      />
       <Modal
-        title="Цей функціонал ще не готовий"
+        title="Додати діловода"
         visible={visible}
-        onOk={handleOk}
-        onCancel={handleOk}
+        onOk={handleAdminAdd}
+        onCancel={handleAdminAdd}
         footer={null}
       >
-        {/*<AddGoverningBodiesSecretaryForm*/}
-        {/*  onAdd={handleOk}*/}
-        {/*  admins={admins}*/}
-        {/*  setAdmins={setAdmins}*/}
-        {/*  setGoverningBodyHead={setSectorHead}*/}
-        {/*  governingBodyId={+sectorId}>*/}
-        {/*</AddGoverningBodiesSecretaryForm>*/}
+        <AddSectorAdminForm
+          onAdd={handleAdminAdd}
+          admins={admins}
+          setAdmins={setAdmins}
+          setSectorHead={setSectorHead}
+          sectorId={+sectorId}
+          governingBodyId={+governingBodyId}
+        >
+        </AddSectorAdminForm>
       </Modal>
       {userAccesses["ManipulateDocument"] ? (
         <AddDocumentModal
@@ -464,8 +476,8 @@ const Sector = () => {
           setDocument={setDocument}
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
-          onAdd={onAdd}
-        ></AddDocumentModal>
+          onAdd={onDocumentAdd}
+        />
       ) : null}
     </Layout.Content>
   ) : (

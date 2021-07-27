@@ -76,8 +76,7 @@ const City = () => {
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
-  const [reload, setReload] = useState<boolean>(false);
-  
+
   const changeApproveStatus = async (memberId: number) => {
   const member = await toggleMemberStatus(memberId);
     moment.locale("uk-ua");
@@ -101,11 +100,12 @@ const City = () => {
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
     ).data;
-
+    const response = await getCityById(+id);
+    setMembersCount(response.data.memberCount);
+    setFollowersCount(response.data.followerCount);
     if (members.length < 9) {
       setMembers([...members, member.data]);
     }
-
     setFollowers(followers.filter((f) => f.id !== memberId));
   };
 
@@ -122,7 +122,8 @@ const City = () => {
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
-
+    const response = await getCityById(+id);
+    setFollowersCount(response.data.followerCount);
     if (followers.length < 6) {
       setFollowers([...followers, follower.data]);
     }
@@ -161,12 +162,13 @@ const City = () => {
     setCityLogoLoading(false);
   };
 
-  const onAdd = (newDocument: CityDocument) => {
+  const onAdd = async (newDocument: CityDocument) => {
+    const response = await getCityById(+id);
+    setDocumentsCount(response.data.documentsCount);
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]); 
     }
     notificationLogic("success", fileIsAdded());
-    setReload(!reload);
   };
 
   function seeDeleteModal() {
@@ -300,28 +302,38 @@ const City = () => {
     });
   };
 
-  const handleOk = async(admin: CityAdmin) => {
+  const checkAdminId = async (admin: CityAdmin)=> {
     if (admin.id === 0) {
-      try {
-        if (admin.adminType.adminTypeName === Roles.CityHead && city.head !== null) {
-          if (city.head?.userId !== admin.userId) {
-          await  showConfirmCityAdmin(admin);
-          } else if (city.head?.userId === admin.userId) {
-          }
-          else {
-            editCityAdmin(admin);
-          }
+      await addCityAdmin(admin);
+    } else {
+      await editCityAdmin(admin);
+    }
+  }
+
+  const handleOk = async(admin: CityAdmin) => {
+    try {
+      if (admin.adminType.adminTypeName === Roles.CityHead) {
+        if (city.head == null) {
+          
+          checkAdminId(admin);
         } else {
-          if (admin.id === 0) {
-            addCityAdmin(admin);
-          }
-          else {
-            editCityAdmin(admin);
+          if (city.head?.userId !== admin.userId) {
+            showConfirmCityAdmin(admin);
+          } else {
+            checkAdminId(admin);
           }
         }
-      } finally {
-        setvisible(false);
+      } else if (admin.adminType.adminTypeName === Roles.CityHeadDeputy) {
+        if (city.headDeputy == null) {
+          checkAdminId(admin);
+        } else {
+          checkAdminId(admin);
+        }
+      } else {
+          await addCityAdmin(admin);
       }
+    } finally {
+      setvisible(false);
     }
   };
 
@@ -334,7 +346,7 @@ const City = () => {
       PsevdonimCreator.setPseudonimLocation(`cities/${city.name}`, `cities/${id}`);
     }
     getCity();
-  }, [reload])
+  }, [])
 
   return loading ? (
     <Spinner />
@@ -785,6 +797,8 @@ const City = () => {
         <AddCitiesNewSecretaryForm
           onAdd={handleOk}
           cityId={+id}
+          head={city.head}
+          headDeputy={city.headDeputy}
           visibleModal={visible}>
         </AddCitiesNewSecretaryForm>
       </Modal>

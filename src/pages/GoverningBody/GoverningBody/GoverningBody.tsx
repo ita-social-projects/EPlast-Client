@@ -55,6 +55,7 @@ const GoverningBody = () => {
   const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(new GoverningBodyProfile());
   const [governingBodyLogo64, setGoverningBodyLogo64] = useState<string>("");
   const [documents, setDocuments] = useState<GoverningBodyDocument[]>([]);
+  const [documentsCount, setDocumentsCount] = useState<number>(0);
   const [document, setDocument] = useState<GoverningBodyDocument>(new GoverningBodyDocument());
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
@@ -64,7 +65,6 @@ const GoverningBody = () => {
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   const [admins, setAdmins] = useState<GoverningBodyAdmin[]>([]);
   const [governingBodyHead, setGoverningBodyHead] = useState<GoverningBodyAdmin>();
-  const [adminsCount, setAdminsCount] = useState<number>();
   const [sectors, setSectors] = useState<SectorProfile[]>([]);
   const [sectorsPhotosLoading, setSectorsPhotosLoading] = useState<boolean>(false);
 
@@ -103,10 +103,11 @@ const GoverningBody = () => {
     setSectorsPhotosLoading(false);
   };
 
-  const onAdd = (newDocument: GoverningBodyDocument) => {
+  const onDocumentAdd = (newDocument: GoverningBodyDocument) => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
+    setDocumentsCount(documentsCount + 1);
   };
 
   function seeDeleteModal() {
@@ -137,35 +138,37 @@ const GoverningBody = () => {
     try {
       await getUserAccesses();
       const response = await getGoverningBodyById(+id);
+      const governingBodyViewModel = response.data.governingBodyViewModel;
 
       const admins = [
-        ...response.data.administration,
-        response.data.head,
+        ...governingBodyViewModel.administration,
+        governingBodyViewModel.head,
       ].filter(a => a !== null);
 
-      const responseSectors = response.data.sectors;
+      const responseSectors = governingBodyViewModel.sectors;
 
       setGoverningBodyLogoLoading(true);
       setSectorsPhotosLoading(true);
       await setPhotos(
         [...admins],
-        response.data.logo,
+        governingBodyViewModel.logo,
         responseSectors
       );
 
-      setGoverningBody(response.data);
+      setGoverningBody(governingBodyViewModel);
       setAdmins(admins);
-      setGoverningBodyHead(response.data.head)
-      setAdminsCount(admins.length);
-      setDocuments(response.data.documents);
-      setSectors(response.data.sectors);
+      setGoverningBodyHead(governingBodyViewModel.head)
+      setDocuments(governingBodyViewModel.documents);
+      setDocumentsCount(response.data.documentsCount);
+      setSectors(governingBodyViewModel.sectors);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOk = () => {
+  const handleAdminAdd = () => {
     setVisible(false);
+
   };
 
   useEffect(() => {
@@ -277,7 +280,7 @@ const GoverningBody = () => {
                   <Button
                     type="primary"
                     className="governingBodyInfoButton"
-                    onClick={() => history.push(`/annualreport/table/city`)}
+                    onClick={() => history.push(`/decisions`)}
                   >
                     Додати рішення
                   </Button>
@@ -380,9 +383,9 @@ const GoverningBody = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Провід Керівного Органу <a onClick={() => history.push(`/governingBodies/administration/${governingBody.id}`)}>
-            {adminsCount !== 0 ?
+            {admins.length !== 0 ?
                 <Badge
-                  count={adminsCount}
+                  count={admins.length}
                   style={{ backgroundColor: "#3c5438" }}
                 /> : null
               }
@@ -393,9 +396,11 @@ const GoverningBody = () => {
                 admins.map((admin) => (
                   <Col className="governingBodyMemberItem" key={admin.id} xs={12} sm={8}>
                     <div
-                      onClick={() =>
-                        history.push(`/userpage/main/${admin.userId}`)
-                      }
+                      onClick={() => {
+                        if (userAccesses["GoToSecretaryProfile"]) {
+                          history.push(`/userpage/main/${admin.userId}`)
+                        }
+                      }}
                     >
                       {adminsPhotosLoading ? (
                         <Skeleton.Avatar active size={64} />
@@ -462,7 +467,14 @@ const GoverningBody = () => {
           xs={24}
         >
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Документообіг Керівного Органу</Title>
+            <Title level={4}>Документообіг Керівного Органу <a onClick={() => history.push(`/governingBodies/documents/${governingBody.id}`)}>
+              {documentsCount !== 0 ?
+                <Badge
+                  count={documentsCount}
+                  style={{ backgroundColor: "#3c5438" }}
+                /> : null
+              }
+            </a></Title>
             <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
                 {documents.length !== 0 ? (
                     documents.map((d) => (
@@ -510,12 +522,12 @@ const GoverningBody = () => {
       <Modal
         title="Додати діловода"
         visible={visible}
-        onOk={handleOk}
-        onCancel={handleOk}
+        onOk={handleAdminAdd}
+        onCancel={() => setVisible(false)}
         footer={null}
       >
         <AddGoverningBodiesSecretaryForm
-          onAdd={handleOk}
+          onAdd={handleAdminAdd}
           admins={admins}
           setAdmins={setAdmins}
           setGoverningBodyHead={setGoverningBodyHead}
@@ -529,7 +541,7 @@ const GoverningBody = () => {
           setDocument={setDocument}
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
-          onAdd={onAdd}
+          onAdd={onDocumentAdd}
         />
       ) : null}
     </Layout.Content>

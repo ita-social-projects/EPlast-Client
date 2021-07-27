@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Alert, Button, Form, Input } from "antd";
+import { Alert, Button, Form, Input, Skeleton } from "antd";
 import userApi from "../../../api/UserApi";
 import moment from "moment";
-import AvatarAndProgress from "./AvatarAndProgress";
 import { Data, User } from "../Interface/Interface";
 import { useParams, useHistory } from "react-router-dom";
 import notificationLogic from "../../../components/Notifications/Notification";
@@ -11,7 +10,7 @@ import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import Facebook from "../../../assets/images/facebookGreen.svg";
 import Twitter from "../../../assets/images/birdGreen.svg";
 import Instagram from "../../../assets/images/instagramGreen.svg";
-import { Sticky, StickyContainer } from "react-sticky";
+import { StickyContainer } from "react-sticky";
 import AvatarAndProgressStatic from "./AvatarAndProgressStatic";
 import { Roles } from "../../../models/Roles/Roles";
 import UserApi from "../../../api/UserApi";
@@ -59,10 +58,17 @@ export default function () {
   useEffect(() => {
     fetchData();
   }, [userId]);
-  
   return loading === false ? (
-    <Spinner />
-  ) : data?.user !== null ? (
+    <div className="kadraWrapper">
+      <Skeleton.Avatar
+        size={220}
+        active={true}
+        shape="circle"
+        className="img"
+      />
+    </div>
+  )  
+  : data?.user !== null ? (
     <div className="container">
       <Form name="basic" className="formContainer">
       
@@ -88,19 +94,21 @@ export default function () {
           <div className="avatarWrapperUserFields">
 
           <StickyContainer className="kadraWrapper">
-              <AvatarAndProgress
+              <AvatarAndProgressStatic
                 imageUrl={data?.user.imagePath}
                 time={data?.timeToJoinPlast}
                 firstName={data?.user.firstName}
                 lastName={data?.user.lastName}
                 isUserPlastun={data?.isUserPlastun}
                 pseudo={data?.user.pseudo}
+                governingBody={data?.user.governingBody}
                 region={data?.user.region}
                 city={data?.user.city}
                 club={data?.user.club}
                 cityId={data?.user.cityId}
                 clubId={data?.user.clubId}
                 regionId={data?.user.regionId}
+                governingBodyId={data?.user.governingBodyId}
               />
             </StickyContainer>
 
@@ -459,12 +467,14 @@ export default function () {
             lastName={data?.shortUser.lastName}
             isUserPlastun={data?.isUserPlastun}
             pseudo={data?.shortUser.pseudo}
-            region={data.shortUser.region}
+            governingBody={data?.shortUser.governingBody}
+            region={data?.shortUser.region}
             city={data?.shortUser.city}
             club={data?.shortUser.club}
-            regionId={data.shortUser.regionId}
-            cityId={data.shortUser.cityId}
-            clubId={data.shortUser.clubId}
+            governingBodyId={data?.shortUser.governingBodyId}
+            regionId={data?.shortUser.regionId}
+            cityId={data?.shortUser.cityId}
+            clubId={data?.shortUser.clubId}
           />
         </div>
         <div className="shortAllFields">

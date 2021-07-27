@@ -5,7 +5,6 @@ import {
   Select,
   Input,
   Button,
-  notification,
   Row,
   Col,
 } from "antd";
@@ -18,10 +17,10 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
   maxLength,
-  failCreateAction,
   maxNumber,
   minNumber
 } from "../../../components/Notifications/Messages"
+import moment from "moment";
 
 type FormAddPrecautionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -49,14 +48,11 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
   const [distData, setDistData] = useState<Precaution[]>(Array<Precaution>());
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
   const dateFormat = "DD.MM.YYYY";
-  const openNotification = (message: string) => {
-    notification.error({
-      message: failCreateAction(`пересторогу`),
-      description: `${message}`,
-      placement: "topLeft",
-    });
-  };
 
+  const disabledStartDate = (current: any) => {
+    return current && current > moment();
+  };
+  
   useEffect(() => {
     const fetchData = async () => {
       await precautionApi.getPrecautions().then((response) => {
@@ -119,20 +115,12 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
       reason: values.reason,
       number: values.number,
     };
-    if (
-      await precautionApi
-        .checkNumberExisting(newPrecaution.number)
-        .then((response) => response.data === false)
-    ) {
-      await precautionApi.addUserPrecaution(newPrecaution);
-      setVisibleModal(false);
-      form.resetFields();
-      onAdd();
-      await createNotifications(newPrecaution);
-    } else {
-      openNotification(`Номер ${values.number} вже зайнятий`);
-      form.resetFields(["number"]);
-    }
+
+    await precautionApi.addUserPrecaution(newPrecaution);
+    setVisibleModal(false);
+    form.resetFields();
+    onAdd();
+    await createNotifications(newPrecaution);
   };
   return (
     <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
@@ -153,10 +141,14 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
                   message: maxNumber(99999),
                 },
                 {
-                  validator: (_ : object, value: number) => 
+                  validator: async (_ : object, value: number) =>
                       value < 1
                           ? Promise.reject(minNumber(1)) 
-                          : Promise.resolve()
+                          : await precautionApi
+                              .checkNumberExisting(value)
+                              .then(response => response.data === false)
+                              ? Promise.resolve()
+                              : Promise.reject('Цей номер уже зайнятий')
                 }
               ]}
           >
@@ -259,6 +251,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             <DatePicker
               format={dateFormat}
               className={formclasses.selectField}
+              disabledDate={disabledStartDate}
               getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
               popupStyle={{position: 'absolute'}}
             />
