@@ -25,9 +25,11 @@ class AvatarAndProgressStaticProps {
   lastName: string | undefined;
   isUserPlastun: boolean | undefined;
   pseudo: string | undefined;
+  governingBody: string | undefined;
   region: string | undefined;
   city: string | undefined;
   club: string | undefined;
+  governingBodyId: number | undefined;
   regionId: number | undefined;
   cityId: number|undefined;
   clubId: number|undefined;

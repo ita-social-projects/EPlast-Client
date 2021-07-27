@@ -429,6 +429,7 @@ const UsersTable = () => {
         </div>
         <div className={classes.searchArea}>
           <Search placeholder="Пошук"
+            allowClear
             enterButton
             onChange={handleSearchChange}
             onSearch={handleSearch}

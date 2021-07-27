@@ -93,10 +93,8 @@ export default function () {
   }
 
   useEffect(() => {
-
     getId();
     getAppId();
-
   }, []);
 
   return (

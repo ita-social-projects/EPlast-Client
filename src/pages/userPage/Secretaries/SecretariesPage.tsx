@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import userApi from '../../../api/UserApi';
-import AvatarAndProgress from '../personalData/AvatarAndProgress';
+import AvatarAndProgressStatic from '../personalData/AvatarAndProgressStatic';
 import { useParams } from 'react-router-dom';
 import { Data } from '../Interface/Interface';
 import notificationLogic from '../../../components/Notifications/Notification';
-import { Card, Form } from 'antd';
+import { Card, Form, Skeleton } from 'antd';
 import './Secretaries.less'
 import {UserCitySecretaryTable} from './UserCitySecretaryTable';
 import { UserRegionSecretaryTable } from './UserRegionSecretaryTable';
@@ -39,16 +39,14 @@ export const Secretaries = () => {
     
     const [noTitleKey, setKey] = useState<string>('1');
     const [data, setData] = useState<Data>();
+     const [LoadInfo, setLoadInfo] = useState<boolean>(false);
 
     const fetchData = async () => {
         await userApi.getById(userId).then(response => {
             setData(response.data);
+            setLoadInfo(true);
         }).catch(() => { notificationLogic('error', tryAgain) })
     };
-
-    useEffect(() => {
-        fetchData();
-    }, [userId]);
 
     const onTabChange =  (key:string) => { setKey(key) };
 
@@ -59,17 +57,24 @@ export const Secretaries = () => {
         4: <div key='4'><UserClubSecretaryTable UserId={userId}/></div>
       };
 
-
-    return (
-        <>
-            
-            <p></p>
+      useEffect(() => {
+        fetchData();
+    }, []);
+    return LoadInfo === false ? (
+      <div className="kadraWrapper">
+        <Skeleton.Avatar
+          size={220}
+          active={true}
+          shape="circle"
+          className="img"
+        />
+      </div>
+    ) : ( 
             <div className="container">
                 <Form name="basic" className="formContainer">
-
                     <div className="avatarWrapperSecretaries">
                         <StickyContainer className="kadraWrapper">
-                            <AvatarAndProgress
+                            <AvatarAndProgressStatic
                                 imageUrl={data?.user.imagePath}
                                 time={data?.timeToJoinPlast}
                                 firstName={data?.user.firstName}
@@ -89,6 +94,7 @@ export const Secretaries = () => {
 
                     <div className="allFieldsSecretaries">
                         <div className="rowBlockSecretaries">
+                        
                             <Card
                                 style={{ width: '100%' }}
                                 tabList={tabList}
@@ -106,7 +112,6 @@ export const Secretaries = () => {
                     </div>
                 </Form>
             </div>
-        </>
     )
 
 }
