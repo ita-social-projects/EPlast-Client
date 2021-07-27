@@ -158,16 +158,6 @@ const EventUser = () => {
                         regionId={currentUser?.user.regionId}
                     />
                 </div>
-                {userToken.nameid === userId && canCreate && (
-                    <Button
-                        type="primary"
-                        className={classes.buttonInside}
-                        style={{ marginBottom: "15px" }}
-                        onClick={() => setShowEventCreateDrawer(true)}
-                    >
-                        Створити подію
-                    </Button>
-                )}
             </div>
 
             <div className={classes.wrapperCol}>
@@ -249,21 +239,7 @@ const EventUser = () => {
                     </div>
                     <div className={classes.wrapper3}>
                         <Title level={2}> Створені події </Title>
-                        {allEvents.createdEvents.length === 0 &&
-                            userToken.nameid === userId && (
-                                <div>
-                                    <h2>Ви ще не створили жодної події</h2>
-                                    {canCreate &&
-                                        <Button
-                                            type="primary"
-                                            className={classes.buttonInside}
-                                            style={{ marginBottom: "15px" }}
-                                            onClick={() => setShowEventCreateDrawer(true)}>
-                                            Створити подію
-                                </Button>}
-                                </div>
-                            )}
-                        {allEvents.createdEvents.length !== 0 && (
+                        {allEvents.createdEvents.length !== 0 ? (
                             <div>
                                 <Badge
                                     count={allEvents.createdEvents.length}
@@ -278,7 +254,20 @@ const EventUser = () => {
                                     Список
                                 </Button>
                             </div>
+                        ) : (
+                            userToken.nameid === userId && 
+                                    <h2>Ви ще не створили жодної події</h2>
                         )}
+                        {userToken.nameid === userId && canCreate && (
+                            <Button
+                                type="primary"
+                                className={classes.buttonInside}
+                                style={{ marginBottom: "15px" }}
+                                onClick={() => setShowEventCreateDrawer(true)}
+                            >
+                                Створити подію
+                            </Button>
+                        )} 
 
                         <EventCreateDrawer
                             visibleEventCreateDrawer={showEventCreateDrawer}
