@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import eventUserApi from '../../../../api/eventUserApi';
-import { Button, Space, Spin, Modal } from 'antd';
+import { Button, Modal } from 'antd';
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import ukLocale from '@fullcalendar/core/locales/uk';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
-import notificationLogic from '../../../../components/Notifications/Notification';
-import Spinner from '../../../Spinner/Spinner';
 
 const classes = require('./EventCalendar.module.css');
 
@@ -60,7 +58,7 @@ export default function () {
     }
 
     return loading === false ? (
-        <Spinner />
+       <span/>
     ) : (
             <div>
                 <div>
