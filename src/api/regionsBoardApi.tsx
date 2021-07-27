@@ -6,4 +6,11 @@ export const getUserAccess = async (userId: string) => {
          throw error;
          } 
     );
-}  
+}
+
+export const getDocs = async (regionId: number) => {
+    return await api.get('RegionsBoard/getDocs/' + regionId, regionId)
+        .catch(error => {
+            throw error;
+        });
+}
