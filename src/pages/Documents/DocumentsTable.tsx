@@ -169,10 +169,10 @@ const DocumentsTable = () => {
           setShowDropdown(false);
         }}
       >
-        <h1 className={classes.titleTable}>Документація</h1>
+        <h1 className={classes.titleTable}>Репозитарій</h1>
         <>
           <div className={classes.searchContainer}>
-            {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true || supporter == true) ? (
+            {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
               <Button type="primary" onClick={showModal}>
                 Додати документ 
               </Button>

@@ -14,8 +14,10 @@ const AddDocumentsModal = ({ visibleModal, setVisibleModal, onAdd }: Props) => {
 
   return (
     <Drawer
-      width="auto"
       title="Додати документ"
+      placement="right"
+      width="auto"
+      height={10000}
       visible={visibleModal}
       onClose={handleCancel}
       footer={null}

@@ -82,9 +82,6 @@ const DropDown = (props: Props) => {
           window.open(pdf);
           break;
         }
-        case '3':
-          EditModal();
-          break;
       }
     item.key = '0'
   };
@@ -113,12 +110,6 @@ const DropDown = (props: Props) => {
         <Menu.Item key="2">
           <FilePdfOutlined  />
             Переглянути в PDF
-        </Menu.Item>
-
-
-        <Menu.Item key="3">
-          <EditOutlined  />
-            Редагувати
         </Menu.Item>
 
       </Menu>
