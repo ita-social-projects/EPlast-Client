@@ -248,11 +248,23 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Тема рішення"
             labelCol={{ span: 24 }}
             name="decisionTarget"
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { required: true, 
+                message: emptyInput() 
+              },
+              {
+                max: 255,
+                message: maxLength(255)
+              },
+            ]}
           >
-            <AutoComplete>
-              {data?.decisionTargets.map((dt) => (
-                <Select.Option key={dt.id} value={dt.targetName}>
+            
+            <AutoComplete 
+            filterOption={true}
+            className={formclasses.selectField}
+            >
+              {data?.decisionTargets.slice(0, 9).map((dt) => (
+                <Select.Option key={dt.id} value={dt.targetName} >
                   {dt.targetName}
                 </Select.Option>
               ))}
@@ -285,7 +297,15 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Текст рішення"
             labelCol={{ span: 24 }}
             name="description"
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { required: true, 
+                message: emptyInput() 
+              },
+              {
+                max: 1000,
+                message: maxLength(1000)
+              },
+            ]}
           >
             <Mentions
                 loading={loadingUserStatus}

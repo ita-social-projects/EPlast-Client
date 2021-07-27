@@ -1,8 +1,9 @@
-import classes from '*.module.css';
-import { Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import moment from 'moment';
 import React from 'react';
 import decisionsApi, { statusTypeGetParser } from '../../api/decisionsApi';
+const classes = require('./Table.module.css');
+
 const columns = [
   {
     title: 'ID',
@@ -34,8 +35,8 @@ const columns = [
     title: 'Рішення',
     dataIndex: 'description',
     render: (description: any) => (
-      <Tooltip placement="topLeft" title={description.substring(0, 400)}>
-        {description}
+      <Tooltip className={classes.antTooltipInner} title={description.substring(0, 500)}>
+          {description.substring(0, 100)}
       </Tooltip>
     ),
   },
