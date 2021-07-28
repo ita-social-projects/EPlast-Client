@@ -8,7 +8,6 @@ import {
   DownloadOutlined,
 } from "@ant-design/icons";
 import {
-  getRegionDocuments,
   getFile,
   removeDocument,
 } from "../../api/regionsApi";
@@ -18,7 +17,10 @@ import moment from "moment";
 import Spinner from "../Spinner/Spinner";
 import AuthStore from '../../stores/AuthStore';
 import jwt from 'jwt-decode';
-import { getUserAccess } from "../../api/regionsBoardApi";
+import {
+  getUserAccess,
+  getDocs
+} from "../../api/regionsBoardApi";
 
 const RegionBoardDocuments = () => {
   const { id } = useParams();
@@ -48,7 +50,7 @@ const RegionBoardDocuments = () => {
 
   const setRegionDocs = async () => {
     try {
-      const response = await getRegionDocuments(id);
+      const response = await getDocs(id);
       setDocuments(response.data);
     } finally {
     }
