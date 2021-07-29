@@ -235,21 +235,21 @@ const City = () => {
     setPhotos([...admins],response.data.logo);
   }
 
-  const addCityAdmin = async (admin: CityAdmin) => {
+  const addCityAdmin = async (newAdmin: CityAdmin) => {
     let previousAdmin: CityAdmin = new CityAdmin(); 
-    admins.map((_admin) => {
-      if(_admin.adminType.adminTypeName == admin.adminType.adminTypeName){
-        previousAdmin = _admin;
+    admins.map((admin) => {
+      if(admin.adminType.adminTypeName == newAdmin.adminType.adminTypeName){
+        previousAdmin = admin;
       }
     });
-    await addAdministrator(admin.cityId, admin);
+    await addAdministrator(newAdmin.cityId, newAdmin);
     await updateAdmins();
     if(previousAdmin.adminType.adminTypeName != ""){
       await createNotification(previousAdmin.userId,
         `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в станиці`);
     }
-    await createNotification(admin.userId,
-      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в станиці`);
+    await createNotification(newAdmin.userId,
+      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`);
       notificationLogic("success", "Користувач успішно доданий в провід");
   };
 

@@ -202,21 +202,21 @@ const Club = () => {
     setPhotos([...admins],response.data.logo);
   }
 
-  const addClubAdmin = async (admin: ClubAdmin) => {
+  const addClubAdmin = async (newAdmin: ClubAdmin) => {
     let previousAdmin: ClubAdmin = new ClubAdmin();
-    admins.forEach(_admin => {
-      if(_admin.adminType.adminTypeName == admin.adminType.adminTypeName){
-        previousAdmin = _admin;
+    admins.forEach(admin => {
+      if(admin.adminType.adminTypeName == newAdmin.adminType.adminTypeName){
+        previousAdmin = admin;
       }
     }); 
-    await addAdministrator(admin.clubId, admin);
+    await addAdministrator(newAdmin.clubId, newAdmin);
     await updateAdmins();
     if(previousAdmin.adminType.adminTypeName != ""){
       await createNotification(previousAdmin.userId,
         `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в курені`);
     }
-    await createNotification(admin.userId,
-      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в курені`);
+    await createNotification(newAdmin.userId,
+      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в курені`);
     notificationLogic("success", "Користувач успішно доданий в провід");
   };
 

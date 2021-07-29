@@ -243,21 +243,21 @@ const Region = () => {
     }
   }
 
-  const addRegionAdmin = async (admin: RegionAdmin) => {
+  const addRegionAdmin = async (newAdmin: RegionAdmin) => {
     let previousAdmin: RegionAdmin = new RegionAdmin(); 
-    admins.map((_admin) => {
-      if(_admin.adminType.adminTypeName == admin.adminType.adminTypeName){
-        previousAdmin = _admin;
+    admins.map((admin) => {
+      if(admin.adminType.adminTypeName == newAdmin.adminType.adminTypeName){
+        previousAdmin = admin;
       }
     });
-    await AddAdmin(admin);
+    await AddAdmin(newAdmin);
     await updateAdmins();
     if(previousAdmin.adminType.adminTypeName != ""){
       await createNotification(previousAdmin.userId,
         `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`);
     }
-    await createNotification(admin.userId,
-      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`);
+    await createNotification(newAdmin.userId,
+      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в окрузі`);
       notificationLogic("success", "Користувач успішно доданий в провід");
   };
 
@@ -357,15 +357,15 @@ const Region = () => {
     }
   }
 
-  const setSixFollowers = (_followers: RegionFollower[]) => {
-    if (_followers.length !== 0) {
-      if (_followers.length > 6) {
+  const setSixFollowers = (newfollowers: RegionFollower[]) => {
+    if (newfollowers.length !== 0) {
+      if (newfollowers.length > 6) {
         for (let i = 0; i < 6; i++) {
-          followers[i] = _followers[i];
+          followers[i] = newfollowers[i];
         }
       } else {
-        for (let i = 0; i < _followers.length; i++) {
-          followers[i] = _followers[i];
+        for (let i = 0; i < newfollowers.length; i++) {
+          followers[i] = newfollowers[i];
         }
       }  
     }
