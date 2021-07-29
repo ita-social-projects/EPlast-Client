@@ -157,11 +157,11 @@ const Region = () => {
 
   const deleteRegion = async () => {
     await removeRegion(region.id);
-    notificationLogic("success", successfulDeleteAction("Округу"));
     admins.map(async (ad) => {
       await createNotification(ad.userId,
-        `На жаль округу, в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено! Округа`);
+        `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
     });
+    notificationLogic("success", successfulDeleteAction("Округу"));
     history.push("/regions");
   };
 
@@ -255,10 +255,10 @@ const Region = () => {
     await updateAdmins();
     if(previousAdmin.adminType.adminTypeName != ""){
       await createNotification(previousAdmin.userId,
-        `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`);
+        `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`, true);
     }
     await createNotification(newAdmin.userId,
-      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в окрузі`);
+      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в окрузі`, true);
       notificationLogic("success", "Користувач успішно доданий в провід");
   };
 
@@ -267,7 +267,7 @@ const Region = () => {
     await updateAdmins();
     notificationLogic("success", successfulEditAction("Адміністратора"));
     await createNotification(admin.userId,
-      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`);
+      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`, true);
   };
 
   const showConfirmClubAdmin  = async (admin: RegionAdmin) => {
@@ -408,14 +408,22 @@ const Region = () => {
     }
   };
 
-  const createNotification = async(userId: string, message: string) => {
-    await NotificationBoxApi.createNotifications(
-      [userId],
-      message + ": ",
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/regions/${id}`,
-      region.name
-    );
+  const createNotification = async(userId: string, message: string, regionExist: boolean) => {
+    if(regionExist){  
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message + ": ",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/regions/${id}`,
+        region.regionName
+        );
+    } else {
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+      );
+    }
   }
 
   useEffect(() => {

@@ -61,7 +61,7 @@ const Club = () => {
     const member = await toggleMemberStatus(memberId);
 
     await createNotification(member.data.userId,
-      "Вітаємо, вас зараховано до членів куреня");
+      "Вітаємо, вас зараховано до членів куреня", true);
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
     ).data;
@@ -80,7 +80,7 @@ const Club = () => {
 
     admins.map(async (ad) => {
       await createNotification(ad.userId,
-        `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня`);   
+        `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня`, true);   
     });
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
@@ -95,11 +95,11 @@ const Club = () => {
 
   const deleteClub = async () => {
     await removeClub(club.id);
-    notificationLogic("success", successfulDeleteAction("Курінь"));
     admins.map(async (ad) => {
       await createNotification(ad.userId,
-        `На жаль курінь, в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено! Курінь`);
+        `На жаль курінь '${club.name}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
     });
+    notificationLogic("success", successfulDeleteAction("Курінь"));
     history.push('/clubs');
   }
 
@@ -213,10 +213,10 @@ const Club = () => {
     await updateAdmins();
     if(previousAdmin.adminType.adminTypeName != ""){
       await createNotification(previousAdmin.userId,
-        `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в курені`);
+        `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в курені`, true);
     }
     await createNotification(newAdmin.userId,
-      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в курені`);
+      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в курені`, true);
     notificationLogic("success", "Користувач успішно доданий в провід");
   };
 
@@ -225,7 +225,7 @@ const Club = () => {
     await updateAdmins();
     notificationLogic("success", successfulEditAction("Адміністратора"));
     await createNotification(admin.userId,
-      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в курені`);
+      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в курені`, true);
   };
 
   const showConfirmClubAdmin  = async (admin: ClubAdmin) => {
@@ -294,14 +294,22 @@ const Club = () => {
     setvisible(false);
   };
 
-  const createNotification = async(userId: string, message: string) => {
-    await NotificationBoxApi.createNotifications(
-      [userId],
-      message + ": ",
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/clubs/${id}`,
-      club.name
+  const createNotification = async(userId: string, message: string, clubExist: boolean) => {
+    if(clubExist){  
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message + ": ",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/clubs/${id}`,
+        club.name
       );
+    } else {
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+      );
+    }
   }
 
   useEffect(() => {
