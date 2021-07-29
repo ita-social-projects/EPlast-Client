@@ -85,6 +85,7 @@ const Region = () => {
 
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [admins, setAdmins] = useState<any[]>([]);
+  const [sixAdmins, setSixAdmins] = useState<any[]>([]);
 
   const [members, setMembers] = useState<any[]>([
     {
@@ -155,12 +156,9 @@ const Region = () => {
 
   const deleteRegion = async () => {
     await removeRegion(region.id);
-    admins.map(async (ad) => {
-      await NotificationBoxApi.createNotifications(
-        [ad.userId],
-        `На жаль регіон: '${region.name}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
-        NotificationBoxApi.NotificationTypes.UserNotifications
-      );
+    sixAdmins.map(async (ad) => {
+      await createNotification(ad.userId,
+        `На жаль округу, в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено! Округа`);
     });
     history.push("/regions");
   };
@@ -204,7 +202,8 @@ const Region = () => {
       setDocumentsCount(regionResponse.data.documentsCount);
 
       setPhotosLoading(true);
-      setSixAdmins(regionAdministrationResp.data, 7);
+      setAdmins(regionAdministrationResp.data);
+      getSixAdmins(regionAdministrationResp.data, 7);
       setAdminsCount(regionAdministrationResp.data.length);
 
       setRegionLogoLoading(true);
@@ -235,7 +234,7 @@ const Region = () => {
     setHeadDeputy(responseHeadDeputy.data);
     setRegion(regionResponse.data);
     setPhotosLoading(true);
-    setSixAdmins(regionAdministrationResp.data, 7);
+    getSixAdmins(regionAdministrationResp.data, 7);
     setAdminsCount(regionAdministrationResp.data.length);
     setPhotos([...regionResponse.data.cities], [...regionAdministrationResp.data], regionFollowersResp.data);
     if (regionResponse.data.logo === null) {
@@ -244,28 +243,29 @@ const Region = () => {
   }
 
   const addRegionAdmin = async (admin: any) => {
+    let previousAdmin: any = {} as any; 
+    admins.map((_admin) => {
+      if(_admin.adminType.adminTypeName == admin.adminType.adminTypeName){
+        previousAdmin = _admin;
+      }
+    });
     await AddAdmin(admin);
     await updateAdmins();
-    notificationLogic("success", "Користувач успішно доданий в провід");
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${id}`,
-      `цій станиці`
-    );
+    if(previousAdmin.adminType?.adminTypeName != ""){
+      await createNotification(previousAdmin.userId,
+        `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`);
+    }
+    await createNotification(admin.userId,
+      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`);
+      notificationLogic("success", "Користувач успішно доданий в провід");
   };
 
   const editRegionAdmin = async (admin: any) => {
     await EditAdmin(admin);
     await updateAdmins();
     notificationLogic("success", successfulEditAction("Адміністратора"));
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/clubs/${id}`,
-      `цьому курені`);
+    await createNotification(admin.userId,
+      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`);
   };
 
   const showConfirmClubAdmin  = async (admin: any) => {
@@ -384,15 +384,15 @@ const Region = () => {
     }
   };
 
-  const setSixAdmins = (admin: any[], amount: number) => {
+  const getSixAdmins = (admin: any[], amount: number) => {
     if (admin.length > 7) {
       for (let i = 0; i < amount; i++) {
-        admins[i] = admin[i];
+        sixAdmins[i] = admin[i];
       }
     } else {
       if (admin.length !== 0) {
         for (let i = 0; i < admin.length; i++) {
-          admins[i] = admin[i];
+          sixAdmins[i] = admin[i];
         }
       }
     }
@@ -405,6 +405,16 @@ const Region = () => {
       setDocuments([...documents, newDocument]);
     }
   };
+
+  const createNotification = async(userId: string, message: string) => {
+    await NotificationBoxApi.createNotifications(
+      [userId],
+      message + ": ",
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/regions/${id}`,
+      region.name
+      );
+  }
 
   useEffect(() => {
     getRegion();
@@ -659,7 +669,7 @@ const Region = () => {
               </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
                 {adminsCount !== 0 ? (
-                  admins.map((admin) => (
+                  sixAdmins.map((admin) => (
                     <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                       <div
                         onClick={() =>
