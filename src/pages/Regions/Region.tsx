@@ -47,7 +47,7 @@ import CitiesRedirectForm from "./CitiesRedirectForm";
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import notificationLogic from "../../components/Notifications/Notification";
-import { successfulEditAction } from "../../components/Notifications/Messages";
+import { successfulDeleteAction, successfulEditAction } from "../../components/Notifications/Messages";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
@@ -155,6 +155,8 @@ const Region = () => {
 
   const deleteRegion = async () => {
     await removeRegion(region.id);
+    notificationLogic("success", successfulDeleteAction("Округу"));
+
     admins.map(async (ad) => {
       await NotificationBoxApi.createNotifications(
         [ad.userId],
