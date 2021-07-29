@@ -52,6 +52,7 @@ import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
 import RegionFollower from "../../models/Region/RegionFollower";
+import RegionAdmin from "../../models/Region/RegionAdmin";
 
 const Region = () => {
   const history = useHistory();
@@ -84,8 +85,8 @@ const Region = () => {
   });
 
   const [visibleDrawer, setVisibleDrawer] = useState(false);
-  const [admins, setAdmins] = useState<any[]>([]);
-  const [sixAdmins, setSixAdmins] = useState<any[]>([]);
+  const [admins, setAdmins] = useState<RegionAdmin[]>([]);
+  const [sixAdmins, setSixAdmins] = useState<RegionAdmin[]>([]);
 
   const [members, setMembers] = useState<any[]>([
     {
@@ -128,7 +129,7 @@ const Region = () => {
     endDate: "",
   });
 
-  const setPhotos = async (members: any[], admins: any[], followers: RegionFollower[]) => {
+  const setPhotos = async (members: any[], admins: RegionAdmin[], followers: RegionFollower[]) => {
     for (let i = 0; i < admins.length; i++) {
       admins[i].user.imagePath = (
         await userApi.getImage(admins[i].user.imagePath)
@@ -242,8 +243,8 @@ const Region = () => {
     }
   }
 
-  const addRegionAdmin = async (admin: any) => {
-    let previousAdmin: any = {} as any; 
+  const addRegionAdmin = async (admin: RegionAdmin) => {
+    let previousAdmin: RegionAdmin = new RegionAdmin(); 
     admins.map((_admin) => {
       if(_admin.adminType.adminTypeName == admin.adminType.adminTypeName){
         previousAdmin = _admin;
@@ -251,7 +252,7 @@ const Region = () => {
     });
     await AddAdmin(admin);
     await updateAdmins();
-    if(previousAdmin.adminType?.adminTypeName != ""){
+    if(previousAdmin.adminType.adminTypeName != ""){
       await createNotification(previousAdmin.userId,
         `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`);
     }
@@ -260,7 +261,7 @@ const Region = () => {
       notificationLogic("success", "Користувач успішно доданий в провід");
   };
 
-  const editRegionAdmin = async (admin: any) => {
+  const editRegionAdmin = async (admin: RegionAdmin) => {
     await EditAdmin(admin);
     await updateAdmins();
     notificationLogic("success", successfulEditAction("Адміністратора"));
@@ -268,7 +269,7 @@ const Region = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`);
   };
 
-  const showConfirmClubAdmin  = async (admin: any) => {
+  const showConfirmClubAdmin  = async (admin: RegionAdmin) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
@@ -296,7 +297,7 @@ const Region = () => {
     });
   };
   
-  const checkAdminId = async (admin: any)=> {
+  const checkAdminId = async (admin: RegionAdmin)=> {
     if (admin.id === 0) {
       await addRegionAdmin(admin);
     } else {
@@ -308,7 +309,7 @@ const Region = () => {
     setVisible(false);
   };
 
-  const handleOk = async(admin: any) => {
+  const handleOk = async(admin: RegionAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.OkrugaHead) {
         if (head == ' ') {
@@ -347,7 +348,7 @@ const Region = () => {
     }
   }
 
-  const setIsRegionAdmin = (admins: any[], userId: string) => {
+  const setIsRegionAdmin = (admins: RegionAdmin[], userId: string) => {
     for (let i = 0; i < admins.length; i++){
       if (admins[i].userId == userId){
         setIsActiveUserRegionAdmin(true);
@@ -356,7 +357,7 @@ const Region = () => {
     }
   }
 
-  const setSixFollowers = (_followers: any[]) => {
+  const setSixFollowers = (_followers: RegionFollower[]) => {
     if (_followers.length !== 0) {
       if (_followers.length > 6) {
         for (let i = 0; i < 6; i++) {
@@ -384,15 +385,15 @@ const Region = () => {
     }
   };
 
-  const getSixAdmins = (admin: any[], amount: number) => {
-    if (admin.length > 7) {
+  const getSixAdmins = (admins: RegionAdmin[], amount: number) => {
+    if (admins.length > 7) {
       for (let i = 0; i < amount; i++) {
-        sixAdmins[i] = admin[i];
+        sixAdmins[i] = admins[i];
       }
     } else {
-      if (admin.length !== 0) {
-        for (let i = 0; i < admin.length; i++) {
-          sixAdmins[i] = admin[i];
+      if (admins.length !== 0) {
+        for (let i = 0; i < admins.length; i++) {
+          sixAdmins[i] = admins[i];
         }
       }
     }
