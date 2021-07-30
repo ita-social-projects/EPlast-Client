@@ -19,11 +19,11 @@ import {
   LockOutlined,
 } from "@ant-design/icons";
 import {
-  getRegionDocuments,
   GetRegionsBoard,
 } from "../../api/regionsApi";
 import {
-  getUserAccess
+  getUserAccess,
+  getDocs
 } from "../../api/regionsBoardApi";
 import "../Regions/Region.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
@@ -151,7 +151,7 @@ const RegionBoard = () => {
   };
 
   const setRegionDocs = async (id: number) => {
-    const response: [] = await (await getRegionDocuments(id)).data;
+    const response: [] = await (await getDocs(id)).data;
     setDocumentsCount(response.length);
     setDocuments(
       response.length > 6 ? response.slice(response.length - 6) : response

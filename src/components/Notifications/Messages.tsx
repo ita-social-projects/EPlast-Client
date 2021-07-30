@@ -57,11 +57,11 @@ export const successfulCancelAction = (name:string, itemName?:string)=>{
 }; 
 
 export const successfulAddDegree = ()=>{
-    return `Вам було надано новий ступінь `;
+    return `Ступінь було успішно додано`;
 }; 
 
 export const successfulDeleteDegree = ()=>{
-    return `На жаль Ваc було позбавлено ступеня `;
+    return `На жаль ступеня було позбавлено`;
 };
 
 export const failCreateAction = (name:string)=>{

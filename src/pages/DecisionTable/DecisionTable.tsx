@@ -143,6 +143,7 @@ const DecisionTable = () => {
             <Search
                 enterButton
                 placeholder="Пошук"
+                allowClear
                 onChange={handleSearchChange}
                 onSearch={handleSearch}                
                />

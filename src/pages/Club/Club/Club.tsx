@@ -72,14 +72,8 @@ const Club = () => {
   const changeApproveStatus = async (memberId: number) => {
     const member = await toggleMemberStatus(memberId);
 
-    await NotificationBoxApi.createNotifications(
-      [member.data.userId],
-      "Вітаємо, вас зараховано до членів куреня: ",
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/clubs/${id}`,
-      club.name
-    );
-
+    await createNotification(member.data.userId,
+      "Вітаємо, вас зараховано до членів куреня", true);
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
     ).data;
@@ -96,13 +90,10 @@ const Club = () => {
   const addMember = async () => {
     const follower = await addFollower(+id);
 
-    await NotificationBoxApi.createNotifications(
-      admins.map(ad => ad.userId),
-      `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня: `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/clubs/followers/${id}`,
-      `${club.name}`
-    );
+    admins.map(async (ad) => {
+      await createNotification(ad.userId,
+        `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня`, true);   
+    });
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
@@ -114,16 +105,10 @@ const Club = () => {
     setCanJoin(false);
   };
 
+
   const ArchiveClub = async () => {
     await archiveClub(club.id);
     notificationLogic("success", successfulDeleteAction("Курінь"));
-    admins.map(async (ad) => {
-      await NotificationBoxApi.createNotifications(
-        [ad.userId],
-        `На жаль курінь: '${club.name}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
-        NotificationBoxApi.NotificationTypes.UserNotifications
-      );
-    });
     history.push('/clubs');
   }
 
@@ -273,29 +258,30 @@ const Club = () => {
     setPhotos([...admins],response.data.logo);
   }
 
-  const addClubAdmin = async (admin: ClubAdmin) => {
-    await addAdministrator(admin.clubId, admin);
+  const addClubAdmin = async (newAdmin: ClubAdmin) => {
+    let previousAdmin: ClubAdmin = new ClubAdmin();
+    admins.forEach(admin => {
+      if(admin.adminType.adminTypeName == newAdmin.adminType.adminTypeName){
+        previousAdmin = admin;
+      }
+    }); 
+    await addAdministrator(newAdmin.clubId, newAdmin);
     await updateAdmins();
+    if(previousAdmin.adminType.adminTypeName != ""){
+      await createNotification(previousAdmin.userId,
+        `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в курені`, true);
+    }
+    await createNotification(newAdmin.userId,
+      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в курені`, true);
     notificationLogic("success", "Користувач успішно доданий в провід");
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${id}`,
-      `цій станиці`
-    );
   };
 
   const editClubAdmin = async (admin: ClubAdmin) => {
     await editAdministrator(admin.id, admin);
     await updateAdmins();
     notificationLogic("success", successfulEditAction("Адміністратора"));
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/clubs/${id}`,
-      `цьому курені`);
+    await createNotification(admin.userId,
+      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в курені`, true);
   };
 
   const showConfirmClubAdmin  = async (admin: ClubAdmin) => {
@@ -364,9 +350,28 @@ const Club = () => {
     setvisible(false);
   };
 
+
   const handleConfirm = async () => {
     setActiveMemberVisibility(false);
   };
+
+  const createNotification = async(userId: string, message: string, clubExist: boolean) => {
+    if(clubExist){  
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message + ": ",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/clubs/${id}`,
+        club.name
+      );
+    } else {
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+      );
+    }
+  }
 
   useEffect(() => {
     getClub();

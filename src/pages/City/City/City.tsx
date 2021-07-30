@@ -88,20 +88,11 @@ const City = () => {
   const member = await toggleMemberStatus(memberId);
     moment.locale("uk-ua");
 
-    await NotificationBoxApi.createNotifications(
-      [member.data.userId],
-      "Вітаємо, вас зараховано до членів станиці: ",
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${id}`,
-      city.name
-    );
+    await createNotification(member.data.userId,
+      "Вітаємо, вас зараховано до членів станиці", true);
     
     if(member.data.wasInRegisteredUserRole){
-        await NotificationBoxApi.createNotifications(
-            [member.data.userId],
-            "Тобі надано нову роль: 'Прихильник'",
-            NotificationBoxApi.NotificationTypes.UserNotifications
-          );
+      await createNotification(member.data.userId, "Тобі надано нову роль: 'Прихильник' в станиці", true);
     }
     
     member.data.user.imagePath = (
@@ -119,13 +110,11 @@ const City = () => {
   const addMember = async () => {
     const follower = await addFollower(+id);
 
-    await NotificationBoxApi.createNotifications(
-      admins.map((ad) => ad.userId),
-      `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці: `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/followers/${id}`,
-      city.name
-    );
+    admins.map(async (ad) => {
+      await createNotification(ad.userId,
+        `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці`, true);  
+    });
+
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
@@ -141,14 +130,15 @@ const City = () => {
   const ArchiveCity = async () => {
     await archiveCity(city.id);
     notificationLogic("success", successfulEditAction("Станицю"));
-
     admins.map(async (ad) => {
-      await NotificationBoxApi.createNotifications(
-        [ad.userId],
-        `На жаль станицю: '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було архівовано`,
-        NotificationBoxApi.NotificationTypes.UserNotifications
-      );
+       await createNotification(ad.userId,
+        `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
     });
+  const deleteCity = async () => {
+    await removeCity(city.id);
+    admins.map(async (ad) => {
+    
+    notificationLogic("success", successfulDeleteAction("Станицю"));
     history.push("/cities");
   };
 
@@ -301,29 +291,30 @@ const City = () => {
     setPhotos([...admins],response.data.logo);
   }
 
-  const addCityAdmin = async (admin: CityAdmin) => {
-    await addAdministrator(admin.cityId, admin);
+  const addCityAdmin = async (newAdmin: CityAdmin) => {
+    let previousAdmin: CityAdmin = new CityAdmin(); 
+    admins.map((admin) => {
+      if(admin.adminType.adminTypeName == newAdmin.adminType.adminTypeName){
+        previousAdmin = admin;
+      }
+    });
+    await addAdministrator(newAdmin.cityId, newAdmin);
     await updateAdmins();
-    notificationLogic("success", "Користувач успішно доданий в провід");
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${id}`,
-      `цій станиці`
-    );
+    if(previousAdmin.adminType.adminTypeName != ""){
+      await createNotification(previousAdmin.userId,
+        `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в станиці`, true);
+    }
+    await createNotification(newAdmin.userId,
+      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`, true);
+      notificationLogic("success", "Користувач успішно доданий в провід");
   };
 
   const editCityAdmin = async (admin: CityAdmin) => {
     await editAdministrator(id, admin);
     await updateAdmins();
     notificationLogic("success", successfulEditAction("Адміністратора"));
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${id}`,
-      `цій станиці`);
+    await createNotification(admin.userId,
+      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в станиці`, true);
   };
 
   const showConfirmCityAdmin  = async (admin: CityAdmin) => {
@@ -396,6 +387,24 @@ const City = () => {
   const handleConfirm = async () => {
     setActiveMemberVisibility(false);
   };
+
+  const createNotification = async(userId: string, message: string, cityExist: boolean) => {
+    if(cityExist){
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message + ": ",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/cities/${id}`,
+        city.name
+        );  
+    } else {
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+      );
+    }
+  }
 
   useEffect(() => {
     if (city.name.length !== 0) {
