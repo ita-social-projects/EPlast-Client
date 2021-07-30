@@ -52,6 +52,7 @@ import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
 import RegionFollower from "../../models/Region/RegionFollower";
+import RegionAdmin from "../../models/Region/RegionAdmin";
 
 const Region = () => {
   const history = useHistory();
@@ -84,7 +85,8 @@ const Region = () => {
   });
 
   const [visibleDrawer, setVisibleDrawer] = useState(false);
-  const [admins, setAdmins] = useState<any[]>([]);
+  const [admins, setAdmins] = useState<RegionAdmin[]>([]);
+  const [sixAdmins, setSixAdmins] = useState<RegionAdmin[]>([]);
 
   const [members, setMembers] = useState<any[]>([
     {
@@ -127,7 +129,7 @@ const Region = () => {
     endDate: "",
   });
 
-  const setPhotos = async (members: any[], admins: any[], followers: RegionFollower[]) => {
+  const setPhotos = async (members: any[], admins: RegionAdmin[], followers: RegionFollower[]) => {
     for (let i = 0; i < admins.length; i++) {
       admins[i].user.imagePath = (
         await userApi.getImage(admins[i].user.imagePath)
@@ -155,15 +157,11 @@ const Region = () => {
 
   const deleteRegion = async () => {
     await removeRegion(region.id);
-    notificationLogic("success", successfulDeleteAction("Округу"));
-
     admins.map(async (ad) => {
-      await NotificationBoxApi.createNotifications(
-        [ad.userId],
-        `На жаль регіон: '${region.name}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
-        NotificationBoxApi.NotificationTypes.UserNotifications
-      );
+      await createNotification(ad.userId,
+        `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
     });
+    notificationLogic("success", successfulDeleteAction("Округу"));
     history.push("/regions");
   };
 
@@ -206,7 +204,8 @@ const Region = () => {
       setDocumentsCount(regionResponse.data.documentsCount);
 
       setPhotosLoading(true);
-      setSixAdmins(regionAdministrationResp.data, 7);
+      setAdmins(regionAdministrationResp.data);
+      getSixAdmins(regionAdministrationResp.data, 7);
       setAdminsCount(regionAdministrationResp.data.length);
 
       setRegionLogoLoading(true);
@@ -237,7 +236,7 @@ const Region = () => {
     setHeadDeputy(responseHeadDeputy.data);
     setRegion(regionResponse.data);
     setPhotosLoading(true);
-    setSixAdmins(regionAdministrationResp.data, 7);
+    getSixAdmins(regionAdministrationResp.data, 7);
     setAdminsCount(regionAdministrationResp.data.length);
     setPhotos([...regionResponse.data.cities], [...regionAdministrationResp.data], regionFollowersResp.data);
     if (regionResponse.data.logo === null) {
@@ -245,32 +244,33 @@ const Region = () => {
     }
   }
 
-  const addRegionAdmin = async (admin: any) => {
-    await AddAdmin(admin);
+  const addRegionAdmin = async (newAdmin: RegionAdmin) => {
+    let previousAdmin: RegionAdmin = new RegionAdmin(); 
+    admins.map((admin) => {
+      if(admin.adminType.adminTypeName == newAdmin.adminType.adminTypeName){
+        previousAdmin = admin;
+      }
+    });
+    await AddAdmin(newAdmin);
     await updateAdmins();
-    notificationLogic("success", "Користувач успішно доданий в провід");
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${id}`,
-      `цій станиці`
-    );
+    if(previousAdmin.adminType.adminTypeName != ""){
+      await createNotification(previousAdmin.userId,
+        `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`, true);
+    }
+    await createNotification(newAdmin.userId,
+      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в окрузі`, true);
+      notificationLogic("success", "Користувач успішно доданий в провід");
   };
 
-  const editRegionAdmin = async (admin: any) => {
+  const editRegionAdmin = async (admin: RegionAdmin) => {
     await EditAdmin(admin);
     await updateAdmins();
     notificationLogic("success", successfulEditAction("Адміністратора"));
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/clubs/${id}`,
-      `цьому курені`);
+    await createNotification(admin.userId,
+      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`, true);
   };
 
-  const showConfirmClubAdmin  = async (admin: any) => {
+  const showConfirmClubAdmin  = async (admin: RegionAdmin) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
@@ -298,7 +298,7 @@ const Region = () => {
     });
   };
   
-  const checkAdminId = async (admin: any)=> {
+  const checkAdminId = async (admin: RegionAdmin)=> {
     if (admin.id === 0) {
       await addRegionAdmin(admin);
     } else {
@@ -310,7 +310,7 @@ const Region = () => {
     setVisible(false);
   };
 
-  const handleOk = async(admin: any) => {
+  const handleOk = async(admin: RegionAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.OkrugaHead) {
         if (head == ' ') {
@@ -349,7 +349,7 @@ const Region = () => {
     }
   }
 
-  const setIsRegionAdmin = (admins: any[], userId: string) => {
+  const setIsRegionAdmin = (admins: RegionAdmin[], userId: string) => {
     for (let i = 0; i < admins.length; i++){
       if (admins[i].userId == userId){
         setIsActiveUserRegionAdmin(true);
@@ -358,15 +358,15 @@ const Region = () => {
     }
   }
 
-  const setSixFollowers = (_followers: any[]) => {
-    if (_followers.length !== 0) {
-      if (_followers.length > 6) {
+  const setSixFollowers = (newfollowers: RegionFollower[]) => {
+    if (newfollowers.length !== 0) {
+      if (newfollowers.length > 6) {
         for (let i = 0; i < 6; i++) {
-          followers[i] = _followers[i];
+          followers[i] = newfollowers[i];
         }
       } else {
-        for (let i = 0; i < _followers.length; i++) {
-          followers[i] = _followers[i];
+        for (let i = 0; i < newfollowers.length; i++) {
+          followers[i] = newfollowers[i];
         }
       }  
     }
@@ -386,15 +386,15 @@ const Region = () => {
     }
   };
 
-  const setSixAdmins = (admin: any[], amount: number) => {
-    if (admin.length > 7) {
+  const getSixAdmins = (admins: RegionAdmin[], amount: number) => {
+    if (admins.length > 7) {
       for (let i = 0; i < amount; i++) {
-        admins[i] = admin[i];
+        sixAdmins[i] = admins[i];
       }
     } else {
-      if (admin.length !== 0) {
-        for (let i = 0; i < admin.length; i++) {
-          admins[i] = admin[i];
+      if (admins.length !== 0) {
+        for (let i = 0; i < admins.length; i++) {
+          sixAdmins[i] = admins[i];
         }
       }
     }
@@ -407,6 +407,24 @@ const Region = () => {
       setDocuments([...documents, newDocument]);
     }
   };
+
+  const createNotification = async(userId: string, message: string, regionExist: boolean) => {
+    if(regionExist){  
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message + ": ",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/regions/${id}`,
+        region.regionName
+        );
+    } else {
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+      );
+    }
+  }
 
   useEffect(() => {
     getRegion();
@@ -661,7 +679,7 @@ const Region = () => {
               </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
                 {adminsCount !== 0 ? (
-                  admins.map((admin) => (
+                  sixAdmins.map((admin) => (
                     <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                       <div
                         onClick={() =>
