@@ -81,6 +81,17 @@ export const removeRegion = async (id: number) => {
   });
 };
 
+export const archiveRegion = async (id: number) => {
+  return api.put(`Regions/ArchiveRegion/${id}`, id).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const unArchiveRegion = async (id: number) => {
+  return api.put(`Regions/UnArchiveRegion/${id}`, id).catch((error) => {
+    throw new Error(error);
+  });
+};
 export const getHead = async (regionId: number) => {
   return api.get(`Regions/GetHead/${regionId}`).catch((error) => {
     throw new Error(error);
@@ -249,13 +260,25 @@ const removeAnnualReport = async (id: number) => {
     });
 }
 
-export const getRegionsByPage = async (
+export const getActiveRegionsByPage = async (
   page: number,
   pageSize: number,
   regionName: string | null = null
 ) => {
   return api
-    .get(`Regions/Profiles/${page}`, { page, pageSize, regionName })
+    .get(`Regions/Profiles/Active/${page}`, { page, pageSize, regionName })
+    .catch((error) => {
+      throw error;
+    });
+};
+
+export const getNotActiveRegionsByPage = async (
+  page: number,
+  pageSize: number,
+  regionName: string | null = null
+) => {
+  return api
+    .get(`Regions/Profiles/NotActive/${page}`, { page, pageSize, regionName })
     .catch((error) => {
       throw error;
     });
@@ -308,7 +331,8 @@ export default {
   getReportById,
   createRegionAnnualReport,
   getAdminTypeIdByName,
-  getRegionsByPage,
+  getActiveRegionsByPage,
+  getNotActiveRegionsByPage,
   redirectCities,
   getHead,
   removeDocument,

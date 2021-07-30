@@ -8,7 +8,7 @@ import FooterContainer from "./components/Footer/FooterContainer";
 import PrivateLayout from "./components/PrivateLayout/PrivateLayout";
 import RouteWithLayout from "./RouteWithLayout";
 import Contacts from "./pages/Contacts/Contacts";
-import Cities from "./pages/City/Cities/Cities";
+import ActionCities from "./pages/City/Cities/ActionCities";
 import City from "./pages/City/City/City";
 import CityMembers from "./pages/City/City/CityMembers";
 import CityAdministration from "./pages/City/City/CityAdministration";
@@ -25,7 +25,7 @@ import UserProfile from "./pages/userPage/personalData/PersonalData";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
-import Clubs from "./pages/Club/Clubs/Clubs";
+import ActionClubs from "./pages/Club/Clubs/ActionClubs";
 import Club from "./pages/Club/Club/Club";
 import CreateClub from "./pages/Club/CreateClub/CreateClub";
 import ClubMembers from "./pages/Club/Club/ClubMembers";
@@ -41,8 +41,8 @@ import NotFound from "./pages/Error/NotFound";
 import UsersTable from "./pages/UserTable/UserTable";
 import UserDistinctions from "./pages/Distinction/DistinctionTable/DistinctionTable";
 import KadrasTable from "./pages/KadraVykhovnykiv/KadrasPage";
-import Regions from "./pages/Regions/RegionsPage";
-import Region from "./pages/Regions/Region";
+import Regions from "./pages/Regions/ActionRegion";
+import ActionRegion from "./pages/Regions/Region";
 import RegionEdit from "./pages/Regions/RegionEdit";
 import AddNewRegionFormPage from "./pages/Regions/AddRegion";
 import RegionAdministration from "./pages/Regions/RegionAdministration";
@@ -104,7 +104,7 @@ const App: FC = () => (
             layout={PrivateLayout}
             exact
             path="/cities"
-            component={Cities}
+            component={ActionCities}
           />
           <RouteWithLayout
             layout={PrivateLayout}
@@ -291,7 +291,7 @@ const App: FC = () => (
             layout={PrivateLayout}
             exact
             path="/clubs"
-            component={Clubs}
+            component={ActionClubs}
           />
           <RouteWithLayout
             layout={PrivateLayout}
@@ -460,7 +460,7 @@ const App: FC = () => (
             layout={PrivateLayout}
             exact
             path="/regions/:id"
-            component={Region}
+            component={ActionRegion}
           />
           <RouteWithLayout
             layout={PrivateLayout}

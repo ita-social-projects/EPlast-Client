@@ -10,15 +10,17 @@ import {
   Skeleton,
   Card,
   Tooltip,
-  Badge } from "antd";
+  Badge,
+  Tag } from "antd";
 import {
   FileTextOutlined,
   EditOutlined,
   PlusSquareFilled,
   UserAddOutlined,
   PlusOutlined,
-  DeleteOutlined,
-  ExclamationCircleOutlined } from "@ant-design/icons";
+  ContainerOutlined,
+  ExclamationCircleOutlined, 
+  DeleteOutlined} from "@ant-design/icons";
 import moment from "moment";
 import {
   addAdministrator,
@@ -27,6 +29,8 @@ import {
   editAdministrator,
   getCityById,
   getLogo,
+  archiveCity, 
+  unArchiveCity,
   removeCity,
   toggleMemberStatus } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
@@ -37,6 +41,7 @@ import CityMember from "../../../models/City/CityMember";
 import CityAdmin from "../../../models/City/CityAdmin";
 import CityDocument from "../../../models/City/CityDocument";
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
+import CheckActiveMembersForm from "./CheckActiveMembersForm";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
@@ -44,7 +49,7 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulDeleteAction, fileIsAdded, successfulEditAction } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUpdateAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
@@ -76,6 +81,8 @@ const City = () => {
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
+  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
+  const [isActiveCity, setIsActiveCity] = useState<boolean>(true);
 
   const changeApproveStatus = async (memberId: number) => {
   const member = await toggleMemberStatus(memberId);
@@ -131,17 +138,31 @@ const City = () => {
     setCanJoin(false);
   };
 
-  const deleteCity = async () => {
-    await removeCity(city.id);
-    notificationLogic("success", successfulDeleteAction("Станицю"));
+  const ArchiveCity = async () => {
+    await archiveCity(city.id);
+    notificationLogic("success", successfulEditAction("Станицю"));
 
     admins.map(async (ad) => {
       await NotificationBoxApi.createNotifications(
         [ad.userId],
-        `На жаль станицю: '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
+        `На жаль станицю: '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було архівовано`,
         NotificationBoxApi.NotificationTypes.UserNotifications
       );
     });
+    history.push("/cities");
+  };
+
+  const deleteCity = async () => {
+    await removeCity(city.id);
+    notificationLogic("success", successfulDeleteAction("Станицю"));
+
+    history.push("/cities");
+  };
+
+  const UnArchiveCity = async () => {
+    await unArchiveCity(city.id)
+    notificationLogic("success", successfulUpdateAction("Станицю"));
+
     history.push("/cities");
   };
 
@@ -171,6 +192,36 @@ const City = () => {
     notificationLogic("success", fileIsAdded());
   };
 
+  function seeArchiveModal() {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете архівувати дану станицю?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, заархівувати",
+      okType: "danger",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        membersCount !== 0 || adminsCount !== 0 || followersCount !== 0
+        ? setActiveMemberVisibility(true)
+        : ArchiveCity();
+      },
+    });
+  }
+
+  function seeUnArchiveModal() {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете розархівувати дану станицю?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, розархівувати",
+      okType: "danger",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        UnArchiveCity();
+      },
+    });
+  }
+  
   function seeDeleteModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити дану станицю?",
@@ -224,6 +275,7 @@ const City = () => {
       setDocuments(response.data.documents);
       setCanCreate(response.data.canCreate);
       setCanEdit(response.data.canEdit);
+      setIsActiveCity(response.data.isActive);
       setCanJoin(response.data.canJoin);
       setMembersCount(response.data.memberCount);
       setAdminsCount(response.data.administrationCount);
@@ -340,6 +392,10 @@ const City = () => {
   const handleClose = async() => {
     setvisible(false);
   };
+  
+  const handleConfirm = async () => {
+    setActiveMemberVisibility(false);
+  };
 
   useEffect(() => {
     if (city.name.length !== 0) {
@@ -365,6 +421,11 @@ const City = () => {
                 second={url.replace(`/${id}`, "")}
                 second_name="Станиці"
               />
+              {isActiveCity ? null : (
+                <Tag className="status" color = {"red"}>
+                  Заархівовано
+                </Tag>
+              )}
             </div>
             <Title level={3}>Станиця {city.name}</Title>
             <Row className="cityPhotos" gutter={[0, 12]}>
@@ -507,14 +568,34 @@ const City = () => {
                       </Col>
                     ) : null}
                     {canCreate ? (
+                      isActiveCity ? (
                       <Col offset={1}>
-                        <Tooltip title="Видалити станицю">
-                          <DeleteOutlined
+                        <Tooltip title="Архівувати станицю">
+                          <ContainerOutlined
                             className="cityInfoIconDelete"
-                            onClick={() => seeDeleteModal()}
+                            onClick={() => seeArchiveModal()} 
                           />
                         </Tooltip>
-                      </Col>
+                      </Col>) : (
+                        <React.Fragment>
+                          <Col offset={1}>
+                            <Tooltip title="Видалити станицю">
+                              <DeleteOutlined
+                                className="cityInfoIconDelete"
+                                onClick={() => seeDeleteModal()} 
+                              />
+                            </Tooltip>
+                            </Col>
+                          <Col offset={1}>
+                            <Tooltip title="Розархівувати станицю">
+                              <ContainerOutlined
+                                className="cityInfoIcon"
+                                color = "green" 
+                                onClick={() => seeUnArchiveModal()} 
+                              />
+                            </Tooltip>
+                          </Col>
+                      </React.Fragment>)
                     ) : null}
                   </Row>
                 </Col>
@@ -616,12 +697,12 @@ const City = () => {
                 )}
             </Row>
             <div className="cityMoreButton">
-              {canEdit ? (
+              {isActiveCity ? (canEdit ? (
               <PlusSquareFilled
                 type="primary"
                 className="addReportIcon"
                 onClick={() => setvisible(true)}
-              />):null}
+              />):null) : null}
               <Button
                 type="primary"
                 className="cityInfoButton"
@@ -691,12 +772,12 @@ const City = () => {
                   </Button>
                 ) : null
               }
-              {canEdit ? (
+              {isActiveCity ? ( canEdit ? (
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
                 />
-              ) : null}
+              ) : null) : null}
             </div>
           </Card>
         </Col>
@@ -718,7 +799,7 @@ const City = () => {
             </a>
             </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
-              {canJoin ? (
+              {isActiveCity ? (canJoin ? (
                 <Col
                   className="cityMemberItem"
                   xs={12}
@@ -734,7 +815,7 @@ const City = () => {
                     <p>Доєднатися</p>
                   </div>
                 </Col>
-              ) : null}
+              ) : null): <Paragraph>Ще немає прихильників станиці</Paragraph>}
               {followers.length !== 0 ? (
                 followers.slice(0, canJoin ? 5 : 6).map((followers) => (
                   <Col
@@ -802,6 +883,16 @@ const City = () => {
           visibleModal={visible}>
         </AddCitiesNewSecretaryForm>
       </Modal>
+
+      <Modal
+          title="На жаль ви не можете архівувати зазначену округу"
+          visible={activeMemberVisibility}
+          onOk={handleConfirm}
+          onCancel={handleConfirm}
+          footer={null}
+        >
+          <CheckActiveMembersForm members = {members} followers = {followers} admins = {admins}  onAdd={handleConfirm} />
+        </Modal>
 
       {canEdit ? (
         <AddDocumentModal
