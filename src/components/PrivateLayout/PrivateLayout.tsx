@@ -38,6 +38,7 @@ const PrivateLayout = ({ children }: any) => {
   const [onlyRegistered, setOnlyRegistered] = useState(false);
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
   const [plastMember, setPlastMember] = useState(false);
+  const [reload, setReload] = useState<boolean>(false);
   const ref = useRef(null)
 
   const handleClickOutside = () => {
@@ -67,11 +68,12 @@ const PrivateLayout = ({ children }: any) => {
     else {
       const user: any = jwt(token);
       await UserApi.getById(user.nameid).then(async response => {
-        await UserApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
+        await UserApi.getImage(response.data?.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
         })
         setId(response.data.user.id);
       })
+      setReload(!reload);
     }
   };
 
@@ -96,7 +98,7 @@ const PrivateLayout = ({ children }: any) => {
   useEffect(() => {
     fetchData();
     fetchUser();
-  }, []);
+  }, [reload]);
 
   return (
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
