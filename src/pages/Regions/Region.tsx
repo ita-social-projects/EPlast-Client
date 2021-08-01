@@ -51,7 +51,7 @@ import CheckActiveCitiesForm from "./CheckActiveCitiesForm"
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import notificationLogic from "../../components/Notifications/Notification";
-import { successfulEditAction, successfulDeleteAction } from "../../components/Notifications/Messages";
+import { successfulEditAction, successfulDeleteAction, successfulAddDegree } from "../../components/Notifications/Messages";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
@@ -165,12 +165,9 @@ const Region = () => {
       await archiveRegion(region.id);
     }finally{
     admins.map(async (ad) => {
-
-      await NotificationBoxApi.createNotifications(
-        [ad.userId],
-        `На жаль регіон: '${region.regionName}', в якому ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
-        NotificationBoxApi.NotificationTypes.UserNotifications
-      );
+      await createNotification(ad.userId,
+        `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
+    });
     history.push("/regions");
   }
   };
@@ -275,6 +272,7 @@ const Region = () => {
       setIsFromRegion(regionResponse.data.cities, cityNameResp.data);
       setIsRegionAdmin(regionAdministrationResp.data, userApi.getActiveUserId());
       setSixFollowers(regionFollowersResp.data);
+      setFollowers(regionFollowersResp.data);
       setFollowersCount(regionFollowersResp.data.length);
 
       if (regionResponse.data.logo === null) {
@@ -975,7 +973,7 @@ const Region = () => {
           onCancel={handleConfirm}
           footer={null}
         >
-          <CheckActiveCitiesForm cities = {members}  onAdd={handleConfirm} />
+          <CheckActiveCitiesForm cities = {members} admins = {admins} followers = {followers}  onAdd={handleConfirm} />
         </Modal>
 
         <RegionDetailDrawer

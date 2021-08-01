@@ -9,8 +9,6 @@ type CheckActiveCitiesForm = {
     onAdd: () => void;
 }
 
-
-
 const CheckActiveMembersForm  = (props: any)=>{
     
     const  { onAdd } = props;
@@ -29,88 +27,79 @@ const CheckActiveMembersForm  = (props: any)=>{
             onFinish={handleSubmit}
             form = {form}
             >
-         <Form.Item
-             className={classes.formField}
-         > {props.members.length !== 0 ? (
-             <React.Fragment>
-                <PageHeader 
-                title = "Необхідно відкріпити членів: "
-                className="site-page-header" 
-                />
-                        <Row className= "cityItems" justify="center">
-                        {props.members.map((member: any) => ( 
-                            <Link to={"/userpage/main/"+member.userId} target="_blank">
-                                <Col
-                                key={member.id}
-                                >
-                                <div onClick={() => history.push(`/cities/${member.id}`)}>
-                                    <Avatar size={64} src={member.user.imagePath} />
-                                    <p>{member.user.firstName}</p>
-                                </div>
-                                </Col>
-                            </Link>
-                        ))}
-                        </Row> 
-                </React.Fragment>
-         ) : null}
-            {props.admins.length !== 0 ? (
+            <Form.Item
+                className={classes.formField}
+            > {props.members.length !== 0 ? (
                 <React.Fragment>
-                <PageHeader 
-             title = "Необхідно відкріпити членів проводу: "
-             className="site-page-header" 
-             />
-            <Row className= "cityItems" justify="center">
-                {props.admins.map((admin: any) => ( 
-                    <Link to={"/userpage/main/"+admin.userId} target="_blank">
-                        <Col  key={admin.id} >
-                    <div>
-                          <Avatar size={64} src={admin.user.imagePath} />
-                      <p>{admin.user.firstName}</p>
-                    </div>
-                  </Col>
-                    </Link>
-                    ))}
-            </Row> 
-        </React.Fragment>
-        ) : null}
-        {props.followers.length !== 0 ? (
-             <React.Fragment>
-                <PageHeader 
-                title = "Необхідно відкріпити прихильників:"
-                className="site-page-header" 
-                />
-                    <Row className= "cityItems" justify="center">
-                    {props.followers.map((follower: any) => ( 
-                        <Link to={"/userpage/main/"+follower.userId} target="_blank">
-                            <Col
-                            key={follower.id}
-                            >
-                                <div onClick={() => history.push(`/cities/${follower.id}`)}>
-                                    <Avatar size={64} src={follower.user.imagePath} />
-                                    <p>{follower.user.firstName}</p>
-                                </div>
-                            </Col>
-                        </Link>
-                    ))}
-                    </Row> 
-                </React.Fragment>
-         ) : null}
-         </Form.Item>
+                    <PageHeader 
+                    title = "Необхідно відкріпити членів: "
+                    className="site-page-header" 
+                    />
+                            <Row className= "cityItems" justify="center">
+                            {props.members.map((member: any) => ( 
+                                <Link to={"/userpage/main/"+member.userId} target="_blank">
+                                    <Col
+                                    key={member.id}
+                                    >
+                                        <Avatar size={64} src={member.user.imagePath} />
+                                        <div className = "name">{member.user.firstName}</div>
+                                    </Col>
+                                </Link>
+                            ))}
+                            </Row> 
+                    </React.Fragment>
+            ) : null}
+                {props.admins.length !== 0 ? (
+                    <React.Fragment>
+                        <PageHeader 
+                        title = "Необхідно відкріпити членів проводу: "
+                        className="site-page-header" 
+                        />
+                            <Row className= "cityItems" justify="center">
+                                {props.admins.map((admin: any) => ( 
+                                    <Link to={"/userpage/main/"+admin.userId} target="_blank">
+                                        <Col  key={admin.id} >
+                                            <Avatar size={64} src={admin.user.imagePath} />
+                                            <div className = "name">{admin.user.firstName}</div>
+                                        </Col>
+                                    </Link>
+                                ))}
+                            </Row> 
+                    </React.Fragment>
+                ) : null}
+                {props.followers.length !== 0 ? (
+                    <React.Fragment>
+                        <PageHeader 
+                        title = "Необхідно відкріпити прихильників:"
+                        className="site-page-header" 
+                        />
+                            <Row className= "cityItems" justify="center">
+                            {props.followers.map((follower: any) => ( 
+                                <Link to={"/userpage/main/"+follower.userId} target="_blank">
+                                    <Col
+                                    key={follower.id}
+                                    >
+                                            <Avatar size={64} src={follower.user.imagePath} />
+                                            <div className = "name">{follower.user.firstName}</div>
+                                    </Col>
+                                </Link>
+                            ))}
+                            </Row> 
+                        </React.Fragment>
+                ) : null}
+            </Form.Item>
 
-         <Form.Item style = {{ textAlign: "center"}}>
+            <Form.Item style = {{ textAlign: "center"}}>
 
-        <Button
-         type="primary" 
-         htmlType="submit" 
-        >
-         OK
-        </Button>
-
-      </Form.Item> 
-        
-     </Form>;
-
-
+                <Button
+                type="primary" 
+                htmlType="submit" 
+                >
+                OK
+                </Button>
+            </Form.Item> 
+     
+        </Form>;
 }
 
 export default CheckActiveMembersForm;

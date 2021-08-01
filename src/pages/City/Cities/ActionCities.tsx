@@ -5,7 +5,6 @@ import { Roles } from "../../../models/Roles/Roles";
 import { useEffect } from 'react';
 import SortedCities from './SortedCities';
 
-
 const classes = require('./ActionCities.module.css');
 
 const ActionCities = () => {
@@ -29,7 +28,7 @@ const ActionCities = () => {
     return (
         <div>
             {isAdmin ? ( 
-            <p className={classes.swapper}> Показати не активні округи : <Switch onChange={onChange}/></p> 
+            <p className={classes.swapper}> Показати не активні станиці: <Switch onChange={onChange}/></p> 
             ): null }
             <div className={classes.actionsWrapper}>
             <SortedCities switcher={SwitchValue} />
@@ -37,4 +36,5 @@ const ActionCities = () => {
         </div>
     )
 }
+
 export default ActionCities;
