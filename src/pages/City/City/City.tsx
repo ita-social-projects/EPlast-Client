@@ -114,7 +114,6 @@ const City = () => {
       await createNotification(ad.userId,
         `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці`, true);  
     });
-
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
@@ -131,14 +130,9 @@ const City = () => {
     await archiveCity(city.id);
     notificationLogic("success", successfulEditAction("Станицю"));
     admins.map(async (ad) => {
-       await createNotification(ad.userId,
+      await createNotification(ad.userId,
         `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
     });
-  const deleteCity = async () => {
-    await removeCity(city.id);
-    admins.map(async (ad) => {
-    
-    notificationLogic("success", successfulDeleteAction("Станицю"));
     history.push("/cities");
   };
 
