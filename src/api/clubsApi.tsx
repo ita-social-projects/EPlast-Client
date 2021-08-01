@@ -93,7 +93,7 @@ export const getClubByPage = async (page: number, pageSize: number, clubName: st
 };
 
 export const getActiveClubByPage = async (page: number, pageSize: number, clubName: string | null = null) => {
-  return api
+  return await api
     .get(`Club/Profiles/Active/${page}`, { page, pageSize, clubName })
     .catch((error) => {
       throw new Error(error);
@@ -101,7 +101,7 @@ export const getActiveClubByPage = async (page: number, pageSize: number, clubNa
 };
 
 export const getNotActiveClubByPage = async (page: number, pageSize: number, clubName: string | null = null) => {
-  return api
+  return await api
     .get(`Club/Profiles/NotActive/${page}`, { page, pageSize, clubName })
     .catch((error) => {
       throw new Error(error);
@@ -109,13 +109,13 @@ export const getNotActiveClubByPage = async (page: number, pageSize: number, clu
 };
 
 export const archiveClub = async (id: number) => {
-  return api.put(`Club/ArchiveClub/${id}`).catch((error) => {
+  return await api.put(`Club/ArchiveClub/${id}`).catch((error) => {
     throw new Error(error);
   });
 };
 
 export const unArchiveClub = async (id: number) => {
-  return api.put(`Club/UnArchiveClub/${id}`).catch((error) => {
+  return await api.put(`Club/UnArchiveClub/${id}`).catch((error) => {
     throw new Error(error);
   });
 };

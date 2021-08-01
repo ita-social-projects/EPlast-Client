@@ -23,7 +23,7 @@ export const getCityById = async (id: number) => {
 };
 
 export const getActiveCitiesByPage = async (page: number, pageSize: number, cityName: string | null = null) => {
-  return api
+  return await api
     .get(`Cities/Profiles/Active/${page}`, { page, pageSize, cityName })
     .catch((error) => {
       throw new Error(error);
@@ -31,7 +31,7 @@ export const getActiveCitiesByPage = async (page: number, pageSize: number, city
 };
 
 export const getNotActiveCitiesByPage = async (page: number, pageSize: number, cityName: string | null = null) => {
-  return api
+  return await api
     .get(`Cities/Profiles/NotActive/${page}`, { page, pageSize, cityName })
     .catch((error) => {
       throw new Error(error);
@@ -51,13 +51,13 @@ export const updateCity = async (id: number, data: any) => {
 };
 
 export const archiveCity = async (id: number) => {
-  return api.put(`Cities/ArchiveCity/${id}`).catch((error) => {
+  return await api.put(`Cities/ArchiveCity/${id}`).catch((error) => {
     throw new Error(error);
   });
 };
 
 export const unArchiveCity = async (id: number) => {
-  return api.put(`Cities/UnArchiveCity/${id}`).catch((error) => {
+  return await  api.put(`Cities/UnArchiveCity/${id}`).catch((error) => {
     throw new Error(error);
   });
 };

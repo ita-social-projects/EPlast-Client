@@ -82,13 +82,13 @@ export const removeRegion = async (id: number) => {
 };
 
 export const archiveRegion = async (id: number) => {
-  return api.put(`Regions/ArchiveRegion/${id}`, id).catch((error) => {
+  return await api.put(`Regions/ArchiveRegion/${id}`, id).catch((error) => {
     throw new Error(error);
   });
 };
 
 export const unArchiveRegion = async (id: number) => {
-  return api.put(`Regions/UnArchiveRegion/${id}`, id).catch((error) => {
+  return await api.put(`Regions/UnArchiveRegion/${id}`, id).catch((error) => {
     throw new Error(error);
   });
 };
@@ -265,7 +265,7 @@ export const getActiveRegionsByPage = async (
   pageSize: number,
   regionName: string | null = null
 ) => {
-  return api
+  return await api
     .get(`Regions/Profiles/Active/${page}`, { page, pageSize, regionName })
     .catch((error) => {
       throw error;
@@ -277,7 +277,7 @@ export const getNotActiveRegionsByPage = async (
   pageSize: number,
   regionName: string | null = null
 ) => {
-  return api
+  return await api
     .get(`Regions/Profiles/NotActive/${page}`, { page, pageSize, regionName })
     .catch((error) => {
       throw error;
