@@ -712,22 +712,23 @@ const Club = () => {
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="clubCard">
             <Title level={4}>Документообіг куреня <a onClick={() => 
-            canEdit || (!activeUserRoles.includes(Roles.RegisteredUser)  
-            && club.name == activeUserClub) ||
-            (activeUserRoles.includes(Roles.CityHead)|| activeUserRoles.includes(Roles.CityHeadDeputy))
-            ||
-            (activeUserRoles.includes(Roles.KurinHead)|| activeUserRoles.includes(Roles.KurinHeadDeputy))
-              ?
-              history.push(`/clubs/documents/${club.id}`)
-              : undefined
-              }>
-              {documentsCount !== 0 ?
-                <Badge
-                  count={documentsCount}
-                  style={{ backgroundColor: "#3c5438" }}
-                /> : null
-              }
-            </a></Title>
+              canEdit || (!activeUserRoles.includes(Roles.RegisteredUser)  
+              && club.name == activeUserClub) ||
+              (activeUserRoles.includes(Roles.CityHead)|| activeUserRoles.includes(Roles.CityHeadDeputy))
+              ||
+              (activeUserRoles.includes(Roles.KurinHead)|| activeUserRoles.includes(Roles.KurinHeadDeputy))
+                ?
+                history.push(`/clubs/documents/${club.id}`)
+                : undefined
+                }>
+                {documentsCount !== 0 ?
+                  <Badge
+                    count={documentsCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  /> : null
+                }
+              </a>
+            </Title>
             <Row className="clubItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
                 documents.map((document) => (

@@ -33,8 +33,8 @@ const CheckActiveMembersForm  = (props: any)=>{
                 {props.members.length !== 0 ? (
                     <React.Fragment>
                         <PageHeader 
-                        title = "Необхідно відкріпити членів: "
-                        className="site-page-header" 
+                            title = "Необхідно відкріпити членів: "
+                            className="site-page-header" 
                         />
                             <Row className= "cityItems" justify="center">
                                 {props.members.map((member: any) => ( 
@@ -52,8 +52,8 @@ const CheckActiveMembersForm  = (props: any)=>{
                 {props.admins.length !== 0 ? (
                     <React.Fragment>
                         <PageHeader 
-                        title = "Необхідно відкріпити членів проводу: "
-                        className="site-page-header" 
+                            title = "Необхідно відкріпити членів проводу: "
+                            className="site-page-header" 
                         />
                             <Row className= "cityItems" justify="center">
                                 {props.admins.map((admin: any) => ( 
@@ -70,8 +70,8 @@ const CheckActiveMembersForm  = (props: any)=>{
                 {props.followers.length !== 0 ? (
                     <React.Fragment>
                         <PageHeader 
-                        title = "Необхідно відкріпити прихильників:"
-                        className="site-page-header" 
+                            title = "Необхідно відкріпити прихильників:"
+                            className="site-page-header" 
                         />
                             <Row className= "cityItems" justify="center">
                                 {props.followers.map((follower: any) => ( 
@@ -90,8 +90,8 @@ const CheckActiveMembersForm  = (props: any)=>{
 
             <Form.Item style = {{ textAlign: "center"}}>
                 <Button
-                type="primary" 
-                htmlType="submit" 
+                    type="primary" 
+                    htmlType="submit" 
                 >
                 OK
                 </Button>

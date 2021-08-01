@@ -28,10 +28,10 @@ const ActionCities = () => {
     return (
         <div>
             {isAdmin ? ( 
-            <p className={classes.swapper}> Показати не активні станиці: <Switch onChange={onChange}/></p> 
+                <p className={classes.swapper}> Показати не активні станиці: <Switch onChange={onChange}/></p> 
             ): null }
             <div className={classes.actionsWrapper}>
-            <SortedCities switcher={SwitchValue} />
+                <SortedCities switcher={SwitchValue} />
             </div>
         </div>
     )

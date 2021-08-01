@@ -111,17 +111,17 @@ const SortedCities = ( {switcher}: Props) => {
         return  arr.map((city: CityProfile) =>(
           <Link to={`${url}/${city.id}`}>
               <Card
-              key={city.id}
-              hoverable
-              className="cardStyles"
-              cover={
-                  photosLoading ? (
-                  <Skeleton.Avatar shape="square" active />
-                  ) : (
-                      <img src={city.logo || undefined} alt="City" />
-                  )
-              }
-              onClick={() => history.push(`${url}/${city.id}`)}
+                key={city.id}
+                hoverable
+                className="cardStyles"
+                cover={
+                    photosLoading ? (
+                    <Skeleton.Avatar shape="square" active />
+                    ) : (
+                        <img src={city.logo || undefined} alt="City" />
+                    )
+                }
+                onClick={() => history.push(`${url}/${city.id}`)}
               >
                   <Card.Meta title={city.name} className="titleText" />
               </Card>

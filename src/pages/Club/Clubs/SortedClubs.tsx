@@ -125,8 +125,8 @@ const SortedClubs = ( {switcher}: Props) => {
                 >
                   <Card.Meta title={city.name} className="titleText" />
               </Card>
-        </Link>
-          ))   
+          </Link>
+        ))   
     }
     return null;
 };
@@ -145,8 +145,8 @@ const SortedClubs = ( {switcher}: Props) => {
   return (
     <Layout.Content className="cities">
       {switcher ? (
-      <Title level={1}>Не активні курені</Title>) : (
-      <Title level={1}>Курені</Title>
+        <Title level={1}>Не активні курені</Title>) : (
+        <Title level={1}>Курені</Title>
       )}
       <div className="searchContainer">
         <Search
@@ -210,7 +210,7 @@ const SortedClubs = ( {switcher}: Props) => {
               />
             </div>
           </div>
-        )}
+      )}
     </Layout.Content>
   );
 };
