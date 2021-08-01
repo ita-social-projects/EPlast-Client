@@ -20,7 +20,7 @@ const CheckActiveMembersForm  = (props: any)=>{
     const [activeCities, setActiveCities] = useState<any[]>([]);
     const handleSubmit = async ()=>{
         onAdd();
-        }
+    }
        
     return <Form
             name="basic"
@@ -28,27 +28,27 @@ const CheckActiveMembersForm  = (props: any)=>{
             form = {form}
             >
             <Form.Item
-                className={classes.formField}
-            > {props.members.length !== 0 ? (
-                <React.Fragment>
-                    <PageHeader 
-                    title = "Необхідно відкріпити членів: "
-                    className="site-page-header" 
-                    />
+            className={classes.formField}
+            > 
+                {props.members.length !== 0 ? (
+                    <React.Fragment>
+                        <PageHeader 
+                        title = "Необхідно відкріпити членів: "
+                        className="site-page-header" 
+                        />
                             <Row className= "cityItems" justify="center">
-                            {props.members.map((member: any) => ( 
-                                <Link to={"/userpage/main/"+member.userId} target="_blank">
-                                    <Col
-                                    key={member.id}
-                                    >
-                                        <Avatar size={64} src={member.user.imagePath} />
-                                        <div className = "name">{member.user.firstName}</div>
-                                    </Col>
-                                </Link>
-                            ))}
+                                {props.members.map((member: any) => ( 
+                                    <Link to={"/userpage/main/"+member.userId} target="_blank">
+                                        <Col
+                                        key={member.id}>
+                                            <Avatar size={64} src={member.user.imagePath} />
+                                            <div className = "name">{member.user.firstName}</div>
+                                        </Col>
+                                    </Link>
+                                ))}
                             </Row> 
                     </React.Fragment>
-            ) : null}
+                ) : null}
                 {props.admins.length !== 0 ? (
                     <React.Fragment>
                         <PageHeader 
@@ -58,14 +58,14 @@ const CheckActiveMembersForm  = (props: any)=>{
                             <Row className= "cityItems" justify="center">
                                 {props.admins.map((admin: any) => ( 
                                     <Link to={"/userpage/main/"+admin.userId} target="_blank">
-                                        <Col  key={admin.id} >
+                                        <Col  key={admin.id}>
                                             <Avatar size={64} src={admin.user.imagePath} />
                                             <div className = "name">{admin.user.firstName}</div>
                                         </Col>
                                     </Link>
                                 ))}
                             </Row> 
-                    </React.Fragment>
+                     </React.Fragment>
                 ) : null}
                 {props.followers.length !== 0 ? (
                     <React.Fragment>
@@ -74,23 +74,21 @@ const CheckActiveMembersForm  = (props: any)=>{
                         className="site-page-header" 
                         />
                             <Row className= "cityItems" justify="center">
-                            {props.followers.map((follower: any) => ( 
-                                <Link to={"/userpage/main/"+follower.userId} target="_blank">
-                                    <Col
-                                    key={follower.id}
-                                    >
+                                {props.followers.map((follower: any) => ( 
+                                    <Link to={"/userpage/main/"+follower.userId} target="_blank">
+                                        <Col
+                                        key={follower.id}>
                                             <Avatar size={64} src={follower.user.imagePath} />
                                             <div className = "name">{follower.user.firstName}</div>
-                                    </Col>
-                                </Link>
-                            ))}
+                                        </Col>
+                                    </Link>
+                                ))}
                             </Row> 
                         </React.Fragment>
                 ) : null}
             </Form.Item>
 
             <Form.Item style = {{ textAlign: "center"}}>
-
                 <Button
                 type="primary" 
                 htmlType="submit" 

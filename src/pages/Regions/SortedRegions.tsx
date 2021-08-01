@@ -104,17 +104,17 @@ const SortedRegions = ({switcher}: Props) => {
         return  arr.map((region: RegionProfile) =>(
           <Link to={`${url}/${region.id}`}>
               <Card
-              key={region.id}
-              hoverable
-              className="cardStyles"
-              cover={
+                key={region.id}
+                hoverable
+                className="cardStyles"
+                cover={
                   photosLoading ? (
                   <Skeleton.Avatar shape="square" active />
                   ) : (
                       <img src={region.logo || undefined} alt="RegionDefault" />
                   )
-              }
-              onClick={() => history.push(`${url}/${region.id}`)}
+                }
+                onClick={() => history.push(`${url}/${region.id}`)}
               >
                   <Card.Meta title={region.regionName} className="titleText" />
               </Card>

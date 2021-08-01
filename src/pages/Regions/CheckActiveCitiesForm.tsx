@@ -104,8 +104,8 @@ const CheckActiveCitiesForm  = (props: any)=>{
 
                 <Form.Item style = {{ textAlign: "center"}}>
                     <Button
-                    type="primary" 
-                    htmlType="submit" 
+                        type="primary" 
+                        htmlType="submit" 
                     >
                     OK
                     </Button>

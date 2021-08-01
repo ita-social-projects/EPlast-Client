@@ -565,32 +565,32 @@ const Club = () => {
                     ) : null}
                     {canCreate ? (
                       isActiveClub ? (
-                      <Col offset={1}>
-                        <Tooltip title="Архівувати курінь">
-                          <ContainerOutlined
-                            className="clubInfoIconDelete"
-                            onClick={() => seeArchiveModal()} 
-                          />
-                        </Tooltip>
-                      </Col>) : (
-                        <React.Fragment>
-                          <Col offset={1}>
-                            <Tooltip title="Видалити курінь">
-                              <DeleteOutlined
-                                className="clubInfoIconDelete"
-                                onClick={() => seeDeleteModal()}
-                              />
-                            </Tooltip>
+                        <Col offset={1}>
+                          <Tooltip title="Архівувати курінь">
+                            <ContainerOutlined
+                              className="clubInfoIconDelete"
+                              onClick={() => seeArchiveModal()} 
+                            />
+                          </Tooltip>
+                        </Col>) : (
+                          <React.Fragment>
+                            <Col offset={1}>
+                              <Tooltip title="Видалити курінь">
+                                <DeleteOutlined
+                                  className="clubInfoIconDelete"
+                                  onClick={() => seeDeleteModal()}
+                                />
+                              </Tooltip>
                             </Col>
-                          <Col offset={1}>
-                            <Tooltip title="Розархівувати станицю">
-                              <ContainerOutlined
-                                className="clubInfoIcon" 
-                                onClick={() => seeUnArchiveModal()} 
-                              />
-                            </Tooltip>
-                          </Col>
-                        </React.Fragment>)
+                            <Col offset={1}>
+                              <Tooltip title="Розархівувати станицю">
+                                <ContainerOutlined
+                                  className="clubInfoIcon" 
+                                  onClick={() => seeUnArchiveModal()} 
+                                />
+                              </Tooltip>
+                            </Col>
+                          </React.Fragment>)
                     ) : null}
                   </Row>
                 </Col>

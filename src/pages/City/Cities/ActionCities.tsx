@@ -20,7 +20,7 @@ const ActionCities = () => {
 
     const onChange = () => {
             setSwitchValue(!SwitchValue);
-        }
+    }
 
     useEffect(()=>{
         checkAccessToManage();

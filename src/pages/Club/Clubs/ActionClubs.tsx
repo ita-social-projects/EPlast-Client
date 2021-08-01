@@ -28,11 +28,11 @@ const ActionClubs = () => {
     return (
         <div>
             {isAdmin ? ( 
-            <p className={classes.swapper}> Показати не активні курені: <Switch onChange={onChange}/></p> 
+                <p className={classes.swapper}> Показати не активні курені: <Switch onChange={onChange}/></p> 
             ): null }
-            <div className={classes.actionsWrapper}>
-            <SortedClubs switcher={SwitchValue} />
-            </div>
+                <div className={classes.actionsWrapper}>
+                    <SortedClubs switcher={SwitchValue} />
+                </div>
         </div>
     )
 }

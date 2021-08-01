@@ -163,7 +163,7 @@ const Region = () => {
   const ArchiveRegion = async () => {
     try {
       await archiveRegion(region.id);
-    }finally{
+    } finally {
     admins.map(async (ad) => {
       await createNotification(ad.userId,
         `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
@@ -507,11 +507,11 @@ const Region = () => {
                   second={url.replace(`/${id}`, "")}
                   second_name="Округи"
                 />
-                {isActiveRegion ? null : (
-                  <Tag className="status" color = {"red"}>
-                  Заархівовано
-                  </Tag>
-              )}
+                  {isActiveRegion ? null : (
+                    <Tag className="status" color = {"red"}>
+                      Заархівовано
+                    </Tag>
+                  )}
               </div>
               <Title level={3}>Округа {region.regionName}</Title>
               <Row className="cityPhotos" gutter={[0, 12]}>
@@ -656,9 +656,7 @@ const Region = () => {
                             />
                           </Tooltip>
                         </Col>
-                        
-                        {
-                          activeUserRoles.includes(Roles.Admin) ? (
+                        {activeUserRoles.includes(Roles.Admin) ? (
                           isActiveRegion ? (
                             <Col offset={1}>
                               <Tooltip title="Заархівувати станицю">
@@ -667,7 +665,8 @@ const Region = () => {
                                   onClick={() => seeArchiveModal()} 
                                 />
                               </Tooltip>
-                            </Col>) : (
+                            </Col>
+                          ) : (
                               <React.Fragment>
                                 <Col offset={1}>
                                   <Tooltip title="Видалити станицю">
@@ -676,7 +675,7 @@ const Region = () => {
                                       onClick={() => seeDeleteModal()} 
                                     />
                                   </Tooltip>
-                                  </Col>
+                                </Col>
                                 <Col offset={1}>
                                   <Tooltip title="Розархівувати станицю">
                                     <ContainerOutlined
@@ -686,8 +685,9 @@ const Region = () => {
                                     />
                                   </Tooltip>
                                 </Col>
-                            </React.Fragment>)
-                          ) : null}
+                              </React.Fragment>
+                          )
+                        ) : null}
                       </Row>
                     </Col>
                   </>

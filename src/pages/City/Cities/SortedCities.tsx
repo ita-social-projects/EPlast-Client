@@ -36,7 +36,7 @@ const SortedCities = ( {switcher}: Props) => {
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
 
   const setPhotos = async (cities: CityProfile[]) => {
-    try{
+    try {
       for await (const city of cities) {
         if (city.logo === null) {
           city.logo = CityDefaultLogo;
@@ -45,7 +45,7 @@ const SortedCities = ( {switcher}: Props) => {
           city.logo = logo.data;
         }
       }
-    }finally{
+    } finally {
       setPhotosLoading(false);
     }
     
@@ -133,7 +133,6 @@ const SortedCities = ( {switcher}: Props) => {
 
   useEffect(() => {
     switcher ? (getNotActiveCities()):(getActiveCities()) 
-
   }, [page, pageSize, searchedData]);
 
   useEffect(()=>{

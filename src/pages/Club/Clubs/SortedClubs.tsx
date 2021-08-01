@@ -36,7 +36,7 @@ const SortedClubs = ( {switcher}: Props) => {
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
 
   const setPhotos = async (clubs: ClubProfile[]) => {
-    try{
+    try {
       for await (const club of clubs) {
         if (club.logo === null) {
           club.logo = CityDefaultLogo;
@@ -45,7 +45,7 @@ const SortedClubs = ( {switcher}: Props) => {
           club.logo = logo.data;
         }
       }
-    }finally{
+    } finally {
       setPhotosLoading(false);
     }
     
@@ -111,18 +111,18 @@ const SortedClubs = ( {switcher}: Props) => {
         return  arr.map((city: ClubProfile) =>(
           <Link to={`${url}/${city.id}`}>
               <Card
-              key={city.id}
-              hoverable
-              className="cardStyles"
-              cover={
-                  photosLoading ? (
-                  <Skeleton.Avatar shape="square" active />
-                  ) : (
-                      <img src={city.logo || undefined} alt="City" />
-                  )
-              }
-              onClick={() => history.push(`${url}/${city.id}`)}
-              >
+                key={city.id}
+                hoverable
+                className="cardStyles"
+                cover={
+                    photosLoading ? (
+                    <Skeleton.Avatar shape="square" active />
+                    ) : (
+                        <img src={city.logo || undefined} alt="City" />
+                    )
+                }
+                onClick={() => history.push(`${url}/${city.id}`)}
+                >
                   <Card.Meta title={city.name} className="titleText" />
               </Card>
         </Link>

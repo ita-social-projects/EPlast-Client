@@ -572,14 +572,14 @@ const City = () => {
                     ) : null}
                     {canCreate ? (
                       isActiveCity ? (
-                      <Col offset={1}>
-                        <Tooltip title="Архівувати станицю">
-                          <ContainerOutlined
-                            className="cityInfoIconDelete"
-                            onClick={() => seeArchiveModal()} 
-                          />
-                        </Tooltip>
-                      </Col>) : (
+                        <Col offset={1}>
+                          <Tooltip title="Архівувати станицю">
+                            <ContainerOutlined
+                              className="cityInfoIconDelete"
+                              onClick={() => seeArchiveModal()} 
+                            />
+                          </Tooltip>
+                        </Col>) : (
                         <React.Fragment>
                           <Col offset={1}>
                             <Tooltip title="Видалити станицю">
@@ -588,7 +588,7 @@ const City = () => {
                                 onClick={() => seeDeleteModal()} 
                               />
                             </Tooltip>
-                            </Col>
+                          </Col>
                           <Col offset={1}>
                             <Tooltip title="Розархівувати станицю">
                               <ContainerOutlined
@@ -598,7 +598,7 @@ const City = () => {
                               />
                             </Tooltip>
                           </Col>
-                      </React.Fragment>)
+                        </React.Fragment>)
                     ) : null}
                   </Row>
                 </Col>
