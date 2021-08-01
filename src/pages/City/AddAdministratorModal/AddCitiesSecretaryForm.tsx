@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
-import { Form, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
+import { Form, DatePicker, AutoComplete, Select, Button } from "antd";
 import {
-  getAllAdmins,
   getAllMembers,
 } from "../../../api/citiesApi";
 import moment from "moment";
@@ -100,7 +99,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         name="userId"
         rules={[
           {
-            required: props.admin === undefined ? true : false,
+            required: props.admin === undefined,
             message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
@@ -140,7 +139,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
             { value: "Член СПР" },
           ]}
           placeholder={"Тип адміністрування"}
-        ></AutoComplete>
+        />
       </Form.Item>
 
       <Form.Item
