@@ -29,7 +29,7 @@ export type UserDates ={
     dateEnd: string | null;
     userId : string;
 }
-const getAccessLevelById = async (id : string) => {
+const getAccessLevelById = async (id : string): Promise<string[]> => {
     const response = await Api.get(`ActiveMembership/accessLevel/${id}`);
 
     return response.data;
