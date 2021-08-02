@@ -25,7 +25,7 @@ const { Title } = Typography;
 
 const ActiveMembership = () => {
   const { userId } = useParams();
-  const [accessLevels, setAccessLevels] = useState([]);
+  const [accessLevels, setAccessLevels] = useState<string[]>([]);
   const [dates, setDates] = useState<any>({});
   const [data, setUserData] = useState<Data>();
   const [currentUser, setCurrentUser] = useState<any>({});
@@ -82,7 +82,10 @@ const ActiveMembership = () => {
       notificationLogic("error", error.message);
     });
 
-    setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
+    await activeMembershipApi.getAccessLevelById(userId).then(async (response) => {
+      console.log(response);
+      setAccessLevels(response)
+    })
 
     await activeMembershipApi.getUserDates(userId).then((response) => {
       response.dateEntry =
@@ -268,7 +271,7 @@ const ActiveMembership = () => {
                     >
                       <Tag color={setTagColor(item)} key={index}>
                         <Tooltip placement="topLeft" title={item}>
-                          {item}
+                          <p>{item}</p>
                         </Tooltip>
                       </Tag>
                     </List.Item>
