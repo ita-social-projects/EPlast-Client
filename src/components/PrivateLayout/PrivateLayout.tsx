@@ -38,6 +38,7 @@ const PrivateLayout = ({ children }: any) => {
   const [onlyRegistered, setOnlyRegistered] = useState(false);
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
   const [plastMember, setPlastMember] = useState(false);
+  const [reload, setReload] = useState<boolean>(false);
   const [formerMember, setFormerMember] = useState(false);
   const ref = useRef(null)
 
