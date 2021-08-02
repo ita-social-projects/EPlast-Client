@@ -38,6 +38,7 @@ const PrivateLayout = ({ children }: any) => {
   const [onlyRegistered, setOnlyRegistered] = useState(false);
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
   const [plastMember, setPlastMember] = useState(false);
+  const [formerMember, setFormerMember] = useState(false);
   const ref = useRef(null)
 
   const handleClickOutside = () => {
@@ -131,7 +132,7 @@ const PrivateLayout = ({ children }: any) => {
               </Menu.Item>
               ) : (<> </>)
             }
-            {activeUserProfile?.city ? (
+            {(activeUserProfile || formerMember) ? (
               <Menu.Item
                 key="1"
                 icon={<BankOutlined />}
@@ -150,7 +151,7 @@ const PrivateLayout = ({ children }: any) => {
                 </Menu.Item>
                 ) : (<> </>)
               }
-              {activeUserProfile?.city ? (
+              {(activeUserProfile || formerMember) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/regions"); }} key="3" >
                   Округи                  
                 </Menu.Item>
@@ -165,7 +166,7 @@ const PrivateLayout = ({ children }: any) => {
                 </Menu.Item>
                 ) : (<> </>)
               }
-              {activeUserProfile?.city ? (
+              {(activeUserProfile || formerMember) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/events/types'); }} key="6">
                   Події
                 </Menu.Item>
