@@ -5,7 +5,6 @@ import moment from "moment";
 import { Data, User } from "../Interface/Interface";
 import { useParams, useHistory } from "react-router-dom";
 import notificationLogic from "../../../components/Notifications/Notification";
-import Spinner from "../../Spinner/Spinner";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import Facebook from "../../../assets/images/facebookGreen.svg";
 import Twitter from "../../../assets/images/birdGreen.svg";

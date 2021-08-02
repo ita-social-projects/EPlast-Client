@@ -1,11 +1,10 @@
-.titleTable {
+.titleTable{
   text-align: center;
   margin-bottom: 15px;
 }
 
 /* Search container */
-
-.searchContainer {
+.searchContainer{
   display: flex;
   margin-bottom: 12px;
   width: 400px;
@@ -22,7 +21,7 @@
   color:#3c5438;
   border-color: #3c5438;
 }
-.searchContainer>* {
+.searchContainer>*{
   margin-left: 12px;
 }
 
@@ -31,7 +30,6 @@
   .searchContainer{
     width: 100%;
     flex-direction: column;
-    
   }
   .searchContainer>*{
     width: 100%;
@@ -42,16 +40,15 @@
     width: 100%;
     margin-bottom: 10px;
     margin-left: auto; 
-
   }
-
 }
-.menu {
+
+.menu{
   box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
   position: absolute;
 }
 .submitButtons{
   width:100%;
   display:flex;
-   justify-content:space-between
+  justify-content:space-between;
 }
