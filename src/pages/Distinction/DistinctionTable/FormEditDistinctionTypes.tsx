@@ -135,7 +135,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
               name="inputName"
               value={title}
               onChange={(event) => {
-                if(event.target.value.length < 250)
+                if(event.target.value.length < 200)
                 {
                   setTitle(event.target.value);
                   setVisRule(false);
@@ -144,7 +144,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
                   setVisRule(true);
               }}
               placeholder="Додати відзначення"
-              maxLength={250}
+              maxLength={200}
               onPressEnter={handleAdd}
               enterButton={<CheckOutlined onClick={handleAdd} />}
             /> 
@@ -153,7 +153,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
           {visRule ?
               <div>
                 <Text type="danger">
-                  Поле не повинно містити більше 250 символів!
+                  Поле не повинно містити більше 200 символів!
                 </Text>
               </div>
               : <></>

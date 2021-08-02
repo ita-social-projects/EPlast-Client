@@ -198,14 +198,18 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           (element) => contentListNoTitle[element.kadraVykhovnykivTypeId]
         )}
       </div>
-
       {UserDistinctions.map((dist) => (
         <div className="distinctions">
-          <Tooltip title={dist?.reason}>
-            <h2>
-              {dist.distinction.name} №{dist.number}
+          {(dist.distinction.name?.length > 55) ?
+            <Tooltip title={dist?.distinction.name}>
+              <h2>
+                {dist.distinction.name.slice(0,54) + "..."} №{dist.number}
+              </h2>
+            </Tooltip>
+          : <h2> 
+              {dist.distinction.name + "№" + dist.number} 
             </h2>
-          </Tooltip>
+          }
         </div>
       ))}
       {UserPrecaution.map((dist) =>
