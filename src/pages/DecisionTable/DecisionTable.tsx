@@ -4,7 +4,6 @@ import columns from './columns';
 import DropDown from './DropDownDecision';
 import AddDecisionModal from './AddDecisionModal';
 import decisionsApi, { Decision, statusTypeGetParser } from '../../api/decisionsApi';
-import notificationLogic from '../../components/Notifications/Notification';
 import ClickAwayListener from 'react-click-away-listener';
 import Spinner from '../Spinner/Spinner';
 import AuthStore from '../../stores/AuthStore';
@@ -12,7 +11,7 @@ import jwt_decode from "jwt-decode";
 import Search from 'antd/lib/input/Search';
 import { DecisionTableInfo } from './Interfaces/DecisionTableInfo';
 import { Roles } from '../../models/Roles/Roles';
-const classes = require('./Table.module.css');
+import classes from './Table.module.css';
 
 const { Content } = Layout;
 
@@ -143,6 +142,7 @@ const DecisionTable = () => {
             <Search
                 enterButton
                 placeholder="Пошук"
+                allowClear
                 onChange={handleSearchChange}
                 onSearch={handleSearch}                
                />

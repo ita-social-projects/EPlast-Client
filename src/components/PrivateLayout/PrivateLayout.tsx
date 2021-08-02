@@ -69,11 +69,12 @@ const PrivateLayout = ({ children }: any) => {
     else {
       const user: any = jwt(token);
       await UserApi.getById(user.nameid).then(async response => {
-        await UserApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
+        await UserApi.getImage(response.data?.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
         })
         setId(response.data.user.id);
       })
+      setReload(!reload);
     }
   };
 
@@ -98,7 +99,7 @@ const PrivateLayout = ({ children }: any) => {
   useEffect(() => {
     fetchData();
     fetchUser();
-  }, []);
+  }, [reload]);
 
   return (
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
@@ -231,6 +232,9 @@ const PrivateLayout = ({ children }: any) => {
                 Річні звіти
               </Menu.Item>
               ) : (<> </>)
+            }
+            {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/aboutBase'); }} key="5">Про Базу</Menu.Item>) : (<> </>)
             }
           </Menu>
         </Sider>

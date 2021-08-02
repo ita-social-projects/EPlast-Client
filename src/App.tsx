@@ -62,6 +62,7 @@ import RegionBoardAdministration from "./pages/RegionsBoard/RegionBoardAdministr
 import RegionBoardDocuments from "./pages/RegionsBoard/RegionBoardDocuments";
 import GoverningBody from "./pages/GoverningBody/GoverningBody/GoverningBody";
 import CreateGoverningBody from "./pages/GoverningBody/CreateGoverningBody";
+import AboutBase from "./pages/AboutBase/AboutBase";
 import CreateGoverningBodySector from "./pages/GoverningBody/Sector/CreateSector";
 import RegionAnnualReportCreate from "./pages/AnnualReport/RegionAnnualReportCreateEditView/RegionAnnualReportCreate";
 import RegionAnnualReportEdit from "./pages/AnnualReport/RegionAnnualReportCreateEditView/RegionAnnualReportEdit";
@@ -437,6 +438,11 @@ const App: FC = () => (
             exact
             path="/clubs/documents/:id"
             component={ClubDocuments}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            path="/aboutBase"
+            component={AboutBase}
           />
           <RouteWithLayout
             layout={PrivateLayout}
