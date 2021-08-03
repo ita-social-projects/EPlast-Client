@@ -30,7 +30,7 @@ const FormAddPlastDegree = ({
     const [filtredDegrees, setFiltredDegrees] = useState<Array<PlastDegree>>([]);
   
     const handleFinish = async (info: any) => {
-        const plastDegreeId=filtredDegrees.find(item => item.name === "Пласт прият")?.id;
+        const plastDegreeId=filtredDegrees.find(item => item.name === "Пластприят")?.id;
         info.plastDegree=plastDegreeId? plastDegreeId:info.plastDegree;
         const userPlastDegreePost: UserPlastDegreePost = {
             plastDegreeId: info.plastDegree,
@@ -55,9 +55,9 @@ const FormAddPlastDegree = ({
     }
 
     const handleOnChange = (value: any) => {
-        if (value === "Пласт прият") {
+        if (value === "Пластприят") {
             setVisiableDegree(false);
-            setFiltredDegrees(availablePlastDegree.filter(item => item.name === "Пласт прият"));
+            setFiltredDegrees(availablePlastDegree.filter(item => item.name === "Пластприят"));
         } else if (value === "Улад Старшого Пластунства") {
             setVisiableDegree(true);
             setFiltredDegrees(availablePlastDegree.filter(item =>item.name.includes("Старш")));
@@ -85,7 +85,7 @@ const FormAddPlastDegree = ({
                 onChange = {(value) => handleOnChange(value)}
                 placeholder = {"Оберіть Улад"}
             >
-                { availablePlastDegree.find(item => item.name === "Пласт прият") && <Select.Option value="Пласт прият">Пласт прият</Select.Option>}
+                { availablePlastDegree.find(item => item.name === "Пластприят") && <Select.Option value="Пластприят">Пластприят</Select.Option>}
                 {!isCityAdmin && availablePlastDegree.find(item => item.name.includes("Старш")) && <Select.Option value="Улад Старшого Пластунства">Улад Старшого Пластунства</Select.Option>}
                 {!isCityAdmin && availablePlastDegree.filter(item => item.name.includes("сеніор")) && <Select.Option value="Улад Пластового Сеніорату">Улад Пластового Сеніорату</Select.Option>}
             </Select>
