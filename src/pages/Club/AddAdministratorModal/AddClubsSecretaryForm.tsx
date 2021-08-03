@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
-import { Form, Input, DatePicker, AutoComplete, Select, Modal, Button } from "antd";
-import notificationLogic from "../../../components/Notifications/Notification";
+import { Form, DatePicker, AutoComplete, Select, Button } from "antd";
 import {
   getAllMembers,
 } from "../../../api/clubsApi";
@@ -10,9 +9,7 @@ import {emptyInput,} from "../../../components/Notifications/Messages"
 import AdminType from "../../../models/Admin/AdminType";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
 import ClubMember from "../../../models/Club/ClubMember";
-import User from "../../Distinction/Interfaces/User";
 import "./AddClubsSecretaryForm.less";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
@@ -99,7 +96,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
         name="userId"
         rules={[
           {
-            required: props.admin === undefined ? true : false,
+            required: props.admin === undefined,
             message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}
@@ -140,7 +137,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
             { value: "Член СПР" },
           ]}
           placeholder={"Тип адміністрування"}
-        ></AutoComplete>
+        />
       </Form.Item>
 
       <Form.Item
