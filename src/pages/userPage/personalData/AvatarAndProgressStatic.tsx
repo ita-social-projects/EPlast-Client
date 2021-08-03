@@ -17,6 +17,7 @@ import User from "../../../models/UserTable/User";
 import moment from "moment";
 
 const { Title } = Typography;
+const nameMaxLength = 55;
 
 class AvatarAndProgressStaticProps {
   imageUrl: string | undefined;
@@ -198,14 +199,18 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           (element) => contentListNoTitle[element.kadraVykhovnykivTypeId]
         )}
       </div>
-
       {UserDistinctions.map((dist) => (
         <div className="distinctions">
-          <Tooltip title={dist?.reason}>
-            <h2>
-              {dist.distinction.name} №{dist.number}
+          {(dist.distinction.name?.length > nameMaxLength) ?
+            <Tooltip title={dist?.distinction.name}>
+              <h2>
+                {dist.distinction.name.slice(0,54) + "..."} №{dist.number}
+              </h2>
+            </Tooltip>
+          : <h2> 
+              {dist.distinction.name + "№" + dist.number} 
             </h2>
-          </Tooltip>
+          }
         </div>
       ))}
       {UserPrecaution.map((dist) =>
