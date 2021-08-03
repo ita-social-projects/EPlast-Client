@@ -154,7 +154,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
           {visRule ?
               <div>
                 <Text type="danger">
-                  Поле не повинно містити більше 200 символів!
+                  Поле не повинно містити більше {typeMaxLength} символів!
                 </Text>
               </div>
               : <></>
