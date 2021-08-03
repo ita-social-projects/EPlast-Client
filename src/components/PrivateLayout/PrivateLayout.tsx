@@ -48,6 +48,7 @@ const PrivateLayout = ({ children }: any) => {
 
 
   const onCollapse = (collValue: boolean) => {
+    setReload(!reload);
     setCollapsed(collValue);
   };
 
@@ -73,7 +74,6 @@ const PrivateLayout = ({ children }: any) => {
         })
         setId(response.data.user.id);
       })
-      setReload(!reload);
     }
   };
 

@@ -25,6 +25,7 @@ let defaultDist: Distinction = {
   name: "",
   id: 0,
 };
+const typeMaxLength = 200;
 
 const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => {
   const [distData, setDistData] = useState<Distinction[]>([defaultDist]);
@@ -135,7 +136,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
               name="inputName"
               value={title}
               onChange={(event) => {
-                if(event.target.value.length < 250)
+                if(event.target.value.length < typeMaxLength)
                 {
                   setTitle(event.target.value);
                   setVisRule(false);
@@ -144,7 +145,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
                   setVisRule(true);
               }}
               placeholder="Додати відзначення"
-              maxLength={250}
+              maxLength={typeMaxLength}
               onPressEnter={handleAdd}
               enterButton={<CheckOutlined onClick={handleAdd} />}
             /> 
@@ -153,7 +154,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
           {visRule ?
               <div>
                 <Text type="danger">
-                  Поле не повинно містити більше 250 символів!
+                  Поле не повинно містити більше {typeMaxLength} символів!
                 </Text>
               </div>
               : <></>
@@ -178,7 +179,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
                 name: event.target.value,
               })
             }
-            maxLength={250}
+            maxLength={typeMaxLength}
             onPressEnter={handleEdit}
             enterButton={<SaveOutlined/>}
             onSearch={handleEdit}
