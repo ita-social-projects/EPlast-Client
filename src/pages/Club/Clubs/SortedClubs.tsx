@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch, Link } from "react-router-dom";
-import { Card, Layout, Pagination, Result, Skeleton } from "antd";
+import { Card, Layout, Pagination, Result, Skeleton, Tooltip } from "antd";
 import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import { getActiveClubByPage, getNotActiveClubByPage, getLogo } from "../../../api/clubsApi";
@@ -16,6 +16,7 @@ interface Props {
   switcher: boolean;
 }
 
+const nameMaxLength = 23;
 const SortedClubs = ( {switcher}: Props) => {
   const history = useHistory();
   const { url } = useRouteMatch();
@@ -108,22 +109,28 @@ const SortedClubs = ( {switcher}: Props) => {
   const renderCity = (arr: ClubProfile[]) => {
     if (arr) {
         // eslint-disable-next-line react/no-array-index-key
-        return  arr.map((city: ClubProfile) =>(
-          <Link to={`${url}/${city.id}`}>
+        return  arr.map((club: ClubProfile) =>(
+          <Link to={`${url}/${club.id}`}>
               <Card
-                key={city.id}
+                key={club.id}
                 hoverable
                 className="cardStyles"
                 cover={
                     photosLoading ? (
                     <Skeleton.Avatar shape="square" active />
                     ) : (
-                        <img src={city.logo || undefined} alt="City" />
+                        <img src={club.logo || undefined} alt="Club" />
                     )
                 }
-                onClick={() => history.push(`${url}/${city.id}`)}
+                onClick={() => history.push(`${url}/${club.id}`)}
                 >
-                  <Card.Meta title={city.name} className="titleText" />
+                  {(club.name?.length > nameMaxLength) ?
+                    <Tooltip title={club.name}>
+                      <Card.Meta title={club.name.slice(0, 22) + "..."} className="titleText"/>
+                    </Tooltip>
+                    : 
+                    <Card.Meta title={club.name} className="titleText"/>
+                  }
               </Card>
           </Link>
         ))   
