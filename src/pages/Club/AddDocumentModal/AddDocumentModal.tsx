@@ -29,7 +29,8 @@ interface Props {
     ClubId: number;
     onAdd: (document: ClubDocument) => void;
 }
-  
+
+const nameMaxLength = 40;
 const AddDocumentModal = (props: Props) => {
     const [form] = Form.useForm();
     const [documentTypes, setDocumentTypes] = useState<ClubDocumentType[]>([]);
@@ -163,7 +164,9 @@ const AddDocumentModal = (props: Props) => {
               >
                 {documentTypes.map((dt) => (
                   <Select.Option key={dt.id} value={dt.name}>
-                    {dt.name}
+                    {(dt.name?.length> nameMaxLength) ?
+                      dt.name.slice(0,39) + "..."
+                    : dt.name}
                   </Select.Option>
                 ))}
               </Select>

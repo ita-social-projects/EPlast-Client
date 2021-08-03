@@ -17,6 +17,16 @@ import{
             message: maxLength(50),
         }
     ],
+    ClubName: [
+        {
+            required: true,
+            message: emptyInput(),
+        },
+        {
+            max: 200,
+            message: maxLength(200),
+        }
+    ],
     Description:
     {
         max: 1000,

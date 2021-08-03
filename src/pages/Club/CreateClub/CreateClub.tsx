@@ -42,6 +42,10 @@ import{
   successfulDeleteAction
 } from "../../../components/Notifications/Messages"
 
+const nameMaxLength = 201;
+const descriptionMaxLength = 1001;
+const linkMaxLength = 257;
+const emailMaxLength = 51;
 const CreateClub = () => {
   const { id } = useParams();
   const history = useHistory();
@@ -200,9 +204,9 @@ const CreateClub = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={club.name}
-                rules={descriptionValidation.Name}
+                rules={descriptionValidation.ClubName}
               >
-                <Input value={club.name} maxLength={51} />
+                <Input value={club.name} maxLength={nameMaxLength} />
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
@@ -213,7 +217,7 @@ const CreateClub = () => {
                 initialValue={club.description}
                 rules={[descriptionValidation.Description]}
               >
-                <Input value={club.description} maxLength={1001}/>
+                <Input value={club.description} maxLength={descriptionMaxLength}/>
               </Form.Item>
             </Col>
             <Col md={11} xs={24}>
@@ -224,7 +228,7 @@ const CreateClub = () => {
                 initialValue={club.clubURL}
                 rules={[descriptionValidation.Link]}
               >
-                <Input value={club.clubURL} maxLength={257}/>
+                <Input value={club.clubURL} maxLength={linkMaxLength}/>
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
@@ -252,18 +256,18 @@ const CreateClub = () => {
                 initialValue={club.email}
                 rules={descriptionValidation.Email}
               >
-                <Input value={club.email} maxLength={51}/>
+                <Input value={club.email} maxLength={emailMaxLength}/>
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
             <Form.Item
                 name="street"
-                label="Гасло"
+                label="Вулиця"
                 labelCol={{ span: 24 }}
                 initialValue={club.street}
                 rules={[descriptionValidation.Description]}
               >
-                <Input value={club.description} maxLength={1001}/>
+                <Input value={club.description} maxLength={descriptionMaxLength}/>
                 </Form.Item>
             </Col>
           </Row>
