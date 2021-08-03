@@ -26,6 +26,7 @@ interface Props {
   admin: ClubAdmin;
   setAdmin: (admin: ClubAdmin) => void;
   clubId: number;
+  clubName: string;
   onAdd?: (admin?: ClubAdmin) => void;
   onChange?: (id: string, userRoles: string) => void;
 }
@@ -149,7 +150,7 @@ const AddAdministratorModal = (props: Props) => {
     <Modal
       title={
         props.admin.id === 0
-          ? "Додати в провід куреня"
+          ? `Додати в провід ${props.clubName}`
           : "Редагувати адміністратора"
       }
       visible={props.visibleModal}

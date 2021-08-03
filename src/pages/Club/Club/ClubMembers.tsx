@@ -195,6 +195,7 @@ const ClubMembers = () => {
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
           clubId={+id}
+          clubName={clubName}
           onAdd={onAdd}
         ></AddAdministratorModal>
       ) : null}
