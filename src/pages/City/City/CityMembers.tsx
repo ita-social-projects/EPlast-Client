@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Row, Skeleton, Spin, } from "antd";
-import { SettingOutlined, CloseOutlined, RollbackOutlined } from "@ant-design/icons";
+import { Avatar, Button, Card, Layout, Modal, Row, Skeleton, Spin, } from "antd";
+import { SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
@@ -49,6 +49,20 @@ const CityMembers = () => {
       setActiveUserRoles(userRoles);
     setLoading(false);
   };
+
+  function seeDeleteModal(admin: CityMember) {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете видалити даного користувача із членів Станиці?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, Видалити",
+      okType: "primary",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+         removeMember(admin);
+      },
+    });
+  }
 
   const removeMember = async (member: CityMember) => {
     await toggleMemberStatus(member.id);
@@ -132,7 +146,7 @@ const CityMembers = () => {
                 canEdit && (member?.user.id !== head?.user.id || !activeUserRoles.includes(Roles.CityHeadDeputy))
                   ? [
                       <SettingOutlined onClick={() => showModal(member)} />,
-                      <CloseOutlined onClick={() => removeMember(member)} />,
+                      <CloseOutlined onClick={() => seeDeleteModal(member)} />,
                     ]
                   : undefined
               }
