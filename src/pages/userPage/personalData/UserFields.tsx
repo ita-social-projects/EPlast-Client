@@ -553,19 +553,19 @@ export default function () {
           <div className="links">
             {data?.shortUser.facebookLink !== null &&
             data?.shortUser.facebookLink !== "" ? (
-              <a href={data?.shortUser.facebookLink}>
+              <a href={"https://www.facebook.com/" + data?.shortUser.facebookLink}>
                 <img src={Facebook} alt="Facebook" />
               </a>
             ) : null}
             {data?.shortUser.twitterLink !== null &&
             data?.shortUser.twitterLink !== "" ? (
-              <a href={data?.shortUser.twitterLink}>
+              <a href={"https://www.twitter.com/" + data?.shortUser.twitterLink}>
                 <img src={Twitter} alt="Twitter" />
               </a>
             ) : null}
             {data?.shortUser.instagramLink !== null &&
             data?.shortUser.instagramLink !== "" ? (
-              <a href={data?.shortUser.instagramLink}>
+              <a href={"https://www.instagram.com/" + data?.shortUser.instagramLink}>
                 <img src={Instagram} alt="Instagram" />
               </a>
             ) : null}

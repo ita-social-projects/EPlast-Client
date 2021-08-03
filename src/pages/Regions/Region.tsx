@@ -11,24 +11,28 @@ import {
   Card,
   Tooltip,
   Badge,
+  Tag
 } from "antd";
 import {
   FileTextOutlined,
   EditOutlined,
   PlusSquareFilled,
   DeleteOutlined,
+  ContainerOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import {
   getRegionById,
-  removeRegion,
+  archiveRegion,
+  unArchiveRegion,
   getRegionAdministration,
   getHead,
   getHeadDeputy,
   getRegionFollowers,
   AddAdmin,
   EditAdmin,
+  removeRegion,
 } from "../../api/regionsApi";
 import {
   cityNameOfApprovedMember,
@@ -43,11 +47,11 @@ import RegionDocument from "../../models/Region/RegionDocument";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
 import userApi from "./../../api/UserApi";
 import { getLogo } from "./../../api/citiesApi";
-import CitiesRedirectForm from "./CitiesRedirectForm";
+import CheckActiveCitiesForm from "./CheckActiveCitiesForm"
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import notificationLogic from "../../components/Notifications/Notification";
-import { successfulDeleteAction, successfulEditAction } from "../../components/Notifications/Messages";
+import { successfulEditAction, successfulDeleteAction, successfulAddDegree } from "../../components/Notifications/Messages";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
@@ -96,7 +100,7 @@ const Region = () => {
     },
   ]);
 
-  const [memberRedirectVisibility, setMemberRedirectVisibility] = useState<boolean>(false);
+  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
 
   const [followers, setFollowers] = useState<RegionFollower[]>([]);
   const [followersCount, setFollowersCount] = useState<number>();
@@ -104,13 +108,14 @@ const Region = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
   const [membersCount, setMembersCount] = useState<number>();
+  const [activeCities, setActiveCities] = useState<any[]>([]);
   const [adminsCount, setAdminsCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
   const [visible, setVisible] = useState<boolean>(false);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
   const [isActiveUserFromRegion, setIsActiveUserFromRegion] = useState<boolean>(false);
-  
+  const [isActiveRegion, setIsActiveRegion] = useState<boolean>(true);
   const [head, setHead] = useState<any>({
     user: {
       firstName: "",
@@ -155,16 +160,61 @@ const Region = () => {
     setRegionLogoLoading(false);
   };
 
-  const deleteRegion = async () => {
-    await removeRegion(region.id);
+  const ArchiveRegion = async () => {
+    try {
+      await archiveRegion(region.id);
+    } finally {
     admins.map(async (ad) => {
       await createNotification(ad.userId,
         `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
     });
-    notificationLogic("success", successfulDeleteAction("Округу"));
+    history.push("/regions");
+  }
+  };
+
+  const deleteRegion = async () => {
+    await removeRegion(region.id);
+    notificationLogic("success", successfulDeleteAction("округу"));
+
+    history.push("/regions");
+  };
+  const UnArchiveCity = async () => {
+    await unArchiveRegion(region.id)
+    notificationLogic("success", successfulEditAction("Станицю"));
+
     history.push("/regions");
   };
 
+  function seeArchiveModal() {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете архівувати дану округу?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, заархівувати",
+      okType: "danger",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        membersCount !== 0 || adminsCount !== 0
+        ? setActiveMemberVisibility(true)
+        : ArchiveRegion();
+      },
+    });
+  }
+
+  function seeUnArchiveModal() {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете розархівувати дану округу?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, розархівувати",
+      okType: "danger",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        UnArchiveCity();
+      },
+    });
+  }
+  
   function seeDeleteModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити дану округу?",
@@ -174,13 +224,17 @@ const Region = () => {
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
-        {
-          members[0].name !== ""
-            ? setMemberRedirectVisibility(true)
-            : deleteRegion();
-        }
+        deleteRegion();
       },
     });
+  }
+
+  const setActiveMembers = (cities: any[]) => {
+    for (let i = 0; i < cities.length; i++) {
+      if (cities[i].cityMembers.length != 0) {
+           setActiveCities(activeCities => [...activeCities,  cities[i]])
+      }
+   } 
   }
 
   const getRegion = async () => {
@@ -197,6 +251,8 @@ const Region = () => {
       setActiveUserRoles(userApi.getActiveUserRoles());
       setHead(responseHead.data);
       setHeadDeputy(responseHeadDeputy.data);
+      setMembers(regionResponse.data.cities);
+      setActiveMembers(regionResponse.data.cities);
       setMembersCount(regionResponse.data.cities.length);
       setSixMembers(regionResponse.data.cities, 6);
 
@@ -207,7 +263,7 @@ const Region = () => {
       setAdmins(regionAdministrationResp.data);
       getSixAdmins(regionAdministrationResp.data, 7);
       setAdminsCount(regionAdministrationResp.data.length);
-
+      setIsActiveRegion(regionResponse.data.isActive);
       setRegionLogoLoading(true);
       setPhotos([...regionResponse.data.cities], [...regionAdministrationResp.data], regionFollowersResp.data);
 
@@ -216,6 +272,7 @@ const Region = () => {
       setIsFromRegion(regionResponse.data.cities, cityNameResp.data);
       setIsRegionAdmin(regionAdministrationResp.data, userApi.getActiveUserId());
       setSixFollowers(regionFollowersResp.data);
+      setFollowers(regionFollowersResp.data);
       setFollowersCount(regionFollowersResp.data.length);
 
       if (regionResponse.data.logo === null) {
@@ -307,13 +364,13 @@ const Region = () => {
   }
 
   const handleConfirm = async () => {
-    setVisible(false);
+    setActiveMemberVisibility(false);
   };
 
   const handleOk = async(admin: RegionAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.OkrugaHead) {
-        if (head == ' ') {
+        if (head == '') {
           checkAdminId(admin);
         } else {
           if (head.userId !== admin.userId) {
@@ -434,7 +491,7 @@ const Region = () => {
     if (region.regionName.length !== 0) {
       PsevdonimCreator.setPseudonimLocation(`regions/${region.regionName}`, `regions/${id}`);
     }
-  }, [region]);
+  }, []);
 
   return loading ? (
     <Spinner />
@@ -450,6 +507,11 @@ const Region = () => {
                   second={url.replace(`/${id}`, "")}
                   second_name="Округи"
                 />
+                  {isActiveRegion ? null : (
+                    <Tag className="status" color = {"red"}>
+                      Заархівовано
+                    </Tag>
+                  )}
               </div>
               <Title level={3}>Округа {region.regionName}</Title>
               <Row className="cityPhotos" gutter={[0, 12]}>
@@ -594,19 +656,38 @@ const Region = () => {
                             />
                           </Tooltip>
                         </Col>
-                        
-                        {
-                          activeUserRoles.includes(Roles.Admin) ? 
+                        {activeUserRoles.includes(Roles.Admin) ? (
+                          isActiveRegion ? (
                             <Col offset={1}>
-                              <Tooltip title="Видалити округу">
-                                <DeleteOutlined
+                              <Tooltip title="Заархівувати станицю">
+                                <ContainerOutlined
                                   className="cityInfoIconDelete"
-                                  onClick={() => seeDeleteModal()}
+                                  onClick={() => seeArchiveModal()} 
                                 />
                               </Tooltip>
                             </Col>
-                          : null
-                        }
+                          ) : (
+                              <React.Fragment>
+                                <Col offset={1}>
+                                  <Tooltip title="Видалити станицю">
+                                    <DeleteOutlined
+                                      className="cityInfoIconDelete"
+                                      onClick={() => seeDeleteModal()} 
+                                    />
+                                  </Tooltip>
+                                </Col>
+                                <Col offset={1}>
+                                  <Tooltip title="Розархівувати станицю">
+                                    <ContainerOutlined
+                                      className="regionInfoIcon"
+                                      color = "green" 
+                                      onClick={() => seeUnArchiveModal()} 
+                                    />
+                                  </Tooltip>
+                                </Col>
+                              </React.Fragment>
+                          )
+                        ) : null}
                       </Row>
                     </Col>
                   </>
@@ -627,7 +708,7 @@ const Region = () => {
                 </a>
               </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
-                {members[0].name !== "" ? (
+                {members.length !== 0 ? (
                   members.map((member) => (
                     <Col
                       className="cityMemberItem"
@@ -703,14 +784,15 @@ const Region = () => {
                   )}
               </Row>
               <div className="cityMoreButton">
-                {canEdit && (activeUserRoles.includes(Roles.Admin) || isActiveUserRegionAdmin) 
+                {isActiveRegion ? (
+                canEdit && (activeUserRoles.includes(Roles.Admin) || isActiveUserRegionAdmin) 
                 ?(
                   <PlusSquareFilled
                     type="primary"
                     className="addReportIcon"
                     onClick={() => setVisible(true)}
                   />
-                ) : null}
+                ) : null) : null}
                 <Button
                   type="primary"
                   className="cityInfoButton"
@@ -780,7 +862,8 @@ const Region = () => {
                     </Button>
                   : null
                 }
-                {activeUserRoles.includes(Roles.Admin)
+                {isActiveRegion ? (
+                activeUserRoles.includes(Roles.Admin)
                 || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
                     && isActiveUserRegionAdmin)
                 ?(
@@ -788,7 +871,7 @@ const Region = () => {
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
                 />
-                ):null}
+                ):null) : null}
               </div>
             </Card>
           </Col>
@@ -884,13 +967,13 @@ const Region = () => {
         </Modal>
 
         <Modal
-          title="Оберіть округу до якої належатимуть станиці-члени:"
-          visible={memberRedirectVisibility}
+          title="На жаль ви не можете архівувати зазначену округу"
+          visible={activeMemberVisibility}
           onOk={handleConfirm}
           onCancel={handleConfirm}
           footer={null}
         >
-          <CitiesRedirectForm regionId = {region.id} onAdd={handleOk} />
+          <CheckActiveCitiesForm cities = {members} admins = {admins} followers = {followers}  onAdd={handleConfirm} />
         </Modal>
 
         <RegionDetailDrawer

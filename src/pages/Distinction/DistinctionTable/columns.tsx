@@ -4,7 +4,7 @@ import { Tooltip } from 'antd';
 import { SortOrder } from 'antd/lib/table/interface';
 import { FormLabelAlign } from 'antd/lib/form/interface';
 
-
+const nameMaxLength = 71;
 const columns = [
     {
         align: 'right' as FormLabelAlign,
@@ -18,13 +18,15 @@ const columns = [
     {
         title: 'Відзначення',
         dataIndex: 'distinctionName',
-        render: (distinctionName: string) => {
-            return distinctionName
+        render: (distinctionName: any) => {
+          return((distinctionName?.length > nameMaxLength) ?
+            <Tooltip title={distinctionName}>
+              <span>{distinctionName.slice(0, 70)+ "..."}</span>
+            </Tooltip>
+          : distinctionName)
         },
         sorter: (a: any, b: any) => a.distinctionName.localeCompare(b.distinctionName),
-        sortDirections: ['ascend', 'descend'] as SortOrder[],
-        
-        
+        sortDirections: ['ascend', 'descend'] as SortOrder[],   
     },
     {
         title: 'Ім\'я',
@@ -42,31 +44,31 @@ const columns = [
             return moment(date.toLocaleString()).format('DD.MM.YYYY');
         },
         sorter:(a: any, b: any)  => a.date.localeCompare(b.date),
-      sortDirections: ['ascend', 'descend'] as SortOrder[],
+        sortDirections: ['ascend', 'descend'] as SortOrder[],
     },
     {
         title: 'Подання від',
         dataIndex: 'reporter',
         ellipsis: {
             showTitle: false,
-          },
-          render: (reporter: any) => (
-            <Tooltip placement="topLeft" title={reporter}>
-              {reporter}
-            </Tooltip>
-          ),
+        },
+        render: (reporter: any) => (
+          <Tooltip placement="topLeft" title={reporter}>
+            {reporter}
+          </Tooltip>
+        ),
     },
     {
         title: 'Обгрунтування',
         dataIndex: 'reason',
         ellipsis: {
             showTitle: false,
-          },
-          render: (reason: any) => (
-            <Tooltip placement="topRight" title={reason}>
-              {reason}
-            </Tooltip>
-          ),
+        },
+        render: (reason: any) => (
+          <Tooltip placement="topRight" title={reason}>
+            {reason}
+          </Tooltip>
+        ),
     },
 ];
 export default columns;

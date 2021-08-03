@@ -1,0 +1,19 @@
+
+.mainTitle{
+    text-align: center;
+    font-size: 65px;
+    color:#3c5438;
+}
+.actionsWrapper{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.swapper{
+    margin-left: 10px;
+    font-size: 15px;
+    font-weight: bold;
+}
