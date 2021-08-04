@@ -188,7 +188,7 @@ const ActiveMembership = () => {
       <div className={classes.avatarWrapper}>
         <AvatarAndProgressStatic
           time={data?.timeToJoinPlast}
-          imageUrl={data?.user.imagePath}
+          imageUrl={data?.user.imagePath as string}
           firstName={data?.user.firstName}
           lastName={data?.user.lastName}
           isUserPlastun={true}
