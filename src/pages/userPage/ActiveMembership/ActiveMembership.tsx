@@ -140,7 +140,7 @@ const ActiveMembership = () => {
       );
     }
     await fetchData();
-    notificationLogic("error", successfulDeleteDegree());
+    notificationLogic("success", successfulDeleteDegree());
   };
 
   const setTagColor = (userRoles: string) => {
