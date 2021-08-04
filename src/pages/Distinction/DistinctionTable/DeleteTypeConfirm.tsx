@@ -7,8 +7,8 @@ const { confirm } = Modal;
 
 const DeleteTypeConfirm = (id: number, onDelete: any) => {
   return confirm({
-    title: "Ви справді хочете видалити цей тип відзначення?",
-    icon: <ExclamationCircleOutlined style={{ color: "#3c5438" }} />,
+    title: "Ви справді хочете видалити цей тип відзначення? Це спричинить видалення всіх створених відзначень із цим типом.",
+    icon: <ExclamationCircleOutlined style={{ color: "#FF0000" }} />,
     okText: "Так",
     cancelText: "Ні",
     onOk() {
