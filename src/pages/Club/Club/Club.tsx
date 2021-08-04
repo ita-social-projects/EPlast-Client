@@ -403,7 +403,7 @@ const Club = () => {
                 </Tag>
                )}
             </div>
-            <Title level={3}>Курінь {club.name}</Title>
+            <Title level={3}>{club.name}</Title>
             <Row className="clubPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
                 {clubLogoLoading ? (
@@ -714,6 +714,8 @@ const Club = () => {
             <Title level={4}>Документообіг куреня <a onClick={() => 
               canEdit || (!activeUserRoles.includes(Roles.RegisteredUser)  
               && club.name == activeUserClub) ||
+              (activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy))
+              ||
               (activeUserRoles.includes(Roles.CityHead)|| activeUserRoles.includes(Roles.CityHeadDeputy))
               ||
               (activeUserRoles.includes(Roles.KurinHead)|| activeUserRoles.includes(Roles.KurinHeadDeputy))
@@ -753,6 +755,8 @@ const Club = () => {
             <div className="clubMoreButton">
             {canEdit || (!activeUserRoles.includes(Roles.RegisteredUser) 
               && club.name == activeUserClub) ||
+              (activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy))
+              ||
               (activeUserRoles.includes(Roles.CityHead)|| activeUserRoles.includes(Roles.CityHeadDeputy))
               ||
               (activeUserRoles.includes(Roles.KurinHead)|| activeUserRoles.includes(Roles.KurinHeadDeputy))
@@ -766,13 +770,14 @@ const Club = () => {
               </Button>
                 ): null}
                 {isActiveClub ? (
-                (activeUserRoles.includes(Roles.Admin)) || (activeUserRoles.includes(Roles.KurinHead)|| activeUserRoles.includes(Roles.KurinHeadDeputy)
+                (activeUserRoles.includes(Roles.Admin)) 
+                || ((activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.KurinHeadDeputy))
                 && club.name == activeUserClub)? (
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
                 />
-                 ):null ) : null}
+                 ): null ) : null}
             </div>
           </Card>
         </Col>

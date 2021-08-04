@@ -126,7 +126,7 @@ const ClubAdministration = () => {
                     onClick={() =>
                       history.push(`/userpage/main/${member.userId}`)
                     }
-                    className="ClubMember"
+                    className="clubMember"
                   >
                     <div>
                       {photosLoading ? (
