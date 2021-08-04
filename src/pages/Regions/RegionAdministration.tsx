@@ -5,6 +5,7 @@ import {
   SettingOutlined,
   CloseOutlined,
   RollbackOutlined,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { getRegionAdministration, removeAdmin } from "../../api/regionsApi";
 import userApi from "../../api/UserApi";
@@ -64,6 +65,20 @@ const RegionAdministration = () => {
     setIsRegionAdmin([...response.data].filter((a) => a != null), userApi.getActiveUserId());
     setLoading(false);
   };
+
+  function seeDeleteModal(admin: CityAdmin) {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете видалити даного користувача із Проводу?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, Видалити",
+      okType: "primary",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        removeAdministrator(admin);
+      },
+    });
+  }
 
   const removeAdministrator = async (admin: CityAdmin) => {
     await removeAdmin(admin.id);
@@ -133,7 +148,7 @@ const RegionAdministration = () => {
                   ?
                   [
                   <SettingOutlined onClick={() => showModal(member)} />,
-                  <CloseOutlined onClick={() => removeAdministrator(member)} />,
+                  <CloseOutlined onClick={() => seeDeleteModal(member)} />,
                   ]
                   : undefined
                 }
