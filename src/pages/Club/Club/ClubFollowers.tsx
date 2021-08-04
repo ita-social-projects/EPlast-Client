@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout, Skeleton, Spin} from 'antd';
-import {CloseOutlined, PlusOutlined, RollbackOutlined} from '@ant-design/icons';
+import {CloseOutlined, ExclamationCircleOutlined, PlusOutlined, RollbackOutlined} from '@ant-design/icons';
 import {getAllFollowers, removeFollower, toggleMemberStatus} from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
@@ -9,6 +9,7 @@ import ClubMember from '../../../models/Club/ClubMember';
 import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
+import { Modal } from 'antd';
 
 const ClubFollowers = () => {
     const {id} = useParams();
@@ -19,6 +20,7 @@ const ClubFollowers = () => {
     const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [activeUserID, setActiveUserID] = useState<string>();
 
     const getFollowers = async () => {
       setLoading(true);
@@ -27,10 +29,36 @@ const ClubFollowers = () => {
       setPhotosLoading(true);
       setPhotos(response.data.followers);
       setFollowers(response.data.followers);
+
       setCanEdit(response.data.canEdit);
       setClubName(response.data.name);
+      setActiveUserID(userApi.getActiveUserId());
       setLoading(false);
     };
+
+  function seeSkipModal(follower: ClubMember) {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете покинути даний курінь?",
+      icon: <ExclamationCircleOutlined />,
+      okText: 'Так, покинути',
+      okType: 'primary',
+      cancelText: 'Скасувати',
+      maskClosable: true,
+      onOk() { removeMember(follower) }
+    });
+  }
+
+  function seeDeleteModal(follower: ClubMember) {
+    return Modal.confirm({
+      title: `Ви впевнені, що хочете видалити ${follower.user.firstName} ${follower.user.lastName} із прихильників?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'Так, видалити',
+      okType: 'primary',
+      cancelText: 'Скасувати',
+      maskClosable: true,
+      onOk() { removeMember(follower) }
+    });
+  }
 
     const createNotification = async(userId : string, message : string) => {
       await NotificationBoxApi.createNotifications(
@@ -73,22 +101,27 @@ const ClubFollowers = () => {
           <Spinner />
         ) : (
           <div className="clubMoreItems">
-            {followers.length > 0 ? (
+            {followers.length > 0 ? (    
               followers.map((follower: ClubMember) => (
                 <Card
                   key={follower.id}
                   className="detailsCard"
                   actions={
-                    canEdit
-                      ? [
-                          <PlusOutlined
-                            onClick={() => addMember(follower)}
-                          />,
+                    canEdit ?
+                      [
+                        <PlusOutlined
+                          onClick={() => addMember(follower)}
+                        />,
+                        <CloseOutlined
+                          onClick={() => seeDeleteModal(follower)}
+                        />,
+                      ]
+                      : (follower.userId === activeUserID) ?
+                        [
                           <CloseOutlined
-                            onClick={() => removeMember(follower)}
-                          />,
-                        ]
-                      : undefined
+                            onClick={() => seeSkipModal(follower)}
+                          />
+                        ] : undefined
                   }
                 >
                   <div

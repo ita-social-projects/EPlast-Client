@@ -9,10 +9,11 @@ import {
   PlusOutlined, 
   DeleteOutlined, 
   ContainerOutlined, 
-  ExclamationCircleOutlined, 
+  ExclamationCircleOutlined,
+  MinusOutlined, 
 } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getClubById, getLogo, removeClub,unArchiveClub, archiveClub,  toggleMemberStatus, clubNameOfApprovedMember, removeAdministrator } from "../../../api/clubsApi";
+import { addFollower, getClubById, getLogo, removeClub,unArchiveClub, archiveClub,  toggleMemberStatus, clubNameOfApprovedMember, removeAdministrator, removeFollower } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
 import {
@@ -63,6 +64,7 @@ const Club = () => {
   const [documentsCount, setDocumentsCount] = useState<number>();
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const [activeUserID, setActiveUserID] = useState<string>();
   const [clubLogoLoading, setClubLogoLoading] = useState<boolean>(false);
   const [document, setDocument] = useState<ClubDocument>(new ClubDocument());
   const [activeUserClub, setActiveUserClub] = useState<string>();
@@ -87,6 +89,14 @@ const Club = () => {
     setFollowers(followers.filter((f) => f.id !== memberId));
   };
 
+  const removeMember = async (followerID: number) => {
+    await removeFollower(followerID);
+    await createNotification(activeUserID as string, "На жаль, ви були виключені з прихильників куреня",true);
+    const response = await getClubById(+id);
+    setFollowersCount(response.data.followerCount);
+    setFollowers(followers.filter((f) => f.id !== followerID));
+    setCanJoin(true);
+}
   const addMember = async () => {
     const follower = await addFollower(+id);
 
@@ -207,10 +217,22 @@ const Club = () => {
     });
   }
 
+  function seeSkipModal(followerID: number) {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете покинути даний курінь?",
+      icon: <ExclamationCircleOutlined />,
+      okText: 'Так, покинути',
+      okType: 'primary',
+      cancelText: 'Скасувати',
+      maskClosable: true,
+      onOk() {removeMember(followerID)}
+    });
+  }
   const getClub = async () => {
     setLoading(true);
     try {
       const response = await getClubById(+id);
+      setActiveUserID(userApi.getActiveUserId());
       const clubNameResponse = await clubNameOfApprovedMember(userApi.getActiveUserId());
       setActiveUserClub(clubNameResponse.data);
       setPhotosLoading(true);
@@ -843,7 +865,11 @@ const Club = () => {
                           className="approveIcon"
                           onClick={() => changeApproveStatus(followers.id)}
                         />
-                      ) : null}
+                      ) : (followers.userId===activeUserID) ?( <MinusOutlined 
+                        className="approveIcon"
+                        onClick={() =>seeSkipModal(followers.id)}
+                       />):null
+                     }
                     </div>
                   </Col>
                 ))
