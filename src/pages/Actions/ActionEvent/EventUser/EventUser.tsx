@@ -142,7 +142,7 @@ const EventUser = () => {
             <div className={classes.wrapperImg}>
                 <div className={classes.avatarWrapper}>
                     <AvatarAndProgressStatic
-                        imageUrl={currentUser?.user.imagePath}
+                        imageUrl={currentUser?.user.imagePath as string}
                         time={currentUser?.timeToJoinPlast}
                         firstName={currentUser?.user.firstName}
                         lastName={currentUser?.user.lastName}
