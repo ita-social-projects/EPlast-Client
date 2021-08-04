@@ -31,8 +31,11 @@ const DocumentsTable = () => {
   const [viewData, setViewData] = useState<DocumentsTableInfo[]>(Array<DocumentsTableInfo>());
   const [canEdit, setCanEdit] = useState(false);
   const [regionAdm, setRegionAdm] = useState(false);
+  const [regionAdmDep, setRegionAdmDep] = useState(false);
   const [cityAdm, setCityAdm] = useState(false);
+  const [cityAdmDep, setCityAdmDep] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
+  const [clubAdmDep, setClubAdmDep] = useState(false);
   const [supporter, setSupporter] = useState(false);
   const [plastMember, setPlastMember] = useState(false);
   
@@ -102,8 +105,11 @@ const DocumentsTable = () => {
       setUser(roles);
       setCanEdit(roles.includes(Roles.Admin));
       setRegionAdm(roles.includes(Roles.OkrugaHead));
+      setRegionAdmDep(roles.includes(Roles.OkrugaHeadDeputy));
       setCityAdm(roles.includes(Roles.CityHead));
+      setCityAdmDep(roles.includes(Roles.CityHeadDeputy));
       setClubAdm(roles.includes(Roles.KurinHead));
+      setClubAdmDep(roles.includes(Roles.KurinHeadDeputy));
       setSupporter(roles.includes(Roles.Supporter));
       setPlastMember(roles.includes(Roles.PlastMember));
     };
@@ -172,13 +178,15 @@ const DocumentsTable = () => {
         <h1 className={classes.titleTable}>Репозитарій</h1>
         <>
           <div className={classes.searchContainer}>
-            {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+            {(canEdit == true || regionAdm == true || regionAdmDep == true || cityAdm == true || 
+            cityAdmDep == true || clubAdm == true || clubAdmDep == true) ? (
               <Button type="primary" onClick={showModal}>
                 Додати документ 
               </Button>
             ) : (<> </>)
             }
-            {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true || supporter == true || plastMember == true) ? (
+            {(canEdit == true || regionAdm == true || regionAdmDep == true|| cityAdm == true || 
+            cityAdmDep == true || clubAdm == true || clubAdmDep == true || supporter == true || plastMember == true) ? (
              <Search
                 enterButton
                 placeholder="Пошук"
@@ -190,7 +198,8 @@ const DocumentsTable = () => {
             }
             </div>
 
-          {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true || supporter == true || plastMember == true) ? (
+          {(canEdit == true || regionAdm == true || regionAdmDep == true|| cityAdm == true || 
+            cityAdmDep == true || clubAdm == true || clubAdmDep == true || supporter == true || plastMember == true) ? (
           <Card
             style={{ width: '100%' }}
             tabList={tabList}
