@@ -84,9 +84,9 @@ const AnnualReportTable = () => {
 
   const checkAccessToManage = () => {
     let roles = UserApi.getActiveUserRoles();
-    setCityManager(roles.includes(Roles.Admin) || roles.includes(Roles.CityHead));
-    setClubManager(roles.includes(Roles.Admin) || roles.includes(Roles.KurinHead));
-    setRegionManager(roles.includes(Roles.Admin) || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHead));
+    setCityManager(roles.includes(Roles.Admin) || roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy));
+    setClubManager(roles.includes(Roles.Admin) || roles.includes(Roles.KurinHead)|| roles.includes(Roles.KurinHeadDeputy));
+    setRegionManager(roles.includes(Roles.Admin) || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy));
   };
 
   const handleSearch = (event: any) => {
