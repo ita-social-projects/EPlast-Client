@@ -226,7 +226,7 @@ const Assignments = () => {
               <br />
             </div>
             )}
-            </div>
+          </div>
         </div>
         <h1 className="approversCard">Поручення куреня УСП/УПС</h1>
         <div className="approversCard">
