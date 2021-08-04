@@ -202,7 +202,7 @@ const PrivateLayout = ({ children }: any) => {
               }
             </SubMenu>
 
-            {(canEdit || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy) ? (
+            {(canEdit || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdmDeputy) ? (
               <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
                 <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="9">
                   Річні звіти
