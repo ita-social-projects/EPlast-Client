@@ -20,7 +20,7 @@ const { Title } = Typography;
 const nameMaxLength = 55;
 
 class AvatarAndProgressStaticProps {
-  imageUrl: string | undefined;
+  imageUrl: string ;
   time: number | undefined;
   firstName: string | undefined;
   lastName: string | undefined;
@@ -34,6 +34,10 @@ class AvatarAndProgressStaticProps {
   regionId: number | undefined;
   cityId: number|undefined;
   clubId: number|undefined;
+
+  constructor() {
+    this.imageUrl="";
+  }
 }
 
 const contentListNoTitle: { [key: string]: any } = {
@@ -146,8 +150,9 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       });
       setLoading(true);
     };
-
-    fetchData();
+    if (imageUrl?.length > 0) {
+      fetchData();
+    }
   }, [props]);
 
   return loading === false ? (

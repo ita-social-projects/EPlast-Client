@@ -150,7 +150,7 @@ export const Blanks = () => {
             <div className={classes.wrapper}>
                 <div className={classes.wrapperImg}>
                     <AvatarAndProgressStatic 
-                        imageUrl={data?.user.imagePath}
+                        imageUrl={data?.user.imagePath as string}
                         time={data?.timeToJoinPlast}
                         firstName={data?.user.firstName}
                         lastName={data?.user.lastName}
