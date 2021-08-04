@@ -11,7 +11,6 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import notificationLogic from '../../../components/Notifications/Notification';
-import Spinner from '../../Spinner/Spinner';
 import {
   fileIsNotUpload,
   successfulDeleteAction,
@@ -201,8 +200,7 @@ const Assignments = () => {
           }
           )}
           <div>
-
-            {data?.canApprovePlastMember && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser)) && (
+            {data?.canApprovePlastMember && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser && roles.includes(Roles.Admin))) && (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
@@ -216,11 +214,11 @@ const Assignments = () => {
                             />
                         </Link>
                     </Spin>
-              </Tooltip>
-            </div>)
+                </Tooltip>
+              </div>)
             }
             <div
-              hidden={data?.confirmedUsers.length != 0 || (data?.canApprove && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser)))}>
+              hidden={data?.confirmedUsers.length != 0 || (data?.canApprove && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser && roles.includes(Roles.Admin))))}>
               <br />
                 <br />
                     На жаль, поруки відсутні
@@ -229,11 +227,10 @@ const Assignments = () => {
             </div>
           </div>
 
-          </div>
+        </div>
         <h1 className="approversCard">Поручення куреня УСП/УПС</h1>
         <div className="approversCard">
           {(data?.clubApprover != null) ? (
-
             <div>
               {(data.clubApprover.approver.userID == data.currentUserId || roles.includes(Roles.Admin)) ?
                 (
@@ -272,7 +269,6 @@ const Assignments = () => {
                     <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
                   </Card>
                 )}
-
             </div>
           ) : ((data?.clubApprover == null  && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin)) && (data?.isUserHeadOfClub || roles.includes(Roles.Admin))) ?
             (
