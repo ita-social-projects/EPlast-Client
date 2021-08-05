@@ -83,7 +83,6 @@ const ActiveMembership = () => {
     });
 
     await activeMembershipApi.getAccessLevelById(userId).then(async (response) => {
-      console.log(response);
       setAccessLevels(response)
     })
 
