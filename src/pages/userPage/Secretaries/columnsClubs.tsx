@@ -45,7 +45,7 @@ const columns = [
     render: (club: any) =>{
       return((club.name?.length > clubNameMaxLength) ?
         <Tooltip title={club.name}>
-          <span>{club.name.slice(0, 27)+ "..."}</span>
+          <span>{club.name.slice(0, clubNameMaxLength-1)+ "..."}</span>
         </Tooltip>
       : club.name)
     }
