@@ -83,8 +83,8 @@ const ActiveMembership = () => {
     });
 
     await activeMembershipApi.getAccessLevelById(userId).then(async (response) => {
-      setAccessLevels(response)
-    })
+      setAccessLevels(response);
+    });
 
     await activeMembershipApi.getUserDates(userId).then((response) => {
       response.dateEntry =
