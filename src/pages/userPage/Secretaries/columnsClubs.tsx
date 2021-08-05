@@ -1,8 +1,9 @@
 import React from "react";
-
 import ClubUser from "../../../models/Club/ClubUser";
 import moment from "moment";
+import { Tooltip } from 'antd';
 
+const clubNameMaxLength = 28;
 const columns = [
   {
     title: "ID",
@@ -42,7 +43,11 @@ const columns = [
     title: "Курінь",
     dataIndex: "club",
     render: (club: any) =>{
-      return club.name;
+      return((club.name?.length > clubNameMaxLength) ?
+        <Tooltip title={club.name}>
+          <span>{club.name.slice(0, clubNameMaxLength-1)+ "..."}</span>
+        </Tooltip>
+      : club.name)
     }
   },
 ];

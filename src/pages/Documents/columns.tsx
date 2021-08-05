@@ -1,4 +1,4 @@
-import classes from '*.module.css';
+import classes from './Table.module.css';
 import { Tooltip } from 'antd';
 import moment from 'moment';
 import React from 'react';
@@ -21,6 +21,11 @@ const columns = [
   {
     title: 'Короткий зміст',
     dataIndex: 'description',
+    render: (description: any) => (
+      <Tooltip className={classes.antTooltipInner} title={description.substring(0, 500)}>
+          {description.substring(0, 100)} 
+      </Tooltip>
+    ),
   },
   {
     title: 'Дата',
