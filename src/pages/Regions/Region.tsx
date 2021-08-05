@@ -58,6 +58,11 @@ import { Roles } from "../../models/Roles/Roles";
 import RegionFollower from "../../models/Region/RegionFollower";
 import RegionAdmin from "../../models/Region/RegionAdmin";
 
+enum AdminType{
+  Head = "Head",
+  HeadDeputy = "HeadDeputy"
+}
+
 const Region = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
@@ -327,20 +332,33 @@ const Region = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`, true);
   };
 
-  const showConfirmClubAdmin  = async (admin: RegionAdmin) => {
+  const showConfirmClubAdmin  = async (admin: RegionAdmin, adminType: AdminType) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: (
+      content: ( adminType === "Head" ?
         <div style={{ margin: 10 }}>
           <b>
             {head?.user.firstName} {head?.user.lastName}
           </b>{" "}
-          є Головою Куреня, час правління закінчується{" "}
+          є Головою Округи, час правління закінчується{" "}
           <b>
             {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
               : moment(head?.endDate).format("DD.MM.YYYY")}
           </b>
+          .
+        </div>
+        :
+        <div style={{ margin: 10 }}>
+        <b>
+          {headDeputy?.user.firstName} {headDeputy?.user.lastName}
+        </b>{" "}
+        є Заступником Голови Округи, час правління закінчується{" "}
+        <b>
+          {moment(headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            ? "ще не скоро"
+            : moment(headDeputy?.endDate).format("DD.MM.YYYY")}
+        </b>
           .
         </div>
       ),
@@ -374,7 +392,7 @@ const Region = () => {
           checkAdminId(admin);
         } else {
           if (head.userId !== admin.userId) {
-            showConfirmClubAdmin(admin);
+            showConfirmClubAdmin(admin, AdminType.Head);
           } else {
             checkAdminId(admin);
           }
@@ -383,7 +401,11 @@ const Region = () => {
         if (headDeputy == 'null') {
           checkAdminId(admin);
         } else {
-          checkAdminId(admin);
+          if (head.userId !== admin.userId) {
+            showConfirmClubAdmin(admin, AdminType.HeadDeputy);
+          } else {
+            checkAdminId(admin);
+          }
         }
       } else {
           await addRegionAdmin(admin);
