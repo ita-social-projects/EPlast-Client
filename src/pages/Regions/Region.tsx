@@ -58,11 +58,6 @@ import { Roles } from "../../models/Roles/Roles";
 import RegionFollower from "../../models/Region/RegionFollower";
 import RegionAdmin from "../../models/Region/RegionAdmin";
 
-enum AdminType{
-  Head = "Head",
-  HeadDeputy = "HeadDeputy"
-}
-
 const Region = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
@@ -332,10 +327,10 @@ const Region = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`, true);
   };
 
-  const showConfirmClubAdmin  = async (admin: RegionAdmin, adminType: AdminType) => {
+  const showConfirmRegionAdmin  = async (admin: RegionAdmin, adminType: Roles) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: ( adminType === "Head" ?
+      content: ( adminType.toString() === "OkrugaHead" ?
         <div style={{ margin: 10 }}>
           <b>
             {head?.user.firstName} {head?.user.lastName}
@@ -392,7 +387,7 @@ const Region = () => {
           checkAdminId(admin);
         } else {
           if (head.userId !== admin.userId) {
-            showConfirmClubAdmin(admin, AdminType.Head);
+            showConfirmRegionAdmin(admin, Roles.OkrugaHead);
           } else {
             checkAdminId(admin);
           }
@@ -402,7 +397,7 @@ const Region = () => {
           checkAdminId(admin);
         } else {
           if (head.userId !== admin.userId) {
-            showConfirmClubAdmin(admin, AdminType.HeadDeputy);
+            showConfirmRegionAdmin(admin, Roles.OkrugaHeadDeputy);
           } else {
             checkAdminId(admin);
           }

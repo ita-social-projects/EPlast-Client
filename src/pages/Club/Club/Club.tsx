@@ -39,11 +39,6 @@ import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
 
-enum AdminType{
-  Head = "Head",
-  HeadDeputy = "HeadDeputy"
-}
-
 const Club = () => {
   const history = useHistory();
   const { id } = useParams();
@@ -310,10 +305,10 @@ const Club = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в курені`, true);
   };
 
-  const showConfirmClubAdmin  = async (admin: ClubAdmin, adminType: AdminType) => {
+  const showConfirmClubAdmin  = async (admin: ClubAdmin, adminType: Roles) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: ( adminType === "Head" ?
+      content: ( adminType.toString() === "KurinHead" ?
         <div style={{ margin: 10 }}>
           <b>
             {club.head.user.firstName} {club.head.user.lastName}
@@ -366,7 +361,7 @@ const Club = () => {
           checkAdminId(admin);
         } else {
           if (club.head?.userId !== admin.userId) {
-            showConfirmClubAdmin(admin, AdminType.Head);
+            showConfirmClubAdmin(admin, Roles.KurinHead);
           } else {
             checkAdminId(admin);
           }
@@ -376,7 +371,7 @@ const Club = () => {
           checkAdminId(admin);
         } else {
           if (club.head?.userId !== admin.userId) {
-            showConfirmClubAdmin(admin, AdminType.HeadDeputy);
+            showConfirmClubAdmin(admin, Roles.KurinHeadDeputy);
           } else {
             checkAdminId(admin);
           }

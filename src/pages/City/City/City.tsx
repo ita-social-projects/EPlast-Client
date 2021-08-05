@@ -55,11 +55,6 @@ import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecreta
 import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
 
-enum AdminType{
-  Head = "Head",
-  HeadDeputy = "HeadDeputy"
-}
-
 const City = () => {
   const history = useHistory();
   const { id } = useParams();
@@ -316,10 +311,10 @@ const City = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в станиці`, true);
   };
 
-  const showConfirmCityAdmin  = async (admin: CityAdmin, adminType: AdminType) => {
+  const showConfirmCityAdmin  = async (admin: CityAdmin, adminType: Roles) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: (adminType === "Head" ?
+      content: (adminType.toString() === "CityHead" ?
         <div style={{ margin: 10 }}>
           <b>
             {city.head.user.firstName} {city.head.user.lastName}
@@ -373,7 +368,7 @@ const City = () => {
           checkAdminId(admin);
         } else {
           if (city.head?.userId !== admin.userId) {
-            showConfirmCityAdmin(admin, AdminType.Head);
+            showConfirmCityAdmin(admin, Roles.CityHead);
           } else {
             checkAdminId(admin);
           }
@@ -383,7 +378,7 @@ const City = () => {
           checkAdminId(admin);
         } else {
           if (city.headDeputy?.userId !== admin.userId) {
-            showConfirmCityAdmin(admin, AdminType.HeadDeputy);
+            showConfirmCityAdmin(admin, Roles.CityHeadDeputy);
           } else {
             checkAdminId(admin);
           }
