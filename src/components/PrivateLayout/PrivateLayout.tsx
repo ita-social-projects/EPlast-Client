@@ -128,6 +128,7 @@ const PrivateLayout = ({ children }: any) => {
                 icon={<SolutionOutlined />}
                 onClick={() => { handleClickAway(); history.push("/decisions"); }}
                 style={{ color: "white" }}
+                title=""
               >
                 Рішення
               </Menu.Item>
@@ -139,6 +140,7 @@ const PrivateLayout = ({ children }: any) => {
                 icon={<BankOutlined />}
                 onClick={() => { handleClickAway(); history.push("/regionsBoard"); }}
                 style={{ color: "white" }}
+                title=""
               >
                 Крайовий Провід Пласту
               </Menu.Item>
@@ -233,7 +235,14 @@ const PrivateLayout = ({ children }: any) => {
               ) : (<> </>)
             }
             {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
-                <Menu.Item onClick={() => { handleClickAway(); history.push('/aboutBase'); }} key="17">Про Базу</Menu.Item>) : (<> </>)
+                <Menu.Item 
+                  onClick={() => { handleClickAway(); history.push('/aboutBase'); }} 
+                  key="17"
+                  title=""
+                >
+                  Про Базу
+                </Menu.Item>
+                ) : (<> </>)
             }
           </Menu>
         </Sider>
