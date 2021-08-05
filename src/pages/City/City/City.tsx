@@ -20,7 +20,8 @@ import {
   PlusOutlined,
   ContainerOutlined,
   ExclamationCircleOutlined, 
-  DeleteOutlined} from "@ant-design/icons";
+  DeleteOutlined,
+  MinusOutlined} from "@ant-design/icons";
 import moment from "moment";
 import {
   addAdministrator,
@@ -32,7 +33,8 @@ import {
   archiveCity, 
   unArchiveCity,
   removeCity,
-  toggleMemberStatus } from "../../../api/citiesApi";
+  toggleMemberStatus,
+  removeFollower } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -83,6 +85,7 @@ const City = () => {
   const [activeUserCity, setActiveUserCity] = useState<string>();
   const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
   const [isActiveCity, setIsActiveCity] = useState<boolean>(true);
+  const [activeUserID, setActiveUserID] = useState<string>();
 
   const changeApproveStatus = async (memberId: number) => {
   const member = await toggleMemberStatus(memberId);
@@ -106,6 +109,15 @@ const City = () => {
     }
     setFollowers(followers.filter((f) => f.id !== memberId));
   };
+
+  const removeMember = async (followerID: number) => {
+    await removeFollower(followerID);
+    await createNotification(activeUserID as string, "На жаль, ви були виключені із прихильників станиці",true);
+    const response = await getCityById(+id);
+    setFollowersCount(response.data.followerCount);
+    setFollowers(followers.filter((f) => f.id !== followerID));
+    setCanJoin(true);
+}
 
   const addMember = async () => {
     const follower = await addFollower(+id);
@@ -234,10 +246,23 @@ const City = () => {
     });
   }
 
+  function seeSkipModal(followerID: number) {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете покинути дану станицю?",
+      icon: <ExclamationCircleOutlined />,
+      okText: 'Так, покинути',
+      okType: 'primary',
+      cancelText: 'Скасувати',
+      maskClosable: true,
+      onOk() {removeMember(followerID)}
+    });
+  }
+
   const getCity = async () => {
     setLoading(true);
     try {
       const response = await getCityById(+id);
+      setActiveUserID(userApi.getActiveUserId());
       const responce1 = await cityNameOfApprovedMember(userApi.getActiveUserId());
       setCity(response.data);
       setActiveUserCity(responce1.data);
@@ -847,7 +872,11 @@ const City = () => {
                           className="approveIcon"
                           onClick={() => changeApproveStatus(followers.id)}
                         />
-                      ) : null}
+                        ) : (followers.userId === activeUserID) ? (<MinusOutlined 
+                          className="approveIcon"
+                          onClick={() => seeSkipModal(followers.id)}
+                         />) : null
+                       }
                     </div>
                   </Col>
                 ))
