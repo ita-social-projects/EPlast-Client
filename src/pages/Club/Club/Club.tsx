@@ -39,7 +39,6 @@ import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
 
-
 const Club = () => {
   const history = useHistory();
   const { id } = useParams();
@@ -306,10 +305,10 @@ const Club = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в курені`, true);
   };
 
-  const showConfirmClubAdmin  = async (admin: ClubAdmin) => {
+  const showConfirmClubAdmin  = async (admin: ClubAdmin, adminType: Roles) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: (
+      content: ( adminType.toString() === "KurinHead" ?
         <div style={{ margin: 10 }}>
           <b>
             {club.head.user.firstName} {club.head.user.lastName}
@@ -322,6 +321,19 @@ const Club = () => {
           </b>
           .
         </div>
+        :
+        <div style={{ margin: 10 }}>
+        <b>
+          {club.headDeputy.user.firstName} {club.headDeputy.user.lastName}
+        </b>{" "}
+        є Заступником Голови Куреня, час правління закінчується{" "}
+        <b>
+          {moment(club.headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            ? "ще не скоро"
+            : moment(club.headDeputy.endDate).format("DD.MM.YYYY")}
+        </b>
+        .
+      </div>
       ),
       onCancel() { },
       async onOk() {
@@ -349,7 +361,7 @@ const Club = () => {
           checkAdminId(admin);
         } else {
           if (club.head?.userId !== admin.userId) {
-            showConfirmClubAdmin(admin);
+            showConfirmClubAdmin(admin, Roles.KurinHead);
           } else {
             checkAdminId(admin);
           }
@@ -358,7 +370,11 @@ const Club = () => {
         if (club.headDeputy == null) {
           checkAdminId(admin);
         } else {
-          checkAdminId(admin);
+          if (club.head?.userId !== admin.userId) {
+            showConfirmClubAdmin(admin, Roles.KurinHeadDeputy);
+          } else {
+            checkAdminId(admin);
+          }
         }
       } else {
           await addClubAdmin(admin);

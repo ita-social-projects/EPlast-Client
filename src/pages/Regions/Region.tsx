@@ -327,20 +327,33 @@ const Region = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`, true);
   };
 
-  const showConfirmClubAdmin  = async (admin: RegionAdmin) => {
+  const showConfirmRegionAdmin  = async (admin: RegionAdmin, adminType: Roles) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: (
+      content: ( adminType.toString() === "OkrugaHead" ?
         <div style={{ margin: 10 }}>
           <b>
             {head?.user.firstName} {head?.user.lastName}
           </b>{" "}
-          є Головою Куреня, час правління закінчується{" "}
+          є Головою Округи, час правління закінчується{" "}
           <b>
             {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
               : moment(head?.endDate).format("DD.MM.YYYY")}
           </b>
+          .
+        </div>
+        :
+        <div style={{ margin: 10 }}>
+        <b>
+          {headDeputy?.user.firstName} {headDeputy?.user.lastName}
+        </b>{" "}
+        є Заступником Голови Округи, час правління закінчується{" "}
+        <b>
+          {moment(headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            ? "ще не скоро"
+            : moment(headDeputy?.endDate).format("DD.MM.YYYY")}
+        </b>
           .
         </div>
       ),
@@ -374,7 +387,7 @@ const Region = () => {
           checkAdminId(admin);
         } else {
           if (head.userId !== admin.userId) {
-            showConfirmClubAdmin(admin);
+            showConfirmRegionAdmin(admin, Roles.OkrugaHead);
           } else {
             checkAdminId(admin);
           }
@@ -383,7 +396,11 @@ const Region = () => {
         if (headDeputy == 'null') {
           checkAdminId(admin);
         } else {
-          checkAdminId(admin);
+          if (head.userId !== admin.userId) {
+            showConfirmRegionAdmin(admin, Roles.OkrugaHeadDeputy);
+          } else {
+            checkAdminId(admin);
+          }
         }
       } else {
           await addRegionAdmin(admin);
