@@ -162,6 +162,7 @@ const SortedClubs = ( {switcher}: Props) => {
           onSearch={handleSearch}
           loading={photosLoading}
           disabled={photosLoading}
+          allowClear={true}
         />
       </div>
       {loading ? (
@@ -184,8 +185,7 @@ const SortedClubs = ( {switcher}: Props) => {
                   />
                 </Card>
               ) : null ) }
-
-              {clubs.length === 0 || searchedData.length !== 0 ? (
+              {clubs.length === 0 ? (
                 <div>
                   <Result status="404" title="Курінь не знайдено" />
                 </div>

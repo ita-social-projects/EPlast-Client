@@ -154,6 +154,7 @@ const SortedCities = ( {switcher}: Props) => {
           onSearch={handleSearch}
           loading={photosLoading}
           disabled={photosLoading}
+          allowClear={true}
         />
       </div>
       {loading ? (
@@ -189,7 +190,7 @@ const SortedCities = ( {switcher}: Props) => {
                 </Card>
               ) : null ) }
 
-              {cities.length === 0 && searchedData.length !== 0 ? (
+              {cities.length === 0 ? (
                 <div>
                   <Result status="404" title="Станицю не знайдено" />
                 </div>

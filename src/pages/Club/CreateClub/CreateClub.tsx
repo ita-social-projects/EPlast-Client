@@ -133,6 +133,7 @@ const CreateClub = () => {
       phoneNumber: values.phoneNumber,
       postIndex: values.postIndex,
       street: values.street,
+      isActive: club.isActive
     };
     if (!club.id) {
       CreateClub(newClub);

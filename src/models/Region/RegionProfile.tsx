@@ -11,6 +11,7 @@ export default class RegionProfile {
   houseNumber: string;
   officeNumber: string;
   postIndex: string;
+  isActive: boolean;
 
   constructor() {
     this.id = 0;
@@ -25,5 +26,6 @@ export default class RegionProfile {
     this.houseNumber = "";
     this.officeNumber = "";
     this.postIndex = "";
+    this.isActive = true;
   }
 }
