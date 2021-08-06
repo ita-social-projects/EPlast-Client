@@ -148,6 +148,7 @@ const SortedRegions = ({switcher}: Props) => {
           onSearch={handleSearch}
           loading={loading}
           disabled={loading}
+          allowClear={true}
         />
       </div>
       
@@ -170,7 +171,7 @@ const SortedRegions = ({switcher}: Props) => {
                 </Card>
               ) : null}
 
-              {regions.length === 0 && searchedData.length !== 0 ? (
+              {regions.length === 0 ? (
                 <div>
                   <Result status="404" title="Округу не знайдено" />
                 </div>) : (

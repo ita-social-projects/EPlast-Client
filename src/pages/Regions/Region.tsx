@@ -168,6 +168,7 @@ const Region = () => {
       await createNotification(ad.userId,
         `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
     });
+    notificationLogic("success", successfulEditAction("округу"));
     history.push("/regions");
   }
   };
@@ -659,7 +660,7 @@ const Region = () => {
                         {activeUserRoles.includes(Roles.Admin) ? (
                           isActiveRegion ? (
                             <Col offset={1}>
-                              <Tooltip title="Заархівувати станицю">
+                              <Tooltip title="Заархівувати округу">
                                 <ContainerOutlined
                                   className="cityInfoIconDelete"
                                   onClick={() => seeArchiveModal()} 
@@ -669,7 +670,7 @@ const Region = () => {
                           ) : (
                               <React.Fragment>
                                 <Col offset={1}>
-                                  <Tooltip title="Видалити станицю">
+                                  <Tooltip title="Видалити округу">
                                     <DeleteOutlined
                                       className="cityInfoIconDelete"
                                       onClick={() => seeDeleteModal()} 
@@ -677,7 +678,7 @@ const Region = () => {
                                   </Tooltip>
                                 </Col>
                                 <Col offset={1}>
-                                  <Tooltip title="Розархівувати станицю">
+                                  <Tooltip title="Розархівувати округу">
                                     <ContainerOutlined
                                       className="regionInfoIcon"
                                       color = "green" 

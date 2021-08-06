@@ -118,20 +118,20 @@ const Club = () => {
 
   const ArchiveClub = async () => {
     await archiveClub(club.id);
-    notificationLogic("success", successfulDeleteAction("Курінь"));
+    notificationLogic("success", successfulEditAction("Курінь"));
     history.push('/clubs');
   }
 
   const deleteClub = async () => {
     await removeClub(club.id);
-    notificationLogic("success", successfulDeleteAction("Станицю"));
+    notificationLogic("success", successfulDeleteAction("Курінь"));
 
     history.push('/clubs');
   };
 
   const UnArchiveClub = async () => {
     await unArchiveClub(club.id)
-    notificationLogic("success", successfulDeleteAction("Станицю"));
+    notificationLogic("success", successfulEditAction("Курінь"));
 
     history.push('/clubs');
   };
@@ -605,7 +605,7 @@ const Club = () => {
                               </Tooltip>
                             </Col>
                             <Col offset={1}>
-                              <Tooltip title="Розархівувати станицю">
+                              <Tooltip title="Розархівувати курінь">
                                 <ContainerOutlined
                                   className="clubInfoIcon" 
                                   onClick={() => seeUnArchiveModal()} 
