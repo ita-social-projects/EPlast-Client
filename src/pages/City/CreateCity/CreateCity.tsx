@@ -226,6 +226,7 @@ const CreateCity = () => {
         postIndex: values.postIndex,
         region: values.region,
         street: values.street,
+        isActive: city.isActive
       }; 
       
       if (!city.id) {
@@ -266,6 +267,7 @@ const CreateCity = () => {
       postIndex: newRegionFollower.postIndex,
       region: appealRegion.regionName,
       street: newRegionFollower.street,
+      isActive: city.isActive
     }; 
 
     CreateCity(newCity, regionFollower.id);

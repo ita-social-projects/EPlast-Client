@@ -111,6 +111,7 @@ const RegionEditFormPage = () => {
       postIndex: values.postIndex,
       logo: logo,
       city: values.city,
+      isActive: chosenRegion.isActive
     };
     await RegionsApi.EditRegion(currentRegion, newRegion);
 

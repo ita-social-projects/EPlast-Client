@@ -15,7 +15,7 @@ export default class CityProfile {
   postIndex: string;
   head: CityAdmin;
   headDeputy: CityAdmin;
-
+  isActive: boolean;
   constructor() {
     this.id = 0;
     this.name = "";
@@ -31,5 +31,6 @@ export default class CityProfile {
     this.postIndex = "";
     this.head = new CityAdmin();
     this.headDeputy = new CityAdmin();
+    this.isActive = true;
   }
 }

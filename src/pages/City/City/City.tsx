@@ -157,7 +157,7 @@ const City = () => {
 
   const UnArchiveCity = async () => {
     await unArchiveCity(city.id)
-    notificationLogic("success", successfulUpdateAction("Станицю"));
+    notificationLogic("success", successfulEditAction("Станицю"));
 
     history.push("/cities");
   };
