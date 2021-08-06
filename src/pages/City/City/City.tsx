@@ -20,7 +20,8 @@ import {
   PlusOutlined,
   ContainerOutlined,
   ExclamationCircleOutlined, 
-  DeleteOutlined} from "@ant-design/icons";
+  DeleteOutlined,
+  MinusOutlined} from "@ant-design/icons";
 import moment from "moment";
 import {
   addAdministrator,
@@ -32,7 +33,8 @@ import {
   archiveCity, 
   unArchiveCity,
   removeCity,
-  toggleMemberStatus } from "../../../api/citiesApi";
+  toggleMemberStatus,
+  removeFollower } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -83,6 +85,7 @@ const City = () => {
   const [activeUserCity, setActiveUserCity] = useState<string>();
   const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
   const [isActiveCity, setIsActiveCity] = useState<boolean>(true);
+  const [activeUserID, setActiveUserID] = useState<string>();
 
   const changeApproveStatus = async (memberId: number) => {
   const member = await toggleMemberStatus(memberId);
@@ -106,6 +109,15 @@ const City = () => {
     }
     setFollowers(followers.filter((f) => f.id !== memberId));
   };
+
+  const removeMember = async (followerID: number) => {
+    await removeFollower(followerID);
+    await createNotification(activeUserID as string, "На жаль, ви були виключені із прихильників станиці",true);
+    const response = await getCityById(+id);
+    setFollowersCount(response.data.followerCount);
+    setFollowers(followers.filter((f) => f.id !== followerID));
+    setCanJoin(true);
+}
 
   const addMember = async () => {
     const follower = await addFollower(+id);
@@ -234,10 +246,23 @@ const City = () => {
     });
   }
 
+  function seeSkipModal(followerID: number) {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете покинути дану станицю?",
+      icon: <ExclamationCircleOutlined />,
+      okText: 'Так, покинути',
+      okType: 'primary',
+      cancelText: 'Скасувати',
+      maskClosable: true,
+      onOk() {removeMember(followerID)}
+    });
+  }
+
   const getCity = async () => {
     setLoading(true);
     try {
       const response = await getCityById(+id);
+      setActiveUserID(userApi.getActiveUserId());
       const responce1 = await cityNameOfApprovedMember(userApi.getActiveUserId());
       setCity(response.data);
       setActiveUserCity(responce1.data);
@@ -311,10 +336,10 @@ const City = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в станиці`, true);
   };
 
-  const showConfirmCityAdmin  = async (admin: CityAdmin) => {
+  const showConfirmCityAdmin  = async (admin: CityAdmin, adminType: Roles) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: (
+      content: (adminType.toString() === "CityHead" ?
         <div style={{ margin: 10 }}>
           <b>
             {city.head.user.firstName} {city.head.user.lastName}
@@ -327,6 +352,19 @@ const City = () => {
           </b>
           .
         </div>
+        :
+        <div style={{ margin: 10 }}>
+        <b>
+          {city.headDeputy.user.firstName} {city.headDeputy.user.lastName}
+        </b>{" "}
+        є Заступником Голови Станиці, час правління закінчується{" "}
+        <b>
+          {moment(city.headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            ? "ще не скоро"
+            : moment(city.headDeputy.endDate).format("DD.MM.YYYY")}
+        </b>
+        .
+      </div>
       ),
       onCancel() { },
       async onOk() {
@@ -355,7 +393,7 @@ const City = () => {
           checkAdminId(admin);
         } else {
           if (city.head?.userId !== admin.userId) {
-            showConfirmCityAdmin(admin);
+            showConfirmCityAdmin(admin, Roles.CityHead);
           } else {
             checkAdminId(admin);
           }
@@ -364,7 +402,11 @@ const City = () => {
         if (city.headDeputy == null) {
           checkAdminId(admin);
         } else {
-          checkAdminId(admin);
+          if (city.headDeputy?.userId !== admin.userId) {
+            showConfirmCityAdmin(admin, Roles.CityHeadDeputy);
+          } else {
+            checkAdminId(admin);
+          }
         }
       } else {
           await addCityAdmin(admin);
@@ -847,7 +889,11 @@ const City = () => {
                           className="approveIcon"
                           onClick={() => changeApproveStatus(followers.id)}
                         />
-                      ) : null}
+                        ) : (followers.userId === activeUserID) ? (<MinusOutlined 
+                          className="approveIcon"
+                          onClick={() => seeSkipModal(followers.id)}
+                         />) : null
+                       }
                     </div>
                   </Col>
                 ))

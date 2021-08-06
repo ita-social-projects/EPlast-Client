@@ -136,7 +136,7 @@ const Assignments = () => {
       <div className="avatarWrapperApprovers">
         <StickyContainer className="kadraWrapper">
           <AvatarAndProgressStatic
-            imageUrl={data?.user.imagePath}
+            imageUrl={data?.user.imagePath as string}
             time={data?.timeToJoinPlast}
             firstName={data?.user.firstName}
             lastName={data?.user.lastName}
@@ -200,7 +200,7 @@ const Assignments = () => {
           }
           )}
           <div>
-            {data?.canApprovePlastMember && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser && roles.includes(Roles.Admin))) && (
+            {(data?.canApprovePlastMember && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser || roles.includes(Roles.Admin)))) ? (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
@@ -215,8 +215,8 @@ const Assignments = () => {
                         </Link>
                     </Spin>
                 </Tooltip>
-              </div>)
-            }
+              </div>
+            ) : (
             <div
               hidden={data?.confirmedUsers.length != 0 || (data?.canApprove && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser && roles.includes(Roles.Admin))))}>
               <br />
@@ -225,8 +225,8 @@ const Assignments = () => {
                 <br />
               <br />
             </div>
+            )}
           </div>
-
         </div>
         <h1 className="approversCard">Поручення куреня УСП/УПС</h1>
         <div className="approversCard">

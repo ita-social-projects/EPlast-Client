@@ -199,7 +199,7 @@ const CreateClub = () => {
             </Upload>
           </Form.Item>
           <Row justify="center">
-            <Col md={11} xs={24}>
+            <Col md={10} xs={24}>
               <Form.Item
                 name="name"
                 label="Назва"
@@ -210,7 +210,7 @@ const CreateClub = () => {
                 <Input value={club.name} maxLength={nameMaxLength} />
               </Form.Item>
             </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
+            <Col md={{ span: 10, offset: 2 }} xs={24}>
               <Form.Item
                 name="description"
                 label="Опис"
@@ -221,7 +221,7 @@ const CreateClub = () => {
                 <Input value={club.description} maxLength={descriptionMaxLength}/>
               </Form.Item>
             </Col>
-            <Col md={11} xs={24}>
+            <Col md={10} xs={24}>
               <Form.Item
                 name="clubURL"
                 label="Посилання"
@@ -232,7 +232,7 @@ const CreateClub = () => {
                 <Input value={club.clubURL} maxLength={linkMaxLength}/>
               </Form.Item>
             </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
+            <Col md={{ span: 10, offset: 2 }} xs={24}>
               <Form.Item
                 name="phoneNumber"
                 label="Номер телефону"
@@ -249,7 +249,7 @@ const CreateClub = () => {
                 </ReactInputMask>
               </Form.Item>
             </Col>
-            <Col md={11} xs={24}>
+            <Col md={10} xs={24}>
               <Form.Item
                 name="email"
                 label="Електронна пошта"
@@ -260,7 +260,7 @@ const CreateClub = () => {
                 <Input value={club.email} maxLength={emailMaxLength}/>
               </Form.Item>
             </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
+            <Col md={{ span: 10, offset: 2 }} xs={24}>
             <Form.Item
                 name="street"
                 label="Вулиця"

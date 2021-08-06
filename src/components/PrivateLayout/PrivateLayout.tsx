@@ -202,7 +202,7 @@ const PrivateLayout = ({ children }: any) => {
               }
             </SubMenu>
 
-            {(canEdit || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdmDeputy) ? (
+            {(canEdit || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy ) ? (
               <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
                 <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="9">
                   Річні звіти
@@ -226,14 +226,14 @@ const PrivateLayout = ({ children }: any) => {
               ) : (<> </>)
             }
 
-            {(!canEdit && !regionAdm && !cityAdm && clubAdm) ? (
-              <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="9">
+            {(!canEdit && !regionAdm && !cityAdm && clubAdm && clubAdmDeputy) ? (
+              <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="16">
                 Річні звіти
               </Menu.Item>
               ) : (<> </>)
             }
             {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
-                <Menu.Item onClick={() => { handleClickAway(); history.push('/aboutBase'); }} key="5">Про Базу</Menu.Item>) : (<> </>)
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/aboutBase'); }} key="17">Про Базу</Menu.Item>) : (<> </>)
             }
           </Menu>
         </Sider>

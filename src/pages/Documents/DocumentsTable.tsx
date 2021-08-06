@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Input, Button, Layout, Pagination, Card } from 'antd';
+import { Table, Button, Layout, Card } from 'antd';
 import columns from './columns';
 import DropDown from './DropDownDocuments';
 import documentsApi, { TypeGetParser } from '../../api/documentsApi';
-import { Document } from "../../models/Documents/Document";
 import notificationLogic from '../../components/Notifications/Notification';
 import ClickAwayListener from 'react-click-away-listener';
-import moment from "moment";
 import Spinner from '../Spinner/Spinner';
 import AuthStore from '../../stores/AuthStore';
 import jwt_decode from "jwt-decode";
@@ -14,7 +12,7 @@ import AddDocumentsModal from './AddDocumetsModal';
 import { Roles } from '../../models/Roles/Roles';
 import DocumentsTableInfo from '../../models/Documents/DocumentsTableInfo';
 import Search from 'antd/lib/input/Search';
-const classes = require('./Table.module.css');
+import classes from './Table.module.css';
 
 const { Content } = Layout;
 

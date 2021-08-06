@@ -305,7 +305,7 @@ const RegionBoard = () => {
                       justify={userAccesses["EditRB"] ? "center" : "start"}
                     >
                       <Col>
-                        <Tooltip title="Крайовий Провід Пласту">
+                        <Tooltip title="Редагувати Крайовий Провід Пласту">
                           <EditOutlined
                             className="cityInfoIcon"
                             onClick={() => history.push(`/regionsBoard/edit`)}

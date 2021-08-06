@@ -181,19 +181,7 @@ const SortedClubs = ( {switcher}: Props) => {
                 >
                   <Card.Meta
                     className="titleText"
-                    title="Створити нову станицю"
-                  />
-                </Card>
-              ) : page === 1 && searchedData.length === 0 ?(
-                <Card
-                  hoverable
-                  className="cardStyles addCity"
-                  cover={<img src={Add} alt="AddRegionFollower" />}
-                  onClick={() => history.push(`/regions/follower/new`)}
-                >
-                  <Card.Meta
-                    className="titleText"
-                    title={<div className="createFollowerTitleText">Подати заяву на створення нової станиці</div>}
+                    title="Створити новий курінь"
                   />
                 </Card>
               ) : null ) }
