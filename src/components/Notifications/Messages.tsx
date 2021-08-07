@@ -41,7 +41,7 @@ export const successfulEditAction = (name:string, itemName?:string)=>{
 }; 
 
 export const successfulDeleteAction = (name:string, itemName?:string)=>{
-    return itemName ? `${name} ${itemName} успішно видалено` : `${name} успішно видалено`;
+    return (<div style={{wordBreak:'break-word'}}>{ itemName ? `${name} ${itemName} успішно видалено` : `${name} успішно видалено`} </div>);
 }; 
 
 export const successfulUpdateAction = (name:string, itemName?:string)=>{
@@ -85,7 +85,7 @@ export const shouldContain = (items:string)=>{
 };
 
 export const fileIsUpload = (name?:string)=>{
-    return name ? `${name} завантажено` : `Файл завантажено`;
+    return (<div style={{wordBreak:'break-word'}}>{ name ? `${name} завантажено` : `Файл завантажено`} </div>);
 }; 
 
 export const fileIsAdded= (name?:string)=>{

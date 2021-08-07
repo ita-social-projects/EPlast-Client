@@ -149,7 +149,7 @@ export const showDeleteConfirm = ({eventId, eventName, successCallback, isSingle
                 );
             deleteEvent()
                 .then(() => {
-                    Success(successfulDeleteAction("Подію"))
+                    Success('Подію успішно видалено')
                     if (isSingleEventInState) {
                         // @ts-ignore
                         successCallback()

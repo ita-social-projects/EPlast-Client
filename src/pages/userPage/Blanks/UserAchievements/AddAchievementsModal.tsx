@@ -120,7 +120,7 @@ const AddAchievementsModal = (props: Props) => {
               Клікніть або перетягніть файл для завантаження
                 </p>
             {files.length !== 0 && files.map(file => (
-              <div>{file.fileName};</div>
+              <div style={{wordBreak:'break-word'}}> {file.fileName} </div>
             ))}
           </Dragger>
           {files.length !== 0 ? (

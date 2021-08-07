@@ -1,6 +1,6 @@
 import { DeleteOutlined, DownloadOutlined, EyeOutlined, FileImageOutlined, FilePdfOutlined, LoadingOutlined } from "@ant-design/icons";
-import { List, message, Modal, Popconfirm } from "antd";
-import React, { useEffect, useState } from "react";
+import { List, Modal, Popconfirm } from "antd";
+import React, { useState } from "react";
 import { getAchievementFile, openAchievemetFile, removeAchievementDocument, getAchievementsByPage } from "../../../../api/blankApi";
 import BlankDocument from "../../../../models/Blank/BlankDocument";
 import classes from "./ListOfAchievements.module.css"
