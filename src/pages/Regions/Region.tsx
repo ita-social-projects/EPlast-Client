@@ -51,7 +51,7 @@ import CheckActiveCitiesForm from "./CheckActiveCitiesForm"
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import notificationLogic from "../../components/Notifications/Notification";
-import { successfulEditAction, successfulDeleteAction, successfulAddDegree } from "../../components/Notifications/Messages";
+import { successfulEditAction, successfulDeleteAction } from "../../components/Notifications/Messages";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
@@ -61,18 +61,13 @@ import RegionAdmin from "../../models/Region/RegionAdmin";
 const Region = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
-
   const { id } = useParams();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
-
   const [photoStatus, setPhotoStatus] = useState(true);
   const [canEdit, setCanEdit] = useState(false);
-
   const [document, setDocument] = useState<RegionDocument>(new RegionDocument());
-
   const [documents, setDocuments] = useState<RegionDocument[]>([]);
-
   const [region, setRegion] = useState<any>({
     id: "",
     regionName: "",
@@ -87,11 +82,9 @@ const Region = () => {
     postIndex: "",
     city: "",
   });
-
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [admins, setAdmins] = useState<RegionAdmin[]>([]);
   const [sixAdmins, setSixAdmins] = useState<RegionAdmin[]>([]);
-
   const [members, setMembers] = useState<any[]>([
     {
       id: "",
@@ -99,9 +92,8 @@ const Region = () => {
       logo: "",
     },
   ]);
-
+  const [nineMembers, setSixMembers] = useState<any[]>([]);
   const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
-
   const [followers, setFollowers] = useState<RegionFollower[]>([]);
   const [followersCount, setFollowersCount] = useState<number>();
   const [canCreate, setCanCreate] = useState(false);
@@ -124,7 +116,6 @@ const Region = () => {
     startDate: "",
     endDate: "",
   });
-
   const [headDeputy, setHeadDeputy] = useState<any>({
     user: {
       firstName: "",
@@ -140,7 +131,6 @@ const Region = () => {
         await userApi.getImage(admins[i].user.imagePath)
       ).data;
     }
-
     for (let i = 0; i < members.length; i++) {
       if (members[i].logo !== null) {
         members[i].logo = (await getLogo(members[i].logo)).data;
@@ -148,15 +138,12 @@ const Region = () => {
         members[i].logo = CityDefaultLogo;
       }
     }
-
     for(let i = 0; i < followers.length; i++) {
       if (followers[i].logo === null) {
         followers[i].logo = CityDefaultLogo;
       }
     }
-
     setPhotosLoading(false);
-
     setRegionLogoLoading(false);
   };
 
@@ -240,7 +227,6 @@ const Region = () => {
 
   const getRegion = async () => {
     setLoading(true);
-
     try {
       const regionResponse = await getRegionById(id);
       const regionAdministrationResp = await getRegionAdministration(id);
@@ -255,19 +241,16 @@ const Region = () => {
       setMembers(regionResponse.data.cities);
       setActiveMembers(regionResponse.data.cities);
       setMembersCount(regionResponse.data.cities.length);
-      setSixMembers(regionResponse.data.cities, 6);
-
+      getNineMembers(regionResponse.data.cities, 9);
       setDocuments(regionResponse.data.documents);
       setDocumentsCount(regionResponse.data.documentsCount);
-
       setPhotosLoading(true);
       setAdmins(regionAdministrationResp.data);
-      getSixAdmins(regionAdministrationResp.data, 7);
+      getSixAdmins(regionAdministrationResp.data, 6);
       setAdminsCount(regionAdministrationResp.data.length);
       setIsActiveRegion(regionResponse.data.isActive);
       setRegionLogoLoading(true);
       setPhotos([...regionResponse.data.cities], [...regionAdministrationResp.data], regionFollowersResp.data);
-
       setRegion(regionResponse.data);
       setCanEdit(regionResponse.data.canEdit);
       setIsFromRegion(regionResponse.data.cities, cityNameResp.data);
@@ -294,7 +277,7 @@ const Region = () => {
     setHeadDeputy(responseHeadDeputy.data);
     setRegion(regionResponse.data);
     setPhotosLoading(true);
-    getSixAdmins(regionAdministrationResp.data, 7);
+    getSixAdmins(regionAdministrationResp.data, 6);
     setAdminsCount(regionAdministrationResp.data.length);
     setPhotos([...regionResponse.data.cities], [...regionAdministrationResp.data], regionFollowersResp.data);
     if (regionResponse.data.logo === null) {
@@ -447,22 +430,22 @@ const Region = () => {
     }
   };
 
-  const setSixMembers = (member: any[], amount: number) => {
+  const getNineMembers = (member: any[], amount: number) => {
     if (member.length > 6) {
       for (let i = 0; i < amount; i++) {
-        members[i] = member[i];
+        nineMembers[i] = member[i];
       }
     } else {
       if (member.length !== 0) {
         for (let i = 0; i < member.length; i++) {
-          members[i] = member[i];
+          nineMembers[i] = member[i];
         }
       }
     }
   };
 
   const getSixAdmins = (admins: RegionAdmin[], amount: number) => {
-    if (admins.length > 7) {
+    if (admins.length > 6) {
       for (let i = 0; i < amount; i++) {
         sixAdmins[i] = admins[i];
       }
@@ -727,7 +710,7 @@ const Region = () => {
               </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
                 {members.length !== 0 ? (
-                  members.map((member) => (
+                  nineMembers.map((member) => (
                     <Col
                       className="cityMemberItem"
                       key={member.id}

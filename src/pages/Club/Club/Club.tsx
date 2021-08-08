@@ -926,7 +926,7 @@ const Club = () => {
       ></ClubDetailDrawer>
 
         <Modal
-          title="На жаль ви не можете архівувати зазначену округу"
+          title="На жаль ви не можете архівувати зазначений Курінь"
           visible={activeMemberVisibility}
           onOk={handleConfirm}
           onCancel={handleConfirm}
