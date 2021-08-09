@@ -930,12 +930,7 @@ const Region = () => {
                 <Button
                   type="primary"
                   className="cityInfoButton"
-                  onClick={() => activeUserRoles.includes(Roles.Admin) 
-                    || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
-                        && isActiveUserRegionAdmin) 
-                    ? history.push(`/regions/followers/${region.id}`) 
-                    : undefined
-                  }
+                  onClick={() => history.push(`/regions/followers/${region.id}`)}
                 >
                 Більше
                 </Button>
