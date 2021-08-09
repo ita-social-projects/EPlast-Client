@@ -4,8 +4,7 @@ import ActionCard from '../ActionCard/ActionCard';
 import eventsApi from "../../api/eventsApi";
 import spinClasses from "./ActionEvent/EventUser/EventUser.module.css";
 import {Pagination, Space, Spin} from "antd";
-
-const classes = require('./Actions.module.css');
+import classes from './Actions.module.css';
 
 const Actions = () => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -25,13 +24,11 @@ const Actions = () => {
 
     const handlePageNumberChange = (pageNumber: number) => {
       setPageNumber(pageNumber);
-      getCategories();
     }
   
     const handlePageSizeChange = (pageNumber: number, pageSize: number = 10) => {
       setPageNumber(pageNumber);
       setPageSize(pageSize);
-      getCategories();
     }
 
     const getCategories = async () => {
