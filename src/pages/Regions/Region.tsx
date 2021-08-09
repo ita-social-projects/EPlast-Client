@@ -155,14 +155,14 @@ const Region = () => {
       await createNotification(ad.userId,
         `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
     });
-    notificationLogic("success", successfulEditAction("округу"));
+    notificationLogic("success", successfulEditAction("Округу"));
     history.push("/regions");
   }
   };
 
   const deleteRegion = async () => {
     await removeRegion(region.id);
-    notificationLogic("success", successfulDeleteAction("округу"));
+    notificationLogic("success", successfulDeleteAction("Округу"));
 
     history.push("/regions");
   };
