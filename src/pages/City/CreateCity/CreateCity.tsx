@@ -51,6 +51,7 @@ import RegionFollower from "../../../models/Region/RegionFollower";
 import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
 import TextArea from "antd/lib/input/TextArea";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 const CreateCity = () => {
   const { id } = useParams();
@@ -242,8 +243,10 @@ const CreateCity = () => {
     const responsePromise =  createRegionFollower(newRegionFollower);
 
     return responsePromise
-      .then(() => {
+      .then(async () => {
         notificationLogic("success", successfulCreateAction("Заяву"));
+        await createNotification(newRegionFollower.userId,
+          `Вітаємо, вашу заяву на створення станиці '${newRegionFollower.cityName}' успішно створено! Заява очікує розгляду адміністрацією округи.`);
         history.push(`/cities`);
       })
       .catch(() => {
@@ -309,7 +312,7 @@ const CreateCity = () => {
 
   function seeAddFollowerModal(newRegionFollower: RegionFollower) {
     return Modal.confirm({
-      title: `Ви впевнені, що хочете надіслати заявку на створення станиці ${newRegionFollower.cityName}?`,
+      title: `Ви впевнені, що хочете надіслати заяву на створення станиці ${newRegionFollower.cityName}?`,
       icon: <ExclamationCircleOutlined />,
       okText: "Так, надіслати!",
       okType: "danger",
@@ -343,7 +346,7 @@ const CreateCity = () => {
 
   function seeConfirmFollowerModal(regionFollower: RegionFollower) {
     return Modal.confirm({
-      title: `Ви впевнені, що хочете підтвердити заявку на створення станиці ${regionFollower.cityName}?`,
+      title: `Ви впевнені, що хочете підтвердити заяву на створення станиці ${regionFollower.cityName}?`,
       icon: <ExclamationCircleOutlined />,
       okText: "Так, підтвердити!",
       okType: "danger",
@@ -355,6 +358,14 @@ const CreateCity = () => {
         }
       },
     });
+  }
+
+  const createNotification = async(userId: string, message: string) => {
+    await NotificationBoxApi.createNotifications(
+      [userId],
+      message,
+      NotificationBoxApi.NotificationTypes.UserNotifications
+    );  
   }
 
   return loading ? (
@@ -581,7 +592,7 @@ const CreateCity = () => {
               )}
             </Col>
             <Col xs={24} sm={12}>
-              {location.pathname.startsWith(followerPath + "edit") ? (
+              {(location.pathname.startsWith(followerPath + "edit") || location.pathname.startsWith("/cities/edit/")) ? (
                 <Button htmlType="submit" type="primary">
                   Підтвердити
                 </Button>
