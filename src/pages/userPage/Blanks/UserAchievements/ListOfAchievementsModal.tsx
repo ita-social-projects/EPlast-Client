@@ -151,7 +151,7 @@ const ListOfAchievementsModal = (props: Props) => {
                                         <Tooltip title={item.fileName}>
                                             <span>
                                              {item.fileName.slice(0,fileNameMaxLength - 1) + "..."} 
-                                             </span>
+                                            </span>
                                         </Tooltip>
                                     : item.fileName
                                     }
