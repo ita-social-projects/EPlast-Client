@@ -59,13 +59,13 @@ const RegionAdministration = () => {
   const getAdministration = async () => {
     setLoading(true);
     const regionResponse = await getRegionById(id);
-    const administartionResponse = await getRegionAdministration(id);
+    const administrationResponse = await getRegionAdministration(id);
     setPhotosLoading(true);
     setRegion(regionResponse.data);
-    setPhotos([...administartionResponse.data].filter((a) => a != null));
-    setAdministration([...administartionResponse.data].filter((a) => a != null));
+    setPhotos([...administrationResponse.data].filter((a) => a != null));
+    setAdministration([...administrationResponse.data].filter((a) => a != null));
     setActiveUserRoles(userApi.getActiveUserRoles());
-    setIsRegionAdmin([...administartionResponse.data].filter((a) => a != null), userApi.getActiveUserId());
+    setIsRegionAdmin([...administrationResponse.data].filter((a) => a != null), userApi.getActiveUserId());
     setLoading(false);
   };
 
