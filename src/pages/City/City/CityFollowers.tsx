@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Skeleton, Spin} from 'antd';
-import {CloseOutlined, PlusOutlined, RollbackOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Layout, Modal, Skeleton} from 'antd';
+import {CloseOutlined, ExclamationCircleOutlined, PlusOutlined, RollbackOutlined} from '@ant-design/icons';
 import {getAllFollowers, removeFollower, toggleMemberStatus} from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
@@ -21,6 +21,7 @@ const CityFollowers = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [cityName, setCityName] = useState<string>("");
     const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+    const [activeUserID, setActiveUserID] = useState<string>();
 
     const getFollowers = async () => {
       setLoading(true);
@@ -31,9 +32,34 @@ const CityFollowers = () => {
       setFollowers(response.data.followers);
       setCanEdit(response.data.canEdit);
       setCityName(response.data.name);
+      setActiveUserID(userApi.getActiveUserId());
       setActiveUserRoles(userApi.getActiveUserRoles);
       setLoading(false);
     };
+
+    function seeSkipModal(follower: CityMember) {
+      return Modal.confirm({
+        title: "Ви впевнені, що хочете покинути дану станицю?",
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Так, покинути',
+        okType: 'primary',
+        cancelText: 'Скасувати',
+        maskClosable: true,
+        onOk() { removeMember(follower) }
+      });
+    }
+  
+    function seeDeleteModal(follower: CityMember) {
+      return Modal.confirm({
+        title: `Ви впевнені, що хочете видалити ${follower.user.firstName} ${follower.user.lastName} із прихильників?`,
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Так, видалити',
+        okType: 'primary',
+        cancelText: 'Скасувати',
+        maskClosable: true,
+        onOk() { removeMember(follower) }
+      });
+    }
 
     const createNotification = async(userId : string, message : string) => {
       await NotificationBoxApi.createNotifications(
@@ -82,16 +108,21 @@ const CityFollowers = () => {
                   key={follower.id}
                   className="detailsCard"
                   actions={
-                    canEdit
-                      ? [
-                          <PlusOutlined
-                            onClick={() => addMember(follower)}
-                          />,
+                    canEdit ?
+                      [
+                        <PlusOutlined
+                          onClick={() => addMember(follower)}
+                        />,
+                        <CloseOutlined
+                          onClick={() => seeDeleteModal(follower)}
+                        />,
+                      ]
+                      : (follower.userId === activeUserID) ?
+                        [
                           <CloseOutlined
-                            onClick={() => removeMember(follower)}
-                          />,
-                        ]
-                      : undefined
+                            onClick={() => seeSkipModal(follower)}
+                          />
+                        ] : undefined
                   }
                 >
                   <div

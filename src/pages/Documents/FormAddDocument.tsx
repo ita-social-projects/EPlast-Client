@@ -266,7 +266,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
 
                 {fileData.FileAsBase64 !== null && (
                   <div>
-                    <div>{fileData.FileName}</div>{" "}
+                    <div style={{wordBreak:'break-word'}}> {fileData.FileName} </div>{" "}
                   </div>
                 )}
               </Upload.Dragger>

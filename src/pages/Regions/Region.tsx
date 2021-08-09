@@ -11,24 +11,28 @@ import {
   Card,
   Tooltip,
   Badge,
+  Tag
 } from "antd";
 import {
   FileTextOutlined,
   EditOutlined,
   PlusSquareFilled,
   DeleteOutlined,
+  ContainerOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import {
   getRegionById,
-  removeRegion,
+  archiveRegion,
+  unArchiveRegion,
   getRegionAdministration,
   getHead,
   getHeadDeputy,
   getRegionFollowers,
   AddAdmin,
   EditAdmin,
+  removeRegion,
 } from "../../api/regionsApi";
 import {
   cityNameOfApprovedMember,
@@ -43,11 +47,11 @@ import RegionDocument from "../../models/Region/RegionDocument";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
 import userApi from "./../../api/UserApi";
 import { getLogo } from "./../../api/citiesApi";
-import CitiesRedirectForm from "./CitiesRedirectForm";
+import CheckActiveCitiesForm from "./CheckActiveCitiesForm"
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import notificationLogic from "../../components/Notifications/Notification";
-import { successfulDeleteAction, successfulEditAction } from "../../components/Notifications/Messages";
+import { successfulEditAction, successfulDeleteAction } from "../../components/Notifications/Messages";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
@@ -57,18 +61,13 @@ import RegionAdmin from "../../models/Region/RegionAdmin";
 const Region = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
-
   const { id } = useParams();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
-
   const [photoStatus, setPhotoStatus] = useState(true);
   const [canEdit, setCanEdit] = useState(false);
-
   const [document, setDocument] = useState<RegionDocument>(new RegionDocument());
-
   const [documents, setDocuments] = useState<RegionDocument[]>([]);
-
   const [region, setRegion] = useState<any>({
     id: "",
     regionName: "",
@@ -83,11 +82,9 @@ const Region = () => {
     postIndex: "",
     city: "",
   });
-
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [admins, setAdmins] = useState<RegionAdmin[]>([]);
   const [sixAdmins, setSixAdmins] = useState<RegionAdmin[]>([]);
-
   const [members, setMembers] = useState<any[]>([
     {
       id: "",
@@ -95,22 +92,22 @@ const Region = () => {
       logo: "",
     },
   ]);
-
-  const [memberRedirectVisibility, setMemberRedirectVisibility] = useState<boolean>(false);
-
+  const [nineMembers, setSixMembers] = useState<any[]>([]);
+  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
   const [followers, setFollowers] = useState<RegionFollower[]>([]);
   const [followersCount, setFollowersCount] = useState<number>();
   const [canCreate, setCanCreate] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
   const [membersCount, setMembersCount] = useState<number>();
+  const [activeCities, setActiveCities] = useState<any[]>([]);
   const [adminsCount, setAdminsCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
   const [visible, setVisible] = useState<boolean>(false);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
   const [isActiveUserFromRegion, setIsActiveUserFromRegion] = useState<boolean>(false);
-  
+  const [isActiveRegion, setIsActiveRegion] = useState<boolean>(true);
   const [head, setHead] = useState<any>({
     user: {
       firstName: "",
@@ -119,7 +116,6 @@ const Region = () => {
     startDate: "",
     endDate: "",
   });
-
   const [headDeputy, setHeadDeputy] = useState<any>({
     user: {
       firstName: "",
@@ -135,7 +131,6 @@ const Region = () => {
         await userApi.getImage(admins[i].user.imagePath)
       ).data;
     }
-
     for (let i = 0; i < members.length; i++) {
       if (members[i].logo !== null) {
         members[i].logo = (await getLogo(members[i].logo)).data;
@@ -143,28 +138,71 @@ const Region = () => {
         members[i].logo = CityDefaultLogo;
       }
     }
-
     for(let i = 0; i < followers.length; i++) {
       if (followers[i].logo === null) {
         followers[i].logo = CityDefaultLogo;
       }
     }
-
     setPhotosLoading(false);
-
     setRegionLogoLoading(false);
   };
 
-  const deleteRegion = async () => {
-    await removeRegion(region.id);
+  const ArchiveRegion = async () => {
+    try {
+      await archiveRegion(region.id);
+    } finally {
     admins.map(async (ad) => {
       await createNotification(ad.userId,
         `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
     });
+    notificationLogic("success", successfulEditAction("Округу"));
+    history.push("/regions");
+  }
+  };
+
+  const deleteRegion = async () => {
+    await removeRegion(region.id);
     notificationLogic("success", successfulDeleteAction("Округу"));
+
+    history.push("/regions");
+  };
+  const UnArchiveCity = async () => {
+    await unArchiveRegion(region.id)
+    notificationLogic("success", successfulEditAction("Станицю"));
+
     history.push("/regions");
   };
 
+  function seeArchiveModal() {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете архівувати дану округу?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, заархівувати",
+      okType: "danger",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        membersCount !== 0 || adminsCount !== 0
+        ? setActiveMemberVisibility(true)
+        : ArchiveRegion();
+      },
+    });
+  }
+
+  function seeUnArchiveModal() {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете розархівувати дану округу?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, розархівувати",
+      okType: "danger",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        UnArchiveCity();
+      },
+    });
+  }
+  
   function seeDeleteModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити дану округу?",
@@ -174,18 +212,21 @@ const Region = () => {
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
-        {
-          members[0].name !== ""
-            ? setMemberRedirectVisibility(true)
-            : deleteRegion();
-        }
+        deleteRegion();
       },
     });
   }
 
+  const setActiveMembers = (cities: any[]) => {
+    for (let i = 0; i < cities.length; i++) {
+      if (cities[i].cityMembers.length != 0) {
+           setActiveCities(activeCities => [...activeCities,  cities[i]])
+      }
+   } 
+  }
+
   const getRegion = async () => {
     setLoading(true);
-
     try {
       const regionResponse = await getRegionById(id);
       const regionAdministrationResp = await getRegionAdministration(id);
@@ -197,25 +238,25 @@ const Region = () => {
       setActiveUserRoles(userApi.getActiveUserRoles());
       setHead(responseHead.data);
       setHeadDeputy(responseHeadDeputy.data);
+      setMembers(regionResponse.data.cities);
+      setActiveMembers(regionResponse.data.cities);
       setMembersCount(regionResponse.data.cities.length);
-      setSixMembers(regionResponse.data.cities, 6);
-
+      getNineMembers(regionResponse.data.cities, 9);
       setDocuments(regionResponse.data.documents);
       setDocumentsCount(regionResponse.data.documentsCount);
-
       setPhotosLoading(true);
       setAdmins(regionAdministrationResp.data);
-      getSixAdmins(regionAdministrationResp.data, 7);
+      getSixAdmins(regionAdministrationResp.data, 6);
       setAdminsCount(regionAdministrationResp.data.length);
-
+      setIsActiveRegion(regionResponse.data.isActive);
       setRegionLogoLoading(true);
       setPhotos([...regionResponse.data.cities], [...regionAdministrationResp.data], regionFollowersResp.data);
-
       setRegion(regionResponse.data);
       setCanEdit(regionResponse.data.canEdit);
       setIsFromRegion(regionResponse.data.cities, cityNameResp.data);
       setIsRegionAdmin(regionAdministrationResp.data, userApi.getActiveUserId());
       setSixFollowers(regionFollowersResp.data);
+      setFollowers(regionFollowersResp.data);
       setFollowersCount(regionFollowersResp.data.length);
 
       if (regionResponse.data.logo === null) {
@@ -236,7 +277,7 @@ const Region = () => {
     setHeadDeputy(responseHeadDeputy.data);
     setRegion(regionResponse.data);
     setPhotosLoading(true);
-    getSixAdmins(regionAdministrationResp.data, 7);
+    getSixAdmins(regionAdministrationResp.data, 6);
     setAdminsCount(regionAdministrationResp.data.length);
     setPhotos([...regionResponse.data.cities], [...regionAdministrationResp.data], regionFollowersResp.data);
     if (regionResponse.data.logo === null) {
@@ -270,20 +311,33 @@ const Region = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`, true);
   };
 
-  const showConfirmClubAdmin  = async (admin: RegionAdmin) => {
+  const showConfirmRegionAdmin  = async (admin: RegionAdmin, adminType: Roles) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: (
+      content: ( adminType.toString() === "OkrugaHead" ?
         <div style={{ margin: 10 }}>
           <b>
             {head?.user.firstName} {head?.user.lastName}
           </b>{" "}
-          є Головою Куреня, час правління закінчується{" "}
+          є Головою Округи, час правління закінчується{" "}
           <b>
             {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
               : moment(head?.endDate).format("DD.MM.YYYY")}
           </b>
+          .
+        </div>
+        :
+        <div style={{ margin: 10 }}>
+        <b>
+          {headDeputy?.user.firstName} {headDeputy?.user.lastName}
+        </b>{" "}
+        є Заступником Голови Округи, час правління закінчується{" "}
+        <b>
+          {moment(headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            ? "ще не скоро"
+            : moment(headDeputy?.endDate).format("DD.MM.YYYY")}
+        </b>
           .
         </div>
       ),
@@ -307,17 +361,17 @@ const Region = () => {
   }
 
   const handleConfirm = async () => {
-    setVisible(false);
+    setActiveMemberVisibility(false);
   };
 
   const handleOk = async(admin: RegionAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.OkrugaHead) {
-        if (head == ' ') {
+        if (head == '') {
           checkAdminId(admin);
         } else {
           if (head.userId !== admin.userId) {
-            showConfirmClubAdmin(admin);
+            showConfirmRegionAdmin(admin, Roles.OkrugaHead);
           } else {
             checkAdminId(admin);
           }
@@ -326,7 +380,11 @@ const Region = () => {
         if (headDeputy == 'null') {
           checkAdminId(admin);
         } else {
-          checkAdminId(admin);
+          if (head.userId !== admin.userId) {
+            showConfirmRegionAdmin(admin, Roles.OkrugaHeadDeputy);
+          } else {
+            checkAdminId(admin);
+          }
         }
       } else {
           await addRegionAdmin(admin);
@@ -372,22 +430,22 @@ const Region = () => {
     }
   };
 
-  const setSixMembers = (member: any[], amount: number) => {
+  const getNineMembers = (member: any[], amount: number) => {
     if (member.length > 6) {
       for (let i = 0; i < amount; i++) {
-        members[i] = member[i];
+        nineMembers[i] = member[i];
       }
     } else {
       if (member.length !== 0) {
         for (let i = 0; i < member.length; i++) {
-          members[i] = member[i];
+          nineMembers[i] = member[i];
         }
       }
     }
   };
 
   const getSixAdmins = (admins: RegionAdmin[], amount: number) => {
-    if (admins.length > 7) {
+    if (admins.length > 6) {
       for (let i = 0; i < amount; i++) {
         sixAdmins[i] = admins[i];
       }
@@ -434,7 +492,7 @@ const Region = () => {
     if (region.regionName.length !== 0) {
       PsevdonimCreator.setPseudonimLocation(`regions/${region.regionName}`, `regions/${id}`);
     }
-  }, [region]);
+  }, []);
 
   return loading ? (
     <Spinner />
@@ -450,6 +508,11 @@ const Region = () => {
                   second={url.replace(`/${id}`, "")}
                   second_name="Округи"
                 />
+                  {isActiveRegion ? null : (
+                    <Tag className="status" color = {"red"}>
+                      Заархівовано
+                    </Tag>
+                  )}
               </div>
               <Title level={3}>Округа {region.regionName}</Title>
               <Row className="cityPhotos" gutter={[0, 12]}>
@@ -594,19 +657,38 @@ const Region = () => {
                             />
                           </Tooltip>
                         </Col>
-                        
-                        {
-                          activeUserRoles.includes(Roles.Admin) ? 
+                        {activeUserRoles.includes(Roles.Admin) ? (
+                          isActiveRegion ? (
                             <Col offset={1}>
-                              <Tooltip title="Видалити округу">
-                                <DeleteOutlined
+                              <Tooltip title="Заархівувати округу">
+                                <ContainerOutlined
                                   className="cityInfoIconDelete"
-                                  onClick={() => seeDeleteModal()}
+                                  onClick={() => seeArchiveModal()} 
                                 />
                               </Tooltip>
                             </Col>
-                          : null
-                        }
+                          ) : (
+                              <React.Fragment>
+                                <Col offset={1}>
+                                  <Tooltip title="Видалити округу">
+                                    <DeleteOutlined
+                                      className="cityInfoIconDelete"
+                                      onClick={() => seeDeleteModal()} 
+                                    />
+                                  </Tooltip>
+                                </Col>
+                                <Col offset={1}>
+                                  <Tooltip title="Розархівувати округу">
+                                    <ContainerOutlined
+                                      className="regionInfoIcon"
+                                      color = "green" 
+                                      onClick={() => seeUnArchiveModal()} 
+                                    />
+                                  </Tooltip>
+                                </Col>
+                              </React.Fragment>
+                          )
+                        ) : null}
                       </Row>
                     </Col>
                   </>
@@ -627,8 +709,8 @@ const Region = () => {
                 </a>
               </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
-                {members[0].name !== "" ? (
-                  members.map((member) => (
+                {members.length !== 0 ? (
+                  nineMembers.map((member) => (
                     <Col
                       className="cityMemberItem"
                       key={member.id}
@@ -703,14 +785,15 @@ const Region = () => {
                   )}
               </Row>
               <div className="cityMoreButton">
-                {canEdit && (activeUserRoles.includes(Roles.Admin) || isActiveUserRegionAdmin) 
+                {isActiveRegion ? (
+                canEdit && (activeUserRoles.includes(Roles.Admin) || isActiveUserRegionAdmin) 
                 ?(
                   <PlusSquareFilled
                     type="primary"
                     className="addReportIcon"
                     onClick={() => setVisible(true)}
                   />
-                ) : null}
+                ) : null) : null}
                 <Button
                   type="primary"
                   className="cityInfoButton"
@@ -780,7 +863,8 @@ const Region = () => {
                     </Button>
                   : null
                 }
-                {activeUserRoles.includes(Roles.Admin)
+                {isActiveRegion ? (
+                activeUserRoles.includes(Roles.Admin)
                 || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
                     && isActiveUserRegionAdmin)
                 ?(
@@ -788,7 +872,7 @@ const Region = () => {
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
                 />
-                ):null}
+                ):null) : null}
               </div>
             </Card>
           </Col>
@@ -846,12 +930,7 @@ const Region = () => {
                 <Button
                   type="primary"
                   className="cityInfoButton"
-                  onClick={() => activeUserRoles.includes(Roles.Admin) 
-                    || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
-                        && isActiveUserRegionAdmin) 
-                    ? history.push(`/regions/followers/${region.id}`) 
-                    : undefined
-                  }
+                  onClick={() => history.push(`/regions/followers/${region.id}`)}
                 >
                 Більше
                 </Button>
@@ -884,13 +963,13 @@ const Region = () => {
         </Modal>
 
         <Modal
-          title="Оберіть округу до якої належатимуть станиці-члени:"
-          visible={memberRedirectVisibility}
+          title="На жаль ви не можете архівувати зазначену округу"
+          visible={activeMemberVisibility}
           onOk={handleConfirm}
           onCancel={handleConfirm}
           footer={null}
         >
-          <CitiesRedirectForm regionId = {region.id} onAdd={handleOk} />
+          <CheckActiveCitiesForm cities = {members} admins = {admins} followers = {followers}  onAdd={handleConfirm} />
         </Modal>
 
         <RegionDetailDrawer

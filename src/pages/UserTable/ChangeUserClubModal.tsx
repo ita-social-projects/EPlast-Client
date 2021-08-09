@@ -59,6 +59,7 @@ const ChangeUserClubModal = ({
           visibleModal={showModal}
           setVisibleModal={setShowModal}
           clubId={clubId}
+          clubName={user.clubName}
           onChange={handleChange}
         ></AddAdministratorModal>
         ):

@@ -99,7 +99,9 @@ const ClubDocuments = () => {
                         ]
                         
                       : ((activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) 
-                      && club.name == activeUserClub ) 
+                      && club.name == activeUserClub ) || (activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy))
+                      || (activeUserRoles.includes(Roles.CityHead) || activeUserRoles.includes(Roles.CityHeadDeputy))
+                      || (activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.KurinHeadDeputy))
                       ? [
                           <DownloadOutlined
                             key="download"

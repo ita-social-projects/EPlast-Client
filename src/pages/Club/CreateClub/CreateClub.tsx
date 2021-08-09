@@ -42,6 +42,10 @@ import{
   successfulDeleteAction
 } from "../../../components/Notifications/Messages"
 
+const nameMaxLength = 201;
+const descriptionMaxLength = 1001;
+const linkMaxLength = 257;
+const emailMaxLength = 51;
 const CreateClub = () => {
   const { id } = useParams();
   const history = useHistory();
@@ -129,6 +133,7 @@ const CreateClub = () => {
       phoneNumber: values.phoneNumber,
       postIndex: values.postIndex,
       street: values.street,
+      isActive: club.isActive
     };
     if (!club.id) {
       CreateClub(newClub);
@@ -194,18 +199,18 @@ const CreateClub = () => {
             </Upload>
           </Form.Item>
           <Row justify="center">
-            <Col md={11} xs={24}>
+            <Col md={10} xs={24}>
               <Form.Item
                 name="name"
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={club.name}
-                rules={descriptionValidation.Name}
+                rules={descriptionValidation.ClubName}
               >
-                <Input value={club.name} maxLength={51} />
+                <Input value={club.name} maxLength={nameMaxLength} />
               </Form.Item>
             </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
+            <Col md={{ span: 10, offset: 2 }} xs={24}>
               <Form.Item
                 name="description"
                 label="Опис"
@@ -213,10 +218,10 @@ const CreateClub = () => {
                 initialValue={club.description}
                 rules={[descriptionValidation.Description]}
               >
-                <Input value={club.description} maxLength={1001}/>
+                <Input value={club.description} maxLength={descriptionMaxLength}/>
               </Form.Item>
             </Col>
-            <Col md={11} xs={24}>
+            <Col md={10} xs={24}>
               <Form.Item
                 name="clubURL"
                 label="Посилання"
@@ -224,10 +229,10 @@ const CreateClub = () => {
                 initialValue={club.clubURL}
                 rules={[descriptionValidation.Link]}
               >
-                <Input value={club.clubURL} maxLength={257}/>
+                <Input value={club.clubURL} maxLength={linkMaxLength}/>
               </Form.Item>
             </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
+            <Col md={{ span: 10, offset: 2 }} xs={24}>
               <Form.Item
                 name="phoneNumber"
                 label="Номер телефону"
@@ -244,7 +249,7 @@ const CreateClub = () => {
                 </ReactInputMask>
               </Form.Item>
             </Col>
-            <Col md={11} xs={24}>
+            <Col md={10} xs={24}>
               <Form.Item
                 name="email"
                 label="Електронна пошта"
@@ -252,18 +257,18 @@ const CreateClub = () => {
                 initialValue={club.email}
                 rules={descriptionValidation.Email}
               >
-                <Input value={club.email} maxLength={51}/>
+                <Input value={club.email} maxLength={emailMaxLength}/>
               </Form.Item>
             </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
+            <Col md={{ span: 10, offset: 2 }} xs={24}>
             <Form.Item
                 name="street"
-                label="Гасло"
+                label="Вулиця"
                 labelCol={{ span: 24 }}
                 initialValue={club.street}
                 rules={[descriptionValidation.Description]}
               >
-                <Input value={club.description} maxLength={1001}/>
+                <Input value={club.description} maxLength={descriptionMaxLength}/>
                 </Form.Item>
             </Col>
           </Row>

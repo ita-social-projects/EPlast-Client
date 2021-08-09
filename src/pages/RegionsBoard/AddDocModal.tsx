@@ -192,7 +192,7 @@ const AddDocumentModal = (props: Props) => {
             <p className="ant-upload-hint">
               Клікніть або перетягніть файл для завантаження
             </p>
-            {props.document.blobName !== null && <div>{fileUploaded ? fileName : null}</div>}
+            {props.document.blobName !== null && <div style={{wordBreak:'break-word'}}> {fileUploaded ? fileName : null} </div>}
           </Upload.Dragger>
 
           {props.document.blobName ? (

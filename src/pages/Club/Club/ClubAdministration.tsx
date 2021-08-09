@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Skeleton, Spin} from 'antd';
-import {SettingOutlined, CloseOutlined, RollbackOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Layout, Modal, Skeleton} from 'antd';
+import {SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import { getAllAdmins, removeAdministrator} from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
@@ -42,6 +42,20 @@ const ClubAdministration = () => {
         setActiveUserRoles(userRoles);
       setLoading(false);
     };
+
+    function seeDeleteModal(admin: ClubAdmin) {
+      return Modal.confirm({
+        title: "Ви впевнені, що хочете видалити даного користувача із Проводу?",
+        icon: <ExclamationCircleOutlined />,
+        okText: "Так, Видалити",
+        okType: "primary",
+        cancelText: "Скасувати",
+        maskClosable: true,
+        onOk() {
+           removeAdmin(admin);
+        },
+      });
+    }
 
     const removeAdmin = async (admin: ClubAdmin) => {
       await removeAdministrator(admin.id);
@@ -103,7 +117,7 @@ const ClubAdministration = () => {
                     canEdit && (!activeUserRoles.includes(Roles.KurinHeadDeputy) || member.adminType.adminTypeName !== Roles.KurinHead)
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
-                          <CloseOutlined onClick={() => removeAdmin(member)} />,
+                          <CloseOutlined onClick={() => seeDeleteModal(member)} />,
                         ]
                       : undefined
                   }
@@ -112,7 +126,7 @@ const ClubAdministration = () => {
                     onClick={() =>
                       history.push(`/userpage/main/${member.userId}`)
                     }
-                    className="ClubMember"
+                    className="clubMember"
                   >
                     <div>
                       {photosLoading ? (
@@ -151,6 +165,7 @@ const ClubAdministration = () => {
             visibleModal={visibleModal}
             setVisibleModal={setVisibleModal}
             clubId={+id}
+            clubName={clubName}
             onAdd={onAdd}
           ></AddAdministratorModal>
         ) : null}

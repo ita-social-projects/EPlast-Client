@@ -72,7 +72,7 @@ export const ClubAnnualReportForm = (props: Props) => {
                                             e.keyCode === 188) &&
                                         e.preventDefault()
                                     }
-                                    value={members.length + admins.length}
+                                    value={members.length}
                                 />
                             </Form.Item>
                         </Col>

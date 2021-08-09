@@ -14,6 +14,7 @@ export default class ClubProfile {
   postIndex: string;
   head: ClubAdmin;
   headDeputy: ClubAdmin;
+  isActive: boolean;
 
   constructor() {
     this.id = 0;
@@ -29,5 +30,6 @@ export default class ClubProfile {
     this.postIndex = "";
     this.head = new ClubAdmin();
     this.headDeputy = new ClubAdmin();
+    this.isActive = true;
   }
 }
