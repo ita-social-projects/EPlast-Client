@@ -100,6 +100,7 @@ import{
     [
         {
             required: true,
+            message: emptyInput()
         },
         {
             validator: (_ : object, value : string) => 
