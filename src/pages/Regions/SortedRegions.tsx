@@ -114,7 +114,6 @@ const SortedRegions = ({switcher}: Props) => {
                       <img src={region.logo || undefined} alt="RegionDefault" />
                   )
                 }
-                onClick={() => history.push(`${url}/${region.id}`)}
               >
                   <Card.Meta title={region.regionName} className="titleText" />
               </Card>

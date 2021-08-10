@@ -62,6 +62,7 @@ const Region = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
   const { id } = useParams();
+  const maxMembersDisplayCount = 9;
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [photoStatus, setPhotoStatus] = useState(true);
@@ -182,7 +183,7 @@ const Region = () => {
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
-        membersCount !== 0 || adminsCount !== 0
+        membersCount !== 0 || adminsCount !== 0 || followersCount !== 0
         ? setActiveMemberVisibility(true)
         : ArchiveRegion();
       },
@@ -241,7 +242,7 @@ const Region = () => {
       setMembers(regionResponse.data.cities);
       setActiveMembers(regionResponse.data.cities);
       setMembersCount(regionResponse.data.cities.length);
-      getNineMembers(regionResponse.data.cities, 9);
+      getNineMembers(regionResponse.data.cities, maxMembersDisplayCount);
       setDocuments(regionResponse.data.documents);
       setDocumentsCount(regionResponse.data.documentsCount);
       setPhotosLoading(true);
@@ -431,7 +432,7 @@ const Region = () => {
   };
 
   const getNineMembers = (member: any[], amount: number) => {
-    if (member.length > 6) {
+    if (member.length > maxMembersDisplayCount) {
       for (let i = 0; i < amount; i++) {
         nineMembers[i] = member[i];
       }
@@ -969,7 +970,7 @@ const Region = () => {
           onCancel={handleConfirm}
           footer={null}
         >
-          <CheckActiveCitiesForm cities = {members} admins = {admins} followers = {followers}  onAdd={handleConfirm} />
+          <CheckActiveCitiesForm cities = {activeCities} admins = {admins} followers = {followers}  onAdd={handleConfirm} />
         </Modal>
 
         <RegionDetailDrawer
