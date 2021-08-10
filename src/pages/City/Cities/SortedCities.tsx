@@ -121,7 +121,6 @@ const SortedCities = ( {switcher}: Props) => {
                         <img src={city.logo || undefined} alt="City" />
                     )
                 }
-                onClick={() => history.push(`${url}/${city.id}`)}
               >
                   <Card.Meta title={city.name} className="titleText" />
               </Card>

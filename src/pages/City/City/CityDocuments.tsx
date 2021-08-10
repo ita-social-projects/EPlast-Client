@@ -97,7 +97,10 @@ const CityDocuments = () => {
                           onClick={() => removeDocumentById(document.id)}
                         />                          
                       ]                                                                                                            
-                    : ((activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) 
+                    : activeUserRoles.includes(Roles.CityHead) 
+                    || activeUserRoles.includes(Roles.CityHeadDeputy) 
+                    || ((activeUserRoles.includes(Roles.Supporter) 
+                    || activeUserRoles.includes(Roles.PlastMember)) 
                     && city.name == activeUserCity )
                      
                     ?

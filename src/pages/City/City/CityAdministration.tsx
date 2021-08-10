@@ -2,10 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout, Modal, Skeleton, Spin} from 'antd';
 import {SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
-import { getAllAdmins, removeAdministrator} from "../../../api/citiesApi";
+import { getAllAdmins, removeAdministrator, getCityById, cityNameOfApprovedMember} from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
 import CityAdmin from '../../../models/City/CityAdmin';
+import CityProfile from '../../../models/City/CityProfile';
 import AddAdministratorModal from '../AddAdministratorModal/AddAdministratorModal';
 import moment from "moment";
 import "moment/locale/uk";
@@ -27,9 +28,26 @@ const CityAdministration = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [cityName, setCityName] = useState<string>("");
     const [reload, setReload] = useState<boolean>(false);
+    const [city, setCity] = useState<CityProfile>(new CityProfile());
+    const [activeUserCity, setActiveUserCity] = useState<string>();
+    const [activeUserID, setActiveUserID] = useState<string>();
 
     const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  
+
+    const getCity = async () => {
+    setLoading(true);
+    try {
+      const response = await getCityById(+id);
+      setActiveUserID(userApi.getActiveUserId());
+      const responce1 = await cityNameOfApprovedMember(userApi.getActiveUserId());
+      setCity(response.data);
+      setActiveUserCity(responce1.data);
+      
+    } 
+    finally {
+      setLoading(false);
+    }
+  };  
     const getAdministration = async () => {
       setLoading(true);
       const response = await getAllAdmins(id);
@@ -112,8 +130,9 @@ const CityAdministration = () => {
                   title={`${member.adminType.adminTypeName}`}
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit || (activeUserRoles.includes(Roles.CityHead)|| activeUserRoles.includes(Roles.CityHeadDeputy)) 
-                      && (!activeUserRoles.includes(Roles.CityHead) || member.adminType.adminTypeName !== Roles.CityHeadDeputy)
+                    canEdit 
+                    || ((activeUserRoles.includes(Roles.CityHead) 
+                    || activeUserRoles.includes(Roles.CityHeadDeputy)) &&  city.name == activeUserCity) 
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
                           <CloseOutlined onClick={() => seeDeleteModal(member)} />,

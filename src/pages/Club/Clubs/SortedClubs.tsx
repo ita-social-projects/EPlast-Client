@@ -122,7 +122,6 @@ const SortedClubs = ( {switcher}: Props) => {
                         <img src={club.logo || undefined} alt="Club" />
                     )
                 }
-                onClick={() => history.push(`${url}/${club.id}`)}
                 >
                   {(club.name?.length > nameMaxLength) ?
                     <Tooltip title={club.name}>

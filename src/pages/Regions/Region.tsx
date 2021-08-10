@@ -431,7 +431,7 @@ const Region = () => {
   };
 
   const getNineMembers = (member: any[], amount: number) => {
-    if (member.length > 6) {
+    if (member.length > 9) {
       for (let i = 0; i < amount; i++) {
         nineMembers[i] = member[i];
       }
@@ -709,7 +709,7 @@ const Region = () => {
                 </a>
               </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
-                {members.length !== 0 ? (
+                {nineMembers.length !== 0 ? (
                   nineMembers.map((member) => (
                     <Col
                       className="cityMemberItem"
@@ -974,7 +974,7 @@ const Region = () => {
           onCancel={handleConfirm}
           footer={null}
         >
-          <CheckActiveCitiesForm cities = {members} admins = {admins} followers = {followers}  onAdd={handleConfirm} />
+          <CheckActiveCitiesForm cities = {activeCities} admins = {admins} followers = {followers}  onAdd={handleConfirm} />
         </Modal>
 
         <RegionDetailDrawer
