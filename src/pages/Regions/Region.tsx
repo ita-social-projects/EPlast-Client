@@ -183,7 +183,7 @@ const Region = () => {
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
-        membersCount !== 0 || adminsCount !== 0
+        membersCount !== 0 || adminsCount !== 0 || followersCount !== 0
         ? setActiveMemberVisibility(true)
         : ArchiveRegion();
       },
