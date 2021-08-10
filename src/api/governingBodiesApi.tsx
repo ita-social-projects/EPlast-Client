@@ -164,3 +164,42 @@ export const getUsersPreviousAdministrations = async(UserId:string)=>{
     throw new Error(error);
   })
 }
+
+export const getAllAnnouncements = async () => {
+  return await api
+    .get('GoverningBodies/GetAllAnnouncements')
+    .catch((error) => {
+      throw new Error(error);
+    });
+}
+
+export const addAnnouncement = (text: string) => {
+    return api.post(`GoverningBodies/AddAnnouncement/${text}`, text)
+      .catch(error => {
+        throw new Error(error);
+      });
+}
+
+export const getAnnouncementsById = (id: number) => {
+  return api
+    .get(`GoverningBodies/GetAnnouncement/${id}`, id)
+    .catch((error) => {
+      throw new Error(error);
+    });
+}
+
+export const deleteAnnouncement = async (id: number) => {
+  return api
+    .remove(`GoverningBodies/DeleteAnnouncement/${id}`, id)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const getAllUserId = async () => {
+  return await api
+    .get('GoverningBodies/GetAllUsersId')
+    .catch((error) => {
+      throw new Error(error);
+    });
+}

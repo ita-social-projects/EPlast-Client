@@ -379,7 +379,7 @@ const Sector = () => {
               <Button
                 type="primary"
                 className="governingBodyInfoButton"
-                onClick={() => setVisible(true)}
+                onClick={() => history.push(`/GetAllAnnouncements`)}
               >
                 Більше
               </Button>
