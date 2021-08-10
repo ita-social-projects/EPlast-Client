@@ -41,7 +41,6 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
       setLoadingUserStatus(true);
     };
     fetchData();
-    console.log(users);
   }, []);
 
   const handleCancel = () => {

@@ -30,14 +30,14 @@ const Announcements = () => {
     setLoading(true);
     getAllAnnouncements().then((res) => {
       var announcements: Announcement[] = [];
-      for (var val of res.data) {
+      for (var value of res.data) {
         var ann: Announcement = {
-          id: val.id,
-          text: val.text,
-          date: val.date.substring(0, 10),
-          firstName: val.user.firstName,
-          lastName: val.user.lastName,
-          userId: val.user.userId,
+          id: value.id,
+          text: value.text,
+          date: value.date.substring(0, 10),
+          firstName: value.user.firstName,
+          lastName: value.user.lastName,
+          userId: value.user.userId,
         };
         announcements.push(ann);
       }
@@ -63,14 +63,14 @@ const Announcements = () => {
     setLoading(true);
     await getAllAnnouncements().then((res) => {
       var announcements: Announcement[] = [];
-      for (var val of res.data) {
+      for (var value of res.data) {
         var ann: Announcement = {
-          id: val.id,
-          text: val.text,
-          date: val.date.substring(0, 10),
-          firstName: val.user.firstName,
-          lastName: val.user.lastName,
-          userId: val.user.userId,
+          id: value.id,
+          text: value.text,
+          date: value.date.substring(0, 10),
+          firstName: value.user.firstName,
+          lastName: value.user.lastName,
+          userId: value.user.userId,
         };
         announcements.push(ann);
       }
