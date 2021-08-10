@@ -62,6 +62,7 @@ const Region = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
   const { id } = useParams();
+  const maxMembersDisplayCount = 9;
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [photoStatus, setPhotoStatus] = useState(true);
@@ -241,7 +242,7 @@ const Region = () => {
       setMembers(regionResponse.data.cities);
       setActiveMembers(regionResponse.data.cities);
       setMembersCount(regionResponse.data.cities.length);
-      getNineMembers(regionResponse.data.cities, 9);
+      getNineMembers(regionResponse.data.cities, maxMembersDisplayCount);
       setDocuments(regionResponse.data.documents);
       setDocumentsCount(regionResponse.data.documentsCount);
       setPhotosLoading(true);
@@ -431,7 +432,7 @@ const Region = () => {
   };
 
   const getNineMembers = (member: any[], amount: number) => {
-    if (member.length > 9) {
+    if (member.length > maxMembersDisplayCount) {
       for (let i = 0; i < amount; i++) {
         nineMembers[i] = member[i];
       }
@@ -709,7 +710,7 @@ const Region = () => {
                 </a>
               </Title>
               <Row className="cityItems" justify="center" gutter={[0, 16]}>
-                {nineMembers.length !== 0 ? (
+                {members.length !== 0 ? (
                   nineMembers.map((member) => (
                     <Col
                       className="cityMemberItem"

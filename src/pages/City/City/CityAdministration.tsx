@@ -38,9 +38,9 @@ const CityAdministration = () => {
     setLoading(true);
     try {
       const response = await getCityById(+id);
-      const responce1 = await cityNameOfApprovedMember(userApi.getActiveUserId());
+      const responceCityName = await cityNameOfApprovedMember(userApi.getActiveUserId());
       setCity(response.data);
-      setActiveUserCity(responce1.data);
+      setActiveUserCity(responceCityName.data);
       
     } 
     finally {
