@@ -38,7 +38,6 @@ const CityAdministration = () => {
     setLoading(true);
     try {
       const response = await getCityById(+id);
-      setActiveUserID(userApi.getActiveUserId());
       const responce1 = await cityNameOfApprovedMember(userApi.getActiveUserId());
       setCity(response.data);
       setActiveUserCity(responce1.data);
@@ -113,6 +112,7 @@ const CityAdministration = () => {
 
     useEffect(() => {
         getAdministration();
+        getCity();
     }, [reload]);
 
     return (
