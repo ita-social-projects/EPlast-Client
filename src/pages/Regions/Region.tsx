@@ -156,14 +156,14 @@ const Region = () => {
       await createNotification(ad.userId,
         `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
     });
-    notificationLogic("success", successfulEditAction("округу"));
+    notificationLogic("success", successfulEditAction("Округу"));
     history.push("/regions");
   }
   };
 
   const deleteRegion = async () => {
     await removeRegion(region.id);
-    notificationLogic("success", successfulDeleteAction("округу"));
+    notificationLogic("success", successfulDeleteAction("Округу"));
 
     history.push("/regions");
   };
@@ -931,12 +931,7 @@ const Region = () => {
                 <Button
                   type="primary"
                   className="cityInfoButton"
-                  onClick={() => activeUserRoles.includes(Roles.Admin) 
-                    || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
-                        && isActiveUserRegionAdmin) 
-                    ? history.push(`/regions/followers/${region.id}`) 
-                    : undefined
-                  }
+                  onClick={() => history.push(`/regions/followers/${region.id}`)}
                 >
                 Більше
                 </Button>
