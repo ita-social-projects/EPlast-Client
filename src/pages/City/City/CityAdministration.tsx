@@ -34,28 +34,24 @@ const CityAdministration = () => {
 
     const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
-    const getCity = async () => {
-    setLoading(true);
-    try {
+    const fetchData = async () => {
+      try{
+      setLoading(true);
+      const responseAdmins = await getAllAdmins(id);
       const responseCity = await getCityById(+id);
       const responseCityName = await cityNameOfApprovedMember(userApi.getActiveUserId());
       setCity(responseCity.data);
       setActiveUserCity(responseCityName.data);
-    } 
-    finally {
-      setLoading(false);
-    }
-  };  
-    const getAdministration = async () => {
-      setLoading(true);
-      const response = await getAllAdmins(id);
         setPhotosLoading(true);
-        setPhotos([...response.data.administration, response.data.head, response.data.headDeputy].filter(a => a != null));
-        setAdministration([...response.data.administration, response.data.head, response.data.headDeputy].filter(a => a != null));
-        setCanEdit(response.data.canEdit);
-        setCityName(response.data.name);
+        setPhotos([...responseAdmins.data.administration, responseAdmins.data.head, responseAdmins.data.headDeputy].filter(a => a != null));
+        setAdministration([...responseAdmins.data.administration, responseAdmins.data.head, responseAdmins.data.headDeputy].filter(a => a != null));
+        setCanEdit(responseAdmins.data.canEdit);
+        setCityName(responseAdmins.data.name);
         setActiveUserRoles(userApi.getActiveUserRoles());
-      setLoading(false);
+      } finally {
+        setLoading(false);
+      }
+      
     };
     
     function seeDeleteModal(admin: CityAdmin) {
@@ -110,8 +106,7 @@ const CityAdministration = () => {
     };
 
     useEffect(() => {
-        getAdministration();
-        getCity();
+        fetchData();
     }, [reload]);
 
     return (
