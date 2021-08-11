@@ -28,8 +28,11 @@ const DecisionTable = () => {
   const [userRole, setUser] = useState<string[]>();
   const [canEdit, setCanEdit] = useState(false);
   const [regionAdm, setRegionAdm] = useState(false);
+  const [regionAdmDeputy, setRegionAdmDeputy] = useState(false);
   const [cityAdm, setCityAdm] = useState(false);
+  const [cityAdmDeputy, setCityAdmDeputy] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
+  const [clubAdmDeputy, setClubAdmDeputy] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);
@@ -92,8 +95,11 @@ const DecisionTable = () => {
       setUser(roles);
       setCanEdit(roles.includes(Roles.Admin));
       setRegionAdm(roles.includes(Roles.OkrugaHead));
+      setRegionAdmDeputy(roles.includes(Roles.OkrugaHeadDeputy));
       setCityAdm(roles.includes(Roles.CityHead));
+      setCityAdmDeputy(roles.includes(Roles.CityHeadDeputy));
       setClubAdm(roles.includes(Roles.KurinHead));
+      setClubAdmDeputy(roles.includes(Roles.KurinHeadDeputy));
     };
     fetchData();
   }, [searchedData, page, pageSize]);
@@ -133,7 +139,8 @@ const DecisionTable = () => {
         <h1 className={classes.titleTable}>Рішення керівних органів</h1>
         <>
           <div className={classes.searchContainer}>
-            {(canEdit == true || regionAdm == true || cityAdm == true || clubAdm == true) ? (
+            {(canEdit == true || regionAdm == true || regionAdmDeputy == true || cityAdm == true || 
+            cityAdmDeputy == true || clubAdm == true || clubAdmDeputy == true ) ? (
               <Button type="primary" onClick={showModal}>
                 Додати рішення
               </Button>

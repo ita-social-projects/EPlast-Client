@@ -224,7 +224,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             label="Подання від"
             labelCol={{ span: 24 }}
             name="reporter"
-            rules={[
+            rules={[ { required: true, message: emptyInput() },
               {
                 max: 100,
                 message: maxLength(100),
