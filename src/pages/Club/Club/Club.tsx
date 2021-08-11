@@ -38,7 +38,7 @@ import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
-const mottoMaxLength = 38;
+const sloganMaxLength = 38;
 
 const Club = () => {
   const history = useHistory();
@@ -528,10 +528,10 @@ const Club = () => {
                 {club.clubURL || club.email || club.phoneNumber ? (
                   <div>
                     {club.street ? (
-                      (club.street?.length > mottoMaxLength) ?
+                      (club.street?.length > sloganMaxLength) ?
                         <Tooltip title={club.street}>
                           <Paragraph>
-                            <b>Гасло:</b> {club.street.slice(0,mottoMaxLength-1) + "..."}
+                            <b>Гасло:</b> {club.street.slice(0, sloganMaxLength - 1) + "..."}
                           </Paragraph>
                         </Tooltip>
                       : <Paragraph>
@@ -553,10 +553,10 @@ const Club = () => {
                       </Paragraph>
                     ) : null}
                     {club.email ? (
-                      (club.email?.length > mottoMaxLength) ?
+                      (club.email?.length > sloganMaxLength) ?
                         <Tooltip title={club.email}>
                           <Paragraph>
-                          <b>Пошта:</b> {club.email.slice(0,mottoMaxLength-1) + "..."}
+                          <b>Пошта:</b> {club.email.slice(0, sloganMaxLength - 1) + "..."}
                           </Paragraph>
                         </Tooltip>
                       : <Paragraph>
