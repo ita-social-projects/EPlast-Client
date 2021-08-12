@@ -33,8 +33,7 @@ export const getGoverningBodiesByPage = async (
   pageSize: number,
   governingBodyName: string | null = null
 ) => {
-  return api
-    .get(`GoverningBodies/Profiles/${page}`, {
+  return api.get(`GoverningBodies/Profiles/${page}`, {
       page,
       pageSize,
       governingBodyName,
@@ -45,24 +44,21 @@ export const getGoverningBodiesByPage = async (
 };
 
 export const createGoverningBody = async (data: any) => {
-  return api
-    .post("GoverningBodies/CreateGoverningBody", data)
+  return api.post("GoverningBodies/CreateGoverningBody", data)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const updateGoverningBody = async (id: number, data: any) => {
-  return api
-    .put(`GoverningBodies/EditGoverningBody/${id}`, data)
+  return api.put(`GoverningBodies/EditGoverningBody/${id}`, data)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const removeGoverningBody = async (id: number) => {
-  return api
-    .remove(`GoverningBodies/RemoveGoverningBody/${id}`, id)
+  return api.remove(`GoverningBodies/RemoveGoverningBody/${id}`, id)
     .catch((error) => {
       throw new Error(error);
     });
@@ -87,40 +83,35 @@ export const getAllDocuments = async (id: number) => {
 };
 
 export const addAdministrator = async (governingBodyId: number, data: any) => {
-  return api
-    .post(`GoverningBodies/AddAdmin/${governingBodyId}`, data)
+  return api.post(`GoverningBodies/AddAdmin/${governingBodyId}`, data)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const removeAdministrator = async (adminId: number) => {
-  return api
-    .put(`GoverningBodies/RemoveAdmin/${adminId}`, adminId)
+  return api.put(`GoverningBodies/RemoveAdmin/${adminId}`, adminId)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const editAdministrator = async (adminId: number, data: any) => {
-  return api
-    .put(`GoverningBodies/EditAdmin/${adminId}`, data)
+  return api.put(`GoverningBodies/EditAdmin/${adminId}`, data)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const addDocument = async (governingBodyId: number, data: any) => {
-  return api
-    .post(`GoverningBodies/AddDocument/${governingBodyId}`, data)
+  return api.post(`GoverningBodies/AddDocument/${governingBodyId}`, data)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const removeDocument = async (documentId: number) => {
-  return api
-    .remove(`GoverningBodies/RemoveDocument/${documentId}`, documentId)
+  return api.remove(`GoverningBodies/RemoveDocument/${documentId}`, documentId)
     .catch((error) => {
       throw new Error(error);
     });
@@ -166,8 +157,7 @@ export const getUsersPreviousAdministrations = async(UserId:string)=>{
 }
 
 export const getAllAnnouncements = async () => {
-  return await api
-    .get('GoverningBodies/GetAllAnnouncements')
+  return await api.get('GoverningBodies/GetAllAnnouncements')
     .catch((error) => {
       throw new Error(error);
     });
@@ -181,24 +171,21 @@ export const addAnnouncement = (text: string) => {
 }
 
 export const getAnnouncementsById = (id: number) => {
-  return api
-    .get(`GoverningBodies/GetAnnouncement/${id}`, id)
+  return api.get(`GoverningBodies/GetAnnouncement/${id}`, id)
     .catch((error) => {
       throw new Error(error);
     });
 }
 
 export const deleteAnnouncement = async (id: number) => {
-  return api
-    .remove(`GoverningBodies/DeleteAnnouncement/${id}`, id)
+  return api.remove(`GoverningBodies/DeleteAnnouncement/${id}`, id)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const getAllUserId = async () => {
-  return await api
-    .get('GoverningBodies/GetAllUsersId')
+  return await api.get('GoverningBodies/GetAllUsersId')
     .catch((error) => {
       throw new Error(error);
     });
