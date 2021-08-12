@@ -195,7 +195,12 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             label="Ім'я"
             name="user"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              }
+            ]}
           >
             <Select
               className={formclasses.selectField}
@@ -224,7 +229,11 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             label="Подання від"
             labelCol={{ span: 24 }}
             name="reporter"
-            rules={[ { required: true, message: emptyInput() },
+            rules={[ 
+              { 
+                required: true, 
+                message: emptyInput() 
+              },
               {
                 max: 100,
                 message: maxLength(100),
@@ -246,7 +255,12 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             name="date"
             label="Дата затвердження"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              }
+            ]}
           >
             <DatePicker
               format={dateFormat}
@@ -266,10 +280,13 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             labelCol={{ span: 24 }}
             name="reason"
             rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              },
               {
-                required: true,
                 max: 500,
-                message: "Це поле має бути заповненим",
+                message: maxLength(500),
               },
             ]}
           >

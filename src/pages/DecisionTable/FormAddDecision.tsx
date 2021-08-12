@@ -37,12 +37,15 @@ import {
   fileIsTooBig,
   maxLength,
   successfulDeleteAction,
+  onlyWhiteSpaces,
 } from "../../components/Notifications/Messages"
 
 type FormAddDecisionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: () => void;
 };
+
+const notOnlyWhiteSpaces = /^\s*\S.*$/;
 const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
   const { setVisibleModal, onAdd } = props;
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -208,6 +211,10 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
                 max: 60,
                 message: maxLength(60)
               },
+              { 
+                pattern: notOnlyWhiteSpaces, 
+                message:onlyWhiteSpaces() 
+              },
             ]}
           >
             <Input className={formclasses.inputField} />
@@ -258,10 +265,10 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
               },
             ]}
           >
-            
             <AutoComplete 
             filterOption={true}
             className={formclasses.selectField}
+            getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
               {data?.decisionTargets.slice(0, 9).map((dt) => (
                 <Select.Option key={dt.id} value={dt.targetName} >

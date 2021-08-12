@@ -93,6 +93,10 @@ const FormEditDecision = ({
                     required: true,
                     message: emptyInput(),
                   },
+                  {
+                    max: 1000,
+                    message: maxLength(1000)
+                  },
                 ]}
               >
                 <Input.TextArea className={formclasses.input} allowClear />

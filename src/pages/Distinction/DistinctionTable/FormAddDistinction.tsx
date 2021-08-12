@@ -188,7 +188,12 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Ім'я"
             name="user"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              }
+            ]}
           >
             <Select
               className={formclasses.selectField}
@@ -217,7 +222,11 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Подання від"
             labelCol={{ span: 24 }}
             name="reporter"
-            rules={[ { required: true, message: emptyInput() },
+            rules={[ 
+              { 
+                required: true, 
+                message: emptyInput() 
+              },
               {
                 max: 100,
                 message: maxLength(100),
@@ -239,7 +248,12 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             name="date"
             label="Дата затвердження"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: incorrectData }]}
+            rules={[
+              { 
+                required: true, 
+                message: incorrectData 
+              }
+            ]}
           >
             <DatePicker
               format={dateFormat}
@@ -257,7 +271,11 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Обгрунтування"
             labelCol={{ span: 24 }}
             name="reason"
-            rules={[ { required: true, message: emptyInput() },
+            rules={[ 
+              { 
+                required: true, 
+                message: emptyInput() 
+              },
               {
                 max: 1000,
                 message: maxLength(1000),
