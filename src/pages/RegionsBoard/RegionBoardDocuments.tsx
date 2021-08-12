@@ -41,7 +41,6 @@ const RegionBoardDocuments = () => {
 
   const getUserAccesses = async () => {
     setLoading(true);
-    debugger;
     let user: any = jwt(AuthStore.getToken() as string);
     await getUserAccess(user.nameid).then(
       response => {
@@ -53,7 +52,6 @@ const RegionBoardDocuments = () => {
 
   const setRegionDocs = async () => {
     try {
-      debugger;
       setLoading(true);
       const response = await getDocs(id);
       setDocuments(response.data);

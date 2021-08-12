@@ -51,9 +51,9 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const newNotification = async () => {
     await NotificationBoxApi.createNotifications(
       users,
-      "Додане нове оголошення",
+      "Додане нове оголошення.",
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/distinctions`,
+      `/GetAllAnnouncements`,
       `Переглянути`
     );
   };
