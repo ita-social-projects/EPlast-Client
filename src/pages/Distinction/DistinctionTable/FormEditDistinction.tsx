@@ -233,7 +233,10 @@ const FormEditDistinction = ({
                   distinction.user.firstName + " " + distinction.user.lastName
                 }
                 rules={[
-                  { required: true, message: emptyInput() },
+                  { 
+                    required: true, 
+                    message: emptyInput() 
+                  },
                 ]}
               >
                 <Select
@@ -265,6 +268,10 @@ const FormEditDistinction = ({
                 name="reporter"
                 initialValue={distinction.reporter}
                 rules={[
+                  { 
+                    required: true, 
+                    message: emptyInput() 
+                  },
                   {
                     max: 100,
                     message: maxLength(100),
@@ -288,7 +295,10 @@ const FormEditDistinction = ({
                 labelCol={{ span: 24 }}
                 initialValue={moment(distinction.date)}
                 rules={[
-                  { required: true, message: emptyInput() },
+                  { 
+                    required: true, 
+                    message: emptyInput() 
+                  },
                 ]}
               >
                 <DatePicker
@@ -307,6 +317,10 @@ const FormEditDistinction = ({
                 name="reason"
                 initialValue={distinction.reason}
                 rules={[
+                  { 
+                    required: true, 
+                    message: emptyInput() 
+                  },
                   {
                     max: 1000,
                     message: maxLength(1000),
