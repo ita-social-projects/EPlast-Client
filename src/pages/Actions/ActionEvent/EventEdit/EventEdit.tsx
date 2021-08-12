@@ -290,16 +290,16 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
                             message: emptyInput() 
                         },
                         {
-                        validator: (_ : object, value: number) => 
-                            value > 100
-                                ? Promise.reject(maxNumber(100)) 
-                                : Promise.resolve()
+                            validator: (_ : object, value: number) => 
+                                value > 100
+                                    ? Promise.reject(maxNumber(100)) 
+                                    : Promise.resolve()
                         },
                         {
-                        validator: (_ : object, value: number) => 
-                            value < 2
-                                ? Promise.reject(minNumber(2)) 
-                                : Promise.resolve()
+                            validator: (_ : object, value: number) => 
+                                value < 2
+                                    ? Promise.reject(minNumber(2)) 
+                                    : Promise.resolve()
                         }
                     ]}
                 >
