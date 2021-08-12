@@ -285,8 +285,10 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
                 <h3>Приблизна кількість учасників </h3>
                 < Form.Item name="NumberOfPartisipants"
                     rules={[
-                        { required: true, message: emptyInput() },
-                        
+                        { 
+                            required: true, 
+                            message: emptyInput() 
+                        },
                         {
                         validator: (_ : object, value: number) => 
                             value > 100

@@ -225,8 +225,10 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       < div className={classes.row} >
         < Form.Item label ="Приблизна кількість учасників" name="NumberOfPartisipants" className={classes.formItem} 
           rules={[
-            { required: true, message: emptyInput() },
-            
+            { 
+              required: true, 
+              message: emptyInput() 
+            },
             {
               validator: (_ : object, value: number) => 
                   value > 100
@@ -239,7 +241,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
                       ? Promise.reject(minNumber(2)) 
                       : Promise.resolve()
             }
-            ]}
+          ]}
           >
           <Input className={classes.input} type="number" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() } min="2" max="100"/>
         </Form.Item>
