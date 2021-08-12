@@ -16,7 +16,9 @@ import{
     tryAgain, 
     emptyInput, 
     maxLength, 
-    isNotChosen
+    isNotChosen,
+    maxNumber,
+    minNumber
 } from "../../../../components/Notifications/Messages"
 moment.locale('uk-ua');
 
@@ -281,7 +283,24 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
             </div>
             < div className={classes.row} >
                 <h3>Приблизна кількість учасників </h3>
-                < Form.Item name="NumberOfPartisipants">
+                < Form.Item name="NumberOfPartisipants"
+                    rules={[
+                        { required: true, message: emptyInput() },
+                        
+                        {
+                        validator: (_ : object, value: number) => 
+                            value > 100
+                                ? Promise.reject(maxNumber(100)) 
+                                : Promise.resolve()
+                        },
+                        {
+                        validator: (_ : object, value: number) => 
+                            value < 2
+                                ? Promise.reject(minNumber(2)) 
+                                : Promise.resolve()
+                        }
+                    ]}
+                >
                     <Input className={classes.input} type="number"  onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }  min="2" max="100"/>
                 </Form.Item>
             </ div>

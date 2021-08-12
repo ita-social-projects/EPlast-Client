@@ -14,7 +14,9 @@ import{
   tryAgain, 
   emptyInput, 
   maxLength, 
-  isNotChosen
+  isNotChosen,
+  maxNumber,
+  minNumber
 } from "../../../../components/Notifications/Messages"
 
 const classes = require('./EventCreate.module.css');
@@ -221,8 +223,25 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         </Form.Item>
       </div>
       < div className={classes.row} >
-        < Form.Item label ="Приблизна кількість учасників" name="NumberOfPartisipants" className={classes.formItem} rules={[{ required: true, message: emptyInput() }, { max: 6, message: maxLength(6)}]} >
-          <Input className={classes.input} type="number" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() } min="1" max="999999"/>
+        < Form.Item label ="Приблизна кількість учасників" name="NumberOfPartisipants" className={classes.formItem} 
+          rules={[
+            { required: true, message: emptyInput() },
+            
+            {
+              validator: (_ : object, value: number) => 
+                  value > 100
+                      ? Promise.reject(maxNumber(100)) 
+                      : Promise.resolve()
+            },
+            {
+              validator: (_ : object, value: number) => 
+                  value < 2
+                      ? Promise.reject(minNumber(2)) 
+                      : Promise.resolve()
+            }
+            ]}
+          >
+          <Input className={classes.input} type="number" onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() } min="2" max="100"/>
         </Form.Item>
       </ div>
       < div className={classes.row} >
