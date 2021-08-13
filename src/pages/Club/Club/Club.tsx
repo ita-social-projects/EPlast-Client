@@ -527,15 +527,15 @@ const Club = () => {
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
                 {club.clubURL || club.email || club.phoneNumber ? (
                   <div>
-                    {club.street ? (
-                      (club.street?.length > sloganMaxLength) ?
-                        <Tooltip title={club.street}>
+                    {club.slogan ? (
+                      (club.slogan?.length > sloganMaxLength) ?
+                        <Tooltip title={club.slogan}>
                           <Paragraph>
-                            <b>Гасло:</b> {club.street.slice(0, sloganMaxLength - 1) + "..."}
+                            <b>Гасло:</b> {club.slogan.slice(0, sloganMaxLength - 1) + "..."}
                           </Paragraph>
                         </Tooltip>
                       : <Paragraph>
-                          <b>Гасло:</b> {club.street}
+                          <b>Гасло:</b> {club.slogan}
                         </Paragraph>
                     ) : null}
                     {club.clubURL ? (
