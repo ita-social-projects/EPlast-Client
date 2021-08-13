@@ -27,6 +27,11 @@ import{
             message: maxLength(200),
         }
     ],
+    Slogan:
+    {
+        max: 500,
+        message: maxLength(500),
+    },
     Description:
     {
         max: 1000,

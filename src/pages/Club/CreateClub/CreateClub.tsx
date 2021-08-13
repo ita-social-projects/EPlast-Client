@@ -44,6 +44,7 @@ import{
 
 const nameMaxLength = 201;
 const descriptionMaxLength = 1001;
+const sloganMaxLength = 500;
 const linkMaxLength = 257;
 const emailMaxLength = 51;
 const CreateClub = () => {
@@ -125,14 +126,11 @@ const CreateClub = () => {
       email: values.email,
       head: club.head,
       headDeputy: club.headDeputy,
-      houseNumber: values.houseNumber,
       id: club.id,
       logo: club.logo?.length === 0 ? null : club.logo,
-      officeNumber: values.officeNumber,
       name: values.name,
       phoneNumber: values.phoneNumber,
-      postIndex: values.postIndex,
-      street: values.street,
+      slogan: values.slogan,
       isActive: club.isActive
     };
     if (!club.id) {
@@ -261,15 +259,15 @@ const CreateClub = () => {
               </Form.Item>
             </Col>
             <Col md={{ span: 10, offset: 2 }} xs={24}>
-            <Form.Item
-                name="street"
-                label="Вулиця"
-                labelCol={{ span: 24 }}
-                initialValue={club.street}
-                rules={[descriptionValidation.Description]}
+              <Form.Item
+                  name="slogan"
+                  label="Гасло"
+                  labelCol={{ span: 24 }}
+                  initialValue={club.slogan}
+                  rules={[descriptionValidation.Slogan]}
               >
-                <Input value={club.description} maxLength={descriptionMaxLength}/>
-                </Form.Item>
+                <Input value={club.slogan} maxLength={sloganMaxLength}/>
+              </Form.Item>
             </Col>
           </Row>
           <Row className="clubButtons" justify="center" gutter={[0, 6]}>

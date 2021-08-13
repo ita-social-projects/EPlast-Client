@@ -82,16 +82,16 @@ const ClubDetailDrawer = (props: Props) => {
           </Col>
           <Col md={12} xs={24}>
           <Form.Item
-              name="street"
+              name="slogan"
               label="Гасло"
               labelCol={{ span: 24 }}
               initialValue={
-                props.Club.street?.length > 0 ? props.Club.street : "---"
+                props.Club.slogan?.length > 0 ? props.Club.slogan : "---"
               }
             >
               <Input
                 value={
-                  props.Club.street?.length > 0 ? props.Club.street : "---"
+                  props.Club.slogan?.length > 0 ? props.Club.slogan : "---"
                 }
                 disabled
               />
