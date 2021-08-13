@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Modal, Skeleton} from 'antd';
+import {Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip} from 'antd';
 import {CloseOutlined, ExclamationCircleOutlined, PlusOutlined, RollbackOutlined} from '@ant-design/icons';
 import {getAllFollowers, removeFollower, toggleMemberStatus} from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
@@ -11,6 +11,8 @@ import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import { Roles } from '../../../models/Roles/Roles';
 
+const nameMaxLength = 11;
+const namesMaxLength = 5;
 const CityFollowers = () => {
     const {id} = useParams();
     const history = useHistory();
@@ -143,7 +145,15 @@ const CityFollowers = () => {
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={`${follower.user.firstName} ${follower.user.lastName}`}
+                      title={
+                        (follower.user.firstName?.length > nameMaxLength) && (follower.user.lastName?.length > nameMaxLength) ?
+                          <Tooltip title={follower.user.firstName + " " + follower.user.lastName}>
+                            <span> 
+                              {follower.user.firstName + " " + follower.user.lastName.slice(0,namesMaxLength) + "..."} 
+                            </span>
+                          </Tooltip>
+                        : `${follower.user.firstName} ${follower.user.lastName}`
+                      }
                     />
                   </div>
                 </Card>

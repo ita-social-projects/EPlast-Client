@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal, Row, Skeleton, Spin, } from "antd";
+import { Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip, } from "antd";
 import { SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
@@ -16,6 +16,8 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import { Roles } from "../../../models/Roles/Roles";
 moment.locale("uk-ua");
 
+const nameMaxLength = 11;
+const namesMaxLength = 5;
 const CityMembers = () => {
   const {id} = useParams();
   const history = useHistory();
@@ -169,7 +171,15 @@ const CityMembers = () => {
                 )}
                 <Card.Meta
                   className="detailsMeta"
-                  title={`${member.user.firstName} ${member.user.lastName}`}
+                  title={
+                    (member.user.firstName?.length > nameMaxLength) && (member.user.lastName?.length > nameMaxLength) ?
+                      <Tooltip title={member.user.firstName + " " + member.user.lastName}>
+                        <span> 
+                          {member.user.firstName + " " + member.user.lastName.slice(0, namesMaxLength) + "..."} 
+                        </span>
+                      </Tooltip>
+                    : `${member.user.firstName} ${member.user.lastName}`
+                  }
                 />
               </div>
             </Card>
