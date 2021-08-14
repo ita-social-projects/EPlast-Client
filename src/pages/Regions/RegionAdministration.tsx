@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal, Skeleton, Spin } from "antd";
+import { Avatar, Button, Card, Layout, Modal, Skeleton, Spin, Tooltip } from "antd";
 import {
   SettingOutlined,
   CloseOutlined,
@@ -21,6 +21,7 @@ import { Roles } from "../../models/Roles/Roles";
 import RegionAdmin from "../../models/Region/RegionAdmin";
 moment.locale("uk-ua");
 
+const adminTypeNameMaxLength = 22;
 const RegionAdministration = () => {
   const { id } = useParams();
   const history = useHistory();
@@ -134,7 +135,15 @@ const RegionAdministration = () => {
               <Card
                 key={member.id}
                 className="detailsCard"
-                title={`${member.adminType.adminTypeName}`}
+                title={
+                  (member.adminType.adminTypeName?.length > adminTypeNameMaxLength) ?
+                    <Tooltip title={member.adminType.adminTypeName}>
+                      <span> 
+                        {member.adminType.adminTypeName.slice(0, adminTypeNameMaxLength - 1) + "..."} 
+                      </span>
+                    </Tooltip>
+                  : `${member.adminType.adminTypeName}`
+                }
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}          
                 actions={
                   activeUserRoles.includes(Roles.Admin) || (activeUserRoles.includes(Roles.OkrugaHead) && isActiveUserRegionAdmin)

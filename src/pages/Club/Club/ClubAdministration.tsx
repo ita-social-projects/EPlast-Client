@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Modal, Skeleton} from 'antd';
+import {Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip} from 'antd';
 import {SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import { getAllAdmins, removeAdministrator} from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
@@ -15,6 +15,7 @@ import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import { Roles } from '../../../models/Roles/Roles';
 moment.locale("uk-ua");
 
+const adminTypeNameMaxLength = 22;
 const ClubAdministration = () => {
     const {id} = useParams();
     const history = useHistory();
@@ -111,7 +112,15 @@ const ClubAdministration = () => {
                 <Card
                   key={member.id}
                   className="detailsCard"
-                  title={`${member.adminType.adminTypeName}`}
+                  title={
+                    (member.adminType.adminTypeName?.length > adminTypeNameMaxLength) ?
+                      <Tooltip title={member.adminType.adminTypeName}>
+                        <span> 
+                          {member.adminType.adminTypeName.slice(0, adminTypeNameMaxLength - 1) + "..."} 
+                        </span>
+                      </Tooltip>
+                    : `${member.adminType.adminTypeName}`
+                  }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
                     canEdit && (!activeUserRoles.includes(Roles.KurinHeadDeputy) || member.adminType.adminTypeName !== Roles.KurinHead)
