@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Modal, Skeleton, Spin} from 'antd';
+import {Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip} from 'antd';
 import {SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import { getAllAdmins, removeAdministrator, getCityById, cityNameOfApprovedMember} from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
@@ -16,6 +16,7 @@ import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import { Roles } from '../../../models/Roles/Roles';
 moment.locale("uk-ua");
 
+const adminTypeNameMaxLength = 23;
 const CityAdministration = () => {
     const {id} = useParams();
     const history = useHistory();
@@ -121,7 +122,15 @@ const CityAdministration = () => {
                 <Card
                   key={member.id}
                   className="detailsCard"
-                  title={`${member.adminType.adminTypeName}`}
+                  title={
+                    (member.adminType.adminTypeName?.length > adminTypeNameMaxLength) ?
+                      <Tooltip title={member.adminType.adminTypeName}>
+                        <span> 
+                          {member.adminType.adminTypeName.slice(0, adminTypeNameMaxLength - 1) + "..."} 
+                        </span>
+                      </Tooltip>
+                    :`${member.adminType.adminTypeName}`
+                  }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
                     canEdit 
