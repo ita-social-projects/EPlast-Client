@@ -13,7 +13,7 @@ import {
   MinusOutlined, 
 } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getClubById, getLogo, removeClub,unArchiveClub, archiveClub,  toggleMemberStatus, clubNameOfApprovedMember, removeAdministrator, removeFollower } from "../../../api/clubsApi";
+import { addFollower, getClubById, getLogo, removeClub,unArchiveClub, archiveClub,  toggleMemberStatus, clubNameOfApprovedMember, removeFollower } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
 import {
@@ -33,11 +33,12 @@ import Spinner from "../../Spinner/Spinner";
 import ClubDetailDrawer from "../ClubDetailDrawer/ClubDetailDrawer";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import notificationLogic from "../../../components/Notifications/Notification";
-import { successfulDeleteAction, fileIsAdded, successfulEditAction } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, successfulEditAction } from "../../../components/Notifications/Messages";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
+const sloganMaxLength = 38;
 
 const Club = () => {
   const history = useHistory();
@@ -450,13 +451,10 @@ const Club = () => {
                   {club.description.length != 0 ? (
                     <Paragraph>
                       <b>{club.description}</b>
-
                     </Paragraph>
-
                   ) : (
                       <Paragraph>
                         <b>Ще немає опису куреня.</b>
-
                       </Paragraph>
                     )}
                 </div>
@@ -522,10 +520,16 @@ const Club = () => {
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
                 {club.clubURL || club.email || club.phoneNumber ? (
                   <div>
-                    {club.street ? (
-                      <Paragraph>
-                        <b>Гасло:</b> {club.street}
-                      </Paragraph>
+                    {club.slogan ? (
+                      (club.slogan?.length > sloganMaxLength) ?
+                        <Tooltip title={club.slogan}>
+                          <Paragraph>
+                            <b>Гасло:</b> {club.slogan.slice(0, sloganMaxLength - 1) + "..."}
+                          </Paragraph>
+                        </Tooltip>
+                      : <Paragraph>
+                          <b>Гасло:</b> {club.slogan}
+                        </Paragraph>
                     ) : null}
                     {club.clubURL ? (
                       <Paragraph
@@ -542,9 +546,15 @@ const Club = () => {
                       </Paragraph>
                     ) : null}
                     {club.email ? (
-                      <Paragraph>
-                        <b>Пошта:</b> {club.email}
-                      </Paragraph>
+                      (club.email?.length > sloganMaxLength) ?
+                        <Tooltip title={club.email}>
+                          <Paragraph>
+                          <b>Пошта:</b> {club.email.slice(0, sloganMaxLength - 1) + "..."}
+                          </Paragraph>
+                        </Tooltip>
+                      : <Paragraph>
+                          <b>Пошта:</b> {club.email}
+                        </Paragraph>
                     ) : null}
                   </div>
                 ) : (

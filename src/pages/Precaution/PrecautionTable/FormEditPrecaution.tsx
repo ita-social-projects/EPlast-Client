@@ -242,7 +242,10 @@ const FormEditPrecaution = ({
                   Precaution.user.firstName + " " + Precaution.user.lastName
                 }
                 rules={[
-                  { required: true, message: emptyInput() },
+                  { 
+                    required: true, 
+                    message: emptyInput() 
+                  },
                 ]}
               >
                 <Select
@@ -274,6 +277,10 @@ const FormEditPrecaution = ({
                 name="reporter"
                 initialValue={Precaution.reporter}
                 rules={[
+                  { 
+                    required: true, 
+                    message: emptyInput() 
+                  },
                   {
                     max: 100,
                     message: maxLength(100),
@@ -297,7 +304,10 @@ const FormEditPrecaution = ({
                 labelCol={{ span: 24 }}
                 initialValue={moment(Precaution.date)}
                 rules={[
-                  { required: true, message: emptyInput() },
+                  { 
+                    required: true, 
+                    message: emptyInput() 
+                  },
                 ]}
               >
                 <DatePicker
