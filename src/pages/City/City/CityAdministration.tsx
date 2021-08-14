@@ -28,29 +28,28 @@ const CityAdministration = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [cityName, setCityName] = useState<string>("");
     const [reload, setReload] = useState<boolean>(false);
-    const [city, setCity] = useState<CityProfile>(new CityProfile());
-    const [activeUserCity, setActiveUserCity] = useState<string>();
-    const [activeUserID, setActiveUserID] = useState<string>();
-
+    const [isActiveUserCityAdmin, setIsActiveUserCityAdmin] = useState<boolean>(false);
     const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
+    const setIsCityAdmin = (admin: any[], userId: string) => {
+      for (let i = 0; i < admin.length; i++){
+        if (admin[i].userId == userId){
+          setIsActiveUserCityAdmin(true);
+        }
+      }
+    }
+
     const fetchData = async () => {
-      try{
-      setLoading(true);
-      const responseAdmins = await getAllAdmins(id);
-      const responseCity = await getCityById(+id);
-      const responseCityName = await cityNameOfApprovedMember(userApi.getActiveUserId());
-      setCity(responseCity.data);
-      setActiveUserCity(responseCityName.data);
+        setLoading(true);
+        const responseAdmins = await getAllAdmins(id);
+        setIsCityAdmin([...responseAdmins.data.administration], userApi.getActiveUserId())
         setPhotosLoading(true);
         setPhotos([...responseAdmins.data.administration, responseAdmins.data.head, responseAdmins.data.headDeputy].filter(a => a != null));
         setAdministration([...responseAdmins.data.administration, responseAdmins.data.head, responseAdmins.data.headDeputy].filter(a => a != null));
         setCanEdit(responseAdmins.data.canEdit);
         setCityName(responseAdmins.data.name);
         setActiveUserRoles(userApi.getActiveUserRoles());
-      } finally {
         setLoading(false);
-      }
       
     };
     
@@ -126,7 +125,7 @@ const CityAdministration = () => {
                   actions={
                     canEdit 
                     || ((activeUserRoles.includes(Roles.CityHead) 
-                    || activeUserRoles.includes(Roles.CityHeadDeputy)) &&  city.name == activeUserCity) 
+                    || activeUserRoles.includes(Roles.CityHeadDeputy)) &&  isActiveUserCityAdmin) 
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
                           <CloseOutlined onClick={() => seeDeleteModal(member)} />,

@@ -335,11 +335,32 @@ const City = () => {
     await createNotification(admin.userId,
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в станиці`, true);
   };
+  
+  const showDiseableModal = async (admin: CityAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете змінити роль цьому користовачу",
+      content: (
+        <div style={{ margin: 15 }}>
+          <b>
+            {city.head.user.firstName} {city.head.user.lastName}
+          </b>{" "}
+          є Головою Станиці, час правління закінчується{" "}
+          <b>
+            {moment(city.head.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(city.head.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
 
-  const showConfirmCityAdmin  = async (admin: CityAdmin, adminType: Roles) => {
+  const showConfirmCityAdmin  = async (admin: CityAdmin) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: (adminType.toString() === "CityHead" ?
+      content: (admin.adminType.adminTypeName.toString() === Roles.CityHead ?
         <div style={{ margin: 10 }}>
           <b>
             {city.head.user.firstName} {city.head.user.lastName}
@@ -388,29 +409,22 @@ const City = () => {
   const handleOk = async(admin: CityAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.CityHead) {
-        if (city.head == null) {
-          
-          checkAdminId(admin);
+        if (city.head !== null && city.head.userId !== admin.userId) {
+          showConfirmCityAdmin(admin);
         } else {
-          if (city.head?.userId !== admin.userId) {
-            showConfirmCityAdmin(admin, Roles.CityHead);
+          checkAdminId(admin);
+        }
+       } else if (admin.adminType.adminTypeName === Roles.CityHeadDeputy) {
+        if (admin.userId === city.head.userId) {
+          showDiseableModal(admin);
+        } else if (city.headDeputy !== null && city.headDeputy.userId !== admin.userId) {
+            showConfirmCityAdmin(admin);
           } else {
             checkAdminId(admin);
           }
-        }
-      } else if (admin.adminType.adminTypeName === Roles.CityHeadDeputy) {
-        if (city.headDeputy == null) {
-          checkAdminId(admin);
-        } else {
-          if (city.headDeputy?.userId !== admin.userId) {
-            showConfirmCityAdmin(admin, Roles.CityHeadDeputy);
-          } else {
-            checkAdminId(admin);
-          }
-        }
-      } else {
+       } else {
           await addCityAdmin(admin);
-      }
+       }
     } finally {
       setvisible(false);
     }

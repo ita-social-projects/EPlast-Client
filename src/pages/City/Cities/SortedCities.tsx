@@ -21,15 +21,11 @@ const SortedCities = ( {switcher}: Props) => {
   const { url } = useRouteMatch();
 
   const [cities, setCities] = useState<CityProfile[]>([]);
-  const [activeCities, setActiveCities] = useState<CityProfile[]>([]);
-  const [notActiveCities, setNotActiveCities] = useState<CityProfile[]>([]);
   const [canCreate, setCanCreate] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
-  const [activeTotal, setActiveTotal] = useState(0);
-  const [notActiveTotal, setNotActiveTotal] = useState(0);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
@@ -65,6 +61,7 @@ const SortedCities = ( {switcher}: Props) => {
       setPhotos(response.data.cities);
       setCities(response.data.cities);
       setCanCreate(response.data.canCreate);
+      setActiveCanCreate(response.data.canCreate);
       setTotal(response.data.total);
     } finally {
       setLoading(false);
@@ -203,7 +200,7 @@ const SortedCities = ( {switcher}: Props) => {
                 pageSize={pageSize}
                 total={total}
                 responsive
-                showLessItems
+                showSizeChanger={total < 20 ? false : true}
                 onChange={(page) => handleChange(page)}
                 onShowSizeChange={(page, size) => handleSizeChange(page, size)}
               />

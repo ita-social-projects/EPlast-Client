@@ -308,7 +308,7 @@ const Club = () => {
   const showConfirmClubAdmin  = async (admin: ClubAdmin, adminType: Roles) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: ( adminType.toString() === "KurinHead" ?
+      content: ( adminType.toString() === Roles.KurinHead ?
         <div style={{ margin: 10 }}>
           <b>
             {club.head.user.firstName} {club.head.user.lastName}
@@ -357,24 +357,17 @@ const Club = () => {
   const handleOk = async(admin: ClubAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.KurinHead) {
-        if (club.head == null) {
-          checkAdminId(admin);
+        if (club.head !== null && club.head.userId !== admin.userId) {
+          showConfirmClubAdmin(admin, Roles.KurinHead);
         } else {
-          if (club.head?.userId !== admin.userId) {
-            showConfirmClubAdmin(admin, Roles.KurinHead);
-          } else {
-            checkAdminId(admin);
+          checkAdminId(admin);
           }
         }
-      } else if (admin.adminType.adminTypeName === Roles.KurinHeadDeputy) {
-        if (club.headDeputy == null) {
-          checkAdminId(admin);
+       else if (admin.adminType.adminTypeName === Roles.KurinHeadDeputy) {
+        if (club.headDeputy !== null && club.headDeputy.userId !== admin.userId) {
+          showConfirmClubAdmin(admin, Roles.KurinHeadDeputy);
         } else {
-          if (club.head?.userId !== admin.userId) {
-            showConfirmClubAdmin(admin, Roles.KurinHeadDeputy);
-          } else {
-            checkAdminId(admin);
-          }
+          checkAdminId(admin);
         }
       } else {
           await addClubAdmin(admin);

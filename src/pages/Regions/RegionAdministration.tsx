@@ -7,7 +7,13 @@ import {
   RollbackOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { getRegionAdministration, getRegionById, removeAdmin } from "../../api/regionsApi";
+import { 
+  getRegionAdministration, 
+  getRegionById, 
+  removeAdmin,
+  getHead, 
+  getHeadDeputy, 
+} from "../../api/regionsApi";
 import userApi from "../../api/UserApi";
 import "./Region.less";
 import moment from "moment";
@@ -16,7 +22,7 @@ import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
 import CityAdmin from "../../models/City/CityAdmin";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
-import AddNewSecretaryForm from "./AddRegionSecretaryForm";
+import AddAdministratorModal from "./AddAdministratorModal";
 import { Roles } from "../../models/Roles/Roles";
 import RegionAdmin from "../../models/Region/RegionAdmin";
 moment.locale("uk-ua");
@@ -41,10 +47,11 @@ const RegionAdministration = () => {
   });
   const [administration, setAdministration] = useState<RegionAdmin[]>([]);
   const [visibleModal, setVisibleModal] = useState(false);
-  const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
+  const [admin, setAdmin] = useState<RegionAdmin>(new RegionAdmin());
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [reload, setReload] = useState(false);
+  const [regionName, setRegionName] = useState<string>("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
 
@@ -62,6 +69,7 @@ const RegionAdministration = () => {
     const administrationResponse = await getRegionAdministration(id);
     setPhotosLoading(true);
     setRegion(regionResponse.data);
+    setRegionName(regionResponse.data.name);
     setPhotos([...administrationResponse.data].filter((a) => a != null));
     setAdministration([...administrationResponse.data].filter((a) => a != null));
     setActiveUserRoles(userApi.getActiveUserRoles());
@@ -90,13 +98,16 @@ const RegionAdministration = () => {
     setAdministration(administration.filter((u) => u.id !== admin.id));
   };
 
-  const showModal = (member: any) => {
+  const showModal = (member: RegionAdmin) => {
     setAdmin(member);
     setVisibleModal(true);
   };
 
-  const handleOk = () => {
-    setVisibleModal(false);
+  const onAdd = async (newAdmin: RegionAdmin = new RegionAdmin()) => {
+    const index = administration.findIndex((a) => a.id === admin.id);
+    administration[index] = newAdmin;
+    await createNotification(newAdmin.userId, `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`);
+    setAdministration(administration);
     setReload(!reload);
   };
 
@@ -114,7 +125,7 @@ const RegionAdministration = () => {
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regions/${id}`,
-      region.regionName
+      regionName
     );
   }
 
@@ -187,18 +198,15 @@ const RegionAdministration = () => {
         </Button>
       </div>
 
-      <Modal
-        title="Редагувати діловода"
-        visible={visibleModal}
-        onOk={handleOk}
-        onCancel={handleOk}
-        footer={null}
-      >
-        <AddNewSecretaryForm
-          onAdd={handleOk}
-          admin={admin} 
-        ></AddNewSecretaryForm>
-      </Modal>
+          <AddAdministratorModal
+            admin={admin}
+            setAdmin={setAdmin}
+            visibleModal={visibleModal}
+            setVisibleModal={setVisibleModal}
+            regionId={+id}
+            regionName={region}
+            onAdd={onAdd}
+          ></AddAdministratorModal>
     </Layout.Content>
   );
 };
