@@ -336,7 +336,7 @@ const Region = () => {
   const showConfirmRegionAdmin  = async (admin: RegionAdmin) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: ( admin.adminType.toString() === "Голова Округи" ?
+      content: ( admin.adminType.adminTypeName.toString() === "Голова Округи" ?
         <div style={{ margin: 10 }}>
           <b>
             {head?.user.firstName} {head?.user.lastName}
@@ -397,7 +397,7 @@ const Region = () => {
       } else if (admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy) {
         if (admin.userId === head.userId) {
           showDiseableModal(admin);
-        } else if (headDeputy === '' && headDeputy.userId !== admin.userId) {
+        } else if (headDeputy !== '' && headDeputy.userId !== admin.userId) {
           showConfirmRegionAdmin(admin);
           } else {
             checkAdminId(admin);
