@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch, Link } from "react-router-dom";
 import { Card, Layout, Pagination, Result, Skeleton } from "antd";
 import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
-import { getCitiesByPage, getLogo } from "../../../api/citiesApi";
+import { getActiveCitiesByPage, getNotActiveCitiesByPage, getLogo } from "../../../api/citiesApi";
 import "./Cities.less";
 import CityProfile from "../../../models/City/CityProfile";
 import Title from "antd/lib/typography/Title";
@@ -12,37 +12,49 @@ import Search from "antd/lib/input/Search";
 import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
 
-const Cities = () => {
+interface Props {
+  switcher: boolean;
+}
+
+const SortedCities = ( {switcher}: Props) => {
   const history = useHistory();
   const { url } = useRouteMatch();
 
   const [cities, setCities] = useState<CityProfile[]>([]);
+  const [activeCities, setActiveCities] = useState<CityProfile[]>([]);
+  const [notActiveCities, setNotActiveCities] = useState<CityProfile[]>([]);
   const [canCreate, setCanCreate] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
+  const [activeTotal, setActiveTotal] = useState(0);
+  const [notActiveTotal, setNotActiveTotal] = useState(0);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
 
   const setPhotos = async (cities: CityProfile[]) => {
-    for await (const city of cities) {
-      if (city.logo === null) {
-        city.logo = CityDefaultLogo;
-      } else {
-        const logo = await getLogo(city.logo);
-        city.logo = logo.data;
+    try {
+      for await (const city of cities) {
+        if (city.logo === null) {
+          city.logo = CityDefaultLogo;
+        } else {
+          const logo = await getLogo(city.logo);
+          city.logo = logo.data;
+        }
       }
+    } finally {
+      setPhotosLoading(false);
     }
-
-    setPhotosLoading(false);
+    
   };
-  const getCities = async () => {
+  const getActiveCities = async () => {
     setLoading(true);
 
     try {
-      const response = await getCitiesByPage(
+      const response = await getActiveCitiesByPage(
         page,
         pageSize,
         searchedData.trim()
@@ -59,6 +71,26 @@ const Cities = () => {
     }
   };
 
+  const getNotActiveCities = async () => {
+    setLoading(true);
+
+    try {
+      const response = await getNotActiveCitiesByPage(
+        page,
+        pageSize,
+        searchedData.trim()
+      );
+
+      setPhotosLoading(true);
+      setActiveUserRoles(userApi.getActiveUserRoles);
+      setPhotos(response.data.cities);
+      setCities(response.data.cities);
+      setTotal(response.data.total);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleChange = (page: number) => {
     setPage(page);
   };
@@ -68,17 +100,52 @@ const Cities = () => {
     setPageSize(pageSize);
   };
 
-  useEffect(() => {
-    getCities();
-  }, [page, pageSize, searchedData]);
-
   const handleSearch = (event: any) => {
     setPage(1);
     setSearchedData(event);
   };
+
+  const renderCity = (arr: CityProfile[]) => {
+    if (arr) {
+        // eslint-disable-next-line react/no-array-index-key
+        return  arr.map((city: CityProfile) =>(
+          <Link to={`${url}/${city.id}`}>
+              <Card
+                key={city.id}
+                hoverable
+                className="cardStyles"
+                cover={
+                    photosLoading ? (
+                    <Skeleton.Avatar shape="square" active />
+                    ) : (
+                        <img src={city.logo || undefined} alt="City" />
+                    )
+                }
+              >
+                  <Card.Meta title={city.name} className="titleText" />
+              </Card>
+        </Link>
+          ))   
+    }
+    return null;
+};
+
+  useEffect(() => {
+    switcher ? (getNotActiveCities()):(getActiveCities()) 
+  }, [page, pageSize, searchedData]);
+
+  useEffect(()=>{
+    setPage(1);
+    switcher ? (getNotActiveCities()) :(getActiveCities())
+    setCanCreate(switcher ? false : activeCanCreate);
+  },[switcher])
+
   return (
     <Layout.Content className="cities">
+      {switcher ? (
+      <Title level={1}>Не активні станиці</Title>) : (
       <Title level={1}>Станиці</Title>
+      )}
       <div className="searchContainer">
         <Search
           placeholder="Пошук"
@@ -86,14 +153,17 @@ const Cities = () => {
           onSearch={handleSearch}
           loading={photosLoading}
           disabled={photosLoading}
+          allowClear={true}
         />
       </div>
       {loading ? (
         <Spinner />
       ) : (
+        
           <div>
             <div className="cityWrapper">
-              {activeUserRoles.includes(Roles.Admin) && page === 1 && searchedData.length === 0 ? (
+              { switcher ? (null) : (
+              activeUserRoles.includes(Roles.Admin) && page === 1 && searchedData.length === 0 ? (
                 <Card
                   hoverable
                   className="cardStyles addCity"
@@ -117,32 +187,14 @@ const Cities = () => {
                     title={<div className="createFollowerTitleText">Подати заяву на створення нової станиці</div>}
                   />
                 </Card>
-              ) : null }
+              ) : null ) }
 
-              {cities.length === 0 && searchedData.length !== 0 ? (
+              {cities.length === 0 ? (
                 <div>
                   <Result status="404" title="Станицю не знайдено" />
                 </div>
               ) : (
-                  cities.map((city: CityProfile) => (
-                    <Link to={`${url}/${city.id}`}>
-                      <Card
-                        key={city.id}
-                        hoverable
-                        className="cardStyles"
-                        cover={
-                          photosLoading ? (
-                            <Skeleton.Avatar shape="square" active />
-                          ) : (
-                              <img src={city.logo || undefined} alt="City" />
-                            )
-                        }
-                        onClick={() => history.push(`${url}/${city.id}`)}
-                      >
-                        <Card.Meta title={city.name} className="titleText" />
-                      </Card>
-                    </Link>
-                  ))
+                  renderCity(cities)
                 )}
             </div>
             <div className="pagination">
@@ -161,4 +213,4 @@ const Cities = () => {
     </Layout.Content>
   );
 };
-export default Cities;
+export default SortedCities;

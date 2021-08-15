@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal, Skeleton, Spin } from "antd";
+import { Avatar, Button, Card, Layout, Modal, Skeleton, Spin, Tooltip } from "antd";
 import {
   SettingOutlined,
   CloseOutlined,
   RollbackOutlined,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { getRegionAdministration, removeAdmin } from "../../api/regionsApi";
+import { getRegionAdministration, getRegionById, removeAdmin } from "../../api/regionsApi";
 import userApi from "../../api/UserApi";
 import "./Region.less";
 import moment from "moment";
@@ -17,27 +18,29 @@ import CityAdmin from "../../models/City/CityAdmin";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
 import { Roles } from "../../models/Roles/Roles";
+import RegionAdmin from "../../models/Region/RegionAdmin";
 moment.locale("uk-ua");
 
+const adminTypeNameMaxLength = 22;
 const RegionAdministration = () => {
   const { id } = useParams();
   const history = useHistory();
 
-  const [administration, setAdministration] = useState<any[]>([
-    {
-      id: "",
-      user: {
-        firstName: "",
-        lastName: "",
-        imagePath: "",
-      },
-      adminType: {
-        adminTypeName: "",
-      },
-      startDate: "",
-      endDate: "",
-    },
-  ]);
+  const [region, setRegion] = useState<any>({
+    id: "",
+    regionName: "",
+    description: "",
+    logo: "",
+    administration: [{}],
+    cities: [{}],
+    phoneNumber: "",
+    email: "",
+    link: "",
+    documents: [{}],
+    postIndex: "",
+    city: "",
+  });
+  const [administration, setAdministration] = useState<RegionAdmin[]>([]);
   const [visibleModal, setVisibleModal] = useState(false);
   const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
@@ -56,24 +59,35 @@ const RegionAdministration = () => {
 
   const getAdministration = async () => {
     setLoading(true);
-    const response = await getRegionAdministration(id);
+    const regionResponse = await getRegionById(id);
+    const administrationResponse = await getRegionAdministration(id);
     setPhotosLoading(true);
-    setPhotos([...response.data].filter((a) => a != null));
-    setAdministration([...response.data].filter((a) => a != null));
+    setRegion(regionResponse.data);
+    setPhotos([...administrationResponse.data].filter((a) => a != null));
+    setAdministration([...administrationResponse.data].filter((a) => a != null));
     setActiveUserRoles(userApi.getActiveUserRoles());
-    setIsRegionAdmin([...response.data].filter((a) => a != null), userApi.getActiveUserId());
+    setIsRegionAdmin([...administrationResponse.data].filter((a) => a != null), userApi.getActiveUserId());
     setLoading(false);
   };
 
+  function seeDeleteModal(admin: CityAdmin) {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете видалити даного користувача із Проводу?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, Видалити",
+      okType: "primary",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        removeAdministrator(admin);
+      },
+    });
+  }
+
   const removeAdministrator = async (admin: CityAdmin) => {
     await removeAdmin(admin.id);
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/regions/${id}`,
-      `цій окрузі`
-    );
+    await createNotification(admin.userId,
+      `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в окрузі`);
     setAdministration(administration.filter((u) => u.id !== admin.id));
   };
 
@@ -87,19 +101,6 @@ const RegionAdministration = () => {
     setReload(!reload);
   };
 
-  const onAdd = async (newAdmin: any) => {
-    const index = administration.findIndex((a) => a.id === admin.id);
-    administration[index] = newAdmin;
-    await NotificationBoxApi.createNotifications(
-      [newAdmin.userId],
-      `Вам було надано нову адміністративну роль: '${newAdmin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/regions/${id}`,
-      `цій окрузі`
-    );
-    setAdministration(administration);
-  };
-
   const setPhotos = async (members: any[]) => {
     for (let i of members) {
       i.user.imagePath = (await userApi.getImage(i.user.imagePath)).data;
@@ -107,6 +108,16 @@ const RegionAdministration = () => {
 
     setPhotosLoading(false);
   };
+
+  const createNotification = async(userId: string, message: string) => {
+    await NotificationBoxApi.createNotifications(
+      [userId],
+      message + ": ",
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/regions/${id}`,
+      region.regionName
+    );
+  }
 
   useEffect(() => {
     getAdministration();
@@ -124,7 +135,15 @@ const RegionAdministration = () => {
               <Card
                 key={member.id}
                 className="detailsCard"
-                title={`${member.adminType.adminTypeName}`}
+                title={
+                  (member.adminType.adminTypeName?.length > adminTypeNameMaxLength) ?
+                    <Tooltip title={member.adminType.adminTypeName}>
+                      <span> 
+                        {member.adminType.adminTypeName.slice(0, adminTypeNameMaxLength - 1) + "..."} 
+                      </span>
+                    </Tooltip>
+                  : `${member.adminType.adminTypeName}`
+                }
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}          
                 actions={
                   activeUserRoles.includes(Roles.Admin) || (activeUserRoles.includes(Roles.OkrugaHead) && isActiveUserRegionAdmin)
@@ -133,7 +152,7 @@ const RegionAdministration = () => {
                   ?
                   [
                   <SettingOutlined onClick={() => showModal(member)} />,
-                  <CloseOutlined onClick={() => removeAdministrator(member)} />,
+                  <CloseOutlined onClick={() => seeDeleteModal(member)} />,
                   ]
                   : undefined
                 }

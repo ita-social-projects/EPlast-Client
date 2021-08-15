@@ -26,6 +26,7 @@ interface Props {
   admin: ClubAdmin;
   setAdmin: (admin: ClubAdmin) => void;
   clubId: number;
+  clubName: string;
   onAdd?: (admin?: ClubAdmin) => void;
   onChange?: (id: string, userRoles: string) => void;
 }
@@ -39,7 +40,7 @@ const AddAdministratorModal = (props: Props) => {
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const disabledEndDate = (current: any) => {
-    return current && current < startDate;
+    return current && current < moment();
   };
 
   const disabledStartDate = (current: any) => {
@@ -80,6 +81,7 @@ const AddAdministratorModal = (props: Props) => {
     props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
     props.onAdd?.(admin);
   };
+
   const editClubAdmin = async (admin: ClubAdmin) => {
     admin = (await editAdministrator(props.admin.clubId, admin)).data;
     notificationLogic("success", "Адміністратор успішно відредагований");
@@ -116,13 +118,13 @@ const AddAdministratorModal = (props: Props) => {
         if (head?.userId !== admin.userId) {
           showConfirm(admin);
         } else {
-          editClubAdmin(admin);
+          await editClubAdmin(admin);
         }
       } else {
         if (admin.id === 0) {
-          addClubAdmin(admin);
+          await addClubAdmin(admin);
         } else {
-          editClubAdmin(admin);
+          await editClubAdmin(admin);
         }
       }
     } finally {
@@ -148,7 +150,7 @@ const AddAdministratorModal = (props: Props) => {
     <Modal
       title={
         props.admin.id === 0
-          ? "Додати в провід куреня"
+          ? `Додати в провід ${props.clubName}`
           : "Редагувати адміністратора"
       }
       visible={props.visibleModal}
@@ -180,7 +182,7 @@ const AddAdministratorModal = (props: Props) => {
             ]}
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}
-          ></AutoComplete>
+          />
         </Form.Item>
         <Row>
           <Col span={11}>

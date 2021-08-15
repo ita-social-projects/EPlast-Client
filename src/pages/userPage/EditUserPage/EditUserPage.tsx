@@ -10,6 +10,7 @@ import {
   DatePicker,
   Popconfirm,
   Tooltip,
+  Skeleton,
 } from "antd";
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 import styles from "./EditUserPage.module.css";
@@ -22,7 +23,6 @@ import jwt from "jwt-decode";
 import AuthStore from "../../../stores/AuthStore";
 import { useParams } from "react-router-dom";
 import notificationLogic from "../../../components/Notifications/Notification";
-import Spinner from "../../Spinner/Spinner";
 import { useHistory } from "react-router-dom";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
@@ -321,7 +321,7 @@ export default function () {
   }
 
   const handleOnChangeAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue( { address: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
+    form.setFieldsValue( { address: changeApostropheInWord(event.target.value) });
   }
   
   const handleOnChangeReligion = (value: any, event: any) => {
@@ -481,8 +481,15 @@ export default function () {
   };
 
   return loading === false ? (
-    <Spinner />
-  ) : (
+    <div className="kadraWrapper">
+        <Skeleton.Avatar
+            size={220}
+            active={true}
+            shape="circle"
+            className="img"
+        />
+    </div>
+    ) : ( 
     <div className={styles.mainContainer}>
       <Form
         form={form}

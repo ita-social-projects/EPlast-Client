@@ -11,7 +11,6 @@ import { DeleteOutlined, DownloadOutlined, EyeOutlined, FileImageOutlined, FileP
 import AddBiographyModal from "./UserBiography/AddBiographyModal";
 import BlankDocument from "../../../models/Blank/BlankDocument";
 import Paragraph from "antd/lib/typography/Paragraph";
-import Spinner from "../../Spinner/Spinner";
 import AddAchievementsModal from "./UserAchievements/AddAchievementsModal";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
@@ -24,6 +23,7 @@ import {
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 import { Roles } from "../../../models/Roles/Roles";
 const userGenders = ["Чоловік", "Жінка", "Інша"];
+const fileNameMaxLength = 50;
 
 export const Blanks = () => {
     const { userId } = useParams<{ userId:string}>();
@@ -131,9 +131,9 @@ export const Blanks = () => {
 
     const IsUserHasAccessToManageBlanks = (userRoles: Array<string>): boolean => {
 
-        return (userRoles?.includes(Roles.KurinHead) && currentUser?.user?.clubId == data?.user?.clubId) ||
-            (userRoles?.includes(Roles.CityHead) && currentUser?.user?.cityId == data?.user?.cityId) ||
-            (userRoles?.includes(Roles.OkrugaHead) && currentUser?.user?.regionId == data?.user?.regionId) ||
+        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && currentUser?.user?.clubId == data?.user?.clubId) ||
+            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && currentUser?.user?.cityId == data?.user?.cityId) ||
+            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy))&& currentUser?.user?.regionId == data?.user?.regionId) ||
             userRoles?.includes(Roles.Admin);
     };
 
@@ -151,7 +151,7 @@ export const Blanks = () => {
             <div className={classes.wrapper}>
                 <div className={classes.wrapperImg}>
                     <AvatarAndProgressStatic 
-                        imageUrl={data?.user.imagePath}
+                        imageUrl={data?.user.imagePath as string}
                         time={data?.timeToJoinPlast}
                         firstName={data?.user.firstName}
                         lastName={data?.user.lastName}
@@ -188,9 +188,17 @@ export const Blanks = () => {
                                             <FileTextOutlined
                                                 className={classes.documentIcon}
                                             />}
-                                        <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
+                                        {(document.fileName?.length > fileNameMaxLength) ?
+                                            <Tooltip className={classes.antTooltipInner} title={document.fileName}>
+                                                <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
+                                                    {document.fileName.slice(0,fileNameMaxLength-1) + "..."}
+                                                </Paragraph>
+                                            </Tooltip>
+                                        : <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
                                             {document.fileName}
-                                        </Paragraph>
+                                          </Paragraph>
+                                        }
+
                                     </div>
                                     {(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) &&
                                         <Tooltip title="Завантажити">
@@ -274,10 +282,16 @@ export const Blanks = () => {
                                             <FileTextOutlined
                                                 className={classes.documentIcon}
                                             />}
-
-                                        <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
-                                            {extractUPU.fileName}
-                                        </Paragraph>
+                                        {(extractUPU.fileName?.length > fileNameMaxLength) ?
+                                            <Tooltip className={classes.antTooltipInner} title={extractUPU.fileName}>
+                                                <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
+                                                    {extractUPU.fileName.slice(0,fileNameMaxLength-1) + "..."}
+                                                </Paragraph>
+                                            </Tooltip>
+                                         : <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
+                                                {extractUPU.fileName}
+                                           </Paragraph>
+                                        } 
                                     </div>
                                     <Tooltip title="Завантажити">
                                         <DownloadOutlined

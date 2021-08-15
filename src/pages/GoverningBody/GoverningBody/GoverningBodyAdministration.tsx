@@ -17,6 +17,7 @@ import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import AuthStore from '../../../stores/AuthStore';
 moment.locale("uk-ua");
 
+const adminTypeNameMaxLength = 23;
 const GoverningBodyAdministration = () => {
     const confirm = Modal.confirm;
     const {id} = useParams();
@@ -136,7 +137,15 @@ const GoverningBodyAdministration = () => {
                 <Card
                   key={member.id}
                   className="detailsCard"
-                  title={`${member.adminType.adminTypeName}`}
+                  title={
+                    (member.adminType.adminTypeName?.length > adminTypeNameMaxLength) ?
+                      <Tooltip title={member.adminType.adminTypeName}>
+                        <span> 
+                          {member.adminType.adminTypeName.slice(0, adminTypeNameMaxLength - 1) + "..."} 
+                        </span>
+                      </Tooltip>
+                    : `${member.adminType.adminTypeName}`
+                  }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
                     userAccesses["AddGBSecretary"]

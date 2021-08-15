@@ -8,12 +8,10 @@ export default class ClubProfile {
   clubURL: string;
   phoneNumber: string;
   email: string;
-  street: string;
-  houseNumber: string;
-  officeNumber: string;
-  postIndex: string;
+  slogan: string;
   head: ClubAdmin;
   headDeputy: ClubAdmin;
+  isActive: boolean;
 
   constructor() {
     this.id = 0;
@@ -23,11 +21,9 @@ export default class ClubProfile {
     this.clubURL = "";
     this.phoneNumber = "";
     this.email = "";
-    this.street = "";
-    this.houseNumber = "";
-    this.officeNumber = "";
-    this.postIndex = "";
+    this.slogan = "";
     this.head = new ClubAdmin();
     this.headDeputy = new ClubAdmin();
+    this.isActive = true;
   }
 }

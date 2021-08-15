@@ -17,9 +17,10 @@ import User from "../../../models/UserTable/User";
 import moment from "moment";
 
 const { Title } = Typography;
+const nameMaxLength = 55;
 
 class AvatarAndProgressStaticProps {
-  imageUrl: string | undefined;
+  imageUrl: string ;
   time: number | undefined;
   firstName: string | undefined;
   lastName: string | undefined;
@@ -33,6 +34,10 @@ class AvatarAndProgressStaticProps {
   regionId: number | undefined;
   cityId: number|undefined;
   clubId: number|undefined;
+
+  constructor() {
+    this.imageUrl="";
+  }
 }
 
 const contentListNoTitle: { [key: string]: any } = {
@@ -145,8 +150,9 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       });
       setLoading(true);
     };
-
-    fetchData();
+    if (imageUrl?.length > 0) {
+      fetchData();
+    }
   }, [props]);
 
   return loading === false ? (
@@ -198,14 +204,18 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           (element) => contentListNoTitle[element.kadraVykhovnykivTypeId]
         )}
       </div>
-
       {UserDistinctions.map((dist) => (
         <div className="distinctions">
-          <Tooltip title={dist?.reason}>
-            <h2>
-              {dist.distinction.name} №{dist.number}
+          {(dist.distinction.name?.length > nameMaxLength) ?
+            <Tooltip title={dist?.distinction.name}>
+              <h2>
+                {dist.distinction.name.slice(0,54) + "..."} №{dist.number}
+              </h2>
+            </Tooltip>
+          : <h2> 
+              {dist.distinction.name + "№" + dist.number} 
             </h2>
-          </Tooltip>
+          }
         </div>
       ))}
       {UserPrecaution.map((dist) =>

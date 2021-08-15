@@ -46,7 +46,7 @@ const AddAdministratorModal = (props: Props) => {
   };
 
   const disabledEndDate = (current: any) => {
-    return current && current < startDate;
+    return current && current < moment();
   };
 
   const disabledStartDate = (current: any) => {
@@ -87,6 +87,7 @@ const AddAdministratorModal = (props: Props) => {
     props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
     props.onAdd?.(admin);
   };
+
   const editCityAdmin = async (admin: CityAdmin) => {
     admin = (await editAdministrator(props.admin.cityId, admin)).data;
     notificationLogic("success", "Адміністратор успішно відредагований");
@@ -115,13 +116,13 @@ const AddAdministratorModal = (props: Props) => {
         if (head?.userId !== admin.userId) {
           showConfirm(admin);
         } else {
-          editCityAdmin(admin);
+          await editCityAdmin(admin);
         }
       } else {
         if (admin.id === 0) {
-          addCityAdmin(admin);
+          await addCityAdmin(admin);
         } else {
-          editCityAdmin(admin);
+          await editCityAdmin(admin);
         }
       }
     } finally {
@@ -139,7 +140,8 @@ const AddAdministratorModal = (props: Props) => {
       form.resetFields();
     }
     const userRoles = userApi.getActiveUserRoles();
-      setActiveUserRoles(userRoles);
+    setActiveUserRoles(userRoles);
+    getCityHead();
   }, [props]);
 
   return (
@@ -178,7 +180,7 @@ const AddAdministratorModal = (props: Props) => {
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}
             onChange={getCityHead}
-          ></AutoComplete>
+          />
         </Form.Item>
         <Row>
           <Col span={11}>

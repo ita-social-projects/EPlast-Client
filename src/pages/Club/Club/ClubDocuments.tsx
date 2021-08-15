@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Spin} from 'antd';
-import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Layout, Modal, Spin} from 'antd';
+import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {clubNameOfApprovedMember, getAllDocuments, getFile, removeDocument, getClubById} from "../../../api/clubsApi";
 import "./Club.less";
 import ClubDocument from '../../../models/Club/ClubDocument';
@@ -51,6 +51,20 @@ const ClubDocuments = () => {
       await getFile(fileBlob, fileName);
     }
 
+    function seeDeleteModal(documentId: number) {
+      return Modal.confirm({
+        title: "Ви впевнені, що хочете видалити даний документ із документообігу?",
+        icon: <ExclamationCircleOutlined />,
+        okText: "Так, Видалити",
+        okType: "primary",
+        cancelText: "Скасувати",
+        maskClosable: true,
+        onOk() {
+          removeDocumentById(documentId);
+        },
+      });
+    }
+
     const removeDocumentById = async (documentId: number) => {
       await removeDocument(documentId);
 
@@ -94,12 +108,14 @@ const ClubDocuments = () => {
                           />,
                           <CloseOutlined
                             key="close"
-                            onClick={() => removeDocumentById(document.id)}
+                            onClick={() => seeDeleteModal(document.id)}
                           />,
                         ]
                         
                       : ((activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) 
-                      && club.name == activeUserClub ) 
+                      && club.name == activeUserClub ) || (activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy))
+                      || (activeUserRoles.includes(Roles.CityHead) || activeUserRoles.includes(Roles.CityHeadDeputy))
+                      || (activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.KurinHeadDeputy))
                       ? [
                           <DownloadOutlined
                             key="download"

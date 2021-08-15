@@ -5,9 +5,11 @@ import formclasses from "./FormEditDecision.module.css";
 import{
   emptyInput,
   maxLength,
+  onlyWhiteSpaces,
 } from "../../components/Notifications/Messages"
 import jwt from "jwt-decode";
 import AuthStore from "../../stores/AuthStore";
+const notOnlyWhiteSpaces = /^\s*\S.*$/;
 
 interface Props {
   record: number;
@@ -76,6 +78,10 @@ const FormEditDecision = ({
                     max: 60,
                     message: maxLength(60) 
                   },
+                  { 
+                    pattern: notOnlyWhiteSpaces, 
+                    message:onlyWhiteSpaces() 
+                  },
                 ]}
               >
                 <Input className={formclasses.input} />
@@ -92,6 +98,10 @@ const FormEditDecision = ({
                   {
                     required: true,
                     message: emptyInput(),
+                  },
+                  {
+                    max: 1000,
+                    message: maxLength(1000)
                   },
                 ]}
               >

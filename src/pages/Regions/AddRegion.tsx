@@ -50,6 +50,7 @@ const AddNewRegionFormPage = () => {
       officeNumber: values.officeNumber,
       postIndex: values.postIndex,
       city: values.city,
+      isActive: true
     };
     await RegionsApi.createRegion(newRegion);
     form.resetFields();

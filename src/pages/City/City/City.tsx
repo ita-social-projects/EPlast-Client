@@ -10,15 +10,18 @@ import {
   Skeleton,
   Card,
   Tooltip,
-  Badge } from "antd";
+  Badge,
+  Tag } from "antd";
 import {
   FileTextOutlined,
   EditOutlined,
   PlusSquareFilled,
   UserAddOutlined,
   PlusOutlined,
+  ContainerOutlined,
+  ExclamationCircleOutlined, 
   DeleteOutlined,
-  ExclamationCircleOutlined } from "@ant-design/icons";
+  MinusOutlined} from "@ant-design/icons";
 import moment from "moment";
 import {
   addAdministrator,
@@ -27,8 +30,11 @@ import {
   editAdministrator,
   getCityById,
   getLogo,
+  archiveCity, 
+  unArchiveCity,
   removeCity,
-  toggleMemberStatus } from "../../../api/citiesApi";
+  toggleMemberStatus,
+  removeFollower } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -37,6 +43,7 @@ import CityMember from "../../../models/City/CityMember";
 import CityAdmin from "../../../models/City/CityAdmin";
 import CityDocument from "../../../models/City/CityDocument";
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
+import CheckActiveMembersForm from "./CheckActiveMembersForm";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
@@ -44,7 +51,7 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulDeleteAction, fileIsAdded, successfulEditAction } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUpdateAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
@@ -76,25 +83,19 @@ const City = () => {
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
+  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
+  const [isActiveCity, setIsActiveCity] = useState<boolean>(true);
+  const [activeUserID, setActiveUserID] = useState<string>();
 
   const changeApproveStatus = async (memberId: number) => {
   const member = await toggleMemberStatus(memberId);
     moment.locale("uk-ua");
 
-    await NotificationBoxApi.createNotifications(
-      [member.data.userId],
-      "Вітаємо, вас зараховано до членів станиці: ",
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${id}`,
-      city.name
-    );
+    await createNotification(member.data.userId,
+      "Вітаємо, вас зараховано до членів станиці", true);
     
     if(member.data.wasInRegisteredUserRole){
-        await NotificationBoxApi.createNotifications(
-            [member.data.userId],
-            "Тобі надано нову роль: 'Прихильник'",
-            NotificationBoxApi.NotificationTypes.UserNotifications
-          );
+      await createNotification(member.data.userId, "Тобі надано нову роль: 'Прихильник' в станиці", true);
     }
     
     member.data.user.imagePath = (
@@ -109,16 +110,22 @@ const City = () => {
     setFollowers(followers.filter((f) => f.id !== memberId));
   };
 
+  const removeMember = async (followerID: number) => {
+    await removeFollower(followerID);
+    await createNotification(activeUserID as string, "На жаль, ви були виключені із прихильників станиці",true);
+    const response = await getCityById(+id);
+    setFollowersCount(response.data.followerCount);
+    setFollowers(followers.filter((f) => f.id !== followerID));
+    setCanJoin(true);
+}
+
   const addMember = async () => {
     const follower = await addFollower(+id);
 
-    await NotificationBoxApi.createNotifications(
-      admins.map((ad) => ad.userId),
-      `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці: `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/followers/${id}`,
-      city.name
-    );
+    admins.map(async (ad) => {
+      await createNotification(ad.userId,
+        `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці`, true);  
+    });
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
@@ -131,17 +138,27 @@ const City = () => {
     setCanJoin(false);
   };
 
+  const ArchiveCity = async () => {
+    await archiveCity(city.id);
+    notificationLogic("success", successfulEditAction("Станицю"));
+    admins.map(async (ad) => {
+      await createNotification(ad.userId,
+        `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
+    });
+    history.push("/cities");
+  };
+
   const deleteCity = async () => {
     await removeCity(city.id);
     notificationLogic("success", successfulDeleteAction("Станицю"));
 
-    admins.map(async (ad) => {
-      await NotificationBoxApi.createNotifications(
-        [ad.userId],
-        `На жаль станицю: '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено`,
-        NotificationBoxApi.NotificationTypes.UserNotifications
-      );
-    });
+    history.push("/cities");
+  };
+
+  const UnArchiveCity = async () => {
+    await unArchiveCity(city.id)
+    notificationLogic("success", successfulEditAction("Станицю"));
+
     history.push("/cities");
   };
 
@@ -171,6 +188,36 @@ const City = () => {
     notificationLogic("success", fileIsAdded());
   };
 
+  function seeArchiveModal() {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете архівувати дану станицю?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, заархівувати",
+      okType: "danger",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        membersCount !== 0 || adminsCount !== 0 || followersCount !== 0
+        ? setActiveMemberVisibility(true)
+        : ArchiveCity();
+      },
+    });
+  }
+
+  function seeUnArchiveModal() {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете розархівувати дану станицю?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, розархівувати",
+      okType: "danger",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        UnArchiveCity();
+      },
+    });
+  }
+  
   function seeDeleteModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити дану станицю?",
@@ -199,10 +246,23 @@ const City = () => {
     });
   }
 
+  function seeSkipModal(followerID: number) {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете покинути дану станицю?",
+      icon: <ExclamationCircleOutlined />,
+      okText: 'Так, покинути',
+      okType: 'primary',
+      cancelText: 'Скасувати',
+      maskClosable: true,
+      onOk() {removeMember(followerID)}
+    });
+  }
+
   const getCity = async () => {
     setLoading(true);
     try {
       const response = await getCityById(+id);
+      setActiveUserID(userApi.getActiveUserId());
       const responce1 = await cityNameOfApprovedMember(userApi.getActiveUserId());
       setCity(response.data);
       setActiveUserCity(responce1.data);
@@ -224,6 +284,7 @@ const City = () => {
       setDocuments(response.data.documents);
       setCanCreate(response.data.canCreate);
       setCanEdit(response.data.canEdit);
+      setIsActiveCity(response.data.isActive);
       setCanJoin(response.data.canJoin);
       setMembersCount(response.data.memberCount);
       setAdminsCount(response.data.administrationCount);
@@ -249,35 +310,36 @@ const City = () => {
     setPhotos([...admins],response.data.logo);
   }
 
-  const addCityAdmin = async (admin: CityAdmin) => {
-    await addAdministrator(admin.cityId, admin);
+  const addCityAdmin = async (newAdmin: CityAdmin) => {
+    let previousAdmin: CityAdmin = new CityAdmin(); 
+    admins.map((admin) => {
+      if(admin.adminType.adminTypeName == newAdmin.adminType.adminTypeName){
+        previousAdmin = admin;
+      }
+    });
+    await addAdministrator(newAdmin.cityId, newAdmin);
     await updateAdmins();
-    notificationLogic("success", "Користувач успішно доданий в провід");
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${id}`,
-      `цій станиці`
-    );
+    if(previousAdmin.adminType.adminTypeName != ""){
+      await createNotification(previousAdmin.userId,
+        `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в станиці`, true);
+    }
+    await createNotification(newAdmin.userId,
+      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`, true);
+      notificationLogic("success", "Користувач успішно доданий в провід");
   };
 
   const editCityAdmin = async (admin: CityAdmin) => {
     await editAdministrator(id, admin);
     await updateAdmins();
     notificationLogic("success", successfulEditAction("Адміністратора"));
-    await NotificationBoxApi.createNotifications(
-      [admin.userId],
-      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${id}`,
-      `цій станиці`);
+    await createNotification(admin.userId,
+      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в станиці`, true);
   };
 
-  const showConfirmCityAdmin  = async (admin: CityAdmin) => {
+  const showConfirmCityAdmin  = async (admin: CityAdmin, adminType: Roles) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: (
+      content: (adminType.toString() === "CityHead" ?
         <div style={{ margin: 10 }}>
           <b>
             {city.head.user.firstName} {city.head.user.lastName}
@@ -290,6 +352,19 @@ const City = () => {
           </b>
           .
         </div>
+        :
+        <div style={{ margin: 10 }}>
+        <b>
+          {city.headDeputy.user.firstName} {city.headDeputy.user.lastName}
+        </b>{" "}
+        є Заступником Голови Станиці, час правління закінчується{" "}
+        <b>
+          {moment(city.headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            ? "ще не скоро"
+            : moment(city.headDeputy.endDate).format("DD.MM.YYYY")}
+        </b>
+        .
+      </div>
       ),
       onCancel() { },
       async onOk() {
@@ -318,7 +393,7 @@ const City = () => {
           checkAdminId(admin);
         } else {
           if (city.head?.userId !== admin.userId) {
-            showConfirmCityAdmin(admin);
+            showConfirmCityAdmin(admin, Roles.CityHead);
           } else {
             checkAdminId(admin);
           }
@@ -327,7 +402,11 @@ const City = () => {
         if (city.headDeputy == null) {
           checkAdminId(admin);
         } else {
-          checkAdminId(admin);
+          if (city.headDeputy?.userId !== admin.userId) {
+            showConfirmCityAdmin(admin, Roles.CityHeadDeputy);
+          } else {
+            checkAdminId(admin);
+          }
         }
       } else {
           await addCityAdmin(admin);
@@ -340,6 +419,28 @@ const City = () => {
   const handleClose = async() => {
     setvisible(false);
   };
+  
+  const handleConfirm = async () => {
+    setActiveMemberVisibility(false);
+  };
+
+  const createNotification = async(userId: string, message: string, cityExist: boolean) => {
+    if(cityExist){
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message + ": ",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/cities/${id}`,
+        city.name
+        );  
+    } else {
+      await NotificationBoxApi.createNotifications(
+        [userId],
+        message,
+        NotificationBoxApi.NotificationTypes.UserNotifications
+      );
+    }
+  }
 
   useEffect(() => {
     if (city.name.length !== 0) {
@@ -365,6 +466,11 @@ const City = () => {
                 second={url.replace(`/${id}`, "")}
                 second_name="Станиці"
               />
+              {isActiveCity ? null : (
+                <Tag className="status" color = {"red"}>
+                  Заархівовано
+                </Tag>
+              )}
             </div>
             <Title level={3}>Станиця {city.name}</Title>
             <Row className="cityPhotos" gutter={[0, 12]}>
@@ -507,14 +613,34 @@ const City = () => {
                       </Col>
                     ) : null}
                     {canCreate ? (
-                      <Col offset={1}>
-                        <Tooltip title="Видалити станицю">
-                          <DeleteOutlined
-                            className="cityInfoIconDelete"
-                            onClick={() => seeDeleteModal()}
-                          />
-                        </Tooltip>
-                      </Col>
+                      isActiveCity ? (
+                        <Col offset={1}>
+                          <Tooltip title="Архівувати станицю">
+                            <ContainerOutlined
+                              className="cityInfoIconDelete"
+                              onClick={() => seeArchiveModal()} 
+                            />
+                          </Tooltip>
+                        </Col>) : (
+                        <React.Fragment>
+                          <Col offset={1}>
+                            <Tooltip title="Видалити станицю">
+                              <DeleteOutlined
+                                className="cityInfoIconDelete"
+                                onClick={() => seeDeleteModal()} 
+                              />
+                            </Tooltip>
+                          </Col>
+                          <Col offset={1}>
+                            <Tooltip title="Розархівувати станицю">
+                              <ContainerOutlined
+                                className="cityInfoIcon"
+                                color = "green" 
+                                onClick={() => seeUnArchiveModal()} 
+                              />
+                            </Tooltip>
+                          </Col>
+                        </React.Fragment>)
                     ) : null}
                   </Row>
                 </Col>
@@ -616,12 +742,12 @@ const City = () => {
                 )}
             </Row>
             <div className="cityMoreButton">
-              {canEdit ? (
+              {isActiveCity ? (canEdit ? (
               <PlusSquareFilled
                 type="primary"
                 className="addReportIcon"
                 onClick={() => setvisible(true)}
-              />):null}
+              />):null) : null}
               <Button
                 type="primary"
                 className="cityInfoButton"
@@ -691,12 +817,12 @@ const City = () => {
                   </Button>
                 ) : null
               }
-              {canEdit ? (
+              {isActiveCity ? ( canEdit ? (
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
                 />
-              ) : null}
+              ) : null) : null}
             </div>
           </Card>
         </Col>
@@ -718,7 +844,7 @@ const City = () => {
             </a>
             </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
-              {canJoin ? (
+              {isActiveCity ? (canJoin ? (
                 <Col
                   className="cityMemberItem"
                   xs={12}
@@ -734,7 +860,7 @@ const City = () => {
                     <p>Доєднатися</p>
                   </div>
                 </Col>
-              ) : null}
+              ) : null): <Paragraph>Ще немає прихильників станиці</Paragraph>}
               {followers.length !== 0 ? (
                 followers.slice(0, canJoin ? 5 : 6).map((followers) => (
                   <Col
@@ -763,7 +889,11 @@ const City = () => {
                           className="approveIcon"
                           onClick={() => changeApproveStatus(followers.id)}
                         />
-                      ) : null}
+                        ) : (followers.userId === activeUserID) ? (<MinusOutlined 
+                          className="approveIcon"
+                          onClick={() => seeSkipModal(followers.id)}
+                         />) : null
+                       }
                     </div>
                   </Col>
                 ))
@@ -802,6 +932,16 @@ const City = () => {
           visibleModal={visible}>
         </AddCitiesNewSecretaryForm>
       </Modal>
+
+      <Modal
+          title="На жаль ви не можете архівувати зазначену Станицю"
+          visible={activeMemberVisibility}
+          onOk={handleConfirm}
+          onCancel={handleConfirm}
+          footer={null}
+        >
+          <CheckActiveMembersForm members = {members} followers = {followers} admins = {admins}  onAdd={handleConfirm} />
+        </Modal>
 
       {canEdit ? (
         <AddDocumentModal

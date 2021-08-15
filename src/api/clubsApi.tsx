@@ -92,6 +92,34 @@ export const getClubByPage = async (page: number, pageSize: number, clubName: st
     });
 };
 
+export const getActiveClubByPage = async (page: number, pageSize: number, clubName: string | null = null) => {
+  return await api
+    .get(`Club/Profiles/Active/${page}`, { page, pageSize, clubName })
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const getNotActiveClubByPage = async (page: number, pageSize: number, clubName: string | null = null) => {
+  return await api
+    .get(`Club/Profiles/NotActive/${page}`, { page, pageSize, clubName })
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const archiveClub = async (id: number) => {
+  return await api.put(`Club/ArchiveClub/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const unArchiveClub = async (id: number) => {
+  return await api.put(`Club/UnArchiveClub/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export const createClub = async (data: any) => {
   return api.post("Club/CreateClub", data).catch((error) => {
     throw new Error(error);
@@ -152,12 +180,6 @@ export const clubNameOfApprovedMember = async(memberId: string) =>{
 
 export const addFollower = async (clubId: number) => {
   return api.post(`Club/AddFollower/${clubId}`, clubId).catch((error) => {
-    throw new Error(error);
-  });
-}
-
-export const addFollowerWithId = async (clubId: number, userId: string) => {
-  return api.post(`Club/AddFollowerWithId/${clubId}/${userId}`).catch((error) => {
     throw new Error(error);
   });
 }

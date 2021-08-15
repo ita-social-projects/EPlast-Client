@@ -22,9 +22,17 @@ export const getCityById = async (id: number) => {
   });
 };
 
-export const getCitiesByPage = async (page: number, pageSize: number, cityName: string | null = null) => {
-  return api
-    .get(`Cities/Profiles/${page}`, { page, pageSize, cityName })
+export const getActiveCitiesByPage = async (page: number, pageSize: number, cityName: string | null = null) => {
+  return await api
+    .get(`Cities/Profiles/Active/${page}`, { page, pageSize, cityName })
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const getNotActiveCitiesByPage = async (page: number, pageSize: number, cityName: string | null = null) => {
+  return await api
+    .get(`Cities/Profiles/NotActive/${page}`, { page, pageSize, cityName })
     .catch((error) => {
       throw new Error(error);
     });
@@ -38,6 +46,18 @@ export const createCity = async (data: any) => {
 
 export const updateCity = async (id: number, data: any) => {
   return api.put(`Cities/EditCity/${id}`, data).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const archiveCity = async (id: number) => {
+  return await api.put(`Cities/ArchiveCity/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const unArchiveCity = async (id: number) => {
+  return await  api.put(`Cities/UnArchiveCity/${id}`).catch((error) => {
     throw new Error(error);
   });
 };

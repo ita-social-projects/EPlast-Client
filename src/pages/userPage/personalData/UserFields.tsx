@@ -5,7 +5,6 @@ import moment from "moment";
 import { Data, User } from "../Interface/Interface";
 import { useParams, useHistory } from "react-router-dom";
 import notificationLogic from "../../../components/Notifications/Notification";
-import Spinner from "../../Spinner/Spinner";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import Facebook from "../../../assets/images/facebookGreen.svg";
 import Twitter from "../../../assets/images/birdGreen.svg";
@@ -95,7 +94,7 @@ export default function () {
 
           <StickyContainer className="kadraWrapper">
               <AvatarAndProgressStatic
-                imageUrl={data?.user.imagePath}
+                imageUrl={data?.user.imagePath as string}
                 time={data?.timeToJoinPlast}
                 firstName={data?.user.firstName}
                 lastName={data?.user.lastName}
@@ -461,7 +460,7 @@ export default function () {
       <Form name="basic" className="formContainer">
         <div className="shortAvatarWrapperUserFields">
           <AvatarAndProgressStatic
-            imageUrl={data?.shortUser.imagePath}
+            imageUrl={data?.shortUser.imagePath as string}
             time={data?.timeToJoinPlast}
             firstName={data?.shortUser.firstName}
             lastName={data?.shortUser.lastName}
@@ -554,19 +553,19 @@ export default function () {
           <div className="links">
             {data?.shortUser.facebookLink !== null &&
             data?.shortUser.facebookLink !== "" ? (
-              <a href={data?.shortUser.facebookLink}>
+              <a href={"https://www.facebook.com/" + data?.shortUser.facebookLink}>
                 <img src={Facebook} alt="Facebook" />
               </a>
             ) : null}
             {data?.shortUser.twitterLink !== null &&
             data?.shortUser.twitterLink !== "" ? (
-              <a href={data?.shortUser.twitterLink}>
+              <a href={"https://www.twitter.com/" + data?.shortUser.twitterLink}>
                 <img src={Twitter} alt="Twitter" />
               </a>
             ) : null}
             {data?.shortUser.instagramLink !== null &&
             data?.shortUser.instagramLink !== "" ? (
-              <a href={data?.shortUser.instagramLink}>
+              <a href={"https://www.instagram.com/" + data?.shortUser.instagramLink}>
                 <img src={Instagram} alt="Instagram" />
               </a>
             ) : null}

@@ -28,6 +28,10 @@ export const minNumber = (minLen:number)=>{
     return `Значення має бути більше або дорівнювати ${minLen}`
 };
 
+export const onlyWhiteSpaces = ()=>{
+    return `Назва не може містити лише порожні символи`
+};
+
 export const tryAgain = 'Щось пішло не так. Спробуйте ще раз.'; 
 
 export const ReportAlreadyExists = 'Звіт вже існує.';
@@ -41,7 +45,7 @@ export const successfulEditAction = (name:string, itemName?:string)=>{
 }; 
 
 export const successfulDeleteAction = (name:string, itemName?:string)=>{
-    return itemName ? `${name} ${itemName} успішно видалено` : `${name} успішно видалено`;
+    return (<div style={{wordBreak:'break-word'}}>{ itemName ? `${name} ${itemName} успішно видалено` : `${name} успішно видалено`} </div>);
 }; 
 
 export const successfulUpdateAction = (name:string, itemName?:string)=>{
@@ -85,7 +89,7 @@ export const shouldContain = (items:string)=>{
 };
 
 export const fileIsUpload = (name?:string)=>{
-    return name ? `${name} завантажено` : `Файл завантажено`;
+    return (<div style={{wordBreak:'break-word'}}>{ name ? `${name} завантажено` : `Файл завантажено`} </div>);
 }; 
 
 export const fileIsAdded= (name?:string)=>{

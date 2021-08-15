@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Spin} from 'antd';
-import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Layout, Modal, Spin} from 'antd';
+import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {getAllDocuments, getFile, removeDocument, getCityById, cityNameOfApprovedMember} from "../../../api/citiesApi";
 import "./City.less";
 import CityDocument from '../../../models/City/CityDocument';
@@ -51,6 +51,20 @@ const CityDocuments = () => {
       await getFile(fileBlob, fileName);
     }
 
+    function seeDeleteModal(documentId: number) {
+      return Modal.confirm({
+        title: "Ви впевнені, що хочете видалити даний документ із документообігу?",
+        icon: <ExclamationCircleOutlined />,
+        okText: "Так, Видалити",
+        okType: "primary",
+        cancelText: "Скасувати",
+        maskClosable: true,
+        onOk() {
+          removeDocumentById(documentId);
+        },
+      });
+    }
+
     const removeDocumentById = async (documentId: number) => {
       await removeDocument(documentId);
 
@@ -94,10 +108,13 @@ const CityDocuments = () => {
                         />,
                         <CloseOutlined
                           key="close"
-                          onClick={() => removeDocumentById(document.id)}
+                          onClick={() => seeDeleteModal(document.id)}
                         />                          
                       ]                                                                                                            
-                    : ((activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) 
+                    : activeUserRoles.includes(Roles.CityHead) 
+                    || activeUserRoles.includes(Roles.CityHeadDeputy) 
+                    || ((activeUserRoles.includes(Roles.Supporter) 
+                    || activeUserRoles.includes(Roles.PlastMember)) 
                     && city.name == activeUserCity )
                      
                     ?

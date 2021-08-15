@@ -38,6 +38,7 @@ const PrivateLayout = ({ children }: any) => {
   const [onlyRegistered, setOnlyRegistered] = useState(false);
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
   const [plastMember, setPlastMember] = useState(false);
+  const [reload, setReload] = useState<boolean>(false);
   const ref = useRef(null)
 
   const handleClickOutside = () => {
@@ -47,6 +48,7 @@ const PrivateLayout = ({ children }: any) => {
 
 
   const onCollapse = (collValue: boolean) => {
+    setReload(!reload);
     setCollapsed(collValue);
   };
 
@@ -67,7 +69,7 @@ const PrivateLayout = ({ children }: any) => {
     else {
       const user: any = jwt(token);
       await UserApi.getById(user.nameid).then(async response => {
-        await UserApi.getImage(response.data.user.imagePath).then((response: { data: any; }) => {
+        await UserApi.getImage(response.data?.user.imagePath).then((response: { data: any; }) => {
           setImageBase64(response.data);
         })
         setId(response.data.user.id);
@@ -96,7 +98,7 @@ const PrivateLayout = ({ children }: any) => {
   useEffect(() => {
     fetchData();
     fetchUser();
-  }, []);
+  }, [reload]);
 
   return (
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
@@ -126,6 +128,7 @@ const PrivateLayout = ({ children }: any) => {
                 icon={<SolutionOutlined />}
                 onClick={() => { handleClickAway(); history.push("/decisions"); }}
                 style={{ color: "white" }}
+                title=""
               >
                 Рішення
               </Menu.Item>
@@ -137,6 +140,7 @@ const PrivateLayout = ({ children }: any) => {
                 icon={<BankOutlined />}
                 onClick={() => { handleClickAway(); history.push("/regionsBoard"); }}
                 style={{ color: "white" }}
+                title=""
               >
                 Крайовий Провід Пласту
               </Menu.Item>
@@ -200,7 +204,7 @@ const PrivateLayout = ({ children }: any) => {
               }
             </SubMenu>
 
-            {(canEdit || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy) ? (
+            {(canEdit || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy ) ? (
               <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
                 <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="9">
                   Річні звіти
@@ -224,14 +228,21 @@ const PrivateLayout = ({ children }: any) => {
               ) : (<> </>)
             }
 
-            {(!canEdit && !regionAdm && !cityAdm && clubAdm) ? (
-              <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="9">
+            {(!canEdit && !regionAdm && !cityAdm && clubAdm && clubAdmDeputy) ? (
+              <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="16">
                 Річні звіти
               </Menu.Item>
               ) : (<> </>)
             }
             {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
-                <Menu.Item onClick={() => { handleClickAway(); history.push('/aboutBase'); }} key="5">Про Базу</Menu.Item>) : (<> </>)
+                <Menu.Item 
+                  onClick={() => { handleClickAway(); history.push('/aboutBase'); }} 
+                  key="17"
+                  title=""
+                >
+                  Про Базу
+                </Menu.Item>
+                ) : (<> </>)
             }
           </Menu>
         </Sider>
