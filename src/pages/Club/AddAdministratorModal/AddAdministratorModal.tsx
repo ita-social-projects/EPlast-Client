@@ -65,7 +65,7 @@ const AddAdministratorModal = (props: Props) => {
 
   const showDiseableModal = async (admin: ClubAdmin) => {
     return Modal.warning({
-      title: "Ви не можете змінити роль цьому користовачу",
+      title: "Ви не можете змінити роль цьому користувачу",
       content: (
         <div style={{ margin: 15 }}>
           <b>

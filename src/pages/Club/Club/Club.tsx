@@ -309,6 +309,27 @@ const Club = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в курені`, true);
   };
 
+  const showDiseableModal = async (admin: ClubAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете змінити роль цьому користувачу",
+      content: (
+        <div style={{ margin: 15 }}>
+          <b>
+            {club.head.user.firstName} {club.head.user.lastName}
+          </b>{" "}
+          є Головою Куреня, час правління закінчується{" "}
+          <b>
+            {moment(club.head.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(club.head.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
   const showConfirmClubAdmin  = async (admin: ClubAdmin, adminType: Roles) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
@@ -368,7 +389,9 @@ const Club = () => {
           }
         }
        else if (admin.adminType.adminTypeName === Roles.KurinHeadDeputy) {
-        if (club.headDeputy !== null && club.headDeputy.userId !== admin.userId) {
+         if (admin.userId === club.head.userId) {
+          showDiseableModal(admin);
+         } else if (club.headDeputy !== null && club.headDeputy.userId !== admin.userId) {
           showConfirmClubAdmin(admin, Roles.KurinHeadDeputy);
         } else {
           checkAdminId(admin);

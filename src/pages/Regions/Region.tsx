@@ -314,7 +314,7 @@ const Region = () => {
 
   const showDiseableModal = async (admin: RegionAdmin) => {
     return Modal.warning({
-      title: "Ви не можете змінити роль цьому користовачу",
+      title: "Ви не можете змінити роль цьому користувачу",
       content: (
         <div style={{ margin: 15 }}>
           <b>
