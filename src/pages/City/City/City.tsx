@@ -122,10 +122,14 @@ const City = () => {
   const addMember = async () => {
     const follower = await addFollower(+id);
 
-    admins.map(async (ad) => {
-      await createNotification(ad.userId,
-        `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці`, true);  
-    });
+    if (city.head !== null ){
+      await createNotification(city.head.userId,
+        `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня`, true);   
+    }
+    if (city.headDeputy !== null ){
+      await createNotification(city.headDeputy.userId,
+        `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня`, true);   
+    }
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;

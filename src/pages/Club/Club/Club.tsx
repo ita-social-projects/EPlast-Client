@@ -99,11 +99,14 @@ const Club = () => {
 }
   const addMember = async () => {
     const follower = await addFollower(+id);
-
-    admins.map(async (ad) => {
-      await createNotification(ad.userId,
+    if (club.head !== null ){
+      await createNotification(club.head.userId,
         `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня`, true);   
-    });
+    }
+    if (club.headDeputy !== null ){
+      await createNotification(club.headDeputy.userId,
+        `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня`, true);   
+    }
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
