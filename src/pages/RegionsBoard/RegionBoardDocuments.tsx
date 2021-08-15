@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import {Avatar, Button, Card, Layout, Modal} from "antd";
+import {Avatar, Button, Card, Layout, Modal, Tooltip} from "antd";
 import {
   FileTextOutlined,
   CloseOutlined,
@@ -22,6 +22,7 @@ import {
   getDocs
 } from "../../api/regionsBoardApi";
 
+const fileNameMaxLength = 40;
 const RegionBoardDocuments = () => {
   const { id } = useParams();
   const history = useHistory();
@@ -124,7 +125,16 @@ const RegionBoardDocuments = () => {
                 }
               >
                 <Avatar size={86} icon={<FileTextOutlined />} />
-                <Card.Meta className="detailsMeta" title={document.fileName} />
+                <Card.Meta
+                 className="detailsMeta" 
+                 title={
+                  (document.fileName?.length > fileNameMaxLength) ?
+                    <Tooltip title={document.fileName}>
+                        {document.fileName}
+                    </Tooltip>
+                  : document.fileName
+                  } 
+                />
               </Card>
             ))
           ) : (
