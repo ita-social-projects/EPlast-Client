@@ -518,7 +518,7 @@ const Club = () => {
                   )}
               </Col>
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
-                {club.clubURL || club.email || club.phoneNumber ? (
+                {club.slogan || club.clubURL || club.email || club.phoneNumber ? (
                   <div>
                     {club.slogan ? (
                       (club.slogan?.length > sloganMaxLength) ?
