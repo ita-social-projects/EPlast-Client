@@ -320,7 +320,7 @@ const Region = () => {
           <b>
             {head.user.firstName} {head.user.lastName}
           </b>{" "}
-          є Головою Станиці, час правління закінчується{" "}
+          є Головою Округи, час правління закінчується{" "}
           <b>
             {moment(head.endDate).format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
