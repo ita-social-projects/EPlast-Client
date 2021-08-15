@@ -191,7 +191,7 @@ const AddAdministratorModal = (props: Props) => {
           editRegionAdmin(admin);
         }
       } else {
-        if(admin.userId === head?.userId || admin.userId === headDeputy?.userId) {
+        if (admin.userId === head?.userId || admin.userId === headDeputy?.userId) {
             showEditConfirmModal(admin);
         } else {
           await editRegionAdmin(admin);

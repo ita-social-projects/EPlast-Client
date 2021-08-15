@@ -215,7 +215,7 @@ const RegionAdministration = () => {
             regionId={+id}
             regionName={region}
             onAdd={onAdd}
-          ></AddAdministratorModal>
+          />
     </Layout.Content>
   );
 };
