@@ -107,7 +107,7 @@ const RegionAdministration = () => {
   const onAdd = async (newAdmin: RegionAdmin = new RegionAdmin()) => {
     const index = administration.findIndex((a) => a.id === admin.id);
     administration[index] = newAdmin;
-    await createNotification(newAdmin.userId, `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`);
+    await createNotification(newAdmin.userId, `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`);
     setAdministration(administration);
     setReload(!reload);
   };
