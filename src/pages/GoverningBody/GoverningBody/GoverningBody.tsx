@@ -450,12 +450,6 @@ const GoverningBody = () => {
               >
                 Більше
               </Button>
-              {userAccesses["ManipulatePoster"] ? (
-                <PlusSquareFilled
-                  className="addReportIcon"
-                  onClick={() => setVisibleModal(true)}
-                />
-              ) : null}
             </div>
           </Card>
         </Col>

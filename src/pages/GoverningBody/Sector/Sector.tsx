@@ -383,12 +383,6 @@ const Sector = () => {
               >
                 Більше
               </Button>
-              {userAccesses["ManipulatePoster"] ? (
-                <PlusSquareFilled
-                  className="addReportIcon"
-                  onClick={() => setVisible(true)}
-                />
-              ) : null}
             </div>
           </Card>
         </Col>
