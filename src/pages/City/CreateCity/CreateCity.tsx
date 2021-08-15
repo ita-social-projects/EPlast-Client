@@ -439,7 +439,7 @@ const CreateCity = () => {
                   label="Заява"
                   labelCol={{ span: 24 }}
                   initialValue={regionFollower.appeal}
-                  rules={[{ required: true, message: emptyInput("заява") }]}
+                  rules={descriptionValidation.Appeal}
                 >
                   <Input value={regionFollower.appeal} maxLength={1001} />
                 </Form.Item>
@@ -463,7 +463,7 @@ const CreateCity = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={isFollowerPath ? regionFollower.cityDescription : city.description}
-                rules={[descriptionValidation.Description]}
+                rules={descriptionValidation.Description}
               >
                 <Input value={isFollowerPath ? regionFollower.cityDescription : city.description} maxLength={1001} />
               </Form.Item>

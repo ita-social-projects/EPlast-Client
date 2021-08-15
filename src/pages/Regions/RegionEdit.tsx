@@ -169,7 +169,7 @@ const RegionEditFormPage = () => {
                     name="description"
                     initialValue={chosenRegion?.description}
                     labelCol={{ span: 24 }}
-                    rules={[descriptionValidation.Description, descriptionValidation.Required]}
+                    rules={descriptionValidation.Description}
                   >
                     <Input
                     value={chosenRegion?.description} maxLength={1001} />
