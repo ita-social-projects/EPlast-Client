@@ -1,12 +1,10 @@
 import React from 'react';
-import {Card} from 'antd';
+import {Card, Tooltip} from 'antd';
 import ActionLogo from '../../assets/images/ActionLogo.png'
-
 import {useHistory} from "react-router-dom";
+import classes from './ActionCard.module.css';
 
-
-const classes = require('./ActionCard.module.css');
-
+const categoryMaxLength = 21;
 interface CardProps {
     eventCategoryId: number
     eventCategoryName: string
@@ -34,7 +32,16 @@ const ActionCard = ({
                 cover={<img alt="example" src={ActionLogo}/>}
                 onClick={() => history.push(`/types/${eventTypeId}/categories/${eventCategoryId}/events`)}
             >
-                <Meta title={eventCategoryName} className={classes.titleText}/>
+                <Meta
+                    className={classes.titleText}
+                    title={
+                        (eventCategoryName.length > categoryMaxLength) ?
+                            <Tooltip title={eventCategoryName}>
+                                <span>{eventCategoryName}</span>
+                            </Tooltip>
+                        : eventCategoryName
+                    } 
+                />
             </Card>
         </div>
     )
