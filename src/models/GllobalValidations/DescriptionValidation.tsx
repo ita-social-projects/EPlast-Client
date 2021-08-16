@@ -4,27 +4,48 @@ import{
     onlyPositiveNumber,
     incorrectPhone,
     incorrectEmail,
-    onlyWhiteSpaces,
+    incorrectCityName,
+    incorrectClubName,
+    incorrectDescription,
+    incorrectStreet,
+    incorrectHouseNumber,
+    incorrectOficeNumber,
+    incorrectSlogan,
+    incorrectAppeal
   } from "../../components/Notifications/Messages"
   
   const notOnlyWhiteSpaces = /^\s*\S.*$/;
 
  export const descriptionValidation = {
+    Appeal: [
+        {
+            pattern: /^\S*((?=(\S+))\2\s?)+$/,
+            message: incorrectAppeal
+        },
+        {
+            max: 1000,
+            message: maxLength(1000),
+        },    
+    ],
     Name: [
         {
-            required: true,
-            message: emptyInput(),
+            pattern: /^(([А-ЯҐЄІЇ][а-яґєії]*'?[а-яґєії]*){1}(?:[\s\-])?)*$/,
+            message: incorrectCityName
         },
         {
             max: 50,
             message: maxLength(50),
         },
-        { 
-            pattern: notOnlyWhiteSpaces, 
-            message:onlyWhiteSpaces() 
-        },
+        {
+            required: true,
+            message: emptyInput(),
+        }
     ],
     ClubName: [
+        {
+            pattern: /^\S*((?=([^\sA-Za-z]+))\2\s?)+$/,
+            message: incorrectClubName
+        },
         {
             required: true,
             message: emptyInput(),
@@ -34,16 +55,26 @@ import{
             message: maxLength(200),
         }
     ],
-    Slogan:
-    {
-        max: 500,
-        message: maxLength(500),
-    },
-    Description:
-    {
-        max: 1000,
-        message: maxLength(1000),
-    },
+    Slogan:[
+        {
+            pattern: /^\S*((?=(\S+))\2\s?)+$/,
+            message: incorrectSlogan
+        },
+        {
+            max: 500,
+            message: maxLength(500),
+        },    
+    ],
+    Description: [
+        {
+            pattern: /^\S*((?=(\S+))\2\s?)+$/,
+            message: incorrectDescription
+        },
+        {
+            max: 1000,
+            message: maxLength(1000),
+        },    
+    ],
     RegionEmail: [
         {
             pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
@@ -81,6 +112,10 @@ import{
     Street:
     [
         {
+            pattern: /^\S*((?=([А-ЯҐЄІЇа-яґєії\d]+[\.\-']?))\2\s?)+$/,
+            message: incorrectStreet
+        },
+        {
             required: true,
             message: emptyInput(),
         },
@@ -92,6 +127,10 @@ import{
     houseNumber:
     [
         {
+            pattern: /^[1-9]{1}\d*\/?[А-ЯҐЄІЇа-яґєії]?([1-9]{1}\d*)?$/,
+            message: incorrectHouseNumber
+        },
+        {
             required: true,
             message: emptyInput(),
         },
@@ -102,6 +141,10 @@ import{
     ],
     officeNumber:
     [
+        {
+            pattern: /^[1-9]{1}\d*\/?[А-ЯҐЄІЇа-яґєії]?([1-9]{1}\d*)?$/,
+            message: incorrectOficeNumber
+        },
         {
             required: true,
             max: 5,

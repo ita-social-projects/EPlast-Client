@@ -209,7 +209,7 @@ const CreateGoverningBody = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={governingBody.description}
-                rules={[descriptionValidation.Description]}
+                rules={descriptionValidation.Description}
               >
                 <Input value={governingBody.description} maxLength={1001} />
               </Form.Item>

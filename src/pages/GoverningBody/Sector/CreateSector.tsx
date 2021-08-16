@@ -163,7 +163,7 @@ const CreateSector = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={sector.description}
-                rules={[descriptionValidation.Description]}
+                rules={descriptionValidation.Description}
               >
                 <Input value={sector.description} maxLength={1001} />
               </Form.Item>

@@ -214,7 +214,7 @@ const CreateClub = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={club.description}
-                rules={[descriptionValidation.Description]}
+                rules={descriptionValidation.Description}
               >
                 <Input value={club.description} maxLength={descriptionMaxLength}/>
               </Form.Item>
@@ -264,7 +264,7 @@ const CreateClub = () => {
                   label="Гасло"
                   labelCol={{ span: 24 }}
                   initialValue={club.slogan}
-                  rules={[descriptionValidation.Slogan]}
+                  rules={descriptionValidation.Slogan}
               >
                 <Input value={club.slogan} maxLength={sloganMaxLength}/>
               </Form.Item>

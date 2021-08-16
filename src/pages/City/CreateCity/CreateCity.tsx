@@ -52,6 +52,7 @@ import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
 import TextArea from "antd/lib/input/TextArea";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import { inherits } from "util";
 
 const CreateCity = () => {
   const { id } = useParams();
@@ -410,7 +411,7 @@ const CreateCity = () => {
           </Form.Item>
           <Row justify="center">
             {isFollowerPath ? (
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
+              <Col md={11} xs={24}>
                 <Form.Item
                   name="applicant"
                   label="Заявник"
@@ -421,7 +422,7 @@ const CreateCity = () => {
                     )}
                   rules={[{ required: true, message: emptyInput("заявник") }]}
                 >
-                  <Input readOnly value={location.pathname.startsWith(followerPath + "edit") ? (
+                  <Input style={{cursor: "pointer"}} readOnly value={location.pathname.startsWith(followerPath + "edit") ? (
                     applicant.firstName + " " + applicant.lastName) : (
                       activeUser.firstName + " " + activeUser.lastName
                     )} maxLength={51} 
@@ -439,7 +440,7 @@ const CreateCity = () => {
                   label="Заява"
                   labelCol={{ span: 24 }}
                   initialValue={regionFollower.appeal}
-                  rules={[{ required: true, message: emptyInput("заява") }]}
+                  rules={descriptionValidation.Appeal}
                 >
                   <Input value={regionFollower.appeal} maxLength={1001} />
                 </Form.Item>
@@ -463,7 +464,7 @@ const CreateCity = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={isFollowerPath ? regionFollower.cityDescription : city.description}
-                rules={[descriptionValidation.Description]}
+                rules={descriptionValidation.Description}
               >
                 <Input value={isFollowerPath ? regionFollower.cityDescription : city.description} maxLength={1001} />
               </Form.Item>
@@ -518,9 +519,13 @@ const CreateCity = () => {
                 <Select
                   showSearch
                   optionFilterProp="children"
+                  disabled={location.pathname.startsWith(followerPath + "edit") ? true : false}
                 >
                   {regions.map((item: RegionProfile) => (
-                    <Select.Option key={item.id} value={isFollowerPath ? item.id : item.regionName}>
+                    <Select.Option 
+                      key={item.id} 
+                      value={isFollowerPath ? item.id : item.regionName}
+                    >
                       {item.regionName}
                     </Select.Option>
                   ))}
