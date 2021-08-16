@@ -127,7 +127,8 @@ const AddClubsNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: Roles.KurinHead, disabled: activeUserRoles.includes(Roles.KurinHeadDeputy) },
+            { value: Roles.KurinHead, disabled: (activeUserRoles.includes(Roles.KurinHeadDeputy) 
+              && activeUserRoles.includes(Roles.Admin)) },
             { value: Roles.KurinHeadDeputy },
             { value: "Голова СПС" },
             { value: "Фотограф" },

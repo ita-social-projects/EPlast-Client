@@ -99,11 +99,14 @@ const Club = () => {
 }
   const addMember = async () => {
     const follower = await addFollower(+id);
-
-    admins.map(async (ad) => {
-      await createNotification(ad.userId,
+    if (club.head !== null ){
+      await createNotification(club.head.userId,
         `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня`, true);   
-    });
+    }
+    if (club.headDeputy !== null ){
+      await createNotification(club.headDeputy.userId,
+        `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашого куреня`, true);   
+    }
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
@@ -306,10 +309,31 @@ const Club = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в курені`, true);
   };
 
+  const showDiseableModal = async (admin: ClubAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете змінити роль цьому користувачу",
+      content: (
+        <div style={{ margin: 15 }}>
+          <b>
+            {club.head.user.firstName} {club.head.user.lastName}
+          </b>{" "}
+          є Головою Куреня, час правління закінчується{" "}
+          <b>
+            {moment(club.head.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(club.head.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
   const showConfirmClubAdmin  = async (admin: ClubAdmin, adminType: Roles) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: ( adminType.toString() === "KurinHead" ?
+      content: ( adminType.toString() === Roles.KurinHead ?
         <div style={{ margin: 10 }}>
           <b>
             {club.head.user.firstName} {club.head.user.lastName}
@@ -358,24 +382,19 @@ const Club = () => {
   const handleOk = async(admin: ClubAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.KurinHead) {
-        if (club.head == null) {
-          checkAdminId(admin);
+        if (club.head !== null && club.head.userId !== admin.userId) {
+          showConfirmClubAdmin(admin, Roles.KurinHead);
         } else {
-          if (club.head?.userId !== admin.userId) {
-            showConfirmClubAdmin(admin, Roles.KurinHead);
-          } else {
-            checkAdminId(admin);
+          checkAdminId(admin);
           }
         }
-      } else if (admin.adminType.adminTypeName === Roles.KurinHeadDeputy) {
-        if (club.headDeputy == null) {
-          checkAdminId(admin);
+       else if (admin.adminType.adminTypeName === Roles.KurinHeadDeputy) {
+         if (admin.userId === club.head.userId) {
+          showDiseableModal(admin);
+         } else if (club.headDeputy !== null && club.headDeputy.userId !== admin.userId) {
+          showConfirmClubAdmin(admin, Roles.KurinHeadDeputy);
         } else {
-          if (club.head?.userId !== admin.userId) {
-            showConfirmClubAdmin(admin, Roles.KurinHeadDeputy);
-          } else {
-            checkAdminId(admin);
-          }
+          checkAdminId(admin);
         }
       } else {
           await addClubAdmin(admin);
