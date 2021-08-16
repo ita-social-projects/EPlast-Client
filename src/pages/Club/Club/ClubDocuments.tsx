@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Modal, Spin} from 'antd';
+import {Avatar, Button, Card, Layout, Modal, Spin, Tooltip} from 'antd';
 import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {clubNameOfApprovedMember, getAllDocuments, getFile, removeDocument, getClubById} from "../../../api/clubsApi";
 import "./Club.less";
@@ -12,7 +12,7 @@ import Spinner from '../../Spinner/Spinner';
 import Title from 'antd/lib/typography/Title';
 import userApi from "../../../api/UserApi";
 
-
+const typeMaxLength = 40;
 const ClubDocuments = () => {
     const {id} = useParams();
     const history = useHistory();
@@ -133,7 +133,13 @@ const ClubDocuments = () => {
                   <Avatar size={86} icon={<FileTextOutlined />} />
                   <Card.Meta
                     className="detailsMeta"
-                    title={document.clubDocumentType.name}
+                    title={
+                      (document.clubDocumentType.name?.length > typeMaxLength) ?
+                        <Tooltip title={document.clubDocumentType.name}>
+                            <span>{document.clubDocumentType.name}</span>
+                        </Tooltip>
+                      : document.clubDocumentType.name
+                    }
                   />
                 </Card>
               ))
