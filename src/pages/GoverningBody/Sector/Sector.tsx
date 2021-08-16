@@ -290,7 +290,7 @@ const Sector = () => {
 
         <Col
           xl={{ span: 7, offset: 1 }}
-          md={{ span: 11, offset: 2 }}
+          md={11}
           sm={24}
           xs={24}
         >
