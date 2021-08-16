@@ -312,10 +312,31 @@ const Region = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`, true);
   };
 
-  const showConfirmRegionAdmin  = async (admin: RegionAdmin, adminType: Roles) => {
+  const showDiseableModal = async (admin: RegionAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете змінити роль цьому користувачу",
+      content: (
+        <div style={{ margin: 15 }}>
+          <b>
+            {head.user.firstName} {head.user.lastName}
+          </b>{" "}
+          є Головою Округи, час правління закінчується{" "}
+          <b>
+            {moment(head.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(head.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
+  const showConfirmRegionAdmin  = async (admin: RegionAdmin) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: ( adminType.toString() === "OkrugaHead" ?
+      content: ( admin.adminType.adminTypeName.toString() === "Голова Округи" ?
         <div style={{ margin: 10 }}>
           <b>
             {head?.user.firstName} {head?.user.lastName}
@@ -368,26 +389,20 @@ const Region = () => {
   const handleOk = async(admin: RegionAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.OkrugaHead) {
-        if (head == '') {
-          checkAdminId(admin);
-        } else {
-          if (head.userId !== admin.userId) {
-            showConfirmRegionAdmin(admin, Roles.OkrugaHead);
+        if (head !== '' && head.userId !== admin.userId) {
+          showConfirmRegionAdmin(admin);
           } else {
             checkAdminId(admin);
           }
-        }
       } else if (admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy) {
-        if (headDeputy == 'null') {
-          checkAdminId(admin);
-        } else {
-          if (head.userId !== admin.userId) {
-            showConfirmRegionAdmin(admin, Roles.OkrugaHeadDeputy);
+        if (admin.userId === head.userId) {
+          showDiseableModal(admin);
+        } else if (headDeputy !== '' && headDeputy.userId !== admin.userId) {
+          showConfirmRegionAdmin(admin);
           } else {
             checkAdminId(admin);
           }
-        }
-      } else {
+        } else {
           await addRegionAdmin(admin);
       }
     } finally {
@@ -960,6 +975,8 @@ const Region = () => {
         >
           <AddNewSecretaryForm 
               onAdd={handleOk}
+              head={head}
+              headDeputy={headDeputy}
               regionId={region.id}
               visibleModal={visible}
           >
