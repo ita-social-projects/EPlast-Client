@@ -31,8 +31,11 @@ const DropDown = (props: Props) => {
   const [canEdit, setCanEdit] = useState(false);
   const [canSee, setCanSee] = useState(false);
   const [regionAdm, setRegionAdm] = useState(false);
+  const [regionAdmDeputy, setRegionAdmDeputy] = useState(false);
   const [cityAdm, setCityAdm] = useState(false);
+  const [cityAdmDeputy, setCityAdmDeputy] = useState(false);
   const [clubAdm, setClubAdm] = useState(false);
+  const [clubAdmDeputy, setClubAdmDeputy] = useState(false);
   const [data, setData] = useState<DecisionPost>({
     id: 0,
     name: "",
@@ -52,8 +55,11 @@ const fetchUser = async () => {
   setUser(roles);
   setCanEdit(roles.includes(Roles.Admin));
   setRegionAdm(roles.includes(Roles.OkrugaHead));
+  setRegionAdmDeputy(roles.includes(Roles.OkrugaHeadDeputy));
   setCityAdm(roles.includes(Roles.CityHead));
+  setCityAdmDeputy(roles.includes(Roles.CityHeadDeputy));
   setClubAdm(roles.includes(Roles.KurinHead));
+  setClubAdmDeputy(roles.includes(Roles.KurinHeadDeputy));
   setCanSee(roles.includes(Roles.PlastMember));
 }
 const fetchData = async () =>{
@@ -105,7 +111,8 @@ const fetchData = async () =>{
         }
         }
       >
-        {(canEdit || ((regionAdm || cityAdm || clubAdm) && (userId === recordCreatorId))) ? (
+        {(canEdit || ((regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy) &&
+         (userId === recordCreatorId))) ? (
         <Menu.Item key="1">
           <EditOutlined />
           Редагувати
