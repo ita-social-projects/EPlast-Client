@@ -898,7 +898,10 @@ const Region = () => {
                 {followers.length !== 0 ? (
                   followers.slice(0, 6).map((follower) => (
                     <Col
-                      className="cityMemberItem"
+                      className={activeUserRoles.includes(Roles.Admin) 
+                        || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
+                            && isActiveUserRegionAdmin)
+                        ? "cityMemberItem" : undefined}
                       xs={12}
                       sm={8}
                       key={follower.id}
