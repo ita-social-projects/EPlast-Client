@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from "react";
-import "./AddAdministrationModal.less";
-import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
-import { ExclamationCircleOutlined} from '@ant-design/icons';
-import CityAdmin from "./../../../models/City/CityAdmin";
-import AdminType from "./../../../models/Admin/AdminType";
-import {
-  addAdministrator,
-  editAdministrator,
-  getAllAdmins,
-} from "../../../api/citiesApi";
-import notificationLogic from "./../../../components/Notifications/Notification";
+import { useHistory, useParams } from "react-router-dom";
+import { 
+    Button, 
+    Modal, 
+    Skeleton, 
+    Spin, 
+    Form, 
+    AutoComplete,
+    Row,
+    Col,
+    DatePicker
+} from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { emptyInput } from "../../components/Notifications/Messages"
+import { 
+  getHead, 
+  getHeadDeputy, 
+  AddAdmin, 
+  EditAdmin
+} from "../../api/regionsApi";
+import userApi from "../../api/UserApi";
+import "./Region.less";
+import AdminType from "../../models/Admin/AdminType";
 import moment from "moment";
 import "moment/locale/uk";
-import userApi from "../../../api/UserApi";
-import{emptyInput} from "../../../components/Notifications/Messages"
-import { Roles } from "../../../models/Roles/Roles";
+import notificationLogic from "../../components/Notifications/Notification";
+import { Roles } from "../../models/Roles/Roles";
+import RegionAdmin from "../../models/Region/RegionAdmin";
 moment.locale("uk-ua");
 
 const confirm = Modal.confirm;
@@ -22,10 +34,11 @@ const confirm = Modal.confirm;
 interface Props {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
-  admin: CityAdmin;
-  setAdmin: (admin: CityAdmin) => void;
-  cityId: number;
-  onAdd?: (admin?: CityAdmin) => void;
+  admin: RegionAdmin;
+  setAdmin: (admin: RegionAdmin) => void;
+  regionId: number;
+  regionName: string;
+  onAdd?: (admin?: RegionAdmin) => void;
   onChange?: (id: string, userRoles: string) => void;
 }
 
@@ -34,18 +47,9 @@ const AddAdministratorModal = (props: Props) => {
   const [startDate, setStartDate] = useState<any>();
   const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
-  const [head, setHead] = useState<CityAdmin>();
-  const [headDeputy, setHeadDeputy] = useState<CityAdmin>();
+  const [head, setHead] = useState<any>();
+  const [headDeputy, setHeadDeputy] = useState<any>();
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-
-  const getCityAdmins= async () => {
-    if (props.cityId !== 0) {
-      const responseAdmins = await getAllAdmins(props.cityId)
-      setHead(responseAdmins.data.head);
-      setHeadDeputy(responseAdmins.data.headDeputy);
-      setLoading(false);
-    }
-  };
 
   const disabledEndDate = (current: any) => {
     return current && current < moment();
@@ -55,7 +59,7 @@ const AddAdministratorModal = (props: Props) => {
     return current && current > moment();
   };
 
-  function showEditConfirmModal(admin: CityAdmin) {
+  function showEditConfirmModal(admin: RegionAdmin) {
     return Modal.confirm({
       title: "Ви впевнені, що хочете змінити роль даного користувача?",
       icon: <ExclamationCircleOutlined />,
@@ -64,12 +68,12 @@ const AddAdministratorModal = (props: Props) => {
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
-         editCityAdmin(admin);
+         editRegionAdmin(admin);
       },
     });
   }
 
-  const showDiseableModal = async (admin: CityAdmin) => {
+  const showDiseableModal = async (admin: RegionAdmin) => {
     return Modal.warning({
       title: "Ви не можете змінити роль цьому користувачу",
       content: (
@@ -77,7 +81,7 @@ const AddAdministratorModal = (props: Props) => {
           <b>
             {head?.user.firstName} {head?.user.lastName}
           </b>{" "}
-          є Головою Станиці, час правління закінчується{" "}
+          є Головою Округи, час правління закінчується{" "}
           <b>
             {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
@@ -90,15 +94,15 @@ const AddAdministratorModal = (props: Props) => {
     });
   };
 
-  const showConfirmCityAdmin  = async (admin: CityAdmin, adminType: Roles) => {
+    const showConfirmRegionAdmin  = async (admin: RegionAdmin) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: (adminType.toString() === "Голова Станиці" ?
+      content: (admin.adminType.adminTypeName.toString() === Roles.OkrugaHead ?
         <div style={{ margin: 10 }}>
           <b>
             {head?.user.firstName} {head?.user.lastName}
           </b>{" "}
-          є Головою Станиці, час правління закінчується{" "}
+          є Головою Округи, час правління закінчується{" "}
           <b>
             {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
@@ -111,7 +115,7 @@ const AddAdministratorModal = (props: Props) => {
         <b>
           {headDeputy?.user.firstName} {headDeputy?.user.lastName}
         </b>{" "}
-        є Заступником Голови Станиці, час правління закінчується{" "}
+        є Заступником Голови Округи, час правління закінчується{" "}
         <b>
           {moment(headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
             ? "ще не скоро"
@@ -123,38 +127,48 @@ const AddAdministratorModal = (props: Props) => {
       onCancel() {},
       async onOk() {
         if (admin.id === 0) {
-          addCityAdmin(admin);
+          addRegionAdmin(admin);
         } else {
-          editCityAdmin(admin);
+          editRegionAdmin(admin);
         }
       },
     });
   };
-
-  const addCityAdmin = async (admin: CityAdmin) => {
-    admin = (await addAdministrator(props.admin.cityId, admin)).data;
+  
+  const addRegionAdmin = async (admin: RegionAdmin) => {
+    
+    await AddAdmin(admin);
     notificationLogic("success", "Користувач успішно доданий в провід");
     props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
     props.onAdd?.(admin);
   };
 
-  const editCityAdmin = async (admin: CityAdmin) => {
-    admin = (await editAdministrator(props.admin.cityId, admin)).data;
+  const editRegionAdmin = async (admin: RegionAdmin) => {
+    await EditAdmin(admin);
     notificationLogic("success", "Адміністратор успішно відредагований");
     props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
     props.onAdd?.(admin);
   };
 
+  const getAdministration = async () => {
+    setLoading(true);
+    const responseHead = await getHead(props.regionId);
+    const responseHeadDeputy = await getHeadDeputy(props.regionId);
+    setHead(responseHead.data);
+    setHeadDeputy(responseHeadDeputy.data);
+    setLoading(false);
+  };
+
   const handleSubmit = async (values: any) => {
     setLoading(true);
 
-    let admin: CityAdmin = {
+    let admin: any = {
       id: props.admin.id,
       adminType: {
         ...new AdminType(),
         adminTypeName: values.adminType,
       },
-      cityId: props.cityId,
+      regionId: props.regionId,
       user: props.admin.user,
       userId: props.admin.userId,
       endDate: values.endDate?._d,
@@ -162,26 +176,26 @@ const AddAdministratorModal = (props: Props) => {
     };
 
     try {
-      if (values.adminType === Roles.CityHead) {
-        if (head !== null && head?.userId !== admin.userId) {
-          showConfirmCityAdmin(admin, values.adminType);
+      if (values.adminType === Roles.OkrugaHead) {
+        if (head !== '' && head?.userId !== admin.userId) {
+          showConfirmRegionAdmin(admin);
         } else {
-           await editCityAdmin(admin);
+           await editRegionAdmin(admin);
         }
-      } else if (values.adminType === Roles.CityHeadDeputy ) {
+      } else if (values.adminType === Roles.OkrugaHeadDeputy ) {
         if (admin.userId === head?.userId) {
             showDiseableModal(admin);
-        } else if (headDeputy !== null && headDeputy?.userId !== admin.userId) {
-          showConfirmCityAdmin(admin, values.adminType);
+        } else if (headDeputy !== '' && headDeputy?.userId !== admin.userId) {
+          showConfirmRegionAdmin(admin);
         } else {
-          await editCityAdmin(admin);
+          editRegionAdmin(admin);
         }
       } else {
         if (admin.userId === head?.userId || admin.userId === headDeputy?.userId) {
             showEditConfirmModal(admin);
         } else {
-          await editCityAdmin(admin);
-        }
+          await editRegionAdmin(admin);
+        } 
       }
     } finally {
       props.setVisibleModal(false);
@@ -197,16 +211,16 @@ const AddAdministratorModal = (props: Props) => {
     if (props.visibleModal) {
       form.resetFields();
     }
-    getCityAdmins();
+    getAdministration();
     const userRoles = userApi.getActiveUserRoles();
-    setActiveUserRoles(userRoles);
+      setActiveUserRoles(userRoles);
   }, [props]);
 
   return (
     <Modal
       title={
         props.admin.id === 0
-          ? "Додати в провід станиці"
+          ? `Додати в провід ${props.regionName}`
           : "Редагування проводу"
       }
       visible={props.visibleModal}
@@ -227,10 +241,11 @@ const AddAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: Roles.CityHead, disabled: (activeUserRoles.includes(Roles.CityHeadDeputy) 
+              { value: Roles.OkrugaHead, disabled: (activeUserRoles.includes(Roles.OkrugaHeadDeputy) 
               && !activeUserRoles.includes(Roles.Admin)) },
-              { value: Roles.CityHeadDeputy},
+              { value: Roles.OkrugaHeadDeputy },
               { value: "Голова СПС" },
+              { value: "Фотограф" },
               { value: "Писар" },
               { value: "Скарбник" },
               { value: "Домівкар" },

@@ -76,6 +76,7 @@ import GoverningBodySector from "./pages/GoverningBody/Sector/Sector";
 import EditGoverningBodySector from "./pages/GoverningBody/Sector/EditSector";
 import GoverningBodySectorDocuments from "./pages/GoverningBody/Sector/SectorDocuments";
 import GoverningBodySectorAdministration from "./pages/GoverningBody/Sector/SectorAdministration";
+import Announcements from "./pages/GoverningBody/Announcement/Announcement";
 
 const App: FC = () => (
   <div className="App">
@@ -390,6 +391,12 @@ const App: FC = () => (
             exact
             path="/governingBodies/:governingBodyId/sectors/new"
             component={CreateGoverningBodySector}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/GetAllAnnouncements"
+            component={Announcements}
           />
           <RouteWithLayout
             layout={PrivateLayout}

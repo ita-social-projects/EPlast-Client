@@ -13,6 +13,8 @@ import{
     incorrectSlogan,
     incorrectAppeal
   } from "../../components/Notifications/Messages"
+  
+  const notOnlyWhiteSpaces = /^\s*\S.*$/;
 
  export const descriptionValidation = {
     Appeal: [

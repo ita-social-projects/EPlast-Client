@@ -41,20 +41,24 @@ const RegionBoardDocuments = () => {
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
 
   const getUserAccesses = async () => {
+    setLoading(true);
     let user: any = jwt(AuthStore.getToken() as string);
     await getUserAccess(user.nameid).then(
       response => {
         setUserAccesses(response.data);
       }
     );
+    setLoading(false);
   }
 
   const setRegionDocs = async () => {
     try {
+      setLoading(true);
       const response = await getDocs(id);
       setDocuments(response.data);
     } finally {
     }
+    setLoading(false);
   };
 
   const downloadDocument = async (fileBlob: string, fileName: string) => {
