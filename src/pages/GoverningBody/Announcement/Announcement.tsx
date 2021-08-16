@@ -5,7 +5,6 @@ import { getAllAnnouncements } from "../../../api/governingBodiesApi";
 import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
 import AddAnnouncementModal from "./AddAnnouncementModal";
 import Spinner from "../../Spinner/Spinner";
-import "./Filter.less";
 import { AnnouncementForAdd } from "../../../models/GoverningBody/Announcement/AnnouncementForAdd";
 import DropDown from "./DropDownAnnouncement";
 import ClickAwayListener from "react-click-away-listener";
@@ -105,7 +104,7 @@ const Announcements = () => {
             dataSource={data}
             renderItem={(item) => (
               <List.Item
-                className={classes.textListItem}
+                className={classes.listItem}
                 onClick={() => {
                   setShowDropdown(false);
                 }}
