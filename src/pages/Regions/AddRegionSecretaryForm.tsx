@@ -152,7 +152,8 @@ const AddNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: Roles.OkrugaHead, disabled: activeUserRoles.includes(Roles.OkrugaHeadDeputy) },
+            { value: Roles.OkrugaHead,  disabled: (activeUserRoles.includes(Roles.OkrugaHeadDeputy) 
+              && !activeUserRoles.includes(Roles.Admin)) },
             { value: Roles.OkrugaHeadDeputy},
             { value: "Писар" },
             { value: "Бунчужний" },
@@ -163,7 +164,7 @@ const AddNewSecretaryForm = (props: any) => {
             { value: "Голова ОПР" },
           ]}
           placeholder={"Тип адміністрування"}
-        ></AutoComplete>
+        />
       </Form.Item>
 
       <Form.Item
