@@ -150,7 +150,7 @@ const AddNewRegionFormPage = () => {
                 label="Опис"
                 name="description"
                 labelCol={{ span: 24 }}
-                rules={[descriptionValidation.Description, descriptionValidation.Required]}
+                rules={descriptionValidation.Description}
               >
                 <Input maxLength={1001} />
               </Form.Item>
