@@ -110,6 +110,10 @@ const RegionFollowers = () => {
                   }
                 >
                   <div
+                    className={activeUserRoles.includes(Roles.Admin) 
+                      || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
+                          && isActiveUserRegionAdmin)
+                      ? "cityMember" : undefined}
                     onClick={() => 
                         activeUserRoles.includes(Roles.Admin) 
                         || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
@@ -117,7 +121,6 @@ const RegionFollowers = () => {
                         ? history.push(`/regions/follower/edit/${follower.id}`)
                         : undefined
                     }
-                    className="cityMember"
                   >
                     {photosLoading ? (
                       <Skeleton.Avatar active size={86}></Skeleton.Avatar>
