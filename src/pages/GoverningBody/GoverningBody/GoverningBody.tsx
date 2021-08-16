@@ -446,16 +446,10 @@ const GoverningBody = () => {
               <Button
                 type="primary"
                 className="governingBodyInfoButton"
-                onClick={() => history.push(`/governingBodies/documents/${governingBody.id}`)}
+                onClick={() => history.push(`/GetAllAnnouncements`)}
               >
                 Більше
               </Button>
-              {userAccesses["ManipulatePoster"] ? (
-                <PlusSquareFilled
-                  className="addReportIcon"
-                  onClick={() => setVisibleModal(true)}
-                />
-              ) : null}
             </div>
           </Card>
         </Col>

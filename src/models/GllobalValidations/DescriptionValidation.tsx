@@ -3,8 +3,11 @@ import{
     maxLength,
     onlyPositiveNumber,
     incorrectPhone,
-    incorrectEmail
+    incorrectEmail,
+    onlyWhiteSpaces,
   } from "../../components/Notifications/Messages"
+  
+  const notOnlyWhiteSpaces = /^\s*\S.*$/;
 
  export const descriptionValidation = {
     Name: [
@@ -15,7 +18,11 @@ import{
         {
             max: 50,
             message: maxLength(50),
-        }
+        },
+        { 
+            pattern: notOnlyWhiteSpaces, 
+            message:onlyWhiteSpaces() 
+        },
     ],
     ClubName: [
         {

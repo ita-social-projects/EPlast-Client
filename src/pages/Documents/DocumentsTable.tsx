@@ -26,7 +26,6 @@ const DocumentsTable = () => {
   const [searchedData, setSearchedData] = useState('');
   const [visibleModal, setVisibleModal] = useState(false);
   const [userRole, setUser] = useState<string[]>();
-  const [viewData, setViewData] = useState<DocumentsTableInfo[]>(Array<DocumentsTableInfo>());
   const [canEdit, setCanEdit] = useState(false);
   const [regionAdm, setRegionAdm] = useState(false);
   const [regionAdmDep, setRegionAdmDep] = useState(false);
