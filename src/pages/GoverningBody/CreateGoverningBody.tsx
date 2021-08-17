@@ -140,7 +140,7 @@ const CreateGoverningBody = () => {
     return responsePromise
       .then(() => {
         notificationLogic("success", successfulCreateAction("Керівний орган"));
-        history.push(`${governingBody.id}`);
+        history.replace(`/governingBodies/${governingBody.id}`);
       })
       .catch(() => {
         notificationLogic("error", failCreateAction("керівний орган"));
