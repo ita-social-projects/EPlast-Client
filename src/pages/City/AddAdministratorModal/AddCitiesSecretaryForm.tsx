@@ -130,7 +130,8 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: Roles.CityHead, disabled: activeUserRoles.includes(Roles.CityHeadDeputy) },
+            { value: Roles.CityHead, disabled: (activeUserRoles.includes(Roles.CityHeadDeputy)
+            && activeUserRoles.includes(Roles.Admin)) },
             { value: Roles.CityHeadDeputy},
             { value: "Голова СПС" },
             { value: "Писар" },

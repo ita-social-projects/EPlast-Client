@@ -189,10 +189,10 @@ const DropDown = (props: Props) => {
         await userDeleteCofirm(record, onDelete);
         break;
       case "3":
-        await setShowCityModal(true);
+        await setShowRegionModal(true);
         break;
       case "4":
-        await setShowRegionModal(true);
+        await setShowCityModal(true);
         break;
       case "5":
         await setShowClubModal(true);
@@ -306,6 +306,7 @@ const DropDown = (props: Props) => {
           record={record}
           showModal={showCityModal}
           setShowModal={setShowCityModal}
+          user={user}
           onChange={onChange}
         />
         <ChangeUserRegionModal
@@ -313,7 +314,7 @@ const DropDown = (props: Props) => {
           showModal={showRegionModal}
           setShowModal={setShowRegionModal}
           onChange={onChange}
-          roles={props.roles}
+          user={user}
         />
         <ChangeUserClubModal
           record={record}

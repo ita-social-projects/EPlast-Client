@@ -159,6 +159,14 @@ const AddAdministratorModal = (props: Props) => {
     setLoading(false);
   };
 
+  const checkAdminId = async (admin: RegionAdmin)=> {
+    if (admin.id === 0) {
+      await addRegionAdmin(admin);
+    } else {
+      await editRegionAdmin(admin);
+    }
+  }
+
   const handleSubmit = async (values: any) => {
     setLoading(true);
 
@@ -180,7 +188,7 @@ const AddAdministratorModal = (props: Props) => {
         if (head !== '' && head?.userId !== admin.userId) {
           showConfirmRegionAdmin(admin);
         } else {
-           await editRegionAdmin(admin);
+           await checkAdminId(admin);
         }
       } else if (values.adminType === Roles.OkrugaHeadDeputy ) {
         if (admin.userId === head?.userId) {
@@ -188,13 +196,13 @@ const AddAdministratorModal = (props: Props) => {
         } else if (headDeputy !== '' && headDeputy?.userId !== admin.userId) {
           showConfirmRegionAdmin(admin);
         } else {
-          editRegionAdmin(admin);
+          checkAdminId(admin);
         }
       } else {
         if (admin.userId === head?.userId || admin.userId === headDeputy?.userId) {
             showEditConfirmModal(admin);
         } else {
-          await editRegionAdmin(admin);
+          await checkAdminId(admin);
         } 
       }
     } finally {
