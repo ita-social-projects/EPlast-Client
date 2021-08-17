@@ -11,7 +11,9 @@ import moment from "moment";
 import Spinner from '../../Spinner/Spinner';
 import userApi from "../../../api/UserApi";
 import { Roles } from '../../../models/Roles/Roles';
+import addTooltip from '../../../components/Tooltip';
 
+const adminTypeMaxLength = 21;
 const CityDocuments = () => {
     const {id} = useParams();
     const history = useHistory();
@@ -135,7 +137,9 @@ const CityDocuments = () => {
                   <Avatar size={86} icon={<FileTextOutlined />} />
                   <Card.Meta
                     className="detailsMeta"
-                    title={document.cityDocumentType.name}
+                    title={
+                      addTooltip(adminTypeMaxLength, document.cityDocumentType.name)
+                    }
                   />
                 </Card>
               ))

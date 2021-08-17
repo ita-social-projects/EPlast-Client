@@ -15,6 +15,7 @@ import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import AuthStore from '../../../stores/AuthStore';
+import addTooltip from '../../../components/Tooltip';
 moment.locale("uk-ua");
 
 const adminTypeNameMaxLength = 23;
@@ -132,13 +133,7 @@ const SectorAdministration = () => {
                 key={member.id}
                 className="detailsCard"
                 title={
-                  (member.adminType.adminTypeName?.length > adminTypeNameMaxLength) ?
-                      <Tooltip title={member.adminType.adminTypeName}>
-                        <span> 
-                          {member.adminType.adminTypeName.slice(0, adminTypeNameMaxLength - 1) + "..."} 
-                        </span>
-                      </Tooltip>
-                    : `${member.adminType.adminTypeName}`
+                  addTooltip(adminTypeNameMaxLength, `${member.adminType.adminTypeName}`)
                 }
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                 actions={
@@ -171,7 +166,9 @@ const SectorAdministration = () => {
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={`${member.user.firstName} ${member.user.lastName}`}
+                      title={
+                        addTooltip(adminTypeNameMaxLength, `${member.user.firstName} ${member.user.lastName}`)
+                      }
                     />
                     {processEmail(member.workEmail == null || member.workEmail == "" ? member.user.email : member.workEmail)}
                   </div>

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Modal, Tooltip} from 'antd';
+import {Avatar, Button, Card, Layout, Modal} from 'antd';
 import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {getRegionById, getRegionDocuments, getFile, removeDocument} from "../../api/regionsApi";
 import "./Region.less";
@@ -12,8 +12,9 @@ import {
   cityNameOfApprovedMember,
 } from "../../api/citiesApi";
 import { Roles } from '../../models/Roles/Roles';
+import addTooltip from '../../components/Tooltip';
 
-const fileNameMaxLength = 40;
+const fileNameMaxLength = 21;
 const RegionDocuments = () => {
     const {id} = useParams();
     const history = useHistory();
@@ -154,11 +155,7 @@ const RegionDocuments = () => {
                   <Card.Meta
                     className="detailsMeta"
                     title={
-                      (document.fileName?.length > fileNameMaxLength) ?
-                        <Tooltip title={document.fileName}>
-                            {document.fileName}
-                        </Tooltip>
-                      : document.fileName
+                      addTooltip(fileNameMaxLength, document.fileName)
                     }
                   />
                 </Card>

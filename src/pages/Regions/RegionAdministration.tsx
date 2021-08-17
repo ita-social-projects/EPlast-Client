@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal, Skeleton, Spin, Tooltip } from "antd";
+import { Avatar, Button, Card, Layout, Modal, Skeleton } from "antd";
 import {
   SettingOutlined,
   CloseOutlined,
@@ -10,9 +10,7 @@ import {
 import { 
   getRegionAdministration, 
   getRegionById, 
-  removeAdmin,
-  getHead, 
-  getHeadDeputy, 
+  removeAdmin, 
 } from "../../api/regionsApi";
 import userApi from "../../api/UserApi";
 import "./Region.less";
@@ -25,6 +23,7 @@ import NotificationBoxApi from "../../api/NotificationBoxApi";
 import AddAdministratorModal from "./AddAdministratorModal";
 import { Roles } from "../../models/Roles/Roles";
 import RegionAdmin from "../../models/Region/RegionAdmin";
+import addTooltip from "../../components/Tooltip";
 moment.locale("uk-ua");
 
 const adminTypeNameMaxLength = 22;
@@ -147,13 +146,7 @@ const RegionAdministration = () => {
                 key={member.id}
                 className="detailsCard"
                 title={
-                  (member.adminType.adminTypeName?.length > adminTypeNameMaxLength) ?
-                    <Tooltip title={member.adminType.adminTypeName}>
-                      <span> 
-                        {member.adminType.adminTypeName.slice(0, adminTypeNameMaxLength - 1) + "..."} 
-                      </span>
-                    </Tooltip>
-                  : `${member.adminType.adminTypeName}`
+                  addTooltip(adminTypeNameMaxLength, `${member.adminType.adminTypeName}`)
                 }
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}          
                 actions={
@@ -184,7 +177,9 @@ const RegionAdministration = () => {
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={`${member.user.firstName} ${member.user.lastName}`}
+                      title={
+                        addTooltip(adminTypeNameMaxLength, `${member.user.firstName} ${member.user.lastName}`)
+                      }
                     />
                   </div>
                 </div>

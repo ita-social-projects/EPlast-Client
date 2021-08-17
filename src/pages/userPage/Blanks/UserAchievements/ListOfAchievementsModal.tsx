@@ -1,5 +1,5 @@
 import { DeleteOutlined, DownloadOutlined, EyeOutlined, FileImageOutlined, FilePdfOutlined, LoadingOutlined } from "@ant-design/icons";
-import { List, Modal, Popconfirm, Tooltip } from "antd";
+import { List, Modal, Popconfirm } from "antd";
 import React, { useState } from "react";
 import { getAchievementFile, openAchievemetFile, removeAchievementDocument, getAchievementsByPage } from "../../../../api/blankApi";
 import BlankDocument from "../../../../models/Blank/BlankDocument";
@@ -8,7 +8,8 @@ import notificationLogic from '../../../../components/Notifications/Notification
 import InfiniteScroll from 'react-infinite-scroller';
 import { useParams } from "react-router-dom";
 import{ successfulDeleteAction } from "../../../../components/Notifications/Messages"
-const fileNameMaxLength = 45;
+import addTooltip from "../../../../components/Tooltip";
+const fileNameMaxLength = 47;
 
 interface Props {
     visibleModal: boolean;
@@ -147,13 +148,8 @@ const ListOfAchievementsModal = (props: Props) => {
                                 }
                                 <List.Item.Meta
                                     className={classes.text}
-                                    title={(item.fileName?.length > fileNameMaxLength) ?
-                                        <Tooltip title={item.fileName}>
-                                            <span>
-                                             {item.fileName.slice(0,fileNameMaxLength - 1) + "..."} 
-                                            </span>
-                                        </Tooltip>
-                                    : item.fileName
+                                    title={
+                                        addTooltip(fileNameMaxLength, item.fileName)
                                     }
                                 />
                             </List.Item>

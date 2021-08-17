@@ -10,7 +10,9 @@ import moment from "moment";
 import Spinner from '../../Spinner/Spinner';
 import AuthStore from '../../../stores/AuthStore';
 import jwt from 'jwt-decode';
+import addTooltip from '../../../components/Tooltip';
 
+const typeMaxLength = 21;
 const SectorDocuments = () => {
   const confirm = Modal.confirm;
   const { governingBodyId, sectorId } = useParams();
@@ -111,7 +113,9 @@ const SectorDocuments = () => {
                 <Avatar size={86} icon={<FileTextOutlined />} />
                 <Card.Meta
                   className="detailsMeta"
-                  title={document.sectorDocumentType.name}
+                  title={
+                    addTooltip(typeMaxLength, document.sectorDocumentType.name)
+                  }
                 />
               </Card>
             ))

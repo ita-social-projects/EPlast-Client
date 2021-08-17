@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Modal, Spin} from 'antd';
+import {Avatar, Button, Card, Layout, Modal} from 'antd';
 import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined} from '@ant-design/icons';
 import {getAllDocuments, getFile, removeDocument, getUserAccess} from "../../../api/governingBodiesApi";
 import "../../City/City/City.less";
@@ -10,7 +10,9 @@ import moment from "moment";
 import Spinner from '../../Spinner/Spinner';
 import AuthStore from '../../../stores/AuthStore';
 import jwt from 'jwt-decode';
+import addTooltip from '../../../components/Tooltip';
 
+const typeMaxLength = 21;
 const GoverningBodyDocuments = () => {
     const confirm = Modal.confirm;
     const {id} = useParams();
@@ -111,7 +113,9 @@ const GoverningBodyDocuments = () => {
                   <Avatar size={86} icon={<FileTextOutlined />} />
                   <Card.Meta
                     className="detailsMeta"
-                    title={document.governingBodyDocumentType.name}
+                    title={
+                      addTooltip(typeMaxLength, document.governingBodyDocumentType.name)
+                    }
                   />
                 </Card>
               ))

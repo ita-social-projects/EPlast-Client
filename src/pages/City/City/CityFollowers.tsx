@@ -10,7 +10,9 @@ import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import { Roles } from '../../../models/Roles/Roles';
+import addTooltip from '../../../components/Tooltip';
 
+const namesMaxLegth = 21;
 const CityFollowers = () => {
     const {id} = useParams();
     const history = useHistory();
@@ -143,7 +145,9 @@ const CityFollowers = () => {
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={`${follower.user.firstName} ${follower.user.lastName}`}
+                      title={
+                        addTooltip(namesMaxLegth, `${follower.user.firstName} ${follower.user.lastName}`)
+                      }
                     />
                   </div>
                 </Card>
