@@ -20,7 +20,7 @@ const { Title } = Typography;
 const nameMaxLength = 55;
 
 class AvatarAndProgressStaticProps {
-  imageUrl: string ;
+  imageUrl: string;
   time: number | undefined;
   firstName: string | undefined;
   lastName: string | undefined;
@@ -32,11 +32,13 @@ class AvatarAndProgressStaticProps {
   club: string | undefined;
   governingBodyId: number | undefined;
   regionId: number | undefined;
-  cityId: number|undefined;
-  clubId: number|undefined;
+  cityId: number | undefined;
+  clubId: number | undefined;
+  cityMemberIsApproved: boolean | undefined;
+  clubMemberIsApproved: boolean | undefined;
 
   constructor() {
-    this.imageUrl="";
+    this.imageUrl = "";
   }
 }
 
@@ -78,7 +80,11 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     region,
     city,
     club,
-    cityId, clubId, regionId
+    cityId,
+    clubId,
+    regionId,
+    cityMemberIsApproved,
+    clubMemberIsApproved,
   } = props;
   const [imageBase64, setImageBase64] = useState<string>();
   const [UserDistinctions, setData] = useState<UserDistinction[]>([
@@ -166,25 +172,69 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     </div>
   ) : (
     <div className="kadraWrapper">
-      
       <Avatar src={imageBase64} className="img" />
       <Title level={2}>
         {firstName} {lastName}
       </Title>
       <Title level={4}>Псевдо: {pseudo}</Title>
-      <p className="statusText">Округа: <Link to={"/regions/"+regionId} target="_blank" className="LinkText">{region}</Link></p>
-      <p className="statusText">Станиця: <Link to={"/cities/"+cityId} target="_blank" className="LinkText">{city}</Link></p>
-      <p className="statusText">Курінь: <Link to={"/clubs/"+clubId} target="_blank" className="LinkText">{club}</Link></p>
+      {cityMemberIsApproved == false ? (
+        <div>
+          <p className="statusText">
+            Є прихильником округи:{" "}
+            <Link to={"/regions/" + regionId} target="_blank" className="LinkText">
+              {region}
+            </Link>
+          </p>
+          <p className="statusText">
+            Є прихильником станиці:{" "}
+            <Link to={"/cities/" + cityId} target="_blank" className="LinkText">
+              {city}
+            </Link>
+          </p>
+        </div>
+      ) : (
+        <div>
+          <p className="statusText">
+            Округа:{" "}
+            <Link
+              to={"/regions/" + regionId} target="_blank" className="LinkText">
+              {region}
+            </Link>
+          </p>
+          <p className="statusText">
+            Станиця:{" "}
+            <Link 
+              to={"/cities/" + cityId} target="_blank" className="LinkText">
+              {city}
+            </Link>
+          </p>
+        </div>
+      )}
+      {clubMemberIsApproved == false ? (
+        <p className="statusText">
+          Є прихильником куреня:{" "}
+          <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
+            {club}
+          </Link>
+        </p>
+      ) : (
+        <p className="statusText">
+          Курінь:{" "}
+          <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
+            {club}
+          </Link>
+        </p>
+      )}
       {!isUserPlastun && (
         <div className="progress">
           {time !== 0 ? (
             <p className="statusText">
               {time} дні і {firstName} {lastName} - Дійсний член організації :)
-          </p>
+            </p>
           ) : (
             <p className="statusText">
               Менше 1 дня і {firstName} {lastName} - Дійсний член організації :)
-          </p>
+            </p>
           )}
           <Progress
             type="circle"
@@ -193,9 +243,14 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
               "0%": "#108ee9",
               "100%": "#87d068",
             }}
-            percent={Math.round(
-              (100 - ((time === undefined ? 0 : time) * 100) / 365 + Number.EPSILON) * 10
-            ) / 10}
+            percent={
+              Math.round(
+                (100 -
+                  ((time === undefined ? 0 : time) * 100) / 365 +
+                  Number.EPSILON) *
+                  10
+              ) / 10
+            }
           />
         </div>
       )}
@@ -206,16 +261,17 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       </div>
       {UserDistinctions.map((dist) => (
         <div className="distinctions">
-          {(dist.distinction.name?.length > nameMaxLength) ?
+          {dist.distinction.name?.length > nameMaxLength ? (
             <Tooltip title={dist?.distinction.name}>
               <h2>
-                {dist.distinction.name.slice(0,54) + "..."} №{dist.number}
+                {dist.distinction.name.slice(0, 54) + "..."} №{dist.number}
               </h2>
             </Tooltip>
-          : <h2> 
-              {dist.distinction.name + "№" + dist.number} 
+          ) : (
+            <h2>
+              {dist.distinction.name + "№" + dist.number}
             </h2>
-          }
+          )}
         </div>
       ))}
       {UserPrecaution.map((dist) =>

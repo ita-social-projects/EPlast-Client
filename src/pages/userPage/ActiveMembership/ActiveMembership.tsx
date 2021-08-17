@@ -201,6 +201,8 @@ const ActiveMembership = () => {
           regionId={data?.user.regionId}
           cityId={data?.user.cityId}
           clubId={data?.user.clubId}
+          cityMemberIsApproved={data?.user.cityMemberIsApproved}
+          clubMemberIsApproved={data?.shortUser.clubMemberIsApproved}
         />
       </div>
 
