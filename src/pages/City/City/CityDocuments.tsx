@@ -11,9 +11,8 @@ import moment from "moment";
 import Spinner from '../../Spinner/Spinner';
 import userApi from "../../../api/UserApi";
 import { Roles } from '../../../models/Roles/Roles';
-import addTooltip from '../../../components/Tooltip';
+import addTooltip, {parameterMaxLength} from '../../../components/Tooltip';
 
-const adminTypeMaxLength = 21;
 const CityDocuments = () => {
     const {id} = useParams();
     const history = useHistory();
@@ -138,7 +137,7 @@ const CityDocuments = () => {
                   <Card.Meta
                     className="detailsMeta"
                     title={
-                      addTooltip(adminTypeMaxLength, document.cityDocumentType.name)
+                      addTooltip(parameterMaxLength, document.cityDocumentType.name)
                     }
                   />
                 </Card>

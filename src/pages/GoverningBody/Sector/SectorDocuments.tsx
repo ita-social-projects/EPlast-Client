@@ -10,9 +10,8 @@ import moment from "moment";
 import Spinner from '../../Spinner/Spinner';
 import AuthStore from '../../../stores/AuthStore';
 import jwt from 'jwt-decode';
-import addTooltip from '../../../components/Tooltip';
+import addTooltip, {parameterMaxLength} from '../../../components/Tooltip';
 
-const typeMaxLength = 21;
 const SectorDocuments = () => {
   const confirm = Modal.confirm;
   const { governingBodyId, sectorId } = useParams();
@@ -114,7 +113,7 @@ const SectorDocuments = () => {
                 <Card.Meta
                   className="detailsMeta"
                   title={
-                    addTooltip(typeMaxLength, document.sectorDocumentType.name)
+                    addTooltip(parameterMaxLength, document.sectorDocumentType.name)
                   }
                 />
               </Card>
