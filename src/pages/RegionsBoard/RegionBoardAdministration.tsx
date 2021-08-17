@@ -10,10 +10,9 @@ import Spinner from "../Spinner/Spinner";
 import { getGoverningBodiesList, getGoverningBodyLogo } from "../../api/governingBodiesApi";
 import { GoverningBody } from "../../api/decisionsApi";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
-import addTooltip from "../../components/Tooltip";
+import addTooltip, {parameterMaxLength} from "../../components/Tooltip";
 moment.locale("uk-ua");
 
-const nameMaxLegth = 21;
 const RegionBoardAdministration = () => {
   const history = useHistory();
 
@@ -63,7 +62,7 @@ const RegionBoardAdministration = () => {
                 key={governingBody.id}
                 className="detailsCard"
                 title={
-                  addTooltip(nameMaxLegth, `${governingBody.governingBodyName}`)
+                  addTooltip(parameterMaxLength, `${governingBody.governingBodyName}`)
                 }
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
               >
