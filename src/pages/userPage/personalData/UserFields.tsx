@@ -108,6 +108,8 @@ export default function () {
                 clubId={data?.user.clubId}
                 regionId={data?.user.regionId}
                 governingBodyId={data?.user.governingBodyId}
+                cityMemberIsApproved={data?.user.cityMemberIsApproved}
+                clubMemberIsApproved={data?.user.clubMemberIsApproved}
               />
             </StickyContainer>
 
@@ -474,6 +476,8 @@ export default function () {
             regionId={data?.shortUser.regionId}
             cityId={data?.shortUser.cityId}
             clubId={data?.shortUser.clubId}
+            cityMemberIsApproved={data?.shortUser.cityMemberIsApproved}
+            clubMemberIsApproved={data?.shortUser.clubMemberIsApproved}
           />
         </div>
         <div className="shortAllFields">

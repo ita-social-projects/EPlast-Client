@@ -164,7 +164,9 @@ export const Blanks = () => {
                         governingBodyId={data?.user.governingBodyId}
                         regionId={data?.user.regionId}
                         cityId={data?.user.cityId}
-                        clubId={data?.user.clubId} />
+                        clubId={data?.user.clubId}
+                        cityMemberIsApproved={data?.user.cityMemberIsApproved}
+                        clubMemberIsApproved={data?.user.clubMemberIsApproved} />
                 </div>
                 <div className={classes.wrapperCol}>
                     <div className={classes.wrapper}>
