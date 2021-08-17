@@ -114,7 +114,6 @@ const CreateGoverningBody = () => {
   }, [id]);
 
   const handleSubmit = async (values: any) => {
-    debugger;
     const newGoverningBody: GoverningBodyProfile = {
       id: governingBody.id,
       description: values.description,
