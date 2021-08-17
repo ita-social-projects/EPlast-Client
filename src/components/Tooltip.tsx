@@ -1,7 +1,6 @@
 import { Tooltip } from "antd";
 import React from "react";
 
-export const parameterMaxLength = 21;
 function addTooltip (number: number, text: string) {
    return (text?.length > number) ?
         <Tooltip title={text}>
@@ -9,5 +8,5 @@ function addTooltip (number: number, text: string) {
         </Tooltip>
     : text  
 }
-  
+export const parameterMaxLength = 21;  
 export default addTooltip;
