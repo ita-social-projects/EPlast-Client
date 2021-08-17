@@ -124,20 +124,20 @@ export const Blanks = () => {
         getExtractFromUPU();
     }, [userId, visibleModal, visibleAchievementModal, visibleExtractFromUPUModal]);
 
-    const IsUserHasAccessToManageBlanks = (userRoles: Array<string>): boolean => {
+    const DoesUserHasAccessToManageBlanks = (userRoles: Array<string>): boolean => {
 
         return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && currentUser?.user?.clubId == data?.user?.clubId) ||
             ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && currentUser?.user?.cityId == data?.user?.cityId) ||
             ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && currentUser?.user?.regionId == data?.user?.regionId) ||
             userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead);
     };
-    const IsUserHasAccessToSeeAndDownloadBlanks = (userRoles: Array<string>): boolean => {
+    const DoesUserHasAccessToSeeAndDownloadBlanks = (userRoles: Array<string>): boolean => {
         return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && currentUser?.user?.clubId == data?.user?.clubId) ||
             ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && currentUser?.user?.cityId == data?.user?.cityId) ||
             ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && currentUser?.user?.regionId == data?.user?.regionId) ||
             userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead) || userRoles?.includes(Roles.PlastMember);
     };
-    const IsUserHasAccessToDeleteBlanks = (userRoles: Array<string>): boolean => {
+    const DoesUserHasAccessToDeleteBlanks = (userRoles: Array<string>): boolean => {
         return (
             userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead));
     };
@@ -205,7 +205,7 @@ export const Blanks = () => {
                                         }
 
                                     </div>
-                                    {(userToken.nameid === userId || IsUserHasAccessToSeeAndDownloadBlanks(roles)) &&
+                                    {(userToken.nameid === userId || DoesUserHasAccessToSeeAndDownloadBlanks(roles)) &&
                                         <Tooltip title="Завантажити">
                                             <DownloadOutlined
                                                 className={classes.downloadIcon}
@@ -218,7 +218,7 @@ export const Blanks = () => {
                                                 }
                                             /></Tooltip>}
 
-                                    {((userToken.nameid === userId || IsUserHasAccessToSeeAndDownloadBlanks(roles)) && documentFormat !== "doc" && documentFormat !== "docx") ?
+                                    {((userToken.nameid === userId || DoesUserHasAccessToSeeAndDownloadBlanks(roles)) && documentFormat !== "doc" && documentFormat !== "docx") ?
                                         <Tooltip title="Переглянути">
                                             <EyeOutlined
                                                 className={classes.reviewIcon}
@@ -226,7 +226,7 @@ export const Blanks = () => {
                                                 onClick={() => openDocument(document.blobName, document.fileName)} />
                                         </Tooltip>
                                         : null}
-                                    {(userToken.nameid === userId || IsUserHasAccessToDeleteBlanks) ?
+                                    {(userToken.nameid === userId || DoesUserHasAccessToDeleteBlanks) ?
                                         <Tooltip title="Видалити">
                                             <Popconfirm
                                                 title="Видалити цей документ?"
@@ -300,7 +300,7 @@ export const Blanks = () => {
                                     </div>
                                     <Tooltip title="Завантажити">
                                         <DownloadOutlined
-                                            hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles))}
+                                            hidden={!(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles))}
                                             className={classes.downloadIcon}
                                             key="download"
                                             onClick={() =>
@@ -311,7 +311,7 @@ export const Blanks = () => {
                                             }
                                         />
                                     </Tooltip>
-                                    {((userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) && extractUPUFormat !== "doc" && extractUPUFormat !== "docx") ?
+                                    {((userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles)) && extractUPUFormat !== "doc" && extractUPUFormat !== "docx") ?
                                         <Tooltip title="Переглянути">
                                             <EyeOutlined
                                                 className={classes.reviewIcon}
@@ -328,7 +328,7 @@ export const Blanks = () => {
                                             okText="Так"
                                             cancelText="Ні">
                                             <DeleteOutlined
-                                                hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles))}
+                                                hidden={!(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles))}
                                                 className={classes.deleteIcon}
 
                                                 key="close"
@@ -346,7 +346,7 @@ export const Blanks = () => {
                                     }
                                     <div>
                                         <Button type="primary"
-                                            hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles))}
+                                            hidden={!(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles))}
                                             className={classes.addIcon}
                                             onClick={() => setVisibleExtractFromUPUModal(true)}>
                                             Додати Виписку
@@ -390,7 +390,7 @@ export const Blanks = () => {
                             <Col>
                                 <div>
                                     <Button type="primary"
-                                        hidden={!(IsUserHasAccessToManageBlanks(roles) || userToken.nameid === userId)}
+                                        hidden={!(DoesUserHasAccessToManageBlanks(roles) || userToken.nameid === userId)}
                                         className={classes.addIcon}
                                         onClick={() => setvisibleAchievementModal(true)}>
                                         Додати Досягнення
@@ -404,7 +404,7 @@ export const Blanks = () => {
                             <FileTextOutlined
                                 className={classes.documentIcon} />
                             <Button
-                                hidden={!(IsUserHasAccessToManageBlanks(roles) || userToken.nameid === userId)}
+                                hidden={!(DoesUserHasAccessToManageBlanks(roles) || userToken.nameid === userId)}
                                 className={classes.addIcon}
                                 type="primary"
                                 onClick={() => getPdf()}>
@@ -421,9 +421,9 @@ export const Blanks = () => {
                 visibleModal={visibleListAchievementModal}
                 setVisibleModal={setVisibleListAchievementModal}
                 achievementDoc={achievementDoc}
-                hasAccess={IsUserHasAccessToManageBlanks(roles) || userToken.nameid === userId}
-                hasAccessToSeeAndDownload={IsUserHasAccessToSeeAndDownloadBlanks(roles) || userToken.nameid === userId}
-                hasAccessToDelete={IsUserHasAccessToDeleteBlanks(roles) || userToken.nameid === userId}
+                hasAccess={DoesUserHasAccessToManageBlanks(roles) || userToken.nameid === userId}
+                hasAccessToSeeAndDownload={DoesUserHasAccessToSeeAndDownloadBlanks(roles) || userToken.nameid === userId}
+                hasAccessToDelete={DoesUserHasAccessToDeleteBlanks(roles) || userToken.nameid === userId}
                 setAchievementDoc={setAchievementDoc} />
 
             <AddAchievementsModal
