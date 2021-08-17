@@ -95,7 +95,6 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
         >
       <Select onChange={handleChange}>
         <Option value={Roles.Supporter} disabled={handleDisabled()}>Прихильник</Option>
-        <Option value={Roles.Interested} disabled={handleDisabled()}>Зацікавлений</Option>
         <Option value={Roles.PlastMember} disabled={handleDisabled()}>
           Дійсний член організації
         </Option>
