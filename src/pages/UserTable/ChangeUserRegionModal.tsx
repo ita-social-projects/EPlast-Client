@@ -67,7 +67,7 @@ const ChangeUserRegionModal = ({
             visible={showModal}
             onOk={handleClick}
             onCancel={handleClick}>
-            <p> Користувач  <b>{user.firstName} {user.lastName} </b>не являється членом округи!{" "}</p>
+            <p> Користувач  <b>{user.firstName} {user.lastName} </b>не є членом округи!{" "}</p>
             <p>В провід округи можна додати тільки дійсного члена!</p>
           </Modal>  
         )};
