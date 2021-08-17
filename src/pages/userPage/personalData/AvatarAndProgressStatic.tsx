@@ -84,7 +84,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     clubId,
     regionId,
     cityMemberIsApproved,
-    clubMemberIsApproved
+    clubMemberIsApproved,
   } = props;
   const [imageBase64, setImageBase64] = useState<string>();
   const [UserDistinctions, setData] = useState<UserDistinction[]>([
@@ -181,18 +181,13 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
         <div>
           <p className="statusText">
             Є прихильником округи:{" "}
-            <Link
-              to={"/regions/" + regionId}
-              target="_blank"
-              className="LinkText"
-            >
+            <Link to={"/regions/" + regionId} target="_blank" className="LinkText">
               {region}
             </Link>
           </p>
           <p className="statusText">
             Є прихильником станиці:{" "}
-            <Link
-              to={"/cities/" + cityId} target="_blank" className="LinkText">
+            <Link to={"/cities/" + cityId} target="_blank" className="LinkText">
               {city}
             </Link>
           </p>
@@ -202,16 +197,14 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           <p className="statusText">
             Округа:{" "}
             <Link
-              to={"/regions/" + regionId}
-              target="_blank"
-              className="LinkText"
-            >
+              to={"/regions/" + regionId} target="_blank" className="LinkText">
               {region}
             </Link>
           </p>
           <p className="statusText">
             Станиця:{" "}
-            <Link to={"/cities/" + cityId} target="_blank" className="LinkText">
+            <Link 
+              to={"/cities/" + cityId} target="_blank" className="LinkText">
               {city}
             </Link>
           </p>
@@ -219,17 +212,18 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       )}
       {clubMemberIsApproved == false ? (
         <p className="statusText">
-        Є прихильником куреня:{" "}
-        <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
-          {club}
-        </Link>
-      </p>) : (
-      <p className="statusText">
-        Курінь:{" "}
-        <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
-          {club}
-        </Link>
-      </p>
+          Є прихильником куреня:{" "}
+          <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
+            {club}
+          </Link>
+        </p>
+      ) : (
+        <p className="statusText">
+          Курінь:{" "}
+          <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
+            {club}
+          </Link>
+        </p>
       )}
       {!isUserPlastun && (
         <div className="progress">
@@ -274,7 +268,9 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
               </h2>
             </Tooltip>
           ) : (
-            <h2>{dist.distinction.name + "№" + dist.number}</h2>
+            <h2>
+              {dist.distinction.name + "№" + dist.number}
+            </h2>
           )}
         </div>
       ))}
