@@ -26,7 +26,7 @@ const userGenders = ["Чоловік", "Жінка", "Інша"];
 const fileNameMaxLength = 50;
 
 export const Blanks = () => {
-    const { userId } = useParams<{ userId:string}>();
+    const { userId } = useParams<{ userId: string }>();
 
     const [data, setData] = useState<Data>();
     const [currentUser, setCurrentUser] = useState<Data>();
@@ -68,16 +68,16 @@ export const Blanks = () => {
     const getAppropriateToGenderVerb = () => {
         if (userGenders[0] === data?.user.gender?.name)
             return "додав";
-        if (userGenders[1] === data?.user.gender?.name) 
-          return "додала";
+        if (userGenders[1] === data?.user.gender?.name)
+            return "додала";
         return "додав(ла)";
-      };
+    };
 
     const getDocument = async () => {
         const response = await getDocumentByUserId(userId);
         setDocument(response.data);
         setDocumentFormat(getFormat(response.data.fileName));
-    };
+    };    
     const getAchievementDocumentsByUserId = async () => {
         const response = await getAllAchievementDocumentsByUserId(userId);
         setAchievementDoc(response.data);
@@ -87,12 +87,10 @@ export const Blanks = () => {
         setExtractUPU(response.data);
         setExtractUPUFormat(getFormat(response.data.fileName));
     }
-
     const getPdf = async () => {
         const pdfLink = await openGenerationFile(userId);
         window.open(pdfLink);
     }
-
     const removeDocumentById = async (documentId: number) => {
         await removeDocument(documentId);
         notificationLogic('success', successfulDeleteAction("Файл"));
@@ -103,15 +101,12 @@ export const Blanks = () => {
         notificationLogic('success', successfulDeleteAction("Файл"));
         await getExtractFromUPU();
     }
-
     const downloadExtractDocument = async (fileBlob: string, fileName: string) => {
         await getExtractFromUPUFile(fileBlob, fileName);
     }
-
     const downloadDocument = async (fileBlob: string, fileName: string) => {
         await getFile(fileBlob, fileName);
     }
-
     const openDocument = async (fileBlob: string, fileName: string) => {
         await openBiographyFile(fileBlob, fileName);
     }
@@ -129,28 +124,38 @@ export const Blanks = () => {
         getExtractFromUPU();
     }, [userId, visibleModal, visibleAchievementModal, visibleExtractFromUPUModal]);
 
-    const IsUserHasAccessToManageBlanks = (userRoles: Array<string>): boolean => {
+    const DoesUserHasAccessToManageBlanks = (userRoles: Array<string>): boolean => {
 
         return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && currentUser?.user?.clubId == data?.user?.clubId) ||
             ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && currentUser?.user?.cityId == data?.user?.cityId) ||
-            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy))&& currentUser?.user?.regionId == data?.user?.regionId) ||
-            userRoles?.includes(Roles.Admin);
+            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && currentUser?.user?.regionId == data?.user?.regionId) ||
+            userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead);
+    };
+    const DoesUserHasAccessToSeeAndDownloadBlanks = (userRoles: Array<string>): boolean => {
+        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && currentUser?.user?.clubId == data?.user?.clubId) ||
+            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && currentUser?.user?.cityId == data?.user?.cityId) ||
+            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && currentUser?.user?.regionId == data?.user?.regionId) ||
+            userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead) || userRoles?.includes(Roles.PlastMember);
+    };
+    const DoesUserHasAccessToDeleteBlanks = (userRoles: Array<string>): boolean => {
+        return (
+            userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead));
     };
 
     return loading === false ? (
-    <div className="kadraWrapper">
-        <Skeleton.Avatar
-            size={220}
-            active={true}
-            shape="circle"
-            className="img"
-        />
-    </div>
-    ) : ( 
+        <div className="kadraWrapper">
+            <Skeleton.Avatar
+                size={220}
+                active={true}
+                shape="circle"
+                className="img"
+            />
+        </div>
+    ) : (
         <>
             <div className={classes.wrapper}>
                 <div className={classes.wrapperImg}>
-                    <AvatarAndProgressStatic 
+                    <AvatarAndProgressStatic
                         imageUrl={data?.user.imagePath as string}
                         time={data?.timeToJoinPlast}
                         firstName={data?.user.firstName}
@@ -164,7 +169,9 @@ export const Blanks = () => {
                         governingBodyId={data?.user.governingBodyId}
                         regionId={data?.user.regionId}
                         cityId={data?.user.cityId}
-                        clubId={data?.user.clubId} />
+                        clubId={data?.user.clubId}
+                        cityMemberIsApproved={data?.user.cityMemberIsApproved}
+                        clubMemberIsApproved={data?.user.clubMemberIsApproved} />
                 </div>
                 <div className={classes.wrapperCol}>
                     <div className={classes.wrapper}>
@@ -191,16 +198,16 @@ export const Blanks = () => {
                                         {(document.fileName?.length > fileNameMaxLength) ?
                                             <Tooltip className={classes.antTooltipInner} title={document.fileName}>
                                                 <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
-                                                    {document.fileName.slice(0,fileNameMaxLength-1) + "..."}
+                                                    {document.fileName.slice(0, fileNameMaxLength - 1) + "..."}
                                                 </Paragraph>
                                             </Tooltip>
-                                        : <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
-                                            {document.fileName}
-                                          </Paragraph>
+                                            : <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
+                                                {document.fileName}
+                                            </Paragraph>
                                         }
 
                                     </div>
-                                    {(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) &&
+                                    {(userToken.nameid === userId || DoesUserHasAccessToSeeAndDownloadBlanks(roles)) &&
                                         <Tooltip title="Завантажити">
                                             <DownloadOutlined
                                                 className={classes.downloadIcon}
@@ -213,7 +220,7 @@ export const Blanks = () => {
                                                 }
                                             /></Tooltip>}
 
-                                    {((userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) && documentFormat !== "doc" && documentFormat !== "docx") ?
+                                    {((userToken.nameid === userId || DoesUserHasAccessToSeeAndDownloadBlanks(roles)) && documentFormat !== "doc" && documentFormat !== "docx") ?
                                         <Tooltip title="Переглянути">
                                             <EyeOutlined
                                                 className={classes.reviewIcon}
@@ -221,7 +228,7 @@ export const Blanks = () => {
                                                 onClick={() => openDocument(document.blobName, document.fileName)} />
                                         </Tooltip>
                                         : null}
-                                    {(userToken.nameid === userId || roles.includes(Roles.Admin)) &&
+                                    {(userToken.nameid === userId || DoesUserHasAccessToDeleteBlanks) ?
                                         <Tooltip title="Видалити">
                                             <Popconfirm
                                                 title="Видалити цей документ?"
@@ -237,7 +244,7 @@ export const Blanks = () => {
                                                 />
                                             </Popconfirm>
                                         </Tooltip>
-                                    }
+                                        : null}
                                 </Col>
                             )
                                 : (
@@ -254,7 +261,7 @@ export const Blanks = () => {
                                                     className={classes.addIcon}
                                                     onClick={() => setVisibleModal(true)}>
                                                     Додати Життєпис
-                                            </Button>
+                                                </Button>
                                             </div>
                                         }
                                     </Col>
@@ -285,17 +292,17 @@ export const Blanks = () => {
                                         {(extractUPU.fileName?.length > fileNameMaxLength) ?
                                             <Tooltip className={classes.antTooltipInner} title={extractUPU.fileName}>
                                                 <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
-                                                    {extractUPU.fileName.slice(0,fileNameMaxLength-1) + "..."}
+                                                    {extractUPU.fileName.slice(0, fileNameMaxLength - 1) + "..."}
                                                 </Paragraph>
                                             </Tooltip>
-                                         : <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
+                                            : <Paragraph ellipsis={{ rows: 2, suffix: " " }}>
                                                 {extractUPU.fileName}
-                                           </Paragraph>
-                                        } 
+                                            </Paragraph>
+                                        }
                                     </div>
                                     <Tooltip title="Завантажити">
                                         <DownloadOutlined
-                                            hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles))}
+                                            hidden={!(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles))}
                                             className={classes.downloadIcon}
                                             key="download"
                                             onClick={() =>
@@ -306,14 +313,14 @@ export const Blanks = () => {
                                             }
                                         />
                                     </Tooltip>
-                                    {((userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles)) && extractUPUFormat !== "doc" && extractUPUFormat !== "docx") ?
+                                    {((userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles)) && extractUPUFormat !== "doc" && extractUPUFormat !== "docx") ?
                                         <Tooltip title="Переглянути">
                                             <EyeOutlined
                                                 className={classes.reviewIcon}
                                                 key="review"
                                                 onClick={() => openExtractFromUPUDocument(extractUPU.blobName, extractUPU.fileName)} />
                                         </Tooltip>
-                                    : null}
+                                        : null}
                                     <Tooltip title="Видалити">
                                         <Popconfirm
                                             title="Видалити цей документ?"
@@ -323,7 +330,7 @@ export const Blanks = () => {
                                             okText="Так"
                                             cancelText="Ні">
                                             <DeleteOutlined
-                                                hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles))}
+                                                hidden={!(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles))}
                                                 className={classes.deleteIcon}
 
                                                 key="close"
@@ -341,11 +348,11 @@ export const Blanks = () => {
                                     }
                                     <div>
                                         <Button type="primary"
-                                            hidden={!(userToken.nameid === userId || IsUserHasAccessToManageBlanks(roles))}
+                                            hidden={!(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles))}
                                             className={classes.addIcon}
                                             onClick={() => setVisibleExtractFromUPUModal(true)}>
                                             Додати Виписку
-                                                </Button>
+                                        </Button>
                                     </div>
                                 </Col>
                             )}
@@ -385,11 +392,11 @@ export const Blanks = () => {
                             <Col>
                                 <div>
                                     <Button type="primary"
-                                        hidden={!(IsUserHasAccessToManageBlanks(roles) || userToken.nameid === userId)}
+                                        hidden={!(DoesUserHasAccessToManageBlanks(roles) || userToken.nameid === userId)}
                                         className={classes.addIcon}
                                         onClick={() => setvisibleAchievementModal(true)}>
                                         Додати Досягнення
-                                        </Button>
+                                    </Button>
                                 </div>
                             </Col>
                         </div>
@@ -399,12 +406,12 @@ export const Blanks = () => {
                             <FileTextOutlined
                                 className={classes.documentIcon} />
                             <Button
-                                hidden={!(IsUserHasAccessToManageBlanks(roles) || userToken.nameid === userId)}
+                                hidden={!(DoesUserHasAccessToManageBlanks(roles) || userToken.nameid === userId)}
                                 className={classes.addIcon}
                                 type="primary"
                                 onClick={() => getPdf()}>
                                 Згенерувати файл
-                                    </Button>
+                            </Button>
                         </div>
 
                     </div>
@@ -416,7 +423,9 @@ export const Blanks = () => {
                 visibleModal={visibleListAchievementModal}
                 setVisibleModal={setVisibleListAchievementModal}
                 achievementDoc={achievementDoc}
-                hasAccess={IsUserHasAccessToManageBlanks(roles) || userToken.nameid === userId}
+                hasAccess={DoesUserHasAccessToManageBlanks(roles) || userToken.nameid === userId}
+                hasAccessToSeeAndDownload={DoesUserHasAccessToSeeAndDownloadBlanks(roles) || userToken.nameid === userId}
+                hasAccessToDelete={DoesUserHasAccessToDeleteBlanks(roles) || userToken.nameid === userId}
                 setAchievementDoc={setAchievementDoc} />
 
             <AddAchievementsModal

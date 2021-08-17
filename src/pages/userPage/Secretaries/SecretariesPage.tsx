@@ -88,7 +88,9 @@ export const Secretaries = () => {
                                 governingBodyId={data?.user.governingBodyId}
                                 cityId={data?.user.cityId}
                                 clubId={data?.user.clubId}
-                                regionId={data?.user.regionId}/>
+                                regionId={data?.user.regionId}
+                                cityMemberIsApproved={data?.user.cityMemberIsApproved}
+                                clubMemberIsApproved={data?.user.clubMemberIsApproved}/>
                         </StickyContainer>
                     </div>
 
