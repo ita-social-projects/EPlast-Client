@@ -114,6 +114,7 @@ const CreateGoverningBody = () => {
   }, [id]);
 
   const handleSubmit = async (values: any) => {
+    debugger;
     const newGoverningBody: GoverningBodyProfile = {
       id: governingBody.id,
       description: values.description,
@@ -140,7 +141,7 @@ const CreateGoverningBody = () => {
     return responsePromise
       .then(() => {
         notificationLogic("success", successfulCreateAction("Керівний орган"));
-        history.push(`${governingBody.id}`);
+        history.replace(`/governingBodies/${governingBody.id}`);
       })
       .catch(() => {
         notificationLogic("error", failCreateAction("керівний орган"));
