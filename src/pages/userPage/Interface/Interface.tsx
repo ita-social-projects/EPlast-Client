@@ -59,6 +59,8 @@ export type User ={
     facebookLink: string;
     twitterLink: string;
     instagramLink: string;
+    cityMemberIsApproved: boolean;
+    clubMemberIsApproved: boolean;
 }
 
 export type ShortUser ={
@@ -81,6 +83,8 @@ export type ShortUser ={
     facebookLink: string;
     twitterLink: string;
     instagramLink: string;
+    cityMemberIsApproved: boolean;
+    clubMemberIsApproved: boolean;
 }
 
 export  interface Data {

@@ -156,6 +156,8 @@ const EventUser = () => {
                         cityId={currentUser?.user.cityId}
                         clubId={currentUser?.user.clubId}
                         regionId={currentUser?.user.regionId}
+                        cityMemberIsApproved={currentUser?.user.cityMemberIsApproved}
+                        clubMemberIsApproved={currentUser?.user.clubMemberIsApproved}
                     />
                 </div>
             </div>

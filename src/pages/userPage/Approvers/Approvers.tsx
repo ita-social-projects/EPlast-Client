@@ -149,7 +149,9 @@ const Assignments = () => {
             cityId={data?.user.cityId}
             clubId={data?.user.clubId}
             regionId={data?.user.regionId}
-            governingBodyId={data?.user.governingBodyId} />
+            governingBodyId={data?.user.governingBodyId}
+            cityMemberIsApproved={data?.user.cityMemberIsApproved}
+            clubMemberIsApproved={data?.user.clubMemberIsApproved} />
         </StickyContainer>
       </div>
       <div className="approversContentApprovers">
