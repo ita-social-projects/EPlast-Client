@@ -202,7 +202,7 @@ const ActiveMembership = () => {
           cityId={data?.user.cityId}
           clubId={data?.user.clubId}
           cityMemberIsApproved={data?.user.cityMemberIsApproved}
-          clubMemberIsApproved={data?.shortUser.clubMemberIsApproved}
+          clubMemberIsApproved={data?.user.clubMemberIsApproved}
         />
       </div>
 
