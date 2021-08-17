@@ -3,7 +3,7 @@ import {Card} from 'antd';
 import ActionLogo from '../../assets/images/ActionLogo.png'
 import {useHistory} from "react-router-dom";
 import classes from './ActionCard.module.css';
-import addTooltip, {parameterMaxLength} from '../../components/Tooltip';
+import extendedTitleTooltip, {parameterMaxLength} from '../../components/Tooltip';
 
 interface CardProps {
     eventCategoryId: number
@@ -35,7 +35,7 @@ const ActionCard = ({
                 <Meta
                     className={classes.titleText}
                     title={
-                        addTooltip(parameterMaxLength, eventCategoryName)
+                        extendedTitleTooltip(parameterMaxLength, eventCategoryName)
                     } 
                 />
             </Card>

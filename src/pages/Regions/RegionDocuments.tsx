@@ -12,7 +12,7 @@ import {
   cityNameOfApprovedMember,
 } from "../../api/citiesApi";
 import { Roles } from '../../models/Roles/Roles';
-import addTooltip, {parameterMaxLength} from '../../components/Tooltip';
+import extendedTitleTooltip, {parameterMaxLength} from '../../components/Tooltip';
 
 const RegionDocuments = () => {
     const {id} = useParams();
@@ -154,7 +154,7 @@ const RegionDocuments = () => {
                   <Card.Meta
                     className="detailsMeta"
                     title={
-                      addTooltip(parameterMaxLength, document.fileName)
+                      extendedTitleTooltip(parameterMaxLength, document.fileName)
                     }
                   />
                 </Card>

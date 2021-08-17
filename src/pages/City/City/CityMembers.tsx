@@ -14,7 +14,7 @@ import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import { Roles } from "../../../models/Roles/Roles";
-import addTooltip, {parameterMaxLength} from "../../../components/Tooltip";
+import extendedTitleTooltip, {parameterMaxLength} from "../../../components/Tooltip";
 moment.locale("uk-ua");
 
 const CityMembers = () => {
@@ -171,7 +171,7 @@ const CityMembers = () => {
                 <Card.Meta
                   className="detailsMeta"
                   title={
-                    addTooltip(parameterMaxLength, `${member.user.firstName} ${member.user.lastName}`)
+                    extendedTitleTooltip(parameterMaxLength, `${member.user.firstName} ${member.user.lastName}`)
                   }
                 />
               </div>

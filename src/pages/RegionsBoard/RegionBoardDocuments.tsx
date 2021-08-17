@@ -21,7 +21,7 @@ import {
   getUserAccess,
   getDocs
 } from "../../api/regionsBoardApi";
-import addTooltip, {parameterMaxLength} from "../../components/Tooltip";
+import extendedTitleTooltip, {parameterMaxLength} from "../../components/Tooltip";
 
 const RegionBoardDocuments = () => {
   const { id } = useParams();
@@ -132,7 +132,7 @@ const RegionBoardDocuments = () => {
                 <Card.Meta
                   className="detailsMeta" 
                   title={
-                    addTooltip(parameterMaxLength, document.fileName)
+                    extendedTitleTooltip(parameterMaxLength, document.fileName)
                   } 
                 />
               </Card>

@@ -8,7 +8,7 @@ import notificationLogic from '../../../../components/Notifications/Notification
 import InfiniteScroll from 'react-infinite-scroller';
 import { useParams } from "react-router-dom";
 import{ successfulDeleteAction } from "../../../../components/Notifications/Messages"
-import addTooltip from "../../../../components/Tooltip";
+import extendedTitleTooltip from "../../../../components/Tooltip";
 const fileNameMaxLength = 47;
 
 interface Props {
@@ -149,7 +149,7 @@ const ListOfAchievementsModal = (props: Props) => {
                                 <List.Item.Meta
                                     className={classes.text}
                                     title={
-                                        addTooltip(fileNameMaxLength, item.fileName)
+                                        extendedTitleTooltip(fileNameMaxLength, item.fileName)
                                     }
                                 />
                             </List.Item>

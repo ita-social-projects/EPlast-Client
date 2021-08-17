@@ -10,7 +10,7 @@ import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg"
-import addTooltip, {parameterMaxLength} from "../../components/Tooltip";
+import extendedTitleTooltip, {parameterMaxLength} from "../../components/Tooltip";
 moment.locale("uk-ua");
 
 const RegionMembers = () => {
@@ -88,7 +88,7 @@ const RegionMembers = () => {
                 <Card.Meta
                   className="detailsMeta"
                   title={
-                    addTooltip(parameterMaxLength, `${member.name}`)
+                    extendedTitleTooltip(parameterMaxLength, `${member.name}`)
                   }
                 />
               </div>

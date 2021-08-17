@@ -10,7 +10,7 @@ import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import { Modal } from 'antd';
-import addTooltip, {parameterMaxLength} from '../../../components/Tooltip';
+import extendedTitleTooltip, {parameterMaxLength} from '../../../components/Tooltip';
 
 const ClubFollowers = () => {
     const {id} = useParams();
@@ -143,7 +143,7 @@ const ClubFollowers = () => {
                     <Card.Meta
                       className="detailsMeta"
                       title={
-                        addTooltip(parameterMaxLength, `${follower.user.firstName} ${follower.user.lastName}`)
+                        extendedTitleTooltip(parameterMaxLength, `${follower.user.firstName} ${follower.user.lastName}`)
                       }
                     />
                   </div>

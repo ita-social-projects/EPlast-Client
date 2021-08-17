@@ -1,6 +1,6 @@
 import ClubUser from "../../../models/Club/ClubUser";
 import moment from "moment";
-import addTooltip from "../../../components/Tooltip";
+import extendedTitleTooltip from "../../../components/Tooltip";
 
 const clubNameMaxLength = 28;
 const columns = [
@@ -42,7 +42,7 @@ const columns = [
     title: "Курінь",
     dataIndex: "club",
     render: (club: any) =>{
-      return(addTooltip(clubNameMaxLength, club.name))
+      return(extendedTitleTooltip(clubNameMaxLength, club.name))
     }
   },
 ];

@@ -23,7 +23,7 @@ import NotificationBoxApi from "../../api/NotificationBoxApi";
 import AddAdministratorModal from "./AddAdministratorModal";
 import { Roles } from "../../models/Roles/Roles";
 import RegionAdmin from "../../models/Region/RegionAdmin";
-import addTooltip from "../../components/Tooltip";
+import extendedTitleTooltip from "../../components/Tooltip";
 moment.locale("uk-ua");
 
 const adminTypeNameMaxLength = 22;
@@ -146,7 +146,7 @@ const RegionAdministration = () => {
                 key={member.id}
                 className="detailsCard"
                 title={
-                  addTooltip(adminTypeNameMaxLength, `${member.adminType.adminTypeName}`)
+                  extendedTitleTooltip(adminTypeNameMaxLength, `${member.adminType.adminTypeName}`)
                 }
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}          
                 actions={
@@ -178,7 +178,7 @@ const RegionAdministration = () => {
                     <Card.Meta
                       className="detailsMeta"
                       title={
-                        addTooltip(adminTypeNameMaxLength, `${member.user.firstName} ${member.user.lastName}`)
+                        extendedTitleTooltip(adminTypeNameMaxLength, `${member.user.firstName} ${member.user.lastName}`)
                       }
                     />
                   </div>

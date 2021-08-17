@@ -11,7 +11,7 @@ import { Roles } from '../../../models/Roles/Roles';
 import Spinner from '../../Spinner/Spinner';
 import Title from 'antd/lib/typography/Title';
 import userApi from "../../../api/UserApi";
-import addTooltip, {parameterMaxLength} from '../../../components/Tooltip';
+import extendedTitleTooltip, {parameterMaxLength} from '../../../components/Tooltip';
 
 const ClubDocuments = () => {
     const {id} = useParams();
@@ -134,7 +134,7 @@ const ClubDocuments = () => {
                   <Card.Meta
                     className="detailsMeta"
                     title={
-                       addTooltip(parameterMaxLength, document.clubDocumentType.name)
+                       extendedTitleTooltip(parameterMaxLength, document.clubDocumentType.name)
                     }
                   />
                 </Card>
