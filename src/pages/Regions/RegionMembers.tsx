@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Row, Skeleton, Spin, } from "antd";
-import { SettingOutlined, CloseOutlined, RollbackOutlined } from "@ant-design/icons";
-import { addFollower, getRegionById, getRegionLogo, removeRegion, getRegionAdministration, getRegionDocuments } from "../../api/regionsApi";
-import userApi from "../../api/UserApi";
+import { Avatar, Button, Card, Layout, Skeleton, } from "antd";
+import { RollbackOutlined } from "@ant-design/icons";
+import { getRegionById } from "../../api/regionsApi";
 import {getLogo} from "./../../api/citiesApi"
 import "./Region.less";
 import moment from "moment";
@@ -11,6 +10,7 @@ import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg"
+import extendedTitleTooltip, {parameterMaxLength} from "../../components/Tooltip";
 moment.locale("uk-ua");
 
 const RegionMembers = () => {
@@ -87,7 +87,9 @@ const RegionMembers = () => {
                 )}
                 <Card.Meta
                   className="detailsMeta"
-                  title={`${member.name}`}
+                  title={
+                    extendedTitleTooltip(parameterMaxLength, `${member.name}`)
+                  }
                 />
               </div>
             </Card>

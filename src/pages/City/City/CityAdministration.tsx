@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip} from 'antd';
+import {Avatar, Button, Card, Layout, Modal, Skeleton} from 'antd';
 import {SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
-import { getAllAdmins, removeAdministrator, getCityById, cityNameOfApprovedMember} from "../../../api/citiesApi";
+import { getAllAdmins, removeAdministrator} from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
 import CityAdmin from '../../../models/City/CityAdmin';
-import CityProfile from '../../../models/City/CityProfile';
 import AddAdministratorModal from '../AddAdministratorModal/AddAdministratorModal';
 import moment from "moment";
 import "moment/locale/uk";
@@ -14,6 +13,7 @@ import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import { Roles } from '../../../models/Roles/Roles';
+import extendedTitleTooltip from '../../../components/Tooltip';
 moment.locale("uk-ua");
 
 const adminTypeNameMaxLength = 23;
@@ -122,13 +122,7 @@ const CityAdministration = () => {
                   key={member.id}
                   className="detailsCard"
                   title={
-                    (member.adminType.adminTypeName?.length > adminTypeNameMaxLength) ?
-                      <Tooltip title={member.adminType.adminTypeName}>
-                        <span> 
-                          {member.adminType.adminTypeName.slice(0, adminTypeNameMaxLength - 1) + "..."} 
-                        </span>
-                      </Tooltip>
-                    :`${member.adminType.adminTypeName}`
+                    extendedTitleTooltip(adminTypeNameMaxLength, `${member.adminType.adminTypeName}`)
                   }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
@@ -157,7 +151,9 @@ const CityAdministration = () => {
                       )}
                       <Card.Meta
                         className="detailsMeta"
-                        title={`${member.user.firstName} ${member.user.lastName}`}
+                        title={
+                          extendedTitleTooltip(adminTypeNameMaxLength, `${member.user.firstName} ${member.user.lastName}`)
+                        }
                       />
                     </div>
                   </div>

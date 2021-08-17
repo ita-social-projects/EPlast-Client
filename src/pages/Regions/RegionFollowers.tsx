@@ -16,6 +16,7 @@ import Spinner from '../Spinner/Spinner';
 import { Roles } from '../../models/Roles/Roles';
 import { successfulDeleteAction } from '../../components/Notifications/Messages';
 import notificationLogic from "../../components/Notifications/Notification";
+import extendedTitleTooltip, {parameterMaxLength} from '../../components/Tooltip';
 
 const RegionFollowers = () => {
     const {id} = useParams();
@@ -133,7 +134,9 @@ const RegionFollowers = () => {
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={`${follower.cityName}`}
+                      title={
+                        extendedTitleTooltip(parameterMaxLength, `${follower.cityName}`)
+                      }
                     />
                   </div>
                 </Card>
