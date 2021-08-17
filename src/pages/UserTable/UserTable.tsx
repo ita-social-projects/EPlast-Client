@@ -294,6 +294,7 @@ const UsersTable = () => {
   const handlePageChange = (page: number) => {
     setPage(page);
     setCurrentTabName(currentTabName);
+    setShowDropdown(false);
   };
 
   const handleSizeChange = (page: number, pageSize: number = 10) => {

@@ -39,6 +39,7 @@ const AddAdministratorModal = (props: Props) => {
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const getCityAdmins= async () => {
+    setLoading(true);
     if (props.cityId !== 0) {
       const responseAdmins = await getAllAdmins(props.cityId)
       setHead(responseAdmins.data.head);
@@ -145,6 +146,14 @@ const AddAdministratorModal = (props: Props) => {
     props.onAdd?.(admin);
   };
 
+  const checkAdminId = async (admin: CityAdmin)=> {
+    if (admin.id === 0) {
+      await addCityAdmin(admin);
+    } else {
+      await editCityAdmin(admin);
+    }
+  }
+
   const handleSubmit = async (values: any) => {
     setLoading(true);
 
@@ -166,7 +175,7 @@ const AddAdministratorModal = (props: Props) => {
         if (head !== null && head?.userId !== admin.userId) {
           showConfirmCityAdmin(admin, values.adminType);
         } else {
-           await editCityAdmin(admin);
+           await checkAdminId(admin);
         }
       } else if (values.adminType === Roles.CityHeadDeputy ) {
         if (admin.userId === head?.userId) {
@@ -174,13 +183,13 @@ const AddAdministratorModal = (props: Props) => {
         } else if (headDeputy !== null && headDeputy?.userId !== admin.userId) {
           showConfirmCityAdmin(admin, values.adminType);
         } else {
-          await editCityAdmin(admin);
+          await checkAdminId(admin);
         }
       } else {
         if (admin.userId === head?.userId || admin.userId === headDeputy?.userId) {
             showEditConfirmModal(admin);
         } else {
-          await editCityAdmin(admin);
+          await checkAdminId(admin);
         }
       }
     } finally {
