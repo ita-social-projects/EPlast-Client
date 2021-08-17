@@ -140,6 +140,7 @@ const AddAdministratorModal = (props: Props) => {
   };
 
   const getClubAdmins = async () => {
+    setLoading(true);
     if (props.clubId !== 0) {
       const responseAdmins = await getAllAdmins(props.clubId);
       setHead(responseAdmins.data.head);
@@ -147,6 +148,14 @@ const AddAdministratorModal = (props: Props) => {
       setLoading(false);
     }
   };
+
+  const checkAdminId = async (admin: ClubAdmin)=> {
+    if (admin.id === 0) {
+      await addClubAdmin(admin);
+    } else {
+      await editClubAdmin(admin);
+    }
+  }
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
@@ -170,7 +179,7 @@ const AddAdministratorModal = (props: Props) => {
           console.log(admin);
           showConfirm(admin);
         } else {
-          await editClubAdmin(admin);
+          await checkAdminId(admin);
         }
       } else if (values.adminType === Roles.KurinHeadDeputy ) {
         if (admin.userId == head?.userId) {
@@ -179,13 +188,13 @@ const AddAdministratorModal = (props: Props) => {
           console.log(admin);
           showConfirm(admin);
         } else {
-          await editClubAdmin(admin);
+          await checkAdminId(admin);
         }
       } else {
         if (admin.userId === head?.userId || admin.userId === headDeputy?.userId) {
             showEditConfirmModal(admin);
         } else {
-          await editClubAdmin(admin);
+          await checkAdminId(admin);
         }
       }
     } finally {
