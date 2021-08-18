@@ -86,7 +86,6 @@ const getById = async (id: number) => {
 
 const getAll = async () => {
   const { data } = await Api.get("Decisions");
-
   return data;
 };
 
