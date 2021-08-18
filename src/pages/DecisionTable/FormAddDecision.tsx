@@ -398,9 +398,11 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
               className={formclasses.selectField}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
-              <Select.Option key="9" value="InReview">Прийнято</Select.Option>
-              <Select.Option key="10" value="Confirmed">Потверджено</Select.Option>
-              <Select.Option key="11" value="Canceled">Скасовано</Select.Option>
+              {data?.decisionStatusTypeListItems.map((dst) => (
+                <Select.Option key={dst.value} value={JSON.stringify(dst)}>
+                  {dst.text}
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
         </Col>
