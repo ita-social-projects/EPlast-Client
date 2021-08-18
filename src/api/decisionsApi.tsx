@@ -64,6 +64,7 @@ export const statusTypeGetParser = (statusType: number): string => {
   if (statusType === 2) return "Скасовано";
   return "Не визначено";
 };
+
 const dataURLtoFile = (dataurl: string, filename: string) => {
   const arr = dataurl.split(',');
   const mime = arr[0].match(/:(.*?);/)![1];
@@ -75,9 +76,9 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
     u8arr[length] = bstr.charCodeAt(length);
     length -= 1;
   }
-
   return new File([u8arr], filename, { type: mime });
-}
+};
+
 const getById = async (id: number) => {
   const response: DecisionPost = await (await Api.get(`Decisions/${id}`)).data;
   return response;
@@ -155,7 +156,6 @@ const put = async (id: number, data: DecisionPost) => {
     .catch(error => {
       notificationLogic('error', error.response.data.value);
     });
-
   return response;
 };
 
