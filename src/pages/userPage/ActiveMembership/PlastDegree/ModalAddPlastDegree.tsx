@@ -5,21 +5,21 @@ import FormAddPlastDegree from './FormAddPlastDegree';
 type ModalAddPlastDegreeProps = {
     userId: string;
     visibleModal: boolean;
-    isCityAdmin?:boolean;
+    isCityAdmin?: boolean;
     setVisibleModal: (visibleModal: boolean) => void;
     handleAddDegree: () => void;
 }
-const ModalAddPlastDegree = ({ 
-    visibleModal, 
-    setVisibleModal, 
-    isCityAdmin, 
-    userId, 
-    handleAddDegree 
-    }: ModalAddPlastDegreeProps) => {
+const ModalAddPlastDegree = ({
+    visibleModal,
+    setVisibleModal,
+    isCityAdmin,
+    userId,
+    handleAddDegree
+}: ModalAddPlastDegreeProps) => {
     const [availablePlastDegree, setAvailablePlastDegree] = useState<Array<PlastDegree>>([]);
-    const [cancel, setCancel]=useState<boolean>(false);
+    const [cancel, setCancel] = useState<boolean>(false);
 
-    const handleCancel = () => {setVisibleModal(false); setCancel(true)};
+    const handleCancel = () => { setVisibleModal(false); setCancel(true) };
 
     const getAvailablePlastDegree = (allDegrees: Array<PlastDegree>, userPlastDegrees: Array<UserPlastDegree>): Array<PlastDegree> => {
         setCancel(false);
@@ -41,7 +41,7 @@ const ModalAddPlastDegree = ({
     }
     useEffect(() => {
         fetchData();
-    }, [userId]);
+    }, [userId, availablePlastDegree]);
     return <Modal
         visible={visibleModal}
         onCancel={handleCancel}
