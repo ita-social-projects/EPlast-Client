@@ -63,7 +63,7 @@ const Assignments = () => {
 
   const AccessToManage = (roles: string[]): boolean => {
     for (var i = 0; i < roles.length; i++) {
-      if (AccessableRoles.includes(roles[i] && Roles.PlastMember)) return true;
+      if (Roles.PlastMember) return true;
     }
     return false;
   }
