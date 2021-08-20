@@ -34,19 +34,6 @@ const Assignments = () => {
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
-  const AccessableRoles = [
-    Roles.Admin.toString(),
-    Roles.GoverningBodyHead.toString(),
-    Roles.KurinHead.toString(),
-    Roles.KurinHeadDeputy.toString(),
-    Roles.CityHead.toString(),
-    Roles.CityHeadDeputy.toString(),
-    Roles.OkrugaHead.toString(),
-    Roles.OkrugaHeadDeputy.toString(),
-    Roles.PlastMember.toString(),
-    Roles.Supporter.toString(),
-    Roles.RegisteredUser.toString()
-  ];
 
   const [roles, setRoles] = useState<string[]>([]);
 
@@ -63,7 +50,7 @@ const Assignments = () => {
 
   const AccessToManage = (roles: string[]): boolean => {
     for (var i = 0; i < roles.length; i++) {
-      if (Roles.PlastMember) return true;
+      if (Roles.PlastMember.includes(roles[i])) return true;
     }
     return false;
   }
