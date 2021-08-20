@@ -51,7 +51,7 @@ export default function () {
   const wrongOnlyLettersMessage = shouldContain("тільки літери");
   const wrongAllVariantsMessage = shouldContain("літери, символи та цифри");
   const [form] = Form.useForm();
-  const MAX_AGE = 100;
+  const MIN_AVAILABLE_DATE = "01.01.1900";
 
   const [nationality, setNationality] = useState<Nationality>();
   const [religion, setReligion] = useState<Religion>();
@@ -149,7 +149,7 @@ export default function () {
 
   function disabledDate(current: moment.Moment) {
     let date =  moment().endOf('day');
-    return current && (current > date) || current.isBefore(moment().subtract(MAX_AGE, 'year'));
+    return current && (current > date) || current.isBefore(MIN_AVAILABLE_DATE);
   }
 
   const validationSchema = {
