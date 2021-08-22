@@ -48,6 +48,10 @@ export const onlyWhiteSpaces = ()=>{
     return `Назва не може містити лише порожні символи`
 };
 
+export const inputOnlyWhiteSpaces = ()=>{
+    return `Поле не може містити лише порожні символи`
+};
+
 export const tryAgain = 'Щось пішло не так. Спробуйте ще раз.'; 
 
 export const ReportAlreadyExists = 'Звіт вже існує.';
