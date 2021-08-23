@@ -37,7 +37,7 @@ import {
   fileIsTooBig,
   maxLength,
   successfulDeleteAction,
-  onlyWhiteSpaces,
+  inputOnlyWhiteSpaces,
 } from "../../components/Notifications/Messages"
 
 type FormAddDecisionProps = {
@@ -213,7 +213,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
               },
               {
                 pattern: notOnlyWhiteSpaces,
-                message: onlyWhiteSpaces()
+                message: inputOnlyWhiteSpaces()
               },
             ]}
           >
