@@ -44,10 +44,6 @@ export const minNumber = (minLen:number)=>{
     return `Значення має бути більше або дорівнювати ${minLen}`
 };
 
-export const onlyWhiteSpaces = ()=>{
-    return `Назва не може містити лише порожні символи`
-};
-
 export const inputOnlyWhiteSpaces = ()=>{
     return `Поле не може містити лише порожні символи`
 };

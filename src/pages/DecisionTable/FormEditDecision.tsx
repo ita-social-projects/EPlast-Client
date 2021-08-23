@@ -5,7 +5,7 @@ import formclasses from "./FormEditDecision.module.css";
 import{
   emptyInput,
   maxLength,
-  onlyWhiteSpaces,
+  inputOnlyWhiteSpaces,
 } from "../../components/Notifications/Messages"
 import jwt from "jwt-decode";
 import AuthStore from "../../stores/AuthStore";
@@ -80,7 +80,7 @@ const FormEditDecision = ({
                   },
                   { 
                     pattern: notOnlyWhiteSpaces, 
-                    message:onlyWhiteSpaces() 
+                    message:inputOnlyWhiteSpaces() 
                   },
                 ]}
               >
