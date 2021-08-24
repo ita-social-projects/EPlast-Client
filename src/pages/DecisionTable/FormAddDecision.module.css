@@ -1,21 +1,17 @@
 .cardButton {
   display: flex;
   width: 100%;
-  max-width: 370px;
   justify-content:flex-end;
   float: right;
 }
 
+.cardButton>* {
+margin-right: 8px;
+} 
+
 .formField {
   max-width: 370px;
   display: flex;
-}
-
-.cardButtonDocuments {
-  display: flex;
-  width: 100%;
-  max-width: 370px;
-  justify-content:flex-end;
 }
 
 .selectField {
@@ -25,20 +21,18 @@
 }
 
 @media(max-width: 400px) {
-.formField{ 
-  max-width: 100%;
-  min-width: 100%;
-  position: absolute;
-}
-.selectField {
-  max-width: 100%;
-  min-width: 100%;
-  display: flex;
-  position: absolute;
+  .formField{ 
+    max-width: 100%;
+    min-width: 100%;
+  }
+  .selectField {
+    max-width: 100%;
+    min-width: 100%;
+    display: flex;
+    position: absolute;
   }
 }
-.buttons
-  {
-    margin-left: 7px;
-    margin-right: 0px;
-  }
+.buttons {
+  margin-left: 7px;
+  margin-right: 0px;
+}
