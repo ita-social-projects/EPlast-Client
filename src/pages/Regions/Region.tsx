@@ -167,9 +167,9 @@ const Region = () => {
 
     history.push("/regions");
   };
-  const UnArchiveCity = async () => {
+  const UnArchiveRegion = async () => {
     await unArchiveRegion(region.id)
-    notificationLogic("success", successfulEditAction("Станицю"));
+    notificationLogic("success", successfulEditAction("Округу"));
 
     history.push("/regions");
   };
@@ -199,7 +199,7 @@ const Region = () => {
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
-        UnArchiveCity();
+        UnArchiveRegion();
       },
     });
   }
