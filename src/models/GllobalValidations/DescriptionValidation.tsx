@@ -11,10 +11,9 @@ import{
     incorrectHouseNumber,
     incorrectOficeNumber,
     incorrectSlogan,
-    incorrectAppeal
+    incorrectAppeal,
+    inputOnlyWhiteSpaces,
   } from "../../components/Notifications/Messages"
-  
-  const notOnlyWhiteSpaces = /^\s*\S.*$/;
 
  export const descriptionValidation = {
     Appeal: [
@@ -182,6 +181,35 @@ import{
     {
         required: true,
         message: emptyInput(),
-    }
-    
+    },
+    Inputs: 
+    [
+        {
+            pattern: /^\s*\S.*$/,
+            message: inputOnlyWhiteSpaces(),
+        },
+        { 
+            max: 50, 
+            message: maxLength(50),
+        },
+        {
+            required: true,
+            message: emptyInput(),
+        },    
+    ],
+    DescriptionAndQuestions:
+    [
+        {
+            pattern: /^\s*\S.*$/,
+            message: inputOnlyWhiteSpaces(),
+        },
+        { 
+            max: 200, 
+            message: maxLength(200),
+        },
+        {
+            required: true,
+            message: emptyInput(),
+        },    
+    ],
   };

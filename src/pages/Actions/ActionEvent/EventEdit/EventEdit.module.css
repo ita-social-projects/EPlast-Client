@@ -2,25 +2,38 @@
     background-color: rgb(238, 238, 238);
 }
 
-.actionsWrapper {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    width: 90%;
-    margin: 0 auto;
+form {
+    width: 100%;
 }
 
-.card {
-    background-color: #fff;
-    margin-top: 40px;
-    width: 600px;
-    height: auto;
-    box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 30px;
+.label {
+    background-color: #3c5438;
+    color: #f0f8ff;
+    margin: 17px;
+    padding: 8px;
+    text-align: center;
+    width: 150px;
+}
+
+[type='radio'] {
+    margin-right: 20px;
+}
+
+.select:hover,
+.select:focus,
+input:hover,
+.select1:hover {
+    outline: 0;
+    border-color: #3c5438 !important;
+}
+
+.input {
+    width: 245px !important;
+    text-align: start;
+}
+
+.background {
+    background-color: rgb(238, 238, 238);
 }
 
 form {
@@ -40,13 +53,6 @@ form {
     margin-right: 20px;
 }
 
-.row {
-    display: flex;
-    justify-content: space-between;
-    margin: 0px 45px;
-    column-gap: 10px;
-}
-
 .select:hover,
 .select:focus,
 input:hover,
@@ -56,37 +62,34 @@ input:hover,
 }
 
 .input {
-    width: 245px !important;
     text-align: start;
+    padding: 5px 11px;
+    font-size: 17px;
+    width: 100% !important;
+    
+}
+.formItem {
+    display: block;
+    width: 100% !important;
 }
 
 .select {
-    width: 245px !important;
-    text-align: start;
-}
-
-input,
-[role="spinbutton"] {
-    text-align: left;
-}
-
-[role="spinbutton"] {
-    margin-left: -20px;
+    min-width: 370px;
+    max-width: 370px;
+    position: relative;
 }
 
 .button {
-    margin-top: 10px;
+    margin: 10px 0px 25px 7px;
     border: none;
     width: auto;
     height: 40px;
     outline: none;
-    text-align: center;
     cursor: pointer;
-    margin-left: 7px;
-    margin-right: 0px;
     margin-bottom: 15px;
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+    display: inline-table;
     float: right;
 }
 
@@ -99,38 +102,12 @@ input,
 }
 
 .radio {
-    margin-top: -30px;
+    width: 100%;
     justify-content: center;
-    display: flex;
-}
-
-.title {
-    justify-content: center;
-    display: flex;
+    display: block;
 }
 
 @media(max-width:767px) {
-    .actionsWrapper {
-        margin: 0;
-        width: 100%;
-    }
-    .card {
-        margin: 0;
-        width: 100%;
-    }
-    .title {
-        text-align: center;
-        padding: 10px 0;
-    }
-    .title h2 {
-        font-size: 20px;
-    }
-    .row {
-        width: 100%;
-        flex-direction: column;
-        margin: 0;
-        padding: 0 15px
-    }
     .input {
         width: 100% !important;
     }
@@ -139,10 +116,23 @@ input,
     }
     .button {
         margin: auto;
-        display: block;
+        display: inline-block;   
     }
     .ant-radio-group {
         display: flex;
         flex-direction: column;
     }
 }
+@media(max-width: 400px) {
+    .formItem { 
+      max-width: 100%;
+      min-width: 100%;
+      position: absolute;
+    }
+    .select {
+      max-width: 100%;
+      min-width: 100%;
+      display: flex;
+      position: absolute;
+    }
+}    
