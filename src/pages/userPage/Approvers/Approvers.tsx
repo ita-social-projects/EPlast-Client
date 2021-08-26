@@ -199,14 +199,22 @@ const Assignments = () => {
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
-                  placement="bottom">
+                  placement="rightBottom">
                   <Spin spinning={approveAsMemberLoading}>
                     <Link to="#" onClick={() => approveClick(data?.user.id)}>
-                      <Avatar src={AddUser}
-                        alt="example" size={166}
-                        className="avatarEmpty"
-                        shape="square"
-                      />
+                      <Card
+                        hoverable
+                        className="cardStyles"
+                        cover={
+                          <Avatar src={AddUser}
+                            alt="example" size={166}
+                            className="avatarEmpty"
+                            shape="square"
+                          />}
+                      >
+                        <p className="cardP" />
+                        <p className="cardP" />
+                      </Card>
                     </Link>
                   </Spin>
                 </Tooltip>
@@ -273,10 +281,19 @@ const Assignments = () => {
                   placement="rightBottom">
                   <Spin spinning={approveAsHovelHeadLoading}>
                     <Link to="#" onClick={() => approveClick(data?.user.id, roles.includes(Roles.KurinHead) || roles.includes(Roles.Admin), false)}>
-                      <Avatar src={AddUser}
-                        alt="example" size={168}
-                        className="avatarEmpty"
-                        shape="square" />
+                    <Card
+                        hoverable
+                        className="cardStyles"
+                        cover={
+                          <Avatar src={AddUser}
+                            alt="example" size={166}
+                            className="avatarEmpty"
+                            shape="square"
+                          />}
+                      >
+                        <p className="cardP" />
+                        <p className="cardP" />
+                      </Card>
                     </Link>
                   </Spin>
                 </Tooltip>
@@ -343,11 +360,19 @@ const Assignments = () => {
                   placement="rightBottom">
                   <Spin spinning={approveAsCityHeadLoading}>
                     <Link to="#" onClick={() => approveClick(data?.user.id, false, roles.includes(Roles.CityHead) || roles.includes(Roles.Admin))}>
-                      <Avatar
-                        src={AddUser}
-                        alt="example" size={168}
-                        className="avatarEmpty"
-                        shape="square" />
+                    <Card
+                        hoverable
+                        className="cardStyles"
+                        cover={
+                          <Avatar src={AddUser}
+                            alt="example" size={168}
+                            className="avatarEmpty"
+                            shape="square"
+                          />}
+                      >
+                        <p className="cardP" />
+                        <p className="cardP" />
+                      </Card>
                     </Link>
                   </Spin>
                 </Tooltip>

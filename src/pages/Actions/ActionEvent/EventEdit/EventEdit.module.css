@@ -123,16 +123,3 @@ input:hover,
         flex-direction: column;
     }
 }
-@media(max-width: 400px) {
-    .formItem { 
-      max-width: 100%;
-      min-width: 100%;
-      position: absolute;
-    }
-    .select {
-      max-width: 100%;
-      min-width: 100%;
-      display: flex;
-      position: absolute;
-    }
-}    
