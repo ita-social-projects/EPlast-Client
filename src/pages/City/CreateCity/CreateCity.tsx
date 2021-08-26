@@ -453,7 +453,7 @@ const CreateCity = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={isFollowerPath ? regionFollower.cityName : city.name}
-                rules={descriptionValidation.Name}
+                rules={descriptionValidation.CityName}
               >
                 <Input value={isFollowerPath ? regionFollower.cityName : city.name} maxLength={51} />
               </Form.Item>

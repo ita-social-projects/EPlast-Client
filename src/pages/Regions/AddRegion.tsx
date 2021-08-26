@@ -8,8 +8,7 @@ import {
   Col,
   Row,
 } from "antd";
-import React, { useState, useEffect } from "react";
-import RegionsApi from "../../api/regionsApi";
+import React, { useState } from "react";
 import "./CreateRegion.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import notificationLogic from "../../components/Notifications/Notification";
@@ -28,6 +27,7 @@ import{
   successfulCreateAction,
   failCreateAction
 } from "../../components/Notifications/Messages"
+import { createRegion } from "../../api/regionsApi";
 
 const AddNewRegionFormPage = () => {
   const [form] = Form.useForm();
@@ -52,7 +52,7 @@ const AddNewRegionFormPage = () => {
       city: values.city,
       isActive: true
     };
-    await RegionsApi.createRegion(newRegion);
+    await createRegion(newRegion);
     form.resetFields();
 
     notificationLogic("success", successfulCreateAction("Округу"));
@@ -140,7 +140,7 @@ const AddNewRegionFormPage = () => {
                 label="Назва округи"
                 name="regionName"
                 labelCol={{ span: 24 }}
-                rules={descriptionValidation.Name}
+                rules={descriptionValidation.RegionName}
               >
                 <Input maxLength={51} />
               </Form.Item>
@@ -199,7 +199,7 @@ const AddNewRegionFormPage = () => {
                 label="Місто"
                 name="city"
                 labelCol={{ span: 24 }}
-                rules={descriptionValidation.Name}
+                rules={descriptionValidation.CityName}
               >
                 <Input maxLength={51} />
               </Form.Item>
