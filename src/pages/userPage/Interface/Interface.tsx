@@ -1,40 +1,40 @@
-export type Gender={
-    id:number;
-    name:string;
+export type Gender = {
+    id: number;
+    name: string;
 }
-export type Work={
-    id:number;
+export type Work = {
+    id: number;
     placeOfwork: string;
     position: string;
 }
-export type Education={
-    id:number;
+export type Education = {
+    id: number;
     placeOfStudy: string;
     speciality: string;
 }
-export type Degree={
-    id:number;
-    name:string;
+export type Degree = {
+    id: number;
+    name: string;
 }
-export type Religion={
-    id:number;
-    name:string;
+export type Religion = {
+    id: number;
+    name: string;
 }
-export type Nationality={
-    id:number;
-    name:string;
+export type Nationality = {
+    id: number;
+    name: string;
 }
-export type UpuDegree={
-    id:number;
-    name:string;
+export type UpuDegree = {
+    id: number;
+    name: string;
 }
-export type User ={
-    id:any;
-    userProfileID:any;
+export type User = {
+    id: any;
+    userProfileID: any;
     firstName: string;
     lastName: string;
-    fatherName:string;
-    imagePath:string;
+    fatherName: string;
+    imagePath: string;
     address: string;
     birthday: Date;
     phoneNumber: string;
@@ -50,7 +50,7 @@ export type User ={
     region: string;
     city: string;
     club: string;
-    cityId?:number;
+    cityId?: number;
     clubId?: number;
     regionId?: number;
     governingBodyId?: number;
@@ -63,19 +63,19 @@ export type User ={
     clubMemberIsApproved: boolean;
 }
 
-export type ShortUser ={
-    id:any;
-    userProfileID:any;
+export type ShortUser = {
+    id: any;
+    userProfileID: any;
     firstName: string;
     lastName: string;
-    fatherName:string;
-    imagePath:string;
+    fatherName: string;
+    imagePath: string;
     pseudo: string;
     governingBody: string;
     region: string;
     city: string;
     club: string;
-    cityId?:number;
+    cityId?: number;
     clubId?: number;
     regionId?: number;
     governingBodyId?: number;
@@ -87,39 +87,41 @@ export type ShortUser ={
     clubMemberIsApproved: boolean;
 }
 
-export  interface Data {
-    isUserPlastun:boolean;
-    timeToJoinPlast:number;
-    user:User;
-    shortUser:ShortUser;
-  }
-  export interface Approver{
-    id:number;
-    user:User;
-    userID:string;
-    confirmedUser:ConfirmedUser;
+export interface Data {
+    isUserPlastun: boolean;
+    timeToJoinPlast: number;
+    user: User;
+    shortUser: ShortUser;
 }
-  export interface ConfirmedUser{
-    id:number;
-    user:User;
-    userID:string;
-    approverId:string
-    approver:Approver;
-    confirmDate:Date;
-    isClubAdmin:boolean;
-    isCityAdmin:boolean;
+export interface Approver {
+    id: number;
+    user: User;
+    userID: string;
+    confirmedUser: ConfirmedUser;
 }
-  export interface ApproversData{
-      user:User;
-      confirmedUsers:ConfirmedUser[];
-      canApprove:boolean;
-      canApprovePlastMember:boolean;
-      timeToJoinPlast:number;
-      clubApprover:ConfirmedUser;
-      cityApprover:ConfirmedUser;
-      isUserPlastun:boolean;
-      isUserHeadOfClub:boolean;
-      isUserHeadOfRegion:boolean;
-      isUserHeadOfCity:boolean;
-      currentUserId:string;
-  }
+export interface ConfirmedUser {
+    id: number;
+    user: User;
+    userID: string;
+    approverId: string
+    approver: Approver;
+    confirmDate: Date;
+    isClubAdmin: boolean;
+    isCityAdmin: boolean;
+    isRegionAdmin: boolean;
+}
+export interface ApproversData {
+    user: User;
+    confirmedUsers: ConfirmedUser[];
+    canApprove: boolean;
+    canApprovePlastMember: boolean;
+    timeToJoinPlast: number;
+    clubApprover: ConfirmedUser;
+    cityApprover: ConfirmedUser;
+    isUserPlastun: boolean;
+    isUserHeadOfClub: boolean;
+    isUserHeadOfRegion: boolean;
+    isUserHeadOfCity: boolean;
+    currentUserId: string;
+    clubId: number;
+}

@@ -38,8 +38,8 @@ const deleteApprove = async (confirmedId: number) => {
 
     return response;
 };
-const approveUser = async (userId: string, isClubAdmin: boolean, isCityAdmin: boolean) => {
-    const response = await axios.post(`${`${BASE_URL}User/approveUser/${userId}/${isClubAdmin}/${isCityAdmin}`}`);
+const approveUser = async (userId: string, isClubAdmin: boolean, isCityAdmin: boolean, isRegionAdmin: boolean) => {
+    const response = await axios.post(`${`${BASE_URL}User/approveUser/${userId}/${isClubAdmin}/${isCityAdmin}/${isRegionAdmin}`}`);
 
     return response;
 };

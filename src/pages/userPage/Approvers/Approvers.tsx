@@ -29,7 +29,7 @@ const Assignments = () => {
   const [loading, setLoading] = useState(false);
   const [approveAsMemberLoading, setApproveAsMemberLoading] = useState(false);
   const [approveAsHovelHeadLoading, setApproveAsHovelHeadLoading] = useState(false);
-  const [approveAsCityHeadLoading, setApproveAsCityHeadLoading] = useState(false);
+  const [approveAsCityOrRegionHeadLoading, setApproveAsCityOrRegionHeadLoading] = useState(false);
   const [data, setData] = useState<ApproversData>();
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
@@ -95,10 +95,10 @@ const Assignments = () => {
     fetchData();
   }
 
-  const approveClick = async (userId: string, isClubAdmin: boolean = false, isCityAdmin: boolean = false) => {
+  const approveClick = async (userId: string, isClubAdmin: boolean = false, isRegionAdmin: boolean = false, isCityAdmin: boolean = false) => {
 
-    isCityAdmin ? setApproveAsCityHeadLoading(true) : isClubAdmin ? setApproveAsHovelHeadLoading(true) : setApproveAsMemberLoading(true);
-    await userApi.approveUser(userId, isClubAdmin, isCityAdmin).
+    (isCityAdmin || isRegionAdmin) ? setApproveAsCityOrRegionHeadLoading(true) /*: isRegionAdmin ? setApproveAsCityHeadLoading(true) */ : isClubAdmin ? setApproveAsHovelHeadLoading(true) : setApproveAsMemberLoading(true);
+    await userApi.approveUser(userId, isClubAdmin, isCityAdmin, isRegionAdmin).
       then(() => { notificationLogic('success', successfulCreateAction("Поручення")) }).
       catch(() => { notificationLogic('error', "Не вдалося поручитися") });
     await NotificationBoxApi.createNotifications(
@@ -111,7 +111,7 @@ const Assignments = () => {
       'Переглянути користувача'
     );
     await fetchData();
-    isCityAdmin ? setApproveAsCityHeadLoading(false) : isClubAdmin ? setApproveAsHovelHeadLoading(false) : setApproveAsMemberLoading(false);
+    (isCityAdmin || isRegionAdmin) ? setApproveAsCityOrRegionHeadLoading(false) : isClubAdmin ? setApproveAsHovelHeadLoading(false) : setApproveAsMemberLoading(false);
   }
 
   const { Meta } = Card;
@@ -335,14 +335,21 @@ const Assignments = () => {
               )}
 
             </div>
-          ) : ((data?.cityApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin)) && (data?.isUserHeadOfCity || roles.includes(Roles.Admin))) ?
+          ) : ((
+            (data?.canApprove
+              && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin))
+              && (data?.isUserHeadOfCity || roles.includes(Roles.Admin)))
+            || (data?.canApprove
+              && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin))
+              && (data?.isUserHeadOfRegion || roles.includes(Roles.Admin)))
+          ) ?
             (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
                   placement="rightBottom">
-                  <Spin spinning={approveAsCityHeadLoading}>
-                    <Link to="#" onClick={() => approveClick(data?.user.id, false, roles.includes(Roles.CityHead) || roles.includes(Roles.Admin))}>
+                  <Spin spinning={approveAsCityOrRegionHeadLoading}>
+                    <Link to="#" onClick={() => approveClick(data?.user.id, false, roles.includes(Roles.CityHead) || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.Admin))}>
                       <Avatar
                         src={AddUser}
                         alt="example" size={168}
