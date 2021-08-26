@@ -22,8 +22,8 @@ const regionNameExists = async (value: string) => {
     const regionsResponce = await getRegions();
     const regions: RegionProfile[] = regionsResponce.data;
 
-    for(let i = 0; i < regions.length; i++){
-        if(regions[i].regionName === value){
+    for (let i = 0; i < regions.length; i++){
+        if (regions[i].regionName === value){
             return true;
         }
     }
