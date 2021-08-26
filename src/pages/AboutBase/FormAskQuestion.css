@@ -60,3 +60,36 @@
       width: 30%;
     }
   }
+
+  form {
+    width: 370px;
+  }
+
+  .input {
+    text-align: start;
+    padding: 5px 11px;
+    font-size: 17px;
+    width: 100% !important; 
+  }
+
+  .formField {
+    display: block;
+    width: 100% !important;
+  }
+  
+  @media(max-width: 400px) {
+    .formField{ 
+      max-width: 100%;
+      min-width: 100%;
+    }
+    form {
+      max-width: 100%;
+      min-width: 100%;
+    }
+  }
+
+  .buttons {
+    margin-left: 7px;
+    margin-right: 0px;
+  }
+  
