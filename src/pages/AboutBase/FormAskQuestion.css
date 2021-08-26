@@ -61,10 +61,6 @@
     }
   }
 
-  form {
-    width: 370px;
-  }
-
   .input {
     text-align: start;
     padding: 5px 11px;
@@ -72,17 +68,25 @@
     width: 100% !important; 
   }
 
+  .form {
+    width: 100%;
+  }
+
+  #area {
+    width: 370px;
+  }
+  
   .formField {
-    display: block;
-    width: 100% !important;
+    max-width: 370px;
+    display: flex;
   }
   
   @media(max-width: 400px) {
-    .formField{ 
+    .formField { 
       max-width: 100%;
       min-width: 100%;
     }
-    form {
+    #area {
       max-width: 100%;
       min-width: 100%;
     }

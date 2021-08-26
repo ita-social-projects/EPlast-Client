@@ -48,6 +48,7 @@ const FormAskQuestion: React.FC<FormAskQuestionProps> = (props: any) => {
       form={form}
       validateMessages={validateMessages}
       onFinish={handleSubmit}
+      id='area' 
     >
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
