@@ -97,7 +97,7 @@ const Assignments = () => {
 
   const approveClick = async (userId: string, isClubAdmin: boolean = false, isRegionAdmin: boolean = false, isCityAdmin: boolean = false) => {
 
-    (isCityAdmin || isRegionAdmin) ? setApproveAsCityOrRegionHeadLoading(true) /*: isRegionAdmin ? setApproveAsCityHeadLoading(true) */ : isClubAdmin ? setApproveAsHovelHeadLoading(true) : setApproveAsMemberLoading(true);
+    (isCityAdmin || isRegionAdmin) ? setApproveAsCityOrRegionHeadLoading(true) : isClubAdmin ? setApproveAsHovelHeadLoading(true) : setApproveAsMemberLoading(true);
     await userApi.approveUser(userId, isClubAdmin, isCityAdmin, isRegionAdmin).
       then(() => { notificationLogic('success', successfulCreateAction("Поручення")) }).
       catch(() => { notificationLogic('error', "Не вдалося поручитися") });
