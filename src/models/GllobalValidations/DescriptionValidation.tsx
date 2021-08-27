@@ -1,3 +1,4 @@
+import regionsApi from "../../api/regionsApi";
 import{
     emptyInput,
     maxLength,
@@ -64,6 +65,17 @@ export const descriptionValidation = ({
             required: true,
             message: emptyInput(),
         },
+        {
+            validator: async (_ : object, value: string) => 
+                String(value).length == 0
+                    ? Promise.resolve()
+                    : await regionsApi
+                        .checkNameExists(value)
+                        .then(response => response.data === false)
+                        ? Promise.resolve()
+                        : Promise.reject('Округа з такою назвою вже існує!')
+
+        }
     ],
     ClubName: [
         {
