@@ -389,15 +389,15 @@ const Region = () => {
   const handleOk = async(admin: RegionAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.OkrugaHead) {
-        if (head !== '' && head.userId !== admin.userId) {
+        if (head !== '' && head?.userId !== admin.userId) {
           showConfirmRegionAdmin(admin);
           } else {
             checkAdminId(admin);
           }
       } else if (admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy) {
-        if (admin.userId === head.userId) {
+        if (admin.userId === head?.userId) {
           showDiseableModal(admin);
-        } else if (headDeputy !== '' && headDeputy.userId !== admin.userId) {
+        } else if (headDeputy !== '' && headDeputy?.userId !== admin.userId) {
           showConfirmRegionAdmin(admin);
           } else {
             checkAdminId(admin);
