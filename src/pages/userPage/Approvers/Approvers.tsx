@@ -34,14 +34,7 @@ const Assignments = () => {
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
-  const AccessableRoles = [Roles.Admin.toString(),
-                           Roles.KurinHead.toString(),
-                           Roles.CityHead.toString(),
-                           Roles.OkrugaHead.toString(),
-                           Roles.PlastMember.toString(),
-                           Roles.Supporter.toString(),
-                           Roles.RegisteredUser.toString()
-                          ];
+
   const [roles, setRoles] = useState<string[]>([]);
 
   const fetchData = async () => {
@@ -57,7 +50,7 @@ const Assignments = () => {
 
   const AccessToManage = (roles: string[]): boolean => {
     for (var i = 0; i < roles.length; i++) {
-      if (AccessableRoles.includes(roles[i])) return true;
+      if (Roles.PlastMember.includes(roles[i])) return true;
     }
     return false;
   }
@@ -87,19 +80,19 @@ const Assignments = () => {
   }
 
   const deleteApprove = async (event: number) => {
-      await userApi.deleteApprove(event).
-        then(() => { notificationLogic('success', successfulDeleteAction("Поручення")) }).
-        catch(() => { notificationLogic('error', failDeleteAction("поручення")) });
-      await NotificationBoxApi.createNotifications(
-        [userId],
-        `${setGreeting()}, повідомляємо, що користувач 
+    await userApi.deleteApprove(event).
+      then(() => { notificationLogic('success', successfulDeleteAction("Поручення")) }).
+      catch(() => { notificationLogic('error', failDeleteAction("поручення")) });
+    await NotificationBoxApi.createNotifications(
+      [userId],
+      `${setGreeting()}, повідомляємо, що користувач 
         ${approverName} скасував своє поручення за тебе.
         Будь тією зміною, яку хочеш бачити у світі!`,
-        NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/userpage/main/${data?.currentUserId}`,
-        'Переглянути користувача'
-      );
-      fetchData();
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/userpage/main/${data?.currentUserId}`,
+      'Переглянути користувача'
+    );
+    fetchData();
   }
 
   const approveClick = async (userId: string, isClubAdmin: boolean = false, isCityAdmin: boolean = false) => {
@@ -116,7 +109,7 @@ const Assignments = () => {
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/userpage/main/${data?.currentUserId}`,
       'Переглянути користувача'
-      );
+    );
     await fetchData();
     isCityAdmin ? setApproveAsCityHeadLoading(false) : isClubAdmin ? setApproveAsHovelHeadLoading(false) : setApproveAsMemberLoading(false);
   }
@@ -131,7 +124,7 @@ const Assignments = () => {
         className="img"
       />
     </div>
-  ) : ( 
+  ) : (
     <div className="displayFlex">
       <div className="avatarWrapperApprovers">
         <StickyContainer className="kadraWrapper">
@@ -149,7 +142,9 @@ const Assignments = () => {
             cityId={data?.user.cityId}
             clubId={data?.user.clubId}
             regionId={data?.user.regionId}
-            governingBodyId={data?.user.governingBodyId} />
+            governingBodyId={data?.user.governingBodyId}
+            cityMemberIsApproved={data?.user.cityMemberIsApproved}
+            clubMemberIsApproved={data?.user.clubMemberIsApproved} />
         </StickyContainer>
       </div>
       <div className="approversContentApprovers">
@@ -172,7 +167,7 @@ const Assignments = () => {
                       </Link>
                     </Tooltip>
                     <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
-                    <DeleteApproveButton approverId={p.id} deleteApprove={deleteApprove}/>
+                    <DeleteApproveButton approverId={p.id} deleteApprove={deleteApprove} />
                   </Card>
                 </div>
               )
@@ -204,27 +199,35 @@ const Assignments = () => {
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
-                  placement="bottom">
-                    <Spin spinning={approveAsMemberLoading}>
-                        <Link to="#" onClick={() => approveClick(data?.user.id)}>
-                            <Avatar src={AddUser}
+                  placement="rightBottom">
+                  <Spin spinning={approveAsMemberLoading}>
+                    <Link to="#" onClick={() => approveClick(data?.user.id)}>
+                      <Card
+                        hoverable
+                        className="cardStyles"
+                        cover={
+                          <Avatar src={AddUser}
                             alt="example" size={166}
                             className="avatarEmpty"
-                            shape="square"                            
-                            />
-                        </Link>
-                    </Spin>
+                            shape="square"
+                          />}
+                      >
+                        <p className="cardP" />
+                        <p className="cardP" />
+                      </Card>
+                    </Link>
+                  </Spin>
                 </Tooltip>
               </div>
             ) : (
-            <div
-              hidden={data?.confirmedUsers.length != 0 || (data?.canApprove && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser && roles.includes(Roles.Admin))))}>
-              <br />
+              <div
+                hidden={data?.confirmedUsers.length != 0 || (data?.canApprove && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser && roles.includes(Roles.Admin))))}>
                 <br />
-                    На жаль, поруки відсутні
                 <br />
-              <br />
-            </div>
+                На жаль, поруки відсутні
+                <br />
+                <br />
+              </div>
             )}
           </div>
         </div>
@@ -249,7 +252,7 @@ const Assignments = () => {
                       </Link>
                     </Tooltip>
                     <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
-                    <DeleteApproveButton approverId={data.clubApprover.id} deleteApprove={deleteApprove}/>
+                    <DeleteApproveButton approverId={data.clubApprover.id} deleteApprove={deleteApprove} />
                   </Card>
                 ) : (
                   <Card
@@ -270,33 +273,42 @@ const Assignments = () => {
                   </Card>
                 )}
             </div>
-          ) : ((data?.clubApprover == null  && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin)) && (data?.isUserHeadOfClub || roles.includes(Roles.Admin))) ?
+          ) : ((data?.clubApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin)) && (data?.isUserHeadOfClub || roles.includes(Roles.Admin))) ?
             (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
                   placement="rightBottom">
-                    <Spin spinning={approveAsHovelHeadLoading}>
-                        <Link to="#" onClick={() => approveClick(data?.user.id, roles.includes(Roles.KurinHead) || roles.includes(Roles.Admin), false)}>
-                            <Avatar src={AddUser}
-                            alt="example" size={168}
+                  <Spin spinning={approveAsHovelHeadLoading}>
+                    <Link to="#" onClick={() => approveClick(data?.user.id, roles.includes(Roles.KurinHead) || roles.includes(Roles.Admin), false)}>
+                    <Card
+                        hoverable
+                        className="cardStyles"
+                        cover={
+                          <Avatar src={AddUser}
+                            alt="example" size={166}
                             className="avatarEmpty"
-                            shape="square" />
-                        </Link>
-                    </Spin>
+                            shape="square"
+                          />}
+                      >
+                        <p className="cardP" />
+                        <p className="cardP" />
+                      </Card>
+                    </Link>
+                  </Spin>
                 </Tooltip>
               </div>
             ) : (
               <div>
                 <br />
-                  <br />
-                    На жаль, поруки відсутні
-                  <br />
+                <br />
+                На жаль, поруки відсутні
+                <br />
                 <br />
               </div>
             )
           )}
-      </div>
+        </div>
 
         <h1 className="approversCard">Поручення Голови осередку/Осередкового УСП/УПС</h1>
         <div>
@@ -318,7 +330,7 @@ const Assignments = () => {
                     </Link>
                   </Tooltip>
                   <Meta title={moment(data.cityApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
-                  <DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove}/>
+                  <DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove} />
                 </Card>
               ) : (
                 <Card
@@ -346,24 +358,31 @@ const Assignments = () => {
                 <Tooltip
                   title="Поручитися за користувача"
                   placement="rightBottom">
-
                   <Spin spinning={approveAsCityHeadLoading}>
-                  <Link to="#" onClick={() => approveClick(data?.user.id, false, roles.includes(Roles.CityHead) || roles.includes(Roles.Admin))}>
-                    <Avatar
-                      src={AddUser}
-                      alt="example" size={168}
-                      className="avatarEmpty"
-                      shape="square" />
-                  </Link>
+                    <Link to="#" onClick={() => approveClick(data?.user.id, false, roles.includes(Roles.CityHead) || roles.includes(Roles.Admin))}>
+                    <Card
+                        hoverable
+                        className="cardStyles"
+                        cover={
+                          <Avatar src={AddUser}
+                            alt="example" size={168}
+                            className="avatarEmpty"
+                            shape="square"
+                          />}
+                      >
+                        <p className="cardP" />
+                        <p className="cardP" />
+                      </Card>
+                    </Link>
                   </Spin>
                 </Tooltip>
               </div>
             ) : (
               <div>
                 <br />
-                  <br />
-                    На жаль, поруки відсутні
-                  <br />
+                <br />
+                На жаль, поруки відсутні
+                <br />
                 <br />
               </div>
             )

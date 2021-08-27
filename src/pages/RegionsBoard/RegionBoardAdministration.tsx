@@ -10,6 +10,7 @@ import Spinner from "../Spinner/Spinner";
 import { getGoverningBodiesList, getGoverningBodyLogo } from "../../api/governingBodiesApi";
 import { GoverningBody } from "../../api/decisionsApi";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
+import extendedTitleTooltip, {parameterMaxLength} from "../../components/Tooltip";
 moment.locale("uk-ua");
 
 const RegionBoardAdministration = () => {
@@ -60,7 +61,9 @@ const RegionBoardAdministration = () => {
               <Card
                 key={governingBody.id}
                 className="detailsCard"
-                title={`${governingBody.governingBodyName}`}
+                title={
+                  extendedTitleTooltip(parameterMaxLength, `${governingBody.governingBodyName}`)
+                }
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
               >
                 <div className="cityMember">
@@ -74,7 +77,6 @@ const RegionBoardAdministration = () => {
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={`${governingBody.governingBodyName}`}
                     />
                   </div>
                 </div>

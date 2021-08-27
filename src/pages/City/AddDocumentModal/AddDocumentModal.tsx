@@ -155,9 +155,7 @@ const AddDocumentModal = (props: Props) => {
               >
                 {documentTypes.map((dt) => (
                   <Select.Option key={dt.id} value={dt.name}>
-                    {(dt.name?.length > nameMaxLength) ?
-                      dt.name.slice(0,39) + "..."
-                    : dt.name}
+                    {dt.name}
                   </Select.Option>
                 ))}
               </Select>

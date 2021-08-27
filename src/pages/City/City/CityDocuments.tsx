@@ -11,6 +11,7 @@ import moment from "moment";
 import Spinner from '../../Spinner/Spinner';
 import userApi from "../../../api/UserApi";
 import { Roles } from '../../../models/Roles/Roles';
+import extendedTitleTooltip, {parameterMaxLength} from '../../../components/Tooltip';
 
 const CityDocuments = () => {
     const {id} = useParams();
@@ -135,7 +136,9 @@ const CityDocuments = () => {
                   <Avatar size={86} icon={<FileTextOutlined />} />
                   <Card.Meta
                     className="detailsMeta"
-                    title={document.cityDocumentType.name}
+                    title={
+                      extendedTitleTooltip(parameterMaxLength, document.cityDocumentType.name)
+                    }
                   />
                 </Card>
               ))

@@ -1,5 +1,5 @@
 import { DeleteOutlined, DownloadOutlined, EyeOutlined, FileImageOutlined, FilePdfOutlined, LoadingOutlined } from "@ant-design/icons";
-import { List, Modal, Popconfirm, Tooltip } from "antd";
+import { List, Modal, Popconfirm } from "antd";
 import React, { useState } from "react";
 import { getAchievementFile, openAchievemetFile, removeAchievementDocument, getAchievementsByPage } from "../../../../api/blankApi";
 import BlankDocument from "../../../../models/Blank/BlankDocument";
@@ -8,13 +8,17 @@ import notificationLogic from '../../../../components/Notifications/Notification
 import InfiniteScroll from 'react-infinite-scroller';
 import { useParams } from "react-router-dom";
 import{ successfulDeleteAction } from "../../../../components/Notifications/Messages"
-const fileNameMaxLength = 45;
+import extendedTitleTooltip from "../../../../components/Tooltip";
+const fileNameMaxLength = 47;
+
 
 interface Props {
     visibleModal: boolean;
     setVisibleModal: (visibleModal: boolean) => void;
     achievementDoc: BlankDocument[];
     hasAccess?: boolean;
+    hasAccessToSeeAndDownload?: boolean;
+    hasAccessToDelete?: boolean;
     setAchievementDoc: (document: BlankDocument[]) => void;
     userToken: any;
 }
@@ -29,7 +33,7 @@ const ListOfAchievementsModal = (props: Props) => {
     let [pageNumber, setPageNumber] = useState(0);
     const [pageSize] = useState(7);
     const [isEmpty, setIsEmpty] = useState(false);
-
+    
     const handleCancel = () => {
         setLoadingMore({ loading: false, hasMore: true });
         setIsEmpty(false);
@@ -93,15 +97,15 @@ const ListOfAchievementsModal = (props: Props) => {
                                 actions={
                                     (item.fileName.split(".")[1] !== "doc" && item.fileName.split(".")[1] !== "docx") ?
                                         [
-                                            <DownloadOutlined
-                                                className={classes.downloadIcon}
-                                                hidden={!props.hasAccess}
-                                                onClick={() => downloadFile(item.blobName, item.fileName)}
-                                            />,
                                             <EyeOutlined
                                                 className={classes.reviewIcon}
-                                                hidden={!props.hasAccess}
+                                                hidden={!props.hasAccessToSeeAndDownload}
                                                 onClick={() => reviewFile(item.blobName, item.fileName)} />,
+                                            <DownloadOutlined
+                                                className={classes.downloadIcon}
+                                                hidden={!props.hasAccessToSeeAndDownload}
+                                                onClick={() => downloadFile(item.blobName, item.fileName)}
+                                            />,
                                             <Popconfirm
                                                 title="Видалити цей документ?"
                                                 placement="right"
@@ -110,7 +114,7 @@ const ListOfAchievementsModal = (props: Props) => {
                                                 okText="Так"
                                                 cancelText="Ні">
                                                 <DeleteOutlined
-                                                    hidden={!props.hasAccess}
+                                                    hidden={!props.hasAccessToDelete}
                                                     className={classes.deleteIcon}
                                                 />
                                             </Popconfirm>
@@ -119,7 +123,7 @@ const ListOfAchievementsModal = (props: Props) => {
                                         [
                                             <DownloadOutlined
                                                 className={classes.downloadIcon}
-                                                hidden={!props.hasAccess}
+                                                hidden={!props.hasAccessToSeeAndDownload}
                                                 onClick={() => downloadFile(item.blobName, item.fileName)}
                                             />,
                                             <Popconfirm
@@ -130,12 +134,12 @@ const ListOfAchievementsModal = (props: Props) => {
                                                 okText="Так"
                                                 cancelText="Ні">
                                                 <DeleteOutlined
-                                                    hidden={!props.hasAccess}
+                                                    hidden={!props.hasAccessToDelete}
                                                     className={classes.deleteIcon}
                                                 />
                                             </Popconfirm>
                                         ]
-                                    }>
+                                }>
                                 {item.blobName.split(".")[1] === "pdf"
                                     ?
                                     <FilePdfOutlined
@@ -147,13 +151,8 @@ const ListOfAchievementsModal = (props: Props) => {
                                 }
                                 <List.Item.Meta
                                     className={classes.text}
-                                    title={(item.fileName?.length > fileNameMaxLength) ?
-                                        <Tooltip title={item.fileName}>
-                                            <span>
-                                             {item.fileName.slice(0,fileNameMaxLength - 1) + "..."} 
-                                            </span>
-                                        </Tooltip>
-                                    : item.fileName
+                                    title={
+                                        extendedTitleTooltip(fileNameMaxLength, item.fileName)
                                     }
                                 />
                             </List.Item>
