@@ -13,9 +13,10 @@ import{
     incorrectSlogan,
     incorrectAppeal,
     inputOnlyWhiteSpaces,
-  } from "../../components/Notifications/Messages"
-
- export const descriptionValidation = {
+    incorrectName,
+} from "../../components/Notifications/Messages"
+  
+export const descriptionValidation = ({
     Appeal: [
         {
             pattern: /^\S*((?=(\S+))\2\s?)+$/,
@@ -28,6 +29,16 @@ import{
     ],
     Name: [
         {
+            pattern: /^\S*((?=(\S+))\2\s?)+$/,
+            message: incorrectName
+        },
+        {
+            max: 50,
+            message: maxLength(50),
+        },    
+    ],
+    CityName: [
+        {
             pattern: /^(([А-ЯҐЄІЇ][а-яґєії]*'?[а-яґєії]*){1}(?:[\s\-])?)*$/,
             message: incorrectCityName
         },
@@ -38,7 +49,21 @@ import{
         {
             required: true,
             message: emptyInput(),
-        }
+        },
+    ],
+    RegionName: [
+        {
+            pattern: /^(([А-ЯҐЄІЇ][а-яґєії]*'?[а-яґєії]*){1}(?:[\s\-])?)*$/,
+            message: incorrectCityName
+        },
+        {
+            max: 50,
+            message: maxLength(50),
+        },
+        {
+            required: true,
+            message: emptyInput(),
+        },
     ],
     ClubName: [
         {
@@ -54,7 +79,7 @@ import{
             message: maxLength(200),
         }
     ],
-    Slogan:[
+    Slogan: [
         {
             pattern: /^\S*((?=(\S+))\2\s?)+$/,
             message: incorrectSlogan
@@ -98,18 +123,15 @@ import{
             message: maxLength(50),
         }
     ],
-    Phone: 
-        {
-            pattern: /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/,
-            message: incorrectPhone,
-        },
-    Link:
-        {
-            max: 256,
-            message: maxLength(256),
-        },
-    Street:
-    [
+    Phone: {
+        pattern: /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/,
+        message: incorrectPhone,
+    },
+    Link: {
+        max: 256,
+        message: maxLength(256),
+    },
+    Street: [
         {
             pattern: /^\S*((?=([А-ЯҐЄІЇа-яґєії\d]+[\.\-']?))\2\s?)+$/,
             message: incorrectStreet
@@ -123,8 +145,7 @@ import{
             message: maxLength(50),
         },
     ],
-    houseNumber:
-    [
+    houseNumber: [
         {
             pattern: /^[1-9]{1}\d*\/?[А-ЯҐЄІЇа-яґєії]?([1-9]{1}\d*)?$/,
             message: incorrectHouseNumber
@@ -138,8 +159,7 @@ import{
             message: maxLength(5),
         },
     ],
-    officeNumber:
-    [
+    officeNumber: [
         {
             pattern: /^[1-9]{1}\d*\/?[А-ЯҐЄІЇа-яґєії]?([1-9]{1}\d*)?$/,
             message: incorrectOficeNumber
@@ -150,8 +170,7 @@ import{
             message: maxLength(5),
         },
     ],
-    postIndex:
-    [
+    postIndex: [
         {
             required: true,
             message: emptyInput()
@@ -177,13 +196,11 @@ import{
                     )
         },
     ],
-    Required:
-    {
+    Required: {
         required: true,
         message: emptyInput(),
     },
-    Inputs: 
-    [
+    Inputs: [
         {
             pattern: /^\s*\S.*$/,
             message: inputOnlyWhiteSpaces(),
@@ -197,8 +214,7 @@ import{
             message: emptyInput(),
         },    
     ],
-    DescriptionAndQuestions:
-    [
+    DescriptionAndQuestions: [
         {
             pattern: /^\s*\S.*$/,
             message: inputOnlyWhiteSpaces(),
@@ -212,4 +228,4 @@ import{
             message: emptyInput(),
         },    
     ],
-  };
+});
