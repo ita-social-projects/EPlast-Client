@@ -1,4 +1,3 @@
-import { getRegions } from "../../api/regionsApi";
 import{
     emptyInput,
     maxLength,
@@ -16,20 +15,6 @@ import{
     inputOnlyWhiteSpaces,
     incorrectName,
 } from "../../components/Notifications/Messages"
-import RegionProfile from "../Region/RegionProfile";
-
-const regionNameExists = async (value: string) => {
-    const regionsResponce = await getRegions();
-    const regions: RegionProfile[] = regionsResponce.data;
-
-    for (let i = 0; i < regions.length; i++){
-        if (regions[i].regionName === value){
-            return true;
-        }
-    }
-
-    return false;        
-}
   
 export const descriptionValidation = ({
     Appeal: [
@@ -79,12 +64,6 @@ export const descriptionValidation = ({
             required: true,
             message: emptyInput(),
         },
-        {
-            validator: async (_ : object, value: string) => 
-                await regionNameExists(value)
-                ? Promise.reject("Округа з такою назвою вже існує!")
-                : Promise.resolve() 
-        }
     ],
     ClubName: [
         {
