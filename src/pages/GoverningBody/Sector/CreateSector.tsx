@@ -26,12 +26,12 @@ import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
-import{
+import {
   fileIsUpload,
-  fileIsNotUpload, 
-  possibleFileExtensions, 
-  fileIsTooBig, 
-  successfulDeleteAction, 
+  fileIsNotUpload,
+  possibleFileExtensions,
+  fileIsTooBig,
+  successfulDeleteAction,
   successfulCreateAction,
   failCreateAction,
 } from "../../../components/Notifications/Messages"
@@ -126,7 +126,7 @@ const CreateSector = () => {
         <Title level={2}>Створення напряму керівного органу</Title>
         <Form onFinish={handleSubmit}>
           <Form.Item name="logo" initialValue={sector.logo}>
-          <Upload
+            <Upload
               name="avatar"
               listType="picture-card"
               showUploadList={false}
@@ -163,7 +163,7 @@ const CreateSector = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={sector.description}
-                rules={descriptionValidation.Description}
+                rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
               >
                 <Input value={sector.description} maxLength={1001} />
               </Form.Item>

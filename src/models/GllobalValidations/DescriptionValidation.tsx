@@ -228,4 +228,14 @@ export const descriptionValidation = ({
             message: emptyInput(),
         },    
     ],
+    DescriptionNotOnlyWhiteSpaces: [
+        {
+            pattern: /^\s*\S.*$/,
+            message: inputOnlyWhiteSpaces(),
+        },
+        { 
+            max: 1000, 
+            message: maxLength(1000),
+        },    
+    ],
 });

@@ -18,11 +18,11 @@ import { useHistory } from "react-router-dom";
 import ReactInputMask from "react-input-mask";
 import Title from "antd/lib/typography/Title";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
-import{
+import {
   fileIsUpload,
-  fileIsNotUpload, 
-  possibleFileExtensions, 
-  fileIsTooBig, 
+  fileIsNotUpload,
+  possibleFileExtensions,
+  fileIsTooBig,
   successfulDeleteAction,
   successfulCreateAction,
   failCreateAction
@@ -37,30 +37,30 @@ const AddNewRegionFormPage = () => {
   const [currentPhoto, setCurrentPhoto] = useState(false);
 
   const handleSubmit = async (values: any) => {
-  try{
-    const newRegion: any = {
-      regionName: values.regionName,
-      description: values.description,
-      phoneNumber: values.phoneNumber,
-      email: values.email,
-      link: values.link,
-      logo: logo,
-      street: values.street,
-      houseNumber: values.houseNumber,
-      officeNumber: values.officeNumber,
-      postIndex: values.postIndex,
-      city: values.city,
-      isActive: true
-    };
-    await createRegion(newRegion);
-    form.resetFields();
+    try {
+      const newRegion: any = {
+        regionName: values.regionName,
+        description: values.description,
+        phoneNumber: values.phoneNumber,
+        email: values.email,
+        link: values.link,
+        logo: logo,
+        street: values.street,
+        houseNumber: values.houseNumber,
+        officeNumber: values.officeNumber,
+        postIndex: values.postIndex,
+        city: values.city,
+        isActive: true
+      };
+      await createRegion(newRegion);
+      form.resetFields();
 
-    notificationLogic("success", successfulCreateAction("Округу"));
-    history.push("/regions");
-  }
-  catch(error){
-    notificationLogic("error", failCreateAction("округу"));
-  }
+      notificationLogic("success", successfulCreateAction("Округу"));
+      history.push("/regions");
+    }
+    catch (error) {
+      notificationLogic("error", failCreateAction("округу"));
+    }
   };
 
   const checkFile = (size: number, fileName: string) => {
@@ -150,14 +150,14 @@ const AddNewRegionFormPage = () => {
                 label="Опис"
                 name="description"
                 labelCol={{ span: 24 }}
-                rules={descriptionValidation.Description}
+                rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
               >
                 <Input maxLength={1001} />
               </Form.Item>
             </Col>
 
             <Col md={11} xs={24}>
-            <Form.Item
+              <Form.Item
                 name="phoneNumber"
                 label="Номер телефону"
                 labelCol={{ span: 24 }}
@@ -179,7 +179,7 @@ const AddNewRegionFormPage = () => {
                 labelCol={{ span: 24 }}
                 rules={descriptionValidation.RegionEmail}
               >
-                <Input maxLength={51}/>
+                <Input maxLength={51} />
               </Form.Item>
             </Col>
 
@@ -212,7 +212,7 @@ const AddNewRegionFormPage = () => {
                 name="street"
                 rules={descriptionValidation.Street}
               >
-                <Input  maxLength={51} />
+                <Input maxLength={51} />
               </Form.Item>
             </Col>
 

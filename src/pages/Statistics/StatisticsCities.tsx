@@ -60,7 +60,7 @@ const StatisticsCities = () => {
       key: "id",
       fixed: "left",
       sorter: { compare: (a: any, b: any) => a.id - b.id },
-      width: 55
+      width: 65
     },
     {
       title: "Рік",
@@ -68,7 +68,7 @@ const StatisticsCities = () => {
       key: "year",
       fixed: "left",
       sorter: { compare: (a: any, b: any) => a.year - b.year },
-      width: 80
+      width: 65
     },
     {
       title: "Округа",
