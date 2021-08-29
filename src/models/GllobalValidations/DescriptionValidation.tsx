@@ -89,16 +89,6 @@ export const descriptionValidation = ({
             message: maxLength(500),
         },    
     ],
-    Description: [
-        {
-            pattern: /^\S*((?=(\S+))\2\s?)+$/,
-            message: incorrectDescription
-        },
-        {
-            max: 1000,
-            message: maxLength(1000),
-        },    
-    ],
     RegionEmail: [
         {
             pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,

@@ -163,7 +163,7 @@ const RegionBoardEditFormPage = () => {
                   name="description"
                   initialValue={chosenRegion?.description}
                   labelCol={{ span: 24 }}
-                  rules={descriptionValidation.Description}
+                  rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
                 >
                   <Input value={chosenRegion?.description} maxLength={1001} />
                 </Form.Item>
