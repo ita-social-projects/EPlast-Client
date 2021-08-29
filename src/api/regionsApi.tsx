@@ -320,6 +320,10 @@ export const removeFollower = async (followerId: number) => {
   });
 }
 
+export const checkIfNameExists = async (name: string) => {
+  return api.get(`Regions/CheckIfRegionNameExists/${name}`, name)
+}
+
 export default {
   editReport,
   getRegionMembersInfo,
@@ -355,5 +359,6 @@ export default {
   getRegionFollowers,
   getRegionFollowerById,
   createRegionFollower,
-  removeFollower  
+  removeFollower,
+  checkIfNameExists 
 };
