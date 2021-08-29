@@ -7,7 +7,6 @@ import{
     incorrectEmail,
     incorrectCityName,
     incorrectClubName,
-    incorrectDescription,
     incorrectStreet,
     incorrectHouseNumber,
     incorrectOficeNumber,
