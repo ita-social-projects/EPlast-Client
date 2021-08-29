@@ -28,7 +28,7 @@ import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
-import{
+import {
   fileIsUpload,
   fileIsNotUpload,
   possibleFileExtensions,
@@ -188,7 +188,7 @@ const EditSector = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={sector.description}
-                rules={descriptionValidation.Description}
+                rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
               >
                 <Input value={sector.description} maxLength={1001} />
               </Form.Item>

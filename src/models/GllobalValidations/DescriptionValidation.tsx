@@ -7,7 +7,6 @@ import{
     incorrectEmail,
     incorrectCityName,
     incorrectClubName,
-    incorrectDescription,
     incorrectStreet,
     incorrectHouseNumber,
     incorrectOficeNumber,
@@ -98,16 +97,6 @@ export const descriptionValidation = ({
         {
             max: 500,
             message: maxLength(500),
-        },    
-    ],
-    Description: [
-        {
-            pattern: /^\S*((?=(\S+))\2\s?)+$/,
-            message: incorrectDescription
-        },
-        {
-            max: 1000,
-            message: maxLength(1000),
         },    
     ],
     RegionEmail: [
@@ -237,6 +226,16 @@ export const descriptionValidation = ({
         {
             required: true,
             message: emptyInput(),
+        },    
+    ],
+    DescriptionNotOnlyWhiteSpaces: [
+        {
+            pattern: /^\s*\S.*$/,
+            message: inputOnlyWhiteSpaces(),
+        },
+        { 
+            max: 1000, 
+            message: maxLength(1000),
         },    
     ],
 });
