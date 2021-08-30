@@ -148,7 +148,7 @@ const EditAdministratorModal = (props: Props) => {
       title={
         props.admin.id === 0
           ? "Додати в провід напряму"
-          : "Редагувати адміністратора"
+          : "Редагування проводу"
       }
       visible={props.visibleModal}
       footer={null}
