@@ -23,7 +23,7 @@ const EventDetailsHeader = ({
                             }: Props) => {
     return (
         <Descriptions column = {{ xs: 1, sm: 2, md: 2, lg: 2, xxl: 3 }} layout = "vertical" className = "descriptions">
-            <Descriptions.Item label = { renderLabel("Назва") } style={{overflow:"hidden"}}>{ renderContent(eventName) }</Descriptions.Item>
+            <Descriptions.Item label = { renderLabel("Назва") }>{ renderContent(eventName) }</Descriptions.Item>
             <Descriptions.Item label = { renderLabel("Тип") }>{ renderContent(eventType) }</Descriptions.Item>
             <Descriptions.Item label = { renderLabel("Категорія") }>{ renderContent(eventCategory) }</Descriptions.Item>
             <Descriptions.Item label = { renderLabel("Дата початку") }>{ renderContent(eventDateStart) }</Descriptions.Item>
