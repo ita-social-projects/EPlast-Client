@@ -290,13 +290,13 @@ export default function () {
         id: 0,
         name: value,
       });
-      form.setFieldsValue({ nationalityName: setFirstLettersUpperCased(changeApostropheInWord(value)) });
+      form.setFieldsValue({ nationalityName: changeApostropheInWord(value) });
     } else {
       setNationality({
         id: parseInt(event.key),
         name: event.value,
       });
-      form.setFieldsValue({ nationalityName: setFirstLettersUpperCased(changeApostropheInWord(event.value)) });
+      form.setFieldsValue({ nationalityName: changeApostropheInWord(event.value) });
     }
   };
 
@@ -330,13 +330,13 @@ export default function () {
         id: 0,
         name: value,
       });
-      form.setFieldsValue({ religionName: setFirstLettersUpperCased(changeApostropheInWord(value)) });
+      form.setFieldsValue({ religionName: changeApostropheInWord(value) });
     } else {
       setReligion({
         id: parseInt(event.key),
         name: event.value,
       });
-      form.setFieldsValue({ religionName: setFirstLettersUpperCased(changeApostropheInWord(event.value)) });
+      form.setFieldsValue({ religionName: changeApostropheInWord(event.value) });
     }
   };
   const handleOnChangeDegree = (value: any, event: any) => {
