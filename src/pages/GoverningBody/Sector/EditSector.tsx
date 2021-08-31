@@ -127,7 +127,6 @@ const EditSector = () => {
   };
 
   const EditSector = async (newSector: SectorProfile) => {
-    notificationLogic("info", "Оновлення...", <LoadingOutlined />);
 
     return updateSector(newSector.id, JSON.stringify(newSector))
       .then(() => {
