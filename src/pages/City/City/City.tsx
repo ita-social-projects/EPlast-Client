@@ -903,10 +903,13 @@ const City = () => {
                           className="approveIcon"
                           onClick={() => changeApproveStatus(followers.id)}
                         />
-                        ) : (followers.userId === activeUserID) ? (<MinusOutlined 
-                          className="approveIcon"
-                          onClick={() => seeSkipModal(followers.id)}
-                         />) : null
+                        ) : (followers.userId === activeUserID) ? (
+                        <Tooltip placement={"bottom"} title={"Покинути станицю"}>
+                          <MinusOutlined 
+                            className="approveIcon"
+                            onClick={() => seeSkipModal(followers.id)}
+                          />
+                         </Tooltip>) : null
                        }
                     </div>
                   </Col>
