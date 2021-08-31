@@ -103,7 +103,6 @@ const CreateSector = () => {
   };
 
   const CreateSector = async (newSector: SectorProfile) => {
-    notificationLogic("info", "Створення...", <LoadingOutlined />);
     const responsePromise = createSector(JSON.stringify(newSector));
     const response = await responsePromise;
     sector.id = response.data;

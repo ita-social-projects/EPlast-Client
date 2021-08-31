@@ -142,7 +142,6 @@ const CreateClub = () => {
 
   const CreateClub = async (newClub: ClubProfile) => {
     try {
-      notificationLogic("info", "Створення...", <LoadingOutlined />);
       const response = await createClub(JSON.stringify(newClub));
       club.id = response.data;
       notificationLogic("success", successfulCreateAction("Курінь"));

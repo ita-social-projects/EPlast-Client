@@ -132,7 +132,6 @@ const CreateGoverningBody = () => {
   };
 
   const CreateGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
-    notificationLogic("info", "Створення...", <LoadingOutlined />);
     const responsePromise = createGoverningBody(JSON.stringify(newGoverningBody));
     const response = await responsePromise;
     governingBody.id = response.data;
@@ -148,8 +147,7 @@ const CreateGoverningBody = () => {
   };
 
   const EditGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
-    notificationLogic("info", "Оновлення...", <LoadingOutlined />);
-
+    
     return updateGoverningBody(governingBody.id, JSON.stringify(newGoverningBody))
       .then(() => {
         notificationLogic("success", successfulUpdateAction("Керівний орган"));

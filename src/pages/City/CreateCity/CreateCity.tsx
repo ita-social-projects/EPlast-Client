@@ -240,7 +240,6 @@ const CreateCity = () => {
   };
 
   const CreateRegionFollower = async (newRegionFollower: RegionFollower) => {
-    notificationLogic("info", "Створення...", <LoadingOutlined />);
     const responsePromise = createRegionFollower(newRegionFollower);
 
     return responsePromise
@@ -278,7 +277,6 @@ const CreateCity = () => {
   };
 
   const CreateCity = async (newCity: CityProfile, regionFollowerId: number) => {
-    notificationLogic("info", "Створення...", <LoadingOutlined />);
     const responsePromise = createCity(JSON.stringify(newCity));
     const response = await responsePromise;
     city.id = response.data;
