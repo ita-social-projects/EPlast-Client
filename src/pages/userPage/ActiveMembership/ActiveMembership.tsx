@@ -289,8 +289,6 @@ const ActiveMembership = () => {
                 <div style={{ marginBottom: "7px" }}>
                   <div className={classes.textFieldsMain}>
                     {<SafetyCertificateOutlined />}{" "}
-                    {console.log("plastDegrees")}
-                   {console.log(plastDegrees)}
                     {getAppropriateToGenderDegree(plastDegrees!.plastDegree?.name)}
                   </div>
                   <div className={classes.textFieldsOthers}>

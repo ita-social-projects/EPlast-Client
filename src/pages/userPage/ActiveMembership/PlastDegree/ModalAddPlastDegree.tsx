@@ -33,10 +33,10 @@ const ModalAddPlastDegree = ({
     }
     const fetchData = async () => {
         await activeMembershipApi.getAllPlastDegrees().then(async response => {
-             await activeMembershipApi.getUserPlastDegrees(userId).then(res => {
+            await activeMembershipApi.getUserPlastDegrees(userId).then(res => {
                 setAvailablePlastDegree(getAvailablePlastDegree(response, res));
-             }
-             )
+            }
+            )
         })
     }
     useEffect(() => {
