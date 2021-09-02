@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import classes from "./ActiveMembership.module.css";
-import {Typography, List, Button, Tooltip, Tag, Empty, Skeleton} from "antd";
+import { Typography, List, Button, Tooltip, Tag, Empty, Skeleton } from "antd";
 import "../personalData/PersonalData.less";
 import activeMembershipApi, {
   UserPlastDegree,
@@ -23,6 +23,7 @@ import { Data } from '../Interface/Interface';
 import { successfulAddDegree, successfulDeleteDegree } from "../../../components/Notifications/Messages";
 const { Title } = Typography;
 
+const itemMaxLength = 43;
 const ActiveMembership = () => {
   const { userId } = useParams();
   const [accessLevels, setAccessLevels] = useState([]);
@@ -33,7 +34,7 @@ const ActiveMembership = () => {
   const [plastDegrees, setPlastDegrees] = useState<Array<UserPlastDegree>>([]);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [datesVisibleModal, setDatesVisibleModal] = useState<boolean>(false);
-  const [roles, setRoles]=useState<Array<string>>([]);
+  const [roles, setRoles] = useState<Array<string>>([]);
   const [userToken, setUserToken] = useState<any>([{ nameid: "" }]);
 
   const userAdminTypeRoles = [
@@ -66,7 +67,7 @@ const ActiveMembership = () => {
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
     setUserToken(jwt(token));
-    const currentUserId=(jwt(token) as { nameid: "" }).nameid;
+    const currentUserId = (jwt(token) as { nameid: "" }).nameid;
     let decodedJwt = jwt_decode(token) as any;
     setRoles([].concat(decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']));
 
@@ -103,13 +104,13 @@ const ActiveMembership = () => {
 
   const IsUserHasAccessToManageDegree = (userRoles: Array<string>): boolean => {
     return (userRoles?.includes(Roles.KurinHead) && currentUser.clubId == data?.user.clubId) ||
-           (userRoles?.includes(Roles.KurinHeadDeputy) && currentUser.clubId == data?.user.clubId) ||
-           (userRoles?.includes(Roles.CityHead) && currentUser.cityId == data?.user.cityId) ||
-           (userRoles?.includes(Roles.CityHeadDeputy) && currentUser.cityId == data?.user.cityId) ||
-           (userRoles?.includes(Roles.OkrugaHead) && currentUser.regionId == data?.user.regionId) ||
-           (userRoles?.includes(Roles.OkrugaHeadDeputy) && currentUser.regionId == data?.user.regionId) ||
-           userRoles?.includes(Roles.RegionBoardHead) ||
-           userRoles?.includes(Roles.Admin);
+      (userRoles?.includes(Roles.KurinHeadDeputy) && currentUser.clubId == data?.user.clubId) ||
+      (userRoles?.includes(Roles.CityHead) && currentUser.cityId == data?.user.cityId) ||
+      (userRoles?.includes(Roles.CityHeadDeputy) && currentUser.cityId == data?.user.cityId) ||
+      (userRoles?.includes(Roles.OkrugaHead) && currentUser.regionId == data?.user.regionId) ||
+      (userRoles?.includes(Roles.OkrugaHeadDeputy) && currentUser.regionId == data?.user.regionId) ||
+      userRoles?.includes(Roles.RegionBoardHead) ||
+      userRoles?.includes(Roles.Admin);
   };
 
   const IsUserHasAnyAdminTypeRoles = (userRoles: Array<string>): boolean => {
@@ -164,13 +165,13 @@ const ActiveMembership = () => {
     await fetchData();
   };
 
-  const AppropriateButtonText=():string=>{
-    const amount= plastDegrees.length;
-    if(amount === 1) return "Змінити ступінь"
-    else if(amount === 0) return "Додати ступінь"
+  const AppropriateButtonText = (): string => {
+    const amount = plastDegrees.length;
+    if (amount === 1) return "Змінити ступінь"
+    else if (amount === 0) return "Додати ступінь"
     return "Додати ступінь"
   }
-  
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -263,15 +264,21 @@ const ActiveMembership = () => {
                 <List
                   style={{ overflow: "hidden" }}
                   dataSource={accessLevels}
-                  renderItem={(item, index) => (
+                  renderItem={(item: any, index) => (
                     <List.Item
                       className={classes.textListItem}
                       style={{ padding: "6px 0" }}
                     >
                       <Tag color={setTagColor(item)} key={index}>
-                        <Tooltip placement="topLeft" title={item}>
-                          {item}
-                        </Tooltip>
+                        {(item?.length > itemMaxLength) ?
+                          <Tooltip placement="topLeft" title={item}>
+                            <span>{item.slice(0, itemMaxLength - 1) + "..."}</span>
+                          </Tooltip>
+                          :
+                          <Tooltip placement="topLeft" title={item}>
+                            {item}
+                          </Tooltip>
+                        }
                       </Tag>
                     </List.Item>
                   )}
@@ -280,25 +287,25 @@ const ActiveMembership = () => {
             </div>
           </div>
         </div>
-          <div className={classes.wrapper}>
-            <div className={classes.wrapperGeneralInfo}>
-              <Title level={2}> Ступені користувача </Title>
-              {plastDegrees.length===0? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Без ступеня"/> : plastDegrees.map((pd) => (
-                <React.Fragment key={pd.id}>
-                  <div style={{ marginBottom: "7px" }}>
-                    <div className={classes.textFieldsMain}>
+        <div className={classes.wrapper}>
+          <div className={classes.wrapperGeneralInfo}>
+            <Title level={2}> Ступені користувача </Title>
+            {plastDegrees.length === 0 ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Без ступеня" /> : plastDegrees.map((pd) => (
+              <React.Fragment key={pd.id}>
+                <div style={{ marginBottom: "7px" }}>
+                  <div className={classes.textFieldsMain}>
                     {<SafetyCertificateOutlined />}{" "}
-                      {getAppropriateToGenderDegree(pd.plastDegree.name)}
-                    </div>
-                    <div className={classes.textFieldsOthers}>
-                      Дата початку ступеню:{" "}
-                      {moment(pd.dateStart).format("DD.MM.YYYY")}
-                    </div>
-                    {IsUserHasAccessToManageDegree(roles?.map((role:any) => {
-                      if(!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy || 
-                        role === Roles.CityHead || role === Roles.CityHeadDeputy))
-                        return role
-                    })) && (
+                    {getAppropriateToGenderDegree(pd.plastDegree.name)}
+                  </div>
+                  <div className={classes.textFieldsOthers}>
+                    Дата початку ступеню:{" "}
+                    {moment(pd.dateStart).format("DD.MM.YYYY")}
+                  </div>
+                  {IsUserHasAccessToManageDegree(roles?.map((role: any) => {
+                    if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ||
+                      role === Roles.CityHead || role === Roles.CityHeadDeputy))
+                      return role
+                  })) && (
                       <div className={classes.buttons}>
                         <Button type="primary"
                           className={classes.buttonChange}
@@ -314,31 +321,32 @@ const ActiveMembership = () => {
                         </Button>
                       </div>
                     )}
-                  </div>
-                </React.Fragment>
-              ))}
-               {IsUserHasAccessToManageDegree(roles?.map((role:any) => {
-                      if(!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy))
-                        return role
-                    })) && (
-                  <div className={classes.buttons}>
-                    <Button type="primary"
-                      className={classes.buttonChange}
-                      onClick={() =>
-                        setVisibleModal(true)
-                      }
-                    >
-                      {AppropriateButtonText()}
-                    </Button>
-                  </div>
-               )}
-            </div>
+                </div>
+              </React.Fragment>
+            ))}
+            {IsUserHasAccessToManageDegree(roles?.map((role: any) => {
+              if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy))
+                return role
+            })) && (
+                <div className={classes.buttons}>
+                  <Button type="primary"
+                    className={classes.buttonChange}
+                    onClick={() =>
+                      setVisibleModal(true)
+                    }
+                  >
+                    {AppropriateButtonText()}
+                  </Button>
+                </div>
+              )}
           </div>
+        </div>
       </div>
       <ModalAddPlastDegree
         userId={userId}
-        isCityAdmin={!IsUserHasAnyAdminTypeRoles(roles?.map((role:any) => {
-          if(!(role === Roles.CityHead || role === Roles.CityHeadDeputy)) return role}))}
+        isCityAdmin={!IsUserHasAnyAdminTypeRoles(roles?.map((role: any) => {
+          if (!(role === Roles.CityHead || role === Roles.CityHeadDeputy)) return role
+        }))}
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
         handleAddDegree={handleAddDegree}
@@ -349,7 +357,7 @@ const ActiveMembership = () => {
         datesVisibleModal={datesVisibleModal}
         setDatesVisibleModal={setDatesVisibleModal}
         handleChangeDates={handleChangeDates}
-      
+
       />
     </div>
   );

@@ -21,18 +21,18 @@ import Spinner from "../Spinner/Spinner";
 import Title from "antd/lib/typography/Title";
 import RegionProfile from "../../models/Region/RegionProfile";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
-import{
+import {
   fileIsUpload,
-  fileIsNotUpload, 
-  possibleFileExtensions, 
-  fileIsTooBig, 
+  fileIsNotUpload,
+  possibleFileExtensions,
+  fileIsTooBig,
   successfulEditAction,
 } from "../../components/Notifications/Messages"
 
 const RegionEditFormPage = () => {
   let currentRegion = Number(
     window.location.hash.substring(1) ||
-      window.location.pathname.split("/").pop()
+    window.location.pathname.split("/").pop()
   );
   const [form] = Form.useForm();
   const history = useHistory();
@@ -128,7 +128,7 @@ const RegionEditFormPage = () => {
           <Spinner />
         ) : (
           <Form name="basic" onFinish={handleSubmit} form={form}>
-          <Title level={2}>Редагування округи</Title>
+            <Title level={2}>Редагування округи</Title>
             <Form.Item name="logo" initialValue={chosenRegion.logo}>
               <Upload
                 name="avatar"
@@ -138,10 +138,10 @@ const RegionEditFormPage = () => {
                 customRequest={handleUpload}
               >
                 {logo?.length! > 0 ? (
-                <DeleteOutlined onClick={removeLogo} />
-              ) : (
-                <PlusOutlined />
-              )}
+                  <DeleteOutlined onClick={removeLogo} />
+                ) : (
+                  <PlusOutlined />
+                )}
                 <img
                   src={logo ? logo : CityDefaultLogo}
                   alt="Region"
@@ -151,157 +151,157 @@ const RegionEditFormPage = () => {
             </Form.Item>
 
             <Row justify="center">
-                <Col md={11} xs={24}>
-                  <Form.Item
-                    label="Назва округи"
-                    name="regionName"
-                    initialValue={chosenRegion.regionName}
-                    labelCol={{ span: 24 }}
-                    rules={descriptionValidation.Name}
-                  >
-                    <Input
-                    value={chosenRegion.regionName} maxLength={51} />
-                  </Form.Item>
-                </Col>
-                <Col md={{ span: 11, offset: 2 }} xs={24}>
-                  <Form.Item
-                    label="Опис"
-                    name="description"
-                    initialValue={chosenRegion?.description}
-                    labelCol={{ span: 24 }}
-                    rules={descriptionValidation.Description}
-                  >
-                    <Input
-                    value={chosenRegion?.description} maxLength={1001} />
-                  </Form.Item>
-                </Col>
-
-                <Col md={11} xs={24}>
+              <Col md={11} xs={24}>
                 <Form.Item
-                    name="phoneNumber"
-                    label="Номер телефону"
-                    labelCol={{ span: 24 }}
-                    initialValue={chosenRegion?.phoneNumber}
-                    rules={[descriptionValidation.Phone, descriptionValidation.Required]}
-                  >
-                    <ReactInputMask
-                      mask="+380(99)-999-99-99"
-                      maskChar={null}
-                      value={chosenRegion?.phoneNumber}
-                    >
-                      {(inputProps: any) => <Input {...inputProps} />}
-                    </ReactInputMask>
-                  </Form.Item>
-                </Col>
+                  label="Назва округи"
+                  name="regionName"
+                  initialValue={chosenRegion.regionName}
+                  labelCol={{ span: 24 }}
+                  rules={descriptionValidation.Name}
+                >
+                  <Input
+                    value={chosenRegion.regionName} maxLength={51} />
+                </Form.Item>
+              </Col>
+              <Col md={{ span: 11, offset: 2 }} xs={24}>
+                <Form.Item
+                  label="Опис"
+                  name="description"
+                  initialValue={chosenRegion?.description}
+                  labelCol={{ span: 24 }}
+                  rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
+                >
+                  <Input
+                    value={chosenRegion?.description} maxLength={1001} />
+                </Form.Item>
+              </Col>
 
-                <Col md={{ span: 11, offset: 2 }} xs={24}>
-                  <Form.Item
-                    label="Електронна пошта"
-                    name="email"
-                    labelCol={{ span: 24 }}
-                    initialValue={chosenRegion?.email}
-                    rules={descriptionValidation.RegionEmail}
+              <Col md={11} xs={24}>
+                <Form.Item
+                  name="phoneNumber"
+                  label="Номер телефону"
+                  labelCol={{ span: 24 }}
+                  initialValue={chosenRegion?.phoneNumber}
+                  rules={[descriptionValidation.Phone, descriptionValidation.Required]}
+                >
+                  <ReactInputMask
+                    mask="+380(99)-999-99-99"
+                    maskChar={null}
+                    value={chosenRegion?.phoneNumber}
                   >
-                    <Input maxLength={51} 
-                    value={chosenRegion?.email}/>
-                  </Form.Item>
-                </Col>
+                    {(inputProps: any) => <Input {...inputProps} />}
+                  </ReactInputMask>
+                </Form.Item>
+              </Col>
 
-                <Col md={11} xs={24}>
-                  <Form.Item
-                    label="Посилання"
-                    name="link"
-                    initialValue={chosenRegion?.link}
-                    labelCol={{ span: 24 }}
-                    rules={[descriptionValidation.Link]}
-                  >
-                    <Input maxLength={257} 
-                    value={chosenRegion?.link}/>
-                  </Form.Item>
-                </Col>
+              <Col md={{ span: 11, offset: 2 }} xs={24}>
+                <Form.Item
+                  label="Електронна пошта"
+                  name="email"
+                  labelCol={{ span: 24 }}
+                  initialValue={chosenRegion?.email}
+                  rules={descriptionValidation.RegionEmail}
+                >
+                  <Input maxLength={51}
+                    value={chosenRegion?.email} />
+                </Form.Item>
+              </Col>
 
-                <Col md={{ span: 11, offset: 2 }} xs={24}>
-                  <Form.Item
-                    label="Місто"
-                    name="city"
-                    initialValue={chosenRegion?.city}
-                    labelCol={{ span: 24 }}
-                    rules={descriptionValidation.Name}
-                  >
-                    <Input maxLength={51} 
-                    value={chosenRegion?.city}/>
-                  </Form.Item>
-                </Col>
+              <Col md={11} xs={24}>
+                <Form.Item
+                  label="Посилання"
+                  name="link"
+                  initialValue={chosenRegion?.link}
+                  labelCol={{ span: 24 }}
+                  rules={[descriptionValidation.Link]}
+                >
+                  <Input maxLength={257}
+                    value={chosenRegion?.link} />
+                </Form.Item>
+              </Col>
 
-                <Col md={11} xs={24}>
-                  <Form.Item
-                    labelCol={{ span: 24 }}
-                    label="Вулиця"
-                    name="street"
-                    initialValue={chosenRegion?.street}
-                    rules={descriptionValidation.Street}
-                  >
-                    <Input  maxLength={51} 
-                    value={chosenRegion?.street}/>
-                  </Form.Item>
-                </Col>
+              <Col md={{ span: 11, offset: 2 }} xs={24}>
+                <Form.Item
+                  label="Місто"
+                  name="city"
+                  initialValue={chosenRegion?.city}
+                  labelCol={{ span: 24 }}
+                  rules={descriptionValidation.Name}
+                >
+                  <Input maxLength={51}
+                    value={chosenRegion?.city} />
+                </Form.Item>
+              </Col>
 
-                <Col md={{ span: 11, offset: 2 }} xs={24}>
-                  <Form.Item
-                    labelCol={{ span: 24 }}
-                    label="Номер будинку"
-                    name="houseNumber"
-                    initialValue={chosenRegion?.houseNumber}
-                    rules={descriptionValidation.houseNumber}
-                  >
-                    <Input maxLength={6} 
-                    value={chosenRegion?.houseNumber}/>
-                  </Form.Item>
-                </Col>
+              <Col md={11} xs={24}>
+                <Form.Item
+                  labelCol={{ span: 24 }}
+                  label="Вулиця"
+                  name="street"
+                  initialValue={chosenRegion?.street}
+                  rules={descriptionValidation.Street}
+                >
+                  <Input maxLength={51}
+                    value={chosenRegion?.street} />
+                </Form.Item>
+              </Col>
 
-                <Col md={11} xs={24}>
-                  <Form.Item
-                    labelCol={{ span: 24 }}
-                    label="Номер офісу/квартири"
-                    name="officeNumber"
-                    initialValue={chosenRegion?.officeNumber}
-                    rules={descriptionValidation.officeNumber}
-                  >
-                    <Input maxLength={6} 
-                    value={chosenRegion?.officeNumber}/>
-                  </Form.Item>
-                </Col>
+              <Col md={{ span: 11, offset: 2 }} xs={24}>
+                <Form.Item
+                  labelCol={{ span: 24 }}
+                  label="Номер будинку"
+                  name="houseNumber"
+                  initialValue={chosenRegion?.houseNumber}
+                  rules={descriptionValidation.houseNumber}
+                >
+                  <Input maxLength={6}
+                    value={chosenRegion?.houseNumber} />
+                </Form.Item>
+              </Col>
 
-                <Col md={{ span: 11, offset: 2 }} xs={24}>
-                  <Form.Item
-                    labelCol={{ span: 24 }}
-                    label="Поштовий індекс"
-                    name="postIndex"
-                    initialValue={chosenRegion.postIndex}
-                    rules={descriptionValidation.postIndex}
-                  >
-                    <Input type="number" 
-                    value={chosenRegion.postIndex}/>
-                  </Form.Item>
-                </Col>
-              </Row>
+              <Col md={11} xs={24}>
+                <Form.Item
+                  labelCol={{ span: 24 }}
+                  label="Номер офісу/квартири"
+                  name="officeNumber"
+                  initialValue={chosenRegion?.officeNumber}
+                  rules={descriptionValidation.officeNumber}
+                >
+                  <Input maxLength={6}
+                    value={chosenRegion?.officeNumber} />
+                </Form.Item>
+              </Col>
 
-              <Row className="cityButtons" justify="center" gutter={[0, 6]}>
-                <Col xs={24} sm={12}>
-                  <Button
-                    type="primary"
-                    className="backButton"
-                    onClick={() => history.goBack()}
-                  >
-                    Назад
-                  </Button>
-                </Col>
-                <Col xs={24} sm={12}>
-                  <Button htmlType="submit" type="primary">
-                    Підтвердити
-                  </Button>
-                </Col>
-              </Row>
+              <Col md={{ span: 11, offset: 2 }} xs={24}>
+                <Form.Item
+                  labelCol={{ span: 24 }}
+                  label="Поштовий індекс"
+                  name="postIndex"
+                  initialValue={chosenRegion.postIndex}
+                  rules={descriptionValidation.postIndex}
+                >
+                  <Input type="number"
+                    value={chosenRegion.postIndex} />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row className="cityButtons" justify="center" gutter={[0, 6]}>
+              <Col xs={24} sm={12}>
+                <Button
+                  type="primary"
+                  className="backButton"
+                  onClick={() => history.goBack()}
+                >
+                  Назад
+                </Button>
+              </Col>
+              <Col xs={24} sm={12}>
+                <Button htmlType="submit" type="primary">
+                  Підтвердити
+                </Button>
+              </Col>
+            </Row>
           </Form>
         )}
       </Card>

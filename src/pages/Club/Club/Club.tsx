@@ -244,18 +244,15 @@ const Club = () => {
       setActiveUserClub(clubNameResponse.data);
       setPhotosLoading(true);
       setClubLogoLoading(true);
-      const admins = [...response.data.administration, response.data.head, response.data.headDeputy]
-        .filter(a => a !== null);
-
       setPhotos([
-        ...admins,
+        ...response.data.administration,
         ...response.data.members,
         ...response.data.followers,
 
       ], response.data.logo);
 
       setActiveUserRoles(userApi.getActiveUserRoles);
-      setAdmins(admins);
+      setAdmins(response.data.administration);
       setClub(response.data);
       setMembers(response.data.members);
       setFollowers(response.data.followers);
@@ -276,15 +273,10 @@ const Club = () => {
   const updateAdmins = async () => {
     const response = await getClubById(+id);
     setAdminsCount(response.data.administrationCount);
-    const admins = [
-      ...response.data.administration,
-      response.data.head,
-      response.data.headDeputy,
-    ].filter((a) => a !== null);
     setClub(response.data);
-    setAdmins(admins);
+    setAdmins(response.data.administration);
     setPhotosLoading(true);
-    setPhotos([...admins],response.data.logo);
+    setPhotos([...response.data.administration],response.data.logo);
   }
 
   const addClubAdmin = async (newAdmin: ClubAdmin) => {
@@ -386,16 +378,16 @@ const Club = () => {
   const handleOk = async(admin: ClubAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.KurinHead) {
-        if (club.head !== null && club.head.userId !== admin.userId) {
+        if (club.head !== null && club.head?.userId !== admin.userId) {
           showConfirmClubAdmin(admin, Roles.KurinHead);
         } else {
           checkAdminId(admin);
           }
         }
        else if (admin.adminType.adminTypeName === Roles.KurinHeadDeputy) {
-         if (admin.userId === club.head.userId) {
+         if (admin.userId === club.head?.userId) {
           showDiseableModal(admin);
-         } else if (club.headDeputy !== null && club.headDeputy.userId !== admin.userId) {
+         } else if (club.headDeputy !== null && club.headDeputy?.userId !== admin.userId) {
           showConfirmClubAdmin(admin, Roles.KurinHeadDeputy);
         } else {
           checkAdminId(admin);
@@ -914,10 +906,13 @@ const Club = () => {
                           className="approveIcon"
                           onClick={() => changeApproveStatus(followers.id)}
                         />
-                      ) : (followers.userId===activeUserID) ?( <MinusOutlined 
-                        className="approveIcon"
-                        onClick={() =>seeSkipModal(followers.id)}
-                       />):null
+                      ) : (followers.userId===activeUserID) ? ( 
+                      <Tooltip placement={"bottom"} title={"Покинути курінь"}>
+                        <MinusOutlined 
+                          className="approveIcon"
+                          onClick={() => seeSkipModal(followers.id)}
+                        />
+                       </Tooltip>) : null
                      }
                     </div>
                   </Col>

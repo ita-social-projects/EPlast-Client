@@ -10,7 +10,7 @@ export const incorrectSlogan = "Неправильний формат. Гасл�
 
 export const incorrectAppeal = "Неправильний формат. Заява не повинна починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
 
-export const incorrectDescription = "Неправильний формат. Опис не повинен починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
+export const incorrectName = "Неправильний формат. Назва не повинна починатись чи закінчуватись пробілом або містити більше одного пробілу поспіль!";
 
 export const incorrectCityName = "Неправильний формат. Кожне слово назви повинне починатись з великої літери. Назва може містити кириличні літери, пробіл, тире чи апостроф. Назва не повинна починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
 
@@ -53,11 +53,11 @@ export const tryAgain = 'Щось пішло не так. Спробуйте щ�
 export const ReportAlreadyExists = 'Звіт вже існує.';
 
 export const successfulCreateAction = (name:string, itemName?:string)=>{
-    return itemName ? `${name} ${itemName} успішно створено` : `${name} успішно створено`;
+    return (<div style={{wordBreak:'break-word'}}>{ itemName ? `${name} ${itemName} успішно створено` : `${name} успішно створено`} </div>);
 }; 
 
 export const successfulEditAction = (name:string, itemName?:string)=>{
-    return itemName ? `${name} ${itemName} успішно змінено` : `${name} успішно змінено`;
+    return (<div style={{wordBreak:'break-word'}}>{ itemName ? `${name} ${itemName} успішно змінено` : `${name} успішно змінено`} </div>);
 }; 
 
 export const successfulDeleteAction = (name:string, itemName?:string)=>{
@@ -65,7 +65,7 @@ export const successfulDeleteAction = (name:string, itemName?:string)=>{
 }; 
 
 export const successfulUpdateAction = (name:string, itemName?:string)=>{
-    return itemName ? `${name} ${itemName} успішно оновлено` : `${name} успішно оновлено`;
+    return (<div style={{wordBreak:'break-word'}}>{ itemName ? `${name} ${itemName} успішно оновлено` : `${name} успішно оновлено`} </div>);
 }; 
 
 export const successfulConfirmedAction = (name:string, itemName?:string)=>{

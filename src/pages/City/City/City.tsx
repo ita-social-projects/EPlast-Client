@@ -273,9 +273,7 @@ const City = () => {
       setPhotosLoading(true);
       setCityLogoLoading(true);
       const admins = [
-        ...response.data.administration,
-        response.data.head,
-        response.data.headDeputy,
+        ...response.data.administration
       ].filter((a) => a !== null);
 
       setPhotos(
@@ -305,8 +303,6 @@ const City = () => {
     setAdminsCount(response.data.administrationCount);
     const admins = [
       ...response.data.administration,
-      response.data.head,
-      response.data.headDeputy,
     ].filter((a) => a !== null);
     setCity(response.data);
     setAdmins(admins);
@@ -413,15 +409,15 @@ const City = () => {
   const handleOk = async(admin: CityAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.CityHead) {
-        if (city.head !== null && city.head.userId !== admin.userId) {
+        if (city.head !== null && city.head?.userId !== admin.userId) {
           showConfirmCityAdmin(admin);
         } else {
           checkAdminId(admin);
         }
        } else if (admin.adminType.adminTypeName === Roles.CityHeadDeputy) {
-        if (admin.userId === city.head.userId) {
+        if (admin.userId === city.head?.userId) {
           showDiseableModal(admin);
-        } else if (city.headDeputy !== null && city.headDeputy.userId !== admin.userId) {
+        } else if (city.headDeputy !== null && city.headDeputy?.userId !== admin.userId) {
             showConfirmCityAdmin(admin);
           } else {
             checkAdminId(admin);
@@ -907,10 +903,13 @@ const City = () => {
                           className="approveIcon"
                           onClick={() => changeApproveStatus(followers.id)}
                         />
-                        ) : (followers.userId === activeUserID) ? (<MinusOutlined 
-                          className="approveIcon"
-                          onClick={() => seeSkipModal(followers.id)}
-                         />) : null
+                        ) : (followers.userId === activeUserID) ? (
+                        <Tooltip placement={"bottom"} title={"Покинути станицю"}>
+                          <MinusOutlined 
+                            className="approveIcon"
+                            onClick={() => seeSkipModal(followers.id)}
+                          />
+                         </Tooltip>) : null
                        }
                     </div>
                   </Col>

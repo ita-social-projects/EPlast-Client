@@ -26,11 +26,11 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import { useHistory } from "react-router-dom";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
-import{
+import {
   fileIsUpload,
-  fileIsNotUpload, 
-  possibleFileExtensions, 
-  fileIsTooBig, 
+  fileIsNotUpload,
+  possibleFileExtensions,
+  fileIsTooBig,
   maxLength,
   successfulEditAction,
   tryAgain,
@@ -44,7 +44,7 @@ import jwt_decode from "jwt-decode";
 import { Roles } from "../../../models/Roles/Roles";
 
 export default function () {
-  const { userId } = useParams<{ userId:string }>();
+  const { userId } = useParams<{ userId: string }>();
   const history = useHistory();
   const onlyLettersPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()]{0,50})*$/;
   const allVariantsPattern = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",.0-9]{1,50}((\s|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ'`()!@#$%:"{}:\"\'&*_+=%;₴~№",.0-9]{0,50})*$/;
@@ -74,9 +74,9 @@ export default function () {
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
     let decodedJwt = jwt_decode(token) as any;
-    let id=user.nameid;
-    if(user.nameid!=userId || (decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]).includes(Roles.Admin))
-      id=userId
+    let id = user.nameid;
+    if (user.nameid != userId || (decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]).includes(Roles.Admin))
+      id = userId
     await userApi
       .edit(id)
       .then(async (response) => {
@@ -90,7 +90,7 @@ export default function () {
             .catch(() => {
               notificationLogic("error", fileIsNotUpload("фото"));
             });
-            setPhotoName(response.data.user.imagePath);
+          setPhotoName(response.data.user.imagePath);
         } else {
           notificationLogic("error", fileIsNotUpload("даних"));
         }
@@ -126,11 +126,11 @@ export default function () {
         setPlaceOfWorkID(response.data.workView.placeOfWorkID);
         setPositionID(response.data.workView.positionID);
         setGender(response.data.user.gender);
-        setUpuDegree(response.data.user.upuDegree); 
+        setUpuDegree(response.data.user.upuDegree);
         if (response.data.user.birthday === "0001-01-01T00:00:00") {
-          form.setFieldsValue({'birthday': undefined});
+          form.setFieldsValue({ 'birthday': undefined });
         } else {
-          form.setFieldsValue({'birthday': moment(response.data.user.birthday)});
+          form.setFieldsValue({ 'birthday': moment(response.data.user.birthday) });
         }
         if (response.data.user.phoneNumber === null) {
           setPhoneNumber("");
@@ -148,7 +148,7 @@ export default function () {
   }, [form]);
 
   function disabledDate(current: moment.Moment) {
-    let date =  moment().endOf('day');
+    let date = moment().endOf('day');
     return current && (current > date) || current.isBefore(MIN_AVAILABLE_DATE);
   }
 
@@ -228,17 +228,17 @@ export default function () {
   };
 
   const setFirstLettersUpperCased = (word: string) => {
-    if(word.length == 0) {
+    if (word.length == 0) {
       return word;
     }
 
     let parts = word.split(/[- ]+/);
 
-    parts = parts.map( (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase());
-    
-    if(word.includes('-')) {
+    parts = parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase());
+
+    if (word.includes('-')) {
       return parts.join('-');
-    } else if(word.includes(' ')) {
+    } else if (word.includes(' ')) {
       return parts.join(' ');
     } else {
       return parts.join('');
@@ -250,7 +250,7 @@ export default function () {
     reader.addEventListener("load", () => callback(reader.result));
     reader.readAsDataURL(img);
   };
-  
+
   const checkFile = (size: number, fileName: string) => {
     const extension = fileName.split(".").reverse()[0].toLowerCase();
     const isCorrectExtension =
@@ -290,22 +290,22 @@ export default function () {
         id: 0,
         name: value,
       });
-      form.setFieldsValue({ nationalityName: setFirstLettersUpperCased(changeApostropheInWord(value)) });
+      form.setFieldsValue({ nationalityName: changeApostropheInWord(value) });
     } else {
       setNationality({
         id: parseInt(event.key),
         name: event.value,
       });
-      form.setFieldsValue({ nationalityName: setFirstLettersUpperCased(changeApostropheInWord(event.value)) });
+      form.setFieldsValue({ nationalityName: changeApostropheInWord(event.value) });
     }
   };
 
   const handleOnChangeFirstName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue( {firstName: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
+    form.setFieldsValue({ firstName: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
   }
 
   const handleOnChangeLastName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue({ lastName: setFirstLettersUpperCased(changeApostropheInWord(event.target.value))});
+    form.setFieldsValue({ lastName: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
   }
 
   const handleOnChangeFathersName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -321,22 +321,22 @@ export default function () {
   }
 
   const handleOnChangeAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue( { address: changeApostropheInWord(event.target.value) });
+    form.setFieldsValue({ address: changeApostropheInWord(event.target.value) });
   }
-  
+
   const handleOnChangeReligion = (value: any, event: any) => {
     if (event.key === undefined) {
       setReligion({
         id: 0,
         name: value,
       });
-      form.setFieldsValue({ religionName: setFirstLettersUpperCased(changeApostropheInWord(value)) });
+      form.setFieldsValue({ religionName: changeApostropheInWord(value) });
     } else {
       setReligion({
         id: parseInt(event.key),
         name: event.value,
       });
-      form.setFieldsValue({ religionName: setFirstLettersUpperCased(changeApostropheInWord(event.value)) });
+      form.setFieldsValue({ religionName: changeApostropheInWord(event.value) });
     }
   };
   const handleOnChangeDegree = (value: any, event: any) => {
@@ -407,14 +407,14 @@ export default function () {
 
   const handleDeletePhoto = async () => {
     await userApi
-            .getImage(defaultPhotoName)
-            .then((q: { data: any }) => {
-              setUserAvatar(q.data);
-            })
-            .catch(() => {
-              notificationLogic("error", fileIsNotUpload("фото"));
-            });
-            setPhotoName(defaultPhotoName);
+      .getImage(defaultPhotoName)
+      .then((q: { data: any }) => {
+        setUserAvatar(q.data);
+      })
+      .catch(() => {
+        notificationLogic("error", fileIsNotUpload("фото"));
+      });
+    setPhotoName(defaultPhotoName);
   };
 
   const handleSubmit = async (values: any) => {
@@ -472,7 +472,7 @@ export default function () {
       .put(newUserProfile)
       .then(() => {
         notificationLogic("success", successfulEditAction("Дані"));
-        history.push(`/userpage/main/${userId}`);       
+        history.push(`/userpage/main/${userId}`);
       })
       .catch(() => {
         notificationLogic("error", tryAgain);
@@ -482,14 +482,14 @@ export default function () {
 
   return loading === false ? (
     <div className="kadraWrapper">
-        <Skeleton.Avatar
-            size={220}
-            active={true}
-            shape="circle"
-            className="img"
-        />
+      <Skeleton.Avatar
+        size={220}
+        active={true}
+        shape="circle"
+        className="img"
+      />
     </div>
-    ) : ( 
+  ) : (
     <div className={styles.mainContainer}>
       <Form
         form={form}
@@ -501,36 +501,39 @@ export default function () {
           <div className={styles.kadraWrapper}>
             <Avatar size={300} src={userAvatar} className="avatarElem" />
             <div className={styles.buttonsImage}>
-            <Upload
-              name="avatar"
-              className={styles.changeAvatar}
-              showUploadList={false}
-              accept=".jpeg,.jpg,.png"
-              customRequest={handleUpload}
-            >
-              <Button className={styles.changeAvatarBtn}>
-                <UploadOutlined /> Вибрати
-              </Button>
-            </Upload>
-            {photoName!==defaultPhotoName?
-            <Tooltip title="Видалити">
-              <Popconfirm
-                title="Видалити фото?"
-                placement="bottom"
-                icon={false}
-                onConfirm={()=>handleDeletePhoto()}
-                okText="Так"
-                cancelText="Ні">
-                <DeleteOutlined
-                  className={styles.deleteIcon}
-                  key="close"
-                />
-              </Popconfirm>
-            </Tooltip>:null}
+              <Upload
+                name="avatar"
+                className={styles.changeAvatar}
+                showUploadList={false}
+                accept=".jpeg,.jpg,.png"
+                customRequest={handleUpload}
+              >
+                <Tooltip placement={"bottom"}
+                  title={"Ви можете завантажити файл розміром не більше 3Мб. Пам'ятайте: Вашу фотографію будуть бачити інші пластуни!"}>
+                  <Button className={styles.changeAvatarBtn}>
+                    <UploadOutlined /> Вибрати
+                  </Button>
+                </Tooltip>
+              </Upload>
+              {photoName !== defaultPhotoName ?
+                <Tooltip title="Видалити">
+                  <Popconfirm
+                    title="Видалити фото?"
+                    placement="bottom"
+                    icon={false}
+                    onConfirm={() => handleDeletePhoto()}
+                    okText="Так"
+                    cancelText="Ні">
+                    <DeleteOutlined
+                      className={styles.deleteIcon}
+                      key="close"
+                    />
+                  </Popconfirm>
+                </Tooltip> : null}
             </div>
           </div>
         </div>
-        
+
         <div className={styles.allFields}>
           <div className={styles.rowBlock}>
             <Form.Item
@@ -539,7 +542,7 @@ export default function () {
               rules={validationSchema.name}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} onChange={handleOnChangeFirstName} maxLength={26}/>
+              <Input className={styles.dataInput} onChange={handleOnChangeFirstName} maxLength={26} />
             </Form.Item>
             <Form.Item
               label="Прізвище"
@@ -547,7 +550,7 @@ export default function () {
               rules={validationSchema.surName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} onChange={e=>handleOnChangeLastName(e)} maxLength={26}/>
+              <Input className={styles.dataInput} onChange={e => handleOnChangeLastName(e)} maxLength={26} />
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
@@ -557,7 +560,7 @@ export default function () {
               rules={validationSchema.fatherName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} onChange={e=>handleOnChangeFathersName(e)} maxLength={26}/>
+              <Input className={styles.dataInput} onChange={e => handleOnChangeFathersName(e)} maxLength={26} />
             </Form.Item>
             <Form.Item
               label="Стать"
@@ -583,10 +586,10 @@ export default function () {
               name="pseudo"
               rules={validationSchema.pseudo}
               className={styles.formItem}
-            >            
-              <Input className={styles.dataInput} onChange={handleOnChangePseudo} maxLength={26}/>
+            >
+              <Input className={styles.dataInput} onChange={handleOnChangePseudo} maxLength={26} />
             </Form.Item>
-            <Form.Item 
+            <Form.Item
               label="Дата народження"
               name="birthday"
               className={styles.formItem}
@@ -609,13 +612,13 @@ export default function () {
               rules={[descriptionValidation.Phone, descriptionValidation.Required]}
             >
               <ReactInputMask
-                  mask="+380(99)-999-99-99"
-                  maskChar={null}
-                  value={phoneNumber}
-                  onChange={changePhoneNumber}
-                  className={styles.dataInput}
-                >
-                  {(inputProps: any) => <Input {...inputProps} />}
+                mask="+380(99)-999-99-99"
+                maskChar={null}
+                value={phoneNumber}
+                onChange={changePhoneNumber}
+                className={styles.dataInput}
+              >
+                {(inputProps: any) => <Input {...inputProps} />}
               </ReactInputMask>
             </Form.Item>
             <Form.Item
@@ -648,7 +651,7 @@ export default function () {
                 className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangeReligion}
-                
+
               >
                 {data?.religions.map((p) => (
                   <Select.Option key={p.id} value={p.name}>
@@ -759,15 +762,15 @@ export default function () {
               rules={validationSchema.address}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} onChange={handleOnChangeAddress} maxLength={51}/>
+              <Input className={styles.dataInput} onChange={handleOnChangeAddress} maxLength={51} />
             </Form.Item>
             <Form.Item
               label="Громадська, політична діяльність"
               name="publicPoliticalActivity"
               rules={validationSchema.publicPoliticalActivity}
               className={styles.formItem}
-            >            
-              <Input className={styles.dataInput} onChange={handleOnChangePublicPoliticalActivity} maxLength={26}/>
+            >
+              <Input className={styles.dataInput} onChange={handleOnChangePublicPoliticalActivity} maxLength={26} />
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
@@ -788,28 +791,28 @@ export default function () {
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item 
+            <Form.Item
               label="Посилання на Facebook"
               name="facebookLink"
               className={styles.formItem}
             >
-              <Input className={styles.dataInput}/>               
+              <Input className={styles.dataInput} />
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
-            <Form.Item 
+            <Form.Item
               label="Посилання на Twitter"
               name="twitterLink"
               className={styles.formItem}
             >
-              <Input className={styles.dataInput}/>               
+              <Input className={styles.dataInput} />
             </Form.Item>
-            <Form.Item 
+            <Form.Item
               label="Посилання на Instagram"
               name="instagramLink"
               className={styles.formItem}
             >
-              <Input className={styles.dataInput}/>            
+              <Input className={styles.dataInput} />
             </Form.Item>
           </div>
           <div className="buttons">

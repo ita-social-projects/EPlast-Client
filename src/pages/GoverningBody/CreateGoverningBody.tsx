@@ -29,14 +29,14 @@ import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfil
 import notificationLogic from "../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
-import{
+import {
   fileIsUpload,
-  fileIsNotUpload, 
-  possibleFileExtensions, 
-  fileIsTooBig, 
-  successfulDeleteAction, 
-  successfulCreateAction, 
-  successfulUpdateAction, 
+  fileIsNotUpload,
+  possibleFileExtensions,
+  fileIsTooBig,
+  successfulDeleteAction,
+  successfulCreateAction,
+  successfulUpdateAction,
   failCreateAction,
   failUpdateAction,
 } from "../../components/Notifications/Messages"
@@ -132,7 +132,6 @@ const CreateGoverningBody = () => {
   };
 
   const CreateGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
-    notificationLogic("info", "Створення...", <LoadingOutlined />);
     const responsePromise = createGoverningBody(JSON.stringify(newGoverningBody));
     const response = await responsePromise;
     governingBody.id = response.data;
@@ -148,8 +147,7 @@ const CreateGoverningBody = () => {
   };
 
   const EditGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
-    notificationLogic("info", "Оновлення...", <LoadingOutlined />);
-
+    
     return updateGoverningBody(governingBody.id, JSON.stringify(newGoverningBody))
       .then(() => {
         notificationLogic("success", successfulUpdateAction("Керівний орган"));
@@ -172,7 +170,7 @@ const CreateGoverningBody = () => {
         )}
         <Form onFinish={handleSubmit}>
           <Form.Item name="logo" initialValue={governingBody.logo}>
-          <Upload
+            <Upload
               name="avatar"
               listType="picture-card"
               showUploadList={false}
@@ -209,7 +207,7 @@ const CreateGoverningBody = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={governingBody.description}
-                rules={descriptionValidation.Description}
+                rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
               >
                 <Input value={governingBody.description} maxLength={1001} />
               </Form.Item>

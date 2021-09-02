@@ -60,7 +60,7 @@ const StatisticsCities = () => {
       key: "id",
       fixed: "left",
       sorter: { compare: (a: any, b: any) => a.id - b.id },
-      width: 55
+      width: 65
     },
     {
       title: "Рік",
@@ -68,19 +68,7 @@ const StatisticsCities = () => {
       key: "year",
       fixed: "left",
       sorter: { compare: (a: any, b: any) => a.year - b.year },
-      width: 80
-    },
-    {
-      title: "Округа",
-      dataIndex: "regionName",
-      key: "regionName",
-      fixed: "left",
-      ellipsis: {
-        showTitle: true,
-      },
-      sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
-      sortDirections: ["ascend", "descend"] as SortOrder[],
-      width: 150
+      width: 65
     },
     {
       title: "Станиця",
@@ -92,7 +80,18 @@ const StatisticsCities = () => {
       },
       sorter: (a: any, b: any) => a.cityName.localeCompare(b.cityName),
       sortDirections: ["ascend", "descend"] as SortOrder[],
-      width: 150
+      width: 130
+    },
+    {
+      title: "Округа",
+      dataIndex: "regionName",
+      key: "regionName",
+      ellipsis: {
+        showTitle: true,
+      },
+      sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
+      sortDirections: ["ascend", "descend"] as SortOrder[],
+      width: 130
     },
   ];
 
