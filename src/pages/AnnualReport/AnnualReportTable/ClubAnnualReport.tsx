@@ -78,7 +78,8 @@ export const ClubAnnualReportTable = ({ columns, searchedData, sortKey }: props)
     let roles = UserApi.getActiveUserRoles();
     setIsAdmin(roles.includes(Roles.Admin));
     setIsClubAdmin(roles.includes(Roles.KurinHead));
-    setCanView(roles.includes(Roles.CityHead) || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.Admin));
+    setCanView(roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy) ||
+     roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy) || roles.includes(Roles.Admin));
   };
 
   const hideDropdowns = () => {
