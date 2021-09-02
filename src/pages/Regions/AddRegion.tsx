@@ -122,7 +122,7 @@ const AddNewRegionFormPage = () => {
 
   function seeRegionNameExistsModal() {
     return Modal.error({
-      title: "Округа з такою назвою вже існує! Будь-ласка вкажіть іншу назву.",
+      title: "Округа з такою назвою вже існує! Будь ласка, вкажіть іншу назву.",
       icon: <ExclamationCircleOutlined />,
       okText: "Ок",
       maskClosable: true,
