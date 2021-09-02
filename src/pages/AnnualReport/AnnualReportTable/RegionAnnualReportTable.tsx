@@ -179,7 +179,8 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey }: prop
     let roles = UserApi.getActiveUserRoles();
     setIsRegionAdmin(roles.includes(Roles.OkrugaHead));
     setIsAdmin(roles.includes(Roles.Admin));
-    setCanView(roles.includes(Roles.CityHead) || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.Admin));
+    setCanView(roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy) ||
+     roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy) ||roles.includes(Roles.Admin));
   };
 
   const handlePageChange = (page: number) => {
