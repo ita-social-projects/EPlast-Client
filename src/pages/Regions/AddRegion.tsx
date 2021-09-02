@@ -30,6 +30,7 @@ import {
 } from "../../components/Notifications/Messages"
 import { checkIfNameExists, createRegion } from "../../api/regionsApi";
 import Spinner from "../Spinner/Spinner";
+import RegionProfile from "../../models/Region/RegionProfile";
 
 const AddNewRegionFormPage = () => {
   const [loading, setLoading] = useState(false);
@@ -42,10 +43,10 @@ const AddNewRegionFormPage = () => {
   const handleSubmit = async (values: any) => {
     try {
       setLoading(true);
-      const checkResponce = await checkIfNameExists(values.regionName);
 
-      if (checkResponce.data === false) {
-        const newRegion: any = {
+      if (!await checkIfNameExists(values.regionName)) {
+        const newRegion: RegionProfile = {
+          id: 0,
           regionName: values.regionName,
           description: values.description,
           phoneNumber: values.phoneNumber,
@@ -67,7 +68,7 @@ const AddNewRegionFormPage = () => {
       } else {
         setLoading(false);
 
-        seeRegionNameExistsModal();
+        showRegionNameExistsModal();
       }
     }
     catch (error) {
@@ -120,7 +121,7 @@ const AddNewRegionFormPage = () => {
     setCurrentPhoto(false);
   };
 
-  function seeRegionNameExistsModal() {
+  function showRegionNameExistsModal() {
     return Modal.error({
       title: "Округа з такою назвою вже існує! Будь ласка, вкажіть іншу назву.",
       icon: <ExclamationCircleOutlined />,
@@ -162,7 +163,7 @@ const AddNewRegionFormPage = () => {
             <Row justify="center">
               <Col md={11} xs={24}>
                 <Form.Item
-                  label="Назва округи"
+                  label="Назва"
                   name="regionName"
                   labelCol={{ span: 24 }}
                   rules={descriptionValidation.RegionName}
