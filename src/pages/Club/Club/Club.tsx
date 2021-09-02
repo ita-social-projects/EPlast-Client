@@ -91,13 +91,17 @@ const Club = () => {
 
   const removeMember = async (followerID: number) => {
     await removeFollower(followerID);
-    await createNotification(activeUserID as string, "На жаль, ви були виключені з прихильників куреня",true);
+    await createNotification(activeUserID as string, "На жаль, ви були виключені з прихильників куреня", true);
     const response = await getClubById(+id);
     setFollowersCount(response.data.followerCount);
     setFollowers(followers.filter((f) => f.id !== followerID));
     setCanJoin(true);
 }
   const addMember = async () => {
+    if(activeUserClub?.length != 0){
+      await createNotification(activeUserID as string, 
+        `На жаль, ви були виключені з членів куреня "${activeUserClub}" та позбавлені наданих в ньому посад`, false);
+    }
     const follower = await addFollower(+id);
     if (club.head !== null ){
       await createNotification(club.head.userId,
