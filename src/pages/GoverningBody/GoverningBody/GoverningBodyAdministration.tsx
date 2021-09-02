@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip} from 'antd';
-import {SettingOutlined, RollbackOutlined, DeleteOutlined} from '@ant-design/icons';
+import {SettingOutlined, RollbackOutlined, CloseOutlined} from '@ant-design/icons';
 import { getAllAdmins, removeAdministrator, getUserAccess} from "../../../api/governingBodiesApi";
 import userApi from "../../../api/UserApi";
 import "./GoverningBody.less";
@@ -148,8 +148,7 @@ const GoverningBodyAdministration = () => {
                           <SettingOutlined
                             className={classes.governingBodyAdminSettingsIcon}
                             onClick={() => showModal(member)} />,
-                          <DeleteOutlined
-                            className={classes.governingBodyAdminDeleteIcon}
+                          <CloseOutlined
                             onClick={() => showConfirm(member)}
                           />,
                         ]
