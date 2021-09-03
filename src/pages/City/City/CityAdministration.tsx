@@ -182,6 +182,7 @@ const CityAdministration = () => {
             visibleModal={visibleModal}
             setVisibleModal={setVisibleModal}
             cityId={+id}
+            cityName={cityName}
             onAdd={onAdd}
           ></AddAdministratorModal>
         ) : null}
