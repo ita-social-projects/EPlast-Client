@@ -31,7 +31,7 @@ const ActiveMembership = () => {
   const [data, setUserData] = useState<Data>();
   const [currentUser, setCurrentUser] = useState<any>({});
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
-  const [plastDegrees, setPlastDegrees] = useState<UserPlastDegree>({} as UserPlastDegree);
+  const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [datesVisibleModal, setDatesVisibleModal] = useState<boolean>(false);
   const [roles, setRoles] = useState<Array<string>>([]);
@@ -50,8 +50,8 @@ const ActiveMembership = () => {
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
   const handleAddDegree = async () => {
-    await activeMembershipApi.getUserPlastDegrees(userId).then((response) => {
-      setPlastDegrees(response);
+    await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
+      setUserPlastDegree(response);
     });
     notificationLogic("success", successfulAddDegree());
   };
@@ -96,8 +96,8 @@ const ActiveMembership = () => {
       setLoadInfo(true);
     });
 
-    await activeMembershipApi.getUserPlastDegrees(userId).then((response) => {
-      setPlastDegrees(response);
+    await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
+      setUserPlastDegree(response);
     });
   };
 
@@ -126,11 +126,11 @@ const ActiveMembership = () => {
   };
 
   const handleDelete = async () => {
-    if (plastDegrees !== null) {
+    if (userPlastDegree !== null) {
       await NotificationBoxApi.createNotifications(
         [userId],
         `На жаль вас було позбавлено ступеня: ${getAppropriateToGenderDegree(
-          plastDegrees!.plastDegree.name
+          userPlastDegree!.plastDegree.name
         )} в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/userpage/activeMembership/${userId}`,
@@ -163,7 +163,7 @@ const ActiveMembership = () => {
   };
 
   const AppropriateButtonText = (): string => {
-    if (plastDegrees) return "Змінити ступінь"
+    if (userPlastDegree) return "Змінити ступінь"
     else  return "Додати ступінь"
   }
 
@@ -285,15 +285,15 @@ const ActiveMembership = () => {
         <div className={classes.wrapper}>
           <div className={classes.wrapperGeneralInfo}>
             <Title level={2}> Ступені користувача </Title>
-            {plastDegrees && plastDegrees.id ? (<React.Fragment key={plastDegrees?.id}>
+            {userPlastDegree && userPlastDegree.id ? (<React.Fragment key={userPlastDegree?.id}>
                 <div style={{ marginBottom: "7px" }}>
                   <div className={classes.textFieldsMain}>
                     {<SafetyCertificateOutlined />}{" "}
-                    {getAppropriateToGenderDegree(plastDegrees!.plastDegree?.name)}
+                    {getAppropriateToGenderDegree(userPlastDegree!.plastDegree?.name)}
                   </div>
                   <div className={classes.textFieldsOthers}>
                     Дата початку ступеню:{" "}
-                    {moment(plastDegrees?.dateStart).format("DD.MM.YYYY")}
+                    {moment(userPlastDegree?.dateStart).format("DD.MM.YYYY")}
                   </div>
                   {IsUserHasAccessToManageDegree(roles?.map((role: any) => {
                     if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ||
@@ -306,7 +306,7 @@ const ActiveMembership = () => {
                           onClick={() => {
                             DeleteDegreeConfirm(
                               userId,
-                              plastDegrees!.plastDegree.id,
+                              userPlastDegree!.plastDegree.id,
                               handleDelete
                             );
                           }}

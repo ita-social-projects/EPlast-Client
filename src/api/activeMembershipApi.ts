@@ -36,7 +36,7 @@ const getAllPlastDegrees = async () => {
     return response.data as PlastDegree[];
 };
 
- const getUserPlastDegrees = async (id : string) : Promise<UserPlastDegree> => {
+ const getUserPlastDegree = async (id : string) : Promise<UserPlastDegree> => {
     const response = await Api.get(`ActiveMembership/degree/${id}`);
 
     return response.data as UserPlastDegree;
@@ -69,7 +69,7 @@ export default
 { 
     getAccessLevelById,
     getAllPlastDegrees,
-    getUserPlastDegrees,
+    getUserPlastDegree,
     postUserPlastDegree,
     removeUserPlastDegree,
     getUserDates,
