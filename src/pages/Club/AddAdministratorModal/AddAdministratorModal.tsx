@@ -220,7 +220,7 @@ const AddAdministratorModal = (props: Props) => {
     <Modal
       title={
         props.admin.id === 0
-          ? `Додати в провід ${props.clubName}`
+          ? `Додати в провід куреня ${props.clubName}`
           : "Редагування проводу"
       }
       visible={props.visibleModal}
