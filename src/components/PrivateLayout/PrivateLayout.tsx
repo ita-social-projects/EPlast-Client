@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { Avatar, Layout, Menu, Button } from "antd";
-import { BankOutlined, RollbackOutlined } from "@ant-design/icons";
+import { BankOutlined, BookOutlined, RollbackOutlined } from "@ant-design/icons";
 import {
   SolutionOutlined,
-  InfoCircleOutlined,
   SnippetsOutlined,
   PieChartOutlined,
   FileTextOutlined,
@@ -147,7 +146,7 @@ const PrivateLayout = ({ children }: any) => {
               ) : (<> </>)
             }
             
-            <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Довідник">
+            <SubMenu key="sub1" icon={<BookOutlined />} title="Довідник">
               {(canEdit || canSee || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy || plastMember) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
                   Таблиця користувачів

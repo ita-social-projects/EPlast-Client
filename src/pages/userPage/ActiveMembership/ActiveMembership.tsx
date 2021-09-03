@@ -31,7 +31,7 @@ const ActiveMembership = () => {
   const [data, setUserData] = useState<Data>();
   const [currentUser, setCurrentUser] = useState<any>({});
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
-  const [plastDegrees, setPlastDegrees] = useState<Array<UserPlastDegree>>([]);
+  const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [datesVisibleModal, setDatesVisibleModal] = useState<boolean>(false);
   const [roles, setRoles] = useState<Array<string>>([]);
@@ -50,15 +50,15 @@ const ActiveMembership = () => {
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
   const handleAddDegree = async () => {
-    await activeMembershipApi.getUserPlastDegrees(userId).then((response) => {
-      setPlastDegrees(response);
+    await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
+      setUserPlastDegree(response);
     });
     notificationLogic("success", successfulAddDegree());
   };
   const getAppropriateToGenderDegree = (plastDegreeName: string): string => {
-    if (userGenders[0] === data?.user.gender?.name && plastDegreeName.includes("/")) {
+    if (userGenders[0] === data?.user.gender?.name && plastDegreeName?.includes("/")) {
       return plastDegreeName.split("/")[0];
-    } else if (userGenders[1] === data?.user.gender?.name && plastDegreeName.includes("/")) {
+    } else if (userGenders[1] === data?.user.gender?.name && plastDegreeName?.includes("/")) {
       return plastDegreeName.split("/")[1];
     } else return plastDegreeName;
   };
@@ -96,8 +96,8 @@ const ActiveMembership = () => {
       setLoadInfo(true);
     });
 
-    await activeMembershipApi.getUserPlastDegrees(userId).then((response) => {
-      setPlastDegrees(response);
+    await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
+      setUserPlastDegree(response);
     });
   };
 
@@ -125,15 +125,12 @@ const ActiveMembership = () => {
     return IsUserHasAnyAdminRole;
   };
 
-  const handleDelete = async (plastDegreeId: number) => {
-    const currentPlastDegree = plastDegrees.find(
-      (p) => p.plastDegree.id === plastDegreeId
-    );
-    if (currentPlastDegree) {
+  const handleDelete = async () => {
+    if (userPlastDegree !== null) {
       await NotificationBoxApi.createNotifications(
         [userId],
         `На жаль вас було позбавлено ступеня: ${getAppropriateToGenderDegree(
-          currentPlastDegree.plastDegree.name
+          userPlastDegree!.plastDegree.name
         )} в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/userpage/activeMembership/${userId}`,
@@ -166,10 +163,8 @@ const ActiveMembership = () => {
   };
 
   const AppropriateButtonText = (): string => {
-    const amount = plastDegrees.length;
-    if (amount === 1) return "Змінити ступінь"
-    else if (amount === 0) return "Додати ступінь"
-    return "Додати ступінь"
+    if (userPlastDegree) return "Змінити ступінь"
+    else  return "Додати ступінь"
   }
 
   useEffect(() => {
@@ -290,16 +285,15 @@ const ActiveMembership = () => {
         <div className={classes.wrapper}>
           <div className={classes.wrapperGeneralInfo}>
             <Title level={2}> Ступені користувача </Title>
-            {plastDegrees.length === 0 ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Без ступеня" /> : plastDegrees.map((pd) => (
-              <React.Fragment key={pd.id}>
+            {userPlastDegree && userPlastDegree.id ? (<React.Fragment key={userPlastDegree?.id}>
                 <div style={{ marginBottom: "7px" }}>
                   <div className={classes.textFieldsMain}>
                     {<SafetyCertificateOutlined />}{" "}
-                    {getAppropriateToGenderDegree(pd.plastDegree.name)}
+                    {getAppropriateToGenderDegree(userPlastDegree!.plastDegree?.name)}
                   </div>
                   <div className={classes.textFieldsOthers}>
                     Дата початку ступеню:{" "}
-                    {moment(pd.dateStart).format("DD.MM.YYYY")}
+                    {moment(userPlastDegree?.dateStart).format("DD.MM.YYYY")}
                   </div>
                   {IsUserHasAccessToManageDegree(roles?.map((role: any) => {
                     if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ||
@@ -312,7 +306,7 @@ const ActiveMembership = () => {
                           onClick={() => {
                             DeleteDegreeConfirm(
                               userId,
-                              pd.plastDegree.id,
+                              userPlastDegree!.plastDegree.id,
                               handleDelete
                             );
                           }}
@@ -323,7 +317,9 @@ const ActiveMembership = () => {
                     )}
                 </div>
               </React.Fragment>
-            ))}
+            )
+            :(<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Без ступеня" />)
+            }
             {IsUserHasAccessToManageDegree(roles?.map((role: any) => {
               if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy))
                 return role
@@ -338,7 +334,7 @@ const ActiveMembership = () => {
                     {AppropriateButtonText()}
                   </Button>
                 </div>
-              )}
+              )} 
           </div>
         </div>
       </div>

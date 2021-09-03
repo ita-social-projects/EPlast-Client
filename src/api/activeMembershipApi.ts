@@ -8,20 +8,15 @@ export type UserPlastDegree ={
     id: number;
     plastDegree : PlastDegree;
     dateStart : string;
-    dateFinish: string;
-    isCurrent: boolean;
 }
 export type UserPlastDegreePost ={
     plastDegreeId : number;
     dateStart : string;
-    dateFinish: string | null;
-    isCurrent: boolean;
     userId : string;
 }
 export type UserPlastDegreePut ={
     userId : string;
     plastDegreeId : number;
-    endDate : string;
 }
 export type UserDates ={
     dateEntry : string;
@@ -41,10 +36,10 @@ const getAllPlastDegrees = async () => {
     return response.data as PlastDegree[];
 };
 
- const getUserPlastDegrees = async (id : string) : Promise<Array<UserPlastDegree>> => {
+ const getUserPlastDegree = async (id : string) : Promise<UserPlastDegree> => {
     const response = await Api.get(`ActiveMembership/degree/${id}`);
 
-    return response.data;
+    return response.data as UserPlastDegree;
  };
 
  const postUserPlastDegree = async (userPlastDegree : UserPlastDegreePost) =>{
@@ -58,16 +53,7 @@ const getAllPlastDegrees = async () => {
        
     return response.data;
 };
-const setPlastDegreeAsCurrent = async (userId : string, userPlastDegreeId: number)=>{
-    const response = await Api.put(`ActiveMembership/degree/setAsCurrent/${userId}/${userPlastDegreeId}`);
-       
-    return response.data;
-}
-const addEndDateForUserPlastDegree = async (userPlastDegreePut: UserPlastDegreePut) =>{
-    const response = await Api.put(`ActiveMembership/degree/endDate`, userPlastDegreePut);
-       
-    return response.data;
-}
+
 const getUserDates = async (id : string) :Promise<UserDates>=> {
     const response = await Api.get(`ActiveMembership/dates/${id}`);
 
@@ -83,11 +69,9 @@ export default
 { 
     getAccessLevelById,
     getAllPlastDegrees,
-    getUserPlastDegrees,
+    getUserPlastDegree,
     postUserPlastDegree,
     removeUserPlastDegree,
-    setPlastDegreeAsCurrent,
-    addEndDateForUserPlastDegree,
     getUserDates,
     postUserDates
 };
