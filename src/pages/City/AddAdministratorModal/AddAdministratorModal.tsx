@@ -25,6 +25,7 @@ interface Props {
   admin: CityAdmin;
   setAdmin: (admin: CityAdmin) => void;
   cityId: number;
+  cityName: string;
   onAdd?: (admin?: CityAdmin) => void;
   onChange?: (id: string, userRoles: string) => void;
 }
@@ -215,7 +216,7 @@ const AddAdministratorModal = (props: Props) => {
     <Modal
       title={
         props.admin.id === 0
-          ? "Додати в провід станиці"
+          ? `Додати в провід станиці ${props.cityName}`
           : "Редагування проводу"
       }
       visible={props.visibleModal}

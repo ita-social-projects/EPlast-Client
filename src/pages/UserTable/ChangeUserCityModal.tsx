@@ -58,6 +58,7 @@ const ChangeUserCityModal = ({
         visibleModal={showModal}
         setVisibleModal={setShowModal}
         cityId={cityId}
+        cityName={user.cityName}
         onChange={handleChange}
       ></AddAdministratorModal>
       ):

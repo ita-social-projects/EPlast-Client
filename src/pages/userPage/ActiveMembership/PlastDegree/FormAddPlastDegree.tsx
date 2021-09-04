@@ -25,7 +25,6 @@ const FormAddPlastDegree = ({
     cancel
 }: FormAddPlastDegreeProps) => {
     const [form] = Form.useForm();
-    const [isChecked, setIsChecked] = useState<boolean>(false);
     const visiableDegree = useRef<boolean>(false);
     const [filtredDegrees, setFiltredDegrees] = useState<Array<PlastDegree>>([]);
 
@@ -35,8 +34,6 @@ const FormAddPlastDegree = ({
         const userPlastDegreePost: UserPlastDegreePost = {
             plastDegreeId: info.plastDegree,
             dateStart: info.datepickerStart._d,
-            dateFinish: null,
-            isCurrent: isChecked,
             userId: userId
         };
         setVisibleModal(false);

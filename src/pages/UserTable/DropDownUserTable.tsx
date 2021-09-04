@@ -126,10 +126,6 @@ const DropDown = (props: Props) => {
         && currentUser?.regionId == user?.regionId;
       const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
         && currentUser?.regionId == user?.regionId;
-      const isCurrentUserKurinHeadDeputy = roles.includes(Roles.KurinHeadDeputy) 
-        && currentUser?.clubId == user?.clubId;
-      const isCurrentUserKurinHead = roles.includes(Roles.KurinHead) 
-        && currentUser?.clubId == user?.clubId;
       const isUserCityHead = roles.includes(Roles.CityHead) 
         && currentUser?.cityId == user?.cityId;
       const isUserCityHeadDeputy = roles.includes(Roles.CityHeadDeputy) 
@@ -139,8 +135,6 @@ const DropDown = (props: Props) => {
       isCurrentUserGoverningBodyHead ||      
       isCurrentUserRegionHead ||      
       isCurrentUserRegionHeadDeputy ||
-      isCurrentUserKurinHeadDeputy ||
-      isCurrentUserKurinHead ||
       isUserCityHead ||
       isUserCityHeadDeputy;
     });
@@ -152,10 +146,6 @@ const DropDown = (props: Props) => {
         && currentUser?.regionId == user?.regionId;
       const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
         && currentUser?.regionId == user?.regionId;
-      const isCurrentUserKurinHeadDeputy = roles.includes(Roles.KurinHeadDeputy) 
-        && currentUser?.clubId == user?.clubId;
-      const isCurrentUserKurinHead = roles.includes(Roles.KurinHead) 
-        && currentUser?.clubId == user?.clubId;
       const isUserCityHead = roles.includes(Roles.CityHead) 
         && currentUser?.cityId == user?.cityId;
       const isUserCityHeadDeputy = roles.includes(Roles.CityHeadDeputy) 
@@ -165,8 +155,6 @@ const DropDown = (props: Props) => {
       isCurrentUserGoverningBodyHead ||      
       isCurrentUserRegionHead ||      
       isCurrentUserRegionHeadDeputy ||
-      isCurrentUserKurinHeadDeputy ||
-      isCurrentUserKurinHead ||
       isUserCityHead ||
       isUserCityHeadDeputy;
     });
