@@ -29,6 +29,7 @@ import {
   fileIsTooBig,
   successfulEditAction,
 } from "../../components/Notifications/Messages"
+import { showRegionNameExistsModal } from "../../components/Notifications/Modals";
 
 const RegionEditFormPage = () => {
   let currentRegion = Number(
@@ -130,15 +131,6 @@ const RegionEditFormPage = () => {
       showRegionNameExistsModal();
     }
   };
-
-  function showRegionNameExistsModal() {
-    return Modal.error({
-      title: "Округа з такою назвою вже існує! Будь ласка, вкажіть іншу назву.",
-      icon: <ExclamationCircleOutlined />,
-      okText: "Ок",
-      maskClosable: true,
-    });
-  }
 
   return (
     <Layout.Content className="createCity">

@@ -31,6 +31,7 @@ import {
 import { checkIfNameExists, createRegion } from "../../api/regionsApi";
 import Spinner from "../Spinner/Spinner";
 import RegionProfile from "../../models/Region/RegionProfile";
+import { showRegionNameExistsModal } from "../../components/Notifications/Modals";
 
 const AddNewRegionFormPage = () => {
   const [loading, setLoading] = useState(false);
@@ -120,15 +121,6 @@ const AddNewRegionFormPage = () => {
     event.stopPropagation();
     setCurrentPhoto(false);
   };
-
-  function showRegionNameExistsModal() {
-    return Modal.error({
-      title: "Округа з такою назвою вже існує! Будь ласка, вкажіть іншу назву.",
-      icon: <ExclamationCircleOutlined />,
-      okText: "Ок",
-      maskClosable: true,
-    });
-  }
 
   return (
     <Layout.Content className="createCity">
