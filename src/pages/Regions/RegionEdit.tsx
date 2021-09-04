@@ -7,13 +7,14 @@ import {
   Upload,
   Row,
   Col,
+  Modal,
 } from "antd";
 import React, { useState, useEffect } from "react";
-import RegionsApi from "../../api/regionsApi";
+import RegionsApi, { checkIfNameExists } from "../../api/regionsApi";
 import ReactInputMask from "react-input-mask";
 import "./CreateRegion.less";
 import notificationLogic from "../../components/Notifications/Notification";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, ExclamationCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";
 import { useHistory } from "react-router-dom";
@@ -28,6 +29,7 @@ import {
   fileIsTooBig,
   successfulEditAction,
 } from "../../components/Notifications/Messages"
+import { showRegionNameExistsModal } from "../../components/Notifications/Modals";
 
 const RegionEditFormPage = () => {
   let currentRegion = Number(
@@ -99,32 +101,41 @@ const RegionEditFormPage = () => {
   };
 
   const handleSubmit = async (values: any) => {
-    const newRegion: any = {
-      regionName: values.regionName,
-      description: values.description,
-      phoneNumber: values.phoneNumber,
-      email: values.email,
-      link: values.link,
-      street: values.street,
-      houseNumber: values.houseNumber,
-      officeNumber: values.officeNumber,
-      postIndex: values.postIndex,
-      logo: logo,
-      city: values.city,
-      isActive: chosenRegion.isActive
-    };
-    await RegionsApi.EditRegion(currentRegion, newRegion);
+    setLoading(true);
 
-    form.resetFields();
+    if (!await checkIfNameExists(values.regionName)) {
+      const newRegion: RegionProfile = {
+        id: chosenRegion.id,
+        regionName: values.regionName,
+        description: values.description,
+        phoneNumber: values.phoneNumber,
+        email: values.email,
+        link: values.link,
+        street: values.street,
+        houseNumber: values.houseNumber,
+        officeNumber: values.officeNumber,
+        postIndex: values.postIndex,
+        logo: logo,
+        city: values.city,
+        isActive: chosenRegion.isActive
+      };
+      await RegionsApi.EditRegion(currentRegion, newRegion);
+  
+      form.resetFields();
+  
+      notificationLogic("success", successfulEditAction("Дані округи"));
+      history.push(`/regions/${currentRegion}`);  
+    } else {
+      setLoading(false);
 
-    notificationLogic("success", successfulEditAction("Дані округи"));
-    history.push(`/regions/${currentRegion}`);
+      showRegionNameExistsModal();
+    }
   };
 
   return (
     <Layout.Content className="createCity">
       <Card hoverable className="createCityCard">
-        {loading === true ? (
+        {loading ? (
           <Spinner />
         ) : (
           <Form name="basic" onFinish={handleSubmit} form={form}>
@@ -153,7 +164,7 @@ const RegionEditFormPage = () => {
             <Row justify="center">
               <Col md={11} xs={24}>
                 <Form.Item
-                  label="Назва округи"
+                  label="Назва"
                   name="regionName"
                   initialValue={chosenRegion.regionName}
                   labelCol={{ span: 24 }}
