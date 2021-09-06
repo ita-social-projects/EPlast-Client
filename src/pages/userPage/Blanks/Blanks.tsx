@@ -207,7 +207,7 @@ export const Blanks = () => {
                                         }
 
                                     </div>
-                                    {(userToken.nameid === userId || DoesUserHasAccessToSeeAndDownloadBlanks(roles)) &&
+                                    {(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles)) &&
                                         <Tooltip title="Завантажити">
                                             <DownloadOutlined
                                                 className={classes.downloadIcon}
@@ -220,7 +220,7 @@ export const Blanks = () => {
                                                 }
                                             /></Tooltip>}
 
-                                    {((userToken.nameid === userId || DoesUserHasAccessToSeeAndDownloadBlanks(roles)) && documentFormat !== "doc" && documentFormat !== "docx") ?
+                                    {((userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles)) && documentFormat !== "doc" && documentFormat !== "docx") ?
                                         <Tooltip title="Переглянути">
                                             <EyeOutlined
                                                 className={classes.reviewIcon}
@@ -228,7 +228,7 @@ export const Blanks = () => {
                                                 onClick={() => openDocument(document.blobName, document.fileName)} />
                                         </Tooltip>
                                         : null}
-                                    {(userToken.nameid === userId || DoesUserHasAccessToDeleteBlanks) ?
+                                    {(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles)) ?
                                         <Tooltip title="Видалити">
                                             <Popconfirm
                                                 title="Видалити цей документ?"
