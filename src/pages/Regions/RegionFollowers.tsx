@@ -100,9 +100,7 @@ const RegionFollowers = () => {
                   key={follower.id}
                   className="detailsCard"
                   actions={
-                    activeUserRoles.includes(Roles.Admin) 
-                    || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
-                        && isActiveUserRegionAdmin)   
+                    activeUserRoles.includes(Roles.Admin)    
                     ? [
                         <CloseOutlined
                           onClick={() => seeDeleteFollowerModal(follower)}
@@ -111,14 +109,9 @@ const RegionFollowers = () => {
                   }
                 >
                   <div
-                    className={activeUserRoles.includes(Roles.Admin) 
-                      || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
-                          && isActiveUserRegionAdmin)
-                      ? "cityMember" : undefined}
+                    className={activeUserRoles.includes(Roles.Admin) ? "cityMember" : undefined}
                     onClick={() => 
-                        activeUserRoles.includes(Roles.Admin) 
-                        || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
-                            && isActiveUserRegionAdmin)   
+                        activeUserRoles.includes(Roles.Admin)
                         ? history.push(`/regions/follower/edit/${follower.id}`)
                         : undefined
                     }
