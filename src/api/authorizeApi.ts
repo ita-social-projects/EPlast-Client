@@ -19,10 +19,8 @@ export default class AuthorizeApi {
       .catch((error) => {
         if (error.response.data.value == "User-FormerMember") {
           showUserIsFormerMemberModal();
-        } else {
-          if (error.response.status === 400) {
-            notificationLogic("error", error.response.data.value);
-          }  
+        } else if (error.response.status === 400) {
+          notificationLogic("error", error.response.data.value);
         }
       });
     return response;
@@ -120,10 +118,8 @@ export default class AuthorizeApi {
       .catch((error) => {
         if (error.response.data.value == "User-FormerMember") {
           showUserIsFormerMemberModal();
-        } else {
-          if (error.response.status === 400) {
-            notificationLogic("error", error.response.data.value);
-          }  
+        } else if (error.response.status === 400) {
+          notificationLogic("error", error.response.data.value);
         }
       });
     return response;
@@ -147,11 +143,9 @@ export default class AuthorizeApi {
       .catch((error) => {
         if (error.response.data.value == "User-FormerMember") {
           showUserIsFormerMemberModal();
-        } else {
-          if (error.response.status === 400) {
-            notificationLogic("error", error.response.data.value);
-          }  
-        }
+        } else if (error.response.status === 400) {
+          notificationLogic("error", error.response.data.value);
+        }  
       });
     return respon;
   };
