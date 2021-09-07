@@ -33,7 +33,7 @@ import Spinner from "../../Spinner/Spinner";
 import ClubDetailDrawer from "../ClubDetailDrawer/ClubDetailDrawer";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import notificationLogic from "../../../components/Notifications/Notification";
-import { successfulDeleteAction, successfulEditAction } from "../../../components/Notifications/Messages";
+import { successfulArchiveAction, successfulDeleteAction, successfulEditAction, successfulUnarchiveAction } from "../../../components/Notifications/Messages";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
@@ -125,7 +125,7 @@ const Club = () => {
 
   const ArchiveClub = async () => {
     await archiveClub(club.id);
-    notificationLogic("success", successfulEditAction("Курінь"));
+    notificationLogic("success", successfulArchiveAction("Курінь"));
     history.push('/clubs');
   }
 
@@ -138,7 +138,7 @@ const Club = () => {
 
   const UnArchiveClub = async () => {
     await unArchiveClub(club.id)
-    notificationLogic("success", successfulEditAction("Курінь"));
+    notificationLogic("success", successfulUnarchiveAction("Курінь"));
 
     history.push('/clubs');
   };
@@ -508,7 +508,7 @@ const Club = () => {
                   </div>
                 ) : (
                     <Paragraph>
-                      <b>Немає голови куреня</b>
+                      <b>Ще немає голови куреня</b>
                     </Paragraph>
                   )}
                   {club.headDeputy ? (
@@ -535,7 +535,7 @@ const Club = () => {
                   </div>
                 ) : (
                     <Paragraph>
-                      <b>Немає заступника голови куреня</b>
+                      <b>Ще немає заступника голови куреня</b>
                     </Paragraph>
                   )}
               </Col>
