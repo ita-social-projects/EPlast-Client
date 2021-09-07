@@ -16,11 +16,11 @@ import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
-  maxLength,
   maxNumber,
   minNumber
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 type FormAddPrecautionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -229,16 +229,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             label="Подання від"
             labelCol={{ span: 24 }}
             name="reporter"
-            rules={[ 
-              { 
-                required: true, 
-                message: emptyInput() 
-              },
-              {
-                max: 100,
-                message: maxLength(100),
-              },
-            ]}
+            rules={descriptionValidation.Reporter}
           >
             <Input
               allowClear
@@ -279,16 +270,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             label="Обгрунтування"
             labelCol={{ span: 24 }}
             name="reason"
-            rules={[
-              { 
-                required: true, 
-                message: emptyInput() 
-              },
-              {
-                max: 500,
-                message: maxLength(500),
-              },
-            ]}
+            rules={descriptionValidation.Reason}
           >
             <Input.TextArea
               allowClear

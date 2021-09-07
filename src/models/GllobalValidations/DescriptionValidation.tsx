@@ -208,14 +208,70 @@ export const descriptionValidation = ({
             message: emptyInput(),
         },    
     ],
+    DecisionAndDocumentName: [
+        {
+            pattern: /^\s*\S.*$/,
+            message: inputOnlyWhiteSpaces(),
+        },
+        {
+            max: 60, 
+            message: maxLength(60),
+        },
+        {
+            required: true,
+            message: emptyInput(),
+        },    
+    ],
+    Reporter: [
+        {
+            pattern: /^\s*\S.*$/,
+            message: inputOnlyWhiteSpaces(),
+        },
+        {
+            max: 100, 
+            message: maxLength(100),
+        },
+        {
+            required: true,
+            message: emptyInput(),
+        },    
+    ],
     DescriptionAndQuestions: [
         {
             pattern: /^\s*\S.*$/,
             message: inputOnlyWhiteSpaces(),
         },
-        { 
+        {
             max: 200, 
             message: maxLength(200),
+        },
+        {
+            required: true,
+            message: emptyInput(),
+        },    
+    ],
+    Reason: [
+        {
+            pattern: /^\s*\S.*$/,
+            message: inputOnlyWhiteSpaces(),
+        },
+        {
+            max: 500, 
+            message: maxLength(500),
+        },
+        {
+            required: true,
+            message: emptyInput(),
+        },    
+    ],
+    Description: [
+        {
+            pattern: /^\s*\S.*$/,
+            message: inputOnlyWhiteSpaces(),
+        },
+        {
+            max: 1000, 
+            message: maxLength(1000),
         },
         {
             required: true,
@@ -230,6 +286,26 @@ export const descriptionValidation = ({
         { 
             max: 1000, 
             message: maxLength(1000),
+        },    
+    ],
+    ShortDescription: [
+        {
+            pattern: /^\s*\S.*$/,
+            message: inputOnlyWhiteSpaces(),
+        },
+        { 
+            required: true,
+            message: emptyInput(),
+        },    
+    ],
+    DecisionTarget: [
+        {
+            max: 255, 
+            message: maxLength(255),
+        },
+        {
+            required: true,
+            message: emptyInput(),
         },    
     ],
 });

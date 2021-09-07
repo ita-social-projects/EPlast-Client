@@ -16,13 +16,13 @@ import adminApi from "../../../api/adminApi";
 import Precaution from "../Interfaces/Precaution";
 import {
   emptyInput,
-  maxLength,
   failEditAction,
   maxNumber,
   minNumber
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 moment.locale("uk-ua");
 
 interface Props {
@@ -276,16 +276,7 @@ const FormEditPrecaution = ({
                 labelCol={{ span: 24 }}
                 name="reporter"
                 initialValue={Precaution.reporter}
-                rules={[
-                  { 
-                    required: true, 
-                    message: emptyInput() 
-                  },
-                  {
-                    max: 100,
-                    message: maxLength(100),
-                  },
-                ]}
+                rules={descriptionValidation.Reporter}
               >
                 <Input
                   allowClear
@@ -325,13 +316,7 @@ const FormEditPrecaution = ({
                 labelCol={{ span: 24 }}
                 name="reason"
                 initialValue={Precaution.reason}
-                rules={[
-                  {
-                    required: true,
-                    max: 500,
-                    message: maxLength(500),
-                  },
-                ]}
+                rules={descriptionValidation.Reason}
               >
                 <Input.TextArea
                   allowClear

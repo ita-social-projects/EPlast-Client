@@ -22,13 +22,13 @@ import {
   fileIsNotUpload,
   possibleFileExtensions,
   fileIsTooBig,
-  maxLength,
   successfulDeleteAction,
 } from "../../components/Notifications/Messages"
 import { DocumentOnCreateData } from "../../models/Documents/DocumentOnCreateData";
 import { MethodicDocumentType } from "../../models/Documents/MethodicDocumentType"
 import { FileWrapper, GoverningBody } from "../../api/decisionsApi";
 import { DocumentWrapper } from "../../models/Documents/DocumentWraper";
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 type FormAddDocumentsProps = {
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: () => void;
@@ -146,7 +146,12 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             label="Тип документу"
             labelCol={{ span: 24 }}
             name="methodicDocumentType"
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              }
+            ]}
           >
             <Select 
               className={formclasses.selectField}
@@ -168,16 +173,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             labelCol={{ span: 24 }}
             label="Назва документу"
             name="name"
-            rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-              {
-                max: 60,
-                message: maxLength(60)
-              },
-            ]}
+            rules={descriptionValidation.DecisionAndDocumentName}
           >
             <Input className={formclasses.inputField} />
           </Form.Item>
@@ -190,7 +186,12 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             label="Орган, що видав документ"
             labelCol={{ span: 24 }}
             name="governingBody"
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              }
+            ]}
           >
             <Select
               showSearch
@@ -214,7 +215,12 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             name="datepicker"
             label="Дата документу"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              }
+            ]}
           >
             <DatePicker
               format="DD.MM.YYYY"
@@ -232,7 +238,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             label="Короткий зміст (опис) документу"
             labelCol={{ span: 24 }}
             name="description"
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={descriptionValidation.ShortDescription}
           >
             <Input.TextArea allowClear className={formclasses.inputField} />
           </Form.Item>
