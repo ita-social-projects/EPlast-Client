@@ -103,33 +103,35 @@ const RegionEditFormPage = () => {
   const handleSubmit = async (values: any) => {
     setLoading(true);
 
-    if (!await checkIfNameExists(values.regionName)) {
-      const newRegion: RegionProfile = {
-        id: chosenRegion.id,
-        regionName: values.regionName,
-        description: values.description,
-        phoneNumber: values.phoneNumber,
-        email: values.email,
-        link: values.link,
-        street: values.street,
-        houseNumber: values.houseNumber,
-        officeNumber: values.officeNumber,
-        postIndex: values.postIndex,
-        logo: logo,
-        city: values.city,
-        isActive: chosenRegion.isActive
-      };
-      await RegionsApi.EditRegion(currentRegion, newRegion);
+    await checkIfNameExists(values.regionName).then(async (response) => {
+      if (!response.data) {
+        const newRegion: RegionProfile = {
+          id: chosenRegion.id,
+          regionName: values.regionName,
+          description: values.description,
+          phoneNumber: values.phoneNumber,
+          email: values.email,
+          link: values.link,
+          street: values.street,
+          houseNumber: values.houseNumber,
+          officeNumber: values.officeNumber,
+          postIndex: values.postIndex,
+          logo: logo,
+          city: values.city,
+          isActive: chosenRegion.isActive
+        };
+        await RegionsApi.EditRegion(currentRegion, newRegion);
+    
+        form.resetFields();
+    
+        notificationLogic("success", successfulEditAction("Дані округи"));
+        history.push(`/regions/${currentRegion}`);  
+      } else {
+        setLoading(false);
   
-      form.resetFields();
-  
-      notificationLogic("success", successfulEditAction("Дані округи"));
-      history.push(`/regions/${currentRegion}`);  
-    } else {
-      setLoading(false);
-
-      showRegionNameExistsModal();
-    }
+        showRegionNameExistsModal();
+      }  
+    });
   };
 
   return (
