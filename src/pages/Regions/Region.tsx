@@ -574,7 +574,9 @@ const Region = () => {
                         )}
                     </div>
                   ) : (
+                    <Paragraph>
                       <b>Ще немає голови округи</b>
+                    </Paragraph>
                     )}
                     {headDeputy.user ? (
                     <div>
@@ -596,7 +598,9 @@ const Region = () => {
                         )}
                     </div>
                   ) : (
+                    <Paragraph>
                       <b>Ще немає заступника голови округи</b>
+                    </Paragraph>
                     )}
                 </Col>
 
