@@ -51,7 +51,7 @@ import CheckActiveCitiesForm from "./CheckActiveCitiesForm"
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import notificationLogic from "../../components/Notifications/Notification";
-import { successfulEditAction, successfulDeleteAction } from "../../components/Notifications/Messages";
+import { successfulEditAction, successfulDeleteAction, successfulArchiveAction, successfulUnarchiveAction } from "../../components/Notifications/Messages";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
@@ -156,7 +156,7 @@ const Region = () => {
       await createNotification(ad.userId,
         `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
     });
-    notificationLogic("success", successfulEditAction("Округу"));
+    notificationLogic("success", successfulArchiveAction("Округу"));
     history.push("/regions");
   }
   };
@@ -169,7 +169,7 @@ const Region = () => {
   };
   const UnArchiveRegion = async () => {
     await unArchiveRegion(region.id)
-    notificationLogic("success", successfulEditAction("Округу"));
+    notificationLogic("success", successfulUnarchiveAction("Округу"));
 
     history.push("/regions");
   };
@@ -574,7 +574,9 @@ const Region = () => {
                         )}
                     </div>
                   ) : (
-                      <p>Ще немає голови округи</p>
+                    <Paragraph>
+                      <b>Ще немає голови округи</b>
+                    </Paragraph>
                     )}
                     {headDeputy.user ? (
                     <div>
@@ -596,7 +598,9 @@ const Region = () => {
                         )}
                     </div>
                   ) : (
-                      <p>Ще немає заступника голови округи</p>
+                    <Paragraph>
+                      <b>Ще немає заступника голови округи</b>
+                    </Paragraph>
                     )}
                 </Col>
 

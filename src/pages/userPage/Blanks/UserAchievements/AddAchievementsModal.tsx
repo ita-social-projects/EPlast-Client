@@ -43,7 +43,7 @@ const AddAchievementsModal = (props: Props) => {
           files.push(newDocument);
           setFiles([...files]);
         });
-        notificationLogic("success", fileIsUpload(`Файл ${info.file.name}`));
+        notificationLogic("success", fileIsUpload());
         setDisabled(false);
       }
     } else {

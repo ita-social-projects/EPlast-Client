@@ -148,7 +148,6 @@ const Assignments = () => {
         </StickyContainer>
       </div>
       <div className="approversContentApprovers">
-        <br />
         <h1 className="approversCard">Поручення дійсних членів</h1>
         <div className="approversCard">
           {data?.confirmedUsers.map(p => {
