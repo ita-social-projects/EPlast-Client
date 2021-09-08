@@ -3,7 +3,8 @@ import { Form, Select, Button, DatePicker } from 'antd';
 import activeMembershipApi, { PlastDegree, UserPlastDegreePost } from '../../../../api/activeMembershipApi';
 import classes from "./FormAddPlastDegree.module.css"
 import NotificationBoxApi from '../../../../api/NotificationBoxApi';
-import { emptyInput } from "../../../../components/Notifications/Messages"
+import { emptyInput, successfulAddDegree } from "../../../../components/Notifications/Messages"
+import notificationLogic from "../../../../components/Notifications/Notification"
 
 type FormAddPlastDegreeProps = {
     availablePlastDegree: Array<PlastDegree>;
@@ -49,6 +50,7 @@ const FormAddPlastDegree = ({
             `/userpage/activeMembership/${userId}`,
             `Дійсному членстві`
         );
+        notificationLogic("success", successfulAddDegree());
     }
 
     const handleOnChange = (value: any) => {
