@@ -20,7 +20,7 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../../models/Roles/Roles";
 import { Data } from '../Interface/Interface';
-import { successfulAddDegree, successfulDeleteDegree } from "../../../components/Notifications/Messages";
+import { successfulDeleteDegree } from "../../../components/Notifications/Messages";
 const { Title } = Typography;
 
 const itemMaxLength = 43;
@@ -53,7 +53,6 @@ const ActiveMembership = () => {
     await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
       setUserPlastDegree(response);
     });
-    notificationLogic("success", successfulAddDegree());
   };
   const getAppropriateToGenderDegree = (plastDegreeName: string): string => {
     if (userGenders[0] === data?.user.gender?.name && plastDegreeName?.includes("/")) {

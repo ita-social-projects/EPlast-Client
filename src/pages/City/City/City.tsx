@@ -51,7 +51,7 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUpdateAction } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUnarchiveAction, successfulArchiveAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
@@ -144,7 +144,7 @@ const City = () => {
 
   const ArchiveCity = async () => {
     await archiveCity(city.id);
-    notificationLogic("success", successfulEditAction("Станицю"));
+    notificationLogic("success", successfulArchiveAction("Станицю"));
     admins.map(async (ad) => {
       await createNotification(ad.userId,
         `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
@@ -161,7 +161,7 @@ const City = () => {
 
   const UnArchiveCity = async () => {
     await unArchiveCity(city.id)
-    notificationLogic("success", successfulEditAction("Станицю"));
+    notificationLogic("success", successfulUnarchiveAction("Станицю"));
 
     history.push("/cities");
   };
@@ -527,7 +527,7 @@ const City = () => {
                   </div>
                 ) : (
                     <Paragraph>
-                      <b>Немає голови станиці</b>
+                      <b>Ще немає голови станиці</b>
                     </Paragraph>
                   )}
                   
@@ -552,7 +552,7 @@ const City = () => {
                   </div>
                 ) : (
                     <Paragraph>
-                      <b>Немає заступника голови станиці</b>
+                      <b>Ще немає заступника голови станиці</b>
                     </Paragraph>
                   )}
               </Col>

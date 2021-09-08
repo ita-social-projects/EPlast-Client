@@ -2,14 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Row, Col } from "antd";
 import decisionsApi, { DecisionPost } from "../../api/decisionsApi";
 import formclasses from "./FormEditDecision.module.css";
-import{
-  emptyInput,
-  maxLength,
-  inputOnlyWhiteSpaces,
-} from "../../components/Notifications/Messages"
 import jwt from "jwt-decode";
 import AuthStore from "../../stores/AuthStore";
-const notOnlyWhiteSpaces = /^\s*\S.*$/;
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 
 interface Props {
   record: number;
@@ -69,20 +64,7 @@ const FormEditDecision = ({
                 labelCol={{ span: 24 }}
                 name="name"
                 className={formclasses.inputWidth}
-                rules={[
-                  {
-                    required: true,
-                    message: emptyInput(),
-                  },
-                  { 
-                    max: 60,
-                    message: maxLength(60) 
-                  },
-                  { 
-                    pattern: notOnlyWhiteSpaces, 
-                    message:inputOnlyWhiteSpaces() 
-                  },
-                ]}
+                rules={descriptionValidation.DecisionAndDocumentName}
               >
                 <Input className={formclasses.input} />
               </Form.Item>
@@ -94,16 +76,7 @@ const FormEditDecision = ({
                 label="Текст рішення"
                 labelCol={{ span: 24 }}
                 name="description"
-                rules={[
-                  {
-                    required: true,
-                    message: emptyInput(),
-                  },
-                  {
-                    max: 1000,
-                    message: maxLength(1000)
-                  },
-                ]}
+                rules={descriptionValidation.Description}
               >
                 <Input.TextArea className={formclasses.input} allowClear />
               </Form.Item>
