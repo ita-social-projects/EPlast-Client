@@ -45,32 +45,34 @@ const AddNewRegionFormPage = () => {
     try {
       setLoading(true);
 
-      if (!await checkIfNameExists(values.regionName)) {
-        const newRegion: RegionProfile = {
-          id: 0,
-          regionName: values.regionName,
-          description: values.description,
-          phoneNumber: values.phoneNumber,
-          email: values.email,
-          link: values.link,
-          logo: logo,
-          street: values.street,
-          houseNumber: values.houseNumber,
-          officeNumber: values.officeNumber,
-          postIndex: values.postIndex,
-          city: values.city,
-          isActive: true
-        };
-        await createRegion(newRegion);
-        form.resetFields();
+      await checkIfNameExists(values.regionName).then(async (response) =>{
+        if (!response.data) {
+          const newRegion: RegionProfile = {
+            id: 0,
+            regionName: values.regionName,
+            description: values.description,
+            phoneNumber: values.phoneNumber,
+            email: values.email,
+            link: values.link,
+            logo: logo,
+            street: values.street,
+            houseNumber: values.houseNumber,
+            officeNumber: values.officeNumber,
+            postIndex: values.postIndex,
+            city: values.city,
+            isActive: true
+          };
+          await createRegion(newRegion);
+          form.resetFields();
+    
+          notificationLogic("success", successfulCreateAction("Округу"));
+          history.push("/regions");  
+        } else {
+          setLoading(false);
   
-        notificationLogic("success", successfulCreateAction("Округу"));
-        history.push("/regions");  
-      } else {
-        setLoading(false);
-
-        showRegionNameExistsModal();
-      }
+          showRegionNameExistsModal();
+        }  
+      });
     }
     catch (error) {
       notificationLogic("error", failCreateAction("округу"));

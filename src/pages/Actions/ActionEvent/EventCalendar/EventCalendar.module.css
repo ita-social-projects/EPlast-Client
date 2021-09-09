@@ -55,4 +55,10 @@
 .title{
    width: 300;
    overflow: hidden;
+   word-break: break-all;
+}
+
+.description{
+    overflow: hidden;
+    word-break: break-all; 
 }

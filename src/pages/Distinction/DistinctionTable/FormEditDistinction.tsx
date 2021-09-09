@@ -16,13 +16,13 @@ import adminApi from "../../../api/adminApi";
 import Distinction from "../Interfaces/Distinction";
 import{
   emptyInput,
-  maxLength,
   failEditAction,
   maxNumber,
   minNumber
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 moment.locale("uk-ua");
 
 interface Props {
@@ -267,16 +267,7 @@ const FormEditDistinction = ({
                 labelCol={{ span: 24 }}
                 name="reporter"
                 initialValue={distinction.reporter}
-                rules={[
-                  { 
-                    required: true, 
-                    message: emptyInput() 
-                  },
-                  {
-                    max: 100,
-                    message: maxLength(100),
-                  },
-                ]}
+                rules={descriptionValidation.Reporter}
               >
                 <Input
                   allowClear
@@ -316,16 +307,7 @@ const FormEditDistinction = ({
                 labelCol={{ span: 24 }}
                 name="reason"
                 initialValue={distinction.reason}
-                rules={[
-                  { 
-                    required: true, 
-                    message: emptyInput() 
-                  },
-                  {
-                    max: 1000,
-                    message: maxLength(1000),
-                  },
-                ]}
+                rules={descriptionValidation.Description}
               >
                 <Input.TextArea
                   allowClear

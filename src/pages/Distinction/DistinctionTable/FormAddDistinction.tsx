@@ -15,12 +15,12 @@ import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
-  maxLength,
   maxNumber,
   minNumber,
   incorrectData
 } from "../../../components/Notifications/Messages"
 import precautionApi from "../../../api/precautionApi";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 type FormAddDistinctionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -222,16 +222,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Подання від"
             labelCol={{ span: 24 }}
             name="reporter"
-            rules={[ 
-              { 
-                required: true, 
-                message: emptyInput() 
-              },
-              {
-                max: 100,
-                message: maxLength(100),
-              },
-            ]}
+            rules={descriptionValidation.Reporter}
           >
             <Input
               allowClear
@@ -271,16 +262,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Обгрунтування"
             labelCol={{ span: 24 }}
             name="reason"
-            rules={[ 
-              { 
-                required: true, 
-                message: emptyInput() 
-              },
-              {
-                max: 1000,
-                message: maxLength(1000),
-              },
-            ]}
+            rules={descriptionValidation.Description}
           >
             <Input.TextArea
               allowClear

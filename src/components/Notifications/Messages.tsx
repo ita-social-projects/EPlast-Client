@@ -76,6 +76,14 @@ export const successfulCancelAction = (name:string, itemName?:string)=>{
     return itemName ? `${name} ${itemName} скасовано` : `${name} скасовано`;
 }; 
 
+export const successfulArchiveAction = (name:string)=>{
+    return `${name} успішно заархівовано`;
+}; 
+
+export const successfulUnarchiveAction = (name:string)=>{
+    return `${name} успішно розархівовано`;
+}; 
+
 export const successfulAddDegree = ()=>{
     return `Ступінь було успішно додано`;
 }; 

@@ -7,7 +7,6 @@ import {
   Input,
   Upload,
   Button,
-  AutoComplete,
   Row,
   Col,
   Mentions
@@ -35,17 +34,15 @@ import {
   fileIsNotUpload,
   possibleFileExtensions,
   fileIsTooBig,
-  maxLength,
   successfulDeleteAction,
-  inputOnlyWhiteSpaces,
 } from "../../components/Notifications/Messages"
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 
 type FormAddDecisionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: () => void;
 };
 
-const notOnlyWhiteSpaces = /^\s*\S.*$/;
 const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
   const { setVisibleModal, onAdd } = props;
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -202,20 +199,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             labelCol={{ span: 24 }}
             label="Назва рішення"
             name="name"
-            rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-              {
-                max: 60,
-                message: maxLength(60)
-              },
-              {
-                pattern: notOnlyWhiteSpaces,
-                message: inputOnlyWhiteSpaces()
-              },
-            ]}
+            rules={descriptionValidation.DecisionAndDocumentName}
           >
             <Input className={formclasses.inputField} />
           </Form.Item>
@@ -255,16 +239,8 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Тема рішення"
             labelCol={{ span: 24 }}
             name="decisionTarget"
-            rules={[
-              {
-                required: true,
-                message: emptyInput()
-              },
-              {
-                max: 255,
-                message: maxLength(255)
-              },
-            ]}>
+            rules={descriptionValidation.DecisionTarget}
+          >
             <Select
               className={formclasses.selectField}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
@@ -286,7 +262,12 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             name="datepicker"
             label="Дата рішення"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              }
+            ]}
           >
             <DatePicker
               format="DD.MM.YYYY"
@@ -304,16 +285,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Текст рішення"
             labelCol={{ span: 24 }}
             name="description"
-            rules={[
-              {
-                required: true,
-                message: emptyInput()
-              },
-              {
-                max: 1000,
-                message: maxLength(1000)
-              },
-            ]}
+            rules={descriptionValidation.Description}
           >
             <Mentions
               loading={loadingUserStatus}
@@ -391,7 +363,12 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Статус рішення"
             labelCol={{ span: 24 }}
             name="decisionStatusType"
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              }
+            ]}
           >
             <Select
               placeholder="Оберіть статус"
