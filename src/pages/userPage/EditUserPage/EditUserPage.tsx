@@ -181,7 +181,7 @@ export default function () {
       { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
     ],
     placeOfStudy: [
-      { max: 50, message: maxLength(50) },
+      { max: 100, message: maxLength(100) },
       { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
     ],
     speciality: [
