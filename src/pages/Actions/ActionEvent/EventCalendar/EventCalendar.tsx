@@ -81,6 +81,10 @@ export default function () {
                     <FullCalendar
                         plugins={[dayGridPlugin]}
                         initialView="dayGridMonth"
+                        buttonText= {
+                           
+                            {today: 'Поточний місяць'}
+                           }
                         headerToolbar={{
                             left: 'prev,next today',
                             center: 'title',
