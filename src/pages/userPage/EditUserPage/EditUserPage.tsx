@@ -418,10 +418,10 @@ export default function () {
   };
 
   const multiplierMinToMiliseconds = 60000;
-  const handleDate = (datestr : string):Date =>{
-    var date = new Date(datestr);
-    return new Date( date.getTime() + Math.abs(date.getTimezoneOffset()*multiplierMinToMiliseconds) )
-  } 
+  const handleDate = (datestr: string): Date => {
+      var date = new Date(datestr);
+      return new Date(date.getTime() + Math.abs(date.getTimezoneOffset() * multiplierMinToMiliseconds))
+  }
 
   const handleSubmit = async (values: any) => {
     const newUserProfile = {
