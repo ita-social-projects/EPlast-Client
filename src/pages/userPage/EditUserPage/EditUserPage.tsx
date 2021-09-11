@@ -417,6 +417,12 @@ export default function () {
     setPhotoName(defaultPhotoName);
   };
 
+  const multiplierMinToMiliseconds = 60000;
+  const handleDate = (datestr : string):Date =>{
+    var date = new Date(datestr);
+    return new Date( date.getTime() + Math.abs(date.getTimezoneOffset()*multiplierMinToMiliseconds) )
+  } 
+
   const handleSubmit = async (values: any) => {
     const newUserProfile = {
       user: {
@@ -426,7 +432,7 @@ export default function () {
         lastName: values.lastName?.trim(),
         fatherName: values.fatherName?.trim(),
         phoneNumber: phoneNumber?.trim(),
-        birthday: form?.getFieldValue('birthday'),
+        birthday: handleDate(form?.getFieldValue('birthday')),
         imagePath: photoName,
         pseudo: values.pseudo?.trim(),
         publicPoliticalActivity: values.publicPoliticalActivity?.trim(),
