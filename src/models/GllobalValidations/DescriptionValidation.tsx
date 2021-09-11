@@ -288,7 +288,7 @@ export const descriptionValidation = ({
             message: maxLength(1000),
         },    
     ],
-    ShortDescription: [
+    AdminType: [
         {
             pattern: /^\s*\S.*$/,
             message: inputOnlyWhiteSpaces(),
