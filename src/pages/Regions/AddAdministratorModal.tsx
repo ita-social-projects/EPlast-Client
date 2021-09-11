@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
 import { 
     Button, 
     Modal, 
-    Skeleton, 
-    Spin, 
     Form, 
     AutoComplete,
     Row,
@@ -12,7 +9,7 @@ import {
     DatePicker
 } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { emptyInput } from "../../components/Notifications/Messages"
+import { emptyInput, inputOnlyWhiteSpaces } from "../../components/Notifications/Messages"
 import { 
   getHead, 
   getHeadDeputy, 
@@ -244,7 +241,16 @@ const AddAdministratorModal = (props: Props) => {
           label="Виберіть тип адміністрування"
           labelCol={{ span: 24 }}
           initialValue={props.admin.adminType.adminTypeName}
-          rules={[{ required: true, message: emptyInput() }]}
+          rules={[
+            { 
+              required: true, 
+              message: emptyInput() 
+            },
+            {
+              pattern: /^\s*\S.*$/,
+              message: inputOnlyWhiteSpaces()
+            },
+          ]}
         >
           <AutoComplete
             className="adminTypeSelect"

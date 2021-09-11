@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from "react";
 import classes from "./Form.module.css";
 import {Form, DatePicker, AutoComplete, Select, Button } from "antd";
-import notificationLogic from "../../components/Notifications/Notification";
 import regionsApi from "../../api/regionsApi";
-import NotificationBoxApi from "../../api/NotificationBoxApi";
 import userApi from "../../api/UserApi";
 import moment from "moment";
 import {
-  emptyInput,
+  emptyInput, inputOnlyWhiteSpaces,
 } from "../../components/Notifications/Messages"
 import AdminType from "../../models/Admin/AdminType";
 import RegionUser from "../../models/Region/RegionUser";
-import User from "../Distinction/Interfaces/User";
 import "./AddRegionSecretaryForm.less";
 import { Roles } from "../../models/Roles/Roles";
 
@@ -146,6 +143,10 @@ const AddNewSecretaryForm = (props: any) => {
           {
             required: true,
             message: <div className="formItemExplain">{emptyInput()}</div>,
+          },
+          {
+            pattern: /^\s*\S.*$/,
+            message: <div className="formItemExplain">{inputOnlyWhiteSpaces()}</div>,
           },
         ]}
       >
