@@ -41,7 +41,6 @@ const AccessToManage = (roles: string[]): boolean => {
     }
     return false;
 }
-
 const RenderEventIcons = ({ event,
     isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
     isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
@@ -172,14 +171,8 @@ const RenderEventIcons = ({ event,
             onClick={() => setAdminsVisibility(true)}
         />
     </Tooltip>)
-
-
-
-    return eventIcons
+   return eventIcons
 }
-
-
-
 const RenderRatingSystem = ({
     event, canEstimate, isEventFinished, participantAssessment
 }: EventDetails
@@ -192,9 +185,7 @@ const RenderRatingSystem = ({
         return <Rate allowHalf disabled defaultValue={event.rating} onChange={(value) => console.log(value)} />
     }
 }
-
 const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any) => {
-
     const history = useHistory();
     return <List className="event-admin-card"
         grid={{
@@ -222,7 +213,6 @@ const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any) => {
         )}
     />
 }
-
 const SortedEventInfo = ({ event, setApprovedEvent, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer, setVisibleDrawer }: Props) => {
     const [adminsVisible, setAdminsVisibility] = useState(false);
     const { id } = useParams();
@@ -248,7 +238,7 @@ const SortedEventInfo = ({ event, setApprovedEvent, subscribeOnEvent, unSubscrib
         });
     };
 
-    return <Row >
+      return <Row >
         <Col className="eventActions">
             <img
                 className="imgEvent"
