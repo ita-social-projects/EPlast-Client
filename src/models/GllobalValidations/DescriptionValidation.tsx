@@ -95,7 +95,7 @@ export const descriptionValidation = ({
         {
             max: 500,
             message: maxLength(500),
-        },        
+        },
     ],
     RegionEmail: [
         {
