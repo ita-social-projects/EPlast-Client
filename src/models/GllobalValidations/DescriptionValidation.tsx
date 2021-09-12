@@ -40,6 +40,10 @@ export const descriptionValidation = ({
             max: 50,
             message: maxLength(50),
         },    
+        {
+            required: true,
+            message: emptyInput(),
+        },   
     ],
     CityName: [
         {
@@ -91,7 +95,7 @@ export const descriptionValidation = ({
         {
             max: 500,
             message: maxLength(500),
-        },    
+        },        
     ],
     RegionEmail: [
         {
@@ -115,7 +119,11 @@ export const descriptionValidation = ({
         {
             max: 50,
             message: maxLength(50),
-        }
+        },
+        {
+            required: true,
+            message: emptyInput(),
+        },   
     ],
     Phone: {
         pattern: /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/,
@@ -287,6 +295,10 @@ export const descriptionValidation = ({
             max: 1000, 
             message: maxLength(1000),
         },    
+        {
+            required: true,
+            message: emptyInput(),
+        },   
     ],
     ShortDescription: [
         {
