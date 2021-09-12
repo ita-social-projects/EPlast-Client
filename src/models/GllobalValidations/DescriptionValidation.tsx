@@ -300,7 +300,7 @@ export const descriptionValidation = ({
             message: emptyInput(),
         },   
     ],
-    ShortDescription: [
+    AdminType: [
         {
             pattern: /^\s*\S.*$/,
             message: inputOnlyWhiteSpaces(),

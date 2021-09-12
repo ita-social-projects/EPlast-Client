@@ -10,7 +10,7 @@ import {
   getAllAdmins,
 } from "../../../api/clubsApi";
 import{
-  emptyInput,
+  emptyInput, inputOnlyWhiteSpaces,
 } from "../../../components/Notifications/Messages"
 import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
@@ -236,7 +236,16 @@ const AddAdministratorModal = (props: Props) => {
           label="Виберіть тип адміністрування"
           labelCol={{ span: 24 }}
           initialValue={props.admin.adminType.adminTypeName}
-          rules={[{ required: true, message: emptyInput() }]}
+          rules={[
+            { 
+              required: true, 
+              message: emptyInput() 
+            },
+            {
+              pattern: /^\s*\S.*$/,
+              message: inputOnlyWhiteSpaces()
+            },
+          ]}
         >
           <AutoComplete
             className="adminTypeSelect"

@@ -238,7 +238,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             label="Короткий зміст (опис) документу"
             labelCol={{ span: 24 }}
             name="description"
-            rules={descriptionValidation.ShortDescription}
+            rules={descriptionValidation.DescriptionAndQuestions}
           >
             <Input.TextArea allowClear className={formclasses.inputField} />
           </Form.Item>
