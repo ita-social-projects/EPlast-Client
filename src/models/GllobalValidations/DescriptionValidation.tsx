@@ -294,11 +294,7 @@ export const descriptionValidation = ({
         { 
             max: 1000, 
             message: maxLength(1000),
-        },    
-        {
-            required: true,
-            message: emptyInput(),
-        },   
+        }
     ],
     AdminType: [
         {
