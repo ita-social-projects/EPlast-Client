@@ -13,7 +13,7 @@ import notificationLogic from "./../../../components/Notifications/Notification"
 import moment from "moment";
 import "moment/locale/uk";
 import userApi from "../../../api/UserApi";
-import{emptyInput} from "../../../components/Notifications/Messages"
+import{emptyInput, inputOnlyWhiteSpaces} from "../../../components/Notifications/Messages"
 import { Roles } from "../../../models/Roles/Roles";
 moment.locale("uk-ua");
 
@@ -232,7 +232,16 @@ const AddAdministratorModal = (props: Props) => {
           label="Виберіть тип адміністрування"
           labelCol={{ span: 24 }}
           initialValue={props.admin.adminType.adminTypeName}
-          rules={[{ required: true, message: emptyInput() }]}
+          rules={[
+            { 
+              required: true, 
+              message: emptyInput() 
+            },
+            {
+              pattern: /^\s*\S.*$/,
+              message: inputOnlyWhiteSpaces()
+            },
+          ]}
         >
           <AutoComplete
             className="adminTypeSelect"
