@@ -6,7 +6,7 @@ import {
 } from "../../../api/citiesApi";
 import moment from "moment";
 import {
-  emptyInput,
+  emptyInput, inputOnlyWhiteSpaces,
 } from "../../../components/Notifications/Messages"
 import CityAdmin from "../../../models/City/CityAdmin";
 import AdminType from "../../../models/Admin/AdminType";
@@ -124,6 +124,10 @@ const AddCitiesNewSecretaryForm = (props: any) => {
           {
             required: true,
             message: <div className="formItemExplain">{emptyInput()}</div>,
+          },
+          {
+            pattern: /^\s*\S.*$/,
+            message: <div className="formItemExplain">{inputOnlyWhiteSpaces()}</div>,
           },
         ]}
       >
