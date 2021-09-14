@@ -68,7 +68,7 @@ const ChangeUserCityModal = ({
           onOk={handleClick}
           onCancel={handleClick}>
           <p> Користувач  <b>{user.firstName} {user.lastName} </b>не є членом станиці!{" "}</p>
-          <p>В провід станиці можна додати тільки дійсного члена!</p>
+          <p>В провід станиці можна додати лише користувача, який є хоча б прихильником!</p>
         </Modal>  
       )};
   </div>
