@@ -95,7 +95,7 @@ export const descriptionValidation = ({
         {
             max: 500,
             message: maxLength(500),
-        },        
+        },
     ],
     RegionEmail: [
         {
@@ -294,11 +294,7 @@ export const descriptionValidation = ({
         { 
             max: 1000, 
             message: maxLength(1000),
-        },    
-        {
-            required: true,
-            message: emptyInput(),
-        },   
+        }
     ],
     AdminType: [
         {
