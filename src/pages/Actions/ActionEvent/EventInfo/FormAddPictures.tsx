@@ -108,7 +108,7 @@ const FormAddPictures = ({eventId, updateGallery, picturesCount}: Props) => {
                     accept=".jpg,.jpeg,.png"
                     customRequest={dummyRequest}
                 >
-                    <Tooltip placement="right" title={`Ліміт фотографій у галереї становить ${MaxPicturesCount} штук.`}>
+                    <Tooltip placement="right" title={`Ліміт завантаження до: ${MaxPicturesCount} зображень.`}>
                         <Button>
                             <UploadOutlined/> Додати фотографії
                         </Button>
