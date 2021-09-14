@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import {useHistory} from "react-router-dom";
-import {Card, Tooltip} from 'antd';
+import { useHistory } from "react-router-dom";
+import { Card, Tooltip } from 'antd';
 import EventLogo from '../../../../assets/images/handshake.png'
 import userApi from "../../../../api/UserApi";
 
@@ -18,17 +18,15 @@ import {
     UserAddOutlined
 } from '@ant-design/icons';
 // eslint-disable-next-line import/named
-import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirm} from "../../EventsModals";
+import { showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirm } from "../../EventsModals";
 
 // eslint-disable-next-line import/no-cycle
-import {CardProps} from "../SortedEvents";
+import { CardProps } from "../SortedEvents";
 import { Roles } from '../../../../models/Roles/Roles';
-
-
-
+import extendedTitleTooltip from '../../../../components/Tooltip';
 
 const classes = require('./EventCard.module.css');
-
+const eventNameMaxLength = 14;
 interface Props {
     item: CardProps;
     removeEvent: (id: number) => void
@@ -37,28 +35,28 @@ interface Props {
 }
 
 const EventCard = ({
-                       item: {
-                           eventName, eventId, isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
-                           isUserRejectedParticipant, isUserUndeterminedParticipant,
-                           isEventApproved, isEventFinished, isEventNotApproved, eventAdmins, eventParticipants
-                       },
-                       removeEvent,
-                       subscribeOnEvent,
-                       unsubscribeOnEvent
-                   }: Props) => {
-    const {Meta} = Card;
+    item: {
+        eventName, eventId, isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
+        isUserRejectedParticipant, isUserUndeterminedParticipant,
+        isEventApproved, isEventFinished, isEventNotApproved, eventAdmins, eventParticipants
+    },
+    removeEvent,
+    subscribeOnEvent,
+    unsubscribeOnEvent
+}: Props) => {
+    const { Meta } = Card;
     const history = useHistory();
-    const [canSubscribe] = useState(userApi.getActiveUserRoles().filter(r => r != Roles.Supporter && r != Roles.RegisteredUser).length!=0);
+    const [canSubscribe] = useState(userApi.getActiveUserRoles().filter(r => r != Roles.Supporter && r != Roles.RegisteredUser).length != 0);
 
 
     const RenderEventsIcons = (): React.ReactNode[] => {
         const eventIcons: React.ReactNode[] = []
         if (isUserEventAdmin) {
             eventIcons.push(<Tooltip title="Ви адмін!">
-                <SettingTwoTone twoToneColor="#3c5438" key="setting"/>
+                <SettingTwoTone twoToneColor="#3c5438" key="setting" />
             </Tooltip>)
             eventIcons.push(<Tooltip title="Редагувати">
-                <EditTwoTone twoToneColor="#3c5438" key="edit"/>
+                <EditTwoTone twoToneColor="#3c5438" key="edit" />
             </Tooltip>)
             eventIcons.push(<Tooltip title="Видалити">
                 <DeleteTwoTone onClick={() => showDeleteConfirm({
@@ -69,22 +67,22 @@ const EventCard = ({
                     eventAdmins,
                     eventParticipants
                 })} twoToneColor="#8B0000"
-                               key="delete"/>
+                    key="delete" />
             </Tooltip>)
         } else if (isUserParticipant && !isEventFinished) {
             if (isUserRejectedParticipant) {
                 eventIcons.push(<Tooltip title="Вашу заявку на участь у даній події відхилено">
-                    <StopOutlined style={{color: "#8B0000"}} key="banned"/>
+                    <StopOutlined style={{ color: "#8B0000" }} key="banned" />
                 </Tooltip>)
             } else {
                 if (isUserApprovedParticipant) {
                     eventIcons.push(<Tooltip title="Учасник">
-                        <CheckCircleTwoTone twoToneColor="#73bd79" key="participant"/>
+                        <CheckCircleTwoTone twoToneColor="#73bd79" key="participant" />
                     </Tooltip>)
                 }
                 if (isUserUndeterminedParticipant) {
                     eventIcons.push(<Tooltip title="Ваша заявка розглядається">
-                        <QuestionCircleTwoTone twoToneColor="#FF8C00" key="underReview"/>
+                        <QuestionCircleTwoTone twoToneColor="#FF8C00" key="underReview" />
                     </Tooltip>)
                 }
                 eventIcons.push(<Tooltip title="Відписатися від події">
@@ -96,8 +94,8 @@ const EventCard = ({
                         eventAdmins,
                         eventParticipants
                     })}
-                                        style={{color: "#8B0000"}}
-                                        key="unsubscribe"/>
+                        style={{ color: "#8B0000" }}
+                        key="unsubscribe" />
                 </Tooltip>)
             }
         } else if (!isEventFinished && canSubscribe) {
@@ -110,23 +108,23 @@ const EventCard = ({
                     eventAdmins,
                     eventParticipants
                 })}
-                                 style={{color: "#3c5438"}}
-                                 key="unsubscribe"/>
+                    style={{ color: "#3c5438" }}
+                    key="unsubscribe" />
             </Tooltip>)
         }
         if (isEventFinished) {
             eventIcons.push(<Tooltip title="Завершений(-на)">
-                <FlagTwoTone twoToneColor="#3c5438" key="finished"/>
+                <FlagTwoTone twoToneColor="#3c5438" key="finished" />
             </Tooltip>)
         }
         if (isEventApproved) {
             eventIcons.push(<Tooltip title="Затверджено">
-                <NotificationTwoTone twoToneColor="#3c5438" key="approved"/>
+                <NotificationTwoTone twoToneColor="#3c5438" key="approved" />
             </Tooltip>)
         }
         if (isEventNotApproved) {
             eventIcons.push(<Tooltip title="Не затверджено">
-                <ToolTwoTone twoToneColor="#3c5438" key="notApproved"/>
+                <ToolTwoTone twoToneColor="#3c5438" key="notApproved" />
             </Tooltip>)
         }
         return eventIcons
@@ -135,9 +133,9 @@ const EventCard = ({
     return (
 
         <div className={classes.background}>
-            
+
             <div className={classes.actionsWrapper}>
-            <Card
+                <Card
                     hoverable
                     className={classes.cardStyles}
                     cover={
@@ -153,7 +151,9 @@ const EventCard = ({
                     }
                 >
                     <Meta
-                        title={eventName}
+                        title={
+                            extendedTitleTooltip(eventNameMaxLength, eventName)
+                        }
                     />
                 </Card>
             </div>
