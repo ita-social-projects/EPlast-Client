@@ -204,7 +204,7 @@ export const descriptionValidation = ({
     },
     Inputs: [
         {
-            pattern: /^(\s*\S+\s*){1,50}$/,
+            pattern: /^\s*\S.*$/,
             message: inputOnlyWhiteSpaces(),
         },
         { 
