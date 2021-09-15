@@ -317,3 +317,14 @@ export const descriptionValidation = ({
         },    
     ],
 });
+
+export const sameNameValidator = (org:string, array: any[] | undefined) => { 
+    return {
+        validator: (_ : object, value : string) => 
+        value == undefined || String(value).length == 0
+            ? Promise.resolve()
+            : (array as any[]).find(x => x === String(value).trim()) === undefined
+                ? Promise.resolve()
+                : Promise.reject(org + ' з назвою \"' + String(value).trim() + '\" вже існує')
+    } 
+}
