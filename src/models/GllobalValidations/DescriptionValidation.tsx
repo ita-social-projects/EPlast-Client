@@ -204,7 +204,7 @@ export const descriptionValidation = ({
     },
     Inputs: [
         {
-            pattern:  /^(\s*\S+\s*){1,50}$/,
+            pattern: /^(\s*\S+\s*){1,50}$/,
             message: inputOnlyWhiteSpaces(),
         },
         { 
@@ -246,7 +246,7 @@ export const descriptionValidation = ({
     ],
     DescriptionAndQuestions: [
         {
-            pattern:  /^(\s*\S+\s*){1,200}$/,
+            pattern: /^\s*\S.*$/,
             message: inputOnlyWhiteSpaces(),
         },
         {
@@ -260,7 +260,7 @@ export const descriptionValidation = ({
     ],
     Reason: [
         {
-            pattern:  /^(\s*\S+\s*){1,500}$/,
+            pattern: /^\s*\S.*$/,
             message: inputOnlyWhiteSpaces(),
         },
         {
@@ -274,7 +274,7 @@ export const descriptionValidation = ({
     ],
     Description: [
         {
-            pattern:  /^(\s*\S+\s*){1,1000}$/,
+            pattern: /^\s*\S.*$/,
             message: inputOnlyWhiteSpaces(),
         },
         {
