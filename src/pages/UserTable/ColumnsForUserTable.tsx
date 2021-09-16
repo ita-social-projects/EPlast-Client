@@ -67,8 +67,16 @@ const ColumnsForUserTable = (props: Props): any[] => {
   return [
     {
       title: <Row className="tableHeader"><Col>№</Col><Col><SortDirection sort={1} /></Col></Row>,
-      render: (text: any) => {
-        return SortColumnHighlight(1, text);
+      render: (id: any) => {
+        return SortColumnHighlight(1, 
+          <div className={styles.divWrapper}>
+            <div className={styles.tagText}>
+              <Tooltip placement="top" title={id}>
+                {id}
+              </Tooltip>
+            </div>
+          </div>
+        );
       },
       dataIndex: "userSystemId",
       fixed: true,
