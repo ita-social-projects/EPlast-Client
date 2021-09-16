@@ -165,7 +165,7 @@ const FormEditPrecaution = ({
   return (
     <div>
       {!loading && (
-        <Form name="basic" onFinish={handleFinish} form={form}>
+        <Form name="basic" onFinish={handleFinish} form={form} id='area' style={{position: 'relative'}}>
           <Row justify="start" gutter={[12, 0]}>
             <Col md={24} xs={24}>
               <Form.Item
@@ -221,6 +221,7 @@ const FormEditPrecaution = ({
                   className={formclasses.selectField}
                   showSearch
                   onSelect={distChange}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
                   {distData?.map((o) => (
                     <Select.Option key={o.id} value={JSON.stringify(o)}>
@@ -253,6 +254,7 @@ const FormEditPrecaution = ({
                   onSelect={userChange}
                   showSearch
                   loading={loadingUserStatus}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
                   {userData?.map((o) => (
                       <Select.Option 
@@ -304,6 +306,8 @@ const FormEditPrecaution = ({
                 <DatePicker
                   format={dateFormat}
                   className={formclasses.selectField}
+                  getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
+                  popupStyle={{position: 'absolute'}}
                 />
               </Form.Item>
             </Col>
@@ -345,7 +349,11 @@ const FormEditPrecaution = ({
                   },
                 ]}
               >
-                <Select className={formclasses.selectField} showSearch>
+                <Select 
+                  className={formclasses.selectField} 
+                  showSearch
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                >
                   <Select.Option key="9" value="Прийнято">Прийнято</Select.Option>
                   <Select.Option key="10" value="Потверджено">Потверджено</Select.Option>
                   <Select.Option key="11" value="Скасовано">Скасовано</Select.Option>

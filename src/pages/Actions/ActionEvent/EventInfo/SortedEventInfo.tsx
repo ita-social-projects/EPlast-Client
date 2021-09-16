@@ -99,7 +99,7 @@ const RenderEventIcons = ({ event,
                     className="icon" key="delete" />
             </Tooltip>)
         }
-        else if (event.eventStatus === "Завершений(-на)") {
+        else if (event.eventStatus === "Завершено") {
             eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
                 <DeleteTwoTone twoToneColor="#8B0000"
                     onClick={() => showDeleteConfirmForSingleEvent({
@@ -112,7 +112,7 @@ const RenderEventIcons = ({ event,
                     className="icon" key="delete" />
             </Tooltip>)
         }
-        else if (event.eventStatus === "Затверджений(-на)" && roles.includes(Roles.Admin)) {
+        else if (event.eventStatus === "Затверджено" && roles.includes(Roles.Admin)) {
             eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
                 <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
                     onClick={() => setVisibleDrawer(true)} />
@@ -254,7 +254,7 @@ const SortedEventInfo = ({ event, setApprovedEvent, subscribeOnEvent, unSubscrib
         </Col>
         <Modal
             visible={adminsVisible}
-            title='Адміністрація події.'
+            title='Адміністрація події'
             footer={null}
             onCancel={() => {
                 setAdminsVisibility(false);
