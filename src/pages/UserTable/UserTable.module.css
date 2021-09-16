@@ -39,3 +39,20 @@
     width: 100%;
   }
 }
+
+.divWrapper {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: auto;
+}
+
+.tagText {
+  max-width: 100%;  
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.parentDiv {  
+  display: flex;
+  align-items: center; 
+}
