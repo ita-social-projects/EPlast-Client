@@ -169,7 +169,8 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             ]}
           >
             <Select 
-              className={formclasses.selectField} showSearch
+              className={formclasses.selectField} 
+              showSearch
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
               {distData?.map((o) => (
@@ -242,7 +243,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             rules={[
               { 
                 required: true, 
-                message: incorrectData 
+                message: emptyInput()  
               }
             ]}
           >
