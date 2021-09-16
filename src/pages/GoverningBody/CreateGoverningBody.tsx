@@ -115,14 +115,12 @@ const CreateGoverningBody = () => {
         response.logo = logo.data;
       }
       setGoverningBody(response);
-      console.log(response)
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    getGoverningBodyNames()
     if (+id) {
       getGoverningBody();
     }
