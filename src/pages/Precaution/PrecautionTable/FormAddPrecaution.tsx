@@ -176,7 +176,8 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             ]}
           >
             <Select 
-              className={formclasses.selectField} showSearch
+              className={formclasses.selectField} 
+              showSearch
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
               {distData?.map((o) => (

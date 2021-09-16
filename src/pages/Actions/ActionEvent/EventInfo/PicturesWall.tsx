@@ -61,7 +61,7 @@ const PicturesWall = ({pictures, removePicture}: Props) => {
                     }
                     <Modal
                         visible={previewVisible}
-                        title='Перегляд картинки.'
+                        title='Перегляд картинки'
                         footer={null}
                         onCancel={()=>setPreviewVisibility(false)}
                     >
