@@ -122,7 +122,6 @@ const CreateGoverningBody = () => {
   };
 
   useEffect(() => {
-    getGoverningBodyNames()
     if (+id) {
       getGoverningBody();
     }
