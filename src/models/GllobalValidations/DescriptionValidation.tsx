@@ -318,7 +318,7 @@ export const descriptionValidation = ({
     ],
 });
 
-export const sameNameValidator = (org:string, array: any[] | undefined) => { 
+export const sameNameValidator = (org:string, array: string[] | undefined) => { 
     return {
         validator: (_ : object, value : string) => 
         value == undefined || String(value).length == 0
