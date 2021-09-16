@@ -156,7 +156,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
       title: "Email",
       dataIndex: "email",
       width: 160,
-      render: (email: string) => {
+      render: (email: any) => {
         return (
           <div className={styles.divWrapper}>
             <div className={styles.tagText}>
@@ -222,7 +222,6 @@ const ColumnsForUserTable = (props: Props): any[] => {
       width: 150,
       render: (userPlastDegreeName: any, record: any) => {
         if (userPlastDegreeName !== null && userPlastDegreeName.length > 0) {
-
           if (record.gender?.name !== null && record.gender?.name == "Чоловік") {
             return SortColumnHighlight(8, 
               <div className={styles.parentDiv}>
@@ -254,7 +253,6 @@ const ColumnsForUserTable = (props: Props): any[] => {
               </div>
             );
           }
-
         } else {
           return SortColumnHighlight(8, "");
         }
