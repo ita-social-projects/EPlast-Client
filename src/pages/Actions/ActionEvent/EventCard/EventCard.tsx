@@ -113,7 +113,7 @@ const EventCard = ({
             </Tooltip>)
         }
         if (isEventFinished) {
-            eventIcons.push(<Tooltip title="Завершений(-на)">
+            eventIcons.push(<Tooltip title="Завершено">
                 <FlagTwoTone twoToneColor="#3c5438" key="finished" />
             </Tooltip>)
         }

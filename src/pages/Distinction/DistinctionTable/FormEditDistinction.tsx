@@ -156,7 +156,7 @@ const FormEditDistinction = ({
   return (
     <div>
       {!loading && (
-        <Form name="basic" onFinish={handleFinish} form={form}>
+        <Form name="basic" onFinish={handleFinish} form={form} id='area' style={{position: 'relative'}}>
           <Row justify="start" gutter={[12, 0]}>
             <Col md={24} xs={24}>
               <Form.Item
@@ -212,6 +212,7 @@ const FormEditDistinction = ({
                   className={formclasses.selectField}
                   showSearch
                   onSelect={distChange}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
                   {distData?.map((o) => (
                     <Select.Option key={o.id} value={JSON.stringify(o)}>
@@ -244,6 +245,7 @@ const FormEditDistinction = ({
                   onSelect={userChange}
                   showSearch
                   loading={loadingUserStatus}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
                   {userData?.map((o) => (
                       <Select.Option 
@@ -295,6 +297,8 @@ const FormEditDistinction = ({
                 <DatePicker
                   format={dateFormat}
                   className={formclasses.selectField}
+                  getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
+                  popupStyle={{position: 'absolute'}}
                 />
               </Form.Item>
             </Col>
