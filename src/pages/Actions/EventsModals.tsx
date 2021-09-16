@@ -220,7 +220,7 @@ export const showApproveConfirm = ({eventId, eventName, eventStatusId, setApprov
             approveEvent()
                 .then(() => {
                     Success('Ви успішно затвердили дану подію.')
-                    if (eventStatusId==="Затверджений(-на)") {
+                    if (eventStatusId==="Затверджено") {
                         // @ts-ignore
                         successCallback()
                     } 

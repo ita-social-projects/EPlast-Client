@@ -23,6 +23,7 @@ import {
   getGoverningBodyById,
   getGoverningBodyLogo,
   updateGoverningBody,
+  getGoverningBodiesList
 } from "../../api/governingBodiesApi";
 import "../City/CreateCity/CreateCity.less";
 import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfile";
@@ -40,7 +41,7 @@ import {
   failCreateAction,
   failUpdateAction,
 } from "../../components/Notifications/Messages"
-import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, sameNameValidator} from "../../models/GllobalValidations/DescriptionValidation";
 
 const CreateGoverningBody = () => {
   const { id } = useParams();
@@ -48,6 +49,12 @@ const CreateGoverningBody = () => {
 
   const [loading, setLoading] = useState(false);
   const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(new GoverningBodyProfile());
+  const [governingBodyNames, setGoverningBodyNames] = useState<string[] | undefined>();
+  const orgName: string = 'Керівний орган'
+  
+  const getGoverningBodyNames = async () => {
+    setGoverningBodyNames((await getGoverningBodiesList() as any[]).map(x => x.governingBodyName));
+  }
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -108,6 +115,7 @@ const CreateGoverningBody = () => {
   };
 
   useEffect(() => {
+    getGoverningBodyNames()
     if (+id) {
       getGoverningBody();
     }
@@ -132,18 +140,16 @@ const CreateGoverningBody = () => {
   };
 
   const CreateGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
-    const responsePromise = createGoverningBody(JSON.stringify(newGoverningBody));
-    const response = await responsePromise;
-    governingBody.id = response.data;
-
-    return responsePromise
-      .then(() => {
-        notificationLogic("success", successfulCreateAction("Керівний орган"));
-        history.replace(`/governingBodies/${governingBody.id}`);
-      })
-      .catch(() => {
-        notificationLogic("error", failCreateAction("керівний орган"));
-      });
+    createGoverningBody(JSON.stringify(newGoverningBody))
+    .then((response) => {
+      governingBody.id = response.data;
+      notificationLogic("success", successfulCreateAction("Керівний орган"));
+      history.replace(`/governingBodies/${governingBody.id}`);
+    })
+    .catch(() => {
+      getGoverningBodyNames()
+      notificationLogic("error", failCreateAction("керівний орган"));
+    });
   };
 
   const EditGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
@@ -196,7 +202,7 @@ const CreateGoverningBody = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={governingBody.governingBodyName}
-                rules={descriptionValidation.Name}
+                rules={[...descriptionValidation.Name, sameNameValidator(orgName,governingBodyNames)]}
               >
                 <Input value={governingBody.governingBodyName} maxLength={51} />
               </Form.Item>
@@ -207,7 +213,7 @@ const CreateGoverningBody = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={governingBody.description}
-                rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
+                rules={descriptionValidation.Description}
               >
                 <Input value={governingBody.description} maxLength={1001} />
               </Form.Item>

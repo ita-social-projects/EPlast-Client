@@ -40,6 +40,10 @@ export const descriptionValidation = ({
             max: 50,
             message: maxLength(50),
         },    
+        {
+            required: true,
+            message: emptyInput(),
+        },   
     ],
     CityName: [
         {
@@ -91,7 +95,7 @@ export const descriptionValidation = ({
         {
             max: 500,
             message: maxLength(500),
-        },    
+        },
     ],
     RegionEmail: [
         {
@@ -115,7 +119,11 @@ export const descriptionValidation = ({
         {
             max: 50,
             message: maxLength(50),
-        }
+        },
+        {
+            required: true,
+            message: emptyInput(),
+        },   
     ],
     Phone: {
         pattern: /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/,
@@ -196,7 +204,7 @@ export const descriptionValidation = ({
     },
     Inputs: [
         {
-            pattern: /^\s*\S.*$/,
+            pattern:  /^(\s*\S+\s*){1,50}$/,
             message: inputOnlyWhiteSpaces(),
         },
         { 
@@ -238,7 +246,7 @@ export const descriptionValidation = ({
     ],
     DescriptionAndQuestions: [
         {
-            pattern: /^\s*\S.*$/,
+            pattern:  /^(\s*\S+\s*){1,200}$/,
             message: inputOnlyWhiteSpaces(),
         },
         {
@@ -252,7 +260,7 @@ export const descriptionValidation = ({
     ],
     Reason: [
         {
-            pattern: /^\s*\S.*$/,
+            pattern:  /^(\s*\S+\s*){1,500}$/,
             message: inputOnlyWhiteSpaces(),
         },
         {
@@ -266,7 +274,7 @@ export const descriptionValidation = ({
     ],
     Description: [
         {
-            pattern: /^\s*\S.*$/,
+            pattern:  /^(\s*\S+\s*){1,1000}$/,
             message: inputOnlyWhiteSpaces(),
         },
         {
@@ -286,7 +294,7 @@ export const descriptionValidation = ({
         { 
             max: 1000, 
             message: maxLength(1000),
-        },    
+        }
     ],
     AdminType: [
         {
@@ -309,3 +317,14 @@ export const descriptionValidation = ({
         },    
     ],
 });
+
+export const sameNameValidator = (org:string, array: string[] | undefined) => { 
+    return {
+        validator: (_ : object, value : string) => 
+        value == undefined || String(value).length == 0
+            ? Promise.resolve()
+            : (array as any[]).find(x => x === String(value).trim()) === undefined
+                ? Promise.resolve()
+                : Promise.reject(org + ' з назвою \"' + String(value).trim() + '\" вже існує')
+    } 
+}

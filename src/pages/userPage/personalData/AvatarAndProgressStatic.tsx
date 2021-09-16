@@ -287,15 +287,11 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       </div>
       {UserDistinctions.map((dist) => (
         <div className="distinctions">
-          {dist.distinction.name?.length > nameMaxLength ? (
-            <Tooltip title={dist?.distinction.name}>
-              <h2>
-                {dist.distinction.name.slice(0, 54) + "..."} №{dist.number}
-              </h2>
-            </Tooltip>
-          ) : (
-            <h2>{dist.distinction.name + "№" + dist.number}</h2>
-          )}
+          <Tooltip title={dist?.reason}>
+            <h2>
+              {dist.distinction.name} №{dist.number}
+            </h2>
+          </Tooltip>
         </div>
       ))}
       {UserPrecaution.map((dist) =>

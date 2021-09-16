@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Row, Col, Tooltip, Modal, Card, List, Rate} from 'antd';
+import React, { useState } from 'react';
+import { Row, Col, Tooltip, Modal, Card, List, Rate } from 'antd';
 import {
     IdcardOutlined,
     EditTwoTone,
@@ -11,8 +11,8 @@ import {
     UserDeleteOutlined,
     UserAddOutlined
 } from '@ant-design/icons';
-import {EventDetails, EventAdmin} from "./EventInfo";
-import {showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirmForSingleEvent, showApproveConfirm} from "../../EventsModals";
+import { EventDetails, EventAdmin } from "./EventInfo";
+import { showSubscribeConfirm, showUnsubscribeConfirm, showDeleteConfirmForSingleEvent, showApproveConfirm } from "../../EventsModals";
 import EventAdminLogo from "../../../../assets/images/EventAdmin.png"
 import './EventInfo.less';
 import eventsApi from "../../../../api/eventsApi";
@@ -26,104 +26,125 @@ import { Roles } from '../../../../models/Roles/Roles';
 
 interface Props {
     event: EventDetails;
-    visibleDrawer:boolean;
-    setApprovedEvent:(visible:boolean)=>void;
-    setVisibleDrawer:(visible:boolean)=>void;
+    visibleDrawer: boolean;
+    setApprovedEvent: (visible: boolean) => void;
+    setVisibleDrawer: (visible: boolean) => void;
     subscribeOnEvent: () => void;
     unSubscribeOnEvent: () => void;
 }
 
-const AccessableRoles=[Roles.Admin.toString(), Roles.KurinHead.toString(), Roles.CityHead.toString(), Roles.OkrugaHead.toString(), Roles.PlastMember.toString(), Roles.Supporter.toString(), Roles.RegisteredUser.toString()];
+const AccessableRoles = [Roles.Admin.toString(), Roles.KurinHead.toString(), Roles.CityHead.toString(), Roles.OkrugaHead.toString(), Roles.PlastMember.toString(), Roles.Supporter.toString(), Roles.RegisteredUser.toString()];
 
-const AccessToManage=(roles: string[]):boolean=>{ 
-    for(var i = 0; i < roles.length; i++){
-       if(AccessableRoles.includes(roles[i])) return true;
+const AccessToManage = (roles: string[]): boolean => {
+    for (var i = 0; i < roles.length; i++) {
+        if (AccessableRoles.includes(roles[i])) return true;
     }
     return false;
-  }
-
-const RenderEventIcons = ({event,
-                              isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
-                              isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
-                          }: EventDetails,
-                          setApprovedEvent:(visible:boolean)=>void,
-                          setVisibleDrawer:(visible:boolean)=>void,
-                          subscribeOnEvent: () => void,
-                          unSubscribeOnEvent: () => void,
-                          setAdminsVisibility: (flag: boolean) => void
+}
+const RenderEventIcons = ({ event,
+    isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
+    isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
+}: EventDetails,
+    setApprovedEvent: (visible: boolean) => void,
+    setVisibleDrawer: (visible: boolean) => void,
+    subscribeOnEvent: () => void,
+    unSubscribeOnEvent: () => void,
+    setAdminsVisibility: (flag: boolean) => void
 ) => {
     const eventIcons: React.ReactNode[] = []
-    const roles=([] as string[]).concat(userApi.getActiveUserRoles());
-    if ((isUserEventAdmin && AccessToManage(roles.filter(role=>role!=Roles.RegisteredUser && role!=Roles.Supporter))) || roles.includes(Roles.Admin)) {
-        if (event.eventStatus==="Не затверджені"){
-            {roles.includes(Roles.Admin) && eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
-                <SettingTwoTone twoToneColor="#3c5438"  onClick={() => showApproveConfirm({
-                    eventId: event?.eventId,
-                    eventName: event?.eventName,
-                    eventStatusId:event?.eventStatus,
-                    eventAdmins:event.eventAdmins,
-                    setApprovedEvent:setApprovedEvent
-                })} className="icon" key="setting"/>
-            </Tooltip>)}
-        eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
-            <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
-            onClick={()=> setVisibleDrawer(true)} />      
-            </Tooltip>)
-        eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
-            <DeleteTwoTone twoToneColor="#8B0000"
-                       onClick={() => showDeleteConfirmForSingleEvent({
-                           eventId: event?.eventId,
-                           eventName: event?.eventName,
-                           eventTypeId: event?.eventTypeId,
-                           eventCategoryId: event?.eventCategoryId,
-                           eventAdmins: event.eventAdmins
-                       })}
-                       className="icon" key="delete"/>
-                        </Tooltip>)}
-        else if (event.eventStatus==="Завершений(-на)"){
-        eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
-            <DeleteTwoTone twoToneColor="#8B0000"
-                           onClick={() => showDeleteConfirmForSingleEvent({
-                               eventId: event?.eventId,
-                               eventName: event?.eventName,
-                               eventTypeId: event?.eventTypeId,
-                               eventCategoryId: event?.eventCategoryId,
-                               eventAdmins: event.eventAdmins
-                           })}
-                           className="icon" key="delete"/>
-        </Tooltip>)}
-        else if(event.eventStatus==="Затверджений(-на)" && roles.includes(Roles.Admin)){
+    const roles = ([] as string[]).concat(userApi.getActiveUserRoles());
+    const SubscribeToEvent = () => {
+        eventIcons.push(<Tooltip title="Зголоситись на подію" key="subscribe">
+            <UserAddOutlined onClick={() => showSubscribeConfirm({
+                eventId: event?.eventId,
+                eventName: event?.eventName,
+                successCallback: subscribeOnEvent,
+                isSingleEventInState: true,
+                eventAdmins: event.eventAdmins,
+                eventParticipants: event.eventParticipants
+            })}
+                style={{ color: "#3c5438" }}
+                key="subscribe" />
+        </Tooltip>)
+    }
+    if ((isUserEventAdmin && AccessToManage(roles.filter(role => role != Roles.RegisteredUser && role != Roles.Supporter))) || roles.includes(Roles.Admin)) {
+        if (!isEventFinished && !isUserEventAdmin && AccessToManage(roles.filter(r => r != Roles.RegisteredUser))) {
+            SubscribeToEvent();
+        }
+        if (event.eventStatus === "Не затверджені") {
+            {
+                roles.includes(Roles.Admin) && eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
+                    <SettingTwoTone twoToneColor="#3c5438" onClick={() => showApproveConfirm({
+                        eventId: event?.eventId,
+                        eventName: event?.eventName,
+                        eventStatusId: event?.eventStatus,
+                        eventAdmins: event.eventAdmins,
+                        setApprovedEvent: setApprovedEvent
+                    })} className="icon" key="setting" />
+                </Tooltip>)
+            }
             eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
-            <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
-            onClick={()=> setVisibleDrawer(true)} />      
+                <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
+                    onClick={() => setVisibleDrawer(true)} />
             </Tooltip>)
             eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
                 <DeleteTwoTone twoToneColor="#8B0000"
-                               onClick={() => showDeleteConfirmForSingleEvent({
-                                   eventId: event?.eventId,
-                                   eventName: event?.eventName,
-                                   eventTypeId: event?.eventTypeId,
-                                   eventCategoryId: event?.eventCategoryId,
-                                   eventAdmins: event.eventAdmins
-                               })}
-                               className="icon" key="delete"/>
-            </Tooltip>)}
+                    onClick={() => showDeleteConfirmForSingleEvent({
+                        eventId: event?.eventId,
+                        eventName: event?.eventName,
+                        eventTypeId: event?.eventTypeId,
+                        eventCategoryId: event?.eventCategoryId,
+                        eventAdmins: event.eventAdmins
+                    })}
+                    className="icon" key="delete" />
+            </Tooltip>)
+        }
+        else if (event.eventStatus === "Завершено") {
+            eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
+                <DeleteTwoTone twoToneColor="#8B0000"
+                    onClick={() => showDeleteConfirmForSingleEvent({
+                        eventId: event?.eventId,
+                        eventName: event?.eventName,
+                        eventTypeId: event?.eventTypeId,
+                        eventCategoryId: event?.eventCategoryId,
+                        eventAdmins: event.eventAdmins
+                    })}
+                    className="icon" key="delete" />
+            </Tooltip>)
+        }
+        else if (event.eventStatus === "Затверджено" && roles.includes(Roles.Admin)) {
+            eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
+                <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
+                    onClick={() => setVisibleDrawer(true)} />
+            </Tooltip>)
+            eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
+                <DeleteTwoTone twoToneColor="#8B0000"
+                    onClick={() => showDeleteConfirmForSingleEvent({
+                        eventId: event?.eventId,
+                        eventName: event?.eventName,
+                        eventTypeId: event?.eventTypeId,
+                        eventCategoryId: event?.eventCategoryId,
+                        eventAdmins: event.eventAdmins
+                    })}
+                    className="icon" key="delete" />
+            </Tooltip>)
+        }
 
     } else if (isUserParticipant && !isEventFinished) {
         if (isUserRejectedParticipant) {
             eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено"
-                                     key="banned">
-                <StopOutlined style={{color: "#8B0000"}} className="icon" key="banned"/>
+                key="banned">
+                <StopOutlined style={{ color: "#8B0000" }} className="icon" key="banned" />
             </Tooltip>)
         } else {
             if (isUserApprovedParticipant) {
                 eventIcons.push(<Tooltip placement="bottom" title="Учасник" key="participant">
-                    <CheckCircleTwoTone twoToneColor="#73bd79" className="icon" key="participant"/>
+                    <CheckCircleTwoTone twoToneColor="#73bd79" className="icon" key="participant" />
                 </Tooltip>)
             }
             if (isUserUndeterminedParticipant) {
                 eventIcons.push(<Tooltip placement="bottom" title="Ваша заявка розглядається" key="underReview">
-                    <QuestionCircleTwoTone twoToneColor="#FF8C00" className="icon" key="underReview"/>
+                    <QuestionCircleTwoTone twoToneColor="#FF8C00" className="icon" key="underReview" />
                 </Tooltip>)
             }
             eventIcons.push(<Tooltip placement="bottom" title="Відписатися від події" key="unsubscribe">
@@ -136,102 +157,88 @@ const RenderEventIcons = ({event,
                         eventAdmins: event.eventAdmins,
                         eventParticipants: event.eventParticipants
                     })}
-                    style={{color: "#8B0000"}}
-                    className="icon" key="unsubscribe"/>
+                    style={{ color: "#8B0000" }}
+                    className="icon" key="unsubscribe" />
             </Tooltip>)
         }
-    } else if (!isEventFinished && AccessToManage(roles.filter(r=>r!=Roles.RegisteredUser))) {
-        eventIcons.push(<Tooltip title="Зголоситись на подію" key="subscribe">
-            <UserAddOutlined onClick={() => showSubscribeConfirm({
-                eventId: event?.eventId,
-                eventName: event?.eventName,
-                successCallback: subscribeOnEvent,
-                isSingleEventInState: true,
-                eventAdmins: event.eventAdmins,
-                eventParticipants: event.eventParticipants
-            })}
-                             style={{color: "#3c5438"}}
-                             key="subscribe"/>
-        </Tooltip>) 
+
+    } else if (!isEventFinished && AccessToManage(roles.filter(r => r != Roles.RegisteredUser))) {
+        SubscribeToEvent();
     }
 
     eventIcons.push(<Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
-        <IdcardOutlined style={{color: "#3c5438", fontSize: "30px"}} className="icon"
-                        onClick={() => setAdminsVisibility(true)}
+        <IdcardOutlined style={{ color: "#3c5438", fontSize: "30px" }} className="icon"
+            onClick={() => setAdminsVisibility(true)}
         />
     </Tooltip>)
-    return eventIcons
+   return eventIcons
 }
-
 const RenderRatingSystem = ({
-                                event, canEstimate, isEventFinished, participantAssessment
-                            }: EventDetails
+    event, canEstimate, isEventFinished, participantAssessment
+}: EventDetails
 ): React.ReactNode => {
     if (isEventFinished && canEstimate) {
         return <Rate allowHalf defaultValue={participantAssessment}
-                     onChange={async (value) => await eventsApi.estimateEvent(event.eventId,value)}
+            onChange={async (value) => await eventsApi.estimateEvent(event.eventId, value)}
         />
     } else {
-        return <Rate allowHalf disabled defaultValue={event.rating} onChange={(value) => console.log(value)}/>
+        return <Rate allowHalf disabled defaultValue={event.rating} onChange={(value) => console.log(value)} />
     }
 }
-
-const RenderAdminCards = (eventAdmins: EventAdmin[],visibleDrawer:any) => {
-   
+const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any) => {
     const history = useHistory();
     return <List className="event-admin-card"
-                 grid={{
-                     gutter: 16,
-                     xs: 2,
-                     sm: 2,
-                     md: 2,
-                     lg: 2,
-                     xl: 2,
-                     xxl: 2,
-                 }}
-                 dataSource={eventAdmins}
-                 renderItem={item => (
-                     <List.Item>
-                         <Card
-                             hoverable
-                             title={item.adminType}
-                             cover={<img alt="example" src={EventAdminLogo}/>}
-                         >
-                             <div onClick={() => history.push(`/userpage/main/${item.userId}`)}>
-                                 {item.fullName}
-                             </div>
-                         </Card>
-                     </List.Item>
-                 )}
+        grid={{
+            gutter: 16,
+            xs: 2,
+            sm: 2,
+            md: 2,
+            lg: 2,
+            xl: 2,
+            xxl: 2,
+        }}
+        dataSource={eventAdmins}
+        renderItem={item => (
+            <List.Item>
+                <Card
+                    hoverable
+                    title={item.adminType}
+                    cover={<img alt="example" src={EventAdminLogo} />}
+                >
+                    <div onClick={() => history.push(`/userpage/main/${item.userId}`)}>
+                        {item.fullName}
+                    </div>
+                </Card>
+            </List.Item>
+        )}
     />
 }
-
-const SortedEventInfo = ({event, setApprovedEvent, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer ,setVisibleDrawer}: Props) => {
+const SortedEventInfo = ({ event, setApprovedEvent, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer, setVisibleDrawer }: Props) => {
     const [adminsVisible, setAdminsVisibility] = useState(false);
-    const {id}= useParams();
+    const { id } = useParams();
     const { userId } = useParams();
     const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
         new CreatedEvents(),
-      ]);
+    ]);
     const [allEvents, setAllEvents] = useState<EventsUser>(new EventsUser());
     const [imageBase64, setImageBase64] = useState<string>();
     const [loading, setLoading] = useState(false);
 
     const fetchData = async () => {
         await eventUserApi.getEventsUser(userId).then(async (response) => {
-          setCreatedEvents(response.data);
-          setAllEvents(response.data);
-          await userApi
-            .getImage(response.data.user.imagePath)
-            .then((response: { data: any }) => {
-              setImageBase64(response.data);
-            });
-           
-          setLoading(true);
-        });
-      };
+            setCreatedEvents(response.data);
+            setAllEvents(response.data);
+            await userApi
+                .getImage(response.data.user.imagePath)
+                .then((response: { data: any }) => {
+                    setImageBase64(response.data);
+                });
 
-    return <Row >
+            setLoading(true);
+        });
+    };
+
+      return <Row >
         <Col className="eventActions">
             <img
                 className="imgEvent"
@@ -247,21 +254,21 @@ const SortedEventInfo = ({event, setApprovedEvent, subscribeOnEvent, unSubscribe
         </Col>
         <Modal
             visible={adminsVisible}
-            title='Адміністрація події.'
+            title='Адміністрація події'
             footer={null}
             onCancel={() => {
                 setAdminsVisibility(false);
             }}
         >
-            {RenderAdminCards(event.event.eventAdmins,visibleDrawer)}
- 
+            {RenderAdminCards(event.event.eventAdmins, visibleDrawer)}
+
         </Modal>
         <EventEditDrawer
-                id={id}
-                visibleEventEditDrawer={visibleDrawer}
-                setShowEventEditDrawer={setVisibleDrawer}
-                onEdit={fetchData}
-              />
+            id={id}
+            visibleEventEditDrawer={visibleDrawer}
+            setShowEventEditDrawer={setVisibleDrawer}
+            onEdit={fetchData}
+        />
     </Row>
 }
 export default SortedEventInfo;
