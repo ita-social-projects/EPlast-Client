@@ -176,47 +176,73 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       <Title level={2}>
         {firstName} {lastName}
       </Title>
-      <Title level={4}>Псевдо: {pseudo}</Title>
+      {pseudo ? (
+        <Title level={4}>Псевдо: {pseudo}</Title>
+      ) : (
+        <Title level={4}>Псевдо не внесено</Title>
+      )}
       {cityMemberIsApproved == false ? (
         <div>
-          <p className="statusText">
-            Є прихильником округи:{" "}
-            <Link to={"/regions/" + regionId} target="_blank" className="LinkText">
-              {region}
-            </Link>
-          </p>
-          <p className="statusText">
-            Є прихильником станиці:{" "}
-            <Link to={"/cities/" + cityId} target="_blank" className="LinkText">
-              {city}
-            </Link>
-          </p>
+          {region ? (
+            <p className="statusText">
+              Є прихильником округи:{" "}
+              <Link
+                to={"/regions/" + regionId}
+                target="_blank"
+                className="LinkText"
+              >
+                {region}
+              </Link>
+            </p>
+          ) : (
+            <p className="statusText">Не є прихильником жодної округи</p>
+          )}
+          {city ? (
+            <p className="statusText">
+              Є прихильником станиці:{" "}
+              <Link
+                to={"/cities/" + cityId}
+                target="_blank"
+                className="LinkText"
+              >
+                {city}
+              </Link>
+            </p>
+          ) : (
+            <p className="statusText">Не є прихильником жодної станиці</p>
+          )}
         </div>
       ) : (
         <div>
           <p className="statusText">
             Округа:{" "}
             <Link
-              to={"/regions/" + regionId} target="_blank" className="LinkText">
+              to={"/regions/" + regionId}
+              target="_blank"
+              className="LinkText"
+            >
               {region}
             </Link>
           </p>
           <p className="statusText">
             Станиця:{" "}
-            <Link 
-              to={"/cities/" + cityId} target="_blank" className="LinkText">
+            <Link to={"/cities/" + cityId} target="_blank" className="LinkText">
               {city}
             </Link>
           </p>
         </div>
       )}
       {clubMemberIsApproved == false ? (
-        <p className="statusText">
-          Є прихильником куреня:{" "}
-          <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
-            {club}
-          </Link>
-        </p>
+        club ? (
+          <p className="statusText">
+            Є прихильником куреня:{" "}
+            <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
+              {club}
+            </Link>
+          </p>
+        ) : (
+          <p className="statusText">Не є прихильником жодного куреня</p>
+        )
       ) : (
         <p className="statusText">
           Курінь:{" "}
@@ -268,9 +294,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
               </h2>
             </Tooltip>
           ) : (
-            <h2>
-              {dist.distinction.name + "№" + dist.number}
-            </h2>
+            <h2>{dist.distinction.name + "№" + dist.number}</h2>
           )}
         </div>
       ))}

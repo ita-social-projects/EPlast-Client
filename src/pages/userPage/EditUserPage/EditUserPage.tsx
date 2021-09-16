@@ -94,7 +94,6 @@ export default function () {
         } else {
           notificationLogic("error", fileIsNotUpload("даних"));
         }
-
         setLoading(true);
         form.setFieldsValue({
           firstName: response.data.user.firstName,
@@ -130,7 +129,7 @@ export default function () {
         if (response.data.user.birthday === "0001-01-01T00:00:00") {
           form.setFieldsValue({ 'birthday': undefined });
         } else {
-          form.setFieldsValue({ 'birthday': moment(response.data.user.birthday) });
+          form.setFieldsValue({ 'birthday': moment.utc(response.data.user.birthday).local() });
         }
         if (response.data.user.phoneNumber === null) {
           setPhoneNumber("");
@@ -417,11 +416,6 @@ export default function () {
     setPhotoName(defaultPhotoName);
   };
 
-  const multiplierMinToMiliseconds = 60000;
-  const handleDate = (datestr: string): Date => {
-      var date = new Date(datestr);
-      return new Date(date.getTime() + Math.abs(date.getTimezoneOffset() * multiplierMinToMiliseconds))
-  }
 
   const handleSubmit = async (values: any) => {
     const newUserProfile = {
@@ -432,7 +426,7 @@ export default function () {
         lastName: values.lastName?.trim(),
         fatherName: values.fatherName?.trim(),
         phoneNumber: phoneNumber?.trim(),
-        birthday: handleDate(form?.getFieldValue('birthday')),
+        birthday: form?.getFieldValue('birthday'),
         imagePath: photoName,
         pseudo: values.pseudo?.trim(),
         publicPoliticalActivity: values.publicPoliticalActivity?.trim(),
@@ -834,3 +828,4 @@ export default function () {
     </div>
   );
 }
+
