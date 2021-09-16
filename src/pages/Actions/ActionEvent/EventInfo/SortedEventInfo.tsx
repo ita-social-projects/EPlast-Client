@@ -107,9 +107,7 @@ const RenderEventIcons = ({ event,
             SubscribeToEvent();
         }
         else if(!isEventFinished && !isUserEventAdmin && isUserParticipant){
-
-         TrackStatus();
-
+          TrackStatus();
         }
         if (event.eventStatus === "Не затверджені") {
             {
