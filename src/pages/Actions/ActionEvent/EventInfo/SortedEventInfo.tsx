@@ -67,9 +67,49 @@ const RenderEventIcons = ({ event,
                 key="subscribe" />
         </Tooltip>)
     }
+    const TrackStatus=()=>{
+
+        if (isUserRejectedParticipant) {
+            eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено"
+                key="banned">
+                <StopOutlined style={{ color: "#8B0000" }} className="icon" key="banned" />
+            </Tooltip>)
+        } else {
+            if (isUserApprovedParticipant) {
+                eventIcons.push(<Tooltip placement="bottom" title="Учасник" key="participant">
+                    <CheckCircleTwoTone twoToneColor="#73bd79" className="icon" key="participant" />
+                </Tooltip>)
+            }
+            if (isUserUndeterminedParticipant) {
+                eventIcons.push(<Tooltip placement="bottom" title="Ваша заявка розглядається" key="underReview">
+                    <QuestionCircleTwoTone twoToneColor="#FF8C00" className="icon" key="underReview" />
+                </Tooltip>)
+            }
+            eventIcons.push(<Tooltip placement="bottom" title="Відписатися від події" key="unsubscribe">
+                <UserDeleteOutlined
+                    onClick={() => showUnsubscribeConfirm({
+                        eventId: event?.eventId,
+                        eventName: event?.eventName,
+                        successCallback: unSubscribeOnEvent,
+                        isSingleEventInState: true,
+                        eventAdmins: event.eventAdmins,
+                        eventParticipants: event.eventParticipants
+                    })}
+                    style={{ color: "#8B0000" }}
+                    className="icon" key="unsubscribe" />
+            </Tooltip>)
+        }
+
+
+    }
     if ((isUserEventAdmin && AccessToManage(roles.filter(role => role != Roles.RegisteredUser && role != Roles.Supporter))) || roles.includes(Roles.Admin)) {
-        if (!isEventFinished && !isUserEventAdmin && AccessToManage(roles.filter(r => r != Roles.RegisteredUser))) {
+        if (!isEventFinished && !isUserEventAdmin && !isUserParticipant) {
             SubscribeToEvent();
+        }
+        else if(!isEventFinished && !isUserEventAdmin && isUserParticipant){
+
+         TrackStatus();
+
         }
         if (event.eventStatus === "Не затверджені") {
             {
@@ -130,39 +170,11 @@ const RenderEventIcons = ({ event,
             </Tooltip>)
         }
 
-    } else if (isUserParticipant && !isEventFinished) {
-        if (isUserRejectedParticipant) {
-            eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено"
-                key="banned">
-                <StopOutlined style={{ color: "#8B0000" }} className="icon" key="banned" />
-            </Tooltip>)
-        } else {
-            if (isUserApprovedParticipant) {
-                eventIcons.push(<Tooltip placement="bottom" title="Учасник" key="participant">
-                    <CheckCircleTwoTone twoToneColor="#73bd79" className="icon" key="participant" />
-                </Tooltip>)
-            }
-            if (isUserUndeterminedParticipant) {
-                eventIcons.push(<Tooltip placement="bottom" title="Ваша заявка розглядається" key="underReview">
-                    <QuestionCircleTwoTone twoToneColor="#FF8C00" className="icon" key="underReview" />
-                </Tooltip>)
-            }
-            eventIcons.push(<Tooltip placement="bottom" title="Відписатися від події" key="unsubscribe">
-                <UserDeleteOutlined
-                    onClick={() => showUnsubscribeConfirm({
-                        eventId: event?.eventId,
-                        eventName: event?.eventName,
-                        successCallback: unSubscribeOnEvent,
-                        isSingleEventInState: true,
-                        eventAdmins: event.eventAdmins,
-                        eventParticipants: event.eventParticipants
-                    })}
-                    style={{ color: "#8B0000" }}
-                    className="icon" key="unsubscribe" />
-            </Tooltip>)
-        }
-
-    } else if (!isEventFinished && AccessToManage(roles.filter(r => r != Roles.RegisteredUser))) {
+    } 
+    else if (isUserParticipant && !isEventFinished) {
+       TrackStatus();
+    } 
+    else if (!isEventFinished && AccessToManage(roles.filter(r => r != Roles.RegisteredUser))) {
         SubscribeToEvent();
     }
 
