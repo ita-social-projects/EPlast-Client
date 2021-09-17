@@ -94,7 +94,6 @@ export default function () {
         } else {
           notificationLogic("error", fileIsNotUpload("даних"));
         }
-
         setLoading(true);
         form.setFieldsValue({
           firstName: response.data.user.firstName,
@@ -130,7 +129,7 @@ export default function () {
         if (response.data.user.birthday === "0001-01-01T00:00:00") {
           form.setFieldsValue({ 'birthday': undefined });
         } else {
-          form.setFieldsValue({ 'birthday': moment(response.data.user.birthday) });
+          form.setFieldsValue({ 'birthday': moment.utc(response.data.user.birthday).local() });
         }
         if (response.data.user.phoneNumber === null) {
           setPhoneNumber("");
@@ -181,7 +180,7 @@ export default function () {
       { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
     ],
     placeOfStudy: [
-      { max: 50, message: maxLength(50) },
+      { max: 100, message: maxLength(100) },
       { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
     ],
     speciality: [
@@ -416,6 +415,7 @@ export default function () {
       });
     setPhotoName(defaultPhotoName);
   };
+
 
   const handleSubmit = async (values: any) => {
     const newUserProfile = {
@@ -828,3 +828,4 @@ export default function () {
     </div>
   );
 }
+

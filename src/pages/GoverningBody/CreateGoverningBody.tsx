@@ -11,6 +11,7 @@ import {
   Card,
 } from "antd";
 import {
+  ConsoleSqlOutlined,
   DeleteOutlined,
   LoadingOutlined,
   PlusOutlined,
@@ -53,7 +54,13 @@ const CreateGoverningBody = () => {
   const orgName: string = 'Керівний орган'
   
   const getGoverningBodyNames = async () => {
-    setGoverningBodyNames((await getGoverningBodiesList() as any[]).map(x => x.governingBodyName));
+    let governingBodies = (await getGoverningBodiesList() as any[])
+    if(+id){
+      let currentName = (await getGoverningBodyById(+id)).data.governingBodyViewModel.governingBodyName;
+      setGoverningBodyNames(governingBodies.map(x => x.governingBodyName).filter(x => x !== currentName))
+    }
+    else
+      setGoverningBodyNames(governingBodies.map(x => x.governingBodyName));
   }
 
   const getBase64 = (img: Blob, callback: Function) => {
@@ -102,23 +109,22 @@ const CreateGoverningBody = () => {
   const getGoverningBody = async () => {
     try {
       setLoading(true);
-      let response = await getGoverningBodyById(+id);
-
-      if (response.data.logo !== null && response.data.logo !== '') {
-        const logo = await getGoverningBodyLogo(response.data.logo);
-        response.data.logo = logo.data;
+      let response = (await getGoverningBodyById(+id)).data.governingBodyViewModel;
+      if (response.logo !== null && response.logo !== '') {
+        const logo = await getGoverningBodyLogo(response.logo);
+        response.logo = logo.data;
       }
-      setGoverningBody(response.data);
+      setGoverningBody(response);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    getGoverningBodyNames()
     if (+id) {
       getGoverningBody();
     }
+    getGoverningBodyNames()
   }, [id]);
 
   const handleSubmit = async (values: any) => {
