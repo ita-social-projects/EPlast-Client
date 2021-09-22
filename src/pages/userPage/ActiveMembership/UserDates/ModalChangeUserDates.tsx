@@ -31,7 +31,8 @@ const ModalChangeUserDates = ({
     if (dates.dateEntry === "" || dates.dateEntry === null) {
       return current && current < moment();
     } else {
-      if (dates.dateEnd !== "" || dates.dateEnd !== null) {
+      //Check if dateEnd is not null or empty
+      if (dates.dateEnd) {
         return !(
           moment.utc(dates.dateEnd).subtract(1, "d").isAfter(current) &&
           moment.utc(dates.dateEntry).isSameOrBefore(current)
