@@ -26,17 +26,19 @@ const ModalChangeUserDates = ({
   const handleCancel = () => setDatesVisibleModal(false);
 
   const [StartDate, setStartDate] = useState<any>();
-  const [EndDate, setEndDate] = useState<any>();
-
-  const disabledEndDate = (current: any) => {
-    return current && current <= StartDate;
-  };
 
   const disabledStartDate = (current: any) => {
-    if (EndDate === "" || EndDate === null) {
-      return current && current > moment();
+    if (dates.dateEntry === "" || dates.dateEntry === null) {
+      return current && current < moment();
     } else {
-      return current && current > EndDate;
+      if (dates.dateEnd !== "" || dates.dateEnd !== null) {
+        return !(
+          moment.utc(dates.dateEnd).subtract(1, "d").isAfter(current) &&
+          moment.utc(dates.dateEntry).isSameOrBefore(current)
+        );
+      } else {
+        return current && current < moment(dates.dateEntry);
+      }
     }
   };
 
@@ -72,7 +74,7 @@ const ModalChangeUserDates = ({
     >
       <Form name="basic" onFinish={handleFinish} form={form}>
         <label htmlFor="datepickerOath" className={classes.formLabel}>
-            Дата присяги
+          Дата присяги
         </label>
         <Form.Item className={classes.formField} name="datepickerOath">
           <DatePicker
@@ -86,24 +88,6 @@ const ModalChangeUserDates = ({
             }
             className={classes.selectField}
             placeholder="Дата присяги"
-          />
-        </Form.Item>
-
-        <label htmlFor="datepickerEnd" className={classes.formLabel}>
-            Дата завершення
-        </label>
-        <Form.Item className={classes.formField} name="datepickerEnd">
-          <DatePicker
-            format="DD.MM.YYYY"
-            disabledDate={disabledEndDate}
-            onChange={(e) => setEndDate(e)}
-            defaultValue={
-              dates.dateEnd !== ""
-                ? moment.utc(dates.dateEnd, "YYYY-MM-DD").local()
-                : undefined
-            }
-            className={classes.selectField}
-            placeholder="Дата завершення"
           />
         </Form.Item>
         <Form.Item>
