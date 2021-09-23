@@ -362,8 +362,8 @@ const UsersTable = () => {
       <div className={classes.searchContainer}>
         <div className={classes.filterContainer}>
           <Form form={form} onFinish={handleFilter}>
-            <Row style={{ flexFlow: "nowrap" }}>
-              <Col style={{ width: "88%"}}>
+            <Row className={classes.rowForFilterSearch}>
+              <Col className={classes.colForTreeSelect}>
                 <Form.Item
                   rules={[
                     {
@@ -372,7 +372,6 @@ const UsersTable = () => {
                       type: "array",
                     },
                   ]}
-                  style={{ width: "auto"}}
                 >
                   <TreeSelect
                     placeholder="Фільтр"
@@ -381,7 +380,6 @@ const UsersTable = () => {
                     multiple
                     onDeselect={ondeSelect}
                     onSelect={onSelect}
-                    className={classes.treeSelect}
                     treeCheckable={true}
                     showCheckedStrategy={SHOW_PARENT}
                     filterTreeNode={(input, option) =>
@@ -439,7 +437,7 @@ const UsersTable = () => {
       </div>
 
       <Card
-        style={{ width: "100%" }}
+        className={classes.card}
         tabList={tabList}
         activeTabKey={currentTabName}
         onTabChange={(key) => {

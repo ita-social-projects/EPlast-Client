@@ -15,6 +15,18 @@
   width: 35%;
 }
 
+.rowForFilterSearch {
+  flex-flow: nowrap;
+}
+
+.colForTreeSelect {
+  width: 88%;
+}
+
+.card {
+  width: 100%;
+}
+
 @media (max-width: 765px){
   .table{
     overflow-x: scroll;
