@@ -361,9 +361,9 @@ const UsersTable = () => {
       <Title level={4} style={{ textAlign: "left", margin: 10 }} underline={true}>Загальна кількість користувачів: {total}</Title>
       <div className={classes.searchContainer}>
         <div className={classes.filterContainer}>
-          <Form form={form} onFinish={handleFilter} style={{ height: "20px" }}>
+          <Form form={form} onFinish={handleFilter}>
             <Row style={{ flexFlow: "nowrap" }}>
-              <Col span={20}>
+              <Col style={{ width: "88%"}}>
                 <Form.Item
                   rules={[
                     {
@@ -372,6 +372,7 @@ const UsersTable = () => {
                       type: "array",
                     },
                   ]}
+                  style={{ width: "auto"}}
                 >
                   <TreeSelect
                     placeholder="Фільтр"
@@ -383,7 +384,6 @@ const UsersTable = () => {
                     className={classes.treeSelect}
                     treeCheckable={true}
                     showCheckedStrategy={SHOW_PARENT}
-                    style={{ minWidth: "75%", height: "32px", maxWidth: "95%" }}
                     filterTreeNode={(input, option) =>
                       (option?.title as string)
                         .toLowerCase()
@@ -414,12 +414,12 @@ const UsersTable = () => {
                   </TreeSelect>
                 </Form.Item>
               </Col>
-              <Col>
+              <Col className={classes.colForButton}>
                 <Form.Item>
                   <Button
                     type="primary"
                     htmlType="submit"
-                    style={{ minWidth: "10%", marginBottom: 30 }}
+                    className={classes.okButton}
                   >
                     OK
                   </Button>
