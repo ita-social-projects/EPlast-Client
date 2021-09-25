@@ -104,8 +104,8 @@ export const KVTable = ({ current, searchData }: props) => {
       (item) =>
         ( item.user.firstName?.toLowerCase()?.includes(searchData.toLowerCase()) ||
           item.user.lastName?.toLowerCase()?.includes(searchData.toLowerCase())||
-          (item.user.firstName+ ' ' + item.user.lastName)?.toLowerCase()?.includes(searchData.toLowerCase())||
-          (item.user.lastName+ ' ' + item.user.firstName)?.toLowerCase()?.includes(searchData.toLowerCase())) &&
+          (item.user.firstName + ' ' + item.user.lastName)?.toLowerCase()?.includes(searchData.toLowerCase())||
+          (item.user.lastName + ' ' + item.user.firstName)?.toLowerCase()?.includes(searchData.toLowerCase())) &&
         !filteredData.includes(item)
     )
   );
