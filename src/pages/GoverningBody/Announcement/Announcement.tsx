@@ -7,9 +7,10 @@ import AddAnnouncementModal from "./AddAnnouncementModal";
 import Spinner from "../../Spinner/Spinner";
 import { AnnouncementForAdd } from "../../../models/GoverningBody/Announcement/AnnouncementForAdd";
 import DropDown from "./DropDownAnnouncement";
+import jwt from 'jwt-decode';
 import ClickAwayListener from "react-click-away-listener";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import EditAnnouncementModal from "./EditAnnouncementModal";
+import AuthStore from "../../../stores/AuthStore";
+import { getUserAccess } from "../../../api/regionsBoardApi";
 
 const { Content } = Layout;
 
@@ -54,6 +55,8 @@ const Announcements = () => {
     });
   }
   useEffect(() => {
+
+    getUserAccesses()
     getAnnouncements();
     getAllUsers();
   }, []);
@@ -104,12 +107,15 @@ const Announcements = () => {
           setShowDropdown(false);
         }}
       >
-        <h1> Оголошення </h1>
+      <h1> Оголошення </h1>
+      {userAccesses["AddAnnouncement"] ?
         <div className={classes.antbtn}>
           <Button type="primary" onClick={showModal}>
             Додати оголошення
-          </Button>
+          </Button> 
         </div>
+        : null
+      }
         {loading ? (
           <Spinner />
         ) : (
@@ -118,6 +124,7 @@ const Announcements = () => {
             dataSource={data}
             renderItem={(item) => (
               <List.Item
+                style={{overflow:"hidden",textOverflow:"ellipsis", wordBreak:"break-word"}}
                 className={classes.listItem}
                 onClick={() => {
                   setShowDropdown(false);
@@ -151,7 +158,7 @@ const Announcements = () => {
             pageX={x}
             pageY={y}
             onDelete={handleDelete}
-            onEdit = {() => {setVisibleEditModal(true)}}
+            userAccesses ={userAccesses}
           />
         </ClickAwayListener>
         <AddAnnouncementModal

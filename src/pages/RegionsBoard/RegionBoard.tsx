@@ -107,7 +107,7 @@ const RegionBoard = () => {
     setLoading(true);
     try {
       const response = await GetRegionsBoard();
-      await getUserAccesses();
+      const userAccesses = (await getUserAccesses()).data
       if (userAccesses["ViewDecisions"]) {        
         await setRegionDecisions();
       }
@@ -124,11 +124,15 @@ const RegionBoard = () => {
   
   const getUserAccesses = async () => {
       let user: any = jwt(AuthStore.getToken() as string);
+      let result: any
       await getUserAccess(user.nameid).then(
         response => {
+          result = response
           setUserAccesses(response.data);
         }
       );
+      return result
+      
   }
 
   const loadGbPhotos = async (governingBodies: GoverningBody[]) => {
@@ -407,22 +411,22 @@ const RegionBoard = () => {
             {userAccesses["ViewDecisions"] ? 
               <>
                 <Row className="cityItems" justify="center" gutter={[0, 16]}>
-                    {decisions.length !== 0 ? (
+                    {decisions.length !== 0 ? 
                     decisions.map((decision) => (
                         <Col
-                        className="cityMemberItem"
-                        xs={12}
-                        sm={8}
-                        key={decision.id}
-                        onClick={() => openPDF(decision)}
-                        >
-                        <div>
-                            <FileDoneOutlined className="documentIcon" />
-                            <p className="documentText">{decision.name}</p>
-                        </div>
+                          className="cityMemberItem"
+                          xs={12}
+                          sm={8}
+                          key={decision.id}
+                          onClick={() => openPDF(decision)}
+                          >
+                            <div>
+                                <FileDoneOutlined className="documentIcon" />
+                                <p className="documentText">{decision.name}</p>
+                            </div>
                         </Col>
-                    ))
-                    ) : (
+                    )) 
+                   : (
                     <Paragraph>Ще немає рішень</Paragraph>
                     )}
                 </Row>

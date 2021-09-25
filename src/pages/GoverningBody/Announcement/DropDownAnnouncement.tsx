@@ -8,9 +8,10 @@ import {
 import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
 import classes from "./Announcement.module.css";
 import "../../../api/governingBodiesApi";
-import { getAllAnnouncements } from "../../../api/governingBodiesApi";
+import { getAllAnnouncements, getUserAccess } from "../../../api/governingBodiesApi";
 import DeleteConfirm from "./DeleteConfirm";
-
+import AuthStore from "../../../stores/AuthStore";
+import jwt from 'jwt-decode';
 interface Props {
   record: number;
   pageX: number;
@@ -18,10 +19,15 @@ interface Props {
   showDropdown: boolean;
   onEdit: () => void;
   onDelete: (id: number) => void;
+  userAccesses : {[key: string] : boolean};
 }
 
+
+
 const DropDown = (props: Props) => {
-  const { record, pageX, pageY, showDropdown, onDelete, onEdit } = props;
+  const { record, pageX, pageY, showDropdown, onDelete, userAccesses  } = props;
+
+
 
   useEffect(() => {
     const fetchData = async () => {};
@@ -42,28 +48,28 @@ const DropDown = (props: Props) => {
   };
 
   return (
-    <Menu
-      theme="dark"
-      onClick={handleItemClick}
-      className={classes.menu}
-      style={{
-        top: pageY,
-        left:
-          window.innerWidth - (pageX + 184) < 0
-            ? window.innerWidth - 227
-            : pageX,
-        display: showDropdown ? "block" : "none",
-      }}
-    >
-      <Menu.Item key="1">
-        <DeleteOutlined />
-        Видалити
-      </Menu.Item>
-      <Menu.Item key="2">
-        <EditOutlined />
-        Редагувати
-      </Menu.Item>
-    </Menu>
+    <>
+      {userAccesses["DeleteAnnouncement"]?
+      <Menu
+        theme="dark"
+        onClick={handleItemClick}
+        className={classes.menu}
+        style={{
+          top: pageY,
+          left:
+            window.innerWidth - (pageX + 184) < 0
+              ? window.innerWidth - 227
+              : pageX,
+          display: showDropdown ? "block" : "none",
+        }}
+      >
+        <Menu.Item key="1">
+          <DeleteOutlined />
+          Видалити
+        </Menu.Item>
+      </Menu>
+      : null}
+    </>
   );
 };
 

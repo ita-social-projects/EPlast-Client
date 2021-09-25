@@ -148,6 +148,7 @@ const EditSector = () => {
         history.goBack();
       })
       .catch(() => {
+        getSectorNames()
         notificationLogic("error", failUpdateAction("напрям керівного органу"));
       });
   };

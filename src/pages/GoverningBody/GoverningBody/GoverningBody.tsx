@@ -17,9 +17,11 @@ import {
   PlusSquareFilled,
   DeleteOutlined,
   ExclamationCircleOutlined,
-  FileTextOutlined
+  FileTextOutlined,
+  LockOutlined
 } from "@ant-design/icons";
 import {
+  getAllAnnouncements,
   getGoverningBodyById,
   getGoverningBodyLogo,
   getUserAccess,
@@ -28,6 +30,7 @@ import {
 import "./GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import GoverningBodyProfile from "../../../models/GoverningBody/GoverningBodyProfile";
+import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
 import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
@@ -67,6 +70,7 @@ const GoverningBody = () => {
   const [governingBodyHead, setGoverningBodyHead] = useState<GoverningBodyAdmin>();
   const [sectors, setSectors] = useState<SectorProfile[]>([]);
   const [sectorsPhotosLoading, setSectorsPhotosLoading] = useState<boolean>(false);
+  const [announcements, setAnnouncements] = useState<GoverningBodyAnnouncement[]>([]);
 
   const deleteGoverningBody = async () => {
     await removeGoverningBody(governingBody.id);
@@ -126,17 +130,31 @@ const GoverningBody = () => {
 
   const getUserAccesses = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
+    let result :any
     await getUserAccess(user.nameid).then(
       response => {
+        result = response
         setUserAccesses(response.data);
       }
     );
+    return result
   }
-
+ 
+  
   const getGoverningBody = async () => {
     setLoading(true);
     try {
-      await getUserAccesses();
+      let userAccesses = await getUserAccesses();
+      if(userAccesses.data["ViewAnnouncements"]){
+        const res: GoverningBodyAnnouncement[]  = (await getAllAnnouncements()).data
+        console.log(res)
+        let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];
+        for(let i = 0; i < res.length && i < 3; i++) {
+          res[i].text = res[i].text.substring(0,20) + (res[i].text.length > 20? "...": "")
+          shortListedAnnoncements = [...shortListedAnnoncements, res[i]]
+        }
+        setAnnouncements(shortListedAnnoncements)
+      }
       const response = await getGoverningBodyById(+id);
       const governingBodyViewModel = response.data.governingBodyViewModel;
 
@@ -441,16 +459,42 @@ const GoverningBody = () => {
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Оголошення</Title>
             <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
+              {userAccesses["ViewAnnouncements"] ?  
+                announcements.length > 0 ?
+                announcements.map((announcement) => (
+                  <Col
+                     className="cityMemberItem"
+                    xs={12}
+                    sm={8}
+                    key={announcement.id}
+                    style={{padding: "0.3rem"}}
+                  >
+                    <Paragraph><strong>{announcement.user.firstName}</strong></Paragraph>
+                    <Paragraph style={{overflow:"hidden",textOverflow:"ellipsis", wordBreak:"break-word"}}>{announcement.text}</Paragraph>
+                    <Paragraph>{moment(announcement.date).format("DD.MM.YYYY")}</Paragraph>
+                  </Col>
+                  )) 
+                  : 
+                  <Col>
+                    <Paragraph>Ще немає оголошень</Paragraph>
+                  </Col>
+                : 
+                <Col>
+                   <Paragraph strong>У тебе немає доступу до оголошень!</Paragraph>
+                   <LockOutlined style={{ fontSize:"150px" }} />
+                </Col>}
             </Row>
-            <div className="governingBodyMoreButton">
-              <Button
-                type="primary"
-                className="governingBodyInfoButton"
-                onClick={() => history.push(`/GetAllAnnouncements`)}
-              >
-                Більше
-              </Button>
-            </div>
+            {userAccesses["ViewAnnouncements"] ?
+              <div className="governingBodyMoreButton">
+                <Button
+                  type="primary"
+                  className="governingBodyInfoButton"
+                  onClick={() => history.push(`/announcements`)}
+                >
+                  Більше
+                </Button>
+              </div>
+            : null}
           </Card>
         </Col>
 
