@@ -1,6 +1,7 @@
 import axios from "axios";
 import api from "./api";
 import BASE_URL from '../config';
+import { Announcement } from "../models/GoverningBody/Announcement/Announcement";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
   const arr = dataurl.split(",");
@@ -176,6 +177,13 @@ export const getAnnouncementsById = (id: number) => {
       throw new Error(error);
     });
 }
+
+export const editAnnouncement = async (id: number, data: Announcement) => {
+  return api.put(`GoverningBodies/EditAnnouncement/${id}`, data)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
 
 export const deleteAnnouncement = async (id: number) => {
   return api.remove(`GoverningBodies/DeleteAnnouncement/${id}`, id)
