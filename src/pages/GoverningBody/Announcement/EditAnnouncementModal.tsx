@@ -1,66 +1,77 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Row, Col } from "antd";
+import { Form, Input, Button, Row, Col, Drawer } from "antd";
 import formclasses from "./Form.module.css";
 import {
   emptyInput,
   maxLength,
 } from "../../../components/Notifications/Messages";
 import {
-  addAnnouncement,
-  getAllAnnouncements,
-  getAllUserId,
+  getAnnouncementsById
 } from "../../../api/governingBodiesApi";
 import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
-type FormAddAnnouncementProps = {
+interface Props {
+  visibleModal: boolean;
+  id: number;
   setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: (arg0: string) => void;
-};
+  onEdit: (id: number, ann: Announcement) => void;
+}  
 
-const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
-  props: any
-) => {
-  const { setVisibleModal, onAdd } = props;
+const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Props) => {
   const [form] = Form.useForm();
-  const [submitLoading, setSubmitLoading] = useState(false);
-  const [distData, setDistData] = useState<Announcement[]>(
-    Array<Announcement>()
-  );
-  const [loadingUserStatus, setLoadingUserStatus] = useState(false);
-
+  const [announcement, setAnnouncement] = useState<any>()
+  const [text, setText] = useState<string>("");
   useEffect(() => {
-    const fetchData = async () => {
-      await getAllAnnouncements().then((response) => {
-        setDistData(response.data);
-      });
-     
-      setLoadingUserStatus(true);
-    };
-    fetchData();
-  }, []);
+    getAnnouncement(id);
+    console.log(id)
+  }, [id])
+
+  const getAnnouncement = async(id: number) => {
+    await getAnnouncementsById(id)
+    .then(response => {
+      setAnnouncement(response.data)
+      setText(response.data.text)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
 
   const handleCancel = () => {
-    form.resetFields();
     setVisibleModal(false);
   };
 
   const handleSubmit = (values: any) => {
-    setSubmitLoading(true);
     setVisibleModal(false);
     form.resetFields();
-    onAdd(values.text);
-    setSubmitLoading(false);
+    var updatedAnnouncement: Announcement = {
+      id: announcement.id,
+      text: text,
+      date: announcement.date,
+      firstName: announcement.user.firstName,
+      lastName: announcement.user.lastName,
+      userId: announcement.userId,
+    };
+    onEdit(id,updatedAnnouncement);
   };
-
+  
   return (
-    <Form
-      name="basic"
-      onFinish={handleSubmit}
-      form={form}
-      id="area"
-      style={{ position: "relative" }}
+    <Drawer
+      title="Редагувати оголошення"
+      placement="right"
+      width="auto"
+      height={1000}
+      visible={visibleModal}
+      onClose={handleCancel}
+      footer={null}
     >
+      <Form
+        name="basic"
+        onFinish={handleSubmit}
+        form={form}
+        id="area"
+        style={{ position: "relative" }}
+      >
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
@@ -75,8 +86,13 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
                 message: maxLength(1000),
               },
             ]}
+             initialValue={text}
           >
+            <p></p>
             <Input.TextArea
+              name="text-area"
+              value = {text}
+              onChange={(e) => {setText(e.target.value)}}
               allowClear
               autoSize={{
                 minRows: 2,
@@ -104,14 +120,15 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
                 htmlType="submit"
                 className={formclasses.buttons}
               >
-                Опублікувати
+                Зберегти
               </Button>
             </div>
           </Form.Item>
         </Col>
       </Row>
     </Form>
+  </Drawer>
   );
 };
 
-export default FormAddAnnouncement;
+export default EditAnnouncementModal;
