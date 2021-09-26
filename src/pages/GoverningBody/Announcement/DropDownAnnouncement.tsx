@@ -8,7 +8,7 @@ import {
 import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
 import classes from "./Announcement.module.css";
 import "../../../api/governingBodiesApi";
-import { getAllAnnouncements, getAllUserId, getAnnouncementsById, getUserAccess } from "../../../api/governingBodiesApi";
+import { getAllAnnouncements } from "../../../api/governingBodiesApi";
 import DeleteConfirm from "./DeleteConfirm";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from 'jwt-decode';
