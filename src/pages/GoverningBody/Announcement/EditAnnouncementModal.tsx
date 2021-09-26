@@ -23,7 +23,6 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
   const [text, setText] = useState<string>("");
   useEffect(() => {
     getAnnouncement(id);
-    console.log(id)
   }, [id])
 
   const getAnnouncement = async(id: number) => {

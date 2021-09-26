@@ -45,16 +45,6 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     setVisibleModal(false);
   };
 
-  const newNotification = async () => {
-    await NotificationBoxApi.createNotifications(
-      users,
-      "Додане нове оголошення.",
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/governingBodies/announcements`,
-      `Переглянути`
-    );
-  };
-
   const handleSubmit = (values: any) => {
     setSubmitLoading(true);
     setVisibleModal(false);

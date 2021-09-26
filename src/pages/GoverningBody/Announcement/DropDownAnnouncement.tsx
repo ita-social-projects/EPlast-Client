@@ -8,7 +8,7 @@ import {
 import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
 import classes from "./Announcement.module.css";
 import "../../../api/governingBodiesApi";
-import { getAllAnnouncements, getUserAccess } from "../../../api/governingBodiesApi";
+import { getAllAnnouncements, getAllUserId, getAnnouncementsById, getUserAccess } from "../../../api/governingBodiesApi";
 import DeleteConfirm from "./DeleteConfirm";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from 'jwt-decode';
@@ -25,7 +25,7 @@ interface Props {
 
 
 const DropDown = (props: Props) => {
-  const { record, pageX, pageY, showDropdown, onDelete, userAccesses  } = props;
+  const { record, pageX, pageY, showDropdown, onDelete, onEdit, userAccesses  } = props;
 
 
 
@@ -49,7 +49,7 @@ const DropDown = (props: Props) => {
 
   return (
     <>
-      {userAccesses["DeleteAnnouncement"]?
+      {userAccesses["DeleteAnnouncement"] || userAccesses["EditAnnouncement"]?
       <Menu
         theme="dark"
         onClick={handleItemClick}
@@ -63,12 +63,20 @@ const DropDown = (props: Props) => {
           display: showDropdown ? "block" : "none",
         }}
       >
+        {userAccesses["DeleteAnnouncement"]?
         <Menu.Item key="1">
           <DeleteOutlined />
           Видалити
         </Menu.Item>
+           : null}
+        {userAccesses["EditAnnouncement"]?
+        <Menu.Item key="2">
+          <EditOutlined />
+          Редагувати
+        </Menu.Item>
+        : null}
       </Menu>
-      : null}
+      :null}
     </>
   );
 };

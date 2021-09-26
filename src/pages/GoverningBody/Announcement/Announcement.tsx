@@ -1,7 +1,7 @@
 import { Button, Layout, List } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { addAnnouncement, editAnnouncement, getAllAnnouncements, getAllUserId } from "../../../api/governingBodiesApi";
+import { addAnnouncement, editAnnouncement, getAllAnnouncements, getAllUserId, getAnnouncementsById } from "../../../api/governingBodiesApi";
 import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
 import AddAnnouncementModal from "./AddAnnouncementModal";
 import Spinner from "../../Spinner/Spinner";
@@ -11,6 +11,8 @@ import jwt from 'jwt-decode';
 import ClickAwayListener from "react-click-away-listener";
 import AuthStore from "../../../stores/AuthStore";
 import { getUserAccess } from "../../../api/regionsBoardApi";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import EditAnnouncementModal from "./EditAnnouncementModal";
 
 const { Content } = Layout;
 
@@ -29,6 +31,7 @@ const Announcements = () => {
   const [activeUserId, setActiveUserId] = useState<string>("");
   const classes = require("./Announcement.module.css");
   const [users, setUsers] = useState<string[]>([]);
+  const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   const getAnnouncements = async () => {
     setLoading(true);
     await getAllAnnouncements()
@@ -49,6 +52,20 @@ const Announcements = () => {
       setLoading(false);
     });
   };
+  const getUserAccesses = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    console.log(user)
+    setActiveUserId(user.nameid)
+    let result :any
+    await getUserAccess(user.nameid).then(
+      response => {
+        result = response
+        setUserAccesses(response.data);
+      }
+    );
+    return result
+  }
+
   const getAllUsers = async () => {
     await getAllUserId().then((response) => {
       setUsers(response.data);
@@ -158,6 +175,7 @@ const Announcements = () => {
             pageX={x}
             pageY={y}
             onDelete={handleDelete}
+            onEdit={() => setVisibleEditModal(true)}
             userAccesses ={userAccesses}
           />
         </ClickAwayListener>
