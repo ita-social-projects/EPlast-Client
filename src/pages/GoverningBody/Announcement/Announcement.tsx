@@ -52,6 +52,7 @@ const Announcements = () => {
       setLoading(false);
     });
   };
+  
   const getUserAccesses = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
     console.log(user)
@@ -72,7 +73,6 @@ const Announcements = () => {
     });
   }
   useEffect(() => {
-
     getUserAccesses()
     getAnnouncements();
     getAllUsers();
