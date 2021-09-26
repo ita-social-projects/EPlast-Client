@@ -16,11 +16,12 @@ interface Props {
   pageX: number;
   pageY: number;
   showDropdown: boolean;
+  onEdit: () => void;
   onDelete: (id: number) => void;
 }
 
 const DropDown = (props: Props) => {
-  const { record, pageX, pageY, showDropdown, onDelete } = props;
+  const { record, pageX, pageY, showDropdown, onDelete, onEdit } = props;
 
   useEffect(() => {
     const fetchData = async () => {};
@@ -32,6 +33,9 @@ const DropDown = (props: Props) => {
     switch (item.key) {
       case "1":
         DeleteConfirm(record, onDelete);
+        break;
+      case "2":
+        onEdit();
         break;
     }
     item.key = "0";
@@ -54,6 +58,10 @@ const DropDown = (props: Props) => {
       <Menu.Item key="1">
         <DeleteOutlined />
         Видалити
+      </Menu.Item>
+      <Menu.Item key="2">
+        <EditOutlined />
+        Редагувати
       </Menu.Item>
     </Menu>
   );
