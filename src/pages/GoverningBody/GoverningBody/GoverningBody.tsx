@@ -139,7 +139,6 @@ const GoverningBody = () => {
     );
     return result
   }
- 
   
   const getGoverningBody = async () => {
     setLoading(true);
