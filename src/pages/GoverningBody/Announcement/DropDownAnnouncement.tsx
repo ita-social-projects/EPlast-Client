@@ -22,13 +22,9 @@ interface Props {
   userAccesses : {[key: string] : boolean};
 }
 
-
-
 const DropDown = (props: Props) => {
   const { record, pageX, pageY, showDropdown, onDelete, onEdit, userAccesses  } = props;
-
-
-
+  
   useEffect(() => {
     const fetchData = async () => {};
     fetchData();
