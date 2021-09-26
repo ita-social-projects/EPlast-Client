@@ -5,7 +5,7 @@ import FormAddAnnouncement from "./FormAddAnnouncement";
 interface Props {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: () => void;
+  onAdd: (str:string) => void;
 }
 
 const AddAnnouncementModal = ({
