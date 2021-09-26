@@ -107,6 +107,7 @@ export default function () {
                 governingBodyId={data?.user.governingBodyId}
                 cityMemberIsApproved={data?.user.cityMemberIsApproved}
                 clubMemberIsApproved={data?.user.clubMemberIsApproved}
+                showPrecautions = {data?.shortUser === null}
               />
             </StickyContainer>
           </div>
@@ -519,6 +520,7 @@ export default function () {
             clubId={data?.shortUser.clubId}
             cityMemberIsApproved={data?.shortUser.cityMemberIsApproved}
             clubMemberIsApproved={data?.shortUser.clubMemberIsApproved}
+            showPrecautions = { data.shortUser === null }
           />
         </div>
         <div className="shortAllFields">
