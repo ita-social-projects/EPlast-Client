@@ -46,7 +46,7 @@ const EditSector = () => {
 
   const [loading, setLoading] = useState(false);
   const [sector, setSector] = useState<SectorProfile>(new SectorProfile());
-  const [sectorNames, setSectorNames] = useState<string[] | undefined>();
+  const [sectorNames, setSectorNames] = useState<string[]>([]);
   const orgName: string = 'Сектор'
 
   useEffect(() => {

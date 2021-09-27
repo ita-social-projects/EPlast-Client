@@ -1,4 +1,3 @@
-import { checkIfNameExists } from "../../api/regionsApi";
 import{
     emptyInput,
     maxLength,
@@ -318,13 +317,14 @@ export const descriptionValidation = ({
     ],
 });
 
-export const sameNameValidator = (org:string, array: string[] | undefined) => { 
+export const sameNameValidator = (org:string, array: string[]) => { 
+    let foundString: string | undefined
     return {
         validator: (_ : object, value : string) => 
         value == undefined || String(value).length == 0
             ? Promise.resolve()
-            : (array as string[]).find(x => x.trim() === String(value).trim()) === undefined
+            : (foundString = array.find(x => (x.trim().toLowerCase()) === String(value).trim().toLowerCase())) === undefined
                 ? Promise.resolve()
-                : Promise.reject(org + ' з назвою \"' + String(value).trim() + '\" вже існує')
+                : Promise.reject(org + ' з назвою \"' + String(foundString).trim() + '\" вже існує')
     } 
 }
