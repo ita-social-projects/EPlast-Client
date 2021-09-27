@@ -105,7 +105,7 @@ const CreateSector = () => {
       governingBodyId: governingBodyId,
       description: values.description,
       email: values.email,
-      name: values.name,
+      name: (values.name as string).trim(),
       logo: sector.logo?.length === 0 ? null : sector.logo,
       phoneNumber: values.phoneNumber,
       head: sector.head,
