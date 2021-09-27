@@ -361,9 +361,9 @@ const UsersTable = () => {
       <Title level={4} style={{ textAlign: "left", margin: 10 }} underline={true}>Загальна кількість користувачів: {total}</Title>
       <div className={classes.searchContainer}>
         <div className={classes.filterContainer}>
-          <Form form={form} onFinish={handleFilter} style={{ height: "20px" }}>
-            <Row style={{ flexFlow: "nowrap" }}>
-              <Col span={20}>
+          <Form form={form} onFinish={handleFilter}>
+            <Row className={classes.rowForFilterSearch}>
+              <Col className={classes.colForTreeSelect}>
                 <Form.Item
                   rules={[
                     {
@@ -380,10 +380,8 @@ const UsersTable = () => {
                     multiple
                     onDeselect={ondeSelect}
                     onSelect={onSelect}
-                    className={classes.treeSelect}
                     treeCheckable={true}
                     showCheckedStrategy={SHOW_PARENT}
-                    style={{ minWidth: "75%", height: "32px", maxWidth: "95%" }}
                     filterTreeNode={(input, option) =>
                       (option?.title as string)
                         .toLowerCase()
@@ -414,12 +412,12 @@ const UsersTable = () => {
                   </TreeSelect>
                 </Form.Item>
               </Col>
-              <Col>
+              <Col className={classes.colForButton}>
                 <Form.Item>
                   <Button
                     type="primary"
                     htmlType="submit"
-                    style={{ minWidth: "10%", marginBottom: 30 }}
+                    className={classes.okButton}
                   >
                     OK
                   </Button>
@@ -439,7 +437,7 @@ const UsersTable = () => {
       </div>
 
       <Card
-        style={{ width: "100%" }}
+        className={classes.card}
         tabList={tabList}
         activeTabKey={currentTabName}
         onTabChange={(key) => {

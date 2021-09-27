@@ -12,6 +12,8 @@ import { EventParticipant } from "./EventInfo";
 import eventsApi from "../../../../api/eventsApi";
 import "./ParticipantsTable.less";
 import { useHistory } from "react-router-dom";
+import userApi from "../../../../api/UserApi";
+import { Roles } from "../../../../models/Roles/Roles";
 
 const { Text } = Typography;
 
@@ -36,6 +38,7 @@ const ParticipantsTable = ({
     participants
   );
   const history = useHistory();
+  const roles = ([] as string[]).concat(userApi.getActiveUserRoles());
   useEffect(() => {
     setParticipant(participants);
   }, [participants]);
@@ -129,7 +132,7 @@ const ParticipantsTable = ({
     },
   ];
 
-  if (isUserEventAdmin) {
+  if (isUserEventAdmin || roles.includes(Roles.Admin)) {
     columns.push({
       title: "Змінити статус",
       dataIndex: "changeStatus",
