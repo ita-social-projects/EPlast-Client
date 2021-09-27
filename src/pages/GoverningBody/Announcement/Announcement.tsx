@@ -10,6 +10,11 @@ import DropDown from "./DropDownAnnouncement";
 import ClickAwayListener from "react-click-away-listener";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import EditAnnouncementModal from "./EditAnnouncementModal";
+import { getUserAccess } from "../../../api/regionsBoardApi";
+
+import jwt from 'jwt-decode';
+import AuthStore from "../../../stores/AuthStore";
+
 
 const { Content } = Layout;
 
@@ -28,6 +33,8 @@ const Announcements = () => {
   const [activeUserId, setActiveUserId] = useState<string>("");
   const classes = require("./Announcement.module.css");
   const [users, setUsers] = useState<string[]>([]);
+  const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
+
   const getAnnouncements = async () => {
     setLoading(true);
     await getAllAnnouncements()
@@ -48,12 +55,27 @@ const Announcements = () => {
       setLoading(false);
     });
   };
+
+  const getUserAccesses = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    let result :any
+    await getUserAccess(user.nameid).then(
+      response => {
+        result = response
+        setUserAccesses(response.data);
+        console.log(response.data)
+      }
+    );
+    return result
+  }
+
   const getAllUsers = async () => {
     await getAllUserId().then((response) => {
       setUsers(response.data);
     });
   }
   useEffect(() => {
+    getUserAccesses();
     getAnnouncements();
     getAllUsers();
   }, []);
@@ -67,7 +89,7 @@ const Announcements = () => {
       users,
       "Додане нове оголошення.",
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/GetAllAnnouncements`,
+      `/announcements`,
       `Переглянути`
     );
   };
@@ -105,11 +127,14 @@ const Announcements = () => {
         }}
       >
         <h1> Оголошення </h1>
-        <div className={classes.antbtn}>
-          <Button type="primary" onClick={showModal}>
-            Додати оголошення
-          </Button>
-        </div>
+        {userAccesses["AddAnnouncement"] ?
+          <div className={classes.antbtn}>
+            <Button type="primary" onClick={showModal}>
+              Додати оголошення
+            </Button>
+          </div>
+        : null
+      }
         {loading ? (
           <Spinner />
         ) : (
@@ -118,6 +143,7 @@ const Announcements = () => {
             dataSource={data}
             renderItem={(item) => (
               <List.Item
+              style={{overflow:"hidden", wordBreak:"break-word"}}
                 className={classes.listItem}
                 onClick={() => {
                   setShowDropdown(false);
@@ -152,6 +178,7 @@ const Announcements = () => {
             pageY={y}
             onDelete={handleDelete}
             onEdit = {() => {setVisibleEditModal(true)}}
+            userAccess={userAccesses}
           />
         </ClickAwayListener>
         <AddAnnouncementModal
