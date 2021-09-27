@@ -212,7 +212,12 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Рішення органу"
             labelCol={{ span: 24 }}
             name="governingBody"
-            rules={descriptionValidation.Inputs}
+            rules={[
+              {
+                required: true,
+                message: emptyInput()
+              }
+            ]}
           >
             <Select
               placeholder="Оберіть орган"
