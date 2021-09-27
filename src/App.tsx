@@ -395,7 +395,7 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/GetAllAnnouncements"
+            path="/announcements"
             component={Announcements}
           />
           <RouteWithLayout
