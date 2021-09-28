@@ -53,6 +53,10 @@ input[type='password']{
     margin-left:200px;
 }
 
+.forgot:hover{
+    text-decoration: underline;
+}
+
 .GoogleFacebookLogin{
     display: flex;
     justify-content: space-between;
