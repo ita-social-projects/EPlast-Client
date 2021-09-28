@@ -27,7 +27,6 @@ const fileNameMaxLength = 50;
 
 export const Blanks = () => {
     const { userId } = useParams<{ userId: string }>();
-
     const [data, setData] = useState<Data>();
     const [currentUser, setCurrentUser] = useState<Data>();
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());

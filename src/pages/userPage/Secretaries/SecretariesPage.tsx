@@ -13,8 +13,6 @@ import { UserGoverningBodySecretaryTable } from './UserGoverningBodySecretaryTab
 import{ tryAgain } from "../../../components/Notifications/Messages";
 import { StickyContainer } from 'react-sticky';
 
-
-
 const tabList = [
     {
         key: '1',
@@ -33,7 +31,6 @@ const tabList = [
         tab: 'Діловодства куреня',
     },
 ];
-
 
 export const Secretaries = () => {
     const { userId } = useParams();
