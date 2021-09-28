@@ -31,6 +31,7 @@ const ActiveMembership = () => {
   const [accessLevels, setAccessLevels] = useState([]);
   const [dates, setDates] = useState<any>({});
   const [data, setUserData] = useState<Data>();
+  const [userProfile, SetUserProfile] = useState<Data>();
   const [currentUser, setCurrentUser] = useState<any>({});
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
   const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
@@ -77,6 +78,15 @@ const ActiveMembership = () => {
     }).catch((error) => {
       notificationLogic("error", error.message);
     });
+
+    await userApi
+      .getUserProfileById(currentUserId, userId)
+      .then((response) => {
+        SetUserProfile(response.data);
+      })
+      .catch((error) => {
+        notificationLogic("error", error.message);
+      });
 
     await userApi.getById(userId).then(async (response) => {
       setUserData(response.data);
@@ -211,6 +221,7 @@ const ActiveMembership = () => {
           clubId={data?.user.clubId}
           cityMemberIsApproved={data?.user.cityMemberIsApproved}
           clubMemberIsApproved={data?.user.clubMemberIsApproved}
+          showPrecautions = {userProfile?.shortUser === null}
         />
       </div>
 
