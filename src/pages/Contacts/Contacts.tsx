@@ -35,7 +35,7 @@ export default function () {
       avatar: (
         <MailOutlined id={styles.environmentOutlined} />
       ),
-      title: "info@plast.ua",
+      title: "info@plast.org.ua",
     },
   ];
 

@@ -700,7 +700,7 @@ const Region = () => {
                                 <Col offset={1}>
                                   <Tooltip title="Розархівувати округу">
                                     <ContainerOutlined
-                                      className="regionInfoIcon"
+                                      className="cityInfoIcon"
                                       color = "green" 
                                       onClick={() => seeUnArchiveModal()} 
                                     />
