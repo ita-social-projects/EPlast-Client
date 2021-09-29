@@ -27,7 +27,6 @@ const fileNameMaxLength = 50;
 
 export const Blanks = () => {
     const { userId } = useParams<{ userId: string }>();
-
     const [data, setData] = useState<Data>();
     const [currentUser, setCurrentUser] = useState<Data>();
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
@@ -171,7 +170,8 @@ export const Blanks = () => {
                         cityId={data?.user.cityId}
                         clubId={data?.user.clubId}
                         cityMemberIsApproved={data?.user.cityMemberIsApproved}
-                        clubMemberIsApproved={data?.user.clubMemberIsApproved} />
+                        clubMemberIsApproved={data?.user.clubMemberIsApproved}
+                        showPrecautions={data?.shortUser === null} />
                 </div>
                 <div className={classes.wrapperCol}>
                     <div className={classes.wrapper}>

@@ -36,7 +36,7 @@ class AvatarAndProgressStaticProps {
   clubId: number | undefined;
   cityMemberIsApproved: boolean | undefined;
   clubMemberIsApproved: boolean | undefined;
-
+  showPrecautions: boolean | undefined;
   constructor() {
     this.imageUrl = "";
   }
@@ -85,6 +85,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     regionId,
     cityMemberIsApproved,
     clubMemberIsApproved,
+    showPrecautions
   } = props;
   const [imageBase64, setImageBase64] = useState<string>();
   const [UserDistinctions, setData] = useState<UserDistinction[]>([
@@ -147,9 +148,11 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           setData(response.data);
         });
 
-      await precautionApi.getPrecautionOfGivenUser(userId).then((response) => {
-        setPrecaution(response.data);
-      });
+      if (showPrecautions) {
+        await precautionApi.getPrecautionOfGivenUser(userId).then((response) => {
+          setPrecaution(response.data);
+        });
+      }
 
       await userApi.getImage(imageUrl).then((response: { data: any }) => {
         setImageBase64(response.data);
@@ -274,7 +277,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
                 (100 -
                   ((time === undefined ? 0 : time) * 100) / 365 +
                   Number.EPSILON) *
-                  10
+                10
               ) / 10
             }
           />
@@ -294,7 +297,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           </Tooltip>
         </div>
       ))}
-      {UserPrecaution.map((dist) =>
+      {showPrecautions && UserPrecaution.map((dist) =>
         dist.status !== "Скасовано" ? (
           <div className="precautions">
             <Tooltip title={dist?.reason}>
