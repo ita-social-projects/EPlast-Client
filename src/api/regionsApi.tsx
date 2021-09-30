@@ -153,8 +153,7 @@ export const getUsersAdministrations = async (userId: string) => {
   });
 };
 
-export const 
-getUsersPreviousAdministrations = async (userId: string) => {
+export const getUsersPreviousAdministrations = async (userId: string) => {
   return api
     .get(`Regions/GetUserPreviousAdministrations/${userId}`)
     .catch((error) => {
