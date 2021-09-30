@@ -151,8 +151,6 @@ const RegionAdministration = () => {
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}          
                 actions={
                   activeUserRoles.includes(Roles.Admin) || (activeUserRoles.includes(Roles.OkrugaHead) && isActiveUserRegionAdmin)
-                  || ((!activeUserRoles.includes(Roles.OkrugaHeadDeputy) || member.adminType.adminTypeName !== Roles.OkrugaHead)
-                  && isActiveUserRegionAdmin)
                   ?
                   [
                   <SettingOutlined onClick={() => showModal(member)} />,
