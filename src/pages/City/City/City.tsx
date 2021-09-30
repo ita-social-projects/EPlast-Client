@@ -138,7 +138,6 @@ const City = () => {
     if (followers.length < 6) {
       setFollowers([...followers, follower.data]);
     }
-
     setCanJoin(false);
   };
 
@@ -238,7 +237,7 @@ const City = () => {
 
   function seeJoinModal() {
     return Modal.confirm({
-      title: "Ви впевнені, що хочете доєднатися до даної станиці?",
+      title: "Ви впевнені, що хочете доєднатися до даної станиці? При доєднанні до нової станиці всі попередні ролі будуть скасовані.",
       icon: <ExclamationCircleOutlined />,
       okText: "Так, доєднатися",
       okType: "primary",
