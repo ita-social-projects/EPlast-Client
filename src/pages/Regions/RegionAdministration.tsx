@@ -23,7 +23,7 @@ import NotificationBoxApi from "../../api/NotificationBoxApi";
 import AddAdministratorModal from "./AddAdministratorModal";
 import { Roles } from "../../models/Roles/Roles";
 import RegionAdmin from "../../models/Region/RegionAdmin";
-import extendedTitleTooltip from "../../components/Tooltip";
+import extendedTitleTooltip, { parameterMaxLength } from "../../components/Tooltip";
 moment.locale("uk-ua");
 
 const adminTypeNameMaxLength = 22;
@@ -178,7 +178,7 @@ const RegionAdministration = () => {
                     <Card.Meta
                       className="detailsMeta"
                       title={
-                        extendedTitleTooltip(adminTypeNameMaxLength, `${member.user.firstName} ${member.user.lastName}`)
+                        extendedTitleTooltip(parameterMaxLength, `${member.user.firstName} ${member.user.lastName}`)
                       }
                     />
                   </div>
