@@ -36,7 +36,7 @@ class AvatarAndProgressStaticProps {
   clubId: number | undefined;
   cityMemberIsApproved: boolean | undefined;
   clubMemberIsApproved: boolean | undefined;
-
+  showPrecautions: boolean | undefined;
   constructor() {
     this.imageUrl = "";
   }
@@ -85,6 +85,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     regionId,
     cityMemberIsApproved,
     clubMemberIsApproved,
+    showPrecautions
   } = props;
   const [imageBase64, setImageBase64] = useState<string>();
   const [UserDistinctions, setData] = useState<UserDistinction[]>([
@@ -147,9 +148,11 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           setData(response.data);
         });
 
-      await precautionApi.getPrecautionOfGivenUser(userId).then((response) => {
-        setPrecaution(response.data);
-      });
+      if (showPrecautions) {
+        await precautionApi.getPrecautionOfGivenUser(userId).then((response) => {
+          setPrecaution(response.data);
+        });
+      }
 
       await userApi.getImage(imageUrl).then((response: { data: any }) => {
         setImageBase64(response.data);
@@ -176,47 +179,73 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       <Title level={2}>
         {firstName} {lastName}
       </Title>
-      <Title level={4}>Псевдо: {pseudo}</Title>
+      {pseudo ? (
+        <Title level={4}>Псевдо: {pseudo}</Title>
+      ) : (
+        <Title level={4}>Псевдо не внесено</Title>
+      )}
       {cityMemberIsApproved == false ? (
         <div>
-          <p className="statusText">
-            Є прихильником округи:{" "}
-            <Link to={"/regions/" + regionId} target="_blank" className="LinkText">
-              {region}
-            </Link>
-          </p>
-          <p className="statusText">
-            Є прихильником станиці:{" "}
-            <Link to={"/cities/" + cityId} target="_blank" className="LinkText">
-              {city}
-            </Link>
-          </p>
+          {region ? (
+            <p className="statusText">
+              Є прихильником округи:{" "}
+              <Link
+                to={"/regions/" + regionId}
+                target="_blank"
+                className="LinkText"
+              >
+                {region}
+              </Link>
+            </p>
+          ) : (
+            <p className="statusText">Не є прихильником жодної округи</p>
+          )}
+          {city ? (
+            <p className="statusText">
+              Є прихильником станиці:{" "}
+              <Link
+                to={"/cities/" + cityId}
+                target="_blank"
+                className="LinkText"
+              >
+                {city}
+              </Link>
+            </p>
+          ) : (
+            <p className="statusText">Не є прихильником жодної станиці</p>
+          )}
         </div>
       ) : (
         <div>
           <p className="statusText">
             Округа:{" "}
             <Link
-              to={"/regions/" + regionId} target="_blank" className="LinkText">
+              to={"/regions/" + regionId}
+              target="_blank"
+              className="LinkText"
+            >
               {region}
             </Link>
           </p>
           <p className="statusText">
             Станиця:{" "}
-            <Link 
-              to={"/cities/" + cityId} target="_blank" className="LinkText">
+            <Link to={"/cities/" + cityId} target="_blank" className="LinkText">
               {city}
             </Link>
           </p>
         </div>
       )}
       {clubMemberIsApproved == false ? (
-        <p className="statusText">
-          Є прихильником куреня:{" "}
-          <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
-            {club}
-          </Link>
-        </p>
+        club ? (
+          <p className="statusText">
+            Є прихильником куреня:{" "}
+            <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
+              {club}
+            </Link>
+          </p>
+        ) : (
+          <p className="statusText">Не є прихильником жодного куреня</p>
+        )
       ) : (
         <p className="statusText">
           Курінь:{" "}
@@ -248,7 +277,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
                 (100 -
                   ((time === undefined ? 0 : time) * 100) / 365 +
                   Number.EPSILON) *
-                  10
+                10
               ) / 10
             }
           />
@@ -261,20 +290,14 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       </div>
       {UserDistinctions.map((dist) => (
         <div className="distinctions">
-          {dist.distinction.name?.length > nameMaxLength ? (
-            <Tooltip title={dist?.distinction.name}>
-              <h2>
-                {dist.distinction.name.slice(0, 54) + "..."} №{dist.number}
-              </h2>
-            </Tooltip>
-          ) : (
+          <Tooltip title={dist?.reason}>
             <h2>
-              {dist.distinction.name + "№" + dist.number}
+              {dist.distinction.name} №{dist.number}
             </h2>
-          )}
+          </Tooltip>
         </div>
       ))}
-      {UserPrecaution.map((dist) =>
+      {showPrecautions && UserPrecaution.map((dist) =>
         dist.status !== "Скасовано" ? (
           <div className="precautions">
             <Tooltip title={dist?.reason}>

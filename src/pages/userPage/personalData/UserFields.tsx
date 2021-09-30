@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Alert, Button, Form, Input, Skeleton } from "antd";
+import { Alert, Button, Form, Input, Skeleton, Tooltip } from "antd";
 import userApi from "../../../api/UserApi";
 import moment from "moment";
 import { Data, User } from "../Interface/Interface";
@@ -15,24 +15,23 @@ import { Roles } from "../../../models/Roles/Roles";
 import UserApi from "../../../api/UserApi";
 
 export default function () {
-  const { userId } = useParams<{userId:string}>();
+  const { userId } = useParams<{ userId: string }>();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
-  const [activeUserRoles, setActiveUserRoles]=useState<string[]>([]);
-  const [activeUserId, setActiveUserId]=useState<string>("");
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const [activeUserId, setActiveUserId] = useState<string>("");
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
 
   const fetchData = async () => {
-
     const actUserId = await UserApi.getActiveUserId();
-      setActiveUserId(actUserId);
+    setActiveUserId(actUserId);
 
     const userRoles = UserApi.getActiveUserRoles();
-      setActiveUserRoles(userRoles);
+    setActiveUserRoles(userRoles);
 
     const userProfile = await UserApi.getActiveUserProfile();
-     setActiveUserProfile(userProfile);
+    setActiveUserProfile(userProfile);
 
     await userApi
       .getUserProfileById(actUserId, userId)
@@ -66,33 +65,31 @@ export default function () {
         className="img"
       />
     </div>
-  )  
-  : data?.user !== null ? (
+  ) : data?.user !== null ? (
     <div className="container">
       <Form name="basic" className="formContainer">
-      
         <div className="wrapperContainer">
+          {activeUserProfile?.gender.name === null && (
+            <Alert
+              className="alertWrapper"
+              message="Попередження"
+              description="Заповніть обов'язкові поля профілю українською мовою"
+              type="warning"
+              showIcon
+            />
+          )}
+          {activeUserProfile?.city === null && (
+            <Alert
+              className="alertWrapper"
+              message="Попередження"
+              description="Оберіть станицю та доєднайтеся до неї"
+              type="warning"
+              showIcon
+            />
+          )}
 
-          {activeUserProfile?.gender.name === null &&
-          <Alert
-            className="alertWrapper"
-            message="Попередження"
-            description="Заповніть обов'язкові поля профілю українською мовою"
-            type="warning"
-            showIcon
-          />}
-          {activeUserProfile?.city === null &&
-          <Alert
-            className="alertWrapper"
-            message="Попередження"
-            description="Оберіть станицю та доєднайтеся до неї"
-            type="warning"
-            showIcon
-          />}
-          
           <div className="avatarWrapperUserFields">
-
-          <StickyContainer className="kadraWrapper">
+            <StickyContainer className="kadraWrapper">
               <AvatarAndProgressStatic
                 imageUrl={data?.user.imagePath as string}
                 time={data?.timeToJoinPlast}
@@ -110,12 +107,12 @@ export default function () {
                 governingBodyId={data?.user.governingBodyId}
                 cityMemberIsApproved={data?.user.cityMemberIsApproved}
                 clubMemberIsApproved={data?.user.clubMemberIsApproved}
+                showPrecautions = {data?.shortUser === null}
               />
             </StickyContainer>
-
           </div>
         </div>
-      
+
         <div className="allFields">
           <div className="rowBlock">
             <Form.Item label="Ім`я" className="formItem">
@@ -201,7 +198,7 @@ export default function () {
                 <Input
                   readOnly
                   className="dataInput"
-                  value={moment(data?.user.birthday).format("DD.MM.YYYY")}
+                  value={moment.utc(data?.user.birthday).local().format("DD.MM.YYYY")}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -352,11 +349,17 @@ export default function () {
                     className="dataInput"
                     value="не була в юнацтві"
                   />
-                ) : (
+                ) : data?.user.gender.id === 1 ? (
                   <Input
                     readOnly
                     className="dataInput"
                     value="не був в юнацтві"
+                  />
+                ) : (
+                  <Input
+                    readOnly
+                    className="dataInput"
+                    value="не бу-в/ла в юнацтві"
                   />
                 )
               ) : data?.user.upuDegree.id === 2 ? (
@@ -366,12 +369,20 @@ export default function () {
                     className="dataInput"
                     value="пластунка учасниця"
                   />
-                ) : (
+                ) : data?.user.gender.id === 1 ? (
                   <Input
                     readOnly
                     className="dataInput"
                     value="пластун учасник"
                   />
+                ) : (
+                  <Tooltip title = "пластун учасник/пластунка учасниця">
+                    <Input
+                      readOnly
+                      className="dataInput"
+                      value="пластун учасник/пластунка учасниця"
+                    />
+                  </Tooltip>
                 )
               ) : data?.user.upuDegree.id === 3 ? (
                 data?.user.gender.id === 2 ? (
@@ -380,12 +391,20 @@ export default function () {
                     className="dataInput"
                     value="пластунка розвідувачка"
                   />
-                ) : (
+                ) : data?.user.gender.id === 1 ? (
                   <Input
                     readOnly
                     className="dataInput"
                     value="пластун розвідувач"
                   />
+                ) : (
+                  <Tooltip title = "пластун розвідувач/пластунка розвідувачка">
+                    <Input
+                      readOnly
+                      className="dataInput"
+                      value="пластун розвідувач/пластунка розвідувачка"
+                    />
+                  </Tooltip>
                 )
               ) : data?.user.upuDegree.id === 4 ? (
                 data?.user.gender.id === 2 ? (
@@ -394,8 +413,16 @@ export default function () {
                     className="dataInput"
                     value="пластунка вірлиця"
                   />
-                ) : (
+                ) : data?.user.gender.id === 1 ? (
                   <Input readOnly className="dataInput" value="пластун скоб" />
+                ) : (
+                  <Tooltip title = "пластун скоб/пластунка вірлиця">
+                    <Input
+                      readOnly
+                      className="dataInput"
+                      value="пластун скоб/пластунка вірлиця"
+                    />
+                  </Tooltip>
                 )
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -434,21 +461,36 @@ export default function () {
           <div className="buttonWrapper">
             <Button
               className="confirmBtn"
-              hidden={!(activeUserId === userId || activeUserRoles.includes(Roles.Admin))}
+              hidden={
+                !(
+                  activeUserId === userId ||
+                  activeUserRoles.includes(Roles.Admin)
+                )
+              }
               onClick={() => history.push(`/userpage/edit/${userId}`)}
             >
               Редагувати профіль
             </Button>
             <Button
               className="confirmBtn"
-              hidden={!(activeUserId === userId || activeUserRoles.includes(Roles.Admin))}
+              hidden={
+                !(
+                  activeUserId === userId ||
+                  activeUserRoles.includes(Roles.Admin)
+                )
+              }
               onClick={() => history.push(`/cities`)}
             >
               Обрати/змінити станицю
             </Button>
             <Button
-              className="confirmBtn" 
-              hidden={!(activeUserId === userId || activeUserRoles.includes(Roles.Admin)) || activeUserRoles.includes(Roles.RegisteredUser)}
+              className="confirmBtn"
+              hidden={
+                !(
+                  activeUserId === userId ||
+                  activeUserRoles.includes(Roles.Admin)
+                ) || activeUserRoles.includes(Roles.RegisteredUser)
+              }
               onClick={() => history.push(`/clubs`)}
             >
               Обрати/змінити курінь
@@ -478,6 +520,7 @@ export default function () {
             clubId={data?.shortUser.clubId}
             cityMemberIsApproved={data?.shortUser.cityMemberIsApproved}
             clubMemberIsApproved={data?.shortUser.clubMemberIsApproved}
+            showPrecautions = { data.shortUser === null }
           />
         </div>
         <div className="shortAllFields">
@@ -557,19 +600,29 @@ export default function () {
           <div className="links">
             {data?.shortUser.facebookLink !== null &&
             data?.shortUser.facebookLink !== "" ? (
-              <a href={"https://www.facebook.com/" + data?.shortUser.facebookLink}>
+              <a
+                href={
+                  "https://www.facebook.com/" + data?.shortUser.facebookLink
+                }
+              >
                 <img src={Facebook} alt="Facebook" />
               </a>
             ) : null}
             {data?.shortUser.twitterLink !== null &&
             data?.shortUser.twitterLink !== "" ? (
-              <a href={"https://www.twitter.com/" + data?.shortUser.twitterLink}>
+              <a
+                href={"https://www.twitter.com/" + data?.shortUser.twitterLink}
+              >
                 <img src={Twitter} alt="Twitter" />
               </a>
             ) : null}
             {data?.shortUser.instagramLink !== null &&
             data?.shortUser.instagramLink !== "" ? (
-              <a href={"https://www.instagram.com/" + data?.shortUser.instagramLink}>
+              <a
+                href={
+                  "https://www.instagram.com/" + data?.shortUser.instagramLink
+                }
+              >
                 <img src={Instagram} alt="Instagram" />
               </a>
             ) : null}
@@ -581,3 +634,4 @@ export default function () {
     <> </>
   );
 }
+

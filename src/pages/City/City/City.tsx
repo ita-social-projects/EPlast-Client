@@ -124,11 +124,11 @@ const City = () => {
 
     if (city.head !== null ){
       await createNotification(city.head.userId,
-        `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці`, true);   
+        `Новий прихильник приєднався: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці`, true);   
     }
     if (city.headDeputy !== null ){
       await createNotification(city.headDeputy.userId,
-        `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці`, true);   
+        `Новий прихильник приєднався: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці`, true);   
     }
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)

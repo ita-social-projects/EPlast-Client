@@ -21,6 +21,8 @@ import jwt_decode from "jwt-decode";
 import { Roles } from "../../../models/Roles/Roles";
 import { Data } from '../Interface/Interface';
 import { successfulDeleteDegree } from "../../../components/Notifications/Messages";
+import { Console } from "console";
+import { boolean } from "yup";
 const { Title } = Typography;
 
 const itemMaxLength = 43;
@@ -29,6 +31,7 @@ const ActiveMembership = () => {
   const [accessLevels, setAccessLevels] = useState([]);
   const [dates, setDates] = useState<any>({});
   const [data, setUserData] = useState<Data>();
+  const [userProfile, SetUserProfile] = useState<Data>();
   const [currentUser, setCurrentUser] = useState<any>({});
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
   const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
@@ -76,6 +79,15 @@ const ActiveMembership = () => {
       notificationLogic("error", error.message);
     });
 
+    await userApi
+      .getUserProfileById(currentUserId, userId)
+      .then((response) => {
+        SetUserProfile(response.data);
+      })
+      .catch((error) => {
+        notificationLogic("error", error.message);
+      });
+
     await userApi.getById(userId).then(async (response) => {
       setUserData(response.data);
     }).catch((error) => {
@@ -111,6 +123,17 @@ const ActiveMembership = () => {
       userRoles?.includes(Roles.RegionBoardHead) ||
       userRoles?.includes(Roles.Admin);
   };
+
+  const IsPossibleToChangeDateOfSwear = (access: Array<string>): boolean =>{
+    var flag = true;
+    access.map( x => {
+      if( x.includes("Зареєстрований користувач")){
+        flag = false;
+        return;
+      }
+    })
+    return flag;
+  }
 
   const IsUserHasAnyAdminTypeRoles = (userRoles: Array<string>): boolean => {
     let IsUserHasAnyAdminRole = false;
@@ -198,6 +221,7 @@ const ActiveMembership = () => {
           clubId={data?.user.clubId}
           cityMemberIsApproved={data?.user.cityMemberIsApproved}
           clubMemberIsApproved={data?.user.clubMemberIsApproved}
+          showPrecautions = {userProfile?.shortUser === null}
         />
       </div>
 
@@ -228,14 +252,14 @@ const ActiveMembership = () => {
                     <li className={classes.textListItem} key={3}>
                       <div>
                         <span className={classes.date}>Дата завершення: </span>
-                        {dates?.dateEnd === ""
-                          ? "Ще в Пласті"
+                        { dates?.dateEnd === ""
+                          ? ( dates.dateEntry ==="" ? " - ":"ще у Пласті" )
                           : moment(dates.dateEnd).format("DD.MM.YYYY")}
                       </div>
                     </li>
                   </ul>
 
-                  {IsUserHasAccessToManageDegree(roles) && (
+                  {(IsUserHasAccessToManageDegree(roles) && IsPossibleToChangeDateOfSwear(accessLevels)) && (
                     <Button
                       type="primary"
                       className={classes.buttonChange}

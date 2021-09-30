@@ -3,18 +3,28 @@
   position: absolute;
 }
 .searchContainer{
-  margin-bottom: 12px;
   display: flex;
 }
-.searchContainer > input{
-  width: 300px;
-}
+
 .searchArea{
-  width: 240px;
+  width: 25%;
   margin-left: auto;
+  margin-bottom: 1em;
 }
 .filterContainer{
-  width: 400px;
+  width: 35%;
+}
+
+.rowForFilterSearch {
+  flex-flow: nowrap;
+}
+
+.colForTreeSelect {
+  width: 88%;
+}
+
+.card {
+  width: 100%;
 }
 
 @media (max-width: 765px){
@@ -22,20 +32,46 @@
     overflow-x: scroll;
   }
 
+  .colForButton {
+    width: 12%;
+    text-align: center;
+  }
+
   .searchContainer{
     display: flex;
     flex-wrap: wrap;
     flex-flow: wrap;
     justify-content: left;
-    width: auto;
+    width: 100%;
   }
   .filterContainer{
     display: flex;
-    flex-direction: column;
-    margin-bottom: 30px;
     width: 100%;
   }
   .searchArea{
     width: 100%;
   }
+
+  .okButton {
+    width: 100%;
+    display: flex;  
+    justify-content: center;  
+  }
+}
+
+.divWrapper {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: auto;
+}
+
+.tagText {
+  max-width: 100%;  
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.parentDiv {  
+  display: flex;
+  align-items: center; 
 }
