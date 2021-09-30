@@ -139,6 +139,7 @@ input[type='password']{
     }
     .forgot{
         font-size: 15px;
+        margin-left:180px;
     }
 }
 
@@ -151,6 +152,7 @@ input[type='password']{
     }
     .forgot{
         font-size: 14px;
+        margin-left:145px;
     }
 }
 
@@ -162,7 +164,8 @@ input[type='password']{
         height:36px;
     }
     .forgot{
-        font-size: 13px;
+        font-size: 14px;
+        margin-left:110px;
     }
 }
 
@@ -171,7 +174,8 @@ input[type='password']{
         width: 350px;
     }
     .forgot{
-        font-size: 12px;
+        font-size: 14px;
+        margin-left:100px;
     }
 }
 
@@ -180,7 +184,8 @@ input[type='password']{
         width: 320px;
     }
     .forgot{
-        font-size: 11px;
+        font-size: 14px;
+        margin-left:80px;
     }
 }
 
@@ -189,6 +194,7 @@ input[type='password']{
         width: 280px;
     }
     .forgot{
-        font-size: 10px;
+        font-size: 14px;
+        margin-left:80px;
     }
 }
