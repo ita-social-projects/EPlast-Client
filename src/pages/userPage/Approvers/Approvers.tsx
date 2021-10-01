@@ -22,6 +22,7 @@ import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import DeleteApproveButton from './DeleteApproveButton';
 import { Roles } from '../../../models/Roles/Roles';
 import AvatarAndProgressStatic from '../personalData/AvatarAndProgressStatic';
+import { Data } from '../Interface/Interface';
 
 const Assignments = () => {
   const history = useHistory();
@@ -33,11 +34,21 @@ const Assignments = () => {
   const [data, setData] = useState<ApproversData>();
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
+  const [userProfile, SetUserProfile] = useState<Data>();
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
   const [roles, setRoles] = useState<string[]>([]);
 
   const fetchData = async () => {
+    const currentUserId = userApi.getActiveUserId();
+    await userApi
+      .getUserProfileById(currentUserId, userId)
+      .then((response) => {
+        SetUserProfile(response.data);
+      })
+      .catch((error) => {
+        notificationLogic("error", error.message);
+      });
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
     setRoles(userApi.getActiveUserRoles());
@@ -86,8 +97,7 @@ const Assignments = () => {
     await NotificationBoxApi.createNotifications(
       [userId],
       `${setGreeting()}, повідомляємо, що користувач 
-        ${approverName} скасував своє поручення за тебе.
-        Будь тією зміною, яку хочеш бачити у світі!`,
+        ${approverName} скасував своє поручення за тебе.`,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/userpage/main/${data?.currentUserId}`,
       'Переглянути користувача'
@@ -144,7 +154,8 @@ const Assignments = () => {
             regionId={data?.user.regionId}
             governingBodyId={data?.user.governingBodyId}
             cityMemberIsApproved={data?.user.cityMemberIsApproved}
-            clubMemberIsApproved={data?.user.clubMemberIsApproved} />
+            clubMemberIsApproved={data?.user.clubMemberIsApproved}
+            showPrecautions={userProfile?.shortUser === null} />
         </StickyContainer>
       </div>
       <div className="approversContentApprovers">
@@ -280,7 +291,7 @@ const Assignments = () => {
                   placement="rightBottom">
                   <Spin spinning={approveAsHovelHeadLoading}>
                     <Link to="#" onClick={() => approveClick(data?.user.id, roles.includes(Roles.KurinHead) || roles.includes(Roles.Admin), false)}>
-                    <Card
+                      <Card
                         hoverable
                         className="cardStyles"
                         cover={
@@ -359,7 +370,7 @@ const Assignments = () => {
                   placement="rightBottom">
                   <Spin spinning={approveAsCityHeadLoading}>
                     <Link to="#" onClick={() => approveClick(data?.user.id, false, roles.includes(Roles.CityHead) || roles.includes(Roles.Admin))}>
-                    <Card
+                      <Card
                         hoverable
                         className="cardStyles"
                         cover={
