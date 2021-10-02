@@ -21,7 +21,8 @@ import {
   ContainerOutlined,
   ExclamationCircleOutlined, 
   DeleteOutlined,
-  MinusOutlined} from "@ant-design/icons";
+  MinusOutlined,
+  LoadingOutlined} from "@ant-design/icons";
 import moment from "moment";
 import {
   addAdministrator,
@@ -56,6 +57,7 @@ import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
+import { number } from "yup";
 
 const City = () => {
   const history = useHistory();
@@ -85,10 +87,14 @@ const City = () => {
   const [activeUserCity, setActiveUserCity] = useState<string>();
   const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
   const [isActiveCity, setIsActiveCity] = useState<boolean>(true);
+  const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
+  const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [activeUserID, setActiveUserID] = useState<string>();
 
   const changeApproveStatus = async (memberId: number) => {
-  const member = await toggleMemberStatus(memberId);
+    setIsLoadingMemberId(memberId)
+    setIsLoadingPlus(false);  
+    const member = await toggleMemberStatus(memberId);
     moment.locale("uk-ua");
 
     await createNotification(member.data.userId,
@@ -108,6 +114,7 @@ const City = () => {
       setMembers([...members, member.data]);
     }
     setFollowers(followers.filter((f) => f.id !== memberId));
+    setIsLoadingPlus(true)
   };
 
   const removeMember = async (followerID: number) => {
@@ -897,18 +904,24 @@ const City = () => {
                         <p className="userName">{followers.user.firstName}</p>
                         <p className="userName">{followers.user.lastName}</p>
                       </div>
-                      {canEdit ? (
-                        <PlusOutlined
-                          className="approveIcon"
-                          onClick={() => changeApproveStatus(followers.id)}
-                        />
+                      {(canEdit && isLoadingPlus) || isLoadingMemberId !== followers.id  ? (
+                        <Tooltip placement={"bottom"} title={"Додати до членів"}>
+                          <PlusOutlined
+                            className="approveIcon"
+                            onClick={() => changeApproveStatus(followers.id)}
+                          />
+                        </Tooltip>
                         ) : (followers.userId === activeUserID) ? (
                         <Tooltip placement={"bottom"} title={"Покинути станицю"}>
                           <MinusOutlined 
                             className="approveIcon"
                             onClick={() => seeSkipModal(followers.id)}
                           />
-                         </Tooltip>) : null
+                         </Tooltip>) : !isLoadingPlus && isLoadingMemberId === followers.id ? (
+                         <Tooltip placement={"bottom"} title={"Зачекайте"}>
+                            <LoadingOutlined className="approveIcon"/>
+                         </Tooltip>
+                         ) : null
                        }
                     </div>
                   </Col>
