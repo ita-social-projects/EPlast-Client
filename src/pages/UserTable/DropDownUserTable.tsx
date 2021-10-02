@@ -150,13 +150,14 @@ const DropDown = (props: Props) => {
         && currentUser?.cityId == user?.cityId;
       const isUserCityHeadDeputy = roles.includes(Roles.CityHeadDeputy) 
         && currentUser?.cityId == user?.cityId;
-
-      return isCurrentUserAdmin ||
+      const isUserInCity = user?.cityId != null;
+      
+      return (isCurrentUserAdmin ||
       isCurrentUserGoverningBodyHead ||      
       isCurrentUserRegionHead ||      
       isCurrentUserRegionHeadDeputy ||
       isUserCityHead ||
-      isUserCityHeadDeputy;
+      isUserCityHeadDeputy) && isUserInCity;
     });
 
     setsuperAdmin(roles.includes(Roles.Admin));

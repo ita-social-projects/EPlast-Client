@@ -55,7 +55,7 @@ const CityMembers = () => {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити даного користувача із членів Станиці?",
       icon: <ExclamationCircleOutlined />,
-      okText: "Так, Видалити",
+      okText: "Так, видалити",
       okType: "primary",
       cancelText: "Скасувати",
       maskClosable: true,
