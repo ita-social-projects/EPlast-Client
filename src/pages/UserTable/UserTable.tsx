@@ -131,7 +131,6 @@ const UsersTable = () => {
   };
   const fetchDegrees = async () => {
     try {
-
       let response = await activeMembershipApi.getAllPlastDegrees();
       let degrees = response as PlastDegree[];
       setDegrees(
