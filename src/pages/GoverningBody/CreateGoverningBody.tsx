@@ -50,7 +50,7 @@ const CreateGoverningBody = () => {
 
   const [loading, setLoading] = useState(false);
   const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(new GoverningBodyProfile());
-  const [governingBodyNames, setGoverningBodyNames] = useState<string[] | undefined>();
+  const [governingBodyNames, setGoverningBodyNames] = useState<string[]>([]);
   const orgName: string = 'Керівний орган'
   
   const getGoverningBodyNames = async () => {
@@ -132,7 +132,7 @@ const CreateGoverningBody = () => {
       id: governingBody.id,
       description: values.description,
       email: values.email,
-      governingBodyName: values.name,
+      governingBodyName: (values.name as string).trim(),
       logo: governingBody.logo?.length === 0 ? null : governingBody.logo,
       phoneNumber: values.phoneNumber,
       head: governingBody.head,

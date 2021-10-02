@@ -10,7 +10,8 @@ import {
   DeleteOutlined, 
   ContainerOutlined, 
   ExclamationCircleOutlined,
-  MinusOutlined, 
+  MinusOutlined,
+  LoadingOutlined, 
 } from "@ant-design/icons";
 import moment from "moment";
 import { addFollower, getClubById, getLogo, removeClub,unArchiveClub, archiveClub,  toggleMemberStatus, clubNameOfApprovedMember, removeFollower } from "../../../api/clubsApi";
@@ -69,9 +70,13 @@ const Club = () => {
   const [document, setDocument] = useState<ClubDocument>(new ClubDocument());
   const [activeUserClub, setActiveUserClub] = useState<string>();
   const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
+  const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
+  const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [isActiveClub, setIsActiveClub] = useState<boolean>(true);
 
   const changeApproveStatus = async (memberId: number) => {
+    setIsLoadingMemberId(memberId)
+    setIsLoadingPlus(false)  
     const member = await toggleMemberStatus(memberId);
 
     await createNotification(member.data.userId,
@@ -85,8 +90,8 @@ const Club = () => {
     if (members.length < 9) {
       setMembers([...members, member.data]);
     }
-
     setFollowers(followers.filter((f) => f.id !== memberId));
+    setIsLoadingPlus(true)
   };
 
   const removeMember = async (followerID: number) => {
@@ -901,18 +906,24 @@ const Club = () => {
                         <p className="userName">{followers.user.firstName}</p>
                         <p className="userName">{followers.user.lastName}</p>
                       </div>
-                      {canEdit ? (
-                        <PlusOutlined
-                          className="approveIcon"
-                          onClick={() => changeApproveStatus(followers.id)}
-                        />
+                      {(canEdit && isLoadingPlus) || isLoadingMemberId !== followers.id ? (
+                        <Tooltip placement={"bottom"} title={"Додати до членів"}>
+                          <PlusOutlined
+                            className="approveIcon"
+                            onClick={() => changeApproveStatus(followers.id)}
+                          />
+                        </Tooltip>
                       ) : (followers.userId===activeUserID) ? ( 
                       <Tooltip placement={"bottom"} title={"Покинути курінь"}>
                         <MinusOutlined 
                           className="approveIcon"
                           onClick={() => seeSkipModal(followers.id)}
                         />
-                       </Tooltip>) : null
+                       </Tooltip>) : !isLoadingPlus && isLoadingMemberId === followers.id ? (
+                         <Tooltip placement={"bottom"} title={"Зачекайте"}>
+                            <LoadingOutlined className="approveIcon"/>
+                         </Tooltip>
+                         ) : null
                      }
                     </div>
                   </Col>
