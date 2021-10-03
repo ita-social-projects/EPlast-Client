@@ -98,8 +98,7 @@ const Assignments = () => {
     await NotificationBoxApi.createNotifications(
       [userId],
       `${setGreeting()}, повідомляємо, що користувач 
-        ${approverName} скасував своє поручення за тебе.
-        Будь тією зміною, яку хочеш бачити у світі!`,
+        ${approverName} скасував своє поручення за тебе.`,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/userpage/main/${data?.currentUserId}`,
       'Переглянути користувача'

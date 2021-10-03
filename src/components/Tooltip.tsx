@@ -8,5 +8,5 @@ function extendedTitleTooltip(number: number, text: string) {
         </Tooltip>
         : text
 }
-export const parameterMaxLength = 21;
+export const parameterMaxLength = 20;
 export default extendedTitleTooltip;
