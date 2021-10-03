@@ -12,6 +12,7 @@ import Spinner from "../../Spinner/Spinner";
 import { getSectorsListByGoverningBodyId, getSectorLogo } from "../../../api/governingBodySectorsApi";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
+import extendedTitleTooltip, { parameterMaxLength } from "../../../components/Tooltip";
 moment.locale("uk-ua");
 
 const Sectors = () => {
@@ -61,7 +62,9 @@ const Sectors = () => {
               <Card
                 key={sector.id}
                 className="detailsCard"
-                title={`${sector.name}`}
+                title={
+                  extendedTitleTooltip(parameterMaxLength, `${sector.name}`)
+                }
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
               >
                 <div className="cityMember">
@@ -75,7 +78,6 @@ const Sectors = () => {
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={`${sector.name}`}
                     />
                   </div>
                 </div>
