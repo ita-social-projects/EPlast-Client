@@ -114,7 +114,6 @@ const SortedRegions = ({switcher}: Props) => {
                       <img src={region.logo || undefined} alt="RegionDefault" />
                   )
                 }
-                onClick={() => history.push(`${url}/${region.id}`)}
               >
                   <Card.Meta title={region.regionName} className="titleText" />
               </Card>
@@ -185,7 +184,7 @@ const SortedRegions = ({switcher}: Props) => {
                 pageSize={pageSize}
                 total={total}
                 responsive
-                showSizeChanger={total < 20 ? false : true}
+                showSizeChanger={total >= 20}
                 onChange={(page) => handleChange(page)}
                 onShowSizeChange={(page, size) => handleSizeChange(page, size)}
               />

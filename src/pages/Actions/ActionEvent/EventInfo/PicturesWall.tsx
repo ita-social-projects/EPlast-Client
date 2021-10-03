@@ -1,4 +1,4 @@
-import {List, Card, Row, Col, Tooltip, notification, Modal} from 'antd';
+import {Card, Row, Col, notification, Modal} from 'antd';
 import React, {useState} from 'react';
 import {EventGallery} from "./EventInfo";
 import {DeleteOutlined, EyeOutlined} from "@ant-design/icons/lib";
@@ -61,7 +61,7 @@ const PicturesWall = ({pictures, removePicture}: Props) => {
                     }
                     <Modal
                         visible={previewVisible}
-                        title='Перегляд картинки.'
+                        title='Перегляд картинки'
                         footer={null}
                         onCancel={()=>setPreviewVisibility(false)}
                     >

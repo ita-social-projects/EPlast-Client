@@ -43,7 +43,7 @@ const AddAchievementsModal = (props: Props) => {
           files.push(newDocument);
           setFiles([...files]);
         });
-        notificationLogic("success", fileIsUpload(`Файл ${info.file.name}`));
+        notificationLogic("success", fileIsUpload());
         setDisabled(false);
       }
     } else {
@@ -120,7 +120,7 @@ const AddAchievementsModal = (props: Props) => {
               Клікніть або перетягніть файл для завантаження
                 </p>
             {files.length !== 0 && files.map(file => (
-              <div>{file.fileName};</div>
+              <div style={{wordBreak:'break-word'}}> {file.fileName} </div>
             ))}
           </Dragger>
           {files.length !== 0 ? (

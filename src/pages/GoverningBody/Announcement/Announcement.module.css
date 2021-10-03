@@ -1,0 +1,23 @@
+.antbtn {
+  margin-bottom: 12px !important;
+  width: 200px !important;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+.demo-loadmore-list {
+  min-height: 350px;
+}
+
+.listItem {
+  display: block;
+  outline: 2px solid rgb(211, 208, 208);
+  padding-left: 28px;
+  margin-top: 10px;
+}
+
+.menu {
+  box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
+  position: absolute;
+}

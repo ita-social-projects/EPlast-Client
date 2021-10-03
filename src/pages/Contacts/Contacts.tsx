@@ -10,6 +10,7 @@ import{
   incorrectEmail,
   incorrectPhone,
 } from "../../components/Notifications/Messages"
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 
 let authService = new AuthorizeApi();
 
@@ -34,7 +35,7 @@ export default function () {
       avatar: (
         <MailOutlined id={styles.environmentOutlined} />
       ),
-      title: "info@plast.ua",
+      title: "info@plast.org.ua",
     },
   ];
 
@@ -93,7 +94,7 @@ export default function () {
         <Form.Item
           name="Name"
           label="Вкажіть Ваше ім'я"
-          rules={[{ required: true }]}
+          rules={descriptionValidation.Inputs}
         >
           <Input />
         </Form.Item>
@@ -119,7 +120,7 @@ export default function () {
         <Form.Item
           name="FeedBackDescription"
           label="Опишіть Ваше звернення"
-          rules={[{ required: true }]}
+          rules={descriptionValidation.DescriptionAndQuestions}
         >
           <Input.TextArea />
         </Form.Item>

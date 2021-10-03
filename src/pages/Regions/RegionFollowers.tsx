@@ -16,6 +16,7 @@ import Spinner from '../Spinner/Spinner';
 import { Roles } from '../../models/Roles/Roles';
 import { successfulDeleteAction } from '../../components/Notifications/Messages';
 import notificationLogic from "../../components/Notifications/Notification";
+import extendedTitleTooltip, {parameterMaxLength} from '../../components/Tooltip';
 
 const RegionFollowers = () => {
     const {id} = useParams();
@@ -99,9 +100,7 @@ const RegionFollowers = () => {
                   key={follower.id}
                   className="detailsCard"
                   actions={
-                    activeUserRoles.includes(Roles.Admin) 
-                    || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
-                        && isActiveUserRegionAdmin)   
+                    activeUserRoles.includes(Roles.Admin)    
                     ? [
                         <CloseOutlined
                           onClick={() => seeDeleteFollowerModal(follower)}
@@ -110,14 +109,12 @@ const RegionFollowers = () => {
                   }
                 >
                   <div
+                    className={activeUserRoles.includes(Roles.Admin) ? "cityMember" : undefined}
                     onClick={() => 
-                        activeUserRoles.includes(Roles.Admin) 
-                        || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
-                            && isActiveUserRegionAdmin)   
+                        activeUserRoles.includes(Roles.Admin)
                         ? history.push(`/regions/follower/edit/${follower.id}`)
                         : undefined
                     }
-                    className="cityMember"
                   >
                     {photosLoading ? (
                       <Skeleton.Avatar active size={86}></Skeleton.Avatar>
@@ -130,7 +127,9 @@ const RegionFollowers = () => {
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={`${follower.cityName}`}
+                      title={
+                        extendedTitleTooltip(parameterMaxLength, `${follower.cityName}`)
+                      }
                     />
                   </div>
                 </Card>

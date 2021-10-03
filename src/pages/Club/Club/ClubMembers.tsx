@@ -14,6 +14,7 @@ import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import { Roles } from "../../../models/Roles/Roles";
+import extendedTitleTooltip, { parameterMaxLength } from "../../../components/Tooltip";
 moment.locale("uk-ua");
 
 const ClubMembers = () => {
@@ -53,7 +54,7 @@ const ClubMembers = () => {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити даного користувача із членів Куреня?",
       icon: <ExclamationCircleOutlined />,
-      okText: "Так, Видалити",
+      okText: "Так, видалити",
       okType: "primary",
       cancelText: "Скасувати",
       maskClosable: true,
@@ -166,7 +167,9 @@ const ClubMembers = () => {
                 )}
                 <Card.Meta
                   className="detailsMeta"
-                  title={`${member.user.firstName} ${member.user.lastName}`}
+                  title={
+                    extendedTitleTooltip(parameterMaxLength, `${member.user.firstName} ${member.user.lastName}`)
+                  }
                 />
               </div>
             </Card>

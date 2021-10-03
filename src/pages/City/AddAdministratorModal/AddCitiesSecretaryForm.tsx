@@ -6,7 +6,7 @@ import {
 } from "../../../api/citiesApi";
 import moment from "moment";
 import {
-  emptyInput,
+  emptyInput, inputOnlyWhiteSpaces,
 } from "../../../components/Notifications/Messages"
 import CityAdmin from "../../../models/City/CityAdmin";
 import AdminType from "../../../models/Admin/AdminType";
@@ -125,12 +125,17 @@ const AddCitiesNewSecretaryForm = (props: any) => {
             required: true,
             message: <div className="formItemExplain">{emptyInput()}</div>,
           },
+          {
+            pattern: /^\s*\S.*$/,
+            message: <div className="formItemExplain">{inputOnlyWhiteSpaces()}</div>,
+          },
         ]}
       >
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: Roles.CityHead, disabled: activeUserRoles.includes(Roles.CityHeadDeputy) },
+            { value: Roles.CityHead, disabled: (activeUserRoles.includes(Roles.CityHeadDeputy)
+            && activeUserRoles.includes(Roles.Admin)) },
             { value: Roles.CityHeadDeputy},
             { value: "Голова СПС" },
             { value: "Писар" },

@@ -5,27 +5,27 @@ import FormAddPlastDegree from './FormAddPlastDegree';
 type ModalAddPlastDegreeProps = {
     userId: string;
     visibleModal: boolean;
-    isCityAdmin?:boolean;
+    isCityAdmin?: boolean;
     setVisibleModal: (visibleModal: boolean) => void;
     handleAddDegree: () => void;
 }
-const ModalAddPlastDegree = ({ 
-    visibleModal, 
-    setVisibleModal, 
-    isCityAdmin, 
-    userId, 
-    handleAddDegree 
-    }: ModalAddPlastDegreeProps) => {
+const ModalAddPlastDegree = ({
+    visibleModal,
+    setVisibleModal,
+    isCityAdmin,
+    userId,
+    handleAddDegree
+}: ModalAddPlastDegreeProps) => {
     const [availablePlastDegree, setAvailablePlastDegree] = useState<Array<PlastDegree>>([]);
-    const [cancel, setCancel]=useState<boolean>(false);
+    const [cancel, setCancel] = useState<boolean>(false);
 
-    const handleCancel = () => {setVisibleModal(false); setCancel(true)};
+    const handleCancel = () => { setVisibleModal(false); setCancel(true) };
 
-    const getAvailablePlastDegree = (allDegrees: Array<PlastDegree>, userPlastDegrees: Array<UserPlastDegree>): Array<PlastDegree> => {
+    const getAvailablePlastDegree = (allDegrees: Array<PlastDegree>, userPlastDegree: UserPlastDegree): Array<PlastDegree> => {
         setCancel(false);
         const aupd: Array<PlastDegree> = [];
         allDegrees.forEach(d => {
-            if (!userPlastDegrees.find(upd => upd.plastDegree.id === d.id)) {
+            if (userPlastDegree?.plastDegree?.id !== d.id) {
                 aupd.push(d);
             }
         });
@@ -33,7 +33,7 @@ const ModalAddPlastDegree = ({
     }
     const fetchData = async () => {
         await activeMembershipApi.getAllPlastDegrees().then(async response => {
-            await activeMembershipApi.getUserPlastDegrees(userId).then(res => {
+            await activeMembershipApi.getUserPlastDegree(userId).then(res => {
                 setAvailablePlastDegree(getAvailablePlastDegree(response, res));
             }
             )

@@ -1,14 +1,31 @@
 import React from 'react';
 
-export const incorrectEmail = 'Неправильний формат електронної пошти'; 
+const wrongFormat = "Вкажіть, будь ласка, правильний формат"
+export const incorrectEmail = wrongFormat + " електронної пошти"; 
 
 export const emptyInput = (name?:string)=>{
     return name ? `Поле ${name} є обов'язковим` : `Поле є обов'язковим`;
-}; 
+};
 
-export const incorrectPhone = 'Неправильний формат телефонного номера';
+export const incorrectSlogan = wrongFormat + ". Гасло не повинно починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
 
-export const incorrectData = 'Ви вказали неправильний формат дати'; 
+export const incorrectAppeal = wrongFormat + ". Заява не повинна починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
+
+export const incorrectName = wrongFormat + ". Назва не повинна починатись чи закінчуватись пробілом або містити більше одного пробілу поспіль!";
+
+export const incorrectCityName = wrongFormat + ". Кожне слово назви повинне починатись з великої літери. Назва може містити кириличні літери, пробіл, тире чи апостроф. Назва не повинна починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
+
+export const incorrectClubName = wrongFormat + ". Назва повинна містити кириличні літери, цифри та знаки пунктуації. Назва не повинна починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
+
+export const incorrectPhone = wrongFormat + "  телефонного номера";
+
+export const incorrectStreet = wrongFormat + ". Назва може містити лише кириличні літери, цифри, крапку апостроф чи тире. Назва не повинна починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
+
+export const incorrectHouseNumber = wrongFormat + ". Номер будинку може містити лише цифри, кириличні літери, дріб, та не повинен починатись з нуля чи містити пробілів!";
+
+export const incorrectOficeNumber = wrongFormat + ". Номер офісу/квартири може містити лише цифри, кириличні літери, дріб, та не повинен починатись з нуля чи містити пробілів!";
+
+export const incorrectData = wrongFormat + "  дати"; 
 
 export const onlyPositiveNumber = `Поле не може бути від'ємним`; 
 
@@ -28,24 +45,28 @@ export const minNumber = (minLen:number)=>{
     return `Значення має бути більше або дорівнювати ${minLen}`
 };
 
+export const inputOnlyWhiteSpaces = ()=>{
+    return `Поле не може містити лише порожні символи`
+};
+
 export const tryAgain = 'Щось пішло не так. Спробуйте ще раз.'; 
 
 export const ReportAlreadyExists = 'Звіт вже існує.';
 
 export const successfulCreateAction = (name:string, itemName?:string)=>{
-    return itemName ? `${name} ${itemName} успішно створено` : `${name} успішно створено`;
+    return (<div style={{wordBreak:'break-word'}}>{ itemName ? `${name} ${itemName} успішно створено` : `${name} успішно створено`} </div>);
 }; 
 
 export const successfulEditAction = (name:string, itemName?:string)=>{
-    return itemName ? `${name} ${itemName} успішно змінено` : `${name} успішно змінено`;
+    return (<div style={{wordBreak:'break-word'}}>{ itemName ? `${name} ${itemName} успішно змінено` : `${name} успішно змінено`} </div>);
 }; 
 
 export const successfulDeleteAction = (name:string, itemName?:string)=>{
-    return itemName ? `${name} ${itemName} успішно видалено` : `${name} успішно видалено`;
+    return (<div style={{wordBreak:'break-word'}}>{ itemName ? `${name} ${itemName} успішно видалено` : `${name} успішно видалено`} </div>);
 }; 
 
 export const successfulUpdateAction = (name:string, itemName?:string)=>{
-    return itemName ? `${name} ${itemName} успішно оновлено` : `${name} успішно оновлено`;
+    return (<div style={{wordBreak:'break-word'}}>{ itemName ? `${name} ${itemName} успішно оновлено` : `${name} успішно оновлено`} </div>);
 }; 
 
 export const successfulConfirmedAction = (name:string, itemName?:string)=>{
@@ -54,6 +75,14 @@ export const successfulConfirmedAction = (name:string, itemName?:string)=>{
 
 export const successfulCancelAction = (name:string, itemName?:string)=>{
     return itemName ? `${name} ${itemName} скасовано` : `${name} скасовано`;
+}; 
+
+export const successfulArchiveAction = (name:string)=>{
+    return `${name} успішно заархівовано`;
+}; 
+
+export const successfulUnarchiveAction = (name:string)=>{
+    return `${name} успішно розархівовано`;
 }; 
 
 export const successfulAddDegree = ()=>{
@@ -85,7 +114,7 @@ export const shouldContain = (items:string)=>{
 };
 
 export const fileIsUpload = (name?:string)=>{
-    return name ? `${name} завантажено` : `Файл завантажено`;
+    return (<div style={{wordBreak:'break-word'}}>{ name ? `${name} завантажено` : `Файл завантажено`} </div>);
 }; 
 
 export const fileIsAdded= (name?:string)=>{

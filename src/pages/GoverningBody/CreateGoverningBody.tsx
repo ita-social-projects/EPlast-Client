@@ -11,6 +11,7 @@ import {
   Card,
 } from "antd";
 import {
+  ConsoleSqlOutlined,
   DeleteOutlined,
   LoadingOutlined,
   PlusOutlined,
@@ -23,24 +24,25 @@ import {
   getGoverningBodyById,
   getGoverningBodyLogo,
   updateGoverningBody,
+  getGoverningBodiesList
 } from "../../api/governingBodiesApi";
 import "../City/CreateCity/CreateCity.less";
 import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfile";
 import notificationLogic from "../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
-import{
+import {
   fileIsUpload,
-  fileIsNotUpload, 
-  possibleFileExtensions, 
-  fileIsTooBig, 
-  successfulDeleteAction, 
-  successfulCreateAction, 
-  successfulUpdateAction, 
+  fileIsNotUpload,
+  possibleFileExtensions,
+  fileIsTooBig,
+  successfulDeleteAction,
+  successfulCreateAction,
+  successfulUpdateAction,
   failCreateAction,
   failUpdateAction,
 } from "../../components/Notifications/Messages"
-import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, sameNameValidator} from "../../models/GllobalValidations/DescriptionValidation";
 
 const CreateGoverningBody = () => {
   const { id } = useParams();
@@ -48,6 +50,18 @@ const CreateGoverningBody = () => {
 
   const [loading, setLoading] = useState(false);
   const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(new GoverningBodyProfile());
+  const [governingBodyNames, setGoverningBodyNames] = useState<string[]>([]);
+  const orgName: string = 'Керівний орган'
+  
+  const getGoverningBodyNames = async () => {
+    let governingBodies = (await getGoverningBodiesList() as any[])
+    if(+id){
+      let currentName = (await getGoverningBodyById(+id)).data.governingBodyViewModel.governingBodyName;
+      setGoverningBodyNames(governingBodies.map(x => x.governingBodyName).filter(x => x !== currentName))
+    }
+    else
+      setGoverningBodyNames(governingBodies.map(x => x.governingBodyName));
+  }
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -95,13 +109,12 @@ const CreateGoverningBody = () => {
   const getGoverningBody = async () => {
     try {
       setLoading(true);
-      let response = await getGoverningBodyById(+id);
-
-      if (response.data.logo !== null && response.data.logo !== '') {
-        const logo = await getGoverningBodyLogo(response.data.logo);
-        response.data.logo = logo.data;
+      let response = (await getGoverningBodyById(+id)).data.governingBodyViewModel;
+      if (response.logo !== null && response.logo !== '') {
+        const logo = await getGoverningBodyLogo(response.logo);
+        response.logo = logo.data;
       }
-      setGoverningBody(response.data);
+      setGoverningBody(response);
     } finally {
       setLoading(false);
     }
@@ -111,6 +124,7 @@ const CreateGoverningBody = () => {
     if (+id) {
       getGoverningBody();
     }
+    getGoverningBodyNames()
   }, [id]);
 
   const handleSubmit = async (values: any) => {
@@ -118,7 +132,7 @@ const CreateGoverningBody = () => {
       id: governingBody.id,
       description: values.description,
       email: values.email,
-      governingBodyName: values.name,
+      governingBodyName: (values.name as string).trim(),
       logo: governingBody.logo?.length === 0 ? null : governingBody.logo,
       phoneNumber: values.phoneNumber,
       head: governingBody.head,
@@ -132,24 +146,20 @@ const CreateGoverningBody = () => {
   };
 
   const CreateGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
-    notificationLogic("info", "Створення...", <LoadingOutlined />);
-    const responsePromise = createGoverningBody(JSON.stringify(newGoverningBody));
-    const response = await responsePromise;
-    governingBody.id = response.data;
-
-    return responsePromise
-      .then(() => {
-        notificationLogic("success", successfulCreateAction("Керівний орган"));
-        history.push(`${governingBody.id}`);
-      })
-      .catch(() => {
-        notificationLogic("error", failCreateAction("керівний орган"));
-      });
+    createGoverningBody(JSON.stringify(newGoverningBody))
+    .then((response) => {
+      governingBody.id = response.data;
+      notificationLogic("success", successfulCreateAction("Керівний орган"));
+      history.replace(`/governingBodies/${governingBody.id}`);
+    })
+    .catch(() => {
+      getGoverningBodyNames()
+      notificationLogic("error", failCreateAction("керівний орган"));
+    });
   };
 
   const EditGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
-    notificationLogic("info", "Оновлення...", <LoadingOutlined />);
-
+    
     return updateGoverningBody(governingBody.id, JSON.stringify(newGoverningBody))
       .then(() => {
         notificationLogic("success", successfulUpdateAction("Керівний орган"));
@@ -172,7 +182,7 @@ const CreateGoverningBody = () => {
         )}
         <Form onFinish={handleSubmit}>
           <Form.Item name="logo" initialValue={governingBody.logo}>
-          <Upload
+            <Upload
               name="avatar"
               listType="picture-card"
               showUploadList={false}
@@ -198,7 +208,7 @@ const CreateGoverningBody = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={governingBody.governingBodyName}
-                rules={descriptionValidation.Name}
+                rules={[...descriptionValidation.Name, sameNameValidator(orgName,governingBodyNames)]}
               >
                 <Input value={governingBody.governingBodyName} maxLength={51} />
               </Form.Item>
@@ -209,7 +219,7 @@ const CreateGoverningBody = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={governingBody.description}
-                rules={[descriptionValidation.Description]}
+                rules={descriptionValidation.Description}
               >
                 <Input value={governingBody.description} maxLength={1001} />
               </Form.Item>

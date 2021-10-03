@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import Switcher from "../SignUp/Switcher/Switcher";
 import styles from "./SignIn.module.css";
@@ -46,14 +46,8 @@ export default function () {
     await authService.login(values);
     const token = AuthStore.getToken() as string;
     user = jwt(token);
-    var prevPage = localStorage.getItem('pathName');
-    if(prevPage){
-      history.push(prevPage);
-      localStorage.removeItem('pathName');
-    }else{
     history.push(`/userpage/main/${user.nameid}`);
-  }
-  window.location.reload();
+    window.location.reload();
   };
 
   const handleGoogleResponse = async (response: any) => {
@@ -127,7 +121,7 @@ export default function () {
             Увійти
           </Button>
         </Form.Item>
-        <Link className={styles.forgot} to="/forgotPassword">Забули пароль</Link>
+        <Link className={styles.forgot} to="/forgotPassword">Забули пароль?</Link>
         <div className={styles.GoogleFacebookLogin}>
           {googleLoading ? (
             ''

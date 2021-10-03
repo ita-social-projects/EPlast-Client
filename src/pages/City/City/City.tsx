@@ -21,7 +21,8 @@ import {
   ContainerOutlined,
   ExclamationCircleOutlined, 
   DeleteOutlined,
-  MinusOutlined} from "@ant-design/icons";
+  MinusOutlined,
+  LoadingOutlined} from "@ant-design/icons";
 import moment from "moment";
 import {
   addAdministrator,
@@ -51,11 +52,12 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUpdateAction } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUnarchiveAction, successfulArchiveAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
+import { number } from "yup";
 
 const City = () => {
   const history = useHistory();
@@ -85,10 +87,14 @@ const City = () => {
   const [activeUserCity, setActiveUserCity] = useState<string>();
   const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
   const [isActiveCity, setIsActiveCity] = useState<boolean>(true);
+  const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
+  const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [activeUserID, setActiveUserID] = useState<string>();
 
   const changeApproveStatus = async (memberId: number) => {
-  const member = await toggleMemberStatus(memberId);
+    setIsLoadingMemberId(memberId)
+    setIsLoadingPlus(false);  
+    const member = await toggleMemberStatus(memberId);
     moment.locale("uk-ua");
 
     await createNotification(member.data.userId,
@@ -108,6 +114,7 @@ const City = () => {
       setMembers([...members, member.data]);
     }
     setFollowers(followers.filter((f) => f.id !== memberId));
+    setIsLoadingPlus(true)
   };
 
   const removeMember = async (followerID: number) => {
@@ -122,10 +129,14 @@ const City = () => {
   const addMember = async () => {
     const follower = await addFollower(+id);
 
-    admins.map(async (ad) => {
-      await createNotification(ad.userId,
-        `Приєднався новий прихильник: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці`, true);  
-    });
+    if (city.head !== null ){
+      await createNotification(city.head.userId,
+        `Новий прихильник приєднався: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці`, true);   
+    }
+    if (city.headDeputy !== null ){
+      await createNotification(city.headDeputy.userId,
+        `Новий прихильник приєднався: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці`, true);   
+    }
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;
@@ -134,13 +145,12 @@ const City = () => {
     if (followers.length < 6) {
       setFollowers([...followers, follower.data]);
     }
-
     setCanJoin(false);
   };
 
   const ArchiveCity = async () => {
     await archiveCity(city.id);
-    notificationLogic("success", successfulEditAction("Станицю"));
+    notificationLogic("success", successfulArchiveAction("Станицю"));
     admins.map(async (ad) => {
       await createNotification(ad.userId,
         `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
@@ -157,7 +167,7 @@ const City = () => {
 
   const UnArchiveCity = async () => {
     await unArchiveCity(city.id)
-    notificationLogic("success", successfulEditAction("Станицю"));
+    notificationLogic("success", successfulUnarchiveAction("Станицю"));
 
     history.push("/cities");
   };
@@ -234,7 +244,7 @@ const City = () => {
 
   function seeJoinModal() {
     return Modal.confirm({
-      title: "Ви впевнені, що хочете доєднатися до даної станиці?",
+      title: "Ви впевнені, що хочете доєднатися до даної станиці? При доєднанні до нової станиці всі попередні ролі будуть скасовані.",
       icon: <ExclamationCircleOutlined />,
       okText: "Так, доєднатися",
       okType: "primary",
@@ -269,9 +279,7 @@ const City = () => {
       setPhotosLoading(true);
       setCityLogoLoading(true);
       const admins = [
-        ...response.data.administration,
-        response.data.head,
-        response.data.headDeputy,
+        ...response.data.administration
       ].filter((a) => a !== null);
 
       setPhotos(
@@ -301,8 +309,6 @@ const City = () => {
     setAdminsCount(response.data.administrationCount);
     const admins = [
       ...response.data.administration,
-      response.data.head,
-      response.data.headDeputy,
     ].filter((a) => a !== null);
     setCity(response.data);
     setAdmins(admins);
@@ -335,11 +341,32 @@ const City = () => {
     await createNotification(admin.userId,
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в станиці`, true);
   };
+  
+  const showDiseableModal = async (admin: CityAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете змінити роль цьому користувачу",
+      content: (
+        <div style={{ margin: 15 }}>
+          <b>
+            {city.head.user.firstName} {city.head.user.lastName}
+          </b>{" "}
+          є Головою Станиці, час правління закінчується{" "}
+          <b>
+            {moment(city.head.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(city.head.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
 
-  const showConfirmCityAdmin  = async (admin: CityAdmin, adminType: Roles) => {
+  const showConfirmCityAdmin  = async (admin: CityAdmin) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: (adminType.toString() === "CityHead" ?
+      content: (admin.adminType.adminTypeName.toString() === Roles.CityHead ?
         <div style={{ margin: 10 }}>
           <b>
             {city.head.user.firstName} {city.head.user.lastName}
@@ -388,29 +415,22 @@ const City = () => {
   const handleOk = async(admin: CityAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.CityHead) {
-        if (city.head == null) {
-          
-          checkAdminId(admin);
+        if (city.head !== null && city.head?.userId !== admin.userId) {
+          showConfirmCityAdmin(admin);
         } else {
-          if (city.head?.userId !== admin.userId) {
-            showConfirmCityAdmin(admin, Roles.CityHead);
+          checkAdminId(admin);
+        }
+       } else if (admin.adminType.adminTypeName === Roles.CityHeadDeputy) {
+        if (admin.userId === city.head?.userId) {
+          showDiseableModal(admin);
+        } else if (city.headDeputy !== null && city.headDeputy?.userId !== admin.userId) {
+            showConfirmCityAdmin(admin);
           } else {
             checkAdminId(admin);
           }
-        }
-      } else if (admin.adminType.adminTypeName === Roles.CityHeadDeputy) {
-        if (city.headDeputy == null) {
-          checkAdminId(admin);
-        } else {
-          if (city.headDeputy?.userId !== admin.userId) {
-            showConfirmCityAdmin(admin, Roles.CityHeadDeputy);
-          } else {
-            checkAdminId(admin);
-          }
-        }
-      } else {
+       } else {
           await addCityAdmin(admin);
-      }
+       }
     } finally {
       setvisible(false);
     }
@@ -513,7 +533,7 @@ const City = () => {
                   </div>
                 ) : (
                     <Paragraph>
-                      <b>Немає голови станиці</b>
+                      <b>Ще немає голови станиці</b>
                     </Paragraph>
                   )}
                   
@@ -538,7 +558,7 @@ const City = () => {
                   </div>
                 ) : (
                     <Paragraph>
-                      <b>Немає заступника голови станиці</b>
+                      <b>Ще немає заступника голови станиці</b>
                     </Paragraph>
                   )}
               </Col>
@@ -884,15 +904,24 @@ const City = () => {
                         <p className="userName">{followers.user.firstName}</p>
                         <p className="userName">{followers.user.lastName}</p>
                       </div>
-                      {canEdit ? (
-                        <PlusOutlined
-                          className="approveIcon"
-                          onClick={() => changeApproveStatus(followers.id)}
-                        />
-                        ) : (followers.userId === activeUserID) ? (<MinusOutlined 
-                          className="approveIcon"
-                          onClick={() => seeSkipModal(followers.id)}
-                         />) : null
+                      {(canEdit && isLoadingPlus) || isLoadingMemberId !== followers.id  ? (
+                        <Tooltip placement={"bottom"} title={"Додати до членів"}>
+                          <PlusOutlined
+                            className="approveIcon"
+                            onClick={() => changeApproveStatus(followers.id)}
+                          />
+                        </Tooltip>
+                        ) : (followers.userId === activeUserID) ? (
+                        <Tooltip placement={"bottom"} title={"Покинути станицю"}>
+                          <MinusOutlined 
+                            className="approveIcon"
+                            onClick={() => seeSkipModal(followers.id)}
+                          />
+                         </Tooltip>) : !isLoadingPlus && isLoadingMemberId === followers.id ? (
+                         <Tooltip placement={"bottom"} title={"Зачекайте"}>
+                            <LoadingOutlined className="approveIcon"/>
+                         </Tooltip>
+                         ) : null
                        }
                     </div>
                   </Col>
@@ -934,7 +963,7 @@ const City = () => {
       </Modal>
 
       <Modal
-          title="На жаль ви не можете архівувати зазначену округу"
+          title="На жаль ви не можете архівувати зазначену Станицю"
           visible={activeMemberVisibility}
           onOk={handleConfirm}
           onCancel={handleConfirm}

@@ -81,6 +81,7 @@ export default function () {
                     <FullCalendar
                         plugins={[dayGridPlugin]}
                         initialView="dayGridMonth"
+                        buttonText= {{today:'Поточний місяць'}}
                         headerToolbar={{
                             left: 'prev,next today',
                             center: 'title',
@@ -124,7 +125,7 @@ export default function () {
                         <h2>Дата початку: {moment(eventInfo?.event?.start).format("LLLL")}</h2>
                         <h2>Дата завершення: {moment(eventInfo?.event?.end).format("LLLL")}</h2>
                         <h2>Локація: {eventInfo?.event?._def.extendedProps.eventlocation}</h2>
-                        <h2>Опис: {eventInfo?.event?._def.extendedProps.description}</h2>
+                        <h2 className={classes.description}>Опис: {eventInfo?.event?._def.extendedProps.description}</h2>
                         < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/details/${eventInfo?.event?.id}`)} >
                             Деталі
                         </Button>

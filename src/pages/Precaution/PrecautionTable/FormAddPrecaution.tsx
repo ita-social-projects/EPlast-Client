@@ -16,11 +16,11 @@ import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
-  maxLength,
   maxNumber,
   minNumber
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 type FormAddPrecautionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -176,7 +176,8 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             ]}
           >
             <Select 
-              className={formclasses.selectField} showSearch
+              className={formclasses.selectField} 
+              showSearch
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
               {distData?.map((o) => (
@@ -195,7 +196,12 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             label="Ім'я"
             name="user"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              }
+            ]}
           >
             <Select
               className={formclasses.selectField}
@@ -224,12 +230,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             label="Подання від"
             labelCol={{ span: 24 }}
             name="reporter"
-            rules={[
-              {
-                max: 100,
-                message: maxLength(100),
-              },
-            ]}
+            rules={descriptionValidation.Reporter}
           >
             <Input
               allowClear
@@ -246,7 +247,12 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             name="date"
             label="Дата затвердження"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              }
+            ]}
           >
             <DatePicker
               format={dateFormat}
@@ -265,13 +271,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             label="Обгрунтування"
             labelCol={{ span: 24 }}
             name="reason"
-            rules={[
-              {
-                required: true,
-                max: 500,
-                message: "Це поле має бути заповненим",
-              },
-            ]}
+            rules={descriptionValidation.Reason}
           >
             <Input.TextArea
               allowClear

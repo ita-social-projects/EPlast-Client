@@ -5,7 +5,7 @@ import {
   getAllMembers,
 } from "../../../api/clubsApi";
 import moment from "moment";
-import {emptyInput,} from "../../../components/Notifications/Messages"
+import {emptyInput, inputOnlyWhiteSpaces,} from "../../../components/Notifications/Messages"
 import AdminType from "../../../models/Admin/AdminType";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
 import ClubMember from "../../../models/Club/ClubMember";
@@ -122,12 +122,17 @@ const AddClubsNewSecretaryForm = (props: any) => {
             required: true,
             message: <div className="formItemExplain">{emptyInput()}</div>,
           },
+          {
+            pattern: /^\s*\S.*$/,
+            message: <div className="formItemExplain">{inputOnlyWhiteSpaces()}</div>,
+          },
         ]}
       >
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: Roles.KurinHead, disabled: activeUserRoles.includes(Roles.KurinHeadDeputy) },
+            { value: Roles.KurinHead, disabled: (activeUserRoles.includes(Roles.KurinHeadDeputy) 
+              && activeUserRoles.includes(Roles.Admin)) },
             { value: Roles.KurinHeadDeputy },
             { value: "Голова СПС" },
             { value: "Фотограф" },

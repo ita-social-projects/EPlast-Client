@@ -7,7 +7,6 @@ import {
   Input,
   Upload,
   Button,
-  AutoComplete,
   Row,
   Col,
   Mentions
@@ -35,14 +34,15 @@ import {
   fileIsNotUpload,
   possibleFileExtensions,
   fileIsTooBig,
-  maxLength,
   successfulDeleteAction,
 } from "../../components/Notifications/Messages"
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 
 type FormAddDecisionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: () => void;
 };
+
 const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
   const { setVisibleModal, onAdd } = props;
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -65,34 +65,34 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
   };
 
   const onSearch = async (search: string) => {
-    if(search !== "" && search !== null){
-        await adminApi.getShortUserInfo(search).then((response) => {
+    if (search !== "" && search !== null) {
+      await adminApi.getShortUserInfo(search).then((response) => {
         setUserData(response.data);
         setLoadingUserStatus(false);
-    });
+      });
     }
   };
 
   const onSelect = async (select: any) => {
-      var user: any = userData.find(u => u.firstName + ' ' + u.lastName === select.value);
-      setMentionedUsers(old => [...old, user]);
+    var user: any = userData.find(u => u.firstName + ' ' + u.lastName === select.value);
+    setMentionedUsers(old => [...old, user]);
   };
 
   useEffect(() => {
     const timeoutId = setTimeout(() => [onSearch(search), setLoadingUserStatus(true)], 1000);
     return () => clearTimeout(timeoutId);
   }, [search]);
-  
+
 
   const notifyMentionedUsers = async (description: string, title: string) => {
     let usersToNotify = (mentionedUsers.filter(u => description.includes(u.firstName + ' ' + u.lastName)));
     let uniqueUsersIds = Array.from(new Set(usersToNotify.map(u => u.id)));
     await NotificationBoxApi.createNotifications(
-        uniqueUsersIds,
-        `Тебе позначили в рішенні: ${title}.`,
-        NotificationBoxApi.NotificationTypes.EventNotifications,
-        `/decisions`,
-        'Перейти до рішень'
+      uniqueUsersIds,
+      `Тебе позначили в рішенні: ${title}.`,
+      NotificationBoxApi.NotificationTypes.EventNotifications,
+      `/decisions`,
+      'Перейти до рішень'
     );
   }
 
@@ -176,7 +176,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     setSubmitLoading(false);
     await notifyMentionedUsers(values.description, values.name);
   };
- 
+
   const [data, setData] = useState<DecisionOnCreateData>({
     governingBodies: Array<GoverningBody>(),
     decisionStatusTypeListItems: Array<decisionStatusType>(),
@@ -191,7 +191,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     fetchData();
   }, []);
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}  id='area' style={{position: 'relative'}}>
+    <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{ position: 'relative' }}>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
@@ -199,16 +199,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             labelCol={{ span: 24 }}
             label="Назва рішення"
             name="name"
-            rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-              {
-                max: 60,
-                message: maxLength(60)
-              },
-            ]}
+            rules={descriptionValidation.DecisionAndDocumentName}
           >
             <Input className={formclasses.inputField} />
           </Form.Item>
@@ -216,19 +207,21 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
-          <Form.Item          
+          <Form.Item
             className={formclasses.formField}
             label="Рішення органу"
             labelCol={{ span: 24 }}
             name="governingBody"
-            rules={[{ 
-              required: true, 
-              message: emptyInput() 
-            }]}
+            rules={[
+              {
+                required: true,
+                message: emptyInput()
+              }
+            ]}
           >
             <Select
               placeholder="Оберіть орган"
-              className={formclasses.selectField}     
+              className={formclasses.selectField}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
               showSearch
             >
@@ -248,27 +241,19 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Тема рішення"
             labelCol={{ span: 24 }}
             name="decisionTarget"
-            rules={[
-              { required: true, 
-                message: emptyInput() 
-              },
-              {
-                max: 255,
-                message: maxLength(255)
-              },
-            ]}
+            rules={descriptionValidation.DecisionTarget}
           >
-            
-            <AutoComplete 
-            filterOption={true}
-            className={formclasses.selectField}
+            <Select
+              className={formclasses.selectField}
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              showSearch
             >
               {data?.decisionTargets.slice(0, 9).map((dt) => (
                 <Select.Option key={dt.id} value={dt.targetName} >
                   {dt.targetName}
                 </Select.Option>
               ))}
-            </AutoComplete>
+            </Select>
           </Form.Item>
         </Col>
       </Row>
@@ -279,13 +264,18 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             name="datepicker"
             label="Дата рішення"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              }
+            ]}
           >
             <DatePicker
               format="DD.MM.YYYY"
               className={formclasses.selectField}
-              getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
-              popupStyle={{position: 'absolute'}}
+              getPopupContainer={() => document.getElementById('area')! as HTMLElement}
+              popupStyle={{ position: 'absolute' }}
             />
           </Form.Item>
         </Col>
@@ -297,30 +287,22 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Текст рішення"
             labelCol={{ span: 24 }}
             name="description"
-            rules={[
-              { required: true, 
-                message: emptyInput() 
-              },
-              {
-                max: 1000,
-                message: maxLength(1000)
-              },
-            ]}
+            rules={descriptionValidation.Description}
           >
             <Mentions
-                loading={loadingUserStatus}
-                onSearch={(s => setSearch(s))}
-                rows={5}
-                onSelect={onSelect}
-                className={formclasses.formField}
+              loading={loadingUserStatus}
+              onSearch={(s => setSearch(s))}
+              rows={5}
+              onSelect={onSelect}
+              className={formclasses.formField}
             >
-                {userData?.map((u) =>
-                    <Option
-                        key={u.id}
-                        value={u.firstName + ' ' + u.lastName}
-                    >
-                        {u.firstName + ' ' + u.lastName}
-                    </Option>)}
+              {userData?.map((u) =>
+                <Option
+                  key={u.id}
+                  value={u.firstName + ' ' + u.lastName}
+                >
+                  {u.firstName + ' ' + u.lastName}
+                </Option>)}
             </Mentions>
           </Form.Item>
         </Col>
@@ -353,7 +335,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
 
                 {fileData.FileAsBase64 !== null && (
                   <div>
-                    <div>{fileData.FileName}</div>{" "}
+                    <div style={{ wordBreak: 'break-word' }}> {fileData.FileName} </div>{" "}
                   </div>
                 )}
               </Upload.Dragger>
@@ -383,9 +365,15 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Статус рішення"
             labelCol={{ span: 24 }}
             name="decisionStatusType"
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              }
+            ]}
           >
-            <Select 
+            <Select
+              placeholder="Оберіть статус"
               className={formclasses.selectField}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >

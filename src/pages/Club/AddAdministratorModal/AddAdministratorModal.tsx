@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./AddAdministrationModal.less";
 import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
+import { ExclamationCircleOutlined} from '@ant-design/icons';
 import ClubAdmin from "./../../../models/Club/ClubAdmin";
 import AdminType from "./../../../models/Admin/AdminType";
 import {
@@ -9,7 +10,7 @@ import {
   getAllAdmins,
 } from "../../../api/clubsApi";
 import{
-  emptyInput,
+  emptyInput, inputOnlyWhiteSpaces,
 } from "../../../components/Notifications/Messages"
 import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
@@ -37,6 +38,7 @@ const AddAdministratorModal = (props: Props) => {
   const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
   const [head, setHead] = useState<ClubAdmin>();
+  const [headDeputy, setHeadDeputy] = useState<ClubAdmin>();
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const disabledEndDate = (current: any) => {
@@ -47,11 +49,25 @@ const AddAdministratorModal = (props: Props) => {
     return current && current > moment();
   };
 
-  const showConfirm = (admin: ClubAdmin) => {
-    confirm({
-      title: "Призначити даного користувача на цю посаду?",
+  function showEditConfirmModal(admin: ClubAdmin) {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете змінити роль даного користувача?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, Змінити",
+      okType: "primary",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+         editClubAdmin(admin);
+      },
+    });
+  }
+
+  const showDiseableModal = async (admin: ClubAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете змінити роль цьому користувачу",
       content: (
-        <div style={{ margin: 10 }}>
+        <div style={{ margin: 15 }}>
           <b>
             {head?.user.firstName} {head?.user.lastName}
           </b>{" "}
@@ -64,8 +80,42 @@ const AddAdministratorModal = (props: Props) => {
           .
         </div>
       ),
+      onOk() {}
+    });
+  };
+
+  const showConfirm = (admin: ClubAdmin) => {
+    return Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (admin.adminType.adminTypeName.toString() === Roles.KurinHead ?
+        <div style={{ margin: 10 }}>
+          <b>
+            {head?.user.firstName} {head?.user.lastName}
+          </b>{" "}
+          є Головою Куреня, час правління закінчується{" "}
+          <b>
+            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(head?.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+        :
+        <div style={{ margin: 10 }}>
+        <b>
+          {headDeputy?.user.firstName} {headDeputy?.user.lastName}
+        </b>{" "}
+        є Заступником Голови Куреня, час правління закінчується{" "}
+        <b>
+          {moment(headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            ? "ще не скоро"
+            : moment(headDeputy?.endDate).format("DD.MM.YYYY")}
+        </b>
+        .
+      </div>
+      ),
       onCancel() {},
-      onOk() {
+      async onOk() {
         if (admin.id === 0) {
           addClubAdmin(admin);
         } else {
@@ -89,13 +139,23 @@ const AddAdministratorModal = (props: Props) => {
     props.onAdd?.(admin);
   };
 
-  const getClubHead = async () => {
+  const getClubAdmins = async () => {
+    setLoading(true);
     if (props.clubId !== 0) {
       const responseAdmins = await getAllAdmins(props.clubId);
       setHead(responseAdmins.data.head);
+      setHeadDeputy(responseAdmins.data.headDeputy);
       setLoading(false);
     }
   };
+
+  const checkAdminId = async (admin: ClubAdmin)=> {
+    if (admin.id === 0) {
+      await addClubAdmin(admin);
+    } else {
+      await editClubAdmin(admin);
+    }
+  }
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
@@ -114,17 +174,27 @@ const AddAdministratorModal = (props: Props) => {
     };
 
     try {
-      if (values.adminType === Roles.KurinHead && head !== null) {
-        if (head?.userId !== admin.userId) {
+      if (values.adminType === Roles.KurinHead) {
+        if (head !== null && head?.userId !== admin.userId) {
+          console.log(admin);
           showConfirm(admin);
         } else {
-          await editClubAdmin(admin);
+          await checkAdminId(admin);
+        }
+      } else if (values.adminType === Roles.KurinHeadDeputy ) {
+        if (admin.userId == head?.userId) {
+            showDiseableModal(admin);
+        } else if (headDeputy !== null && headDeputy?.userId !== admin.userId) {
+          console.log(admin);
+          showConfirm(admin);
+        } else {
+          await checkAdminId(admin);
         }
       } else {
-        if (admin.id === 0) {
-          await addClubAdmin(admin);
+        if (admin.userId === head?.userId || admin.userId === headDeputy?.userId) {
+            showEditConfirmModal(admin);
         } else {
-          await editClubAdmin(admin);
+          await checkAdminId(admin);
         }
       }
     } finally {
@@ -141,7 +211,7 @@ const AddAdministratorModal = (props: Props) => {
     if (props.visibleModal) {
       form.resetFields();
     }
-    getClubHead();
+    getClubAdmins();
     const userRoles = userApi.getActiveUserRoles();
       setActiveUserRoles(userRoles);
   }, [props]);
@@ -150,8 +220,8 @@ const AddAdministratorModal = (props: Props) => {
     <Modal
       title={
         props.admin.id === 0
-          ? `Додати в провід ${props.clubName}`
-          : "Редагувати адміністратора"
+          ? `Додати в провід куреня ${props.clubName}`
+          : "Редагування проводу"
       }
       visible={props.visibleModal}
       footer={null}
@@ -166,12 +236,22 @@ const AddAdministratorModal = (props: Props) => {
           label="Виберіть тип адміністрування"
           labelCol={{ span: 24 }}
           initialValue={props.admin.adminType.adminTypeName}
-          rules={[{ required: true, message: emptyInput() }]}
+          rules={[
+            { 
+              required: true, 
+              message: emptyInput() 
+            },
+            {
+              pattern: /^\s*\S.*$/,
+              message: inputOnlyWhiteSpaces()
+            },
+          ]}
         >
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: Roles.KurinHead, disabled: activeUserRoles.includes(Roles.KurinHeadDeputy) },
+              { value: Roles.KurinHead, disabled: (activeUserRoles.includes(Roles.KurinHeadDeputy) 
+               && !activeUserRoles.includes(Roles.Admin)) },
               { value: Roles.KurinHeadDeputy },
               { value: "Голова СПС" },
               { value: "Фотограф" },

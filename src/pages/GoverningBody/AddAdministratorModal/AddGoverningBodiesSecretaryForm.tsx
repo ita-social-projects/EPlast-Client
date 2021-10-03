@@ -168,7 +168,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     const fetchData = async () => {
       setUsersLoading(true);
       await adminApi.getUsersForTable().then((response) => {
-        setUsers(response.data);
+        setUsers((response.data as any[]).filter(x => !x.isInLowerRole))
         setUsersLoading(false);
       });
     };

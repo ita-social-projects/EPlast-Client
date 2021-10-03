@@ -22,15 +22,11 @@ const SortedClubs = ( {switcher}: Props) => {
   const { url } = useRouteMatch();
 
   const [clubs, setClubs] = useState<ClubProfile[]>([]);
-  const [activeCities, setActiveCities] = useState<ClubProfile[]>([]);
-  const [notActiveCities, setNotActiveCities] = useState<ClubProfile[]>([]);
   const [canCreate, setCanCreate] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
-  const [activeTotal, setActiveTotal] = useState(0);
-  const [notActiveTotal, setNotActiveTotal] = useState(0);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
@@ -66,6 +62,7 @@ const SortedClubs = ( {switcher}: Props) => {
       setPhotos(response.data.clubs);
       setClubs(response.data.clubs);
       setCanCreate(response.data.canCreate);
+      setActiveCanCreate(response.data.canCreate);
       setTotal(response.data.total);
     } finally {
       setLoading(false);
@@ -122,7 +119,6 @@ const SortedClubs = ( {switcher}: Props) => {
                         <img src={club.logo || undefined} alt="Club" />
                     )
                 }
-                onClick={() => history.push(`${url}/${club.id}`)}
                 >
                   {(club.name?.length > nameMaxLength) ?
                     <Tooltip title={club.name}>
@@ -199,7 +195,7 @@ const SortedClubs = ( {switcher}: Props) => {
                 pageSize={pageSize}
                 total={total}
                 responsive
-                showLessItems
+                showSizeChanger={total >= 20}
                 onChange={(page) => handleChange(page)}
                 onShowSizeChange={(page, size) => handleSizeChange(page, size)}
               />

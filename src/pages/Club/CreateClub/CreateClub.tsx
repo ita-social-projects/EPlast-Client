@@ -30,13 +30,13 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
-import{
+import {
   fileIsUpload,
-  fileIsNotUpload, 
-  possibleFileExtensions, 
-  fileIsTooBig, 
-  successfulCreateAction, 
-  successfulUpdateAction, 
+  fileIsNotUpload,
+  possibleFileExtensions,
+  fileIsTooBig,
+  successfulCreateAction,
+  successfulUpdateAction,
   failCreateAction,
   failUpdateAction,
   successfulDeleteAction
@@ -44,6 +44,7 @@ import{
 
 const nameMaxLength = 201;
 const descriptionMaxLength = 1001;
+const sloganMaxLength = 500;
 const linkMaxLength = 257;
 const emailMaxLength = 51;
 const CreateClub = () => {
@@ -125,14 +126,11 @@ const CreateClub = () => {
       email: values.email,
       head: club.head,
       headDeputy: club.headDeputy,
-      houseNumber: values.houseNumber,
       id: club.id,
       logo: club.logo?.length === 0 ? null : club.logo,
-      officeNumber: values.officeNumber,
       name: values.name,
       phoneNumber: values.phoneNumber,
-      postIndex: values.postIndex,
-      street: values.street,
+      slogan: values.slogan,
       isActive: club.isActive
     };
     if (!club.id) {
@@ -143,20 +141,19 @@ const CreateClub = () => {
   };
 
   const CreateClub = async (newClub: ClubProfile) => {
-    try{
-    notificationLogic("info", "Створення...", <LoadingOutlined />);
-    const response = await createClub(JSON.stringify(newClub));
-    club.id = response.data;
-        notificationLogic("success", successfulCreateAction("Курінь"));
-        history.push(`/clubs/${club.id}`);
-      }
-    catch(error) {
-        notificationLogic("error", failCreateAction("курінь. Можливо курінь з даною назвою уже існує"));
-      }
+    try {
+      const response = await createClub(JSON.stringify(newClub));
+      club.id = response.data;
+      notificationLogic("success", successfulCreateAction("Курінь"));
+      history.push(`/clubs/${club.id}`);
+    }
+    catch (error) {
+      notificationLogic("error", failCreateAction("курінь. Можливо курінь з даною назвою уже існує"));
+    }
   };
 
   const EditClub = async (newClub: ClubProfile) => {
-  
+
     return updateClub(club.id, JSON.stringify(newClub))
       .then(() => {
         notificationLogic("success", successfulUpdateAction("Курінь"));
@@ -216,9 +213,9 @@ const CreateClub = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={club.description}
-                rules={[descriptionValidation.Description]}
+                rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
               >
-                <Input value={club.description} maxLength={descriptionMaxLength}/>
+                <Input value={club.description} maxLength={descriptionMaxLength} />
               </Form.Item>
             </Col>
             <Col md={10} xs={24}>
@@ -229,7 +226,7 @@ const CreateClub = () => {
                 initialValue={club.clubURL}
                 rules={[descriptionValidation.Link]}
               >
-                <Input value={club.clubURL} maxLength={linkMaxLength}/>
+                <Input value={club.clubURL} maxLength={linkMaxLength} />
               </Form.Item>
             </Col>
             <Col md={{ span: 10, offset: 2 }} xs={24}>
@@ -241,11 +238,11 @@ const CreateClub = () => {
                 rules={[descriptionValidation.Phone]}
               >
                 <ReactInputMask
-                maskChar={null}
+                  maskChar={null}
                   mask="+380(99)-999-99-99"
                   value={club.phoneNumber}
                 >
-                  {(inputProps: any) => <Input {...inputProps}/>}
+                  {(inputProps: any) => <Input {...inputProps} />}
                 </ReactInputMask>
               </Form.Item>
             </Col>
@@ -257,19 +254,19 @@ const CreateClub = () => {
                 initialValue={club.email}
                 rules={descriptionValidation.Email}
               >
-                <Input value={club.email} maxLength={emailMaxLength}/>
+                <Input value={club.email} maxLength={emailMaxLength} />
               </Form.Item>
             </Col>
             <Col md={{ span: 10, offset: 2 }} xs={24}>
-            <Form.Item
-                name="street"
-                label="Вулиця"
+              <Form.Item
+                name="slogan"
+                label="Гасло"
                 labelCol={{ span: 24 }}
-                initialValue={club.street}
-                rules={[descriptionValidation.Description]}
+                initialValue={club.slogan}
+                rules={descriptionValidation.Slogan}
               >
-                <Input value={club.description} maxLength={descriptionMaxLength}/>
-                </Form.Item>
+                <Input value={club.slogan} maxLength={sloganMaxLength} />
+              </Form.Item>
             </Col>
           </Row>
           <Row className="clubButtons" justify="center" gutter={[0, 6]}>

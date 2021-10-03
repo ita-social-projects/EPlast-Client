@@ -16,13 +16,13 @@ import adminApi from "../../../api/adminApi";
 import Distinction from "../Interfaces/Distinction";
 import{
   emptyInput,
-  maxLength,
   failEditAction,
   maxNumber,
   minNumber
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 moment.locale("uk-ua");
 
 interface Props {
@@ -156,7 +156,7 @@ const FormEditDistinction = ({
   return (
     <div>
       {!loading && (
-        <Form name="basic" onFinish={handleFinish} form={form}>
+        <Form name="basic" onFinish={handleFinish} form={form} id='area' style={{position: 'relative'}}>
           <Row justify="start" gutter={[12, 0]}>
             <Col md={24} xs={24}>
               <Form.Item
@@ -212,6 +212,7 @@ const FormEditDistinction = ({
                   className={formclasses.selectField}
                   showSearch
                   onSelect={distChange}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
                   {distData?.map((o) => (
                     <Select.Option key={o.id} value={JSON.stringify(o)}>
@@ -233,7 +234,10 @@ const FormEditDistinction = ({
                   distinction.user.firstName + " " + distinction.user.lastName
                 }
                 rules={[
-                  { required: true, message: emptyInput() },
+                  { 
+                    required: true, 
+                    message: emptyInput() 
+                  },
                 ]}
               >
                 <Select
@@ -241,6 +245,7 @@ const FormEditDistinction = ({
                   onSelect={userChange}
                   showSearch
                   loading={loadingUserStatus}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
                   {userData?.map((o) => (
                       <Select.Option 
@@ -264,12 +269,7 @@ const FormEditDistinction = ({
                 labelCol={{ span: 24 }}
                 name="reporter"
                 initialValue={distinction.reporter}
-                rules={[
-                  {
-                    max: 100,
-                    message: maxLength(100),
-                  },
-                ]}
+                rules={descriptionValidation.Reporter}
               >
                 <Input
                   allowClear
@@ -288,12 +288,17 @@ const FormEditDistinction = ({
                 labelCol={{ span: 24 }}
                 initialValue={moment(distinction.date)}
                 rules={[
-                  { required: true, message: emptyInput() },
+                  { 
+                    required: true, 
+                    message: emptyInput() 
+                  },
                 ]}
               >
                 <DatePicker
                   format={dateFormat}
                   className={formclasses.selectField}
+                  getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
+                  popupStyle={{position: 'absolute'}}
                 />
               </Form.Item>
             </Col>
@@ -306,12 +311,7 @@ const FormEditDistinction = ({
                 labelCol={{ span: 24 }}
                 name="reason"
                 initialValue={distinction.reason}
-                rules={[
-                  {
-                    max: 1000,
-                    message: maxLength(1000),
-                  },
-                ]}
+                rules={descriptionValidation.Description}
               >
                 <Input.TextArea
                   allowClear

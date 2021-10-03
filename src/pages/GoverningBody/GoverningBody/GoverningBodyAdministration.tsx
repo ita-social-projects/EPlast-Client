@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip} from 'antd';
-import {SettingOutlined, RollbackOutlined, DeleteOutlined} from '@ant-design/icons';
+import {SettingOutlined, RollbackOutlined, CloseOutlined} from '@ant-design/icons';
 import { getAllAdmins, removeAdministrator, getUserAccess} from "../../../api/governingBodiesApi";
 import userApi from "../../../api/UserApi";
 import "./GoverningBody.less";
@@ -15,8 +15,10 @@ import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import AuthStore from '../../../stores/AuthStore';
+import extendedTitleTooltip, { parameterMaxLength } from '../../../components/Tooltip';
 moment.locale("uk-ua");
 
+const adminTypeNameMaxLength = 23;
 const GoverningBodyAdministration = () => {
     const confirm = Modal.confirm;
     const {id} = useParams();
@@ -136,7 +138,9 @@ const GoverningBodyAdministration = () => {
                 <Card
                   key={member.id}
                   className="detailsCard"
-                  title={`${member.adminType.adminTypeName}`}
+                  title={
+                    extendedTitleTooltip(adminTypeNameMaxLength, `${member.adminType.adminTypeName}`)
+                  }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
                     userAccesses["AddGBSecretary"]
@@ -144,8 +148,7 @@ const GoverningBodyAdministration = () => {
                           <SettingOutlined
                             className={classes.governingBodyAdminSettingsIcon}
                             onClick={() => showModal(member)} />,
-                          <DeleteOutlined
-                            className={classes.governingBodyAdminDeleteIcon}
+                          <CloseOutlined
                             onClick={() => showConfirm(member)}
                           />,
                         ]
@@ -168,7 +171,9 @@ const GoverningBodyAdministration = () => {
                       )}
                       <Card.Meta
                         className="detailsMeta"
-                        title={`${member.user.firstName} ${member.user.lastName}`}
+                        title={
+                          extendedTitleTooltip(parameterMaxLength, `${member.user.firstName} ${member.user.lastName}`)
+                        }
                       />
                       {processEmail(member.workEmail == null || member.workEmail == "" ? member.user.email : member.workEmail)}
                     </div>

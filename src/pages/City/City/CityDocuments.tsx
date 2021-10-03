@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Spin} from 'antd';
-import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Layout, Modal, Spin} from 'antd';
+import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {getAllDocuments, getFile, removeDocument, getCityById, cityNameOfApprovedMember} from "../../../api/citiesApi";
 import "./City.less";
 import CityDocument from '../../../models/City/CityDocument';
@@ -11,6 +11,7 @@ import moment from "moment";
 import Spinner from '../../Spinner/Spinner';
 import userApi from "../../../api/UserApi";
 import { Roles } from '../../../models/Roles/Roles';
+import extendedTitleTooltip, {parameterMaxLength} from '../../../components/Tooltip';
 
 const CityDocuments = () => {
     const {id} = useParams();
@@ -49,6 +50,20 @@ const CityDocuments = () => {
 
     const downloadDocument = async (fileBlob: string, fileName: string) => {
       await getFile(fileBlob, fileName);
+    }
+
+    function seeDeleteModal(documentId: number) {
+      return Modal.confirm({
+        title: "Ви впевнені, що хочете видалити даний документ із документообігу?",
+        icon: <ExclamationCircleOutlined />,
+        okText: "Так, Видалити",
+        okType: "primary",
+        cancelText: "Скасувати",
+        maskClosable: true,
+        onOk() {
+          removeDocumentById(documentId);
+        },
+      });
     }
 
     const removeDocumentById = async (documentId: number) => {
@@ -94,10 +109,13 @@ const CityDocuments = () => {
                         />,
                         <CloseOutlined
                           key="close"
-                          onClick={() => removeDocumentById(document.id)}
+                          onClick={() => seeDeleteModal(document.id)}
                         />                          
                       ]                                                                                                            
-                    : ((activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) 
+                    : activeUserRoles.includes(Roles.CityHead) 
+                    || activeUserRoles.includes(Roles.CityHeadDeputy) 
+                    || ((activeUserRoles.includes(Roles.Supporter) 
+                    || activeUserRoles.includes(Roles.PlastMember)) 
                     && city.name == activeUserCity )
                      
                     ?
@@ -118,7 +136,9 @@ const CityDocuments = () => {
                   <Avatar size={86} icon={<FileTextOutlined />} />
                   <Card.Meta
                     className="detailsMeta"
-                    title={document.cityDocumentType.name}
+                    title={
+                      extendedTitleTooltip(parameterMaxLength, document.cityDocumentType.name)
+                    }
                   />
                 </Card>
               ))

@@ -21,6 +21,7 @@ import DefaultLogo from "../../../assets/images/default_city_image.jpg";
 import {
   getSectorById,
   getSectorLogo,
+  getSectorsListByGoverningBodyId,
   updateSector,
 } from "../../../api/governingBodySectorsApi";
 import "../../City/CreateCity/CreateCity.less";
@@ -28,7 +29,7 @@ import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
-import{
+import {
   fileIsUpload,
   fileIsNotUpload,
   possibleFileExtensions,
@@ -37,7 +38,7 @@ import{
   successfulUpdateAction,
   failUpdateAction,
 } from "../../../components/Notifications/Messages"
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, sameNameValidator } from "../../../models/GllobalValidations/DescriptionValidation";
 
 const EditSector = () => {
   const { governingBodyId, sectorId } = useParams();
@@ -45,6 +46,19 @@ const EditSector = () => {
 
   const [loading, setLoading] = useState(false);
   const [sector, setSector] = useState<SectorProfile>(new SectorProfile());
+  const [sectorNames, setSectorNames] = useState<string[]>([]);
+  const orgName: string = 'Сектор'
+
+  useEffect(() => {
+    getSectorNames();
+  },[]);
+
+  const getSectorNames = async () => {
+    let sectors = (await getSectorsListByGoverningBodyId(governingBodyId) as any[])
+    let currentName = (await getSectorById(sectorId)).data.sectorViewModel.name
+    setSectorNames(sectors.map(x => x.name).filter(x => x !== currentName));
+  }
+
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -117,7 +131,7 @@ const EditSector = () => {
       governingBodyId: governingBodyId,
       description: values.description,
       email: values.email,
-      name: values.name,
+      name: (values.name as string).trim(),
       logo: sector.logo?.length === 0 ? null : sector.logo,
       phoneNumber: values.phoneNumber,
       head: sector.head,
@@ -127,7 +141,6 @@ const EditSector = () => {
   };
 
   const EditSector = async (newSector: SectorProfile) => {
-    notificationLogic("info", "Оновлення...", <LoadingOutlined />);
 
     return updateSector(newSector.id, JSON.stringify(newSector))
       .then(() => {
@@ -177,7 +190,7 @@ const EditSector = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={sector.name}
-                rules={descriptionValidation.Name}
+                rules={[...descriptionValidation.Name, sameNameValidator(orgName,sectorNames)]}
               >
                 <Input value={sector.name} maxLength={51} />
               </Form.Item>
@@ -188,7 +201,7 @@ const EditSector = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={sector.description}
-                rules={[descriptionValidation.Description]}
+                rules={descriptionValidation.Description}
               >
                 <Input value={sector.description} maxLength={1001} />
               </Form.Item>

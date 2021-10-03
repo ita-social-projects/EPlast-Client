@@ -17,7 +17,8 @@ import {
   PlusSquareFilled,
   DeleteOutlined,
   ExclamationCircleOutlined,
-  FileTextOutlined
+  FileTextOutlined,
+  LockOutlined
 } from "@ant-design/icons";
 import {
   getSectorById,
@@ -44,6 +45,8 @@ import moment from "moment";
 import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument";
 import AddDocumentModal from "./AddDocumentModal";
 import AddSectorAdminForm from "./AddSectorAdminForm";
+import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
+import { getAllAnnouncements } from "../../../api/governingBodiesApi";
 
 const Sector = () => {
   const history = useHistory();
@@ -63,6 +66,7 @@ const Sector = () => {
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   const [admins, setAdmins] = useState<SectorAdmin[]>([]);
   const [sectorHead, setSectorHead] = useState<SectorAdmin>();
+  const [announcements, setAnnouncements] = useState<GoverningBodyAnnouncement[]>([]);
 
   const deleteSector = async () => {
     await removeSector(sector.id);
@@ -110,11 +114,14 @@ const Sector = () => {
 
   const getUserAccesses = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
+    let result :any
     await getUserAccess(user.nameid).then(
       response => {
+        result = response
         setUserAccesses(response.data);
       }
     );
+    return result
   }
 
   const getSector = async () => {
@@ -122,7 +129,16 @@ const Sector = () => {
     try {
       const response = await getSectorById(+sectorId);
       const sectorViewModel = response.data.sectorViewModel
-      await getUserAccesses();
+      let userAccesses = await getUserAccesses();
+      if(userAccesses.data["ViewAnnouncements"]){
+        const res = (await getAllAnnouncements()).data
+        let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];
+        for(let i = 0; i < res.length && i < 3; i++) {
+          res[i].text = res[i].text.substring(0,40) + (res[i].text.length > 40? "...": "")
+          shortListedAnnoncements = [...shortListedAnnoncements, res[i]]
+        }
+        setAnnouncements(shortListedAnnoncements)
+      }
 
       setSectorLogoLoading(true);
       const admins = [
@@ -290,7 +306,7 @@ const Sector = () => {
 
         <Col
           xl={{ span: 7, offset: 1 }}
-          md={{ span: 11, offset: 2 }}
+          md={11}
           sm={24}
           xs={24}
         >
@@ -374,22 +390,42 @@ const Sector = () => {
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Оголошення</Title>
             <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
+              {userAccesses["ViewAnnouncements"] ?  
+                announcements.length > 0?
+                  announcements.map((announcement, index) => (
+                    <Col
+                      className="cityMemberItem"
+                      xs={12}
+                      sm={8}
+                      key={announcement.id}
+                      style={{padding: "0.3rem"}}
+                    >
+                      <Paragraph><strong>{announcement.user.firstName}</strong></Paragraph>
+                      <Paragraph style={{overflow:"hidden",textOverflow:"ellipsis", wordBreak:"break-word"}}>{announcement.text}</Paragraph>
+                      <Paragraph>{moment(announcement.date).format("DD.MM.YYYY")}</Paragraph>
+                    </Col>
+                    )) 
+                : 
+                <Col>
+                  <Paragraph>Ще немає оголошень</Paragraph>
+                </Col>
+              :
+              <Col>
+                <Paragraph strong>У тебе немає доступу до оголошень!</Paragraph>
+                <LockOutlined style={{ fontSize:"150px" }} />
+              </Col>}
             </Row>
-            <div className="governingBodyMoreButton">
-              <Button
-                type="primary"
-                className="governingBodyInfoButton"
-                onClick={() => setVisible(true)}
-              >
-                Більше
-              </Button>
-              {userAccesses["ManipulatePoster"] ? (
-                <PlusSquareFilled
-                  className="addReportIcon"
-                  onClick={() => setVisible(true)}
-                />
-              ) : null}
-            </div>
+            {userAccesses["ViewAnnouncements"] ?
+              <div className="governingBodyMoreButton">
+                <Button
+                  type="primary"
+                  className="governingBodyInfoButton"
+                  onClick={() => history.push(`/announcements`)}
+                >
+                  Більше
+                </Button>
+              </div>
+            : null}
           </Card>
         </Col>
 

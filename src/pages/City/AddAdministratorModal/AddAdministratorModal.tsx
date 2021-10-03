@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./AddAdministrationModal.less";
 import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
+import { ExclamationCircleOutlined} from '@ant-design/icons';
 import CityAdmin from "./../../../models/City/CityAdmin";
 import AdminType from "./../../../models/Admin/AdminType";
 import {
@@ -12,7 +13,7 @@ import notificationLogic from "./../../../components/Notifications/Notification"
 import moment from "moment";
 import "moment/locale/uk";
 import userApi from "../../../api/UserApi";
-import{emptyInput} from "../../../components/Notifications/Messages"
+import{emptyInput, inputOnlyWhiteSpaces} from "../../../components/Notifications/Messages"
 import { Roles } from "../../../models/Roles/Roles";
 moment.locale("uk-ua");
 
@@ -24,6 +25,7 @@ interface Props {
   admin: CityAdmin;
   setAdmin: (admin: CityAdmin) => void;
   cityId: number;
+  cityName: string;
   onAdd?: (admin?: CityAdmin) => void;
   onChange?: (id: string, userRoles: string) => void;
 }
@@ -34,13 +36,15 @@ const AddAdministratorModal = (props: Props) => {
   const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
   const [head, setHead] = useState<CityAdmin>();
+  const [headDeputy, setHeadDeputy] = useState<CityAdmin>();
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
-  const getCityHead = async () => {
+  const getCityAdmins= async () => {
+    setLoading(true);
     if (props.cityId !== 0) {
-      await getAllAdmins(props.cityId).then((response) => {
-        setHead(response.data.head);
-      });
+      const responseAdmins = await getAllAdmins(props.cityId)
+      setHead(responseAdmins.data.head);
+      setHeadDeputy(responseAdmins.data.headDeputy);
       setLoading(false);
     }
   };
@@ -53,11 +57,25 @@ const AddAdministratorModal = (props: Props) => {
     return current && current > moment();
   };
 
-  const showConfirm = (admin: CityAdmin) => {
-    confirm({
-      title: "Призначити даного користувача на цю посаду?",
+  function showEditConfirmModal(admin: CityAdmin) {
+    return Modal.confirm({
+      title: "Ви впевнені, що хочете змінити роль даного користувача?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, Змінити",
+      okType: "primary",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+         editCityAdmin(admin);
+      },
+    });
+  }
+
+  const showDiseableModal = async (admin: CityAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете змінити роль цьому користувачу",
       content: (
-        <div style={{ margin: 10 }}>
+        <div style={{ margin: 15 }}>
           <b>
             {head?.user.firstName} {head?.user.lastName}
           </b>{" "}
@@ -70,8 +88,42 @@ const AddAdministratorModal = (props: Props) => {
           .
         </div>
       ),
+      onOk() {}
+    });
+  };
+
+  const showConfirmCityAdmin  = async (admin: CityAdmin, adminType: Roles) => {
+    return Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (adminType.toString() === "Голова Станиці" ?
+        <div style={{ margin: 10 }}>
+          <b>
+            {head?.user.firstName} {head?.user.lastName}
+          </b>{" "}
+          є Головою Станиці, час правління закінчується{" "}
+          <b>
+            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment(head?.endDate).format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+        :
+        <div style={{ margin: 10 }}>
+        <b>
+          {headDeputy?.user.firstName} {headDeputy?.user.lastName}
+        </b>{" "}
+        є Заступником Голови Станиці, час правління закінчується{" "}
+        <b>
+          {moment(headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            ? "ще не скоро"
+            : moment(headDeputy?.endDate).format("DD.MM.YYYY")}
+        </b>
+        .
+      </div>
+      ),
       onCancel() {},
-      onOk() {
+      async onOk() {
         if (admin.id === 0) {
           addCityAdmin(admin);
         } else {
@@ -95,6 +147,14 @@ const AddAdministratorModal = (props: Props) => {
     props.onAdd?.(admin);
   };
 
+  const checkAdminId = async (admin: CityAdmin)=> {
+    if (admin.id === 0) {
+      await addCityAdmin(admin);
+    } else {
+      await editCityAdmin(admin);
+    }
+  }
+
   const handleSubmit = async (values: any) => {
     setLoading(true);
 
@@ -112,17 +172,25 @@ const AddAdministratorModal = (props: Props) => {
     };
 
     try {
-      if (values.adminType === Roles.CityHead && head !== null) {
-        if (head?.userId !== admin.userId) {
-          showConfirm(admin);
+      if (values.adminType === Roles.CityHead) {
+        if (head !== null && head?.userId !== admin.userId) {
+          showConfirmCityAdmin(admin, values.adminType);
         } else {
-          await editCityAdmin(admin);
+           await checkAdminId(admin);
+        }
+      } else if (values.adminType === Roles.CityHeadDeputy ) {
+        if (admin.userId === head?.userId) {
+            showDiseableModal(admin);
+        } else if (headDeputy !== null && headDeputy?.userId !== admin.userId) {
+          showConfirmCityAdmin(admin, values.adminType);
+        } else {
+          await checkAdminId(admin);
         }
       } else {
-        if (admin.id === 0) {
-          await addCityAdmin(admin);
+        if (admin.userId === head?.userId || admin.userId === headDeputy?.userId) {
+            showEditConfirmModal(admin);
         } else {
-          await editCityAdmin(admin);
+          await checkAdminId(admin);
         }
       }
     } finally {
@@ -139,17 +207,17 @@ const AddAdministratorModal = (props: Props) => {
     if (props.visibleModal) {
       form.resetFields();
     }
+    getCityAdmins();
     const userRoles = userApi.getActiveUserRoles();
     setActiveUserRoles(userRoles);
-    getCityHead();
   }, [props]);
 
   return (
     <Modal
       title={
         props.admin.id === 0
-          ? "Додати в провід станиці"
-          : "Редагувати адміністратора"
+          ? `Додати в провід станиці ${props.cityName}`
+          : "Редагування проводу"
       }
       visible={props.visibleModal}
       footer={null}
@@ -164,12 +232,22 @@ const AddAdministratorModal = (props: Props) => {
           label="Виберіть тип адміністрування"
           labelCol={{ span: 24 }}
           initialValue={props.admin.adminType.adminTypeName}
-          rules={[{ required: true, message: emptyInput() }]}
+          rules={[
+            { 
+              required: true, 
+              message: emptyInput() 
+            },
+            {
+              pattern: /^\s*\S.*$/,
+              message: inputOnlyWhiteSpaces()
+            },
+          ]}
         >
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: Roles.CityHead, disabled: activeUserRoles.includes(Roles.CityHeadDeputy) },
+              { value: Roles.CityHead, disabled: (activeUserRoles.includes(Roles.CityHeadDeputy) 
+              && !activeUserRoles.includes(Roles.Admin)) },
               { value: Roles.CityHeadDeputy},
               { value: "Голова СПС" },
               { value: "Писар" },
@@ -179,7 +257,6 @@ const AddAdministratorModal = (props: Props) => {
             ]}
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}
-            onChange={getCityHead}
           />
         </Form.Item>
         <Row>

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Spin} from 'antd';
-import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Layout, Modal} from 'antd';
+import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {clubNameOfApprovedMember, getAllDocuments, getFile, removeDocument, getClubById} from "../../../api/clubsApi";
 import "./Club.less";
 import ClubDocument from '../../../models/Club/ClubDocument';
@@ -11,7 +11,7 @@ import { Roles } from '../../../models/Roles/Roles';
 import Spinner from '../../Spinner/Spinner';
 import Title from 'antd/lib/typography/Title';
 import userApi from "../../../api/UserApi";
-
+import extendedTitleTooltip, {parameterMaxLength} from '../../../components/Tooltip';
 
 const ClubDocuments = () => {
     const {id} = useParams();
@@ -49,6 +49,20 @@ const ClubDocuments = () => {
 
     const downloadDocument = async (fileBlob: string, fileName: string) => {
       await getFile(fileBlob, fileName);
+    }
+
+    function seeDeleteModal(documentId: number) {
+      return Modal.confirm({
+        title: "Ви впевнені, що хочете видалити даний документ із документообігу?",
+        icon: <ExclamationCircleOutlined />,
+        okText: "Так, Видалити",
+        okType: "primary",
+        cancelText: "Скасувати",
+        maskClosable: true,
+        onOk() {
+          removeDocumentById(documentId);
+        },
+      });
     }
 
     const removeDocumentById = async (documentId: number) => {
@@ -94,7 +108,7 @@ const ClubDocuments = () => {
                           />,
                           <CloseOutlined
                             key="close"
-                            onClick={() => removeDocumentById(document.id)}
+                            onClick={() => seeDeleteModal(document.id)}
                           />,
                         ]
                         
@@ -119,7 +133,9 @@ const ClubDocuments = () => {
                   <Avatar size={86} icon={<FileTextOutlined />} />
                   <Card.Meta
                     className="detailsMeta"
-                    title={document.clubDocumentType.name}
+                    title={
+                       extendedTitleTooltip(parameterMaxLength, document.clubDocumentType.name)
+                    }
                   />
                 </Card>
               ))

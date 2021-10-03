@@ -68,8 +68,8 @@ const ChangeUserClubModal = ({
             visible={showModal}
             onOk={handleClick}
             onCancel={handleClick}>
-            <p> Користувач  <b>{user.firstName} {user.lastName} </b>не являється членом курення!{" "}</p>
-            <p>В провід курення можна додати тільки дійсного члена!</p>
+            <p> Користувач  <b>{user.firstName} {user.lastName} </b>не є членом куреня!{" "}</p>
+            <p>В провід куреня можна додати тільки дійсного члена!</p>
           </Modal>  
         )};
     </div>

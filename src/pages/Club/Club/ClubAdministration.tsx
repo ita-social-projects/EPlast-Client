@@ -13,8 +13,10 @@ import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import { Roles } from '../../../models/Roles/Roles';
+import extendedTitleTooltip, { parameterMaxLength } from '../../../components/Tooltip';
 moment.locale("uk-ua");
 
+const adminTypeNameMaxLength = 22;
 const ClubAdministration = () => {
     const {id} = useParams();
     const history = useHistory();
@@ -47,7 +49,7 @@ const ClubAdministration = () => {
       return Modal.confirm({
         title: "Ви впевнені, що хочете видалити даного користувача із Проводу?",
         icon: <ExclamationCircleOutlined />,
-        okText: "Так, Видалити",
+        okText: "Так, видалити",
         okType: "primary",
         cancelText: "Скасувати",
         maskClosable: true,
@@ -111,7 +113,9 @@ const ClubAdministration = () => {
                 <Card
                   key={member.id}
                   className="detailsCard"
-                  title={`${member.adminType.adminTypeName}`}
+                  title={
+                    extendedTitleTooltip(adminTypeNameMaxLength,`${member.adminType.adminTypeName}`)
+                  }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
                     canEdit && (!activeUserRoles.includes(Roles.KurinHeadDeputy) || member.adminType.adminTypeName !== Roles.KurinHead)
@@ -136,7 +140,9 @@ const ClubAdministration = () => {
                       )}
                       <Card.Meta
                         className="detailsMeta"
-                        title={`${member.user.firstName} ${member.user.lastName}`}
+                        title={
+                          extendedTitleTooltip(parameterMaxLength,`${member.user.firstName} ${member.user.lastName}`)
+                        }
                       />
                     </div>
                   </div>

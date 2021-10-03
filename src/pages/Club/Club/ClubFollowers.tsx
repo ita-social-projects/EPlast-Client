@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Skeleton, Spin} from 'antd';
+import {Avatar, Button, Card, Layout, Skeleton} from 'antd';
 import {CloseOutlined, ExclamationCircleOutlined, PlusOutlined, RollbackOutlined} from '@ant-design/icons';
 import {getAllFollowers, removeFollower, toggleMemberStatus} from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
@@ -10,6 +10,7 @@ import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import { Modal } from 'antd';
+import extendedTitleTooltip, {parameterMaxLength} from '../../../components/Tooltip';
 
 const ClubFollowers = () => {
     const {id} = useParams();
@@ -141,7 +142,9 @@ const ClubFollowers = () => {
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={`${follower.user.firstName} ${follower.user.lastName}`}
+                      title={
+                        extendedTitleTooltip(parameterMaxLength, `${follower.user.firstName} ${follower.user.lastName}`)
+                      }
                     />
                   </div>
                 </Card>

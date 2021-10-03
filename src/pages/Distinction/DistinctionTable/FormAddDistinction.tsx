@@ -15,12 +15,12 @@ import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
-  maxLength,
   maxNumber,
   minNumber,
   incorrectData
 } from "../../../components/Notifications/Messages"
 import precautionApi from "../../../api/precautionApi";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 type FormAddDistinctionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -169,7 +169,8 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             ]}
           >
             <Select 
-              className={formclasses.selectField} showSearch
+              className={formclasses.selectField} 
+              showSearch
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
               {distData?.map((o) => (
@@ -188,7 +189,12 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Ім'я"
             name="user"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput() 
+              }
+            ]}
           >
             <Select
               className={formclasses.selectField}
@@ -217,12 +223,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Подання від"
             labelCol={{ span: 24 }}
             name="reporter"
-            rules={[ { required: true, message: emptyInput() },
-              {
-                max: 100,
-                message: maxLength(100),
-              },
-            ]}
+            rules={descriptionValidation.Reporter}
           >
             <Input
               allowClear
@@ -239,7 +240,12 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             name="date"
             label="Дата затвердження"
             labelCol={{ span: 24 }}
-            rules={[{ required: true, message: incorrectData }]}
+            rules={[
+              { 
+                required: true, 
+                message: emptyInput()  
+              }
+            ]}
           >
             <DatePicker
               format={dateFormat}
@@ -257,12 +263,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Обгрунтування"
             labelCol={{ span: 24 }}
             name="reason"
-            rules={[ { required: true, message: emptyInput() },
-              {
-                max: 1000,
-                message: maxLength(1000),
-              },
-            ]}
+            rules={descriptionValidation.Description}
           >
             <Input.TextArea
               allowClear

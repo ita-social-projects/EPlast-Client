@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { Avatar, Layout, Menu, Button } from "antd";
-import { BankOutlined, RollbackOutlined } from "@ant-design/icons";
+import { BankOutlined, BookOutlined, RollbackOutlined } from "@ant-design/icons";
 import {
   SolutionOutlined,
-  InfoCircleOutlined,
   SnippetsOutlined,
   PieChartOutlined,
   FileTextOutlined,
@@ -128,6 +127,7 @@ const PrivateLayout = ({ children }: any) => {
                 icon={<SolutionOutlined />}
                 onClick={() => { handleClickAway(); history.push("/decisions"); }}
                 style={{ color: "white" }}
+                title=""
               >
                 Рішення
               </Menu.Item>
@@ -139,13 +139,14 @@ const PrivateLayout = ({ children }: any) => {
                 icon={<BankOutlined />}
                 onClick={() => { handleClickAway(); history.push("/regionsBoard"); }}
                 style={{ color: "white" }}
+                title=""
               >
                 Крайовий Провід Пласту
               </Menu.Item>
               ) : (<> </>)
             }
             
-            <SubMenu key="sub1" icon={<InfoCircleOutlined />} title="Довідник">
+            <SubMenu key="sub1" icon={<BookOutlined />} title="Довідник">
               {(canEdit || canSee || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy || plastMember) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
                   Таблиця користувачів
@@ -231,7 +232,14 @@ const PrivateLayout = ({ children }: any) => {
             ) : (<> </>))
             }
             {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
-                <Menu.Item onClick={() => { handleClickAway(); history.push('/aboutBase'); }} key="17">Про Базу</Menu.Item>) : (<> </>)
+                <Menu.Item 
+                  onClick={() => { handleClickAway(); history.push('/aboutBase'); }} 
+                  key="17"
+                  title=""
+                >
+                  Про Базу
+                </Menu.Item>
+                ) : (<> </>)
             }
           </Menu>
         </Sider>

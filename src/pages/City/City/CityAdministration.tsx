@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Modal, Skeleton, Spin} from 'antd';
+import {Avatar, Button, Card, Layout, Modal, Skeleton} from 'antd';
 import {SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import { getAllAdmins, removeAdministrator} from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
@@ -13,8 +13,10 @@ import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import { Roles } from '../../../models/Roles/Roles';
+import extendedTitleTooltip, { parameterMaxLength } from '../../../components/Tooltip';
 moment.locale("uk-ua");
 
+const adminTypeNameMaxLength = 23;
 const CityAdministration = () => {
     const {id} = useParams();
     const history = useHistory();
@@ -27,26 +29,36 @@ const CityAdministration = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [cityName, setCityName] = useState<string>("");
     const [reload, setReload] = useState<boolean>(false);
-
+    const [isActiveUserCityAdmin, setIsActiveUserCityAdmin] = useState<boolean>(false);
     const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  
-    const getAdministration = async () => {
-      setLoading(true);
-      const response = await getAllAdmins(id);
+
+    const setIsCityAdmin = (admin: any[], userId: string) => {
+      for (let i = 0; i < admin.length; i++){
+        if (admin[i].userId == userId){
+          setIsActiveUserCityAdmin(true);
+        }
+      }
+    }
+
+    const fetchData = async () => {
+        setLoading(true);
+        const responseAdmins = await getAllAdmins(id);
+        setIsCityAdmin([...responseAdmins.data.administration], userApi.getActiveUserId())
         setPhotosLoading(true);
-        setPhotos([...response.data.administration, response.data.head, response.data.headDeputy].filter(a => a != null));
-        setAdministration([...response.data.administration, response.data.head, response.data.headDeputy].filter(a => a != null));
-        setCanEdit(response.data.canEdit);
-        setCityName(response.data.name);
+        setPhotos([...responseAdmins.data.administration, responseAdmins.data.head, responseAdmins.data.headDeputy].filter(a => a != null));
+        setAdministration([...responseAdmins.data.administration, responseAdmins.data.head, responseAdmins.data.headDeputy].filter(a => a != null));
+        setCanEdit(responseAdmins.data.canEdit);
+        setCityName(responseAdmins.data.name);
         setActiveUserRoles(userApi.getActiveUserRoles());
-      setLoading(false);
+        setLoading(false);
+      
     };
     
     function seeDeleteModal(admin: CityAdmin) {
       return Modal.confirm({
         title: "Ви впевнені, що хочете видалити даного користувача із Проводу?",
         icon: <ExclamationCircleOutlined />,
-        okText: "Так, Видалити",
+        okText: "Так, видалити",
         okType: "primary",
         cancelText: "Скасувати",
         maskClosable: true,
@@ -94,7 +106,7 @@ const CityAdministration = () => {
     };
 
     useEffect(() => {
-        getAdministration();
+        fetchData();
     }, [reload]);
 
     return (
@@ -109,11 +121,14 @@ const CityAdministration = () => {
                 <Card
                   key={member.id}
                   className="detailsCard"
-                  title={`${member.adminType.adminTypeName}`}
+                  title={
+                    extendedTitleTooltip(adminTypeNameMaxLength, `${member.adminType.adminTypeName}`)
+                  }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit || (activeUserRoles.includes(Roles.CityHead)|| activeUserRoles.includes(Roles.CityHeadDeputy)) 
-                      && (!activeUserRoles.includes(Roles.CityHead) || member.adminType.adminTypeName !== Roles.CityHeadDeputy)
+                    canEdit 
+                    || ((activeUserRoles.includes(Roles.CityHead) 
+                    || activeUserRoles.includes(Roles.CityHeadDeputy)) &&  isActiveUserCityAdmin) 
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
                           <CloseOutlined onClick={() => seeDeleteModal(member)} />,
@@ -136,7 +151,9 @@ const CityAdministration = () => {
                       )}
                       <Card.Meta
                         className="detailsMeta"
-                        title={`${member.user.firstName} ${member.user.lastName}`}
+                        title={
+                          extendedTitleTooltip(parameterMaxLength, `${member.user.firstName} ${member.user.lastName}`)
+                        }
                       />
                     </div>
                   </div>
@@ -165,6 +182,7 @@ const CityAdministration = () => {
             visibleModal={visibleModal}
             setVisibleModal={setVisibleModal}
             cityId={+id}
+            cityName={cityName}
             onAdd={onAdd}
           ></AddAdministratorModal>
         ) : null}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { useParams, useHistory } from "react-router-dom";
 import {
   Button,
@@ -20,22 +20,23 @@ import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 import DefaultLogo from "../../../assets/images/default_city_image.jpg";
 import {
   createSector,
+  getSectorsListByGoverningBodyId
 } from "../../../api/governingBodySectorsApi";
 import "../../City/CreateCity/CreateCity.less";
 import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
-import{
+import {
   fileIsUpload,
-  fileIsNotUpload, 
-  possibleFileExtensions, 
-  fileIsTooBig, 
-  successfulDeleteAction, 
+  fileIsNotUpload,
+  possibleFileExtensions,
+  fileIsTooBig,
+  successfulDeleteAction,
   successfulCreateAction,
   failCreateAction,
 } from "../../../components/Notifications/Messages"
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, sameNameValidator } from "../../../models/GllobalValidations/DescriptionValidation";
 
 const CreateSector = () => {
   const { governingBodyId } = useParams();
@@ -43,6 +44,17 @@ const CreateSector = () => {
 
   const [loading, setLoading] = useState(false);
   const [sector, setSector] = useState<SectorProfile>(new SectorProfile());
+  const [sectorNames, setSectorNames] = useState<string[]>([]);
+  const orgName: string = 'Сектор'
+
+  useEffect(() => 
+  {
+    getSectorNames();
+  },[]);
+
+  const getSectorNames = async () => {
+    setSectorNames((await getSectorsListByGoverningBodyId(governingBodyId) as any[]).map(x => x.name));
+  }
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -93,7 +105,7 @@ const CreateSector = () => {
       governingBodyId: governingBodyId,
       description: values.description,
       email: values.email,
-      name: values.name,
+      name: (values.name as string).trim(),
       logo: sector.logo?.length === 0 ? null : sector.logo,
       phoneNumber: values.phoneNumber,
       head: sector.head,
@@ -103,19 +115,16 @@ const CreateSector = () => {
   };
 
   const CreateSector = async (newSector: SectorProfile) => {
-    notificationLogic("info", "Створення...", <LoadingOutlined />);
-    const responsePromise = createSector(JSON.stringify(newSector));
-    const response = await responsePromise;
-    sector.id = response.data;
-
-    return responsePromise
-      .then(() => {
-        notificationLogic("success", successfulCreateAction("Напрям керівного органу"));
-        history.push(`${sector.id}`);
-      })
-      .catch(() => {
-        notificationLogic("error", failCreateAction("напрям керівного органу"));
-      });
+    createSector(JSON.stringify(newSector))
+    .then((response) => {
+      sector.id = response.data;
+      notificationLogic("success", successfulCreateAction("Напрям керівного органу"));
+      history.push(`${sector.id}`);
+    })
+    .catch(() => {
+      getSectorNames()
+      notificationLogic("error", failCreateAction("напрям керівного органу"));
+    });
   };
 
   return loading && sector ? (
@@ -126,7 +135,7 @@ const CreateSector = () => {
         <Title level={2}>Створення напряму керівного органу</Title>
         <Form onFinish={handleSubmit}>
           <Form.Item name="logo" initialValue={sector.logo}>
-          <Upload
+            <Upload
               name="avatar"
               listType="picture-card"
               showUploadList={false}
@@ -152,7 +161,7 @@ const CreateSector = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={sector.name}
-                rules={descriptionValidation.Name}
+                rules={[...descriptionValidation.Name, sameNameValidator(orgName,sectorNames)]}
               >
                 <Input value={sector.name} maxLength={51} />
               </Form.Item>
@@ -163,7 +172,7 @@ const CreateSector = () => {
                 label="Опис"
                 labelCol={{ span: 24 }}
                 initialValue={sector.description}
-                rules={[descriptionValidation.Description]}
+                rules={descriptionValidation.Description}
               >
                 <Input value={sector.description} maxLength={1001} />
               </Form.Item>

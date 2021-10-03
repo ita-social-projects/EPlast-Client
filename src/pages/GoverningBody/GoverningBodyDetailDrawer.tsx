@@ -23,7 +23,7 @@ const GoverningBodyDetailDrawer = (props: Props) => {
     >
       <Form className="detailsForm">
         <Row justify="center" gutter={[12, 0]}>
-          <Col md={12} xs={24}>
+          <Col md={24} xs={24}>
             <Form.Item
               name="phoneNumber"
               label="Номер телефону"
@@ -46,7 +46,7 @@ const GoverningBodyDetailDrawer = (props: Props) => {
           </Col>
         </Row>
         <Row justify="center" gutter={[12, 0]}>
-          <Col md={12} xs={24}>
+          <Col md={24} xs={24}>
             <Form.Item
               name="email"
               label="Електронна пошта"

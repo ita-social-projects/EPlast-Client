@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {Avatar, Button, Card, Layout, Spin} from 'antd';
-import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined} from '@ant-design/icons';
+import {Avatar, Button, Card, Layout, Modal} from 'antd';
+import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {getRegionById, getRegionDocuments, getFile, removeDocument} from "../../api/regionsApi";
 import "./Region.less";
 import Title from 'antd/lib/typography/Title';
@@ -12,7 +12,7 @@ import {
   cityNameOfApprovedMember,
 } from "../../api/citiesApi";
 import { Roles } from '../../models/Roles/Roles';
-
+import extendedTitleTooltip, {parameterMaxLength} from '../../components/Tooltip';
 
 const RegionDocuments = () => {
     const {id} = useParams();
@@ -64,13 +64,25 @@ const RegionDocuments = () => {
           setDocuments(response.data);
         }
         finally{
-      
         }
       }
 
-
     const downloadDocument = async (fileBlob: string, fileName: string) => {
       await getFile(fileBlob, fileName);
+    }
+
+    function seeDeleteModal(documentId: number) {
+      return Modal.confirm({
+        title: "Ви впевнені, що хочете видалити даний документ із документообігу?",
+        icon: <ExclamationCircleOutlined />,
+        okText: "Так, Видалити",
+        okType: "primary",
+        cancelText: "Скасувати",
+        maskClosable: true,
+        onOk() {
+          removeDocumentById(documentId);
+        },
+      });
     }
 
     const removeDocumentById = async (documentId: number) => {
@@ -118,7 +130,7 @@ const RegionDocuments = () => {
                             />,
                             <CloseOutlined
                               key="close"
-                              onClick={() => removeDocumentById(document.id)}
+                              onClick={() => seeDeleteModal(document.id)}
                             />,
                       ]
                     : canEdit || activeUserRoles.includes(Roles.OkrugaHeadDeputy) 
@@ -141,7 +153,9 @@ const RegionDocuments = () => {
                   <Avatar size={86} icon={<FileTextOutlined />} />
                   <Card.Meta
                     className="detailsMeta"
-                    title={document.fileName}
+                    title={
+                      extendedTitleTooltip(parameterMaxLength, document.fileName)
+                    }
                   />
                 </Card>
               ))

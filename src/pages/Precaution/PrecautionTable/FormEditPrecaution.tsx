@@ -16,13 +16,13 @@ import adminApi from "../../../api/adminApi";
 import Precaution from "../Interfaces/Precaution";
 import {
   emptyInput,
-  maxLength,
   failEditAction,
   maxNumber,
   minNumber
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 moment.locale("uk-ua");
 
 interface Props {
@@ -165,7 +165,7 @@ const FormEditPrecaution = ({
   return (
     <div>
       {!loading && (
-        <Form name="basic" onFinish={handleFinish} form={form}>
+        <Form name="basic" onFinish={handleFinish} form={form} id='area' style={{position: 'relative'}}>
           <Row justify="start" gutter={[12, 0]}>
             <Col md={24} xs={24}>
               <Form.Item
@@ -221,6 +221,7 @@ const FormEditPrecaution = ({
                   className={formclasses.selectField}
                   showSearch
                   onSelect={distChange}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
                   {distData?.map((o) => (
                     <Select.Option key={o.id} value={JSON.stringify(o)}>
@@ -242,7 +243,10 @@ const FormEditPrecaution = ({
                   Precaution.user.firstName + " " + Precaution.user.lastName
                 }
                 rules={[
-                  { required: true, message: emptyInput() },
+                  { 
+                    required: true, 
+                    message: emptyInput() 
+                  },
                 ]}
               >
                 <Select
@@ -250,6 +254,7 @@ const FormEditPrecaution = ({
                   onSelect={userChange}
                   showSearch
                   loading={loadingUserStatus}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
                   {userData?.map((o) => (
                       <Select.Option 
@@ -273,12 +278,7 @@ const FormEditPrecaution = ({
                 labelCol={{ span: 24 }}
                 name="reporter"
                 initialValue={Precaution.reporter}
-                rules={[
-                  {
-                    max: 100,
-                    message: maxLength(100),
-                  },
-                ]}
+                rules={descriptionValidation.Reporter}
               >
                 <Input
                   allowClear
@@ -297,12 +297,17 @@ const FormEditPrecaution = ({
                 labelCol={{ span: 24 }}
                 initialValue={moment(Precaution.date)}
                 rules={[
-                  { required: true, message: emptyInput() },
+                  { 
+                    required: true, 
+                    message: emptyInput() 
+                  },
                 ]}
               >
                 <DatePicker
                   format={dateFormat}
                   className={formclasses.selectField}
+                  getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
+                  popupStyle={{position: 'absolute'}}
                 />
               </Form.Item>
             </Col>
@@ -315,13 +320,7 @@ const FormEditPrecaution = ({
                 labelCol={{ span: 24 }}
                 name="reason"
                 initialValue={Precaution.reason}
-                rules={[
-                  {
-                    required: true,
-                    max: 500,
-                    message: maxLength(500),
-                  },
-                ]}
+                rules={descriptionValidation.Reason}
               >
                 <Input.TextArea
                   allowClear
@@ -350,7 +349,11 @@ const FormEditPrecaution = ({
                   },
                 ]}
               >
-                <Select className={formclasses.selectField} showSearch>
+                <Select 
+                  className={formclasses.selectField} 
+                  showSearch
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                >
                   <Select.Option key="9" value="Прийнято">Прийнято</Select.Option>
                   <Select.Option key="10" value="Потверджено">Потверджено</Select.Option>
                   <Select.Option key="11" value="Скасовано">Скасовано</Select.Option>
