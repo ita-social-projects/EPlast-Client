@@ -36,8 +36,8 @@ export const getTableMembers = (members: ClubMember[]) => {
                                                          ((member.user.clubReportPlastDegrees?.plastDegree?.name) ?
                                                          (`${member.user.clubReportPlastDegrees.plastDegree.name}`) :
                                                          ('_')):
-                                                         ((member.user.userPlastDegrees[0]?.plastDegree?.name) ?
-                                                         (`${member.user.userPlastDegrees[0]?.plastDegree.name}`) :
+                                                         ((member.user.userPlastDegrees?.plastDegree?.name) ?
+                                                         (`${member.user.userPlastDegrees?.plastDegree.name}`) :
                                                          ('_')),
    userCity:(member.user.clubReportCities!==null)?((member.user.clubReportCities?.city?.name) ?
                                                    (`${member.user.clubReportCities?.city?.name}`) :
