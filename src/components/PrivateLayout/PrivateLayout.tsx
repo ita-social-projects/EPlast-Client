@@ -126,7 +126,6 @@ const PrivateLayout = ({ children }: any) => {
                 key="0"
                 icon={<SolutionOutlined />}
                 onClick={() => { handleClickAway(); history.push("/decisions"); }}
-                style={{ color: "white" }}
                 title=""
               >
                 Рішення
@@ -138,7 +137,6 @@ const PrivateLayout = ({ children }: any) => {
                 key="1"
                 icon={<BankOutlined />}
                 onClick={() => { handleClickAway(); history.push("/regionsBoard"); }}
-                style={{ color: "white" }}
                 title=""
               >
                 Крайовий Провід Пласту
