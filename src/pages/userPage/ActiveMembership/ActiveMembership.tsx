@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import classes from "./ActiveMembership.module.css";
 import { Typography, List, Button, Tooltip, Tag, Empty, Skeleton } from "antd";
@@ -23,6 +23,7 @@ import { Data } from '../Interface/Interface';
 import { successfulDeleteDegree } from "../../../components/Notifications/Messages";
 import { Console } from "console";
 import { boolean } from "yup";
+import { UserProfileContext } from "../personalData/PersonalData";
 const { Title } = Typography;
 
 const itemMaxLength = 43;
@@ -31,7 +32,7 @@ const ActiveMembership = () => {
   const [accessLevels, setAccessLevels] = useState([]);
   const [dates, setDates] = useState<any>({});
   const [data, setUserData] = useState<Data>();
-  const [userProfile, SetUserProfile] = useState<Data>();
+  const {userProfile, ChangeUserProfile} = useContext(UserProfileContext);
   const [currentUser, setCurrentUser] = useState<any>({});
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
   const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
@@ -82,7 +83,7 @@ const ActiveMembership = () => {
     await userApi
       .getUserProfileById(currentUserId, userId)
       .then((response) => {
-        SetUserProfile(response.data);
+        if(ChangeUserProfile) ChangeUserProfile(response.data);
       })
       .catch((error) => {
         notificationLogic("error", error.message);

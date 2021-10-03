@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Alert, Button, Form, Input, Skeleton, Tooltip } from "antd";
 import userApi from "../../../api/UserApi";
 import moment from "moment";
@@ -13,12 +13,13 @@ import { StickyContainer } from "react-sticky";
 import AvatarAndProgressStatic from "./AvatarAndProgressStatic";
 import { Roles } from "../../../models/Roles/Roles";
 import UserApi from "../../../api/UserApi";
+import { UserProfileContext } from "./PersonalData";
 
 export default function () {
   const { userId } = useParams<{ userId: string }>();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<Data>();
+  const {userProfile, ChangeUserProfile} = useContext(UserProfileContext);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserId, setActiveUserId] = useState<string>("");
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
@@ -37,7 +38,7 @@ export default function () {
       .getUserProfileById(actUserId, userId)
       .then((response) => {
         setLoading(true);
-        setData(response.data);
+        if(ChangeUserProfile) ChangeUserProfile(response.data);
         response.data?.user
           ? PsevdonimCreator.setPseudonimLocation(
               `${response.data?.user.firstName}${response.data?.user.lastName}`,
@@ -65,7 +66,7 @@ export default function () {
         className="img"
       />
     </div>
-  ) : data?.user !== null ? (
+  ) : userProfile?.user !== null ? (
     <div className="container">
       <Form name="basic" className="formContainer">
         <div className="wrapperContainer">
@@ -91,23 +92,23 @@ export default function () {
           <div className="avatarWrapperUserFields">
             <StickyContainer className="kadraWrapper">
               <AvatarAndProgressStatic
-                imageUrl={data?.user.imagePath as string}
-                time={data?.timeToJoinPlast}
-                firstName={data?.user.firstName}
-                lastName={data?.user.lastName}
-                isUserPlastun={data?.isUserPlastun}
-                pseudo={data?.user.pseudo}
-                governingBody={data?.user.governingBody}
-                region={data?.user.region}
-                city={data?.user.city}
-                club={data?.user.club}
-                cityId={data?.user.cityId}
-                clubId={data?.user.clubId}
-                regionId={data?.user.regionId}
-                governingBodyId={data?.user.governingBodyId}
-                cityMemberIsApproved={data?.user.cityMemberIsApproved}
-                clubMemberIsApproved={data?.user.clubMemberIsApproved}
-                showPrecautions = {data?.shortUser === null}
+                imageUrl={userProfile?.user.imagePath as string}
+                time={userProfile?.timeToJoinPlast}
+                firstName={userProfile?.user.firstName}
+                lastName={userProfile?.user.lastName}
+                isUserPlastun={userProfile?.isUserPlastun}
+                pseudo={userProfile?.user.pseudo}
+                governingBody={userProfile?.user.governingBody}
+                region={userProfile?.user.region}
+                city={userProfile?.user.city}
+                club={userProfile?.user.club}
+                cityId={userProfile?.user.cityId}
+                clubId={userProfile?.user.clubId}
+                regionId={userProfile?.user.regionId}
+                governingBodyId={userProfile?.user.governingBodyId}
+                cityMemberIsApproved={userProfile?.user.cityMemberIsApproved}
+                clubMemberIsApproved={userProfile?.user.clubMemberIsApproved}
+                showPrecautions = {userProfile?.shortUser === null}
               />
             </StickyContainer>
           </div>
@@ -116,22 +117,22 @@ export default function () {
         <div className="allFields">
           <div className="rowBlock">
             <Form.Item label="Ім`я" className="formItem">
-              {data?.user.firstName !== null && data?.user.firstName !== "" ? (
+              {userProfile?.user.firstName !== null && userProfile?.user.firstName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.firstName}
+                  value={userProfile?.user.firstName}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
               )}
             </Form.Item>
             <Form.Item label="Прізвище" className="formItem">
-              {data?.user.lastName !== null && data?.user.lastName !== "" ? (
+              {userProfile?.user.lastName !== null && userProfile?.user.lastName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.lastName}
+                  value={userProfile?.user.lastName}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -141,24 +142,24 @@ export default function () {
 
           <div className="rowBlock">
             <Form.Item label="По-батькові" className="formItem">
-              {data?.user.fatherName !== null &&
-              data?.user.fatherName !== "" ? (
+              {userProfile?.user.fatherName !== null &&
+              userProfile?.user.fatherName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.fatherName}
+                  value={userProfile?.user.fatherName}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
               )}
             </Form.Item>
             <Form.Item label="Стать" className="formItem">
-              {data?.user.gender.name !== null &&
-              data?.user.gender.name !== "" ? (
+              {userProfile?.user.gender.name !== null &&
+              userProfile?.user.gender.name !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.gender.name}
+                  value={userProfile?.user.gender.name}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -168,22 +169,22 @@ export default function () {
 
           <div className="rowBlock">
             <Form.Item label="Псевдо" className="formItem">
-              {data?.user.pseudo !== null && data?.user.pseudo !== "" ? (
+              {userProfile?.user.pseudo !== null && userProfile?.user.pseudo !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.pseudo}
+                  value={userProfile?.user.pseudo}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
               )}
             </Form.Item>
             <Form.Item label="Пошта" className="formItem">
-              {data?.user.email !== null && data?.user.email !== "" ? (
+              {userProfile?.user.email !== null && userProfile?.user.email !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.email}
+                  value={userProfile?.user.email}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -193,24 +194,24 @@ export default function () {
 
           <div className="rowBlock">
             <Form.Item label="Дата народження" className="formItem">
-              {data?.user.birthday !== null &&
-              data?.user.birthday.toString() !== "0001-01-01T00:00:00" ? (
+              {userProfile?.user.birthday !== null &&
+              userProfile?.user.birthday.toString() !== "0001-01-01T00:00:00" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={moment.utc(data?.user.birthday).local().format("DD.MM.YYYY")}
+                  value={moment.utc(userProfile?.user.birthday).local().format("DD.MM.YYYY")}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
               )}
             </Form.Item>
             <Form.Item label="Номер телефону" className="formItem">
-              {data?.user.phoneNumber !== null &&
-              data?.user.phoneNumber !== "" ? (
+              {userProfile?.user.phoneNumber !== null &&
+              userProfile?.user.phoneNumber !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.phoneNumber}
+                  value={userProfile?.user.phoneNumber}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -220,24 +221,24 @@ export default function () {
 
           <div className="rowBlock">
             <Form.Item label="Національність" className="formItem">
-              {data?.user.nationality.name !== null &&
-              data?.user.nationality.name !== "" ? (
+              {userProfile?.user.nationality.name !== null &&
+              userProfile?.user.nationality.name !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.nationality.name}
+                  value={userProfile?.user.nationality.name}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
               )}
             </Form.Item>
             <Form.Item label="Віровизнання" className="formItem">
-              {data?.user.religion.name !== null &&
-              data?.user.religion.name !== "" ? (
+              {userProfile?.user.religion.name !== null &&
+              userProfile?.user.religion.name !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.religion.name}
+                  value={userProfile?.user.religion.name}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -247,24 +248,24 @@ export default function () {
 
           <div className="rowBlock">
             <Form.Item label="Навчальний заклад" className="formItem">
-              {data?.user.education.placeOfStudy !== null &&
-              data?.user.education.placeOfStudy !== "" ? (
+              {userProfile?.user.education.placeOfStudy !== null &&
+              userProfile?.user.education.placeOfStudy !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.education.placeOfStudy}
+                  value={userProfile?.user.education.placeOfStudy}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
               )}
             </Form.Item>
             <Form.Item label="Спеціальність" className="formItem">
-              {data?.user.education.speciality !== null &&
-              data?.user.education.speciality !== "" ? (
+              {userProfile?.user.education.speciality !== null &&
+              userProfile?.user.education.speciality !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.education.speciality}
+                  value={userProfile?.user.education.speciality}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -274,24 +275,24 @@ export default function () {
 
           <div className="rowBlock">
             <Form.Item label="Навчальний ступінь" className="formItem">
-              {data?.user.degree.name !== null &&
-              data?.user.degree.name !== "" ? (
+              {userProfile?.user.degree.name !== null &&
+              userProfile?.user.degree.name !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.degree.name}
+                  value={userProfile?.user.degree.name}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
               )}
             </Form.Item>
             <Form.Item label="Місце праці" className="formItem">
-              {data?.user.work.placeOfwork !== null &&
-              data?.user.work.placeOfwork !== "" ? (
+              {userProfile?.user.work.placeOfwork !== null &&
+              userProfile?.user.work.placeOfwork !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.work.placeOfwork}
+                  value={userProfile?.user.work.placeOfwork}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -301,23 +302,23 @@ export default function () {
 
           <div className="rowBlock">
             <Form.Item label="Посада" className="formItem">
-              {data?.user.work.position !== null &&
-              data?.user.work.position !== "" ? (
+              {userProfile?.user.work.position !== null &&
+              userProfile?.user.work.position !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.work.position}
+                  value={userProfile?.user.work.position}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
               )}
             </Form.Item>
             <Form.Item label="Адреса проживання" className="formItem">
-              {data?.user.address !== null && data?.user.address !== "" ? (
+              {userProfile?.user.address !== null && userProfile?.user.address !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.address}
+                  value={userProfile?.user.address}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -330,26 +331,26 @@ export default function () {
               label="Громадська, політична діяльність"
               className="formItem"
             >
-              {data?.user.publicPoliticalActivity !== null &&
-              data?.user.publicPoliticalActivity !== "" ? (
+              {userProfile?.user.publicPoliticalActivity !== null &&
+              userProfile?.user.publicPoliticalActivity !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.user.publicPoliticalActivity}
+                  value={userProfile?.user.publicPoliticalActivity}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
               )}
             </Form.Item>
             <Form.Item label="Ступінь в УПЮ" className="formItem">
-              {data?.user.upuDegree.id === 1 ? (
-                data?.user.gender.id === 2 ? (
+              {userProfile?.user.upuDegree.id === 1 ? (
+                userProfile?.user.gender.id === 2 ? (
                   <Input
                     readOnly
                     className="dataInput"
                     value="не була в юнацтві"
                   />
-                ) : data?.user.gender.id === 1 ? (
+                ) : userProfile?.user.gender.id === 1 ? (
                   <Input
                     readOnly
                     className="dataInput"
@@ -362,14 +363,14 @@ export default function () {
                     value="не бу-в/ла в юнацтві"
                   />
                 )
-              ) : data?.user.upuDegree.id === 2 ? (
-                data?.user.gender.id === 2 ? (
+              ) : userProfile?.user.upuDegree.id === 2 ? (
+                userProfile?.user.gender.id === 2 ? (
                   <Input
                     readOnly
                     className="dataInput"
                     value="пластунка учасниця"
                   />
-                ) : data?.user.gender.id === 1 ? (
+                ) : userProfile?.user.gender.id === 1 ? (
                   <Input
                     readOnly
                     className="dataInput"
@@ -384,14 +385,14 @@ export default function () {
                     />
                   </Tooltip>
                 )
-              ) : data?.user.upuDegree.id === 3 ? (
-                data?.user.gender.id === 2 ? (
+              ) : userProfile?.user.upuDegree.id === 3 ? (
+                userProfile?.user.gender.id === 2 ? (
                   <Input
                     readOnly
                     className="dataInput"
                     value="пластунка розвідувачка"
                   />
-                ) : data?.user.gender.id === 1 ? (
+                ) : userProfile?.user.gender.id === 1 ? (
                   <Input
                     readOnly
                     className="dataInput"
@@ -406,14 +407,14 @@ export default function () {
                     />
                   </Tooltip>
                 )
-              ) : data?.user.upuDegree.id === 4 ? (
-                data?.user.gender.id === 2 ? (
+              ) : userProfile?.user.upuDegree.id === 4 ? (
+                userProfile?.user.gender.id === 2 ? (
                   <Input
                     readOnly
                     className="dataInput"
                     value="пластунка вірлиця"
                   />
-                ) : data?.user.gender.id === 1 ? (
+                ) : userProfile?.user.gender.id === 1 ? (
                   <Input readOnly className="dataInput" value="пластун скоб" />
                 ) : (
                   <Tooltip title = "пластун скоб/пластунка вірлиця">
@@ -431,30 +432,30 @@ export default function () {
           </div>
 
           <div className="links">
-            {data?.user.facebookLink !== null &&
-            data?.user.facebookLink !== "" ? (
-              <a href={"https://www.facebook.com/" + data?.user.facebookLink}>
+            {userProfile?.user.facebookLink !== null &&
+            userProfile?.user.facebookLink !== "" ? (
+              <a href={"https://www.facebook.com/" + userProfile?.user.facebookLink}>
                 <img src={Facebook} alt="Facebook" />
               </a>
             ) : null}
-            {data?.user.twitterLink !== null &&
-            data?.user.twitterLink !== "" ? (
-              <a href={"https://www.twitter.com/" + data?.user.twitterLink}>
+            {userProfile?.user.twitterLink !== null &&
+            userProfile?.user.twitterLink !== "" ? (
+              <a href={"https://www.twitter.com/" + userProfile?.user.twitterLink}>
                 <img src={Twitter} alt="Twitter" />
               </a>
             ) : null}
-            {data?.user.instagramLink !== null &&
-            data?.user.instagramLink !== "" ? (
-              <a href={"https://www.instagram.com/" + data?.user.instagramLink}>
+            {userProfile?.user.instagramLink !== null &&
+            userProfile?.user.instagramLink !== "" ? (
+              <a href={"https://www.instagram.com/" + userProfile?.user.instagramLink}>
                 <img src={Instagram} alt="Instagram" />
               </a>
             ) : null}
-            {data?.user.facebookLink === null ||
-            (data?.user.facebookLink === "" &&
-              data?.user.twitterLink === null) ||
-            (data?.user.twitterLink === "" &&
-              data?.user.instagramLink === null) ||
-            data?.user.instagramLink === "" ? (
+            {userProfile?.user.facebookLink === null ||
+            (userProfile?.user.facebookLink === "" &&
+              userProfile?.user.twitterLink === null) ||
+            (userProfile?.user.twitterLink === "" &&
+              userProfile?.user.instagramLink === null) ||
+            userProfile?.user.instagramLink === "" ? (
               <Form.Item className="formItem"></Form.Item>
             ) : null}
           </div>
@@ -499,39 +500,39 @@ export default function () {
         </div>
       </Form>
     </div>
-  ) : data.shortUser !== null ? (
+  ) : userProfile.shortUser !== null ? (
     <div className="container">
       <Form name="basic" className="formContainer">
         <div className="shortAvatarWrapperUserFields">
           <AvatarAndProgressStatic
-            imageUrl={data?.shortUser.imagePath as string}
-            time={data?.timeToJoinPlast}
-            firstName={data?.shortUser.firstName}
-            lastName={data?.shortUser.lastName}
-            isUserPlastun={data?.isUserPlastun}
-            pseudo={data?.shortUser.pseudo}
-            governingBody={data?.shortUser.governingBody}
-            region={data?.shortUser.region}
-            city={data?.shortUser.city}
-            club={data?.shortUser.club}
-            governingBodyId={data?.shortUser.governingBodyId}
-            regionId={data?.shortUser.regionId}
-            cityId={data?.shortUser.cityId}
-            clubId={data?.shortUser.clubId}
-            cityMemberIsApproved={data?.shortUser.cityMemberIsApproved}
-            clubMemberIsApproved={data?.shortUser.clubMemberIsApproved}
-            showPrecautions = { data.shortUser === null }
+            imageUrl={userProfile?.shortUser.imagePath as string}
+            time={userProfile?.timeToJoinPlast}
+            firstName={userProfile?.shortUser.firstName}
+            lastName={userProfile?.shortUser.lastName}
+            isUserPlastun={userProfile?.isUserPlastun}
+            pseudo={userProfile?.shortUser.pseudo}
+            governingBody={userProfile?.shortUser.governingBody}
+            region={userProfile?.shortUser.region}
+            city={userProfile?.shortUser.city}
+            club={userProfile?.shortUser.club}
+            governingBodyId={userProfile?.shortUser.governingBodyId}
+            regionId={userProfile?.shortUser.regionId}
+            cityId={userProfile?.shortUser.cityId}
+            clubId={userProfile?.shortUser.clubId}
+            cityMemberIsApproved={userProfile?.shortUser.cityMemberIsApproved}
+            clubMemberIsApproved={userProfile?.shortUser.clubMemberIsApproved}
+            showPrecautions = { userProfile.shortUser === null }
           />
         </div>
         <div className="shortAllFields">
           <div className="shortRowBlock">
             <Form.Item label="Прізвище" className="shortFormItem">
-              {data?.shortUser.lastName !== null &&
-              data?.shortUser.lastName !== "" ? (
+              {userProfile?.shortUser.lastName !== null &&
+              userProfile?.shortUser.lastName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.shortUser.lastName}
+                  value={userProfile?.shortUser.lastName}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -541,12 +542,12 @@ export default function () {
 
           <div className="shortRowBlock">
             <Form.Item label="Ім`я" className="shortFormItem">
-              {data?.shortUser.firstName !== null &&
-              data?.shortUser.firstName !== "" ? (
+              {userProfile?.shortUser.firstName !== null &&
+              userProfile?.shortUser.firstName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.shortUser.firstName}
+                  value={userProfile?.shortUser.firstName}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -556,12 +557,12 @@ export default function () {
 
           <div className="shortRowBlock">
             <Form.Item label="По-батькові" className="shortFormItem">
-              {data?.shortUser.fatherName !== null &&
-              data?.shortUser.fatherName !== "" ? (
+              {userProfile?.shortUser.fatherName !== null &&
+              userProfile?.shortUser.fatherName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.shortUser.fatherName}
+                  value={userProfile?.shortUser.fatherName}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -571,12 +572,12 @@ export default function () {
 
           <div className="shortRowBlock">
             <Form.Item label="Псевдо" className="shortFormItem">
-              {data?.shortUser.pseudo !== null &&
-              data?.shortUser.pseudo !== "" ? (
+              {userProfile?.shortUser.pseudo !== null &&
+              userProfile?.shortUser.pseudo !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.shortUser.pseudo}
+                  value={userProfile?.shortUser.pseudo}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -586,11 +587,11 @@ export default function () {
 
           <div className="shortRowBlock">
             <Form.Item label="Ступінь в УПЮ" className="shortFormItem">
-              {data?.shortUser.upuDegree !== null ? (
+              {userProfile?.shortUser.upuDegree !== null ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={data?.shortUser.upuDegree.name}
+                  value={userProfile?.shortUser.upuDegree.name}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -598,29 +599,29 @@ export default function () {
             </Form.Item>
           </div>
           <div className="links">
-            {data?.shortUser.facebookLink !== null &&
-            data?.shortUser.facebookLink !== "" ? (
+            {userProfile?.shortUser.facebookLink !== null &&
+            userProfile?.shortUser.facebookLink !== "" ? (
               <a
                 href={
-                  "https://www.facebook.com/" + data?.shortUser.facebookLink
+                  "https://www.facebook.com/" + userProfile?.shortUser.facebookLink
                 }
               >
                 <img src={Facebook} alt="Facebook" />
               </a>
             ) : null}
-            {data?.shortUser.twitterLink !== null &&
-            data?.shortUser.twitterLink !== "" ? (
+            {userProfile?.shortUser.twitterLink !== null &&
+            userProfile?.shortUser.twitterLink !== "" ? (
               <a
-                href={"https://www.twitter.com/" + data?.shortUser.twitterLink}
+                href={"https://www.twitter.com/" + userProfile?.shortUser.twitterLink}
               >
                 <img src={Twitter} alt="Twitter" />
               </a>
             ) : null}
-            {data?.shortUser.instagramLink !== null &&
-            data?.shortUser.instagramLink !== "" ? (
+            {userProfile?.shortUser.instagramLink !== null &&
+            userProfile?.shortUser.instagramLink !== "" ? (
               <a
                 href={
-                  "https://www.instagram.com/" + data?.shortUser.instagramLink
+                  "https://www.instagram.com/" + userProfile?.shortUser.instagramLink
                 }
               >
                 <img src={Instagram} alt="Instagram" />

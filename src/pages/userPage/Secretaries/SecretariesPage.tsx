@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import userApi from '../../../api/UserApi';
 import AvatarAndProgressStatic from '../personalData/AvatarAndProgressStatic';
 import { useParams } from 'react-router-dom';
@@ -12,6 +12,7 @@ import { UserClubSecretaryTable } from './UserClubSecretaryTable';
 import { UserGoverningBodySecretaryTable } from './UserGoverningBodySecretaryTable';
 import{ tryAgain } from "../../../components/Notifications/Messages";
 import { StickyContainer } from 'react-sticky';
+import { UserProfileContext } from '../personalData/PersonalData';
 
 const tabList = [
     {
@@ -34,18 +35,20 @@ const tabList = [
 
 export const Secretaries = () => {
     const { userId } = useParams();
-    
     const [noTitleKey, setKey] = useState<string>('1');
     const [data, setData] = useState<Data>();
     const [LoadInfo, setLoadInfo] = useState<boolean>(false);
-    const [userProfile, SetUserProfile] = useState<Data>();
+    
+    const {userProfile, ChangeUserProfile} = useContext(UserProfileContext);
 
     const fetchData = async () => {
         const currentUserId = userApi.getActiveUserId();
         await userApi
           .getUserProfileById(currentUserId, userId)
           .then((response) => {
-            SetUserProfile(response.data);
+          if(ChangeUserProfile) {
+            ChangeUserProfile(response.data);
+          }
           })
           .catch((error) => {
             notificationLogic("error", error.message);
@@ -124,7 +127,5 @@ export const Secretaries = () => {
                 </Form>
             </div>
     )
-
 }
-
 export default Secretaries;

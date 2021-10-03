@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, Avatar, Tooltip, Spin, Skeleton } from 'antd';
 import './Approvers.less';
@@ -23,6 +23,7 @@ import DeleteApproveButton from './DeleteApproveButton';
 import { Roles } from '../../../models/Roles/Roles';
 import AvatarAndProgressStatic from '../personalData/AvatarAndProgressStatic';
 import { Data } from '../Interface/Interface';
+import { UserProfileContext } from '../personalData/PersonalData';
 
 const Assignments = () => {
   const history = useHistory();
@@ -34,7 +35,7 @@ const Assignments = () => {
   const [data, setData] = useState<ApproversData>();
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
-  const [userProfile, SetUserProfile] = useState<Data>();
+  const {userProfile, ChangeUserProfile} = useContext(UserProfileContext);
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
   const [roles, setRoles] = useState<string[]>([]);
@@ -44,7 +45,7 @@ const Assignments = () => {
     await userApi
       .getUserProfileById(currentUserId, userId)
       .then((response) => {
-        SetUserProfile(response.data);
+        if(ChangeUserProfile) ChangeUserProfile(response.data);
       })
       .catch((error) => {
         notificationLogic("error", error.message);

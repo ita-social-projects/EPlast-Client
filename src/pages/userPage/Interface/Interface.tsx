@@ -87,6 +87,11 @@ export type ShortUser ={
     clubMemberIsApproved: boolean;
 }
 
+export interface IProfileContext{
+    userProfile: Data;
+    ChangeUserProfile?: (user: Data) => void;
+}
+
 export  interface Data {
     isUserPlastun:boolean;
     timeToJoinPlast:number;

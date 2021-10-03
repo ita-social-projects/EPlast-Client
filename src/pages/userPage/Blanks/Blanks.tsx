@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Data } from "../Interface/Interface";
 import userApi from '../../../api/UserApi';
@@ -22,13 +22,14 @@ import {
 } from "../../../components/Notifications/Messages"
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 import { Roles } from "../../../models/Roles/Roles";
+import { UserProfileContext } from "../personalData/PersonalData";
 const userGenders = ["Чоловік", "Жінка", "Інша"];
 const fileNameMaxLength = 50;
 
 export const Blanks = () => {
     const { userId } = useParams<{ userId: string }>();
     const [data, setData] = useState<Data>();
-    const [currentUser, setCurrentUser] = useState<Data>();
+    const {userProfile, ChangeUserProfile} = useContext(UserProfileContext);
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
     const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
     const [extractUPU, setExtractUPU] = useState<BlankDocument>(new BlankDocument);
@@ -51,15 +52,15 @@ export const Blanks = () => {
     const fetchData = async () => {
         const token = AuthStore.getToken() as string;
         setUserToken(jwt(token));
-        const currentUserId = (jwt(token) as { nameid: "" }).nameid;
+        const userProfileId = (jwt(token) as { nameid: "" }).nameid;
         setRoles(userApi.getActiveUserRoles());
         setCanEdit(roles.includes(Roles.Admin));
         await userApi.getById(userId).then(response => {
             setData(response.data);
         }).catch(() => { notificationLogic('error', tryAgain) })
 
-        await userApi.getById(currentUserId).then(response => {
-            setCurrentUser(response.data);
+        await userApi.getById(userProfileId).then(response => {
+            if(ChangeUserProfile) ChangeUserProfile(response.data);
         }).catch(() => { notificationLogic('error', tryAgain) })
         setLoading(true);
     };
@@ -125,15 +126,15 @@ export const Blanks = () => {
 
     const DoesUserHasAccessToManageBlanks = (userRoles: Array<string>): boolean => {
 
-        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && currentUser?.user?.clubId == data?.user?.clubId) ||
-            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && currentUser?.user?.cityId == data?.user?.cityId) ||
-            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && currentUser?.user?.regionId == data?.user?.regionId) ||
+        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && userProfile?.user?.clubId == data?.user?.clubId) ||
+            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && userProfile?.user?.cityId == data?.user?.cityId) ||
+            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && userProfile?.user?.regionId == data?.user?.regionId) ||
             userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead);
     };
     const DoesUserHasAccessToSeeAndDownloadBlanks = (userRoles: Array<string>): boolean => {
-        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && currentUser?.user?.clubId == data?.user?.clubId) ||
-            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && currentUser?.user?.cityId == data?.user?.cityId) ||
-            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && currentUser?.user?.regionId == data?.user?.regionId) ||
+        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && userProfile?.user?.clubId == data?.user?.clubId) ||
+            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && userProfile?.user?.cityId == data?.user?.cityId) ||
+            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && userProfile?.user?.regionId == data?.user?.regionId) ||
             userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead) || userRoles?.includes(Roles.PlastMember);
     };
     const DoesUserHasAccessToDeleteBlanks = (userRoles: Array<string>): boolean => {
