@@ -19,7 +19,7 @@ export const ClubAnnualReportCreate = () => {
     const history = useHistory();
     const { clubId } = useParams();
     const [form] = Form.useForm();
-    const [admins, setAdmins] = useState<ClubAdmin[]>([]);
+    const [admins, setAdmins] = useState<any>([]);
     const [clubHead, setClubHead] = useState<ClubAdmin>({} as ClubAdmin);
     const [members, setClubMembers] = useState<ClubMember[]>([]);
     const [followers, setFollowers] = useState<ClubMember[]>([]);
@@ -30,9 +30,10 @@ export const ClubAnnualReportCreate = () => {
     const [club, setClub] = useState<any>({
         id: 0,
         name: "",
-        description: "",
-        clubURL: "",
+        phoneNumber: "",
         email: "",
+        clubURL: "",
+        street: "",
     });
 
     useEffect(() => {
@@ -70,29 +71,28 @@ export const ClubAnnualReportCreate = () => {
             onOk: () => { history.goBack(); }
         });
     }
-    function seeDeleteModal() {
-        return Modal.confirm({
-          title: "Роман ще додае функціонал на зберігання",
-          okText: "Так, Прискорити Романа",
-          okType: "primary",
-          cancelText: "Скасувати",
-          maskClosable: true,
-          onOk() {
-          },
-        });
-      }
-
-
-
+   
     const handleFinish = async (obj: any) => {
-        seeDeleteModal();
-        if (false) {
+        console.log('Admins');
+        console.log(admins);
+        console.log('members');
+        console.log(members);
             obj.clubId = clubId
             obj.name = club.name
-            obj.clubPage = club.clubURL
+            obj.admins = admins
+            obj.members = members
+            obj.followers =followers
+     
             obj.currentClubFollowers = followers.length
             obj.currentClubMembers = members.length
+            obj.ClubEnteredMembersCount = countUsersPerYear
+            obj.ClubLeftMembersCount = countDeletedUsersPerYear
+            obj.phoneNumber =club.phoneNumber
+            obj.email =club.email
+            obj.clubURL =club.clubURL
+            obj.street =club.street
             obj.date = moment()
+
             setIsLoadingSave(true);
             try {
                 let response = await createClubAnnualReport(obj);
@@ -108,7 +108,6 @@ export const ClubAnnualReportCreate = () => {
             } finally {
                 setIsLoadingSave(false);
             }
-        }
     }
 
     return (

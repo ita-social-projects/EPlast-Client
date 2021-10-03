@@ -26,9 +26,6 @@ const ClubAnnualReportInformation = () => {
     const { id } = useParams();
     const history = useHistory();
     const [clubAnnualReport, setClubAnnualReport] = useState(Object);
-    const [admins, setAdmins] = useState<ClubAdmin[]>([]);
-    const [members, setClubMembers] = useState<ClubMember[]>([]);
-    const [followers, setFollowers] = useState<ClubMember[]>([]);
     const [isAdmin, setIsAdmin] = useState<boolean>();
     const [isClubAdmin, setIsClubAdmin] = useState<boolean>();
     const [userId, setUserId] = useState<string>();
@@ -36,13 +33,16 @@ const ClubAnnualReportInformation = () => {
     const [club, setClub] = useState<any>({
         id: 0,
         name: "",
-        description: "",
-        clubURL: "",
+        phoneNumber: "",
         email: "",
+        clubURL: "",
+        street: "",
     });
+    const [admins, setAdmins] = useState<ClubAdmin[]>([]);
+    const [members, setClubMembers] = useState<ClubMember[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-
-
+    const [followers, setFollowers] = useState<ClubMember[]>([]);
+    const [clubHead, setClubHead] = useState<ClubAdmin>({} as ClubAdmin );
     useEffect(() => {
         checkAccessToManage();
         fetchClubReport(id);
@@ -52,18 +52,19 @@ const ClubAnnualReportInformation = () => {
         setIsLoading(true);
         try {
             let clubReport = await getClubAnnualReportById(id);
+            console.log(clubReport);
+
             setClubAnnualReport(clubReport.data.annualreport);
             setStatus(clubReport.data.annualreport.status);
 
-            let response = await getClubMembersInfo(clubReport.data.annualreport.clubId);
+          //  let response = await getClubMembersInfo(clubReport.data.annualreport.clubId);
 
-            setClub(response.data);
-
-            setAdmins(response.data.administration.filter((a: any) => a != null));
-
-            setClubMembers(response.data.members);
-
-            setFollowers(response.data.followers);
+             //setClub(response.data);
+          
+             setAdmins(clubReport.data.annualreport.admins);
+             setClubHead(clubReport.data.annualreport.head);
+             setClubMembers(clubReport.data.annualreport.members);
+             setFollowers(clubReport.data.annualreport.followers);
         }
         catch (error) {
             showError(error.message)
@@ -208,7 +209,7 @@ const ClubAnnualReportInformation = () => {
                                     className="table"
                                     onRow={(user) => {
                                         return {
-                                            onDoubleClick: event => { if (user.key) window.open(`/userpage/main/${user.key}`) },
+                                            onDoubleClick: () => { if (user.key) window.open(`/userpage/main/${user.key}`) },
                                         };
                                     }}
                                 />
@@ -247,13 +248,13 @@ const ClubAnnualReportInformation = () => {
 
                             <Col xs={24} sm={12} md={12} lg={12} style={{ marginLeft: "10px" }}>
                                 <Text strong={true}>Контакти:</Text>
-                                {club.head ? (
+                                {clubHead? (
                                     <Form.Item
                                         className='w100'
                                         name='clubContacts'>
-                                        {club.head.adminType.adminTypeName} {club.head.user.firstName} {club.head.user.lastName} <br />
-                                        {club.head.user.email} <br />
-                                        {club.head.user.phoneNumber}
+                                        {clubHead.adminType?.adminTypeName}: {clubHead.user?.firstName} {clubHead.user?.lastName} <br />
+                                        {clubHead.user?.email} <br />
+                                        {clubHead.user?.phoneNumber}
                                     </Form.Item>
                                 ) : (
                                     <> Ще немає адміністратора куреня</>
