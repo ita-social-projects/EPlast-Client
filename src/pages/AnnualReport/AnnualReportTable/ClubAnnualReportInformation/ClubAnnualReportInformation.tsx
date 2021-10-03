@@ -52,15 +52,8 @@ const ClubAnnualReportInformation = () => {
         setIsLoading(true);
         try {
             let clubReport = await getClubAnnualReportById(id);
-            console.log(clubReport);
-
-            setClubAnnualReport(clubReport.data.annualreport);
-            setStatus(clubReport.data.annualreport.status);
-
-          //  let response = await getClubMembersInfo(clubReport.data.annualreport.clubId);
-
-             //setClub(response.data);
-          
+             setClubAnnualReport(clubReport.data.annualreport);
+             setStatus(clubReport.data.annualreport.status);
              setAdmins(clubReport.data.annualreport.admins);
              setClubHead(clubReport.data.annualreport.head);
              setClubMembers(clubReport.data.annualreport.members);

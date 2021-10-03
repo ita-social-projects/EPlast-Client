@@ -73,10 +73,6 @@ export const ClubAnnualReportCreate = () => {
     }
    
     const handleFinish = async (obj: any) => {
-        console.log('Admins');
-        console.log(admins);
-        console.log('members');
-        console.log(members);
             obj.clubId = clubId
             obj.name = club.name
             obj.admins = admins
