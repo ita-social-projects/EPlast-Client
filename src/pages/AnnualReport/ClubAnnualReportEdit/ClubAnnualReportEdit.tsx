@@ -36,9 +36,10 @@ const ClubAnnualReportEdit = () => {
     const [club, setClub] = useState<any>({
         id: 0,
         name: "",
-        description: "",
-        clubURL: "",
+        phoneNumber: "",
         email: "",
+        clubURL: "",
+        street: "",
     });
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingSaveChanges, setIsLoadingSaveChanges]=useState(false);
@@ -65,7 +66,6 @@ const ClubAnnualReportEdit = () => {
             setAdmins(club.data.administration.filter((a: any) => a != null));
 
             setClubMembers(club.data.members);
-
             setFollowers(club.data.followers);
 
             const user: any = jwt(token);
