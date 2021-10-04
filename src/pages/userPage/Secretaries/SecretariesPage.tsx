@@ -10,6 +10,7 @@ import {UserCitySecretaryTable} from './UserCitySecretaryTable';
 import { UserRegionSecretaryTable } from './UserRegionSecretaryTable';
 import { UserClubSecretaryTable } from './UserClubSecretaryTable';
 import { UserGoverningBodySecretaryTable } from './UserGoverningBodySecretaryTable';
+import { UserSectorSecretaryTable } from './UserSectorSecretaryTable';
 import{ tryAgain } from "../../../components/Notifications/Messages";
 import { StickyContainer } from 'react-sticky';
 
@@ -29,6 +30,10 @@ const tabList = [
     {
         key: '4',
         tab: 'Діловодства куреня',
+    },
+    {
+        key: '5',
+        tab: 'Діловодства напряму',
     },
 ];
 
@@ -62,7 +67,8 @@ export const Secretaries = () => {
         1: <div key='1'><UserGoverningBodySecretaryTable UserId={userId}/></div>,
         2: <div key='2'><UserRegionSecretaryTable UserId={userId}/></div>,
         3: <div key='3'><UserCitySecretaryTable UserId={userId}/></div>,
-        4: <div key='4'><UserClubSecretaryTable UserId={userId}/></div>
+        4: <div key='4'><UserClubSecretaryTable UserId={userId}/></div>,
+        5: <div key='5'><UserSectorSecretaryTable UserId={userId}/></div>
       };
 
       useEffect(() => {
