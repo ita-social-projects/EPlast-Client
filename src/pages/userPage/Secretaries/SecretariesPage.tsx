@@ -118,7 +118,4 @@ export const Secretaries = () => {
     )
 }
 export default Secretaries;
-function PersonaluserProfileContext(PersonaluserProfileContext: any): { userProfile: any; activeUserRoles: any; activeUserId: any; activeUserProfile: any; ChangeUserProfile: any; UpdateuserProfile: any; } {
-    throw new Error('Function not implemented.');
-}
 
