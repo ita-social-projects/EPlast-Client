@@ -93,7 +93,7 @@ const City = () => {
 
   const changeApproveStatus = async (memberId: number) => {
     setIsLoadingMemberId(memberId)
-    setIsLoadingPlus(false);  
+    setIsLoadingPlus(false)  
     const member = await toggleMemberStatus(memberId);
     moment.locale("uk-ua");
 
@@ -904,7 +904,7 @@ const City = () => {
                         <p className="userName">{followers.user.firstName}</p>
                         <p className="userName">{followers.user.lastName}</p>
                       </div>
-                      {(canEdit && isLoadingPlus) || isLoadingMemberId !== followers.id  ? (
+                      {(canEdit && isLoadingPlus) || (isLoadingMemberId !== followers.id && !isLoadingPlus) ? (
                         <Tooltip placement={"bottom"} title={"Додати до членів"}>
                           <PlusOutlined
                             className="approveIcon"
