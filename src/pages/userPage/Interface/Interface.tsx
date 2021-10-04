@@ -87,10 +87,13 @@ export type ShortUser ={
     clubMemberIsApproved: boolean;
 }
 
-export interface IProfileContext{
-    userProfile: Data;
+export interface IPersonalDataContext{
+    userProfile: Data | undefined;
+    activeUserRoles: string[];
+    activeUserId: string;
+    activeUserProfile: User | undefined;
     ChangeUserProfile?: (user: Data) => void;
-    UpdateUserProfile?: () => void;
+    UpdateData?: () => void;
 }
 
 export  interface Data {

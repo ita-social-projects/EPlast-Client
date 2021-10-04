@@ -31,7 +31,7 @@ import CreatedEvents from "../../../../models/EventUser/CreatedEvents";
 import AvatarAndProgressStatic from "../../../userPage/personalData/AvatarAndProgressStatic";
 import { Data } from '../../../userPage/Interface/Interface'
 import { Roles } from "../../../../models/Roles/Roles";
-import { UserProfileContext } from "../../../userPage/personalData/PersonalData";
+import { PersonalDataContext } from "../../../userPage/personalData/PersonalData";
 
 const { Title } = Typography;
 const userGenders = ["Чоловік", "Жінка", "Інша"];
@@ -51,7 +51,7 @@ const EventUser = () => {
     const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
         new CreatedEvents(),
     ]);
-    const {userProfile, ChangeUserProfile} = useContext(UserProfileContext);
+    const {userProfile, ChangeUserProfile} = useContext(PersonalDataContext);
     const [showEventCreateDrawer, setShowEventCreateDrawer] = useState(false);
     const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
     const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);

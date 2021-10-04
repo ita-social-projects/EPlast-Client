@@ -13,50 +13,22 @@ import { StickyContainer } from "react-sticky";
 import AvatarAndProgressStatic from "./AvatarAndProgressStatic";
 import { Roles } from "../../../models/Roles/Roles";
 import UserApi from "../../../api/UserApi";
-import { UserProfileContext } from "./PersonalData";
+import { PersonalDataContext } from "./PersonalData";
 
 export default function () {
   const { userId } = useParams<{ userId: string }>();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
-  const {userProfile, ChangeUserProfile, UpdateUserProfile} = useContext(UserProfileContext);
-  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const [activeUserId, setActiveUserId] = useState<string>("");
-  const [activeUserProfile, setActiveUserProfile] = useState<User>();
+  const {userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData} = useContext(PersonalDataContext);
 
   const fetchData = async () => {
-    const actUserId = await UserApi.getActiveUserId();
-    setActiveUserId(actUserId);
-
-    const userRoles = UserApi.getActiveUserRoles();
-    setActiveUserRoles(userRoles);
-
-    const userProfile = await UserApi.getActiveUserProfile();
-    setActiveUserProfile(userProfile);
-
-    await userApi
-      .getUserProfileById(actUserId, userId)
-      .then((response) => {
-        setLoading(true);
-        if(ChangeUserProfile) ChangeUserProfile(response.data);
-        response.data?.user
-          ? PsevdonimCreator.setPseudonimLocation(
-              `${response.data?.user.firstName}${response.data?.user.lastName}`,
-              userId
-            )
-          : PsevdonimCreator.setPseudonimLocation(
-              `${response.data?.shortUser.firstName}${response.data?.shortUser.lastName}`,
-              userId
-            );
-      })
-      .catch((error) => {
-        notificationLogic("error", error.message);
-      });
+    setLoading(true);
   };
 
   useEffect(() => {
     fetchData();
   }, [userId]);
+
   return loading === false ? (
     <div className="kadraWrapper">
       <Skeleton.Avatar

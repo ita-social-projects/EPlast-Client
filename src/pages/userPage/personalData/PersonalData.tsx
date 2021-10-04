@@ -10,10 +10,17 @@ import { useParams } from "react-router-dom";
 import Secretaries from "../Secretaries/SecretariesPage";
 import { Blanks } from "../Blanks/Blanks";
 import UserApi from "../../../api/UserApi";
-import { Data, IProfileContext } from "../Interface/Interface";
+import { Data, IPersonalDataContext, User } from "../Interface/Interface";
 import notificationLogic from '../../../components/Notifications/Notification';
 
-export const UserProfileContext = React.createContext<Partial<IProfileContext>>({});
+const DefaultState:IPersonalDataContext = {
+  userProfile: undefined,
+  activeUserRoles: [],
+  activeUserId: "",
+  activeUserProfile: undefined
+}
+
+export const PersonalDataContext = React.createContext<IPersonalDataContext>(DefaultState);
 
 export default function ({
   match: {
@@ -25,19 +32,28 @@ export default function ({
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [userId]);
+
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const [activeUserId, setActiveUserId] = useState<string>("");
+  const [activeUserProfile, setActiveUserProfile] = useState<User>();
 
   const [userProfile, SetUserProfile] = useState<Data>();
   const ChangeUserProfile = (user: Data) => {
     SetUserProfile(user);
   };
-  
-  const UpdateUserProfile = () => {
+
+  const UpdateData = () => {
     fetchData();
   }
 
   const fetchData = async () => {
-    const currentUserId = UserApi.getActiveUserId();
+    let userRoles = UserApi.getActiveUserRoles();
+    setActiveUserRoles(userRoles);
+    let currentUserId = UserApi.getActiveUserId();
+    setActiveUserId(userId);
+    let userProfile = await UserApi.getActiveUserProfile();
+    setActiveUserProfile(userProfile);
     await UserApi
       .getUserProfileById(currentUserId, userId)
       .then((response) => {
@@ -49,7 +65,9 @@ export default function ({
   }
 
   return (
-    <UserProfileContext.Provider value={{userProfile, ChangeUserProfile, UpdateUserProfile}}>
+    <PersonalDataContext.Provider value={{
+      userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData
+    }}>
       <div className="mainContainer">
         <Menu id={userId} />
         {specify === "main" ? (
@@ -86,6 +104,6 @@ export default function ({
           </div>
         )}
       </div>
-    </UserProfileContext.Provider>
+    </PersonalDataContext.Provider>
   );
 }

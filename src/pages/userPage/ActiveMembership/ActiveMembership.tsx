@@ -10,7 +10,7 @@ import userApi from "../../../api/UserApi";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import ModalAddPlastDegree from "./PlastDegree/ModalAddPlastDegree";
-import moment from "moment";
+import moment, { updateLocale } from "moment";
 import ModalChangeUserDates from "./UserDates/ModalChangeUserDates";
 import DeleteDegreeConfirm from "./PlastDegree/DeleteDegreeConfirm";
 import { SafetyCertificateOutlined } from "@ant-design/icons";
@@ -23,7 +23,7 @@ import { Data } from '../Interface/Interface';
 import { successfulDeleteDegree } from "../../../components/Notifications/Messages";
 import { Console } from "console";
 import { boolean } from "yup";
-import { UserProfileContext } from "../personalData/PersonalData";
+import { PersonalDataContext } from "../personalData/PersonalData";
 const { Title } = Typography;
 
 const itemMaxLength = 43;
@@ -32,13 +32,12 @@ const ActiveMembership = () => {
   const [accessLevels, setAccessLevels] = useState([]);
   const [dates, setDates] = useState<any>({});
   const [data, setUserData] = useState<Data>();
-  const {userProfile, ChangeUserProfile} = useContext(UserProfileContext);
+  const {userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData} = useContext(PersonalDataContext);
   const [currentUser, setCurrentUser] = useState<any>({});
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
   const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [datesVisibleModal, setDatesVisibleModal] = useState<boolean>(false);
-  const [roles, setRoles] = useState<Array<string>>([]);
   const [userToken, setUserToken] = useState<any>([{ nameid: "" }]);
 
   const userAdminTypeRoles = [
@@ -68,26 +67,15 @@ const ActiveMembership = () => {
 
 
   const fetchData = async () => {
+    if(UpdateData) UpdateData();
     const token = AuthStore.getToken() as string;
     setUserToken(jwt(token));
-    const currentUserId = (jwt(token) as { nameid: "" }).nameid;
-    let decodedJwt = jwt_decode(token) as any;
-    setRoles([].concat(decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']));
 
-    await userApi.getById(currentUserId).then(async (response) => {
+    await userApi.getById(activeUserId).then(async (response) => {
       setCurrentUser(response.data.user);
     }).catch((error) => {
       notificationLogic("error", error.message);
     });
-
-    await userApi
-      .getUserProfileById(currentUserId, userId)
-      .then((response) => {
-        if(ChangeUserProfile) ChangeUserProfile(response.data);
-      })
-      .catch((error) => {
-        notificationLogic("error", error.message);
-      });
 
     await userApi.getById(userId).then(async (response) => {
       setUserData(response.data);
@@ -128,7 +116,7 @@ const ActiveMembership = () => {
   const IsPossibleToChangeDateOfSwear = (access: Array<string>): boolean =>{
     var flag = true;
     access.map( x => {
-      if( x.includes("Зареєстрований користувач")){
+      if( x.includes("Зареєстрований користувач") || x.includes("Доступ колишнього члена організації")){
         flag = false;
         return;
       }
@@ -260,7 +248,7 @@ const ActiveMembership = () => {
                     </li>
                   </ul>
 
-                  {(IsUserHasAccessToManageDegree(roles) && IsPossibleToChangeDateOfSwear(accessLevels)) && (
+                  {(IsUserHasAccessToManageDegree(activeUserRoles) && IsPossibleToChangeDateOfSwear(accessLevels)) && (
                     <Button
                       type="primary"
                       className={classes.buttonChange}
@@ -319,7 +307,7 @@ const ActiveMembership = () => {
                     Дата початку ступеню:{" "}
                     {moment.utc(userPlastDegree?.dateStart).local().format("DD.MM.YYYY")}
                   </div>
-                  {IsUserHasAccessToManageDegree(roles?.map((role: any) => {
+                  {IsUserHasAccessToManageDegree(activeUserRoles?.map((role: any) => {
                     if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ||
                       role === Roles.CityHead || role === Roles.CityHeadDeputy))
                       return role
@@ -344,7 +332,7 @@ const ActiveMembership = () => {
             )
             :(<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Без ступеня" />)
             }
-            {IsUserHasAccessToManageDegree(roles?.map((role: any) => {
+            {IsUserHasAccessToManageDegree(activeUserRoles?.map((role: any) => {
               if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy))
                 return role
             })) && (
@@ -364,7 +352,7 @@ const ActiveMembership = () => {
       </div>
       <ModalAddPlastDegree
         userId={userId}
-        isCityAdmin={!IsUserHasAnyAdminTypeRoles(roles?.map((role: any) => {
+        isCityAdmin={!IsUserHasAnyAdminTypeRoles(activeUserRoles?.map((role: any) => {
           if (!(role === Roles.CityHead || role === Roles.CityHeadDeputy)) return role
         }))}
         visibleModal={visibleModal}
