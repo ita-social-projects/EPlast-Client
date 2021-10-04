@@ -45,10 +45,9 @@ const SectorDocuments = () => {
   const deleteDocument = async (document: SectorDocument) => {
     confirm({
       title: "Ви впевнені, що хочете видалити даний документ із документообігу?",
-      okText: "Так, Видалити",
+      okText: "Так, видалити",
       okType: "primary",
       cancelText: "Скасувати",
-
       onCancel() { },
       async onOk() {
         await removeDocument(document.id);

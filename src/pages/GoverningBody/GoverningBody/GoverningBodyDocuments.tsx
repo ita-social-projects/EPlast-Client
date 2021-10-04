@@ -45,7 +45,7 @@ const GoverningBodyDocuments = () => {
     const deleteDocument = async (document: GoverningBodyDocument) => {
         confirm({
             title: "Ви впевнені, що хочете видалити даний документ із документообігу?",
-            okText: "Так, Видалити",
+            okText: "Так, видалити",
             okType: "primary",
             cancelText: "Скасувати",
             onCancel() { },
