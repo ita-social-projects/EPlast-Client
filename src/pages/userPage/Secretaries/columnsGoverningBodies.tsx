@@ -24,16 +24,16 @@ const columns = [
     title: "Початок каденції",
     dataIndex: "startDate",
     render: (startDate: Date) => {
-      return moment(startDate).format("DD.MM.YYYY");
+      return moment.utc(startDate).local().format("DD.MM.YYYY");
     },
   },
   {
     title: "Кінець каденції",
     dataIndex: "endDate",
     render: (endDate: Date) => {
-      return moment(endDate).format("DD.MM.YYYY") === "Invalid date"
+      return moment.utc(endDate).local().format("DD.MM.YYYY") === "Invalid date"
         ? " Не закінчена "
-        : moment(endDate).format("DD.MM.YYYY");
+        : moment.utc(endDate).local().format("DD.MM.YYYY");
     },
   },
   {

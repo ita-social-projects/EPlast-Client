@@ -173,7 +173,7 @@ const AddNewSecretaryForm = (props: any) => {
         label="Дата початку"
         name="startDate"
         initialValue={
-          props.admin === undefined ? undefined : moment(props.admin.startDate)
+          props.admin === undefined ? undefined : moment.utc(props.admin.startDate).local()
         }
       >
         <DatePicker
@@ -193,7 +193,7 @@ const AddNewSecretaryForm = (props: any) => {
             ? undefined
             : props.admin.endDate === null
               ? undefined
-              : moment(props.admin.endDate)
+              : moment.utc(props.admin.endDate).local()
         }
       >
         <DatePicker

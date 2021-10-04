@@ -303,7 +303,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
             <Tooltip title={dist?.reason}>
               <h2>
                 {dist.precaution.name} №{dist.number} термін дії до:{" "}
-                {moment(dist.endDate.toLocaleString()).format("DD.MM.YYYY")}
+                {moment.utc(dist.endDate.toLocaleString()).local().format("DD.MM.YYYY")}
               </h2>
             </Tooltip>
           </div>

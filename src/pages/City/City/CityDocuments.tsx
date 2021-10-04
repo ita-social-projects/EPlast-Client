@@ -91,7 +91,7 @@ const CityDocuments = () => {
                   className="detailsCard"
                   title={
                     document.submitDate
-                      ? moment(document.submitDate).format("DD.MM.YYYY")
+                      ? moment.utc(document.submitDate).local().format("DD.MM.YYYY")
                       : "Немає дати"
                   }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}

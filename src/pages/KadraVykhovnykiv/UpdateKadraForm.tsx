@@ -79,7 +79,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 label="Дата вручення"
                 labelCol={{ span: 24 }}
                 name="dateOfGranting"
-                initialValue={moment(record.dateOfGranting)}
+                initialValue={moment.utc(record.dateOfGranting).local()}
                 rules={[
                   {
                     required: true,

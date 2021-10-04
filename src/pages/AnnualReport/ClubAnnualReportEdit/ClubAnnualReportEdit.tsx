@@ -125,7 +125,7 @@ const ClubAnnualReportEdit = () => {
                             className='textCenter'
                             level={3} >
                             {`Річний звіт куреня ${club.name} за 
-                    ${moment(club.date).year()} рік`}</Title>
+                    ${moment.utc(club.date).local().year()} рік`}</Title>
                         <Link className="LinkText" style={{ fontSize: "14px" }} to={"/clubs/" + club.id} target="blank">Перейти на профіль куреня {club.name}</Link>
                         <br />
                         <br />
