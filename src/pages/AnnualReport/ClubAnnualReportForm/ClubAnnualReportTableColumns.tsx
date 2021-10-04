@@ -10,11 +10,11 @@ export const getTableAdmins = (admins: ClubAdmin[]) => {
     key: admin.user.id,
     name: `${admin.user.firstName} ${admin.user.lastName}`,
     type: admin.adminType.adminTypeName,
-    degree: (admin.user.clubReportPlastDegrees !==null)?
-                                                        ((admin.user.clubReportPlastDegrees?.plastDegree?.name) ?
+    degree: (admin?.user?.clubReportPlastDegrees !==null)?
+                                                        ((admin.user?.clubReportPlastDegrees?.plastDegree?.name) ?
                                                         (`${admin.user.clubReportPlastDegrees.plastDegree.name}`) : ('_')):
-                                                        ((admin.user.userPlastDegrees[0]?.plastDegree?.name) ?
-                                                        (`${admin.user.userPlastDegrees[0]?.plastDegree.name}`) :
+                                                        ((admin.user?.userPlastDegrees?.plastDegree?.name) ?
+                                                        (`${admin.user.userPlastDegrees?.plastDegree.name}`) :
                                                         ('_')),
     userCity:(admin.user.clubReportCities!==null)?
                                                   ((admin.user.clubReportCities?.city?.name) ?
