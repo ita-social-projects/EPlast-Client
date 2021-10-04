@@ -71,7 +71,7 @@ const AddNewAdministratorForm = ({
       (a: any) => a.adminType.adminTypeName === value
     );
     if (oldAdmin !== undefined) {
-      setEndDayOld(moment(oldAdmin.endDate).format("DD.MM.YYYY"));
+      setEndDayOld(moment.utc(oldAdmin.endDate).local().format("DD.MM.YYYY"));
       setOldAdminFirstName(oldAdmin.user.firstName);
       setOldAdminLastName(oldAdmin.user.lastName);
     }

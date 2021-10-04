@@ -176,7 +176,7 @@ const Assignments = () => {
                         <Meta title={p.approver.user.firstName + " " + p.approver.user.lastName} className="titleText" />
                       </Link>
                     </Tooltip>
-                    <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                    <Meta title={moment.utc(p.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
                     <DeleteApproveButton approverId={p.id} deleteApprove={deleteApprove} />
                   </Card>
                 </div>
@@ -196,7 +196,7 @@ const Assignments = () => {
                       </Link>
                     </Tooltip>
 
-                    <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                    <Meta title={moment.utc(p.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
                     <p className="cardP" />
                   </Card>
                 </div>
@@ -261,7 +261,7 @@ const Assignments = () => {
                         <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
                       </Link>
                     </Tooltip>
-                    <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                    <Meta title={moment.utc(data.clubApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
                     <DeleteApproveButton approverId={data.clubApprover.id} deleteApprove={deleteApprove} />
                   </Card>
                 ) : (
@@ -279,7 +279,7 @@ const Assignments = () => {
                         <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
                       </Link>
                     </Tooltip>
-                    <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                    <Meta title={moment.utc(data.clubApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
                   </Card>
                 )}
             </div>
@@ -339,7 +339,7 @@ const Assignments = () => {
                       <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
                     </Link>
                   </Tooltip>
-                  <Meta title={moment(data.cityApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                  <Meta title={moment.utc(data.cityApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
                   <DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove} />
                 </Card>
               ) : (
@@ -357,7 +357,7 @@ const Assignments = () => {
                       <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
                     </Link>
                   </Tooltip>
-                  <Meta title={moment(data.cityApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                  <Meta title={moment.utc(data.cityApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
                 </Card>
               )}
 
