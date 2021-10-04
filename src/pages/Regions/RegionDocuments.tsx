@@ -75,7 +75,7 @@ const RegionDocuments = () => {
       return Modal.confirm({
         title: "Ви впевнені, що хочете видалити даний документ із документообігу?",
         icon: <ExclamationCircleOutlined />,
-        okText: "Так, Видалити",
+        okText: "Так, видалити",
         okType: "primary",
         cancelText: "Скасувати",
         maskClosable: true,
