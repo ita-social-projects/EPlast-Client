@@ -19,7 +19,7 @@ export default function () {
   const { userId } = useParams<{ userId: string }>();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
-  const {userProfile, ChangeUserProfile} = useContext(UserProfileContext);
+  const {userProfile, ChangeUserProfile, UpdateUserProfile} = useContext(UserProfileContext);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserId, setActiveUserId] = useState<string>("");
   const [activeUserProfile, setActiveUserProfile] = useState<User>();

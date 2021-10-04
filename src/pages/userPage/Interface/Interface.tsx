@@ -90,6 +90,7 @@ export type ShortUser ={
 export interface IProfileContext{
     userProfile: Data;
     ChangeUserProfile?: (user: Data) => void;
+    UpdateUserProfile?: () => void;
 }
 
 export  interface Data {

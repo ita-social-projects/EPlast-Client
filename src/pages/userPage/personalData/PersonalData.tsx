@@ -31,6 +31,10 @@ export default function ({
   const ChangeUserProfile = (user: Data) => {
     SetUserProfile(user);
   };
+  
+  const UpdateUserProfile = () => {
+    fetchData();
+  }
 
   const fetchData = async () => {
     const currentUserId = UserApi.getActiveUserId();
@@ -45,7 +49,7 @@ export default function ({
   }
 
   return (
-    <UserProfileContext.Provider value={{userProfile, ChangeUserProfile}}>
+    <UserProfileContext.Provider value={{userProfile, ChangeUserProfile, UpdateUserProfile}}>
       <div className="mainContainer">
         <Menu id={userId} />
         {specify === "main" ? (
