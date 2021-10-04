@@ -67,7 +67,10 @@ const RegionBoardDocuments = () => {
 
   const onClickRemoveDocument = async (document: any) => {
     Modal.confirm({
-      title: `Видалити документ ${document.fileName.split('.')[0]}?`,
+      title: "Ви впевнені, що хочете видалити даний документ із документообігу?",
+      okText: "Так, Видалити",
+      okType: "primary",
+      cancelText: "Скасувати",
       onCancel() { },
       async onOk() {
         await removeDocument(document.id);
