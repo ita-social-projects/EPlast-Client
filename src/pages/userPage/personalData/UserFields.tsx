@@ -21,12 +21,8 @@ export default function () {
   const [loading, setLoading] = useState(false);
   const {userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData} = useContext(PersonalDataContext);
 
-  const fetchData = async () => {
-    setLoading(true);
-  };
-
   useEffect(() => {
-    fetchData();
+    setLoading(true)
   }, [userId]);
 
   return loading === false ? (
