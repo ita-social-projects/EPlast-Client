@@ -44,12 +44,10 @@ const GoverningBodyDocuments = () => {
 
     const deleteDocument = async (document: GoverningBodyDocument) => {
         confirm({
-            title: `Дійсно видалити документ ${document.fileName.split('.')[0]}?`,
-            content: (
-              <div>
-                {document.governingBodyDocumentType.name} буде видалений!
-              </div>
-            ),
+            title: "Ви впевнені, що хочете видалити даний документ із документообігу?",
+            okText: "Так, видалити",
+            okType: "primary",
+            cancelText: "Скасувати",
             onCancel() { },
             async onOk() {
               await removeDocument(document.id);
