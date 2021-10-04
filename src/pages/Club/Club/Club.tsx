@@ -320,9 +320,9 @@ const Club = () => {
           </b>{" "}
           є Головою Куреня, час правління закінчується{" "}
           <b>
-            {moment(club.head.endDate).format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(club.head.endDate).local().format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
-              : moment(club.head.endDate).format("DD.MM.YYYY")}
+              : moment.utc(club.head.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -341,9 +341,9 @@ const Club = () => {
           </b>{" "}
           є Головою Куреня, час правління закінчується{" "}
           <b>
-            {moment(club.head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(club.head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
-              : moment(club.head.endDate).format("DD.MM.YYYY")}
+              : moment.utc(club.head.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -354,9 +354,9 @@ const Club = () => {
         </b>{" "}
         є Заступником Голови Куреня, час правління закінчується{" "}
         <b>
-          {moment(club.headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
+          {moment.utc(club.headDeputy?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
             ? "ще не скоро"
-            : moment(club.headDeputy.endDate).format("DD.MM.YYYY")}
+            : moment.utc(club.headDeputy.endDate).local().format("DD.MM.YYYY")}
         </b>
         .
       </div>
@@ -499,13 +499,13 @@ const Club = () => {
                       {club.head.endDate === null ?
                         (<div>
                           <b>Початок правління:</b>
-                          {` ${moment(club.head.startDate).format("DD.MM.YYYY")}`}
+                          {` ${moment.utc(club.head.startDate).local().format("DD.MM.YYYY")}`}
                         </div>
                         )
                         :
                         (<div>
                           <b>Термін правління:</b>
-                          {` ${moment(club.head.startDate).format("DD.MM.YYYY")} - ${moment(club.head.endDate).format("DD.MM.YYYY")}`}
+                          {` ${moment.utc(club.head.startDate).local().format("DD.MM.YYYY")} - ${moment.utc(club.head.endDate).local().format("DD.MM.YYYY")}`}
                         </div>
                         )
                       }
@@ -526,13 +526,13 @@ const Club = () => {
                       {club.headDeputy.endDate === null ?
                         (<div>
                           <b>Початок правління:</b>
-                          {` ${moment(club.headDeputy.startDate).format("DD.MM.YYYY")}`}
+                          {` ${moment.utc(club.headDeputy.startDate).local().format("DD.MM.YYYY")}`}
                         </div>
                         )
                         :
                         (<div>
                           <b>Термін правління:</b>
-                          {` ${moment(club.headDeputy.startDate).format("DD.MM.YYYY")} - ${moment(club.headDeputy.endDate).format("DD.MM.YYYY")}`}
+                          {` ${moment.utc(club.headDeputy.startDate).local().format("DD.MM.YYYY")} - ${moment.utc(club.headDeputy.endDate).local().format("DD.MM.YYYY")}`}
                         </div>
                         )
                       }

@@ -1,3 +1,5 @@
+import { PlastDegree } from "../../api/activeMembershipApi";
+
 export default class ClubUser {
   id: string;
   firstName: string;
@@ -7,10 +9,10 @@ export default class ClubUser {
   phoneNumber:string;
   userRole: string;
   cityName: string;
-  plastDegree:{
-    id: number;
-    name:string;
-  };
+  userPlastDegrees:any;
+  cityMembers: any;
+  clubReportCities:any;
+  clubReportPlastDegrees: any;
 
   constructor() {
     this.id = "";
@@ -21,6 +23,17 @@ export default class ClubUser {
     this.phoneNumber = "";
     this.userRole = '';
     this.cityName = '';
-    this.plastDegree={id:-1, name:"None"}
+    this.userPlastDegrees={
+      plastDegree: {id: -1, name:''}
+    }
+    this.cityMembers={
+      city: {id: -1, name:''}
+    }
+    this.userPlastDegrees={
+      plastDegree: {id: -1, name:''}
+    }
+    this.userPlastDegrees={
+      plastDegree: {id: -1, name:''}
+    }
   }
 }

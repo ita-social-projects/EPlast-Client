@@ -119,7 +119,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
       dataIndex: "birthday",
       width: 130,
       render: (date: Date) => {
-        return SortColumnHighlight(4, <>{date !== null ? moment(date.toLocaleString()).format("DD.MM.YYYY") : ""}</>);
+        return SortColumnHighlight(4, <>{date !== null ? moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY") : ""}</>);
       },
     },
     {

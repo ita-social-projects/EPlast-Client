@@ -239,7 +239,7 @@ const ActiveMembership = () => {
                         <span className={classes.date}>Дата вступу: </span>
                         {dates?.dateEntry === ""
                           ? "Не задано"
-                          : moment(dates.dateEntry).format("DD.MM.YYYY")}
+                          : moment.utc(dates.dateEntry).local().format("DD.MM.YYYY")}
                       </div>
                     </li>
                     <li className={classes.textListItem} key={2}>
@@ -247,7 +247,7 @@ const ActiveMembership = () => {
                         <span className={classes.date}>Дата присяги: </span>
                         {dates?.dateOath === ""
                           ? "Без присяги"
-                          : moment(dates.dateOath).format("DD.MM.YYYY")}
+                          : moment.utc(dates.dateOath).local().format("DD.MM.YYYY")}
                       </div>
                     </li>
                     <li className={classes.textListItem} key={3}>
@@ -255,7 +255,7 @@ const ActiveMembership = () => {
                         <span className={classes.date}>Дата завершення: </span>
                         { dates?.dateEnd === ""
                           ? ( dates.dateEntry ==="" ? " - ":"ще у Пласті" )
-                          : moment(dates.dateEnd).format("DD.MM.YYYY")}
+                          : moment.utc(dates.dateEnd).local().format("DD.MM.YYYY")}
                       </div>
                     </li>
                   </ul>
@@ -317,7 +317,7 @@ const ActiveMembership = () => {
                   </div>
                   <div className={classes.textFieldsOthers}>
                     Дата початку ступеню:{" "}
-                    {moment(userPlastDegree?.dateStart).format("DD.MM.YYYY")}
+                    {moment.utc(userPlastDegree?.dateStart).local().format("DD.MM.YYYY")}
                   </div>
                   {IsUserHasAccessToManageDegree(roles?.map((role: any) => {
                     if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ||

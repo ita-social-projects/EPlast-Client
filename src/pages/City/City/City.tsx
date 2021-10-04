@@ -352,9 +352,9 @@ const City = () => {
           </b>{" "}
           є Головою Станиці, час правління закінчується{" "}
           <b>
-            {moment(city.head.endDate).format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(city.head.endDate).local().format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
-              : moment(city.head.endDate).format("DD.MM.YYYY")}
+              : moment.utc(city.head.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -373,9 +373,9 @@ const City = () => {
           </b>{" "}
           є Головою Станиці, час правління закінчується{" "}
           <b>
-            {moment(city.head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(city.head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
-              : moment(city.head.endDate).format("DD.MM.YYYY")}
+              : moment.utc(city.head.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -386,9 +386,9 @@ const City = () => {
         </b>{" "}
         є Заступником Голови Станиці, час правління закінчується{" "}
         <b>
-          {moment(city.headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
+          {moment.utc(city.headDeputy?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
             ? "ще не скоро"
-            : moment(city.headDeputy.endDate).format("DD.MM.YYYY")}
+            : moment.utc(city.headDeputy.endDate).local().format("DD.MM.YYYY")}
         </b>
         .
       </div>
@@ -521,13 +521,13 @@ const City = () => {
                     {city.head.endDate ? (
                       <Paragraph>
                         <b>Час правління:</b>{" "}
-                        {moment(city.head.startDate).format("DD.MM.YYYY")}{" - "}
-                        {moment(city.head.endDate).format("DD.MM.YYYY")}
+                        {moment.utc(city.head.startDate).local().format("DD.MM.YYYY")}{" - "}
+                        {moment.utc(city.head.endDate).local().format("DD.MM.YYYY")}
                       </Paragraph>
                     ) : (
                         <Paragraph>
                           <b>Початок правління:</b>{" "}
-                          {moment(city.head.startDate).format("DD.MM.YYYY")}
+                          {moment.utc(city.head.startDate).local().format("DD.MM.YYYY")}
                         </Paragraph>
                       )}
                   </div>
@@ -546,13 +546,13 @@ const City = () => {
                     {city.headDeputy.endDate ? (
                       <Paragraph>
                         <b>Час правління:</b>{" "}
-                        {moment(city.headDeputy.startDate).format("DD.MM.YYYY")}{" - "}
-                        {moment(city.headDeputy.endDate).format("DD.MM.YYYY")}
+                        {moment.utc(city.headDeputy.startDate).local().format("DD.MM.YYYY")}{" - "}
+                        {moment.utc(city.headDeputy.endDate).local().format("DD.MM.YYYY")}
                       </Paragraph>
                     ) : (
                         <Paragraph>
                           <b>Початок правління:</b>{" "}
-                          {moment(city.headDeputy.startDate).format("DD.MM.YYYY")}
+                          {moment.utc(city.headDeputy.startDate).local().format("DD.MM.YYYY")}
                         </Paragraph>
                       )}
                   </div>

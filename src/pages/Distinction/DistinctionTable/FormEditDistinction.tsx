@@ -286,7 +286,7 @@ const FormEditDistinction = ({
                 name="date"
                 label="Дата затвердження"
                 labelCol={{ span: 24 }}
-                initialValue={moment(distinction.date)}
+                initialValue={moment.utc(distinction.date).local()}
                 rules={[
                   { 
                     required: true, 
