@@ -60,9 +60,9 @@ const EditAdministratorModal = (props: Props) => {
           </b>{" "}
           є Головою Напряму Керівного Органу, час правління закінчується{" "}
           <b>
-            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
-              : moment(head?.endDate).format("DD.MM.YYYY")}
+              : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -196,7 +196,7 @@ const EditAdministratorModal = (props: Props) => {
               labelCol={{ span: 24 }}
               initialValue={
                 props.admin.startDate
-                  ? moment(props.admin.startDate)
+                  ? moment.utc(props.admin.startDate).local()
                   : undefined
               }
             >
@@ -206,7 +206,7 @@ const EditAdministratorModal = (props: Props) => {
                 format="DD.MM.YYYY"
                 value={
                   props.admin.startDate
-                    ? moment(props.admin.startDate)
+                    ? moment.utc(props.admin.startDate).local()
                     : undefined
                 }
                 onChange={(e) => setStartDate(e)}
@@ -219,7 +219,7 @@ const EditAdministratorModal = (props: Props) => {
               label="Час кінця"
               labelCol={{ span: 24 }}
               initialValue={
-                props.admin.endDate ? moment(props.admin.endDate) : undefined
+                props.admin.endDate ? moment.utc(props.admin.endDate).local() : undefined
               }
             >
               <DatePicker
@@ -227,7 +227,7 @@ const EditAdministratorModal = (props: Props) => {
                 disabledDate={disabledEndDate}
                 format="DD.MM.YYYY"
                 value={
-                  props.admin.endDate ? moment(props.admin.endDate) : undefined
+                  props.admin.endDate ? moment.utc(props.admin.endDate).local() : undefined
                 }
                 onChange={(e) => setEndDate(e)}
               />

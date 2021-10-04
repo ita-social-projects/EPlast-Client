@@ -123,7 +123,7 @@ export const ClubAnnualReportCreate = () => {
                         <Title
                             className='textCenter'
                             level={3} >
-                            {`Річний звіт куреня ${club.name} за  ${moment(club.date).year()} рік`}
+                            {`Річний звіт куреня ${club.name} за  ${moment.utc(club.date).local().year()} рік`}
                         </Title>
 
                         <Link

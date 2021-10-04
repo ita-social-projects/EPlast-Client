@@ -219,14 +219,14 @@ const EventUser = () => {
                                     <h2>
                                         {" "}
                                         Дата початку:{" "}
-                                        {moment(item.eventDateStart).format(
+                                        {moment.utc(item.eventDateStart).local().format(
                                             "DD.MM.YYYY HH:mm"
                                         )}{" "}
                                     </h2>
                                     <h2>
                                         {" "}
                                         Дата завершення:{" "}
-                                        {moment(item.eventDateEnd).format("DD.MM.YYYY HH:mm")}{" "}
+                                        {moment.utc(item.eventDateEnd).local().format("DD.MM.YYYY HH:mm")}{" "}
                                     </h2>
                                     <Button
                                         type="primary"
@@ -372,14 +372,14 @@ const EventUser = () => {
                                     <h2>
                                         {" "}
                                         Дата початку:{" "}
-                                        {moment(item.eventDateStart).format(
+                                        {moment.utc(item.eventDateStart).local().format(
                                             "DD.MM.YYYY HH:mm"
                                         )}{" "}
                                     </h2>
                                     <h2>
                                         {" "}
                                         Дата завершення:{" "}
-                                        {moment(item.eventDateEnd).format("DD.MM.YYYY HH:mm")}{" "}
+                                        {moment.utc(item.eventDateEnd).local().format("DD.MM.YYYY HH:mm")}{" "}
                                     </h2>
                                     <Button
                                         type="primary"
@@ -488,14 +488,14 @@ const EventUser = () => {
                                     <h2>
                                         {" "}
                                         Дата початку:{" "}
-                                        {moment(item.eventDateStart).format(
+                                        {moment.utc(item.eventDateStart).local().format(
                                             "DD.MM.YYYY HH:mm"
                                         )}{" "}
                                     </h2>
                                     <h2>
                                         {" "}
                                         Дата завершення:{" "}
-                                        {moment(item.eventDateEnd).format("DD.MM.YYYY HH:mm")}{" "}
+                                        {moment.utc(item.eventDateEnd).local().format("DD.MM.YYYY HH:mm")}{" "}
                                     </h2>
                                     <Button
                                         type="primary"
