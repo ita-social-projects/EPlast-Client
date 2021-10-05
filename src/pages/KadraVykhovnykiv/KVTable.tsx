@@ -91,7 +91,7 @@ export const KVTable = ({ current, searchData }: props) => {
   ? data.filter((item) => {
       return Object.values([
         item.numberInRegister,
-        moment(item.dateOfGranting.toLocaleString()).format("DD.MM.YYYY"),
+        moment.utc(item.dateOfGranting.toLocaleString()).local().format("DD.MM.YYYY"),
       ]).find((element) => {
         return String(element).toLowerCase().includes(searchData);
       });
@@ -102,10 +102,10 @@ export const KVTable = ({ current, searchData }: props) => {
   filteredData = filteredData.concat(
     data.filter(
       (item) =>
-        (item.user.firstName?.toLowerCase()?.includes(searchData) ||
-          item.user.lastName?.toLowerCase()?.includes(searchData)||
-          item.user.firstName?.includes(searchData) ||
-          item.user.lastName?.includes(searchData)) &&
+        ( item.user.firstName?.toLowerCase()?.includes(searchData.toLowerCase()) ||
+          item.user.lastName?.toLowerCase()?.includes(searchData.toLowerCase())||
+          (item.user.firstName + ' ' + item.user.lastName)?.toLowerCase()?.includes(searchData.toLowerCase())||
+          (item.user.lastName + ' ' + item.user.firstName)?.toLowerCase()?.includes(searchData.toLowerCase())) &&
         !filteredData.includes(item)
     )
   );

@@ -160,7 +160,7 @@ const AnnualReportInformation = () => {
                             className='textCenter'
                             level={3} >
                             {`Річний звіт станиці ${cityAnnualReport.city?.name} за 
-                    ${moment(cityAnnualReport.date).year()} рік`}</Title>
+                    ${moment.utc(cityAnnualReport.date).local().year()} рік`}</Title>
                         <StatusStamp status={status!} />
                         <Link className="LinkText" style={{ fontSize: "14px" }} to={"/cities/"+cityAnnualReport.city?.id} target="blank">Перейти на профіль станиці {cityAnnualReport.city?.name}</Link>
                         <br />

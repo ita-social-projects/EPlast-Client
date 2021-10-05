@@ -44,12 +44,10 @@ const SectorDocuments = () => {
 
   const deleteDocument = async (document: SectorDocument) => {
     confirm({
-      title: `Дійсно видалити документ ${document.fileName.split('.')[0]}?`,
-      content: (
-        <div>
-          {document.sectorDocumentType.name} буде видалений!
-        </div>
-      ),
+      title: "Ви впевнені, що хочете видалити даний документ із документообігу?",
+      okText: "Так, видалити",
+      okType: "primary",
+      cancelText: "Скасувати",
       onCancel() { },
       async onOk() {
         await removeDocument(document.id);
@@ -76,7 +74,7 @@ const SectorDocuments = () => {
                 className="detailsCard"
                 title={
                   document.submitDate
-                    ? moment(document.submitDate).format("DD.MM.YYYY")
+                    ? moment.utc(document.submitDate).local().format("DD.MM.YYYY")
                     : "Немає дати"
                 }
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
