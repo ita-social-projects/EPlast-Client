@@ -18,12 +18,7 @@ import { PersonalDataContext } from "./PersonalData";
 export default function () {
   const { userId } = useParams<{ userId: string }>();
   const history = useHistory();
-  const [loading, setLoading] = useState(false);
-  const {userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData} = useContext(PersonalDataContext);
-
-  useEffect(() => {
-    setLoading(true)
-  }, [userId]);
+  const {userProfile, activeUserRoles, activeUserId, activeUserProfile, loading} = useContext(PersonalDataContext);
 
   return loading === false ? (
     <div className="kadraWrapper">

@@ -17,6 +17,7 @@ const DefaultState:IPersonalDataContext = {
   userProfile: undefined,
   activeUserRoles: [],
   activeUserId: "",
+  loading: false,
   activeUserProfile: undefined
 }
 
@@ -37,6 +38,7 @@ export default function ({
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserId, setActiveUserId] = useState<string>("");
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
+  const [loading, setLoading] = useState(false);
 
   const [userProfile, SetUserProfile] = useState<Data>();
   const ChangeUserProfile = (user: Data) => {
@@ -62,11 +64,12 @@ export default function ({
       .catch((error) => {
         notificationLogic("error", error.message);
       });
+      setLoading(true);
   }
 
   return (
     <PersonalDataContext.Provider value={{
-      userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData
+      userProfile, activeUserRoles, activeUserId, activeUserProfile, loading, ChangeUserProfile, UpdateData
     }}>
       <div className="mainContainer">
         <Menu id={userId} />

@@ -92,6 +92,7 @@ export interface IPersonalDataContext{
     activeUserRoles: string[];
     activeUserId: string;
     activeUserProfile: User | undefined;
+    loading: boolean;
     ChangeUserProfile?: (user: Data) => void;
     UpdateData?: () => void;
 }
