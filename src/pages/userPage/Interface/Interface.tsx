@@ -93,6 +93,7 @@ export interface IPersonalDataContext{
     activeUserId: string;
     activeUserProfile: User | undefined;
     loading: boolean;
+    imageBase64: string;
     ChangeUserProfile?: (user: Data) => void;
     UpdateData?: () => void;
 }
