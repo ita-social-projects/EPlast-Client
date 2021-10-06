@@ -31,14 +31,13 @@ const ActiveMembership = () => {
   const { userId } = useParams();
   const [accessLevels, setAccessLevels] = useState([]);
   const [dates, setDates] = useState<any>({});
-  const [data, setUserData] = useState<Data>();
   const {userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData} = useContext(PersonalDataContext);
-  const [currentUser, setCurrentUser] = useState<any>({});
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
   const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [datesVisibleModal, setDatesVisibleModal] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<any>([{ nameid: "" }]);
+  const defaultDate: string = "0001-01-01T00:00:00";
 
   const userAdminTypeRoles = [
     Roles.Admin,
@@ -58,40 +57,49 @@ const ActiveMembership = () => {
     });
   };
   const getAppropriateToGenderDegree = (plastDegreeName: string): string => {
-    if (userGenders[0] === data?.user.gender?.name && plastDegreeName?.includes("/")) {
+    if (userGenders[0] === userProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
       return plastDegreeName.split("/")[0];
-    } else if (userGenders[1] === data?.user.gender?.name && plastDegreeName?.includes("/")) {
+    } else if (userGenders[1] === userProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
       return plastDegreeName.split("/")[1];
     } else return plastDegreeName;
   };
 
+  const InitialFetchData = async() => {
+    const token = AuthStore.getToken() as string;
+    setUserToken(jwt(token));
+
+    setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
+
+    await activeMembershipApi.getUserDates(userId).then((response) => {
+      response.dateEntry =
+        response.dateEntry === defaultDate ? "" : response.dateEntry;
+      response.dateOath =
+        response.dateOath === defaultDate ? "" : response.dateOath;
+      response.dateEnd =
+        response.dateEnd === defaultDate ? "" : response.dateEnd;
+      setDates(response);
+      setLoadInfo(true);
+    });
+
+    await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
+      setUserPlastDegree(response);
+    });
+  }
 
   const fetchData = async () => {
     if(UpdateData) UpdateData();
     const token = AuthStore.getToken() as string;
     setUserToken(jwt(token));
 
-    await userApi.getById(activeUserId).then(async (response) => {
-      setCurrentUser(response.data.user);
-    }).catch((error) => {
-      notificationLogic("error", error.message);
-    });
-
-    await userApi.getById(userId).then(async (response) => {
-      setUserData(response.data);
-    }).catch((error) => {
-      notificationLogic("error", error.message);
-    });
-
     setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
 
     await activeMembershipApi.getUserDates(userId).then((response) => {
       response.dateEntry =
-        response.dateEntry === "0001-01-01T00:00:00" ? "" : response.dateEntry;
+        response.dateEntry === defaultDate ? "" : response.dateEntry;
       response.dateOath =
-        response.dateOath === "0001-01-01T00:00:00" ? "" : response.dateOath;
+        response.dateOath === defaultDate? "" : response.dateOath;
       response.dateEnd =
-        response.dateEnd === "0001-01-01T00:00:00" ? "" : response.dateEnd;
+        response.dateEnd === defaultDate ? "" : response.dateEnd;
       setDates(response);
       setLoadInfo(true);
     });
@@ -103,12 +111,12 @@ const ActiveMembership = () => {
 
 
   const IsUserHasAccessToManageDegree = (userRoles: Array<string>): boolean => {
-    return (userRoles?.includes(Roles.KurinHead) && currentUser.clubId == data?.user.clubId) ||
-      (userRoles?.includes(Roles.KurinHeadDeputy) && currentUser.clubId == data?.user.clubId) ||
-      (userRoles?.includes(Roles.CityHead) && currentUser.cityId == data?.user.cityId) ||
-      (userRoles?.includes(Roles.CityHeadDeputy) && currentUser.cityId == data?.user.cityId) ||
-      (userRoles?.includes(Roles.OkrugaHead) && currentUser.regionId == data?.user.regionId) ||
-      (userRoles?.includes(Roles.OkrugaHeadDeputy) && currentUser.regionId == data?.user.regionId) ||
+    return (userRoles?.includes(Roles.KurinHead) && activeUserProfile?.clubId == userProfile?.user.clubId) ||
+      (userRoles?.includes(Roles.KurinHeadDeputy) && activeUserProfile?.clubId == userProfile?.user.clubId) ||
+      (userRoles?.includes(Roles.CityHead) && activeUserProfile?.cityId == userProfile?.user.cityId) ||
+      (userRoles?.includes(Roles.CityHeadDeputy) && activeUserProfile?.cityId == userProfile?.user.cityId) ||
+      (userRoles?.includes(Roles.OkrugaHead) && activeUserProfile?.regionId == userProfile?.user.regionId) ||
+      (userRoles?.includes(Roles.OkrugaHeadDeputy) && activeUserProfile?.regionId == userProfile?.user.regionId) ||
       userRoles?.includes(Roles.RegionBoardHead) ||
       userRoles?.includes(Roles.Admin);
   };
@@ -179,7 +187,7 @@ const ActiveMembership = () => {
   }
 
   useEffect(() => {
-    fetchData();
+    InitialFetchData();
   }, []);
   return LoadInfo === false ? (
     <div className="kadraWrapper">
@@ -194,22 +202,22 @@ const ActiveMembership = () => {
     <div className={classes.wrapper}>
       <div className={classes.avatarWrapper}>
         <AvatarAndProgressStatic
-          time={data?.timeToJoinPlast}
-          imageUrl={data?.user.imagePath as string}
-          firstName={data?.user.firstName}
-          lastName={data?.user.lastName}
+          time={userProfile?.timeToJoinPlast}
+          imageUrl={userProfile?.user.imagePath as string}
+          firstName={userProfile?.user.firstName}
+          lastName={userProfile?.user.lastName}
           isUserPlastun={true}
-          pseudo={data?.user.pseudo}
-          governingBody={data?.user.governingBody}
-          region={data?.user.region}
-          city={data?.user.city}
-          club={data?.user.club}
-          governingBodyId={data?.user.governingBodyId}
-          regionId={data?.user.regionId}
-          cityId={data?.user.cityId}
-          clubId={data?.user.clubId}
-          cityMemberIsApproved={data?.user.cityMemberIsApproved}
-          clubMemberIsApproved={data?.user.clubMemberIsApproved}
+          pseudo={userProfile?.user.pseudo}
+          governingBody={userProfile?.user.governingBody}
+          region={userProfile?.user.region}
+          city={userProfile?.user.city}
+          club={userProfile?.user.club}
+          governingBodyId={userProfile?.user.governingBodyId}
+          regionId={userProfile?.user.regionId}
+          cityId={userProfile?.user.cityId}
+          clubId={userProfile?.user.clubId}
+          cityMemberIsApproved={userProfile?.user.cityMemberIsApproved}
+          clubMemberIsApproved={userProfile?.user.clubMemberIsApproved}
           showPrecautions = {userProfile?.shortUser === null}
         />
       </div>
