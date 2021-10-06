@@ -37,6 +37,7 @@ const ActiveMembership = () => {
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [datesVisibleModal, setDatesVisibleModal] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<any>([{ nameid: "" }]);
+  const defaultDate: string = "0001-01-01T00:00:00";
 
   const userAdminTypeRoles = [
     Roles.Admin,
@@ -71,11 +72,11 @@ const ActiveMembership = () => {
 
     await activeMembershipApi.getUserDates(userId).then((response) => {
       response.dateEntry =
-        response.dateEntry === "0001-01-01T00:00:00" ? "" : response.dateEntry;
+        response.dateEntry === defaultDate ? "" : response.dateEntry;
       response.dateOath =
-        response.dateOath === "0001-01-01T00:00:00" ? "" : response.dateOath;
+        response.dateOath === defaultDate ? "" : response.dateOath;
       response.dateEnd =
-        response.dateEnd === "0001-01-01T00:00:00" ? "" : response.dateEnd;
+        response.dateEnd === defaultDate ? "" : response.dateEnd;
       setDates(response);
       setLoadInfo(true);
     });
@@ -94,11 +95,11 @@ const ActiveMembership = () => {
 
     await activeMembershipApi.getUserDates(userId).then((response) => {
       response.dateEntry =
-        response.dateEntry === "0001-01-01T00:00:00" ? "" : response.dateEntry;
+        response.dateEntry === defaultDate ? "" : response.dateEntry;
       response.dateOath =
-        response.dateOath === "0001-01-01T00:00:00" ? "" : response.dateOath;
+        response.dateOath === defaultDate? "" : response.dateOath;
       response.dateEnd =
-        response.dateEnd === "0001-01-01T00:00:00" ? "" : response.dateEnd;
+        response.dateEnd === defaultDate ? "" : response.dateEnd;
       setDates(response);
       setLoadInfo(true);
     });

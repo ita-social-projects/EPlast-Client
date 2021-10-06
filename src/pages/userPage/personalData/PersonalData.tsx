@@ -57,8 +57,8 @@ export default function ({
     setActiveUserRoles(userRoles);
     let currentUserId = UserApi.getActiveUserId();
     setActiveUserId(userId);
-    let userProfile1 = await UserApi.getActiveUserProfile();
-    setActiveUserProfile(userProfile1);
+    let userProfile = await UserApi.getActiveUserProfile();
+    setActiveUserProfile(userProfile);
     await UserApi
       .getUserProfileById(currentUserId, userId)
       .then((response) => {
@@ -69,10 +69,8 @@ export default function ({
       })
       .catch((error) => {
         notificationLogic("error", error.message);
-      });
-     
+      });   
       setLoading(true);
-      
   }
 
   return (
