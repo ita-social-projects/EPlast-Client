@@ -107,7 +107,7 @@ const RegionBoard = () => {
     setLoading(true);
     try {
       const response = await GetRegionsBoard();
-      await getUserAccesses();
+      const userAccesses = (await getUserAccesses()).data
       if (userAccesses["ViewDecisions"]) {        
         await setRegionDecisions();
       }
@@ -123,12 +123,15 @@ const RegionBoard = () => {
   };
   
   const getUserAccesses = async () => {
-      let user: any = jwt(AuthStore.getToken() as string);
-      await getUserAccess(user.nameid).then(
-        response => {
-          setUserAccesses(response.data);
-        }
-      );
+    let user: any = jwt(AuthStore.getToken() as string);
+    let result :any
+    await getUserAccess(user.nameid).then(
+      response => {
+        result = response
+        setUserAccesses(response.data);
+      }
+    );
+    return result
   }
 
   const loadGbPhotos = async (governingBodies: GoverningBody[]) => {
@@ -410,7 +413,7 @@ const RegionBoard = () => {
                     {decisions.length !== 0 ? (
                     decisions.map((decision) => (
                         <Col
-                        className="cityMemberItem"
+                        className="cityDocumentItem"
                         xs={12}
                         sm={8}
                         key={decision.id}

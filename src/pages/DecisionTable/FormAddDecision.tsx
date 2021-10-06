@@ -35,6 +35,7 @@ import {
   possibleFileExtensions,
   fileIsTooBig,
   successfulDeleteAction,
+  fileIsEmpty,
 } from "../../components/Notifications/Messages"
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 
@@ -105,7 +106,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
   const handleUpload = (info: any) => {
     if (info.file !== null) {
       if (info.file.size <= 3145728) {
-        if (checkFile(info.file.name)) {
+        if (checkFile(info.file.size, info.file.name)) {
           getBase64(info.file, (base64: string) => {
             setFileData({
               FileAsBase64: base64.split(",")[1],
@@ -121,7 +122,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
       notificationLogic("error", fileIsNotUpload());
     }
   };
-  const checkFile = (fileName: string): boolean => {
+  const checkFile = (fileSize: number, fileName: string): boolean => {
     const extension = fileName.split(".").reverse()[0].toLowerCase();
     const isCorrectExtension =
       extension.indexOf("pdf") !== -1 ||
@@ -142,7 +143,12 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
         possibleFileExtensions("pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods.")
       );
     }
-    return isCorrectExtension;
+
+    const isEmptyFile = fileSize !== 0;
+      if (!isEmptyFile)
+      notificationLogic("error", fileIsEmpty());
+
+    return isCorrectExtension && isEmptyFile;
   };
 
   const handleSubmit = async (values: any) => {
@@ -212,7 +218,12 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             label="Рішення органу"
             labelCol={{ span: 24 }}
             name="governingBody"
-            rules={descriptionValidation.Inputs}
+            rules={[
+              {
+                required: true,
+                message: emptyInput()
+              }
+            ]}
           >
             <Select
               placeholder="Оберіть орган"
