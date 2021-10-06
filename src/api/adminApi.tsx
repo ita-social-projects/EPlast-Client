@@ -3,13 +3,11 @@ import Api from "./api";
 import BASE_URL from "../config";
 import TableFilterParameters from "../pages/UserTable/Interfaces/TableFilterParameters";
 
-const getUsersForTable = async () => {
-  const response = await Api.get(`Admin/usersTable`);
-
-  return response;
+export const getUsersForTable = async () => {
+  return await Api.get(`Admin/usersTable`);
 };
 
-const getShortUserInfo = async (search: string) => {
+export const getShortUserInfo = async (search: string) => {
     const response = await Api.get(`Admin/ShortUsersInfo/${search}`);
     return response;
   };
@@ -45,6 +43,18 @@ const getRolesForEdit = async (userId: string) => {
   return response;
 };
 
+export const getUsersByAllRoles = async (roles: string[],include:boolean) => {
+  const response = await Api.get(`Admin/GetUsersByAllRoles/${roles.join()}/${include}`);
+
+  return response;
+};
+
+export const getUsersByAnyRole = async (roles: string[],include:boolean) => {
+  const response = await Api.get(`Admin/GetUsersByAnyRole/${roles.join()}/${include}`);
+
+  return response;
+};
+
 const putEditedRoles = async (userId: string, userRoles: any) => {
   const response = await Api.put(`Admin/editedRole/${userId}`, userRoles);
 
@@ -64,6 +74,8 @@ const putCurrentRole = async (userId: string, role: string) => {
 };
 
 export default {
+  getUsersByAnyRole,
+  getUsersByAllRoles,
   getCityRegionAdmins,
   getUsersForTable,
   getShortUserInfo,
