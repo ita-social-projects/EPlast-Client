@@ -5,7 +5,6 @@ metadata:
   labels:
     app: eplastweb  
 spec:
-  replicas: 2
   selector:
     matchLabels:
       app: eplastweb
@@ -20,7 +19,7 @@ spec:
           resources:
             limits:
               cpu: "0.5"
-              memory: "1G"          
+              memory: "700Mi"          
           ports:
           - containerPort: 80
 
