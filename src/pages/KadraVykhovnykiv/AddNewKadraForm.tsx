@@ -103,7 +103,6 @@ type FormAddKadraProps = {
 
                     if(response.data === false){
                       await kadrasApi.createKadra(newKadra)
-                      form.resetFields();
                       onAdd();
                       notificationLogic('success', "Користувач успішно отримав відзнаку");
 
@@ -111,7 +110,6 @@ type FormAddKadraProps = {
                      }
                      else{
                       notificationLogic('error', "Користувач вже отримував цю відзнаку");
-                      form.resetFields();
                       onAdd();
                      }
           
@@ -119,10 +117,9 @@ type FormAddKadraProps = {
             }
                 else{
                     notificationLogic('error', "Номер реєстру вже зайнятий");
-                    form.resetFields();
                     onAdd();
                 }
-        });
+        });form.resetFields();
     }
 
   const backgroundColor = (user: any) => {

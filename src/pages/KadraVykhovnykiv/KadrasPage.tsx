@@ -122,6 +122,7 @@ export const KadrasTable = () => {
                 visible={visible}
                 onClose={handleCancel}
                 footer={null}
+                destroyOnClose = {true}
             >
                 <AddNewKadraForm onAdd={renewPage} showModal={setvisible} ></AddNewKadraForm>
             </Drawer>
