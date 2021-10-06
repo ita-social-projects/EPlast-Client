@@ -63,14 +63,14 @@ const columns = [
     filters: years,
     onFilter: (value: any, record: any) => record.date.includes(value),
     render: (date: Date) => {
-      return moment(date.toLocaleString()).format('DD.MM.YYYY');
+      return moment.utc(date.toLocaleString()).local().format('DD.MM.YYYY');
     },
   },
   {
     title: 'Дата завершення',
     dataIndex: 'endDate',
     render: (endDate: Date, record: any) => {
-      return record.isActive === true ? moment(endDate.toLocaleString()).format('DD.MM.YYYY') : "не активна";
+      return record.isActive === true ? moment.utc(endDate.toLocaleString()).local().format('DD.MM.YYYY') : "не активна";
     },
     sorter: (a: any, b: any) => a.endDate.localeCompare(b.endDate),
     sortDirections: ['ascend', 'descend'] as SortOrder[],

@@ -144,7 +144,7 @@ const AnnualReportTable = () => {
     {
       title: <>Дата подання<SortDirection sort={4} /></>,
       dataIndex: "date",
-      render: (date: any)=>{return SortColumnHighlight(4, moment(date.toLocaleString()).format("DD.MM.YYYY"))},
+      render: (date: any)=>{return SortColumnHighlight(4, moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY"))},
     },
     {
       title: "Статус",
@@ -177,7 +177,7 @@ const AnnualReportTable = () => {
     {
       title: <>Дата подання<SortDirection sort={3} /></>,
       dataIndex: "date",
-      render: (date: any)=>{return SortColumnHighlight(3, moment(date.toLocaleString()).format("DD.MM.YYYY"))},
+      render: (date: any)=>{return SortColumnHighlight(3, moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY"))},
     },
     {
       title: "Статус",
@@ -209,7 +209,7 @@ const AnnualReportTable = () => {
     {
       title: <>Дата подання<SortDirection sort={3} /></>,
       dataIndex: "date",
-      render: (date: any)=>{return SortColumnHighlight(3, moment(date.toLocaleString()).format("DD.MM.YYYY"))},
+      render: (date: any)=>{return SortColumnHighlight(3, moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY"))},
     },
     {
       title: "Статус",

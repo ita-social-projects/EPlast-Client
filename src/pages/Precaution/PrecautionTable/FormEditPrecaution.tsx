@@ -295,7 +295,7 @@ const FormEditPrecaution = ({
                 name="date"
                 label="Дата затвердження"
                 labelCol={{ span: 24 }}
-                initialValue={moment(Precaution.date)}
+                initialValue={moment.utc(Precaution.date).local()}
                 rules={[
                   { 
                     required: true, 

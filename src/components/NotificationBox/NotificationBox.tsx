@@ -80,7 +80,7 @@ const NotificationBox = ({
                                 }
                             </div> 
                             <p className = { classes.Date }>
-                                { moment(item.createdAt).format("DD.MM.YYYY HH:mm") }
+                                { moment.utc(item.createdAt).local().format("DD.MM.YYYY HH:mm") }
                             </p>
                         </div> 
                         <div className = { classes.Button }> 

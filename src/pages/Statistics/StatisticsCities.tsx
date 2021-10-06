@@ -208,16 +208,6 @@ const StatisticsCities = () => {
   let sumOfIndicators = 0;
   dataChart.map((indicator: any) => { sumOfIndicators += indicator.count });
   
-  let onChange = (pagination: any) => {
-    if (pagination) {
-      window.scrollTo({
-        left: 0,
-        top: 0,
-        behavior: "smooth",
-      });
-    }
-  }    
-  
 if(dataFromRow != undefined)
 {
   const regex = /[0-9]/g;
@@ -436,7 +426,6 @@ const onClick = (value: Array<Number>) => {
               }
             };
           }}
-          onChange={onChange}
           pagination={{
             showLessItems: true,
             responsive: true,

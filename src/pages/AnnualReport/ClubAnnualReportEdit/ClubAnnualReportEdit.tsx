@@ -36,9 +36,10 @@ const ClubAnnualReportEdit = () => {
     const [club, setClub] = useState<any>({
         id: 0,
         name: "",
-        description: "",
-        clubURL: "",
+        phoneNumber: "",
         email: "",
+        clubURL: "",
+        street: "",
     });
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingSaveChanges, setIsLoadingSaveChanges]=useState(false);
@@ -65,7 +66,6 @@ const ClubAnnualReportEdit = () => {
             setAdmins(club.data.administration.filter((a: any) => a != null));
 
             setClubMembers(club.data.members);
-
             setFollowers(club.data.followers);
 
             const user: any = jwt(token);
@@ -125,7 +125,7 @@ const ClubAnnualReportEdit = () => {
                             className='textCenter'
                             level={3} >
                             {`Річний звіт куреня ${club.name} за 
-                    ${moment(club.date).year()} рік`}</Title>
+                    ${moment.utc(club.date).local().year()} рік`}</Title>
                         <Link className="LinkText" style={{ fontSize: "14px" }} to={"/clubs/" + club.id} target="blank">Перейти на профіль куреня {club.name}</Link>
                         <br />
                         <br />

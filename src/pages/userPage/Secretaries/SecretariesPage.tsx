@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import userApi from '../../../api/UserApi';
-import AvatarAndProgressStatic from '../personalData/AvatarAndProgressStatic';
 import { useParams } from 'react-router-dom';
 import { Data } from '../Interface/Interface';
 import notificationLogic from '../../../components/Notifications/Notification';
@@ -10,8 +9,12 @@ import {UserCitySecretaryTable} from './UserCitySecretaryTable';
 import { UserRegionSecretaryTable } from './UserRegionSecretaryTable';
 import { UserClubSecretaryTable } from './UserClubSecretaryTable';
 import { UserGoverningBodySecretaryTable } from './UserGoverningBodySecretaryTable';
+import { UserSectorSecretaryTable } from './UserSectorSecretaryTable';
 import{ tryAgain } from "../../../components/Notifications/Messages";
 import { StickyContainer } from 'react-sticky';
+import { PersonalDataContext } from '../personalData/PersonalData';
+import AvatarAndProgressStatic from '../personalData/AvatarAndProgressStatic';
+import { updateLocale } from 'moment';
 
 const tabList = [
     {
@@ -30,31 +33,18 @@ const tabList = [
         key: '4',
         tab: 'Діловодства куреня',
     },
+    {
+        key: '5',
+        tab: 'Діловодства напряму',
+    },
 ];
 
 export const Secretaries = () => {
     const { userId } = useParams();
-    
     const [noTitleKey, setKey] = useState<string>('1');
-    const [data, setData] = useState<Data>();
     const [LoadInfo, setLoadInfo] = useState<boolean>(false);
-    const [userProfile, SetUserProfile] = useState<Data>();
-
-    const fetchData = async () => {
-        const currentUserId = userApi.getActiveUserId();
-        await userApi
-          .getUserProfileById(currentUserId, userId)
-          .then((response) => {
-            SetUserProfile(response.data);
-          })
-          .catch((error) => {
-            notificationLogic("error", error.message);
-          });
-        await userApi.getById(userId).then(response => {
-            setData(response.data);
-            setLoadInfo(true);
-        }).catch(() => { notificationLogic('error', tryAgain) })
-    };
+    
+    const {userProfile, UpdateData} = useContext(PersonalDataContext);
 
     const onTabChange =  (key:string) => { setKey(key) };
 
@@ -62,12 +52,14 @@ export const Secretaries = () => {
         1: <div key='1'><UserGoverningBodySecretaryTable UserId={userId}/></div>,
         2: <div key='2'><UserRegionSecretaryTable UserId={userId}/></div>,
         3: <div key='3'><UserCitySecretaryTable UserId={userId}/></div>,
-        4: <div key='4'><UserClubSecretaryTable UserId={userId}/></div>
+        4: <div key='4'><UserClubSecretaryTable UserId={userId}/></div>,
+        5: <div key='5'><UserSectorSecretaryTable UserId={userId}/></div>
       };
 
-      useEffect(() => {
-        fetchData();
-    }, []);
+    useEffect(()=>{
+        setLoadInfo(true);
+    },[])
+
     return LoadInfo === false ? (
       <div className="kadraWrapper">
         <Skeleton.Avatar
@@ -83,22 +75,22 @@ export const Secretaries = () => {
                     <div className="avatarWrapperSecretaries">
                         <StickyContainer className="kadraWrapper">
                             <AvatarAndProgressStatic
-                                imageUrl={data?.user.imagePath as string}
-                                time={data?.timeToJoinPlast}
-                                firstName={data?.user.firstName}
-                                lastName={data?.user.lastName}
-                                isUserPlastun={data?.isUserPlastun}
-                                pseudo={data?.user.pseudo}
-                                governingBody={data?.user.governingBody}
-                                region={data?.user.region}
-                                city={data?.user.city}
-                                club={data?.user.club} 
-                                governingBodyId={data?.user.governingBodyId}
-                                cityId={data?.user.cityId}
-                                clubId={data?.user.clubId}
-                                regionId={data?.user.regionId}
-                                cityMemberIsApproved={data?.user.cityMemberIsApproved}
-                                clubMemberIsApproved={data?.user.clubMemberIsApproved}
+                                imageUrl={userProfile?.user.imagePath as string}
+                                time={userProfile?.timeToJoinPlast}
+                                firstName={userProfile?.user.firstName}
+                                lastName={userProfile?.user.lastName}
+                                isUserPlastun={userProfile?.isUserPlastun}
+                                pseudo={userProfile?.user.pseudo}
+                                governingBody={userProfile?.user.governingBody}
+                                region={userProfile?.user.region}
+                                city={userProfile?.user.city}
+                                club={userProfile?.user.club} 
+                                governingBodyId={userProfile?.user.governingBodyId}
+                                cityId={userProfile?.user.cityId}
+                                clubId={userProfile?.user.clubId}
+                                regionId={userProfile?.user.regionId}
+                                cityMemberIsApproved={userProfile?.user.cityMemberIsApproved}
+                                clubMemberIsApproved={userProfile?.user.clubMemberIsApproved}
                                 showPrecautions = {userProfile?.shortUser === null} />
                         </StickyContainer>
                     </div>
@@ -124,7 +116,6 @@ export const Secretaries = () => {
                 </Form>
             </div>
     )
-
 }
-
 export default Secretaries;
+

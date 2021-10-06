@@ -1,4 +1,4 @@
-import GoverningBodyUser from "../../../models/GoverningBody/GoverningBodyUser";
+import SectorUser from "../../../models/GoverningBody/Sector/SectorUser";
 import moment from "moment";
 
 const columns = [
@@ -9,7 +9,7 @@ const columns = [
   {
     title: "Користувач",
     dataIndex: "user",
-    render: (user: GoverningBodyUser) => {
+    render: (user: SectorUser) => {
       return user.firstName + " " + user.lastName;
     },
   },
@@ -24,23 +24,23 @@ const columns = [
     title: "Початок каденції",
     dataIndex: "startDate",
     render: (startDate: Date) => {
-      return moment.utc(startDate).local().format("DD.MM.YYYY");
+      return moment(startDate).format("DD.MM.YYYY");
     },
   },
   {
     title: "Кінець каденції",
     dataIndex: "endDate",
     render: (endDate: Date) => {
-      return moment.utc(endDate).local().format("DD.MM.YYYY") === "Invalid date"
+      return moment(endDate).format("DD.MM.YYYY") === "Invalid date"
         ? " Не закінчена "
-        : moment.utc(endDate).local().format("DD.MM.YYYY");
+        : moment(endDate).format("DD.MM.YYYY");
     },
   },
   {
-    title: "Край",
-    dataIndex: "governingBody",
-    render: (governingBody: any) => {
-      return governingBody.governingBodyName;
+    title: "Напрям",
+    dataIndex: "sector",
+    render: (sector: any) => {
+      return sector.name;
     },
   },
 ];

@@ -1,33 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Menu } from 'antd';
 import './Menu.less';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Roles } from '../../../models/Roles/Roles';
 import UserApi from '../../../api/UserApi';
 import { User } from '../Interface/Interface';
+import { PersonalDataContext } from '../personalData/PersonalData';
 
 type CustomMenuProps = {
   id: string;
 }
 const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
   let { url } = useRouteMatch();
-  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const [activeUserId, setActiveUserId] = useState<string>("");
-  const [activeUserProfile, setActiveUserProfile] = useState<User>();
+  const { activeUserRoles, activeUserId, activeUserProfile } = useContext(PersonalDataContext);
   const history = useHistory();
-
-  useEffect(() => {
-    checkAccessToManage();
-  },[]);
-
-  const checkAccessToManage = async () => {
-    let userRoles = UserApi.getActiveUserRoles();
-      setActiveUserRoles(userRoles);
-    let userId = UserApi.getActiveUserId();
-      setActiveUserId(userId);
-    let userProfile = await UserApi.getActiveUserProfile();
-      setActiveUserProfile(userProfile);
-  };
 
   url = (url.replace(`/userpage/`, "")).replace(`/${props.id}`, "");
 

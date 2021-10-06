@@ -396,7 +396,7 @@ export default function () {
     if (value === "") {
       setBirthday(undefined);
     } else {
-      setBirthday(moment(event?._d));
+      setBirthday(moment.utc(event?._d).local());
     }
   };
 
