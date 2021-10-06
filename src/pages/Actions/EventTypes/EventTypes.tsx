@@ -42,7 +42,7 @@ const EventTypes = () => {
 
     ) : (
         <div className={classes.background}>
-            <h5 className={classes.mainTitle}>Типи подій</h5>
+            <h1 className={classes.mainTitle}>Типи</h1>
             <div className={classes.actionsWrapper}>{plastTypes}</div>
         </div>
     )

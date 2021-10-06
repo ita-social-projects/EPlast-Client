@@ -19,7 +19,7 @@
 }
 .wrapperImg {
     width:  calc(100% - 60px);
-    min-height: 520px;
+    min-height: 580px;
     height: auto;
     box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
     display: flex;
@@ -133,7 +133,7 @@
     margin: 0px 0px 20px 20px;
 }
 
-@media (max-width: 791px) {
+@media (max-width: 930px) {
     .wrapper {
         flex-direction: column;
     }

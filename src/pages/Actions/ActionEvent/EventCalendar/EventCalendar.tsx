@@ -122,8 +122,8 @@ export default function () {
                         <div className={classes.title}>
                         <h1 className={classes.title}>{eventInfo?.event?.title}</h1>
                         </div>
-                        <h2>Дата початку: {moment(eventInfo?.event?.start).format("LLLL")}</h2>
-                        <h2>Дата завершення: {moment(eventInfo?.event?.end).format("LLLL")}</h2>
+                        <h2>Дата початку: {moment.utc(eventInfo?.event?.start).local().format("LLLL")}</h2>
+                        <h2>Дата завершення: {moment.utc(eventInfo?.event?.end).local().format("LLLL")}</h2>
                         <h2>Локація: {eventInfo?.event?._def.extendedProps.eventlocation}</h2>
                         <h2 className={classes.description}>Опис: {eventInfo?.event?._def.extendedProps.description}</h2>
                         < Button type="primary" className={classes.button} id={classes.button} onClick={() => history.push(`/events/details/${eventInfo?.event?.id}`)} >

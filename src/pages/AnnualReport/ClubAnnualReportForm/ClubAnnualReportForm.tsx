@@ -13,9 +13,10 @@ interface Props {
     club: {
         id: 0,
         name: "",
-        description: "",
-        clubURL: "",
+        phoneNumber: "",
         email: "",
+        clubURL: "",
+        street: "",
     }
     admins: ClubAdmin[],
     members: ClubMember[],
@@ -207,6 +208,28 @@ export const ClubAnnualReportForm = (props: Props) => {
                 <Card.Grid className='container'>
                     <Row>
                         <Col span={8}>
+                            <Form.Item
+                                label={(<Text strong={true}>Номер телефону</Text>)}
+                            >
+                                {club.clubURL?.replace(' ', '') == '' ? 'немає' : club.phoneNumber}
+                            </Form.Item>
+                            <Form.Item
+                                label={(<Text strong={true}>Електронна пошта</Text>)}
+                            >
+                                {club.clubURL?.replace(' ', '') == '' ? 'немає' : club.email}
+                            </Form.Item>
+                            <Form.Item
+                                label={(<Text strong={true}>Вулиця</Text>)}
+                            >
+                                {club.clubURL?.replace(' ', '') == '' ? 'немає' : club.street}
+                            </Form.Item>
+                            <Form.Item
+                                label={(<Text strong={true}>Сайт/сторінка в інтернеті</Text>)}
+                            >
+                                {club.clubURL?.replace(' ', '') == '' ? 'немає' : club.clubURL}
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
                             <Text strong={true}>Контакти:</Text>
                             {head ? (
                                 <Form.Item
@@ -219,14 +242,6 @@ export const ClubAnnualReportForm = (props: Props) => {
                             ) : (
                                 <> Ще немає адміністратора куреня</>
                             )}
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item
-                                label={(<Text strong={true}>Сайт/сторінка в інтернеті</Text>)}
-                                className='w100'
-                            >
-                                {club.clubURL?.replace(' ', '') == '' ? 'немає' : club.clubURL}
-                            </Form.Item>
                         </Col>
                         <Col span={8}>
                             <Form.Item

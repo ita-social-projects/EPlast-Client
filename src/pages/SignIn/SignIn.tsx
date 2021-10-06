@@ -121,7 +121,7 @@ export default function () {
             Увійти
           </Button>
         </Form.Item>
-        <Link className={styles.forgot} to="/forgotPassword">Забули пароль</Link>
+        <Link className={styles.forgot} to="/forgotPassword">Забули пароль?</Link>
         <div className={styles.GoogleFacebookLogin}>
           {googleLoading ? (
             ''
