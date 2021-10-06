@@ -12,12 +12,14 @@ import { Blanks } from "../Blanks/Blanks";
 import UserApi from "../../../api/UserApi";
 import { Data, IPersonalDataContext, User } from "../Interface/Interface";
 import notificationLogic from '../../../components/Notifications/Notification';
+import { string } from "yup";
 
 const DefaultState:IPersonalDataContext = {
   userProfile: undefined,
   activeUserRoles: [],
   activeUserId: "",
   loading: false,
+  imageBase64: "",
   activeUserProfile: undefined
 }
 
@@ -39,6 +41,7 @@ export default function ({
   const [activeUserId, setActiveUserId] = useState<string>("");
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
   const [loading, setLoading] = useState(false);
+  const [imageBase64, setImageBase64] = useState<string>("");
 
   const [userProfile, SetUserProfile] = useState<Data>();
   const ChangeUserProfile = (user: Data) => {
@@ -60,16 +63,19 @@ export default function ({
       .getUserProfileById(currentUserId, userId)
       .then((response) => {
         SetUserProfile(response.data);
+        UserApi.getImage(response.data?.user.imagePath ).then((response: { data: any }) => {
+          setImageBase64(response.data);
+        });
       })
       .catch((error) => {
         notificationLogic("error", error.message);
-      });
+      });   
       setLoading(true);
   }
 
   return (
     <PersonalDataContext.Provider value={{
-      userProfile, activeUserRoles, activeUserId, activeUserProfile, loading, ChangeUserProfile, UpdateData
+      userProfile, activeUserRoles, activeUserId, activeUserProfile, loading, imageBase64, ChangeUserProfile, UpdateData
     }}>
       <div className="mainContainer">
         <Menu id={userId} />
