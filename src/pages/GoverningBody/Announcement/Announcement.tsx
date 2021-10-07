@@ -12,7 +12,7 @@ import ClickAwayListener from "react-click-away-listener";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import EditAnnouncementModal from "./EditAnnouncementModal";
 import { getUserAccess } from "../../../api/regionsBoardApi";
-
+import { Roles } from '../../../models/Roles/Roles';
 import jwt from 'jwt-decode';
 import AuthStore from "../../../stores/AuthStore";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
@@ -70,7 +70,7 @@ const Announcements = () => {
   }
 
   const getUsers = async () => {
-    let prohibitedUsers = ['Зареєстрований користувач'];
+    let prohibitedUsers = [Roles.RegisteredUser];
     let result: any
     await getUsersByAllRoles(prohibitedUsers,false).then(
       response => {
