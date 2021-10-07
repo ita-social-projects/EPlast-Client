@@ -91,7 +91,7 @@ export const KVTable = ({ current, searchData }: props) => {
   ? data.filter((item) => {
       return Object.values([
         item.numberInRegister,
-        moment(item.dateOfGranting.toLocaleString()).format("DD.MM.YYYY"),
+        moment.utc(item.dateOfGranting.toLocaleString()).local().format("DD.MM.YYYY"),
       ]).find((element) => {
         return String(element).toLowerCase().includes(searchData);
       });

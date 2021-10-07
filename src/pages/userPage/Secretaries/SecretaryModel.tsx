@@ -17,8 +17,12 @@ interface SecretaryModel{
     region?: {
         id: number,
         name: string
-    }
+    },
     governingBody?: {
+        id: number,
+        name: string
+    },
+    sector?: {
         id: number,
         name: string
     }

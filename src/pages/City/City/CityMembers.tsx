@@ -71,7 +71,7 @@ const CityMembers = () => {
     const existingAdmin = [head, ...admins].filter(
       (a) =>
         a?.userId === member.userId &&
-        (moment(a?.endDate).isAfter(moment()) || a?.endDate === null)
+        (moment.utc(a?.endDate).local().isAfter(moment()) || a?.endDate === null)
     );
 
     for (let i of existingAdmin) {

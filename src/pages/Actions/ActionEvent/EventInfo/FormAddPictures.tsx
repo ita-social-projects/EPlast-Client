@@ -4,9 +4,9 @@ import {
     Button,
     Upload, notification, Tooltip,
 } from 'antd';
-import {UploadOutlined} from '@ant-design/icons';
+import { UploadOutlined } from '@ant-design/icons';
 import eventsApi from "../../../../api/eventsApi";
-import {EventGallery} from "./EventInfo";
+import { EventGallery } from "./EventInfo";
 import {
     updateNotification,
     failUpdatingNotification,
@@ -22,8 +22,8 @@ interface Props {
 }
 
 const formItemLayout = {
-    labelCol: {span: 6},
-    wrapperCol: {span: 14},
+    labelCol: { span: 6 },
+    wrapperCol: { span: 14 },
 };
 
 const normFile = (e: any) => {
@@ -33,13 +33,13 @@ const normFile = (e: any) => {
     return e && e.fileList;
 };
 
-const dummyRequest = ({file, onSuccess}: any) => {
+const dummyRequest = ({ file, onSuccess }: any) => {
     setTimeout(() => {
         onSuccess("ok");
     }, 0);
 };
 
-const FormAddPictures = ({eventId, updateGallery, picturesCount}: Props) => {
+const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
     const [form] = Form.useForm();
     const MaxPicturesCount: number = 15;
     const addPictures = async (eventId: number, data: FormData) => {
@@ -99,7 +99,7 @@ const FormAddPictures = ({eventId, updateGallery, picturesCount}: Props) => {
                 label="Завантажити"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
-                style={{maxHeight: '400px', overflow: 'auto'}}
+                style={{ maxHeight: '400px', overflow: 'auto' }}
             >
                 <Upload
                     name="gallery"
@@ -108,15 +108,15 @@ const FormAddPictures = ({eventId, updateGallery, picturesCount}: Props) => {
                     accept=".jpg,.jpeg,.png"
                     customRequest={dummyRequest}
                 >
-                    <Tooltip placement="right" title={`Ліміт завантаження до: ${MaxPicturesCount} зображень.`}>
+                    <Tooltip placement="right" title={`Ліміт завантаження: до ${MaxPicturesCount} зображень.`}>
                         <Button>
-                            <UploadOutlined/> Додати фотографії
+                            <UploadOutlined /> Додати фотографії
                         </Button>
                     </Tooltip>
                 </Upload>
             </Form.Item>
 
-            <Form.Item wrapperCol={{span: 12, offset: 6}}>
+            <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
                 <Button type="primary" htmlType="submit">
                     Надіслати
                 </Button>

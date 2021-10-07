@@ -11,7 +11,8 @@ import {
   Card,
   Tooltip,
   Badge,
-  Tag } from "antd";
+  Tag
+} from "antd";
 import {
   FileTextOutlined,
   EditOutlined,
@@ -19,10 +20,11 @@ import {
   UserAddOutlined,
   PlusOutlined,
   ContainerOutlined,
-  ExclamationCircleOutlined, 
+  ExclamationCircleOutlined,
   DeleteOutlined,
   MinusOutlined,
-  LoadingOutlined} from "@ant-design/icons";
+  LoadingOutlined
+} from "@ant-design/icons";
 import moment from "moment";
 import {
   addAdministrator,
@@ -31,11 +33,12 @@ import {
   editAdministrator,
   getCityById,
   getLogo,
-  archiveCity, 
+  archiveCity,
   unArchiveCity,
   removeCity,
   toggleMemberStatus,
-  removeFollower } from "../../../api/citiesApi";
+  removeFollower
+} from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -93,17 +96,17 @@ const City = () => {
 
   const changeApproveStatus = async (memberId: number) => {
     setIsLoadingMemberId(memberId)
-    setIsLoadingPlus(false);  
+    setIsLoadingPlus(false)
     const member = await toggleMemberStatus(memberId);
     moment.locale("uk-ua");
 
     await createNotification(member.data.userId,
       "Вітаємо, вас зараховано до членів станиці", true);
-    
-    if(member.data.wasInRegisteredUserRole){
+
+    if (member.data.wasInRegisteredUserRole) {
       await createNotification(member.data.userId, "Тобі надано нову роль: 'Прихильник' в станиці", true);
     }
-    
+
     member.data.user.imagePath = (
       await userApi.getImage(member.data.user.imagePath)
     ).data;
@@ -119,23 +122,23 @@ const City = () => {
 
   const removeMember = async (followerID: number) => {
     await removeFollower(followerID);
-    await createNotification(activeUserID as string, "На жаль, ви були виключені із прихильників станиці",true);
+    await createNotification(activeUserID as string, "На жаль, ви були виключені із прихильників станиці", true);
     const response = await getCityById(+id);
     setFollowersCount(response.data.followerCount);
     setFollowers(followers.filter((f) => f.id !== followerID));
     setCanJoin(true);
-}
+  }
 
   const addMember = async () => {
     const follower = await addFollower(+id);
 
-    if (city.head !== null ){
+    if (city.head !== null) {
       await createNotification(city.head.userId,
-        `Новий прихильник приєднався: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці`, true);   
+        `Новий прихильник ${follower.data.user.firstName} ${follower.data.user.lastName} приєднався до вашої станиці`, true);
     }
-    if (city.headDeputy !== null ){
+    if (city.headDeputy !== null) {
       await createNotification(city.headDeputy.userId,
-        `Новий прихильник приєднався: ${follower.data.user.firstName} ${follower.data.user.lastName} до вашої станиці`, true);   
+        `Новий прихильник ${follower.data.user.firstName} ${follower.data.user.lastName} приєднався до вашої станиці`, true);
     }
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
@@ -193,7 +196,7 @@ const City = () => {
     const response = await getCityById(+id);
     setDocumentsCount(response.data.documentsCount);
     if (documents.length < 6) {
-      setDocuments([...documents, newDocument]); 
+      setDocuments([...documents, newDocument]);
     }
     notificationLogic("success", fileIsAdded());
   };
@@ -208,8 +211,8 @@ const City = () => {
       maskClosable: true,
       onOk() {
         membersCount !== 0 || adminsCount !== 0 || followersCount !== 0
-        ? setActiveMemberVisibility(true)
-        : ArchiveCity();
+          ? setActiveMemberVisibility(true)
+          : ArchiveCity();
       },
     });
   }
@@ -227,7 +230,7 @@ const City = () => {
       },
     });
   }
-  
+
   function seeDeleteModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити дану станицю?",
@@ -264,7 +267,7 @@ const City = () => {
       okType: 'primary',
       cancelText: 'Скасувати',
       maskClosable: true,
-      onOk() {removeMember(followerID)}
+      onOk() { removeMember(followerID) }
     });
   }
 
@@ -299,7 +302,7 @@ const City = () => {
       setFollowersCount(response.data.followerCount);
       setDocumentsCount(response.data.documentsCount);
       setActiveUserRoles(userApi.getActiveUserRoles);
-    } 
+    }
     finally {
       setLoading(false);
     }
@@ -313,25 +316,25 @@ const City = () => {
     setCity(response.data);
     setAdmins(admins);
     setPhotosLoading(true);
-    setPhotos([...admins],response.data.logo);
+    setPhotos([...admins], response.data.logo);
   }
 
   const addCityAdmin = async (newAdmin: CityAdmin) => {
-    let previousAdmin: CityAdmin = new CityAdmin(); 
+    let previousAdmin: CityAdmin = new CityAdmin();
     admins.map((admin) => {
-      if(admin.adminType.adminTypeName == newAdmin.adminType.adminTypeName){
+      if (admin.adminType.adminTypeName == newAdmin.adminType.adminTypeName) {
         previousAdmin = admin;
       }
     });
     await addAdministrator(newAdmin.cityId, newAdmin);
     await updateAdmins();
-    if(previousAdmin.adminType.adminTypeName != ""){
+    if (previousAdmin.adminType.adminTypeName != "") {
       await createNotification(previousAdmin.userId,
         `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в станиці`, true);
     }
     await createNotification(newAdmin.userId,
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`, true);
-      notificationLogic("success", "Користувач успішно доданий в провід");
+    notificationLogic("success", "Користувач успішно доданий в провід");
   };
 
   const editCityAdmin = async (admin: CityAdmin) => {
@@ -341,7 +344,7 @@ const City = () => {
     await createNotification(admin.userId,
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в станиці`, true);
   };
-  
+
   const showDiseableModal = async (admin: CityAdmin) => {
     return Modal.warning({
       title: "Ви не можете змінити роль цьому користувачу",
@@ -352,18 +355,18 @@ const City = () => {
           </b>{" "}
           є Головою Станиці, час правління закінчується{" "}
           <b>
-            {moment(city.head.endDate).format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(city.head.endDate).local().format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
-              : moment(city.head.endDate).format("DD.MM.YYYY")}
+              : moment.utc(city.head.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {}
+      onOk() { }
     });
   };
 
-  const showConfirmCityAdmin  = async (admin: CityAdmin) => {
+  const showConfirmCityAdmin = async (admin: CityAdmin) => {
     return Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (admin.adminType.adminTypeName.toString() === Roles.CityHead ?
@@ -373,38 +376,38 @@ const City = () => {
           </b>{" "}
           є Головою Станиці, час правління закінчується{" "}
           <b>
-            {moment(city.head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(city.head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
-              : moment(city.head.endDate).format("DD.MM.YYYY")}
+              : moment.utc(city.head.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
         :
         <div style={{ margin: 10 }}>
-        <b>
-          {city.headDeputy.user.firstName} {city.headDeputy.user.lastName}
-        </b>{" "}
-        є Заступником Голови Станиці, час правління закінчується{" "}
-        <b>
-          {moment(city.headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
-            ? "ще не скоро"
-            : moment(city.headDeputy.endDate).format("DD.MM.YYYY")}
-        </b>
-        .
-      </div>
+          <b>
+            {city.headDeputy.user.firstName} {city.headDeputy.user.lastName}
+          </b>{" "}
+          є Заступником Голови Станиці, час правління закінчується{" "}
+          <b>
+            {moment.utc(city.headDeputy?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(city.headDeputy.endDate).local().format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
       ),
       onCancel() { },
       async onOk() {
         if (admin.id === 0) {
-         await addCityAdmin(admin);
+          await addCityAdmin(admin);
         } else {
-         await editCityAdmin(admin);
+          await editCityAdmin(admin);
         }
       },
     });
   };
 
-  const checkAdminId = async (admin: CityAdmin)=> {
+  const checkAdminId = async (admin: CityAdmin) => {
     if (admin.id === 0) {
       await addCityAdmin(admin);
     } else {
@@ -412,7 +415,7 @@ const City = () => {
     }
   }
 
-  const handleOk = async(admin: CityAdmin) => {
+  const handleOk = async (admin: CityAdmin) => {
     try {
       if (admin.adminType.adminTypeName === Roles.CityHead) {
         if (city.head !== null && city.head?.userId !== admin.userId) {
@@ -420,39 +423,39 @@ const City = () => {
         } else {
           checkAdminId(admin);
         }
-       } else if (admin.adminType.adminTypeName === Roles.CityHeadDeputy) {
+      } else if (admin.adminType.adminTypeName === Roles.CityHeadDeputy) {
         if (admin.userId === city.head?.userId) {
           showDiseableModal(admin);
         } else if (city.headDeputy !== null && city.headDeputy?.userId !== admin.userId) {
-            showConfirmCityAdmin(admin);
-          } else {
-            checkAdminId(admin);
-          }
-       } else {
-          await addCityAdmin(admin);
-       }
+          showConfirmCityAdmin(admin);
+        } else {
+          checkAdminId(admin);
+        }
+      } else {
+        await addCityAdmin(admin);
+      }
     } finally {
       setvisible(false);
     }
   };
 
-  const handleClose = async() => {
+  const handleClose = async () => {
     setvisible(false);
   };
-  
+
   const handleConfirm = async () => {
     setActiveMemberVisibility(false);
   };
 
-  const createNotification = async(userId: string, message: string, cityExist: boolean) => {
-    if(cityExist){
+  const createNotification = async (userId: string, message: string, cityExist: boolean) => {
+    if (cityExist) {
       await NotificationBoxApi.createNotifications(
         [userId],
         message + ": ",
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/cities/${id}`,
         city.name
-        );  
+      );
     } else {
       await NotificationBoxApi.createNotifications(
         [userId],
@@ -487,7 +490,7 @@ const City = () => {
                 second_name="Станиці"
               />
               {isActiveCity ? null : (
-                <Tag className="status" color = {"red"}>
+                <Tag className="status" color={"red"}>
                   Заархівовано
                 </Tag>
               )}
@@ -498,8 +501,8 @@ const City = () => {
                 {cityLogoLoading ? (
                   <Skeleton.Avatar active shape={"square"} size={172} />
                 ) : (
-                    <img src={cityLogo64} alt="City" className="cityLogo" />
-                  )}
+                  <img src={cityLogo64} alt="City" className="cityLogo" />
+                )}
               </Col>
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
                 <iframe
@@ -521,23 +524,23 @@ const City = () => {
                     {city.head.endDate ? (
                       <Paragraph>
                         <b>Час правління:</b>{" "}
-                        {moment(city.head.startDate).format("DD.MM.YYYY")}{" - "}
-                        {moment(city.head.endDate).format("DD.MM.YYYY")}
+                        {moment.utc(city.head.startDate).local().format("DD.MM.YYYY")}{" - "}
+                        {moment.utc(city.head.endDate).local().format("DD.MM.YYYY")}
                       </Paragraph>
                     ) : (
-                        <Paragraph>
-                          <b>Початок правління:</b>{" "}
-                          {moment(city.head.startDate).format("DD.MM.YYYY")}
-                        </Paragraph>
-                      )}
+                      <Paragraph>
+                        <b>Початок правління:</b>{" "}
+                        {moment.utc(city.head.startDate).local().format("DD.MM.YYYY")}
+                      </Paragraph>
+                    )}
                   </div>
                 ) : (
-                    <Paragraph>
-                      <b>Ще немає голови станиці</b>
-                    </Paragraph>
-                  )}
-                  
-                  {city.headDeputy ? (
+                  <Paragraph>
+                    <b>Ще немає голови станиці</b>
+                  </Paragraph>
+                )}
+
+                {city.headDeputy ? (
                   <div>
                     <Paragraph>
                       <b>Заступник Голови Станиці:</b> {city.headDeputy.user.firstName}{" "}
@@ -546,21 +549,21 @@ const City = () => {
                     {city.headDeputy.endDate ? (
                       <Paragraph>
                         <b>Час правління:</b>{" "}
-                        {moment(city.headDeputy.startDate).format("DD.MM.YYYY")}{" - "}
-                        {moment(city.headDeputy.endDate).format("DD.MM.YYYY")}
+                        {moment.utc(city.headDeputy.startDate).local().format("DD.MM.YYYY")}{" - "}
+                        {moment.utc(city.headDeputy.endDate).local().format("DD.MM.YYYY")}
                       </Paragraph>
                     ) : (
-                        <Paragraph>
-                          <b>Початок правління:</b>{" "}
-                          {moment(city.headDeputy.startDate).format("DD.MM.YYYY")}
-                        </Paragraph>
-                      )}
+                      <Paragraph>
+                        <b>Початок правління:</b>{" "}
+                        {moment.utc(city.headDeputy.startDate).local().format("DD.MM.YYYY")}
+                      </Paragraph>
+                    )}
                   </div>
                 ) : (
-                    <Paragraph>
-                      <b>Ще немає заступника голови станиці</b>
-                    </Paragraph>
-                  )}
+                  <Paragraph>
+                    <b>Ще немає заступника голови станиці</b>
+                  </Paragraph>
+                )}
               </Col>
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
                 {city.cityURL || city.email || city.phoneNumber ? (
@@ -587,10 +590,10 @@ const City = () => {
                     ) : null}
                   </div>
                 ) : (
-                    <Paragraph>
-                      <b>Немає контактів</b>
-                    </Paragraph>
-                  )}
+                  <Paragraph>
+                    <b>Немає контактів</b>
+                  </Paragraph>
+                )}
               </Col>
             </Row>
             <Row className="cityButtons" justify="center" gutter={[12, 0]}>
@@ -638,7 +641,7 @@ const City = () => {
                           <Tooltip title="Архівувати станицю">
                             <ContainerOutlined
                               className="cityInfoIconDelete"
-                              onClick={() => seeArchiveModal()} 
+                              onClick={() => seeArchiveModal()}
                             />
                           </Tooltip>
                         </Col>) : (
@@ -647,7 +650,7 @@ const City = () => {
                             <Tooltip title="Видалити станицю">
                               <DeleteOutlined
                                 className="cityInfoIconDelete"
-                                onClick={() => seeDeleteModal()} 
+                                onClick={() => seeDeleteModal()}
                               />
                             </Tooltip>
                           </Col>
@@ -655,8 +658,8 @@ const City = () => {
                             <Tooltip title="Розархівувати станицю">
                               <ContainerOutlined
                                 className="cityInfoIcon"
-                                color = "green" 
-                                onClick={() => seeUnArchiveModal()} 
+                                color="green"
+                                onClick={() => seeUnArchiveModal()}
                               />
                             </Tooltip>
                           </Col>
@@ -691,23 +694,23 @@ const City = () => {
                   >
                     <div
                       onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
-                        ? history.push(`/userpage/main/${member.userId}`) 
+                        ? history.push(`/userpage/main/${member.userId}`)
                         : undefined
                       }
                     >
                       {photosLoading ? (
                         <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
-                          <Avatar size={64} src={member.user.imagePath} />
-                        )}
+                        <Avatar size={64} src={member.user.imagePath} />
+                      )}
                       <p className="userName">{member.user.firstName}</p>
                       <p className="userName">{member.user.lastName}</p>
                     </div>
                   </Col>
                 ))
               ) : (
-                  <Paragraph>Ще немає членів станиці</Paragraph>
-                )}
+                <Paragraph>Ще немає членів станиці</Paragraph>
+              )}
             </Row>
             <div className="cityMoreButton">
               <Button
@@ -750,24 +753,24 @@ const City = () => {
                       {photosLoading ? (
                         <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                       ) : (
-                          <Avatar size={64} src={admin.user.imagePath} />
-                        )}
+                        <Avatar size={64} src={admin.user.imagePath} />
+                      )}
                       <p className="userName">{admin.user.firstName}</p>
                       <p className="userName">{admin.user.lastName}</p>
                     </div>
                   </Col>
                 ))
               ) : (
-                  <Paragraph>Ще немає діловодів станиці</Paragraph>
-                )}
+                <Paragraph>Ще немає діловодів станиці</Paragraph>
+              )}
             </Row>
             <div className="cityMoreButton">
               {isActiveCity ? (canEdit ? (
-              <PlusSquareFilled
-                type="primary"
-                className="addReportIcon"
-                onClick={() => setvisible(true)}
-              />):null) : null}
+                <PlusSquareFilled
+                  type="primary"
+                  className="addReportIcon"
+                  onClick={() => setvisible(true)}
+                />) : null) : null}
               <Button
                 type="primary"
                 className="cityInfoButton"
@@ -783,14 +786,14 @@ const City = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={4}>Документообіг станиці <a onClick={() => 
-              canEdit || activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy) 
-              || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
-              || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy) 
-              || (!activeUserRoles.includes(Roles.RegisteredUser) && city.name == activeUserCity)
-            ?
-              history.push(`/cities/documents/${city.id}`)
-            : undefined
+            <Title level={4}>Документообіг станиці <a onClick={() =>
+              canEdit || activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)
+                || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+                || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy)
+                || (!activeUserRoles.includes(Roles.RegisteredUser) && city.name == activeUserCity)
+                ?
+                history.push(`/cities/documents/${city.id}`)
+                : undefined
             }>
               {documentsCount !== 0 ?
                 <Badge
@@ -818,15 +821,15 @@ const City = () => {
                   </Col>
                 ))
               ) : (
-                  <Paragraph>Ще немає документів станиці</Paragraph>
-                )}
+                <Paragraph>Ще немає документів станиці</Paragraph>
+              )}
             </Row>
             <div className="cityMoreButton">
-              {canEdit || activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy) 
-                  || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
-                  || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy) 
-                  || (!activeUserRoles.includes(Roles.RegisteredUser)
-                   && city.name == activeUserCity)
+              {canEdit || activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)
+                || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
+                || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy)
+                || (!activeUserRoles.includes(Roles.RegisteredUser)
+                  && city.name == activeUserCity)
                 ? (
                   <Button
                     type="primary"
@@ -837,7 +840,7 @@ const City = () => {
                   </Button>
                 ) : null
               }
-              {isActiveCity ? ( canEdit ? (
+              {isActiveCity ? (canEdit ? (
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
@@ -880,7 +883,7 @@ const City = () => {
                     <p>Доєднатися</p>
                   </div>
                 </Col>
-              ) : null): <Paragraph>Ще немає прихильників станиці</Paragraph>}
+              ) : null) : <Paragraph>Ще немає прихильників станиці</Paragraph>}
               {followers.length !== 0 ? (
                 followers.slice(0, canJoin ? 5 : 6).map((followers) => (
                   <Col
@@ -899,30 +902,30 @@ const City = () => {
                         {photosLoading ? (
                           <Skeleton.Avatar active size={64}></Skeleton.Avatar>
                         ) : (
-                            <Avatar size={64} src={followers.user.imagePath} />
-                          )}
+                          <Avatar size={64} src={followers.user.imagePath} />
+                        )}
                         <p className="userName">{followers.user.firstName}</p>
                         <p className="userName">{followers.user.lastName}</p>
                       </div>
-                      {(canEdit && isLoadingPlus) || isLoadingMemberId !== followers.id  ? (
+                      {(canEdit && isLoadingPlus) || (isLoadingMemberId !== followers.id && !isLoadingPlus) ? (
                         <Tooltip placement={"bottom"} title={"Додати до членів"}>
                           <PlusOutlined
                             className="approveIcon"
                             onClick={() => changeApproveStatus(followers.id)}
                           />
                         </Tooltip>
-                        ) : (followers.userId === activeUserID) ? (
+                      ) : (followers.userId === activeUserID) ? (
                         <Tooltip placement={"bottom"} title={"Покинути станицю"}>
-                          <MinusOutlined 
+                          <MinusOutlined
                             className="approveIcon"
                             onClick={() => seeSkipModal(followers.id)}
                           />
-                         </Tooltip>) : !isLoadingPlus && isLoadingMemberId === followers.id ? (
-                         <Tooltip placement={"bottom"} title={"Зачекайте"}>
-                            <LoadingOutlined className="approveIcon"/>
-                         </Tooltip>
-                         ) : null
-                       }
+                        </Tooltip>) : !isLoadingPlus && isLoadingMemberId === followers.id ? (
+                          <Tooltip placement={"bottom"} title={"Зачекайте"}>
+                            <LoadingOutlined className="approveIcon" />
+                          </Tooltip>
+                        ) : null
+                      }
                     </div>
                   </Col>
                 ))
@@ -963,14 +966,14 @@ const City = () => {
       </Modal>
 
       <Modal
-          title="На жаль ви не можете архівувати зазначену Станицю"
-          visible={activeMemberVisibility}
-          onOk={handleConfirm}
-          onCancel={handleConfirm}
-          footer={null}
-        >
-          <CheckActiveMembersForm members = {members} followers = {followers} admins = {admins}  onAdd={handleConfirm} />
-        </Modal>
+        title="На жаль ви не можете архівувати зазначену Станицю"
+        visible={activeMemberVisibility}
+        onOk={handleConfirm}
+        onCancel={handleConfirm}
+        footer={null}
+      >
+        <CheckActiveMembersForm members={members} followers={followers} admins={admins} onAdd={handleConfirm} />
+      </Modal>
 
       {canEdit ? (
         <AddDocumentModal
@@ -984,8 +987,8 @@ const City = () => {
       ) : null}
     </Layout.Content>
   ) : (
-        <Title level={2}>Місто не знайдено</Title>
-      );
+    <Title level={2}>Місто не знайдено</Title>
+  );
 };
 
 export default City;
