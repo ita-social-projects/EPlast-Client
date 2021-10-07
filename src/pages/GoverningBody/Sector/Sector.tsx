@@ -331,7 +331,7 @@ const Sector = () => {
           xs={24}
         >
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Провід <a onClick={() => history.push(`/governingBodies/${governingBodyId}/sectors/${sector.id}/administration`)}>
+            <Title level={4}>Провід напряму керівного органу <a onClick={() => history.push(`/governingBodies/${governingBodyId}/sectors/${sector.id}/administration`)}>
               {admins.length !== 0 ?
                 <Badge
                   count={admins.length}

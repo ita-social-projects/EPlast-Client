@@ -25,8 +25,7 @@ import "./AddAdministrationModal.less"
 const confirm = Modal.confirm;
 
 const AddGoverningBodiesSecretaryForm = (props: any) => {
-  const [head, setHead] = useState<GoverningBodyAdmin>();
-  const { onAdd, setAdmins, setGoverningBodyHead } = props;
+  const { onAdd, setAdmins, admins, setGoverningBodyHead } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [usersLoading, setUsersLoading] = useState<boolean>(false);
@@ -47,13 +46,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   ]);
   const [workEmail, setWorkEmail] = useState<string>("");
 
-  const getHead = async () => {
-    if (props.governingBodyId !== 0) {
-      const responseAdmins = await getAllAdmins(props.governingBodyId);
-      setHead(responseAdmins.data.head);
-    }
-  };
-
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
   };
@@ -64,13 +56,9 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
 
   const addGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
     await addAdministrator(admin.governingBodyId, admin);
-    admin.user.imagePath =  (
-        await userApi.getImage(admin.user.imagePath)
-      ).data;
     if (admin.adminType.adminTypeName == Roles.GoverningBodyHead) {
       setGoverningBodyHead(admin);        
     }
-    setAdmins((old: GoverningBodyAdmin[]) => [...old, admin]);
     notificationLogic("success", "Користувач успішно доданий в провід");
     form.resetFields();
     await NotificationBoxApi.createNotifications(
@@ -95,29 +83,30 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   };
 
 
-  const showConfirm = (admin: GoverningBodyAdmin) => {
+  const showConfirm = (newAdmin: GoverningBodyAdmin, existingAdmin: GoverningBodyAdmin) => {
     confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
         <div style={{ margin: 10 }}>
           <b>
-            {head?.user.firstName} {head?.user.lastName}
+            {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          є Головою Керівного Органу, час правління закінчується{" "}
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
           <b>
-            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            {existingAdmin.endDate === null || existingAdmin.endDate === undefined
               ? "ще не скоро"
-              : moment(head?.endDate).format("DD.MM.YYYY")}
+              : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
       onCancel() { },
       onOk() {
-        if (admin.id === 0) {
-          addGoverningBodyAdmin(admin);
+        if (newAdmin.id === 0) {
+          addGoverningBodyAdmin(newAdmin);
+          setAdmins((admins as GoverningBodyAdmin[]).map(x => x.userId === existingAdmin?.userId ? newAdmin : x));
         } else {
-          editGoverningBodyAdmin(admin);
+          editGoverningBodyAdmin(newAdmin);
         }
       },
     });
@@ -139,16 +128,19 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       endDate: values.endDate,
       workEmail: workEmail
     };
-
-    onAdd();
+    newAdmin.user.imagePath =  (
+      await userApi.getImage(newAdmin.user.imagePath)
+    ).data; 
     if (newAdmin.id === 0) {
       try {
-        if (values.AdminType === Roles.GoverningBodyHead && head !== null) {
-          if (head?.userId !== newAdmin.userId) {
-            showConfirm(newAdmin);
-          }
-        } else {
+        const existingAdmin  = (admins as GoverningBodyAdmin[])
+        .find(x => x.adminType.adminTypeName === newAdmin.adminType.adminTypeName)
+        if(existingAdmin !== undefined) {
+          showConfirm(newAdmin, existingAdmin);
+        }
+        else {
           addGoverningBodyAdmin(newAdmin);
+          setAdmins((old: GoverningBodyAdmin[]) => [...old, newAdmin]);
         }
       } finally {
         onAdd();
@@ -180,7 +172,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     if (props.visibleModal) {
       form.resetFields();
     }
-    getHead();
   }, [props]);
 
   return (
