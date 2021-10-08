@@ -13,6 +13,7 @@ import {
   Skeleton,
 } from "antd";
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import ImgCrop from 'antd-img-crop';
 import styles from "./EditUserPage.module.css";
 import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
@@ -42,6 +43,7 @@ import "../EditUserPage/EditUserPage.less"
 import { UpuDegree } from "../Interface/Interface";
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../../models/Roles/Roles";
+import { PersonalDataContext } from "../personalData/PersonalData";
 
 export default function () {
   const { userId } = useParams<{ userId: string }>();
@@ -501,6 +503,11 @@ export default function () {
           <div className={styles.kadraWrapper}>
             <Avatar size={300} src={userAvatar} className="avatarElem" />
             <div className={styles.buttonsImage}>
+            <ImgCrop 
+              shape = 'round'
+              rotate = {true}
+              modalTitle = 'Редагувати фото'
+            >
               <Upload
                 name="avatar"
                 className={styles.changeAvatar}
@@ -515,6 +522,7 @@ export default function () {
                   </Button>
                 </Tooltip>
               </Upload>
+              </ImgCrop>
               {photoName !== defaultPhotoName ?
                 <Tooltip title="Видалити">
                   <Popconfirm
