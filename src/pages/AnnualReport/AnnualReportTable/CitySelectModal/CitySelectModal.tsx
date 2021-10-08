@@ -48,13 +48,8 @@ const CitySelectModal = (props: Props) => {
                             <>
                                 {item.name}
                                 <div
+                                    className="stampCitiesCreatedReport"
                                     hidden={!item.hasReport}
-                                    style={{
-                                        float: "right",
-                                        fontSize: "12px",
-                                        marginTop: "2px",
-                                        marginRight: "10px",
-                                    }}
                                 >
                                     Станиця вже має створений звіт
                                 </div>
