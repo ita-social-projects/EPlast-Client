@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Form,
   Input,
@@ -71,6 +71,7 @@ export default function () {
   const [defaultPhotoName, setDefaultPhotoName] = useState<string>("default_user_image.png");
   const [upuDegree, setUpuDegree] = useState<UpuDegree>();
   const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const { UpdateData } = useContext(PersonalDataContext);
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
@@ -479,6 +480,7 @@ export default function () {
       .catch(() => {
         notificationLogic("error", tryAgain);
       });
+      if(UpdateData) UpdateData();
     fetchData();
   };
 
