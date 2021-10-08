@@ -2,6 +2,7 @@ import { Button, Layout, List } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { addAnnouncement, editAnnouncement, getAllAnnouncements, getAllUserId } from "../../../api/governingBodiesApi";
+import { getUsersByAnyRole, getUsersByAllRoles } from "../../../api/adminApi";
 import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
 import AddAnnouncementModal from "./AddAnnouncementModal";
 import Spinner from "../../Spinner/Spinner";
@@ -11,9 +12,10 @@ import ClickAwayListener from "react-click-away-listener";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import EditAnnouncementModal from "./EditAnnouncementModal";
 import { getUserAccess } from "../../../api/regionsBoardApi";
-
+import { Roles } from '../../../models/Roles/Roles';
 import jwt from 'jwt-decode';
 import AuthStore from "../../../stores/AuthStore";
+import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 
 
 const { Content } = Layout;
@@ -32,7 +34,6 @@ const Announcements = () => {
   const [visibleEditModal, setVisibleEditModal] = useState(false);
   const [activeUserId, setActiveUserId] = useState<string>("");
   const classes = require("./Announcement.module.css");
-  const [users, setUsers] = useState<string[]>([]);
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
 
   const getAnnouncements = async () => {
@@ -63,21 +64,23 @@ const Announcements = () => {
       response => {
         result = response
         setUserAccesses(response.data);
-        console.log(response.data)
       }
     );
     return result
   }
 
-  const getAllUsers = async () => {
-    await getAllUserId().then((response) => {
-      setUsers(response.data);
+  const getUsers = async () => {
+    let prohibitedUsers = [Roles.RegisteredUser];
+    let result: any
+    await getUsersByAllRoles(prohibitedUsers,false).then(
+      response => {
+      result = response
     });
+    return result;
   }
   useEffect(() => {
     getUserAccesses();
     getAnnouncements();
-    getAllUsers();
   }, []);
 
   const handleClickAway = () => {
@@ -85,8 +88,9 @@ const Announcements = () => {
   };
 
   const newNotification = async () => {
+    let usersId = ((await getUsers()).data as ShortUserInfo[]).map(x => x.id)
     await NotificationBoxApi.createNotifications(
-      users,
+      usersId,
       "Додане нове оголошення.",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/announcements`,
