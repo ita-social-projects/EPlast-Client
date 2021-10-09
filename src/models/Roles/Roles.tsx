@@ -21,4 +21,3 @@ export enum Roles {
     GoverningBodySecretary = "Діловод Керівного Органу",
     GoverningBodySectorHead = "Голова Напряму Керівного Органу"
 }
-
