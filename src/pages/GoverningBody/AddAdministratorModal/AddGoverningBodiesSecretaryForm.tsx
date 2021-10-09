@@ -21,6 +21,7 @@ import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin
 import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
 import "./AddAdministrationModal.less"
+import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 
 const confirm = Modal.confirm;
 
@@ -29,21 +30,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [usersLoading, setUsersLoading] = useState<boolean>(false);
-  const [users, setUsers] = useState<any[]>([
-    {
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-        birthday: "",
-      },
-      regionName: "",
-      cityName: "",
-      clubName: "",
-      userPlastDegreeName: "",
-      userRoles: "",
-    },
-  ]);
+  const [users, setUsers] = useState<ShortUserInfo[]>([]);
   const [workEmail, setWorkEmail] = useState<string>("");
 
   const disabledEndDate = (current: any) => {
@@ -59,6 +46,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     if (admin.adminType.adminTypeName == Roles.GoverningBodyHead) {
       setGoverningBodyHead(admin);        
     }
+    setUsers(users.filter(x => x.id !== admin.userId));
     notificationLogic("success", "Користувач успішно доданий в провід");
     form.resetFields();
     await NotificationBoxApi.createNotifications(
@@ -159,14 +147,21 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   useEffect(() => {
     const fetchData = async () => {
       setUsersLoading(true);
-      await adminApi.getUsersForTable().then((response) => {
-        setUsers((response.data as any[]).filter(x => !x.isInLowerRole))
+      await adminApi.getUsersByAnyRole([
+        Roles.RegisteredUser, 
+        Roles.Supporter, 
+        Roles.FormerPlastMember, 
+        Roles.Interested,
+        Roles.GoverningBodyHead, 
+        Roles.GoverningBodySecretary],
+        false)
+      .then((response) => {
+        setUsers(response.data)
         setUsersLoading(false);
       });
     };
     fetchData();
   }, []);
-
 
   useEffect(() => {
     if (props.visibleModal) {
