@@ -5,11 +5,11 @@ import { NonAdminRole } from "../../models/Roles/NonAdminRole";
 //Enum to check place's id equality and check 
 //if user has appropriate rights
 enum Place {
-  Region = 0, //Округа
-  City,       //Станиця
-  Club,       //Курінь
-  All,        //Всі можливі з перерахованих вище пунктів
-  None,       //Не важливий жоден
+  Region  = 0,   //Округа
+  City    = 1,    //Станиця
+  Club    = 2,    //Курінь
+  All     = 3,    //Всі можливі з перерахованих вище пунктів
+  None    = 4,    //Не важливий жоден
 }
 
 //Basic builder for set of dropdown items, can be extended to pattern 'Builder'
@@ -281,13 +281,13 @@ class UserHasAdminRolesCheck extends Check {
     places.forEach(place => {
       switch (place) {
         case Place.Region: 
-          chainContinues = chainContinues ||  this.checkIfUserHasRights(currentUserAdminRoles, [AdminRole.RegionHead, AdminRole.RegionHeadDeputy]);
+          chainContinues = chainContinues ||  this.checkIfUserHasRights(currentUserAdminRoles, [AdminRole.OkrugaHead, AdminRole.OkrugaHeadDeputy]);
           break;
         case Place.City: 
           chainContinues = chainContinues ||  this.checkIfUserHasRights(currentUserAdminRoles, [AdminRole.CityHead, AdminRole.CityHeadDeputy]);
           break;
         case Place.Club: 
-          chainContinues = chainContinues || this.checkIfUserHasRights(currentUserAdminRoles, [AdminRole.ClubHead, AdminRole.ClubHeadDeputy]);
+          chainContinues = chainContinues || this.checkIfUserHasRights(currentUserAdminRoles, [AdminRole.KurinHead, AdminRole.KurinHeadDeputy]);
           break;
         default:
           chainContinues = true;
@@ -303,7 +303,7 @@ class UserHasAdminRolesCheck extends Check {
   }
 }
 
-//Checks if user and selected user have share place(s) (Region, City, etc)
+//Checks if user and selected user have same place(s) (Region, City, etc)
 //Every new place should be added to switch statement
 class PlaceIdsEqualityHandler extends Check {
 

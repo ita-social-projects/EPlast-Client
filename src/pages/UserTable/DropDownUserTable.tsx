@@ -65,10 +65,7 @@ const DropDown = (props: Props) => {
 
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
   const [governingBodyHead, setGoverningBodyHead] = useState<boolean>(true);
-
   const [currentUserAdminRoles, setCurrentUserAdminRoles] = useState<Array<AdminRole>>([]);
-  const [selectedUserAdminRoles, setSelectedUserAdminRoles] = useState<Array<AdminRole>>([]);
-
   const [canDelete, setCanDelete] = useState<boolean>(false);
   const [canChangeCityAdministration, setCanChangeCityAdministration] = useState<boolean>(false);
   const [canChangeClubAdministration, setCanChangeClubAdministration] = useState<boolean>(false);
@@ -79,56 +76,72 @@ const DropDown = (props: Props) => {
 
   const [chainOfAccessibility, setChainOfAccessibility] = useState<IDropdownItem>();
   
+  //Some megamind function, taken from StackOverflow to convert enum string value to appropriate key
+  //I have no idea what's going on here
+  function getEnumKeyByEnumValue<T extends {[index:string]:string}>(myEnum:T, enumValue:string):keyof T|null {
+    let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
+    return keys.length > 0 ? keys[0] : null;
+  }
+
   //Takes only those roles, which can access User Table and 
   //writes them in array in descending order (as in AdminRole enum)
-  const setUserAdminRoles = (allUserRoles: Array<string>) => {
+  const setUserAdminRoles = (allUserRoles: Array<string>): Array<AdminRole> => {
 
-    const userAdminRoles: Array<AdminRole> = new Array<AdminRole>();
-
-    if (allUserRoles?.includes(Roles.Admin)) {
-      userAdminRoles.push(AdminRole.Admin);
-    }
-    if (allUserRoles?.includes(Roles.GoverningBodyHead)) {
-      userAdminRoles.push(AdminRole.GoverningBodyHead);
-    }
-    if (allUserRoles?.includes(Roles.OkrugaHead)) {
-      userAdminRoles.push(AdminRole.RegionHead);
-    }
-    if (allUserRoles?.includes(Roles.OkrugaHeadDeputy)) {
-      userAdminRoles.push(AdminRole.RegionHeadDeputy);
-    }  
-    if (allUserRoles?.includes(Roles.CityHead)) {
-      userAdminRoles.push(AdminRole.CityHead);
-    }
-    if (allUserRoles?.includes(Roles.CityHeadDeputy)) {
-      userAdminRoles.push(AdminRole.CityHeadDeputy);
-    }
-    if (allUserRoles?.includes(Roles.KurinHead)) {
-      userAdminRoles.push(AdminRole.ClubHead);
-    }      
-    if (allUserRoles?.includes(Roles.KurinHeadDeputy)) {
-      userAdminRoles.push(AdminRole.ClubHeadDeputy);
+    //All possible AdminRole keys are converted to string array
+    const allAdminRolesAsEnumKeys: Array<string> = new Array<string>();
+    for(var key in AdminRole) {
+      allAdminRolesAsEnumKeys.push(AdminRole[key]);
     }
 
-    return userAdminRoles;
+    //Current user roles as strings (values) are converted to corresponding
+    //Roles enum keys, which are also saved as array of string
+    const userRolesAsEnumKeys: Array<string> = new Array<string>();
+    allUserRoles.forEach(role => {
+      let result = getEnumKeyByEnumValue(Roles, role);
+      if (result !== null) {
+        userRolesAsEnumKeys.push(result);
+      }
+    });
+    
+    //Intersection of possible Admin roles and current admin roles
+    const userAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(role => userRolesAsEnumKeys.includes(role));
+
+    //Roles are converted  to AdminRole enum  
+    const currentUserAdminRoles = new Array<AdminRole>();
+    userAdminRolesAsEnumKeys.forEach(role => {
+      currentUserAdminRoles.push(AdminRole[role as keyof typeof AdminRole]);
+    })
+
+    return currentUserAdminRoles;
   };
 
-  //Takes user Plast role, writes them in array in descending order (as in NonAdminRole enum)
-  const setUserNonAdminRoles = (allUserRoles: Array<string>) => {
-    const userNonAdminRoles: Array<NonAdminRole> = new Array<NonAdminRole>();
+  //Takes user Plast roles, writes them in array in descending order (as in NonAdminRole enum)
+  const setUserNonAdminRoles = (allUserRoles: Array<string>): Array<NonAdminRole> => {
 
-    if (allUserRoles?.includes(Roles.FormerPlastMember)) {
-      userNonAdminRoles.push(NonAdminRole.FormerPlastMember);
+    //All possible NonAdminRole keys are converted to string array
+    const allAdminRolesAsEnumKeys: Array<string> = new Array<string>();
+    for(var key in NonAdminRole) {
+      allAdminRolesAsEnumKeys.push(NonAdminRole[key]);
     }
-    if (allUserRoles?.includes(Roles.PlastMember)) {
-      userNonAdminRoles.push(NonAdminRole.PlastMember);
-    }
-    if (allUserRoles?.includes(Roles.Supporter)) {
-      userNonAdminRoles.push(NonAdminRole.Supporter);
-    }
-    if (allUserRoles?.includes(Roles.RegisteredUser)) {
-      userNonAdminRoles.push(NonAdminRole.Registered);
-    }
+
+    //Current user roles as strings (values) are converted to corresponding
+    //Roles enum keys, which are also saved as array of string
+    const userRolesAsEnumKeys: Array<string> = new Array<string>();
+    allUserRoles.forEach(role => {
+      let result = getEnumKeyByEnumValue(Roles, role);
+      if (result !== null) {
+        userRolesAsEnumKeys.push(result);
+      }
+    });
+    
+    //Intersection of possible NonAdmin roles and current admin roles
+    const userNonAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(role => userRolesAsEnumKeys.includes(role));
+
+    //Roles are converted  to NonAdminRole enum  
+    const userNonAdminRoles = new Array<NonAdminRole>();
+    userNonAdminRolesAsEnumKeys.forEach(role => {
+      userNonAdminRoles.push(NonAdminRole[role as keyof typeof NonAdminRole]);
+    })
 
     return userNonAdminRoles;
   };
@@ -144,16 +157,15 @@ const DropDown = (props: Props) => {
   }, []);
 
   const lookThroughChain = async () => {
-
     chainOfAccessibility?.handle(currentUser, setUserAdminRoles(roles), selectedUser, 
       setUserAdminRoles(selectedUserRoles), setUserNonAdminRoles(selectedUserRoles));
 
-    return chainOfAccessibility?.getHandlersResults() ?? null;
+    return chainOfAccessibility?.getHandlersResults();
   }
 
   const fetchUser = async () => {
 
-    const result: Map<DropdownFunc, any> | null = await lookThroughChain();
+    const result: Map<DropdownFunc, any> | undefined | null = await lookThroughChain();
 
     setCanDelete(result?.get(DropdownFunc.Delete) ?? false);
     
@@ -163,8 +175,6 @@ const DropDown = (props: Props) => {
 
     setCanChangeClubAdministration(result?.get(DropdownFunc.EditClub) ?? false);
       
-    // setCanChangeGoverningBodyAdministration(result);
-
     setCanChangeUserAccess(result?.get(DropdownFunc.EditRole) ?? false);
 
     setCanAddDegree(result?.get(DropdownFunc.AddDegree) ?? false);

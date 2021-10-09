@@ -1,12 +1,12 @@
 export enum AdminRole {
-  Admin = 0,          //Admin
-  GoverningBodyHead,  //Голова керівного органу
-  RegionHead,         //Голова округи
-  RegionHeadDeputy,   //Заступник голови округи
-  CityHead,           //Голова станиці
-  CityHeadDeputy,     //Заступник голови станиці 
-  ClubHead,           //Голова куреня
-  ClubHeadDeputy,     //Заступник голови куреня
+  Admin             = 0,  //Admin
+  GoverningBodyHead = 1,  //Голова керівного органу
+  OkrugaHead        = 2,  //Голова округи
+  OkrugaHeadDeputy  = 3,  //Заступник голови округи
+  CityHead          = 4,  //Голова станиці
+  CityHeadDeputy    = 5,  //Заступник голови станиці 
+  KurinHead         = 6,  //Голова куреня
+  KurinHeadDeputy   = 7,  //Заступник голови куреня
 }
 
 //This enum is used to compare which one of two admins has more rights (user table)
