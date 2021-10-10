@@ -205,7 +205,7 @@ export const ClubAnnualReportForm = (props: Props) => {
                                 name="clubCenters"
                                 rules={validationSchema.textareaClubCenters}
                             >
-                                <TextArea style={{ height: "100px" }} />
+                                <TextArea rows={4} />
                             </Form.Item>
                         </Col>
                         <Col
@@ -220,7 +220,7 @@ export const ClubAnnualReportForm = (props: Props) => {
                                 name="kbUSPWishes"
                                 rules={validationSchema.textareaKbUSPWishes}
                             >
-                                <TextArea style={{ height: "100px" }} />
+                                <TextArea rows={4} />
                             </Form.Item>
                         </Col>
                     </Row>
