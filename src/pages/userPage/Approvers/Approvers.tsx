@@ -358,7 +358,7 @@ const Assignments = () => {
               )}
 
             </div>
-          ) : ((data?.cityApprover == null && userProfile && data?.canApprove && (data?.currentUserId != data?.user.id || activeUserRoles.includes(Roles.Admin)) && (data?.isUserHeadOfCity || activeUserRoles.includes(Roles.Admin))) ?
+          ) : ((data?.cityApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || activeUserRoles.includes(Roles.Admin)) && (data?.isUserHeadOfCity || activeUserRoles.includes(Roles.Admin))) ?
             (
               <div>
                 <Tooltip
