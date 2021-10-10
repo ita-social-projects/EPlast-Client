@@ -84,6 +84,8 @@ const UsersTable = () => {
     forceUpdate({});
   }, []);
 
+  const searchFieldMaxLength: number = 200;
+
   const fetchCities = async () => {
     try {
       let response = await citiesApi.getCities();
@@ -361,7 +363,7 @@ const UsersTable = () => {
   }
  
   return (
-    <Layout.Content>
+    <Layout.Content onClick={() => { setShowDropdown(false); }}>
       <Title level={2}>Таблиця користувачів</Title>
       <Title level={4} style={{ textAlign: "left", margin: 10 }} underline={true}>Загальна кількість користувачів: {total}</Title>
       <div className={classes.searchContainer}>
@@ -435,6 +437,7 @@ const UsersTable = () => {
           <Search placeholder="Пошук"
             allowClear
             enterButton
+            maxLength={searchFieldMaxLength}
             onChange={handleSearchChange}
             onSearch={handleSearch}
           />
