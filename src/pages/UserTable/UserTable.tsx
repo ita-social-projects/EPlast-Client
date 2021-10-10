@@ -358,7 +358,7 @@ const UsersTable = () => {
   };
 
   return (
-    <Layout.Content>
+    <Layout.Content onClick={() => { setShowDropdown(false); }}>
       <Title level={2}>Таблиця користувачів</Title>
       <Title level={4} style={{ textAlign: "left", margin: 10 }} underline={true}>Загальна кількість користувачів: {total}</Title>
       <div className={classes.searchContainer}>
