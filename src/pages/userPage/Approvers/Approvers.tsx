@@ -94,13 +94,6 @@ const Assignments = () => {
     fetchData();
   }
 
-  const CanApproveClubMember = (): boolean | undefined => {
-    return (
-      data?.clubApprover == null && (userProfile?.user?.clubId === activeUserProfile?.clubId || userProfile?.shortUser?.clubId === activeUserProfile?.clubId) 
-      && data?.canApprove && (data?.currentUserId != data?.user.id || activeUserRoles.includes(Roles.Admin)) 
-      && (data?.isUserHeadOfClub || activeUserRoles.includes(Roles.Admin)));
-  }
-
   const approveClick = async (userId: string, isClubAdmin: boolean = false, isCityAdmin: boolean = false) => {
 
     isCityAdmin ? setApproveAsCityHeadLoading(true) : isClubAdmin ? setApproveAsHovelHeadLoading(true) : setApproveAsMemberLoading(true);
@@ -279,7 +272,7 @@ const Assignments = () => {
                   </Card>
                 )}
             </div>
-          ) : ( CanApproveClubMember() ?
+          ) : ( data?.canApproveClubMember ?
             (
               <div>
                 <Tooltip

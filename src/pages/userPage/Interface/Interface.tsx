@@ -125,6 +125,7 @@ export  interface Data {
       confirmedUsers:ConfirmedUser[];
       canApprove:boolean;
       canApprovePlastMember:boolean;
+      canApproveClubMember:boolean;
       timeToJoinPlast:number;
       clubApprover:ConfirmedUser;
       cityApprover:ConfirmedUser;
