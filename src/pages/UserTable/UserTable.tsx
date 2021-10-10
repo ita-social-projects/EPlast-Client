@@ -83,6 +83,8 @@ const UsersTable = () => {
     forceUpdate({});
   }, []);
 
+  const searchFieldMaxLength: number = 200;
+
   const fetchCities = async () => {
     try {
       let response = await citiesApi.getCities();
@@ -430,6 +432,7 @@ const UsersTable = () => {
           <Search placeholder="Пошук"
             allowClear
             enterButton
+            maxLength={searchFieldMaxLength}
             onChange={handleSearchChange}
             onSearch={handleSearch}
           />
