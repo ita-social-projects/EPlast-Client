@@ -166,7 +166,7 @@ const Assignments = () => {
                       </Link>
                     </Tooltip>
                     <Meta title={moment.utc(p.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
-                    { userProfile?.isUserPlastun && (<DeleteApproveButton approverId={p.id} deleteApprove={deleteApprove} />)}
+                    { !userProfile?.isUserPlastun && (<DeleteApproveButton approverId={p.id} deleteApprove={deleteApprove} />)}
                   </Card>
                 </div>
               )
@@ -251,7 +251,7 @@ const Assignments = () => {
                       </Link>
                     </Tooltip>
                     <Meta title={moment.utc(data.clubApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
-                    { userProfile?.isUserPlastun && (<DeleteApproveButton approverId={data.clubApprover.id} deleteApprove={deleteApprove} />)}
+                    { !userProfile?.isUserPlastun && (<DeleteApproveButton approverId={data.clubApprover.id} deleteApprove={deleteApprove} />)}
                   </Card>
                 ) : (
                   <Card
@@ -329,7 +329,7 @@ const Assignments = () => {
                     </Link>
                   </Tooltip>
                   <Meta title={moment.utc(data.cityApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
-                  { userProfile?.isUserPlastun && (<DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove}/>)}
+                  { !userProfile?.isUserPlastun && (<DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove}/>)}
                 </Card>
               ) : (
                 <Card
