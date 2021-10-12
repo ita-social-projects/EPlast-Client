@@ -13,8 +13,9 @@ import UserApi from "../../../api/UserApi";
 import { Data, IPersonalDataContext, User } from "../Interface/Interface";
 import notificationLogic from '../../../components/Notifications/Notification';
 import { string } from "yup";
+import { off } from "process";
 
-const DefaultState:IPersonalDataContext = {
+const DefaultState: IPersonalDataContext = {
   userProfile: undefined,
   activeUserRoles: [],
   activeUserId: "",
@@ -63,14 +64,21 @@ export default function ({
       .getUserProfileById(currentUserId, userId)
       .then((response) => {
         SetUserProfile(response.data);
-        UserApi.getImage(response.data?.user.imagePath ).then((response: { data: any }) => {
-          setImageBase64(response.data);
-        });
+        if (response.data?.user !== null) {
+          UserApi.getImage(response.data?.user.imagePath).then((response: { data: any }) => {
+            setImageBase64(response.data);
+          });
+        }
+        if (response.data?.shortUser !== null) {
+          UserApi.getImage(response.data?.shortUser.imagePath).then((response: { data: any }) => {
+            setImageBase64(response.data);
+          });
+        }
       })
       .catch((error) => {
         notificationLogic("error", error.message);
-      });   
-      setLoading(true);
+      });
+    setLoading(true);
   }
 
   return (
