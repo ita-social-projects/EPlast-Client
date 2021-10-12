@@ -51,7 +51,7 @@ const EventUser = () => {
     const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
         new CreatedEvents(),
     ]);
-    const {userProfile, ChangeUserProfile} = useContext(PersonalDataContext);
+    const { fullUserProfile, ChangeUserProfile} = useContext(PersonalDataContext);
     const [showEventCreateDrawer, setShowEventCreateDrawer] = useState(false);
     const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
     const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
@@ -143,22 +143,21 @@ const EventUser = () => {
             <div className={classes.wrapperImg}>
                 <div className={classes.avatarWrapper}>
                     <AvatarAndProgressStatic
-                        imageUrl={userProfile?.user.imagePath as string}
-                        time={userProfile?.timeToJoinPlast}
-                        firstName={userProfile?.user.firstName}
-                        lastName={userProfile?.user.lastName}
-                        isUserPlastun={true}
-                        pseudo={userProfile?.user.pseudo}
-                        governingBody={userProfile?.user.governingBody}
-                        region={userProfile?.user.region}
-                        city={userProfile?.user.city}
-                        club={userProfile?.user.club}
-                        governingBodyId={userProfile?.user.governingBodyId}
-                        cityId={userProfile?.user.cityId}
-                        clubId={userProfile?.user.clubId}
-                        regionId={userProfile?.user.regionId}
-                        cityMemberIsApproved={userProfile?.user.cityMemberIsApproved}
-                        clubMemberIsApproved={userProfile?.user.clubMemberIsApproved}
+                        time={fullUserProfile?.timeToJoinPlast}
+                        firstName={fullUserProfile?.user.firstName}
+                        lastName={fullUserProfile?.user.lastName}
+                        isUserPlastun={fullUserProfile?.isUserPlastun}
+                        pseudo={fullUserProfile?.user.pseudo}
+                        governingBody={fullUserProfile?.user.governingBody}
+                        region={fullUserProfile?.user.region}
+                        city={fullUserProfile?.user.city}
+                        club={fullUserProfile?.user.club}
+                        governingBodyId={fullUserProfile?.user.governingBodyId}
+                        cityId={fullUserProfile?.user.cityId}
+                        clubId={fullUserProfile?.user.clubId}
+                        regionId={fullUserProfile?.user.regionId}
+                        cityMemberIsApproved={fullUserProfile?.user.cityMemberIsApproved}
+                        clubMemberIsApproved={fullUserProfile?.user.clubMemberIsApproved}
                         showPrecautions={ true }
                     />
                 </div>
@@ -172,8 +171,8 @@ const EventUser = () => {
                             userToken.nameid !== userId && (
                                 <h2>
                                     {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
-                                    { userGenders[0] === userProfile?.user.gender?.name ? (<> відвідав</>) :
-                                        userGenders[1] === userProfile?.user.gender?.name ? (<> відвідала</>) :
+                                    { userGenders[0] === fullUserProfile?.user.gender?.name ? (<> відвідав</>) :
+                                        userGenders[1] === fullUserProfile?.user.gender?.name ? (<> відвідала</>) :
                                             (<> відвідав(ла)</>)} жодної події
                                 </h2>
                             )}
@@ -284,8 +283,8 @@ const EventUser = () => {
                                 <div>
                                     <h2>
                                         {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
-                                        {userGenders[0] === userProfile?.user.gender?.name ? (<> створив</>) :
-                                            userGenders[1] === userProfile?.user.gender?.name ? (<> створила</>) :
+                                        {userGenders[0] === fullUserProfile?.user.gender?.name ? (<> створив</>) :
+                                            userGenders[1] === fullUserProfile?.user.gender?.name ? (<> створила</>) :
                                                 (<> створив(ла)</>)} жодної події
                                 </h2>
                                 </div>
@@ -437,8 +436,8 @@ const EventUser = () => {
                             userToken.nameid !== userId && (
                                 <h2>
                                     {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
-                                    {userGenders[0] === userProfile?.user.gender?.name ? (<> запланував</>) :
-                                            userGenders[1] === userProfile?.user.gender?.name ? (<> запланувала</>) :
+                                    {userGenders[0] === fullUserProfile?.user.gender?.name ? (<> запланував</>) :
+                                            userGenders[1] === fullUserProfile?.user.gender?.name ? (<> запланувала</>) :
                                                 (<> запланував(ла)</>)} жодної події
                                 </h2>
                             )}

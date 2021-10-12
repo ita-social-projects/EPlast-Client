@@ -89,6 +89,7 @@ export type ShortUser ={
 
 export interface IPersonalDataContext{
     userProfile: Data | undefined;
+    fullUserProfile: Data | undefined;
     activeUserRoles: string[];
     activeUserId: string;
     activeUserProfile: User | undefined;
