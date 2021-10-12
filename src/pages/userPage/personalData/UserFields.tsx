@@ -55,7 +55,6 @@ export default function () {
           <div className="avatarWrapperUserFields">
             <StickyContainer className="kadraWrapper">
               <AvatarAndProgressStatic
-                imageUrl={userProfile?.user.imagePath as string}
                 time={userProfile?.timeToJoinPlast}
                 firstName={userProfile?.user.firstName}
                 lastName={userProfile?.user.lastName}
@@ -468,7 +467,6 @@ export default function () {
       <Form name="basic" className="formContainer">
         <div className="shortAvatarWrapperUserFields">
           <AvatarAndProgressStatic
-            imageUrl={userProfile?.shortUser.imagePath as string}
             time={userProfile?.timeToJoinPlast}
             firstName={userProfile?.shortUser.firstName}
             lastName={userProfile?.shortUser.lastName}

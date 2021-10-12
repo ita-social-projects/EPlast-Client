@@ -128,7 +128,6 @@ const Assignments = () => {
       <div className="avatarWrapperApprovers">
         <StickyContainer className="kadraWrapper">
           <AvatarAndProgressStatic
-            imageUrl={data?.user.imagePath as string}
             time={data?.timeToJoinPlast}
             firstName={data?.user.firstName}
             lastName={data?.user.lastName}
