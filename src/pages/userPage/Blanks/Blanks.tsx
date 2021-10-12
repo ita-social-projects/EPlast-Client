@@ -28,7 +28,7 @@ const fileNameMaxLength = 50;
 
 export const Blanks = () => {
     const { userId } = useParams<{ userId: string }>();
-    const {userProfile, activeUserRoles, ChangeUserProfile, UpdateData} = useContext(PersonalDataContext);
+    const {fullUserProfile, activeUserRoles, UpdateData} = useContext(PersonalDataContext);
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
     const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
     const [extractUPU, setExtractUPU] = useState<BlankDocument>(new BlankDocument);
@@ -55,9 +55,9 @@ export const Blanks = () => {
     };
 
     const getAppropriateToGenderVerb = () => {
-        if (userGenders[0] === userProfile?.user.gender?.name)
+        if (userGenders[0] === fullUserProfile?.user.gender?.name)
             return "додав";
-        if (userGenders[1] === userProfile?.user.gender?.name)
+        if (userGenders[1] === fullUserProfile?.user.gender?.name)
             return "додала";
         return "додав(ла)";
     };
@@ -115,15 +115,15 @@ export const Blanks = () => {
 
     const DoesUserHasAccessToManageBlanks = (userRoles: Array<string>): boolean => {
 
-        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && userProfile?.user?.clubId == userProfile?.user?.clubId) ||
-            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && userProfile?.user?.cityId == userProfile?.user?.cityId) ||
-            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && userProfile?.user?.regionId == userProfile?.user?.regionId) ||
+        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && fullUserProfile?.user?.clubId == fullUserProfile?.user?.clubId) ||
+            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && fullUserProfile?.user?.cityId == fullUserProfile?.user?.cityId) ||
+            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && fullUserProfile?.user?.regionId == fullUserProfile?.user?.regionId) ||
             userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead);
     };
     const DoesUserHasAccessToSeeAndDownloadBlanks = (userRoles: Array<string>): boolean => {
-        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && userProfile?.user?.clubId == userProfile?.user?.clubId) ||
-            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && userProfile?.user?.cityId == userProfile?.user?.cityId) ||
-            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && userProfile?.user?.regionId == userProfile?.user?.regionId) ||
+        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && fullUserProfile?.user?.clubId == fullUserProfile?.user?.clubId) ||
+            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && fullUserProfile?.user?.cityId == fullUserProfile?.user?.cityId) ||
+            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && fullUserProfile?.user?.regionId == fullUserProfile?.user?.regionId) ||
             userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead) || userRoles?.includes(Roles.PlastMember);
     };
     const DoesUserHasAccessToDeleteBlanks = (userRoles: Array<string>): boolean => {
@@ -145,23 +145,22 @@ export const Blanks = () => {
             <div className={classes.wrapper}>
                 <div className={classes.wrapperImg}>
                     <AvatarAndProgressStatic
-                        imageUrl={userProfile?.user.imagePath as string}
-                        time={userProfile?.timeToJoinPlast}
-                        firstName={userProfile?.user.firstName}
-                        lastName={userProfile?.user.lastName}
+                        time={fullUserProfile?.timeToJoinPlast}
+                        firstName={fullUserProfile?.user.firstName}
+                        lastName={fullUserProfile?.user.lastName}
                         isUserPlastun={true}
-                        pseudo={userProfile?.user.pseudo}
-                        governingBody={userProfile?.user.governingBody}
-                        region={userProfile?.user.region}
-                        city={userProfile?.user.city}
-                        club={userProfile?.user.club}
-                        governingBodyId={userProfile?.user.governingBodyId}
-                        regionId={userProfile?.user.regionId}
-                        cityId={userProfile?.user.cityId}
-                        clubId={userProfile?.user.clubId}
-                        cityMemberIsApproved={userProfile?.user.cityMemberIsApproved}
-                        clubMemberIsApproved={userProfile?.user.clubMemberIsApproved}
-                        showPrecautions={userProfile?.shortUser === null} />
+                        pseudo={fullUserProfile?.user.pseudo}
+                        governingBody={fullUserProfile?.user.governingBody}
+                        region={fullUserProfile?.user.region}
+                        city={fullUserProfile?.user.city}
+                        club={fullUserProfile?.user.club}
+                        governingBodyId={fullUserProfile?.user.governingBodyId}
+                        regionId={fullUserProfile?.user.regionId}
+                        cityId={fullUserProfile?.user.cityId}
+                        clubId={fullUserProfile?.user.clubId}
+                        cityMemberIsApproved={fullUserProfile?.user.cityMemberIsApproved}
+                        clubMemberIsApproved={fullUserProfile?.user.clubMemberIsApproved}
+                        showPrecautions={fullUserProfile?.shortUser === null} />
                 </div>
                 <div className={classes.wrapperCol}>
                     <div className={classes.wrapper}>
@@ -243,7 +242,7 @@ export const Blanks = () => {
                                             <h2>Ви ще не додали Життєпис</h2>
                                         }
                                         {userToken.nameid !== userId &&
-                                            <h2>{userProfile?.user.firstName} ще не {getAppropriateToGenderVerb()} Життєпис</h2>
+                                            <h2>{fullUserProfile?.user.firstName} ще не {getAppropriateToGenderVerb()} Життєпис</h2>
                                         }
                                         {(userToken.nameid === userId || activeUserRoles.includes(Roles.Admin)) &&
                                             <div>
@@ -334,7 +333,7 @@ export const Blanks = () => {
                                         <h2>Ви ще не додали Виписку</h2>
                                     }
                                     {userToken.nameid !== userId &&
-                                        <h2>{userProfile?.user.firstName} ще не {getAppropriateToGenderVerb()} Виписку</h2>
+                                        <h2>{fullUserProfile?.user.firstName} ще не {getAppropriateToGenderVerb()} Виписку</h2>
                                     }
                                     <div>
                                         <Button type="primary"
@@ -375,7 +374,7 @@ export const Blanks = () => {
                                         <h2>Ви ще не додали жодного Досягнення</h2>
                                     }
                                     {userToken.nameid !== userId &&
-                                        <h2>{userProfile?.user.firstName} ще не {getAppropriateToGenderVerb()} жодного Досягнення</h2>
+                                        <h2>{fullUserProfile?.user.firstName} ще не {getAppropriateToGenderVerb()} жодного Досягнення</h2>
                                     }
                                 </Col>
                             )}
@@ -419,19 +418,19 @@ export const Blanks = () => {
                 setAchievementDoc={setAchievementDoc} />
 
             <AddAchievementsModal
-                userId={userProfile?.user.id}
+                userId={fullUserProfile?.user.id}
                 visibleModal={visibleAchievementModal}
                 setVisibleModal={setvisibleAchievementModal} />
 
             <AddBiographyModal
-                userId={userProfile?.user.id}
+                userId={fullUserProfile?.user.id}
                 document={document}
                 setDocument={setDocument}
                 visibleModal={visibleModal}
                 setVisibleModal={setVisibleModal} />
 
             <AddExtractFromUPUModal
-                userId={userProfile?.user.id}
+                userId={fullUserProfile?.user.id}
                 document={extractUPU}
                 setDocument={setExtractUPU}
                 visibleModal={visibleExtractFromUPUModal}
