@@ -179,8 +179,7 @@ const ClubAnnualReportInformation = () => {
                         </Title>
                         <StatusStamp status={status!} />
                         <Link
-                            className="LinkText"
-                            style={{ fontSize: "14px" }}
+                            className="linkText"
                             to={"/clubs/" + clubAnnualReport.clubId}
                             target="blank"
                         >
@@ -190,16 +189,14 @@ const ClubAnnualReportInformation = () => {
                         <br />
                         <br />
                         <Card>
-                            <Row gutter={16} align="bottom" style={{}}>
+                            <Row gutter={16} align="bottom">
                                 <Col xs={24} sm={12} md={12} lg={12}>
                                     <Card.Grid className="container">
                                         <Title level={4}>
                                             Географія куреня. Осередки в
                                             Україні:{" "}
                                         </Title>
-                                        <Text
-                                            style={{ wordBreak: "break-word" }}
-                                        >
+                                        <Text className="clubAnnualReportInformationText">
                                             {clubAnnualReport.clubCenters}
                                         </Text>
                                     </Card.Grid>
@@ -210,9 +207,7 @@ const ClubAnnualReportInformation = () => {
                                         <Title level={4}>
                                             Побажання до КБ УСП:{" "}
                                         </Title>
-                                        <Text
-                                            style={{ wordBreak: "break-word" }}
-                                        >
+                                        <Text className="clubAnnualReportInformationText">
                                             {clubAnnualReport.kbUSPWishes}
                                         </Text>
                                     </Card.Grid>
@@ -302,7 +297,7 @@ const ClubAnnualReportInformation = () => {
                                 sm={12}
                                 md={12}
                                 lg={12}
-                                style={{ marginLeft: "10px" }}
+                                className="clubAnnualReportInformationCol"
                             >
                                 <Text strong={true}>Контакти:</Text>
                                 {clubHead ? (
