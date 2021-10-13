@@ -242,9 +242,7 @@ const ClubAnnualReportInformation = () => {
                                         return {
                                             onDoubleClick: () => {
                                                 if (user.key)
-                                                    window.open(
-                                                        `/userpage/main/${user.key}`
-                                                    );
+                                                    window.open(`/userpage/main/${user.key}`);
                                             },
                                         };
                                     }}
@@ -262,9 +260,7 @@ const ClubAnnualReportInformation = () => {
                                         return {
                                             onDoubleClick: (event) => {
                                                 if (user.key)
-                                                    window.open(
-                                                        `/userpage/main/${user.key}`
-                                                    );
+                                                    window.open(`/userpage/main/${user.key}`);
                                             },
                                         };
                                     }}
@@ -283,9 +279,7 @@ const ClubAnnualReportInformation = () => {
                                         return {
                                             onDoubleClick: (event) => {
                                                 if (user.key)
-                                                    window.open(
-                                                        `/userpage/main/${user.key}`
-                                                    );
+                                                    window.open(`/userpage/main/${user.key}`);
                                             },
                                         };
                                     }}
