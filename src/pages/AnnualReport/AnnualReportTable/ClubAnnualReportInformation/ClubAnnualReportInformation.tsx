@@ -172,10 +172,7 @@ const ClubAnnualReportInformation = () => {
                         className="annualreport-form"
                     >
                         <Title className="textCenter" level={3}>
-                            {`Річний звіт куреня ${
-                                clubAnnualReport.clubName
-                            } за 
-                    ${moment.utc(clubAnnualReport.date).local().year()} рік`}
+                            {`Річний звіт куреня ${clubAnnualReport.clubName} за ${moment.utc(clubAnnualReport.date).local().year()} рік`}
                         </Title>
                         <StatusStamp status={status!} />
                         <Link
@@ -183,8 +180,7 @@ const ClubAnnualReportInformation = () => {
                             to={"/clubs/" + clubAnnualReport.clubId}
                             target="blank"
                         >
-                            Перейти на профіль куреня{" "}
-                            {clubAnnualReport.clubName}
+                            Перейти на профіль куреня{" "}{clubAnnualReport.clubName}
                         </Link>
                         <br />
                         <br />
@@ -192,10 +188,7 @@ const ClubAnnualReportInformation = () => {
                             <Row gutter={16} align="bottom">
                                 <Col xs={24} sm={12} md={12} lg={12}>
                                     <Card.Grid className="container">
-                                        <Title level={4}>
-                                            Географія куреня. Осередки в
-                                            Україні:{" "}
-                                        </Title>
+                                        <Title level={4}>Географія куреня. Осередки в Україні:{" "}</Title>
                                         <Text className="clubAnnualReportInformationText">
                                             {clubAnnualReport.clubCenters}
                                         </Text>
