@@ -94,9 +94,8 @@ const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
             onFinish={handleSubmit}
         >
 
-            <Form.Item
+            <Form.Item wrapperCol={{ span: 12, offset: 6 }}
                 name="upload"
-                label="Завантажити"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
                 style={{ maxHeight: '400px', overflow: 'auto' }}
@@ -118,7 +117,7 @@ const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
 
             <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
                 <Button type="primary" htmlType="submit">
-                    Надіслати
+                    Завантажити
                 </Button>
             </Form.Item>
         </Form>
