@@ -4,9 +4,6 @@ import {
   Input,
   notification,
   Row,
-  Space,
-  Spin,
-  Table,
   Typography,
 } from "antd";
 import { useParams } from "react-router-dom";
@@ -18,9 +15,8 @@ import eventsApi from "../../../../api/eventsApi";
 import EventDetailsHeader from "./EventDetailsHeader";
 // eslint-disable-next-line import/no-cycle
 import ParticipantsTable from "./ParticipantsTable";
-import spinClasses from "../EventUser/EventUser.module.css";
-
 import "./EventInfo.less";
+import Spinner from "../../../Spinner/Spinner";
 
 const { Title } = Typography;
 
@@ -148,11 +144,7 @@ const EventInfo = () => {
   };
 
   return loading === false ? (
-    <div className={spinClasses.spaceWrapper} key="1">
-      <Space className={spinClasses.loader} size="large">
-        <Spin size="large" />
-      </Space>
-    </div>
+    <Spinner />
   ) : (
     <div className="event-info-background">
       {CheckEventForEstimation(event)}
