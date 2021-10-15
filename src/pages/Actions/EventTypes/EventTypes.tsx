@@ -1,8 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import EventTypeCard from "./EventTypeCard";
 import eventsApi from "../../../api/eventsApi";
-import {Space, Spin} from "antd";
-import spinClasses from '../ActionEvent/EventUser/EventUser.module.css';
+import Spinner from '../../Spinner/Spinner';
 
 const classes = require('./EventTypes.module.css');
 
@@ -34,12 +33,7 @@ const EventTypes = () => {
     const plastTypes = renderTypes(types);
 
     return loading === false ? (
-        <div className={spinClasses.spaceWrapper}>
-            <Space className={spinClasses.loader} size="large">
-                <Spin size="large"/>
-            </Space>
-        </div>
-
+        <Spinner />
     ) : (
         <div className={classes.background}>
             <h1 className={classes.mainTitle}>Типи</h1>

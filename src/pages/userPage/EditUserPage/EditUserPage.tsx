@@ -315,7 +315,7 @@ export default function () {
   }
 
   const handleOnChangePseudo = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue({ pseudo: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
+    form.setFieldsValue({ pseudo: changeApostropheInWord(event.target.value) });
   }
 
   const handleOnChangePublicPoliticalActivity = (event: React.ChangeEvent<HTMLInputElement>) => {

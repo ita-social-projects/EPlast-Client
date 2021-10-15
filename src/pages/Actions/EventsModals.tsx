@@ -67,7 +67,7 @@ export const showSubscribeConfirm = ({eventId, eventName, successCallback, isSin
             };
             NotificationBoxApi.createNotifications(
                 eventAdmins.map((ad) => ad.userId),
-                `На подію ${eventName}, у якій у вас адміністративна роль, зголосився новий учасник.`,
+                `На подію ${eventName}, у якій у вас є адміністративна роль, зголосився новий учасник.`,
                 NotificationBoxApi.NotificationTypes.EventNotifications,
                 `/events/details/${eventId}`,
                 "Перейти до деталей події"
@@ -105,7 +105,7 @@ export const showUnsubscribeConfirm = ({eventId, eventName, successCallback, isS
             };
             NotificationBoxApi.createNotifications(
                 eventAdmins.map((ad) => ad.userId),
-                `Від події ${eventName}, у якій у вас адміністративна роль, відписався учасник.`,
+                `Від події ${eventName}, у якій у вас є адміністративна роль, відписався учасник.`,
                 NotificationBoxApi.NotificationTypes.EventNotifications,
                 `/events/details/${eventId}`,
                 "Перейти до деталей події"
@@ -144,7 +144,7 @@ export const showDeleteConfirm = ({eventId, eventName, successCallback, isSingle
             };
             NotificationBoxApi.createNotifications(
                 eventAdmins.map((ad: { userId: any; }) => ad.userId),
-                `Подія ${eventName}, у якій у вас адміністративна роль, була успішно видалена `,
+                `Подію ${eventName}, у якій у вас була адміністративна роль, успішно видалено `,
                 NotificationBoxApi.NotificationTypes.EventNotifications
                 );
             deleteEvent()
@@ -181,7 +181,7 @@ export const showDeleteConfirmForSingleEvent = ({eventId, eventName, eventTypeId
             };
             NotificationBoxApi.createNotifications(
                 eventAdmins.map((ad: { userId: any; }) => ad.userId),
-                `Подія ${eventName}, у якій у вас адміністративна роль, була успішно видалена `,
+                `Подію ${eventName}, у якій у вас була адміністративна роль, успішно видалено `,
                 NotificationBoxApi.NotificationTypes.EventNotifications
                 );
             deleteEvent()
@@ -212,7 +212,7 @@ export const showApproveConfirm = ({eventId, eventName, eventStatusId, setApprov
             };
             NotificationBoxApi.createNotifications(
                 eventAdmins.map((ad: { userId: any; }) => ad.userId),
-                `Подія ${eventName}, у якій у вас адміністративна роль, успішно затверджена.`,
+                `Подія ${eventName}, у якій у вас є адміністративна роль, успішно затверджена.`,
                 NotificationBoxApi.NotificationTypes.EventNotifications,
                 `/events/details/${eventId}`,
                 "Перейти до деталей події"
