@@ -15,7 +15,8 @@ import {
   fileIsNotUpload,
   possibleFileExtensions,
   fileIsTooBig,
-  successfulDeleteAction
+  successfulDeleteAction,
+  fileIsEmpty
 } from "../../../components/Notifications/Messages"
 moment.locale("uk-ua");
 
@@ -76,13 +77,17 @@ const AddDocumentModal = (props: Props) => {
       setDisabled(true);
     }
 
+    const isEmptyFile = fileSize !== 0;
+    if (!isEmptyFile)
+    notificationLogic("error", fileIsEmpty());
+
     const isSmaller3mb = fileSize < 3145728;
     if (!isSmaller3mb) {
       notificationLogic("error", fileIsTooBig(3));
       setDisabled(true);
     }
 
-    return isSmaller3mb && isCorrectExtension;
+    return isSmaller3mb && isCorrectExtension && isEmptyFile;
   };
 
   const handleSubmit = async (values: any) => {

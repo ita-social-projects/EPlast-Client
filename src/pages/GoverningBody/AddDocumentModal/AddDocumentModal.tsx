@@ -9,7 +9,15 @@ import GoverningBodyDocumentType from '../../../models/GoverningBody/GoverningBo
 import { InboxOutlined } from "@ant-design/icons";
 import moment from "moment";
 import "moment/locale/uk";
-import{emptyInput, fileIsUpload, fileIsNotUpload, possibleFileExtensions, fileIsTooBig, successfulDeleteAction} from "../../../components/Notifications/Messages"
+import {
+  emptyInput, 
+  fileIsUpload, 
+  fileIsNotUpload, 
+  possibleFileExtensions, 
+  fileIsTooBig, 
+  successfulDeleteAction, 
+  fileIsEmpty} 
+  from "../../../components/Notifications/Messages"
 moment.locale("uk-ua");
 
 interface Props {
@@ -69,13 +77,17 @@ const AddDocumentModal = (props: Props) => {
         setDisabled(true);
       }
       
+      const isEmptyFile = fileSize !== 0;
+      if (!isEmptyFile)
+      notificationLogic("error", fileIsEmpty());
+
       const isSmaller3mb = fileSize < 3145728;
       if (!isSmaller3mb) {
         notificationLogic("error", fileIsTooBig(3));
         setDisabled(true);
       }
 
-      return isSmaller3mb && isCorrectExtension;
+      return isSmaller3mb && isCorrectExtension && isEmptyFile;
     };
 
     const handleSubmit = async (values: any) => {
