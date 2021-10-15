@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import moment from "moment";
-import { Tooltip, Tag, Row, Col } from "antd";
+import { Tooltip, Tag, Row, Col, Checkbox, Button } from "antd";
 import {
   WomanOutlined,
   ManOutlined,
@@ -12,6 +12,7 @@ import Transgender from '../../assets/images/lgbt.svg'
 import { Roles } from "../../models/Roles/Roles";
 import "../AnnualReport/AnnualReportTable/AnnualReportTable.less";
 import styles from './UserTable.module.css';
+import { CheckboxValueType } from "antd/lib/checkbox/Group";
 
 const setTagColor = (userRoles: string) => {
   let color = "";
@@ -40,12 +41,65 @@ interface Props {
   sortKey: number;
   setSortKey: any;
   setFilter: any;
-  filterRole: string;
+  filterRole: any;
 }
 
 const ColumnsForUserTable = (props: Props): any[] => {
 
   const { sortKey, setSortKey, setFilter, filterRole } = props;
+
+  const [filterDropdownVisible, setFilterDropdownVisible] = useState<boolean>(false);
+  const [chosenRoles, setChosenRoles] = useState<Roles[]>([]);
+
+  const clearRef = useRef<Checkbox[]>([]);
+
+  const filterOptions = [
+    { label:  Roles.PlastMember,       value: Roles.PlastMember, },
+    { label:  Roles.FormerPlastMember, value: Roles.FormerPlastMember, },
+    { label:  Roles.Supporter,         value: Roles.Supporter, },
+    { label:  Roles.OkrugaHead,        value: Roles.OkrugaHead, },
+    { label:  Roles.OkrugaSecretary,   value: Roles.OkrugaSecretary, },
+    { label:  Roles.CityHead,          value: Roles.CityHead, },
+    { label:  Roles.CitySecretary,     value: Roles.CitySecretary, },
+    { label:  Roles.KurinHead,         value: Roles.KurinHead, },
+    { label:  Roles.KurinSecretary,    value: Roles.KurinSecretary, },
+    { label:  Roles.RegisteredUser,    value: Roles.RegisteredUser },
+  ];
+
+  function getEnumKeyByEnumValue<T extends { [index:string]: string }>(myEnum: T, enumValue: string): keyof T | null {
+    let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
+    return keys.length > 0 ? keys[0] : null;
+  }
+
+  const roles: Array<Roles> = new Array<Roles>();
+
+  const onChangeFilter = (checkedRole: CheckboxValueType[]) => {
+    roles.length = 0;
+    checkedRole.forEach((elem: CheckboxValueType) => {
+      const roleToConvert = getEnumKeyByEnumValue(Roles, elem.toString());
+      if (roleToConvert !== null) {
+        const checkedRoleAsEnum = Roles[roleToConvert];
+        roles.push(checkedRoleAsEnum);
+      }
+    });
+    setChosenRoles(roles);
+  }
+
+  const onSearchFilter = () => {
+    setFilterDropdownVisible(false);
+    const rolesToStr = new Array<string>();
+    chosenRoles.forEach(element => {
+      rolesToStr.push(element.toString());
+    });
+    setFilter(rolesToStr);
+  }
+
+  const onClearFilter = () => {
+    setChosenRoles([]);
+    clearRef?.current?.forEach(el => el.setState({checked: false}));
+    setFilterDropdownVisible(false);
+    setFilter([]);
+  }
 
   const SortDirection = (props: {sort: number}) => {
     return<>
@@ -64,6 +118,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
       children: <div>{text}</div>
     };
   }
+
   return [
     {
       title: <Row className="tableHeader"><Col>№</Col><Col><SortDirection sort={1} /></Col></Row>,
@@ -279,57 +334,33 @@ const ColumnsForUserTable = (props: Props): any[] => {
       dataIndex: "userRoles",
       width: 170,
       ellipsis: false,
-      filteredValue: [filterRole],
-      filters: [
-        {
-          text:  Roles.PlastMember,
-          value: Roles.PlastMember,
-        },
-        {
-          text:  Roles.FormerPlastMember,
-          value: Roles.FormerPlastMember,
-        },
-        {
-          text:  Roles.Supporter,
-          value: Roles.Supporter,
-        },
-        {
-          text:  Roles.OkrugaHead,
-          value: Roles.OkrugaHead,
-        },
-        {
-          text:  Roles.OkrugaSecretary,
-          value: Roles.OkrugaSecretary,
-        },
-        {
-          text:  Roles.CityHead,
-          value: Roles.CityHead,
-        },
-        {
-          text:  Roles.CitySecretary,
-          value: Roles.CitySecretary,
-        },
-        {
-          text:  Roles.KurinHead,
-          value: Roles.KurinHead,
-        },
-        {
-          text:  Roles.KurinSecretary,
-          value: Roles.KurinSecretary,
-        },
-        {
-          text:  Roles.RegisteredUser,
-          value: Roles.RegisteredUser
-        }
-      ],
-      filterMultiple: false,
-      onFilter: (value: any, record: any) => {
-        if (value != filterRole) {
-          setFilter(value); 
-        } else {
-          return true;
-        }
-      },
+      filterDropdownVisible: filterDropdownVisible,
+      filterDropdown: (
+        <div className={styles.customFilterDropdown}>
+          <Checkbox.Group onChange={onChangeFilter}>
+            {filterOptions.map((option, i: number) => 
+              <div>
+                <Checkbox 
+                  key={i}
+                  ref={el => {
+                    if(el !== null) {
+                      clearRef.current[i] = el
+                    }
+                  }}
+                  value={option.value}
+                >
+                  {option.label}
+                </Checkbox>
+                <br />
+              </div>
+            )}
+          </Checkbox.Group>
+          <br/>
+          <Button type="primary" onClick={onClearFilter}>Скинути</Button>
+          <Button type="primary" onClick={onSearchFilter}>Пошук</Button>
+        </div>
+      ),
+      onFilterDropdownVisibleChange: () => setFilterDropdownVisible(!filterDropdownVisible),
       render: (userRoles: any) => {
         return (
           <div className={styles.parentDiv}>
