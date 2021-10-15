@@ -13,7 +13,7 @@ import {
   Skeleton,
 } from "antd";
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
-import ImgCrop from 'antd-img-crop';
+import ImgCrop from "antd-img-crop";
 import styles from "./EditUserPage.module.css";
 import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
