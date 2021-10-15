@@ -47,12 +47,26 @@ export default function () {
             <div className={styles.changePasswordContainer}>
                 <p>Зміна пароля</p>
             </div>
-                <Form.Item name="CurrentPassword" rules={validationSchema.CurrentPassword}>
-                    <Input.Password visibilityToggle={false} className={styles.ChangePasswordInput} placeholder="Поточний пароль" />
+                <Form.Item 
+                    name="CurrentPassword" 
+                    rules={validationSchema.CurrentPassword}
+                >
+                    <Input.Password 
+                        visibilityToggle={true} 
+                        className={styles.ChangePasswordInput} 
+                        placeholder="Поточний пароль" 
+                    />
                 </Form.Item>
 
-                <Form.Item name="NewPassword" rules={validationSchema.NewPassword}>
-                    <Input.Password visibilityToggle={false} className={styles.ChangePasswordInput} placeholder="Новий пароль" />
+                <Form.Item 
+                    name="NewPassword" 
+                    rules={validationSchema.NewPassword}
+                >
+                    <Input.Password 
+                        visibilityToggle={true} 
+                        className={styles.ChangePasswordInput} 
+                        placeholder="Новий пароль" 
+                    />
                 </Form.Item>
 
                 <Form.Item
@@ -73,7 +87,11 @@ export default function () {
                         }),
                     ]}
                 >
-                    <Input.Password visibilityToggle={false} className={styles.ChangePasswordInput} placeholder="Введіть новий пароль ще раз" />
+                    <Input.Password 
+                        visibilityToggle={true} 
+                        className={styles.ChangePasswordInput} 
+                        placeholder="Введіть новий пароль ще раз" 
+                    />
                 </Form.Item>
 
                 <Form.Item>

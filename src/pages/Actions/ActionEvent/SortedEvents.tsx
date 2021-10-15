@@ -3,9 +3,8 @@ import React, {useState, useEffect} from 'react';
 // eslint-disable-next-line import/no-cycle
 import EventCard from './EventCard/EventCard';
 import eventsApi from "../../../api/eventsApi";
-import {Space, Spin} from "antd";
-import spinClasses from "./EventUser/EventUser.module.css";
 import { EventAdmin, EventParticipant } from './EventInfo/EventInfo';
+import Spinner from '../../Spinner/Spinner';
 
 const classes = require('./ActionEvent.module.css');
 
@@ -94,7 +93,8 @@ const SortedEvents = ({eventCategoryId, typeId, switcher}: Props) => {
                     removeEvent={removeEventCard}
                     subscribeOnEvent={subscribeOnEvent}
                     unsubscribeOnEvent={unsubscribeOnEvent}
-                    key={item.eventId}/>);
+                    key={item.eventId}
+                />);
         }
         return null;
     };
@@ -102,12 +102,7 @@ const SortedEvents = ({eventCategoryId, typeId, switcher}: Props) => {
     const actionCard = renderAction(actionsToDisplay);
 
     return loading === false ? (
-        <div className={spinClasses.spaceWrapper}>
-            <Space className={spinClasses.loader} size="large">
-                <Spin size="large"/>
-            </Space>
-        </div>
-
+        <Spinner />
     ) : (
         <div className={classes.background}>
             <div className={classes.actionsWrapper}>{actionCard}</div>
