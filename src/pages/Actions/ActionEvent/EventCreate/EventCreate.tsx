@@ -15,7 +15,9 @@ import {
   emptyInput,
   isNotChosen,
   maxNumber,
-  minNumber
+  minNumber,
+  incorrectStartTime,
+  incorrectEndTime
 } from "../../../../components/Notifications/Messages"
 import { descriptionValidation } from '../../../../models/GllobalValidations/DescriptionValidation';
 
@@ -35,9 +37,10 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
   const [categories, setCategories] = useState<EventCategories[]>([]);
   const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
   const [administators, setAdministators] = useState<Users[]>([]);
+  const [visibleEndDatePicker, setVisibleEndDatePicker] = useState<boolean>(true);
 
 
-  const [StartDate, setStartDate] = useState<any>();
+  const [StartDate, setStartDate] = useState<Date>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -105,12 +108,21 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
     setShowEventCreateDrawer(false);
   }
 
+
   function disabledDate(current: any) {
     return current && current < moment().startOf('day');
   }
 
   function disabledEndDate(current: any) {
-    return current && current < StartDate?.startOf('day');
+    return current && current < moment(StartDate)?.startOf('day');
+  }
+
+  function onEventDateStartChange(e: any) {
+    if(e > moment()) {
+      setStartDate(e)
+      setVisibleEndDatePicker(false)
+      form.resetFields(['EventDateEnd'])
+    }
   }
 
   function onChange(e: any) {
@@ -208,14 +220,23 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
-          <Form.Item label="Дата початку" name="EventDateStart" className={classes.formItem} rules={[{ required: true, message: emptyInput() }]}>
+          <Form.Item label="Дата початку" name="EventDateStart" className={classes.formItem}
+            rules={[
+              { required: true, message: emptyInput() },
+              {
+                validator: (_: object, value: Date) => {
+                  return (value < new Date()
+                    ? Promise.reject(incorrectStartTime)
+                    : Promise.resolve())
+                }
+              }]}>
             <DatePicker
               showTime
               disabledDate={disabledDate}
               placeholder="Оберіть дату початку"
               format={dateFormat}
               className={classes.select}
-              onChange={setStartDate}
+              onChange={onEventDateStartChange}
               getPopupContainer={() => document.getElementById('area')! as HTMLElement}
               popupStyle={{ position: 'absolute' }}
             />
@@ -224,9 +245,22 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
-          <Form.Item label="Дата завершення" name="EventDateEnd" className={classes.formItem} rules={[{ required: true, message: emptyInput() }]}>
+          <Form.Item label="Дата завершення" name="EventDateEnd" className={classes.formItem} 
+          rules={[
+            { required: true, message: emptyInput() },
+            {
+              validator: (_: object, value: Date) => {
+                return (
+                  value < StartDate!
+                  ? Promise.reject(incorrectEndTime)
+                  : Promise.resolve())
+              }
+            }
+            ]}>
             <DatePicker
               showTime
+              disabled={visibleEndDatePicker}
+              defaultPickerValue={moment(StartDate)}
               disabledDate={disabledEndDate}
               placeholder="Оберіть дату завершення"
               format={dateFormat}
@@ -304,7 +338,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
             <Button type="primary" htmlType="submit" className={classes.button} loading={loading}>
               Зберегти подію
             </Button>
-            <Button key="back" style={{marginRight:"7px"}} onClick={handleCancel} className={classes.button} loading={loading}>
+            <Button key="back" style={{ marginRight: "7px" }} onClick={handleCancel} className={classes.button} loading={loading}>
               Відмінити
             </Button>
           </Form.Item>
