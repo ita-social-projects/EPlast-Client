@@ -38,7 +38,7 @@ const SortedCities = ( {switcher}: Props) => {
           city.logo = CityDefaultLogo;
         } else {
           const logo = await getLogo(city.logo);
-          city.logo = logo.data;
+         city.logo = logo.data;
         }
       }
     } finally {

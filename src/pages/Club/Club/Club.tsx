@@ -986,7 +986,7 @@ const Club = () => {
       ) : null}
     </Layout.Content>
   ) : (
-        <Title level={2}>Місто не знайдено</Title>
+        <Title level={2}>Курінь не знайдено</Title>
       );
 };
 
