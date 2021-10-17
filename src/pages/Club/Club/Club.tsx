@@ -14,13 +14,23 @@ import {
   LoadingOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getClubById, getLogo, removeClub, unArchiveClub, archiveClub, toggleMemberStatus, clubNameOfApprovedMember, removeFollower } from "../../../api/clubsApi";
+import {
+   addFollower, 
+   getClubById,
+   getLogo, 
+   removeClub, 
+   unArchiveClub, 
+   archiveClub, 
+   toggleMemberStatus, 
+   clubNameOfApprovedMember, 
+   removeFollower,
+   addAdministrator,
+   editAdministrator,
+   getUserClubAccess
+  } from "../../../api/clubsApi";
+
 import userApi from "../../../api/UserApi";
 import "./Club.less";
-import {
-  addAdministrator,
-  editAdministrator,
-} from "../../../api/clubsApi";
 import ClubDefaultLogo from "../../../assets/images/default_club_image.jpg";
 import ClubProfile from "../../../models/Club/ClubProfile";
 import ClubMember from '../../../models/Club/ClubMember';
@@ -28,6 +38,8 @@ import ClubAdmin from '../../../models/Club/ClubAdmin';
 import ClubDocument from '../../../models/Club/ClubDocument';
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
 import CheckActiveMembersForm from "./CheckActiveMembersForm";
+import AuthStore from "../../../stores/AuthStore";
+import jwt from 'jwt-decode';
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
@@ -56,15 +68,13 @@ const Club = () => {
   const [members, setMembers] = useState<ClubMember[]>([]);
   const [followers, setFollowers] = useState<ClubMember[]>([]);
   const [documents, setDocuments] = useState<ClubDocument[]>([]);
-  const [canCreate, setCanCreate] = useState(false);
-  const [canEdit, setCanEdit] = useState(false);
+  const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({})
   const [canJoin, setCanJoin] = useState(false);
   const [membersCount, setMembersCount] = useState<number>();
   const [adminsCount, setAdminsCount] = useState<number>();
   const [followersCount, setFollowersCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
-  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserID, setActiveUserID] = useState<string>();
   const [clubLogoLoading, setClubLogoLoading] = useState<boolean>(false);
   const [document, setDocument] = useState<ClubDocument>(new ClubDocument());
@@ -243,6 +253,7 @@ const Club = () => {
   const getClub = async () => {
     setLoading(true);
     try {
+      await getUserAccessesFoClubs();
       const response = await getClubById(+id);
       setActiveUserID(userApi.getActiveUserId());
       const clubNameResponse = await clubNameOfApprovedMember(userApi.getActiveUserId());
@@ -256,14 +267,11 @@ const Club = () => {
 
       ], response.data.logo);
 
-      setActiveUserRoles(userApi.getActiveUserRoles);
       setAdmins(response.data.administration);
       setClub(response.data);
       setMembers(response.data.members);
       setFollowers(response.data.followers);
       setDocuments(response.data.documents);
-      setCanCreate(response.data.canCreate);
-      setCanEdit(response.data.canEdit);
       setCanJoin(response.data.canJoin);
       setIsActiveClub(response.data.isActive);
       setMembersCount(response.data.memberCount);
@@ -274,6 +282,15 @@ const Club = () => {
       setLoading(false);
     }
   };
+
+  const getUserAccessesFoClubs = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    await getUserClubAccess(+id, user.nameid).then(
+      response => {
+        setUserAccesses(response.data);
+      }
+    );
+  }
 
   const updateAdmins = async () => {
     const response = await getClubById(+id);
@@ -601,7 +618,7 @@ const Club = () => {
                   Деталі
                 </Button>
               </Col>
-              {canEdit ? (
+              {userAccesses["EditClub"] ? (
                 <Col>
                   <Button
                     type="primary"
@@ -612,13 +629,13 @@ const Club = () => {
                   </Button>
                 </Col>
               ) : null}
-              {canEdit ? (
+              {userAccesses["EditClub"] ? (
                 <Col xs={24} sm={4}>
                   <Row
                     className="clubIcons"
-                    justify={canCreate ? "center" : "start"}
+                    justify={userAccesses["CreateClub"] ? "center" : "start"}
                   >
-                    {canEdit ? (
+                    {userAccesses["EditClub"] ? (
                       <Col>
                         <Tooltip
                           title="Редагувати курінь">
@@ -631,7 +648,7 @@ const Club = () => {
                         </Tooltip>
                       </Col>
                     ) : null}
-                    {canCreate ? (
+                    {userAccesses["DeleteClub"] ? (
                       isActiveClub ? (
                         <Col offset={1}>
                           <Tooltip title="Архівувати курінь">
@@ -758,7 +775,7 @@ const Club = () => {
               )}
             </Row>
             <div className="clubMoreButton">
-              {isActiveClub ? (canEdit ? (
+              {isActiveClub ? (userAccesses["EditClub"] ? (
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
@@ -780,13 +797,7 @@ const Club = () => {
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="clubCard">
             <Title level={4}>Документообіг куреня <a onClick={() =>
-              canEdit || (!activeUserRoles.includes(Roles.RegisteredUser)
-                && club.name == activeUserClub) ||
-                (activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy))
-                ||
-                (activeUserRoles.includes(Roles.CityHead) || activeUserRoles.includes(Roles.CityHeadDeputy))
-                ||
-                (activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.KurinHeadDeputy))
+              userAccesses["IsAdmin"] || (userAccesses["DownloadDocument"] && club.name === activeUserClub)
                 ?
                 history.push(`/clubs/documents/${club.id}`)
                 : undefined
@@ -821,13 +832,7 @@ const Club = () => {
               )}
             </Row>
             <div className="clubMoreButton">
-              {canEdit || (!activeUserRoles.includes(Roles.RegisteredUser)
-                && club.name == activeUserClub) ||
-                (activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy))
-                ||
-                (activeUserRoles.includes(Roles.CityHead) || activeUserRoles.includes(Roles.CityHeadDeputy))
-                ||
-                (activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.KurinHeadDeputy))
+              { userAccesses["IsAdmin"] || (userAccesses["DownloadDocument"] && club.name === activeUserClub)
                 ? (
                   <Button
                     type="primary"
@@ -838,9 +843,7 @@ const Club = () => {
                   </Button>
                 ) : null}
               {isActiveClub ? (
-                (activeUserRoles.includes(Roles.Admin))
-                  || ((activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.KurinHeadDeputy))
-                    && club.name == activeUserClub) ? (
+               userAccesses["EditClub"] ? (
                   <PlusSquareFilled
                     className="addReportIcon"
                     onClick={() => setVisibleModal(true)}
@@ -906,7 +909,7 @@ const Club = () => {
                         <p className="userName">{followers.user.firstName}</p>
                         <p className="userName">{followers.user.lastName}</p>
                       </div>
-                      {(canEdit && isLoadingPlus) || (isLoadingMemberId !== followers.id && !isLoadingPlus) ? (
+                      {(userAccesses["EditClub"] && isLoadingPlus) || (isLoadingMemberId !== followers.id && !isLoadingPlus) ? (
                         <Tooltip placement={"bottom"} title={"Додати до членів"}>
                           <PlusOutlined
                             className="approveIcon"
@@ -974,7 +977,7 @@ const Club = () => {
         <CheckActiveMembersForm members={members} admins={admins} followers={followers} onAdd={handleConfirm} />
       </Modal>
 
-      {canEdit ? (
+      {userAccesses["EditClub"] ? (
         <AddDocumentModal
           ClubId={+id}
           document={document}
