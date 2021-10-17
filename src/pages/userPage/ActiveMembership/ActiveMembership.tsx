@@ -52,9 +52,9 @@ const ActiveMembership = () => {
     });
   };
   const getAppropriateToGenderDegree = (plastDegreeName: string): string => {
-    if (userGenders[0] === userProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
+    if (userGenders[0] === fullUserProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
       return plastDegreeName.split("/")[0];
-    } else if (userGenders[1] === userProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
+    } else if (userGenders[1] === fullUserProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
       return plastDegreeName.split("/")[1];
     } else return plastDegreeName;
   };

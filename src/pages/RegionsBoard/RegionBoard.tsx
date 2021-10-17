@@ -417,7 +417,6 @@ const RegionBoard = () => {
                         xs={12}
                         sm={8}
                         key={decision.id}
-                        onClick={() => openPDF(decision)}
                         >
                         <div>
                             <FileDoneOutlined className="documentIcon" />
