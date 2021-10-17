@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import {
     Modal,
@@ -31,6 +31,7 @@ import CreatedEvents from "../../../../models/EventUser/CreatedEvents";
 import AvatarAndProgressStatic from "../../../userPage/personalData/AvatarAndProgressStatic";
 import { Data } from '../../../userPage/Interface/Interface'
 import { Roles } from "../../../../models/Roles/Roles";
+import { PersonalDataContext } from "../../../userPage/personalData/PersonalData";
 
 const { Title } = Typography;
 const userGenders = ["Чоловік", "Жінка", "Інша"];
@@ -50,7 +51,7 @@ const EventUser = () => {
     const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
         new CreatedEvents(),
     ]);
-    const [currentUser, setCurrentUser] = useState<Data>();
+    const { fullUserProfile, ChangeUserProfile} = useContext(PersonalDataContext);
     const [showEventCreateDrawer, setShowEventCreateDrawer] = useState(false);
     const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
     const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
@@ -64,7 +65,7 @@ const EventUser = () => {
 
     useEffect(() => {
         userApi.getById(userId).then(async (response) => {
-            setCurrentUser(response.data);
+            if(ChangeUserProfile) ChangeUserProfile(response.data);
         });
         fetchData();
     }, []);
@@ -142,22 +143,21 @@ const EventUser = () => {
             <div className={classes.wrapperImg}>
                 <div className={classes.avatarWrapper}>
                     <AvatarAndProgressStatic
-                        imageUrl={currentUser?.user.imagePath as string}
-                        time={currentUser?.timeToJoinPlast}
-                        firstName={currentUser?.user.firstName}
-                        lastName={currentUser?.user.lastName}
-                        isUserPlastun={true}
-                        pseudo={currentUser?.user.pseudo}
-                        governingBody={currentUser?.user.governingBody}
-                        region={currentUser?.user.region}
-                        city={currentUser?.user.city}
-                        club={currentUser?.user.club}
-                        governingBodyId={currentUser?.user.governingBodyId}
-                        cityId={currentUser?.user.cityId}
-                        clubId={currentUser?.user.clubId}
-                        regionId={currentUser?.user.regionId}
-                        cityMemberIsApproved={currentUser?.user.cityMemberIsApproved}
-                        clubMemberIsApproved={currentUser?.user.clubMemberIsApproved}
+                        time={fullUserProfile?.timeToJoinPlast}
+                        firstName={fullUserProfile?.user.firstName}
+                        lastName={fullUserProfile?.user.lastName}
+                        isUserPlastun={fullUserProfile?.isUserPlastun}
+                        pseudo={fullUserProfile?.user.pseudo}
+                        governingBody={fullUserProfile?.user.governingBody}
+                        region={fullUserProfile?.user.region}
+                        city={fullUserProfile?.user.city}
+                        club={fullUserProfile?.user.club}
+                        governingBodyId={fullUserProfile?.user.governingBodyId}
+                        cityId={fullUserProfile?.user.cityId}
+                        clubId={fullUserProfile?.user.clubId}
+                        regionId={fullUserProfile?.user.regionId}
+                        cityMemberIsApproved={fullUserProfile?.user.cityMemberIsApproved}
+                        clubMemberIsApproved={fullUserProfile?.user.clubMemberIsApproved}
                         showPrecautions={ true }
                     />
                 </div>
@@ -171,8 +171,8 @@ const EventUser = () => {
                             userToken.nameid !== userId && (
                                 <h2>
                                     {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
-                                    { userGenders[0] === currentUser?.user.gender?.name ? (<> відвідав</>) :
-                                        userGenders[1] === currentUser?.user.gender?.name ? (<> відвідала</>) :
+                                    { userGenders[0] === fullUserProfile?.user.gender?.name ? (<> відвідав</>) :
+                                        userGenders[1] === fullUserProfile?.user.gender?.name ? (<> відвідала</>) :
                                             (<> відвідав(ла)</>)} жодної події
                                 </h2>
                             )}
@@ -219,14 +219,14 @@ const EventUser = () => {
                                     <h2>
                                         {" "}
                                         Дата початку:{" "}
-                                        {moment(item.eventDateStart).format(
+                                        {moment.utc(item.eventDateStart).local().format(
                                             "DD.MM.YYYY HH:mm"
                                         )}{" "}
                                     </h2>
                                     <h2>
                                         {" "}
                                         Дата завершення:{" "}
-                                        {moment(item.eventDateEnd).format("DD.MM.YYYY HH:mm")}{" "}
+                                        {moment.utc(item.eventDateEnd).local().format("DD.MM.YYYY HH:mm")}{" "}
                                     </h2>
                                     <Button
                                         type="primary"
@@ -283,8 +283,8 @@ const EventUser = () => {
                                 <div>
                                     <h2>
                                         {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
-                                        {userGenders[0] === currentUser?.user.gender?.name ? (<> створив</>) :
-                                            userGenders[1] === currentUser?.user.gender?.name ? (<> створила</>) :
+                                        {userGenders[0] === fullUserProfile?.user.gender?.name ? (<> створив</>) :
+                                            userGenders[1] === fullUserProfile?.user.gender?.name ? (<> створила</>) :
                                                 (<> створив(ла)</>)} жодної події
                                 </h2>
                                 </div>
@@ -372,14 +372,14 @@ const EventUser = () => {
                                     <h2>
                                         {" "}
                                         Дата початку:{" "}
-                                        {moment(item.eventDateStart).format(
+                                        {moment.utc(item.eventDateStart).local().format(
                                             "DD.MM.YYYY HH:mm"
                                         )}{" "}
                                     </h2>
                                     <h2>
                                         {" "}
                                         Дата завершення:{" "}
-                                        {moment(item.eventDateEnd).format("DD.MM.YYYY HH:mm")}{" "}
+                                        {moment.utc(item.eventDateEnd).local().format("DD.MM.YYYY HH:mm")}{" "}
                                     </h2>
                                     <Button
                                         type="primary"
@@ -436,8 +436,8 @@ const EventUser = () => {
                             userToken.nameid !== userId && (
                                 <h2>
                                     {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
-                                    {userGenders[0] === currentUser?.user.gender?.name ? (<> запланував</>) :
-                                            userGenders[1] === currentUser?.user.gender?.name ? (<> запланувала</>) :
+                                    {userGenders[0] === fullUserProfile?.user.gender?.name ? (<> запланував</>) :
+                                            userGenders[1] === fullUserProfile?.user.gender?.name ? (<> запланувала</>) :
                                                 (<> запланував(ла)</>)} жодної події
                                 </h2>
                             )}
@@ -488,14 +488,14 @@ const EventUser = () => {
                                     <h2>
                                         {" "}
                                         Дата початку:{" "}
-                                        {moment(item.eventDateStart).format(
+                                        {moment.utc(item.eventDateStart).local().format(
                                             "DD.MM.YYYY HH:mm"
                                         )}{" "}
                                     </h2>
                                     <h2>
                                         {" "}
                                         Дата завершення:{" "}
-                                        {moment(item.eventDateEnd).format("DD.MM.YYYY HH:mm")}{" "}
+                                        {moment.utc(item.eventDateEnd).local().format("DD.MM.YYYY HH:mm")}{" "}
                                     </h2>
                                     <Button
                                         type="primary"

@@ -80,9 +80,9 @@ const AddAdministratorModal = (props: Props) => {
           </b>{" "}
           є Головою Округи, час правління закінчується{" "}
           <b>
-            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
-              : moment(head?.endDate).format("DD.MM.YYYY")}
+              : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -101,9 +101,9 @@ const AddAdministratorModal = (props: Props) => {
           </b>{" "}
           є Головою Округи, час правління закінчується{" "}
           <b>
-            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
-              : moment(head?.endDate).format("DD.MM.YYYY")}
+              : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -114,9 +114,9 @@ const AddAdministratorModal = (props: Props) => {
         </b>{" "}
         є Заступником Голови Округи, час правління закінчується{" "}
         <b>
-          {moment(headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
+          {moment.utc(headDeputy?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
             ? "ще не скоро"
-            : moment(headDeputy?.endDate).format("DD.MM.YYYY")}
+            : moment.utc(headDeputy?.endDate).local().format("DD.MM.YYYY")}
         </b>
         .
       </div>
@@ -277,7 +277,7 @@ const AddAdministratorModal = (props: Props) => {
               labelCol={{ span: 24 }}
               initialValue={
                 props.admin.startDate
-                  ? moment(props.admin.startDate)
+                  ? moment.utc(props.admin.startDate).local()
                   : undefined
               }
             >
@@ -287,7 +287,7 @@ const AddAdministratorModal = (props: Props) => {
                 format="DD.MM.YYYY"
                 value={
                   props.admin.startDate
-                    ? moment(props.admin.startDate)
+                    ? moment.utc(props.admin.startDate).local()
                     : undefined
                 }
                 onChange={(e) => setStartDate(e)}
@@ -300,7 +300,7 @@ const AddAdministratorModal = (props: Props) => {
               label="Час кінця"
               labelCol={{ span: 24 }}
               initialValue={
-                props.admin.endDate ? moment(props.admin.endDate) : undefined
+                props.admin.endDate ? moment.utc(props.admin.endDate).local() : undefined
               }
             >
               <DatePicker
@@ -308,7 +308,7 @@ const AddAdministratorModal = (props: Props) => {
                 disabledDate={disabledEndDate}
                 format="DD.MM.YYYY"
                 value={
-                  props.admin.endDate ? moment(props.admin.endDate) : undefined
+                  props.admin.endDate ? moment.utc(props.admin.endDate).local() : undefined
                 }
                 onChange={(e) => setEndDate(e)}
               />

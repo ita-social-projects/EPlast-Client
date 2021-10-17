@@ -1,5 +1,5 @@
 import React, { useEffect, useState, PropsWithRef } from 'react';
-import { Table, Spin, Input } from 'antd';
+import { Table, Spin, Input, Layout } from 'antd';
 import columns from './columns';
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import DropDown from './KadraDropDown';
@@ -91,7 +91,7 @@ export const KVTable = ({ current, searchData }: props) => {
   ? data.filter((item) => {
       return Object.values([
         item.numberInRegister,
-        moment(item.dateOfGranting.toLocaleString()).format("DD.MM.YYYY"),
+        moment.utc(item.dateOfGranting.toLocaleString()).local().format("DD.MM.YYYY"),
       ]).find((element) => {
         return String(element).toLowerCase().includes(searchData);
       });
@@ -102,10 +102,10 @@ export const KVTable = ({ current, searchData }: props) => {
   filteredData = filteredData.concat(
     data.filter(
       (item) =>
-        (item.user.firstName?.toLowerCase()?.includes(searchData) ||
-          item.user.lastName?.toLowerCase()?.includes(searchData)||
-          item.user.firstName?.includes(searchData) ||
-          item.user.lastName?.includes(searchData)) &&
+        ( item.user.firstName?.toLowerCase()?.includes(searchData.toLowerCase()) ||
+          item.user.lastName?.toLowerCase()?.includes(searchData.toLowerCase())||
+          (item.user.firstName + ' ' + item.user.lastName)?.toLowerCase()?.includes(searchData.toLowerCase())||
+          (item.user.lastName + ' ' + item.user.firstName)?.toLowerCase()?.includes(searchData.toLowerCase())) &&
         !filteredData.includes(item)
     )
   );
@@ -114,48 +114,49 @@ export const KVTable = ({ current, searchData }: props) => {
 
   return (
     <div>
-
-      <Table
-        className={classes.table}
-        loading={loading}
-        columns={columns}
-        dataSource={filteredData}
-        scroll={{ x: 1300 }}
-        onRow={(record) => {
-          return {
-            onClick: () => {
-              setShowDropdown(false);
-            },
-            onContextMenu: (event) => {
-              event.preventDefault();
-              setShowDropdown(true);
-              setRecordObj(record);
-              setX(event.pageX);
-              setY(event.pageY-200);
-            },
-          };
-        }}
-        pagination={
-          {
-            showLessItems: true,
-            responsive:true,
-            showSizeChanger: true,
+      <Layout.Content onClick={() => { setShowDropdown(false); }}>
+        <Table
+          className={classes.table}
+          loading={loading}
+          columns={columns}
+          dataSource={filteredData}
+          scroll={{ x: 1300 }}
+          onRow={(record) => {
+            return {
+              onClick: () => {
+                setShowDropdown(false);
+              },
+              onContextMenu: (event) => {
+                event.preventDefault();
+                setShowDropdown(true);
+                setRecordObj(record);
+                setX(event.pageX);
+                setY(event.pageY-200);
+              },
+            };
+          }}
+          pagination={
+            {
+              showLessItems: true,
+              responsive:true,
+              showSizeChanger: true,
+            }
           }
-        }
-        bordered
-        rowKey="id"
-      />
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <DropDown
-          showDropdown={showDropdown}
-          record={recordObj}
-          onDelete={handleDelete}
-          setShowDropdown={setShowDropdown}
-          pageX={x}
-          pageY={y}
-          onEdit={onEdit}
+          bordered
+          rowKey="id"
         />
-      </ClickAwayListener>
+        <ClickAwayListener onClickAway={handleClickAway}>
+          <DropDown
+            showDropdown={showDropdown}
+            record={recordObj}
+            onDelete={handleDelete}
+            setShowDropdown={setShowDropdown}
+            pageX={x}
+            pageY={y}
+            onEdit={onEdit}
+          />
+        </ClickAwayListener>
+      </Layout.Content>
     </div>
 
 

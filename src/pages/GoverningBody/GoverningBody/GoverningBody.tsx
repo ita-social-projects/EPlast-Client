@@ -245,13 +245,13 @@ const GoverningBody = () => {
                     {governingBodyHead.endDate ? (
                       <Paragraph>
                         <b>Час правління:</b>{" "}
-                        {moment(governingBodyHead.startDate).format("DD.MM.YYYY")}{" - "}
-                        {moment(governingBodyHead.endDate).format("DD.MM.YYYY")}
+                        {moment.utc(governingBodyHead.startDate).local().format("DD.MM.YYYY")}{" - "}
+                        {moment.utc(governingBodyHead.endDate).local().format("DD.MM.YYYY")}
                       </Paragraph>
                     ) : (
                         <Paragraph>
                           <b>Початок правління:</b>{" "}
-                          {moment(governingBodyHead.startDate).format("DD.MM.YYYY")}
+                          {moment.utc(governingBodyHead.startDate).local().format("DD.MM.YYYY")}
                         </Paragraph>
                       )}
                   </div>
@@ -470,7 +470,7 @@ const GoverningBody = () => {
                     >
                       <Paragraph><strong>{announcement.user.firstName}</strong></Paragraph>
                       <Paragraph style={{overflow:"hidden",textOverflow:"ellipsis", wordBreak:"break-word"}}>{announcement.text}</Paragraph>
-                      <Paragraph>{moment(announcement.date).format("DD.MM.YYYY")}</Paragraph>
+                      <Paragraph>{moment.utc(announcement.date).local().format("DD.MM.YYYY")}</Paragraph>
                     </Col>
                     )) 
                   : 

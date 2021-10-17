@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Data } from "../Interface/Interface";
 import userApi from '../../../api/UserApi';
@@ -22,13 +22,13 @@ import {
 } from "../../../components/Notifications/Messages"
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 import { Roles } from "../../../models/Roles/Roles";
+import { PersonalDataContext } from "../personalData/PersonalData";
 const userGenders = ["Чоловік", "Жінка", "Інша"];
 const fileNameMaxLength = 50;
 
 export const Blanks = () => {
     const { userId } = useParams<{ userId: string }>();
-    const [data, setData] = useState<Data>();
-    const [currentUser, setCurrentUser] = useState<Data>();
+    const {fullUserProfile, activeUserRoles, UpdateData} = useContext(PersonalDataContext);
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
     const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
     const [extractUPU, setExtractUPU] = useState<BlankDocument>(new BlankDocument);
@@ -38,7 +38,6 @@ export const Blanks = () => {
     const [visibleAchievementModal, setvisibleAchievementModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [canEdit, setCanEdit] = useState(false);
-    const [roles, setRoles] = useState<string[]>([]);
     const [userToken, setUserToken] = useState<any>([
         {
             nameid: "",
@@ -51,23 +50,14 @@ export const Blanks = () => {
     const fetchData = async () => {
         const token = AuthStore.getToken() as string;
         setUserToken(jwt(token));
-        const currentUserId = (jwt(token) as { nameid: "" }).nameid;
-        setRoles(userApi.getActiveUserRoles());
-        setCanEdit(roles.includes(Roles.Admin));
-        await userApi.getById(userId).then(response => {
-            setData(response.data);
-        }).catch(() => { notificationLogic('error', tryAgain) })
-
-        await userApi.getById(currentUserId).then(response => {
-            setCurrentUser(response.data);
-        }).catch(() => { notificationLogic('error', tryAgain) })
+        setCanEdit(activeUserRoles.includes(Roles.Admin));
         setLoading(true);
     };
 
     const getAppropriateToGenderVerb = () => {
-        if (userGenders[0] === data?.user.gender?.name)
+        if (userGenders[0] === fullUserProfile?.user.gender?.name)
             return "додав";
-        if (userGenders[1] === data?.user.gender?.name)
+        if (userGenders[1] === fullUserProfile?.user.gender?.name)
             return "додала";
         return "додав(ла)";
     };
@@ -125,15 +115,15 @@ export const Blanks = () => {
 
     const DoesUserHasAccessToManageBlanks = (userRoles: Array<string>): boolean => {
 
-        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && currentUser?.user?.clubId == data?.user?.clubId) ||
-            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && currentUser?.user?.cityId == data?.user?.cityId) ||
-            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && currentUser?.user?.regionId == data?.user?.regionId) ||
+        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && fullUserProfile?.user?.clubId == fullUserProfile?.user?.clubId) ||
+            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && fullUserProfile?.user?.cityId == fullUserProfile?.user?.cityId) ||
+            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && fullUserProfile?.user?.regionId == fullUserProfile?.user?.regionId) ||
             userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead);
     };
     const DoesUserHasAccessToSeeAndDownloadBlanks = (userRoles: Array<string>): boolean => {
-        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && currentUser?.user?.clubId == data?.user?.clubId) ||
-            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && currentUser?.user?.cityId == data?.user?.cityId) ||
-            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && currentUser?.user?.regionId == data?.user?.regionId) ||
+        return ((userRoles?.includes(Roles.KurinHead) || userRoles?.includes(Roles.KurinHeadDeputy)) && fullUserProfile?.user?.clubId == fullUserProfile?.user?.clubId) ||
+            ((userRoles?.includes(Roles.CityHead) || userRoles?.includes(Roles.CityHeadDeputy)) && fullUserProfile?.user?.cityId == fullUserProfile?.user?.cityId) ||
+            ((userRoles?.includes(Roles.OkrugaHead) || userRoles?.includes(Roles.OkrugaHeadDeputy)) && fullUserProfile?.user?.regionId == fullUserProfile?.user?.regionId) ||
             userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead) || userRoles?.includes(Roles.PlastMember);
     };
     const DoesUserHasAccessToDeleteBlanks = (userRoles: Array<string>): boolean => {
@@ -155,23 +145,22 @@ export const Blanks = () => {
             <div className={classes.wrapper}>
                 <div className={classes.wrapperImg}>
                     <AvatarAndProgressStatic
-                        imageUrl={data?.user.imagePath as string}
-                        time={data?.timeToJoinPlast}
-                        firstName={data?.user.firstName}
-                        lastName={data?.user.lastName}
+                        time={fullUserProfile?.timeToJoinPlast}
+                        firstName={fullUserProfile?.user.firstName}
+                        lastName={fullUserProfile?.user.lastName}
                         isUserPlastun={true}
-                        pseudo={data?.user.pseudo}
-                        governingBody={data?.user.governingBody}
-                        region={data?.user.region}
-                        city={data?.user.city}
-                        club={data?.user.club}
-                        governingBodyId={data?.user.governingBodyId}
-                        regionId={data?.user.regionId}
-                        cityId={data?.user.cityId}
-                        clubId={data?.user.clubId}
-                        cityMemberIsApproved={data?.user.cityMemberIsApproved}
-                        clubMemberIsApproved={data?.user.clubMemberIsApproved}
-                        showPrecautions={data?.shortUser === null} />
+                        pseudo={fullUserProfile?.user.pseudo}
+                        governingBody={fullUserProfile?.user.governingBody}
+                        region={fullUserProfile?.user.region}
+                        city={fullUserProfile?.user.city}
+                        club={fullUserProfile?.user.club}
+                        governingBodyId={fullUserProfile?.user.governingBodyId}
+                        regionId={fullUserProfile?.user.regionId}
+                        cityId={fullUserProfile?.user.cityId}
+                        clubId={fullUserProfile?.user.clubId}
+                        cityMemberIsApproved={fullUserProfile?.user.cityMemberIsApproved}
+                        clubMemberIsApproved={fullUserProfile?.user.clubMemberIsApproved}
+                        showPrecautions={fullUserProfile?.shortUser === null} />
                 </div>
                 <div className={classes.wrapperCol}>
                     <div className={classes.wrapper}>
@@ -207,7 +196,7 @@ export const Blanks = () => {
                                         }
 
                                     </div>
-                                    {(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles)) &&
+                                    {(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(activeUserRoles)) &&
                                         <Tooltip title="Завантажити">
                                             <DownloadOutlined
                                                 className={classes.downloadIcon}
@@ -220,7 +209,7 @@ export const Blanks = () => {
                                                 }
                                             /></Tooltip>}
 
-                                    {((userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles)) && documentFormat !== "doc" && documentFormat !== "docx") ?
+                                    {((userToken.nameid === userId || DoesUserHasAccessToManageBlanks(activeUserRoles)) && documentFormat !== "doc" && documentFormat !== "docx") ?
                                         <Tooltip title="Переглянути">
                                             <EyeOutlined
                                                 className={classes.reviewIcon}
@@ -228,7 +217,7 @@ export const Blanks = () => {
                                                 onClick={() => openDocument(document.blobName, document.fileName)} />
                                         </Tooltip>
                                         : null}
-                                    {(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles)) ?
+                                    {(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(activeUserRoles)) ?
                                         <Tooltip title="Видалити">
                                             <Popconfirm
                                                 title="Видалити цей документ?"
@@ -253,9 +242,9 @@ export const Blanks = () => {
                                             <h2>Ви ще не додали Життєпис</h2>
                                         }
                                         {userToken.nameid !== userId &&
-                                            <h2>{data?.user.firstName} ще не {getAppropriateToGenderVerb()} Життєпис</h2>
+                                            <h2>{fullUserProfile?.user.firstName} ще не {getAppropriateToGenderVerb()} Життєпис</h2>
                                         }
-                                        {(userToken.nameid === userId || roles.includes(Roles.Admin)) &&
+                                        {(userToken.nameid === userId || activeUserRoles.includes(Roles.Admin)) &&
                                             <div>
                                                 <Button type="primary"
                                                     className={classes.addIcon}
@@ -302,7 +291,7 @@ export const Blanks = () => {
                                     </div>
                                     <Tooltip title="Завантажити">
                                         <DownloadOutlined
-                                            hidden={!(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles))}
+                                            hidden={!(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(activeUserRoles))}
                                             className={classes.downloadIcon}
                                             key="download"
                                             onClick={() =>
@@ -313,7 +302,7 @@ export const Blanks = () => {
                                             }
                                         />
                                     </Tooltip>
-                                    {((userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles)) && extractUPUFormat !== "doc" && extractUPUFormat !== "docx") ?
+                                    {((userToken.nameid === userId || DoesUserHasAccessToManageBlanks(activeUserRoles)) && extractUPUFormat !== "doc" && extractUPUFormat !== "docx") ?
                                         <Tooltip title="Переглянути">
                                             <EyeOutlined
                                                 className={classes.reviewIcon}
@@ -330,7 +319,7 @@ export const Blanks = () => {
                                             okText="Так"
                                             cancelText="Ні">
                                             <DeleteOutlined
-                                                hidden={!(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles))}
+                                                hidden={!(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(activeUserRoles))}
                                                 className={classes.deleteIcon}
 
                                                 key="close"
@@ -344,11 +333,11 @@ export const Blanks = () => {
                                         <h2>Ви ще не додали Виписку</h2>
                                     }
                                     {userToken.nameid !== userId &&
-                                        <h2>{data?.user.firstName} ще не {getAppropriateToGenderVerb()} Виписку</h2>
+                                        <h2>{fullUserProfile?.user.firstName} ще не {getAppropriateToGenderVerb()} Виписку</h2>
                                     }
                                     <div>
                                         <Button type="primary"
-                                            hidden={!(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(roles))}
+                                            hidden={!(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(activeUserRoles))}
                                             className={classes.addIcon}
                                             onClick={() => setVisibleExtractFromUPUModal(true)}>
                                             Додати Виписку
@@ -385,14 +374,14 @@ export const Blanks = () => {
                                         <h2>Ви ще не додали жодного Досягнення</h2>
                                     }
                                     {userToken.nameid !== userId &&
-                                        <h2>{data?.user.firstName} ще не {getAppropriateToGenderVerb()} жодного Досягнення</h2>
+                                        <h2>{fullUserProfile?.user.firstName} ще не {getAppropriateToGenderVerb()} жодного Досягнення</h2>
                                     }
                                 </Col>
                             )}
                             <Col>
                                 <div>
                                     <Button type="primary"
-                                        hidden={!(DoesUserHasAccessToManageBlanks(roles) || userToken.nameid === userId)}
+                                        hidden={!(DoesUserHasAccessToManageBlanks(activeUserRoles) || userToken.nameid === userId)}
                                         className={classes.addIcon}
                                         onClick={() => setvisibleAchievementModal(true)}>
                                         Додати Досягнення
@@ -406,7 +395,7 @@ export const Blanks = () => {
                             <FileTextOutlined
                                 className={classes.documentIcon} />
                             <Button
-                                hidden={!(DoesUserHasAccessToManageBlanks(roles) || userToken.nameid === userId)}
+                                hidden={!(DoesUserHasAccessToManageBlanks(activeUserRoles) || userToken.nameid === userId)}
                                 className={classes.addIcon}
                                 type="primary"
                                 onClick={() => getPdf()}>
@@ -423,25 +412,25 @@ export const Blanks = () => {
                 visibleModal={visibleListAchievementModal}
                 setVisibleModal={setVisibleListAchievementModal}
                 achievementDoc={achievementDoc}
-                hasAccess={DoesUserHasAccessToManageBlanks(roles) || userToken.nameid === userId}
-                hasAccessToSeeAndDownload={DoesUserHasAccessToSeeAndDownloadBlanks(roles) || userToken.nameid === userId}
-                hasAccessToDelete={DoesUserHasAccessToDeleteBlanks(roles) || userToken.nameid === userId}
+                hasAccess={DoesUserHasAccessToManageBlanks(activeUserRoles) || userToken.nameid === userId}
+                hasAccessToSeeAndDownload={DoesUserHasAccessToSeeAndDownloadBlanks(activeUserRoles) || userToken.nameid === userId}
+                hasAccessToDelete={DoesUserHasAccessToDeleteBlanks(activeUserRoles) || userToken.nameid === userId}
                 setAchievementDoc={setAchievementDoc} />
 
             <AddAchievementsModal
-                userId={data?.user.id}
+                userId={fullUserProfile?.user.id}
                 visibleModal={visibleAchievementModal}
                 setVisibleModal={setvisibleAchievementModal} />
 
             <AddBiographyModal
-                userId={data?.user.id}
+                userId={fullUserProfile?.user.id}
                 document={document}
                 setDocument={setDocument}
                 visibleModal={visibleModal}
                 setVisibleModal={setVisibleModal} />
 
             <AddExtractFromUPUModal
-                userId={data?.user.id}
+                userId={fullUserProfile?.user.id}
                 document={extractUPU}
                 setDocument={setExtractUPU}
                 visibleModal={visibleExtractFromUPUModal}

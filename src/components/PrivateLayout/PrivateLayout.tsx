@@ -126,7 +126,6 @@ const PrivateLayout = ({ children }: any) => {
                 key="0"
                 icon={<SolutionOutlined />}
                 onClick={() => { handleClickAway(); history.push("/decisions"); }}
-                style={{ color: "white" }}
                 title=""
               >
                 Рішення
@@ -138,7 +137,6 @@ const PrivateLayout = ({ children }: any) => {
                 key="1"
                 icon={<BankOutlined />}
                 onClick={() => { handleClickAway(); history.push("/regionsBoard"); }}
-                style={{ color: "white" }}
                 title=""
               >
                 Крайовий Провід Пласту
@@ -203,7 +201,7 @@ const PrivateLayout = ({ children }: any) => {
               }
             </SubMenu>
 
-            {(canEdit || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy ) ? (
+            {(canEdit || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy && !clubAdm && !clubAdmDeputy) ? (
               <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
                 <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="9">
                   Річні звіти
@@ -224,14 +222,12 @@ const PrivateLayout = ({ children }: any) => {
                   <Menu.Item onClick={() => { handleClickAway(); }} key="13">Порівняти осередки</Menu.Item>
                 </SubMenu> */}
               </SubMenu>
-              ) : (<> </>)
-            }
-
-            {(!canEdit && !regionAdm && !cityAdm && clubAdm && clubAdmDeputy) ? (
+            ) : 
+            ((clubAdm || clubAdmDeputy) ? (
               <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="16">
                 Річні звіти
               </Menu.Item>
-              ) : (<> </>)
+            ) : (<> </>))
             }
             {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
                 <Menu.Item 

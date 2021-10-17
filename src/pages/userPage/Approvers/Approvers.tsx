@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, Avatar, Tooltip, Spin, Skeleton } from 'antd';
 import './Approvers.less';
@@ -15,14 +15,14 @@ import {
   fileIsNotUpload,
   successfulDeleteAction,
   failDeleteAction,
-  successfulCreateAction,
+  successfulCreateAction, 
 } from "../../../components/Notifications/Messages"
 import { StickyContainer } from 'react-sticky';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import DeleteApproveButton from './DeleteApproveButton';
 import { Roles } from '../../../models/Roles/Roles';
 import AvatarAndProgressStatic from '../personalData/AvatarAndProgressStatic';
-import { Data } from '../Interface/Interface';
+import { PersonalDataContext } from '../personalData/PersonalData';
 
 const Assignments = () => {
   const history = useHistory();
@@ -34,24 +34,13 @@ const Assignments = () => {
   const [data, setData] = useState<ApproversData>();
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
-  const [userProfile, SetUserProfile] = useState<Data>();
+  const { userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData } = useContext(PersonalDataContext);
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
-  const [roles, setRoles] = useState<string[]>([]);
-
   const fetchData = async () => {
-    const currentUserId = userApi.getActiveUserId();
-    await userApi
-      .getUserProfileById(currentUserId, userId)
-      .then((response) => {
-        SetUserProfile(response.data);
-      })
-      .catch((error) => {
-        notificationLogic("error", error.message);
-      });
+    if (UpdateData) UpdateData();
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
-    setRoles(userApi.getActiveUserRoles());
     await userApi.getApprovers(userId, user.nameid).then(response => {
       setData(response.data);
       setLoading(true);
@@ -139,7 +128,6 @@ const Assignments = () => {
       <div className="avatarWrapperApprovers">
         <StickyContainer className="kadraWrapper">
           <AvatarAndProgressStatic
-            imageUrl={data?.user.imagePath as string}
             time={data?.timeToJoinPlast}
             firstName={data?.user.firstName}
             lastName={data?.user.lastName}
@@ -162,7 +150,7 @@ const Assignments = () => {
         <h1 className="approversCard">Поручення дійсних членів</h1>
         <div className="approversCard">
           {data?.confirmedUsers.map(p => {
-            if (p.approver.userID == data?.currentUserId || roles.includes(Roles.Admin)) {
+            if (p.approver.userID == data?.currentUserId || activeUserRoles.includes(Roles.Admin)) {
               return (
                 <div key={p.id}>
                   <Card
@@ -176,8 +164,8 @@ const Assignments = () => {
                         <Meta title={p.approver.user.firstName + " " + p.approver.user.lastName} className="titleText" />
                       </Link>
                     </Tooltip>
-                    <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
-                    <DeleteApproveButton approverId={p.id} deleteApprove={deleteApprove} />
+                    <Meta title={moment.utc(p.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
+                    { !userProfile?.isUserPlastun && (<DeleteApproveButton approverId={p.id} deleteApprove={deleteApprove} />)}
                   </Card>
                 </div>
               )
@@ -196,7 +184,7 @@ const Assignments = () => {
                       </Link>
                     </Tooltip>
 
-                    <Meta title={moment(p.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                    <Meta title={moment.utc(p.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
                     <p className="cardP" />
                   </Card>
                 </div>
@@ -205,7 +193,7 @@ const Assignments = () => {
           }
           )}
           <div>
-            {(data?.canApprovePlastMember && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser || roles.includes(Roles.Admin)))) ? (
+            {(data?.canApprovePlastMember && AccessToManage(activeUserRoles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser || activeUserRoles.includes(Roles.Admin)))) ? (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
@@ -231,7 +219,7 @@ const Assignments = () => {
               </div>
             ) : (
               <div
-                hidden={data?.confirmedUsers.length != 0 || (data?.canApprove && AccessToManage(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser && roles.includes(Roles.Admin))))}>
+                hidden={data?.confirmedUsers.length != 0 || (data?.canApprove && AccessToManage(activeUserRoles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser && activeUserRoles.includes(Roles.Admin))))}>
                 <br />
                 <br />
                 На жаль, поруки відсутні
@@ -245,7 +233,7 @@ const Assignments = () => {
         <div className="approversCard">
           {(data?.clubApprover != null) ? (
             <div>
-              {(data.clubApprover.approver.userID == data.currentUserId || roles.includes(Roles.Admin)) ?
+              {(data.clubApprover.approver.userID == data.currentUserId || activeUserRoles.includes(Roles.Admin)) ?
                 (
                   <Card
                     hoverable
@@ -261,8 +249,8 @@ const Assignments = () => {
                         <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
                       </Link>
                     </Tooltip>
-                    <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
-                    <DeleteApproveButton approverId={data.clubApprover.id} deleteApprove={deleteApprove} />
+                    <Meta title={moment.utc(data.clubApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
+                    { !userProfile?.isUserPlastun && (<DeleteApproveButton approverId={data.clubApprover.id} deleteApprove={deleteApprove} />)}
                   </Card>
                 ) : (
                   <Card
@@ -279,18 +267,18 @@ const Assignments = () => {
                         <Meta title={data.clubApprover.approver.user.firstName + " " + data.clubApprover.approver.user.lastName} className="titleText" />
                       </Link>
                     </Tooltip>
-                    <Meta title={moment(data.clubApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                    <Meta title={moment.utc(data.clubApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
                   </Card>
                 )}
             </div>
-          ) : ((data?.clubApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin)) && (data?.isUserHeadOfClub || roles.includes(Roles.Admin))) ?
+          ) : ( data?.canApproveClubMember ?
             (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
                   placement="rightBottom">
                   <Spin spinning={approveAsHovelHeadLoading}>
-                    <Link to="#" onClick={() => approveClick(data?.user.id, roles.includes(Roles.KurinHead) || roles.includes(Roles.Admin), false)}>
+                    <Link to="#" onClick={() => approveClick(data?.user.id, activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.Admin), false)}>
                       <Card
                         hoverable
                         className="cardStyles"
@@ -324,7 +312,7 @@ const Assignments = () => {
         <div>
           {(data?.cityApprover != null) ? (
             <div>
-              {(data.cityApprover.approver.userID == data.currentUserId || roles.includes(Roles.Admin)) ? (
+              {(data.cityApprover.approver.userID == data.currentUserId || activeUserRoles.includes(Roles.Admin)) ? (
                 <Card
                   hoverable
                   className="cardStyles"
@@ -339,8 +327,8 @@ const Assignments = () => {
                       <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
                     </Link>
                   </Tooltip>
-                  <Meta title={moment(data.cityApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
-                  <DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove} />
+                  <Meta title={moment.utc(data.cityApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
+                  { !userProfile?.isUserPlastun && (<DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove}/>)}
                 </Card>
               ) : (
                 <Card
@@ -357,19 +345,19 @@ const Assignments = () => {
                       <Meta title={data.cityApprover.approver.user.firstName + " " + data.cityApprover.approver.user.lastName} className="titleText" />
                     </Link>
                   </Tooltip>
-                  <Meta title={moment(data.cityApprover.confirmDate).format("DD.MM.YYYY")} className="title-not-link" />
+                  <Meta title={moment.utc(data.cityApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
                 </Card>
               )}
 
             </div>
-          ) : ((data?.cityApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || roles.includes(Roles.Admin)) && (data?.isUserHeadOfCity || roles.includes(Roles.Admin))) ?
+          ) : ((data?.cityApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || activeUserRoles.includes(Roles.Admin)) && (data?.isUserHeadOfCity || activeUserRoles.includes(Roles.Admin))) ?
             (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
                   placement="rightBottom">
                   <Spin spinning={approveAsCityHeadLoading}>
-                    <Link to="#" onClick={() => approveClick(data?.user.id, false, roles.includes(Roles.CityHead) || roles.includes(Roles.Admin))}>
+                    <Link to="#" onClick={() => approveClick(data?.user.id, false, activeUserRoles.includes(Roles.CityHead) || activeUserRoles.includes(Roles.Admin))}>
                       <Card
                         hoverable
                         className="cardStyles"

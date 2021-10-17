@@ -87,6 +87,18 @@ export type ShortUser ={
     clubMemberIsApproved: boolean;
 }
 
+export interface IPersonalDataContext{
+    userProfile: Data | undefined;
+    fullUserProfile: Data | undefined;
+    activeUserRoles: string[];
+    activeUserId: string;
+    activeUserProfile: User | undefined;
+    loading: boolean;
+    imageBase64: string;
+    ChangeUserProfile?: (user: Data) => void;
+    UpdateData?: () => void;
+}
+
 export  interface Data {
     isUserPlastun:boolean;
     timeToJoinPlast:number;
@@ -114,6 +126,7 @@ export  interface Data {
       confirmedUsers:ConfirmedUser[];
       canApprove:boolean;
       canApprovePlastMember:boolean;
+      canApproveClubMember:boolean;
       timeToJoinPlast:number;
       clubApprover:ConfirmedUser;
       cityApprover:ConfirmedUser;

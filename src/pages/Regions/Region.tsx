@@ -322,9 +322,9 @@ const Region = () => {
           </b>{" "}
           є Головою Округи, час правління закінчується{" "}
           <b>
-            {moment(head.endDate).format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(head.endDate).local().format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
-              : moment(head.endDate).format("DD.MM.YYYY")}
+              : moment.utc(head.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -343,9 +343,9 @@ const Region = () => {
           </b>{" "}
           є Головою Округи, час правління закінчується{" "}
           <b>
-            {moment(head?.endDate).format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
-              : moment(head?.endDate).format("DD.MM.YYYY")}
+              : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -356,9 +356,9 @@ const Region = () => {
         </b>{" "}
         є Заступником Голови Округи, час правління закінчується{" "}
         <b>
-          {moment(headDeputy?.endDate).format("DD.MM.YYYY") === "Invalid date"
+          {moment.utc(headDeputy?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
             ? "ще не скоро"
-            : moment(headDeputy?.endDate).format("DD.MM.YYYY")}
+            : moment.utc(headDeputy?.endDate).local().format("DD.MM.YYYY")}
         </b>
           .
         </div>
@@ -563,13 +563,13 @@ const Region = () => {
                       {head.endDate ? (
                         <Paragraph>
                           <b>Час правління:</b>{" "}
-                          {moment(head.startDate).format("DD.MM.YYYY")}{" - "}
-                          {moment(head.endDate).format("DD.MM.YYYY")}
+                          {moment.utc(head.startDate).local().format("DD.MM.YYYY")}{" - "}
+                          {moment.utc(head.endDate).local().format("DD.MM.YYYY")}
                         </Paragraph>
                       ) : (
                           <Paragraph>
                             <b>Початок правління:</b>{" "}
-                            {moment(head.startDate).format("DD.MM.YYYY")}
+                            {moment.utc(head.startDate).local().format("DD.MM.YYYY")}
                           </Paragraph>
                         )}
                     </div>
@@ -587,13 +587,13 @@ const Region = () => {
                       {headDeputy.endDate ? (
                         <Paragraph>
                           <b>Час правління:</b>{" "}
-                          {moment(headDeputy.startDate).format("DD.MM.YYYY")}{" - "}
-                          {moment(headDeputy.endDate).format("DD.MM.YYYY")}
+                          {moment.utc(headDeputy.startDate).local().format("DD.MM.YYYY")}{" - "}
+                          {moment.utc(headDeputy.endDate).local().format("DD.MM.YYYY")}
                         </Paragraph>
                       ) : (
                           <Paragraph>
                             <b>Початок правління:</b>{" "}
-                            {moment(headDeputy.startDate).format("DD.MM.YYYY")}
+                            {moment.utc(headDeputy.startDate).local().format("DD.MM.YYYY")}
                           </Paragraph>
                         )}
                     </div>

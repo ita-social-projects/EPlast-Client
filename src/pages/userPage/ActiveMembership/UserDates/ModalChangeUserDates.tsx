@@ -34,11 +34,11 @@ const ModalChangeUserDates = ({
       //Check if dateEnd is not null or empty
       if (dates.dateEnd) {
         return !(
-          moment.utc(dates.dateEnd).subtract(1, "d").isAfter(current) &&
-          moment.utc(dates.dateEntry).isSameOrBefore(current)
+          moment.utc(dates.dateEnd).local().subtract(1, "d").isAfter(current) &&
+          moment.utc(dates.dateEntry).local().isSameOrBefore(current)
         );
       } else {
-        return current && current < moment(dates.dateEntry);
+        return current && current < moment.utc(dates.dateEntry).local();
       }
     }
   };
