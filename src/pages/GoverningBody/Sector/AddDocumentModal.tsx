@@ -77,17 +77,19 @@ const AddDocumentModal = (props: Props) => {
       setDisabled(true);
     }
 
-    const isEmptyFile = fileSize !== 0;
-    if (!isEmptyFile)
-    notificationLogic("error", fileIsEmpty());
+    const isFileEmpty = fileSize === 0;
+    if (isFileEmpty) {
+      notificationLogic("error", fileIsEmpty());
+    }
 
-    const isSmaller3mb = fileSize < 3145728;
+    const maxFileSize = 3145728;
+    const isSmaller3mb = fileSize < maxFileSize;
     if (!isSmaller3mb) {
       notificationLogic("error", fileIsTooBig(3));
       setDisabled(true);
     }
 
-    return isSmaller3mb && isCorrectExtension && isEmptyFile;
+    return isSmaller3mb && isCorrectExtension && !isFileEmpty;
   };
 
   const handleSubmit = async (values: any) => {
