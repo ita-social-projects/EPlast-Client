@@ -19,7 +19,7 @@ import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
 import userApi from "../../../api/UserApi";
 import ReactInputMask from "react-input-mask";
-import moment, { Moment } from "moment";
+import moment, { Moment, updateLocale } from "moment";
 import jwt from "jwt-decode";
 import AuthStore from "../../../stores/AuthStore";
 import { useParams } from "react-router-dom";
@@ -274,8 +274,10 @@ export default function () {
   const handleUpload = (info: RcCustomRequestOptions) => {
     if (info !== null) {
       if (checkFile(info.file.size, info.file.name)) {
-        getBase64(info.file, (imageUrl: any) => {
+        getBase64(info.file, async (imageUrl: any) => {
           setUserAvatar(imageUrl);
+          await userApi.updateProfileImage(userId, imageUrl);
+          if(UpdateData) UpdateData();
         });
         setPhotoName(null);
         notificationLogic("success", fileIsUpload("Фото"));
