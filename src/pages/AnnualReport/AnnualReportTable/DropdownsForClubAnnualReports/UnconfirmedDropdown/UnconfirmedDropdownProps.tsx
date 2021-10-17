@@ -3,9 +3,10 @@ interface Props {
         id: number;
         status: number;
         clubId: number;
-        clubName:string;
+        clubName: string;
         date: Date;
-        canManage: boolean; };
+        canManage: boolean;
+    };
     pageX: number;
     pageY: number;
     showDropdown: boolean;
