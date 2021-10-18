@@ -249,7 +249,10 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         <Col md={24} xs={24}>
           <Form.Item label="Дата завершення" name="EventDateEnd" className={classes.formItem} 
           rules={[
-            { required: true, message: emptyInput() },
+            { 
+                required: true, 
+                message: emptyInput() 
+            },
             {
               validator: (_: object, value: Date) => {
                 return (
