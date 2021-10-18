@@ -5,6 +5,7 @@ import { getBase64 } from "../userPage/EditUserPage/Services";
 import notificationLogic from "../../components/Notifications/Notification";
 import { addDocument } from "../../api/regionsApi";
 import { InboxOutlined } from "@ant-design/icons";
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 import moment from "moment";
 import {
   fileIsUpload,
@@ -169,9 +170,7 @@ const AddDocumentModal = (props: Props) => {
           <Form.Item
             name="documentName"
             label="Назва документу"
-            rules={[
-              {required: true, message: emptyInput()},
-              {max: maxNameLength, message: maxLength(maxNameLength)}]}
+            rules={descriptionValidation.Name}
           >
             <Input placeholder="Введіть назву документу" onChange={onFileNameChange}/>
           </Form.Item>
