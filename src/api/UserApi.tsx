@@ -2,7 +2,6 @@ import axios from 'axios';
 import BASE_URL from '../config';
 import AuthStore from '../stores/AuthStore';
 import jwt_decode from 'jwt-decode';
-import { string } from 'yup';
 
 const getById = async (id: string | undefined) => {
     const response = await axios.get(`${`${BASE_URL}User/`}${id}`);

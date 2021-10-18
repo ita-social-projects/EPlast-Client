@@ -19,7 +19,7 @@ import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
 import userApi from "../../../api/UserApi";
 import ReactInputMask from "react-input-mask";
-import moment, { Moment, updateLocale } from "moment";
+import moment, { Moment } from "moment";
 import jwt from "jwt-decode";
 import AuthStore from "../../../stores/AuthStore";
 import { useParams } from "react-router-dom";
@@ -277,7 +277,7 @@ export default function () {
         getBase64(info.file, async (imageUrl: any) => {
           setUserAvatar(imageUrl);
           await userApi.updateProfileImage(userId, imageUrl);
-          if(UpdateData) UpdateData();
+          if (UpdateData) UpdateData();
         });
         setPhotoName(null);
         notificationLogic("success", fileIsUpload("Фото"));
@@ -482,7 +482,7 @@ export default function () {
       .catch(() => {
         notificationLogic("error", tryAgain);
       });
-      if(UpdateData) UpdateData();
+    if (UpdateData) UpdateData();
     fetchData();
   };
 
@@ -507,25 +507,25 @@ export default function () {
           <div className={styles.kadraWrapper}>
             <Avatar size={300} src={userAvatar} className="avatarElem" />
             <div className={styles.buttonsImage}>
-            <ImgCrop 
-              shape = 'round'
-              rotate = {true}
-              modalTitle = 'Редагувати фото'
-            >
-              <Upload
-                name="avatar"
-                className={styles.changeAvatar}
-                showUploadList={false}
-                accept=".jpeg,.jpg,.png"
-                customRequest={handleUpload}
+              <ImgCrop
+                shape='round'
+                rotate={true}
+                modalTitle='Редагувати фото'
               >
-                <Tooltip placement={"bottom"}
-                  title={"Ви можете завантажити файл розміром не більше 3Мб. Пам'ятайте: Вашу фотографію будуть бачити інші пластуни!"}>
-                  <Button className={styles.changeAvatarBtn}>
-                    <UploadOutlined /> Вибрати
-                  </Button>
-                </Tooltip>
-              </Upload>
+                <Upload
+                  name="avatar"
+                  className={styles.changeAvatar}
+                  showUploadList={false}
+                  accept=".jpeg,.jpg,.png"
+                  customRequest={handleUpload}
+                >
+                  <Tooltip placement={"bottom"}
+                    title={"Ви можете завантажити файл розміром не більше 3Мб. Пам'ятайте: Вашу фотографію будуть бачити інші пластуни!"}>
+                    <Button className={styles.changeAvatarBtn}>
+                      <UploadOutlined /> Вибрати
+                    </Button>
+                  </Tooltip>
+                </Upload>
               </ImgCrop>
               {photoName !== defaultPhotoName ?
                 <Tooltip title="Видалити">
