@@ -135,7 +135,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                 },
                 {
                   validator: async (_ : object, value: number) =>
-                      value < 1
+                    !value || value < 1
                           ? Promise.reject(minNumber(1)) 
                           : await distinctionApi
                               .checkNumberExisting(value)

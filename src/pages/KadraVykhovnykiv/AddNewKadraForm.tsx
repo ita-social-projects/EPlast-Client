@@ -119,7 +119,8 @@ type FormAddKadraProps = {
                     notificationLogic('error', "Номер реєстру вже зайнятий");
                     onAdd();
                 }
-        });form.resetFields();
+        });
+        form.resetFields();
     }
 
   const backgroundColor = (user: any) => {
@@ -256,7 +257,7 @@ type FormAddKadraProps = {
                 },
                 {
                   validator: async (_ : object, value: number) =>
-                      value < 1
+                      !value || value < 1
                           ? Promise.reject(minNumber(1)) 
                           : await KadraVykhovnykivApi
                               .doesRegisterNumberExist(value)
