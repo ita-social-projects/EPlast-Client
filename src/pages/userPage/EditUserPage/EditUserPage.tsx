@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Form,
   Input,
@@ -42,6 +42,7 @@ import "../EditUserPage/EditUserPage.less"
 import { UpuDegree } from "../Interface/Interface";
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../../models/Roles/Roles";
+import { PersonalDataContext } from "../personalData/PersonalData";
 
 export default function () {
   const { userId } = useParams<{ userId: string }>();
@@ -69,6 +70,7 @@ export default function () {
   const [defaultPhotoName, setDefaultPhotoName] = useState<string>("default_user_image.png");
   const [upuDegree, setUpuDegree] = useState<UpuDegree>();
   const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const { UpdateData } = useContext(PersonalDataContext);
 
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
@@ -312,7 +314,7 @@ export default function () {
   }
 
   const handleOnChangePseudo = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue({ pseudo: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
+    form.setFieldsValue({ pseudo: changeApostropheInWord(event.target.value) });
   }
 
   const handleOnChangePublicPoliticalActivity = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -477,6 +479,7 @@ export default function () {
       .catch(() => {
         notificationLogic("error", tryAgain);
       });
+      if(UpdateData) UpdateData();
     fetchData();
   };
 

@@ -15,14 +15,13 @@ import {
   fileIsNotUpload,
   successfulDeleteAction,
   failDeleteAction,
-  successfulCreateAction,
+  successfulCreateAction, 
 } from "../../../components/Notifications/Messages"
 import { StickyContainer } from 'react-sticky';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import DeleteApproveButton from './DeleteApproveButton';
 import { Roles } from '../../../models/Roles/Roles';
 import AvatarAndProgressStatic from '../personalData/AvatarAndProgressStatic';
-import { Data } from '../Interface/Interface';
 import { PersonalDataContext } from '../personalData/PersonalData';
 
 const Assignments = () => {
@@ -35,11 +34,11 @@ const Assignments = () => {
   const [data, setData] = useState<ApproversData>();
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
-  const {userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData} = useContext(PersonalDataContext);
+  const { userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData } = useContext(PersonalDataContext);
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
   const fetchData = async () => {
-    if(UpdateData) UpdateData();
+    if (UpdateData) UpdateData();
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
     await userApi.getApprovers(userId, user.nameid).then(response => {
@@ -129,7 +128,6 @@ const Assignments = () => {
       <div className="avatarWrapperApprovers">
         <StickyContainer className="kadraWrapper">
           <AvatarAndProgressStatic
-            imageUrl={data?.user.imagePath as string}
             time={data?.timeToJoinPlast}
             firstName={data?.user.firstName}
             lastName={data?.user.lastName}
@@ -167,7 +165,7 @@ const Assignments = () => {
                       </Link>
                     </Tooltip>
                     <Meta title={moment.utc(p.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
-                    <DeleteApproveButton approverId={p.id} deleteApprove={deleteApprove} />
+                    { !userProfile?.isUserPlastun && (<DeleteApproveButton approverId={p.id} deleteApprove={deleteApprove} />)}
                   </Card>
                 </div>
               )
@@ -252,7 +250,7 @@ const Assignments = () => {
                       </Link>
                     </Tooltip>
                     <Meta title={moment.utc(data.clubApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
-                    <DeleteApproveButton approverId={data.clubApprover.id} deleteApprove={deleteApprove} />
+                    { !userProfile?.isUserPlastun && (<DeleteApproveButton approverId={data.clubApprover.id} deleteApprove={deleteApprove} />)}
                   </Card>
                 ) : (
                   <Card
@@ -273,7 +271,7 @@ const Assignments = () => {
                   </Card>
                 )}
             </div>
-          ) : ((data?.clubApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || activeUserRoles.includes(Roles.Admin)) && (data?.isUserHeadOfClub || activeUserRoles.includes(Roles.Admin))) ?
+          ) : ( data?.canApproveClubMember ?
             (
               <div>
                 <Tooltip
@@ -330,7 +328,7 @@ const Assignments = () => {
                     </Link>
                   </Tooltip>
                   <Meta title={moment.utc(data.cityApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
-                  <DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove} />
+                  { !userProfile?.isUserPlastun && (<DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove}/>)}
                 </Card>
               ) : (
                 <Card

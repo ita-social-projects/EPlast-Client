@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import ActionCard from '../ActionCard/ActionCard';
 import eventsApi from "../../api/eventsApi";
-import spinClasses from "./ActionEvent/EventUser/EventUser.module.css";
-import { Pagination, Space, Spin } from "antd";
+import {Pagination} from "antd";
 import classes from './Actions.module.css';
+import Spinner from '../Spinner/Spinner';
 
 const Actions = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -42,31 +42,29 @@ const Actions = () => {
     getCategories();
   }, [page, pageSize]);
 
-  return loading === false ? (
-    <div className={spinClasses.spaceWrapper}>
-      <Space className={spinClasses.loader} size="large">
-        <Spin size="large" />
-      </Space>
-    </div>
+  return  loading === false ? (
+    <Spinner />
   ) : (
-    <div className={classes.background}>
-      <h1 className={classes.mainTitle}>Категорії</h1>
-      <div className={classes.actionsWrapper}>
-        {
+      <div className={classes.background}>
+        <h1 className={classes.mainTitle}>Категорії</h1>
+        <div className={classes.actionsWrapper}>
+          { 
           actions.map((item: any) => (
-            <ActionCard item={item} eventTypeId={typeId} key={item.eventCategoryId} />
+              <ActionCard item={item} eventTypeId={typeId} key={item.eventCategoryId}/>
           ))
-        }</div>
-      <div className={classes.pagination}>
-        <Pagination
-          current={page}
-          pageSize={pageSize}
-          total={total}
-          showSizeChanger
-          onChange={(pageNumber) => handlePageNumberChange(pageNumber)}
-          onShowSizeChange={(pageNumber, pageSize) => handlePageSizeChange(pageNumber, pageSize)}
-        /></div>
-    </div>
-  )
+          }
+        </div>
+        <div className={classes.pagination}>
+          <Pagination
+            current={page}
+            pageSize={pageSize}
+            total={total}
+            showSizeChanger
+            onChange={(pageNumber) => handlePageNumberChange(pageNumber)}
+            onShowSizeChange={(pageNumber, pageSize) => handlePageSizeChange(pageNumber, pageSize)}
+          />
+        </div> 
+      </div>
+  )   
 }
 export default Actions;

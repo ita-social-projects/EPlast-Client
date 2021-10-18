@@ -21,38 +21,17 @@ import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
 import "../AddAdministratorModal/AddAdministrationModal.less";
+import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 
 const confirm = Modal.confirm;
 
 const AddSectorAdminForm = (props: any) => {
-  const [head, setHead] = useState<SectorAdmin>();
-  const { onAdd, setAdmins, setSectorHead } = props;
+  const { onAdd, setAdmins, admins, setSectorHead } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [usersLoading, setUsersLoading] = useState<boolean>(false);
-  const [users, setUsers] = useState<any[]>([
-    {
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-        birthday: "",
-      },
-      regionName: "",
-      cityName: "",
-      clubName: "",
-      userPlastDegreeName: "",
-      userRoles: "",
-    },
-  ]);
+  const [users, setUsers] = useState<ShortUserInfo[]>([]);
   const [workEmail, setWorkEmail] = useState<string>("");
-
-  const getHead = async () => {
-    if (props.sectorId !== 0) {
-      const responseAdmins = await getAllAdmins(props.sectorId);
-      setHead(responseAdmins.data.head);
-    }
-  };
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -64,13 +43,10 @@ const AddSectorAdminForm = (props: any) => {
 
   const addSectorAdmin = async (admin: SectorAdmin) => {
     await addAdministrator(admin.sectorId, admin);
-    admin.user.imagePath =  (
-      await userApi.getImage(admin.user.imagePath)
-    ).data;
     if (admin.adminType.adminTypeName == Roles.GoverningBodySectorHead) {
       setSectorHead(admin);
     }
-    setAdmins((old: SectorAdmin[]) => [...old, admin]);
+    setUsers(users.filter(x => x.id !== admin.userId));
     notificationLogic("success", "Користувач успішно доданий в провід");
     form.resetFields();
     await NotificationBoxApi.createNotifications(
@@ -95,29 +71,30 @@ const AddSectorAdminForm = (props: any) => {
   };
 
 
-  const showConfirm = (admin: SectorAdmin) => {
+  const showConfirm = (newAdmin: SectorAdmin, existingAdmin: SectorAdmin) => {
     confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
         <div style={{ margin: 10 }}>
           <b>
-            {head?.user.firstName} {head?.user.lastName}
+            {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          є Головою Напряму Керівного Органу, час правління закінчується{" "}
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
           <b>
-            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {existingAdmin.endDate === null || existingAdmin.endDate === undefined
               ? "ще не скоро"
-              : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
+              : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
       onCancel() { },
       onOk() {
-        if (admin.id === 0) {
-          addSectorAdmin(admin);
+        if (newAdmin.id === 0) {
+          addSectorAdmin(newAdmin);
+          setAdmins((admins as SectorAdmin[]).map(x => x.userId === existingAdmin?.userId ? newAdmin : x));
         } else {
-          editSectorAdmin(admin);
+          editSectorAdmin(newAdmin);
         }
       },
     });
@@ -139,16 +116,19 @@ const AddSectorAdminForm = (props: any) => {
       endDate: values.endDate,
       workEmail: workEmail
     };
-
-    onAdd();
+    newAdmin.user.imagePath =  (
+      await userApi.getImage(newAdmin.user.imagePath)
+    ).data;
     if (newAdmin.id === 0) {
       try {
-        if (values.AdminType === Roles.GoverningBodySectorHead && head !== null) {
-          if (head?.userId !== newAdmin.userId) {
-            showConfirm(newAdmin);
-          }
-        } else {
+        const existingAdmin  = (admins as SectorAdmin[])
+        .find(x => x.adminType.adminTypeName === newAdmin.adminType.adminTypeName)
+        if(existingAdmin !== undefined) {
+          showConfirm(newAdmin, existingAdmin);
+        }
+        else {
           addSectorAdmin(newAdmin);
+          setAdmins((old: SectorAdmin[]) => [...old, newAdmin]);
         }
       } finally {
         onAdd();
@@ -167,20 +147,26 @@ const AddSectorAdminForm = (props: any) => {
   useEffect(() => {
     const fetchData = async () => {
       setUsersLoading(true);
-      await adminApi.getUsersForTable().then((response) => {
-        setUsers(response.data);
+      await adminApi.getUsersByAnyRole([
+        Roles.RegisteredUser, 
+        Roles.Supporter, 
+        Roles.FormerPlastMember, 
+        Roles.Interested,
+        Roles.GoverningBodySectorHead, 
+        Roles.GoverningBodySectorSecretary],
+        false)
+      .then((response) => {
+        setUsers(response.data)
         setUsersLoading(false);
       });
     };
     fetchData();
   }, []);
 
-
   useEffect(() => {
     if (props.visibleModal) {
       form.resetFields();
     }
-    getHead();
   }, [props]);
 
   return (

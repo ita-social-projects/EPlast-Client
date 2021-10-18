@@ -39,6 +39,7 @@ import { Roles } from "../../models/Roles/Roles";
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
+  const [recordRoles, setRecordRoles] = useState<Array<string>>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
@@ -48,7 +49,7 @@ const UsersTable = () => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<UserTable[]>([]);
   const [updatedUser, setUpdatedUser] = useState<UserTable[]>([]);
-  const [roles, setRoles] = useState<string>();
+  const [currentUserRoles, setCurrentUserRoles] = useState<string>();
   const [cities, setCities] = useState<any>();
   const [regions, setRegions] = useState<any>();
   const [clubs, setClubs] = useState<any>();
@@ -82,6 +83,8 @@ const UsersTable = () => {
     fetchDegrees();
     forceUpdate({});
   }, []);
+
+  const searchFieldMaxLength: number = 200;
 
   const fetchCities = async () => {
     try {
@@ -283,7 +286,7 @@ const UsersTable = () => {
   const handleChange = (id: string, userRole: string) => {
     const filteredData = users.filter((d: any) => {
       if (d.id === id) {
-        d.userRoles += ", " + userRole;
+        d.userCurrentUserRoles += ", " + userRole;
       }
       return d;
     });
@@ -355,8 +358,12 @@ const UsersTable = () => {
     setCurrentTabName(key);
   };
 
+  const parseUserRolesString = (roles: string) => {
+    return roles != null ? roles.split(', ') : roles;
+  }
+ 
   return (
-    <Layout.Content>
+    <Layout.Content onClick={() => { setShowDropdown(false); }}>
       <Title level={2}>Таблиця користувачів</Title>
       <Title level={4} style={{ textAlign: "left", margin: 10 }} underline={true}>Загальна кількість користувачів: {total}</Title>
       <div className={classes.searchContainer}>
@@ -430,6 +437,7 @@ const UsersTable = () => {
           <Search placeholder="Пошук"
             allowClear
             enterButton
+            maxLength={searchFieldMaxLength}
             onChange={handleSearchChange}
             onSearch={handleSearch}
           />
@@ -468,7 +476,8 @@ const UsersTable = () => {
                 setShowDropdown(false);
                 if (canView) {
                   setRecordObj(record.id);
-                  setRoles(record.userRoles);
+                  setRecordRoles(parseUserRolesString(record.userRoles));
+                  setCurrentUserRoles(record.userRoles);
                   setUser(users.find(x => x.id == record.id));
                   setX(event.pageX);
                   setY(event.pageY);
@@ -504,11 +513,11 @@ const UsersTable = () => {
           record={recordObj}
           pageX={x}
           pageY={y}
+          inActiveTab={isInactive}
           onDelete={handleDelete}
           onChange={handleChange}
-          user={user}
-          roles={roles}
-          inActiveTab={isInactive}
+          selectedUser={user}
+          selectedUserRoles={recordRoles}
           currentUser={currentUser}
           canView={canView}
         />
@@ -516,4 +525,5 @@ const UsersTable = () => {
     </Layout.Content>
   );
 };
+
 export default UsersTable;

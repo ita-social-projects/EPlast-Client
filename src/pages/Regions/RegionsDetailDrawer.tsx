@@ -12,7 +12,7 @@ interface Props {
 const RegionDetailDrawer = (props: Props) => {
   return (
     <Drawer
-      title={`Деталі округи ${props.region.regionname?.length > 0 ? props.region.regionname : ""}`}
+      title={`Деталі округи ${props.region.regionName?.length > 0 ? props.region.regionName : ""}`}
       onClose={() => props.setVisibleDrawer(false)}
       visible={props.visibleDrawer}
       footer={null}

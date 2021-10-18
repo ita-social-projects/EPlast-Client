@@ -6,23 +6,18 @@ import "../personalData/PersonalData.less";
 import activeMembershipApi, {
   UserPlastDegree,
 } from "../../../api/activeMembershipApi";
-import userApi from "../../../api/UserApi";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import ModalAddPlastDegree from "./PlastDegree/ModalAddPlastDegree";
-import moment, { updateLocale } from "moment";
+import moment from "moment";
 import ModalChangeUserDates from "./UserDates/ModalChangeUserDates";
 import DeleteDegreeConfirm from "./PlastDegree/DeleteDegreeConfirm";
 import { SafetyCertificateOutlined } from "@ant-design/icons";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 import notificationLogic from "../../../components/Notifications/Notification";
-import jwt_decode from "jwt-decode";
 import { Roles } from "../../../models/Roles/Roles";
-import { Data } from '../Interface/Interface';
 import { successfulDeleteDegree } from "../../../components/Notifications/Messages";
-import { Console } from "console";
-import { boolean } from "yup";
 import { PersonalDataContext } from "../personalData/PersonalData";
 const { Title } = Typography;
 
@@ -31,7 +26,7 @@ const ActiveMembership = () => {
   const { userId } = useParams();
   const [accessLevels, setAccessLevels] = useState([]);
   const [dates, setDates] = useState<any>({});
-  const {userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData} = useContext(PersonalDataContext);
+  const {userProfile, activeUserRoles, fullUserProfile , activeUserProfile, UpdateData} = useContext(PersonalDataContext);
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
   const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
@@ -57,9 +52,9 @@ const ActiveMembership = () => {
     });
   };
   const getAppropriateToGenderDegree = (plastDegreeName: string): string => {
-    if (userGenders[0] === userProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
+    if (userGenders[0] === fullUserProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
       return plastDegreeName.split("/")[0];
-    } else if (userGenders[1] === userProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
+    } else if (userGenders[1] === fullUserProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
       return plastDegreeName.split("/")[1];
     } else return plastDegreeName;
   };
@@ -109,14 +104,13 @@ const ActiveMembership = () => {
     });
   };
 
-
   const IsUserHasAccessToManageDegree = (userRoles: Array<string>): boolean => {
-    return (userRoles?.includes(Roles.KurinHead) && activeUserProfile?.clubId == userProfile?.user.clubId) ||
-      (userRoles?.includes(Roles.KurinHeadDeputy) && activeUserProfile?.clubId == userProfile?.user.clubId) ||
-      (userRoles?.includes(Roles.CityHead) && activeUserProfile?.cityId == userProfile?.user.cityId) ||
-      (userRoles?.includes(Roles.CityHeadDeputy) && activeUserProfile?.cityId == userProfile?.user.cityId) ||
-      (userRoles?.includes(Roles.OkrugaHead) && activeUserProfile?.regionId == userProfile?.user.regionId) ||
-      (userRoles?.includes(Roles.OkrugaHeadDeputy) && activeUserProfile?.regionId == userProfile?.user.regionId) ||
+    return (userRoles?.includes(Roles.KurinHead) && activeUserProfile?.clubId == fullUserProfile?.user.clubId) ||
+      (userRoles?.includes(Roles.KurinHeadDeputy) && activeUserProfile?.clubId == fullUserProfile?.user.clubId) ||
+      (userRoles?.includes(Roles.CityHead) && activeUserProfile?.cityId == fullUserProfile?.user.cityId) ||
+      (userRoles?.includes(Roles.CityHeadDeputy) && activeUserProfile?.cityId == fullUserProfile?.user.cityId) ||
+      (userRoles?.includes(Roles.OkrugaHead) && activeUserProfile?.regionId == fullUserProfile?.user.regionId) ||
+      (userRoles?.includes(Roles.OkrugaHeadDeputy) && activeUserProfile?.regionId == fullUserProfile?.user.regionId) ||
       userRoles?.includes(Roles.RegionBoardHead) ||
       userRoles?.includes(Roles.Admin);
   };
@@ -202,22 +196,21 @@ const ActiveMembership = () => {
     <div className={classes.wrapper}>
       <div className={classes.avatarWrapper}>
         <AvatarAndProgressStatic
-          time={userProfile?.timeToJoinPlast}
-          imageUrl={userProfile?.user.imagePath as string}
-          firstName={userProfile?.user.firstName}
-          lastName={userProfile?.user.lastName}
-          isUserPlastun={true}
-          pseudo={userProfile?.user.pseudo}
-          governingBody={userProfile?.user.governingBody}
-          region={userProfile?.user.region}
-          city={userProfile?.user.city}
-          club={userProfile?.user.club}
-          governingBodyId={userProfile?.user.governingBodyId}
-          regionId={userProfile?.user.regionId}
-          cityId={userProfile?.user.cityId}
-          clubId={userProfile?.user.clubId}
-          cityMemberIsApproved={userProfile?.user.cityMemberIsApproved}
-          clubMemberIsApproved={userProfile?.user.clubMemberIsApproved}
+          time={fullUserProfile?.timeToJoinPlast}
+          firstName={fullUserProfile?.user.firstName}
+          lastName={fullUserProfile?.user.lastName}
+          isUserPlastun={fullUserProfile?.isUserPlastun}
+          pseudo={fullUserProfile?.user.pseudo}
+          governingBody={fullUserProfile?.user.governingBody}
+          region={fullUserProfile?.user.region}
+          city={fullUserProfile?.user.city}
+          club={fullUserProfile?.user.club}
+          governingBodyId={fullUserProfile?.user.governingBodyId}
+          regionId={fullUserProfile?.user.regionId}
+          cityId={fullUserProfile?.user.cityId}
+          clubId={fullUserProfile?.user.clubId}
+          cityMemberIsApproved={fullUserProfile?.user.cityMemberIsApproved}
+          clubMemberIsApproved={fullUserProfile?.user.clubMemberIsApproved}
           showPrecautions = {userProfile?.shortUser === null}
         />
       </div>
