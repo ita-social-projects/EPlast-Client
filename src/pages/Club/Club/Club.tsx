@@ -14,7 +14,7 @@ import {
   LoadingOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
-import { addFollower, getClubById, getLogo, removeClub, unArchiveClub, archiveClub, toggleMemberStatus, clubNameOfApprovedMember, removeFollower } from "../../../api/clubsApi";
+import {addFollower, getClubById, getLogo, removeClub, unArchiveClub, archiveClub, toggleMemberStatus, clubNameOfApprovedMember, removeFollower } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
 import {
@@ -310,105 +310,58 @@ const Club = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в курені`, true);
   };
 
-  const showDiseableModal = async (admin: ClubAdmin) => {
-    return Modal.warning({
-      title: "Ви не можете змінити роль цьому користувачу",
-      content: (
-        <div style={{ margin: 15 }}>
-          <b>
-            {club.head.user.firstName} {club.head.user.lastName}
-          </b>{" "}
-          є Головою Куреня, час правління закінчується{" "}
-          <b>
-            {moment.utc(club.head.endDate).local().format("DD.MM.YYYY") === "Invalid date"
-              ? "ще не скоро"
-              : moment.utc(club.head.endDate).local().format("DD.MM.YYYY")}
-          </b>
-          .
-        </div>
-      ),
-      onOk() { }
-    });
-  };
-
-  const showConfirmClubAdmin = async (admin: ClubAdmin, adminType: Roles) => {
-    return Modal.confirm({
+  const showConfirm = (newAdmin: ClubAdmin, existingAdmin: ClubAdmin) => {
+    Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: (adminType.toString() === Roles.KurinHead ?
+      content: (
         <div style={{ margin: 10 }}>
           <b>
-            {club.head.user.firstName} {club.head.user.lastName}
+            {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          є Головою Куреня, час правління закінчується{" "}
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
           <b>
-            {moment.utc(club.head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {existingAdmin.endDate === null || existingAdmin.endDate === undefined
               ? "ще не скоро"
-              : moment.utc(club.head.endDate).local().format("DD.MM.YYYY")}
+              : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
-        :
-        <div style={{ margin: 10 }}>
-          <b>
-            {club.headDeputy.user.firstName} {club.headDeputy.user.lastName}
-          </b>{" "}
-          є Заступником Голови Куреня, час правління закінчується{" "}
-          <b>
-            {moment.utc(club.headDeputy?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
-              ? "ще не скоро"
-              : moment.utc(club.headDeputy.endDate).local().format("DD.MM.YYYY")}
-          </b>
-          .
-        </div>
-      ),
+      ),    
       onCancel() { },
-      async onOk() {
-        if (admin.id === 0) {
-          await addClubAdmin(admin);
+      onOk() {
+        if (newAdmin.id === 0) {
+          addClubAdmin(newAdmin);
+          setAdmins((admins as ClubAdmin[]).map(x => x.userId === existingAdmin?.userId ? newAdmin : x));
         } else {
-          await editClubAdmin(admin);
+          editClubAdmin(newAdmin);
         }
-      },
+      }
     });
   };
 
-  const checkAdminId = async (admin: ClubAdmin) => {
+  const handleOk = async(admin: ClubAdmin) => {
     if (admin.id === 0) {
-      await addClubAdmin(admin);
-    } else {
+      try {
+        const existingAdmin  = (admins as ClubAdmin[])
+        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
+        if(existingAdmin !== undefined) {
+          showConfirm(admin, existingAdmin);
+        }
+        else {
+          await addClubAdmin(admin);
+        }
+      } finally {
+        setvisible(false);
+      }
+    }
+    else{
       await editClubAdmin(admin);
     }
   }
 
-  const handleOk = async (admin: ClubAdmin) => {
-    try {
-      if (admin.adminType.adminTypeName === Roles.KurinHead) {
-        if (club.head !== null && club.head?.userId !== admin.userId) {
-          showConfirmClubAdmin(admin, Roles.KurinHead);
-        } else {
-          checkAdminId(admin);
-        }
-      }
-      else if (admin.adminType.adminTypeName === Roles.KurinHeadDeputy) {
-        if (admin.userId === club.head?.userId) {
-          showDiseableModal(admin);
-        } else if (club.headDeputy !== null && club.headDeputy?.userId !== admin.userId) {
-          showConfirmClubAdmin(admin, Roles.KurinHeadDeputy);
-        } else {
-          checkAdminId(admin);
-        }
-      } else {
-        await addClubAdmin(admin);
-      }
-    } finally {
-      setvisible(false);
-    }
-  };
-
   const handleClose = async () => {
     setvisible(false);
   };
-
 
   const handleConfirm = async () => {
     setActiveMemberVisibility(false);
