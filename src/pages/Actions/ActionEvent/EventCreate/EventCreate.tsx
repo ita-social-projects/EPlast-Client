@@ -108,7 +108,6 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
     setShowEventCreateDrawer(false);
   }
 
-
   function disabledDate(current: any) {
     return current && current < moment().startOf('day');
   }
