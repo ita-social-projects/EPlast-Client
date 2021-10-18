@@ -14,8 +14,7 @@ const ActionEvent = () => {
 
 
     const onChange = () => {
-        
-            setSwitchValue(!SwitchValue);
+        setSwitchValue(!SwitchValue);
       }
 
     return (
