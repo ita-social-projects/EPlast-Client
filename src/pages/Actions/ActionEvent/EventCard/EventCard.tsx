@@ -138,10 +138,10 @@ const EventCard = ({
                 <Card
                     hoverable
                     className={classes.cardStyles}
+                    onClick={() => history.push(`/events/details/${eventId}`)}
                     cover={
                         // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/click-events-have-key-events
                         <img
-                            onClick={() => history.push(`/events/details/${eventId}`)}
                             alt="example"
                             src={EventLogo}
                         />
