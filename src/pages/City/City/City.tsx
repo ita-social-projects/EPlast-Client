@@ -345,99 +345,54 @@ const City = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в станиці`, true);
   };
 
-  const showDiseableModal = async (admin: CityAdmin) => {
-    return Modal.warning({
-      title: "Ви не можете змінити роль цьому користувачу",
-      content: (
-        <div style={{ margin: 15 }}>
-          <b>
-            {city.head.user.firstName} {city.head.user.lastName}
-          </b>{" "}
-          є Головою Станиці, час правління закінчується{" "}
-          <b>
-            {moment.utc(city.head.endDate).local().format("DD.MM.YYYY") === "Invalid date"
-              ? "ще не скоро"
-              : moment.utc(city.head.endDate).local().format("DD.MM.YYYY")}
-          </b>
-          .
-        </div>
-      ),
-      onOk() { }
-    });
-  };
-
-  const showConfirmCityAdmin = async (admin: CityAdmin) => {
-    return Modal.confirm({
+  const showConfirm = (newAdmin: CityAdmin, existingAdmin: CityAdmin) => {
+    Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: (admin.adminType.adminTypeName.toString() === Roles.CityHead ?
+      content: (
         <div style={{ margin: 10 }}>
           <b>
-            {city.head.user.firstName} {city.head.user.lastName}
+            {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          є Головою Станиці, час правління закінчується{" "}
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
           <b>
-            {moment.utc(city.head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {existingAdmin.endDate === null || existingAdmin.endDate === undefined
               ? "ще не скоро"
-              : moment.utc(city.head.endDate).local().format("DD.MM.YYYY")}
+              : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
-        :
-        <div style={{ margin: 10 }}>
-          <b>
-            {city.headDeputy.user.firstName} {city.headDeputy.user.lastName}
-          </b>{" "}
-          є Заступником Голови Станиці, час правління закінчується{" "}
-          <b>
-            {moment.utc(city.headDeputy?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
-              ? "ще не скоро"
-              : moment.utc(city.headDeputy.endDate).local().format("DD.MM.YYYY")}
-          </b>
-          .
-        </div>
-      ),
+      ),    
       onCancel() { },
-      async onOk() {
-        if (admin.id === 0) {
-          await addCityAdmin(admin);
+      onOk() {
+        if (newAdmin.id === 0) {
+          addCityAdmin(newAdmin);
+          setAdmins((admins as CityAdmin[]).map(x => x.userId === existingAdmin?.userId ? newAdmin : x));
         } else {
-          await editCityAdmin(admin);
+          editCityAdmin(newAdmin);
         }
-      },
+      }
     });
   };
 
-  const checkAdminId = async (admin: CityAdmin) => {
+  const handleOk = async(admin: CityAdmin) => {
     if (admin.id === 0) {
-      await addCityAdmin(admin);
-    } else {
+      try {
+        const existingAdmin  = (admins as CityAdmin[])
+        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
+        if(existingAdmin !== undefined) {
+          showConfirm(admin, existingAdmin);
+        }
+        else {
+          await addCityAdmin(admin);
+        }
+      } finally {
+        setvisible(false);
+      }
+    }
+    else{
       await editCityAdmin(admin);
     }
   }
-
-  const handleOk = async (admin: CityAdmin) => {
-    try {
-      if (admin.adminType.adminTypeName === Roles.CityHead) {
-        if (city.head !== null && city.head?.userId !== admin.userId) {
-          showConfirmCityAdmin(admin);
-        } else {
-          checkAdminId(admin);
-        }
-      } else if (admin.adminType.adminTypeName === Roles.CityHeadDeputy) {
-        if (admin.userId === city.head?.userId) {
-          showDiseableModal(admin);
-        } else if (city.headDeputy !== null && city.headDeputy?.userId !== admin.userId) {
-          showConfirmCityAdmin(admin);
-        } else {
-          checkAdminId(admin);
-        }
-      } else {
-        await addCityAdmin(admin);
-      }
-    } finally {
-      setvisible(false);
-    }
-  };
 
   const handleClose = async () => {
     setvisible(false);
