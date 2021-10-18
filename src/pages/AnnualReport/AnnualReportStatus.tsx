@@ -1,5 +1,5 @@
-import { Modal, Tag } from "antd"
-import React, { useEffect, useState } from "react"
+import { Modal, Tag } from "antd";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import AnnualReportApi from "../../api/AnnualReportApi";
 
@@ -26,7 +26,7 @@ const StatusStamp = (props: Props) => {
 
     useEffect(() => {
         fetchAnnualReportStatuses();
-    }, [status])
+    }, [status]);
 
     const fetchAnnualReportStatuses = async () => {
         setIsLoading(true);
@@ -35,22 +35,29 @@ const StatusStamp = (props: Props) => {
             setReportStatusNames(response.data.statuses);
         } catch (error) {
             showError(error.message);
-        } finally { setIsLoading(false) }
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const showError = (message: string) => {
         Modal.error({
-            title: 'Помилка!',
+            title: "Помилка!",
             content: message,
-            onOk: () => { history.goBack(); }
+            onOk: () => {
+                history.goBack();
+            },
         });
-    }
+    };
 
-    return (
-        isLoading? null:
-        <Tag className="status-stamp" color={setTagColor(status)} key={reportStatusNames[status]}>
+    return isLoading ? null : (
+        <Tag
+            className="status-stamp"
+            color={setTagColor(status)}
+            key={reportStatusNames[status]}
+        >
             {reportStatusNames[status]}
         </Tag>
-    )
-}
+    );
+};
 export default StatusStamp;
