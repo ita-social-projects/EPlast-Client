@@ -9,7 +9,7 @@ export const emptyInput = (name?:string)=>{
 
 export const incorrectStartTime = "Час початку події не може бути раніше поточного часу!";
 
-export const incorrectEndTime = "Час завершення події не може бути часу початку!";
+export const incorrectEndTime = "Час завершення події не може бути раніше часу початку!";
 
 export const incorrectSlogan = wrongFormat + ". Гасло не повинно починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
 
