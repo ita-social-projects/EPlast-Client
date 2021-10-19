@@ -47,8 +47,6 @@ const AnnualReportForm = (props: Props) => {
             e.keyCode !== 38 && // arrowUp
             e.keyCode !== 39 && // arrowRight
             e.keyCode !== 40 && // arrowDown
-            e.keyCode !== 188 && // comma
-            e.keyCode !== 190 && // period
             e.keyCode !== 110 && // numpadDecimal
             e.keyCode !== 48 && // 0
             e.keyCode !== 49 && // 1
