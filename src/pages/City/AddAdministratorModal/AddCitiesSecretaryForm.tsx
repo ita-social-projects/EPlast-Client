@@ -72,12 +72,12 @@ const AddCitiesNewSecretaryForm = (props: any) => {
     if (JSON.parse(values.userId).id == props.head?.userId ) {
       const newAdmin = SetAdmin(props.head, values);
       onAdd(newAdmin);
-    } else if (JSON.parse(values.userId).id == props.headDeputy?.userId){
-      const newAdmin = SetAdmin(props.headDeputy, values);
-      onAdd(newAdmin);  
-    } else if (JSON.parse(values.userId).id != props.head?.userId && JSON.parse(values.userId).id != props.headDeputy?.userId) {
-      const newAdmin = SetAdmin(props.admin, values);
-      onAdd(newAdmin);
+     } else if (JSON.parse(values.userId).id == props.headDeputy?.userId){
+        const newAdmin = SetAdmin(props.headDeputy, values);
+        onAdd(newAdmin);  
+     } else if (JSON.parse(values.userId).id != props.head?.userId && JSON.parse(values.userId).id != props.headDeputy?.userId) {
+        const newAdmin = SetAdmin(props.admin, values);
+        onAdd(newAdmin);
     }
   };
 

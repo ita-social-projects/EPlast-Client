@@ -67,13 +67,6 @@ const AddNewRegionFormPage = () => {
     
           notificationLogic("success", successfulCreateAction("Округу"));
           history.push("/regions");  
-          
-        //  else {
-        //   setLoading(false);
-  
-        //   showRegionNameExistsModal();
-        // }  
-      
     }
     catch (error) {
       notificationLogic("error", failCreateAction("округу"));

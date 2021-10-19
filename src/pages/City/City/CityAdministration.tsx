@@ -45,8 +45,8 @@ const CityAdministration = () => {
         const responseAdmins = await getAllAdmins(id);
         setIsCityAdmin([...responseAdmins.data.administration], userApi.getActiveUserId())
         setPhotosLoading(true);
-        setPhotos([...responseAdmins.data.administration, responseAdmins.data.head, responseAdmins.data.headDeputy].filter(a => a != null));
-        setAdministration([...responseAdmins.data.administration, responseAdmins.data.head, responseAdmins.data.headDeputy].filter(a => a != null));
+        setPhotos([...responseAdmins.data.administration].filter(a => a != null)); //, responseAdmins.data.head, responseAdmins.data.headDeputy
+        setAdministration([...responseAdmins.data.administration].filter(a => a != null)); //, responseAdmins.data.head, responseAdmins.data.headDeputy
         setCanEdit(responseAdmins.data.canEdit);
         setCityName(responseAdmins.data.name);
         setActiveUserRoles(userApi.getActiveUserRoles());
