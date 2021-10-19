@@ -167,6 +167,9 @@ export const descriptionValidation = ({
         },
         {
             required: true,
+            message: emptyInput(),
+        },
+        {
             max: 5,
             message: maxLength(5),
         },
