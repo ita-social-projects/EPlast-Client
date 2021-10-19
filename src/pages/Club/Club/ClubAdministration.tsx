@@ -2,9 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout, Modal, Skeleton} from 'antd';
 import {SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
-import { getAllAdmins, removeAdministrator} from "../../../api/clubsApi";
+import { getAllAdmins, removeAdministrator, getUserClubAccess} from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
+import AuthStore from "../../../stores/AuthStore";
+import jwt from 'jwt-decode';
 import ClubAdmin from '../../../models/Club/ClubAdmin';
 import AddAdministratorModal from '../AddAdministratorModal/AddAdministratorModal';
 import moment from "moment";
@@ -24,26 +26,32 @@ const ClubAdministration = () => {
     const [administration, setAdministration] = useState<ClubAdmin[]>([]);
     const [visibleModal, setVisibleModal] = useState(false);
     const [admin, setAdmin] = useState<ClubAdmin>(new ClubAdmin());
-    const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [photosLoading, setPhotosLoading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [reload, setReload] = useState<boolean>(false);
     const [clubName, setClubName] = useState<string>("");
-    const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+    const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   
     const getAdministration = async () => {
       setLoading(true);
+      await getUserAccessesForClubs();
       const response = await getAllAdmins(id);
         setPhotosLoading(true);
         setPhotos([...response.data.administration, response.data.head, response.data.headDeputy].filter(a => a != null));
         setAdministration([...response.data.administration, response.data.head, response.data.headDeputy].filter(a => a != null));
-        setCanEdit(response.data.canEdit);
         setClubName(response.data.name);
 
-      const userRoles = userApi.getActiveUserRoles();
-        setActiveUserRoles(userRoles);
       setLoading(false);
     };
+
+    const getUserAccessesForClubs = async () => {
+      let user: any = jwt(AuthStore.getToken() as string);
+      await getUserClubAccess(id,user.nameid).then(
+        response => {
+          setUserAccesses(response.data);
+        }
+      );
+    }
 
     function seeDeleteModal(admin: ClubAdmin) {
       return Modal.confirm({
@@ -118,7 +126,7 @@ const ClubAdministration = () => {
                   }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit && (!activeUserRoles.includes(Roles.KurinHeadDeputy) || member.adminType.adminTypeName !== Roles.KurinHead)
+                    userAccesses["EditClub"] && (userAccesses["AddClubHead"] || member.adminType.adminTypeName !== Roles.KurinHead)
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
                           <CloseOutlined onClick={() => seeDeleteModal(member)} />,
@@ -164,7 +172,7 @@ const ClubAdministration = () => {
             Назад
           </Button>
         </div>
-        {canEdit ? (
+        {userAccesses["EditClub"]? (
           <AddAdministratorModal
             admin={admin}
             setAdmin={setAdmin}

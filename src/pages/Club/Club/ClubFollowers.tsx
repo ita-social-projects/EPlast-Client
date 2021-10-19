@@ -2,9 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout, Skeleton} from 'antd';
 import {CloseOutlined, ExclamationCircleOutlined, PlusOutlined, RollbackOutlined} from '@ant-design/icons';
-import {getAllFollowers, removeFollower, toggleMemberStatus} from "../../../api/clubsApi";
+import {getAllFollowers, removeFollower, toggleMemberStatus, getUserClubAccess} from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
+import AuthStore from "../../../stores/AuthStore";
+import jwt from 'jwt-decode';
 import ClubMember from '../../../models/Club/ClubMember';
 import Title from 'antd/lib/typography/Title';
 import Spinner from '../../Spinner/Spinner';
@@ -13,29 +15,37 @@ import { Modal } from 'antd';
 import extendedTitleTooltip, {parameterMaxLength} from '../../../components/Tooltip';
 
 const ClubFollowers = () => {
-    const {id} = useParams();
-    const history = useHistory();
+  const {id} = useParams();
+  const history = useHistory();
 
-    const [followers, setFollowers] = useState<ClubMember[]>([]);
-    const [clubName, setClubName] = useState<string>("");
-    const [canEdit, setCanEdit] = useState<Boolean>(false);
-    const [photosLoading, setPhotosLoading] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [activeUserID, setActiveUserID] = useState<string>();
+  const [followers, setFollowers] = useState<ClubMember[]>([]);
+  const [clubName, setClubName] = useState<string>("");
+  const [photosLoading, setPhotosLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [activeUserID, setActiveUserID] = useState<string>();
+  const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
 
-    const getFollowers = async () => {
-      setLoading(true);
-      const response = await getAllFollowers(id);
+  const getFollowers = async () => {
+    setLoading(true);
+    await getUserAccessesForClubs();
+    const response = await getAllFollowers(id);
 
-      setPhotosLoading(true);
-      setPhotos(response.data.followers);
-      setFollowers(response.data.followers);
+    setPhotosLoading(true);
+    setPhotos(response.data.followers);
+    setFollowers(response.data.followers);
+    setClubName(response.data.name);
+    setActiveUserID(userApi.getActiveUserId());
+    setLoading(false);
+  };
 
-      setCanEdit(response.data.canEdit);
-      setClubName(response.data.name);
-      setActiveUserID(userApi.getActiveUserId());
-      setLoading(false);
-    };
+  const getUserAccessesForClubs = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    await getUserClubAccess(id,user.nameid).then(
+      response => {
+        setUserAccesses(response.data);
+      }
+    );
+  }
 
   function seeSkipModal(follower: ClubMember) {
     return Modal.confirm({
@@ -108,7 +118,7 @@ const ClubFollowers = () => {
                   key={follower.id}
                   className="detailsCard"
                   actions={
-                    canEdit ?
+                    userAccesses["EditClub"] ?
                       [
                         <PlusOutlined
                           onClick={() => addMember(follower)}
