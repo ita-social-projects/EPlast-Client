@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
 import { Form, DatePicker, AutoComplete, Select, Button } from "antd";
-import {
-  getAllMembers,
-} from "../../../api/clubsApi";
+import { getAllMembers, getUserClubAccess } from "../../../api/clubsApi";
 import moment from "moment";
 import {emptyInput, inputOnlyWhiteSpaces,} from "../../../components/Notifications/Messages"
+import AuthStore from "../../../stores/AuthStore";
+import jwt from 'jwt-decode';
 import AdminType from "../../../models/Admin/AdminType";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
 import ClubMember from "../../../models/Club/ClubMember";
@@ -13,6 +13,7 @@ import "./AddClubsSecretaryForm.less";
 
 import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
+import { useParams } from "react-router-dom";
 
 
 type AddClubsNewSecretaryForm = {
@@ -26,17 +27,27 @@ type AddClubsNewSecretaryForm = {
   headDeputy?: ClubAdmin;
 };
 const AddClubsNewSecretaryForm = (props: any) => {
+  const {id} = useParams();
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [members, setMembers] = useState<ClubMember[]>([]);
+  const [userClubAccesses, setUserClubAccesses] = useState<{[key: string] : boolean}>({});
   
   const getMembers = async () => {
     const responseMembers = await getAllMembers(props.clubId);
+    await getUserAccessesForClubs();
     setMembers(responseMembers.data.members);
   };
-    
-  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+
+  const getUserAccessesForClubs = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    await getUserClubAccess(+id, user.nameid).then(
+      response => {
+        setUserClubAccesses(response.data);
+      }
+    );
+  }  
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -46,7 +57,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
     return current && current > moment();
   };
 
-  const SetAdmin =  (property: any, value: any) => {
+  const SetAdmin = (property: any, value: any) => {
     let admin: ClubAdmin = {
       id: property === undefined ? 0 : property.id,
       adminType: {
@@ -57,7 +68,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
       userId: property === undefined
         ? JSON.parse(value.userId).id
         : property.userId,
-      user: value.user,
+      user: JSON.parse(value.userId),
       endDate: value.endDate,
       startDate: value.startDate,
     };
@@ -71,11 +82,13 @@ const AddClubsNewSecretaryForm = (props: any) => {
     } else if (JSON.parse(values.userId).id == props.headDeputy?.userId){
       const newAdmin = SetAdmin(props.headDeputy, values);
       onAdd(newAdmin);  
+    } else if(JSON.parse(values.userId).id == props.admin?.userId){
+      const newAdmin = SetAdmin(props.headDeputy, values);
+      onAdd(newAdmin);
     } else if (JSON.parse(values.userId).id != props.head?.userId && JSON.parse(values.userId).id != props.headDeputy?.userId) {
       const newAdmin = SetAdmin(props.admin, values);
       onAdd(newAdmin);
-    }
-     
+    }   
   };
 
   useEffect(() => {
@@ -83,8 +96,6 @@ const AddClubsNewSecretaryForm = (props: any) => {
       form.resetFields();
     }
     getMembers();
-    const userRoles = userApi.getActiveUserRoles();
-      setActiveUserRoles(userRoles);
   }, [props]);
 
   return (
@@ -131,8 +142,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: Roles.KurinHead, disabled: (activeUserRoles.includes(Roles.KurinHeadDeputy) 
-              && activeUserRoles.includes(Roles.Admin)) },
+            { value: Roles.KurinHead, disabled: !userClubAccesses["AddClubHead"] },
             { value: Roles.KurinHeadDeputy },
             { value: "Голова СПС" },
             { value: "Фотограф" },
