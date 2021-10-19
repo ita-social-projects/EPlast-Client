@@ -8,8 +8,6 @@ import SortedClubs from './SortedClubs';
 const classes = require('./ActionClubs.module.css');
 
 const ActionClubs = () => {
-
-    const [activeUserRoles, setActiveUserRoles] = useState<string[]>();
     const [SwitchValue, setSwitchValue]= useState<boolean>(false);
     const [isAdmin, setIsAdmin] = useState<boolean>();
     const checkAccessToManage = () => {
