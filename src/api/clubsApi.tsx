@@ -149,7 +149,7 @@ export const getAllAdmins = async (id: number) => {
 };
 
 export const getUserClubAccess = async (clubId: number,userId: string) => {
-  return await api.get(`UserAccess/GetUserClubAccesses/${clubId}/${userId}`)
+  return await api.get(`UserAccess/GetUserClubAccess/${clubId}/${userId}`)
   .catch( error => {
        throw error;
        } 
