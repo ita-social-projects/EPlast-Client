@@ -189,8 +189,7 @@ const ClubAnnualReportInformation = () => {
                                 <Col xs={24} sm={12} md={12} lg={12}>
                                     <Card.Grid className="container">
                                         <Title level={4}>
-                                            Географія куреня. Осередки в
-                                            Україні:{" "}
+                                            Географія куреня. Осередки в Україні:{" "}
                                         </Title>
                                         <Text className="clubAnnualReportInformationText">
                                             {clubAnnualReport.clubCenters}
