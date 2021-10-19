@@ -57,7 +57,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
     return current && current > moment();
   };
 
-  const SetAdmin =  (property: any, value: any) => {
+  const SetAdmin = (property: any, value: any) => {
     let admin: ClubAdmin = {
       id: property === undefined ? 0 : property.id,
       adminType: {
@@ -68,7 +68,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
       userId: property === undefined
         ? JSON.parse(value.userId).id
         : property.userId,
-      user: value.user,
+      user: JSON.parse(value.userId),
       endDate: value.endDate,
       startDate: value.startDate,
     };
@@ -82,11 +82,13 @@ const AddClubsNewSecretaryForm = (props: any) => {
     } else if (JSON.parse(values.userId).id == props.headDeputy?.userId){
       const newAdmin = SetAdmin(props.headDeputy, values);
       onAdd(newAdmin);  
+    } else if(JSON.parse(values.userId).id == props.admin?.userId){
+      const newAdmin = SetAdmin(props.headDeputy, values);
+      onAdd(newAdmin);
     } else if (JSON.parse(values.userId).id != props.head?.userId && JSON.parse(values.userId).id != props.headDeputy?.userId) {
       const newAdmin = SetAdmin(props.admin, values);
       onAdd(newAdmin);
-    }
-     
+    }   
   };
 
   useEffect(() => {
