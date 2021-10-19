@@ -61,7 +61,7 @@ const AddNewSecretaryForm = (props: any) => {
       userId: property === undefined
         ? JSON.parse(value.userId).id
         : property.userId,
-      user: value.user,
+      user: JSON.parse(value.userId),
       endDate: value.endDate,
       startDate: value.startDate,
     };

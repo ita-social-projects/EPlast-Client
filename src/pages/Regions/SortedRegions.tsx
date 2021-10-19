@@ -37,9 +37,7 @@ const SortedRegions = ({switcher}: Props) => {
     for await (const region of regions) {
       if (region.logo === null) {
         region.logo = RegionDefaultLogo;
-      } else {
-
-      }
+      } 
     }
 
     setPhotosLoading(false);
@@ -74,8 +72,9 @@ const SortedRegions = ({switcher}: Props) => {
       );
       setPhotosLoading(true);
       setPhotos(response.data.regions);
-      setRegions( response.data.regions);
+      setRegions(response.data.regions);
       setTotal(response.data.total);
+      
     }
     finally {
       setLoading(false);
@@ -155,7 +154,7 @@ const SortedRegions = ({switcher}: Props) => {
       ) : (
           <div>
             <div className="cityWrapper">
-              {canCreate && page === 1 && searchedData.length === 0 ? (
+              {switcher ? (null) : (canCreate && page === 1 && searchedData.length === 0 ? (
                 < Card
                   hoverable
                   className="cardStyles addCity"
@@ -167,7 +166,7 @@ const SortedRegions = ({switcher}: Props) => {
                   title="Створити нову округу"
                   />
                 </Card>
-              ) : null}
+              ) : null)}
 
               {regions.length === 0 ? (
                 <div>
