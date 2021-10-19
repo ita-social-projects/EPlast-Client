@@ -80,7 +80,9 @@ const AnnualReportForm = (props: Props) => {
             <Title>{title}</Title>
             <Row gutter={16} align="bottom">
                 <Col xs={24} sm={12} md={12} lg={12} className="container">
-                    <Text strong={true}>Голова новообраної Старшини</Text>
+                    <Text strong={true}>
+                        Голова новообраної Старшини
+                    </Text>
                     <Form.Item name="newCityAdminId" className="w100">
                         <Select
                             showSearch
@@ -94,7 +96,9 @@ const AnnualReportForm = (props: Props) => {
                     </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={12} className="container">
-                    <Text strong={true}>Правовий статус осередку</Text>
+                    <Text strong={true}>
+                        Правовий статус осередку
+                    </Text>
                     <Form.Item
                         className="w100"
                         name="newCityLegalStatusType"
@@ -188,9 +192,7 @@ const AnnualReportForm = (props: Props) => {
                 <Text strong={true}>УПЮ</Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={12} lg={8}>
-                        <Text>
-                            Кількість куренів у станиці/паланці (окрузі/регіоні)
-                        </Text>
+                        <Text>Кількість куренів у станиці/паланці (окрузі/регіоні)</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfClubs"
@@ -316,9 +318,7 @@ const AnnualReportForm = (props: Props) => {
                     <Text strong={true}>УСП</Text>
                     <Row gutter={16} align="bottom">
                         <Col xs={24} sm={12} md={24} lg={12}>
-                            <Text>
-                                Кількість старших пластунів прихильників
-                            </Text>
+                            <Text>Кількість старших пластунів прихильників</Text>
                             <Form.Item
                                 className="w100"
                                 name={[
@@ -359,9 +359,7 @@ const AnnualReportForm = (props: Props) => {
                     <Text strong={true}>УПС</Text>
                     <Row gutter={16} align="bottom">
                         <Col xs={24} sm={12} md={24} lg={12}>
-                            <Text>
-                                Кількість сеньйорів пластунів прихильників
-                            </Text>
+                            <Text>Кількість сеньйорів пластунів прихильників</Text>
                             <Form.Item
                                 className="w100"
                                 name={[
@@ -400,12 +398,12 @@ const AnnualReportForm = (props: Props) => {
                 </Col>
             </Row>
             <div className="container">
-                <Text strong={true}>Адміністрування та виховництво</Text>
+                <Text strong={true}>
+                    Адміністрування та виховництво
+                </Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>
-                            Кількість діючих виховників (з усіх членів УСП, УПС)
-                        </Text>
+                        <Text>Кількість діючих виховників (з усіх членів УСП, УПС)</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfTeachers"
@@ -420,10 +418,7 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>
-                            Кількість адміністраторів (в проводах будь якого
-                            рівня)
-                        </Text>
+                        <Text>Кількість адміністраторів (в проводах будь якого рівня)</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfAdministrators"
@@ -438,10 +433,7 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>
-                            Кількість тих, хто поєднує виховництво та
-                            адміністрування
-                        </Text>
+                        <Text>Кількість тих, хто поєднує виховництво та адміністрування</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfTeacherAdministrators"
@@ -508,7 +500,9 @@ const AnnualReportForm = (props: Props) => {
                 </Row>
             </div>
             <div className="container">
-                <Text strong={true}>Залучені кошти</Text>
+                <Text strong={true}>
+                    Залучені кошти
+                </Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={12} lg={6}>
                         <Text>Державні кошти</Text>
@@ -573,14 +567,12 @@ const AnnualReportForm = (props: Props) => {
                 </Row>
             </div>
             <div className="container">
-                <Text strong={true}>Майно та потреби станиці</Text>
+                <Text strong={true}>
+                    Майно та потреби станиці
+                </Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={12} lg={12}>
-                        <Text>
-                            Вкажіть, що вам допоможе ефективніше залучати
-                            волонтерів та створювати виховні частини (гнізда,
-                            курені)
-                        </Text>
+                        <Text>Вкажіть, що вам допоможе ефективніше залучати волонтерів та створювати виховні частини (гнізда, курені)</Text>
                         <Form.Item
                             className="w100"
                             name="listProperty"

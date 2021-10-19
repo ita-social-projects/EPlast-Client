@@ -188,7 +188,9 @@ const ClubAnnualReportInformation = () => {
                             <Row gutter={16} align="bottom">
                                 <Col xs={24} sm={12} md={12} lg={12}>
                                     <Card.Grid className="container">
-                                        <Title level={4}>Географія куреня. Осередки в Україні:{" "}</Title>
+                                        <Title level={4}>
+                                            Географія куреня. Осередки в Україні:{" "}
+                                        </Title>
                                         <Text className="clubAnnualReportInformationText">
                                             {clubAnnualReport.clubCenters}
                                         </Text>
@@ -212,14 +214,10 @@ const ClubAnnualReportInformation = () => {
                                     Дані про членів куреня:{" "}
                                 </Title>
                                 <Space direction="vertical">
-                                    <Text>{`Дійсних членів куреня: 
-                            ${clubAnnualReport.currentClubMembers}`}</Text>
-                                    <Text>{`Прихильників куреня: 
-                            ${clubAnnualReport.currentClubFollowers}`}</Text>
-                                    <Text>{`До куреня приєдналось за звітній період: 
-                            ${clubAnnualReport.clubEnteredMembersCount}`}</Text>
-                                    <Text>{`Вибули з куреня за звітній період: 
-                            ${clubAnnualReport.clubLeftMembersCount}`}</Text>
+                                    <Text>{`Дійсних членів куреня: ${clubAnnualReport.currentClubMembers}`}</Text>
+                                    <Text>{`Прихильників куреня: ${clubAnnualReport.currentClubFollowers}`}</Text>
+                                    <Text>{`До куреня приєдналось за звітній період: ${clubAnnualReport.clubEnteredMembersCount}`}</Text>
+                                    <Text>{`Вибули з куреня за звітній період: ${clubAnnualReport.clubLeftMembersCount}`}</Text>
                                 </Space>
                             </Card.Grid>
 
