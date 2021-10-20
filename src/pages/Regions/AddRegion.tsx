@@ -43,10 +43,7 @@ const AddNewRegionFormPage = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      setLoading(true);
-
-      
-        
+      setLoading(true);     
           const newRegion: RegionProfile = {
             id: 0,
             regionName: values.regionName,
@@ -63,8 +60,7 @@ const AddNewRegionFormPage = () => {
             isActive: true
           };
           await createRegion(newRegion);
-          form.resetFields();
-    
+          form.resetFields();  
           notificationLogic("success", successfulCreateAction("Округу"));
           history.push("/regions");  
     }
