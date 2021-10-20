@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { Avatar, Progress, Skeleton, Tooltip, Typography } from "antd";
@@ -15,12 +15,12 @@ import UserDistinction from "../../Distinction/Interfaces/UserDistinction";
 import UserPrecaution from "../../Precaution/Interfaces/UserPrecaution";
 import User from "../../../models/UserTable/User";
 import moment from "moment";
+import { PersonalDataContext } from "./PersonalData";
 
 const { Title } = Typography;
 const nameMaxLength = 55;
 
 class AvatarAndProgressStaticProps {
-  imageUrl: string;
   time: number | undefined;
   firstName: string | undefined;
   lastName: string | undefined;
@@ -37,9 +37,6 @@ class AvatarAndProgressStaticProps {
   cityMemberIsApproved: boolean | undefined;
   clubMemberIsApproved: boolean | undefined;
   showPrecautions: boolean | undefined;
-  constructor() {
-    this.imageUrl = "";
-  }
 }
 
 const contentListNoTitle: { [key: string]: any } = {
@@ -72,7 +69,6 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
   const [loading, setLoading] = useState(false);
   const {
     time,
-    imageUrl,
     firstName,
     lastName,
     isUserPlastun,
@@ -87,7 +83,8 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     clubMemberIsApproved,
     showPrecautions
   } = props;
-  const [imageBase64, setImageBase64] = useState<string>();
+
+  const { imageBase64, userProfile } = useContext(PersonalDataContext);
   const [UserDistinctions, setData] = useState<UserDistinction[]>([
     {
       id: 0,
@@ -153,15 +150,9 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           setPrecaution(response.data);
         });
       }
-
-      await userApi.getImage(imageUrl).then((response: { data: any }) => {
-        setImageBase64(response.data);
-      });
       setLoading(true);
     };
-    if (imageUrl?.length > 0) {
-      fetchData();
-    }
+    fetchData();
   }, [props]);
 
   return loading === false ? (

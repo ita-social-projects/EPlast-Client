@@ -4,7 +4,7 @@ import AnnualReportApi from "../../../../api/AnnualReportApi";
 import { useHistory } from "react-router-dom";
 import "./CitySelectModal.less";
 import { emptyInput } from "../../../../components/Notifications/Messages";
-import { LoadingOutlined } from "@ant-design/icons";
+import { ConsoleSqlOutlined, LoadingOutlined } from "@ant-design/icons";
 
 interface Props {
     visibleModal: boolean;
@@ -40,12 +40,23 @@ const CitySelectModal = (props: Props) => {
             setCities([].concat(response.data.cities));
             let cities = response.data.cities
                 .filter((item: any) => {
-                    return !item.hasReport;
+                    return item.isActive;
                 })
                 .map((item: any) => {
                     return {
-                        label: <>{item.name}</>,
+                        label: (
+                            <>
+                                {item.name}
+                                <div
+                                    className="stampCitiesCreatedReport"
+                                    hidden={!item.hasReport}
+                                >
+                                    Станиця вже має створений звіт
+                                </div>
+                            </>
+                        ),
                         value: item.id,
+                        disabled: item.hasReport,
                     };
                 });
             setCityOptions(cities);

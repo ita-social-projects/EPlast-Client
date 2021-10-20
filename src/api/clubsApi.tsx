@@ -148,6 +148,14 @@ export const getAllAdmins = async (id: number) => {
   });
 };
 
+export const getUserClubAccess = async (clubId: number,userId: string) => {
+  return await api.get(`UserAccess/GetUserClubAccess/${clubId}/${userId}`)
+  .catch( error => {
+       throw error;
+       } 
+  );
+}
+
 export const getAllDocuments = async (id: number) => {
   return api.get(`Club/Documents/${id}`).catch((error) => {
     throw new Error(error);

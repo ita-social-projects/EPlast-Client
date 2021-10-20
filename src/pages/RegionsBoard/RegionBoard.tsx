@@ -413,11 +413,10 @@ const RegionBoard = () => {
                     {decisions.length !== 0 ? (
                     decisions.map((decision) => (
                         <Col
-                        className="cityMemberItem"
+                        className="cityDocumentItem"
                         xs={12}
                         sm={8}
                         key={decision.id}
-                        onClick={() => openPDF(decision)}
                         >
                         <div>
                             <FileDoneOutlined className="documentIcon" />
