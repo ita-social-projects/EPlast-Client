@@ -62,7 +62,6 @@ export default function ({
     setActiveUserId(userId);
     let userProfile = await UserApi.getActiveUserProfile();
     setActiveUserProfile(userProfile);
-
     await UserApi.getById(userId).then(async (response) => {
       setFullUserProfile(response.data);
     }).catch((error) => {

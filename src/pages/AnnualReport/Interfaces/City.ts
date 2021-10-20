@@ -1,4 +1,4 @@
-import Region from './Region';
+import Region from "./Region";
 
 interface City {
     id: number;

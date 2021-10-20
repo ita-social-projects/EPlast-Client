@@ -23,9 +23,6 @@ const SortedRegions = ({switcher}: Props) => {
   const { url } = useRouteMatch();
 
   const [regions, setRegions] = useState<RegionProfile[]>([]);
-  const [activeRegions, setActiveRegions] = useState<RegionProfile[]>([]);
-  const [notActiveRegions, setNotActiveRegions]= useState<RegionProfile[]>([]);
-
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -127,9 +124,11 @@ const SortedRegions = ({switcher}: Props) => {
   }, [page, pageSize, searchedData]);
 
   useEffect(()=>{
-    setPage(1);
-    switcher ? (getNotActiveRegions()) :(getActiveRegions())
-    setCanCreate(switcher ? false : activeCanCreate);
+    if(regions.length !== 0) {
+      setPage(1);
+      switcher ? (getNotActiveRegions()) :(getActiveRegions())
+      setCanCreate(switcher ? false : activeCanCreate);
+    }
   },[switcher])
 
   return (
