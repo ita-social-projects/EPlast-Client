@@ -43,8 +43,12 @@ const approveUser = async (userId: string, isClubAdmin: boolean, isCityAdmin: bo
 
     return response;
 };
+const updateProfileImage = async (userid: string, imageName: string) => {
+    const response = await axios.put(`${`${BASE_URL}User/photo`}/${userid}`, JSON.stringify(imageName));
+    return response;
+};
 
-const getActiveUserRoles = ():string[] => {
+const getActiveUserRoles = (): string[] => {
     let jwt = AuthStore.getToken() as string;
     let decodedJwt = jwt_decode(jwt) as any;
     let roles = [].concat(decodedJwt[
@@ -81,4 +85,5 @@ export default {
     getActiveUserRoles,
     getActiveUserId,
     getActiveUserProfile,
+    updateProfileImage
 };
