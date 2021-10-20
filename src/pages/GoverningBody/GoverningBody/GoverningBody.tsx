@@ -533,6 +533,7 @@ const GoverningBody = () => {
                     <Paragraph>Ще немає документів Керівного Органу</Paragraph>
                     )}
             </Row>
+            {userAccesses["ViewDocument"]?
             <div className="governingBodyMoreButton">
               <Button
                 type="primary"
@@ -548,6 +549,8 @@ const GoverningBody = () => {
                 />
               ) : null}
             </div>
+            :null
+            }
           </Card>
         </Col>
       </Row>
