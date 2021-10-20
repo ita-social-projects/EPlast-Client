@@ -225,7 +225,6 @@ export const ClubAnnualReportForm = (props: Props) => {
                         </Col>
                     </Row>
                 </Card.Grid>
-
                 <Card.Grid className="container">
                     <Title level={4}>Провід куреня</Title>
                     <Table
@@ -238,9 +237,7 @@ export const ClubAnnualReportForm = (props: Props) => {
                             return {
                                 onDoubleClick: (event) => {
                                     if (user.key)
-                                        window.open(
-                                            `/userpage/main/${user.key}`
-                                        );
+                                        window.open(`/userpage/main/${user.key}`);
                                 },
                             };
                         }}
@@ -258,9 +255,7 @@ export const ClubAnnualReportForm = (props: Props) => {
                             return {
                                 onDoubleClick: (event) => {
                                     if (user.key)
-                                        window.open(
-                                            `/userpage/main/${user.key}`
-                                        );
+                                        window.open(`/userpage/main/${user.key}`);
                                 },
                             };
                         }}
@@ -278,9 +273,7 @@ export const ClubAnnualReportForm = (props: Props) => {
                             return {
                                 onDoubleClick: (event) => {
                                     if (user.key)
-                                        window.open(
-                                            `/userpage/main/${user.key}`
-                                        );
+                                        window.open(`/userpage/main/${user.key}`);
                                 },
                             };
                         }}
@@ -294,25 +287,19 @@ export const ClubAnnualReportForm = (props: Props) => {
                                     <Text strong={true}>Номер телефону</Text>
                                 }
                             >
-                                {club.clubURL?.replace(" ", "") == ""
-                                    ? "немає"
-                                    : club.phoneNumber}
+                                {club.clubURL?.replace(" ", "") == "" ? "немає" : club.phoneNumber}
                             </Form.Item>
                             <Form.Item
                                 label={
                                     <Text strong={true}>Електронна пошта</Text>
                                 }
                             >
-                                {club.clubURL?.replace(" ", "") == ""
-                                    ? "немає"
-                                    : club.email}
+                                {club.clubURL?.replace(" ", "") == "" ? "немає" : club.email}
                             </Form.Item>
                             <Form.Item
                                 label={<Text strong={true}>Вулиця</Text>}
                             >
-                                {club.clubURL?.replace(" ", "") == ""
-                                    ? "немає"
-                                    : club.street}
+                                {club.clubURL?.replace(" ", "") == "" ? "немає" : club.street}
                             </Form.Item>
                             <Form.Item
                                 label={
@@ -321,9 +308,7 @@ export const ClubAnnualReportForm = (props: Props) => {
                                     </Text>
                                 }
                             >
-                                {club.clubURL?.replace(" ", "") == ""
-                                    ? "немає"
-                                    : club.clubURL}
+                                {club.clubURL?.replace(" ", "") == "" ? "немає" : club.clubURL}
                             </Form.Item>
                         </Col>
                         <Col span={8}>

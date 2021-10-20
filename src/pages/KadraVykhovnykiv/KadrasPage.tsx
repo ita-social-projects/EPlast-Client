@@ -53,9 +53,13 @@ export const KadrasTable = () => {
     const [noTitleKey, setKey] = useState<string>('KV1N');
     const [canEdit] = useState(roles.includes(Roles.Admin));
 
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchedData(event.target.value);
-    };
+    const handleSearch = (event: any) => {
+        setSearchedData(event);
+      };
+    
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if(event.target.value.toLowerCase()==='') setSearchedData('');
+      }
 
     const showModal = () => {
         setvisible(true);
@@ -103,7 +107,8 @@ export const KadrasTable = () => {
                     enterButton
                     placeholder="Пошук"
                     allowClear
-                    onChange={handleSearch}               
+                    onChange={handleSearchChange}
+                    onSearch={handleSearch}                
                 />
             </div>
             <Card

@@ -3,8 +3,8 @@ interface Props {
         id: number;
         status: number;
         cityId: number;
-        cityName:string;
-        regionName:string;
+        cityName: string;
+        regionName: string;
         date: Date;
         canManage: boolean;
     };
