@@ -39,7 +39,6 @@ const ClubAdministration = () => {
         setPhotosLoading(true);
         setPhotos([...response.data.administration].filter(a => a != null));
         setAdministration([...response.data.administration].filter(a => a != null));
-        setCanEdit(response.data.canEdit);
         setClubName(response.data.name);
       setLoading(false);
     };
