@@ -23,9 +23,6 @@ const SortedRegions = ({switcher}: Props) => {
   const { url } = useRouteMatch();
 
   const [regions, setRegions] = useState<RegionProfile[]>([]);
-  const [activeRegions, setActiveRegions] = useState<RegionProfile[]>([]);
-  const [notActiveRegions, setNotActiveRegions]= useState<RegionProfile[]>([]);
-
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -40,9 +37,7 @@ const SortedRegions = ({switcher}: Props) => {
     for await (const region of regions) {
       if (region.logo === null) {
         region.logo = RegionDefaultLogo;
-      } else {
-
-      }
+      } 
     }
 
     setPhotosLoading(false);
@@ -77,8 +72,9 @@ const SortedRegions = ({switcher}: Props) => {
       );
       setPhotosLoading(true);
       setPhotos(response.data.regions);
-      setRegions( response.data.regions);
+      setRegions(response.data.regions);
       setTotal(response.data.total);
+      
     }
     finally {
       setLoading(false);
@@ -128,9 +124,11 @@ const SortedRegions = ({switcher}: Props) => {
   }, [page, pageSize, searchedData]);
 
   useEffect(()=>{
-    setPage(1);
-    switcher ? (getNotActiveRegions()) :(getActiveRegions())
-    setCanCreate(switcher ? false : activeCanCreate);
+    if(regions.length !== 0) {
+      setPage(1);
+      switcher ? (getNotActiveRegions()) :(getActiveRegions())
+      setCanCreate(switcher ? false : activeCanCreate);
+    }
   },[switcher])
 
   return (
@@ -156,7 +154,7 @@ const SortedRegions = ({switcher}: Props) => {
       ) : (
           <div>
             <div className="cityWrapper">
-              {canCreate && page === 1 && searchedData.length === 0 ? (
+              {switcher ? (null) : (canCreate && page === 1 && searchedData.length === 0 ? (
                 < Card
                   hoverable
                   className="cardStyles addCity"
@@ -168,7 +166,7 @@ const SortedRegions = ({switcher}: Props) => {
                   title="Створити нову округу"
                   />
                 </Card>
-              ) : null}
+              ) : null)}
 
               {regions.length === 0 ? (
                 <div>

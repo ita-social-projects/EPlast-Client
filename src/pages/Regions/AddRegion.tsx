@@ -43,10 +43,7 @@ const AddNewRegionFormPage = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      setLoading(true);
-
-      await checkIfNameExists(values.regionName).then(async (response) =>{
-        if (!response.data) {
+      setLoading(true);      
           const newRegion: RegionProfile = {
             id: 0,
             regionName: values.regionName,
@@ -64,15 +61,8 @@ const AddNewRegionFormPage = () => {
           };
           await createRegion(newRegion);
           form.resetFields();
-    
           notificationLogic("success", successfulCreateAction("Округу"));
           history.push("/regions");  
-        } else {
-          setLoading(false);
-  
-          showRegionNameExistsModal();
-        }  
-      });
     }
     catch (error) {
       notificationLogic("error", failCreateAction("округу"));

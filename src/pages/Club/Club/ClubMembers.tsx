@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Avatar, Button, Card, Layout, Modal, Skeleton, } from "antd";
 import { SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus } from "../../../api/clubsApi";
+import { removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus, getUserClubAccess } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
+import AuthStore from "../../../stores/AuthStore";
+import jwt from 'jwt-decode';
 import "./Club.less";
 import ClubMember from "../../../models/Club/ClubMember";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
@@ -13,7 +15,6 @@ import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { Roles } from "../../../models/Roles/Roles";
 import extendedTitleTooltip, { parameterMaxLength } from "../../../components/Tooltip";
 moment.locale("uk-ua");
 
@@ -27,28 +28,34 @@ const ClubMembers = () => {
   const [clubName, setClubName] = useState<string>("");
   const [visibleModal, setVisibleModal] = useState(false);
   const [admin, setAdmin] = useState<ClubAdmin>(new ClubAdmin());
-  const [canEdit, setCanEdit] = useState<Boolean>(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   
   const getMembers = async () => {
     setLoading(true);
+    await getUserAccessesForClubs();
     const responseMembers = await getAllMembers(id);
 
     setPhotosLoading(true);
     setPhotos(responseMembers.data.members);
     setMembers(responseMembers.data.members);
-    setCanEdit(responseMembers.data.canEdit);
     setClubName(responseMembers.data.name);
 
     const responseAdmins = await getAllAdmins(id);
     setAdmins(responseAdmins.data.administration);
     setHead(responseAdmins.data.head);
-    const userRoles = userApi.getActiveUserRoles();
-      setActiveUserRoles(userRoles);
     setLoading(false);
   };
+
+  const getUserAccessesForClubs = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    await getUserClubAccess(id,user.nameid).then(
+      response => {
+        setUserAccesses(response.data);
+      }
+    );
+  }
 
   function seeDeleteModal(admin: ClubMember) {
     return Modal.confirm({
@@ -143,8 +150,7 @@ const ClubMembers = () => {
               key={member.id}
               className="detailsCard"
               actions={
-
-                canEdit && (member?.user?.id !== head?.user?.id || !activeUserRoles.includes(Roles.KurinHeadDeputy))
+                userAccesses["EditClub"] && (member?.user?.id !== head?.user?.id || userAccesses["AddClubHead"])
                   ? [
                       <SettingOutlined onClick={() => showModal(member)} />,
                       <CloseOutlined onClick={() => seeDeleteModal(member)} />,
@@ -191,7 +197,7 @@ const ClubMembers = () => {
           Назад
         </Button>
       </div>
-      {canEdit ? (
+      {userAccesses["EditClub"] ? (
         <AddAdministratorModal
           admin={admin}
           setAdmin={setAdmin}
