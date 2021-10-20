@@ -24,7 +24,7 @@ import { descriptionValidation } from '../../../../models/GllobalValidations/Des
 const classes = require('./EventCreate.module.css');
 
 interface Props {
-  onCreate: () => void;
+  onCreate?: () => void;
   setShowEventCreateDrawer: (visibleEventCreateDrawer: boolean) => void;
 }
 
@@ -102,7 +102,9 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         notificationLogic('error', tryAgain);
       }
     });
-    onCreate();
+    if (onCreate != undefined) {
+      onCreate();
+    }
     form.resetFields();
     setLoading(false);
     setShowEventCreateDrawer(false);
@@ -117,7 +119,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
   }
 
   function onEventDateStartChange(e: any) {
-    if(e > moment()) {
+    if (e > moment()) {
       setStartDate(e)
       setVisibleEndDatePicker(false)
       form.resetFields(['EventDateEnd'])
@@ -221,9 +223,9 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         <Col md={24} xs={24}>
           <Form.Item label="Дата початку" name="EventDateStart" className={classes.formItem}
             rules={[
-              { 
-                required: true, 
-                message: emptyInput() 
+              {
+                required: true,
+                message: emptyInput()
               },
               {
                 validator: (_: object, value: Date) => {
@@ -247,20 +249,20 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
-          <Form.Item label="Дата завершення" name="EventDateEnd" className={classes.formItem} 
-          rules={[
-            { 
-                required: true, 
-                message: emptyInput() 
-            },
-            {
-              validator: (_: object, value: Date) => {
-                return (
-                  value < StartDate!
-                  ? Promise.reject(incorrectEndTime)
-                  : Promise.resolve())
+          <Form.Item label="Дата завершення" name="EventDateEnd" className={classes.formItem}
+            rules={[
+              {
+                required: true,
+                message: emptyInput()
+              },
+              {
+                validator: (_: object, value: Date) => {
+                  return (
+                    value < StartDate!
+                      ? Promise.reject(incorrectEndTime)
+                      : Promise.resolve())
+                }
               }
-            }
             ]}>
             <DatePicker
               showTime
