@@ -2,12 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout, Modal} from 'antd';
 import {FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
-import {clubNameOfApprovedMember, getAllDocuments, getFile, removeDocument, getClubById} from "../../../api/clubsApi";
+import {clubNameOfApprovedMember, getAllDocuments, getUserClubAccess, getFile, removeDocument, getClubById} from "../../../api/clubsApi";
 import "./Club.less";
+import AuthStore from "../../../stores/AuthStore";
+import jwt from 'jwt-decode';
 import ClubDocument from '../../../models/Club/ClubDocument';
 import ClubProfile from "../../../models/Club/ClubProfile";
 import moment from "moment";
-import { Roles } from '../../../models/Roles/Roles';
 import Spinner from '../../Spinner/Spinner';
 import Title from 'antd/lib/typography/Title';
 import userApi from "../../../api/UserApi";
@@ -19,20 +20,27 @@ const ClubDocuments = () => {
 
     const [activeUserClub, setActiveUserClub] = useState<string>();
     const [documents, setDocuments] = useState<ClubDocument[]>([]);
-    const [canEdit, setCanEdit] = useState<Boolean>(false);
     const [club, setClub] = useState<ClubProfile>(new ClubProfile());
     const [loading, setLoading] = useState<boolean>(false);
-    const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+    const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
     
+    const getUserClubAccesses = async () => {
+      let user: any = jwt(AuthStore.getToken() as string);
+      await getUserClubAccess(id,user.nameid).then(
+        response => {
+          setUserAccesses(response.data);
+        }
+      );
+    }
 
     const getClub = async () => {
       setLoading(true);
       try {
+        await getUserClubAccesses();
         const response = await getClubById(+id);
         const clubNameResponse = await clubNameOfApprovedMember(userApi.getActiveUserId());
 
         setActiveUserClub(clubNameResponse.data);
-        setActiveUserRoles(userApi.getActiveUserRoles);
         setClub(response.data);
        } 
     finally {
@@ -44,7 +52,6 @@ const ClubDocuments = () => {
       setLoading(true);
       const response = await getAllDocuments(id);
       setDocuments(response.data.documents);
-      setCanEdit(response.data.canEdit);
     };
 
     const downloadDocument = async (fileBlob: string, fileName: string) => {
@@ -95,8 +102,7 @@ const ClubDocuments = () => {
                   }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit
-                      ? [
+                    userAccesses["EditClub"] ? [
                           <DownloadOutlined
                             key="download"
                             onClick={() =>
@@ -110,13 +116,8 @@ const ClubDocuments = () => {
                             key="close"
                             onClick={() => seeDeleteModal(document.id)}
                           />,
-                        ]
-                        
-                      : ((activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) 
-                      && club.name == activeUserClub ) || (activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy))
-                      || (activeUserRoles.includes(Roles.CityHead) || activeUserRoles.includes(Roles.CityHeadDeputy))
-                      || (activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.KurinHeadDeputy))
-                      ? [
+                    ] : userAccesses["IsAdmin"] || 
+                    (userAccesses["DownloadDocument"] && club.name == activeUserClub) ? [
                           <DownloadOutlined
                             key="download"
                             onClick={() =>
@@ -126,8 +127,7 @@ const ClubDocuments = () => {
                               )
                             }
                           />,
-                        ]
-                        : undefined
+                        ] : undefined
                   }
                 >
                   <Avatar size={86} icon={<FileTextOutlined />} />

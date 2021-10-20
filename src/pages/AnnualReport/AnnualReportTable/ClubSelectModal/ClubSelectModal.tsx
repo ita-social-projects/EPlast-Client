@@ -101,8 +101,7 @@ const ClubSelectModal = (props: Props) => {
                                 options={clubOptions}
                                 placeholder={
                                     <span>
-                                        Обрати курінь{" "}
-                                        {isLoadingClubs && <LoadingOutlined />}
+                                        Обрати курінь{" "}{isLoadingClubs && <LoadingOutlined />}
                                     </span>
                                 }
                                 filterOption={(input, option) =>
