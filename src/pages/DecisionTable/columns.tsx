@@ -35,8 +35,8 @@ const columns = [
     title: 'Рішення',
     dataIndex: 'description',
     render: (description: any) => (
-      <Tooltip className={classes.antTooltipInner} title={description.substring(0, 500)}>
-          {description.substring(0, 100)}
+      <Tooltip className={classes.antTooltipInner} title={description.substring(0, 500)+ "..."}>
+          {description.substring(0, 100)} 
       </Tooltip>
     ),
   },
