@@ -467,10 +467,7 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>
-                            Кількість тих, хто поєднує виховництво та
-                            адміністрування
-                        </Text>
+                        <Text>Кількість тих, хто поєднує виховництво та адміністрування</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfTeacherAdministrators"
