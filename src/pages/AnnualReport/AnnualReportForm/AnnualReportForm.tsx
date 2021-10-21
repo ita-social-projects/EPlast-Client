@@ -14,6 +14,9 @@ const { TextArea } = Input;
 const AnnualReportForm = (props: Props) => {
     const { title, cityMembers, cityLegalStatuses, formHook } = props;
 
+    const numberMaxAmountDigit = 6
+    const moneyMaxAmountDigit = 11
+
     const validationSchema = {
         cityLegalStatus: [{ required: true, message: emptyInput() }],
         number: [
@@ -98,7 +101,7 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    maxLength={6}
+                                    maxLength={numberMaxAmountDigit}
                                     onChange={(e) => {
                                         formHook.setFieldsValue({
                                             numberOfSeatsPtashat: getOnlyNums(e.target.value),
@@ -115,7 +118,7 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    maxLength={6}
+                                    maxLength={numberMaxAmountDigit}
                                     onChange={(e) => {
                                         formHook.setFieldsValue({
                                             membersStatistic: {
@@ -141,7 +144,7 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    maxLength={6}
+                                    maxLength={numberMaxAmountDigit}
                                     onChange={(e) => {
                                         formHook.setFieldsValue({
                                             numberOfIndependentRiy: getOnlyNums(e.target.value),
@@ -158,7 +161,7 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    maxLength={6}
+                                    maxLength={numberMaxAmountDigit}
                                     onChange={(e) => {
                                         formHook.setFieldsValue({
                                             membersStatistic: {
@@ -185,7 +188,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={numberMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         numberOfClubs: getOnlyNums(e.target.value),
@@ -202,7 +205,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={numberMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         numberOfIndependentGroups: getOnlyNums(e.target.value),
@@ -222,7 +225,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={numberMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         membersStatistic: {
@@ -244,7 +247,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={numberMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         membersStatistic: {
@@ -266,7 +269,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={numberMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         membersStatistic: {
@@ -288,7 +291,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={numberMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         membersStatistic: {
@@ -310,7 +313,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={numberMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         membersStatistic: {
@@ -340,7 +343,7 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    maxLength={6}
+                                    maxLength={numberMaxAmountDigit}
                                     onChange={(e) => {
                                         formHook.setFieldsValue({
                                             membersStatistic: {
@@ -362,7 +365,7 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    maxLength={6}
+                                    maxLength={numberMaxAmountDigit}
                                     onChange={(e) => {
                                         formHook.setFieldsValue({
                                             membersStatistic: {
@@ -391,7 +394,7 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    maxLength={6}
+                                    maxLength={numberMaxAmountDigit}
                                     onChange={(e) => {
                                         formHook.setFieldsValue({
                                             membersStatistic: {
@@ -413,7 +416,7 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    maxLength={6}
+                                    maxLength={numberMaxAmountDigit}
                                     onChange={(e) => {
                                         formHook.setFieldsValue({
                                             membersStatistic: {
@@ -440,7 +443,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={numberMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         numberOfTeachers: getOnlyNums(e.target.value),
@@ -450,14 +453,14 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>Кількість адміністраторів (в проводах будь якого рівня)</Text>
+                        <Text>Кількість адміністраторів (в проводах будь-якого рівня)</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfAdministrators"
                             rules={validationSchema.number}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={numberMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         numberOfAdministrators: getOnlyNums(e.target.value),
@@ -474,7 +477,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={numberMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         numberOfTeacherAdministrators: getOnlyNums(e.target.value),
@@ -498,7 +501,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={numberMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         numberOfBeneficiaries: getOnlyNums(e.target.value),
@@ -515,7 +518,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={numberMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         numberOfPlastpryiatMembers: getOnlyNums(e.target.value),
@@ -532,7 +535,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={numberMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         numberOfHonoraryMembers: getOnlyNums(e.target.value),
@@ -556,7 +559,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.money}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={moneyMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         publicFunds: getOnlyNums(e.target.value),
@@ -573,7 +576,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.money}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={moneyMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         contributionFunds: getOnlyNums(e.target.value),
@@ -590,7 +593,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.money}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={moneyMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         plastSalary: getOnlyNums(e.target.value),
@@ -607,7 +610,7 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.money}
                         >
                             <Input
-                                maxLength={6}
+                                maxLength={moneyMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
                                         sponsorshipFunds: getOnlyNums(e.target.value),
