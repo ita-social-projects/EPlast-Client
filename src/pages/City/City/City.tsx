@@ -274,22 +274,20 @@ const City = () => {
   const getCity = async () => {
     setLoading(true);
     try {
+      console.log(0)
       const response = await getCityById(+id);
+      console.log(1);
       setActiveUserID(userApi.getActiveUserId());
       const responce1 = await cityNameOfApprovedMember(userApi.getActiveUserId());
       setCity(response.data);
       setActiveUserCity(responce1.data);
       setPhotosLoading(true);
       setCityLogoLoading(true);
-      const admins = [
-        ...response.data.administration
-      ].filter((a) => a !== null);
-
       setPhotos(
-        [...admins, ...response.data.members, ...response.data.followers],
+        [...response.data.administration, ...response.data.members, ...response.data.followers],
         response.data.logo
       );
-      setAdmins(admins);
+      setAdmins(response.data.administration);
       setMembers(response.data.members);
       setFollowers(response.data.followers);
       setDocuments(response.data.documents);
@@ -310,13 +308,10 @@ const City = () => {
   const updateAdmins = async () => {
     const response = await getCityById(+id);
     setAdminsCount(response.data.administrationCount);
-    const admins = [
-      ...response.data.administration,
-    ].filter((a) => a !== null);
     setCity(response.data);
-    setAdmins(admins);
+    setAdmins(response.data.administration);
     setPhotosLoading(true);
-    setPhotos([...admins], response.data.logo);
+    setPhotos([...response.data.administration], response.data.logo);
   }
 
   const addCityAdmin = async (newAdmin: CityAdmin) => {
@@ -334,7 +329,7 @@ const City = () => {
     }
     await createNotification(newAdmin.userId,
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`, true);
-    notificationLogic("success", "Користувач успішно доданий в провід");
+      notificationLogic("success", "Користувач успішно доданий в провід");
   };
 
   const editCityAdmin = async (admin: CityAdmin) => {
@@ -421,11 +416,14 @@ const City = () => {
   }
 
   useEffect(() => {
-    if (city.name.length !== 0) {
-      PsevdonimCreator.setPseudonimLocation(`cities/${city.name}`, `cities/${id}`);
-    }
     getCity();
   }, [])
+
+  useEffect(() => {
+    if (city.name.length != 0) {
+      PsevdonimCreator.setPseudonimLocation(`cities/${city.name}`, `cities/${id}`);
+    }
+  },[city])
 
   return loading ? (
     <Spinner />
