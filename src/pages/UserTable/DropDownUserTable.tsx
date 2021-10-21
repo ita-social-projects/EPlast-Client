@@ -21,7 +21,7 @@ import UserApi from "../../api/UserApi";
 import { Roles } from "../../models/Roles/Roles";
 import { AdminRole } from "../../models/Roles/AdminRole";
 import { NonAdminRole } from "../../models/Roles/NonAdminRole";
-import { IDropdownItem, DropdownItemBuilder } from "./DropdownItem";
+import { IDropdownItem, DropdownItemCreator } from "./DropdownItem";
 import { DropdownFunc } from "../../models/UserTable/DropdownFunc";
 
 let authService = new AuthorizeApi();
@@ -66,6 +66,7 @@ const DropDown = (props: Props) => {
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
   const [governingBodyHead, setGoverningBodyHead] = useState<boolean>(true);
   const [currentUserAdminRoles, setCurrentUserAdminRoles] = useState<Array<AdminRole>>([]);
+  const [canViewProfile, setCanViewProfile] = useState<boolean>(false);
   const [canDelete, setCanDelete] = useState<boolean>(false);
   const [canChangeCityAdministration, setCanChangeCityAdministration] = useState<boolean>(false);
   const [canChangeClubAdministration, setCanChangeClubAdministration] = useState<boolean>(false);
@@ -96,7 +97,7 @@ const DropDown = (props: Props) => {
     //Current user roles as strings (values) are converted to corresponding
     //Roles enum keys, which are also saved as array of string
     const userRolesAsEnumKeys: Array<string> = new Array<string>();
-    allUserRoles.forEach(role => {
+    allUserRoles?.forEach(role => {
       let result = getEnumKeyByEnumValue(Roles, role);
       if (result !== null) {
         userRolesAsEnumKeys.push(result);
@@ -127,7 +128,7 @@ const DropDown = (props: Props) => {
     //Current user roles as strings (values) are converted to corresponding
     //Roles enum keys, which are also saved as array of string
     const userRolesAsEnumKeys: Array<string> = new Array<string>();
-    allUserRoles.forEach(role => {
+    allUserRoles?.forEach(role => {
       let result = getEnumKeyByEnumValue(Roles, role);
       if (result !== null) {
         userRolesAsEnumKeys.push(result);
@@ -137,7 +138,7 @@ const DropDown = (props: Props) => {
     //Intersection of possible NonAdmin roles and current admin roles
     const userNonAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(role => userRolesAsEnumKeys.includes(role));
 
-    //Roles are converted  to NonAdminRole enum  
+    //Roles are converted to NonAdminRole enum  
     const userNonAdminRoles = new Array<NonAdminRole>();
     userNonAdminRolesAsEnumKeys.forEach(role => {
       userNonAdminRoles.push(NonAdminRole[role as keyof typeof NonAdminRole]);
@@ -150,7 +151,7 @@ const DropDown = (props: Props) => {
 
   useEffect(() => {
     const buildChain = async () => {
-      const builder: DropdownItemBuilder = new DropdownItemBuilder();
+      const builder: DropdownItemCreator = new DropdownItemCreator();
       setChainOfAccessibility(builder.build());
     };
     buildChain();
@@ -166,6 +167,8 @@ const DropDown = (props: Props) => {
   const fetchUser = async () => {
 
     const result: Map<DropdownFunc, any> | undefined | null = await lookThroughChain();
+
+    setCanViewProfile(result?.get(DropdownFunc.CheckProfile) ?? false);
 
     setCanDelete(result?.get(DropdownFunc.Delete) ?? false);
     
@@ -237,7 +240,7 @@ const DropDown = (props: Props) => {
           display: showDropdown ? "block" : "none",
         }}
       >
-        {props.inActiveTab === false && canView ? (
+        {props.inActiveTab === false && canViewProfile ? (
           <Menu.Item key="1">
             <FileSearchOutlined />
             Переглянути профіль
