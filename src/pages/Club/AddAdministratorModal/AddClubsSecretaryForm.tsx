@@ -75,20 +75,9 @@ const AddClubsNewSecretaryForm = (props: any) => {
     return admin;
   }
 
-  const handleSubmit = async (values: any) => {
-    if (JSON.parse(values.userId).id == props.head?.userId ) {
-      const newAdmin = SetAdmin(props.head, values);
-      onAdd(newAdmin);
-    } else if (JSON.parse(values.userId).id == props.headDeputy?.userId){
-      const newAdmin = SetAdmin(props.headDeputy, values);
-      onAdd(newAdmin);  
-    } else if(JSON.parse(values.userId).id == props.admin?.userId){
-      const newAdmin = SetAdmin(props.headDeputy, values);
-      onAdd(newAdmin);
-    } else if (JSON.parse(values.userId).id != props.head?.userId && JSON.parse(values.userId).id != props.headDeputy?.userId) {
+  const handleSubmit = async (values: any) => {   
       const newAdmin = SetAdmin(props.admin, values);
-      onAdd(newAdmin);
-    }   
+      onAdd(newAdmin);   
   };
 
   useEffect(() => {
