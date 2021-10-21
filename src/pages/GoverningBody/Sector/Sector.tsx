@@ -465,6 +465,7 @@ const Sector = () => {
                 <Paragraph>Ще немає документів Напряму</Paragraph>
               )}
             </Row>
+            {userAccesses["ViewDocument"]?
             <div className="governingBodyMoreButton">
               <Button
                 type="primary"
@@ -480,6 +481,8 @@ const Sector = () => {
                 />
               ) : null}
             </div>
+            :null
+            }
           </Card>
         </Col>
       </Row>
