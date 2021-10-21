@@ -263,9 +263,7 @@ const Club = () => {
         ...response.data.administration,
         ...response.data.members,
         ...response.data.followers,
-
       ], response.data.logo);
-
       setAdmins(response.data.administration);
       setClub(response.data);
       setMembers(response.data.members);
