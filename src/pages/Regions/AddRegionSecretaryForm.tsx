@@ -69,21 +69,11 @@ const AddNewSecretaryForm = (props: any) => {
   }
 
   const handleSubmit = async (values: any) => {
-    if (JSON.parse(values.userId).id == props.head?.userId ) {
-      const newAdmin = await SetAdmin(props.head, values);
-      onAdd(newAdmin);  
-    } else if (JSON.parse(values.userId).id == props.headDeputy?.userId){
-      const newAdmin = await SetAdmin(props.headDeputy, values);
-      onAdd(newAdmin);  
-    } else if (JSON.parse(values.userId).id != props.head?.userId && JSON.parse(values.userId).id != props.headDeputy?.userId) {
       const newAdmin = await SetAdmin(props.admin, values);
       onAdd(newAdmin);
-    }
   };
+
   const fetchData = async () => {
-    await regionsApi.getAdminTypes().then((response) => {
-      setTypes(response.data);
-    });
     if (props.regionId !== undefined)
     {
     await regionsApi.getRegionUsers(props.regionId).then((response) => { 
@@ -91,20 +81,15 @@ const AddNewSecretaryForm = (props: any) => {
     });
     }
   };
+  
   useEffect(() => {
-    setCurrentRegion(
-      Number(
-        window.location.hash.substring(1) ||
-        window.location.pathname.split("/").pop()
-      )
-    );
+    if (props.visibleModal) {
+      form.resetFields();
+    }
     fetchData();
   }, [props]);
 
   useEffect(() => {
-    if (!props.visibleModal) {
-      form.resetFields();
-    }
     const userRoles = userApi.getActiveUserRoles();
       setActiveUserRoles(userRoles);
   }, [props]);
