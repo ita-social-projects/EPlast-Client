@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
 import { Form, DatePicker, AutoComplete, Select, Button } from "antd";
 import {
-  getAllMembers,
+  getCityUsers,
 } from "../../../api/citiesApi";
 import moment from "moment";
 import {
@@ -10,10 +10,10 @@ import {
 } from "../../../components/Notifications/Messages"
 import CityAdmin from "../../../models/City/CityAdmin";
 import AdminType from "../../../models/Admin/AdminType";
-import CityMember from "../../../models/City/CityMember";
 import "./AddCitiesSecretaryForm.less";
 import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
+import CityUser from "../../../models/City/CityUser";
 
 type AddCitiesNewSecretaryForm = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -29,16 +29,8 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
-  const [members, setMembers] = useState<CityMember[]>([]);
-
-  const getMembers = async () => {
-    const responseMembers = await getAllMembers(props.cityId);
-    setMembers(responseMembers.data.members);
-  };
-
+  const [members, setMembers] = useState<CityUser[]>([]);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-
-
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -48,9 +40,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
     return current && current > moment();
   };
 
-
-
-  const SetAdmin =  (property: any, value: any) => {
+  const SetAdmin = async (property: any, value: any) => {
     let admin: CityAdmin = {
       id: property === undefined ? 0 : property.id,
       adminType: {
@@ -69,15 +59,16 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   }
 
   const handleSubmit = async (values: any) => {
-    if (JSON.parse(values.userId).id == props.head?.userId ) {
-      const newAdmin = SetAdmin(props.head, values);
+      const newAdmin = await SetAdmin(props.admin, values);
       onAdd(newAdmin);
-    } else if (JSON.parse(values.userId).id == props.headDeputy?.userId){
-      const newAdmin = SetAdmin(props.headDeputy, values);
-      onAdd(newAdmin);  
-    } else if (JSON.parse(values.userId).id != props.head?.userId && JSON.parse(values.userId).id != props.headDeputy?.userId) {
-      const newAdmin = SetAdmin(props.admin, values);
-      onAdd(newAdmin);
+  };
+
+  const fetchData = async () => {
+    if (props.cityId !== undefined)
+    {
+    await getCityUsers(props.cityId).then((response) => { 
+      setMembers(response.data);
+    });
     }
   };
 
@@ -85,7 +76,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
     if (props.visibleModal) {
       form.resetFields();
     }
-    getMembers();
+    fetchData();
     const userRoles = userApi.getActiveUserRoles();
       setActiveUserRoles(userRoles);
   }, [props]);
@@ -106,8 +97,9 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       >
         <Select showSearch className={classes.inputField}>
           {members?.map((o) => (
-            <Select.Option key={o.userId} value={JSON.stringify(o.user)}>
-              {o.user.firstName + " " + o.user.lastName}
+            <Select.Option key={o.id} value={JSON.stringify(o)}>
+              
+              {o.firstName + " " + o.lastName}
             </Select.Option>
           ))}
         </Select>

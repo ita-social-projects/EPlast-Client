@@ -289,13 +289,13 @@ const Region = () => {
   const addRegionAdmin = async (newAdmin: RegionAdmin) => {
     let previousAdmin: RegionAdmin = new RegionAdmin(); 
     admins.map((admin) => {
-      if(admin.adminType.adminTypeName == newAdmin.adminType.adminTypeName){
+      if (admin.adminType.adminTypeName == newAdmin.adminType.adminTypeName){
         previousAdmin = admin;
       }
     });
     await AddAdmin(newAdmin);
     await updateAdmins();
-    if(previousAdmin.adminType.adminTypeName != ""){
+    if (previousAdmin.adminType.adminTypeName != ""){
       await createNotification(previousAdmin.userId,
         `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`, true);
     }

@@ -90,6 +90,12 @@ export const getAllMembers = async (id: number) => {
   });
 };
 
+export const getCityUsers = async (cityId: number) => {
+  return api.get(`Cities/CityUsers/${cityId}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export const getAllFollowers = async (id: number) => {
   return api.get(`Cities/Followers/${id}`).catch((error) => {
     throw new Error(error);
