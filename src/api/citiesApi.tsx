@@ -1,4 +1,3 @@
-import CityMember from "../models/City/CityMember";
 import api from "./api";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
@@ -74,6 +73,12 @@ export const getLogo = async (logoName: string) => {
 
 export const getAllAdmins = async (id: number) => {
   return api.get(`Cities/Admins/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const getCityAdministration = async (cityId: number) => {
+  return await api.get(`Cities/GetAdministrations/${cityId}`).catch((error) => {
     throw new Error(error);
   });
 };
