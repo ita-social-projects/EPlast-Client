@@ -359,7 +359,7 @@ const UsersTable = () => {
   };
 
   const parseUserRolesString = (roles: string) => {
-    return roles != null ? roles.split(', ') : roles;
+    return roles !== null ? roles.split(', ') : roles;
   }
  
   return (

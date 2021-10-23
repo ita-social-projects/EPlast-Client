@@ -488,6 +488,7 @@ const RegionBoard = () => {
                 <Paragraph>Ще немає документів</Paragraph>
               )}
             </Row>
+            {userAccesses["ViewDocument"]?
             <div className="cityMoreButton">
               <Button
                 type="primary"
@@ -505,6 +506,8 @@ const RegionBoard = () => {
                 />
               ) : null}
             </div>
+            :null
+            }
           </Card>
         </Col>
       </Row>

@@ -274,9 +274,7 @@ const City = () => {
   const getCity = async () => {
     setLoading(true);
     try {
-      console.log(0)
       const response = await getCityById(+id);
-      console.log(1);
       setActiveUserID(userApi.getActiveUserId());
       const responce1 = await cityNameOfApprovedMember(userApi.getActiveUserId());
       setCity(response.data);
