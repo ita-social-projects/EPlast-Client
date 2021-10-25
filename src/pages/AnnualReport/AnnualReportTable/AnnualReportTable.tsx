@@ -87,18 +87,18 @@ const AnnualReportTable = () => {
         let roles = UserApi.getActiveUserRoles();
         setCityManager(
             roles.includes(Roles.Admin) ||
-                roles.includes(Roles.CityHead) ||
-                roles.includes(Roles.CityHeadDeputy)
+            roles.includes(Roles.CityHead) ||
+            roles.includes(Roles.CityHeadDeputy)
         );
         setClubManager(
             roles.includes(Roles.Admin) ||
-                roles.includes(Roles.KurinHead) ||
-                roles.includes(Roles.KurinHeadDeputy)
+            roles.includes(Roles.KurinHead) ||
+            roles.includes(Roles.KurinHeadDeputy)
         );
         setRegionManager(
             roles.includes(Roles.Admin) ||
-                roles.includes(Roles.OkrugaHead) ||
-                roles.includes(Roles.OkrugaHeadDeputy)
+            roles.includes(Roles.OkrugaHead) ||
+            roles.includes(Roles.OkrugaHeadDeputy)
         );
     };
 
@@ -133,9 +133,7 @@ const AnnualReportTable = () => {
                         onClick={() => {
                             setSortKey(-props.sort);
                         }}
-                        className={
-                            sortKey === -props.sort ? "sortDirection" : ""
-                        }
+                        className={sortKey === -props.sort ? "sortDirection" : ""}
                     >
                         <CaretDownOutlined />
                     </button>
@@ -449,7 +447,7 @@ const AnnualReportTable = () => {
             </Row>
             <Row>
                 <Card
-                    style={{ width: "100%" }}
+                    className="AnnualReportTableTabs"
                     tabList={tabList}
                     activeTabKey={noTitleKey}
                     onTabChange={(key) => {
