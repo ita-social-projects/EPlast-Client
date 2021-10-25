@@ -168,6 +168,12 @@ export const getAllMembers = async (id: number) => {
   });
 };
 
+export const getClubUsers = async (clubId: number) => {
+  return api.get(`Club/ClubUsers/${clubId}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export const getAllFollowers = async (id: number) => {
   return api.get(`Club/Followers/${id}`).catch((error) => {
     throw new Error(error);
@@ -210,8 +216,8 @@ export const removeAdministrator = async (adminId: number) => {
   });
 }
 
-export const editAdministrator = async (adminId: number, data: any) => {
-  return api.put(`Club/EditAdmin/${adminId}`, data).catch((error) => {
+export const editAdministrator = async (clubId: number, data: any) => {
+  return api.put(`Club/EditAdmin/${clubId}`, data).catch((error) => {
     throw new Error(error);
   });
 }
