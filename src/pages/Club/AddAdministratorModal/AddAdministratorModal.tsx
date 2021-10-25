@@ -95,9 +95,7 @@ const AddAdministratorModal = (props: Props) => {
           </b>{" "}
           вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
           <b>
-            {existingAdmin.endDate === null || existingAdmin.endDate === undefined
-              ? "ще не скоро"
-              : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
+            {moment(existingAdmin.endDate).format("DD.MM.YYYY") ?? "ще не скоро"}
           </b>
           .
         </div>
