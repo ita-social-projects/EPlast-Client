@@ -332,9 +332,7 @@ const ClubAnnualReportInformation = () => {
                                                         label={
                                                             <Text strong={true}>
                                                                 {
-                                                                    clubHead
-                                                                        .adminType
-                                                                        ?.adminTypeName
+                                                                    clubHead.adminType?.adminTypeName
                                                                 }
                                                             </Text>
                                                         }
@@ -348,7 +346,7 @@ const ClubAnnualReportInformation = () => {
                                                             </Text>
                                                         }
                                                     >
-                                                        {club.clubURL?.replace(" ", "") == "" ? "немає" : club.phoneNumber}
+                                                        {clubAnnualReport.phoneNumber?.replace(" ", "") == "" ? "немає" : clubAnnualReport.phoneNumber}
                                                     </Form.Item>
                                                     <Form.Item
                                                         label={
@@ -357,7 +355,7 @@ const ClubAnnualReportInformation = () => {
                                                             </Text>
                                                         }
                                                     >
-                                                        {club.clubURL?.replace(" ", "") == "" ? "немає" : club.email}
+                                                        {clubAnnualReport.email?.replace(" ", "") == "" ? "немає" : clubAnnualReport.email}
                                                     </Form.Item>
                                                 </>
                                             ) : (
@@ -370,7 +368,7 @@ const ClubAnnualReportInformation = () => {
                                                     </Text>
                                                 }
                                             >
-                                                {club.clubURL.replace(" ", "") == "" ? "немає" : club.clubURL}
+                                                {clubAnnualReport.clubURL?.replace(" ", "") == "" ? "немає" : clubAnnualReport.clubURL}
                                             </Form.Item>
                                         </Col>
                                         <Col
