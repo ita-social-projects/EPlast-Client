@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Button, Layout, Modal, Row, Typography, Tag, Tooltip } from "antd";
+import {
+    Button,
+    Layout,
+    Modal,
+    Row,
+    Typography,
+    Tag,
+    Tooltip,
+    Col,
+    Space,
+} from "antd";
 import moment from "moment";
 import AnnualReportApi from "../../../api/AnnualReportApi";
 import "./AnnualReportTable.less";
@@ -77,18 +87,18 @@ const AnnualReportTable = () => {
         let roles = UserApi.getActiveUserRoles();
         setCityManager(
             roles.includes(Roles.Admin) ||
-            roles.includes(Roles.CityHead) ||
-            roles.includes(Roles.CityHeadDeputy)
+                roles.includes(Roles.CityHead) ||
+                roles.includes(Roles.CityHeadDeputy)
         );
         setClubManager(
             roles.includes(Roles.Admin) ||
-            roles.includes(Roles.KurinHead) ||
-            roles.includes(Roles.KurinHeadDeputy)
+                roles.includes(Roles.KurinHead) ||
+                roles.includes(Roles.KurinHeadDeputy)
         );
         setRegionManager(
             roles.includes(Roles.Admin) ||
-            roles.includes(Roles.OkrugaHead) ||
-            roles.includes(Roles.OkrugaHeadDeputy)
+                roles.includes(Roles.OkrugaHead) ||
+                roles.includes(Roles.OkrugaHeadDeputy)
         );
     };
 
@@ -123,7 +133,9 @@ const AnnualReportTable = () => {
                         onClick={() => {
                             setSortKey(-props.sort);
                         }}
-                        className={sortKey === -props.sort ? "sortDirection" : ""}
+                        className={
+                            sortKey === -props.sort ? "sortDirection" : ""
+                        }
                     >
                         <CaretDownOutlined />
                     </button>
@@ -393,39 +405,48 @@ const AnnualReportTable = () => {
     return (
         <Layout.Content className="annualreport-table">
             <Title level={2}>Річні звіти</Title>
-            <div className="searchContainer">
-                {cityManager ? (
-                    <Button
-                        type="primary"
-                        onClick={() => setShowCitySelectModal(true)}
-                    >
-                        Подати річний звіт станиці
-                    </Button>
-                ) : null}
-                {clubManager ? (
-                    <Button
-                        type="primary"
-                        onClick={() => setShowClubSelectModal(true)}
-                    >
-                        Подати річний звіт куреня
-                    </Button>
-                ) : null}
-                {regionManager ? (
-                    <Button
-                        type="primary"
-                        onClick={() => setShowRegionAnnualReports(true)}
-                    >
-                        Подати річний звіт округи
-                    </Button>
-                ) : null}
-                <Search
-                    placeholder="Пошук"
-                    enterButton
-                    allowClear
-                    onChange={handleSearchChange}
-                    onSearch={handleSearch}
-                />
-            </div>
+            <Row
+                gutter={[12, 12]}
+                className="AnnualReportTableButtonsSearchField"
+            >
+                <Col>
+                    <Space>
+                        {cityManager ? (
+                            <Button
+                                type="primary"
+                                onClick={() => setShowCitySelectModal(true)}
+                            >
+                                Подати річний звіт станиці
+                            </Button>
+                        ) : null}
+                        {clubManager ? (
+                            <Button
+                                type="primary"
+                                onClick={() => setShowClubSelectModal(true)}
+                            >
+                                Подати річний звіт куреня
+                            </Button>
+                        ) : null}
+                        {regionManager ? (
+                            <Button
+                                type="primary"
+                                onClick={() => setShowRegionAnnualReports(true)}
+                            >
+                                Подати річний звіт округи
+                            </Button>
+                        ) : null}
+                    </Space>
+                </Col>
+                <Col>
+                    <Search
+                        placeholder="Пошук"
+                        enterButton
+                        allowClear
+                        onChange={handleSearchChange}
+                        onSearch={handleSearch}
+                    />
+                </Col>
+            </Row>
             <Row>
                 <Card
                     style={{ width: "100%" }}
