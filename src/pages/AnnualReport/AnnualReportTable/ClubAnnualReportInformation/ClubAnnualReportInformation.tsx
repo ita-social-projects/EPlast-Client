@@ -315,7 +315,7 @@ const ClubAnnualReportInformation = () => {
                             </Col>
                         </Row>
                         <Row>
-                            <Col span={24}>
+                            <Col span={24} className="ClubAnnualReportInformationDescription">
                                 <Card>
                                     <Row gutter={20}>
                                         <Col
