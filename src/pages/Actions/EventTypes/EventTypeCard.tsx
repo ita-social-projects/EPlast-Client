@@ -8,7 +8,7 @@ import { useHistory } from "react-router-dom";
 const classes = require('./EventTypeCard.module.css');
 
 interface CardProps {
-    id:number
+    id: number
     eventTypeName: string
 }
 
@@ -17,8 +17,8 @@ interface Props {
 }
 
 const EventTypeCard = ({
-                        item: {  id , eventTypeName}
-                    }:Props) => {
+    item: { id, eventTypeName }
+}: Props) => {
 
     const { Meta } = Card;
     const history = useHistory();
@@ -29,10 +29,10 @@ const EventTypeCard = ({
                 key={id}
                 hoverable
                 className={classes.cardStyles}
-                cover={<img alt="example" src={EvenTypeLogo}/>}
-                onClick={()=> history.push(`/events/${id}/categories`)}
+                cover={<img alt="example" src={EvenTypeLogo} />}
+                onClick={() => history.push(`/events/${id}/categories`)}
             >
-                <Meta title={eventTypeName} className={classes.titleText}/>
+                <Meta title={eventTypeName} className={classes.titleText} />
             </Card>
         </div>
     )

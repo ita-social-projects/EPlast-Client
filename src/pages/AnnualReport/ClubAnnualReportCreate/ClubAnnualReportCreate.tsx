@@ -33,16 +33,14 @@ export const ClubAnnualReportCreate = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingSave, setIsLoadingSave] = useState(false);
     const [countUsersPerYear, setCountUsersPerYear] = useState({} as number);
-    const [countDeletedUsersPerYear, setCountDeletedUsersPerYear] = useState(
-        {} as number
-    );
+    const [countDeletedUsersPerYear, setCountDeletedUsersPerYear] = useState({} as number);
     const [club, setClub] = useState<any>({
         id: 0,
         name: "",
         phoneNumber: "",
         email: "",
         clubURL: "",
-        street: "",
+        slogan: "",
     });
 
     useEffect(() => {
@@ -98,7 +96,7 @@ export const ClubAnnualReportCreate = () => {
         obj.phoneNumber = club.phoneNumber;
         obj.email = club.email;
         obj.clubURL = club.clubURL;
-        obj.street = club.street;
+        obj.slogan = club.slogan;
         obj.date = moment();
 
         setIsLoadingSave(true);
