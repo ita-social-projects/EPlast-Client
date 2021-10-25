@@ -77,8 +77,6 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       form.resetFields();
     }
     fetchData();
-    const userRoles = userApi.getActiveUserRoles();
-      setActiveUserRoles(userRoles);
   }, [props]);
 
   return (
@@ -97,8 +95,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       >
         <Select showSearch className={classes.inputField}>
           {members?.map((o) => (
-            <Select.Option key={o.id} value={JSON.stringify(o)}>
-              
+            <Select.Option key={o.id} value={JSON.stringify(o)}>            
               {o.firstName + " " + o.lastName}
             </Select.Option>
           ))}

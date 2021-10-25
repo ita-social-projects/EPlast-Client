@@ -334,9 +334,7 @@ const Club = () => {
           </b>{" "}
           вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
           <b>
-            {existingAdmin.endDate === null || existingAdmin.endDate === undefined
-              ? "ще не скоро"
-              : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
+            {moment(existingAdmin.endDate).format("DD.MM.YYYY") ?? "ще не скоро"}
           </b>
           .
         </div>
@@ -352,13 +350,37 @@ const Club = () => {
       }
     });
   };
+  const showDiseableModal = async (admin: ClubAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете змінити роль цьому користувачу",
+      content: (
+        <div style={{ margin: 15 }}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+          є Головою Куреня, час правління закінчується{" "}
+          <b>
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
 
   const handleOk = async(admin: ClubAdmin) => {
-    if (admin.id === 0) {
       try {
+        const head = (admins as ClubAdmin[])
+        .find(x => x.adminType.adminTypeName === Roles.KurinHead)
         const existingAdmin  = (admins as ClubAdmin[])
-        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
-        if(existingAdmin !== undefined) {
+        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)      
+        if (Roles.KurinHeadDeputy === admin.adminType.adminTypeName && head?.userId === admin.userId){
+          showDiseableModal(head)
+        }
+        else if(existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);
         }
         else {
@@ -367,10 +389,6 @@ const Club = () => {
       } finally {
         setvisible(false);
       }
-    }
-    else{
-      await editClubAdmin(admin);
-    }
   }
 
   const handleClose = async () => {
