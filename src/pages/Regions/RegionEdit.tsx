@@ -102,9 +102,6 @@ const RegionEditFormPage = () => {
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
-
-    await checkIfNameExists(values.regionName).then(async (response) => {
-      if (!response.data) {
         const newRegion: RegionProfile = {
           id: chosenRegion.id,
           regionName: values.regionName,
@@ -126,12 +123,7 @@ const RegionEditFormPage = () => {
     
         notificationLogic("success", successfulEditAction("Дані округи"));
         history.push(`/regions/${currentRegion}`);  
-      } else {
-        setLoading(false);
-  
-        showRegionNameExistsModal();
-      }  
-    });
+       
   };
 
   return (
