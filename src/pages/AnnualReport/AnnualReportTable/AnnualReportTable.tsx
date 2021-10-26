@@ -404,36 +404,38 @@ const AnnualReportTable = () => {
         <Layout.Content className="annualreport-table">
             <Title level={2}>Річні звіти</Title>
             <Row
-                gutter={[12, 12]}
+                gutter={[6, 12]}
                 className="AnnualReportTableButtonsSearchField"
             >
+                <Col className="AnnualReportTableButtons">
+                    {cityManager ? (
+                        <Button
+                            type="primary"
+                            onClick={() => setShowCitySelectModal(true)}
+                        >
+                            Подати річний звіт станиці
+                        </Button>
+                    ) : null}
+                </Col>
                 <Col>
-                    <Space>
-                        {cityManager ? (
-                            <Button
-                                type="primary"
-                                onClick={() => setShowCitySelectModal(true)}
-                            >
-                                Подати річний звіт станиці
-                            </Button>
-                        ) : null}
-                        {clubManager ? (
-                            <Button
-                                type="primary"
-                                onClick={() => setShowClubSelectModal(true)}
-                            >
-                                Подати річний звіт куреня
-                            </Button>
-                        ) : null}
-                        {regionManager ? (
-                            <Button
-                                type="primary"
-                                onClick={() => setShowRegionAnnualReports(true)}
-                            >
-                                Подати річний звіт округи
-                            </Button>
-                        ) : null}
-                    </Space>
+                    {clubManager ? (
+                        <Button
+                            type="primary"
+                            onClick={() => setShowClubSelectModal(true)}
+                        >
+                            Подати річний звіт куреня
+                        </Button>
+                    ) : null}
+                </Col>
+                <Col>
+                    {regionManager ? (
+                        <Button
+                            type="primary"
+                            onClick={() => setShowRegionAnnualReports(true)}
+                        >
+                            Подати річний звіт округи
+                        </Button>
+                    ) : null}
                 </Col>
                 <Col>
                     <Search
