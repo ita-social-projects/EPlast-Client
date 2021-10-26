@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Layout, Space } from "antd";
+import { Table, Button, Layout, Space, Col, Row } from "antd";
 import Search from "antd/lib/input/Search";
 import columns from "./columns";
 import notificationLogic from "../../../components/Notifications/Notification";
@@ -211,22 +211,23 @@ const DistinctionTable = () => {
         }}
       >
         <h1 className={classes.titleTable}>Відзначення</h1>
-
         <>
-          <div className={classes.searchContainer}>
-            <Space>
-              {canEdit === true ? (
-                <>
+          <Row gutter={[6, 12]} className={classes.buttonsSearchField}>
+            {canEdit === true ? (
+              <>
+                <Col>
                   <Button type="primary" onClick={showModal}>
                     Додати відзначення
                   </Button>
+                </Col>
+                <Col>
                   <Button type="primary" onClick={showModalEditTypes}>
                     Редагування типів відзначень
                   </Button>
-                </>
-              ) : (
-                <></>
-              )}
+                </Col>
+              </>
+            ) : (null)}
+            <Col>
               <Search
                 className={classes.distinctionSearchField}
                 enterButton
@@ -235,8 +236,8 @@ const DistinctionTable = () => {
                 onChange={handleSearchChange}
                 onSearch={handleSearch}
               />
-            </Space>
-          </div>
+            </Col>
+          </Row>
           {loading ? (<Spinner />) : (<div>
             <Table
               className={classes.table}

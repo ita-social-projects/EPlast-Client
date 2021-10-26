@@ -17,8 +17,8 @@
     margin-left: auto;
 }
 
-.PrecautionSearchField {
-    width: auto;
+.buttonsSearchField {
+    justify-content: right;
 }
 
 .cardButton {
@@ -41,6 +41,12 @@
         width: 100%;
         margin-bottom: 5px;
         margin-left: auto;
+    }
+}
+
+@media (max-width: 720px) {
+    .buttonsSearchField {
+        justify-content: center;
     }
 }
 
