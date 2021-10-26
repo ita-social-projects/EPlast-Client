@@ -505,7 +505,7 @@ const GoverningBody = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Документообіг Керівного Органу <a onClick={() => history.push(`/governingBodies/documents/${governingBody.id}`)}>
-              {documentsCount !== 0 ?
+              {documentsCount !== 0 && userAccesses["ViewDocument"] ?
                 <Badge
                   count={documentsCount}
                   style={{ backgroundColor: "#3c5438" }}
