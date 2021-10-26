@@ -122,8 +122,7 @@ const RegionEditFormPage = () => {
         form.resetFields();
     
         notificationLogic("success", successfulEditAction("Дані округи"));
-        history.push(`/regions/${currentRegion}`);  
-       
+        history.push(`/regions/${currentRegion}`);         
   };
 
   return (
