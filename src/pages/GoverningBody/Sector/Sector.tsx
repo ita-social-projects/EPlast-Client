@@ -437,7 +437,7 @@ const Sector = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>Документообіг <a onClick={() => history.push(`/governingBodies/${governingBodyId}/sectors/${sector.id}/documents`)}>
-              {documentsCount !== 0 ?
+              {documentsCount !== 0 && userAccesses["ViewDocument"] ?
                 <Badge
                   count={documentsCount}
                   style={{ backgroundColor: "#3c5438" }}
