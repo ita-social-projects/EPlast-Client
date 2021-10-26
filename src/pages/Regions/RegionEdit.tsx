@@ -117,10 +117,8 @@ const RegionEditFormPage = () => {
           city: values.city,
           isActive: chosenRegion.isActive
         };
-        await RegionsApi.EditRegion(currentRegion, newRegion);
-    
-        form.resetFields();
-    
+        await RegionsApi.EditRegion(currentRegion, newRegion); 
+        form.resetFields();  
         notificationLogic("success", successfulEditAction("Дані округи"));
         history.push(`/regions/${currentRegion}`);         
   };
