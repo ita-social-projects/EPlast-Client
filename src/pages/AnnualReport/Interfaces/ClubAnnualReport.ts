@@ -1,9 +1,9 @@
-import Club from '../../../models/Club/Club';
+import Club from "../../../models/Club/Club";
 
 interface ClubAnnualReport {
     id: number;
-    idView:any;
-    name:string;
+    idView: any;
+    name: string;
     status: number;
     date: Date;
     currentClubMembers: number;
@@ -12,9 +12,9 @@ interface ClubAnnualReport {
     clubLeftMembersCount: number;
     clubCenters: string;
     clubContacts: string;
-    clubPage:string;
-    kbUSPWishes:string;
-    clubId:number;
+    clubPage: string;
+    kbUSPWishes: string;
+    clubId: number;
     club: Club | null;
     clubMembersSummary: string;
     clubAdminContacts: string;

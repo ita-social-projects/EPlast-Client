@@ -56,13 +56,13 @@ export default function ({
   }
 
   const fetchData = async () => {
+    setLoading(false);
     let userRoles = UserApi.getActiveUserRoles();
     setActiveUserRoles(userRoles);
     let currentUserId = UserApi.getActiveUserId();
     setActiveUserId(userId);
     let userProfile = await UserApi.getActiveUserProfile();
     setActiveUserProfile(userProfile);
-
     await UserApi.getById(userId).then(async (response) => {
       setFullUserProfile(response.data);
     }).catch((error) => {

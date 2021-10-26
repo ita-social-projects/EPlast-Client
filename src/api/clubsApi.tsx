@@ -148,6 +148,14 @@ export const getAllAdmins = async (id: number) => {
   });
 };
 
+export const getUserClubAccess = async (clubId: number,userId: string) => {
+  return await api.get(`UserAccess/GetUserClubAccess/${clubId}/${userId}`)
+  .catch( error => {
+       throw error;
+       } 
+  );
+}
+
 export const getAllDocuments = async (id: number) => {
   return api.get(`Club/Documents/${id}`).catch((error) => {
     throw new Error(error);
@@ -156,6 +164,12 @@ export const getAllDocuments = async (id: number) => {
 
 export const getAllMembers = async (id: number) => {
   return api.get(`Club/Members/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const getClubUsers = async (clubId: number) => {
+  return api.get(`Club/ClubUsers/${clubId}`).catch((error) => {
     throw new Error(error);
   });
 };
@@ -202,8 +216,8 @@ export const removeAdministrator = async (adminId: number) => {
   });
 }
 
-export const editAdministrator = async (adminId: number, data: any) => {
-  return api.put(`Club/EditAdmin/${adminId}`, data).catch((error) => {
+export const editAdministrator = async (clubId: number, data: any) => {
+  return api.put(`Club/EditAdmin/${clubId}`, data).catch((error) => {
     throw new Error(error);
   });
 }

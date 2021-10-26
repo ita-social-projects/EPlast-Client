@@ -136,13 +136,14 @@ const SortedClubs = ( {switcher}: Props) => {
 
   useEffect(() => {
     switcher ? (getNotActiveClubs()):(getActiveClubs()) 
-
   }, [page, pageSize, searchedData]);
 
-  useEffect(()=>{
-    setPage(1);
-    switcher ? (getNotActiveClubs()) :(getActiveClubs())
-    setCanCreate(switcher ? false : activeCanCreate);
+  useEffect(()=> {
+    if(clubs.length !== 0){
+      setPage(1);
+      switcher ? (getNotActiveClubs()) :(getActiveClubs())
+      setCanCreate(switcher ? false : activeCanCreate);
+    }
   },[switcher])
 
   return (

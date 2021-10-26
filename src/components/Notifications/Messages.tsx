@@ -7,6 +7,10 @@ export const emptyInput = (name?:string)=>{
     return name ? `Поле ${name} є обов'язковим` : `Поле є обов'язковим`;
 };
 
+export const incorrectStartTime = "Час початку події не може бути раніше поточного часу!";
+
+export const incorrectEndTime = "Час завершення події не може бути раніше часу початку!";
+
 export const incorrectSlogan = wrongFormat + ". Гасло не повинно починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
 
 export const incorrectAppeal = wrongFormat + ". Заява не повинна починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";

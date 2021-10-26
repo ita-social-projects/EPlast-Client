@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Button, Card, Drawer } from 'antd';
+import { Input, Button, Card, Drawer, Col, Row } from 'antd';
 import { KVTable } from './KVTable';
 import jwt from "jwt-decode";
 import AddNewKadraForm from './AddNewKadraForm';
@@ -53,9 +53,13 @@ export const KadrasTable = () => {
     const [noTitleKey, setKey] = useState<string>('KV1N');
     const [canEdit] = useState(roles.includes(Roles.Admin));
 
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchedData(event.target.value);
+    const handleSearch = (event: any) => {
+        setSearchedData(event);
     };
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.value.toLowerCase() === '') setSearchedData('');
+    }
 
     const showModal = () => {
         setvisible(true);
@@ -85,27 +89,28 @@ export const KadrasTable = () => {
 
     return (
         <>
-        <h1 className={classes.titleTable}>Кадра виховників</h1>
-            <div className={classes.searchContainer}>
-                {canEdit === true ? (
-                <>
-                <Button 
-                    type="primary" 
-                    onClick={showModal}
-                >
-                    Додати кадру
-                </Button>
-                    </>
-                ) : (
-                <></>
-                )}
-                <Search
-                    enterButton
-                    placeholder="Пошук"
-                    allowClear
-                    onChange={handleSearch}               
-                />
-            </div>
+            <h1 className={classes.titleTable}>Кадра виховників</h1>
+            <Row gutter={[6, 12]} className={classes.buttonSearchField}>
+                <Col>
+                    {canEdit === true ? (
+                        <Button
+                            type="primary"
+                            onClick={showModal}
+                        >
+                            Додати кадру
+                        </Button>
+                    ) : (null)}
+                </Col>
+                <Col>
+                    <Search
+                        enterButton
+                        placeholder="Пошук"
+                        allowClear
+                        onChange={handleSearchChange}
+                        onSearch={handleSearch}
+                    />
+                </Col>
+            </Row>
             <Card
                 style={{ width: '100%' }}
                 tabList={tabListNoTitle}
@@ -116,7 +121,7 @@ export const KadrasTable = () => {
             >
                 {contentListNoTitle[noTitleKey]}
             </Card>
-            <Drawer 
+            <Drawer
                 width="auto"
                 title="Надати кадру виховників"
                 visible={visible}

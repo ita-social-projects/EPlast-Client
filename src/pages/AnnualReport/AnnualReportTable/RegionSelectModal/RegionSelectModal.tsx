@@ -108,9 +108,7 @@ const RegionSelectModal = (props: Props) => {
             <Form
                 form={form}
                 onFinish={(obj) => {
-                    history.push(
-                        `/annualreport/region/create/${obj.region}/${obj.year}`
-                    );
+                    history.push(`/annualreport/region/create/${obj.region}/${obj.year}`);
                 }}
             >
                 <Row>
@@ -148,28 +146,19 @@ const RegionSelectModal = (props: Props) => {
                                                 <>
                                                     {item.name}
                                                     <div
-                                                        hidden={
-                                                            !item.yearsHasReport?.includes(
-                                                                year
-                                                            )
-                                                        }
+                                                        hidden={!item.yearsHasReport?.includes(year)}
                                                         className="regionSelectModalStamp"
                                                     >
-                                                        Округа вже має звіт за{" "}
-                                                        {year} рік
+                                                        Округа вже має звіт за{" "}{year} рік
                                                     </div>
                                                 </>
                                             ),
                                             value: item.id,
-                                            disabled: item.yearsHasReport?.includes(
-                                                year
-                                            ),
+                                            disabled: item.yearsHasReport?.includes(year),
                                         };
                                     })}
                                 filterOption={(input, option) =>
-                                    (regions?.find(
-                                        (x: any) => x.id == option?.value
-                                    )?.name as string)
+                                    (regions?.find((x: any) => x.id == option?.value)?.name as string)
                                         .toLowerCase()
                                         .indexOf(input.toLowerCase()) >= 0
                                 }
@@ -194,21 +183,16 @@ const RegionSelectModal = (props: Props) => {
                                                     }
                                                     className="regionSelectModalStamp"
                                                 >
-                                                    {region.name} округа вже має
-                                                    звіт за цей рік
+                                                    {region.name} округа вже має звіт за цей рік
                                                 </div>
                                             </>
                                         ),
                                         value: item.value,
-                                        disabled: region?.yearsHasReport?.includes(
-                                            item.value
-                                        ),
+                                        disabled: region?.yearsHasReport?.includes(item.value),
                                     };
                                 })}
                                 filterOption={(input, option) =>
-                                    (years?.find(
-                                        (x: any) => x.value == option?.value
-                                    )?.lable as string)
+                                    (years?.find((x: any) => x.value == option?.value)?.lable as string)
                                         .toLowerCase()
                                         .indexOf(input.toLowerCase()) >= 0
                                 }

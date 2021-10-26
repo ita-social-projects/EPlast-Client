@@ -1,13 +1,35 @@
-.background{
-    background-color: rgb(238, 238, 238);
+.background {
+  background-color: rgb(238, 238, 238);
 }
-.mainTitle{
-    text-align: center;
-    font-size: 40px;
-    color:#3c5438;
+.mainTitle {
+  text-align: center;
+  font-size: 40px;
+  color: #3c5438;
 }
-.actionsWrapper{
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+.actionsWrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.imageStyle {
+  width: 60%;
+  vertical-align: middle;
+}
+.imageContainer {
+  height: 205.93px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.cardStyles {
+  margin: 15px;
+  width: 242px;
+}
+.titleText {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+}
+.titleText:hover {
+  text-decoration: underline;
 }
