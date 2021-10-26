@@ -56,6 +56,7 @@ export default function ({
   }
 
   const fetchData = async () => {
+    setLoading(false);
     let userRoles = UserApi.getActiveUserRoles();
     setActiveUserRoles(userRoles);
     let currentUserId = UserApi.getActiveUserId();
