@@ -135,6 +135,7 @@ const EditSector = () => {
       logo: sector.logo?.length === 0 ? null : sector.logo,
       phoneNumber: values.phoneNumber,
       head: sector.head,
+      isActive: true
     };
 
     await EditSector(newSector);
