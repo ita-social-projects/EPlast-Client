@@ -23,7 +23,6 @@ import {
 } from "../../api/regionsApi";
 import {
   getUserAccess,
-  getDocs
 } from "../../api/regionsBoardApi";
 import "../Regions/Region.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
@@ -112,7 +111,7 @@ const RegionBoard = () => {
         await setRegionDecisions();
       }
       await setRegionOrgs();
-      await setRegionDocs(response.data.id);
+      await setRegionDocs(response.data.documents);
       setRegion(response.data);
       if (response.data.logo == null) {
         setPhotoStatus(false);
@@ -153,11 +152,10 @@ const RegionBoard = () => {
     setDocumentsCount(documentsCount + 1);
   };
 
-  const setRegionDocs = async (id: number) => {
-    const response: [] = await (await getDocs(id)).data;
-    setDocumentsCount(response.length);
+  const setRegionDocs = async (documents: any) => {
+    setDocumentsCount(documents.length);
     setDocuments(
-      response.length > 6 ? response.slice(response.length - 6) : response
+      documents.length > 6 ? documents.slice(documents.length - 6) : documents
     );
   };
 
