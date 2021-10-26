@@ -20,6 +20,7 @@
     "@types/react-facebook-login": "^4.1.2",
     "@types/react-router-dom": "^5.1.5",
     "antd": "^4.3.4",
+    "antd-img-crop": "^3.16.0",
     "antd-mask-input": "^0.1.13",
     "axios": "^0.21.1",
     "bizcharts": "^4.0.15",

@@ -1,6 +1,6 @@
-import MembersStatistic from './MembersStatistic';
-import User from './User';
-import City from './City';
+import MembersStatistic from "./MembersStatistic";
+import User from "./User";
+import City from "./City";
 
 interface AnnualReport {
     id: number;
@@ -21,8 +21,8 @@ interface AnnualReport {
     contributionFunds: number;
     plastSalary: number;
     sponsorshipFunds: number;
-    listProperty: string| null;
-    improvementNeeds: string| null;
+    listProperty: string | null;
+    improvementNeeds: string | null;
     membersStatistic: MembersStatistic;
     creatorId: string;
     creator: User | null;
