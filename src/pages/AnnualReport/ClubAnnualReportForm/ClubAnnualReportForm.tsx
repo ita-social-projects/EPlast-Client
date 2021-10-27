@@ -325,7 +325,9 @@ export const ClubAnnualReportForm = (props: Props) => {
                                     "немає"
                                 ) : (
                                     <a target="_blank" href={club.clubURL}>
-                                        {club.clubURL.length > maxAmountSymbolsURL ? (club.clubURL.substring(0, maxAmountSymbolsURL) + "...") : club.clubURL}
+                                        {club.clubURL.length > maxAmountSymbolsURL
+                                            ? club.clubURL.substring(0, maxAmountSymbolsURL) + "..."
+                                            : club.clubURL}
                                     </a>
                                 )}
                             </Form.Item>
