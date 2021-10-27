@@ -187,7 +187,7 @@ const AddNewRegionFormPage = () => {
                   label="Електронна пошта"
                   name="email"
                   labelCol={{ span: 24 }}
-                  rules={descriptionValidation.RegionEmail}
+                  rules={descriptionValidation.Email}
                 >
                   <Input maxLength={51} />
                 </Form.Item>
