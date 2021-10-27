@@ -10,6 +10,7 @@ import {
     Tag,
     Input,
     Skeleton,
+    Form,
 } from "antd";
 import eventUserApi from "../../../../api/eventUserApi";
 import EventsUser from "../../../../models/EventUser/EventUser";
@@ -32,6 +33,7 @@ import AvatarAndProgressStatic from "../../../userPage/personalData/AvatarAndPro
 import { Data } from '../../../userPage/Interface/Interface'
 import { Roles } from "../../../../models/Roles/Roles";
 import { PersonalDataContext } from "../../../userPage/personalData/PersonalData";
+import { StickyContainer } from "react-sticky";
 
 const { Title } = Typography;
 const userGenders = ["Чоловік", "Жінка", "Інша"];
@@ -51,12 +53,12 @@ const EventUser = () => {
     const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
         new CreatedEvents(),
     ]);
-    const { fullUserProfile, ChangeUserProfile} = useContext(PersonalDataContext);
+    const { fullUserProfile, ChangeUserProfile } = useContext(PersonalDataContext);
     const [showEventCreateDrawer, setShowEventCreateDrawer] = useState(false);
     const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
     const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
     const [eventId, setEventId] = useState<number>();
-    const [canCreate] = useState(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser).length!=0);
+    const [canCreate] = useState(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser).length != 0);
     const [userToken, setUserToken] = useState<any>([
         {
             nameid: "",
@@ -65,7 +67,7 @@ const EventUser = () => {
 
     useEffect(() => {
         userApi.getById(userId).then(async (response) => {
-            if(ChangeUserProfile) ChangeUserProfile(response.data);
+            if (ChangeUserProfile) ChangeUserProfile(response.data);
         });
         fetchData();
     }, []);
@@ -130,40 +132,42 @@ const EventUser = () => {
     const newLocal = "#3c5438";
 
     return loading === false ? (
-    <div className="kadraWrapper">
-        <Skeleton.Avatar
-        size={220}
-        active={true}
-        shape="circle"
-        className="img"
-        />
-    </div>
-    ) : ( 
-        <div className={classes.wrapper}>
-            <div className={classes.wrapperImg}>
-                <div className={classes.avatarWrapper}>
-                    <AvatarAndProgressStatic
-                        time={fullUserProfile?.timeToJoinPlast}
-                        firstName={fullUserProfile?.user.firstName}
-                        lastName={fullUserProfile?.user.lastName}
-                        isUserPlastun={fullUserProfile?.isUserPlastun}
-                        pseudo={fullUserProfile?.user.pseudo}
-                        governingBody={fullUserProfile?.user.governingBody}
-                        region={fullUserProfile?.user.region}
-                        city={fullUserProfile?.user.city}
-                        club={fullUserProfile?.user.club}
-                        governingBodyId={fullUserProfile?.user.governingBodyId}
-                        cityId={fullUserProfile?.user.cityId}
-                        clubId={fullUserProfile?.user.clubId}
-                        regionId={fullUserProfile?.user.regionId}
-                        cityMemberIsApproved={fullUserProfile?.user.cityMemberIsApproved}
-                        clubMemberIsApproved={fullUserProfile?.user.clubMemberIsApproved}
-                        showPrecautions={ true }
-                    />
+        <div className="kadraWrapper">
+            <Skeleton.Avatar
+                size={220}
+                active={true}
+                shape="circle"
+                className="img"
+            />
+        </div>
+    ) : (
+        <Form name="basic" className="formContainer">
+            <div className="wrapperContainer">
+                <div className="avatarWrapperUserFields">
+                    <StickyContainer className="kadraWrapper">
+                        <AvatarAndProgressStatic
+                            time={fullUserProfile?.timeToJoinPlast}
+                            firstName={fullUserProfile?.user.firstName}
+                            lastName={fullUserProfile?.user.lastName}
+                            isUserPlastun={fullUserProfile?.isUserPlastun}
+                            pseudo={fullUserProfile?.user.pseudo}
+                            governingBody={fullUserProfile?.user.governingBody}
+                            region={fullUserProfile?.user.region}
+                            city={fullUserProfile?.user.city}
+                            club={fullUserProfile?.user.club}
+                            governingBodyId={fullUserProfile?.user.governingBodyId}
+                            cityId={fullUserProfile?.user.cityId}
+                            clubId={fullUserProfile?.user.clubId}
+                            regionId={fullUserProfile?.user.regionId}
+                            cityMemberIsApproved={fullUserProfile?.user.cityMemberIsApproved}
+                            clubMemberIsApproved={fullUserProfile?.user.clubMemberIsApproved}
+                            showPrecautions={true}
+                        />
+                    </StickyContainer>
                 </div>
             </div>
 
-            <div className={classes.wrapperCol}>
+            <div className="allFields">
                 <div className={classes.wrapper}>
                     <div className={classes.wrapper2}>
                         <Title level={2}> Відвідані події </Title>
@@ -171,7 +175,7 @@ const EventUser = () => {
                             userToken.nameid !== userId && (
                                 <h2>
                                     {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
-                                    { userGenders[0] === fullUserProfile?.user.gender?.name ? (<> відвідав</>) :
+                                    {userGenders[0] === fullUserProfile?.user.gender?.name ? (<> відвідав</>) :
                                         userGenders[1] === fullUserProfile?.user.gender?.name ? (<> відвідала</>) :
                                             (<> відвідав(ла)</>)} жодної події
                                 </h2>
@@ -258,8 +262,8 @@ const EventUser = () => {
                                 </Button>
                             </div>
                         ) : (
-                            userToken.nameid === userId && 
-                                    <h2>Ви ще не створили жодної події</h2>
+                            userToken.nameid === userId &&
+                            <h2>Ви ще не створили жодної події</h2>
                         )}
                         {userToken.nameid === userId && canCreate && (
                             <Button
@@ -270,7 +274,7 @@ const EventUser = () => {
                             >
                                 Створити подію
                             </Button>
-                        )} 
+                        )}
 
                         <EventCreateDrawer
                             visibleEventCreateDrawer={showEventCreateDrawer}
@@ -286,7 +290,7 @@ const EventUser = () => {
                                         {userGenders[0] === fullUserProfile?.user.gender?.name ? (<> створив</>) :
                                             userGenders[1] === fullUserProfile?.user.gender?.name ? (<> створила</>) :
                                                 (<> створив(ла)</>)} жодної події
-                                </h2>
+                                    </h2>
                                 </div>
                             )}
                         <Modal
@@ -424,12 +428,12 @@ const EventUser = () => {
                             userToken.nameid === userId && (
                                 <div>
                                     <h2>Ви ще не запланували жодної події</h2>
-                                    {roles.filter(r => r != Roles.RegisteredUser).length!=0 && <Button
+                                    {roles.filter(r => r != Roles.RegisteredUser).length != 0 && <Button
                                         type="primary"
                                         className={classes.buttonInside}
                                         onClick={() => history.push("/events/types")}>
                                         Зголоситись на подію
-                                </Button>}
+                                    </Button>}
                                 </div>
                             )}
                         {allEvents?.planedEvents?.length === 0 &&
@@ -437,8 +441,8 @@ const EventUser = () => {
                                 <h2>
                                     {allEvents?.user.firstName} {allEvents?.user.lastName} ще не
                                     {userGenders[0] === fullUserProfile?.user.gender?.name ? (<> запланував</>) :
-                                            userGenders[1] === fullUserProfile?.user.gender?.name ? (<> запланувала</>) :
-                                                (<> запланував(ла)</>)} жодної події
+                                        userGenders[1] === fullUserProfile?.user.gender?.name ? (<> запланувала</>) :
+                                            (<> запланував(ла)</>)} жодної події
                                 </h2>
                             )}
                         {allEvents?.planedEvents?.length !== 0 && (
@@ -537,7 +541,7 @@ const EventUser = () => {
                     </Drawer>
                 </div>
             </div>
-        </div>
+        </Form>
     );
 };
 

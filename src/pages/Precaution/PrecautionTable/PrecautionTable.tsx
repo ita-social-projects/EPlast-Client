@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Layout } from "antd";
+import { Table, Button, Layout, Col, Row } from "antd";
 import Search from "antd/lib/input/Search";
 import columns from "./columns";
 import notificationLogic from "../../../components/Notifications/Notification";
@@ -52,33 +52,33 @@ const PrecautionTable = () => {
   const [count, setCount] = useState<number>(0);
   const [precautions, setPrecautions] = useState<UserPrecautionTableInfo[]>([
     {
-        count: 0,
-        total: 0,
-        id: 0,
-        number: 0,
-        precautionName: "",
-        userId: "",
-        userName: "",
-        reporter: "",
-        reason: "",
-        status: "",
-        date: new Date(),
-        endDate: new Date(),
-        isActive: false,
+      count: 0,
+      total: 0,
+      id: 0,
+      number: 0,
+      precautionName: "",
+      userId: "",
+      userName: "",
+      reporter: "",
+      reason: "",
+      status: "",
+      date: new Date(),
+      endDate: new Date(),
+      isActive: false,
     },
   ]);
 
   useEffect(() => {
     const fetchData = async () => {
-    setLoading(true);
-    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(searchedData, page, pageSize);
-    setTotal(res[0]?.total);
-    setCount(res[0]?.count);
-    setPrecautions(res);
-    setLoading(false);
-  };
-  fetchData();
-}, [searchedData, page, pageSize]);
+      setLoading(true);
+      const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(searchedData, page, pageSize);
+      setTotal(res[0]?.total);
+      setCount(res[0]?.count);
+      setPrecautions(res);
+      setLoading(false);
+    };
+    fetchData();
+  }, [searchedData, page, pageSize]);
 
   const handleSearch = (event: any) => {
     setPage(1);
@@ -86,7 +86,7 @@ const PrecautionTable = () => {
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if(event.target.value.toLowerCase()==='') setSearchedData('');
+    if (event.target.value.toLowerCase() === '') setSearchedData('');
   }
 
   const showModal = () => {
@@ -172,15 +172,15 @@ const PrecautionTable = () => {
 
   const handleDelete = (id: number) => {
     const filteredData = precautions.filter(
-        (d: { id: number }) => d.id !== id
-      );
-      setPrecautions([...filteredData]);
-      setTotal(total-1);
-      setCount(count-1);
-      notificationLogic("success", successfulDeleteAction("Пересторогу"));
-      CreateDeleteNotification(id);
+      (d: { id: number }) => d.id !== id
+    );
+    setPrecautions([...filteredData]);
+    setTotal(total - 1);
+    setCount(count - 1);
+    notificationLogic("success", successfulDeleteAction("Пересторогу"));
+    CreateDeleteNotification(id);
   };
-  
+
   const handleEdit = (
     id: number,
     precaution: Precaution,
@@ -196,20 +196,20 @@ const PrecautionTable = () => {
   ) => {
     /* eslint no-param-reassign: "error" */
     const editedData = precautions.filter((d) => {
-        if (d.id === id) {
-          d.precautionName = precaution.name;
-          d.date = date;
-          d.endDate = endDate;
-          d.isActive = isActive;
-          d.reason = reason;
-          d.reporter = reporter;
-          d.status = status;
-          d.number = number;
-          d.userId = userId;
-          d.userName = user.firstName + ' ' + user.lastName;
-        }
-        return d;
-      });
+      if (d.id === id) {
+        d.precautionName = precaution.name;
+        d.date = date;
+        d.endDate = endDate;
+        d.isActive = isActive;
+        d.reason = reason;
+        d.reporter = reporter;
+        d.status = status;
+        d.number = number;
+        d.userId = userId;
+        d.userName = user.firstName + ' ' + user.lastName;
+      }
+      return d;
+    });
     setPrecautions([...editedData]);
     notificationLogic("success", successfulUpdateAction("Пересторогу"));
     CreateEditNotification(userId, precaution.name);
@@ -224,27 +224,29 @@ const PrecautionTable = () => {
         <h1 className={classes.titleTable}>Перестороги</h1>
 
         <>
-          <div className={classes.searchContainer}>
-            {canEdit === true ? (
-              <>
-                <Button 
-                  type="primary" 
-                  onClick={showModal}
-                >
-                  Додати пересторогу
-                </Button>
-              </>
-            ) : (
-              <></>
-            )}
-            <Search
+          <Row gutter={[6, 12]} className={classes.buttonsSearchField}>
+            <Col>
+              {canEdit === true ? (
+                <>
+                  <Button
+                    type="primary"
+                    onClick={showModal}
+                  >
+                    Додати пересторогу
+                  </Button>
+                </>
+              ) : (null)}
+            </Col>
+            <Col>
+              <Search
                 enterButton
                 placeholder="Пошук"
                 allowClear
                 onChange={handleSearchChange}
-                onSearch={handleSearch}                
-            />
-          </div>
+                onSearch={handleSearch}
+              />
+            </Col>
+          </Row>
           {loading ? (<Spinner />) : (<div>
             <Table
               className={classes.table}

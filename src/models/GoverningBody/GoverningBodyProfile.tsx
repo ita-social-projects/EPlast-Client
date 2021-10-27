@@ -8,6 +8,7 @@ export default class GoverningBodyProfile {
   logo: string | null;
   phoneNumber: string;
   head: GoverningBodyAdmin;
+  isActive: boolean;
 
   constructor() {
     this.id = 0;
@@ -17,5 +18,6 @@ export default class GoverningBodyProfile {
     this.logo = "";
     this.phoneNumber = "";
     this.head = new GoverningBodyAdmin();
+    this.isActive = true;
   }
 }
