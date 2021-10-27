@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import classes from "./ActiveMembership.module.css";
-import { Typography, List, Button, Tooltip, Tag, Empty, Skeleton } from "antd";
+import { Typography, List, Button, Tooltip, Tag, Empty, Skeleton, Form } from "antd";
 import "../personalData/PersonalData.less";
 import activeMembershipApi, {
   UserPlastDegree,
@@ -19,6 +19,7 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import { Roles } from "../../../models/Roles/Roles";
 import { successfulDeleteDegree } from "../../../components/Notifications/Messages";
 import { PersonalDataContext } from "../personalData/PersonalData";
+import { StickyContainer } from "react-sticky";
 const { Title } = Typography;
 
 const itemMaxLength = 43;
@@ -26,7 +27,7 @@ const ActiveMembership = () => {
   const { userId } = useParams();
   const [accessLevels, setAccessLevels] = useState([]);
   const [dates, setDates] = useState<any>({});
-  const {userProfile, activeUserRoles, fullUserProfile , activeUserProfile, UpdateData} = useContext(PersonalDataContext);
+  const { userProfile, activeUserRoles, fullUserProfile, activeUserProfile, UpdateData } = useContext(PersonalDataContext);
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
   const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
@@ -59,7 +60,7 @@ const ActiveMembership = () => {
     } else return plastDegreeName;
   };
 
-  const InitialFetchData = async() => {
+  const InitialFetchData = async () => {
     const token = AuthStore.getToken() as string;
     setUserToken(jwt(token));
 
@@ -82,7 +83,7 @@ const ActiveMembership = () => {
   }
 
   const fetchData = async () => {
-    if(UpdateData) UpdateData();
+    if (UpdateData) UpdateData();
     const token = AuthStore.getToken() as string;
     setUserToken(jwt(token));
 
@@ -92,7 +93,7 @@ const ActiveMembership = () => {
       response.dateEntry =
         response.dateEntry === defaultDate ? "" : response.dateEntry;
       response.dateOath =
-        response.dateOath === defaultDate? "" : response.dateOath;
+        response.dateOath === defaultDate ? "" : response.dateOath;
       response.dateEnd =
         response.dateEnd === defaultDate ? "" : response.dateEnd;
       setDates(response);
@@ -115,10 +116,10 @@ const ActiveMembership = () => {
       userRoles?.includes(Roles.Admin);
   };
 
-  const IsPossibleToChangeDateOfSwear = (access: Array<string>): boolean =>{
+  const IsPossibleToChangeDateOfSwear = (access: Array<string>): boolean => {
     var flag = true;
-    access.map( x => {
-      if( x.includes("Зареєстрований користувач") || x.includes("Доступ колишнього члена організації")){
+    access.map(x => {
+      if (x.includes("Зареєстрований користувач") || x.includes("Доступ колишнього члена організації")) {
         flag = false;
         return;
       }
@@ -177,7 +178,7 @@ const ActiveMembership = () => {
 
   const AppropriateButtonText = (): string => {
     if (userPlastDegree) return "Змінити ступінь"
-    else  return "Додати ступінь"
+    else return "Додати ступінь"
   }
 
   useEffect(() => {
@@ -193,29 +194,33 @@ const ActiveMembership = () => {
       />
     </div>
   ) : (
-    <div className={classes.wrapper}>
-      <div className={classes.avatarWrapper}>
-        <AvatarAndProgressStatic
-          time={fullUserProfile?.timeToJoinPlast}
-          firstName={fullUserProfile?.user.firstName}
-          lastName={fullUserProfile?.user.lastName}
-          isUserPlastun={fullUserProfile?.isUserPlastun}
-          pseudo={fullUserProfile?.user.pseudo}
-          governingBody={fullUserProfile?.user.governingBody}
-          region={fullUserProfile?.user.region}
-          city={fullUserProfile?.user.city}
-          club={fullUserProfile?.user.club}
-          governingBodyId={fullUserProfile?.user.governingBodyId}
-          regionId={fullUserProfile?.user.regionId}
-          cityId={fullUserProfile?.user.cityId}
-          clubId={fullUserProfile?.user.clubId}
-          cityMemberIsApproved={fullUserProfile?.user.cityMemberIsApproved}
-          clubMemberIsApproved={fullUserProfile?.user.clubMemberIsApproved}
-          showPrecautions = {userProfile?.shortUser === null}
-        />
+    <Form name="basic" className="formContainer">
+      <div className="wrapperContainer">
+        <div className="avatarWrapperUserFields">
+          <StickyContainer className="kadraWrapper">
+            <AvatarAndProgressStatic
+              time={fullUserProfile?.timeToJoinPlast}
+              firstName={fullUserProfile?.user.firstName}
+              lastName={fullUserProfile?.user.lastName}
+              isUserPlastun={fullUserProfile?.isUserPlastun}
+              pseudo={fullUserProfile?.user.pseudo}
+              governingBody={fullUserProfile?.user.governingBody}
+              region={fullUserProfile?.user.region}
+              city={fullUserProfile?.user.city}
+              club={fullUserProfile?.user.club}
+              governingBodyId={fullUserProfile?.user.governingBodyId}
+              regionId={fullUserProfile?.user.regionId}
+              cityId={fullUserProfile?.user.cityId}
+              clubId={fullUserProfile?.user.clubId}
+              cityMemberIsApproved={fullUserProfile?.user.cityMemberIsApproved}
+              clubMemberIsApproved={fullUserProfile?.user.clubMemberIsApproved}
+              showPrecautions={userProfile?.shortUser === null}
+            />
+          </StickyContainer>
+        </div>
       </div>
 
-      <div className={classes.wrapperCol}>
+      <div className="allFields">
         <div className={classes.wrapper}>
           <div className={classes.wrapperGeneralInfo}>
             <Title level={2}> Загальна інформація </Title>
@@ -242,8 +247,8 @@ const ActiveMembership = () => {
                     <li className={classes.textListItem} key={3}>
                       <div>
                         <span className={classes.date}>Дата завершення: </span>
-                        { dates?.dateEnd === ""
-                          ? ( dates.dateEntry ==="" ? " - ":"ще у Пласті" )
+                        {dates?.dateEnd === ""
+                          ? (dates.dateEntry === "" ? " - " : "ще у Пласті")
                           : moment.utc(dates.dateEnd).local().format("DD.MM.YYYY")}
                       </div>
                     </li>
@@ -299,39 +304,39 @@ const ActiveMembership = () => {
           <div className={classes.wrapperGeneralInfo}>
             <Title level={2}> Ступені користувача </Title>
             {userPlastDegree && userPlastDegree.id ? (<React.Fragment key={userPlastDegree?.id}>
-                <div style={{ marginBottom: "7px" }}>
-                  <div className={classes.textFieldsMain}>
-                    {<SafetyCertificateOutlined />}{" "}
-                    {getAppropriateToGenderDegree(userPlastDegree!.plastDegree?.name)}
-                  </div>
-                  <div className={classes.textFieldsOthers}>
-                    Дата початку ступеню:{" "}
-                    {moment.utc(userPlastDegree?.dateStart).local().format("DD.MM.YYYY")}
-                  </div>
-                  {IsUserHasAccessToManageDegree(activeUserRoles?.map((role: any) => {
-                    if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ||
-                      role === Roles.CityHead || role === Roles.CityHeadDeputy))
-                      return role
-                  })) && (
-                      <div className={classes.buttons}>
-                        <Button type="primary"
-                          className={classes.buttonChange}
-                          onClick={() => {
-                            DeleteDegreeConfirm(
-                              userId,
-                              userPlastDegree!.plastDegree.id,
-                              handleDelete
-                            );
-                          }}
-                        >
-                          Видалити
-                        </Button>
-                      </div>
-                    )}
+              <div style={{ marginBottom: "7px" }}>
+                <div className={classes.textFieldsMain}>
+                  {<SafetyCertificateOutlined />}{" "}
+                  {getAppropriateToGenderDegree(userPlastDegree!.plastDegree?.name)}
                 </div>
-              </React.Fragment>
+                <div className={classes.textFieldsOthers}>
+                  Дата початку ступеню:{" "}
+                  {moment.utc(userPlastDegree?.dateStart).local().format("DD.MM.YYYY")}
+                </div>
+                {IsUserHasAccessToManageDegree(activeUserRoles?.map((role: any) => {
+                  if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ||
+                    role === Roles.CityHead || role === Roles.CityHeadDeputy))
+                    return role
+                })) && (
+                    <div className={classes.buttons}>
+                      <Button type="primary"
+                        className={classes.buttonChange}
+                        onClick={() => {
+                          DeleteDegreeConfirm(
+                            userId,
+                            userPlastDegree!.plastDegree.id,
+                            handleDelete
+                          );
+                        }}
+                      >
+                        Видалити
+                      </Button>
+                    </div>
+                  )}
+              </div>
+            </React.Fragment>
             )
-            :(<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Без ступеня" />)
+              : (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Без ступеня" />)
             }
             {IsUserHasAccessToManageDegree(activeUserRoles?.map((role: any) => {
               if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy))
@@ -347,7 +352,7 @@ const ActiveMembership = () => {
                     {AppropriateButtonText()}
                   </Button>
                 </div>
-              )} 
+              )}
           </div>
         </div>
       </div>
@@ -368,7 +373,7 @@ const ActiveMembership = () => {
         handleChangeDates={handleChangeDates}
 
       />
-    </div>
+   </Form >
   );
 };
 export default ActiveMembership;

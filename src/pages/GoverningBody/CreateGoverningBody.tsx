@@ -136,6 +136,7 @@ const CreateGoverningBody = () => {
       logo: governingBody.logo?.length === 0 ? null : governingBody.logo,
       phoneNumber: values.phoneNumber,
       head: governingBody.head,
+      isActive: true
     };
 
     if (!governingBody.id) {
