@@ -102,7 +102,7 @@ const UsersTable = () => {
   };
   const fetchRegions = async () => {
     try {
-      let response = await regionsApi.getRegions();
+      let response = await regionsApi.getRegionsNames();
       let regions = response.data as Region[];
       setRegions(
         regions.map((item) => {
