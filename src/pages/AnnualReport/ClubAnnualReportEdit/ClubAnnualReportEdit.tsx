@@ -63,20 +63,6 @@ const ClubAnnualReportEdit = () => {
                 response.data.annualreport.clubId
             );
 
-            let temp: ClubProfile = {
-                id: clubInfo.data.club.id,
-                name: clubInfo.data.club.name,
-                logo: "string",
-                description: "string",
-                clubURL: clubInfo.data.club.clubURL,
-                phoneNumber: clubInfo.data.club.phoneNumber,
-                email: clubInfo.data.club.email,
-                slogan: "string",
-                head: new ClubAdmin,
-                headDeputy: new ClubAdmin,
-                isActive: true,
-            }
-
             setClub((club: any) => ({
                 id: clubInfo.data.club.id,
                 name: clubInfo.data.club.name,
@@ -90,10 +76,9 @@ const ClubAnnualReportEdit = () => {
                 headDeputy: new ClubAdmin,
                 isActive: true,
             }))
+            /*setClubHead((clubHead:any)=>({
 
-            // setClub({ ...temp })
-
-            setClubHead(response.data);
+            }));*/
 
 
 
