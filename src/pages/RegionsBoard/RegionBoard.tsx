@@ -459,14 +459,16 @@ const RegionBoard = () => {
           xs={24}
         >
           <Card hoverable className="cityCard">
-            <Title level={4}>Документообіг <a onClick={() => history.push('/regionsBoard/documents/' + region.id)}>
-              {documentsCount !== 0  && userAccesses["ViewDocument"] ? (
-                <Badge
-                  count={documentsCount}
-                  style={{ backgroundColor: "#3c5438" }}
-                />
-              ) : null}
-            </a></Title>
+            <Title level={4}>Документообіг{' '}
+              <a onClick={() => userAccesses["ViewDocument"] ? history.push('/regionsBoard/documents/' + region.id) : undefined}>
+                {documentsCount !== 0 ? (
+                  <Badge
+                    count={documentsCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  />
+                ) : null}
+              </a>
+            </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
                 documents.map((document) => (
