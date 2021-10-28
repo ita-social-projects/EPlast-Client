@@ -117,6 +117,7 @@ const City = () => {
       setMembers([...members, member.data]);
     }
     setFollowers(followers.filter((f) => f.id !== memberId));
+    
     setIsLoadingPlus(true)
   };
 
@@ -255,6 +256,7 @@ const City = () => {
       maskClosable: true,
       onOk() {
         addMember();
+        setLoading(true)
       },
     });
   }
@@ -348,7 +350,9 @@ const City = () => {
           </b>{" "}
           вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
           <b>
-            {moment(existingAdmin.endDate).format("DD.MM.YYYY") ?? "ще не скоро"}
+            {moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -357,7 +361,8 @@ const City = () => {
       onOk() {
         if (newAdmin.id === 0) {
           addCityAdmin(newAdmin);
-          setAdmins((admins as CityAdmin[]).map(x => x.userId === existingAdmin?.userId ? newAdmin : x));
+          setAdmins((admins as CityAdmin[]).map(x => x.userId === existingAdmin?.userId && x.adminType.adminTypeName === existingAdmin?.adminType?.adminTypeName ?
+             newAdmin : x));
         } else {
           editCityAdmin(newAdmin);
         }
@@ -386,15 +391,39 @@ const City = () => {
     });
   };
 
+  const showDiseable = async (admin: CityAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете змінити роль цьому користувачу",
+      content: (
+        <div style={{ margin: 15 }}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            вже має таку роль, час правління закінчується{" "}
+          <b>
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
   const handleOk = async(admin: CityAdmin) => {
     if (admin.id === 0) {
-      try {
-        const head = (admins as CityAdmin[])
+      const head = (admins as CityAdmin[])
         .find(x => x.adminType.adminTypeName === Roles.CityHead)
-        const existingAdmin  = (admins as CityAdmin[])
-        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)      
+      const existingAdmin  = (admins as CityAdmin[])
+        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName) 
+      try {     
         if (Roles.CityHeadDeputy === admin.adminType.adminTypeName && head?.userId === admin.userId){
           showDiseableModal(head)
+        }
+        else if(existingAdmin?.userId === admin.userId){
+          showDiseable(admin)
         }
         else if(existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);
