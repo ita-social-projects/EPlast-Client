@@ -25,6 +25,7 @@ import ClubMember from "../../../models/Club/ClubMember";
 import ClubAnnualReportForm from "../ClubAnnualReportForm/ClubAnnualReportForm";
 import UserApi from "../../../api/UserApi";
 import ClubProfile from "../../../models/Club/ClubProfile";
+import { Roles } from "../../../models/Roles/Roles";
 
 
 const { Title } = Typography;
@@ -77,25 +78,25 @@ const ClubAnnualReportEdit = () => {
                 isActive: true,
             }))
             /*setClubHead((clubHead:any)=>({
-
+                
             }));*/
+            setAdmins(clubInfo.data.admins.filter((a: any) => a !== null));
+            setClubMembers(clubInfo.data.members);
+            setFollowers(clubInfo.data.followers);
 
 
 
 
             console.log("Club Info", clubInfo)
             console.log("RESPONSE", response)
-            //setAdmins(club.data.administration.filter((a: any) => a != null));
 
-            //setClubMembers(club.data.members);
-            //setFollowers(club.data.followers);
 
             const user: any = jwt(token);
-            /*if (
+            if (
                 !(
                     (roles.includes(Roles.Admin) ||
                         (roles.includes(Roles.KurinHead) &&
-                            club.data.head?.userId == user.nameid)) &&
+                            clubInfo.data.head?.userId == user.nameid)) &&
                     response.data.annualreport.status == 0
                 )
             ) {
@@ -103,7 +104,7 @@ const ClubAnnualReportEdit = () => {
             } else {
                 setClubAnnualReport(response.data.annualreport);
                 form.setFieldsValue(response.data.annualreport);
-            }*/
+            }
         } catch (error) {
             notificationLogic("error", tryAgain);
             history.goBack();
