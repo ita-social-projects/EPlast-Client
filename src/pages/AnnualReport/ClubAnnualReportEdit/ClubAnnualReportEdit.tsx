@@ -27,7 +27,6 @@ import UserApi from "../../../api/UserApi";
 import ClubProfile from "../../../models/Club/ClubProfile";
 import { Roles } from "../../../models/Roles/Roles";
 
-
 const { Title } = Typography;
 
 const ClubAnnualReportEdit = () => {
@@ -64,32 +63,11 @@ const ClubAnnualReportEdit = () => {
                 response.data.annualreport.clubId
             );
 
-            setClub((club: any) => ({
-                id: clubInfo.data.club.id,
-                name: clubInfo.data.club.name,
-                logo: "string",
-                description: "string",
-                clubURL: clubInfo.data.club.clubURL,
-                phoneNumber: clubInfo.data.club.phoneNumber,
-                email: clubInfo.data.club.email,
-                slogan: "string",
-                head: new ClubAdmin,
-                headDeputy: new ClubAdmin,
-                isActive: true,
-            }))
-            /*setClubHead((clubHead:any)=>({
-                
-            }));*/
+            setClub(clubInfo.data.club)
+            setClubHead(response.data.annualreport.head)
             setAdmins(clubInfo.data.admins.filter((a: any) => a !== null));
             setClubMembers(clubInfo.data.members);
             setFollowers(clubInfo.data.followers);
-
-
-
-
-            console.log("Club Info", clubInfo)
-            console.log("RESPONSE", response)
-
 
             const user: any = jwt(token);
             if (
