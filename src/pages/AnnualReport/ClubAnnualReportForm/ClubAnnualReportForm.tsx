@@ -25,7 +25,7 @@ interface Props {
         phoneNumber: "";
         email: "";
         clubURL: "";
-        street: "";
+        slogan: "";
     };
     admins: ClubAdmin[];
     members: ClubMember[];
@@ -65,10 +65,14 @@ export const ClubAnnualReportForm = (props: Props) => {
         ],
     };
 
+    const maxAmountSymbolsURL = 40;
+
     return (
         <>
             <Card>
-                <Title level={4}>Дані про членів куреня</Title>
+                <Title level={4}>
+                    Дані про членів куреня
+                </Title>
                 <Card.Grid className="container">
                     <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                         <Col
@@ -80,7 +84,9 @@ export const ClubAnnualReportForm = (props: Props) => {
                             xl={6}
                             span={6}
                         >
-                            <Text strong={true}>Дійсних членів куреня:</Text>
+                            <Text strong={true}>
+                                Дійсних членів куреня:
+                            </Text>
                             <Form.Item
                                 className="w100"
                                 rules={validationSchema.number}
@@ -88,14 +94,6 @@ export const ClubAnnualReportForm = (props: Props) => {
                                 <Input
                                     type="number"
                                     min="0"
-                                    onKeyDown={(e) =>
-                                        (e.keyCode === 69 ||
-                                            e.keyCode === 190 ||
-                                            e.keyCode === 187 ||
-                                            e.keyCode === 189 ||
-                                            e.keyCode === 188) &&
-                                        e.preventDefault()
-                                    }
                                     value={members.length}
                                 />
                             </Form.Item>
@@ -109,7 +107,9 @@ export const ClubAnnualReportForm = (props: Props) => {
                             className="clubAnnualReportResponsiveCols"
                             span={6}
                         >
-                            <Text strong={true}>Прихильників куреня:</Text>
+                            <Text strong={true}>
+                                Прихильників куреня:
+                            </Text>
                             <Form.Item
                                 className="w100"
                                 rules={validationSchema.number}
@@ -117,14 +117,6 @@ export const ClubAnnualReportForm = (props: Props) => {
                                 <Input
                                     type="number"
                                     min="0"
-                                    onKeyDown={(e) =>
-                                        (e.keyCode === 69 ||
-                                            e.keyCode === 190 ||
-                                            e.keyCode === 187 ||
-                                            e.keyCode === 189 ||
-                                            e.keyCode === 188) &&
-                                        e.preventDefault()
-                                    }
                                     value={followers.length}
                                 />
                             </Form.Item>
@@ -148,14 +140,6 @@ export const ClubAnnualReportForm = (props: Props) => {
                                 <Input
                                     type="number"
                                     min="0"
-                                    onKeyDown={(e) =>
-                                        (e.keyCode === 69 ||
-                                            e.keyCode === 190 ||
-                                            e.keyCode === 187 ||
-                                            e.keyCode === 189 ||
-                                            e.keyCode === 188) &&
-                                        e.preventDefault()
-                                    }
                                     value={countUsersPerYear}
                                 />
                             </Form.Item>
@@ -179,14 +163,6 @@ export const ClubAnnualReportForm = (props: Props) => {
                                 <Input
                                     type="number"
                                     min="0"
-                                    onKeyDown={(e) =>
-                                        (e.keyCode === 69 ||
-                                            e.keyCode === 190 ||
-                                            e.keyCode === 187 ||
-                                            e.keyCode === 189 ||
-                                            e.keyCode === 188) &&
-                                        e.preventDefault()
-                                    }
                                     value={countdeletedUsersPerYear}
                                 />
                             </Form.Item>
@@ -225,9 +201,10 @@ export const ClubAnnualReportForm = (props: Props) => {
                         </Col>
                     </Row>
                 </Card.Grid>
-
                 <Card.Grid className="container">
-                    <Title level={4}>Провід куреня</Title>
+                    <Title level={4}>
+                        Провід куреня
+                    </Title>
                     <Table
                         dataSource={getTableAdmins(admins)}
                         columns={administrationsColumns}
@@ -237,17 +214,18 @@ export const ClubAnnualReportForm = (props: Props) => {
                         onRow={(user) => {
                             return {
                                 onDoubleClick: (event) => {
-                                    if (user.key)
-                                        window.open(
-                                            `/userpage/main/${user.key}`
-                                        );
+                                    if (user.key) {
+                                        window.open(`/userpage/main/${user.key}`);
+                                    }
                                 },
                             };
                         }}
                     />
                 </Card.Grid>
                 <Card.Grid className="container">
-                    <Title level={4}>Члени куреня</Title>
+                    <Title level={4}>
+                        Члени куреня
+                    </Title>
                     <Table
                         dataSource={getTableMembers(members)}
                         columns={followersColumns}
@@ -257,17 +235,18 @@ export const ClubAnnualReportForm = (props: Props) => {
                         onRow={(user) => {
                             return {
                                 onDoubleClick: (event) => {
-                                    if (user.key)
-                                        window.open(
-                                            `/userpage/main/${user.key}`
-                                        );
+                                    if (user.key) {
+                                        window.open(`/userpage/main/${user.key}`);
+                                    }
                                 },
                             };
                         }}
                     />
                 </Card.Grid>
                 <Card.Grid className="container">
-                    <Title level={4}>Прихильники куреня</Title>
+                    <Title level={4}>
+                        Прихильники куреня
+                    </Title>
                     <Table
                         dataSource={getTableMembers(followers)}
                         columns={followersColumns}
@@ -277,43 +256,64 @@ export const ClubAnnualReportForm = (props: Props) => {
                         onRow={(user) => {
                             return {
                                 onDoubleClick: (event) => {
-                                    if (user.key)
-                                        window.open(
-                                            `/userpage/main/${user.key}`
-                                        );
+                                    if (user.key) {
+                                        window.open(`/userpage/main/${user.key}`);
+                                    }
                                 },
                             };
                         }}
                     />
                 </Card.Grid>
-                <Card.Grid className="container">
-                    <Row>
-                        <Col span={8}>
-                            <Form.Item
-                                label={
-                                    <Text strong={true}>Номер телефону</Text>
-                                }
-                            >
-                                {club.clubURL?.replace(" ", "") == ""
-                                    ? "немає"
-                                    : club.phoneNumber}
-                            </Form.Item>
-                            <Form.Item
-                                label={
-                                    <Text strong={true}>Електронна пошта</Text>
-                                }
-                            >
-                                {club.clubURL?.replace(" ", "") == ""
-                                    ? "немає"
-                                    : club.email}
-                            </Form.Item>
-                            <Form.Item
-                                label={<Text strong={true}>Вулиця</Text>}
-                            >
-                                {club.clubURL?.replace(" ", "") == ""
-                                    ? "немає"
-                                    : club.street}
-                            </Form.Item>
+                <Card.Grid className="clubAnnualReportFormDescription">
+                    <Row gutter={20}>
+                        <Col
+                            xs={24}
+                            sm={24}
+                            md={12}
+                            lg={12}
+                            xl={12}
+                        >
+                            {head ? (
+                                <>
+                                    <Form.Item
+                                        label={
+                                            <Text strong={true}>
+                                                {head.adminType?.adminTypeName}
+                                            </Text>
+                                        }
+                                    >
+                                        {head.user?.firstName}{" "}{head.user?.lastName}
+                                    </Form.Item>
+                                    <Form.Item
+                                        label={
+                                            <Text strong={true}>
+                                                Номер телефону
+                                            </Text>
+                                        }
+                                    >
+                                        {head.user?.phoneNumber.replace(" ", "") === "" ? "немає" : head.user?.phoneNumber}
+                                    </Form.Item>
+                                    <Form.Item
+                                        label={
+                                            <Text strong={true}>
+                                                Електронна пошта
+                                            </Text>
+                                        }
+                                    >
+                                        {head.user?.email.replace(" ", "") === "" ? "немає" : head.user?.email}
+                                    </Form.Item>
+                                </>
+                            ) : (
+                                <> Ще немає адміністратора куреня</>
+                            )}
+                        </Col>
+                        <Col
+                            xs={24}
+                            sm={24}
+                            md={12}
+                            lg={12}
+                            xl={12}
+                        >
                             <Form.Item
                                 label={
                                     <Text strong={true}>
@@ -321,31 +321,40 @@ export const ClubAnnualReportForm = (props: Props) => {
                                     </Text>
                                 }
                             >
-                                {club.clubURL?.replace(" ", "") == ""
-                                    ? "немає"
-                                    : club.clubURL}
+                                {club.clubURL?.replace(" ", "") == "" ? (
+                                    "немає"
+                                ) : (
+                                    <a target="_blank" href={club.clubURL}>
+                                        {club.clubURL.length > maxAmountSymbolsURL
+                                            ? club.clubURL.substring(0, maxAmountSymbolsURL) + "..."
+                                            : club.clubURL}
+                                    </a>
+                                )}
                             </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Text strong={true}>Контакти:</Text>
-                            {head ? (
-                                <Form.Item className="w100">
-                                    {head.adminType?.adminTypeName}:{" "}
-                                    {head.user?.firstName} {head.user?.lastName}{" "}
-                                    <br />
-                                    {head.user?.email} <br />
-                                    {head.user?.phoneNumber}
-                                </Form.Item>
-                            ) : (
-                                <> Ще немає адміністратора куреня</>
-                            )}
-                        </Col>
-                        <Col span={8}>
                             <Form.Item
                                 label={
-                                    <Text strong={true}>Дата заповнення</Text>
+                                    <Text strong={true}>Номер телефону</Text>
                                 }
-                                className="w100"
+                            >
+                                {club.phoneNumber?.replace(" ", "") === "" ? "немає" : club.phoneNumber}
+                            </Form.Item>
+                            <Form.Item
+                                label={
+                                    <Text strong={true}>Електронна пошта</Text>
+                                }
+                            >
+                                {club.email.replace(" ", "") === "" ? "немає" : club.email}
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row className="ClubAnnualReportFormDescriptionDate">
+                        <Col>
+                            <Form.Item
+                                label={
+                                    <Text strong={true}>
+                                        Дата заповнення
+                                    </Text>
+                                }
                             >
                                 {moment().format("DD.MM.YYYY")}
                             </Form.Item>

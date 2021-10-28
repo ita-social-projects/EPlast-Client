@@ -43,10 +43,7 @@ const AddNewRegionFormPage = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      setLoading(true);
-
-      await checkIfNameExists(values.regionName).then(async (response) =>{
-        if (!response.data) {
+      setLoading(true);     
           const newRegion: RegionProfile = {
             id: 0,
             regionName: values.regionName,
@@ -63,16 +60,9 @@ const AddNewRegionFormPage = () => {
             isActive: true
           };
           await createRegion(newRegion);
-          form.resetFields();
-    
+          form.resetFields();  
           notificationLogic("success", successfulCreateAction("Округу"));
           history.push("/regions");  
-        } else {
-          setLoading(false);
-  
-          showRegionNameExistsModal();
-        }  
-      });
     }
     catch (error) {
       notificationLogic("error", failCreateAction("округу"));
@@ -197,7 +187,7 @@ const AddNewRegionFormPage = () => {
                   label="Електронна пошта"
                   name="email"
                   labelCol={{ span: 24 }}
-                  rules={descriptionValidation.RegionEmail}
+                  rules={descriptionValidation.Email}
                 >
                   <Input maxLength={51} />
                 </Form.Item>

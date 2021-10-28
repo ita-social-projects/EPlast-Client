@@ -20,3 +20,7 @@ spec:
         backend:
           serviceName: eplastweb
           servicePort: 80
+      - path: /grafana
+        backend:
+          serviceName: prometheus-grafana
+          servicePort: 80          
