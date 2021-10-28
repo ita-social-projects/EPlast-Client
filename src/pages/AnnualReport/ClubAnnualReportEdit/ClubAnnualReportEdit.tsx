@@ -46,34 +46,12 @@ const ClubAnnualReportEdit = () => {
 
     useEffect(() => {
         fetchData();
-        fetchTEST();
     }, []);
 
     const fetchData = async () => {
-        fetchClubAnnualReport();
+        await fetchClubAnnualReport();
     };
 
-    const fetchTEST = () => {
-        const temp: ClubProfile = {
-            id: 10,
-            name: "string",
-            logo: "string",
-            description: "string",
-            clubURL: "string",
-            phoneNumber: "string",
-            email: "string",
-            slogan: "string",
-            head: new ClubAdmin,
-            headDeputy: new ClubAdmin,
-            isActive: true,
-        }
-
-        console.log('Club', club)
-        setClub({ ...temp })
-        console.log('Club', club)
-        console.log("TEMP", temp)
-        console.log("HEAD", clubHead)
-    }
 
     const fetchClubAnnualReport = async () => {
         setIsLoading(true);
@@ -81,18 +59,47 @@ const ClubAnnualReportEdit = () => {
             let token = AuthStore.getToken() as string;
             let roles = UserApi.getActiveUserRoles();
             let response = await getClubAnnualReportById(id);
-
             let clubInfo = await getClubMembersInfo(
                 response.data.annualreport.clubId
             );
 
+            let temp: ClubProfile = {
+                id: clubInfo.data.club.id,
+                name: clubInfo.data.club.name,
+                logo: "string",
+                description: "string",
+                clubURL: clubInfo.data.club.clubURL,
+                phoneNumber: clubInfo.data.club.phoneNumber,
+                email: clubInfo.data.club.email,
+                slogan: "string",
+                head: new ClubAdmin,
+                headDeputy: new ClubAdmin,
+                isActive: true,
+            }
+
+            setClub((club: any) => ({
+                id: clubInfo.data.club.id,
+                name: clubInfo.data.club.name,
+                logo: "string",
+                description: "string",
+                clubURL: clubInfo.data.club.clubURL,
+                phoneNumber: clubInfo.data.club.phoneNumber,
+                email: clubInfo.data.club.email,
+                slogan: "string",
+                head: new ClubAdmin,
+                headDeputy: new ClubAdmin,
+                isActive: true,
+            }))
+
+            // setClub({ ...temp })
+
+            setClubHead(response.data);
+
+
+
 
             console.log("Club Info", clubInfo)
             console.log("RESPONSE", response)
-
-
-            //setClub(club.data);
-            //setClubHead(response.data);
             //setAdmins(club.data.administration.filter((a: any) => a != null));
 
             //setClubMembers(club.data.members);

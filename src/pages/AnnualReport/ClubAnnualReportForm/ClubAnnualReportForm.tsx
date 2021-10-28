@@ -25,7 +25,6 @@ interface Props {
     members: ClubMember[];
     followers: ClubMember[];
     head: ClubAdmin;
-
     countUsersPerYear: number;
     countdeletedUsersPerYear: number;
 }
