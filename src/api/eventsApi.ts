@@ -10,8 +10,8 @@ const getCategories = async (typeId: number) => {
     return response;
 }
 
-const getCategoriesByPage = async (typeId: number, page:number, pageSize:number) => {
-    const response = await Api.get(`Events/types/${typeId}/categories/${page}`, {page, pageSize});
+const getCategoriesByPage = async (typeId: number, page: number, pageSize: number) => {
+    const response = await Api.get(`Events/types/${typeId}/categories/${page}`, { page, pageSize });
     return response;
 }
 
@@ -20,8 +20,18 @@ const getEvents = async (typeId: number, categoryId: number) => {
     return response;
 }
 
-const getEventsByStatuses = async (typeId: number, categoryId: number, status:number) => {
+const getEventsByStatuses = async (typeId: number, categoryId: number, status: number) => {
     const response = await Api.get(`types/${typeId}/categories/${categoryId}/events/${status}`);
+    return response;
+}
+
+const getSections = async () => {
+    const response = await Api.get(`Events/sections`);
+    return response;
+}
+
+const createEventCategory = async (data: any) => {
+    const response = await Api.post(`Events/newCategory`, data);
     return response;
 }
 
@@ -50,7 +60,7 @@ const createParticipant = async (id: number) => {
     return response;
 };
 
-const estimateEvent = async (id: number,estimate:number) => {
+const estimateEvent = async (id: number, estimate: number) => {
     const response = await Api.put(`Events/${id}/estimate/${estimate}`);
     return response;
 };
@@ -86,6 +96,8 @@ export default {
     getCategories,
     getCategoriesByPage,
     getEvents,
+    getSections,
+    createEventCategory,
     getEventInfo,
     getPictures,
     remove,
