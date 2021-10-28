@@ -145,7 +145,7 @@ const ClubAnnualReportEdit = () => {
                         form={form}
                     >
                         <Title className="textCenter" level={3}>
-                            {`Річний звіт куреня ${club.name} за ${moment.utc().local().year()} рік`}
+                            {`Річний звіт куреня ${club.name} за ${moment.utc(clubAnnualReport?.date).local().year()} рік`}
                         </Title>
                         <Link
                             className="LinkText"
