@@ -117,7 +117,6 @@ const City = () => {
       setMembers([...members, member.data]);
     }
     setFollowers(followers.filter((f) => f.id !== memberId));
-    
     setIsLoadingPlus(true)
   };
 
