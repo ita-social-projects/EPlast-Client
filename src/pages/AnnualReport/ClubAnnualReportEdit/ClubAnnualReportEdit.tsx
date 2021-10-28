@@ -24,6 +24,7 @@ import ClubAdmin from "../../../models/Club/ClubAdmin";
 import ClubMember from "../../../models/Club/ClubMember";
 import ClubAnnualReportForm from "../ClubAnnualReportForm/ClubAnnualReportForm";
 import UserApi from "../../../api/UserApi";
+import ClubProfile from "../../../models/Club/ClubProfile";
 import { Roles } from "../../../models/Roles/Roles";
 
 const { Title } = Typography;
@@ -38,14 +39,7 @@ const ClubAnnualReportEdit = () => {
     const [members, setClubMembers] = useState<ClubMember[]>([]);
     const [followers, setFollowers] = useState<ClubMember[]>([]);
     const [clubHead, setClubHead] = useState<ClubAdmin>({} as ClubAdmin);
-    const [club, setClub] = useState<any>({
-        id: 0,
-        name: "",
-        phoneNumber: "",
-        email: "",
-        clubURL: "",
-        street: "",
-    });
+    const [club, setClub] = useState<ClubProfile>({} as ClubProfile);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingSaveChanges, setIsLoadingSaveChanges] = useState(false);
     const [form] = Form.useForm();
@@ -58,29 +52,29 @@ const ClubAnnualReportEdit = () => {
         await fetchClubAnnualReport();
     };
 
+
     const fetchClubAnnualReport = async () => {
         setIsLoading(true);
         try {
             let token = AuthStore.getToken() as string;
             let roles = UserApi.getActiveUserRoles();
             let response = await getClubAnnualReportById(id);
-
-            let club = await getClubMembersInfo(
+            let clubInfo = await getClubMembersInfo(
                 response.data.annualreport.clubId
             );
-            setClub(club.data);
-            setClubHead(response.data);
-            setAdmins(club.data.administration.filter((a: any) => a != null));
 
-            setClubMembers(club.data.members);
-            setFollowers(club.data.followers);
+            setClub(clubInfo.data.club)
+            setClubHead(response.data.annualreport.head)
+            setAdmins(clubInfo.data.admins.filter((a: any) => a !== null));
+            setClubMembers(clubInfo.data.members);
+            setFollowers(clubInfo.data.followers);
 
             const user: any = jwt(token);
             if (
                 !(
                     (roles.includes(Roles.Admin) ||
                         (roles.includes(Roles.KurinHead) &&
-                            club.data.head?.userId == user.nameid)) &&
+                            clubInfo.data.head?.userId == user.nameid)) &&
                     response.data.annualreport.status == 0
                 )
             ) {
@@ -151,7 +145,7 @@ const ClubAnnualReportEdit = () => {
                         form={form}
                     >
                         <Title className="textCenter" level={3}>
-                            {`Річний звіт куреня ${club.name} за ${moment.utc(club.date).local().year()} рік`}
+                            {`Річний звіт куреня ${club.name} за ${moment.utc(clubAnnualReport?.date).local().year()} рік`}
                         </Title>
                         <Link
                             className="LinkText"
