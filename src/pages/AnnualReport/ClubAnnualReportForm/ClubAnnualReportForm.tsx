@@ -14,23 +14,18 @@ import {
     maxLength,
 } from "../../../components/Notifications/Messages";
 import "./ClubAnnualReportForm.less";
+import ClubProfile from "../../../models/Club/ClubProfile";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 interface Props {
-    club: {
-        id: 0;
-        name: "";
-        phoneNumber: "";
-        email: "";
-        clubURL: "";
-        slogan: "";
-    };
+    club: ClubProfile;
     admins: ClubAdmin[];
     members: ClubMember[];
     followers: ClubMember[];
     head: ClubAdmin;
+
     countUsersPerYear: number;
     countdeletedUsersPerYear: number;
 }
@@ -325,9 +320,9 @@ export const ClubAnnualReportForm = (props: Props) => {
                                     "немає"
                                 ) : (
                                     <a target="_blank" href={club.clubURL}>
-                                        {club.clubURL.length > maxAmountSymbolsURL
-                                            ? club.clubURL.substring(0, maxAmountSymbolsURL) + "..."
-                                            : club.clubURL}
+                                        {club.clubURL?.length > maxAmountSymbolsURL
+                                            ? club.clubURL?.substring(0, maxAmountSymbolsURL) + "..."
+                                            : club.clubURL!}
                                     </a>
                                 )}
                             </Form.Item>
@@ -336,14 +331,14 @@ export const ClubAnnualReportForm = (props: Props) => {
                                     <Text strong={true}>Номер телефону</Text>
                                 }
                             >
-                                {club.phoneNumber?.replace(" ", "") === "" ? "немає" : club.phoneNumber}
+                                {club.phoneNumber?.replace(" ", "") === "" ? "немає" : club.phoneNumber!}
                             </Form.Item>
                             <Form.Item
                                 label={
                                     <Text strong={true}>Електронна пошта</Text>
                                 }
                             >
-                                {club.email.replace(" ", "") === "" ? "немає" : club.email}
+                                {club.email?.replace(" ", "") === "" ? "немає" : club.email!}
                             </Form.Item>
                         </Col>
                     </Row>
