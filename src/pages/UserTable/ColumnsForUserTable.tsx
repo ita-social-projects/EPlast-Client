@@ -41,17 +41,17 @@ interface Props {
   sortKey: number;
   setSortKey: any;
   setFilter: any;
+  setPage: any;
   filterRole: any;
 }
 
 const ColumnsForUserTable = (props: Props): any[] => {
 
-  const { sortKey, setSortKey, setFilter, filterRole } = props;
+  const { sortKey, setSortKey, setFilter, setPage, filterRole } = props;
 
   const [filterDropdownVisible, setFilterDropdownVisible] = useState<boolean>(false);
   const [chosenRoles, setChosenRoles] = useState<Roles[]>([]);
-
-  const clearRef = useRef<Checkbox[]>([]);
+  const [checked, setChecked] = useState<boolean>(true);
 
   const filterOptions = [
     { label:  Roles.PlastMember,       value: Roles.PlastMember, },
@@ -73,16 +73,22 @@ const ColumnsForUserTable = (props: Props): any[] => {
 
   const roles: Array<Roles> = new Array<Roles>();
 
-  const onChangeFilter = (checkedRole: CheckboxValueType[]) => {
+  const onChangeFilter = (checkedRoles: CheckboxValueType[]) => {
     roles.length = 0;
-    checkedRole.forEach((elem: CheckboxValueType) => {
+    checkedRoles.forEach((elem: CheckboxValueType) => {
       const roleToConvert = getEnumKeyByEnumValue(Roles, elem.toString());
       if (roleToConvert !== null) {
         const checkedRoleAsEnum = Roles[roleToConvert];
         roles.push(checkedRoleAsEnum);
       }
     });
+    
     setChosenRoles(roles);
+  }
+
+  const onChangeCheckbox = (e: any) => {
+    e.preventDefault();
+    setChecked(!checked);
   }
 
   const onSearchFilter = () => {
@@ -91,13 +97,18 @@ const ColumnsForUserTable = (props: Props): any[] => {
     chosenRoles.forEach(element => {
       rolesToStr.push(element.toString());
     });
+    setChecked(false);
+    setPage(1);
     setFilter(rolesToStr);
   }
 
-  const onClearFilter = () => {
+  const onClearFilter = (e: any) => {
+    
     setChosenRoles([]);
-    clearRef?.current?.forEach(el => el.setState({checked: false}));
+    console.log(checked);
+    setChecked(false);
     setFilterDropdownVisible(false);
+    setPage(1);
     setFilter([]);
   }
 
@@ -342,12 +353,9 @@ const ColumnsForUserTable = (props: Props): any[] => {
               <div>
                 <Checkbox 
                   key={i}
-                  ref={el => {
-                    if(el !== null) {
-                      clearRef.current[i] = el
-                    }
-                  }}
                   value={option.value}
+                  checked={true}
+                  onChange={onChangeCheckbox}
                 >
                   {option.label}
                 </Checkbox>

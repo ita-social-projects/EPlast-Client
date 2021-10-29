@@ -84,7 +84,7 @@ const UsersTable = () => {
     forceUpdate({});
   }, []);
 
-  const searchFieldMaxLength: number = 200;
+  const searchFieldMaxLength: number = 150;
 
   const fetchCities = async () => {
     try {
@@ -467,6 +467,7 @@ const UsersTable = () => {
               sortKey: sortKey,
               setSortKey: setSortKey,
               setFilter: setFilter,
+              setPage: setPage,
               filterRole: filter,
             })}
           dataSource={users}
