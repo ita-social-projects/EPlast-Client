@@ -247,7 +247,7 @@ const ActiveMembership = () => {
                         <span className={classes.date}>Дата вступу: </span>
                         {dates?.dateEntry === ""
                           ? "Не задано"
-                          : moment.utc(dates.dateEntry).local().format("DD.MM.YYYY")}
+                          : moment.utc(dates?.dateEntry).local().format("DD.MM.YYYY")}
                       </div>
                     </li>
                     <li className={classes.textListItem} key={2}>
@@ -255,7 +255,7 @@ const ActiveMembership = () => {
                         <span className={classes.date}>Дата присяги: </span>
                         {dates?.dateOath === ""
                           ? "Без присяги"
-                          : moment.utc(dates.dateOath).local().format("DD.MM.YYYY")}
+                          : moment.utc(dates?.dateOath).local().format("DD.MM.YYYY")}
                       </div>
                     </li>
                     <li className={classes.textListItem} key={3}>
@@ -263,7 +263,7 @@ const ActiveMembership = () => {
                         <span className={classes.date}>Дата завершення: </span>
                         {dates?.dateEnd === ""
                           ? (dates.dateEntry === "" ? " - " : "ще у Пласті")
-                          : moment.utc(dates.dateEnd).local().format("DD.MM.YYYY")}
+                          : moment.utc(dates?.dateEnd).local().format("DD.MM.YYYY")}
                       </div>
                     </li>
                   </ul>
