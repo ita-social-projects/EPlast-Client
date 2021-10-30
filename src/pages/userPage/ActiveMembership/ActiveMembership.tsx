@@ -4,6 +4,7 @@ import classes from "./ActiveMembership.module.css";
 import { Typography, List, Button, Tooltip, Tag, Empty, Skeleton, Form } from "antd";
 import "../personalData/PersonalData.less";
 import activeMembershipApi, {
+  UserDates,
   UserPlastDegree,
 } from "../../../api/activeMembershipApi";
 import AuthStore from "../../../stores/AuthStore";
@@ -26,7 +27,7 @@ const itemMaxLength = 43;
 const ActiveMembership = () => {
   const { userId } = useParams();
   const [accessLevels, setAccessLevels] = useState([]);
-  const [dates, setDates] = useState<any>({});
+  const [dates, setDates] = useState<UserDates>();
   const { userProfile, activeUserRoles, fullUserProfile, activeUserProfile, UpdateData } = useContext(PersonalDataContext);
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
   const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
@@ -46,6 +47,16 @@ const ActiveMembership = () => {
     Roles.RegionBoardHead
   ];
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
+
+  const SetDefaultDates = () => {
+    const defaultDates: UserDates = {
+      dateEntry: "",
+      dateOath: "",
+      dateEnd: "",
+      userId: userId
+    }
+    setDates(defaultDates);
+  }
 
   const handleAddDegree = async () => {
     await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
@@ -75,7 +86,10 @@ const ActiveMembership = () => {
         response.dateEnd === defaultDate ? "" : response.dateEnd;
       setDates(response);
       setLoadInfo(true);
-    });
+    }).catch(() => {
+      SetDefaultDates();
+      notificationLogic("error", "Не вдалося завантажити дати дійсного членства");
+    });;
 
     await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
       setUserPlastDegree(response);
@@ -233,7 +247,7 @@ const ActiveMembership = () => {
                         <span className={classes.date}>Дата вступу: </span>
                         {dates?.dateEntry === ""
                           ? "Не задано"
-                          : moment.utc(dates.dateEntry).local().format("DD.MM.YYYY")}
+                          : moment.utc(dates?.dateEntry).local().format("DD.MM.YYYY")}
                       </div>
                     </li>
                     <li className={classes.textListItem} key={2}>
@@ -241,7 +255,7 @@ const ActiveMembership = () => {
                         <span className={classes.date}>Дата присяги: </span>
                         {dates?.dateOath === ""
                           ? "Без присяги"
-                          : moment.utc(dates.dateOath).local().format("DD.MM.YYYY")}
+                          : moment.utc(dates?.dateOath).local().format("DD.MM.YYYY")}
                       </div>
                     </li>
                     <li className={classes.textListItem} key={3}>
@@ -249,7 +263,7 @@ const ActiveMembership = () => {
                         <span className={classes.date}>Дата завершення: </span>
                         {dates?.dateEnd === ""
                           ? (dates.dateEntry === "" ? " - " : "ще у Пласті")
-                          : moment.utc(dates.dateEnd).local().format("DD.MM.YYYY")}
+                          : moment.utc(dates?.dateEnd).local().format("DD.MM.YYYY")}
                       </div>
                     </li>
                   </ul>

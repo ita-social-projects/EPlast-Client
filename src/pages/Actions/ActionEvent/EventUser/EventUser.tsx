@@ -30,7 +30,6 @@ import EventEditDrawer from "../EventEdit/EventEditDrawer";
 import EventCalendar from "../EventCalendar/EventCalendar";
 import CreatedEvents from "../../../../models/EventUser/CreatedEvents";
 import AvatarAndProgressStatic from "../../../userPage/personalData/AvatarAndProgressStatic";
-import { Data } from '../../../userPage/Interface/Interface'
 import { Roles } from "../../../../models/Roles/Roles";
 import { PersonalDataContext } from "../../../userPage/personalData/PersonalData";
 import { StickyContainer } from "react-sticky";
@@ -44,7 +43,6 @@ const EventUser = () => {
 
     const history = useHistory();
     const [loading, setLoading] = useState(false);
-    const [imageBase64, setImageBase64] = useState<string>();
     const [createdEventsModal, setCreatedEventsModal] = useState(false);
     const [plannedEventsModal, setPlannedEventsModal] = useState(false);
     const [visitedEventsModal, setVisitedEventsModal] = useState(false);
@@ -53,7 +51,7 @@ const EventUser = () => {
     const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
         new CreatedEvents(),
     ]);
-    const { fullUserProfile, ChangeUserProfile } = useContext(PersonalDataContext);
+    const { fullUserProfile, UpdateData } = useContext(PersonalDataContext);
     const [showEventCreateDrawer, setShowEventCreateDrawer] = useState(false);
     const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
     const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
@@ -66,13 +64,10 @@ const EventUser = () => {
     ]);
 
     useEffect(() => {
-        userApi.getById(userId).then(async (response) => {
-            if (ChangeUserProfile) ChangeUserProfile(response.data);
-        });
-        fetchData();
+        initialFetchData();
     }, []);
 
-    const fetchData = async () => {
+    const initialFetchData = async () => {
         const token = AuthStore.getToken() as string;
         setUserToken(jwt(token));
         await eventUserApi.getEventsUser(userId).then(async (response) => {
@@ -82,6 +77,17 @@ const EventUser = () => {
             setLoading(true);
         });
     };
+    const fetchData = async () => {
+        if(UpdateData) UpdateData();
+        const token = AuthStore.getToken() as string;
+        setUserToken(jwt(token));
+        await eventUserApi.getEventsUser(userId).then(async (response) => {
+            setCreatedEvents(response.data);
+            setAllEvents(response.data);
+
+            setLoading(true);
+        });
+    }
 
     const setEventTypeName = (typeId: number) => {
         let name = "";

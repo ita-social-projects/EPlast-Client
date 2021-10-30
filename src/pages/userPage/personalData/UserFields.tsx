@@ -1,18 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { Alert, Button, Form, Input, Skeleton, Tooltip } from "antd";
-import userApi from "../../../api/UserApi";
 import moment from "moment";
-import { Data, User } from "../Interface/Interface";
 import { useParams, useHistory } from "react-router-dom";
-import notificationLogic from "../../../components/Notifications/Notification";
-import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import Facebook from "../../../assets/images/facebookGreen.svg";
 import Twitter from "../../../assets/images/birdGreen.svg";
 import Instagram from "../../../assets/images/instagramGreen.svg";
 import { StickyContainer } from "react-sticky";
 import AvatarAndProgressStatic from "./AvatarAndProgressStatic";
 import { Roles } from "../../../models/Roles/Roles";
-import UserApi from "../../../api/UserApi";
 import { PersonalDataContext } from "./PersonalData";
 
 export default function () {
