@@ -109,6 +109,7 @@ const CreateSector = () => {
       logo: sector.logo?.length === 0 ? null : sector.logo,
       phoneNumber: values.phoneNumber,
       head: sector.head,
+      isActive: true
     };
 
     await CreateSector(newSector);

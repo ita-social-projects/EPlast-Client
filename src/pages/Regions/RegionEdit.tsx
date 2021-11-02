@@ -102,9 +102,6 @@ const RegionEditFormPage = () => {
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
-
-    await checkIfNameExists(values.regionName).then(async (response) => {
-      if (!response.data) {
         const newRegion: RegionProfile = {
           id: chosenRegion.id,
           regionName: values.regionName,
@@ -120,18 +117,10 @@ const RegionEditFormPage = () => {
           city: values.city,
           isActive: chosenRegion.isActive
         };
-        await RegionsApi.EditRegion(currentRegion, newRegion);
-    
-        form.resetFields();
-    
+        await RegionsApi.EditRegion(currentRegion, newRegion); 
+        form.resetFields();  
         notificationLogic("success", successfulEditAction("Дані округи"));
-        history.push(`/regions/${currentRegion}`);  
-      } else {
-        setLoading(false);
-  
-        showRegionNameExistsModal();
-      }  
-    });
+        history.push(`/regions/${currentRegion}`);         
   };
 
   return (
@@ -170,7 +159,7 @@ const RegionEditFormPage = () => {
                   name="regionName"
                   initialValue={chosenRegion.regionName}
                   labelCol={{ span: 24 }}
-                  rules={descriptionValidation.Name}
+                  rules={descriptionValidation.RegionName}
                 >
                   <Input
                     value={chosenRegion.regionName} maxLength={51} />
@@ -213,7 +202,7 @@ const RegionEditFormPage = () => {
                   name="email"
                   labelCol={{ span: 24 }}
                   initialValue={chosenRegion?.email}
-                  rules={descriptionValidation.RegionEmail}
+                  rules={descriptionValidation.Email}
                 >
                   <Input maxLength={51}
                     value={chosenRegion?.email} />
@@ -239,7 +228,7 @@ const RegionEditFormPage = () => {
                   name="city"
                   initialValue={chosenRegion?.city}
                   labelCol={{ span: 24 }}
-                  rules={descriptionValidation.Name}
+                  rules={descriptionValidation.RegionName}
                 >
                   <Input maxLength={51}
                     value={chosenRegion?.city} />

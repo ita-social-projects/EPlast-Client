@@ -64,16 +64,22 @@ export default function () {
           <p>Скидання пароля. Введіть електронну пошту</p>
         </div>
 
-        <Form.Item name="Email" rules={validationSchema.Email}>
+        <Form.Item 
+          name="Email" 
+          rules={validationSchema.Email}
+        >
           <Input
             className={styles.ResetPasswordInput}
             placeholder="Електронна пошта"
           />
         </Form.Item>
 
-        <Form.Item name="Password" rules={validationSchema.Password}>
+        <Form.Item 
+          name="Password" 
+          rules={validationSchema.Password}
+        >
           <Input.Password
-            visibilityToggle={false}
+            visibilityToggle={true}
             className={styles.ResetPasswordInput}
             placeholder="Пароль"
             autoComplete="new-password"
@@ -99,7 +105,7 @@ export default function () {
           ]}
         >
           <Input.Password
-            visibilityToggle={false}
+            visibilityToggle={true}
             className={styles.ResetPasswordInput}
             placeholder=" Повторіть пароль"
           />

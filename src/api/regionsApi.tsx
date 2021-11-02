@@ -182,6 +182,13 @@ export const getRegions = async () => {
     });
 };
 
+export const getRegionsNames = async () => {
+  return api.get(`Regions/RegionsNames`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
 export const getAccessableRegions = async () => {
   return api.get(`Regions/RegionOptions`)
     .catch((error) => {
@@ -354,6 +361,7 @@ export default {
   GetAllRegions,
   createRegion,
   getRegions,
+  getRegionsNames,
   GetRegionsBoard,
   getRegionUsers,
   getRegionFollowers,

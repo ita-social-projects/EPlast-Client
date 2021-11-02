@@ -98,7 +98,7 @@ export const descriptionValidation = ({
     ],
     RegionEmail: [
         {
-            pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
+            pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
             message: incorrectEmail,
         },
         {
@@ -112,7 +112,7 @@ export const descriptionValidation = ({
     ],
     Email: [
         {
-            pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
+            pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
             message: incorrectEmail,
         },
         {
@@ -167,6 +167,9 @@ export const descriptionValidation = ({
         },
         {
             required: true,
+            message: emptyInput(),
+        },
+        {
             max: 5,
             message: maxLength(5),
         },

@@ -124,6 +124,9 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+    .textFieldsMain span{
+        width: auto;
+    }
 }
 
 .textList {

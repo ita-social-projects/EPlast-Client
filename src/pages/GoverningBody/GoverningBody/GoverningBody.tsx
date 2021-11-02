@@ -504,14 +504,16 @@ const GoverningBody = () => {
           xs={24}
         >
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Документообіг Керівного Органу <a onClick={() => history.push(`/governingBodies/documents/${governingBody.id}`)}>
-              {documentsCount !== 0 ?
-                <Badge
-                  count={documentsCount}
-                  style={{ backgroundColor: "#3c5438" }}
-                /> : null
-              }
-            </a></Title>
+            <Title level={4}>Документообіг Керівного Органу{' '}
+              <a onClick={() => userAccesses["ViewDocument"] ? history.push(`/governingBodies/documents/${governingBody.id}`) : undefined}>
+                {documentsCount !== 0 ?
+                  <Badge
+                    count={documentsCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  /> : null
+                }
+              </a>
+            </Title>
             <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
                 {documents.length !== 0 ? (
                     documents.map((d) => (
@@ -533,6 +535,7 @@ const GoverningBody = () => {
                     <Paragraph>Ще немає документів Керівного Органу</Paragraph>
                     )}
             </Row>
+            {userAccesses["ViewDocument"]?
             <div className="governingBodyMoreButton">
               <Button
                 type="primary"
@@ -548,6 +551,8 @@ const GoverningBody = () => {
                 />
               ) : null}
             </div>
+            :null
+            }
           </Card>
         </Col>
       </Row>

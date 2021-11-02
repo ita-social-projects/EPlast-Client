@@ -131,10 +131,13 @@ const SortedCities = ( {switcher}: Props) => {
     switcher ? (getNotActiveCities()):(getActiveCities()) 
   }, [page, pageSize, searchedData]);
 
-  useEffect(()=>{
-    setPage(1);
-    switcher ? (getNotActiveCities()) :(getActiveCities())
-    setCanCreate(switcher ? false : activeCanCreate);
+  useEffect(()=> {
+    if(cities.length !== 0) {
+      setPage(1);
+      switcher ? (getNotActiveCities()) :(getActiveCities())
+      setCanCreate(switcher ? false : activeCanCreate);
+    }
+    
   },[switcher])
 
   return (

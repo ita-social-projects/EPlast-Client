@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, DatePicker, Select, Input, Button, Radio, Row, Col } from 'antd';
+import { Form, DatePicker, Select, Input, Button, Radio, Row, Col, Divider, Modal, message, Popconfirm } from 'antd';
 import moment from 'moment';
 import TextArea from 'antd/lib/input/TextArea';
 import eventUserApi from '../../../../api/eventUserApi';
@@ -15,14 +15,18 @@ import {
   emptyInput,
   isNotChosen,
   maxNumber,
-  minNumber
+  minNumber,
+  incorrectStartTime,
+  incorrectEndTime
 } from "../../../../components/Notifications/Messages"
 import { descriptionValidation } from '../../../../models/GllobalValidations/DescriptionValidation';
+import { PlusOutlined } from '@ant-design/icons';
+import EventSections from '../../../../models/EventCreate/EventSections';
 
 const classes = require('./EventCreate.module.css');
 
 interface Props {
-  onCreate: () => void;
+  onCreate?: () => void;
   setShowEventCreateDrawer: (visibleEventCreateDrawer: boolean) => void;
 }
 
@@ -34,10 +38,17 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
   const dateFormat = 'DD.MM.YYYY HH:mm';
   const [categories, setCategories] = useState<EventCategories[]>([]);
   const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
+  const [eventSections, setEventSections] = useState<EventSections[]>([]);
   const [administators, setAdministators] = useState<Users[]>([]);
+  const [visibleEndDatePicker, setVisibleEndDatePicker] = useState<boolean>(true);
+  const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  const [StartDate, setStartDate] = useState<Date>();
+
+  const [categoryName, setCategoryName] = useState<string>();
+  const [eventType, setEventType] = useState();
+  const [eventSection, setEventSection] = useState();
 
 
-  const [StartDate, setStartDate] = useState<any>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -99,28 +110,89 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         notificationLogic('error', tryAgain);
       }
     });
-    onCreate();
+    if (onCreate != undefined) {
+      onCreate();
+    }
     form.resetFields();
     setLoading(false);
     setShowEventCreateDrawer(false);
   }
+
+  const addCategory = async () => {
+    const newCategory = {
+      eventCategory: {
+        eventCategoryName: categoryName,
+        eventSectionId: eventSection,
+      },
+      eventTypeId: eventType
+    }
+    await eventsApi.createEventCategory(newCategory).then(response => {
+      notificationLogic('success', successfulCreateAction('Категорію', categoryName));
+      setVisibleModal(false);
+      clearModal();
+      getCategoriesByType(eventType);
+    }).catch(error => {
+      if (error.response?.status === 400) {
+        notificationLogic('error', tryAgain);
+      }
+    });
+  };
+
+  function showModal() {
+    setVisibleModal(true);
+  };
+
+  function clearModal() {
+    setCategoryName(undefined);
+    setEventSection(undefined);
+  }
+
+  function handleCancelModal() {
+    setVisibleModal(false);
+    clearModal();
+  };
 
   function disabledDate(current: any) {
     return current && current < moment().startOf('day');
   }
 
   function disabledEndDate(current: any) {
-    return current && current < StartDate?.startOf('day');
+    return current && current < moment(StartDate)?.startOf('day');
   }
 
-  function onChange(e: any) {
-    eventsApi.getCategories(e.target.value).then(async response => {
+  function onEventDateStartChange(e: any) {
+    if (e > moment()) {
+      setStartDate(e)
+      setVisibleEndDatePicker(false)
+      form.resetFields(['EventDateEnd'])
+    }
+  }
+
+  function getCategoriesByType(eventType: any) {
+    eventsApi.getCategories(eventType).then(async response => {
       setCategories(response.data);
       form.setFieldsValue({
         EventCategoryID: '',
       });
     })
   };
+
+  function onChange(e: any) {
+    setEventType(e.target.value);
+    getCategoriesByType(e.target.value);
+    eventsApi.getSections().then(async response => {
+      const eventSections = response.data;
+      setEventSections(eventSections);
+    })
+  };
+
+  function onCategoryNameChange(e: any) {
+    setCategoryName(e.target.value)
+  }
+
+  function onEventSectionChange(e: any) {
+    setEventSection(e)
+  }
 
   const handleSelectChange = (dropdownIndex: number, selectedId: string) => {
     const tempSelectedUsers: string[] = [...selectedUsers];
@@ -139,10 +211,16 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
 
     setAdministators([...updatedUsers]);
   }
+
   const handleCancel = () => {
     form.resetFields();
     setShowEventCreateDrawer(false);
   };
+
+  function warning() {
+    message.warning('Спочатку оберіть тип події.');
+  }
+
   return (
     <Form name="basic" form={form} onFinish={handleFinish} id='area' style={{ position: 'relative' }}>
       <Row justify="start" gutter={[12, 0]}>
@@ -157,8 +235,52 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item name="EventCategoryID" className={classes.formItem} label="Категорія" rules={[{ required: true, message: emptyInput() }]}>
-            <Select notFoundContent="Спочатку оберіть тип події" showSearch optionFilterProp="children" getPopupContainer={(triggerNode) => triggerNode.parentNode}>
-              {categories.map((item: any) => (<Select.Option key={item.eventCategoryId} value={item.eventCategoryId}> {item.eventCategoryName} </Select.Option>))}
+            <Select
+              notFoundContent="Спочатку оберіть тип події"
+              showSearch
+              optionFilterProp="children"
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              dropdownRender={menu => (
+                <div>
+                  {menu}
+                  <Divider style={{ margin: '4px 0' }} />
+                  <div>
+                    <a
+                      style={{ flex: 'none', padding: '8px', display: 'block', cursor: 'pointer' }}
+                      onClick={eventType ? showModal : warning}
+                    >
+                      <PlusOutlined /> Додати нову категорію
+                    </a>
+                    <Modal
+                      visible={visibleModal}
+                      title="Додати нову категорію"
+                      onOk={addCategory}
+                      onCancel={handleCancelModal}
+                      footer={[
+                        <Button key="back" onClick={handleCancelModal}>
+                          Відмінити
+                        </Button>,
+                        <Button key="submit" type="primary" onClick={addCategory} disabled={!categoryName || !eventSection}>
+                          Додати
+                        </Button>
+                      ]}
+                    >
+                      <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
+                        <Input style={{ flex: 'auto' }} placeholder="Назва категорії" value={categoryName} onChange={onCategoryNameChange} />
+                        <Select
+                          placeholder="Секція"
+                          value={eventSection}
+                          onChange={onEventSectionChange}
+                          style={{ paddingLeft: 9 }}>
+                          {eventSections.map((item: any) => (<Select.Option key={item.eventSectionId} value={item.eventSectionId}> {item.eventSectionName} </Select.Option>))}
+                        </Select>
+                      </div>
+                    </Modal>
+                  </div>
+                </div>
+              )}
+            >
+              {categories.map((item: any) => (<Select.Option key={item.eventCategoryId} value={item.EventCategoryId}> {item.eventCategoryName} </Select.Option>))}
             </Select>
           </Form.Item>
         </Col>
@@ -208,14 +330,26 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
-          <Form.Item label="Дата початку" name="EventDateStart" className={classes.formItem} rules={[{ required: true, message: emptyInput() }]}>
+          <Form.Item label="Дата початку" name="EventDateStart" className={classes.formItem}
+            rules={[
+              {
+                required: true,
+                message: emptyInput()
+              },
+              {
+                validator: (_: object, value: Date) => {
+                  return (value < new Date()
+                    ? Promise.reject(incorrectStartTime)
+                    : Promise.resolve())
+                }
+              }]}>
             <DatePicker
               showTime
               disabledDate={disabledDate}
               placeholder="Оберіть дату початку"
               format={dateFormat}
               className={classes.select}
-              onChange={setStartDate}
+              onChange={onEventDateStartChange}
               getPopupContainer={() => document.getElementById('area')! as HTMLElement}
               popupStyle={{ position: 'absolute' }}
             />
@@ -224,9 +358,25 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
-          <Form.Item label="Дата завершення" name="EventDateEnd" className={classes.formItem} rules={[{ required: true, message: emptyInput() }]}>
+          <Form.Item label="Дата завершення" name="EventDateEnd" className={classes.formItem}
+            rules={[
+              {
+                required: true,
+                message: emptyInput()
+              },
+              {
+                validator: (_: object, value: Date) => {
+                  return (
+                    value < StartDate!
+                      ? Promise.reject(incorrectEndTime)
+                      : Promise.resolve())
+                }
+              }
+            ]}>
             <DatePicker
               showTime
+              disabled={visibleEndDatePicker}
+              defaultPickerValue={moment(StartDate)}
               disabledDate={disabledEndDate}
               placeholder="Оберіть дату завершення"
               format={dateFormat}
@@ -304,7 +454,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
             <Button type="primary" htmlType="submit" className={classes.button} loading={loading}>
               Зберегти подію
             </Button>
-            <Button key="back" style={{marginRight:"7px"}} onClick={handleCancel} className={classes.button} loading={loading}>
+            <Button key="back" style={{ marginRight: "7px" }} onClick={handleCancel} className={classes.button} loading={loading}>
               Відмінити
             </Button>
           </Form.Item>
