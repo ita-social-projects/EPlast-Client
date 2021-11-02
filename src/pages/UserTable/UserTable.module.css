@@ -75,3 +75,22 @@
   display: flex;
   align-items: center; 
 }
+
+.customFilterDropdown {
+  padding: 0.5em;
+  border: 0.1em solid #3D5438;
+  border-radius: 0.35em;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, .2);
+}
+
+.filterElement {
+  margin-top: 0.2em;
+  margin-left: 0.2em;
+  margin-right: 0.2em;
+}
+
+.filterButton {
+  width: 50%;
+  margin-top: 0.7em;
+  margin-bottom: 0.2em;
+}
