@@ -357,7 +357,7 @@ const UsersTable = () => {
   ];
 
   const onTabChange = async (key: string) => {
-    setPage(page);
+    setPage(1);
     setPageSize(pageSize);
     setCurrentTabName(key);
   };
