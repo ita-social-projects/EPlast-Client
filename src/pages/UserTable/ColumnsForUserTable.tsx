@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import { Tooltip, Tag, Row, Col, Checkbox, Button } from "antd";
 import {
@@ -12,7 +12,6 @@ import Transgender from '../../assets/images/lgbt.svg'
 import { Roles } from "../../models/Roles/Roles";
 import "../AnnualReport/AnnualReportTable/AnnualReportTable.less";
 import styles from './UserTable.module.css';
-import { CheckboxValueType } from "antd/lib/checkbox/Group";
 
 const setTagColor = (userRoles: string) => {
   let color = "";
@@ -37,6 +36,19 @@ const setTagColor = (userRoles: string) => {
   return color;
 };
 
+const options = [
+  { label:  Roles.PlastMember,       value: Roles.PlastMember,        },
+  { label:  Roles.FormerPlastMember, value: Roles.FormerPlastMember,  },
+  { label:  Roles.Supporter,         value: Roles.Supporter,          },
+  { label:  Roles.OkrugaHead,        value: Roles.OkrugaHead,         },
+  { label:  Roles.OkrugaSecretary,   value: Roles.OkrugaSecretary,    },
+  { label:  Roles.CityHead,          value: Roles.CityHead,           },
+  { label:  Roles.CitySecretary,     value: Roles.CitySecretary,      },
+  { label:  Roles.KurinHead,         value: Roles.KurinHead,          },
+  { label:  Roles.KurinSecretary,    value: Roles.KurinSecretary,     },
+  { label:  Roles.RegisteredUser,    value: Roles.RegisteredUser,     },
+];
+
 interface Props {
   sortKey: number;
   setSortKey: any;
@@ -49,66 +61,35 @@ const ColumnsForUserTable = (props: Props): any[] => {
 
   const { sortKey, setSortKey, setFilter, setPage, filterRole } = props;
 
+  const numberOfElementsInFilter: number = 10;
+  const defaultPage: number = 1;
+
   const [filterDropdownVisible, setFilterDropdownVisible] = useState<boolean>(false);
-  const [chosenRoles, setChosenRoles] = useState<Roles[]>([]);
-  const [checked, setChecked] = useState<boolean>(true);
+  const [filterOptions, setFilterOptions] = useState<any>(options);
+  const [filterStatus, setFilterStatus] = useState({value: Array<boolean>(numberOfElementsInFilter).fill(false)});
 
-  const filterOptions = [
-    { label:  Roles.PlastMember,       value: Roles.PlastMember, },
-    { label:  Roles.FormerPlastMember, value: Roles.FormerPlastMember, },
-    { label:  Roles.Supporter,         value: Roles.Supporter, },
-    { label:  Roles.OkrugaHead,        value: Roles.OkrugaHead, },
-    { label:  Roles.OkrugaSecretary,   value: Roles.OkrugaSecretary, },
-    { label:  Roles.CityHead,          value: Roles.CityHead, },
-    { label:  Roles.CitySecretary,     value: Roles.CitySecretary, },
-    { label:  Roles.KurinHead,         value: Roles.KurinHead, },
-    { label:  Roles.KurinSecretary,    value: Roles.KurinSecretary, },
-    { label:  Roles.RegisteredUser,    value: Roles.RegisteredUser },
-  ];
-
-  function getEnumKeyByEnumValue<T extends { [index:string]: string }>(myEnum: T, enumValue: string): keyof T | null {
-    let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
-    return keys.length > 0 ? keys[0] : null;
-  }
-
-  const roles: Array<Roles> = new Array<Roles>();
-
-  const onChangeFilter = (checkedRoles: CheckboxValueType[]) => {
-    roles.length = 0;
-    checkedRoles.forEach((elem: CheckboxValueType) => {
-      const roleToConvert = getEnumKeyByEnumValue(Roles, elem.toString());
-      if (roleToConvert !== null) {
-        const checkedRoleAsEnum = Roles[roleToConvert];
-        roles.push(checkedRoleAsEnum);
-      }
-    });
-    
-    setChosenRoles(roles);
-  }
-
-  const onChangeCheckbox = (e: any) => {
-    e.preventDefault();
-    setChecked(!checked);
+  const onChangeCheckbox = (e: any, i: number) => {
+    let value = filterStatus.value.slice();
+    value[i] = !value[i];
+    setFilterStatus({value});
   }
 
   const onSearchFilter = () => {
-    setFilterDropdownVisible(false);
     const rolesToStr = new Array<string>();
-    chosenRoles.forEach(element => {
-      rolesToStr.push(element.toString());
+    filterStatus.value.forEach((element: boolean, index: number) => {
+      if (element) {
+        rolesToStr.push(filterOptions[index].value.toString());
+      }
     });
-    setChecked(false);
-    setPage(1);
+    setFilterDropdownVisible(false);
+    setPage(defaultPage);
     setFilter(rolesToStr);
   }
 
-  const onClearFilter = (e: any) => {
-    
-    setChosenRoles([]);
-    console.log(checked);
-    setChecked(false);
+  const onClearFilter = () => {
+    setFilterStatus({value: Array<boolean>(numberOfElementsInFilter).fill(false)});
     setFilterDropdownVisible(false);
-    setPage(1);
+    setPage(defaultPage);
     setFilter([]);
   }
 
@@ -348,24 +329,24 @@ const ColumnsForUserTable = (props: Props): any[] => {
       filterDropdownVisible: filterDropdownVisible,
       filterDropdown: (
         <div className={styles.customFilterDropdown}>
-          <Checkbox.Group onChange={onChangeFilter}>
-            {filterOptions.map((option, i: number) => 
-              <div>
-                <Checkbox 
-                  key={i}
-                  value={option.value}
-                  checked={true}
-                  onChange={onChangeCheckbox}
-                >
-                  {option.label}
-                </Checkbox>
-                <br />
-              </div>
-            )}
-          </Checkbox.Group>
-          <br/>
-          <Button type="primary" onClick={onClearFilter}>Скинути</Button>
-          <Button type="primary" onClick={onSearchFilter}>Пошук</Button>
+          {filterOptions.map((item: any, i: number) => 
+            <div>
+              <Checkbox 
+                key={i}
+                value={item.value}
+                checked={filterStatus.value[i]}
+                onChange={(e) => onChangeCheckbox(e, i)}
+                className={styles.filterElement}
+              >
+                {item.label}
+              </Checkbox>
+              <br />
+            </div>
+          )}
+          <div>
+            <Button className={styles.filterButton} onClick={onClearFilter}>Скинути</Button>
+            <Button className={styles.filterButton} type="primary" onClick={onSearchFilter}>Пошук</Button>
+          </div>
         </div>
       ),
       onFilterDropdownVisibleChange: () => setFilterDropdownVisible(!filterDropdownVisible),
