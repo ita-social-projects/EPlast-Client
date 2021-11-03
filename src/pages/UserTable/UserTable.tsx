@@ -69,12 +69,13 @@ const UsersTable = () => {
   const [userArhive, setArhive] = useState();
   const [currentUser, setCurrentUser] = useState<User>();
   const [user, setUser] = useState<UserTable>();
+  const [clearFilter, setClearFilter] = useState(false);
   const { SHOW_PARENT } = TreeSelect;
   const { Search } = Input;
 
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, updatedUser, searchData, sortKey, filter, userArhive, currentTabName]);
+  }, [page, pageSize, updatedUser, searchData, sortKey, filter, userArhive, currentTabName, clearFilter]);
 
   useEffect(() => {
     fetchCities();
@@ -187,6 +188,9 @@ const UsersTable = () => {
         || roles.includes(Roles.Supporter));
       setUsers(response.data.users);
       setTotal(response.data.total);
+    } catch (error) {
+      //don't set value type, check on github will fail
+      showError(error.message);
     } finally {
       setLoading(true);
     }
@@ -316,7 +320,7 @@ const UsersTable = () => {
       dynamicCities.length == 0 &&
       dynamicRegions.length == 0 &&
       dynamicClubs.length == 0 &&
-      dynamicRegions.length == 0
+      dynamicDegrees.length == 0
     ) {
       fetchData();
     } else {
@@ -335,6 +339,9 @@ const UsersTable = () => {
         });
         setUsers(response.data.users);
         setTotal(response.data.total);
+      } catch (error) {
+        //don't set value type, check on github will fail
+        showError(error.message);
       } finally {
         setLoading(true);
       }
@@ -405,6 +412,7 @@ const UsersTable = () => {
                         setDynamicCities([]);
                         setDynamicClubs([]);
                         setDynamicDegrees([]);
+                        setClearFilter(!clearFilter);
                       }
                     }}
                   >
