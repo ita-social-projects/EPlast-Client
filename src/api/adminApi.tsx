@@ -16,10 +16,10 @@ export const getUsersForTableByPage = async (data: TableFilterParameters) => {
   return await Api
     .get(`Admin/Profiles`, data, (params:any)=> {
       return Object.entries(params).map(([key, value]) => {
-      if (Array.isArray(value)) return value.map(it => `${key}=${it}`).join('&');
-        return `${key}=${value}`;
-    }).join('&');
-})
+        if (Array.isArray(value)) return value.map(it => `${key}=${it}`).join('&');
+          return `${key}=${value}`;
+      }).join('&');
+    })
     .catch((error) => {
       throw new Error(error);
     });
