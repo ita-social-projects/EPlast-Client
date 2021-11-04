@@ -80,7 +80,6 @@ const City = () => {
   const [followers, setFollowers] = useState<CityMember[]>([]);
   const [documents, setDocuments] = useState<CityDocument[]>([]);
   const [canCreate, setCanCreate] = useState(false);
-
   const [canJoin, setCanJoin] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [membersCount, setMembersCount] = useState<number>();
