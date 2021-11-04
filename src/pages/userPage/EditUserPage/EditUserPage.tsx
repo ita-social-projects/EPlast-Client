@@ -412,13 +412,15 @@ export default function () {
   const handleDeletePhoto = async () => {
     await userApi
       .getImage(defaultPhotoName)
-      .then((q: { data: any }) => {
+      .then(async (q: { data: any }) => {
         setUserAvatar(q.data);
+        await userApi.updateProfileImage(userId, q.data);
       })
       .catch(() => {
         notificationLogic("error", fileIsNotUpload("фото"));
       });
     setPhotoName(defaultPhotoName);
+    if(UpdateData) UpdateData();
   };
 
 

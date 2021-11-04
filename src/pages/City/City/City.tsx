@@ -122,7 +122,6 @@ const City = () => {
       setMembers([...members, member.data]);
     }
     setFollowers(followers.filter((f) => f.id !== memberId));
-    
     setIsLoadingPlus(true)
   };
 
@@ -292,7 +291,7 @@ const City = () => {
         [...response.data.administration, ...response.data.members, ...response.data.followers],
         response.data.logo
       );
-      setAdmins(response.data.administration)
+      setAdmins(response.data.administration);
       setMembers(response.data.members);
       setFollowers(response.data.followers);
       setDocuments(response.data.documents);
@@ -375,7 +374,7 @@ const City = () => {
     });
   };
 
-  const showDiseableModal = async (admin: CityAdmin) => {
+  const showDisableModal = async (admin: CityAdmin) => {
     return Modal.warning({
       title: "Ви не можете змінити роль цьому користувачу",
       content: (
@@ -396,7 +395,7 @@ const City = () => {
     });
   };
 
-  const showDiseable = async (admin: CityAdmin) => {
+  const showDisable = async (admin: CityAdmin) => {
     return Modal.warning({
       title: "Ви не можете змінити роль цьому користувачу",
       content: (
@@ -425,10 +424,10 @@ const City = () => {
         .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName) 
       try {     
         if (Roles.CityHeadDeputy === admin.adminType.adminTypeName && head?.userId === admin.userId){
-          showDiseableModal(head)
+          showDisableModal(head)
         }
         else if(existingAdmin?.userId === admin.userId){
-          showDiseable(admin)
+          showDisable(admin)
         }
         else if(existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);

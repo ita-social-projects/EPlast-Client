@@ -3,7 +3,6 @@ import ClubAdmin from "../../../models/Club/ClubAdmin";
 import ClubMember from "../../../models/Club/ClubMember";
 
 export const getTableAdmins = (admins: ClubAdmin[]) => {
-    console.log(admins);
     return admins.map((admin: ClubAdmin) => ({
         key: admin.user.id,
         name: `${admin.user.firstName} ${admin.user.lastName}`,
