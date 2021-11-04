@@ -298,7 +298,6 @@ const City = () => {
       setMembers(response.data.members);
       setFollowers(response.data.followers);
       setDocuments(response.data.documents);
-      setCanCreate(response.data.canCreate);
       setIsActiveCity(response.data.isActive);
       setCanJoin(response.data.canJoin);
       setMembersCount(response.data.memberCount);
