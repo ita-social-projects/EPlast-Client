@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import moment from "moment";
-import { Tooltip, Tag, Row, Col } from "antd";
+import { Tooltip, Tag, Row, Col, Checkbox, Button } from "antd";
 import {
   WomanOutlined,
   ManOutlined,
@@ -36,16 +36,62 @@ const setTagColor = (userRoles: string) => {
   return color;
 };
 
+const options = [
+  { label:  Roles.PlastMember,       value: Roles.PlastMember,        },
+  { label:  Roles.FormerPlastMember, value: Roles.FormerPlastMember,  },
+  { label:  Roles.Supporter,         value: Roles.Supporter,          },
+  { label:  Roles.OkrugaHead,        value: Roles.OkrugaHead,         },
+  { label:  Roles.OkrugaSecretary,   value: Roles.OkrugaSecretary,    },
+  { label:  Roles.CityHead,          value: Roles.CityHead,           },
+  { label:  Roles.CitySecretary,     value: Roles.CitySecretary,      },
+  { label:  Roles.KurinHead,         value: Roles.KurinHead,          },
+  { label:  Roles.KurinSecretary,    value: Roles.KurinSecretary,     },
+  { label:  Roles.RegisteredUser,    value: Roles.RegisteredUser,     },
+];
+
 interface Props {
   sortKey: number;
   setSortKey: any;
   setFilter: any;
-  filterRole: string;
+  setPage: any;
+  filterRole: any;
 }
 
 const ColumnsForUserTable = (props: Props): any[] => {
 
-  const { sortKey, setSortKey, setFilter, filterRole } = props;
+  const { sortKey, setSortKey, setFilter, setPage, filterRole } = props;
+
+  const numberOfElementsInFilter: number = 10;
+  const defaultPage: number = 1;
+
+  const [filterDropdownVisible, setFilterDropdownVisible] = useState<boolean>(false);
+  const [filterOptions, setFilterOptions] = useState<any>(options);
+  const [filterStatus, setFilterStatus] = useState({value: Array<boolean>(numberOfElementsInFilter).fill(false)});
+
+  const onChangeCheckbox = (e: any, i: number) => {
+    let value = filterStatus.value.slice();
+    value[i] = !value[i];
+    setFilterStatus({value});
+  }
+
+  const onSearchFilter = () => {
+    const rolesToStr = new Array<string>();
+    filterStatus.value.forEach((element: boolean, index: number) => {
+      if (element) {
+        rolesToStr.push(filterOptions[index].value.toString());
+      }
+    });
+    setFilterDropdownVisible(false);
+    setPage(defaultPage);
+    setFilter(rolesToStr);
+  }
+
+  const onClearFilter = () => {
+    setFilterStatus({value: Array<boolean>(numberOfElementsInFilter).fill(false)});
+    setFilterDropdownVisible(false);
+    setPage(defaultPage);
+    setFilter([]);
+  }
 
   const SortDirection = (props: {sort: number}) => {
     return<>
@@ -64,6 +110,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
       children: <div>{text}</div>
     };
   }
+
   return [
     {
       title: <Row className="tableHeader"><Col>№</Col><Col><SortDirection sort={1} /></Col></Row>,
@@ -279,57 +326,30 @@ const ColumnsForUserTable = (props: Props): any[] => {
       dataIndex: "userRoles",
       width: 170,
       ellipsis: false,
-      filteredValue: [filterRole],
-      filters: [
-        {
-          text:  Roles.PlastMember,
-          value: Roles.PlastMember,
-        },
-        {
-          text:  Roles.FormerPlastMember,
-          value: Roles.FormerPlastMember,
-        },
-        {
-          text:  Roles.Supporter,
-          value: Roles.Supporter,
-        },
-        {
-          text:  Roles.OkrugaHead,
-          value: Roles.OkrugaHead,
-        },
-        {
-          text:  Roles.OkrugaSecretary,
-          value: Roles.OkrugaSecretary,
-        },
-        {
-          text:  Roles.CityHead,
-          value: Roles.CityHead,
-        },
-        {
-          text:  Roles.CitySecretary,
-          value: Roles.CitySecretary,
-        },
-        {
-          text:  Roles.KurinHead,
-          value: Roles.KurinHead,
-        },
-        {
-          text:  Roles.KurinSecretary,
-          value: Roles.KurinSecretary,
-        },
-        {
-          text:  Roles.RegisteredUser,
-          value: Roles.RegisteredUser
-        }
-      ],
-      filterMultiple: false,
-      onFilter: (value: any, record: any) => {
-        if (value != filterRole) {
-          setFilter(value); 
-        } else {
-          return true;
-        }
-      },
+      filterDropdownVisible: filterDropdownVisible,
+      filterDropdown: (
+        <div className={styles.customFilterDropdown}>
+          {filterOptions.map((item: any, i: number) => 
+            <div>
+              <Checkbox 
+                key={i}
+                value={item.value}
+                checked={filterStatus.value[i]}
+                onChange={(e) => onChangeCheckbox(e, i)}
+                className={styles.filterElement}
+              >
+                {item.label}
+              </Checkbox>
+              <br />
+            </div>
+          )}
+          <div>
+            <Button className={styles.filterButton} onClick={onClearFilter}>Скинути</Button>
+            <Button className={styles.filterButton} type="primary" onClick={onSearchFilter}>Пошук</Button>
+          </div>
+        </div>
+      ),
+      onFilterDropdownVisibleChange: () => setFilterDropdownVisible(!filterDropdownVisible),
       render: (userRoles: any) => {
         return (
           <div className={styles.parentDiv}>

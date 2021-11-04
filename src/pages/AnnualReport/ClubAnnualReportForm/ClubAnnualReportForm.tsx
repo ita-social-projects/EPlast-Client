@@ -14,19 +14,13 @@ import {
     maxLength,
 } from "../../../components/Notifications/Messages";
 import "./ClubAnnualReportForm.less";
+import ClubProfile from "../../../models/Club/ClubProfile";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 interface Props {
-    club: {
-        id: 0;
-        name: "";
-        phoneNumber: "";
-        email: "";
-        clubURL: "";
-        slogan: "";
-    };
+    club: ClubProfile;
     admins: ClubAdmin[];
     members: ClubMember[];
     followers: ClubMember[];
@@ -64,6 +58,8 @@ export const ClubAnnualReportForm = (props: Props) => {
             { max: 500, message: maxLength(500) },
         ],
     };
+
+    const maxAmountSymbolsURL = 40;
 
     return (
         <>
@@ -269,17 +265,14 @@ export const ClubAnnualReportForm = (props: Props) => {
                             sm={24}
                             md={12}
                             lg={12}
-                            xl={10}
+                            xl={12}
                         >
-                            <Text strong={true}>
-                                Контакти:
-                            </Text>
                             {head ? (
                                 <>
                                     <Form.Item
                                         label={
                                             <Text strong={true}>
-                                                {head.adminType?.adminTypeName}:
+                                                {head.adminType?.adminTypeName}
                                             </Text>
                                         }
                                     >
@@ -292,7 +285,7 @@ export const ClubAnnualReportForm = (props: Props) => {
                                             </Text>
                                         }
                                     >
-                                        {club.clubURL?.replace(" ", "") == "" ? "немає" : club.phoneNumber}
+                                        {head.user?.phoneNumber.replace(" ", "") === "" ? "немає" : head.user?.phoneNumber}
                                     </Form.Item>
                                     <Form.Item
                                         label={
@@ -301,12 +294,20 @@ export const ClubAnnualReportForm = (props: Props) => {
                                             </Text>
                                         }
                                     >
-                                        {club.clubURL?.replace(" ", "") == "" ? "немає" : club.email}
+                                        {head.user?.email.replace(" ", "") === "" ? "немає" : head.user?.email}
                                     </Form.Item>
                                 </>
                             ) : (
                                 <> Ще немає адміністратора куреня</>
                             )}
+                        </Col>
+                        <Col
+                            xs={24}
+                            sm={24}
+                            md={12}
+                            lg={12}
+                            xl={12}
+                        >
                             <Form.Item
                                 label={
                                     <Text strong={true}>
@@ -314,33 +315,34 @@ export const ClubAnnualReportForm = (props: Props) => {
                                     </Text>
                                 }
                             >
-                                {club.clubURL?.replace(" ", "") == "" ? "немає" : club.clubURL}
+                                {club.clubURL?.replace(" ", "") == "" ? (
+                                    "немає"
+                                ) : (
+                                    <a target="_blank" href={club.clubURL}>
+                                        {club.clubURL?.length > maxAmountSymbolsURL
+                                            ? club.clubURL?.substring(0, maxAmountSymbolsURL) + "..."
+                                            : club.clubURL!}
+                                    </a>
+                                )}
                             </Form.Item>
-                        </Col>
-                        <Col
-                            xs={24}
-                            sm={24}
-                            md={12}
-                            lg={12}
-                            xl={10}
-                        >
                             <Form.Item
                                 label={
-                                    <Text strong={true}>
-                                        Гасло
-                                    </Text>
+                                    <Text strong={true}>Номер телефону</Text>
                                 }
                             >
-                                {club?.slogan == "" ? "немає" : club.slogan}
+                                {club.phoneNumber?.replace(" ", "") === "" ? "немає" : club.phoneNumber!}
+                            </Form.Item>
+                            <Form.Item
+                                label={
+                                    <Text strong={true}>Електронна пошта</Text>
+                                }
+                            >
+                                {club.email?.replace(" ", "") === "" ? "немає" : club.email!}
                             </Form.Item>
                         </Col>
-                        <Col
-                            xs={24}
-                            sm={24}
-                            md={12}
-                            lg={12}
-                            xl={4}
-                        >
+                    </Row>
+                    <Row className="ClubAnnualReportFormDescriptionDate">
+                        <Col>
                             <Form.Item
                                 label={
                                     <Text strong={true}>
