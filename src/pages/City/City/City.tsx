@@ -287,7 +287,7 @@ const City = () => {
         [...response.data.administration, ...response.data.members, ...response.data.followers],
         response.data.logo
       );
-      setAdmins(response.data.administration);
+      setAdmins(response.data.administration)
       setMembers(response.data.members);
       setFollowers(response.data.followers);
       setDocuments(response.data.documents);
@@ -689,7 +689,7 @@ const City = () => {
             </Title>
             <Row className={members.length >= 4 ? "cityItems1" : "cityItems"} justify="center" gutter={[0, 16]}>
               {members.length !== 0 ? (
-                members.map((member) => (
+                members.slice(0, 9).map((member) => (
                   <Col
                     className="cityMemberItem"
                     key={member.id}
@@ -746,7 +746,7 @@ const City = () => {
             </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {admins.length !== 0 ? (
-                admins.map((admin) => (
+                admins.slice(0, 6).map((admin) => (
                   <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                     <div
                       onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
@@ -809,7 +809,7 @@ const City = () => {
             </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
-                documents.map((document) => (
+                documents.slice(0, 6).map((document) => (
                   <Col
                     className="cityDocumentItem"
                     xs={12}
