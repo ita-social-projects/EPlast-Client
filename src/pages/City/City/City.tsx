@@ -79,8 +79,6 @@ const City = () => {
   const [members, setMembers] = useState<CityMember[]>([]);
   const [followers, setFollowers] = useState<CityMember[]>([]);
   const [documents, setDocuments] = useState<CityDocument[]>([]);
-  const [canCreate, setCanCreate] = useState(false);
-
   const [canJoin, setCanJoin] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [membersCount, setMembersCount] = useState<number>();
@@ -643,7 +641,7 @@ const City = () => {
                 <Col xs={24} sm={4}>
                   <Row
                     className="cityIcons"
-                    justify={canCreate ? "center" : "start"}
+                    justify={userAccesses["DeleteCity"] ? "center" : "start"}
                   >
                     {userAccesses["EditCity"] ? (
                       <Col>
