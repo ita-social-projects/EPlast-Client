@@ -287,7 +287,7 @@ const City = () => {
         [...response.data.administration, ...response.data.members, ...response.data.followers],
         response.data.logo
       );
-      setAdmins(response.data.administration)
+      setAdmins(response.data.administration);
       setMembers(response.data.members);
       setFollowers(response.data.followers);
       setDocuments(response.data.documents);
