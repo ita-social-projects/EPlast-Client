@@ -43,6 +43,14 @@ export const createCity = async (data: any) => {
   });
 };
 
+export const getUserCityAccess = async (cityId: number, userId: string) => {
+  return await api.get(`UserAccess/GetUserCityAccess/${cityId}/${userId}`)
+  .catch( error => {
+       throw error;
+       } 
+  );
+}
+
 export const updateCity = async (id: number, data: any) => {
   return api.put(`Cities/EditCity/${id}`, data).catch((error) => {
     throw new Error(error);

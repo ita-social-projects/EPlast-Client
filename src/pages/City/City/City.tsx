@@ -36,6 +36,7 @@ import {
   archiveCity,
   unArchiveCity,
   removeCity,
+  getUserCityAccess,
   toggleMemberStatus,
   removeFollower
 } from "../../../api/citiesApi";
@@ -48,6 +49,7 @@ import CityAdmin from "../../../models/City/CityAdmin";
 import CityDocument from "../../../models/City/CityDocument";
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
 import CheckActiveMembersForm from "./CheckActiveMembersForm";
+import jwt from 'jwt-decode';
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
@@ -61,6 +63,7 @@ import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecreta
 import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
 import { number } from "yup";
+import AuthStore from "../../../stores/AuthStore";
 
 const City = () => {
   const history = useHistory();
@@ -71,12 +74,13 @@ const City = () => {
   const [cityLogo64, setCityLogo64] = useState<string>("");
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
+  const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({})
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
   const [members, setMembers] = useState<CityMember[]>([]);
   const [followers, setFollowers] = useState<CityMember[]>([]);
   const [documents, setDocuments] = useState<CityDocument[]>([]);
   const [canCreate, setCanCreate] = useState(false);
-  const [canEdit, setCanEdit] = useState(false);
+
   const [canJoin, setCanJoin] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [membersCount, setMembersCount] = useState<number>();
@@ -280,6 +284,7 @@ const City = () => {
   const getCity = async () => {
     setLoading(true);
     try {
+      await getUserAccessesForCities();
       const response = await getCityById(+id);
       setActiveUserID(userApi.getActiveUserId());
       const responce1 = await cityNameOfApprovedMember(userApi.getActiveUserId());
@@ -296,7 +301,6 @@ const City = () => {
       setFollowers(response.data.followers);
       setDocuments(response.data.documents);
       setCanCreate(response.data.canCreate);
-      setCanEdit(response.data.canEdit);
       setIsActiveCity(response.data.isActive);
       setCanJoin(response.data.canJoin);
       setMembersCount(response.data.memberCount);
@@ -309,6 +313,7 @@ const City = () => {
       setLoading(false);
     }
   };
+
   const updateAdmins = async () => {
     const response = await getCityById(+id);
     setAdminsCount(response.data.administrationCount);
@@ -442,6 +447,15 @@ const City = () => {
     else{
       await editCityAdmin(admin);
     }
+  }
+
+  const getUserAccessesForCities = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    await getUserCityAccess(+id, user.nameid).then(
+      response => {
+        setUserAccesses(response.data);
+      }
+    );
   }
 
   const handleClose = async () => {
@@ -614,7 +628,7 @@ const City = () => {
                   Деталі
                 </Button>
               </Col>
-              {canEdit ? (
+              {userAccesses["EditCity"] ? (
                 <Col>
                   <Button
                     type="primary"
@@ -625,13 +639,13 @@ const City = () => {
                   </Button>
                 </Col>
               ) : null}
-              {canEdit ? (
+              {userAccesses["EditCity"] ? (
                 <Col xs={24} sm={4}>
                   <Row
                     className="cityIcons"
                     justify={canCreate ? "center" : "start"}
                   >
-                    {canEdit ? (
+                    {userAccesses["EditCity"] ? (
                       <Col>
                         <Tooltip title="Редагувати станицю">
                           <EditOutlined
@@ -643,7 +657,7 @@ const City = () => {
                         </Tooltip>
                       </Col>
                     ) : null}
-                    {canCreate ? (
+                    {userAccesses["DeleteCity"] ? (
                       isActiveCity ? (
                         <Col offset={1}>
                           <Tooltip title="Архівувати станицю">
@@ -701,7 +715,7 @@ const City = () => {
                     sm={8}
                   >
                     <div
-                      onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
+                      onClick={() => userAccesses["EditCity"] || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
                         ? history.push(`/userpage/main/${member.userId}`)
                         : undefined
                       }
@@ -753,7 +767,7 @@ const City = () => {
                 admins.slice(0, adminsToShow).map((admin) => (
                   <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                     <div
-                      onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
+                      onClick={() => userAccesses["EditCity"] || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
                         ? history.push(`/userpage/main/${admin.userId}`)
                         : undefined
                       }
@@ -773,7 +787,7 @@ const City = () => {
               )}
             </Row>
             <div className="cityMoreButton">
-              {isActiveCity ? (canEdit ? (
+              {isActiveCity ? (userAccesses["EditCity"] ? (
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
@@ -795,10 +809,7 @@ const City = () => {
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
             <Title level={4}>Документообіг станиці <a onClick={() =>
-              canEdit || activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)
-                || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
-                || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy)
-                || (!activeUserRoles.includes(Roles.RegisteredUser) && city.name == activeUserCity)
+              userAccesses["IsAdmin"] ||(userAccesses["DownloadDocument"] && city.name == activeUserCity)
                 ?
                 history.push(`/cities/documents/${city.id}`)
                 : undefined
@@ -833,11 +844,7 @@ const City = () => {
               )}
             </Row>
             <div className="cityMoreButton">
-              {canEdit || activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)
-                || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
-                || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy)
-                || (!activeUserRoles.includes(Roles.RegisteredUser)
-                  && city.name == activeUserCity)
+              {userAccesses["IsAdmin"] || (userAccesses["DownloadDocument"] && city.name == activeUserCity)
                 ? (
                   <Button
                     type="primary"
@@ -848,7 +855,7 @@ const City = () => {
                   </Button>
                 ) : null
               }
-              {isActiveCity ? (canEdit ? (
+              {isActiveCity ? (userAccesses["EditCity"] ? (
                 <PlusSquareFilled
                   className="addReportIcon"
                   onClick={() => setVisibleModal(true)}
@@ -902,7 +909,7 @@ const City = () => {
                   >
                     <div>
                       <div
-                        onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
+                        onClick={() => userAccesses["EditCity"] || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
                           ? history.push(`/userpage/main/${followers.userId}`)
                           : undefined
                         }
@@ -915,7 +922,7 @@ const City = () => {
                         <p className="userName">{followers.user.firstName}</p>
                         <p className="userName">{followers.user.lastName}</p>
                       </div>
-                      {(canEdit && isLoadingPlus) || (isLoadingMemberId !== followers.id && !isLoadingPlus) ? (
+                      {(userAccesses["EditCity"] && isLoadingPlus) || (isLoadingMemberId !== followers.id && !isLoadingPlus) ? (
                         <Tooltip placement={"bottom"} title={"Додати до членів"}>
                           <PlusOutlined
                             className="approveIcon"
@@ -983,7 +990,7 @@ const City = () => {
         <CheckActiveMembersForm members={members} followers={followers} admins={admins} onAdd={handleConfirm} />
       </Modal>
 
-      {canEdit ? (
+      {userAccesses["EditCity"] ? (
         <AddDocumentModal
           cityId={+id}
           document={document}
