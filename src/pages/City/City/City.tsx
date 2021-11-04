@@ -93,6 +93,11 @@ const City = () => {
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [activeUserID, setActiveUserID] = useState<string>();
+  const documentsToShow = 6;
+  const adminsToShow = 6;
+  const membersToShow = 9;
+  const followersToShow = 5;
+  const followersToShowOnAdd = 6;
 
   const changeApproveStatus = async (memberId: number) => {
     setIsLoadingMemberId(memberId)
@@ -688,7 +693,7 @@ const City = () => {
             </Title>
             <Row className={members.length >= 4 ? "cityItems1" : "cityItems"} justify="center" gutter={[0, 16]}>
               {members.length !== 0 ? (
-                members.map((member) => (
+                members.slice(0, membersToShow).map((member) => (
                   <Col
                     className="cityMemberItem"
                     key={member.id}
@@ -745,7 +750,7 @@ const City = () => {
             </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {admins.length !== 0 ? (
-                admins.map((admin) => (
+                admins.slice(0, adminsToShow).map((admin) => (
                   <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                     <div
                       onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
@@ -808,7 +813,7 @@ const City = () => {
             </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
-                documents.map((document) => (
+                documents.slice(0, documentsToShow).map((document) => (
                   <Col
                     className="cityDocumentItem"
                     xs={12}
@@ -888,7 +893,7 @@ const City = () => {
                 </Col>
               ) : null) : <Paragraph>Ще немає прихильників станиці</Paragraph>}
               {followers.length !== 0 ? (
-                followers.slice(0, canJoin ? 5 : 6).map((followers) => (
+                followers.slice(0, canJoin ? followersToShow : followersToShowOnAdd).map((followers) => (
                   <Col
                     className="cityMemberItem"
                     xs={12}
