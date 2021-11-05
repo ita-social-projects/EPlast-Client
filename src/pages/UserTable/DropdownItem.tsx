@@ -11,16 +11,16 @@ import { NonAdminRole } from "../../models/Roles/NonAdminRole";
 
 // So, basically this file is designed to incapsulate all logic of building the context menu on UserTable.
 // In other files logic of user accesses will be on backend in JSON file (at least that's what we agreed to start doing on 04.11.2021) 
-// However, when I had a task to correct access logic on UT (a month before mentioned date), I wasn't awared of such a possibility, 
+// However, when I had a task to correct access logic on UT (a month before mentioned date), I wasn't aware of such a possibility, 
 // so I did all of needed stuff here. Maybe, it was my biggest mistake, because now you need to read all of this comments in order to 
-// understand what's going on here. Honestly, I was allowed to keep this file and don't write accesses on backend only
+// understand what's going on here. Honestly, I was allowed to keep this file and don't rewrite accesses on backend only
 // because I had done a lot of work here despite the fact that everyone know that it's really terrible. I'm sorry.
 // After all this entry, there are a few instructions if you'll need to change smth. If things are going too wrong, you can 
 // ask Ira how to contact me and tell me all what you think about this creep. Good luck. 
 
 
 
-//                                    INSTRUCTIONS
+//                                      INSTRUCTIONS
 //
 //  (1) ===== NEW ROLE, like Admin or Governing Body Admin (with a lot of rights), was added =====
 //    1. Edit enum 'AdminRole', which is located in 'EPLAST-CLIENT\src\models\Roles' - you need to add 
@@ -92,6 +92,8 @@ export class DropdownItemCreator {
     const checkerCreator: CheckCreator = new CheckCreator(); 
     DropdownItem.checkCreator = checkerCreator;
 
+    //List of all items in context menu is recorded as linked list. It doesn't carry any
+    //semantic load, only used for sequential check of each item in this list)
     checkProfileItem.setNext(deleteItem).setNext(editClubItem).setNext(editCityItem)
       .setNext(editRegionItem).setNext(addDegreeeItem).setNext(editUserRole);
 
