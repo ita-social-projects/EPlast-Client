@@ -36,6 +36,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
   const [visRule, setVisRule] = useState(false);
   const fetchData = async () => {
     const distData = (await distinctionApi.getDistinctions()).data;
+    console.log(distData);
     setDistData(distData);
   };
 

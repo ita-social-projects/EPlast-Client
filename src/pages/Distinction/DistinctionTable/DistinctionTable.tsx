@@ -48,22 +48,22 @@ const DistinctionTable = () => {
   const [total, setTotal] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
   const [distinctions, setDistinctions] = useState<UserDistinctionTableInfo[]>([
-        {
-            count: 0,
-            total: 0,
-            id: 0,
-            number: 0,
-            distinctionName: "",
-            userId: "",
-            userName: "",
-            reporter: "",
-            reason: "",
-            date: new Date(),
-        }
+    {
+      count: 0,
+      total: 0,
+      id: 0,
+      number: 0,
+      distinctionName: "",
+      userId: "",
+      userName: "",
+      reporter: "",
+      reason: "",
+      date: new Date(),
+    }
   ]);
 
   useEffect(() => {
-      const fetchData = async () => {
+    const fetchData = async () => {
       setLoading(true);
       const res: UserDistinctionTableInfo[] = await distinctionApi.getAllUsersDistinctions(searchedData, page, pageSize);
       setTotal(res[0]?.total);
@@ -73,14 +73,14 @@ const DistinctionTable = () => {
     };
     fetchData();
   }, [searchedData, page, pageSize]);
-  
+
   const handleSearch = (event: any) => {
     setPage(1);
     setSearchedData(event);
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if(event.target.value.toLowerCase()==='') setSearchedData('');
+    if (event.target.value.toLowerCase() === '') setSearchedData('');
   }
 
   const showModal = () => {
@@ -104,16 +104,16 @@ const DistinctionTable = () => {
 
   const handleClickAway = () => {
     setShowDropdown(false);
-    };
-    
+  };
+
   const handlePageChange = (page: number) => {
     setPage(page);
-    };
+  };
 
   const handleSizeChange = (page: number, pageSize: number = 10) => {
     setPage(page);
     setPageSize(pageSize);
-    };
+  };
 
   const CreateDeleteNotification = (id: number) => {
     const userDistinction = distinctions.find(
@@ -169,12 +169,12 @@ const DistinctionTable = () => {
       (d: { id: number }) => d.id !== id
     );
     setDistinctions([...filteredData]);
-    setTotal(total-1);
-    setCount(count-1);
+    setTotal(total - 1);
+    setCount(count - 1);
     notificationLogic("success", successfulDeleteAction("Відзначення"));
     CreateDeleteNotification(id);
   };
-  
+
   const handleEdit = (
     id: number,
     distinction: Distinction,
@@ -205,57 +205,57 @@ const DistinctionTable = () => {
 
   return (
     <Layout>
-        <Content
-          onClick={() => {
-            setShowDropdown(false);
-          }}
-        >
-          <h1 className={classes.titleTable}>Відзначення</h1>
+      <Content
+        onClick={() => {
+          setShowDropdown(false);
+        }}
+      >
+        <h1 className={classes.titleTable}>Відзначення</h1>
 
-          <>
-            <div className={classes.searchContainer}>
-              {canEdit === true ? (
-                <>
-                  <Button type="primary" onClick={showModal}>
-                    Додати відзначення
-                  </Button>
-                  <Button type="primary" onClick={showModalEditTypes}>
-                    Редагування типів відзначень
-                  </Button>
-                </>
-              ) : (
-                  <></>
-                )}
-              <Search
-                enterButton
-                placeholder="Пошук"
-                allowClear
-                onChange={handleSearchChange}
-                onSearch={handleSearch}                
-               />
-            </div>
-            {loading ? (<Spinner />) : (<div>
-              <Table
-                className={classes.table}
-                dataSource={distinctions}
-                columns={columns}
-                scroll={{ x: 1300 }}
-                onRow={(record) => {
-                  return {
-                    onClick: () => {
-                      setShowDropdown(false);
-                    },
-                    onContextMenu: (event) => {
-                      event.preventDefault();
-                      setShowDropdown(true);
-                      setRecordObj(record.id);
-                      setUserId(record.userId);
-                      setX(event.pageX);
-                      setY(event.pageY);
-                    },
-                  };
-                }}
-                onChange={(pagination) => {
+        <>
+          <div className={classes.searchContainer}>
+            {canEdit === true ? (
+              <>
+                <Button type="primary" onClick={showModal}>
+                  Додати відзначення
+                </Button>
+                <Button type="primary" onClick={showModalEditTypes}>
+                  Редагування типів відзначень
+                </Button>
+              </>
+            ) : (
+              <></>
+            )}
+            <Search
+              enterButton
+              placeholder="Пошук"
+              allowClear
+              onChange={handleSearchChange}
+              onSearch={handleSearch}
+            />
+          </div>
+          {loading ? (<Spinner />) : (<div>
+            <Table
+              className={classes.table}
+              dataSource={distinctions}
+              columns={columns}
+              scroll={{ x: 1300 }}
+              onRow={(record) => {
+                return {
+                  onClick: () => {
+                    setShowDropdown(false);
+                  },
+                  onContextMenu: (event) => {
+                    event.preventDefault();
+                    setShowDropdown(true);
+                    setRecordObj(record.id);
+                    setUserId(record.userId);
+                    setX(event.pageX);
+                    setY(event.pageY);
+                  },
+                };
+              }}
+              onChange={(pagination) => {
                 if (pagination) {
                   window.scrollTo({
                     left: 0,
@@ -263,46 +263,46 @@ const DistinctionTable = () => {
                     behavior: "smooth",
                   });
                 }
-                }}
-                pagination={{
-                    current: page,
-                    pageSize: pageSize,
-                    total: count,
-                    showLessItems: true,
-                    responsive: true,
-                    showSizeChanger: true,
-                    onChange: (page) => handlePageChange(page),
-                    onShowSizeChange: (page, size) => handleSizeChange(page, size),
-                }}
-                bordered
-                rowKey="id"
-              />
-            </div>)}
-            <ClickAwayListener onClickAway={handleClickAway}>
-              <DropDownDistinctionTable
-                showDropdown={showDropdown}
-                record={recordObj}
-                userId={userId}
-                pageX={x}
-                pageY={y}
-                canEdit={canEdit}
-                onDelete={handleDelete}
-                onEdit={handleEdit}
-              />
-            </ClickAwayListener>
+              }}
+              pagination={{
+                current: page,
+                pageSize: pageSize,
+                total: count,
+                showLessItems: true,
+                responsive: true,
+                showSizeChanger: true,
+                onChange: (page) => handlePageChange(page),
+                onShowSizeChange: (page, size) => handleSizeChange(page, size),
+              }}
+              bordered
+              rowKey="id"
+            />
+          </div>)}
+          <ClickAwayListener onClickAway={handleClickAway}>
+            <DropDownDistinctionTable
+              showDropdown={showDropdown}
+              record={recordObj}
+              userId={userId}
+              pageX={x}
+              pageY={y}
+              canEdit={canEdit}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+            />
+          </ClickAwayListener>
 
-            <AddDistinctionModal
-              setVisibleModal={setVisibleModal}
-              visibleModal={visibleModal}
-              onAdd={handleAdd}
-            />
-            <EditDistinctionTypesModal
-              setVisibleModal={setVisibleModalEditDist}
-              visibleModal={visibleModalEditDist}
-            />
-          </>
-        </Content>
-      </Layout>
-    );
+          <AddDistinctionModal
+            setVisibleModal={setVisibleModal}
+            visibleModal={visibleModal}
+            onAdd={handleAdd}
+          />
+          <EditDistinctionTypesModal
+            setVisibleModal={setVisibleModalEditDist}
+            visibleModal={visibleModalEditDist}
+          />
+        </>
+      </Content>
+    </Layout>
+  );
 };
 export default DistinctionTable;
