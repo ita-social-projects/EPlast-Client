@@ -44,7 +44,7 @@ export const Secretaries = () => {
     const [noTitleKey, setKey] = useState<string>('1');
     const [LoadInfo, setLoadInfo] = useState<boolean>(false);
     
-    const {userProfile, UpdateData} = useContext(PersonalDataContext);
+    const {userProfile, fullUserProfile , UpdateData} = useContext(PersonalDataContext);
 
     const onTabChange =  (key:string) => { setKey(key) };
 
@@ -75,22 +75,21 @@ export const Secretaries = () => {
                     <div className="avatarWrapperSecretaries">
                         <StickyContainer className="kadraWrapper">
                             <AvatarAndProgressStatic
-                                imageUrl={userProfile?.user.imagePath as string}
-                                time={userProfile?.timeToJoinPlast}
-                                firstName={userProfile?.user.firstName}
-                                lastName={userProfile?.user.lastName}
-                                isUserPlastun={userProfile?.isUserPlastun}
-                                pseudo={userProfile?.user.pseudo}
-                                governingBody={userProfile?.user.governingBody}
-                                region={userProfile?.user.region}
-                                city={userProfile?.user.city}
-                                club={userProfile?.user.club} 
-                                governingBodyId={userProfile?.user.governingBodyId}
-                                cityId={userProfile?.user.cityId}
-                                clubId={userProfile?.user.clubId}
-                                regionId={userProfile?.user.regionId}
-                                cityMemberIsApproved={userProfile?.user.cityMemberIsApproved}
-                                clubMemberIsApproved={userProfile?.user.clubMemberIsApproved}
+                                time={fullUserProfile?.timeToJoinPlast}
+                                firstName={fullUserProfile?.user.firstName}
+                                lastName={fullUserProfile?.user.lastName}
+                                isUserPlastun={fullUserProfile?.isUserPlastun}
+                                pseudo={fullUserProfile?.user.pseudo}
+                                governingBody={fullUserProfile?.user.governingBody}
+                                region={fullUserProfile?.user.region}
+                                city={fullUserProfile?.user.city}
+                                club={fullUserProfile?.user.club} 
+                                governingBodyId={fullUserProfile?.user.governingBodyId}
+                                cityId={fullUserProfile?.user.cityId}
+                                clubId={fullUserProfile?.user.clubId}
+                                regionId={fullUserProfile?.user.regionId}
+                                cityMemberIsApproved={fullUserProfile?.user.cityMemberIsApproved}
+                                clubMemberIsApproved={fullUserProfile?.user.clubMemberIsApproved}
                                 showPrecautions = {userProfile?.shortUser === null} />
                         </StickyContainer>
                     </div>

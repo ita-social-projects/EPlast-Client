@@ -289,13 +289,13 @@ const Region = () => {
   const addRegionAdmin = async (newAdmin: RegionAdmin) => {
     let previousAdmin: RegionAdmin = new RegionAdmin(); 
     admins.map((admin) => {
-      if(admin.adminType.adminTypeName == newAdmin.adminType.adminTypeName){
+      if (admin.adminType.adminTypeName == newAdmin.adminType.adminTypeName){
         previousAdmin = admin;
       }
     });
     await AddAdmin(newAdmin);
     await updateAdmins();
-    if(previousAdmin.adminType.adminTypeName != ""){
+    if (previousAdmin.adminType.adminTypeName != ""){
       await createNotification(previousAdmin.userId,
         `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`, true);
     }
@@ -312,103 +312,58 @@ const Region = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`, true);
   };
 
-  const showDiseableModal = async (admin: RegionAdmin) => {
-    return Modal.warning({
-      title: "Ви не можете змінити роль цьому користувачу",
-      content: (
-        <div style={{ margin: 15 }}>
-          <b>
-            {head.user.firstName} {head.user.lastName}
-          </b>{" "}
-          є Головою Округи, час правління закінчується{" "}
-          <b>
-            {moment.utc(head.endDate).local().format("DD.MM.YYYY") === "Invalid date"
-              ? "ще не скоро"
-              : moment.utc(head.endDate).local().format("DD.MM.YYYY")}
-          </b>
-          .
-        </div>
-      ),
-      onOk() {}
-    });
-  };
-
-  const showConfirmRegionAdmin  = async (admin: RegionAdmin) => {
-    return Modal.confirm({
+  const showConfirm = (newAdmin: RegionAdmin, existingAdmin: RegionAdmin) => {
+    Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: ( admin.adminType.adminTypeName.toString() === "Голова Округи" ?
+      content: (
         <div style={{ margin: 10 }}>
           <b>
-            {head?.user.firstName} {head?.user.lastName}
+            {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          є Головою Округи, час правління закінчується{" "}
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
           <b>
-            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {existingAdmin.endDate === null || existingAdmin.endDate === undefined
               ? "ще не скоро"
-              : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
+              : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
-        :
-        <div style={{ margin: 10 }}>
-        <b>
-          {headDeputy?.user.firstName} {headDeputy?.user.lastName}
-        </b>{" "}
-        є Заступником Голови Округи, час правління закінчується{" "}
-        <b>
-          {moment.utc(headDeputy?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
-            ? "ще не скоро"
-            : moment.utc(headDeputy?.endDate).local().format("DD.MM.YYYY")}
-        </b>
-          .
-        </div>
-      ),
+      ),    
       onCancel() { },
-      async onOk() {
-        if (admin.id === 0) {
-         await addRegionAdmin(admin);
+      onOk() {
+        if (newAdmin.id === 0) {
+          addRegionAdmin(newAdmin);
+          setAdmins((admins as RegionAdmin[]).map(x => x.userId === existingAdmin?.userId ? newAdmin : x));
         } else {
-         await editRegionAdmin(admin);
+          editRegionAdmin(newAdmin);
         }
-      },
+      }
     });
   };
-  
-  const checkAdminId = async (admin: RegionAdmin)=> {
-    if (admin.id === 0) {
-      await addRegionAdmin(admin);
-    } else {
-      await editRegionAdmin(admin);
-    }
-  }
 
   const handleConfirm = async () => {
     setActiveMemberVisibility(false);
   };
 
   const handleOk = async(admin: RegionAdmin) => {
-    try {
-      if (admin.adminType.adminTypeName === Roles.OkrugaHead) {
-        if (head !== '' && head?.userId !== admin.userId) {
-          showConfirmRegionAdmin(admin);
-          } else {
-            checkAdminId(admin);
-          }
-      } else if (admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy) {
-        if (admin.userId === head?.userId) {
-          showDiseableModal(admin);
-        } else if (headDeputy !== '' && headDeputy?.userId !== admin.userId) {
-          showConfirmRegionAdmin(admin);
-          } else {
-            checkAdminId(admin);
-          }
-        } else {
+    if (admin.id === 0) {
+      try {
+        const existingAdmin  = (admins as RegionAdmin[])
+        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
+        if(existingAdmin !== undefined) {
+          showConfirm(admin, existingAdmin);
+        }
+        else {
           await addRegionAdmin(admin);
+        }
+      } finally {
+        setVisible(false);
       }
-    } finally {
-      setVisible(false);
     }
-  };
+    else{
+      await editRegionAdmin(admin);
+    }
+  }
 
   const handleClose = async() => {
     setVisible(false);

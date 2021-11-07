@@ -13,9 +13,11 @@ import UserApi from "../../../api/UserApi";
 import { Data, IPersonalDataContext, User } from "../Interface/Interface";
 import notificationLogic from '../../../components/Notifications/Notification';
 import { string } from "yup";
+import { off } from "process";
 
-const DefaultState:IPersonalDataContext = {
+const DefaultState: IPersonalDataContext = {
   userProfile: undefined,
+  fullUserProfile: undefined,
   activeUserRoles: [],
   activeUserId: "",
   loading: false,
@@ -42,6 +44,7 @@ export default function ({
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
   const [loading, setLoading] = useState(false);
   const [imageBase64, setImageBase64] = useState<string>("");
+  const [fullUserProfile, setFullUserProfile] = useState<Data>();
 
   const [userProfile, SetUserProfile] = useState<Data>();
   const ChangeUserProfile = (user: Data) => {
@@ -53,29 +56,43 @@ export default function ({
   }
 
   const fetchData = async () => {
+    setLoading(false);
     let userRoles = UserApi.getActiveUserRoles();
     setActiveUserRoles(userRoles);
     let currentUserId = UserApi.getActiveUserId();
     setActiveUserId(userId);
     let userProfile = await UserApi.getActiveUserProfile();
     setActiveUserProfile(userProfile);
+    await UserApi.getById(userId).then(async (response) => {
+      setFullUserProfile(response.data);
+    }).catch((error) => {
+      notificationLogic("error", error.message);
+    });
+
     await UserApi
       .getUserProfileById(currentUserId, userId)
       .then((response) => {
         SetUserProfile(response.data);
-        UserApi.getImage(response.data?.user.imagePath ).then((response: { data: any }) => {
-          setImageBase64(response.data);
-        });
+        if (response.data?.user !== null) {
+          UserApi.getImage(response.data?.user.imagePath).then((response: { data: any }) => {
+            setImageBase64(response.data);
+          });
+        }
+        if (response.data?.shortUser !== null) {
+          UserApi.getImage(response.data?.shortUser.imagePath).then((response: { data: any }) => {
+            setImageBase64(response.data);
+          });
+        }
       })
       .catch((error) => {
         notificationLogic("error", error.message);
-      });   
-      setLoading(true);
+      });
+    setLoading(true);
   }
 
   return (
     <PersonalDataContext.Provider value={{
-      userProfile, activeUserRoles, activeUserId, activeUserProfile, loading, imageBase64, ChangeUserProfile, UpdateData
+      userProfile, fullUserProfile, activeUserRoles, activeUserId, activeUserProfile, loading, imageBase64, ChangeUserProfile, UpdateData
     }}>
       <div className="mainContainer">
         <Menu id={userId} />

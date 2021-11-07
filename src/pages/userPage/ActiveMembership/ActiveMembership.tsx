@@ -1,37 +1,34 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import classes from "./ActiveMembership.module.css";
-import { Typography, List, Button, Tooltip, Tag, Empty, Skeleton } from "antd";
+import { Typography, List, Button, Tooltip, Tag, Empty, Skeleton, Form } from "antd";
 import "../personalData/PersonalData.less";
 import activeMembershipApi, {
+  UserDates,
   UserPlastDegree,
 } from "../../../api/activeMembershipApi";
-import userApi from "../../../api/UserApi";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import ModalAddPlastDegree from "./PlastDegree/ModalAddPlastDegree";
-import moment, { updateLocale } from "moment";
+import moment from "moment";
 import ModalChangeUserDates from "./UserDates/ModalChangeUserDates";
 import DeleteDegreeConfirm from "./PlastDegree/DeleteDegreeConfirm";
 import { SafetyCertificateOutlined } from "@ant-design/icons";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 import notificationLogic from "../../../components/Notifications/Notification";
-import jwt_decode from "jwt-decode";
 import { Roles } from "../../../models/Roles/Roles";
-import { Data } from '../Interface/Interface';
 import { successfulDeleteDegree } from "../../../components/Notifications/Messages";
-import { Console } from "console";
-import { boolean } from "yup";
 import { PersonalDataContext } from "../personalData/PersonalData";
+import { StickyContainer } from "react-sticky";
 const { Title } = Typography;
 
 const itemMaxLength = 43;
 const ActiveMembership = () => {
   const { userId } = useParams();
   const [accessLevels, setAccessLevels] = useState([]);
-  const [dates, setDates] = useState<any>({});
-  const {userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData} = useContext(PersonalDataContext);
+  const [dates, setDates] = useState<UserDates>();
+  const { userProfile, activeUserRoles, fullUserProfile, activeUserProfile, UpdateData } = useContext(PersonalDataContext);
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
   const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
@@ -51,20 +48,56 @@ const ActiveMembership = () => {
   ];
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
+  const SetDefaultDates = () => {
+    const defaultDates: UserDates = {
+      dateEntry: "",
+      dateOath: "",
+      dateEnd: "",
+      userId: userId
+    }
+    setDates(defaultDates);
+  }
+
   const handleAddDegree = async () => {
     await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
       setUserPlastDegree(response);
     });
   };
   const getAppropriateToGenderDegree = (plastDegreeName: string): string => {
-    if (userGenders[0] === userProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
+    if (userGenders[0] === fullUserProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
       return plastDegreeName.split("/")[0];
-    } else if (userGenders[1] === userProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
+    } else if (userGenders[1] === fullUserProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
       return plastDegreeName.split("/")[1];
     } else return plastDegreeName;
   };
 
-  const InitialFetchData = async() => {
+  const InitialFetchData = async () => {
+    const token = AuthStore.getToken() as string;
+    setUserToken(jwt(token));
+
+    setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
+
+    await activeMembershipApi.getUserDates(userId).then((response) => {
+      response.dateEntry =
+        response.dateEntry === defaultDate ? "" : response.dateEntry;
+      response.dateOath =
+        response.dateOath === defaultDate ? "" : response.dateOath;
+      response.dateEnd =
+        response.dateEnd === defaultDate ? "" : response.dateEnd;
+      setDates(response);
+      setLoadInfo(true);
+    }).catch(() => {
+      SetDefaultDates();
+      notificationLogic("error", "Не вдалося завантажити дати дійсного членства");
+    });;
+
+    await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
+      setUserPlastDegree(response);
+    });
+  }
+
+  const fetchData = async () => {
+    if (UpdateData) UpdateData();
     const token = AuthStore.getToken() as string;
     setUserToken(jwt(token));
 
@@ -84,47 +117,23 @@ const ActiveMembership = () => {
     await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
       setUserPlastDegree(response);
     });
-  }
-
-  const fetchData = async () => {
-    if(UpdateData) UpdateData();
-    const token = AuthStore.getToken() as string;
-    setUserToken(jwt(token));
-
-    setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
-
-    await activeMembershipApi.getUserDates(userId).then((response) => {
-      response.dateEntry =
-        response.dateEntry === defaultDate ? "" : response.dateEntry;
-      response.dateOath =
-        response.dateOath === defaultDate? "" : response.dateOath;
-      response.dateEnd =
-        response.dateEnd === defaultDate ? "" : response.dateEnd;
-      setDates(response);
-      setLoadInfo(true);
-    });
-
-    await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
-      setUserPlastDegree(response);
-    });
   };
 
-
   const IsUserHasAccessToManageDegree = (userRoles: Array<string>): boolean => {
-    return (userRoles?.includes(Roles.KurinHead) && activeUserProfile?.clubId == userProfile?.user.clubId) ||
-      (userRoles?.includes(Roles.KurinHeadDeputy) && activeUserProfile?.clubId == userProfile?.user.clubId) ||
-      (userRoles?.includes(Roles.CityHead) && activeUserProfile?.cityId == userProfile?.user.cityId) ||
-      (userRoles?.includes(Roles.CityHeadDeputy) && activeUserProfile?.cityId == userProfile?.user.cityId) ||
-      (userRoles?.includes(Roles.OkrugaHead) && activeUserProfile?.regionId == userProfile?.user.regionId) ||
-      (userRoles?.includes(Roles.OkrugaHeadDeputy) && activeUserProfile?.regionId == userProfile?.user.regionId) ||
+    return (userRoles?.includes(Roles.KurinHead) && activeUserProfile?.clubId == fullUserProfile?.user.clubId) ||
+      (userRoles?.includes(Roles.KurinHeadDeputy) && activeUserProfile?.clubId == fullUserProfile?.user.clubId) ||
+      (userRoles?.includes(Roles.CityHead) && activeUserProfile?.cityId == fullUserProfile?.user.cityId) ||
+      (userRoles?.includes(Roles.CityHeadDeputy) && activeUserProfile?.cityId == fullUserProfile?.user.cityId) ||
+      (userRoles?.includes(Roles.OkrugaHead) && activeUserProfile?.regionId == fullUserProfile?.user.regionId) ||
+      (userRoles?.includes(Roles.OkrugaHeadDeputy) && activeUserProfile?.regionId == fullUserProfile?.user.regionId) ||
       userRoles?.includes(Roles.RegionBoardHead) ||
       userRoles?.includes(Roles.Admin);
   };
 
-  const IsPossibleToChangeDateOfSwear = (access: Array<string>): boolean =>{
+  const IsPossibleToChangeDateOfSwear = (access: Array<string>): boolean => {
     var flag = true;
-    access.map( x => {
-      if( x.includes("Зареєстрований користувач") || x.includes("Доступ колишнього члена організації")){
+    access.map(x => {
+      if (x.includes("Зареєстрований користувач") || x.includes("Доступ колишнього члена організації")) {
         flag = false;
         return;
       }
@@ -183,7 +192,7 @@ const ActiveMembership = () => {
 
   const AppropriateButtonText = (): string => {
     if (userPlastDegree) return "Змінити ступінь"
-    else  return "Додати ступінь"
+    else return "Додати ступінь"
   }
 
   useEffect(() => {
@@ -199,30 +208,33 @@ const ActiveMembership = () => {
       />
     </div>
   ) : (
-    <div className={classes.wrapper}>
-      <div className={classes.avatarWrapper}>
-        <AvatarAndProgressStatic
-          time={userProfile?.timeToJoinPlast}
-          imageUrl={userProfile?.user.imagePath as string}
-          firstName={userProfile?.user.firstName}
-          lastName={userProfile?.user.lastName}
-          isUserPlastun={true}
-          pseudo={userProfile?.user.pseudo}
-          governingBody={userProfile?.user.governingBody}
-          region={userProfile?.user.region}
-          city={userProfile?.user.city}
-          club={userProfile?.user.club}
-          governingBodyId={userProfile?.user.governingBodyId}
-          regionId={userProfile?.user.regionId}
-          cityId={userProfile?.user.cityId}
-          clubId={userProfile?.user.clubId}
-          cityMemberIsApproved={userProfile?.user.cityMemberIsApproved}
-          clubMemberIsApproved={userProfile?.user.clubMemberIsApproved}
-          showPrecautions = {userProfile?.shortUser === null}
-        />
+    <Form name="basic" className="formContainer">
+      <div className="wrapperContainer">
+        <div className="avatarWrapperUserFields">
+          <StickyContainer className="kadraWrapper">
+            <AvatarAndProgressStatic
+              time={fullUserProfile?.timeToJoinPlast}
+              firstName={fullUserProfile?.user.firstName}
+              lastName={fullUserProfile?.user.lastName}
+              isUserPlastun={fullUserProfile?.isUserPlastun}
+              pseudo={fullUserProfile?.user.pseudo}
+              governingBody={fullUserProfile?.user.governingBody}
+              region={fullUserProfile?.user.region}
+              city={fullUserProfile?.user.city}
+              club={fullUserProfile?.user.club}
+              governingBodyId={fullUserProfile?.user.governingBodyId}
+              regionId={fullUserProfile?.user.regionId}
+              cityId={fullUserProfile?.user.cityId}
+              clubId={fullUserProfile?.user.clubId}
+              cityMemberIsApproved={fullUserProfile?.user.cityMemberIsApproved}
+              clubMemberIsApproved={fullUserProfile?.user.clubMemberIsApproved}
+              showPrecautions={userProfile?.shortUser === null}
+            />
+          </StickyContainer>
+        </div>
       </div>
 
-      <div className={classes.wrapperCol}>
+      <div className="allFields">
         <div className={classes.wrapper}>
           <div className={classes.wrapperGeneralInfo}>
             <Title level={2}> Загальна інформація </Title>
@@ -235,7 +247,7 @@ const ActiveMembership = () => {
                         <span className={classes.date}>Дата вступу: </span>
                         {dates?.dateEntry === ""
                           ? "Не задано"
-                          : moment.utc(dates.dateEntry).local().format("DD.MM.YYYY")}
+                          : moment.utc(dates?.dateEntry).local().format("DD.MM.YYYY")}
                       </div>
                     </li>
                     <li className={classes.textListItem} key={2}>
@@ -243,15 +255,15 @@ const ActiveMembership = () => {
                         <span className={classes.date}>Дата присяги: </span>
                         {dates?.dateOath === ""
                           ? "Без присяги"
-                          : moment.utc(dates.dateOath).local().format("DD.MM.YYYY")}
+                          : moment.utc(dates?.dateOath).local().format("DD.MM.YYYY")}
                       </div>
                     </li>
                     <li className={classes.textListItem} key={3}>
                       <div>
                         <span className={classes.date}>Дата завершення: </span>
-                        { dates?.dateEnd === ""
-                          ? ( dates.dateEntry ==="" ? " - ":"ще у Пласті" )
-                          : moment.utc(dates.dateEnd).local().format("DD.MM.YYYY")}
+                        {dates?.dateEnd === ""
+                          ? (dates.dateEntry === "" ? " - " : "ще у Пласті")
+                          : moment.utc(dates?.dateEnd).local().format("DD.MM.YYYY")}
                       </div>
                     </li>
                   </ul>
@@ -306,39 +318,39 @@ const ActiveMembership = () => {
           <div className={classes.wrapperGeneralInfo}>
             <Title level={2}> Ступені користувача </Title>
             {userPlastDegree && userPlastDegree.id ? (<React.Fragment key={userPlastDegree?.id}>
-                <div style={{ marginBottom: "7px" }}>
-                  <div className={classes.textFieldsMain}>
-                    {<SafetyCertificateOutlined />}{" "}
-                    {getAppropriateToGenderDegree(userPlastDegree!.plastDegree?.name)}
-                  </div>
-                  <div className={classes.textFieldsOthers}>
-                    Дата початку ступеню:{" "}
-                    {moment.utc(userPlastDegree?.dateStart).local().format("DD.MM.YYYY")}
-                  </div>
-                  {IsUserHasAccessToManageDegree(activeUserRoles?.map((role: any) => {
-                    if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ||
-                      role === Roles.CityHead || role === Roles.CityHeadDeputy))
-                      return role
-                  })) && (
-                      <div className={classes.buttons}>
-                        <Button type="primary"
-                          className={classes.buttonChange}
-                          onClick={() => {
-                            DeleteDegreeConfirm(
-                              userId,
-                              userPlastDegree!.plastDegree.id,
-                              handleDelete
-                            );
-                          }}
-                        >
-                          Видалити
-                        </Button>
-                      </div>
-                    )}
+              <div style={{ marginBottom: "7px" }}>
+                <div className={classes.textFieldsMain}>
+                  {<SafetyCertificateOutlined />}{" "}
+                  {getAppropriateToGenderDegree(userPlastDegree!.plastDegree?.name)}
                 </div>
-              </React.Fragment>
+                <div className={classes.textFieldsOthers}>
+                  Дата початку ступеню:{" "}
+                  {moment.utc(userPlastDegree?.dateStart).local().format("DD.MM.YYYY")}
+                </div>
+                {IsUserHasAccessToManageDegree(activeUserRoles?.map((role: any) => {
+                  if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ||
+                    role === Roles.CityHead || role === Roles.CityHeadDeputy))
+                    return role
+                })) && (
+                    <div className={classes.buttons}>
+                      <Button type="primary"
+                        className={classes.buttonChange}
+                        onClick={() => {
+                          DeleteDegreeConfirm(
+                            userId,
+                            userPlastDegree!.plastDegree.id,
+                            handleDelete
+                          );
+                        }}
+                      >
+                        Видалити
+                      </Button>
+                    </div>
+                  )}
+              </div>
+            </React.Fragment>
             )
-            :(<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Без ступеня" />)
+              : (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Без ступеня" />)
             }
             {IsUserHasAccessToManageDegree(activeUserRoles?.map((role: any) => {
               if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy))
@@ -354,7 +366,7 @@ const ActiveMembership = () => {
                     {AppropriateButtonText()}
                   </Button>
                 </div>
-              )} 
+              )}
           </div>
         </div>
       </div>
@@ -375,7 +387,7 @@ const ActiveMembership = () => {
         handleChangeDates={handleChangeDates}
 
       />
-    </div>
+   </Form >
   );
 };
 export default ActiveMembership;

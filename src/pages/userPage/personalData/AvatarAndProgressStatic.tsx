@@ -21,7 +21,6 @@ const { Title } = Typography;
 const nameMaxLength = 55;
 
 class AvatarAndProgressStaticProps {
-  imageUrl: string;
   time: number | undefined;
   firstName: string | undefined;
   lastName: string | undefined;
@@ -38,9 +37,6 @@ class AvatarAndProgressStaticProps {
   cityMemberIsApproved: boolean | undefined;
   clubMemberIsApproved: boolean | undefined;
   showPrecautions: boolean | undefined;
-  constructor() {
-    this.imageUrl = "";
-  }
 }
 
 const contentListNoTitle: { [key: string]: any } = {
@@ -73,7 +69,6 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
   const [loading, setLoading] = useState(false);
   const {
     time,
-    imageUrl,
     firstName,
     lastName,
     isUserPlastun,
@@ -89,7 +84,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     showPrecautions
   } = props;
 
-  const { imageBase64 } = useContext(PersonalDataContext);
+  const { imageBase64, userProfile } = useContext(PersonalDataContext);
   const [UserDistinctions, setData] = useState<UserDistinction[]>([
     {
       id: 0,
@@ -157,9 +152,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       }
       setLoading(true);
     };
-    if (imageUrl?.length > 0) {
-      fetchData();
-    }
+    fetchData();
   }, [props]);
 
   return loading === false ? (

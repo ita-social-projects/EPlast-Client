@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Layout } from "antd";
+import { Table, Button, Layout, Space, Col, Row } from "antd";
 import Search from "antd/lib/input/Search";
 import columns from "./columns";
 import notificationLogic from "../../../components/Notifications/Notification";
@@ -211,29 +211,33 @@ const DistinctionTable = () => {
         }}
       >
         <h1 className={classes.titleTable}>Відзначення</h1>
-
         <>
-          <div className={classes.searchContainer}>
+          <Row gutter={[6, 12]} className={classes.buttonsSearchField}>
             {canEdit === true ? (
               <>
-                <Button type="primary" onClick={showModal}>
-                  Додати відзначення
-                </Button>
-                <Button type="primary" onClick={showModalEditTypes}>
-                  Редагування типів відзначень
-                </Button>
+                <Col>
+                  <Button type="primary" onClick={showModal}>
+                    Додати відзначення
+                  </Button>
+                </Col>
+                <Col>
+                  <Button type="primary" onClick={showModalEditTypes}>
+                    Редагування типів відзначень
+                  </Button>
+                </Col>
               </>
-            ) : (
-              <></>
-            )}
-            <Search
-              enterButton
-              placeholder="Пошук"
-              allowClear
-              onChange={handleSearchChange}
-              onSearch={handleSearch}
-            />
-          </div>
+            ) : (null)}
+            <Col>
+              <Search
+                className={classes.distinctionSearchField}
+                enterButton
+                placeholder="Пошук"
+                allowClear
+                onChange={handleSearchChange}
+                onSearch={handleSearch}
+              />
+            </Col>
+          </Row>
           {loading ? (<Spinner />) : (<div>
             <Table
               className={classes.table}

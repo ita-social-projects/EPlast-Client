@@ -12,7 +12,10 @@ const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const AnnualReportForm = (props: Props) => {
-    const { title, cityMembers, cityLegalStatuses } = props;
+    const { title, cityMembers, cityLegalStatuses, formHook } = props;
+
+    const numberMaxAmountDigit = 6
+    const moneyMaxAmountDigit = 11
 
     const validationSchema = {
         cityLegalStatus: [{ required: true, message: emptyInput() }],
@@ -39,40 +42,8 @@ const AnnualReportForm = (props: Props) => {
         ],
     };
 
-    const allowOnlyThisKeysToBePressed = (e: any) => {
-        if (
-            e.keyCode !== 8 && //  backspace
-            e.keyCode !== 46 && // delete
-            e.keyCode !== 37 && // arrowLeft
-            e.keyCode !== 38 && // arrowUp
-            e.keyCode !== 39 && // arrowRight
-            e.keyCode !== 40 && // arrowDown
-            e.keyCode !== 188 && // comma
-            e.keyCode !== 190 && // period
-            e.keyCode !== 110 && // numpadDecimal
-            e.keyCode !== 48 && // 0
-            e.keyCode !== 49 && // 1
-            e.keyCode !== 50 && // 2
-            e.keyCode !== 51 && // 3
-            e.keyCode !== 52 && // 4
-            e.keyCode !== 53 && // 5
-            e.keyCode !== 54 && // 6
-            e.keyCode !== 55 && // 7
-            e.keyCode !== 56 && // 8
-            e.keyCode !== 57 && // 9
-            e.keyCode !== 96 && // numpad 0
-            e.keyCode !== 97 && // numpad 1
-            e.keyCode !== 98 && // numpad 2
-            e.keyCode !== 99 && // numpad 3
-            e.keyCode !== 100 && // numpad 4
-            e.keyCode !== 101 && // numpad 5
-            e.keyCode !== 102 && // numpad 6
-            e.keyCode !== 103 && // numpad 7
-            e.keyCode !== 104 && // numpad 8
-            e.keyCode !== 105 // numpad 9
-        ) {
-            e.preventDefault();
-        }
+    const getOnlyNums = (text: string) => {
+        return text.replace(/\D/g, "");
     };
 
     return (
@@ -80,7 +51,9 @@ const AnnualReportForm = (props: Props) => {
             <Title>{title}</Title>
             <Row gutter={16} align="bottom">
                 <Col xs={24} sm={12} md={12} lg={12} className="container">
-                    <Text strong={true}>Голова новообраної Старшини</Text>
+                    <Text strong={true}>
+                        Голова новообраної Старшини
+                    </Text>
                     <Form.Item name="newCityAdminId" className="w100">
                         <Select
                             showSearch
@@ -94,7 +67,9 @@ const AnnualReportForm = (props: Props) => {
                     </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={12} className="container">
-                    <Text strong={true}>Правовий статус осередку</Text>
+                    <Text strong={true}>
+                        Правовий статус осередку
+                    </Text>
                     <Form.Item
                         className="w100"
                         name="newCityLegalStatusType"
@@ -114,7 +89,9 @@ const AnnualReportForm = (props: Props) => {
             </Row>
             <Row gutter={16} align="bottom">
                 <Col xs={24} sm={24} md={12} lg={12} className="container">
-                    <Text strong={true}>УПП</Text>
+                    <Text strong={true}>
+                        УПП
+                    </Text>
                     <Row gutter={16} align="bottom">
                         <Col xs={24} sm={12} md={24} lg={12}>
                             <Text>Кількість гніздечок пташат</Text>
@@ -124,10 +101,12 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    type="number"
-                                    maxLength={6}
-                                    min="0"
-                                    onKeyDown={allowOnlyThisKeysToBePressed}
+                                    maxLength={numberMaxAmountDigit}
+                                    onChange={(e) => {
+                                        formHook.setFieldsValue({
+                                            numberOfSeatsPtashat: getOnlyNums(e.target.value),
+                                        });
+                                    }}
                                 />
                             </Form.Item>
                         </Col>
@@ -139,17 +118,23 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    type="number"
-                                    maxLength={6}
-                                    min="0"
-                                    onKeyDown={allowOnlyThisKeysToBePressed}
+                                    maxLength={numberMaxAmountDigit}
+                                    onChange={(e) => {
+                                        formHook.setFieldsValue({
+                                            membersStatistic: {
+                                                numberOfPtashata: getOnlyNums(e.target.value),
+                                            },
+                                        });
+                                    }}
                                 />
                             </Form.Item>
                         </Col>
                     </Row>
                 </Col>
                 <Col xs={24} sm={24} md={12} lg={12} className="container">
-                    <Text strong={true}>УПН</Text>
+                    <Text strong={true}>
+                        УПН
+                    </Text>
                     <Row gutter={16} align="bottom">
                         <Col xs={24} sm={12} md={24} lg={12}>
                             <Text>Кількість самостійних роїв</Text>
@@ -159,10 +144,12 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    type="number"
-                                    maxLength={6}
-                                    min="0"
-                                    onKeyDown={allowOnlyThisKeysToBePressed}
+                                    maxLength={numberMaxAmountDigit}
+                                    onChange={(e) => {
+                                        formHook.setFieldsValue({
+                                            numberOfIndependentRiy: getOnlyNums(e.target.value),
+                                        });
+                                    }}
                                 />
                             </Form.Item>
                         </Col>
@@ -174,10 +161,14 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    type="number"
-                                    maxLength={6}
-                                    min="0"
-                                    onKeyDown={allowOnlyThisKeysToBePressed}
+                                    maxLength={numberMaxAmountDigit}
+                                    onChange={(e) => {
+                                        formHook.setFieldsValue({
+                                            membersStatistic: {
+                                                numberOfNovatstva: getOnlyNums(e.target.value),
+                                            },
+                                        });
+                                    }}
                                 />
                             </Form.Item>
                         </Col>
@@ -185,22 +176,24 @@ const AnnualReportForm = (props: Props) => {
                 </Col>
             </Row>
             <div className="container">
-                <Text strong={true}>УПЮ</Text>
+                <Text strong={true}>
+                    УПЮ
+                </Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={12} lg={8}>
-                        <Text>
-                            Кількість куренів у станиці/паланці (окрузі/регіоні)
-                        </Text>
+                        <Text>Кількість куренів у станиці/паланці (окрузі/регіоні)</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfClubs"
                             rules={validationSchema.number}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={numberMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        numberOfClubs: getOnlyNums(e.target.value),
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -212,10 +205,12 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={numberMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        numberOfIndependentGroups: getOnlyNums(e.target.value),
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -230,10 +225,14 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={numberMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        membersStatistic: {
+                                            numberOfUnatstvaNoname: getOnlyNums(e.target.value),
+                                        },
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -248,10 +247,14 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={numberMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        membersStatistic: {
+                                            numberOfUnatstvaSupporters: getOnlyNums(e.target.value),
+                                        },
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -266,10 +269,14 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={numberMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        membersStatistic: {
+                                            numberOfUnatstvaMembers: getOnlyNums(e.target.value),
+                                        },
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -284,10 +291,14 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={numberMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        membersStatistic: {
+                                            numberOfUnatstvaProspectors: getOnlyNums(e.target.value),
+                                        },
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -302,10 +313,14 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={numberMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        membersStatistic: {
+                                            numberOfUnatstvaSkobVirlyts: getOnlyNums(e.target.value),
+                                        },
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -313,12 +328,12 @@ const AnnualReportForm = (props: Props) => {
             </div>
             <Row gutter={16} align="bottom">
                 <Col xs={24} sm={24} md={12} lg={12} className="container">
-                    <Text strong={true}>УСП</Text>
+                    <Text strong={true}>
+                        УСП
+                    </Text>
                     <Row gutter={16} align="bottom">
                         <Col xs={24} sm={12} md={24} lg={12}>
-                            <Text>
-                                Кількість старших пластунів прихильників
-                            </Text>
+                            <Text>Кількість старших пластунів прихильників</Text>
                             <Form.Item
                                 className="w100"
                                 name={[
@@ -328,10 +343,14 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    type="number"
-                                    maxLength={6}
-                                    min="0"
-                                    onKeyDown={allowOnlyThisKeysToBePressed}
+                                    maxLength={numberMaxAmountDigit}
+                                    onChange={(e) => {
+                                        formHook.setFieldsValue({
+                                            membersStatistic: {
+                                                numberOfSeniorPlastynSupporters: getOnlyNums(e.target.value),
+                                            },
+                                        });
+                                    }}
                                 />
                             </Form.Item>
                         </Col>
@@ -346,22 +365,26 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    type="number"
-                                    maxLength={6}
-                                    min="0"
-                                    onKeyDown={allowOnlyThisKeysToBePressed}
+                                    maxLength={numberMaxAmountDigit}
+                                    onChange={(e) => {
+                                        formHook.setFieldsValue({
+                                            membersStatistic: {
+                                                numberOfSeniorPlastynMembers: getOnlyNums(e.target.value),
+                                            },
+                                        });
+                                    }}
                                 />
                             </Form.Item>
                         </Col>
                     </Row>
                 </Col>
                 <Col xs={24} sm={24} md={12} lg={12} className="container">
-                    <Text strong={true}>УПС</Text>
+                    <Text strong={true}>
+                        УПС
+                    </Text>
                     <Row gutter={16} align="bottom">
                         <Col xs={24} sm={12} md={24} lg={12}>
-                            <Text>
-                                Кількість сеньйорів пластунів прихильників
-                            </Text>
+                            <Text>Кількість сеньйорів пластунів прихильників</Text>
                             <Form.Item
                                 className="w100"
                                 name={[
@@ -371,10 +394,14 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    type="number"
-                                    maxLength={6}
-                                    min="0"
-                                    onKeyDown={allowOnlyThisKeysToBePressed}
+                                    maxLength={numberMaxAmountDigit}
+                                    onChange={(e) => {
+                                        formHook.setFieldsValue({
+                                            membersStatistic: {
+                                                numberOfSeigneurSupporters: getOnlyNums(e.target.value),
+                                            },
+                                        });
+                                    }}
                                 />
                             </Form.Item>
                         </Col>
@@ -389,10 +416,14 @@ const AnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    type="number"
-                                    maxLength={6}
-                                    min="0"
-                                    onKeyDown={allowOnlyThisKeysToBePressed}
+                                    maxLength={numberMaxAmountDigit}
+                                    onChange={(e) => {
+                                        formHook.setFieldsValue({
+                                            membersStatistic: {
+                                                numberOfSeigneurMembers: getOnlyNums(e.target.value),
+                                            },
+                                        });
+                                    }}
                                 />
                             </Form.Item>
                         </Col>
@@ -400,65 +431,67 @@ const AnnualReportForm = (props: Props) => {
                 </Col>
             </Row>
             <div className="container">
-                <Text strong={true}>Адміністрування та виховництво</Text>
+                <Text strong={true}>
+                    Адміністрування та виховництво
+                </Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>
-                            Кількість діючих виховників (з усіх членів УСП, УПС)
-                        </Text>
+                        <Text>Кількість діючих виховників (з усіх членів УСП, УПС)</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfTeachers"
                             rules={validationSchema.number}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={numberMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        numberOfTeachers: getOnlyNums(e.target.value),
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>
-                            Кількість адміністраторів (в проводах будь якого
-                            рівня)
-                        </Text>
+                        <Text>Кількість адміністраторів (в проводах будь-якого рівня)</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfAdministrators"
                             rules={validationSchema.number}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={numberMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        numberOfAdministrators: getOnlyNums(e.target.value),
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>
-                            Кількість тих, хто поєднує виховництво та
-                            адміністрування
-                        </Text>
+                        <Text>Кількість тих, хто поєднує виховництво та адміністрування</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfTeacherAdministrators"
                             rules={validationSchema.number}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={numberMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        numberOfTeacherAdministrators: getOnlyNums(e.target.value),
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
                 </Row>
             </div>
             <div className="container">
-                <Text strong={true}>Пластприят</Text>
+                <Text strong={true}>
+                    Пластприят
+                </Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={8} lg={8}>
                         <Text>Кількість пільговиків</Text>
@@ -468,10 +501,12 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={numberMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        numberOfBeneficiaries: getOnlyNums(e.target.value),
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -483,10 +518,12 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={numberMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        numberOfPlastpryiatMembers: getOnlyNums(e.target.value),
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -498,17 +535,21 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.number}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={numberMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        numberOfHonoraryMembers: getOnlyNums(e.target.value),
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
                 </Row>
             </div>
             <div className="container">
-                <Text strong={true}>Залучені кошти</Text>
+                <Text strong={true}>
+                    Залучені кошти
+                </Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={12} lg={6}>
                         <Text>Державні кошти</Text>
@@ -518,10 +559,12 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.money}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={moneyMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        publicFunds: getOnlyNums(e.target.value),
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -533,10 +576,12 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.money}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={moneyMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        contributionFunds: getOnlyNums(e.target.value),
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -548,10 +593,12 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.money}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={moneyMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        plastSalary: getOnlyNums(e.target.value),
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -563,24 +610,24 @@ const AnnualReportForm = (props: Props) => {
                             rules={validationSchema.money}
                         >
                             <Input
-                                type="number"
-                                maxLength={6}
-                                min="0"
-                                onKeyDown={allowOnlyThisKeysToBePressed}
+                                maxLength={moneyMaxAmountDigit}
+                                onChange={(e) => {
+                                    formHook.setFieldsValue({
+                                        sponsorshipFunds: getOnlyNums(e.target.value),
+                                    });
+                                }}
                             />
                         </Form.Item>
                     </Col>
                 </Row>
             </div>
             <div className="container">
-                <Text strong={true}>Майно та потреби станиці</Text>
+                <Text strong={true}>
+                    Майно та потреби станиці
+                </Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={12} lg={12}>
-                        <Text>
-                            Вкажіть, що вам допоможе ефективніше залучати
-                            волонтерів та створювати виховні частини (гнізда,
-                            курені)
-                        </Text>
+                        <Text>Вкажіть, що вам допоможе ефективніше залучати волонтерів та створювати виховні частини (гнізда, курені)</Text>
                         <Form.Item
                             className="w100"
                             name="listProperty"

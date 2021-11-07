@@ -19,6 +19,6 @@ export enum Roles {
     RegionBoardHead = "Голова Краю",
     GoverningBodyHead = "Голова Керівного Органу",
     GoverningBodySecretary = "Діловод Керівного Органу",
-    GoverningBodySectorHead = "Голова Напряму Керівного Органу"
+    GoverningBodySectorHead = "Голова Напряму Керівного Органу",
+    GoverningBodySectorSecretary = "Діловод Напряму Керівного Органу"
 }
-

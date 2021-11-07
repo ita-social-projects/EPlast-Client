@@ -111,13 +111,21 @@
     .wrapperCol,
     .wrapperGeneralInfo {
         width: 100%;
-        margin: 0;
-    }
-    .wrapperGeneralInfo {
         margin: 10px 0;
-    }  
+    }
     .buttonChange {
         width: 170px !important;
+    }
+}
+
+@media (max-width: 480px) { 
+    .wrapperGeneralInfo span{
+        width: 170px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .textFieldsMain span{
+        width: auto;
     }
 }
 

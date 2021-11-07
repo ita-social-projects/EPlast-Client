@@ -1,12 +1,12 @@
 interface Props {
     regionRecord: {
-        id: number,
-        regionId: number,
-        regionName: string,
-        date: Date,
-        status: number,
-        count: number,
-        total: number,
+        id: number;
+        regionId: number;
+        regionName: string;
+        date: Date;
+        status: number;
+        count: number;
+        total: number;
         canManage: boolean;
     };
     pageX: number;

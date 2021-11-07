@@ -19,6 +19,10 @@ import ChangeUserClubModal from "./ChangeUserClubModal";
 import AuthorizeApi from "../../api/authorizeApi";
 import UserApi from "../../api/UserApi";
 import { Roles } from "../../models/Roles/Roles";
+import { AdminRole } from "../../models/Roles/AdminRole";
+import { NonAdminRole } from "../../models/Roles/NonAdminRole";
+import { IDropdownItem, DropdownItemCreator } from "./DropdownItem";
+import { DropdownFunc } from "../../models/UserTable/DropdownFunc";
 
 let authService = new AuthorizeApi();
 
@@ -27,11 +31,11 @@ interface Props {
   pageX: number;
   pageY: number;
   showDropdown: boolean;
+  inActiveTab: boolean;
   onDelete: (id: string) => void;
   onChange: (id: string, userRoles: string) => void;
-  roles: string | undefined;
-  inActiveTab: boolean;
-  user: any;
+  selectedUser: any;
+  selectedUserRoles: Array<string>;
   currentUser: any;
   canView: boolean;
 }
@@ -44,20 +48,26 @@ const DropDown = (props: Props) => {
     pageX,
     pageY,
     showDropdown,
+    inActiveTab,
     onDelete,
     onChange,
-    user,
+    selectedUser,
+    selectedUserRoles,
     currentUser,
     canView
   } = props;
+
   const [showEditModal, setShowEditModal] = useState(false);
   const [visibleModalDegree, setVisibleModalDegree] = useState<boolean>(false);
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
 
-  const [superAdmin, setsuperAdmin] = useState<boolean>(false);
+  const [superAdmin, setSuperAdmin] = useState<boolean>(false);
   const [governingBodyHead, setGoverningBodyHead] = useState<boolean>(true);
+  const [currentUserAdminRoles, setCurrentUserAdminRoles] = useState<Array<AdminRole>>([]);
+  const [canViewProfile, setCanViewProfile] = useState<boolean>(false);
+  const [canDelete, setCanDelete] = useState<boolean>(false);
   const [canChangeCityAdministration, setCanChangeCityAdministration] = useState<boolean>(false);
   const [canChangeClubAdministration, setCanChangeClubAdministration] = useState<boolean>(false);
   const [canChangeRegionAdministration, setCanChangeRegionAdministration] = useState<boolean>(false);
@@ -65,109 +75,122 @@ const DropDown = (props: Props) => {
   const [canChangeUserAccess, setCanChangeUserAccess] = useState<boolean>(false);
   const [canAddDegree, setCanAddDegree] = useState<boolean>(false);
 
+  const [chainOfAccessibility, setChainOfAccessibility] = useState<IDropdownItem>();
+  
+  //Some megamind function, taken from StackOverflow to convert enum string value to appropriate key
+  //I have no idea what's going on here
+  function getEnumKeyByEnumValue<T extends {[index:string]:string}>(myEnum:T, enumValue:string):keyof T|null {
+    let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
+    return keys.length > 0 ? keys[0] : null;
+  }
+
+  //Takes only those roles, which can access User Table and 
+  //writes them in array in descending order (as in AdminRole enum)
+  const setUserAdminRoles = (allUserRoles: Array<string>): Array<AdminRole> => {
+
+    //All possible AdminRole keys are converted to string array
+    const allAdminRolesAsEnumKeys: Array<string> = new Array<string>();
+    for(var key in AdminRole) {
+      allAdminRolesAsEnumKeys.push(AdminRole[key]);
+    }
+
+    //Current user roles as strings (values) are converted to corresponding
+    //Roles enum keys, which are also saved as array of string
+    const userRolesAsEnumKeys: Array<string> = new Array<string>();
+    allUserRoles?.forEach(role => {
+      let result = getEnumKeyByEnumValue(Roles, role);
+      if (result !== null) {
+        userRolesAsEnumKeys.push(result);
+      }
+    });
+    
+    //Intersection of possible Admin roles and current admin roles
+    const userAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(role => userRolesAsEnumKeys.includes(role));
+
+    //Roles are converted  to AdminRole enum  
+    const currentUserAdminRoles = new Array<AdminRole>();
+    userAdminRolesAsEnumKeys.forEach(role => {
+      currentUserAdminRoles.push(AdminRole[role as keyof typeof AdminRole]);
+    })
+
+    return currentUserAdminRoles;
+  };
+
+  //Takes user Plast roles, writes them in array in descending order (as in NonAdminRole enum)
+  const setUserNonAdminRoles = (allUserRoles: Array<string>): Array<NonAdminRole> => {
+
+    //All possible NonAdminRole keys are converted to string array
+    const allAdminRolesAsEnumKeys: Array<string> = new Array<string>();
+    for(var key in NonAdminRole) {
+      allAdminRolesAsEnumKeys.push(NonAdminRole[key]);
+    }
+
+    //Current user roles as strings (values) are converted to corresponding
+    //Roles enum keys, which are also saved as array of string
+    const userRolesAsEnumKeys: Array<string> = new Array<string>();
+    allUserRoles?.forEach(role => {
+      let result = getEnumKeyByEnumValue(Roles, role);
+      if (result !== null) {
+        userRolesAsEnumKeys.push(result);
+      }
+    });
+    
+    //Intersection of possible NonAdmin roles and current admin roles
+    const userNonAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(role => userRolesAsEnumKeys.includes(role));
+
+    //Roles are converted to NonAdminRole enum  
+    const userNonAdminRoles = new Array<NonAdminRole>();
+    userNonAdminRolesAsEnumKeys.forEach(role => {
+      userNonAdminRoles.push(NonAdminRole[role as keyof typeof NonAdminRole]);
+    })
+
+    return userNonAdminRoles;
+  };
+
+  const roles = UserApi.getActiveUserRoles();
+
+  useEffect(() => {
+    const buildChain = async () => {
+      const builder: DropdownItemCreator = new DropdownItemCreator();
+      setChainOfAccessibility(builder.build());
+    };
+    buildChain();
+  }, []);
+
+  const lookThroughChain = async () => {
+    chainOfAccessibility?.handle(currentUser, setUserAdminRoles(roles), selectedUser, 
+      setUserAdminRoles(selectedUserRoles), setUserNonAdminRoles(selectedUserRoles));
+
+    return chainOfAccessibility?.getHandlersResults();
+  }
+
   const fetchUser = async () => {
 
-    const roles = UserApi.getActiveUserRoles();
+    const result: Map<DropdownFunc, any> | undefined | null = await lookThroughChain();
 
-    setCanChangeCityAdministration((): boolean => {
-      const isCurrentUserAdmin = roles.includes(Roles.Admin);
-      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
-      const isUserFromSameCityAndRegion = roles.includes(Roles.OkrugaHead)
-        && currentUser?.cityId == user?.cityId;
-      const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
-        && currentUser?.regionId == user?.regionId;
-      const isUserCityHead = roles.includes(Roles.CityHead) 
-        && currentUser?.cityId == user?.cityId;
-      const isUserCityHeadDeputy = roles.includes(Roles.CityHeadDeputy) 
-        && currentUser?.cityId == user?.cityId;
+    //To make changes in user access for context menu look in DropdownItem.tsx
+    
+    setCanViewProfile(result?.get(DropdownFunc.CheckProfile) ?? false);
 
-      return isCurrentUserAdmin ||
-      isCurrentUserGoverningBodyHead ||
-      isUserFromSameCityAndRegion ||
-      isCurrentUserRegionHeadDeputy ||
-      isUserCityHead ||
-      isUserCityHeadDeputy;
-    });
+    setCanDelete(result?.get(DropdownFunc.Delete) ?? false);
+    
+    setCanChangeRegionAdministration(result?.get(DropdownFunc.EditRegion) ?? false);
 
-    setCanChangeClubAdministration((): boolean => {
-      const isCurrentUserAdmin = roles.includes(Roles.Admin);
-      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
-      const isCurrentUserKurinHeadDeputy = roles.includes(Roles.KurinHeadDeputy) 
-        && currentUser?.clubId == user?.clubId;
-      const isCurrentUserKurinHead = roles.includes(Roles.KurinHead) 
-        && currentUser?.clubId == user?.clubId;
+    setCanChangeCityAdministration(result?.get(DropdownFunc.EditCity) ?? false);
 
-      return isCurrentUserAdmin ||
-      isCurrentUserGoverningBodyHead ||
-      isCurrentUserKurinHeadDeputy ||
-      isCurrentUserKurinHead;
-    });
+    setCanChangeClubAdministration(result?.get(DropdownFunc.EditClub) ?? false);
       
-    setCanChangeRegionAdministration((): boolean => {
-      const isCurrentUserAdmin = roles.includes(Roles.Admin);
-      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
-      const isCurrentUserRegionHead = roles.includes(Roles.OkrugaHead) 
-        && currentUser?.regionId == user?.regionId;
-      const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
-        && currentUser?.regionId == user?.regionId;
-       
-      return isCurrentUserAdmin ||
-      isCurrentUserGoverningBodyHead ||      
-      isCurrentUserRegionHead ||      
-      isCurrentUserRegionHeadDeputy;
-    });
+    setCanChangeUserAccess(result?.get(DropdownFunc.EditRole) ?? false);
 
-    setCanChangeGoverningBodyAdministration(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead));
+    setCanAddDegree(result?.get(DropdownFunc.AddDegree) ?? false);
 
-    setCanChangeUserAccess((): boolean => {
-      const isCurrentUserAdmin = roles.includes(Roles.Admin);
-      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
-      const isCurrentUserRegionHead = roles.includes(Roles.OkrugaHead) 
-        && currentUser?.regionId == user?.regionId;
-      const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
-        && currentUser?.regionId == user?.regionId;
-      const isUserCityHead = roles.includes(Roles.CityHead) 
-        && currentUser?.cityId == user?.cityId;
-      const isUserCityHeadDeputy = roles.includes(Roles.CityHeadDeputy) 
-        && currentUser?.cityId == user?.cityId;
-
-      return isCurrentUserAdmin ||
-      isCurrentUserGoverningBodyHead ||      
-      isCurrentUserRegionHead ||      
-      isCurrentUserRegionHeadDeputy ||
-      isUserCityHead ||
-      isUserCityHeadDeputy;
-    });
-
-    setCanAddDegree((): boolean => {
-      const isCurrentUserAdmin = roles.includes(Roles.Admin);
-      const isCurrentUserGoverningBodyHead = roles.includes(Roles.GoverningBodyHead);
-      const isCurrentUserRegionHead = roles.includes(Roles.OkrugaHead) 
-        && currentUser?.regionId == user?.regionId;
-      const isCurrentUserRegionHeadDeputy = roles.includes(Roles.OkrugaHeadDeputy) 
-        && currentUser?.regionId == user?.regionId;
-      const isUserCityHead = roles.includes(Roles.CityHead) 
-        && currentUser?.cityId == user?.cityId;
-      const isUserCityHeadDeputy = roles.includes(Roles.CityHeadDeputy) 
-        && currentUser?.cityId == user?.cityId;
-      const isUserInCity = user?.cityId != null;
-      
-      return (isCurrentUserAdmin ||
-      isCurrentUserGoverningBodyHead ||      
-      isCurrentUserRegionHead ||      
-      isCurrentUserRegionHeadDeputy ||
-      isUserCityHead ||
-      isUserCityHeadDeputy) && isUserInCity;
-    });
-
-    setsuperAdmin(roles.includes(Roles.Admin));
-    setGoverningBodyHead(roles.includes(Roles.GoverningBodyHead));
+    setSuperAdmin(currentUserAdminRoles.includes(AdminRole.Admin));
+    setGoverningBodyHead(currentUserAdminRoles.includes(AdminRole.GoverningBodyHead));
   };
 
   useEffect(() => {
     fetchUser();
-  }, [user]);
-
+  }, [selectedUser]);
 
   const handleItemClick = async (item: any) => {
     switch (item.key) {
@@ -219,7 +242,7 @@ const DropDown = (props: Props) => {
           display: showDropdown ? "block" : "none",
         }}
       >
-        {props.inActiveTab === false && canView ? (
+        {props.inActiveTab === false && canViewProfile ? (
           <Menu.Item key="1">
             <FileSearchOutlined />
             Переглянути профіль
@@ -227,7 +250,7 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {superAdmin || governingBodyHead ? (
+        {props.inActiveTab === false && canDelete ? (
           <Menu.Item key="2">
             <DeleteOutlined />
             Видалити
@@ -235,40 +258,39 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {!props.inActiveTab &&
-          (canChangeCityAdministration || canChangeClubAdministration || canChangeRegionAdministration
-            || canChangeGoverningBodyAdministration || canChangeUserAccess) ? (
-          <SubMenu
-            key="sub"
-            icon={<EditOutlined />}
-            title="Змінити права доступу"
-            onTitleClick={() => { }}
-          >
-            {canChangeRegionAdministration ? (
-              <Menu.Item key="3">Провід округи</Menu.Item>
-            ) : (
-              <> </>
-            )}
-            {canChangeCityAdministration ? (
-              <Menu.Item key="4">Провід станиці</Menu.Item>
-            ) : (
-              <> </>
-            )}
-            {canChangeClubAdministration ? (
-              <Menu.Item key="5" >Провід куреня </Menu.Item>
-            ) : (
-              <> </>
-            )}
-            {canChangeUserAccess ? (
-              <Menu.Item key="6">Поточний стан користувача</Menu.Item>
-            ) : (
-              <> </>
-            )}
-          </SubMenu>
+        {props.inActiveTab === false && canChangeRegionAdministration ? (
+          <Menu.Item key="3">
+            <EditOutlined />
+            Провід округи
+          </Menu.Item>
         ) : (
           <> </>
         )}
-        {!props.inActiveTab && canAddDegree ? (
+        {props.inActiveTab === false && canChangeCityAdministration ? (
+          <Menu.Item key="4">
+            <EditOutlined />
+            Провід станиці
+          </Menu.Item>
+        ) : (
+          <> </>
+        )}
+        {props.inActiveTab === false && canChangeClubAdministration ? (
+          <Menu.Item key="5" >
+            <EditOutlined />
+            Провід куреня
+          </Menu.Item>
+        ) : (
+          <> </>
+        )}
+        {props.inActiveTab === false && canChangeUserAccess ? (
+          <Menu.Item key="6">
+            <EditOutlined />
+            Поточний стан користувача
+          </Menu.Item>
+        ) : (
+          <> </>
+        )}
+        {props.inActiveTab === false && canAddDegree ? (
           <Menu.Item key="7">
             <PlusCircleOutlined />
             Додати ступінь
@@ -276,7 +298,7 @@ const DropDown = (props: Props) => {
         ) : (
           <> </>
         )}
-        {props.inActiveTab && superAdmin ? (
+        {props.inActiveTab === false && superAdmin ? (
           <Menu.Item key="9">
             <MailOutlined />
             Активувати
@@ -289,13 +311,13 @@ const DropDown = (props: Props) => {
           showModal={showEditModal}
           setShowModal={setShowEditModal}
           onChange={onChange}
-          user={user}
+          user={selectedUser}
         />
         <ChangeUserCityModal
           record={record}
           showModal={showCityModal}
           setShowModal={setShowCityModal}
-          user={user}
+          user={selectedUser}
           onChange={onChange}
         />
         <ChangeUserRegionModal
@@ -303,12 +325,12 @@ const DropDown = (props: Props) => {
           showModal={showRegionModal}
           setShowModal={setShowRegionModal}
           onChange={onChange}
-          user={user}
+          user={selectedUser}
         />
         <ChangeUserClubModal
           record={record}
           showModal={showClubModal}
-          user={user}
+          user={selectedUser}
           setShowModal={setShowClubModal}
           onChange={onChange}
         />

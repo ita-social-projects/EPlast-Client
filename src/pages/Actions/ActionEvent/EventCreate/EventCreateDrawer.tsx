@@ -5,7 +5,7 @@ import EventCreate from "./EventCreate";
 interface Props {
     visibleEventCreateDrawer: boolean;
     setShowEventCreateDrawer: (visibleEventCreateDrawer: boolean) => void;
-    onCreate: () => void;
+    onCreate?: () => void;
 }
 
 const EventCreateDrawer = ({ visibleEventCreateDrawer, setShowEventCreateDrawer, onCreate }: Props) => {

@@ -9,8 +9,6 @@ import { useEffect } from 'react';
 const classes = require('./ActionRegion.module.css');
 
 const ActionRegion = () => {
-
-    const [activeUserRoles, setActiveUserRoles] = useState<string[]>();
     const [SwitchValue, setSwitchValue]= useState<boolean>(false);
     const [isAdmin, setIsAdmin] = useState<boolean>();
     const checkAccessToManage = () => {

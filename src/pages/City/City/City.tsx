@@ -93,6 +93,11 @@ const City = () => {
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [activeUserID, setActiveUserID] = useState<string>();
+  const documentsToShow = 6;
+  const adminsToShow = 6;
+  const membersToShow = 9;
+  const followersToShow = 5;
+  const followersToShowOnAdd = 6;
 
   const changeApproveStatus = async (memberId: number) => {
     setIsLoadingMemberId(memberId)
@@ -255,6 +260,7 @@ const City = () => {
       maskClosable: true,
       onOk() {
         addMember();
+        setLoading(true)
       },
     });
   }
@@ -281,15 +287,11 @@ const City = () => {
       setActiveUserCity(responce1.data);
       setPhotosLoading(true);
       setCityLogoLoading(true);
-      const admins = [
-        ...response.data.administration
-      ].filter((a) => a !== null);
-
       setPhotos(
-        [...admins, ...response.data.members, ...response.data.followers],
+        [...response.data.administration, ...response.data.members, ...response.data.followers],
         response.data.logo
       );
-      setAdmins(admins);
+      setAdmins(response.data.administration);
       setMembers(response.data.members);
       setFollowers(response.data.followers);
       setDocuments(response.data.documents);
@@ -310,13 +312,10 @@ const City = () => {
   const updateAdmins = async () => {
     const response = await getCityById(+id);
     setAdminsCount(response.data.administrationCount);
-    const admins = [
-      ...response.data.administration,
-    ].filter((a) => a !== null);
     setCity(response.data);
-    setAdmins(admins);
+    setAdmins(response.data.administration);
     setPhotosLoading(true);
-    setPhotos([...admins], response.data.logo);
+    setPhotos([...response.data.administration], response.data.logo);
   }
 
   const addCityAdmin = async (newAdmin: CityAdmin) => {
@@ -334,7 +333,7 @@ const City = () => {
     }
     await createNotification(newAdmin.userId,
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`, true);
-    notificationLogic("success", "Користувач успішно доданий в провід");
+      notificationLogic("success", "Користувач успішно доданий в провід");
   };
 
   const editCityAdmin = async (admin: CityAdmin) => {
@@ -345,99 +344,105 @@ const City = () => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в станиці`, true);
   };
 
-  const showDiseableModal = async (admin: CityAdmin) => {
+  const showConfirm = (newAdmin: CityAdmin, existingAdmin: CityAdmin) => {
+    Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (
+        <div style={{ margin: 10 }}>
+          <b>
+            {existingAdmin.user.firstName} {existingAdmin.user.lastName}
+          </b>{" "}
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
+          <b>
+            {moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),    
+      onCancel() { },
+      onOk() {
+        if (newAdmin.id === 0) {
+          addCityAdmin(newAdmin);
+          setAdmins((admins as CityAdmin[]).map(x => x.userId === existingAdmin?.userId && x.adminType.adminTypeName === existingAdmin?.adminType?.adminTypeName ?
+             newAdmin : x));
+        } else {
+          editCityAdmin(newAdmin);
+        }
+      }
+    });
+  };
+
+  const showDisableModal = async (admin: CityAdmin) => {
     return Modal.warning({
       title: "Ви не можете змінити роль цьому користувачу",
       content: (
         <div style={{ margin: 15 }}>
           <b>
-            {city.head.user.firstName} {city.head.user.lastName}
+            {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
           є Головою Станиці, час правління закінчується{" "}
           <b>
-            {moment.utc(city.head.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
-              : moment.utc(city.head.endDate).local().format("DD.MM.YYYY")}
+              : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() { }
+      onOk() {}
     });
   };
 
-  const showConfirmCityAdmin = async (admin: CityAdmin) => {
-    return Modal.confirm({
-      title: "Призначити даного користувача на цю посаду?",
-      content: (admin.adminType.adminTypeName.toString() === Roles.CityHead ?
-        <div style={{ margin: 10 }}>
+  const showDisable = async (admin: CityAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете змінити роль цьому користувачу",
+      content: (
+        <div style={{ margin: 15 }}>
           <b>
-            {city.head.user.firstName} {city.head.user.lastName}
+            {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
-          є Головою Станиці, час правління закінчується{" "}
+            вже має таку роль, час правління закінчується{" "}
           <b>
-            {moment.utc(city.head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
               ? "ще не скоро"
-              : moment.utc(city.head.endDate).local().format("DD.MM.YYYY")}
-          </b>
-          .
-        </div>
-        :
-        <div style={{ margin: 10 }}>
-          <b>
-            {city.headDeputy.user.firstName} {city.headDeputy.user.lastName}
-          </b>{" "}
-          є Заступником Голови Станиці, час правління закінчується{" "}
-          <b>
-            {moment.utc(city.headDeputy?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
-              ? "ще не скоро"
-              : moment.utc(city.headDeputy.endDate).local().format("DD.MM.YYYY")}
+              : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() { },
-      async onOk() {
-        if (admin.id === 0) {
-          await addCityAdmin(admin);
-        } else {
-          await editCityAdmin(admin);
-        }
-      },
+      onOk() {}
     });
   };
 
-  const checkAdminId = async (admin: CityAdmin) => {
+  const handleOk = async(admin: CityAdmin) => {
     if (admin.id === 0) {
-      await addCityAdmin(admin);
-    } else {
+      const head = (admins as CityAdmin[])
+        .find(x => x.adminType.adminTypeName === Roles.CityHead)
+      const existingAdmin  = (admins as CityAdmin[])
+        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName) 
+      try {     
+        if (Roles.CityHeadDeputy === admin.adminType.adminTypeName && head?.userId === admin.userId){
+          showDisableModal(head)
+        }
+        else if(existingAdmin?.userId === admin.userId){
+          showDisable(admin)
+        }
+        else if(existingAdmin !== undefined) {
+          showConfirm(admin, existingAdmin);
+        }
+        else {
+          await addCityAdmin(admin);
+        }
+      } finally {
+        setvisible(false);
+      }
+    }
+    else{
       await editCityAdmin(admin);
     }
   }
-
-  const handleOk = async (admin: CityAdmin) => {
-    try {
-      if (admin.adminType.adminTypeName === Roles.CityHead) {
-        if (city.head !== null && city.head?.userId !== admin.userId) {
-          showConfirmCityAdmin(admin);
-        } else {
-          checkAdminId(admin);
-        }
-      } else if (admin.adminType.adminTypeName === Roles.CityHeadDeputy) {
-        if (admin.userId === city.head?.userId) {
-          showDiseableModal(admin);
-        } else if (city.headDeputy !== null && city.headDeputy?.userId !== admin.userId) {
-          showConfirmCityAdmin(admin);
-        } else {
-          checkAdminId(admin);
-        }
-      } else {
-        await addCityAdmin(admin);
-      }
-    } finally {
-      setvisible(false);
-    }
-  };
 
   const handleClose = async () => {
     setvisible(false);
@@ -466,11 +471,14 @@ const City = () => {
   }
 
   useEffect(() => {
-    if (city.name.length !== 0) {
-      PsevdonimCreator.setPseudonimLocation(`cities/${city.name}`, `cities/${id}`);
-    }
     getCity();
   }, [])
+
+  useEffect(() => {
+    if (city.name.length != 0) {
+      PsevdonimCreator.setPseudonimLocation(`cities/${city.name}`, `cities/${id}`);
+    }
+  },[city])
 
   return loading ? (
     <Spinner />
@@ -685,7 +693,7 @@ const City = () => {
             </Title>
             <Row className={members.length >= 4 ? "cityItems1" : "cityItems"} justify="center" gutter={[0, 16]}>
               {members.length !== 0 ? (
-                members.map((member) => (
+                members.slice(0, membersToShow).map((member) => (
                   <Col
                     className="cityMemberItem"
                     key={member.id}
@@ -742,7 +750,7 @@ const City = () => {
             </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {admins.length !== 0 ? (
-                admins.map((admin) => (
+                admins.slice(0, adminsToShow).map((admin) => (
                   <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                     <div
                       onClick={() => canEdit || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
@@ -805,7 +813,7 @@ const City = () => {
             </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
-                documents.map((document) => (
+                documents.slice(0, documentsToShow).map((document) => (
                   <Col
                     className="cityDocumentItem"
                     xs={12}
@@ -885,7 +893,7 @@ const City = () => {
                 </Col>
               ) : null) : <Paragraph>Ще немає прихильників станиці</Paragraph>}
               {followers.length !== 0 ? (
-                followers.slice(0, canJoin ? 5 : 6).map((followers) => (
+                followers.slice(0, canJoin ? followersToShow : followersToShowOnAdd).map((followers) => (
                   <Col
                     className="cityMemberItem"
                     xs={12}

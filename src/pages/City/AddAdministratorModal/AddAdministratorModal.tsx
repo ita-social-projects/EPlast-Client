@@ -8,6 +8,7 @@ import {
   addAdministrator,
   editAdministrator,
   getAllAdmins,
+  getCityAdministration,
 } from "../../../api/citiesApi";
 import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
@@ -37,14 +38,20 @@ const AddAdministratorModal = (props: Props) => {
   const [form] = Form.useForm();
   const [head, setHead] = useState<CityAdmin>();
   const [headDeputy, setHeadDeputy] = useState<CityAdmin>();
+  const [admins, setAdmins] = useState<CityAdmin[]>([]);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
-  const getCityAdmins= async () => {
+  const getCityAdmins = async () => {
     setLoading(true);
     if (props.cityId !== 0) {
-      const responseAdmins = await getAllAdmins(props.cityId)
-      setHead(responseAdmins.data.head);
-      setHeadDeputy(responseAdmins.data.headDeputy);
+      const responseAdmins = await getCityAdministration(props.cityId)
+      setAdmins(responseAdmins.data)
+      const Head = (responseAdmins.data as CityAdmin[])
+        .find(x => x.adminType.adminTypeName === Roles.CityHead) 
+      setHead(Head);
+      const HeadDeputy = (responseAdmins.data as CityAdmin[])
+      .find(x => x.adminType.adminTypeName === Roles.CityHeadDeputy) 
+      setHeadDeputy(HeadDeputy);
       setLoading(false);
     }
   };
@@ -66,7 +73,7 @@ const AddAdministratorModal = (props: Props) => {
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
-         editCityAdmin(admin);
+         addCityAdmin(admin);
       },
     });
   }
@@ -92,44 +99,29 @@ const AddAdministratorModal = (props: Props) => {
     });
   };
 
-  const showConfirmCityAdmin  = async (admin: CityAdmin, adminType: Roles) => {
-    return Modal.confirm({
+  const showConfirm = (newAdmin: CityAdmin, existingAdmin: CityAdmin) => {
+    Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
-      content: (adminType.toString() === "Голова Станиці" ?
+      content: (
         <div style={{ margin: 10 }}>
           <b>
-            {head?.user.firstName} {head?.user.lastName}
+            {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          є Головою Станиці, час правління закінчується{" "}
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
           <b>
-            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
-              ? "ще не скоро"
-              : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
+            {moment(existingAdmin.endDate).format("DD.MM.YYYY") ?? "ще не скоро"}
           </b>
           .
         </div>
-        :
-        <div style={{ margin: 10 }}>
-        <b>
-          {headDeputy?.user.firstName} {headDeputy?.user.lastName}
-        </b>{" "}
-        є Заступником Голови Станиці, час правління закінчується{" "}
-        <b>
-          {moment.utc(headDeputy?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
-            ? "ще не скоро"
-            : moment.utc(headDeputy?.endDate).local().format("DD.MM.YYYY")}
-        </b>
-        .
-      </div>
-      ),
-      onCancel() {},
-      async onOk() {
-        if (admin.id === 0) {
-          addCityAdmin(admin);
+      ),    
+      onCancel() { },
+      onOk() {
+        if (newAdmin.id === 0) {
+          addCityAdmin(newAdmin);
         } else {
-          editCityAdmin(admin);
+          editCityAdmin(newAdmin);
         }
-      },
+      }
     });
   };
 
@@ -170,30 +162,23 @@ const AddAdministratorModal = (props: Props) => {
       endDate: values.endDate?._d,
       startDate: values.startDate?._d,
     };
-
     try {
-      if (values.adminType === Roles.CityHead) {
-        if (head !== null && head?.userId !== admin.userId) {
-          showConfirmCityAdmin(admin, values.adminType);
-        } else {
-           await checkAdminId(admin);
-        }
-      } else if (values.adminType === Roles.CityHeadDeputy ) {
-        if (admin.userId === head?.userId) {
-            showDiseableModal(admin);
-        } else if (headDeputy !== null && headDeputy?.userId !== admin.userId) {
-          showConfirmCityAdmin(admin, values.adminType);
-        } else {
-          await checkAdminId(admin);
-        }
-      } else {
-        if (admin.userId === head?.userId || admin.userId === headDeputy?.userId) {
-            showEditConfirmModal(admin);
-        } else {
-          await checkAdminId(admin);
-        }
+      const existingAdmin  = (admins as CityAdmin[])
+        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
+      if (Roles.CityHeadDeputy === admin.adminType.adminTypeName && head?.userId === admin.userId) {       
+        showDiseableModal(admin);
       }
-    } finally {
+      else if(existingAdmin !== undefined) {
+        showConfirm(admin, existingAdmin);
+      }
+      else if (admin.userId === head?.userId || admin.userId === headDeputy?.userId) {
+        showEditConfirmModal(admin);
+      }    
+      else {
+        await checkAdminId(admin);
+      }
+    }
+    finally {
       props.setVisibleModal(false);
       setLoading(false);
     }

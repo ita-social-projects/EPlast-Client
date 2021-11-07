@@ -9,6 +9,7 @@ export default class SectorProfile {
   logo: string | null;
   phoneNumber: string;
   head: SectorAdmin;
+  isActive: boolean;
 
   constructor() {
     this.id = 0;
@@ -19,5 +20,6 @@ export default class SectorProfile {
     this.logo = "";
     this.phoneNumber = "";
     this.head = new SectorAdmin();
+    this.isActive = true;
   }
 }

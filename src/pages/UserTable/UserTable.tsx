@@ -39,6 +39,7 @@ import { Roles } from "../../models/Roles/Roles";
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
+  const [recordRoles, setRecordRoles] = useState<Array<string>>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
@@ -48,14 +49,14 @@ const UsersTable = () => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<UserTable[]>([]);
   const [updatedUser, setUpdatedUser] = useState<UserTable[]>([]);
-  const [roles, setRoles] = useState<string>();
+  const [currentUserRoles, setCurrentUserRoles] = useState<string>();
   const [cities, setCities] = useState<any>();
   const [regions, setRegions] = useState<any>();
   const [clubs, setClubs] = useState<any>();
   const [degrees, setDegrees] = useState<any>();
   const [searchData, setSearchData] = useState<string>("");
   const [sortKey, setSortKey] = useState<number>(1);
-  const [filter, setFilter] = useState<string>("");
+  const [filter, setFilter] = useState<any[]>([]);
   const [dynamicCities, setDynamicCities] = useState<any[]>([]);
   const [dynamicRegions, setDynamicRegions] = useState<any[]>([]);
   const [dynamicClubs, setDynamicClubs] = useState<any[]>([]);
@@ -68,12 +69,13 @@ const UsersTable = () => {
   const [userArhive, setArhive] = useState();
   const [currentUser, setCurrentUser] = useState<User>();
   const [user, setUser] = useState<UserTable>();
+  const [clearFilter, setClearFilter] = useState(false);
   const { SHOW_PARENT } = TreeSelect;
   const { Search } = Input;
 
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, updatedUser, searchData, sortKey, filter, userArhive, currentTabName]);
+  }, [page, pageSize, updatedUser, searchData, sortKey, filter, userArhive, currentTabName, clearFilter]);
 
   useEffect(() => {
     fetchCities();
@@ -82,6 +84,8 @@ const UsersTable = () => {
     fetchDegrees();
     forceUpdate({});
   }, []);
+
+  const searchFieldMaxLength: number = 150;
 
   const fetchCities = async () => {
     try {
@@ -94,12 +98,13 @@ const UsersTable = () => {
         };
       }))
     } catch (error) {
+      //don't set value type, check on github will fail
       showError(error.message);
     }
   };
   const fetchRegions = async () => {
     try {
-      let response = await regionsApi.getRegions();
+      let response = await regionsApi.getRegionsNames();
       let regions = response.data as Region[];
       setRegions(
         regions.map((item) => {
@@ -110,6 +115,7 @@ const UsersTable = () => {
         })
       );
     } catch (error) {
+      //don't set value type, check on github will fail
       showError(error.message);
     }
   };
@@ -126,6 +132,7 @@ const UsersTable = () => {
         })
       );
     } catch (error) {
+      //don't set value type, check on github will fail
       showError(error.message);
     }
   };
@@ -142,6 +149,7 @@ const UsersTable = () => {
         })
       );
     } catch (error) {
+      //don't set value type, check on github will fail
       showError(error.message);
     }
   };
@@ -180,6 +188,9 @@ const UsersTable = () => {
         || roles.includes(Roles.Supporter));
       setUsers(response.data.users);
       setTotal(response.data.total);
+    } catch (error) {
+      //don't set value type, check on github will fail
+      showError(error.message);
     } finally {
       setLoading(true);
     }
@@ -283,7 +294,7 @@ const UsersTable = () => {
   const handleChange = (id: string, userRole: string) => {
     const filteredData = users.filter((d: any) => {
       if (d.id === id) {
-        d.userRoles += ", " + userRole;
+        d.userCurrentUserRoles += ", " + userRole;
       }
       return d;
     });
@@ -309,7 +320,7 @@ const UsersTable = () => {
       dynamicCities.length == 0 &&
       dynamicRegions.length == 0 &&
       dynamicClubs.length == 0 &&
-      dynamicRegions.length == 0
+      dynamicDegrees.length == 0
     ) {
       fetchData();
     } else {
@@ -324,10 +335,14 @@ const UsersTable = () => {
           Degrees: dynamicDegrees,
           Tab: currentTabName,
           SortKey: sortKey,
+          FilterRoles: filter,
           SearchData: searchData
         });
         setUsers(response.data.users);
         setTotal(response.data.total);
+      } catch (error) {
+        //don't set value type, check on github will fail
+        showError(error.message);
       } finally {
         setLoading(true);
       }
@@ -350,13 +365,17 @@ const UsersTable = () => {
   ];
 
   const onTabChange = async (key: string) => {
-    setPage(page);
+    setPage(1);
     setPageSize(pageSize);
     setCurrentTabName(key);
   };
 
+  const parseUserRolesString = (roles: string) => {
+    return roles !== null ? roles.split(', ') : roles;
+  }
+ 
   return (
-    <Layout.Content>
+    <Layout.Content onClick={() => { setShowDropdown(false); }}>
       <Title level={2}>Таблиця користувачів</Title>
       <Title level={4} style={{ textAlign: "left", margin: 10 }} underline={true}>Загальна кількість користувачів: {total}</Title>
       <div className={classes.searchContainer}>
@@ -394,6 +413,7 @@ const UsersTable = () => {
                         setDynamicCities([]);
                         setDynamicClubs([]);
                         setDynamicDegrees([]);
+                        setClearFilter(!clearFilter);
                       }
                     }}
                   >
@@ -430,6 +450,7 @@ const UsersTable = () => {
           <Search placeholder="Пошук"
             allowClear
             enterButton
+            maxLength={searchFieldMaxLength}
             onChange={handleSearchChange}
             onSearch={handleSearch}
           />
@@ -455,6 +476,7 @@ const UsersTable = () => {
               sortKey: sortKey,
               setSortKey: setSortKey,
               setFilter: setFilter,
+              setPage: setPage,
               filterRole: filter,
             })}
           dataSource={users}
@@ -468,7 +490,8 @@ const UsersTable = () => {
                 setShowDropdown(false);
                 if (canView) {
                   setRecordObj(record.id);
-                  setRoles(record.userRoles);
+                  setRecordRoles(parseUserRolesString(record.userRoles));
+                  setCurrentUserRoles(record.userRoles);
                   setUser(users.find(x => x.id == record.id));
                   setX(event.pageX);
                   setY(event.pageY);
@@ -504,11 +527,11 @@ const UsersTable = () => {
           record={recordObj}
           pageX={x}
           pageY={y}
+          inActiveTab={isInactive}
           onDelete={handleDelete}
           onChange={handleChange}
-          user={user}
-          roles={roles}
-          inActiveTab={isInactive}
+          selectedUser={user}
+          selectedUserRoles={recordRoles}
           currentUser={currentUser}
           canView={canView}
         />
@@ -516,4 +539,5 @@ const UsersTable = () => {
     </Layout.Content>
   );
 };
+
 export default UsersTable;
