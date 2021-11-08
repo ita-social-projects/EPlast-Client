@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch, Link } from "react-router-dom";
-import { Card, Input, Layout, Pagination, Result, Skeleton, Button } from "antd";
-import { RollbackOutlined } from "@ant-design/icons";
+import { Card, Layout, Pagination, Result, Skeleton} from "antd";
 import Add from "../../assets/images/add.png";
 import RegionDefaultLogo from "../../assets/images/default_city_image.jpg";
-import { getActiveRegionsByPage, getNotActiveRegionsByPage, getRegions } from "../../api/regionsApi";
+import { getActiveRegionsByPage, getNotActiveRegionsByPage} from "../../api/regionsApi";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
 import Search from "antd/lib/input/Search";
 import RegionProfile from '../../models/Region/RegionProfile' 
-import { emptyInput } from "../../components/Notifications/Messages";
-import { clear } from "console";
+
 
 interface Props {
     switcher: boolean;
@@ -43,7 +41,7 @@ const SortedRegions = ({switcher}: Props) => {
     setPhotosLoading(false);
   };
 
-  const getActiveRegions = async () => {
+  const getActiveRegions = async (page: number = 1) => {
     setLoading(true);
 
     try {
@@ -63,7 +61,7 @@ const SortedRegions = ({switcher}: Props) => {
     }
   };
 
-  const getNotActiveRegions = async () => {
+  const getNotActiveRegions = async (page: number = 1) => {
     setLoading(true);
     try {
       const response = await getNotActiveRegionsByPage(page,
@@ -120,12 +118,11 @@ const SortedRegions = ({switcher}: Props) => {
 };
 
   useEffect(() => {
-      switcher ? (getNotActiveRegions()) :(getActiveRegions())
+      switcher ? (getNotActiveRegions(page)) :(getActiveRegions(page))
   }, [page, pageSize, searchedData]);
 
   useEffect(()=>{
-    if(regions.length !== 0) {
-      setPage(1);
+    if (regions.length !== 0) {
       switcher ? (getNotActiveRegions()) :(getActiveRegions())
       setCanCreate(switcher ? false : activeCanCreate);
     }
