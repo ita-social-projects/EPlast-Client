@@ -51,7 +51,7 @@ import CheckActiveCitiesForm from "./CheckActiveCitiesForm"
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import notificationLogic from "../../components/Notifications/Notification";
-import { successfulEditAction, successfulDeleteAction, successfulArchiveAction, successfulUnarchiveAction } from "../../components/Notifications/Messages";
+import { successfulEditAction, successfulDeleteAction, successfulArchiveAction, successfulUnarchiveAction, failArchiveAction } from "../../components/Notifications/Messages";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
@@ -151,14 +151,15 @@ const Region = () => {
   const ArchiveRegion = async () => {
     try {
       await archiveRegion(region.id);
-    } finally {
-    admins.map(async (ad) => {
+      admins.map(async (ad) => {
       await createNotification(ad.userId,
         `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
     });
     notificationLogic("success", successfulArchiveAction("Округу"));
     history.push("/regions");
-  }
+    } catch {
+      notificationLogic("error", failArchiveAction(region.name));
+    }
   };
 
   const deleteRegion = async () => {
