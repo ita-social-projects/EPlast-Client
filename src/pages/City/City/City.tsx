@@ -37,6 +37,7 @@ import {
   unArchiveCity,
   removeCity,
   getUserCityAccess,
+  getCheckPlastMember,
   toggleMemberStatus,
   removeFollower
 } from "../../../api/citiesApi";
@@ -64,6 +65,7 @@ import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
 import { number } from "yup";
 import AuthStore from "../../../stores/AuthStore";
+import { getRoles } from "@testing-library/dom";
 
 const City = () => {
   const history = useHistory();
@@ -378,7 +380,7 @@ const City = () => {
 
   const showDisableModal = async (admin: CityAdmin) => {
     return Modal.warning({
-      title: "Ви не можете змінити роль цьому користувачу",
+      title: "Ви не можете додати роль цьому користувачу",
       content: (
         <div style={{ margin: 15 }}>
           <b>
@@ -399,7 +401,7 @@ const City = () => {
 
   const showDisable = async (admin: CityAdmin) => {
     return Modal.warning({
-      title: "Ви не можете змінити роль цьому користувачу",
+      title: "Ви не можете додати роль цьому користувачу",
       content: (
         <div style={{ margin: 15 }}>
           <b>
@@ -418,6 +420,21 @@ const City = () => {
     });
   };
 
+  const showPlastMemberDisable = async (admin: CityAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div style={{ margin: 15 }}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            не є членом Пласту.
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
   const handleOk = async(admin: CityAdmin) => {
     if (admin.id === 0) {
       const head = (admins as CityAdmin[])
@@ -425,11 +442,21 @@ const City = () => {
       const existingAdmin  = (admins as CityAdmin[])
         .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName) 
       try {     
-        if (Roles.CityHeadDeputy === admin.adminType.adminTypeName && head?.userId === admin.userId){
+        if (head?.userId === admin.userId){
           showDisableModal(head)
         }
         else if(existingAdmin?.userId === admin.userId){
           showDisable(admin)
+        }
+        else if(admin.adminType.adminTypeName === "Голова СПР" ||
+          admin.adminType.adminTypeName === "Член СПР"){
+          const check = await getCheckPlastMember(admin.userId);
+          if(check.data){
+            await addCityAdmin(admin);
+          }
+          else {
+            showPlastMemberDisable(admin);
+          }
         }
         else if(existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);
@@ -442,7 +469,18 @@ const City = () => {
       }
     }
     else{
-      await editCityAdmin(admin);
+      if(admin.adminType.adminTypeName === "Голова СПР" ||
+        admin.adminType.adminTypeName === "Член СПР"){
+        if(await getCheckPlastMember(admin.userId)){
+          await editCityAdmin(admin);
+        }
+        else {
+          showPlastMemberDisable(admin);
+        }
+      }
+      else{
+        await editCityAdmin(admin);
+      }
     }
   }
 
@@ -806,7 +844,7 @@ const City = () => {
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
             <Title level={4}>Документообіг станиці <a onClick={() =>
-              userAccesses["IsAdmin"] ||(userAccesses["DownloadDocument"] && city.name == activeUserCity)
+              userAccesses["IsAdmin"] || (userAccesses["DownloadDocument"] && city.name == activeUserCity)
                 ?
                 history.push(`/cities/documents/${city.id}`)
                 : undefined

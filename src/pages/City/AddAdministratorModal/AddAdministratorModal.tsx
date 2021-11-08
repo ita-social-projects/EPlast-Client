@@ -8,6 +8,7 @@ import {
   addAdministrator,
   editAdministrator,
   getAllAdmins,
+  getCheckPlastMember,
   getCityAdministration,
 } from "../../../api/citiesApi";
 import notificationLogic from "./../../../components/Notifications/Notification";
@@ -78,9 +79,9 @@ const AddAdministratorModal = (props: Props) => {
     });
   }
 
-  const showDiseableModal = async (admin: CityAdmin) => {
+  const showDisableModal = async (admin: CityAdmin) => {
     return Modal.warning({
-      title: "Ви не можете змінити роль цьому користувачу",
+      title: "Ви не можете призначити роль цьому користувачу",
       content: (
         <div style={{ margin: 15 }}>
           <b>
@@ -109,7 +110,9 @@ const AddAdministratorModal = (props: Props) => {
           </b>{" "}
           вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
           <b>
-            {moment(existingAdmin.endDate).format("DD.MM.YYYY") ?? "ще не скоро"}
+            {moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -122,6 +125,42 @@ const AddAdministratorModal = (props: Props) => {
           editCityAdmin(newAdmin);
         }
       }
+    });
+  };
+
+  const showDisable = async (admin: CityAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете призначити роль цьому користувачу",
+      content: (
+        <div style={{ margin: 15 }}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            вже має таку роль, час правління закінчується{" "}
+          <b>
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
+  const showPlastMemberDisable = async (admin: CityAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете призначити роль цьому користувачу",
+      content: (
+        <div style={{ margin: 15 }}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            не є членом Пласту.
+        </div>
+      ),
+      onOk() {}
     });
   };
 
@@ -139,10 +178,21 @@ const AddAdministratorModal = (props: Props) => {
     props.onAdd?.(admin);
   };
 
-  const checkAdminId = async (admin: CityAdmin)=> {
+  const checkAdminId = async (admin: CityAdmin) => {
     if (admin.id === 0) {
       await addCityAdmin(admin);
-    } else {
+    } 
+    else if (admin.adminType.adminTypeName === "Голова СПР" ||
+      admin.adminType.adminTypeName === "Член СПР"){
+        const check = await getCheckPlastMember(admin.userId);
+        if(check.data){
+          await editCityAdmin(admin);
+        }
+        else{
+          showPlastMemberDisable(admin);
+        }
+    }
+    else{
       await editCityAdmin(admin);
     }
   }
@@ -163,20 +213,32 @@ const AddAdministratorModal = (props: Props) => {
       startDate: values.startDate?._d,
     };
     try {
+      const head = (admins as CityAdmin[])
+        .find(x => x.adminType.adminTypeName === Roles.CityHead)
       const existingAdmin  = (admins as CityAdmin[])
-        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
-      if (Roles.CityHeadDeputy === admin.adminType.adminTypeName && head?.userId === admin.userId) {       
-        showDiseableModal(admin);
-      }
-      else if(existingAdmin !== undefined) {
-        showConfirm(admin, existingAdmin);
-      }
-      else if (admin.userId === head?.userId || admin.userId === headDeputy?.userId) {
-        showEditConfirmModal(admin);
-      }    
-      else {
-        await checkAdminId(admin);
-      }
+        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)   
+        if (head?.userId === admin.userId){
+          showDisableModal(head)
+        }
+        else if(existingAdmin?.userId === admin.userId){
+          showDisable(admin)
+        }
+        else if(admin.adminType.adminTypeName === "Голова СПР" ||
+          admin.adminType.adminTypeName === "Член СПР"){
+          const check = await getCheckPlastMember(admin.userId);
+          if(check.data){
+            await addCityAdmin(admin);
+          }
+          else {
+            showPlastMemberDisable(admin);
+          }
+        }
+        else if(existingAdmin !== undefined) {
+          showConfirm(admin, existingAdmin);
+        }
+        else {
+          await checkAdminId(admin);
+        }
     }
     finally {
       props.setVisibleModal(false);
@@ -234,7 +296,7 @@ const AddAdministratorModal = (props: Props) => {
               { value: Roles.CityHead, disabled: (activeUserRoles.includes(Roles.CityHeadDeputy) 
               && !activeUserRoles.includes(Roles.Admin)) },
               { value: Roles.CityHeadDeputy},
-              { value: "Голова СПС" },
+              { value: "Голова СПР" },
               { value: "Писар" },
               { value: "Скарбник" },
               { value: "Домівкар" },

@@ -37,6 +37,14 @@ export const getNotActiveCitiesByPage = async (page: number, pageSize: number, c
     });
 };
 
+export const getCheckPlastMember = async (userId: string) => {
+  return await api
+    .get(`Cities/GetCheckPlastMember/${userId}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
 export const createCity = async (data: any) => {
   return api.post("Cities/CreateCity", data).catch((error) => {
     throw new Error(error);
