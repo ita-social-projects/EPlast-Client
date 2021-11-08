@@ -42,7 +42,7 @@ const DistinctionTable = () => {
   const [y, setY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [searchedData, setSearchedData] = useState<string>("");
-  const [canEdit] = useState(roles.includes(Roles.Admin));
+  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>({})
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);
@@ -62,17 +62,29 @@ const DistinctionTable = () => {
     }
   ]);
 
+  const getUserAccessesForDistinctions = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    await distinctionApi.getUserDistinctionAccess(user.nameid).then(
+      response => {
+        setUserAccesses(response.data);
+        console.log(user);
+      }
+    );
+  }
+
+  const fetchData = async () => {   
+    const res: UserDistinctionTableInfo[] = await distinctionApi.getAllUsersDistinctions(searchedData, page, pageSize);
+    setTotal(res[0]?.total);
+    setCount(res[0]?.count);
+    setDistinctions(res);
+    getUserAccessesForDistinctions();
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const res: UserDistinctionTableInfo[] = await distinctionApi.getAllUsersDistinctions(searchedData, page, pageSize);
-      setTotal(res[0]?.total);
-      setCount(res[0]?.count);
-      setDistinctions(res);
-      setLoading(false);
-    };
+    setLoading(true);
     fetchData();
-  }, [searchedData, page, pageSize]);
+    setLoading(false);
+  }, []);
 
   const handleSearch = (event: any) => {
     setPage(1);
@@ -213,7 +225,7 @@ const DistinctionTable = () => {
         <h1 className={classes.titleTable}>Відзначення</h1>
         <>
           <Row gutter={[6, 12]} className={classes.buttonsSearchField}>
-            {canEdit === true ? (
+            {userAccesses["EditTypeDistinction"] === true ? (
               <>
                 <Col>
                   <Button type="primary" onClick={showModal}>
@@ -289,7 +301,7 @@ const DistinctionTable = () => {
               userId={userId}
               pageX={x}
               pageY={y}
-              canEdit={canEdit}
+              canEdit={userAccesses["EditTypeDistinction"]}
               onDelete={handleDelete}
               onEdit={handleEdit}
             />
