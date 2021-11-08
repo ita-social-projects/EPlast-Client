@@ -168,6 +168,8 @@ const DropDown = (props: Props) => {
 
     const result: Map<DropdownFunc, any> | undefined | null = await lookThroughChain();
 
+    //To make changes in user access for context menu look in DropdownItem.tsx
+    
     setCanViewProfile(result?.get(DropdownFunc.CheckProfile) ?? false);
 
     setCanDelete(result?.get(DropdownFunc.Delete) ?? false);

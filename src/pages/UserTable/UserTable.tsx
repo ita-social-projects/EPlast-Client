@@ -56,7 +56,7 @@ const UsersTable = () => {
   const [degrees, setDegrees] = useState<any>();
   const [searchData, setSearchData] = useState<string>("");
   const [sortKey, setSortKey] = useState<number>(1);
-  const [filter, setFilter] = useState<string>("");
+  const [filter, setFilter] = useState<any[]>([]);
   const [dynamicCities, setDynamicCities] = useState<any[]>([]);
   const [dynamicRegions, setDynamicRegions] = useState<any[]>([]);
   const [dynamicClubs, setDynamicClubs] = useState<any[]>([]);
@@ -69,12 +69,13 @@ const UsersTable = () => {
   const [userArhive, setArhive] = useState();
   const [currentUser, setCurrentUser] = useState<User>();
   const [user, setUser] = useState<UserTable>();
+  const [clearFilter, setClearFilter] = useState(false);
   const { SHOW_PARENT } = TreeSelect;
   const { Search } = Input;
 
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, updatedUser, searchData, sortKey, filter, userArhive, currentTabName]);
+  }, [page, pageSize, updatedUser, searchData, sortKey, filter, userArhive, currentTabName, clearFilter]);
 
   useEffect(() => {
     fetchCities();
@@ -84,7 +85,7 @@ const UsersTable = () => {
     forceUpdate({});
   }, []);
 
-  const searchFieldMaxLength: number = 200;
+  const searchFieldMaxLength: number = 150;
 
   const fetchCities = async () => {
     try {
@@ -97,6 +98,7 @@ const UsersTable = () => {
         };
       }))
     } catch (error) {
+      //don't set value type, check on github will fail
       showError(error.message);
     }
   };
@@ -113,6 +115,7 @@ const UsersTable = () => {
         })
       );
     } catch (error) {
+      //don't set value type, check on github will fail
       showError(error.message);
     }
   };
@@ -129,6 +132,7 @@ const UsersTable = () => {
         })
       );
     } catch (error) {
+      //don't set value type, check on github will fail
       showError(error.message);
     }
   };
@@ -145,6 +149,7 @@ const UsersTable = () => {
         })
       );
     } catch (error) {
+      //don't set value type, check on github will fail
       showError(error.message);
     }
   };
@@ -183,6 +188,9 @@ const UsersTable = () => {
         || roles.includes(Roles.Supporter));
       setUsers(response.data.users);
       setTotal(response.data.total);
+    } catch (error) {
+      //don't set value type, check on github will fail
+      showError(error.message);
     } finally {
       setLoading(true);
     }
@@ -312,7 +320,7 @@ const UsersTable = () => {
       dynamicCities.length == 0 &&
       dynamicRegions.length == 0 &&
       dynamicClubs.length == 0 &&
-      dynamicRegions.length == 0
+      dynamicDegrees.length == 0
     ) {
       fetchData();
     } else {
@@ -327,10 +335,14 @@ const UsersTable = () => {
           Degrees: dynamicDegrees,
           Tab: currentTabName,
           SortKey: sortKey,
+          FilterRoles: filter,
           SearchData: searchData
         });
         setUsers(response.data.users);
         setTotal(response.data.total);
+      } catch (error) {
+        //don't set value type, check on github will fail
+        showError(error.message);
       } finally {
         setLoading(true);
       }
@@ -353,7 +365,7 @@ const UsersTable = () => {
   ];
 
   const onTabChange = async (key: string) => {
-    setPage(page);
+    setPage(1);
     setPageSize(pageSize);
     setCurrentTabName(key);
   };
@@ -401,6 +413,7 @@ const UsersTable = () => {
                         setDynamicCities([]);
                         setDynamicClubs([]);
                         setDynamicDegrees([]);
+                        setClearFilter(!clearFilter);
                       }
                     }}
                   >
@@ -463,6 +476,7 @@ const UsersTable = () => {
               sortKey: sortKey,
               setSortKey: setSortKey,
               setFilter: setFilter,
+              setPage: setPage,
               filterRole: filter,
             })}
           dataSource={users}
