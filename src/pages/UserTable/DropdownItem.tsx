@@ -5,17 +5,79 @@ import { NonAdminRole } from "../../models/Roles/NonAdminRole";
 // WARNING: the content of this file will make you cry;
 // God bless this code, coz IDK what I wrote and why I did it
 
+//    ~~~++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++~~~
+//    !!!!!-----PLEASE READ ALL COMMENTS BEFORE EDITING ANYTHING-----!!!!!
+//    ~~~++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++~~~
+
+// So, basically this file is designed to incapsulate all logic of building the context menu on UserTable.
+// In other files logic of user accesses will be on backend in JSON file (at least that's what we agreed to start doing on 04.11.2021) 
+// However, when I had a task to correct access logic on UT (a month before mentioned date), I wasn't aware of such a possibility, 
+// so I did all of needed stuff here. Maybe, it was my biggest mistake, because now you need to read all of this comments in order to 
+// understand what's going on here. Honestly, I was allowed to keep this file and don't rewrite accesses on backend only
+// because I had done a lot of work here despite the fact that everyone know that it's really terrible. I'm sorry.
+// After all this entry, there are a few instructions if you'll need to change smth. If things are going too wrong, you can 
+// ask Ira how to contact me and tell me all what you think about this creep. Good luck. 
+
+
+
+//                                      INSTRUCTIONS
+//
+//  (1) ===== NEW ROLE, like Admin or Governing Body Admin (with a lot of rights), was added =====
+//    1. Edit enum 'AdminRole', which is located in 'EPLAST-CLIENT\src\models\Roles' - you need to add 
+//        name of this new role to this hierarchy on corresponding position
+//    2. Create a new derivative class from abstract class 'Check' and call it like 'CurrUserIsNameOfAdmin'
+//        (for example look on CurrUserIsGovAdminCheck or CurrUserIsHeadAdminCheck)
+//    3. Override base method 'check', include in it if/else statement, which will check
+//        if there is necessary role in array of roles
+//    4. Then you need to include this new check class in all chains in 'CheckCreator' on appropriate position
+//        (like it's with Admin)
+//        
+//  (2) ===== NEW ROLE, like Region (deputy) Head or Club (deputy) Head, was added             ===== 
+//      ===== (if it was added with new place, like Region or Club, see also next instruction) =====
+//    1. Edit enum 'AdminRole', which is located in 'EPLAST-CLIENT\src\models\Roles' - you need to add 
+//        name of this new role to this hierarchy on corresponding position (if it goes with new place
+//        - check instruction 3)
+//    2. Add it to all switch statements in file with similar roles, like in class 
+//        'CurrUserIsAdminForSelectedUserCheck' or 'SelectedUserHasPlace'
+//
+//  (3) ===== NEW PLACE, like Region or Club, was added =====
+//    1. Edit enum 'Place' in current file, add it on the appropriate place in hierarchy
+//    2. Add it to all switch statements in file where this enum is used, like in class
+//        'CurrUserIsAdminForSelectedUserCheck' or 'SelectedUserHasPlace'
+//
+//  (4) ===== NEW ITEM in context menu was added =====
+//    1. Create a new derivative class from abstract class 'DropdownItem' with name like 'NewItem',
+//    2. Override method 'handle', using in it if/else statement, where first one, for example, will
+//        set map of results to true, and else in false (for example)
+//    3. Create new method in CheckCreator class and write appropriate set of checks in chain
+//    4. Remember to call method from clause 3 in method from clause 2.
+//    5. Add this new item to method 'build' in 'DropdownItemCreator' (like all other items),
+//        (it doesn't affect the context menu itself, only order of check)
+//    6. Use the results of this map in file DropDownUserTable.tsx 
+//   
+//  (5) ==== NEW ROLE (non-admin) was added, like PlastMember =====
+//    1. Add this role to enum 'NonAdminRole' in 'EPLAST-CLIENT\src\models\Roles'
+//
+//  (6) === NEW CHECK needed =====
+//    1. Create a new derivative class from abstract class 'Check' with name 'NewCheck',
+//    2. Override method 'check', using in it if/else statement, where one will 
+//        continue the chain, and the other one will return false value to cancel all
+//        further checks and block this menu item for current user. If there is some 
+//        troubles with stopping the chain (don't always need to end if check fails), 
+//        you can look at the end of the file, there is one class (FinalFalseCheck), which 
+//        is helpful with such kind of situations
+//    3. Add it to needed methods in CheckBuilder class
+//    
+
 //Enum to check place's id equality and check 
 //if user has appropriate rights
 enum Place {
   Region  = 0,    //Округа
   City    = 1,    //Станиця
   Club    = 2,    //Курінь
-  All     = 3,    //Всі можливі з перерахованих вище пунктів
-  None    = 4,    //Не важливий жоден
 }
 
-//Basic builder for set of dropdown items, can be extended to pattern 'Builder' (maybe, I'm not sure after all)
+//Basic builder for set of dropdown items
 export class DropdownItemCreator {
 
   public build(): IDropdownItem {
@@ -30,6 +92,8 @@ export class DropdownItemCreator {
     const checkerCreator: CheckCreator = new CheckCreator(); 
     DropdownItem.checkCreator = checkerCreator;
 
+    //List of all items in context menu is recorded as linked list. It doesn't carry any
+    //semantic load, only used for sequential check of each item in this list)
     checkProfileItem.setNext(deleteItem).setNext(editClubItem).setNext(editCityItem)
       .setNext(editRegionItem).setNext(addDegreeeItem).setNext(editUserRole);
 
@@ -39,11 +103,14 @@ export class DropdownItemCreator {
 
 export interface IDropdownItem {
 
+  //This method will set the next item to check it for visibility
   setNext(item: IDropdownItem): IDropdownItem;
 
+  //The method to call the check chain and set the map of results
   handle(currentUser: any, currentUserRoles: Array<AdminRole>, selectedUser: any,
         selectedUserAdminRoles: Array<AdminRole>, selectedUserNonAdminRoles: Array<NonAdminRole>): void;
 
+  //Gets called in DropDownUserTable.tsx to receive the map with results of all checks
   getHandlersResults(): Map<DropdownFunc, any>;
 }
 
@@ -211,8 +278,7 @@ class AddUserDegreeItem extends DropdownItem {
 
 //-------------------------------------------------------------------------------------------------------------------------------
 
-//Builds CoR for each of the dropdown items, can be rewritten using pattern 
-//'Builder' (I'm not sure already) to perform different chains for dropdown items.
+//Builds CoR for each of the dropdown items
 //To improve performance we can create all check's separately for each chain 
 //of these check's (each method in this class), so each chain will be builded only one time. 
 //However, it will take some extra memory and will be more complicated to implement and maintain.
@@ -228,7 +294,8 @@ class CheckCreator {
 
   public rebuildChainForDeleting(): ICheck {
 
-    this.checkId.setNext(this.adminRightsCompare)?.setNext(this.userHeadAdmin)?.setNext(this.userGovAdmin)?.setNext(this.falseCheck)?.setNext(null);
+    this.checkId.setNext(this.adminRightsCompare)?.setNext(this.userHeadAdmin)?.
+        setNext(this.userGovAdmin)?.setNext(this.falseCheck)?.setNext(null);
 
     return this.checkId;
   }
