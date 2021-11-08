@@ -24,6 +24,7 @@ import AddSubsectionModal from './AddSubsectionModal';
 import DeleteSectConfirm from "./DeleteSectConfirm";
 import DeleteSubsectConfirm from './DeleteSubsectConfirm';
 import { List, Tooltip, Typography } from "antd";
+import { enableCursor } from '@fullcalendar/common';
 
 
 const { Content } = Layout;
@@ -63,7 +64,9 @@ const AboutBase = () => {
   const [searchedData, setSearchedData] = useState("");
   const [form] = Form.useForm();
   const [editVisible, setEditVisible] = useState(false);
-  const [editNewVisible, setEditNewVisible] = useState(false);
+  const [editVisibleSub, setEditVisibleSub] = useState(false);
+  const [sectEdit, setSectEdit] = useState(0);
+  const [subsectEdit, setSubsectEdit] = useState(0);
   const [curSect, setCurSect] = useState<SectionModel>(defaultSect);
   const [Sections, setData] = useState<SectionModel[]>([
     {
@@ -113,14 +116,6 @@ const AboutBase = () => {
     setLoading(true);
   };
 
-  /*const handleDelete = (id: SectionModel['id']) => {
-    setData(prev => prev.filter(item => item.id !== id))
-  }
-
-  const handleEdit = (title: string, id: SectionModel['id']) => {
-    setData(prev => prev.map(item => item.id === id ? { ...item, title } : item))
-  }*/
-
   const handleDelete = (id: number) => {
     const filteredData = sectData.filter((s: { id: number }) => s.id !== id);
     setSectData([...filteredData]);
@@ -168,20 +163,6 @@ const AboutBase = () => {
     }
   }
 
-  const handleSubAdd = async (index: any) => {
-
-  }
-
-
-  /*const handleAdd = async (index: any) => {
-    setLoading(false);
-    const newItem = { id: count++, title: '', subsection: JSON.parse(index.subsection) }
-    // const res: SectionModel[] = await Api.get();
-    // setData(res);
-    setData(prev => [...prev.slice(0, index + 1), newItem, ...prev.slice(index + 1)])
-    setLoading(true);
-  };*/
-
   const handleSubmit = async (values: any) => {
     const newSection: SectionModel = {
       id: 0,
@@ -194,6 +175,8 @@ const AboutBase = () => {
     const section = (await aboutBase.getAboutBaseSectionById(id)).data;
     setCurSect(section);
     if (curSect.id != id) {
+      console.log(curSect.id);
+      console.log(id);
       setEditVisible(true);
     }
   };
@@ -201,14 +184,15 @@ const AboutBase = () => {
   const showSubEdit = async (id: number) => {
     const subsection = (await aboutBase.getAboutBaseSubsectionById(id)).data;
     setCurSubsect(subsection);
+    if (curSubsect.id != id) {
+      setEditVisibleSub(true);
+    }
   }
 
   const showModalAsk = () => setVisibleModalAsk(true);
   const showModalSub = () => setVisibleModalSub(true);
 
   const [sectId, setSectId] = useState(0);
-
-  const [sectHeader, setSectHeader] = useState();
 
   return !loading ? (
     <Layout.Content className="aboutbase">
@@ -231,14 +215,38 @@ const AboutBase = () => {
           className="section" key={sectitem.id}
         >
           <Panel
-            header={sectHeader/*sectitem.title <Input style={{width: 300}}/>*/}
+            header={editVisible && sectEdit == sectitem.id ? (
+              <div>
+                <Input
+                  style={{ width: 300 }}
+                  defaultValue={sectitem.title}
+                  onChange={(event) =>
+                    setCurSect({
+                      id: curSect.id,
+                      title: event.target.value,
+                      subsection: {
+                        id: 0,
+                        sectionId: 0,
+                        title: "",
+                        description: ""
+                      }
+                    })
+                  } />
+                <Space>
+                  <Button type="primary" onClick={handleEdit} ><SaveOutlined /></Button>
+                  <Button type="primary" onClick={() => setEditVisible(false)}>Скасувати</Button>
+                </Space>
+              </div>
+            ) : (
+              sectitem.title
+            )}
             key={sectitem.id}
             extra={[
               <Space>
                 <Tooltip title="Редагувати розділ">
                   <EditOutlined
                     className="editInfoIcon"
-                    onClick={() => showEdit(sectitem.id)}
+                    onClick={(e) => { setSectEdit(sectitem.id); showEdit(sectitem.id) }}
                   />
                 </Tooltip>
                 <Tooltip title="Видалити розділ">
@@ -256,7 +264,27 @@ const AboutBase = () => {
                 className="section" key={subitem.id}
               >
                 <Panel
-                  header={subitem.title}
+                  header={editVisibleSub && subsectEdit == subitem.id ? (
+                    <div>
+                      <Input
+                        style={{ width: 300 }}
+                        defaultValue={subitem.title}
+                        onChange={(event) =>
+                          setCurSubsect({
+                            id: curSubsect.id,
+                            sectionId: curSect.id,
+                            title: event.target.value,
+                            description: curSubsect.description
+                          })
+                        } />
+                      <Space>
+                        <Button type="primary" /*onClick={handleEdit}*/ ><SaveOutlined /></Button>
+                        <Button type="primary" /*onClick={() => setEditVisible(false)}*/>Скасувати</Button>
+                      </Space>
+                    </div>
+                  ) : (
+                    subitem.title
+                  )}
                   key={subitem.id}
                   extra={[
                     <Space>
@@ -311,24 +339,19 @@ const AboutBase = () => {
       //onAdd={onAdd}
       />
 
-      {/*!editNewVisible ? (
-        <div></div>
-      ) : (
-        <></>
-      )*/}
-
-      {!editVisible ? (
-        <div></div>
-      ) : (
-        <></>
-      )}
-      {editVisible ? (
-        <div>
-
-        </div>
-      ) : (
-        <></>
-      )}
+      <div className="addSection">
+        <Input placeholder=" Додати розділ" type="text" maxLength={50}
+          value={title}
+          onChange={(event) => {
+            if (event.target.value.length < typeMaxLength) {
+              setTitle(event.target.value);
+              setVisRule(false);
+            }
+            else
+              setVisRule(true);
+          }} />
+        <Button type="primary" onClick={handleAdd}>Додати</Button>
+      </div>
 
       {/*!editVisible ? (
         <div className="addSection">
