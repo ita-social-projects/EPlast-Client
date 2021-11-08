@@ -252,7 +252,7 @@ const Club = () => {
   const getClub = async () => {
     setLoading(true);
     try {
-      await getUserAccessesFoClubs();
+      await getUserAccessesForClubs();
       const response = await getClubById(+id);
       setActiveUserID(userApi.getActiveUserId());
       const clubNameResponse = await clubNameOfApprovedMember(userApi.getActiveUserId());
@@ -280,7 +280,7 @@ const Club = () => {
     }
   };
 
-  const getUserAccessesFoClubs = async () => {
+  const getUserAccessesForClubs = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
     await getUserClubAccess(+id, user.nameid).then(
       response => {
