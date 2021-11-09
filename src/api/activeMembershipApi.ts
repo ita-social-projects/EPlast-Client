@@ -18,6 +18,10 @@ export type UserPlastDegreePut ={
     userId : string;
     plastDegreeId : number;
 }
+export type UserOathDate ={
+    dateOath : string | null
+    userId : string;
+}
 export type UserDates ={
     dateEntry : string;
     dateOath : string | null
@@ -59,7 +63,7 @@ const getUserDates = async (id : string) :Promise<UserDates>=> {
 
     return response.data;
  };
- const postUserDates = async (userDates : UserDates) =>{
+ const postUserOathDate = async (userDates : UserOathDate) =>{
      const response = await Api.post(`ActiveMembership/dates`, userDates);
         
      return response.data;
@@ -73,5 +77,5 @@ export default
     postUserPlastDegree,
     removeUserPlastDegree,
     getUserDates,
-    postUserDates
+    postUserOathDate
 };

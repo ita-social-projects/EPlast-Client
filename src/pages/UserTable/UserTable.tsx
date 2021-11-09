@@ -335,6 +335,7 @@ const UsersTable = () => {
           Degrees: dynamicDegrees,
           Tab: currentTabName,
           SortKey: sortKey,
+          FilterRoles: filter,
           SearchData: searchData
         });
         setUsers(response.data.users);

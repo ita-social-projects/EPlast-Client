@@ -58,7 +58,7 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUnarchiveAction, successfulArchiveAction } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUnarchiveAction, successfulArchiveAction, failArchiveAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
@@ -159,13 +159,17 @@ const City = () => {
   };
 
   const ArchiveCity = async () => {
-    await archiveCity(city.id);
-    notificationLogic("success", successfulArchiveAction("Станицю"));
-    admins.map(async (ad) => {
-      await createNotification(ad.userId,
-        `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
-    });
-    history.push("/cities");
+    try {
+      await archiveCity(city.id);
+      notificationLogic("success", successfulArchiveAction("Станицю"));
+      admins.map(async (ad) => {
+        await createNotification(ad.userId,
+          `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
+      });
+      history.push("/cities");
+    } catch {
+      notificationLogic("error", failArchiveAction(city.name));
+    }
   };
 
   const deleteCity = async () => {
