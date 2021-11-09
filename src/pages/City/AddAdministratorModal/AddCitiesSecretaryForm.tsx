@@ -126,7 +126,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
             { value: Roles.CityHead, disabled: (activeUserRoles.includes(Roles.CityHeadDeputy)
             && activeUserRoles.includes(Roles.Admin)) },
             { value: Roles.CityHeadDeputy},
-            { value: "Голова СПС" },
+            { value: "Голова СПР" },
             { value: "Писар" },
             { value: "Скарбник" },
             { value: "Домівкар" },
