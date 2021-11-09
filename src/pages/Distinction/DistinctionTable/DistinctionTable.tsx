@@ -67,7 +67,6 @@ const DistinctionTable = () => {
     await distinctionApi.getUserDistinctionAccess(user.nameid).then(
       response => {
         setUserAccesses(response.data);
-        console.log(user);
       }
     );
   }
