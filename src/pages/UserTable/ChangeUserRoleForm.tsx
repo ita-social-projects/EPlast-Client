@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
   Form,
-  Input,
   Button,
   Select,
-  Typography,
-  Radio,
-  AutoComplete,
   Row,
   Col,
 } from "antd";
@@ -48,7 +44,6 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
   const addEndDate = async (isEmpty: Boolean) => {
     let currentDates = await activeMembershipApi.getUserDates(userId);
     currentDates.dateEnd = isEmpty ? "0001-01-01T00:00:00" : moment().format();
-    await activeMembershipApi.postUserDates(currentDates);
   };
   const  handleChange = (value:string) => {
     console.log(`selected ${value}`);
