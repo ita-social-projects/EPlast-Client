@@ -11,7 +11,8 @@ import {
   Card,
   Tooltip,
   Badge,
-  Tag
+  Tag,
+  Empty
 } from "antd";
 import {
   FileTextOutlined,
@@ -63,7 +64,7 @@ import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
-import { number } from "yup";
+import { number, string } from "yup";
 import AuthStore from "../../../stores/AuthStore";
 import { getRoles } from "@testing-library/dom";
 
@@ -439,8 +440,12 @@ const City = () => {
     if (admin.id === 0) {
       const head = (admins as CityAdmin[])
         .find(x => x.adminType.adminTypeName === Roles.CityHead)
+      if(admin !== undefined){
+        const admini = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
+        admin.adminType.adminTypeName = admini
+      }
       const existingAdmin  = (admins as CityAdmin[])
-        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName) 
+      .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
       try {     
         if (head?.userId === admin.userId){
           showDisableModal(head)
@@ -449,7 +454,7 @@ const City = () => {
           showDisable(admin)
         }
         else if(admin.adminType.adminTypeName === "Голова СПР" ||
-          admin.adminType.adminTypeName === "Член СПР"){
+        admin.adminType.adminTypeName === "Член СПР"){
           const check = await getCheckPlastMember(admin.userId);
           if(check.data){
             await addCityAdmin(admin);
