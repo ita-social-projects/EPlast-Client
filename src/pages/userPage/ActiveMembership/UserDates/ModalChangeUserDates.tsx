@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Form, DatePicker, Button } from "antd";
 import activeMembershipApi, {
-  UserDates,
+  UserOathDate,
 } from "../../../../api/activeMembershipApi";
 import classes from "./ModalChangeUserDates.module.css";
 import moment from "moment";
@@ -14,6 +14,8 @@ type props = {
   setDatesVisibleModal: (visibleModal: boolean) => void;
   handleChangeDates: () => void;
 };
+
+const defaultDate = "0001-01-01T00:00:00";
 
 const ModalChangeUserDates = ({
   userId,
@@ -45,24 +47,22 @@ const ModalChangeUserDates = ({
 
   const SetDate = (date: any, prevDate: string): string => {
     if (date === undefined) {
-      if (prevDate === "") return "0001-01-01T00:00:00";
+      if (prevDate === "") return defaultDate;
       else return prevDate;
     } else if (date === null) {
-      return "0001-01-01T00:00:00";
+      return defaultDate;
     } else {
       return moment(date._d).format();
     }
   };
 
   const handleFinish = async (info: any) => {
-    const userDatesChange: UserDates = {
+    const userOathDateChange: UserOathDate = {
       userId: userId,
-      dateEntry: dates.dateEntry,
-      dateOath: SetDate(info.datepickerOath, dates.dateOath),
-      dateEnd: SetDate(info.datepickerEnd, dates.dateEnd),
+      dateOath: SetDate(info.datepickerOath, dates.dateOath)
     };
     setDatesVisibleModal(false);
-    await activeMembershipApi.postUserDates(userDatesChange);
+    await activeMembershipApi.postUserOathDate(userOathDateChange);
     handleChangeDates();
   };
 
