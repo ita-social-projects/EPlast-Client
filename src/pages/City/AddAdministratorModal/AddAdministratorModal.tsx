@@ -7,9 +7,8 @@ import AdminType from "./../../../models/Admin/AdminType";
 import {
   addAdministrator,
   editAdministrator,
-  getAllAdmins,
   getCheckPlastMember,
-  getCityAdministration,
+  getCityAdministration
 } from "../../../api/citiesApi";
 import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";

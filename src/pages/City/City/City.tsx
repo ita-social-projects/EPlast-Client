@@ -11,8 +11,7 @@ import {
   Card,
   Tooltip,
   Badge,
-  Tag,
-  Empty
+  Tag
 } from "antd";
 import {
   FileTextOutlined,
@@ -64,9 +63,7 @@ import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
-import { number, string } from "yup";
 import AuthStore from "../../../stores/AuthStore";
-import { getRoles } from "@testing-library/dom";
 
 const City = () => {
   const history = useHistory();
