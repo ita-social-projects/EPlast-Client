@@ -442,8 +442,8 @@ const City = () => {
       const head = (admins as CityAdmin[])
         .find(x => x.adminType.adminTypeName === Roles.CityHead)
       if(admin !== undefined){
-        const admini = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
-        admin.adminType.adminTypeName = admini
+        const adminToUpper = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
+        admin.adminType.adminTypeName = adminToUpper
       }
       const existingAdmin  = (admins as CityAdmin[])
         .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
