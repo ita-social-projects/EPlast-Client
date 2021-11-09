@@ -442,7 +442,7 @@ const City = () => {
         admin.adminType.adminTypeName = admini
       }
       const existingAdmin  = (admins as CityAdmin[])
-      .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
+        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
       try {     
         if (head?.userId === admin.userId){
           showDisableModal(head)
@@ -451,7 +451,7 @@ const City = () => {
           showDisable(admin)
         }
         else if(admin.adminType.adminTypeName === "Голова СПР" ||
-        admin.adminType.adminTypeName === "Член СПР"){
+          admin.adminType.adminTypeName === "Член СПР"){
           const check = await getCheckPlastMember(admin.userId);
           if(check.data){
             await addCityAdmin(admin);
