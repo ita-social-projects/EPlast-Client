@@ -63,9 +63,7 @@ import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
-import { number } from "yup";
 import AuthStore from "../../../stores/AuthStore";
-import { getRoles } from "@testing-library/dom";
 
 const City = () => {
   const history = useHistory();
@@ -443,8 +441,12 @@ const City = () => {
     if (admin.id === 0) {
       const head = (admins as CityAdmin[])
         .find(x => x.adminType.adminTypeName === Roles.CityHead)
+      if(admin !== undefined){
+        const adminToUpper = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
+        admin.adminType.adminTypeName = adminToUpper
+      }
       const existingAdmin  = (admins as CityAdmin[])
-        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName) 
+        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
       try {     
         if (head?.userId === admin.userId){
           showDisableModal(head)
