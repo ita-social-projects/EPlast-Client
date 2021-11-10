@@ -31,6 +31,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   const [startDate, setStartDate] = useState<any>();
   const [members, setMembers] = useState<CityUser[]>([]);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -71,6 +72,12 @@ const AddCitiesNewSecretaryForm = (props: any) => {
     });
     }
   };
+
+  useEffect(() => {
+    if (loading === true){
+      handleSubmit(form.getFieldsValue());
+    }
+  }, [loading])
 
   useEffect(() => {
     if (props.visibleModal) {
@@ -172,7 +179,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item style={{ textAlign: "right" }}>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" disabled={loading} onClick = {() => {setLoading(!loading);}}>
           Опублікувати
         </Button>
       </Form.Item>

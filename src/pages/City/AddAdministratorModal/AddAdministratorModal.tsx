@@ -36,6 +36,7 @@ const AddAdministratorModal = (props: Props) => {
   const [startDate, setStartDate] = useState<any>();
   const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
+  const [disable, setDisable] = useState<boolean>(false);
   const [head, setHead] = useState<CityAdmin>();
   const [headDeputy, setHeadDeputy] = useState<CityAdmin>();
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
@@ -195,6 +196,12 @@ const AddAdministratorModal = (props: Props) => {
       await editCityAdmin(admin);
     }
   }
+
+  useEffect(() => {
+    if (disable === true){
+      handleSubmit(form.getFieldsValue());
+    }
+  }, [disable])
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
@@ -368,7 +375,7 @@ const AddAdministratorModal = (props: Props) => {
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" disabled={disable} onClick = {() => {setDisable(!disable);}}>
                 Опублікувати
               </Button>
             </Col>
