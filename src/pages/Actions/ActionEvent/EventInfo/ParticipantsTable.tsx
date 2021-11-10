@@ -18,7 +18,8 @@ import { Roles } from "../../../../models/Roles/Roles";
 const { Text } = Typography;
 
 interface Props {
-  isUserEventAdmin: boolean;
+  userAccesses: { [key: string]: boolean; }
+  isEventFinished: boolean;
   participants: EventParticipant[];
   setRender: (render: boolean) => void;
 }
@@ -30,7 +31,8 @@ const participantStatuses = {
 };
 
 const ParticipantsTable = ({
-  isUserEventAdmin,
+  userAccesses,
+  isEventFinished,
   participants,
   setRender,
 }: Props) => {
@@ -39,9 +41,21 @@ const ParticipantsTable = ({
   );
   const history = useHistory();
   const roles = ([] as string[]).concat(userApi.getActiveUserRoles());
+
   useEffect(() => {
-    setParticipant(participants);
+    setParticipantsInTable();
   }, [participants]);
+
+  const setParticipantsInTable = () => {
+    debugger;
+    if (userAccesses["SeeUserTable"]) {
+      setParticipant(participants);
+    }
+    else {
+      setParticipant(participants.filter(p => p.status == "Учасник"));
+    }
+  };
+
   const setTagColor = (status: string) => {
     let color = "";
     if (status === "Відмовлено") {
@@ -78,6 +92,7 @@ const ParticipantsTable = ({
         showError();
       });
   };
+
   const changeStatusToUnderReviewed = (participantId: number) => {
     const underReviewedParticipant = async () => {
       await eventsApi.underReviewParticipant(participantId);
@@ -88,6 +103,7 @@ const ParticipantsTable = ({
         showError();
       });
   };
+
   const changeStatusToRejected = (participantId: number) => {
     const rejectParticipant = async () => {
       await eventsApi.rejectParticipant(participantId);
@@ -132,7 +148,7 @@ const ParticipantsTable = ({
     },
   ];
 
-  if (isUserEventAdmin || roles.includes(Roles.Admin)) {
+  if (userAccesses["ApproveParticipant"] && !isEventFinished) {
     columns.push({
       title: "Змінити статус",
       dataIndex: "changeStatus",
