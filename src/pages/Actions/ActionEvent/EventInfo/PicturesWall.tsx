@@ -1,7 +1,7 @@
 import {Card, Row, Col, notification, Modal} from 'antd';
 import React, {useState} from 'react';
 import {EventGallery} from "./EventInfo";
-import {DeleteOutlined, EyeOutlined} from "@ant-design/icons/lib";
+import {DeleteOutlined, ExclamationCircleOutlined, EyeOutlined} from "@ant-design/icons/lib";
 import eventsApi from "../../../../api/eventsApi";
 import{failDeleteAction} from "../../../../components/Notifications/Messages"
 import './EventInfo.less';
@@ -17,6 +17,21 @@ const PicturesWall = ({pictures, removePicture}: Props) => {
     const deletePicture = async (id: number) => {
         return await eventsApi.removePicture(id);
     };
+    
+    function seeDeleteModal(photoId: number) {
+        return Modal.confirm({
+          title: "Ви впевнені, що хочете видалити це фото?",
+          icon: <ExclamationCircleOutlined />,
+          okText: "Так, видалити",
+          okType: "primary",
+          cancelText: "Скасувати",
+          maskClosable: true,
+          onOk() {
+            removePicture(photoId);
+          },
+        });
+    }
+
     const RenderPictureWallActions = (id: number,pictureInBase64:string): React.ReactNode[] => {
         const pictureActions: React.ReactNode[] = []
         pictureActions.push(
@@ -34,7 +49,7 @@ const PicturesWall = ({pictures, removePicture}: Props) => {
                 className="deletePicture"
                 key="deletePicture"
                 onClick={() => deletePicture(id)
-                    .then(() => removePicture(id))
+                    .then(() => seeDeleteModal(id))
                     .catch(() => notification.error({message: failDeleteAction('зображення'), duration: 3}))
                 }
             />
