@@ -76,7 +76,7 @@ const GoverningBodies = () => {
   };
   return (
     <Layout.Content className="cities">
-      <Title level={1}>Керівні оргіни</Title>
+      <Title level={1}>Керівні органи</Title>
       <div className="searchContainer">
         <Search
           placeholder="Пошук"
