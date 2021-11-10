@@ -45,7 +45,7 @@ import Spinner from "../../Spinner/Spinner";
 import ClubDetailDrawer from "../ClubDetailDrawer/ClubDetailDrawer";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import notificationLogic from "../../../components/Notifications/Notification";
-import { successfulArchiveAction, successfulDeleteAction, successfulEditAction, successfulUnarchiveAction } from "../../../components/Notifications/Messages";
+import { successfulArchiveAction, successfulDeleteAction, successfulEditAction, successfulUnarchiveAction, failArchiveAction } from "../../../components/Notifications/Messages";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
@@ -138,9 +138,13 @@ const Club = () => {
 
 
   const ArchiveClub = async () => {
-    await archiveClub(club.id);
-    notificationLogic("success", successfulArchiveAction("Курінь"));
-    history.push('/clubs');
+    try {
+      await archiveClub(club.id);
+      notificationLogic("success", successfulArchiveAction(club.name));
+      history.push('/clubs');
+    } catch {
+      notificationLogic("error", failArchiveAction(club.name));
+    }
   }
 
   const deleteClub = async () => {
@@ -252,7 +256,7 @@ const Club = () => {
   const getClub = async () => {
     setLoading(true);
     try {
-      await getUserAccessesFoClubs();
+      await getUserAccessesForClubs();
       const response = await getClubById(+id);
       setActiveUserID(userApi.getActiveUserId());
       const clubNameResponse = await clubNameOfApprovedMember(userApi.getActiveUserId());
@@ -280,7 +284,7 @@ const Club = () => {
     }
   };
 
-  const getUserAccessesFoClubs = async () => {
+  const getUserAccessesForClubs = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
     await getUserClubAccess(+id, user.nameid).then(
       response => {
