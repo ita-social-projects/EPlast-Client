@@ -58,7 +58,7 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUnarchiveAction, successfulArchiveAction } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUnarchiveAction, successfulArchiveAction, failArchiveAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
@@ -160,13 +160,17 @@ const City = () => {
   };
 
   const ArchiveCity = async () => {
-    await archiveCity(city.id);
-    notificationLogic("success", successfulArchiveAction("Станицю"));
-    admins.map(async (ad) => {
-      await createNotification(ad.userId,
-        `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
-    });
-    history.push("/cities");
+    try {
+      await archiveCity(city.id);
+      notificationLogic("success", successfulArchiveAction("Станицю"));
+      admins.map(async (ad) => {
+        await createNotification(ad.userId,
+          `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
+      });
+      history.push("/cities");
+    } catch {
+      notificationLogic("error", failArchiveAction(city.name));
+    }
   };
 
   const deleteCity = async () => {
@@ -442,7 +446,7 @@ const City = () => {
         admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
       }
       const existingAdmin  = (admins as CityAdmin[])
-      .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
+        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
       try {     
         if (head?.userId === admin.userId){
           showDisableModal(head)
@@ -451,7 +455,7 @@ const City = () => {
           showDisable(admin)
         }
         else if(admin.adminType.adminTypeName === "Голова СПР" ||
-        admin.adminType.adminTypeName === "Член СПР"){
+          admin.adminType.adminTypeName === "Член СПР"){
           const check = await getCheckPlastMember(admin.userId);
           if(check.data){
             await addCityAdmin(admin);

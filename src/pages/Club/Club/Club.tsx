@@ -46,7 +46,7 @@ import Spinner from "../../Spinner/Spinner";
 import ClubDetailDrawer from "../ClubDetailDrawer/ClubDetailDrawer";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import notificationLogic from "../../../components/Notifications/Notification";
-import { successfulArchiveAction, successfulDeleteAction, successfulEditAction, successfulUnarchiveAction } from "../../../components/Notifications/Messages";
+import { successfulArchiveAction, successfulDeleteAction, successfulEditAction, successfulUnarchiveAction, failArchiveAction } from "../../../components/Notifications/Messages";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
@@ -140,9 +140,13 @@ const Club = () => {
 
 
   const ArchiveClub = async () => {
-    await archiveClub(club.id);
-    notificationLogic("success", successfulArchiveAction("Курінь"));
-    history.push('/clubs');
+    try {
+      await archiveClub(club.id);
+      notificationLogic("success", successfulArchiveAction(club.name));
+      history.push('/clubs');
+    } catch {
+      notificationLogic("error", failArchiveAction(club.name));
+    }
   }
 
   const deleteClub = async () => {

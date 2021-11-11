@@ -223,8 +223,7 @@ const AddAdministratorModal = (props: Props) => {
 
     try {
       if(admin !== undefined){
-          const admini = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
-          admin.adminType.adminTypeName = admini
+          admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
         }
       const existingAdmin  = (admins as RegionAdmin[])
         .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)   
