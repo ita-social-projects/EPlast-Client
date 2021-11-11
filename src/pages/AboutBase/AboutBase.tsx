@@ -21,6 +21,7 @@ import Subsections from './Subsections';
 import aboutBase from '../../api/aboutBase';
 import notificationLogic from "../../components/Notifications/Notification";
 import AddSubsectionModal from './AddSubsectionModal';
+import EditSubsectionModal from './EditSubsectionModal';
 import DeleteSectConfirm from "./DeleteSectConfirm";
 import DeleteSubsectConfirm from './DeleteSubsectConfirm';
 import { List, Tooltip, Typography } from "antd";
@@ -59,14 +60,14 @@ const AboutBase = () => {
   const [regionAdm, setRegionAdm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [visibleModalAsk, setVisibleModalAsk] = useState(false);
-  const [visibleModalSub, setVisibleModalSub] = useState(false);
+  const [visibleModalSubAdd, setVisibleModalSubAdd] = useState(false);
+  const [visibleModalSubEdit, setVisibleModalSubEdit] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const [searchedData, setSearchedData] = useState("");
   const [form] = Form.useForm();
   const [editVisible, setEditVisible] = useState(false);
   const [editVisibleSub, setEditVisibleSub] = useState(false);
   const [sectEdit, setSectEdit] = useState(0);
-  const [subsectEdit, setSubsectEdit] = useState(0);
   const [curSect, setCurSect] = useState<SectionModel>(defaultSect);
   const [Sections, setData] = useState<SectionModel[]>([
     {
@@ -175,8 +176,6 @@ const AboutBase = () => {
     const section = (await aboutBase.getAboutBaseSectionById(id)).data;
     setCurSect(section);
     if (curSect.id != id) {
-      console.log(curSect.id);
-      console.log(id);
       setEditVisible(true);
     }
   };
@@ -190,9 +189,13 @@ const AboutBase = () => {
   }
 
   const showModalAsk = () => setVisibleModalAsk(true);
-  const showModalSub = () => setVisibleModalSub(true);
+  const showModalSubAdd = () => setVisibleModalSubAdd(true);
+  const showModalSubEdit = () => setVisibleModalSubEdit(true);
 
   const [sectId, setSectId] = useState(0);
+  const [subId, setSubId] = useState(0);
+  const [subTitle, setSubTitle] = useState("");
+  const [subDescription, setSubDescription] = useState("");
 
   return !loading ? (
     <Layout.Content className="aboutbase">
@@ -264,34 +267,14 @@ const AboutBase = () => {
                 className="section" key={subitem.id}
               >
                 <Panel
-                  header={editVisibleSub && subsectEdit == subitem.id ? (
-                    <div>
-                      <Input
-                        style={{ width: 300 }}
-                        defaultValue={subitem.title}
-                        onChange={(event) =>
-                          setCurSubsect({
-                            id: curSubsect.id,
-                            sectionId: curSect.id,
-                            title: event.target.value,
-                            description: curSubsect.description
-                          })
-                        } />
-                      <Space>
-                        <Button type="primary" /*onClick={handleEdit}*/ ><SaveOutlined /></Button>
-                        <Button type="primary" /*onClick={() => setEditVisible(false)}*/>Скасувати</Button>
-                      </Space>
-                    </div>
-                  ) : (
-                    subitem.title
-                  )}
+                  header={subitem.title}
                   key={subitem.id}
                   extra={[
                     <Space>
                       <Tooltip title="Редагувати підрозділ">
                         <EditOutlined
                           className="editInfoIcon"
-                        //onClick={() => showEdit(sectitem.id)}
+                          onClick={(e) => {setSubId(subitem.id); setSubTitle(subitem.title); setSubDescription(subitem.description); setSectId(sectitem.id); showModalSubEdit()}}
                         />
                       </Tooltip>
                       <Tooltip title="Видалити підрозділ">
@@ -308,33 +291,30 @@ const AboutBase = () => {
               </Collapse>
             ))}
             <div className="addSubSection">
-              <Button type="primary" onClick={(e) => { setSectId(sectitem.id); showModalSub() }}>Додати підрозділ</Button>
+              <Button type="primary" onClick={(e) => { setSectId(sectitem.id); showModalSubAdd() }}>Додати підрозділ</Button>
             </div>
           </Panel>
         </Collapse>
       ))}
-      {/*<div className="addSection">
-        <Input placeholder=" Додати розділ" type="text" maxLength={50}
-          value={title}
-          onChange={(event) => {
-            if (event.target.value.length < typeMaxLength) {
-              setTitle(event.target.value);
-              setVisRule(false);
-            }
-            else
-              setVisRule(true);
-          }} />
-        <Button type="primary" onClick={handleAdd}>Додати</Button>
-        </div>*/}
       <AskQuestionModal
         setVisibleModal={setVisibleModalAsk}
         visibleModal={visibleModalAsk}
       //onAdd={handleAdd}
       />
       <AddSubsectionModal
-        setVisibleModal={setVisibleModalSub}
-        visibleModal={visibleModalSub}
+        setVisibleModal={setVisibleModalSubAdd}
+        visibleModal={visibleModalSubAdd}
         sectId={sectId}
+        fetchSubData={fetchSubData}
+      //onAdd={onAdd}
+      />
+      <EditSubsectionModal
+        setVisibleModal={setVisibleModalSubEdit}
+        visibleModal={visibleModalSubEdit}
+        id={subId}
+        sectId={sectId}
+        title={subTitle}
+        description={subDescription}
         fetchSubData={fetchSubData}
       //onAdd={onAdd}
       />
@@ -352,49 +332,6 @@ const AboutBase = () => {
           }} />
         <Button type="primary" onClick={handleAdd}>Додати</Button>
       </div>
-
-      {/*!editVisible ? (
-        <div className="addSection">
-          <Input placeholder=" Додати розділ" type="text" maxLength={50}
-            value={title}
-            onChange={(event) => {
-              if (event.target.value.length < typeMaxLength) {
-                setTitle(event.target.value);
-                setVisRule(false);
-              }
-              else
-                setVisRule(true);
-            }} />
-          <Button type="primary" onClick={handleAdd}>Додати</Button>
-        </div>
-      ) : (
-        <></>
-      )*/}
-      {/*editVisible ? (
-        <div className="addSection">
-          <Input placeholder=" Редагувати розділ" type="text" maxLength={50}
-            value={curSect?.title}
-            onChange={(event) =>
-              setCurSect({
-                id: curSect.id,
-                title: event.target.value,
-                subsection: {
-                  id: 0,
-                  sectionId: 0,
-                  title: "",
-                  description: ""
-                }
-              })
-            } />
-          <Space>
-            <Button type="primary" onClick={handleEdit} ><SaveOutlined /></Button>
-            <Button type="primary" onClick={() => setEditVisible(false)}>Скасувати</Button>
-          </Space>
-
-        </div>
-      ) : (
-        <></>
-      )*/}
     </Layout.Content>
   ) : (
     <Spinner />
