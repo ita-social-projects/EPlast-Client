@@ -157,6 +157,16 @@ const EventInfo = () => {
     });
   };
 
+  const setParticipantsInTable = () => {
+    debugger;
+    if (userAccesses["SeeUserTable"]) {
+      return event.event?.eventParticipants;
+    }
+    else {
+      return event.event?.eventParticipants.filter((p: EventParticipant) => p.status == "Учасник");
+    }
+  };
+
   return loading === false ? (
     <Spinner />
   ) : (
@@ -211,7 +221,7 @@ const EventInfo = () => {
               <ParticipantsTable
                 userAccesses={userAccesses}
                 isEventFinished={event.isEventFinished}
-                participants={event.event?.eventParticipants}
+                participants={setParticipantsInTable()}
                 key={event.event?.eventId}
                 setRender={setRender}
               />

@@ -12,8 +12,6 @@ import { EventParticipant } from "./EventInfo";
 import eventsApi from "../../../../api/eventsApi";
 import "./ParticipantsTable.less";
 import { useHistory } from "react-router-dom";
-import userApi from "../../../../api/UserApi";
-import { Roles } from "../../../../models/Roles/Roles";
 
 const { Text } = Typography;
 
@@ -36,25 +34,15 @@ const ParticipantsTable = ({
   participants,
   setRender,
 }: Props) => {
+
   const [Participants, setParticipant] = useState<EventParticipant[]>(
     participants
   );
   const history = useHistory();
-  const roles = ([] as string[]).concat(userApi.getActiveUserRoles());
 
   useEffect(() => {
-    setParticipantsInTable();
+    setParticipant(participants);
   }, [participants]);
-
-  const setParticipantsInTable = () => {
-    debugger;
-    if (userAccesses["SeeUserTable"]) {
-      setParticipant(participants);
-    }
-    else {
-      setParticipant(participants.filter(p => p.status == "Учасник"));
-    }
-  };
 
   const setTagColor = (status: string) => {
     let color = "";
