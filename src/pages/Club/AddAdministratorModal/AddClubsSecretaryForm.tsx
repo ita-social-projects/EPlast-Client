@@ -10,8 +10,6 @@ import AdminType from "../../../models/Admin/AdminType";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
 import ClubMember from "../../../models/Club/ClubMember";
 import "./AddClubsSecretaryForm.less";
-
-import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
 import { useParams } from "react-router-dom";
 import ClubUser from "../../../models/Club/ClubUser";
@@ -79,7 +77,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
   const fetchData = async () => {
     if (props.clubId !== undefined)
     {
-    await getUserAccessesForClubs()
+    await getUserAccessesForClubs();
     await getClubUsers(props.clubId).then((response) => { 
       setMembers(response.data);
     });
