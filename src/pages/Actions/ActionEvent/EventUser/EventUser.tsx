@@ -93,7 +93,6 @@ const EventUser = () => {
 
 
     const getUserAccessesForEvents = async () => {
-        debugger;
         let user: any = jwt(AuthStore.getToken() as string);
         await eventUserApi.getUserEventAccess(user.nameid).then(
             response => {

@@ -159,7 +159,6 @@ const EventInfo = () => {
   };
 
   const setParticipantsInTable = () => {
-    debugger;
     if (userAccesses["SeeUserTable"]) {
       return event.event?.eventParticipants;
     }
