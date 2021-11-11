@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./AddAdministrationModal.less";
 import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
-import { ExclamationCircleOutlined} from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import ClubAdmin from "./../../../models/Club/ClubAdmin";
 import AdminType from "./../../../models/Admin/AdminType";
-import{getCheckPlastMember} from "../../../api/citiesApi";
+import { getCheckPlastMember } from "../../../api/citiesApi";
 import {
   addAdministrator,
   editAdministrator,
@@ -189,8 +189,7 @@ const AddAdministratorModal = (props: Props) => {
       const head = (admins as ClubAdmin[])
         .find(x => x.adminType.adminTypeName === Roles.KurinHead)
       if(admin !== undefined){
-          const admini = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
-          admin.adminType.adminTypeName = admini
+          admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
         }
       const existingAdmin  = (admins as ClubAdmin[])
         .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)   
