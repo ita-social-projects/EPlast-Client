@@ -7,9 +7,8 @@ import AdminType from "./../../../models/Admin/AdminType";
 import {
   addAdministrator,
   editAdministrator,
-  getAllAdmins,
   getCheckPlastMember,
-  getCityAdministration,
+  getCityAdministration
 } from "../../../api/citiesApi";
 import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
@@ -37,6 +36,7 @@ const AddAdministratorModal = (props: Props) => {
   const [startDate, setStartDate] = useState<any>();
   const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
+  const [disable, setDisable] = useState<boolean>(false);
   const [head, setHead] = useState<CityAdmin>();
   const [headDeputy, setHeadDeputy] = useState<CityAdmin>();
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
@@ -197,6 +197,12 @@ const AddAdministratorModal = (props: Props) => {
     }
   }
 
+  useEffect(() => {
+    if (disable === true){
+      handleSubmit(form.getFieldsValue());
+    }
+  }, [disable])
+
   const handleSubmit = async (values: any) => {
     setLoading(true);
 
@@ -215,6 +221,10 @@ const AddAdministratorModal = (props: Props) => {
     try {
       const head = (admins as CityAdmin[])
         .find(x => x.adminType.adminTypeName === Roles.CityHead)
+      if(admin !== undefined){
+          const adminToUpper = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
+          admin.adminType.adminTypeName = adminToUpper
+        }
       const existingAdmin  = (admins as CityAdmin[])
         .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)   
         if (head?.userId === admin.userId){
@@ -365,7 +375,7 @@ const AddAdministratorModal = (props: Props) => {
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" disabled={disable} onClick = {() => {setDisable(!disable);}}>
                 Опублікувати
               </Button>
             </Col>

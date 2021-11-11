@@ -47,7 +47,7 @@ const SortedClubs = ( {switcher}: Props) => {
     }
     
   };
-  const getActiveClubs = async () => {
+  const getActiveClubs = async (page: number = 1) => {
     setLoading(true);
 
     try {
@@ -69,7 +69,7 @@ const SortedClubs = ( {switcher}: Props) => {
     }
   };
 
-  const getNotActiveClubs = async () => {
+  const getNotActiveClubs = async (page: number = 1) => {
     setLoading(true);
 
     try {
@@ -135,12 +135,11 @@ const SortedClubs = ( {switcher}: Props) => {
 };
 
   useEffect(() => {
-    switcher ? (getNotActiveClubs()):(getActiveClubs()) 
+    switcher ? (getNotActiveClubs(page)):(getActiveClubs(page)) 
   }, [page, pageSize, searchedData]);
 
   useEffect(()=> {
-    if(clubs.length !== 0){
-      setPage(1);
+    if (clubs.length !== 0){
       switcher ? (getNotActiveClubs()) :(getActiveClubs())
       setCanCreate(switcher ? false : activeCanCreate);
     }

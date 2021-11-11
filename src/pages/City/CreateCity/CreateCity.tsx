@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 import {
   Button,
@@ -15,7 +15,6 @@ import {
 import {
   DeleteOutlined,
   ExclamationCircleOutlined,
-  LoadingOutlined,
   PlusOutlined,
 } from "@ant-design/icons/lib";
 import ReactInputMask from "react-input-mask";
@@ -50,9 +49,7 @@ import { descriptionValidation } from "../../../models/GllobalValidations/Descri
 import RegionFollower from "../../../models/Region/RegionFollower";
 import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
-import TextArea from "antd/lib/input/TextArea";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { inherits } from "util";
 
 const CreateCity = () => {
   const { id } = useParams();
@@ -571,7 +568,7 @@ const CreateCity = () => {
                 initialValue={isFollowerPath ? regionFollower.postIndex : city.postIndex}
                 rules={descriptionValidation.postIndex}
               >
-                <Input type="number" value={isFollowerPath ? regionFollower.postIndex : city.postIndex} />
+                <Input value={isFollowerPath ? regionFollower.postIndex : city.postIndex} maxLength={5} />
               </Form.Item>
             </Col>
           </Row>

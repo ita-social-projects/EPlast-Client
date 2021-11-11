@@ -58,14 +58,12 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUnarchiveAction, successfulArchiveAction } from "../../../components/Notifications/Messages";
+import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUnarchiveAction, successfulArchiveAction, failArchiveAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
-import { number } from "yup";
 import AuthStore from "../../../stores/AuthStore";
-import { getRoles } from "@testing-library/dom";
 
 const City = () => {
   const history = useHistory();
@@ -161,13 +159,17 @@ const City = () => {
   };
 
   const ArchiveCity = async () => {
-    await archiveCity(city.id);
-    notificationLogic("success", successfulArchiveAction("Станицю"));
-    admins.map(async (ad) => {
-      await createNotification(ad.userId,
-        `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
-    });
-    history.push("/cities");
+    try {
+      await archiveCity(city.id);
+      notificationLogic("success", successfulArchiveAction("Станицю"));
+      admins.map(async (ad) => {
+        await createNotification(ad.userId,
+          `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
+      });
+      history.push("/cities");
+    } catch {
+      notificationLogic("error", failArchiveAction(city.name));
+    }
   };
 
   const deleteCity = async () => {
@@ -439,8 +441,12 @@ const City = () => {
     if (admin.id === 0) {
       const head = (admins as CityAdmin[])
         .find(x => x.adminType.adminTypeName === Roles.CityHead)
+      if(admin !== undefined){
+        const adminToUpper = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
+        admin.adminType.adminTypeName = adminToUpper
+      }
       const existingAdmin  = (admins as CityAdmin[])
-        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName) 
+        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
       try {     
         if (head?.userId === admin.userId){
           showDisableModal(head)

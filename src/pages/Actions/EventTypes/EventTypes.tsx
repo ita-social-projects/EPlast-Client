@@ -6,7 +6,9 @@ import { Card } from 'antd';
 import EventCreateDrawer from '../ActionEvent/EventCreate/EventCreateDrawer';
 import { useParams } from 'react-router-dom';
 import Add from "../../../assets/images/add.png";
-import { Roles } from '../../../models/Roles/Roles';
+import AuthStore from "../../../stores/AuthStore";
+import jwt from 'jwt-decode';
+import eventUserApi from "../../../api/eventUserApi";
 import userApi from "../../../api/UserApi";
 
 const classes = require('./EventTypes.module.css');
@@ -23,7 +25,7 @@ const EventTypes = () => {
         },
     ]);
     const { userId } = useParams();
-    const [canCreate] = useState(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser).length != 0);
+    const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>({})
 
     useEffect(() => {
         const getEventTypes = async () => {
@@ -32,6 +34,7 @@ const EventTypes = () => {
             setLoading(true);
         };
         getEventTypes();
+        getUserAccessesForEvents();
     }, []);
 
     const renderTypes = (arr: any) => {
@@ -44,6 +47,15 @@ const EventTypes = () => {
         return null;
     };
 
+    const getUserAccessesForEvents = async () => {
+        let user: any = jwt(AuthStore.getToken() as string);
+        await eventUserApi.getUserEventAccess(user.nameid).then(
+            response => {
+                setUserAccesses(response.data);
+            }
+        );
+    }
+
     const plastTypes = renderTypes(types);
     const { Meta } = Card;
 
@@ -53,7 +65,7 @@ const EventTypes = () => {
         <div className={classes.background}>
             <h1 className={classes.mainTitle}>Типи</h1>
             <div className={classes.actionsWrapper}>
-                {userToken.nameid === userId && canCreate && (
+                {userToken.nameid === userId && userAccesses["CreateEvent"] && (
                     <Card
                         hoverable
                         className={classes.cardStyles}

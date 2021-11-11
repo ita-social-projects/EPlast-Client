@@ -56,7 +56,7 @@ const EventUser = () => {
     const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
     const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
     const [eventId, setEventId] = useState<number>();
-    const [canCreate] = useState(roles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser).length != 0);
+    const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({})
     const [userToken, setUserToken] = useState<any>([
         {
             nameid: "",
@@ -76,6 +76,7 @@ const EventUser = () => {
 
             setLoading(true);
         });
+        getUserAccessesForEvents();
     };
     const fetchData = async () => {
         if(UpdateData) UpdateData();
@@ -87,6 +88,17 @@ const EventUser = () => {
 
             setLoading(true);
         });
+        getUserAccessesForEvents();
+    }
+
+
+    const getUserAccessesForEvents = async () => {
+        let user: any = jwt(AuthStore.getToken() as string);
+        await eventUserApi.getUserEventAccess(user.nameid).then(
+            response => {
+                setUserAccesses(response.data);
+            }
+        );
     }
 
     const setEventTypeName = (typeId: number) => {
@@ -271,7 +283,7 @@ const EventUser = () => {
                             userToken.nameid === userId &&
                             <h2>Ви ще не створили жодної події</h2>
                         )}
-                        {userToken.nameid === userId && canCreate && (
+                        {userToken.nameid === userId && userAccesses["CreateEvent"] && (
                             <Button
                                 type="primary"
                                 className={classes.buttonInside}
