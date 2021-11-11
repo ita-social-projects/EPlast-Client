@@ -21,6 +21,7 @@ import AuthStore from "../../../../stores/AuthStore";
 import jwt from 'jwt-decode';
 import eventUserApi from "../../../../api/eventUserApi";
 
+const classes = require('./EventInfo.module.css');
 const { Title } = Typography;
 
 export interface EventDetails {
@@ -205,12 +206,12 @@ const EventInfo = () => {
         {userAccesses["SeeUserTable"] || event.isUserApprovedParticipant ?
           <div className="participantsTable">
             <div key={"2"}>
-              <Title level={2} style={{ color: "#3c5438" }}>
+              <Title level={2} className={classes.userTableTitle}>
                 Таблиця користувачів
               </Title>
               <Row>
                 <Input.Search
-                  style={{ width: "400px", margin: "0 0 10px 0" }}
+                  className={classes.inputSearch}
                   placeholder="Пошук"
                   enterButton
                   onSearch={search}
