@@ -6,8 +6,7 @@ const getUserDistinctionAccess = async (userId: string) => {
   return await api.get(`UserAccess/GetUserDistinctionAccess/${userId}`)
     .catch(error => {
       throw error;
-    }
-    );
+    });
 }
 
 const getUserDistinctionById = async (id: number) => {
