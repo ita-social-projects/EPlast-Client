@@ -43,6 +43,7 @@ const AddAdministratorModal = (props: Props) => {
   const [headDeputy, setHeadDeputy] = useState<ClubAdmin>();
   const [admins, setAdmins] = useState<ClubAdmin[]>([]);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const classes = require('../Club/Modal.module.css');
 
   const disabledEndDate = (current: any) => {
     return current && current < moment();
@@ -56,7 +57,7 @@ const AddAdministratorModal = (props: Props) => {
     Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
-        <div style={{ margin: 10 }}>
+        <div className={classes.Style}>
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
@@ -84,7 +85,7 @@ const AddAdministratorModal = (props: Props) => {
     return Modal.warning({
       title: "Ви не можете додати роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
@@ -105,7 +106,7 @@ const AddAdministratorModal = (props: Props) => {
     return Modal.warning({
       title: "Ви не можете додати роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
@@ -126,7 +127,7 @@ const AddAdministratorModal = (props: Props) => {
     return Modal.warning({
       title: "Ви не можете додати роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}

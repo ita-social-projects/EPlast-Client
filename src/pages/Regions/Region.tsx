@@ -72,6 +72,7 @@ const Region = () => {
   const [photoStatus, setPhotoStatus] = useState(true);
   const [document, setDocument] = useState<RegionDocument>(new RegionDocument());
   const [documents, setDocuments] = useState<RegionDocument[]>([]);
+  const classes = require('./Modal.module.css');
   const [region, setRegion] = useState<any>({
     id: "",
     regionName: "",
@@ -328,7 +329,7 @@ const Region = () => {
     Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
-        <div style={{ margin: 10 }}>
+        <div className={classes.Style}>
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
@@ -357,7 +358,7 @@ const Region = () => {
     return Modal.warning({
       title: "Ви не можете додати роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
@@ -378,7 +379,7 @@ const Region = () => {
     return Modal.warning({
       title: "Ви не можете додати роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
@@ -399,7 +400,7 @@ const Region = () => {
     return Modal.warning({
       title: "Ви не можете додати роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
