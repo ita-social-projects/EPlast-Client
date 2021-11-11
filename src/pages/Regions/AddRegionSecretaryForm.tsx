@@ -29,6 +29,7 @@ const AddNewSecretaryForm = (props: any) => {
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [users, setUsers] = useState<Array<RegionUser>>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
@@ -85,6 +86,7 @@ const AddNewSecretaryForm = (props: any) => {
   useEffect(() => {
     if (props.visibleModal) {
       form.resetFields();
+      setLoading(false);
     }
     fetchData();
   }, [props]);
@@ -146,7 +148,6 @@ const AddNewSecretaryForm = (props: any) => {
             { value: "Скарбник" },
             { value: "Домівкар" },
             { value: "Член ОПР" },
-            { value: "Голова ОПС" },
             { value: "Голова ОПР" },
           ]}
           placeholder={"Тип адміністрування"}
@@ -189,7 +190,7 @@ const AddNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item style={{ textAlign: "right" }}>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" loading = {loading} onClick = {() => {setLoading(true); handleSubmit(form.getFieldsValue());}}>
           Опублікувати
         </Button>
       </Form.Item>
