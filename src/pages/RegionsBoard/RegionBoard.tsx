@@ -336,7 +336,7 @@ const RegionBoard = () => {
         >
           <Card hoverable className="cityCard">
             <Title level={4}>
-              Керівні Органи{" "}
+              Керівні органи{" "}
               <a onClick={() => history.push(`/regionsBoard/governingBodies`)}>
                 {governingBodies.length !== 0 ? (
                   <Badge
