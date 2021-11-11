@@ -224,7 +224,7 @@ const DistinctionTable = () => {
         <h1 className={classes.titleTable}>Відзначення</h1>
         <>
           <Row gutter={[6, 12]} className={classes.buttonsSearchField}>
-            {userAccesses["EditTypeDistinction"] === true ? (
+            {userAccesses["EditTypeDistinction"] ? (
               <>
                 <Col>
                   <Button type="primary" onClick={showModal}>
