@@ -60,6 +60,8 @@ export default function ({
     let userRoles = UserApi.getActiveUserRoles();
     setActiveUserRoles(userRoles);
     let currentUserId = UserApi.getActiveUserId();
+    let UserProfileAccess = UserApi.getUserProfileAccess(currentUserId, userId);
+    console.log((await UserProfileAccess).data);
     setActiveUserId(userId);
     let userProfile = await UserApi.getActiveUserProfile();
     setActiveUserProfile(userProfile);

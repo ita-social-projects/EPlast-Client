@@ -28,6 +28,17 @@ const put = async (data: any) => {
 
     return response;
 };
+
+const getUserProfileAccess = async (userid: string, focusUserId: string) => {
+    const response = await axios.get(`${`${BASE_URL}UserAccess/GetUserProfileAccess/${userid}/${focusUserId}`}`)
+    .catch(error => {
+        throw error;
+    });
+        
+    
+    return response;
+}
+
 const getApprovers = async (userId: string, approverId: string) => {
     const response = await axios.get(`${`${BASE_URL}User/approvers/${userId}/${approverId}`}`);
 
@@ -85,5 +96,6 @@ export default {
     getActiveUserRoles,
     getActiveUserId,
     getActiveUserProfile,
-    updateProfileImage
+    updateProfileImage,
+    getUserProfileAccess
 };

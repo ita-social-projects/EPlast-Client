@@ -89,6 +89,7 @@ const ActiveMembership = () => {
     }).catch(() => {
       SetDefaultDates();
       notificationLogic("error", "Не вдалося завантажити дати дійсного членства");
+      setLoadInfo(true);
     });;
 
     await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
