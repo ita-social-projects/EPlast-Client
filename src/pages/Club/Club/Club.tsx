@@ -14,6 +14,7 @@ import {
   LoadingOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
+import{getCheckPlastMember} from "../../../api/citiesApi";
 import {
    addFollower, 
    getClubById,
@@ -82,6 +83,7 @@ const Club = () => {
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [isActiveClub, setIsActiveClub] = useState<boolean>(true);
+  const classes = require('./Modal.module.css');
 
   const changeApproveStatus = async (memberId: number) => {
     setIsLoadingMemberId(memberId)
@@ -332,13 +334,15 @@ const Club = () => {
     Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
-        <div style={{ margin: 10 }}>
+        <div className={classes.Style}>
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
           вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
           <b>
-            {moment(existingAdmin.endDate).format("DD.MM.YYYY") ?? "ще не скоро"}
+            {moment(existingAdmin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -354,11 +358,12 @@ const Club = () => {
       }
     });
   };
-  const showDiseableModal = async (admin: ClubAdmin) => {
+
+  const showDisableModal = async (admin: ClubAdmin) => {
     return Modal.warning({
-      title: "Ви не можете змінити роль цьому користувачу",
+      title: "Ви не можете додати роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
@@ -375,14 +380,69 @@ const Club = () => {
     });
   };
 
+  const showDisable = async (admin: ClubAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            вже має таку роль, час правління закінчується{" "}
+          <b>
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
+  const showPlastMemberDisable = async (admin: ClubAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            не є членом Пласту.
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
   const handleOk = async(admin: ClubAdmin) => {
-      try {
-        const head = (admins as ClubAdmin[])
+    if (admin.id === 0) {
+      const head = (admins as ClubAdmin[])
         .find(x => x.adminType.adminTypeName === Roles.KurinHead)
-        const existingAdmin  = (admins as ClubAdmin[])
-        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)      
-        if (Roles.KurinHeadDeputy === admin.adminType.adminTypeName && head?.userId === admin.userId){
-          showDiseableModal(head)
+      if(admin !== undefined){
+        admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
+      }
+      const existingAdmin  = (admins as ClubAdmin[])
+      .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
+      try {     
+        if (head?.userId === admin.userId){
+          showDisableModal(head)
+        }
+        else if(existingAdmin?.userId === admin.userId){
+          showDisable(admin)
+        }
+        else if(admin.adminType.adminTypeName === "Голова КПР" ||
+         admin.adminType.adminTypeName === "Член КПР" ||
+         admin.adminType.adminTypeName === Roles.KurinHead ||
+         admin.adminType.adminTypeName === Roles.KurinHeadDeputy){
+          const check = await getCheckPlastMember(admin.userId);
+          if(check.data){
+            await addClubAdmin(admin);
+          }
+          else {
+            showPlastMemberDisable(admin);
+          }
         }
         else if(existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);
@@ -393,7 +453,25 @@ const Club = () => {
       } finally {
         setvisible(false);
       }
-  }
+    }
+    else{
+      if(admin.adminType.adminTypeName === "Голова КПР" ||
+      admin.adminType.adminTypeName === "Член КПР" ||
+      admin.adminType.adminTypeName === Roles.KurinHead ||
+      admin.adminType.adminTypeName === Roles.KurinHeadDeputy){
+          if(await getCheckPlastMember(admin.userId)){
+            await editClubAdmin(admin);
+          }
+          else {
+            showPlastMemberDisable(admin);
+          }
+        }
+        else{
+          await editClubAdmin(admin);
+        }
+      }
+  
+}
 
   const handleClose = async () => {
     setvisible(false);

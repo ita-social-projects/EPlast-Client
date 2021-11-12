@@ -100,6 +100,7 @@ const City = () => {
   const membersToShow = 9;
   const followersToShow = 5;
   const followersToShowOnAdd = 6;
+  const classes = require('./Modal.module.css');
 
   const changeApproveStatus = async (memberId: number) => {
     setIsLoadingMemberId(memberId)
@@ -354,7 +355,7 @@ const City = () => {
     Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
-        <div style={{ margin: 10 }}>
+        <div className={classes.Style}>
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
@@ -384,7 +385,7 @@ const City = () => {
     return Modal.warning({
       title: "Ви не можете додати роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
@@ -405,7 +406,7 @@ const City = () => {
     return Modal.warning({
       title: "Ви не можете додати роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
@@ -426,7 +427,7 @@ const City = () => {
     return Modal.warning({
       title: "Ви не можете додати роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
@@ -442,8 +443,7 @@ const City = () => {
       const head = (admins as CityAdmin[])
         .find(x => x.adminType.adminTypeName === Roles.CityHead)
       if(admin !== undefined){
-        const adminToUpper = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
-        admin.adminType.adminTypeName = adminToUpper
+        admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
       }
       const existingAdmin  = (admins as CityAdmin[])
         .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
