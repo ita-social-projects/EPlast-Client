@@ -74,7 +74,7 @@ const AddAdministratorModal = (props: Props) => {
 
   function showEditConfirmModal(admin: RegionAdmin) {
     return Modal.confirm({
-      title: "Ви впевнені, що хочете змінити роль даного користувача?",
+      title: "Ви впевнені, що хочете призначити роль даного користувача?",
       icon: <ExclamationCircleOutlined />,
       okText: "Так, Змінити",
       okType: "primary",
@@ -88,7 +88,7 @@ const AddAdministratorModal = (props: Props) => {
 
   const showDisableModal = async (admin: RegionAdmin) => {
     return Modal.warning({
-      title: "Ви не можете змінити роль цьому користувачу",
+      title: "Ви не можете призначити роль цьому користувачу",
       content: (
         <div className={classes.Style}>
           <b>
@@ -137,7 +137,7 @@ const AddAdministratorModal = (props: Props) => {
 
   const showDisable = async (admin: RegionAdmin) => {
     return Modal.warning({
-      title: "Ви не можете додати роль цьому користувачу",
+      title: "Ви не можете призначити роль цьому користувачу",
       content: (
         <div className={classes.Style}>
           <b>
@@ -158,7 +158,7 @@ const AddAdministratorModal = (props: Props) => {
 
   const showPlastMemberDisable = async (admin: RegionAdmin) => {
     return Modal.warning({
-      title: "Ви не можете додати роль цьому користувачу",
+      title: "Ви не можете призначити роль цьому користувачу",
       content: (
         <div className={classes.Style}>
           <b>
@@ -268,6 +268,7 @@ const AddAdministratorModal = (props: Props) => {
       setLoadingButton(false);
     }
     getAdministration();
+    getRegionAdmins();
     const userRoles = userApi.getActiveUserRoles();
       setActiveUserRoles(userRoles);
   }, [props]);

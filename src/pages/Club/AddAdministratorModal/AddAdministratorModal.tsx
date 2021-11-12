@@ -83,7 +83,7 @@ const AddAdministratorModal = (props: Props) => {
 
   const showDisableModal = async (admin: ClubAdmin) => {
     return Modal.warning({
-      title: "Ви не можете додати роль цьому користувачу",
+      title: "Ви не можете призначити роль цьому користувачу",
       content: (
         <div className={classes.Style}>
           <b>
@@ -104,7 +104,7 @@ const AddAdministratorModal = (props: Props) => {
 
   const showDisable = async (admin: ClubAdmin) => {
     return Modal.warning({
-      title: "Ви не можете додати роль цьому користувачу",
+      title: "Ви не можете призначити роль цьому користувачу",
       content: (
         <div className={classes.Style}>
           <b>
@@ -125,7 +125,7 @@ const AddAdministratorModal = (props: Props) => {
 
   const showPlastMemberDisable = async (admin: ClubAdmin) => {
     return Modal.warning({
-      title: "Ви не можете додати роль цьому користувачу",
+      title: "Ви не можете призначити роль цьому користувачу",
       content: (
         <div className={classes.Style}>
           <b>
