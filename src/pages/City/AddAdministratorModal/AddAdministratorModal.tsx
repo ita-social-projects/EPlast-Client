@@ -36,11 +36,12 @@ const AddAdministratorModal = (props: Props) => {
   const [startDate, setStartDate] = useState<any>();
   const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
-  const [disable, setDisable] = useState<boolean>(false);
+  const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const [head, setHead] = useState<CityAdmin>();
   const [headDeputy, setHeadDeputy] = useState<CityAdmin>();
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const classes = require('../City/Modal.module.css');
 
   const getCityAdmins = async () => {
     setLoading(true);
@@ -69,7 +70,7 @@ const AddAdministratorModal = (props: Props) => {
     return Modal.confirm({
       title: "Ви впевнені, що хочете змінити роль даного користувача?",
       icon: <ExclamationCircleOutlined />,
-      okText: "Так, Змінити",
+      okText: "Так, змінити",
       okType: "primary",
       cancelText: "Скасувати",
       maskClosable: true,
@@ -83,7 +84,7 @@ const AddAdministratorModal = (props: Props) => {
     return Modal.warning({
       title: "Ви не можете призначити роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {head?.user.firstName} {head?.user.lastName}
           </b>{" "}
@@ -104,7 +105,7 @@ const AddAdministratorModal = (props: Props) => {
     Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
-        <div style={{ margin: 10 }}>
+        <div className={classes.Style}>
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
@@ -132,7 +133,7 @@ const AddAdministratorModal = (props: Props) => {
     return Modal.warning({
       title: "Ви не можете призначити роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
@@ -153,7 +154,7 @@ const AddAdministratorModal = (props: Props) => {
     return Modal.warning({
       title: "Ви не можете призначити роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
@@ -197,12 +198,6 @@ const AddAdministratorModal = (props: Props) => {
     }
   }
 
-  useEffect(() => {
-    if (disable === true){
-      handleSubmit(form.getFieldsValue());
-    }
-  }, [disable])
-
   const handleSubmit = async (values: any) => {
     setLoading(true);
 
@@ -230,7 +225,7 @@ const AddAdministratorModal = (props: Props) => {
         if (head?.userId === admin.userId){
           showDisableModal(head)
         }
-        else if(existingAdmin?.userId === admin.userId){
+        else if(existingAdmin?.userId === admin.userId && existingAdmin?.endDate === admin.endDate){
           showDisable(admin)
         }
         else if(admin.adminType.adminTypeName === "Голова СПР" ||
@@ -263,6 +258,7 @@ const AddAdministratorModal = (props: Props) => {
   useEffect(() => {
     if (props.visibleModal) {
       form.resetFields();
+      setLoadingButton(false)
     }
     getCityAdmins();
     const userRoles = userApi.getActiveUserRoles();
@@ -309,6 +305,7 @@ const AddAdministratorModal = (props: Props) => {
               { value: "Голова СПР" },
               { value: "Писар" },
               { value: "Скарбник" },
+              { value: "Фотограф" },
               { value: "Домівкар" },
               { value: "Член СПР" },
             ]}
@@ -375,7 +372,7 @@ const AddAdministratorModal = (props: Props) => {
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" disabled={disable} onClick = {() => {setDisable(!disable);}}>
+              <Button type="primary" loading = {loadingButton} onClick = {() => {setLoadingButton(true); handleSubmit(form.getFieldsValue());}}>
                 Опублікувати
               </Button>
             </Col>

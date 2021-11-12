@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./AddAdministrationModal.less";
 import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
-import { ExclamationCircleOutlined} from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import ClubAdmin from "./../../../models/Club/ClubAdmin";
 import AdminType from "./../../../models/Admin/AdminType";
+import { getCheckPlastMember } from "../../../api/citiesApi";
 import {
   addAdministrator,
   editAdministrator,
@@ -34,6 +35,7 @@ interface Props {
 
 const AddAdministratorModal = (props: Props) => {
   const [loading, setLoading] = useState(false);
+  const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<any>();
   const [endDate, setEndDate] = useState<any>();
   const [form] = Form.useForm();
@@ -41,6 +43,7 @@ const AddAdministratorModal = (props: Props) => {
   const [headDeputy, setHeadDeputy] = useState<ClubAdmin>();
   const [admins, setAdmins] = useState<ClubAdmin[]>([]);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const classes = require('../Club/Modal.module.css');
 
   const disabledEndDate = (current: any) => {
     return current && current < moment();
@@ -50,52 +53,19 @@ const AddAdministratorModal = (props: Props) => {
     return current && current > moment();
   };
 
-  function showEditConfirmModal(admin: ClubAdmin) {
-    return Modal.confirm({
-      title: "Ви впевнені, що хочете змінити роль даного користувача?",
-      icon: <ExclamationCircleOutlined />,
-      okText: "Так, Змінити",
-      okType: "primary",
-      cancelText: "Скасувати",
-      maskClosable: true,
-      onOk() {
-         addClubAdmin(admin);
-      },
-    });
-  }
-
-  const showDiseableModal = async (admin: ClubAdmin) => {
-    return Modal.warning({
-      title: "Ви не можете змінити роль цьому користувачу",
-      content: (
-        <div style={{ margin: 15 }}>
-          <b>
-            {head?.user.firstName} {head?.user.lastName}
-          </b>{" "}
-          є Головою Куреня, час правління закінчується{" "}
-          <b>
-            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
-              ? "ще не скоро"
-              : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
-          </b>
-          .
-        </div>
-      ),
-      onOk() {}
-    });
-  };
-
   const showConfirm = (newAdmin: ClubAdmin, existingAdmin: ClubAdmin) => {
     Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
-        <div style={{ margin: 10 }}>
+        <div className={classes.Style}>
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
           вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
           <b>
-            {moment(existingAdmin.endDate).format("DD.MM.YYYY") ?? "ще не скоро"}
+            {moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -108,6 +78,63 @@ const AddAdministratorModal = (props: Props) => {
           editClubAdmin(newAdmin);
         }
       }
+    });
+  };
+
+  const showDisableModal = async (admin: ClubAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+          є Головою Куреня, час правління закінчується{" "}
+          <b>
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
+  const showDisable = async (admin: ClubAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            вже має таку роль, час правління закінчується{" "}
+          <b>
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
+  const showPlastMemberDisable = async (admin: ClubAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            не є членом Пласту.
+        </div>
+      ),
+      onOk() {}
     });
   };
 
@@ -160,25 +187,43 @@ const AddAdministratorModal = (props: Props) => {
       startDate: values.startDate?._d,
     };
     try {
+      const head = (admins as ClubAdmin[])
+        .find(x => x.adminType.adminTypeName === Roles.KurinHead)
+      if(admin !== undefined){
+          admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
+        }
       const existingAdmin  = (admins as ClubAdmin[])
-      .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
-      if (Roles.KurinHeadDeputy === admin.adminType.adminTypeName && head?.userId === admin.userId) {       
-        showDiseableModal(admin);
-      }
-      else if (admin.userId === head?.userId || admin.userId === headDeputy?.userId) {
-        showEditConfirmModal(admin);
-      }
-      else if(existingAdmin !== undefined) {
-        showConfirm(admin, existingAdmin);
-      }
-      else {
-        await checkAdminId(admin);
-      }
+        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)   
+        if (head?.userId === admin.userId){
+          showDisableModal(head)
+        }
+        else if(existingAdmin?.userId === admin.userId && existingAdmin?.endDate === admin.endDate){
+          showDisable(admin)
+        }
+        else if(admin.adminType.adminTypeName === "Голова КПР" ||
+          admin.adminType.adminTypeName === "Член КПР" ||
+          admin.adminType.adminTypeName === Roles.KurinHead ||
+          admin.adminType.adminTypeName === Roles.KurinHeadDeputy){
+          const check = await getCheckPlastMember(admin.userId);
+          if(check.data){
+            await addClubAdmin(admin);
+          }
+          else {
+            showPlastMemberDisable(admin);
+          }
+        }
+        else if(existingAdmin !== undefined) {
+          showConfirm(admin, existingAdmin);
+        }
+        else {
+          await checkAdminId(admin);
+        }
     }
     finally {
       props.setVisibleModal(false);
       setLoading(false);
     }
+
   };
 
   const handleCancel = () => {
@@ -188,6 +233,7 @@ const AddAdministratorModal = (props: Props) => {
   useEffect(() => {
     if (props.visibleModal) {
       form.resetFields();
+      setLoadingButton(false)
     }
     getClubAdmins();
     const userRoles = userApi.getActiveUserRoles();
@@ -231,12 +277,12 @@ const AddAdministratorModal = (props: Props) => {
               { value: Roles.KurinHead, disabled: (activeUserRoles.includes(Roles.KurinHeadDeputy) 
                && !activeUserRoles.includes(Roles.Admin)) },
               { value: Roles.KurinHeadDeputy },
-              { value: "Голова СПС" },
+              { value: "Голова КПР" },
               { value: "Фотограф" },
               { value: "Писар" },
               { value: "Скарбник" },
               { value: "Домівкар" },
-              { value: "Член СПР" },
+              { value: "Член КПР" },
             ]}
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}
@@ -301,7 +347,7 @@ const AddAdministratorModal = (props: Props) => {
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" loading = {loadingButton} onClick = {() => {setLoadingButton(true); handleSubmit(form.getFieldsValue());}}>
                 Опублікувати
               </Button>
             </Col>

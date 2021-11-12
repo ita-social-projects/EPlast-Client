@@ -23,6 +23,7 @@ import {
 } from "@ant-design/icons";
 import moment from "moment";
 import jwt from 'jwt-decode';
+import{getCheckPlastMember} from "../../api/citiesApi";
 import {
   getRegionById,
   archiveRegion,
@@ -71,6 +72,7 @@ const Region = () => {
   const [photoStatus, setPhotoStatus] = useState(true);
   const [document, setDocument] = useState<RegionDocument>(new RegionDocument());
   const [documents, setDocuments] = useState<RegionDocument[]>([]);
+  const classes = require('./Modal.module.css');
   const [region, setRegion] = useState<any>({
     id: "",
     regionName: "",
@@ -328,7 +330,7 @@ const Region = () => {
     Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
-        <div style={{ margin: 10 }}>
+        <div className={classes.Style}>
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
@@ -353,16 +355,96 @@ const Region = () => {
     });
   };
 
+  const showDisableModal = async (admin: RegionAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+          є Головою Округи, час правління закінчується{" "}
+          <b>
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
+  const showDisable = async (admin: RegionAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            вже має таку роль, час правління закінчується{" "}
+          <b>
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
+  const showPlastMemberDisable = async (admin: RegionAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            не є членом Пласту.
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
   const handleConfirm = async () => {
     setActiveMemberVisibility(false);
   };
 
   const handleOk = async(admin: RegionAdmin) => {
     if (admin.id === 0) {
-      try {
-        const existingAdmin  = (admins as RegionAdmin[])
-        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
-        if(existingAdmin !== undefined) {
+      const head = (admins as RegionAdmin[])
+        .find(x => x.adminType.adminTypeName === Roles.CityHead)
+      if(admin !== undefined){
+        admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
+      }
+      const existingAdmin  = (admins as RegionAdmin[])
+      .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
+      try {     
+        if (head?.userId === admin.userId){
+          showDisableModal(head)
+        }
+        else if(existingAdmin?.userId === admin.userId){
+          showDisable(admin)
+        }
+        else if(admin.adminType.adminTypeName === "Голова ОПР" ||
+        admin.adminType.adminTypeName === "Член ОПР" ||
+        admin.adminType.adminTypeName === Roles.OkrugaHead ||
+        admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy){
+          const check = await getCheckPlastMember(admin.userId);
+          if(check.data){
+            await addRegionAdmin(admin);
+          }
+          else {
+            showPlastMemberDisable(admin);
+          }
+        }
+        else if(existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);
         }
         else {
@@ -373,7 +455,20 @@ const Region = () => {
       }
     }
     else{
-      await editRegionAdmin(admin);
+      if(admin.adminType.adminTypeName === "Голова ОПР" ||
+      admin.adminType.adminTypeName === "Член ОПР" ||
+      admin.adminType.adminTypeName === Roles.OkrugaHead ||
+      admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy){
+        if(await getCheckPlastMember(admin.userId)){
+          await editRegionAdmin(admin);
+        }
+        else {
+          showPlastMemberDisable(admin);
+        }
+      }
+      else{
+        await editRegionAdmin(admin);
+      }
     }
   }
 
