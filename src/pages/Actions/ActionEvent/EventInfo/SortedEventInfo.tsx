@@ -25,6 +25,7 @@ import userApi from "../../../../api/UserApi";
 import { Roles } from '../../../../models/Roles/Roles';
 
 interface Props {
+    userAccesses: { [key: string]: boolean };
     event: EventDetails;
     visibleDrawer: boolean;
     setApprovedEvent: (visible: boolean) => void;
@@ -33,16 +34,7 @@ interface Props {
     unSubscribeOnEvent: () => void;
 }
 
-const AccessableRoles = [Roles.Admin.toString(), Roles.KurinHead.toString(), Roles.CityHead.toString(), Roles.OkrugaHead.toString(), Roles.PlastMember.toString(), Roles.Supporter.toString(), Roles.RegisteredUser.toString()];
-
-const AccessToManage = (roles: string[]): boolean => {
-    for (var i = 0; i < roles.length; i++) {
-        if (AccessableRoles.includes(roles[i])) return true;
-    }
-    return false;
-}
-const RenderEventIcons = ({ event,
-    isUserEventAdmin, isUserParticipant, isUserApprovedParticipant,
+const RenderEventIcons = (userAccesses: { [key: string]: boolean }, { event, isUserParticipant, isUserApprovedParticipant,
     isUserUndeterminedParticipant, isUserRejectedParticipant, isEventFinished
 }: EventDetails,
     setApprovedEvent: (visible: boolean) => void,
@@ -53,6 +45,7 @@ const RenderEventIcons = ({ event,
 ) => {
     const eventIcons: React.ReactNode[] = []
     const roles = ([] as string[]).concat(userApi.getActiveUserRoles());
+
     const SubscribeToEvent = () => {
         eventIcons.push(<Tooltip title="Зголоситись на подію" key="subscribe">
             <UserAddOutlined onClick={() => showSubscribeConfirm({
@@ -67,7 +60,8 @@ const RenderEventIcons = ({ event,
                 key="subscribe" />
         </Tooltip>)
     }
-    const TrackStatus=()=>{
+
+    const TrackStatus = () => {
 
         if (isUserRejectedParticipant) {
             eventIcons.push(<Tooltip placement="bottom" title="Вашу заявку на участь у даній події відхилено"
@@ -102,16 +96,17 @@ const RenderEventIcons = ({ event,
 
 
     }
-    if ((isUserEventAdmin && AccessToManage(roles.filter(role => role != Roles.RegisteredUser && role != Roles.Supporter))) || roles.includes(Roles.Admin)) {
-        if (!isEventFinished && !isUserEventAdmin && !isUserParticipant) {
-            SubscribeToEvent();
-        }
-        else if(!isEventFinished && !isUserEventAdmin && isUserParticipant){
-          TrackStatus();
-        }
+
+    if (isUserParticipant && !isEventFinished) {
+        TrackStatus();
+    }
+    else if (!isEventFinished && userAccesses["SubscribeOnEvent"]) {
+        SubscribeToEvent();
+    }
         if (event.eventStatus === "Не затверджені") {
-            {
-                roles.includes(Roles.Admin) && eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
+
+            if (userAccesses["ApproveEvent"]) {
+                eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
                     <SettingTwoTone twoToneColor="#3c5438" onClick={() => showApproveConfirm({
                         eventId: event?.eventId,
                         eventName: event?.eventName,
@@ -121,10 +116,26 @@ const RenderEventIcons = ({ event,
                     })} className="icon" key="setting" />
                 </Tooltip>)
             }
-            eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
-                <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
-                    onClick={() => setVisibleDrawer(true)} />
-            </Tooltip>)
+            if (userAccesses["EditEvent"] && userAccesses["DeleteEvent"]) {
+                eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
+                    <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
+                        onClick={() => setVisibleDrawer(true)} />
+                </Tooltip>)
+                eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
+                    <DeleteTwoTone twoToneColor="#8B0000"
+                        onClick={() => showDeleteConfirmForSingleEvent({
+                            eventId: event?.eventId,
+                            eventName: event?.eventName,
+                            eventTypeId: event?.eventTypeId,
+                            eventCategoryId: event?.eventCategoryId,
+                            eventAdmins: event.eventAdmins
+                        })}
+                        className="icon" key="delete" />
+                </Tooltip>)
+            }
+
+        }
+        else if (event.eventStatus === "Завершено" && (roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead))) {
             eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
                 <DeleteTwoTone twoToneColor="#8B0000"
                     onClick={() => showDeleteConfirmForSingleEvent({
@@ -137,20 +148,7 @@ const RenderEventIcons = ({ event,
                     className="icon" key="delete" />
             </Tooltip>)
         }
-        else if (event.eventStatus === "Завершено") {
-            eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
-                <DeleteTwoTone twoToneColor="#8B0000"
-                    onClick={() => showDeleteConfirmForSingleEvent({
-                        eventId: event?.eventId,
-                        eventName: event?.eventName,
-                        eventTypeId: event?.eventTypeId,
-                        eventCategoryId: event?.eventCategoryId,
-                        eventAdmins: event.eventAdmins
-                    })}
-                    className="icon" key="delete" />
-            </Tooltip>)
-        }
-        else if (event.eventStatus === "Затверджено" && roles.includes(Roles.Admin)) {
+        else if (event.eventStatus === "Затверджено" && (roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead))) {
             eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
                 <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
                     onClick={() => setVisibleDrawer(true)} />
@@ -168,21 +166,17 @@ const RenderEventIcons = ({ event,
             </Tooltip>)
         }
 
-    } 
-    else if (isUserParticipant && !isEventFinished) {
-       TrackStatus();
-    } 
-    else if (!isEventFinished && AccessToManage(roles.filter(r => r != Roles.RegisteredUser))) {
-        SubscribeToEvent();
-    }
+    
 
     eventIcons.push(<Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
         <IdcardOutlined style={{ color: "#3c5438", fontSize: "30px" }} className="icon"
             onClick={() => setAdminsVisibility(true)}
         />
     </Tooltip>)
-   return eventIcons
+
+    return eventIcons
 }
+
 const RenderRatingSystem = ({
     event, canEstimate, isEventFinished, participantAssessment
 }: EventDetails
@@ -223,7 +217,8 @@ const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any) => {
         )}
     />
 }
-const SortedEventInfo = ({ event, setApprovedEvent, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer, setVisibleDrawer }: Props) => {
+
+const SortedEventInfo = ({ userAccesses, event, setApprovedEvent, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer, setVisibleDrawer }: Props) => {
     const [adminsVisible, setAdminsVisibility] = useState(false);
     const { id } = useParams();
     const { userId } = useParams();
@@ -248,7 +243,7 @@ const SortedEventInfo = ({ event, setApprovedEvent, subscribeOnEvent, unSubscrib
         });
     };
 
-      return <Row >
+    return <Row >
         <Col className="eventActions">
             <img
                 className="imgEvent"
@@ -256,7 +251,7 @@ const SortedEventInfo = ({ event, setApprovedEvent, subscribeOnEvent, unSubscrib
                 src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
             />
             <div className="iconsFlex">
-                {RenderEventIcons(event, setApprovedEvent, setVisibleDrawer, subscribeOnEvent, unSubscribeOnEvent, setAdminsVisibility)}
+                {RenderEventIcons(userAccesses, event, setApprovedEvent, setVisibleDrawer, subscribeOnEvent, unSubscribeOnEvent, setAdminsVisibility)}
             </div>
             <div className="rateFlex">
                 {RenderRatingSystem(event)}
