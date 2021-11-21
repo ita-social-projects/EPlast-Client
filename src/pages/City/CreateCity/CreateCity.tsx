@@ -26,7 +26,7 @@ import {
   getLogo,
   updateCity,
 } from "../../../api/citiesApi";
-import { createRegionFollower, GetAllRegions, getRegionById, getRegionFollowerById, removeFollower } from "../../../api/regionsApi";
+import { createRegionFollower, GetAllRegions, getRegionById, getRegionFollowerById, getRegionsNames, removeFollower } from "../../../api/regionsApi";
 import "./CreateCity.less";
 import CityProfile from "../../../models/City/CityProfile";
 import RegionProfile from "../../../models/Region/RegionProfile";
@@ -168,7 +168,7 @@ const CreateCity = () => {
 
   const getRegions = async () => {
     try {
-      const response = await GetAllRegions();
+      const response = await getRegionsNames();
       setRegions(response.data);
     } finally {
     }
