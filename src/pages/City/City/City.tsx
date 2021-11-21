@@ -447,6 +447,8 @@ const City = () => {
       }
       const existingAdmin  = (admins as CityAdmin[])
         .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
+      console.log(admin)
+      console.log(existingAdmin)
       try {     
         if (head?.userId === admin.userId){
           showDisableModal(head)
