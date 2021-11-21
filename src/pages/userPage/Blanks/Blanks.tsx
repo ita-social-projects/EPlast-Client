@@ -29,7 +29,7 @@ const fileNameMaxLength = 50;
 
 export const Blanks = () => {
     const { userId } = useParams<{ userId: string }>();
-    const { fullUserProfile, activeUserRoles, UpdateData } = useContext(PersonalDataContext);
+    const { fullUserProfile, activeUserRoles, userProfileAccess } = useContext(PersonalDataContext);
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
     const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
     const [extractUPU, setExtractUPU] = useState<BlankDocument>(new BlankDocument);
@@ -222,7 +222,7 @@ export const Blanks = () => {
                                                 onClick={() => openDocument(document.blobName, document.fileName)} />
                                         </Tooltip>
                                         : null}
-                                    {(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(activeUserRoles)) ?
+                                    {(userToken.nameid === userId || userProfileAccess["EditDeleteUserBiography"]) ?
                                         <Tooltip title="Видалити">
                                             <Popconfirm
                                                 title="Видалити цей документ?"

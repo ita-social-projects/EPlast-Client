@@ -22,7 +22,8 @@ const DefaultState: IPersonalDataContext = {
   activeUserId: "",
   loading: false,
   imageBase64: "",
-  activeUserProfile: undefined
+  activeUserProfile: undefined,
+  userProfileAccess: {}
 }
 
 export const PersonalDataContext = React.createContext<IPersonalDataContext>(DefaultState);
@@ -45,6 +46,7 @@ export default function ({
   const [loading, setLoading] = useState(false);
   const [imageBase64, setImageBase64] = useState<string>("");
   const [fullUserProfile, setFullUserProfile] = useState<Data>();
+  const [userProfileAccess, setUserProfileAccess] = useState<{[key: string]:boolean}>({})
 
   const [userProfile, SetUserProfile] = useState<Data>();
   const ChangeUserProfile = (user: Data) => {
@@ -61,6 +63,7 @@ export default function ({
     setActiveUserRoles(userRoles);
     let currentUserId = UserApi.getActiveUserId();
     let UserProfileAccess = UserApi.getUserProfileAccess(currentUserId, userId);
+    setUserProfileAccess((await UserProfileAccess).data);
     console.log((await UserProfileAccess).data);
     setActiveUserId(userId);
     let userProfile = await UserApi.getActiveUserProfile();
@@ -94,7 +97,16 @@ export default function ({
 
   return (
     <PersonalDataContext.Provider value={{
-      userProfile, fullUserProfile, activeUserRoles, activeUserId, activeUserProfile, loading, imageBase64, ChangeUserProfile, UpdateData
+      userProfile, 
+      fullUserProfile, 
+      activeUserRoles, 
+      activeUserId, 
+      activeUserProfile, 
+      userProfileAccess, 
+      loading, 
+      imageBase64, 
+      ChangeUserProfile, 
+      UpdateData
     }}>
       <div className="mainContainer">
         <Menu id={userId} />
