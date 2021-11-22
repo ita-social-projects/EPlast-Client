@@ -14,6 +14,7 @@ import {
   LoadingOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
+import{getCheckPlastMember} from "../../../api/citiesApi";
 import {
    addFollower, 
    getClubById,
@@ -26,7 +27,8 @@ import {
    removeFollower,
    addAdministrator,
    editAdministrator,
-   getUserClubAccess
+   getUserClubAccess,
+   getAllAdmins
   } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
@@ -45,7 +47,7 @@ import Spinner from "../../Spinner/Spinner";
 import ClubDetailDrawer from "../ClubDetailDrawer/ClubDetailDrawer";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import notificationLogic from "../../../components/Notifications/Notification";
-import { successfulArchiveAction, successfulDeleteAction, successfulEditAction, successfulUnarchiveAction } from "../../../components/Notifications/Messages";
+import { successfulArchiveAction, successfulDeleteAction, successfulEditAction, successfulUnarchiveAction, failArchiveAction } from "../../../components/Notifications/Messages";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
@@ -64,6 +66,7 @@ const Club = () => {
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [visible, setvisible] = useState<boolean>(false);
   const [admins, setAdmins] = useState<ClubAdmin[]>([]);
+  const [adminsAll, setAdminsAll] = useState<ClubAdmin[]>([]);
   const [members, setMembers] = useState<ClubMember[]>([]);
   const [followers, setFollowers] = useState<ClubMember[]>([]);
   const [documents, setDocuments] = useState<ClubDocument[]>([]);
@@ -82,6 +85,7 @@ const Club = () => {
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [isActiveClub, setIsActiveClub] = useState<boolean>(true);
+  const classes = require('./Modal.module.css');
 
   const changeApproveStatus = async (memberId: number) => {
     setIsLoadingMemberId(memberId)
@@ -138,9 +142,13 @@ const Club = () => {
 
 
   const ArchiveClub = async () => {
-    await archiveClub(club.id);
-    notificationLogic("success", successfulArchiveAction("Курінь"));
-    history.push('/clubs');
+    try {
+      await archiveClub(club.id);
+      notificationLogic("success", successfulArchiveAction(club.name));
+      history.push('/clubs');
+    } catch {
+      notificationLogic("error", failArchiveAction(club.name));
+    }
   }
 
   const deleteClub = async () => {
@@ -180,6 +188,11 @@ const Club = () => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
+  }
+
+  async function SetAdmins(id: number){
+    const response = await getAllAdmins(id);
+    setAdminsAll(response.data.administration)
   }
 
   function seeArchiveModal() {
@@ -252,7 +265,7 @@ const Club = () => {
   const getClub = async () => {
     setLoading(true);
     try {
-      await getUserAccessesFoClubs();
+      await getUserAccessesForClubs();
       const response = await getClubById(+id);
       setActiveUserID(userApi.getActiveUserId());
       const clubNameResponse = await clubNameOfApprovedMember(userApi.getActiveUserId());
@@ -275,12 +288,13 @@ const Club = () => {
       setAdminsCount(response.data.administrationCount);
       setFollowersCount(response.data.followerCount)
       setDocumentsCount(response.data.documentsCount);
+      await SetAdmins(+id);
     } finally {
       setLoading(false);
     }
   };
 
-  const getUserAccessesFoClubs = async () => {
+  const getUserAccessesForClubs = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
     await getUserClubAccess(+id, user.nameid).then(
       response => {
@@ -328,13 +342,15 @@ const Club = () => {
     Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
-        <div style={{ margin: 10 }}>
+        <div className={classes.Style}>
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
           вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
           <b>
-            {moment(existingAdmin.endDate).format("DD.MM.YYYY") ?? "ще не скоро"}
+            {moment(existingAdmin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
@@ -350,11 +366,12 @@ const Club = () => {
       }
     });
   };
-  const showDiseableModal = async (admin: ClubAdmin) => {
+
+  const showDisableModal = async (admin: ClubAdmin) => {
     return Modal.warning({
-      title: "Ви не можете змінити роль цьому користувачу",
+      title: "Ви не можете додати роль цьому користувачу",
       content: (
-        <div style={{ margin: 15 }}>
+        <div className={classes.Style}>
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
@@ -371,14 +388,69 @@ const Club = () => {
     });
   };
 
+  const showDisable = async (admin: ClubAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            вже має таку роль, час правління закінчується{" "}
+          <b>
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
+  const showPlastMemberDisable = async (admin: ClubAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            не є членом Пласту.
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
   const handleOk = async(admin: ClubAdmin) => {
-      try {
-        const head = (admins as ClubAdmin[])
+    if (admin.id === 0) {
+      const head = (admins as ClubAdmin[])
         .find(x => x.adminType.adminTypeName === Roles.KurinHead)
-        const existingAdmin  = (admins as ClubAdmin[])
-        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)      
-        if (Roles.KurinHeadDeputy === admin.adminType.adminTypeName && head?.userId === admin.userId){
-          showDiseableModal(head)
+      if(admin !== undefined){
+        admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
+      }
+      const existingAdmin  = (adminsAll as ClubAdmin[])
+      .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
+      try {     
+        if (head?.userId === admin.userId){
+          showDisableModal(head)
+        }
+        else if(existingAdmin?.userId === admin.userId){
+          showDisable(admin)
+        }
+        else if(admin.adminType.adminTypeName === "Голова КПР" ||
+         admin.adminType.adminTypeName === "Член КПР" ||
+         admin.adminType.adminTypeName === Roles.KurinHead ||
+         admin.adminType.adminTypeName === Roles.KurinHeadDeputy){
+          const check = await getCheckPlastMember(admin.userId);
+          if(check.data){
+            await addClubAdmin(admin);
+          }
+          else {
+            showPlastMemberDisable(admin);
+          }
         }
         else if(existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);
@@ -389,7 +461,25 @@ const Club = () => {
       } finally {
         setvisible(false);
       }
-  }
+    }
+    else{
+      if(admin.adminType.adminTypeName === "Голова КПР" ||
+      admin.adminType.adminTypeName === "Член КПР" ||
+      admin.adminType.adminTypeName === Roles.KurinHead ||
+      admin.adminType.adminTypeName === Roles.KurinHeadDeputy){
+          if(await getCheckPlastMember(admin.userId)){
+            await editClubAdmin(admin);
+          }
+          else {
+            showPlastMemberDisable(admin);
+          }
+        }
+        else{
+          await editClubAdmin(admin);
+        }
+      }
+  
+}
 
   const handleClose = async () => {
     setvisible(false);

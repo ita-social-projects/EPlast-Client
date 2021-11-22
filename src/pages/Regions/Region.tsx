@@ -22,6 +22,8 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
+import jwt from 'jwt-decode';
+import{getCheckPlastMember} from "../../api/citiesApi";
 import {
   getRegionById,
   archiveRegion,
@@ -31,6 +33,7 @@ import {
   getHeadDeputy,
   getRegionFollowers,
   AddAdmin,
+  getUserRegionAccess,
   EditAdmin,
   removeRegion,
 } from "../../api/regionsApi";
@@ -51,12 +54,13 @@ import CheckActiveCitiesForm from "./CheckActiveCitiesForm"
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import notificationLogic from "../../components/Notifications/Notification";
-import { successfulEditAction, successfulDeleteAction, successfulArchiveAction, successfulUnarchiveAction } from "../../components/Notifications/Messages";
+import { successfulEditAction, successfulDeleteAction, successfulArchiveAction, successfulUnarchiveAction, failArchiveAction } from "../../components/Notifications/Messages";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
 import RegionFollower from "../../models/Region/RegionFollower";
 import RegionAdmin from "../../models/Region/RegionAdmin";
+import AuthStore from "../../stores/AuthStore";
 
 const Region = () => {
   const history = useHistory();
@@ -66,9 +70,9 @@ const Region = () => {
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [photoStatus, setPhotoStatus] = useState(true);
-  const [canEdit, setCanEdit] = useState(false);
   const [document, setDocument] = useState<RegionDocument>(new RegionDocument());
   const [documents, setDocuments] = useState<RegionDocument[]>([]);
+  const classes = require('./Modal.module.css');
   const [region, setRegion] = useState<any>({
     id: "",
     regionName: "",
@@ -97,10 +101,10 @@ const Region = () => {
   const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
   const [followers, setFollowers] = useState<RegionFollower[]>([]);
   const [followersCount, setFollowersCount] = useState<number>();
-  const [canCreate, setCanCreate] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
   const [membersCount, setMembersCount] = useState<number>();
+  const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({})
   const [activeCities, setActiveCities] = useState<any[]>([]);
   const [adminsCount, setAdminsCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
@@ -151,14 +155,15 @@ const Region = () => {
   const ArchiveRegion = async () => {
     try {
       await archiveRegion(region.id);
-    } finally {
-    admins.map(async (ad) => {
+      admins.map(async (ad) => {
       await createNotification(ad.userId,
         `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
     });
     notificationLogic("success", successfulArchiveAction("Округу"));
     history.push("/regions");
-  }
+    } catch {
+      notificationLogic("error", failArchiveAction(region.name));
+    }
   };
 
   const deleteRegion = async () => {
@@ -229,6 +234,7 @@ const Region = () => {
   const getRegion = async () => {
     setLoading(true);
     try {
+      await getUserAccessesForRegion();
       const regionResponse = await getRegionById(id);
       const regionAdministrationResp = await getRegionAdministration(id);
       const cityNameResp = await cityNameOfApprovedMember(userApi.getActiveUserId());
@@ -253,7 +259,6 @@ const Region = () => {
       setRegionLogoLoading(true);
       setPhotos([...regionResponse.data.cities], [...regionAdministrationResp.data], regionFollowersResp.data);
       setRegion(regionResponse.data);
-      setCanEdit(regionResponse.data.canEdit);
       setIsFromRegion(regionResponse.data.cities, cityNameResp.data);
       setIsRegionAdmin(regionAdministrationResp.data, userApi.getActiveUserId());
       setSixFollowers(regionFollowersResp.data);
@@ -267,6 +272,15 @@ const Region = () => {
       setLoading(false);
     }
   };
+
+  const getUserAccessesForRegion = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    await getUserRegionAccess(+id, user.nameid).then(
+      response => {
+        setUserAccesses(response.data);
+      }
+    );
+  }
 
   const updateAdmins = async () => {
     const regionResponse = await getRegionById(id);
@@ -316,7 +330,7 @@ const Region = () => {
     Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
-        <div style={{ margin: 10 }}>
+        <div className={classes.Style}>
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
@@ -341,16 +355,96 @@ const Region = () => {
     });
   };
 
+  const showDisableModal = async (admin: RegionAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+          є Головою Округи, час правління закінчується{" "}
+          <b>
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
+  const showDisable = async (admin: RegionAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            вже має таку роль, час правління закінчується{" "}
+          <b>
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+              ? "ще не скоро"
+              : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
+          </b>
+          .
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
+  const showPlastMemberDisable = async (admin: RegionAdmin) => {
+    return Modal.warning({
+      title: "Ви не можете додати роль цьому користувачу",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin.user.firstName} {admin.user.lastName}
+          </b>{" "}
+            не є членом Пласту.
+        </div>
+      ),
+      onOk() {}
+    });
+  };
+
   const handleConfirm = async () => {
     setActiveMemberVisibility(false);
   };
 
   const handleOk = async(admin: RegionAdmin) => {
     if (admin.id === 0) {
-      try {
-        const existingAdmin  = (admins as RegionAdmin[])
-        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
-        if(existingAdmin !== undefined) {
+      const head = (admins as RegionAdmin[])
+        .find(x => x.adminType.adminTypeName === Roles.CityHead)
+      if(admin !== undefined){
+        admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
+      }
+      const existingAdmin  = (admins as RegionAdmin[])
+      .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
+      try {     
+        if (head?.userId === admin.userId){
+          showDisableModal(head)
+        }
+        else if(existingAdmin?.userId === admin.userId){
+          showDisable(admin)
+        }
+        else if(admin.adminType.adminTypeName === "Голова ОПР" ||
+        admin.adminType.adminTypeName === "Член ОПР" ||
+        admin.adminType.adminTypeName === Roles.OkrugaHead ||
+        admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy){
+          const check = await getCheckPlastMember(admin.userId);
+          if(check.data){
+            await addRegionAdmin(admin);
+          }
+          else {
+            showPlastMemberDisable(admin);
+          }
+        }
+        else if(existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);
         }
         else {
@@ -361,7 +455,20 @@ const Region = () => {
       }
     }
     else{
-      await editRegionAdmin(admin);
+      if(admin.adminType.adminTypeName === "Голова ОПР" ||
+      admin.adminType.adminTypeName === "Член ОПР" ||
+      admin.adminType.adminTypeName === Roles.OkrugaHead ||
+      admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy){
+        if(await getCheckPlastMember(admin.userId)){
+          await editRegionAdmin(admin);
+        }
+        else {
+          showPlastMemberDisable(admin);
+        }
+      }
+      else{
+        await editRegionAdmin(admin);
+      }
     }
   }
 
@@ -605,9 +712,9 @@ const Region = () => {
                 </Button>
                 </Col>
 
-                {canCreate || canEdit ? (
+                {userAccesses["DeleteRegion"] || userAccesses["EditRegion"] ? (
                   <>
-                    <Col style={{ display: canCreate || canEdit ? "block" : "none" }}>
+                    <Col style={{ display: userAccesses["DeleteRegion"] || userAccesses["EditRegion"] ? "block" : "none" }}>
                       <Button
                         type="primary"
                         className="cityInfoButton"
@@ -616,11 +723,10 @@ const Region = () => {
                         Річні звіти
                 </Button>
                     </Col>
-                    <Col xs={24} sm={4} style={{ display: canEdit && ( isActiveUserRegionAdmin
-                      || activeUserRoles.includes(Roles.Admin)) ? "block" : "none" }}>
+                    <Col xs={24} sm={4} style={{ display: userAccesses["EditRegion"] ? "block" : "none" }}>
                       <Row
                         className="cityIcons"
-                        justify={canCreate ? "center" : "start"}
+                        justify={userAccesses["DeleteRegion"] ? "center" : "start"}
                       >
                         <Col>
                           <Tooltip title="Редагувати округу">
@@ -761,8 +867,7 @@ const Region = () => {
               </Row>
               <div className="cityMoreButton">
                 {isActiveRegion ? (
-                canEdit && (activeUserRoles.includes(Roles.Admin) || isActiveUserRegionAdmin) 
-                ?(
+                userAccesses["EditRegion"] ? (
                   <PlusSquareFilled
                     type="primary"
                     className="addReportIcon"
@@ -790,9 +895,7 @@ const Region = () => {
           >
             <Card hoverable className="cityCard">
               <Title level={4}>Документообіг округи <a onClick={() => 
-                 canEdit || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
-                 || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy)
-                 || (!activeUserRoles.includes(Roles.RegisteredUser) && isActiveUserFromRegion)
+                 userAccesses["IsAdmin"] || (userAccesses["DownloadDocument"] && isActiveUserFromRegion)
                  ? 
                 history.push(`/regions/documents/${region.id}`)
                 : undefined
@@ -826,9 +929,7 @@ const Region = () => {
               </Row>
               <div className="cityMoreButton">
                 {
-                  canEdit || activeUserRoles.includes(Roles.KurinHead) || activeUserRoles.includes(Roles.CityHead)
-                  || activeUserRoles.includes(Roles.CityHeadDeputy) || activeUserRoles.includes(Roles.KurinHeadDeputy)
-                  || (!activeUserRoles.includes(Roles.RegisteredUser) && isActiveUserFromRegion)
+                 userAccesses["IsAdmin"] || (userAccesses["DownloadDocument"] && isActiveUserFromRegion)
                   ? <Button
                       type="primary"
                       className="cityInfoButton"
@@ -839,9 +940,7 @@ const Region = () => {
                   : null
                 }
                 {isActiveRegion ? (
-                activeUserRoles.includes(Roles.Admin)
-                || ((activeUserRoles.includes(Roles.OkrugaHead) || activeUserRoles.includes(Roles.OkrugaHeadDeputy)) 
-                    && isActiveUserRegionAdmin)
+                userAccesses["EditCity"] 
                 ?(
                 <PlusSquareFilled
                   className="addReportIcon"

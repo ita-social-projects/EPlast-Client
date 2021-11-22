@@ -69,6 +69,14 @@ export const getRegionMembersInfo = async (regionId: number, year: number, page:
   });
 };
 
+export const getUserRegionAccess = async (regionId: number, userId: string) => {
+  return await api.get(`UserAccess/GetUserRegionAccess/${regionId}/${userId}`)
+  .catch( error => {
+       throw error;
+       } 
+  );
+}
+
 export const getRegionLogo = async (logoName: string) => {
   return api.get("Regions/LogoBase64", { logoName }).catch((error) => {
     throw new Error(error);

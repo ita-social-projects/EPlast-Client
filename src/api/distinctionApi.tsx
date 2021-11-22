@@ -2,6 +2,13 @@ import api from "./api";
 import UserDistinction from "../pages/Distinction/Interfaces/UserDistinction";
 import Distinction from "../pages/Distinction/Interfaces/Distinction";
 
+const getUserDistinctionAccess = async (userId: string) => {
+  return await api.get(`UserAccess/GetUserDistinctionAccess/${userId}`)
+    .catch(error => {
+      throw error;
+    });
+}
+
 const getUserDistinctionById = async (id: number) => {
   return await api.get(`Distinction/UserDistinction/${id}`, id);
 };
@@ -10,12 +17,12 @@ const getUserDistinctions = async () => {
 };
 
 const getAllUsersDistinctions = async (searchedData: string, page: number, pageSize: number) => {
-    return (await api.get('Distinction/UsersDistinctionsForTable',
-        {
-            searchedData: searchedData,
-            page: page,
-            pageSize: pageSize,
-        })).data;
+  return (await api.get('Distinction/UsersDistinctionsForTable',
+    {
+      searchedData: searchedData,
+      page: page,
+      pageSize: pageSize,
+    })).data;
 }
 
 const getDistinctionById = async (id: number) => {
@@ -66,4 +73,5 @@ export default {
   editDistinction,
   editUserDistinction,
   checkNumberExisting,
+  getUserDistinctionAccess,
 };
