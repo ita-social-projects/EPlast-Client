@@ -431,7 +431,7 @@ const Club = () => {
       if(admin !== undefined){
         admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
       }
-      const existingAdmin  = (admins as ClubAdmin[])
+      const existingAdmin  = (adminsAll as ClubAdmin[])
       .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
       try {     
         if (head?.userId === admin.userId){
