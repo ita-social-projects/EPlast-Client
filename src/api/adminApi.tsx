@@ -43,15 +43,21 @@ const getRolesForEdit = async (userId: string) => {
   return response;
 };
 
-export const getUsersByAllRoles = async (roles: string[],include:boolean) => {
-  const response = await Api.get(`Admin/GetUsersByAllRoles/${roles.join()}/${include}`);
+export const getUsersByAllRoles = async (roles: string[][], include:boolean) => {
+  const response = await Api.get(`Admin/GetUsersByAllRoles/${roles.map(x => x.join(',')).join('|')}/${include}`);
 
   return response;
 };
 
-export const getUsersByAnyRole = async (roles: string[],include:boolean) => {
-  const response = await Api.get(`Admin/GetUsersByAnyRole/${roles.join()}/${include}`);
+export const getUsersByAnyRole = async (roles: string[][], include:boolean) => {
+  const response = await Api.get(`Admin/GetUsersByAnyRole/${roles.map(x => x.join(',')).join('|')}/${include}`);
 
+  return response;
+};
+
+export const getUsersByExactRoles = async (roles: string[][], include:boolean) => {
+  const response = await Api.get(`Admin/GetUsersByExactRoles/${roles.map(x => x.join(',')).join('|')}/${include}`);
+  
   return response;
 };
 
@@ -76,6 +82,7 @@ const putCurrentRole = async (userId: string, role: string) => {
 export default {
   getUsersByAnyRole,
   getUsersByAllRoles,
+  getUsersByExactRoles,
   getCityRegionAdmins,
   getUsersForTable,
   getShortUserInfo,
