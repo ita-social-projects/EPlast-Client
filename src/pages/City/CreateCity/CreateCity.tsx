@@ -56,8 +56,9 @@ const CreateCity = () => {
   const history = useHistory();
   const location = useLocation();
   const followerPath = "/regions/follower/";
-
+  const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
   const [appealRegion, setAppealRegion] = useState<RegionProfile>(new RegionProfile());
   const [regionFollower, setRegionFollower] = useState<RegionFollower>({} as RegionFollower);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
@@ -376,7 +377,7 @@ const CreateCity = () => {
         ) : (
           <Title level={2}>Створення станиці</Title>
         )}
-        <Form onFinish={handleSubmit}>
+        <Form onFinish={(values) => {handleSubmit(values); setLoadingButton(true)}}>
           <Form.Item name="logo" initialValue={isFollowerPath ? regionFollower.logo : city.logo}>
             <Upload
               name="avatar"
@@ -593,15 +594,15 @@ const CreateCity = () => {
             </Col>
             <Col xs={24} sm={12}>
               {(location.pathname.startsWith(followerPath + "edit") || location.pathname.startsWith("/cities/edit/")) ? (
-                <Button htmlType="submit" type="primary">
+                <Button type="primary" loading = {loadingButton} htmlType="submit">
                   Підтвердити
                 </Button>
               ) : location.pathname.startsWith(followerPath + "new") ? (
-                <Button htmlType="submit" type="primary">
+                <Button htmlType="submit" loading = {loadingButton} type="primary">
                   Надіслати
                 </Button>
               ) : (
-                <Button htmlType="submit" type="primary">
+                <Button htmlType="submit" loading = {loadingButton} type="primary">
                   Створити
                 </Button>
               )}
