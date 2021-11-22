@@ -17,13 +17,16 @@ import EventDetailsHeader from "./EventDetailsHeader";
 import ParticipantsTable from "./ParticipantsTable";
 import "./EventInfo.less";
 import Spinner from "../../../Spinner/Spinner";
+import AuthStore from "../../../../stores/AuthStore";
+import jwt from 'jwt-decode';
+import eventUserApi from "../../../../api/eventUserApi";
 
+const classes = require('./EventInfo.module.css');
 const { Title } = Typography;
 
 export interface EventDetails {
   event: EventInformation;
   participantAssessment: number;
-  isUserEventAdmin: boolean;
   isUserParticipant: boolean;
   isUserApprovedParticipant: boolean;
   isUserUndeterminedParticipant: boolean;
@@ -103,6 +106,7 @@ const EventInfo = () => {
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [approvedEvent, setApprovedEvent] = useState(false);
   const [render, setRender] = useState(false);
+  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>({})
 
   useEffect(() => {
     const fetchData = async () => {
@@ -111,7 +115,18 @@ const EventInfo = () => {
       setLoading(true);
     };
     fetchData();
+    getUserAccessesForEvents(id);
   }, [visibleDrawer, approvedEvent, render]);
+
+
+  const getUserAccessesForEvents = async (id: number) => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    await eventUserApi.getUserEventAccess(user.nameid, +id).then(
+      response => {
+        setUserAccesses(response.data);
+      }
+    );
+  }
 
   const search = (value: any) => {
     const filteredTable = baseData.filter((item: any) =>
@@ -143,6 +158,15 @@ const EventInfo = () => {
     });
   };
 
+  const setParticipantsInTable = () => {
+    if (userAccesses["SeeUserTable"]) {
+      return event.event?.eventParticipants;
+    }
+    else {
+      return event.event?.eventParticipants.filter((p: EventParticipant) => p.status == "Учасник");
+    }
+  };
+
   return loading === false ? (
     <Spinner />
   ) : (
@@ -151,6 +175,7 @@ const EventInfo = () => {
       <Row>
         <Col xs={24} sm={24} md={24} lg={8}>
           <SortedEventInfo
+            userAccesses={userAccesses}
             event={event}
             setApprovedEvent={setApprovedEvent}
             setVisibleDrawer={setVisibleDrawer}
@@ -174,32 +199,34 @@ const EventInfo = () => {
           <Gallery
             key={event.event?.eventLocation}
             eventId={event.event?.eventId}
-            isUserEventAdmin={event.isUserEventAdmin}
+            userAccesses={userAccesses}
           />
         </div>
-        <div className="participantsTable">
-          <div key={"2"}>
-            <Title level={2} style={{ color: "#3c5438" }}>
-              Таблиця користувачів
-            </Title>
-            <Row>
-              <Input.Search
-                style={{ width: "400px", margin: "0 0 10px 0" }}
-                placeholder="Пошук"
-                enterButton
-                onSearch={search}
+        {userAccesses["SeeUserTable"] || event.isUserApprovedParticipant ?
+          <div className="participantsTable">
+            <div key={"2"}>
+              <Title level={2} className={classes.userTableTitle}>
+                Таблиця користувачів
+              </Title>
+              <Row>
+                <Input.Search
+                  className={classes.inputSearch}
+                  placeholder="Пошук"
+                  enterButton
+                  onSearch={search}
+                />
+              </Row>
+            </div>
+            <div className="participant-table">
+              <ParticipantsTable
+                userAccesses={userAccesses}
+                isEventFinished={event.isEventFinished}
+                participants={setParticipantsInTable()}
+                key={event.event?.eventId}
+                setRender={setRender}
               />
-            </Row>
-          </div>
-          <div className="participant-table">
-            <ParticipantsTable
-              isUserEventAdmin={event.isUserEventAdmin}
-              participants={event.event?.eventParticipants}
-              key={event.event?.eventId}
-              setRender={setRender}
-            />
-          </div>
-        </div>
+            </div>
+          </div> : null}
       </div>
     </div>
   );

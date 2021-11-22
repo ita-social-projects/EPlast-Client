@@ -37,7 +37,7 @@ const AddNewRegionFormPage = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const history = useHistory();
-
+  const [loadingButton, setLoadingButton] = useState(false);
   const [logo, setLogo] = useState<any>();
   const [currentPhoto, setCurrentPhoto] = useState(false);
 
@@ -122,7 +122,7 @@ const AddNewRegionFormPage = () => {
           loading ? (
             <Spinner/>
           ) : (
-            <Form name="basic" onFinish={handleSubmit} form={form}>
+            <Form name="basic" onFinish={(values) => {handleSubmit(values); setLoadingButton(true)}} form={form}>
             <Form.Item name="logo">
               <Upload
                 name="avatar"
@@ -271,7 +271,7 @@ const AddNewRegionFormPage = () => {
                 </Button>
               </Col>
               <Col xs={24} sm={12}>
-                <Button htmlType="submit" type="primary">
+                <Button htmlType="submit" loading={loadingButton} type="primary">
                   Підтвердити
                 </Button>
               </Col>

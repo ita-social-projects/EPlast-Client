@@ -10,8 +10,6 @@ import AdminType from "../../../models/Admin/AdminType";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
 import ClubMember from "../../../models/Club/ClubMember";
 import "./AddClubsSecretaryForm.less";
-
-import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
 import { useParams } from "react-router-dom";
 import ClubUser from "../../../models/Club/ClubUser";
@@ -28,12 +26,13 @@ type AddClubsNewSecretaryForm = {
   headDeputy?: ClubAdmin;
 };
 const AddClubsNewSecretaryForm = (props: any) => {
-  const {id} = useParams();
+  const { id } = useParams();
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [members, setMembers] = useState<ClubUser[]>([]);
   const [userClubAccesses, setUserClubAccesses] = useState<{[key: string] : boolean}>({});
+  const [loading, setLoading] = useState<boolean>(false);
 
   const getUserAccessesForClubs = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
@@ -78,6 +77,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
   const fetchData = async () => {
     if (props.clubId !== undefined)
     {
+    await getUserAccessesForClubs();
     await getClubUsers(props.clubId).then((response) => { 
       setMembers(response.data);
     });
@@ -87,6 +87,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
   useEffect(() => {
     if (props.visibleModal) {
       form.resetFields();
+      setLoading(false)
     }
     fetchData();
   }, [props]);
@@ -137,12 +138,12 @@ const AddClubsNewSecretaryForm = (props: any) => {
           options={[
             { value: Roles.KurinHead, disabled: !userClubAccesses["AddClubHead"] },
             { value: Roles.KurinHeadDeputy },
-            { value: "Голова СПС" },
+            { value: "Голова КПР" },
             { value: "Фотограф" },
             { value: "Писар" },
             { value: "Скарбник" },
             { value: "Домівкар" },
-            { value: "Член СПР" },
+            { value: "Член КПР" },
           ]}
           placeholder={"Тип адміністрування"}
         />
@@ -184,7 +185,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item style={{ textAlign: "right" }}>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" loading = {loading} onClick = {() => {setLoading(true); handleSubmit(form.getFieldsValue());}}>
           Опублікувати
         </Button>
       </Form.Item>

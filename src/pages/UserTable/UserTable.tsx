@@ -241,9 +241,9 @@ const UsersTable = () => {
     } else if (e.value.includes("value2")) {
       setDynamicRegions((prev) => prev.filter((item) => item !== e.value.split(' ')[1] as number));
     } else if (e.value.includes("value3")) {
-      setDynamicDegrees((prev) => prev.filter((item) => e.value.split(' ')[1] as number));
+      setDynamicDegrees((prev) => prev.filter((item) => item !== e.value.split(' ')[1] as number));
     } else if (e.value.includes("value4")) {
-      setDynamicClubs((prev) => prev.filter((item) => e.value.split(' ')[1] as number));
+      setDynamicClubs((prev) => prev.filter((item) => item !== e.value.split(' ')[1] as number));
     }
   };
 
@@ -335,6 +335,7 @@ const UsersTable = () => {
           Degrees: dynamicDegrees,
           Tab: currentTabName,
           SortKey: sortKey,
+          FilterRoles: filter,
           SearchData: searchData
         });
         setUsers(response.data.users);

@@ -53,11 +53,17 @@ const put = async (data: any) => {
 
     return response;
 }
+
 const getEventToApprove = async (eventId: number) => {
     const response = await Api.put(`EventsUsers/approveEvent/${eventId}`);
 
     return response;
 }
+
+export const getUserEventAccess = async (userId: string, eventId?: number) => {
+    const response = await Api.get(`UserAccess/GetEventUserAccess/${userId}${eventId? "/"+eventId : ""}`);
+    return response;
+  }
 
 export default {
     getEventsUser,
@@ -69,5 +75,6 @@ export default {
     getCampsForCalendar,
     getEventToApprove,
     post,
-    put
+    put,
+    getUserEventAccess
 };
