@@ -77,7 +77,10 @@ const DecisionTable = () => {
       };
       setTotal(total + 1);
       setCount(count + 1);
+      if(data.length < 10)
+      {
       setData([...data, dec]);
+      }
     });
   }
 
