@@ -1,41 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Layout, Collapse, Space } from 'antd';
-import { useHistory } from "react-router-dom";
+import { Input, Button, Layout, Collapse, Space, Tooltip } from 'antd';
 import Spinner from '../Spinner/Spinner';
 import Search from "antd/lib/input/Search";
 import Title from "antd/lib/typography/Title";
 import AskQuestionModal from './AskQuestionModal';
-import TextEditor from './TextEditor';
 import {
   EditOutlined,
-  PlusSquareFilled,
-  PlusOutlined,
   DeleteOutlined,
   SaveOutlined,
-  HighlightOutlined,
 } from "@ant-design/icons";
 import "./AboutBase.less";
 import SectionModel from '../../models/AboutBase/SectionModel';
 import SubSectionModel from '../../models/AboutBase/SubsectionModel';
-import Subsections from './Subsections';
 import aboutBase from '../../api/aboutBase';
 import notificationLogic from "../../components/Notifications/Notification";
 import AddSubsectionModal from './AddSubsectionModal';
 import EditSubsectionModal from './EditSubsectionModal';
 import DeleteSectConfirm from "./DeleteSectConfirm";
 import DeleteSubsectConfirm from './DeleteSubsectConfirm';
-import { List, Tooltip, Typography } from "antd";
-import { enableCursor } from '@fullcalendar/common';
 
-
-const { Content } = Layout;
 const { Panel } = Collapse;
-
-function callback(key: any) {
-  console.log(key);
-}
-
-let count = 1;
 
 let defaultSect: SectionModel = {
   id: 0,
@@ -54,73 +38,50 @@ let defaultSubSect: SubSectionModel = {
   title: "",
   description: ""
 };
-const typeMaxLength = 200;
 
 const AboutBase = () => {
-  const [regionAdm, setRegionAdm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [visibleModalAsk, setVisibleModalAsk] = useState(false);
   const [visibleModalSubAdd, setVisibleModalSubAdd] = useState(false);
   const [visibleModalSubEdit, setVisibleModalSubEdit] = useState(false);
-  const [canEdit, setCanEdit] = useState(false);
   const [searchedData, setSearchedData] = useState("");
-  const [form] = Form.useForm();
   const [editVisible, setEditVisible] = useState(false);
-  const [editVisibleSub, setEditVisibleSub] = useState(false);
   const [sectEdit, setSectEdit] = useState(0);
   const [curSect, setCurSect] = useState<SectionModel>(defaultSect);
-  const [Sections, setData] = useState<SectionModel[]>([
-    {
-      id: 0,
-      title: "",
-      subsection: {
-        id: 0,
-        sectionId: 0,
-        title: "",
-        description: ""
-      }
-    }
-  ]);
   const [sectData, setSectData] = useState<SectionModel[]>([defaultSect]);
+  const [subsectData, setSubsectData] = useState<SubSectionModel[]>([defaultSubSect]);
   const [title, setTitle] = useState("");
+  const [sectId, setSectId] = useState(0);
+  const [subId, setSubId] = useState(0);
+  const [subTitle, setSubTitle] = useState("");
+  const [subDescription, setSubDescription] = useState("");
+  const showModalAsk = () => setVisibleModalAsk(true);
+  const showModalSubAdd = () => setVisibleModalSubAdd(true);
+  const showModalSubEdit = () => setVisibleModalSubEdit(true);
+
   const fetchSectData = async () => {
     const sectData = (await aboutBase.getAboutBaseSections()).data;
-    //console.log(sectData);
     setSectData(sectData);
   };
-  const [visRule, setVisRule] = useState(false);
 
-  const [curSubsect, setCurSubsect] = useState<SubSectionModel>(defaultSubSect);
-  const [SubSections, setSubData] = useState<SubSectionModel[]>([
-    {
-      id: 0,
-      sectionId: 0,
-      title: "",
-      description: ""
-    }
-  ]);
-  const [subsectData, setSubsectData] = useState<SubSectionModel[]>([defaultSubSect]);
   const fetchSubData = async () => {
     const subsectData = (await aboutBase.getAboutBaseSubsections()).data;
     setSubsectData(subsectData);
   };
 
-  useEffect(() => {
-    setLoading(true);
-    fetchSectData();
-    fetchSubData();
-    setLoading(false);
-  }, []);
+  const handleSearch = (e: any) => {
+    setSearchedData(e);
+  };
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchedData(event.target.value.toLowerCase());
-    setLoading(true);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.toLowerCase() === '') {
+      setSearchedData('');
+    };
   };
 
   const handleDelete = (id: number) => {
     const filteredData = sectData.filter((s: { id: number }) => s.id !== id);
     setSectData([...filteredData]);
-    setEditVisible(false);
     notificationLogic("success", "Розділ успішно видалено!");
   }
 
@@ -130,6 +91,12 @@ const AboutBase = () => {
     setEditVisible(false);
     notificationLogic("success", "Підозділ успішно видалено!");
   }
+
+  const showEdit = async (id: number) => {
+    const section = (await aboutBase.getAboutBaseSectionById(id)).data;
+    setCurSect(section);
+    setEditVisible(true);
+  };
 
   const handleEdit = async () => {
     if (curSect.title.length !== 0) {
@@ -164,38 +131,12 @@ const AboutBase = () => {
     }
   }
 
-  const handleSubmit = async (values: any) => {
-    const newSection: SectionModel = {
-      id: 0,
-      title: "",
-      subsection: JSON.parse(values.subsection)
-    }
-  }
-
-  const showEdit = async (id: number) => {
-    const section = (await aboutBase.getAboutBaseSectionById(id)).data;
-    setCurSect(section);
-    if (curSect.id != id) {
-      setEditVisible(true);
-    }
-  };
-
-  const showSubEdit = async (id: number) => {
-    const subsection = (await aboutBase.getAboutBaseSubsectionById(id)).data;
-    setCurSubsect(subsection);
-    if (curSubsect.id != id) {
-      setEditVisibleSub(true);
-    }
-  }
-
-  const showModalAsk = () => setVisibleModalAsk(true);
-  const showModalSubAdd = () => setVisibleModalSubAdd(true);
-  const showModalSubEdit = () => setVisibleModalSubEdit(true);
-
-  const [sectId, setSectId] = useState(0);
-  const [subId, setSubId] = useState(0);
-  const [subTitle, setSubTitle] = useState("");
-  const [subDescription, setSubDescription] = useState("");
+  useEffect(() => {
+    setLoading(true);
+    fetchSectData();
+    fetchSubData();
+    setLoading(false);
+  }, []);
 
   return !loading ? (
     <Layout.Content className="aboutbase">
@@ -209,12 +150,12 @@ const AboutBase = () => {
         <Search
           placeholder="Пошук"
           enterButton
-          onChange={handleSearch}
+          onChange={handleSearchChange}
+          onSearch={handleSearch}
         />
       </div>
       {sectData.map((sectitem) => (
         <Collapse
-          onChange={callback}
           className="section" key={sectitem.id}
         >
           <Panel
@@ -223,6 +164,7 @@ const AboutBase = () => {
                 <Input
                   style={{ width: 300 }}
                   defaultValue={sectitem.title}
+                  onClick={(e) => { e.stopPropagation() }}
                   onChange={(event) =>
                     setCurSect({
                       id: curSect.id,
@@ -236,8 +178,8 @@ const AboutBase = () => {
                     })
                   } />
                 <Space>
-                  <Button type="primary" onClick={handleEdit} ><SaveOutlined /></Button>
-                  <Button type="primary" onClick={() => setEditVisible(false)}>Скасувати</Button>
+                  <Button type="primary" onClick={(e) => { e.stopPropagation(); handleEdit() }}><SaveOutlined /></Button>
+                  <Button type="primary" onClick={(e) => { e.stopPropagation(); setEditVisible(false) }}>Відмінити</Button>
                 </Space>
               </div>
             ) : (
@@ -249,13 +191,13 @@ const AboutBase = () => {
                 <Tooltip title="Редагувати розділ">
                   <EditOutlined
                     className="editInfoIcon"
-                    onClick={(e) => { setSectEdit(sectitem.id); showEdit(sectitem.id) }}
+                    onClick={(e) => { e.stopPropagation(); setSectEdit(sectitem.id); showEdit(sectitem.id) }}
                   />
                 </Tooltip>
                 <Tooltip title="Видалити розділ">
                   <DeleteOutlined
                     className="deleteInfoIcon"
-                    onClick={() => DeleteSectConfirm(sectitem.id, handleDelete)}
+                    onClick={(e) => { e.stopPropagation(); DeleteSectConfirm(sectitem.id, handleDelete) }}
                   />
                 </Tooltip>
               </Space>
@@ -263,7 +205,6 @@ const AboutBase = () => {
           >
             {subsectData.filter(subitem => subitem.sectionId === sectitem.id).map((subitem) => (
               <Collapse
-                onChange={callback}
                 className="section" key={subitem.id}
               >
                 <Panel
@@ -274,13 +215,13 @@ const AboutBase = () => {
                       <Tooltip title="Редагувати підрозділ">
                         <EditOutlined
                           className="editInfoIcon"
-                          onClick={(e) => {setSubId(subitem.id); setSubTitle(subitem.title); setSubDescription(subitem.description); setSectId(sectitem.id); showModalSubEdit()}}
+                          onClick={(e) => { e.stopPropagation(); setSubId(subitem.id); setSubTitle(subitem.title); setSubDescription(subitem.description); setSectId(sectitem.id); showModalSubEdit() }}
                         />
                       </Tooltip>
                       <Tooltip title="Видалити підрозділ">
                         <DeleteOutlined
                           className="deleteInfoIcon"
-                          onClick={() => DeleteSubsectConfirm(subitem.id, handleSubDelete)}
+                          onClick={(e) => { e.stopPropagation(); DeleteSubsectConfirm(subitem.id, handleSubDelete) }}
                         />
                       </Tooltip>
                     </Space>
@@ -299,14 +240,12 @@ const AboutBase = () => {
       <AskQuestionModal
         setVisibleModal={setVisibleModalAsk}
         visibleModal={visibleModalAsk}
-      //onAdd={handleAdd}
       />
       <AddSubsectionModal
         setVisibleModal={setVisibleModalSubAdd}
         visibleModal={visibleModalSubAdd}
         sectId={sectId}
         fetchSubData={fetchSubData}
-      //onAdd={onAdd}
       />
       <EditSubsectionModal
         setVisibleModal={setVisibleModalSubEdit}
@@ -316,19 +255,13 @@ const AboutBase = () => {
         title={subTitle}
         description={subDescription}
         fetchSubData={fetchSubData}
-      //onAdd={onAdd}
       />
 
       <div className="addSection">
         <Input placeholder=" Додати розділ" type="text" maxLength={50}
           value={title}
           onChange={(event) => {
-            if (event.target.value.length < typeMaxLength) {
-              setTitle(event.target.value);
-              setVisRule(false);
-            }
-            else
-              setVisRule(true);
+            setTitle(event.target.value);
           }} />
         <Button type="primary" onClick={handleAdd}>Додати</Button>
       </div>

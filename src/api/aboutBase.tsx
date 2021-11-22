@@ -16,7 +16,6 @@ const getAboutBaseSections = async () =>{
 
 const getAboutBaseSubsections = async () =>{
     return await api.get(`AboutBase/AboutBaseSubsections`);
-    //return (await api.get(`AboutBase/AboutBaseSubsections`)).data;
 };
 
 const deleteAboutBaseSection = async (id:number) =>{

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
     Form,
-    DatePicker,
-    Select,
     Input,
     Button,
     Row,
@@ -11,16 +9,6 @@ import {
 } from "antd";
 import SubSectionModel from '../../models/AboutBase/SubsectionModel';
 import aboutBase from '../../api/aboutBase';
-import formclasses from "./Form.module.css";
-import NotificationBoxApi from "../../api/NotificationBoxApi";
-import {
-    emptyInput,
-    maxNumber,
-    minNumber,
-    incorrectData
-} from "../../components/Notifications/Messages"
-import precautionApi from "../../api/precautionApi";
-import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 import styles from './FormAskQuestion.css';
 import notificationLogic from "../../components/Notifications/Notification";
 
@@ -37,6 +25,15 @@ const FormEditSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
     const { setVisibleModal, id, sectId, title, description, fetchSubData } = props;
     const [form] = Form.useForm();
 
+    let defaultSubSect: SubSectionModel = {
+        id: id,
+        sectionId: sectId,
+        title: title,
+        description: description
+    };
+
+    const [curSubsect, setCurSubsect] = useState<SubSectionModel>(defaultSubSect);
+
     useEffect(() => {
         fetchSubData();
     }, []);
@@ -46,28 +43,14 @@ const FormEditSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
         setVisibleModal(false);
     };
 
-    const backgroundColor = (user: any) => {
-        return user.isInLowerRole ? { backgroundColor: '#D3D3D3' } : { backgroundColor: 'white' };
-    }
-
-    let defaultSubSect: SubSectionModel = {
-        id: id,
-        sectionId: sectId,
-        title: title,
-        description: description
-    };
-    const [curSubsect, setCurSubsect] = useState<SubSectionModel>(defaultSubSect);
-    const [visRule, setVisRule] = useState(false);
-
     const handleSubmit = async () => {
-        if (curSubsect.title.length !== 0) {
+        if (curSubsect.title.length !== 0 && curSubsect.description.length != 0) {
             await aboutBase.editAboutBaseSubsection(curSubsect);
             notificationLogic("success", "Підрозділ успішно змінено!");
-            fetchSubData();
             setCurSubsect(defaultSubSect);
+            setVisibleModal(false);
         } else
-            notificationLogic("error", "Хибна назва");
-        setVisibleModal(false);
+            notificationLogic("error", "Хибні дані");
         form.resetFields();
         fetchSubData();
     };
@@ -80,7 +63,6 @@ const FormEditSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
                         name="Title"
                         label="Заголовок: "
                         className={styles.formField}
-                        rules={descriptionValidation.Inputs}
                     >
                         <Input
                             maxLength={50}
@@ -103,7 +85,6 @@ const FormEditSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
                         name="Description"
                         label="Текст: "
                         className={styles.formField}
-                        rules={descriptionValidation.Description}
                     >
                         <Input.TextArea
                             allowClear

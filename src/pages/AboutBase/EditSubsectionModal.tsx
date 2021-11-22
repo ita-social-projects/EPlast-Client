@@ -32,7 +32,7 @@ const EditSubsectionModal = ({
             onClose={handleCancel}
             footer={null}
         >
-            <FormEditSubsection setVisibleModal={setVisibleModal} id={id} sectId={sectId} title={title} description={description} fetchSubData={fetchSubData} /*onAdd={onAdd}*/ />
+            <FormEditSubsection setVisibleModal={setVisibleModal} id={id} sectId={sectId} title={title} description={description} fetchSubData={fetchSubData}/>
         </Drawer>
     );
 };

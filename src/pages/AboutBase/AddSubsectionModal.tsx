@@ -7,7 +7,6 @@ interface Props {
     setVisibleModal: (visibleModal: boolean) => void;
     sectId: number;
     fetchSubData: Function
-    //onAdd: () => void;
 }
 
 const AddSubsectionModal = ({
@@ -15,7 +14,6 @@ const AddSubsectionModal = ({
     setVisibleModal,
     sectId,
     fetchSubData
-    //onAdd,
 }: Props) => {
     const handleCancel = () => {
         setVisibleModal(false);
@@ -28,7 +26,7 @@ const AddSubsectionModal = ({
             onClose={handleCancel}
             footer={null}
         >
-            <FormAddSubsection setVisibleModal={setVisibleModal} sectId={sectId} fetchSubData={fetchSubData} /*onAdd={onAdd}*/ />
+            <FormAddSubsection setVisibleModal={setVisibleModal} sectId={sectId} fetchSubData={fetchSubData}/>
         </Drawer>
     );
 };

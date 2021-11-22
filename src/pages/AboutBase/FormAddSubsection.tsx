@@ -1,25 +1,17 @@
 import React, { useEffect, useState } from "react";
 import {
     Form,
-    DatePicker,
-    Select,
     Input,
     Button,
     Row,
     Col,
     Space,
+    Upload,
+    Modal,
 } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import SubSectionModel from '../../models/AboutBase/SubsectionModel';
 import aboutBase from '../../api/aboutBase';
-import formclasses from "./Form.module.css";
-import NotificationBoxApi from "../../api/NotificationBoxApi";
-import {
-    emptyInput,
-    maxNumber,
-    minNumber,
-    incorrectData
-} from "../../components/Notifications/Messages"
-import precautionApi from "../../api/precautionApi";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 import styles from './FormAskQuestion.css';
 import notificationLogic from "../../components/Notifications/Notification";
@@ -28,13 +20,34 @@ type FormAddSubsectionProps = {
     setVisibleModal: (visibleModal: boolean) => void;
     sectId: number;
     fetchSubData: Function
-    //onAdd: () => void;
 };
 
 const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
-    const { setVisibleModal, onAdd, sectId, fetchSubData } = props;
+    const { setVisibleModal, sectId, fetchSubData } = props;
     const [form] = Form.useForm();
-    
+
+    let defaultSubSect: SubSectionModel = {
+        id: 0,
+        sectionId: sectId,
+        title: "",
+        description: ""
+    };
+
+    const [count, setCount] = useState(0);
+    const [subsectData, setSubsectData] = useState<SubSectionModel[]>([defaultSubSect]);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [previewVisible, setPreviewVisible] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
+    const [previewTitle, setPreviewTitle] = useState('');
+    const [fileList, setFileList] = useState([]);
+    const uploadButton = (
+        <div>
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>Upload</div>
+        </div>
+    );
+
     useEffect(() => {
         fetchSubData();
     }, []);
@@ -44,21 +57,7 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
         setVisibleModal(false);
     };
 
-    const backgroundColor = (user: any) => {
-        return user.isInLowerRole ? { backgroundColor: '#D3D3D3' } : { backgroundColor: 'white' };
-    }
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    let defaultSubSect: SubSectionModel = {
-        id: 0,
-        sectionId: sectId,
-        title: "",
-        description: ""
-    };
-    const [subsectData, setSubsectData] = useState<SubSectionModel[]>([defaultSubSect]);
-    const [visRule, setVisRule] = useState(false);
-
-    const handleSubmit = async (/*values: any*/) => {
+    const handleSubmit = async () => {
         const newSubSection: SubSectionModel = {
             id: 0,
             sectionId: sectId,
@@ -71,6 +70,7 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
             setSubsectData(res);
             setTitle("");
             setDescription("");
+            setFileList([]);
             notificationLogic("success", "Підрозділ додано!");
         } else {
             notificationLogic("error", "Хибні дані");
@@ -78,19 +78,39 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
         setVisibleModal(false);
         form.resetFields();
         fetchSubData();
-        
-        /*const newSubSection: SubSectionModel = {
-            id: 0,
-            sectionId: JSON.parse(values.section).id,
-            title: JSON.parse(values.title),
-            description: JSON.parse(values.description),
-        };
+    };
 
-        await aboutBase.addAboutBaseSubsection(newSubSection);
-        setVisibleModal(false);
-        form.resetFields();*/
-        //onAdd();
-        //await createNotifications(newDistinction);
+    const getBase64 = (file: any) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
+
+    const handleCancelImg = () => {
+        setPreviewVisible(false)
+    };
+
+    const handleUpload = ({ file, onSuccess }: any) => {
+        setTimeout(() => {
+            onSuccess("ok");
+        }, 0); 
+        setCount(count+1);
+    };
+
+    const handlePreview = async (file: any) => {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        setPreviewImage(file.url || file.preview);
+        setPreviewVisible(true);
+        setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+    };
+
+    const handleChange = (fileList: any) => {
+        setFileList(fileList);
     };
 
     return (
@@ -107,12 +127,7 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
                             maxLength={50}
                             value={title}
                             onChange={(event) => {
-                                if (event.target.value.length < 49) {
-                                    setTitle(event.target.value);
-                                    setVisRule(false);
-                                }
-                                else
-                                    setVisRule(true);
+                                setTitle(event.target.value);
                             }}
                         />
                     </Form.Item>
@@ -136,15 +151,31 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
                             maxLength={1300}
                             value={description}
                             onChange={(event) => {
-                                if (event.target.value.length < 1299) {
-                                    setDescription(event.target.value);
-                                    setVisRule(false);
-                                }
-                                else
-                                    setVisRule(true);
+                                setDescription(event.target.value);
                             }}
                         />
                     </Form.Item>
+                </Col>
+            </Row>
+            <Row justify="start" gutter={[12, 0]}>
+                <Col md={24} xs={24}>
+                    <Upload
+                        listType="picture-card"
+                        accept=".jpeg,.jpg,.png"
+                        customRequest={handleUpload}
+                        onPreview={handlePreview}
+                        onChange={handleChange}
+                    >
+                        {count >= 5 ? null : uploadButton}
+                    </Upload>
+                    <Modal
+                        visible={previewVisible}
+                        title={previewTitle}
+                        footer={null}
+                        onCancel={handleCancelImg}
+                    >
+                        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                    </Modal>
                 </Col>
             </Row>
             <Row justify="start" gutter={[12, 0]}>
@@ -159,15 +190,6 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
                             </Button>
                         </Space>
                     </Form.Item>
-                    {/*<Form.Item style={{ textAlign: "right" }} className={styles.formField}>
-                        <Button
-                            htmlType="submit"
-                            type="primary"
-                            className={styles.buttons}
-                        >
-                            Додати
-                        </Button>
-                        </Form.Item>*/}
                 </Col>
             </Row>
         </Form>
