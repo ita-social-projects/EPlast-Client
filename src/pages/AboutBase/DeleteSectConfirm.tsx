@@ -1,7 +1,6 @@
 import React from "react";
 import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import distinctionApi from "../../api/aboutBase";
 import aboutBase from "../../api/aboutBase";
 
 const { confirm } = Modal;
