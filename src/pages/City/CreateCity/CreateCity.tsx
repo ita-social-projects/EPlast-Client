@@ -56,7 +56,6 @@ const CreateCity = () => {
   const history = useHistory();
   const location = useLocation();
   const followerPath = "/regions/follower/";
-  const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const [appealRegion, setAppealRegion] = useState<RegionProfile>(new RegionProfile());
