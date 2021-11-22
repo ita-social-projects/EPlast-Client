@@ -593,7 +593,7 @@ const CreateCity = () => {
             </Col>
             <Col xs={24} sm={12}>
               {(location.pathname.startsWith(followerPath + "edit") || location.pathname.startsWith("/cities/edit/")) ? (
-                <Button type="primary" loading = {loadingButton} htmlType="submit">
+                <Button htmlType="submit" loading = {loadingButton} type="primary">
                   Підтвердити
                 </Button>
               ) : location.pathname.startsWith(followerPath + "new") ? (
