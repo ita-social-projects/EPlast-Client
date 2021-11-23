@@ -206,7 +206,7 @@ const AddAdministratorModal = (props: Props) => {
           admin.adminType.adminTypeName === Roles.KurinHeadDeputy){
           const check = await getCheckPlastMember(admin.userId);
           if(check.data){
-            await addClubAdmin(admin);
+            await checkAdminId(admin);
           }
           else {
             showPlastMemberDisable(admin);
