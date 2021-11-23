@@ -43,43 +43,28 @@ export default function () {
   };
 
   const handleSubmit = async (values: any) => {
-    try {
       await authService.login(values);
       const token = AuthStore.getToken() as string;
       user = jwt(token);
       history.push(`/userpage/main/${user.nameid}`);
-      window.location.reload();
-    }
-    catch (error) {
-      console.log(error);
-    }
+      window.location.reload();  
   };
 
   const handleGoogleResponse = async (response: any) => {
-    try {
       await authService.sendToken(response.tokenId);
       const token = AuthStore.getToken() as string;
       user = jwt(token);
       history.push(`/userpage/main/${user.nameid}`);
       window.location.reload();
-    }
-    catch (error) {
-      console.log(error);
-    }
-  }
+  };
 
   const handleFacebookResponse = async (response: FacebookData) => {
-    try {
       await authService.sendFacebookInfo(response);
       const token = AuthStore.getToken() as string;
       user = jwt(token);
       history.push(`/userpage/main/${user.nameid}`);
       window.location.reload();
-    }
-    catch (error) {
-      console.log(error);
-    }
-  }
+  };
 
   const getId = async () => {
     await authService.getGoogleId().then(
