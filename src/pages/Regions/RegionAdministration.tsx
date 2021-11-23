@@ -7,9 +7,11 @@ import {
   RollbackOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
+import jwt from 'jwt-decode';
 import { 
   getRegionAdministration, 
   getRegionById, 
+  getUserRegionAccess, 
   removeAdmin, 
 } from "../../api/regionsApi";
 import userApi from "../../api/UserApi";
@@ -24,6 +26,7 @@ import AddAdministratorModal from "./AddAdministratorModal";
 import { Roles } from "../../models/Roles/Roles";
 import RegionAdmin from "../../models/Region/RegionAdmin";
 import extendedTitleTooltip, { parameterMaxLength } from "../../components/Tooltip";
+import AuthStore from "../../stores/AuthStore";
 moment.locale("uk-ua");
 
 const adminTypeNameMaxLength = 22;
@@ -52,6 +55,7 @@ const RegionAdministration = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [reload, setReload] = useState(false);
   const [regionName, setRegionName] = useState<string>("");
+  const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({})
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
 
@@ -63,8 +67,18 @@ const RegionAdministration = () => {
     }
   }
 
+  const getUserAccessesForRegion = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    await getUserRegionAccess(+id, user.nameid).then(
+      response => {
+        setUserAccesses(response.data);
+      }
+    );
+  }
+
   const getAdministration = async () => {
     setLoading(true);
+    await getUserAccessesForRegion();
     const regionResponse = await getRegionById(id);
     const administrationResponse = await getRegionAdministration(id);
     setPhotosLoading(true);
@@ -150,7 +164,7 @@ const RegionAdministration = () => {
                 }
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}          
                 actions={
-                  activeUserRoles.includes(Roles.Admin) || (activeUserRoles.includes(Roles.OkrugaHead) && isActiveUserRegionAdmin)
+                  userAccesses["EditRegion"]
                   ?
                   [
                   <SettingOutlined onClick={() => showModal(member)} />,

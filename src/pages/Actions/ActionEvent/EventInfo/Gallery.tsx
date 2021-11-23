@@ -11,7 +11,7 @@ const {Title} = Typography;
 
 interface Props {
     eventId: number;
-    isUserEventAdmin: boolean;
+    userAccesses: {[key: string]: boolean};
 }
 
 const GallerySpinner = () => (
@@ -43,7 +43,7 @@ const FillGallery = (pictures: EventGallery[]) => {
     </Carousel>)
 }
 
-const Gallery = ({eventId, isUserEventAdmin}: Props) => {
+const Gallery = ({eventId, userAccesses}: Props) => {
     const [loading, setLoading] = useState(false);
     // @ts-ignore
     const [pictures, setPictures] = useState<EventGallery[]>([])
@@ -51,7 +51,7 @@ const Gallery = ({eventId, isUserEventAdmin}: Props) => {
     const addPictures = (uploadedPictures: EventGallery[]) => setPictures(pictures.concat(uploadedPictures));
     const removePicture = (pictureId: number) => setPictures(pictures.filter(picture => picture.galleryId !== pictureId))
     const GalleryAdministration = (): React.ReactNode[] => {
-        if (isUserEventAdmin) {
+        if (userAccesses["AddPhotos"]) {
             return [
                 <Title level={2} style={{color: '#3c5438'}} key='spinnerTitle'>Адміністрування галереї</Title>,
                 <FormAddPictures eventId={eventId} updateGallery={addPictures} picturesCount={pictures.length}

@@ -7,7 +7,7 @@ interface TableFilterParameters {
     Degrees?: Array<string>;
     Tab: string;
     SortKey: number;
-    FilterRoles?: string;
+    FilterRoles?: Array<string>;
     SearchData: string
 }
 

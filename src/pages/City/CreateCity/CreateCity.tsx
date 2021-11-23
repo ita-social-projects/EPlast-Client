@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 import {
   Button,
@@ -15,7 +15,6 @@ import {
 import {
   DeleteOutlined,
   ExclamationCircleOutlined,
-  LoadingOutlined,
   PlusOutlined,
 } from "@ant-design/icons/lib";
 import ReactInputMask from "react-input-mask";
@@ -27,7 +26,7 @@ import {
   getLogo,
   updateCity,
 } from "../../../api/citiesApi";
-import { createRegionFollower, GetAllRegions, getRegionById, getRegionFollowerById, removeFollower } from "../../../api/regionsApi";
+import { createRegionFollower, GetAllRegions, getRegionById, getRegionFollowerById, getRegionsNames, removeFollower } from "../../../api/regionsApi";
 import "./CreateCity.less";
 import CityProfile from "../../../models/City/CityProfile";
 import RegionProfile from "../../../models/Region/RegionProfile";
@@ -50,17 +49,15 @@ import { descriptionValidation } from "../../../models/GllobalValidations/Descri
 import RegionFollower from "../../../models/Region/RegionFollower";
 import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
-import TextArea from "antd/lib/input/TextArea";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { inherits } from "util";
 
 const CreateCity = () => {
   const { id } = useParams();
   const history = useHistory();
   const location = useLocation();
   const followerPath = "/regions/follower/";
-
   const [loading, setLoading] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
   const [appealRegion, setAppealRegion] = useState<RegionProfile>(new RegionProfile());
   const [regionFollower, setRegionFollower] = useState<RegionFollower>({} as RegionFollower);
   const [city, setCity] = useState<CityProfile>(new CityProfile());
@@ -171,7 +168,7 @@ const CreateCity = () => {
 
   const getRegions = async () => {
     try {
-      const response = await GetAllRegions();
+      const response = await getRegionsNames();
       setRegions(response.data);
     } finally {
     }
@@ -379,7 +376,7 @@ const CreateCity = () => {
         ) : (
           <Title level={2}>Створення станиці</Title>
         )}
-        <Form onFinish={handleSubmit}>
+        <Form onFinish={(values) => {handleSubmit(values); setLoadingButton(true)}}>
           <Form.Item name="logo" initialValue={isFollowerPath ? regionFollower.logo : city.logo}>
             <Upload
               name="avatar"
@@ -571,7 +568,7 @@ const CreateCity = () => {
                 initialValue={isFollowerPath ? regionFollower.postIndex : city.postIndex}
                 rules={descriptionValidation.postIndex}
               >
-                <Input type="number" value={isFollowerPath ? regionFollower.postIndex : city.postIndex} />
+                <Input value={isFollowerPath ? regionFollower.postIndex : city.postIndex} maxLength={5} />
               </Form.Item>
             </Col>
           </Row>
@@ -596,15 +593,15 @@ const CreateCity = () => {
             </Col>
             <Col xs={24} sm={12}>
               {(location.pathname.startsWith(followerPath + "edit") || location.pathname.startsWith("/cities/edit/")) ? (
-                <Button htmlType="submit" type="primary">
+                <Button htmlType="submit" loading = {loadingButton} type="primary">
                   Підтвердити
                 </Button>
               ) : location.pathname.startsWith(followerPath + "new") ? (
-                <Button htmlType="submit" type="primary">
+                <Button htmlType="submit" loading = {loadingButton} type="primary">
                   Надіслати
                 </Button>
               ) : (
-                <Button htmlType="submit" type="primary">
+                <Button htmlType="submit" loading = {loadingButton} type="primary">
                   Створити
                 </Button>
               )}

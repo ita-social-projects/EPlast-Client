@@ -1,69 +1,79 @@
-.titleTable{
+.titleTable {
     text-align: center;
     margin-bottom: 15px;
-  }
+}
 
-  .searchContainer{
+.searchContainer {
     display: flex;
     align-items: baseline;
     margin-bottom: 12px;
     width: 376px;
-    margin-left: auto; 
-  }
-  .searchContainer>input{
+    margin-left: auto;
+}
+.searchContainer > input {
     max-width: 300px;
-    margin-left: auto; 
-  }
+    margin-left: auto;
+}
 
-  .cardButton{
+.cardButton {
     inline-size: -webkit-fill-available;
     margin-top: 7px;
-    color:#3c5438;
+    color: #3c5438;
     border-color: #3c5438;
-  }
-  .searchContainer>* {
+}
+.searchContainer > * {
     margin-left: 12px;
-  }
-  
-  /* Context menu right click */
-  @media(max-width: 800px){
-    .searchContainer{
-      width: 100%;
-      flex-direction: column;
-    }
-    .searchContainer>*{
-      width: 100%;
-      margin-bottom: 5px;
-      margin-left: auto; 
-    }
-    .searchContainer>button{
-      width: 100%;
-      margin-bottom: 10px;
-      margin-left: auto; 
-    }
-  }
- 
-.link{
-  color: blue;
-}
-  
-.IDcolumn{
-  text-align: center;
 }
 
-.Namecolumn{
-  background-color: rgb(247, 245, 245);
-  font-weight: 400;
-  text-align: center;
+/* Context menu right click */
+@media (max-width: 800px) {
+    .searchContainer {
+        width: 100%;
+        flex-direction: column;
+    }
+    .searchContainer > * {
+        width: 100%;
+        margin-bottom: 5px;
+        margin-left: auto;
+    }
+    .searchContainer > button {
+        width: 100%;
+        margin-bottom: 10px;
+        margin-left: auto;
+    }
 }
 
-.menu{
-  box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
-  position: absolute;
+.link {
+    color: blue;
 }
 
-@media (max-width: 1350px){
-  .table{
-    overflow-x: scroll;
-  }
+.IDcolumn {
+    text-align: center;
+}
+
+.Namecolumn {
+    background-color: rgb(247, 245, 245);
+    font-weight: 400;
+    text-align: center;
+}
+
+.menu {
+    box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
+    position: absolute;
+}
+
+@media (max-width: 1350px) {
+    .table {
+        overflow-x: scroll;
+    }
+}
+
+.buttonSearchField {
+    justify-content: right;
+}
+
+@media (max-width: 720px) {
+    .buttonSearchField {
+        justify-content: center;
+    }
 }

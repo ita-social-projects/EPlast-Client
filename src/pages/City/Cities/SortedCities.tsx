@@ -46,7 +46,7 @@ const SortedCities = ( {switcher}: Props) => {
     }
     
   };
-  const getActiveCities = async () => {
+  const getActiveCities = async (page: number = 1) => {
     setLoading(true);
 
     try {
@@ -68,7 +68,7 @@ const SortedCities = ( {switcher}: Props) => {
     }
   };
 
-  const getNotActiveCities = async () => {
+  const getNotActiveCities = async (page: number = 1) => {
     setLoading(true);
 
     try {
@@ -128,12 +128,11 @@ const SortedCities = ( {switcher}: Props) => {
 };
 
   useEffect(() => {
-    switcher ? (getNotActiveCities()):(getActiveCities()) 
+    switcher ? (getNotActiveCities(page)):(getActiveCities(page)) 
   }, [page, pageSize, searchedData]);
 
   useEffect(()=> {
-    if(cities.length !== 0) {
-      setPage(1);
+    if (cities.length !== 0) {
       switcher ? (getNotActiveCities()) :(getActiveCities())
       setCanCreate(switcher ? false : activeCanCreate);
     }

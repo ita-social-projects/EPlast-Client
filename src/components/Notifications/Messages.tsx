@@ -97,6 +97,10 @@ export const successfulDeleteDegree = ()=>{
     return `На жаль ступеня було позбавлено`;
 };
 
+export const failArchiveAction = (name: string) => {
+    return `Не вдалось архівувати ${name} `
+};
+
 export const failCreateAction = (name:string)=>{
     return `Не вдалося створити ${name}`;
 }; 

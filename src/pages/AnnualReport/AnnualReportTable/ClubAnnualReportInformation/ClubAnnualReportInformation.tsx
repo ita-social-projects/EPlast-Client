@@ -5,7 +5,6 @@ import "./ClubAnnualReportInformation.less";
 import { Link, useHistory, useParams } from "react-router-dom";
 import {
     getClubAnnualReportById,
-    getClubMembersInfo,
     confirmClubAnnualReport,
     cancelClubAnnualReport,
     removeClubAnnualReport,
@@ -171,160 +170,230 @@ const ClubAnnualReportInformation = () => {
                         onFinish={() => history.goBack()}
                         className="annualreport-form"
                     >
-                        <Title className="textCenter" level={3}>
-                            {`Річний звіт куреня ${clubAnnualReport.clubName} за ${moment.utc(clubAnnualReport.date).local().year()} рік`}
-                        </Title>
-                        <StatusStamp status={status!} />
-                        <Link
-                            className="linkText"
-                            to={"/clubs/" + clubAnnualReport.clubId}
-                            target="blank"
-                        >
-                            Перейти на профіль куреня{" "}{clubAnnualReport.clubName}
-                        </Link>
-                        <br />
-                        <br />
-                        <Card>
-                            <Row gutter={16} align="bottom">
-                                <Col xs={24} sm={12} md={12} lg={12}>
-                                    <Card.Grid className="container">
-                                        <Title level={4}>
-                                            Географія куреня. Осередки в Україні:{" "}
-                                        </Title>
-                                        <Text className="clubAnnualReportInformationText">
-                                            {clubAnnualReport.clubCenters}
-                                        </Text>
-                                    </Card.Grid>
-                                </Col>
-
-                                <Col xs={24} sm={12} md={12} lg={12}>
-                                    <Card.Grid className="container">
-                                        <Title level={4}>
-                                            Побажання до КБ УСП:{" "}
-                                        </Title>
-                                        <Text className="clubAnnualReportInformationText">
-                                            {clubAnnualReport.kbUSPWishes}
-                                        </Text>
-                                    </Card.Grid>
-                                </Col>
-                            </Row>
-
-                            <Card.Grid className="container">
-                                <Title level={4}>
-                                    Дані про членів куреня:{" "}
-                                </Title>
-                                <Space direction="vertical">
-                                    <Text>{`Дійсних членів куреня: ${clubAnnualReport.currentClubMembers}`}</Text>
-                                    <Text>{`Прихильників куреня: ${clubAnnualReport.currentClubFollowers}`}</Text>
-                                    <Text>{`До куреня приєдналось за звітній період: ${clubAnnualReport.clubEnteredMembersCount}`}</Text>
-                                    <Text>{`Вибули з куреня за звітній період: ${clubAnnualReport.clubLeftMembersCount}`}</Text>
-                                </Space>
-                            </Card.Grid>
-
-                            <Card.Grid className="container">
-                                <Title level={4}>Провід куреня</Title>
-                                <Table
-                                    dataSource={getTableAdmins(admins)}
-                                    columns={administrationsColumns}
-                                    pagination={{ defaultPageSize: 4 }}
-                                    scroll={{ x: true }}
-                                    className="table"
-                                    onRow={(user) => {
-                                        return {
-                                            onDoubleClick: () => {
-                                                if (user.key)
-                                                    window.open(`/userpage/main/${user.key}`);
-                                            },
-                                        };
-                                    }}
-                                />
-                            </Card.Grid>
-                            <Card.Grid className="container">
-                                <Title level={4}>Члени куреня</Title>
-                                <Table
-                                    dataSource={getTableMembers(members)}
-                                    columns={followersColumns}
-                                    pagination={{ defaultPageSize: 4 }}
-                                    scroll={{ x: true }}
-                                    className="table"
-                                    onRow={(user) => {
-                                        return {
-                                            onDoubleClick: (event) => {
-                                                if (user.key)
-                                                    window.open(`/userpage/main/${user.key}`);
-                                            },
-                                        };
-                                    }}
-                                />
-                            </Card.Grid>
-
-                            <Card.Grid className="container">
-                                <Title level={4}>Прихильники куреня</Title>
-                                <Table
-                                    dataSource={getTableMembers(followers)}
-                                    columns={followersColumns}
-                                    pagination={{ defaultPageSize: 4 }}
-                                    scroll={{ x: true }}
-                                    className="table"
-                                    onRow={(user) => {
-                                        return {
-                                            onDoubleClick: (event) => {
-                                                if (user.key)
-                                                    window.open(`/userpage/main/${user.key}`);
-                                            },
-                                        };
-                                    }}
-                                />
-                            </Card.Grid>
-
+                        <Row>
+                            <Col span={24}>
+                                <Card>
+                                    <Title
+                                        className="textCenter"
+                                        level={3}
+                                    >
+                                        {`Річний звіт куреня ${clubAnnualReport.clubName} за ${moment.utc(clubAnnualReport.date).local().year()} рік`}
+                                    </Title>
+                                    <StatusStamp status={status!} />
+                                    <Link
+                                        className="linkText"
+                                        to={"/clubs/" + clubAnnualReport.clubId}
+                                        target="blank"
+                                    >
+                                        Перейти на профіль куреня {clubAnnualReport.clubName}
+                                    </Link>
+                                </Card>
+                            </Col>
+                        </Row>
+                        <Row className="card__wrap--outer">
                             <Col
                                 xs={24}
-                                sm={12}
+                                sm={24}
                                 md={12}
                                 lg={12}
-                                className="clubAnnualReportInformationCol"
+                                xl={12}
+                                className="card__wrap--inner"
                             >
-                                <Text strong={true}>Контакти:</Text>
-                                {clubHead ? (
-                                    <Form.Item
-                                        className="w100"
-                                        name="clubContacts"
-                                    >
-                                        {clubHead.adminType?.adminTypeName}:{" "}
-                                        {clubHead.user?.firstName}{" "}
-                                        {clubHead.user?.lastName} <br />
-                                        {clubHead.user?.email} <br />
-                                        {clubHead.user?.phoneNumber}
-                                    </Form.Item>
-                                ) : (
-                                    <> Ще немає адміністратора куреня</>
-                                )}
-                                <Form.Item
-                                    label={
-                                        <Text strong={true}>
-                                            Сайт/сторінка в інтернеті
-                                        </Text>
-                                    }
-                                    className="w100"
-                                    name="clubPage"
-                                >
-                                    {club.clubURL.replace(" ", "") == ""
-                                        ? "немає"
-                                        : club.clubURL}
-                                </Form.Item>
-                                <Form.Item
-                                    label={
-                                        <Text strong={true}>
-                                            Дата заповнення
-                                        </Text>
-                                    }
-                                    className="w100"
-                                    name="date"
-                                >
-                                    {moment().format("DD.MM.YYYY")}
-                                </Form.Item>
+                                <Card className="flexible">
+                                    <Title level={4}>
+                                        Географія куреня. Осередки в Україні:{" "}
+                                    </Title>
+                                    <Text className="clubAnnualReportInformationText">
+                                        {clubAnnualReport.clubCenters}
+                                    </Text>
+                                </Card>
                             </Col>
-                        </Card>
+                            <Col
+                                xs={24}
+                                sm={24}
+                                md={12}
+                                lg={12}
+                                xl={12}
+                                className="card__wrap--inner"
+                            >
+                                <Card className="flexible">
+                                    <Title level={4}>
+                                        Побажання до КБ УСП:{" "}
+                                    </Title>
+                                    <Text className="clubAnnualReportInformationText">
+                                        {clubAnnualReport.kbUSPWishes}
+                                    </Text>
+                                </Card>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={24}>
+                                <Card>
+                                    <Title level={4}>
+                                        Дані про членів куреня:{" "}
+                                    </Title>
+                                    <Space direction="vertical">
+                                        <Text>{`Дійсних членів куреня: ${clubAnnualReport.currentClubMembers}`}</Text>
+                                        <Text>{`Прихильників куреня: ${clubAnnualReport.currentClubFollowers}`}</Text>
+                                        <Text>{`До куреня приєдналось за звітній період: ${clubAnnualReport.clubEnteredMembersCount}`}</Text>
+                                        <Text>{`Вибули з куреня за звітній період: ${clubAnnualReport.clubLeftMembersCount}`}</Text>
+                                    </Space>
+                                </Card>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={24}>
+                                <Card>
+                                    <Title level={4}>
+                                        Провід куреня
+                                    </Title>
+                                    <Table
+                                        dataSource={getTableAdmins(admins)}
+                                        columns={administrationsColumns}
+                                        pagination={{ defaultPageSize: 4 }}
+                                        scroll={{ x: true }}
+                                        className="table"
+                                        onRow={(user) => {
+                                            return {
+                                                onDoubleClick: () => {
+                                                    if (user.key) {
+                                                        window.open(`/userpage/main/${user.key}`);
+                                                    }
+                                                },
+                                            };
+                                        }}
+                                    />
+                                </Card>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={24}>
+                                <Card>
+                                    <Title level={4}>
+                                        Члени куреня
+                                    </Title>
+                                    <Table
+                                        dataSource={getTableMembers(members)}
+                                        columns={followersColumns}
+                                        pagination={{ defaultPageSize: 4 }}
+                                        scroll={{ x: true }}
+                                        className="table"
+                                        onRow={(user) => {
+                                            return {
+                                                onDoubleClick: (event) => {
+                                                    if (user.key) {
+                                                        window.open(`/userpage/main/${user.key}`);
+                                                    }
+                                                },
+                                            };
+                                        }}
+                                    />
+                                </Card>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={24}>
+                                <Card>
+                                    <Title level={4}>
+                                        Прихильники куреня
+                                    </Title>
+                                    <Table
+                                        dataSource={getTableMembers(followers)}
+                                        columns={followersColumns}
+                                        pagination={{ defaultPageSize: 4 }}
+                                        scroll={{ x: true }}
+                                        className="table"
+                                        onRow={(user) => {
+                                            return {
+                                                onDoubleClick: (event) => {
+                                                    if (user.key) {
+                                                        window.open(`/userpage/main/${user.key}`);
+                                                    }
+                                                },
+                                            };
+                                        }}
+                                    />
+                                </Card>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={24} className="ClubAnnualReportInformationDescription">
+                                <Card>
+                                    <Row gutter={20}>
+                                        <Col
+                                            xs={24}
+                                            sm={24}
+                                            md={18}
+                                            lg={18}
+                                            xl={18}
+                                        >
+                                            <Text strong={true}>Контакти:</Text>
+                                            {clubHead ? (
+                                                <>
+                                                    <Form.Item
+                                                        label={
+                                                            <Text strong={true}>
+                                                                {
+                                                                    clubHead.adminType?.adminTypeName
+                                                                }
+                                                            </Text>
+                                                        }
+                                                    >
+                                                        {clubHead.user?.firstName}{" "}{clubHead.user?.lastName}
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        label={
+                                                            <Text strong={true}>
+                                                                Номер телефону
+                                                            </Text>
+                                                        }
+                                                    >
+                                                        {clubAnnualReport.phoneNumber?.replace(" ", "") == "" ? "немає" : clubAnnualReport.phoneNumber}
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        label={
+                                                            <Text strong={true}>
+                                                                Електронна пошта
+                                                            </Text>
+                                                        }
+                                                    >
+                                                        {clubAnnualReport.email?.replace(" ", "") == "" ? "немає" : clubAnnualReport.email}
+                                                    </Form.Item>
+                                                </>
+                                            ) : (
+                                                <> Ще немає адміністратора</>
+                                            )}
+                                            <Form.Item
+                                                label={
+                                                    <Text strong={true}>
+                                                        Сайт/сторінка в інтернеті
+                                                    </Text>
+                                                }
+                                            >
+                                                {clubAnnualReport.clubURL?.replace(" ", "") == "" ? "немає" : clubAnnualReport.clubURL}
+                                            </Form.Item>
+                                        </Col>
+                                        <Col
+                                            xs={24}
+                                            sm={24}
+                                            md={6}
+                                            lg={6}
+                                            xl={6}
+                                        >
+                                            <Form.Item
+                                                label={
+                                                    <Text strong={true}>
+                                                        Дата заповнення
+                                                    </Text>
+                                                }
+                                            >
+                                                {moment(clubAnnualReport.date).local().format("DD.MM.YYYY")}
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
+                                </Card>
+                            </Col>
+                        </Row>
                     </Form>
                 </>
             )}
