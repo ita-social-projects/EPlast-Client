@@ -147,14 +147,13 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   useEffect(() => {
     const fetchData = async () => {
       setUsersLoading(true);
-      await adminApi.getUsersByAnyRole([
-        Roles.RegisteredUser, 
-        Roles.Supporter, 
-        Roles.FormerPlastMember, 
-        Roles.Interested,
-        Roles.GoverningBodyHead, 
-        Roles.GoverningBodySecretary],
-        false)
+      await adminApi.getUsersByExactRoles(
+        [
+          [Roles.PlastMember],
+          [Roles.PlastMember, Roles.KurinHead],
+          [Roles.PlastMember, Roles.KurinHeadDeputy]
+        ],
+        true)
       .then((response) => {
         setUsers(response.data)
         setUsersLoading(false);
