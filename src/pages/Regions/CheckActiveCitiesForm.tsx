@@ -7,10 +7,13 @@ import{
     emptyInput,
   } from "../../components/Notifications/Messages"
 import "./CheckActiveCitiesForm.less";
+import Title from "antd/lib/typography/Title";
 
 type CheckActiveCitiesForm = {
     onAdd: () => void;
 }
+
+
 
 const CheckActiveCitiesForm  = (props: any)=>{
     const  { onAdd } = props;
@@ -40,12 +43,14 @@ const CheckActiveCitiesForm  = (props: any)=>{
             onFinish={handleSubmit}
             form = {form}
             >
+                <Title level={1}>Округа не повинна містити:</Title>
                 <Form.Item
                 className={classes.formField}> 
                     {props.cities.length !== 0 ? (
                     <React.Fragment>
+                        
                         <PageHeader 
-                        title = "Необхідно відкріпити членів: "
+                        title = "Дійсних членів округи"
                         className="site-page-header" 
                         />
                                 <Row className= "cityItems" justify="center">
@@ -65,7 +70,7 @@ const CheckActiveCitiesForm  = (props: any)=>{
                     {props.admins.length !== 0 ? (
                         <React.Fragment>
                             <PageHeader 
-                            title = "Необхідно відкріпити членів проводу: "
+                            title = "Членів проводу"
                             className="site-page-header" 
                             />
                                 <Row className= "cityItems" justify="center">
@@ -83,7 +88,7 @@ const CheckActiveCitiesForm  = (props: any)=>{
                     {props.followers.length !== 0 ? (
                         <React.Fragment>
                             <PageHeader 
-                            title = "Необхідно відкріпити прихильників:"
+                            title = "Прихильників округи"
                             className="site-page-header" 
                             />
                                 <Row className= "cityItems" justify="center">
