@@ -13,8 +13,6 @@ type CheckActiveCitiesForm = {
     onAdd: () => void;
 }
 
-
-
 const CheckActiveCitiesForm  = (props: any)=>{
     const  { onAdd } = props;
     const [form] = Form.useForm();
