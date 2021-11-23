@@ -12,7 +12,7 @@ import GoogleLoginWrapper from '../SignIn/GoogleLoginWrapper';
 import FacebookLoginWrapper from '../SignIn/FacebookLoginWrapper';
 import FacebookData from '../SignIn/FacebookDataInterface';
 import '../SignIn/SignIn.less';
-import{emptyInput, minLength} from "../../components/Notifications/Messages"
+import { emptyInput, minLength } from "../../components/Notifications/Messages"
 
 let authService = new AuthorizeApi();
 let user: any;
@@ -43,27 +43,42 @@ export default function () {
   };
 
   const handleSubmit = async (values: any) => {
-    await authService.login(values);
-    const token = AuthStore.getToken() as string;
-    user = jwt(token);
-    history.push(`/userpage/main/${user.nameid}`);
-    window.location.reload();
+    try {
+      await authService.login(values);
+      const token = AuthStore.getToken() as string;
+      user = jwt(token);
+      history.push(`/userpage/main/${user.nameid}`);
+      window.location.reload();
+    }
+    catch (error) {
+      console.log(error);
+    }
   };
 
   const handleGoogleResponse = async (response: any) => {
-    await authService.sendToken(response.tokenId);
-    const token = AuthStore.getToken() as string;
-    user = jwt(token);
-    history.push(`/userpage/main/${user.nameid}`);
-    window.location.reload();
+    try {
+      await authService.sendToken(response.tokenId);
+      const token = AuthStore.getToken() as string;
+      user = jwt(token);
+      history.push(`/userpage/main/${user.nameid}`);
+      window.location.reload();
+    }
+    catch (error) {
+      console.log(error);
+    }
   }
 
   const handleFacebookResponse = async (response: FacebookData) => {
-    await authService.sendFacebookInfo(response);
-    const token = AuthStore.getToken() as string;
-    user = jwt(token);
-    history.push(`/userpage/main/${user.nameid}`);
-    window.location.reload();
+    try {
+      await authService.sendFacebookInfo(response);
+      const token = AuthStore.getToken() as string;
+      user = jwt(token);
+      history.push(`/userpage/main/${user.nameid}`);
+      window.location.reload();
+    }
+    catch (error) {
+      console.log(error);
+    }
   }
 
   const getId = async () => {
@@ -126,13 +141,13 @@ export default function () {
           {googleLoading ? (
             ''
           ) : (
-              <GoogleLoginWrapper googleId={googleId} handleGoogleResponse={handleGoogleResponse}></GoogleLoginWrapper>
-            )}
+            <GoogleLoginWrapper googleId={googleId} handleGoogleResponse={handleGoogleResponse}></GoogleLoginWrapper>
+          )}
           {facebookLoading ? (
             ''
           ) : (
-              <FacebookLoginWrapper appId={facebookAppId} handleFacebookResponse={handleFacebookResponse}></FacebookLoginWrapper>
-            )}
+            <FacebookLoginWrapper appId={facebookAppId} handleFacebookResponse={handleFacebookResponse}></FacebookLoginWrapper>
+          )}
         </div>
       </Form>
     </div>
