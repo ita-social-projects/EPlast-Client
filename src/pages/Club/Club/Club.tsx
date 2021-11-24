@@ -27,7 +27,8 @@ import {
    removeFollower,
    addAdministrator,
    editAdministrator,
-   getUserClubAccess
+   getUserClubAccess,
+   getAllAdmins
   } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
@@ -65,6 +66,7 @@ const Club = () => {
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [visible, setvisible] = useState<boolean>(false);
   const [admins, setAdmins] = useState<ClubAdmin[]>([]);
+  const [adminsAll, setAdminsAll] = useState<ClubAdmin[]>([]);
   const [members, setMembers] = useState<ClubMember[]>([]);
   const [followers, setFollowers] = useState<ClubMember[]>([]);
   const [documents, setDocuments] = useState<ClubDocument[]>([]);
@@ -188,6 +190,11 @@ const Club = () => {
     }
   }
 
+  async function SetAdmins(id: number){
+    const response = await getAllAdmins(id);
+    setAdminsAll(response.data.administration)
+  }
+
   function seeArchiveModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете заархівувати даний курінь?",
@@ -281,6 +288,7 @@ const Club = () => {
       setAdminsCount(response.data.administrationCount);
       setFollowersCount(response.data.followerCount)
       setDocumentsCount(response.data.documentsCount);
+      await SetAdmins(+id);
     } finally {
       setLoading(false);
     }
@@ -423,7 +431,7 @@ const Club = () => {
       if(admin !== undefined){
         admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
       }
-      const existingAdmin  = (admins as ClubAdmin[])
+      const existingAdmin  = (adminsAll as ClubAdmin[])
       .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
       try {     
         if (head?.userId === admin.userId){

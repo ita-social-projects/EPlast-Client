@@ -190,15 +190,16 @@ const ClubAnnualReportInformation = () => {
                                 </Card>
                             </Col>
                         </Row>
-                        <Row>
+                        <Row className="card__wrap--outer">
                             <Col
                                 xs={24}
                                 sm={24}
                                 md={12}
                                 lg={12}
                                 xl={12}
+                                className="card__wrap--inner"
                             >
-                                <Card>
+                                <Card className="flexible">
                                     <Title level={4}>
                                         Географія куреня. Осередки в Україні:{" "}
                                     </Title>
@@ -213,8 +214,9 @@ const ClubAnnualReportInformation = () => {
                                 md={12}
                                 lg={12}
                                 xl={12}
+                                className="card__wrap--inner"
                             >
-                                <Card>
+                                <Card className="flexible">
                                     <Title level={4}>
                                         Побажання до КБ УСП:{" "}
                                     </Title>

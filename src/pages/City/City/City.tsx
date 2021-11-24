@@ -39,7 +39,8 @@ import {
   getUserCityAccess,
   getCheckPlastMember,
   toggleMemberStatus,
-  removeFollower
+  removeFollower,
+  getAllAdmins
 } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
@@ -76,6 +77,7 @@ const City = () => {
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({})
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
+  const [adminsAll, setAdminsAll] = useState<CityAdmin[]>([]);
   const [members, setMembers] = useState<CityMember[]>([]);
   const [followers, setFollowers] = useState<CityMember[]>([]);
   const [documents, setDocuments] = useState<CityDocument[]>([]);
@@ -271,6 +273,10 @@ const City = () => {
       },
     });
   }
+  async function SetAdmins(id: number){
+    const response = await getAllAdmins(id);
+    setAdminsAll(response.data.administration)
+  }
 
   function seeSkipModal(followerID: number) {
     return Modal.confirm({
@@ -310,6 +316,7 @@ const City = () => {
       setFollowersCount(response.data.followerCount);
       setDocumentsCount(response.data.documentsCount);
       setActiveUserRoles(userApi.getActiveUserRoles);
+      await SetAdmins(+id);
     }
     finally {
       setLoading(false);
@@ -445,7 +452,7 @@ const City = () => {
       if(admin !== undefined){
         admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
       }
-      const existingAdmin  = (admins as CityAdmin[])
+      const existingAdmin  = (adminsAll as CityAdmin[])
         .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
       try {     
         if (head?.userId === admin.userId){
