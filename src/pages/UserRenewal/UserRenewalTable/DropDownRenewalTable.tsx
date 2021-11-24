@@ -49,8 +49,7 @@ const DropDown = (props: DropDownProps) => {
         if (roles.includes(Roles.Admin)&&!isRecordActive) 
         return true;
 
-        if (roles.includes(Roles.CityHead)
-            || roles.includes(Roles.CityHeadDeputy)
+        if ((roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy))
             && !isRecordActive
             && cityId === currentCity) 
             return true;
