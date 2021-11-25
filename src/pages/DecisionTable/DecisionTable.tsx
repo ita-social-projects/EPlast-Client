@@ -73,7 +73,12 @@ const DecisionTable = () => {
     setData([...filteredData]);
   }
   const handleAdd = async () => {
+    if(page != 1){
     setPage(1);
+    } 
+    else {
+      fetchData();
+    }
   }
 
   useEffect(() => {
