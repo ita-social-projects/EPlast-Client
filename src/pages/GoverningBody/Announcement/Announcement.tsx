@@ -70,9 +70,13 @@ const Announcements = () => {
   }
 
   const getUsers = async () => {
-    let prohibitedUsers = [Roles.RegisteredUser];
     let result: any
-    await getUsersByAllRoles(prohibitedUsers,false).then(
+    await getUsersByAllRoles(
+      [
+        [Roles.RegisteredUser]
+      ],
+      false)
+    .then(
       response => {
       result = response
     });

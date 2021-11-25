@@ -38,6 +38,7 @@ const RegionEditFormPage = () => {
   );
   const [form] = Form.useForm();
   const history = useHistory();
+  const [loadingButton, setLoadingButton] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [logo, setLogo] = useState<any>();
 
@@ -129,7 +130,7 @@ const RegionEditFormPage = () => {
         {loading ? (
           <Spinner />
         ) : (
-          <Form name="basic" onFinish={handleSubmit} form={form}>
+          <Form name="basic" onFinish={(values) => {handleSubmit(values); setLoadingButton(true)}} form={form}>
             <Title level={2}>Редагування округи</Title>
             <Form.Item name="logo" initialValue={chosenRegion.logo}>
               <Upload
@@ -299,7 +300,7 @@ const RegionEditFormPage = () => {
                 </Button>
               </Col>
               <Col xs={24} sm={12}>
-                <Button htmlType="submit" type="primary">
+                <Button htmlType="submit" loading={loadingButton} type="primary">
                   Підтвердити
                 </Button>
               </Col>
