@@ -43,27 +43,27 @@ export default function () {
   };
 
   const handleSubmit = async (values: any) => {
-      await authService.login(values);
-      const token = AuthStore.getToken() as string;
-      user = jwt(token);
-      history.push(`/userpage/main/${user.nameid}`);
-      window.location.reload();  
+    await authService.login(values);
+    const token = AuthStore.getToken() as string;
+    user = jwt(token);
+    history.push(`/userpage/main/${user.nameid}`);
+    window.location.reload();  
   };
 
   const handleGoogleResponse = async (response: any) => {
-      await authService.sendToken(response.tokenId);
-      const token = AuthStore.getToken() as string;
-      user = jwt(token);
-      history.push(`/userpage/main/${user.nameid}`);
-      window.location.reload();
+    await authService.sendToken(response.tokenId);
+    const token = AuthStore.getToken() as string;
+    user = jwt(token);
+    history.push(`/userpage/main/${user.nameid}`);
+    window.location.reload();
   };
 
   const handleFacebookResponse = async (response: FacebookData) => {
-      await authService.sendFacebookInfo(response);
-      const token = AuthStore.getToken() as string;
-      user = jwt(token);
-      history.push(`/userpage/main/${user.nameid}`);
-      window.location.reload();
+    await authService.sendFacebookInfo(response);
+    const token = AuthStore.getToken() as string;
+    user = jwt(token);
+    history.push(`/userpage/main/${user.nameid}`);
+    window.location.reload();
   };
 
   const getId = async () => {
