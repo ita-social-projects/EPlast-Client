@@ -1029,7 +1029,7 @@ const City = () => {
       </Modal>
 
       <Modal
-        title="На жаль ви не можете архівувати зазначену Станицю"
+        title="На жаль ви не можете архівувати зазначену станицю"
         visible={activeMemberVisibility}
         onOk={handleConfirm}
         onCancel={handleConfirm}
