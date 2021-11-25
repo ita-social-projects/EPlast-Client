@@ -193,6 +193,12 @@ const PrivateLayout = ({ children }: any) => {
                 </Menu.Item>)
                 : (<> </>)
               }
+              {(canEdit || canSee || canAccess || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy) ? (
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/renewals'); }} key="18">
+                  Відновлення статусу
+                </Menu.Item>)
+                : (<> </>)
+              }
               {(canEdit || canSee || canAccess || regionAdm || cityAdm || clubAdm || activeUserProfile?.city) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/legislation'); }} key="14">
                   Репозитарій
