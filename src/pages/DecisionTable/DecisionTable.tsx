@@ -37,11 +37,12 @@ const DecisionTable = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
-
+  const rolesUrl: string = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
+  
   const fetchData = async () => {
     let jwt = AuthStore.getToken() as string;
     let decodedJwt = jwt_decode(jwt) as any;
-    let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
+    let roles = decodedJwt[rolesUrl] as string[];
     setLoading(true);
     const res: DecisionTableInfo[] = await decisionsApi.getAllDecisionsForTable(searchedData, page, pageSize);
     setTotal(res[0]?.total);
