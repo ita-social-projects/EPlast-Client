@@ -88,10 +88,7 @@ const SortedRegions = ({switcher}: Props) => {
   };
 
   const handleSizeChange = (pSize: number = 10) => {
-  //  console.log(pSize);
-   // setPage(page);
     setPageSize(pSize);
-    console.log(pageSize);
   };
 
   const handleSearch = (event: any) => {

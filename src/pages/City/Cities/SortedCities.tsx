@@ -99,7 +99,6 @@ const SortedCities = ( {switcher}: Props) => {
   };
 
   const handleSizeChange = (page: number, pageSize: number = 10) => {
-    console.log(pageSize);
     setPageSize(pageSize);
   };
 
