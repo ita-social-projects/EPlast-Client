@@ -169,7 +169,7 @@ const City = () => {
         await createNotification(ad.userId,
           `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
       });
-      history.push("/cities");
+      history.push("/cities/page/1");
     } catch {
       notificationLogic("error", failArchiveAction(city.name));
     }
@@ -179,14 +179,14 @@ const City = () => {
     await removeCity(city.id);
     notificationLogic("success", successfulDeleteAction("Станицю"));
 
-    history.push("/cities");
+    history.push("/cities/page/1");
   };
 
   const UnArchiveCity = async () => {
     await unArchiveCity(city.id)
     notificationLogic("success", successfulUnarchiveAction("Станицю"));
 
-    history.push("/cities");
+    history.push("/cities/page/1");
   };
 
   const setPhotos = async (members: CityMember[], logo: string) => {

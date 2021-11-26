@@ -54,6 +54,7 @@ const getActiveUserRoles = (): string[] => {
     let roles = [].concat(decodedJwt[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
     ]);
+    console.log(decodedJwt);
 
     return roles;
 };

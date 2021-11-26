@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useRouteMatch, Link } from "react-router-dom";
+import { useHistory, useParams, Link } from "react-router-dom";
 import { Card, Layout, Pagination, Result, Skeleton, Tooltip } from "antd";
 import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -17,13 +17,14 @@ interface Props {
 }
 
 const nameMaxLength = 23;
-const SortedClubs = ( {switcher}: Props) => {
+const SortedClubs = ( {switcher}: Props) => { 
+  
+
+  const path: string  = "/clubs";
   const history = useHistory();
-  const { url } = useRouteMatch();
 
   const [clubs, setClubs] = useState<ClubProfile[]>([]);
   const [canCreate, setCanCreate] = useState(false);
-  const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
@@ -31,6 +32,9 @@ const SortedClubs = ( {switcher}: Props) => {
   const [searchedData, setSearchedData] = useState("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
+
+  const {p} = useParams();
+  const [page, setPage] = useState(Number(p));
 
   const setPhotos = async (clubs: ClubProfile[]) => {
     try {
@@ -90,16 +94,15 @@ const SortedClubs = ( {switcher}: Props) => {
   };
 
   const handleChange = (page: number) => {
+    history.push(`${path}/page/${page}`);
     setPage(page);
   };
 
-  const handleSizeChange = (page: number, pageSize: number = 10) => {
-    setPage(page);
+  const handleSizeChange = (pageSize: number = 10) => {
     setPageSize(pageSize);
   };
 
   const handleSearch = (event: any) => {
-    setPage(1);
     setSearchedData(event);
   };
 
@@ -107,7 +110,7 @@ const SortedClubs = ( {switcher}: Props) => {
     if (arr) {
         // eslint-disable-next-line react/no-array-index-key
         return  arr.map((club: ClubProfile) =>(
-          <Link to={`${url}/${club.id}`}>
+          <Link to={`${path}/${club.id}`}>
               <Card
                 key={club.id}
                 hoverable
@@ -148,7 +151,7 @@ const SortedClubs = ( {switcher}: Props) => {
   return (
     <Layout.Content className="cities">
       {switcher ? (
-        <Title level={1}>Не активні курені</Title>) : (
+        <Title level={1}>Неактивні курені</Title>) : (
         <Title level={1}>Курені</Title>
       )}
       <div className="searchContainer">
@@ -173,7 +176,7 @@ const SortedClubs = ( {switcher}: Props) => {
                   hoverable
                   className="cardStyles addCity"
                   cover={<img src={Add} alt="AddCity" />}
-                  onClick={() => history.push(`${url}/new`)}
+                  onClick={() => history.push(`${path}/new`)}
                 >
                   <Card.Meta
                     className="titleText"
@@ -197,7 +200,7 @@ const SortedClubs = ( {switcher}: Props) => {
                 responsive
                 showSizeChanger={total >= 20}
                 onChange={(page) => handleChange(page)}
-                onShowSizeChange={(page, size) => handleSizeChange(page, size)}
+                onShowSizeChange={(page, size) => handleSizeChange(size)}
               />
             </div>
           </div>

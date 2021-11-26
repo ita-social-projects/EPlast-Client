@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useRouteMatch, Link } from "react-router-dom";
+import { useHistory, useRouteMatch, Link, useParams } from "react-router-dom";
 import { Card, Layout, Pagination, Result, Skeleton} from "antd";
 import Add from "../../assets/images/add.png";
 import RegionDefaultLogo from "../../assets/images/default_city_image.jpg";
@@ -17,12 +17,12 @@ interface Props {
 const classes = require('./ActionRegion.module.css');
 
 const SortedRegions = ({switcher}: Props) => {
+
+  const path: string = "/regions";
+
   const history = useHistory();
-  const { url } = useRouteMatch();
 
   const [regions, setRegions] = useState<RegionProfile[]>([]);
-
-  const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
@@ -30,6 +30,9 @@ const SortedRegions = ({switcher}: Props) => {
   const [searchedData, setSearchedData] = useState("");
   const [canCreate, setCanCreate] = useState<boolean>(false);
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
+
+  const {p} = useParams();
+  const [page, setPage] = useState(Number(p));
 
   const setPhotos = async (regions: any[]) => {
     for await (const region of regions) {
@@ -80,12 +83,15 @@ const SortedRegions = ({switcher}: Props) => {
   };
 
   const handleChange = (page: number) => {
+    history.push(`${path}/page/${page}`);
     setPage(page);
   };
 
-  const handleSizeChange = (page: number, pageSize: number = 10) => {
-    setPage(page);
-    setPageSize(pageSize);
+  const handleSizeChange = (pSize: number = 10) => {
+  //  console.log(pSize);
+   // setPage(page);
+    setPageSize(pSize);
+    console.log(pageSize);
   };
 
   const handleSearch = (event: any) => {
@@ -96,7 +102,7 @@ const SortedRegions = ({switcher}: Props) => {
   const renderRegion = (arr: RegionProfile[]) => {
     if (arr) {
         return  arr.map((region: RegionProfile) =>(
-          <Link to={`${url}/${region.id}`}>
+          <Link to={`${path}/${region.id}`}>
               <Card
                 key={region.id}
                 hoverable
@@ -156,7 +162,7 @@ const SortedRegions = ({switcher}: Props) => {
                   hoverable
                   className="cardStyles addCity"
                   cover={<img src={Add} alt="AddCity" />}
-                  onClick={() => history.push(`${url}/new`)}
+                  onClick={() => history.push(`${path}/new`)}
                 >
                   <Card.Meta
                   className="titleText"
@@ -181,7 +187,7 @@ const SortedRegions = ({switcher}: Props) => {
                 responsive
                 showSizeChanger={total >= 20}
                 onChange={(page) => handleChange(page)}
-                onShowSizeChange={(page, size) => handleSizeChange(page, size)}
+                onShowSizeChange={(page, size) => handleSizeChange(size)}
               />
             </div>
           </div>
