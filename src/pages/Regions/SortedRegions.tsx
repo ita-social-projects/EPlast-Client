@@ -9,7 +9,6 @@ import Spinner from "../Spinner/Spinner";
 import Search from "antd/lib/input/Search";
 import RegionProfile from '../../models/Region/RegionProfile' 
 
-
 interface Props {
     switcher: boolean;
 }
@@ -17,11 +16,8 @@ interface Props {
 const classes = require('./ActionRegion.module.css');
 
 const SortedRegions = ({switcher}: Props) => {
-
   const path: string = "/regions";
-
   const history = useHistory();
-
   const [regions, setRegions] = useState<RegionProfile[]>([]);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
@@ -30,7 +26,6 @@ const SortedRegions = ({switcher}: Props) => {
   const [searchedData, setSearchedData] = useState("");
   const [canCreate, setCanCreate] = useState<boolean>(false);
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
-
   const {p} = useParams();
   const [page, setPage] = useState(Number(p));
 

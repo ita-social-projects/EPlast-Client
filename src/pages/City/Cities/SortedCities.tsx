@@ -12,16 +12,13 @@ import Search from "antd/lib/input/Search";
 import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
 
-
 interface Props {
   switcher: boolean;
 }
 
 const SortedCities = ( {switcher}: Props) => {
-
   const path: string  = "/cities";
   const history = useHistory();
-
   const [cities, setCities] = useState<CityProfile[]>([]);
   const [canCreate, setCanCreate] = useState(false);
   const [pageSize, setPageSize] = useState(10);
@@ -31,10 +28,8 @@ const SortedCities = ( {switcher}: Props) => {
   const [searchedData, setSearchedData] = useState("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
-
   const {p} = useParams();
   const [page, setPage] = useState(Number(p));
-
 
   const setPhotos = async (cities: CityProfile[]) => {
     try {

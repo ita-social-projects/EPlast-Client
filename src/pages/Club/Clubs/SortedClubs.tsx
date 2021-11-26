@@ -17,12 +17,10 @@ interface Props {
 }
 
 const nameMaxLength = 23;
-const SortedClubs = ( {switcher}: Props) => { 
-  
 
+const SortedClubs = ( {switcher}: Props) => { 
   const path: string  = "/clubs";
   const history = useHistory();
-
   const [clubs, setClubs] = useState<ClubProfile[]>([]);
   const [canCreate, setCanCreate] = useState(false);
   const [pageSize, setPageSize] = useState(10);
@@ -32,7 +30,6 @@ const SortedClubs = ( {switcher}: Props) => {
   const [searchedData, setSearchedData] = useState("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
-
   const {p} = useParams();
   const [page, setPage] = useState(Number(p));
 

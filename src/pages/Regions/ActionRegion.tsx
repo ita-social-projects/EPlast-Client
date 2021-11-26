@@ -17,8 +17,7 @@ const ActionRegion = () => {
     }
 
     const onChange = () => {
-
-            setSwitchValue(!SwitchValue);
+        setSwitchValue(!SwitchValue);
       }
 
     useEffect(()=>{
