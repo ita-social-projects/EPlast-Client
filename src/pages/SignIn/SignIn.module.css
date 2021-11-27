@@ -196,15 +196,6 @@ input[type='password']{
     }
     .forgot{
         font-size: 14px;
-        margin-left:80px;   
-    }
-    .forgot{
-        margin-left: 50px;
-    }
-    #googleBtn{
-        margin-right: 0px;
-    }
-    .socialButton{
-        margin-left: -15px;
+        margin-left:80px;
     }
 }
