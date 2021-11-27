@@ -47,7 +47,7 @@ const DropDown = (props: DropDownProps) => {
 
     const handleView = () => {
         if (roles.includes(Roles.Admin)&&!isRecordActive) 
-        return true;
+            return true;
 
         if ((roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy))
             && !isRecordActive

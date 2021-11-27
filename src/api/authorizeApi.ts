@@ -1,4 +1,4 @@
-import { showUserRenewalModal} from "../pages/UserRenewal/UserRenewalModals";
+import { showUserRenewalModal } from "../pages/UserRenewal/UserRenewalModals";
 import notificationLogic from "../components/Notifications/Notification";
 import FacebookData from "../pages/SignIn/FacebookDataInterface";
 import AuthStore from "../stores/AuthStore";
