@@ -126,52 +126,100 @@
 
 @media(max-width: 600px){
     .loginText{
-        font-size:16px;
+        font-size:17px;
+        margin-top: 15px;
     }
 
     .registerText{
-        font-size:16px;
+        font-size:17px;
+        margin-top: 15px;
     }
     .orSwitcher{
         font-size:28px;
+        margin-bottom: 5px;
     }
 }
 
 @media(max-width: 480px){
     .loginText{
-        font-size:11px;
+        font-size:15px;
+        margin-top: 15px;
+        margin-left: 5px;
     }
 
     .registerText{
-        font-size:11px;
+        font-size:15px;
+        margin-top: 15px;
+        margin-right: 5px;
     }
     .orSwitcher{
-        font-size:25px;
+        font-size:24px;
+        margin-bottom: 7px;
+    }
+    .loginCircle{
+        width: 58px;
     }
 }
 
+@media(max-width: 380px){
+    .loginText{
+        font-size:13px;
+        margin-top: 12px;
+        margin-left: 5px;
+    }
+    .registerText{
+        font-size:13px;
+        margin-top: 12px;
+        margin-right: 5px;
+    }
+    .orSwitcher{
+        font-size:25px;
+        margin-bottom: 5px;
+    }
+    .loginCircle{
+        width: 60px;
+    }
+}
+
+
 @media(max-width: 370px){
     .loginText{
-        font-size:9px;
+        font-size:11px;
+        margin-top: 11px;
+        margin-left: 6px;
     }
 
     .registerText{
-        font-size: 9px;
+        font-size: 11px;
+        margin-top: 11px;
+        margin-left: 6px;
     }
     .orSwitcher{
-        font-size:22px;
+        font-size:20px;
+        margin-bottom: 5px;
+    }
+    .loginCircle{
+        width: 55px;
     }
 }
 
 @media(max-width: 350px){
     .loginText{
-        font-size:8px;
+        font-size:9px;
+        margin-top: 5px;
+        margin-left: 5px;
     }
 
     .registerText{
-        font-size: 8px;
+        font-size: 9px;
+        margin-top: 5px;
+        margin-right: 5px;
     }
     .orSwitcher{
-        font-size:20px;
+        font-size:18px;
+        margin-bottom: 6px;
+    }
+    .loginCircle{
+        width: 50px;
     }
 }
