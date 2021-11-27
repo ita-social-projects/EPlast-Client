@@ -93,7 +93,7 @@ export default function () {
     const sendRenewal = async (data: any) => {
         await userRenewalsApi.sendUserRenewal(data)
             .then(() => {
-                if (adminsIds !== null) {
+                if (adminsIds.length > 0) {
                     NotificationBoxApi.createNotifications(
                         adminsIds,
                         "Користувач надіслав запит на відновлення статусу",

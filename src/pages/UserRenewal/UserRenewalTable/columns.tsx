@@ -8,8 +8,9 @@ import React from 'react';
 
 const fetchYears = () => {
   const arrayOfYears = [];
+  const firstYear = 2020;
   var startDate = Number(new Date().getFullYear());
-  for (let i = 2018; i <= startDate; i++) {
+  for (let i = firstYear; i <= startDate; i++) {
     arrayOfYears.push({ text: i.toString(), value: i });
   }
   return arrayOfYears;
