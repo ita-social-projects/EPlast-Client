@@ -201,9 +201,6 @@ input[type='password']{
     .forgot{
         margin-left: 50px;
     }
-    #googleBtn{
-        margin-right: 0px;
-    }
     .socialButton{
         margin-left: -15px;
     }
