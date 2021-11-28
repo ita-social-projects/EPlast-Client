@@ -11,10 +11,7 @@ import Spinner from "../../Spinner/Spinner";
 import Search from "antd/lib/input/Search";
 import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
-
-interface Props {
-  switcher: boolean;
-}
+import Props from "../../Interfaces/SwitcherProps";
 
 const nameMaxLength = 23;
 

@@ -19,7 +19,7 @@ const ActionCities = () => {
     }
 
     const onChange = () => {
-            setSwitchValue(!SwitchValue);
+        setSwitchValue(!SwitchValue);
     }
 
     useEffect(()=>{

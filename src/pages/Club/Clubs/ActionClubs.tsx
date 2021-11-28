@@ -4,7 +4,7 @@ import UserApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
 import { useEffect } from 'react';
 import SortedClubs from './SortedClubs';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 const classes = require('./ActionClubs.module.css');
 
@@ -18,8 +18,8 @@ const ActionClubs = () => {
     }
 
     const onChange = () => {
-            setSwitchValue(!SwitchValue);
-            history.push('/clubs/page/1');
+        setSwitchValue(!SwitchValue);
+        history.push('/clubs/page/1');
       }
 
     useEffect(()=>{

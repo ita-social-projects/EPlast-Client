@@ -8,10 +8,7 @@ import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
 import Search from "antd/lib/input/Search";
 import RegionProfile from '../../models/Region/RegionProfile' 
-
-interface Props {
-    switcher: boolean;
-}
+import Props from "../Interfaces/SwitcherProps";
 
 const classes = require('./ActionRegion.module.css');
 
