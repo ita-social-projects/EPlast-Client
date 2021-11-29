@@ -142,7 +142,8 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                               .checkNumberExisting(value)
                               .then(response => response.data === false)
                               ? Promise.resolve()
-                              : Promise.reject('Цей номер уже зайнятий') : Promise.reject()
+                              : Promise.reject('Цей номер уже зайнятий') 
+                              : Promise.reject()
                 }
               ]}
           >

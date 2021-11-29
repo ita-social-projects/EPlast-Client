@@ -259,6 +259,7 @@ type FormAddKadraProps = {
                 },
                 {
                   validator: async (_ : object, value: number) =>
+                  value ?
                       value < 1
                           ? Promise.reject(minNumber(1)) 
                           : await KadraVykhovnykivApi
@@ -266,6 +267,7 @@ type FormAddKadraProps = {
                               .then(response => response.data === false)
                               ? Promise.resolve()
                               : Promise.reject('Цей номер уже зайнятий')
+                              : Promise.reject()
                 }
               ]}
           >
