@@ -223,7 +223,6 @@ const SortedEventInfo = ({ userAccesses, event, eventStatusId, setApprovedEvent,
     const [adminsVisible, setAdminsVisibility] = useState(false);
     const { id } = useParams();
     const { userId } = useParams();
-
     const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
         new CreatedEvents(),
     ]);
