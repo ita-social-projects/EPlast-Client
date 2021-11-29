@@ -1,6 +1,7 @@
 import Api from './api';
 import AnnualReport from '../pages/AnnualReport/Interfaces/AnnualReport';
 import { AxiosError } from 'axios';
+import api from './api';
 
 const getCitiesOptions = async () => {
     return await Api.get('Cities/CitiesOptions')
@@ -66,7 +67,7 @@ const getPdf = async (id: number) => {
     const bytes = new Uint8Array(binaryLen);
     for (let i = 0; i < binaryLen; i += 1) {
         const ascii = binaryString.charCodeAt(i);
-        if(71<=i && i<=83){
+        if (71 <= i && i <= 83) {
             console.log(i, binaryString[i], ascii);
         }
         bytes[i] = ascii;
@@ -88,7 +89,8 @@ const getAnnualReportEditFormById = async (id: number) => {
 
 const getAll = async (searchedData: string, page: number, pageSize: number, sortKey: number, authReport: boolean) => {
     return await Api.get('AnnualReport/Cities',
-        {searchedData: searchedData,
+        {
+            searchedData: searchedData,
             page: page,
             pageSize: pageSize,
             sortKey: sortKey,
@@ -134,7 +136,14 @@ const remove = async (id: number) => {
         });
 }
 
+const getUserAnnualReportAccess = async (userId: string) => {
+    return await api.get(`UserAccess/GetUserAnnualReportAccess/${userId}`)
+        .catch(error => {
+            throw error;
+        });
+}
+
 export default {
     getCitiesOptions, getCities, getCityInfo, getCityLegalStatuses, getAnnualReportStatuses, checkCreated,
-    getById, getPdf, getAll, create, edit, confirm, cancel, remove, getAnnualReportEditFormById, getCityMembers
+    getById, getPdf, getAll, create, edit, confirm, cancel, remove, getAnnualReportEditFormById, getCityMembers, getUserAnnualReportAccess
 };
