@@ -4,7 +4,7 @@ import { Data } from "../Interface/Interface";
 import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
 import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId, openBiographyFile, getExtractFromUPUByUserId, removeExtractFromUPUDocument, getExtractFromUPUFile, openExtractFromUPUFile, openGenerationFile } from "../../../api/blankApi";
-import { Badge, Button, Col, Popconfirm, Skeleton, Tooltip } from "antd";
+import { Badge, Button, Col, Form, Popconfirm, Skeleton, Tooltip } from "antd";
 import classes from "./Blanks.module.css";
 import Title from "antd/lib/typography/Title";
 import { DeleteOutlined, DownloadOutlined, EyeOutlined, FileImageOutlined, FilePdfOutlined, FileTextOutlined } from "@ant-design/icons";
@@ -23,12 +23,13 @@ import {
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 import { Roles } from "../../../models/Roles/Roles";
 import { PersonalDataContext } from "../personalData/PersonalData";
+import { StickyContainer } from "react-sticky";
 const userGenders = ["Чоловік", "Жінка", "Інша"];
 const fileNameMaxLength = 50;
 
 export const Blanks = () => {
     const { userId } = useParams<{ userId: string }>();
-    const {fullUserProfile, activeUserRoles, UpdateData} = useContext(PersonalDataContext);
+    const { fullUserProfile, activeUserRoles, UpdateData } = useContext(PersonalDataContext);
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
     const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
     const [extractUPU, setExtractUPU] = useState<BlankDocument>(new BlankDocument);
@@ -66,7 +67,7 @@ export const Blanks = () => {
         const response = await getDocumentByUserId(userId);
         setDocument(response.data);
         setDocumentFormat(getFormat(response.data.fileName));
-    };    
+    };
     const getAchievementDocumentsByUserId = async () => {
         const response = await getAllAchievementDocumentsByUserId(userId);
         setAchievementDoc(response.data);
@@ -142,27 +143,31 @@ export const Blanks = () => {
         </div>
     ) : (
         <>
-            <div className={classes.wrapper}>
-                <div className={classes.wrapperImg}>
-                    <AvatarAndProgressStatic
-                        time={fullUserProfile?.timeToJoinPlast}
-                        firstName={fullUserProfile?.user.firstName}
-                        lastName={fullUserProfile?.user.lastName}
-                        isUserPlastun={true}
-                        pseudo={fullUserProfile?.user.pseudo}
-                        governingBody={fullUserProfile?.user.governingBody}
-                        region={fullUserProfile?.user.region}
-                        city={fullUserProfile?.user.city}
-                        club={fullUserProfile?.user.club}
-                        governingBodyId={fullUserProfile?.user.governingBodyId}
-                        regionId={fullUserProfile?.user.regionId}
-                        cityId={fullUserProfile?.user.cityId}
-                        clubId={fullUserProfile?.user.clubId}
-                        cityMemberIsApproved={fullUserProfile?.user.cityMemberIsApproved}
-                        clubMemberIsApproved={fullUserProfile?.user.clubMemberIsApproved}
-                        showPrecautions={fullUserProfile?.shortUser === null} />
+            <Form name="basic" className="formContainer">
+                <div className="wrapperContainer">
+                    <div className="avatarWrapperUserFields">
+                        <StickyContainer className="kadraWrapper">
+                            <AvatarAndProgressStatic
+                                time={fullUserProfile?.timeToJoinPlast}
+                                firstName={fullUserProfile?.user.firstName}
+                                lastName={fullUserProfile?.user.lastName}
+                                isUserPlastun={true}
+                                pseudo={fullUserProfile?.user.pseudo}
+                                governingBody={fullUserProfile?.user.governingBody}
+                                region={fullUserProfile?.user.region}
+                                city={fullUserProfile?.user.city}
+                                club={fullUserProfile?.user.club}
+                                governingBodyId={fullUserProfile?.user.governingBodyId}
+                                regionId={fullUserProfile?.user.regionId}
+                                cityId={fullUserProfile?.user.cityId}
+                                clubId={fullUserProfile?.user.clubId}
+                                cityMemberIsApproved={fullUserProfile?.user.cityMemberIsApproved}
+                                clubMemberIsApproved={fullUserProfile?.user.clubMemberIsApproved}
+                                showPrecautions={fullUserProfile?.shortUser === null} />
+                        </StickyContainer>
+                    </div>
                 </div>
-                <div className={classes.wrapperCol}>
+                <div className="allFields">
                     <div className={classes.wrapper}>
                         <div className={classes.wrapper2}>
                             <Title level={2}>Життєпис</Title>
@@ -406,7 +411,7 @@ export const Blanks = () => {
                     </div>
 
                 </div>
-            </div>
+            </Form>
             <ListOfAchievementsModal
                 userToken={userToken}
                 visibleModal={visibleListAchievementModal}

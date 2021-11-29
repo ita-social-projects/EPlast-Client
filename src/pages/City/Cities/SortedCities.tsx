@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useRouteMatch, Link } from "react-router-dom";
+import { useHistory, useParams, Link } from "react-router-dom";
 import { Card, Layout, Pagination, Result, Skeleton } from "antd";
 import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -11,18 +11,13 @@ import Spinner from "../../Spinner/Spinner";
 import Search from "antd/lib/input/Search";
 import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
-
-interface Props {
-  switcher: boolean;
-}
+import Props from "../../Interfaces/SwitcherProps";
 
 const SortedCities = ( {switcher}: Props) => {
+  const path: string  = "/cities";
   const history = useHistory();
-  const { url } = useRouteMatch();
-
   const [cities, setCities] = useState<CityProfile[]>([]);
   const [canCreate, setCanCreate] = useState(false);
-  const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
@@ -30,6 +25,8 @@ const SortedCities = ( {switcher}: Props) => {
   const [searchedData, setSearchedData] = useState("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
+  const {p} = useParams();
+  const [page, setPage] = useState(Number(p));
 
   const setPhotos = async (cities: CityProfile[]) => {
     try {
@@ -46,7 +43,7 @@ const SortedCities = ( {switcher}: Props) => {
     }
     
   };
-  const getActiveCities = async () => {
+  const getActiveCities = async (page: number = 1) => {
     setLoading(true);
 
     try {
@@ -68,7 +65,7 @@ const SortedCities = ( {switcher}: Props) => {
     }
   };
 
-  const getNotActiveCities = async () => {
+  const getNotActiveCities = async (page: number = 1) => {
     setLoading(true);
 
     try {
@@ -89,16 +86,15 @@ const SortedCities = ( {switcher}: Props) => {
   };
 
   const handleChange = (page: number) => {
+    history.push(`${path}/page/${page}`);
     setPage(page);
   };
 
   const handleSizeChange = (page: number, pageSize: number = 10) => {
-    setPage(page);
     setPageSize(pageSize);
   };
 
   const handleSearch = (event: any) => {
-    setPage(1);
     setSearchedData(event);
   };
 
@@ -106,7 +102,7 @@ const SortedCities = ( {switcher}: Props) => {
     if (arr) {
         // eslint-disable-next-line react/no-array-index-key
         return  arr.map((city: CityProfile) =>(
-          <Link to={`${url}/${city.id}`}>
+          <Link to={`${path}/${city.id}`}>
               <Card
                 key={city.id}
                 hoverable
@@ -128,12 +124,11 @@ const SortedCities = ( {switcher}: Props) => {
 };
 
   useEffect(() => {
-    switcher ? (getNotActiveCities()):(getActiveCities()) 
+    switcher ? (getNotActiveCities(page)):(getActiveCities(page)) 
   }, [page, pageSize, searchedData]);
 
   useEffect(()=> {
-    if(cities.length !== 0) {
-      setPage(1);
+    if (cities.length !== 0) {
       switcher ? (getNotActiveCities()) :(getActiveCities())
       setCanCreate(switcher ? false : activeCanCreate);
     }
@@ -143,7 +138,7 @@ const SortedCities = ( {switcher}: Props) => {
   return (
     <Layout.Content className="cities">
       {switcher ? (
-      <Title level={1}>Не активні станиці</Title>) : (
+      <Title level={1}>Неактивні станиці</Title>) : (
       <Title level={1}>Станиці</Title>
       )}
       <div className="searchContainer">
@@ -168,7 +163,7 @@ const SortedCities = ( {switcher}: Props) => {
                   hoverable
                   className="cardStyles addCity"
                   cover={<img src={Add} alt="AddCity" />}
-                  onClick={() => history.push(`${url}/new`)}
+                  onClick={() => history.push(`${path}/new`)}
                 >
                   <Card.Meta
                     className="titleText"

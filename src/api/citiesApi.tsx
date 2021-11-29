@@ -1,4 +1,3 @@
-import CityMember from "../models/City/CityMember";
 import api from "./api";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
@@ -38,11 +37,27 @@ export const getNotActiveCitiesByPage = async (page: number, pageSize: number, c
     });
 };
 
+export const getCheckPlastMember = async (userId: string) => {
+  return await api
+    .get(`Cities/GetCheckPlastMember/${userId}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
 export const createCity = async (data: any) => {
   return api.post("Cities/CreateCity", data).catch((error) => {
     throw new Error(error);
   });
 };
+
+export const getUserCityAccess = async (cityId: number, userId: string) => {
+  return await api.get(`UserAccess/GetUserCityAccess/${cityId}/${userId}`)
+  .catch( error => {
+       throw error;
+       } 
+  );
+}
 
 export const updateCity = async (id: number, data: any) => {
   return api.put(`Cities/EditCity/${id}`, data).catch((error) => {
@@ -74,6 +89,12 @@ export const getLogo = async (logoName: string) => {
 
 export const getAllAdmins = async (id: number) => {
   return api.get(`Cities/Admins/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const getCityAdministration = async (cityId: number) => {
+  return await api.get(`Cities/GetAdministrations/${cityId}`).catch((error) => {
     throw new Error(error);
   });
 };

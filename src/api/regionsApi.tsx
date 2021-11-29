@@ -69,6 +69,14 @@ export const getRegionMembersInfo = async (regionId: number, year: number, page:
   });
 };
 
+export const getUserRegionAccess = async (regionId: number, userId: string) => {
+  return await api.get(`UserAccess/GetUserRegionAccess/${regionId}/${userId}`)
+  .catch( error => {
+       throw error;
+       } 
+  );
+}
+
 export const getRegionLogo = async (logoName: string) => {
   return api.get("Regions/LogoBase64", { logoName }).catch((error) => {
     throw new Error(error);
@@ -177,6 +185,13 @@ export const removeDocument = async (documentId: number) => {
 
 export const getRegions = async () => {
   return api.get(`Regions/Regions`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const getRegionsNames = async () => {
+  return api.get(`Regions/RegionsNames`)
     .catch((error) => {
       throw new Error(error);
     });
@@ -354,6 +369,7 @@ export default {
   GetAllRegions,
   createRegion,
   getRegions,
+  getRegionsNames,
   GetRegionsBoard,
   getRegionUsers,
   getRegionFollowers,

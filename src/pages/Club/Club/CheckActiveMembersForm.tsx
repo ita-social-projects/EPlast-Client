@@ -7,7 +7,7 @@ import{
     emptyInput,
   } from "../../../components/Notifications/Messages"
 import "./CheckActiveMembersForm.less";
-import Title from 'antd/lib/skeleton/Title';
+import Title from "antd/lib/typography/Title" ;
 
 type CheckActiveCitiesForm = {
     onAdd: () => void;
@@ -24,6 +24,7 @@ const CheckActiveMembersForm  = (props: any)=>{
         onAdd();
         }
 
+    
     return <Form
             name="basic"
             onFinish={handleSubmit}
@@ -31,10 +32,11 @@ const CheckActiveMembersForm  = (props: any)=>{
                 <Form.Item
                 className={classes.formField}
                 > 
+                <Title level={1}>Курінь не повинен містити:</Title>
                     {props.members.length !== 0 ? (
                             <React.Fragment>
                                 <PageHeader
-                                    title = "Спочатку відкріпіть членів: "
+                                    title = "Дійсних членів куреня"
                                     className="site-page-header" 
                                 />
                                     <Row className= "cityItems" justify="center">
@@ -54,7 +56,7 @@ const CheckActiveMembersForm  = (props: any)=>{
                     {props.admins.length !== 0 ? (
                             <React.Fragment>
                                 <PageHeader
-                                    title = "Спочатку відкріпіть членів проводу: "
+                                    title = "Членів проводу"
                                     className="site-page-header"
                                 />
                                     <Row className= "cityItems" justify="center">
@@ -72,7 +74,7 @@ const CheckActiveMembersForm  = (props: any)=>{
                     {props.followers.length !== 0 ? (
                             <React.Fragment>
                             <PageHeader
-                                title = "Спочатку відкріпіть прихильників: "
+                                title = "Прихильників куреня: "
                                 className="site-page-header"
                             />
                                 <Row className= "cityItems" justify="center">

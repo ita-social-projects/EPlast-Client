@@ -105,6 +105,7 @@
     .headerContainer {
         color: white !important;
         padding: 0 15px;
+        min-width: 300px;
     }
     .headerMenu {
         color: white !important;

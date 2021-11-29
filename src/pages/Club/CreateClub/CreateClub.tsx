@@ -50,7 +50,7 @@ const emailMaxLength = 51;
 const CreateClub = () => {
   const { id } = useParams();
   const history = useHistory();
-
+  const [loadingButton, setLoadingButton] = useState(false);
   const [loading, setLoading] = useState(false);
   const [club, setClub] = useState<ClubProfile>(new ClubProfile());
 
@@ -174,7 +174,7 @@ const CreateClub = () => {
         ) : (
           <Title level={2}>Створення Куреня</Title>
         )}
-        <Form onFinish={handleSubmit}>
+        <Form onFinish={(values) => {handleSubmit(values); setLoadingButton(true)}}>
           <Form.Item name="logo" initialValue={club.logo}>
             <Upload
               name="avatar"
@@ -280,7 +280,7 @@ const CreateClub = () => {
               </Button>
             </Col>
             <Col xs={24} sm={12}>
-              <Button htmlType="submit" type="primary">
+              <Button htmlType="submit" loading = {loadingButton} type="primary">
                 Підтвердити
               </Button>
             </Col>

@@ -1,18 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { Alert, Button, Form, Input, Skeleton, Tooltip } from "antd";
-import userApi from "../../../api/UserApi";
 import moment from "moment";
-import { Data, User } from "../Interface/Interface";
 import { useParams, useHistory } from "react-router-dom";
-import notificationLogic from "../../../components/Notifications/Notification";
-import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import Facebook from "../../../assets/images/facebookGreen.svg";
 import Twitter from "../../../assets/images/birdGreen.svg";
 import Instagram from "../../../assets/images/instagramGreen.svg";
 import { StickyContainer } from "react-sticky";
 import AvatarAndProgressStatic from "./AvatarAndProgressStatic";
 import { Roles } from "../../../models/Roles/Roles";
-import UserApi from "../../../api/UserApi";
 import { PersonalDataContext } from "./PersonalData";
 
 export default function () {
@@ -442,7 +437,7 @@ export default function () {
                   activeUserRoles.includes(Roles.Admin)
                 )
               }
-              onClick={() => history.push(`/cities`)}
+              onClick={() => history.push(`/cities/page/1`)}
             >
               Обрати/змінити станицю
             </Button>
@@ -454,7 +449,7 @@ export default function () {
                   activeUserRoles.includes(Roles.Admin)
                 ) || activeUserRoles.includes(Roles.RegisteredUser)
               }
-              onClick={() => history.push(`/clubs`)}
+              onClick={() => history.push(`/clubs/page/1`)}
             >
               Обрати/змінити курінь
             </Button>

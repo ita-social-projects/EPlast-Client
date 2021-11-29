@@ -4,7 +4,8 @@ import {Col, Form, Select, Button, Avatar, Row, PageHeader } from 'antd';
 import { redirectCities, removeRegion } from "../../../api/regionsApi";
 import { useParams, useHistory, Link, useRouteMatch } from 'react-router-dom';
 import "./CheckActiveMembersForm.less";
-import Title from 'antd/lib/skeleton/Title';
+import Title from "antd/lib/typography/Title" ;
+
 type CheckActiveCitiesForm = {
     onAdd: () => void;
 }
@@ -30,10 +31,11 @@ const CheckActiveMembersForm  = (props: any)=>{
             <Form.Item
             className={classes.formField}
             > 
+            <Title level={1}>Станиця не повинна містити:</Title>
                 {props.members.length !== 0 ? (
                     <React.Fragment>
                         <PageHeader 
-                            title = "Необхідно відкріпити членів: "
+                            title = "Дійсних членів станиці"
                             className="site-page-header" 
                         />
                             <Row className= "cityItems" justify="center">
@@ -52,7 +54,7 @@ const CheckActiveMembersForm  = (props: any)=>{
                 {props.admins.length !== 0 ? (
                     <React.Fragment>
                         <PageHeader 
-                            title = "Необхідно відкріпити членів проводу: "
+                            title = "Членів проводу"
                             className="site-page-header" 
                         />
                             <Row className= "cityItems" justify="center">
@@ -70,7 +72,7 @@ const CheckActiveMembersForm  = (props: any)=>{
                 {props.followers.length !== 0 ? (
                     <React.Fragment>
                         <PageHeader 
-                            title = "Необхідно відкріпити прихильників:"
+                            title = "Прихильників станиці"
                             className="site-page-header" 
                         />
                             <Row className= "cityItems" justify="center">
