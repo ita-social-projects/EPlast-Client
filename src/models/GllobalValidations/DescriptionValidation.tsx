@@ -300,13 +300,17 @@ export const descriptionValidation = ({
     ],
     AdminType: [
         {
+            required: true,
+            message: emptyInput(),
+        },
+        {
+            max: 50,
+            message: maxLength(50),
+        },
+        {
             pattern: /^\s*\S.*$/,
             message: inputOnlyWhiteSpaces(),
         },
-        { 
-            required: true,
-            message: emptyInput(),
-        },    
     ],
     DecisionTarget: [
         {

@@ -1,3 +1,5 @@
-export default interface Props {
+
+interface Props {
     switcher: boolean;
   }
+export default Props;

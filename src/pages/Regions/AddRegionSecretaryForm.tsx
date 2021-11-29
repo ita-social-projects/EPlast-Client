@@ -11,6 +11,7 @@ import AdminType from "../../models/Admin/AdminType";
 import RegionUser from "../../models/Region/RegionUser";
 import "./AddRegionSecretaryForm.less";
 import { Roles } from "../../models/Roles/Roles";
+import {descriptionValidation} from "../../models/GllobalValidations/DescriptionValidation"
 
 type AddNewSecretaryForm = {
   visibleModal: boolean;
@@ -70,6 +71,7 @@ const AddNewSecretaryForm = (props: any) => {
   }
 
   const handleSubmit = async (values: any) => {
+    console.log("success... Somehow(")
       const newAdmin = await SetAdmin(props.admin, values);
       onAdd(newAdmin);
   };
@@ -126,16 +128,8 @@ const AddNewSecretaryForm = (props: any) => {
           props.admin === undefined ? "" : props.admin.adminType.adminTypeName
         }
         name="AdminType"
-        rules={[
-          {
-            required: true,
-            message: <div className="formItemExplain">{emptyInput()}</div>,
-          },
-          {
-            pattern: /^\s*\S.*$/,
-            message: <div className="formItemExplain">{inputOnlyWhiteSpaces()}</div>,
-          },
-        ]}
+        rules={descriptionValidation.AdminType}
+        
       >
         <AutoComplete
           className={classes.inputField}
@@ -190,7 +184,7 @@ const AddNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item style={{ textAlign: "right" }}>
-        <Button type="primary" loading = {loading} onClick = {() => {setLoading(true); handleSubmit(form.getFieldsValue());}}>
+        <Button type="primary" htmlType="submit" loading = {loading}>
           Опублікувати
         </Button>
       </Form.Item>

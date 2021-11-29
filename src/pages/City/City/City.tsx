@@ -88,7 +88,7 @@ const City = () => {
   const [followersCount, setFollowersCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
   const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
-  const [visible, setvisible] = useState<boolean>(false);
+  const [visibleAddModal, setvisibleAddModal] = useState<boolean>(false);
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
@@ -478,7 +478,7 @@ const City = () => {
           await addCityAdmin(admin);
         }
       } finally {
-        setvisible(false);
+        setvisibleAddModal(false);
       }
     }
     else{
@@ -507,7 +507,7 @@ const City = () => {
   }
 
   const handleClose = async () => {
-    setvisible(false);
+    setvisibleAddModal(false);
   };
 
   const handleConfirm = async () => {
@@ -839,7 +839,7 @@ const City = () => {
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
-                  onClick={() => setvisible(true)}
+                  onClick={() => setvisibleAddModal(true)}
                 />) : null) : null}
               <Button
                 type="primary"
@@ -1015,7 +1015,7 @@ const City = () => {
       ></CityDetailDrawer>
       <Modal
         title="Додати діловода"
-        visible={visible}
+        visible={visibleAddModal}
         onCancel={handleClose}
         footer={null}
       >
@@ -1024,7 +1024,7 @@ const City = () => {
           cityId={+id}
           head={city.head}
           headDeputy={city.headDeputy}
-          visibleModal={visible}>
+          visibleModal={visibleAddModal}>
         </AddCitiesNewSecretaryForm>
       </Modal>
 
