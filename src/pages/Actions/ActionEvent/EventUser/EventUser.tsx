@@ -56,6 +56,7 @@ const EventUser = () => {
     const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
     const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
     const [eventId, setEventId] = useState<number>();
+    const [eventStatus, setEventStatus] = useState<number>();
     const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({})
     const [userToken, setUserToken] = useState<any>([
         {
@@ -419,6 +420,7 @@ const EventUser = () => {
                                                 onClick={() => {
                                                     setShowEventEditDrawer(true);
                                                     setEventId(item.id);
+                                                    setEventStatus(item.eventStatusID);
                                                 }}
                                             >
                                                 Редагувати
@@ -429,6 +431,7 @@ const EventUser = () => {
                             ))}
                             <EventEditDrawer
                                 id={eventId!}
+                                statusId={eventStatus!}
                                 visibleEventEditDrawer={showEventEditDrawer}
                                 setShowEventEditDrawer={setShowEventEditDrawer}
                                 onEdit={fetchData}
