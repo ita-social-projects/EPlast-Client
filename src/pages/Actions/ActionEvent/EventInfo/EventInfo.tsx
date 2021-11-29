@@ -113,7 +113,6 @@ const EventInfo = () => {
     const fetchData = async () => {
       const response = await eventsApi.getEventInfo(id);
       setEvent(response.data);
-      debugger;
       getEventStatusId(response.data.event.eventStatus);
       setLoading(true);
     };
