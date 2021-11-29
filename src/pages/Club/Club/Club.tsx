@@ -145,7 +145,7 @@ const Club = () => {
     try {
       await archiveClub(club.id);
       notificationLogic("success", successfulArchiveAction(club.name));
-      history.push('/clubs');
+      history.push('/clubs/page/1');
     } catch {
       notificationLogic("error", failArchiveAction(club.name));
     }
@@ -155,14 +155,14 @@ const Club = () => {
     await removeClub(club.id);
     notificationLogic("success", successfulDeleteAction("Курінь"));
 
-    history.push('/clubs');
+    history.push('/clubs/page/1');
   };
 
   const UnArchiveClub = async () => {
     await unArchiveClub(club.id)
     notificationLogic("success", successfulUnarchiveAction("Курінь"));
 
-    history.push('/clubs');
+    history.push('/clubs/page/1');
   };
 
   const setPhotos = async (members: ClubMember[], logo: string) => {
