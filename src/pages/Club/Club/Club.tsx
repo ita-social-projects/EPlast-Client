@@ -27,7 +27,8 @@ import {
    removeFollower,
    addAdministrator,
    editAdministrator,
-   getUserClubAccess
+   getUserClubAccess,
+   getAllAdmins
   } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
@@ -65,6 +66,7 @@ const Club = () => {
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [visible, setvisible] = useState<boolean>(false);
   const [admins, setAdmins] = useState<ClubAdmin[]>([]);
+  const [adminsAll, setAdminsAll] = useState<ClubAdmin[]>([]);
   const [members, setMembers] = useState<ClubMember[]>([]);
   const [followers, setFollowers] = useState<ClubMember[]>([]);
   const [documents, setDocuments] = useState<ClubDocument[]>([]);
@@ -143,7 +145,7 @@ const Club = () => {
     try {
       await archiveClub(club.id);
       notificationLogic("success", successfulArchiveAction(club.name));
-      history.push('/clubs');
+      history.push('/clubs/page/1');
     } catch {
       notificationLogic("error", failArchiveAction(club.name));
     }
@@ -153,14 +155,14 @@ const Club = () => {
     await removeClub(club.id);
     notificationLogic("success", successfulDeleteAction("Курінь"));
 
-    history.push('/clubs');
+    history.push('/clubs/page/1');
   };
 
   const UnArchiveClub = async () => {
     await unArchiveClub(club.id)
     notificationLogic("success", successfulUnarchiveAction("Курінь"));
 
-    history.push('/clubs');
+    history.push('/clubs/page/1');
   };
 
   const setPhotos = async (members: ClubMember[], logo: string) => {
@@ -186,6 +188,11 @@ const Club = () => {
     if (documents.length < 6) {
       setDocuments([...documents, newDocument]);
     }
+  }
+
+  async function SetAdmins(id: number){
+    const response = await getAllAdmins(id);
+    setAdminsAll(response.data.administration)
   }
 
   function seeArchiveModal() {
@@ -281,6 +288,7 @@ const Club = () => {
       setAdminsCount(response.data.administrationCount);
       setFollowersCount(response.data.followerCount)
       setDocumentsCount(response.data.documentsCount);
+      await SetAdmins(+id);
     } finally {
       setLoading(false);
     }
@@ -423,7 +431,7 @@ const Club = () => {
       if(admin !== undefined){
         admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
       }
-      const existingAdmin  = (admins as ClubAdmin[])
+      const existingAdmin  = (adminsAll as ClubAdmin[])
       .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
       try {     
         if (head?.userId === admin.userId){
@@ -1018,7 +1026,7 @@ const Club = () => {
       ></ClubDetailDrawer>
 
       <Modal
-        title="На жаль ви не можете архівувати зазначений Курінь"
+        title="На жаль ви не можете архівувати зазначений курінь"
         visible={activeMemberVisibility}
         onOk={handleConfirm}
         onCancel={handleConfirm}

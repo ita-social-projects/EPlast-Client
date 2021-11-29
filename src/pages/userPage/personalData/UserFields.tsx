@@ -437,7 +437,7 @@ export default function () {
                   activeUserRoles.includes(Roles.Admin)
                 )
               }
-              onClick={() => history.push(`/cities`)}
+              onClick={() => history.push(`/cities/page/1`)}
             >
               Обрати/змінити станицю
             </Button>
@@ -449,7 +449,7 @@ export default function () {
                   activeUserRoles.includes(Roles.Admin)
                 ) || activeUserRoles.includes(Roles.RegisteredUser)
               }
-              onClick={() => history.push(`/clubs`)}
+              onClick={() => history.push(`/clubs/page/1`)}
             >
               Обрати/змінити курінь
             </Button>

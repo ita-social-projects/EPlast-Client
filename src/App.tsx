@@ -105,7 +105,7 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/cities"
+            path="/cities/page/:p"
             component={ActionCities}
           />
           <RouteWithLayout
@@ -292,7 +292,7 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/clubs"
+            path="/clubs/page/:p"
             component={ActionClubs}
           />
           <RouteWithLayout
@@ -317,7 +317,7 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/regions"
+            path="/regions/page/:p"
             component={Regions}
           />
           <RouteWithLayout

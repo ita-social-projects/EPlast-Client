@@ -1,11 +1,11 @@
-import SubSectionModal from './SubsectionModel';
+import SubSectionModel from './SubsectionModel';
 export default class Section{
     id: number;
     title: string;
-    subsection:SubSectionModal;
+    subsection:SubSectionModel;
     constructor(){
         this.id = 0;
         this.title = "";
-        this.subsection = new SubSectionModal; 
+        this.subsection = new SubSectionModel; 
     }
 }

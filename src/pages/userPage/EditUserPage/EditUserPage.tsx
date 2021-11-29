@@ -44,6 +44,7 @@ import { UpuDegree } from "../Interface/Interface";
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../../models/Roles/Roles";
 import { PersonalDataContext } from "../personalData/PersonalData";
+import { StickyContainer } from "react-sticky";
 
 export default function () {
   const { userId } = useParams<{ userId: string }>();
@@ -498,16 +499,17 @@ export default function () {
       />
     </div>
   ) : (
-    <div className={styles.mainContainer}>
+    <div className="container">
       <Form
         form={form}
         name="basic"
-        className={styles.formContainer}
+        className="formContainer"
         onFinish={handleSubmit}
       >
-        <div className={styles.avatarWrapper}>
-          <div className={styles.kadraWrapper}>
-            <Avatar size={300} src={userAvatar} className="avatarElem" />
+        <div className="wrapperContainer">
+        <div className="avatarWrapperUserFields">
+        <StickyContainer className="kadraWrapper">
+            <Avatar src={userAvatar} className="img" />
             <div className={styles.buttonsImage}>
               <ImgCrop
                 shape='round'
@@ -545,11 +547,11 @@ export default function () {
                   </Popconfirm>
                 </Tooltip> : null}
             </div>
-          </div>
+          </StickyContainer>
         </div>
-
-        <div className={styles.allFields}>
-          <div className={styles.rowBlock}>
+        </div>
+        <div className="allFields">
+        <div className={styles.rowBlock}>
             <Form.Item
               label="Ім'я"
               name="firstName"
