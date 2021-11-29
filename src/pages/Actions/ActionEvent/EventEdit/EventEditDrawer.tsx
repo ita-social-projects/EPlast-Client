@@ -6,10 +6,11 @@ interface Props {
     visibleEventEditDrawer: boolean;
     setShowEventEditDrawer: (visibleEventEditDrawer: boolean) => void;
     id: number;
+    statusId: number;
     onEdit: () => void;
 }
 
-const EventEditDrawer = ({ visibleEventEditDrawer, setShowEventEditDrawer, id, onEdit }: Props) => {
+const EventEditDrawer = ({ visibleEventEditDrawer, setShowEventEditDrawer, id, statusId, onEdit }: Props) => {
 
     const handleCancel = () => setShowEventEditDrawer(false);
     return (
@@ -23,6 +24,7 @@ const EventEditDrawer = ({ visibleEventEditDrawer, setShowEventEditDrawer, id, o
         >
             <EventEdit
                 id={id}
+                statusId={statusId}
                 onEdit={onEdit}
                 setShowEventEditDrawer={handleCancel}
             />
