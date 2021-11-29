@@ -135,14 +135,14 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                 },
                 {
                   validator: async (_ : object, value: number) =>
-                  value ? (
+                  value ? 
                       value < 1
                           ? Promise.reject(minNumber(1)) 
                           : await distinctionApi
                               .checkNumberExisting(value)
                               .then(response => response.data === false)
                               ? Promise.resolve()
-                              : Promise.reject('Цей номер уже зайнятий')) : Promise.reject()
+                              : Promise.reject('Цей номер уже зайнятий') : Promise.reject()
                 }
               ]}
           >
