@@ -34,7 +34,7 @@ const CitiesRedirectForm  = (props: any)=>{
 
         onAdd();
 
-        history.push('/regions');
+        history.push('/regions/page/1');
         
         }
 

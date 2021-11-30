@@ -71,7 +71,6 @@ const AnnualReportTable = () => {
         checkAccessToManage();
         fetchAnnualReportStatuses();
         setSearchedData(searchedData);
-        renewPage();
     }, [searchedData, sortKey]);
 
     const fetchAnnualReportStatuses = async () => {

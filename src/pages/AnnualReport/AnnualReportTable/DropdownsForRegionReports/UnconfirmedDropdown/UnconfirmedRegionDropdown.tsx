@@ -56,6 +56,7 @@ const UnconfirmedRegionDropdown = (props: Props) => {
             <Menu
                 theme="dark"
                 onClick={handleClick}
+                selectedKeys={[]}
                 className={showDropdown ? styles.menu : styles.menuHidden}
                 style={{
                     top: pageY,

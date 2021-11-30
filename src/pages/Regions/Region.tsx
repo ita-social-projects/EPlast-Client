@@ -160,7 +160,7 @@ const Region = () => {
         `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`, false);
     });
     notificationLogic("success", successfulArchiveAction("Округу"));
-    history.push("/regions");
+    history.push("/regions/page/1");
     } catch {
       notificationLogic("error", failArchiveAction(region.name));
     }
@@ -170,13 +170,13 @@ const Region = () => {
     await removeRegion(region.id);
     notificationLogic("success", successfulDeleteAction("Округу"));
 
-    history.push("/regions");
+    history.push("/regions/page/1");
   };
   const UnArchiveRegion = async () => {
     await unArchiveRegion(region.id)
     notificationLogic("success", successfulUnarchiveAction("Округу"));
 
-    history.push("/regions");
+    history.push("/regions/page/1");
   };
 
   function seeArchiveModal() {

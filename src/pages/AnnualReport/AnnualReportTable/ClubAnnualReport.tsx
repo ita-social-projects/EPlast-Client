@@ -128,10 +128,6 @@ export const ClubAnnualReportTable = ({
         }
     };
 
-    const renewPage = () => {
-        window.location.reload(false);
-    };
-
     const handleView = async (id: number) => {
         hideDropdowns();
         history.push(`/annualreport/clubAnnualReport/${id}`);
@@ -142,13 +138,20 @@ export const ClubAnnualReportTable = ({
         try {
             let response = await cancelClubAnnualReport(id);
             setClubAnnualReports(
-                clubAnnualReports?.filter((item) => item.id !== id)
+                clubAnnualReports.map((item) => {
+                    if (
+                        item.id === id ||
+                        (item.id !== id && item.clubId === response.data.clubId && item.status === 1)
+                    ) {
+                        item.status--;
+                    }
+                    return item;
+                })
             );
             notificationLogic(
                 "success",
                 successfulUpdateAction("Річний звіт", response.data.name)
             );
-            renewPage();
         } catch (error) {
             if (error.response?.status === 400) {
                 notificationLogic("error", tryAgain);
@@ -176,7 +179,6 @@ export const ClubAnnualReportTable = ({
                 "success",
                 successfulConfirmedAction("Річний звіт", response.data.name)
             );
-            renewPage();
         } catch (error) {
             notificationLogic("error", tryAgain);
             history.goBack();
@@ -200,7 +202,6 @@ export const ClubAnnualReportTable = ({
                         "success",
                         successfulDeleteAction("Річний звіт", response.data.name)
                     );
-                    renewPage();
                 },
             });
         } catch (error) {

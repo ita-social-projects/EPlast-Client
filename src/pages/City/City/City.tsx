@@ -39,7 +39,8 @@ import {
   getUserCityAccess,
   getCheckPlastMember,
   toggleMemberStatus,
-  removeFollower
+  removeFollower,
+  getAllAdmins
 } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
@@ -76,6 +77,7 @@ const City = () => {
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({})
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
+  const [adminsAll, setAdminsAll] = useState<CityAdmin[]>([]);
   const [members, setMembers] = useState<CityMember[]>([]);
   const [followers, setFollowers] = useState<CityMember[]>([]);
   const [documents, setDocuments] = useState<CityDocument[]>([]);
@@ -86,7 +88,7 @@ const City = () => {
   const [followersCount, setFollowersCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
   const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
-  const [visible, setvisible] = useState<boolean>(false);
+  const [visibleAddModal, setvisibleAddModal] = useState<boolean>(false);
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
@@ -167,7 +169,7 @@ const City = () => {
         await createNotification(ad.userId,
           `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
       });
-      history.push("/cities");
+      history.push("/cities/page/1");
     } catch {
       notificationLogic("error", failArchiveAction(city.name));
     }
@@ -177,14 +179,14 @@ const City = () => {
     await removeCity(city.id);
     notificationLogic("success", successfulDeleteAction("Станицю"));
 
-    history.push("/cities");
+    history.push("/cities/page/1");
   };
 
   const UnArchiveCity = async () => {
     await unArchiveCity(city.id)
     notificationLogic("success", successfulUnarchiveAction("Станицю"));
 
-    history.push("/cities");
+    history.push("/cities/page/1");
   };
 
   const setPhotos = async (members: CityMember[], logo: string) => {
@@ -271,6 +273,10 @@ const City = () => {
       },
     });
   }
+  async function SetAdmins(id: number){
+    const response = await getAllAdmins(id);
+    setAdminsAll(response.data.administration)
+  }
 
   function seeSkipModal(followerID: number) {
     return Modal.confirm({
@@ -310,6 +316,7 @@ const City = () => {
       setFollowersCount(response.data.followerCount);
       setDocumentsCount(response.data.documentsCount);
       setActiveUserRoles(userApi.getActiveUserRoles);
+      await SetAdmins(+id);
     }
     finally {
       setLoading(false);
@@ -445,7 +452,7 @@ const City = () => {
       if(admin !== undefined){
         admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
       }
-      const existingAdmin  = (admins as CityAdmin[])
+      const existingAdmin  = (adminsAll as CityAdmin[])
         .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
       try {     
         if (head?.userId === admin.userId){
@@ -471,7 +478,7 @@ const City = () => {
           await addCityAdmin(admin);
         }
       } finally {
-        setvisible(false);
+        setvisibleAddModal(false);
       }
     }
     else{
@@ -500,7 +507,7 @@ const City = () => {
   }
 
   const handleClose = async () => {
-    setvisible(false);
+    setvisibleAddModal(false);
   };
 
   const handleConfirm = async () => {
@@ -832,7 +839,7 @@ const City = () => {
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
-                  onClick={() => setvisible(true)}
+                  onClick={() => setvisibleAddModal(true)}
                 />) : null) : null}
               <Button
                 type="primary"
@@ -1008,7 +1015,7 @@ const City = () => {
       ></CityDetailDrawer>
       <Modal
         title="Додати діловода"
-        visible={visible}
+        visible={visibleAddModal}
         onCancel={handleClose}
         footer={null}
       >
@@ -1017,12 +1024,12 @@ const City = () => {
           cityId={+id}
           head={city.head}
           headDeputy={city.headDeputy}
-          visibleModal={visible}>
+          visibleModal={visibleAddModal}>
         </AddCitiesNewSecretaryForm>
       </Modal>
 
       <Modal
-        title="На жаль ви не можете архівувати зазначену Станицю"
+        title="На жаль ви не можете архівувати зазначену станицю"
         visible={activeMemberVisibility}
         onOk={handleConfirm}
         onCancel={handleConfirm}

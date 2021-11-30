@@ -27,6 +27,7 @@ import { Roles } from '../../../../models/Roles/Roles';
 interface Props {
     userAccesses: { [key: string]: boolean };
     event: EventDetails;
+    eventStatusId: number;
     visibleDrawer: boolean;
     setApprovedEvent: (visible: boolean) => void;
     setVisibleDrawer: (visible: boolean) => void;
@@ -218,7 +219,7 @@ const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any) => {
     />
 }
 
-const SortedEventInfo = ({ userAccesses, event, setApprovedEvent, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer, setVisibleDrawer }: Props) => {
+const SortedEventInfo = ({ userAccesses, event, eventStatusId, setApprovedEvent, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer, setVisibleDrawer }: Props) => {
     const [adminsVisible, setAdminsVisibility] = useState(false);
     const { id } = useParams();
     const { userId } = useParams();
@@ -270,6 +271,7 @@ const SortedEventInfo = ({ userAccesses, event, setApprovedEvent, subscribeOnEve
         </Modal>
         <EventEditDrawer
             id={id}
+            statusId={eventStatusId}
             visibleEventEditDrawer={visibleDrawer}
             setShowEventEditDrawer={setVisibleDrawer}
             onEdit={fetchData}

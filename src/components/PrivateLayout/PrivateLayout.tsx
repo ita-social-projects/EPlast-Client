@@ -152,16 +152,16 @@ const PrivateLayout = ({ children }: any) => {
                 ) : (<> </>)
               }
               {activeUserProfile?.city ? (
-                <Menu.Item onClick={() => { handleClickAway(); history.push("/regions"); }} key="3" >
+                <Menu.Item onClick={() => { handleClickAway(); history.push("/regions/page/1"); }} key="3" >
                   Округи                  
                 </Menu.Item>
                 ) : (<> </>)
               }
-              <Menu.Item onClick={() => { handleClickAway(); history.push("/cities"); }} key="4">
+              <Menu.Item onClick={() => { handleClickAway(); history.push("/cities/page/1"); }} key="4">
                 Станиці
               </Menu.Item>
               {(canEdit || canSee || canAccess || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy) ? (
-                <Menu.Item onClick={() => { handleClickAway(); history.push('/clubs'); }} key="5">
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/clubs/page/1'); }} key="5">
                   Курені
                 </Menu.Item>
                 ) : (<> </>)
@@ -190,6 +190,12 @@ const PrivateLayout = ({ children }: any) => {
               {(canEdit || canSee || canAccess || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy) ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/kadra'); }} key="8">
                   Кадра виховників
+                </Menu.Item>)
+                : (<> </>)
+              }
+              {(canEdit || canSee || canAccess || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy) ? (
+                <Menu.Item onClick={() => { handleClickAway(); history.push('/renewals'); }} key="18">
+                  Відновлення статусу
                 </Menu.Item>)
                 : (<> </>)
               }
