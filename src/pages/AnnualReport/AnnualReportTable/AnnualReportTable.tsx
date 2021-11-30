@@ -395,7 +395,7 @@ const AnnualReportTable = () => {
                 className="AnnualReportTableButtonsSearchField"
             >
                 <Col className="AnnualReportTableButtons">
-                    {userAnnualReportAccess?.SubmitCityReport ? (
+                    {userAnnualReportAccess?.CanSubmitCityReport ? (
                         <Button
                             type="primary"
                             onClick={() => setShowCitySelectModal(true)}
@@ -405,7 +405,7 @@ const AnnualReportTable = () => {
                     ) : null}
                 </Col>
                 <Col>
-                    {userAnnualReportAccess?.SubmitClubReport ? (
+                    {userAnnualReportAccess?.CanSubmitClubReport ? (
                         <Button
                             type="primary"
                             onClick={() => setShowClubSelectModal(true)}
@@ -415,7 +415,7 @@ const AnnualReportTable = () => {
                     ) : null}
                 </Col>
                 <Col>
-                    {userAnnualReportAccess?.SubmitRegionReport ? (
+                    {userAnnualReportAccess?.CanSubmitRegionReport ? (
                         <Button
                             type="primary"
                             onClick={() => setShowRegionAnnualReports(true)}
@@ -446,20 +446,20 @@ const AnnualReportTable = () => {
                     {contentList[noTitleKey]}
                 </Card>
             </Row>
-            {userAnnualReportAccess?.SubmitRegionReport ? (
+            {userAnnualReportAccess?.CanSubmitRegionReport ? (
 
                 <RegionSelectModal
                     visibleModal={showRegionAnnualReports}
                     handleOk={() => setShowRegionAnnualReports(false)}
                 />
             ) : null}
-            {userAnnualReportAccess?.SubmitCityReport ? (
+            {userAnnualReportAccess?.CanSubmitCityReport ? (
                 <CitySelectModal
                     visibleModal={showCitySelectModal}
                     handleOk={() => setShowCitySelectModal(false)}
                 />
             ) : null}
-            {userAnnualReportAccess?.SubmitClubReport ? (
+            {userAnnualReportAccess?.CanSubmitClubReport ? (
                 <ClubSelectModal
                     visibleModal={showClubSelectModal}
                     handleOk={() => setShowClubSelectModal(false)}

@@ -226,7 +226,7 @@ const PrivateLayout = ({ children }: any) => {
                 : (<> </>)
               }
             </SubMenu>
-            {userAnnualReportAccess?.ViewAnnualReportsTable == true && userStatisticsAccess?.CityStatisticsFormReport == true ? (
+            {userAnnualReportAccess?.CanViewAnnualReportsTable && userStatisticsAccess?.CanCityStatisticsFormReport ? (
               <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
                 <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="9">
                   Річні звіти
@@ -244,13 +244,13 @@ const PrivateLayout = ({ children }: any) => {
                 </SubMenu>
               </SubMenu>
             ) :
-              (userAnnualReportAccess?.ViewAnnualReportsTable == true ? (
+              (userAnnualReportAccess?.CanViewAnnualReportsTable ? (
                 <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="16">
                   Річні звіти
                 </Menu.Item>
               ) : (<> </>))
             }
-            {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+            {(canEdit || canSee || canAccess || regionAdm || cityAdm || clubAdm) ? (
               <Menu.Item
                 onClick={() => { handleClickAway(); history.push('/aboutBase'); }}
                 key="17"

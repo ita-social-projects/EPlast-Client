@@ -1,23 +1,23 @@
 export default interface IUserAnnualReportAccess {
     IsAdmin: boolean;
-    ViewAnnualReportsTable: boolean;
-    FindEveryAnnualReportInSearch: boolean;
-    ViewEveryAnnualReport: boolean;
-    SubmitCityReport: boolean;
-    SubmitClubReport: boolean;
-    SubmitRegionReport: boolean;
-    EditReport: boolean;
-    ChangeReportStatus: boolean;
-    DeleteReport: boolean;
+    CanViewAnnualReportsTable: boolean;
+    CanFindEveryAnnualReportInSearch: boolean;
+    CanViewEveryAnnualReport: boolean;
+    CanSubmitCityReport: boolean;
+    CanSubmitClubReport: boolean;
+    CanSubmitRegionReport: boolean;
+    CanEditReport: boolean;
+    CanChangeReportStatus: boolean;
+    CanDeleteReport: boolean;
 }
 export default interface IUserStatisticsAccess {
     IsAdmin: boolean;
-    CityStatisticsChooseCity: boolean;
-    CityStatisticsChooseYears: boolean;
-    CityStatisticsChooseIndicators: boolean;
-    CityStatisticsFormReport: boolean;
-    RegionStatisticsChooseRegion: boolean;
-    RegionStatisticsСhooseYears: boolean;
-    RegionStatisticsChooseIndicators: boolean;
-    RegionStatisticsFormReport: boolean;
+    CanCityStatisticsChooseCity: boolean;
+    CanCityStatisticsChooseYears: boolean;
+    CanCityStatisticsChooseIndicators: boolean;
+    CanCityStatisticsFormReport: boolean;
+    CanRegionStatisticsChooseRegion: boolean;
+    CanRegionStatisticsСhooseYears: boolean;
+    CanRegionStatisticsChooseIndicators: boolean;
+    CanRegionStatisticsFormReport: boolean;
 }
