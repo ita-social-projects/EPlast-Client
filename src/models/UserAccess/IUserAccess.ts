@@ -1,4 +1,5 @@
 export default interface IUserAnnualReportAccess {
+    IsSuperAdmin: boolean;
     IsAdmin: boolean;
     CanViewAnnualReportsTable: boolean;
     CanFindEveryAnnualReportInSearch: boolean;
