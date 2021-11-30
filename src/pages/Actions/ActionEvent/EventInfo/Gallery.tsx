@@ -50,14 +50,19 @@ const Gallery = ({eventId, userAccesses}: Props) => {
 
     const addPictures = (uploadedPictures: EventGallery[]) => setPictures(pictures.concat(uploadedPictures));
     const removePicture = (pictureId: number) => setPictures(pictures.filter(picture => picture.galleryId !== pictureId))
-    const GalleryAdministration = (): React.ReactNode[] => {
+    const GalleryAdministration  = (): React.ReactNode[] => {
         if (userAccesses["AddPhotos"]) {
             return [
-                <Title level={2} style={{color: '#3c5438'}} key='spinnerTitle'>Адміністрування галереї</Title>,
-                <FormAddPictures eventId={eventId} updateGallery={addPictures} picturesCount={pictures.length}
-                                 key='addPictures'/>,
+                <div className="">
+                    
+                <Title level={3} style={{color: '#3c5438'}} key='spinnerTitle'>Адміністрування галереї</Title>
+                <FormAddPictures eventId={eventId} updateGallery={addPictures} picturesCount={pictures.length} 
+                         key='addPictures'/>
+            
                 <PicturesWall pictures={pictures} removePicture={removePicture} key='removePictures'/>
+                </div>
             ];
+            
         } else return [];
     }
 
