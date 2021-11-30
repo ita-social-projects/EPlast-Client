@@ -16,6 +16,8 @@ import {
 import "./ClubAnnualReportForm.less";
 import ClubProfile from "../../../models/Club/ClubProfile";
 
+const classes = require('./ClubAnnualReportForm.less');
+
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
@@ -167,12 +169,11 @@ export const ClubAnnualReportForm = (props: Props) => {
                             className="clubAnnualReportResponsiveCols"
                             span={12}
                         >
-                            <Text strong={true}>
-                                Географія куреня. Осередки в Україні:
-                            </Text>
                             <Form.Item
                                 className="w100"
                                 name="clubCenters"
+                                label="Географія куреня. Осередки в Україні"
+                                labelCol={{ span: 24 }}
                                 rules={validationSchema.textareaClubCenters}
                             >
                                 <TextArea rows={4} />
@@ -182,12 +183,11 @@ export const ClubAnnualReportForm = (props: Props) => {
                             className="clubAnnualReportResponsiveCols"
                             span={12}
                         >
-                            <Text strong={true}>
-                                Вкажіть побажання до КБ УСП:
-                            </Text>
                             <Form.Item
                                 className="w100"
                                 name="kbUSPWishes"
+                                label="Вкажіть побажання до КБ УСП"
+                                labelCol={{ span: 24 }}
                                 rules={validationSchema.textareaKbUSPWishes}
                             >
                                 <TextArea rows={4} />
