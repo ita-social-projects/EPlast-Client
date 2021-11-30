@@ -268,8 +268,8 @@ const City = () => {
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
+        setCanJoin(false)
         addMember();
-        setLoading(true)
       },
     });
   }
