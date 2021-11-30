@@ -2,6 +2,7 @@ import Api from './api';
 import AnnualReport from '../pages/AnnualReport/Interfaces/AnnualReport';
 import { AxiosError } from 'axios';
 import api from './api';
+import { ReportType } from '../models/AnnualReport/ReportType';
 
 const getCitiesOptions = async () => {
     return await Api.get('Cities/CitiesOptions')
@@ -143,7 +144,14 @@ const getUserAnnualReportAccess = async (userId: string) => {
         });
 }
 
+const getUserCertainAnnualReportAccess = async (userId: string, reportType: ReportType, reportId: number) => {
+    return await api.get(`UserAccess/GetUserAnnualReportAccess/${userId}/${reportType}/${reportId}`)
+        .catch(error => {
+            throw error;
+        });
+}
+
 export default {
     getCitiesOptions, getCities, getCityInfo, getCityLegalStatuses, getAnnualReportStatuses, checkCreated,
-    getById, getPdf, getAll, create, edit, confirm, cancel, remove, getAnnualReportEditFormById, getCityMembers, getUserAnnualReportAccess
+    getById, getPdf, getAll, create, edit, confirm, cancel, remove, getAnnualReportEditFormById, getCityMembers, getUserAnnualReportAccess, getUserCertainAnnualReportAccess
 };
