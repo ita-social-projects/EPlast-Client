@@ -477,9 +477,7 @@ const City = () => {
           showConfirm(admin, existingAdmin);
         }
         else {
-          await addCityAdmin(admin);
-          admins.push(admin);
-          setAdmins(admins);
+          await addCityAdmin(admin).then(() => { admins.push(admin); setAdmins(admins); });
         }
       } finally {
         setvisibleAddModal(false);

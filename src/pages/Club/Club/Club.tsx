@@ -458,9 +458,7 @@ const Club = () => {
           showConfirm(admin, existingAdmin);
         }
         else {
-          await addClubAdmin(admin);
-          admins.push(admin);
-          setAdmins(admins);
+          await addClubAdmin(admin).then(() => { admins.push(admin); setAdmins(admins);});
         }
       } finally {
         setvisible(false);

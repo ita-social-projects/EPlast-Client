@@ -438,9 +438,7 @@ const Region = () => {
         admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy){
           const check = await getCheckPlastMember(admin.userId);
           if(check.data){
-            await addRegionAdmin(admin);
-            admins.push(admin);
-            setAdmins(admins);
+            await addRegionAdmin(admin).then(() => { admins.push(admin); setAdmins(admins); });
           }
           else {
             showPlastMemberDisable(admin);
