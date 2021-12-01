@@ -466,6 +466,8 @@ const City = () => {
           const check = await getCheckPlastMember(admin.userId);
           if(check.data){
             await addCityAdmin(admin);
+            admins.push(admin);
+            setAdmins(admins);
           }
           else {
             showPlastMemberDisable(admin);
@@ -476,6 +478,8 @@ const City = () => {
         }
         else {
           await addCityAdmin(admin);
+          admins.push(admin);
+          setAdmins(admins);
         }
       } finally {
         setvisibleAddModal(false);
