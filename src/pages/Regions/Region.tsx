@@ -419,7 +419,7 @@ const Region = () => {
   const handleOk = async(admin: RegionAdmin) => {
     if (admin.id === 0) {
       const head = (admins as RegionAdmin[])
-        .find(x => x.adminType.adminTypeName === Roles.CityHead)
+        .find(x => x.adminType.adminTypeName === Roles.OkrugaHead)
       if(admin !== undefined){
         admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
       }
