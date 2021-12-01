@@ -53,16 +53,13 @@ const Gallery = ({eventId, userAccesses}: Props) => {
     const GalleryAdministration  = (): React.ReactNode[] => {
         if (userAccesses["AddPhotos"]) {
             return [
-                <div className="">
-                    
+                <div>      
                 <Title level={3} style={{color: '#3c5438'}} key='spinnerTitle'>Адміністрування галереї</Title>
                 <FormAddPictures eventId={eventId} updateGallery={addPictures} picturesCount={pictures.length} 
-                         key='addPictures'/>
-            
+                     key='addPictures'/>
                 <PicturesWall pictures={pictures} removePicture={removePicture} key='removePictures'/>
                 </div>
-            ];
-            
+            ]; 
         } else return [];
     }
 
