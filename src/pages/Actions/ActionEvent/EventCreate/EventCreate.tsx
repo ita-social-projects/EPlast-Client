@@ -222,7 +222,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
   };
 
   function warning() {
-    message.warning('Спочатку оберіть тип події.');
+    notificationLogic("warning", "Спочатку оберіть тип події.");
   }
 
   return (
