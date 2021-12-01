@@ -117,6 +117,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       onCreate();
     }
     form.resetFields();
+    setSelectedUsers(['', '', '', '']);
     setLoading(false);
     setShowEventCreateDrawer(false);
   }
