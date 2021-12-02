@@ -75,6 +75,10 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
     return false
   }
 
+
+
+  
+
   return (
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
@@ -88,15 +92,22 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
             },
           ]}
         >
+
       <Select onChange={handleChange}>
         <Option value={Roles.Supporter} disabled={handleDisabled()}>Прихильник</Option>
         <Option value={Roles.PlastMember} disabled={handleDisabled()}>
           Дійсний член організації
         </Option>
         <Option value={Roles.FormerPlastMember} disabled={handleDisabled()}>Колишній член Пласту</Option>
-        <Option value={Roles.RegisteredUser} disabled={disabled}>Зареєстрований користувач</Option>
-        
+   
+        { user.userRoles != Roles.FormerPlastMember ? (
+        null 
+        ): 
+        <Option value={Roles.RegisteredUser} disabled={false}>Зареєстрований користувач</Option>
+        }
+      
       </Select>
+      
         </Form.Item>
         <Form.Item className="cancelConfirmButtons">
           <Row justify="end">
