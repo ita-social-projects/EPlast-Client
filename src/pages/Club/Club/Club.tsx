@@ -28,7 +28,8 @@ import {
    addAdministrator,
    editAdministrator,
    getUserClubAccess,
-   getAllAdmins
+   getAllAdmins,
+   isUserApproved
   } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
@@ -251,7 +252,10 @@ const Club = () => {
     });
   }
 
-  function seeSkipModal(followerID: number) {
+  async function seeSkipModal(followerID: number) {
+    const isApproved = await isUserApproved(followerID);
+    if(!isApproved.data)
+    {
     return Modal.confirm({
       title: "Ви впевнені, що хочете покинути даний курінь?",
       icon: <ExclamationCircleOutlined />,
@@ -261,6 +265,17 @@ const Club = () => {
       maskClosable: true,
       onOk() { removeMember(followerID) }
     });
+    }
+    else
+    {
+      return Modal.info({
+        title: "Ви не можете покинути даний курінь, оскільки є його членом!",
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Зрозуміло',
+        okType: 'primary',
+        maskClosable: true
+    });
+  }
   }
   const getClub = async () => {
     setLoading(true);
