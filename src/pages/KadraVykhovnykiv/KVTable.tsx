@@ -21,14 +21,9 @@ export const KVTable = ({ current, searchData }: props) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
-  const [data, setData] = useState<any[]>([{
-    id: '',
-    user: '',
-    dateOfGranting: '',
-    numberInRegister: '',
-  }]);
+  const [data, setData] = useState<any[]>([]);
 
   const createNotifications = async (userId : string) => {
     await NotificationBoxApi.createNotifications(
@@ -77,7 +72,7 @@ export const KVTable = ({ current, searchData }: props) => {
     setLoading(true);
     await kadrasApi.getAllKVswithGivenTypes(current).then(response => {
 
-      setData(response.data);
+      setData(response.data); 
     })
     setLoading(false);
   }
@@ -113,11 +108,11 @@ export const KVTable = ({ current, searchData }: props) => {
 
 
   return (
-    <div>
+    <div style={{textAlign:'center'}}>
+      {!isLoading ?
       <Layout.Content onClick={() => { setShowDropdown(false); }}>
         <Table
           className={classes.table}
-          loading={loading}
           columns={columns}
           dataSource={filteredData}
           scroll={{ x: 1300 }}
@@ -156,9 +151,8 @@ export const KVTable = ({ current, searchData }: props) => {
             onEdit={onEdit}
           />
         </ClickAwayListener>
-      </Layout.Content>
-    </div>
-
-
+      </Layout.Content> :  <Spin/>
+}
+    </div> 
   )
 }
