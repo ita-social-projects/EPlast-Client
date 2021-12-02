@@ -129,6 +129,12 @@ export const toggleMemberStatus = async (id: number) => {
   });
 }
 
+export const isUserApproved = async(id: number) =>{
+  return api.get(`Cities/IsUserApproved/${id}`).catch((error)=>{
+    throw new Error(error)
+  });
+};
+
 export const cityNameOfApprovedMember = async(id: string) =>{
   return api.get(`Cities/CityNameOfApprovedMember/${id}`).catch((error)=>{
     throw new Error(error)

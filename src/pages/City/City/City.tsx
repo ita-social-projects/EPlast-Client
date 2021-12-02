@@ -40,7 +40,8 @@ import {
   getCheckPlastMember,
   toggleMemberStatus,
   removeFollower,
-  getAllAdmins
+  getAllAdmins,
+  isUserApproved
 } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
@@ -278,17 +279,31 @@ const City = () => {
     setAdminsAll(response.data.administration)
   }
 
-  function seeSkipModal(followerID: number) {
-    return Modal.confirm({
-      title: "Ви впевнені, що хочете покинути дану станицю?",
-      icon: <ExclamationCircleOutlined />,
-      okText: 'Так, покинути',
-      okType: 'primary',
-      cancelText: 'Скасувати',
-      maskClosable: true,
-      onOk() { removeMember(followerID) }
+  async function seeSkipModal(followerID: number) {
+    const isApproved = await isUserApproved(followerID);
+    if(!isApproved.data)
+    {
+      return Modal.confirm({
+        title: "Ви впевнені, що хочете покинути дану станицю?",
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Так, покинути',
+        okType: 'primary',
+        cancelText: 'Скасувати',
+        maskClosable: true,
+        onOk() { removeMember(followerID) }
+      });
+    }
+    else
+    {
+      return Modal.info({
+        title: "Ви не можете покинути дану станицю, оскільки є її членом!",
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Зрозуміло',
+        okType: 'primary',
+        maskClosable: true
     });
   }
+}
 
   const getCity = async () => {
     setLoading(true);
