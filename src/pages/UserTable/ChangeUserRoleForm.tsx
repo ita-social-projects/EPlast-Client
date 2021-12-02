@@ -75,10 +75,6 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
     return false
   }
 
-
-
-  
-
   return (
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
@@ -99,13 +95,11 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
           Дійсний член організації
         </Option>
         <Option value={Roles.FormerPlastMember} disabled={handleDisabled()}>Колишній член Пласту</Option>
-   
         { user.userRoles != Roles.FormerPlastMember ? (
         null 
         ): 
         <Option value={Roles.RegisteredUser} disabled={false}>Зареєстрований користувач</Option>
         }
-      
       </Select>
       
         </Form.Item>
