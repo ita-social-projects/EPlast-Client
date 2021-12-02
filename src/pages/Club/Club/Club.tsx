@@ -145,7 +145,7 @@ const Club = () => {
     try {
       await archiveClub(club.id);
       notificationLogic("success", successfulArchiveAction(club.name));
-      history.push('/clubs');
+      history.push('/clubs/page/1');
     } catch {
       notificationLogic("error", failArchiveAction(club.name));
     }
@@ -155,14 +155,14 @@ const Club = () => {
     await removeClub(club.id);
     notificationLogic("success", successfulDeleteAction("Курінь"));
 
-    history.push('/clubs');
+    history.push('/clubs/page/1');
   };
 
   const UnArchiveClub = async () => {
     await unArchiveClub(club.id)
     notificationLogic("success", successfulUnarchiveAction("Курінь"));
 
-    history.push('/clubs');
+    history.push('/clubs/page/1');
   };
 
   const setPhotos = async (members: ClubMember[], logo: string) => {
@@ -447,6 +447,8 @@ const Club = () => {
           const check = await getCheckPlastMember(admin.userId);
           if(check.data){
             await addClubAdmin(admin);
+            admins.push(admin);
+            setAdmins(admins);
           }
           else {
             showPlastMemberDisable(admin);
@@ -456,7 +458,7 @@ const Club = () => {
           showConfirm(admin, existingAdmin);
         }
         else {
-          await addClubAdmin(admin);
+          await addClubAdmin(admin).then(() => { admins.push(admin); setAdmins(admins); });
         }
       } finally {
         setvisible(false);
@@ -1026,7 +1028,7 @@ const Club = () => {
       ></ClubDetailDrawer>
 
       <Modal
-        title="На жаль ви не можете архівувати зазначений Курінь"
+        title="На жаль ви не можете архівувати зазначений курінь"
         visible={activeMemberVisibility}
         onOk={handleConfirm}
         onCancel={handleConfirm}

@@ -56,6 +56,7 @@ const EventUser = () => {
     const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
     const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
     const [eventId, setEventId] = useState<number>();
+    const [eventStatus, setEventStatus] = useState<number>();
     const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({})
     const [userToken, setUserToken] = useState<any>([
         {
@@ -227,8 +228,7 @@ const EventUser = () => {
                             footer={[
                                 <Button
                                     type="primary"
-                                    className={classes.buttonSmall}
-                                    style={{ marginRight: "110px", marginLeft: "110px" }}
+                                    className={classes.buttonCancell}     
                                     onClick={() => setVisitedEventsModal(false)}
                                 >
                                     Закрити
@@ -321,8 +321,7 @@ const EventUser = () => {
                                 <div className={classes.Modal}>
                                     <Button
                                         type="primary"
-                                        className={classes.buttonSmall}
-                                        style={{ marginRight: "110px", marginLeft: "110px" }}
+                                        className={classes.buttonCancell}
                                         onClick={() => setCreatedEventsModal(false)}
                                     >
                                         Закрити
@@ -419,6 +418,7 @@ const EventUser = () => {
                                                 onClick={() => {
                                                     setShowEventEditDrawer(true);
                                                     setEventId(item.id);
+                                                    setEventStatus(item.eventStatusID);
                                                 }}
                                             >
                                                 Редагувати
@@ -429,6 +429,7 @@ const EventUser = () => {
                             ))}
                             <EventEditDrawer
                                 id={eventId!}
+                                statusId={eventStatus!}
                                 visibleEventEditDrawer={showEventEditDrawer}
                                 setShowEventEditDrawer={setShowEventEditDrawer}
                                 onEdit={fetchData}
@@ -496,8 +497,7 @@ const EventUser = () => {
                                 </Button>,
                                 <Button
                                     type="primary"
-                                    className={classes.buttonSmall}
-                                    style={{ marginRight: "110px", marginLeft: "110px" }}
+                                    className={classes.buttonCancell}
                                     onClick={() => setPlannedEventsModal(false)}
                                 >
                                     Закрити

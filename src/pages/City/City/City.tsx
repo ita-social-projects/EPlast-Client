@@ -88,7 +88,7 @@ const City = () => {
   const [followersCount, setFollowersCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
   const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
-  const [visible, setvisible] = useState<boolean>(false);
+  const [visibleAddModal, setvisibleAddModal] = useState<boolean>(false);
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
@@ -169,7 +169,7 @@ const City = () => {
         await createNotification(ad.userId,
           `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
       });
-      history.push("/cities");
+      history.push("/cities/page/1");
     } catch {
       notificationLogic("error", failArchiveAction(city.name));
     }
@@ -179,14 +179,14 @@ const City = () => {
     await removeCity(city.id);
     notificationLogic("success", successfulDeleteAction("Станицю"));
 
-    history.push("/cities");
+    history.push("/cities/page/1");
   };
 
   const UnArchiveCity = async () => {
     await unArchiveCity(city.id)
     notificationLogic("success", successfulUnarchiveAction("Станицю"));
 
-    history.push("/cities");
+    history.push("/cities/page/1");
   };
 
   const setPhotos = async (members: CityMember[], logo: string) => {
@@ -268,8 +268,8 @@ const City = () => {
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
+        setCanJoin(false)
         addMember();
-        setLoading(true)
       },
     });
   }
@@ -466,6 +466,8 @@ const City = () => {
           const check = await getCheckPlastMember(admin.userId);
           if(check.data){
             await addCityAdmin(admin);
+            admins.push(admin);
+            setAdmins(admins);
           }
           else {
             showPlastMemberDisable(admin);
@@ -475,10 +477,10 @@ const City = () => {
           showConfirm(admin, existingAdmin);
         }
         else {
-          await addCityAdmin(admin);
+          await addCityAdmin(admin).then(() => { admins.push(admin); setAdmins(admins); });
         }
       } finally {
-        setvisible(false);
+        setvisibleAddModal(false);
       }
     }
     else{
@@ -507,7 +509,7 @@ const City = () => {
   }
 
   const handleClose = async () => {
-    setvisible(false);
+    setvisibleAddModal(false);
   };
 
   const handleConfirm = async () => {
@@ -839,7 +841,7 @@ const City = () => {
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
-                  onClick={() => setvisible(true)}
+                  onClick={() => setvisibleAddModal(true)}
                 />) : null) : null}
               <Button
                 type="primary"
@@ -1015,7 +1017,7 @@ const City = () => {
       ></CityDetailDrawer>
       <Modal
         title="Додати діловода"
-        visible={visible}
+        visible={visibleAddModal}
         onCancel={handleClose}
         footer={null}
       >
@@ -1024,12 +1026,12 @@ const City = () => {
           cityId={+id}
           head={city.head}
           headDeputy={city.headDeputy}
-          visibleModal={visible}>
+          visibleModal={visibleAddModal}>
         </AddCitiesNewSecretaryForm>
       </Modal>
 
       <Modal
-        title="На жаль ви не можете архівувати зазначену Станицю"
+        title="На жаль ви не можете архівувати зазначену станицю"
         visible={activeMemberVisibility}
         onOk={handleConfirm}
         onCancel={handleConfirm}

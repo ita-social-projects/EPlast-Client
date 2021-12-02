@@ -225,8 +225,8 @@ const AddAdministratorModal = (props: Props) => {
       if(admin !== undefined){
           admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
         }
-      const existingAdmin  = (admins as RegionAdmin[])
-        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)   
+        const existingAdmin  = (admins as RegionAdmin[])
+          .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)   
         if (head?.userId === admin.userId){
           showDisableModal(head)
         }
@@ -235,8 +235,8 @@ const AddAdministratorModal = (props: Props) => {
         }
         else if(admin.adminType.adminTypeName === "Голова КПР" ||
           admin.adminType.adminTypeName === "Член КПР" ||
-          admin.adminType.adminTypeName === Roles.KurinHead ||
-          admin.adminType.adminTypeName === Roles.KurinHeadDeputy){
+          admin.adminType.adminTypeName === Roles.OkrugaHead ||
+          admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy){
           const check = await getCheckPlastMember(admin.userId);
           if(check.data){
             await checkAdminId(admin);
