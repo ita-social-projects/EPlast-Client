@@ -30,6 +30,7 @@ import { MethodicDocumentType } from "../../models/Documents/MethodicDocumentTyp
 import { FileWrapper, GoverningBody } from "../../api/decisionsApi";
 import { DocumentWrapper } from "../../models/Documents/DocumentWraper";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
+import moment, { Moment } from "moment";
 type FormAddDocumentsProps = {
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: () => void;
@@ -115,8 +116,8 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
         governingBody: JSON.parse(values.governingBody),
         description: values.description,
         date:
-          /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values
-            .datepicker._d,
+          /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ 
+          moment.utc(values.datepicker.i).local().toDate(),
         fileName: fileData.FileName,
       },
       fileAsBase64: fileData.FileAsBase64,
