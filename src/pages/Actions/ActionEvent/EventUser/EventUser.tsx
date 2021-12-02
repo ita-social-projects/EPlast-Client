@@ -228,8 +228,7 @@ const EventUser = () => {
                             footer={[
                                 <Button
                                     type="primary"
-                                    className={classes.buttonSmall}
-                                    style={{ marginRight: "110px", marginLeft: "110px" }}
+                                    className={classes.buttonCancell}     
                                     onClick={() => setVisitedEventsModal(false)}
                                 >
                                     Закрити
@@ -322,8 +321,7 @@ const EventUser = () => {
                                 <div className={classes.Modal}>
                                     <Button
                                         type="primary"
-                                        className={classes.buttonSmall}
-                                        style={{ marginRight: "110px", marginLeft: "110px" }}
+                                        className={classes.buttonCancell}
                                         onClick={() => setCreatedEventsModal(false)}
                                     >
                                         Закрити
@@ -499,8 +497,7 @@ const EventUser = () => {
                                 </Button>,
                                 <Button
                                     type="primary"
-                                    className={classes.buttonSmall}
-                                    style={{ marginRight: "110px", marginLeft: "110px" }}
+                                    className={classes.buttonCancell}
                                     onClick={() => setPlannedEventsModal(false)}
                                 >
                                     Закрити

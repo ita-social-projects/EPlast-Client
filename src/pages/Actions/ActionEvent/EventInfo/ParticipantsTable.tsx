@@ -11,7 +11,8 @@ import { showError } from "../../EventsModals";
 import { EventParticipant } from "./EventInfo";
 import eventsApi from "../../../../api/eventsApi";
 import "./ParticipantsTable.less";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
+import NotificationBoxApi from '../../../../api/NotificationBoxApi';
 
 const { Text } = Typography;
 
@@ -19,6 +20,7 @@ interface Props {
   userAccesses: { [key: string]: boolean; }
   isEventFinished: boolean;
   participants: EventParticipant[];
+  eventName: string;
   setRender: (render: boolean) => void;
 }
 
@@ -32,9 +34,11 @@ const ParticipantsTable = ({
   userAccesses,
   isEventFinished,
   participants,
+  eventName,
   setRender,
 }: Props) => {
 
+  const { id } = useParams();
   const [Participants, setParticipant] = useState<EventParticipant[]>(
     participants
   );
@@ -70,7 +74,7 @@ const ParticipantsTable = ({
     );
   };
 
-  const changeStatusToApproved = (participantId: number) => {
+  const changeStatusToApproved = (participantId: number, userId: string) => {
     const approveParticipant = async () => {
       await eventsApi.approveParticipant(participantId);
     };
@@ -79,9 +83,16 @@ const ParticipantsTable = ({
       .catch(() => {
         showError();
       });
+    NotificationBoxApi.createNotifications(
+      [userId],
+      "Ви тепер учасник події ",
+      NotificationBoxApi.NotificationTypes.EventNotifications,
+      `/events/details/${id}`,
+      eventName
+    );
   };
 
-  const changeStatusToUnderReviewed = (participantId: number) => {
+  const changeStatusToUnderReviewed = (participantId: number, userId: string) => {
     const underReviewedParticipant = async () => {
       await eventsApi.underReviewParticipant(participantId);
     };
@@ -90,9 +101,16 @@ const ParticipantsTable = ({
       .catch(() => {
         showError();
       });
+    NotificationBoxApi.createNotifications(
+      [userId],
+      "Ваш статус участі у події змінено на «Розглядається»  ",
+      NotificationBoxApi.NotificationTypes.EventNotifications,
+      `/events/details/${id}`,
+      eventName
+    );
   };
 
-  const changeStatusToRejected = (participantId: number) => {
+  const changeStatusToRejected = (participantId: number, userId: string) => {
     const rejectParticipant = async () => {
       await eventsApi.rejectParticipant(participantId);
     };
@@ -101,6 +119,13 @@ const ParticipantsTable = ({
       .catch(() => {
         showError();
       });
+    NotificationBoxApi.createNotifications(
+      [userId],
+      "Вам було відмовлено в участі у події ",
+      NotificationBoxApi.NotificationTypes.EventNotifications,
+      `/events/details/${id}`,
+      eventName
+    );
   };
 
   const columns: ColumnsType<EventParticipant> = [
@@ -149,7 +174,7 @@ const ParticipantsTable = ({
             icon={<UserAddOutlined className="iconParticipant" />}
             size="small"
             onClick={() => {
-              changeStatusToApproved(record.participantId);
+              changeStatusToApproved(record.participantId, record.userId);
             }}
           />
           <Divider type="vertical" />
@@ -159,7 +184,7 @@ const ParticipantsTable = ({
             icon={<QuestionOutlined className="iconUnderReview" />}
             size="small"
             onClick={() => {
-              changeStatusToUnderReviewed(record.participantId);
+              changeStatusToUnderReviewed(record.participantId, record.userId);
             }}
           />
           <Divider type="vertical" />
@@ -169,7 +194,7 @@ const ParticipantsTable = ({
             icon={<UserDeleteOutlined className="iconParticipant" />}
             size="small"
             onClick={() => {
-              changeStatusToRejected(record.participantId);
+              changeStatusToRejected(record.participantId, record.userId);
               setRender(true);
             }}
           />

@@ -462,6 +462,8 @@ const Club = () => {
           const check = await getCheckPlastMember(admin.userId);
           if(check.data){
             await addClubAdmin(admin);
+            admins.push(admin);
+            setAdmins(admins);
           }
           else {
             showPlastMemberDisable(admin);
@@ -471,7 +473,7 @@ const Club = () => {
           showConfirm(admin, existingAdmin);
         }
         else {
-          await addClubAdmin(admin);
+          await addClubAdmin(admin).then(() => { admins.push(admin); setAdmins(admins); });
         }
       } finally {
         setvisible(false);
