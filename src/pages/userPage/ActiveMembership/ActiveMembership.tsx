@@ -134,7 +134,7 @@ const ActiveMembership = () => {
   const IsPossibleToChangeDateOfSwear = (access: Array<string>): boolean => {
     var flag = true;
     access.map(x => {
-      if (x.includes("Зареєстрований користувач") || x.includes("Доступ колишнього члена організації")) {
+      if (x.includes(Roles.RegisteredUser) || x.includes(Roles.FormerPlastMember)) {
         flag = false;
         return;
       }

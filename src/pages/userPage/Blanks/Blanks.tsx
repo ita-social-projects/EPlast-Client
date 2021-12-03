@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Data } from "../Interface/Interface";
-import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
 import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId, openBiographyFile, getExtractFromUPUByUserId, removeExtractFromUPUDocument, getExtractFromUPUFile, openExtractFromUPUFile, openGenerationFile } from "../../../api/blankApi";
 import { Badge, Button, Col, Form, Popconfirm, Skeleton, Tooltip } from "antd";
@@ -16,10 +14,7 @@ import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import ListOfAchievementsModal from "./UserAchievements/ListOfAchievementsModal";
 import AddExtractFromUPUModal from "./UserExtractFromUPU/AddExtractFromUPUModal";
-import {
-    successfulDeleteAction,
-    tryAgain
-} from "../../../components/Notifications/Messages"
+import { successfulDeleteAction } from "../../../components/Notifications/Messages"
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 import { Roles } from "../../../models/Roles/Roles";
 import { PersonalDataContext } from "../personalData/PersonalData";
@@ -128,8 +123,7 @@ export const Blanks = () => {
             userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead) || userRoles?.includes(Roles.PlastMember);
     };
     const DoesUserHasAccessToDeleteBlanks = (userRoles: Array<string>): boolean => {
-        return (
-            userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead));
+        return (userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead));
     };
 
     return loading === false ? (

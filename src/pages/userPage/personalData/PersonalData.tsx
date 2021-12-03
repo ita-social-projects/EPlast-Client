@@ -64,8 +64,7 @@ export default function ({
     let currentUserId = UserApi.getActiveUserId();
     let UserProfileAccess = UserApi.getUserProfileAccess(currentUserId, userId);
     setUserProfileAccess((await UserProfileAccess).data);
-    console.log((await UserProfileAccess).data);
-    setActiveUserId(userId);
+    setActiveUserId(currentUserId);
     let userProfile = await UserApi.getActiveUserProfile();
     setActiveUserProfile(userProfile);
     await UserApi.getById(userId).then(async (response) => {
