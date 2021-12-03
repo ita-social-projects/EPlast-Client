@@ -105,7 +105,7 @@ const RenderEventIcons = (userAccesses: { [key: string]: boolean }, { event, isU
         SubscribeToEvent();
     }
 
-    if (userAccesses["ApproveEvent"] && event.eventStatus === "Не затверджені") {
+    if (userAccesses["ApproveEvent"] && event.eventStatus === "Не затверджено") {
         eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
             <SettingTwoTone twoToneColor="#3c5438" onClick={() => showApproveConfirm({
                 eventId: event?.eventId,
