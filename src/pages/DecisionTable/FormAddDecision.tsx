@@ -38,6 +38,7 @@ import {
   fileIsEmpty,
 } from "../../components/Notifications/Messages"
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
+import moment, { Moment } from "moment";
 
 type FormAddDecisionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -167,8 +168,8 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
         decisionTarget: { id: 0, targetName: values.decisionTarget },
         description: values.description,
         date:
-          /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ values
-            .datepicker._d,
+          /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ 
+          moment.utc(values.datepicker.i).local().toDate(),
         fileName: fileData.FileName,
         userId: user.nameid,
       },

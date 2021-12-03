@@ -268,8 +268,8 @@ const City = () => {
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
+        setCanJoin(false)
         addMember();
-        setLoading(true)
       },
     });
   }
@@ -466,6 +466,8 @@ const City = () => {
           const check = await getCheckPlastMember(admin.userId);
           if(check.data){
             await addCityAdmin(admin);
+            admins.push(admin);
+            setAdmins(admins);
           }
           else {
             showPlastMemberDisable(admin);
@@ -475,7 +477,7 @@ const City = () => {
           showConfirm(admin, existingAdmin);
         }
         else {
-          await addCityAdmin(admin);
+          await addCityAdmin(admin).then(() => { admins.push(admin); setAdmins(admins); });
         }
       } finally {
         setvisibleAddModal(false);
