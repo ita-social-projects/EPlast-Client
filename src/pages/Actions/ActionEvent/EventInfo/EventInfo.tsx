@@ -216,7 +216,7 @@ const EventInfo = () => {
           <div className="participantsTable">
             <div key={"2"}>
               <Title level={2} className={classes.userTableTitle}>
-                Таблиця користувачів
+                Таблиця учасників
               </Title>
               <Row>
                 <Input.Search
@@ -232,6 +232,7 @@ const EventInfo = () => {
                 userAccesses={userAccesses}
                 isEventFinished={event.isEventFinished}
                 participants={setParticipantsInTable()}
+                eventName={event.event.eventName}
                 key={event.event?.eventId}
                 setRender={setRender}
               />
