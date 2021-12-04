@@ -416,7 +416,6 @@ const EventUser = () => {
                                                 className={classes.buttonSmall}
                                                 onClick={() => {
                                                     setShowEventEditDrawer(true);
-                                                    debugger;
                                                     setEventId(item.id);
                                                     setEventStatus(item.eventStatusID);
                                                 }}
