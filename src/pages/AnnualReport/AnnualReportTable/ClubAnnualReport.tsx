@@ -23,19 +23,25 @@ import {
     StarFilled,
     StarOutlined,
 } from "@ant-design/icons";
+import IUserAnnualReportAccess from "../../../models/UserAccess/IUserAccess";
 import UserApi from "../../../api/UserApi";
-import { Roles } from "../../../models/Roles/Roles";
+import { ReportType } from "../../../models/AnnualReport/ReportType";
+import AnnualReportApi from "../../../api/AnnualReportApi";
 
 interface props {
     columns: any;
     searchedData: any;
     sortKey: any;
+    userCertainAnnualReportAccess: IUserAnnualReportAccess
+    setUserCertainAnnualReportAccess: any
 }
 
 export const ClubAnnualReportTable = ({
     columns,
     searchedData,
     sortKey,
+    userCertainAnnualReportAccess,
+    setUserCertainAnnualReportAccess
 }: props) => {
     const history = useHistory();
     const [clubAnnualReport, setClubAnnualReport] = useState(Object);
@@ -50,9 +56,6 @@ export const ClubAnnualReportTable = ({
     const [showUnconfirmedDropdown, setShowUnconfirmedDropdown] = useState<boolean>(false);
     const [showConfirmedDropdown, setShowConfirmedDropdown] = useState<boolean>(false);
     const [showSavedDropdown, setShowSavedDropdown] = useState<boolean>(false);
-    const [isAdmin, setIsAdmin] = useState<boolean>(false);
-    const [isClubAdmin, setIsClubAdmin] = useState<boolean>();
-    const [canView, setCanView] = useState<boolean>();
     const [isLoading, setIsLoading] = useState(false);
     const [authReport, setAuthReport] = useState(false);
 
@@ -62,7 +65,6 @@ export const ClubAnnualReportTable = ({
             setPage(1);
         }
         fetchClubAnnualReports();
-        checkAccessToManage();
     }, [searchedData, page, pageSize, sortKey, authReport]);
 
     const fetchClubAnnualReports = async () => {
@@ -92,18 +94,7 @@ export const ClubAnnualReportTable = ({
         });
     };
 
-    const checkAccessToManage = () => {
-        let roles = UserApi.getActiveUserRoles();
-        setIsAdmin(roles.includes(Roles.Admin));
-        setIsClubAdmin(roles.includes(Roles.KurinHead));
-        setCanView(
-            roles.includes(Roles.CityHead) ||
-            roles.includes(Roles.CityHeadDeputy) ||
-            roles.includes(Roles.OkrugaHead) ||
-            roles.includes(Roles.OkrugaHeadDeputy) ||
-            roles.includes(Roles.Admin)
-        );
-    };
+
 
     const hideDropdowns = () => {
         setShowUnconfirmedDropdown(false);
@@ -232,7 +223,7 @@ export const ClubAnnualReportTable = ({
                 <p>
                     {count ? "Знайдено " + count + "/" + total + " результатів" : ""}
                 </p>
-                {isClubAdmin ? (
+                {userCertainAnnualReportAccess?.CanSubmitClubReport && !userCertainAnnualReportAccess?.IsSuperAdmin ? (
                     <div className={"AuthReport"}>
                         <Tooltip
                             placement="topLeft"
@@ -265,7 +256,7 @@ export const ClubAnnualReportTable = ({
                 columns={columns}
                 scroll={{ x: 1300 }}
                 dataSource={clubAnnualReports.map((item: any) => {
-                    if (item.canManage && !isAdmin)
+                    if (item.canManage && !userCertainAnnualReportAccess.IsSuperAdmin)
                         return {
                             ...item,
                             idView: (
@@ -287,22 +278,24 @@ export const ClubAnnualReportTable = ({
                 onRow={(record) => {
                     return {
                         onDoubleClick: (event) => {
-                            if (record.id && (canView || record.canManage))
+                            if (record.id && (userCertainAnnualReportAccess.CanViewEveryAnnualReport || userCertainAnnualReportAccess.CanSubmitClubReport))
                                 history.push(`/annualreport/clubAnnualReport/${record.id}`);
                         },
                         onClick: () => {
                             hideDropdowns();
                         },
-                        onContextMenu: (event) => {
+                        onContextMenu: async (event) => {
                             event.preventDefault();
-                            if (record.id && (canView || record.canManage)) {
-                                showDropdown(record.status);
-                                setClubAnnualReport(record);
-                                setX(event.pageX);
-                                setY(event.pageY - 200);
-                            } else {
-                                hideDropdowns();
-                            }
+                            setX(event.pageX);
+                            setY(event.pageY - 200);
+                            userCertainAnnualReportAccess.CanEditReport = userCertainAnnualReportAccess.IsSuperAdmin;
+                            setClubAnnualReport(record);
+                            setUserCertainAnnualReportAccess(
+                                await (await AnnualReportApi.getUserCertainAnnualReportAccess(
+                                    UserApi.getActiveUserId(), ReportType.Club, record.id
+                                )).data
+                            )
+                            showDropdown(record.status);
                         },
                     };
                 }}
@@ -333,7 +326,7 @@ export const ClubAnnualReportTable = ({
                     record={clubAnnualReport}
                     pageX={x}
                     pageY={y}
-                    canManage={isAdmin}
+                    userAnnualReportAccess={userCertainAnnualReportAccess}
                     onView={handleView}
                     onEdit={handleEdit}
                     onConfirm={handleConfirm}
@@ -344,7 +337,7 @@ export const ClubAnnualReportTable = ({
                     record={clubAnnualReport}
                     pageX={x}
                     pageY={y}
-                    canManage={isAdmin}
+                    userAnnualReportAccess={userCertainAnnualReportAccess}
                     onView={handleView}
                     onCancel={handleCancel}
                 />
@@ -353,6 +346,7 @@ export const ClubAnnualReportTable = ({
                     record={clubAnnualReport}
                     pageX={x}
                     pageY={y}
+                    userAnnualReportAccess={userCertainAnnualReportAccess}
                     onView={handleView}
                 />
             </ClickAwayListener>
