@@ -18,12 +18,16 @@ import {
 } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import UserApi from "../../../api/UserApi";
-import { Roles } from "../../../models/Roles/Roles";
+import IUserAnnualReportAccess from "../../../models/UserAccess/IUserAccess";
+import AnnualReportApi from "../../../api/AnnualReportApi";
+import { ReportType } from "../../../models/AnnualReport/ReportType";
 
 interface props {
     columns: any;
     searchedData: any;
     sortKey: any;
+    userCertainAnnualReportAccess: IUserAnnualReportAccess
+    setUserCertainAnnualReportAccess: any
 }
 
 interface regionReport {
@@ -36,7 +40,13 @@ interface regionReport {
     total: number;
 }
 
-export const RegionAnnualReportTable = ({ columns, searchedData, sortKey, }: props) => {
+export const RegionAnnualReportTable = ({
+    columns,
+    searchedData,
+    sortKey,
+    userCertainAnnualReportAccess,
+    setUserCertainAnnualReportAccess,
+}: props) => {
     const [regionAnnualReport, setRegionAnnualReport] = useState(Object);
     const [regionAnnualReports, setRegionsAnnualReports] = useState<regionReport[]>([]);
     const [page, setPage] = useState(1);
@@ -45,13 +55,10 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey, }: pro
     const [count, setCount] = useState<number>(0);
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
-    const [isAdmin, setIsAdmin] = useState<boolean>();
-    const [canView, setCanView] = useState<boolean>();
     const [currentSearchedData, setCurrentSearchedData] = useState<string>();
     const [showConfirmedRegionDropdown, setShowConfirmedRegionDropdown,] = useState<boolean>(false);
     const [showUnconfirmedRegionDropdown, setShowUnconfirmedRegionDropdown,] = useState<boolean>(false);
     const [showSavedRegionDropdown, setShowSavedRegionDropdown] = useState<boolean>(false);
-    const [isRegionAdmin, setIsRegionAdmin] = useState<boolean>();
     const [isLoading, setIsLoading] = useState(false);
     const [authReport, setAuthReport] = useState(false);
     const history = useHistory();
@@ -62,7 +69,6 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey, }: pro
             setPage(1);
         }
         fetchRegionAnnualReports();
-        checkAccessToManage();
     }, [searchedData, page, pageSize, sortKey, authReport]);
 
     const fetchRegionAnnualReports = async () => {
@@ -199,18 +205,6 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey, }: pro
         });
     };
 
-    const checkAccessToManage = () => {
-        let roles = UserApi.getActiveUserRoles();
-        setIsRegionAdmin(roles.includes(Roles.OkrugaHead));
-        setIsAdmin(roles.includes(Roles.Admin));
-        setCanView(
-            roles.includes(Roles.CityHead) ||
-            roles.includes(Roles.CityHeadDeputy) ||
-            roles.includes(Roles.OkrugaHead) ||
-            roles.includes(Roles.OkrugaHeadDeputy) ||
-            roles.includes(Roles.Admin)
-        );
-    };
 
     const handlePageChange = (page: number) => {
         hideDropdowns();
@@ -229,7 +223,7 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey, }: pro
                 <p>
                     {count ? "Знайдено " + count + "/" + total + " результатів" : ""}
                 </p>
-                {isRegionAdmin ? (
+                {userCertainAnnualReportAccess.CanSubmitRegionReport && !userCertainAnnualReportAccess.IsSuperAdmin ? (
                     <div className={"AuthReport"}>
                         <Tooltip
                             placement="topLeft"
@@ -262,7 +256,7 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey, }: pro
                 columns={columns}
                 scroll={{ x: 1300 }}
                 dataSource={regionAnnualReports.map((item: any) => {
-                    if (item.canManage && !isAdmin)
+                    if (item.canManage && !userCertainAnnualReportAccess.IsSuperAdmin)
                         return {
                             ...item,
                             idView: (
@@ -284,23 +278,25 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey, }: pro
                 onRow={(regionRecord) => {
                     return {
                         onDoubleClick: (event) => {
-                            if (regionRecord.id && canView)
+                            if (regionRecord.id && userCertainAnnualReportAccess.CanViewEveryAnnualReport)
                                 history.push(`/annualreport/region/${regionRecord.id}
                                 /${new Date(regionRecord.date).getFullYear()}`);
                         },
                         onClick: () => {
                             hideDropdowns();
                         },
-                        onContextMenu: (event) => {
+                        onContextMenu: async (event) => {
                             event.preventDefault();
-                            if (canView) {
-                                showDropdown(regionRecord.status);
-                                setRegionAnnualReport(regionRecord);
-                                setX(event.pageX);
-                                setY(event.pageY - 200);
-                            } else {
-                                hideDropdowns();
-                            }
+                            setX(event.pageX)
+                            setY(event.pageY)
+                            userCertainAnnualReportAccess.CanEditReport = userCertainAnnualReportAccess.IsSuperAdmin;
+                            setRegionAnnualReport(regionRecord);
+                            setUserCertainAnnualReportAccess(
+                                await (await AnnualReportApi.getUserCertainAnnualReportAccess(
+                                    UserApi.getActiveUserId(), ReportType.Region, regionRecord.id
+                                )).data
+                            )
+                            showDropdown(regionRecord.status);
                         },
                     };
                 }}
@@ -331,7 +327,7 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey, }: pro
                     regionRecord={regionAnnualReport}
                     pageX={x}
                     pageY={y}
-                    canManage={isAdmin!}
+                    userAnnualReportAccess={userCertainAnnualReportAccess}
                     onView={handleView}
                     onEdit={handleEdit}
                     onConfirm={handleConfirm}
@@ -342,7 +338,7 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey, }: pro
                     regionRecord={regionAnnualReport}
                     pageX={x}
                     pageY={y}
-                    canManage={isAdmin!}
+                    userAnnualReportAccess={userCertainAnnualReportAccess}
                     onView={handleView}
                     onCancel={handleCancel}
                 />
@@ -351,6 +347,7 @@ export const RegionAnnualReportTable = ({ columns, searchedData, sortKey, }: pro
                     regionRecord={regionAnnualReport}
                     pageX={x}
                     pageY={y}
+                    userAnnualReportAccess={userCertainAnnualReportAccess}
                     onView={handleView}
                 />
             </ClickAwayListener>

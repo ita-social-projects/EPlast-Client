@@ -1,3 +1,4 @@
+import IUserAnnualReportAccess from "../../../../../models/UserAccess/IUserAccess";
 import RegionAnnualReport from "../../../Interfaces/RegionAnnualReports";
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
         status: number;
         total: number;
     };
+    userAnnualReportAccess: IUserAnnualReportAccess;
     pageX: number;
     pageY: number;
     showDropdown: boolean;

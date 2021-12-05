@@ -377,6 +377,8 @@ const AnnualReportTable = () => {
                     columns={columnsRegion}
                     searchedData={searchedData}
                     sortKey={sortKey}
+                    userCertainAnnualReportAccess={userAnnualReportAccess!}
+                    setUserCertainAnnualReportAccess={setUserAnnualReportAccess}
                 />
             </div>
         ),
