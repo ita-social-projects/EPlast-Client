@@ -355,6 +355,8 @@ const AnnualReportTable = () => {
                     columns={columns}
                     searchedData={searchedData}
                     sortKey={sortKey}
+                    userCertainAnnualReportAccess={userAnnualReportAccess!}
+                    setUserCertainAnnualReportAccess={setUserAnnualReportAccess}
                 />
             </div>
         ),
