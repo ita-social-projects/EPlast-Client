@@ -178,8 +178,9 @@ const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any) => {
                     hoverable
                     title={item.adminType}
                     cover={<img alt="example" src={EventAdminLogo} />}
+                    onClick={() => history.push(`/userpage/main/${item.userId}`)}
                 >
-                    <div onClick={() => history.push(`/userpage/main/${item.userId}`)}>
+                    <div>
                         {item.fullName}
                     </div>
                 </Card>
