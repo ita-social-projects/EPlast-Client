@@ -34,7 +34,6 @@ const getUserProfileAccess = async (userid: string, focusUserId: string) => {
     .catch(error => {
         throw error;
     });
-        
     
     return response;
 }
