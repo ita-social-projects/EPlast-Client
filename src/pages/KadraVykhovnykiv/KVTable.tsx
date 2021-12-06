@@ -4,7 +4,7 @@ import columns from './columns';
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import DropDown from './KadraDropDown';
 import ClickAwayListener from 'react-click-away-listener';
-import moment from 'moment';
+import { KadraTableInfo } from './Interfaces/KadraTableInfo';
 import NotificationBoxApi from '../../api/NotificationBoxApi';
 
 
@@ -17,7 +17,7 @@ interface props {
 }
 
 export const KVTable = ({ current, searchData }: props) => {
-  const [recordObj, setRecordObj] = useState<number>(0);
+  const [recordObj, setRecordObj] = useState<KadraTableInfo>();
   const [showDropdown, setShowDropdown] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -25,7 +25,7 @@ export const KVTable = ({ current, searchData }: props) => {
   const [y, setY] = useState(0);
   const [isLoading, setLoading] = useState(false);
   const [count, setCount] = useState<number>(0);
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<KadraTableInfo[]>(Array<KadraTableInfo>());
 
   const createNotifications = async (userId : string) => {
     await NotificationBoxApi.createNotifications(
@@ -103,7 +103,7 @@ const handleSizeChange = (page: number, pageSize: number = 10) => {
           columns={columns}
           dataSource={data}
           scroll={{ x: 1300 }}
-          onRow={(record) => {
+          onRow={(record : KadraTableInfo) => {
             return {
               onClick: () => {
                 setShowDropdown(false);
