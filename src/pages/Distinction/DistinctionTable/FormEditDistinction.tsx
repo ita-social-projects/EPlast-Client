@@ -153,6 +153,10 @@ const FormEditDistinction = ({
     }
   };
 
+  const getOnlyNums = (text: string) => {
+    return text.replace(/\D/g, "");
+  };  
+
   return (
     <div>
       {!loading && (
@@ -171,24 +175,35 @@ const FormEditDistinction = ({
                       message: emptyInput(),
                     },
                     {
-                      validator: (_ : object, value: number) => 
-                          value > 99999
-                              ? Promise.reject(maxNumber(99999)) 
-                              : Promise.resolve()
+                      max: 5,
+                      message: maxNumber(99999),
                     },
                     {
-                      validator: (_ : object, value: number) => 
-                          value < 1
+                      validator: async (_ : object, value: number) =>
+                        value  
+                           ? !isNaN(value)
+                            ? value < 1
                               ? Promise.reject(minNumber(1)) 
-                              : Promise.resolve()
+                                : await distinctionApi
+                                .checkNumberExisting(value)
+                                .then(response => response.data === false)
+                                ? Promise.resolve()
+                                : Promise.reject('Цей номер уже зайнятий') 
+                                : Promise.reject()
+                                : Promise.reject()
                     }
-                  ]}
-              >
+                  ]}>
                 <Input
-                  type="number"
-                  min={1}
-                  className={formclasses.inputField}
-                  max={99999}
+                onChange={(e) => {
+                  form.setFieldsValue({
+                    number: getOnlyNums(e.target.value),
+                  });
+                }}
+                autoComplete = "off"
+                min={1}
+                className={formclasses.inputField}
+                max={99999}
+                maxLength={7}
                 />
               </Form.Item>
             </Col>

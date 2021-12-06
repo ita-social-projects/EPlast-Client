@@ -149,6 +149,10 @@ type FormAddKadraProps = {
     fetchData();
   }, []);
 
+  const getOnlyNums = (text: string) => {
+    return text.replace(/\D/g, "");
+  };
+
   return (
     <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
       <Row justify="start" gutter={[12, 0]}>
@@ -259,7 +263,9 @@ type FormAddKadraProps = {
                   message: maxNumber(99999),
                 },
                 {
-                  validator: async (_ : object, value: number) =>
+                  validator: async (_ : object, value: any) =>
+                  value ?
+                    !isNaN(value) ?
                       value < 1
                           ? Promise.reject(minNumber(1)) 
                           : await KadraVykhovnykivApi
@@ -267,14 +273,21 @@ type FormAddKadraProps = {
                               .then(response => response.data === false)
                               ? Promise.resolve()
                               : Promise.reject('Цей номер уже зайнятий')
+                              : Promise.reject()
+                              : Promise.reject()
                 }
-              ]}
-          >
+              ]}>
             <Input
-              type="number"
+              onChange={(e) => {
+                form.setFieldsValue({
+                  numberInRegister: getOnlyNums(e.target.value),
+                });
+              }}
+              autoComplete = "off"
               min={1}
-              max={999999}
+              max={99999}
               className={classes.inputField}
+              maxLength = {7}
             />
           </Form.Item>
         </Col>

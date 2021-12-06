@@ -100,6 +100,10 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
       });
   }
 
+  const getOnlyNums = (text: string) => {
+    return text.replace(/\D/g, "");
+  };
+
   const handleSubmit = async (values: any) => {
     const newPrecaution: UserPrecaution = {
       id: 0,
@@ -142,21 +146,30 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
                 },
                 {
                   validator: async (_ : object, value: number) =>
-                      value < 1
-                          ? Promise.reject(minNumber(1)) 
-                          : await precautionApi
-                              .checkNumberExisting(value)
-                              .then(response => response.data === false)
-                              ? Promise.resolve()
-                              : Promise.reject('Цей номер уже зайнятий')
+                  value  
+                  ? !isNaN(value)
+                    ? value < 1
+                      ? Promise.reject(minNumber(1)) 
+                        : await precautionApi
+                          .checkNumberExisting(value)
+                          .then(response => response.data === false)
+                          ? Promise.resolve()
+                          : Promise.reject('Цей номер уже зайнятий')
+                          : Promise.reject()
+                          : Promise.reject()
                 }
-              ]}
-          >
+              ]}>
             <Input
-              type="number"
               min={1}
               className={formclasses.inputField}
               max={99999}
+              maxLength = {7}
+              autoComplete = "off"
+              onChange={(e) => {
+                form.setFieldsValue({
+                  number: getOnlyNums(e.target.value),
+                });
+              }}
             />
           </Form.Item>
         </Col>
