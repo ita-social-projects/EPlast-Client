@@ -92,10 +92,6 @@ const FormEditDistinction = ({
         setUserData(response);
         setLoadingUserStatus(false);
       });
-      /*await adminApi.getUsersForTable().then((response) => {
-        setUserData(response.data);
-      });
-      setLoadingUserStatus(false);*/
     };
     fetchData();
     setLoading(false);
