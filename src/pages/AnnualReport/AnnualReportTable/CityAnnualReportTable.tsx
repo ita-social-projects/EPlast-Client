@@ -15,7 +15,8 @@ import {
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
     successfulDeleteAction,
-    successfulEditAction,
+    successfulConfirmedAction,
+    successfulCancelAction,
     tryAgain,
 } from "../../../components/Notifications/Messages";
 import UserApi from "../../../api/UserApi";
@@ -151,7 +152,7 @@ export const CityAnnualReportTable = ({
             );
             notificationLogic(
                 "success",
-                successfulEditAction("Річний звіт", response.data.name)
+                successfulConfirmedAction("Річний звіт", response.data.name)
             );
         } catch (error) {
             notificationLogic("error", tryAgain);
@@ -200,7 +201,7 @@ export const CityAnnualReportTable = ({
             );
             notificationLogic(
                 "success",
-                successfulEditAction("Річний звіт", response.data.name)
+                successfulCancelAction("Річний звіт", response.data.name)
             );
         } catch (error) {
             notificationLogic("error", tryAgain);

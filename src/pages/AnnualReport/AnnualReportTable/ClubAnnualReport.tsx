@@ -12,8 +12,8 @@ import ConfirmedDropdown from "./DropdownsForClubAnnualReports/ConfirmedDropdown
 import SavedDropdown from "./DropdownsForClubAnnualReports/SavedDropdown/SavedDropdown";
 import {
     successfulConfirmedAction,
+    successfulCancelAction,
     successfulDeleteAction,
-    successfulUpdateAction,
     tryAgain,
 } from "../../../components/Notifications/Messages";
 import notificationLogic from "../../../components/Notifications/Notification";
@@ -150,7 +150,7 @@ export const ClubAnnualReportTable = ({
             );
             notificationLogic(
                 "success",
-                successfulUpdateAction("Річний звіт", response.data.name)
+                successfulCancelAction("Річний звіт", response.data.name)
             );
         } catch (error) {
             if (error.response?.status === 400) {
