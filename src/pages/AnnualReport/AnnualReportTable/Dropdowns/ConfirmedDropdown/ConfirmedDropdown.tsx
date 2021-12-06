@@ -29,7 +29,7 @@ const ConfirmedDropdown = (props: Props) => {
                 onViewPDF(record.id);
                 break;
             case "3":
-                if (userAnnualReportAccess.CanChangeReportStatus) {
+                if (userAnnualReportAccess?.CanChangeReportStatus) {
                     onCancel(record.id);
                 }
                 break;
@@ -60,7 +60,7 @@ const ConfirmedDropdown = (props: Props) => {
                         <FilePdfOutlined />
                         Переглянути у форматі PDF
                     </Menu.Item>
-                    {userAnnualReportAccess.CanChangeReportStatus ? (
+                    {userAnnualReportAccess?.CanChangeReportStatus ? (
                         <Menu.Item key="3">
                             <FileExcelOutlined />
                             Скасувати

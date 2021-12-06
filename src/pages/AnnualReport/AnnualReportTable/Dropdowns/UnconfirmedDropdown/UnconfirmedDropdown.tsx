@@ -32,17 +32,17 @@ const UnconfirmedDropdown = (props: Props) => {
                 onViewPDF(record.id);
                 break;
             case "3":
-                if (userAnnualReportAccess.CanEditReport) {
+                if (userAnnualReportAccess?.CanEditReport) {
                     onEdit(record.id);
                 }
                 break;
             case "4":
-                if (userAnnualReportAccess.CanChangeReportStatus) {
+                if (userAnnualReportAccess?.CanChangeReportStatus) {
                     onConfirm(record.id);
                 }
                 break;
             case "5":
-                if (userAnnualReportAccess.CanDeleteReport) {
+                if (userAnnualReportAccess?.CanDeleteReport) {
                     onRemove(record.id);
                 }
                 break;
@@ -73,19 +73,19 @@ const UnconfirmedDropdown = (props: Props) => {
                         <FilePdfOutlined />
                         Переглянути у форматі PDF
                     </Menu.Item>
-                    {userAnnualReportAccess.CanEditReport ? (
+                    {userAnnualReportAccess?.CanEditReport ? (
                         <Menu.Item key="3">
                             <FileSyncOutlined />
                             Редагувати
                         </Menu.Item>
                     ) : null}
-                    {userAnnualReportAccess.CanChangeReportStatus ? (
+                    {userAnnualReportAccess?.CanChangeReportStatus ? (
                         <Menu.Item key="4">
                             <FileDoneOutlined />
                             Підтвердити
                         </Menu.Item>
                     ) : null}
-                    {userAnnualReportAccess.CanDeleteReport ? (
+                    {userAnnualReportAccess?.CanDeleteReport ? (
                         <Menu.Item key="5">
                             <DeleteOutlined />
                             Видалити

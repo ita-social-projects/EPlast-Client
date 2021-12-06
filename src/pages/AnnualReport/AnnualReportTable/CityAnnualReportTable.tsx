@@ -278,7 +278,7 @@ export const CityAnnualReportTable = ({
                 onRow={(record) => {
                     return {
                         onDoubleClick: (event) => {
-                            if (record.id && userCertainAnnualReportAccess.CanSubmitCityReport)
+                            if (record.id && userCertainAnnualReportAccess?.CanSubmitCityReport)
                                 history.push(`/annualreport/cityAnnualReport/${record.id}`);
                         },
                         onClick: () => {
@@ -288,7 +288,7 @@ export const CityAnnualReportTable = ({
                             event.preventDefault();
                             setX(event.pageX)
                             setY(event.pageY)
-                            userCertainAnnualReportAccess.CanEditReport = userCertainAnnualReportAccess.IsSuperAdmin;
+                            userCertainAnnualReportAccess.CanEditReport = userCertainAnnualReportAccess?.IsSuperAdmin;
                             setAnnualReport(record);
                             setUserCertainAnnualReportAccess(
                                 await (await AnnualReportApi.getUserCertainAnnualReportAccess(

@@ -223,7 +223,7 @@ export const RegionAnnualReportTable = ({
                 <p>
                     {count ? "Знайдено " + count + "/" + total + " результатів" : ""}
                 </p>
-                {userCertainAnnualReportAccess.CanSubmitRegionReport && !userCertainAnnualReportAccess.IsSuperAdmin ? (
+                {userCertainAnnualReportAccess?.CanSubmitRegionReport && !userCertainAnnualReportAccess?.IsSuperAdmin ? (
                     <div className={"AuthReport"}>
                         <Tooltip
                             placement="topLeft"
@@ -256,7 +256,7 @@ export const RegionAnnualReportTable = ({
                 columns={columns}
                 scroll={{ x: 1300 }}
                 dataSource={regionAnnualReports.map((item: any) => {
-                    if (item.canManage && !userCertainAnnualReportAccess.IsSuperAdmin)
+                    if (item.canManage && !userCertainAnnualReportAccess?.IsSuperAdmin)
                         return {
                             ...item,
                             idView: (
@@ -278,7 +278,7 @@ export const RegionAnnualReportTable = ({
                 onRow={(regionRecord) => {
                     return {
                         onDoubleClick: (event) => {
-                            if (regionRecord.id && userCertainAnnualReportAccess.CanViewEveryAnnualReport)
+                            if (regionRecord.id && userCertainAnnualReportAccess?.CanViewEveryAnnualReport)
                                 history.push(`/annualreport/region/${regionRecord.id}
                                 /${new Date(regionRecord.date).getFullYear()}`);
                         },
@@ -289,7 +289,7 @@ export const RegionAnnualReportTable = ({
                             event.preventDefault();
                             setX(event.pageX)
                             setY(event.pageY)
-                            userCertainAnnualReportAccess.CanEditReport = userCertainAnnualReportAccess.IsSuperAdmin;
+                            userCertainAnnualReportAccess.CanEditReport = userCertainAnnualReportAccess?.IsSuperAdmin;
                             setRegionAnnualReport(regionRecord);
                             setUserCertainAnnualReportAccess(
                                 await (await AnnualReportApi.getUserCertainAnnualReportAccess(

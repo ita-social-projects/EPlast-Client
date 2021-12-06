@@ -256,7 +256,7 @@ export const ClubAnnualReportTable = ({
                 columns={columns}
                 scroll={{ x: 1300 }}
                 dataSource={clubAnnualReports.map((item: any) => {
-                    if (item.canManage && !userCertainAnnualReportAccess.IsSuperAdmin)
+                    if (item.canManage && !userCertainAnnualReportAccess?.IsSuperAdmin)
                         return {
                             ...item,
                             idView: (
@@ -278,7 +278,7 @@ export const ClubAnnualReportTable = ({
                 onRow={(record) => {
                     return {
                         onDoubleClick: (event) => {
-                            if (record.id && (userCertainAnnualReportAccess.CanViewEveryAnnualReport || userCertainAnnualReportAccess.CanSubmitClubReport))
+                            if (record.id && (userCertainAnnualReportAccess?.CanViewEveryAnnualReport || userCertainAnnualReportAccess?.CanSubmitClubReport))
                                 history.push(`/annualreport/clubAnnualReport/${record.id}`);
                         },
                         onClick: () => {
@@ -288,7 +288,7 @@ export const ClubAnnualReportTable = ({
                             event.preventDefault();
                             setX(event.pageX);
                             setY(event.pageY - 200);
-                            userCertainAnnualReportAccess.CanEditReport = userCertainAnnualReportAccess.IsSuperAdmin;
+                            userCertainAnnualReportAccess.CanEditReport = userCertainAnnualReportAccess?.IsSuperAdmin;
                             setClubAnnualReport(record);
                             setUserCertainAnnualReportAccess(
                                 await (await AnnualReportApi.getUserCertainAnnualReportAccess(
