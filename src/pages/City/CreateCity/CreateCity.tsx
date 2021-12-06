@@ -65,6 +65,7 @@ const CreateCity = () => {
   const [applicant, setApplicant] = useState<User>({} as User);
   const [activeUser, setActiveUser] = useState<User>({} as User);
   const [isFollowerPath, setIsFollowerPath] = useState<boolean>(location.pathname.includes(followerPath));
+  const [form] = Form.useForm();
 
   useEffect(() => {
     if (isFollowerPath) {
@@ -271,6 +272,10 @@ const CreateCity = () => {
     };
 
     CreateCity(newCity, regionFollower.id);
+  };
+
+  const getOnlyNums = (text: string) => {
+    return text.replace(/\D/g, "");
   };
 
   const CreateCity = async (newCity: CityProfile, regionFollowerId: number) => {
@@ -562,13 +567,17 @@ const CreateCity = () => {
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
               <Form.Item
-                name="postIndex"
                 label="Поштовий індекс"
                 labelCol={{ span: 24 }}
                 initialValue={isFollowerPath ? regionFollower.postIndex : city.postIndex}
+                name="postIndex"
                 rules={descriptionValidation.postIndex}
               >
-                <Input value={isFollowerPath ? regionFollower.postIndex : city.postIndex} maxLength={5} />
+                <Input
+                  type="number"
+                  value={isFollowerPath ? regionFollower.postIndex : city.postIndex} 
+                  autoComplete = "off"
+                />
               </Form.Item>
             </Col>
           </Row>
