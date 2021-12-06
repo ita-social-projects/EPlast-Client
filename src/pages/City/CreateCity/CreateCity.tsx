@@ -245,7 +245,7 @@ const CreateCity = () => {
         notificationLogic("success", successfulCreateAction("Заяву"));
         await createNotification(newRegionFollower.userId,
           `Вітаємо, вашу заяву на створення станиці '${newRegionFollower.cityName}' успішно створено! Заява очікує розгляду адміністрацією округи.`);
-        history.push(`/cities`);
+        history.push(`/cities/page/1`);
       })
       .catch(() => {
         notificationLogic("error", failCreateAction("заяву"));

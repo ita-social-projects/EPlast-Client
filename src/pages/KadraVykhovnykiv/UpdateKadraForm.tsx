@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import classes from "./Form.module.css";
 import {
   Form,
@@ -10,8 +10,8 @@ import {
 } from "antd";
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import notificationLogic from "../../components/Notifications/Notification";
-import moment from "moment";
 import KadraVykhovnykivApi from "../../api/KadraVykhovnykivApi";
+import moment, { Moment } from "moment";
 import{
   emptyInput,
   maxNumber,
@@ -28,6 +28,7 @@ type FormUpdateKadraProps = {
 
 const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
   const { onAdd, record, onEdit, showModal } = props;
+  const [date, setDate] = useState<Moment>();
   const [form] = Form.useForm();
   const dateFormat = "DD.MM.YYYY";
 
@@ -35,7 +36,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
     const newKadra: any = {
       id: record.id,
 
-      dateOfGranting: values.dateOfGranting,
+      dateOfGranting: moment.utc(date).local().format(dateFormat),
 
       numberInRegister: values.numberInRegister,
 
@@ -70,8 +71,17 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
     showModal(false);
   };
 
+
   const getOnlyNums = (text: string) => {
     return text.replace(/\D/g, "");
+    };
+
+  const handleOnChangeDateOfGranting = (event: any, value: any) => {
+    if (value === "") {
+      setDate(undefined);
+    } else {
+      setDate(event._i);
+    }
   };
 
   return (
@@ -95,6 +105,8 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 <DatePicker 
                   className={classes.selectField} 
                   format={dateFormat}
+                  value={date}
+                  onChange={handleOnChangeDateOfGranting}
                 />
               </Form.Item>
             </Col>

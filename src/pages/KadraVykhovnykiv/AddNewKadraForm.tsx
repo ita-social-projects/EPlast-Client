@@ -19,6 +19,7 @@ import{
   minNumber,
 } from "../../components/Notifications/Messages"
 import KadraVykhovnykivApi from "../../api/KadraVykhovnykivApi";
+import moment, { Moment } from "moment";
 
 type FormAddKadraProps = {
     showModal: (visibleModal: boolean) => void;  
@@ -92,7 +93,7 @@ type FormAddKadraProps = {
 
             KadraVykhovnykivTypeId:JSON.parse(values.KadraVykhovnykivType).id,
 
-            dateOfGranting: values.dateOfGranting,
+            dateOfGranting: moment.utc(values.dateOfGranting.i).local().toDate(),
 
             numberInRegister: values.numberInRegister,
         }
