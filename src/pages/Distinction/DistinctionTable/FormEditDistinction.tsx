@@ -13,6 +13,7 @@ import distinctionApi from "../../../api/distinctionApi";
 import UserDistinction from "../Interfaces/UserDistinction";
 import formclasses from "./Form.module.css";
 import adminApi from "../../../api/adminApi";
+import precautionApi from "../../../api/precautionApi";
 import Distinction from "../Interfaces/Distinction";
 import{
   emptyInput,
@@ -87,10 +88,14 @@ const FormEditDistinction = ({
         setDistData(response.data);
       });
       setLoadingUserStatus(true);
-      await adminApi.getUsersForTable().then((response) => {
+      await precautionApi.getUsersWithoutPrecautions().then((response) => {
+        setUserData(response);
+        setLoadingUserStatus(false);
+      });
+      /*await adminApi.getUsersForTable().then((response) => {
         setUserData(response.data);
       });
-      setLoadingUserStatus(false);
+      setLoadingUserStatus(false);*/
     };
     fetchData();
     setLoading(false);
