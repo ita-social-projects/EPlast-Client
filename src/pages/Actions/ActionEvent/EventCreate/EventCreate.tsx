@@ -70,6 +70,9 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
 
   const handleFinish = async (values: any) => {
     setLoading(true);
+    console.log(moment.utc(values.EventDateStart).local());
+    console.log(values.EventDateStart);
+    debugger;
     const newEvent = {
       event: {
         eventName: values.EventName,

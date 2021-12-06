@@ -112,6 +112,7 @@ const EventInfo = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await eventsApi.getEventInfo(id);
+      debugger;
       setEvent(response.data);
       getEventStatusId(response.data.event.eventStatus);
       setLoading(true);
