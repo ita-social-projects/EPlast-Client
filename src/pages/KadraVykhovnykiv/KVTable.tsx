@@ -19,10 +19,12 @@ interface props {
 export const KVTable = ({ current, searchData }: props) => {
   const [recordObj, setRecordObj] = useState<number>(0);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [isLoading, setLoading] = useState(false);
-
+  const [count, setCount] = useState<number>(0);
   const [data, setData] = useState<any[]>([]);
 
   const createNotifications = async (userId : string) => {
@@ -70,51 +72,36 @@ export const KVTable = ({ current, searchData }: props) => {
 
   const fetchData = async () => {
     setLoading(true);
-    await kadrasApi.getAllKVswithGivenTypes(current).then(response => {
-
-      setData(response.data); 
+    
+    await kadrasApi.getEducatorsStaffForTable(current, searchData, page, pageSize).then(response => {
+      setCount(response[0]?.subtotal);
+      setData(response)
     })
     setLoading(false);
   }
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, [current, searchData, page, pageSize])
 
+ const handlePageChange = (page: number) => {
+  setPage(page);
+};
 
-  let filteredData = searchData
-  ? data.filter((item) => {
-      return Object.values([
-        item.numberInRegister,
-        moment.utc(item.dateOfGranting.toLocaleString()).local().format("DD.MM.YYYY"),
-      ]).find((element) => {
-        return String(element).toLowerCase().includes(searchData);
-      });
-    })
-  : data;
-
-
-  filteredData = filteredData.concat(
-    data.filter(
-      (item) =>
-        ( item.user.firstName?.toLowerCase()?.includes(searchData.toLowerCase()) ||
-          item.user.lastName?.toLowerCase()?.includes(searchData.toLowerCase())||
-          (item.user.firstName + ' ' + item.user.lastName)?.toLowerCase()?.includes(searchData.toLowerCase())||
-          (item.user.lastName + ' ' + item.user.firstName)?.toLowerCase()?.includes(searchData.toLowerCase())) &&
-        !filteredData.includes(item)
-    )
-  );
-
+const handleSizeChange = (page: number, pageSize: number = 10) => {
+  setPage(page);
+  setPageSize(pageSize);
+};
 
 
   return (
-    <div style={{textAlign:'center'}}>
+    <div className={classes.textCenter}>
       {!isLoading ?
       <Layout.Content onClick={() => { setShowDropdown(false); }}>
         <Table
           className={classes.table}
           columns={columns}
-          dataSource={filteredData}
+          dataSource={data}
           scroll={{ x: 1300 }}
           onRow={(record) => {
             return {
@@ -130,11 +117,25 @@ export const KVTable = ({ current, searchData }: props) => {
               },
             };
           }}
+          onChange={(pagination) => {
+            if (pagination) {
+              window.scrollTo({
+                left: 0,
+                top: 0,
+                behavior: 'smooth',
+              });
+            }
+          }}
           pagination={
             {
-              showLessItems: true,
-              responsive:true,
-              showSizeChanger: true,
+              current: page,
+                pageSize: pageSize,
+                total: count,
+                showLessItems: true,
+                responsive: true,
+                showSizeChanger: true,
+                onChange: (page) => handlePageChange(page),
+                onShowSizeChange: (page, size) => handleSizeChange(page, size),
             }
           }
           bordered
