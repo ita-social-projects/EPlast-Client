@@ -18,6 +18,7 @@ const AddDistinctionModal = ({
   }
   return (
     <Drawer
+      destroyOnClose={true}
       title="Додати відзначення"
       placement="right"
       width="auto"

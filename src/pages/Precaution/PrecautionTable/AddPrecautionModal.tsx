@@ -18,6 +18,7 @@ const AddPrecautionModal = ({
   }
   return (
     <Drawer
+      destroyOnClose={true}
       title="Додати пересторогу"
       placement="right"
       width="auto"

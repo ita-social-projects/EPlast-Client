@@ -122,6 +122,7 @@ export const KadrasTable = () => {
                 {contentListNoTitle[noTitleKey]}
             </Card>
             <Drawer
+                destroyOnClose={true}
                 width="auto"
                 title="Надати кадру виховників"
                 visible={visible}
