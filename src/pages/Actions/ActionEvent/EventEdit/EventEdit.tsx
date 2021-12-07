@@ -121,7 +121,6 @@ export default function ({ id, statusId, onEdit, setShowEventEditDrawer }: Props
         }
         await eventUserApi.put(newEvent).then(response => {
             notificationLogic('success', successfulEditAction('Подію', values.EventName));
-
             NotificationBoxApi.createNotifications(
                 [values.commandantId, values.alternateId, values.bunchuzhnyiId, values.pysarId],
                 "Подія, в якій ви є адміністратором, змінена: ",

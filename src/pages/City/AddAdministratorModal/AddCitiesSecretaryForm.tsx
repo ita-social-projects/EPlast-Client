@@ -83,7 +83,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   }, [props]);
 
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form} className="formAddSecretaryModal">
+    <Form name="basic" onFinish={(values) => {handleSubmit(values); setLoading(true)}} form={form} className="formAddSecretaryModal">
       <Form.Item
         className={classes.formField}
         style={{ display: props.admin === undefined ? "flex" : "none" }}

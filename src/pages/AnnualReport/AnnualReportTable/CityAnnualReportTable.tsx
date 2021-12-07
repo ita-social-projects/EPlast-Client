@@ -19,19 +19,24 @@ import {
     successfulCancelAction,
     tryAgain,
 } from "../../../components/Notifications/Messages";
+import IUserAnnualReportAccess from "../../../models/UserAccess/IUserAccess";
 import UserApi from "../../../api/UserApi";
-import { Roles } from "../../../models/Roles/Roles";
+import { ReportType } from "../../../models/AnnualReport/ReportType";
 
 interface props {
     columns: any;
     searchedData: any;
     sortKey: any;
+    userCertainAnnualReportAccess: IUserAnnualReportAccess
+    setUserCertainAnnualReportAccess: any
 }
 
 export const CityAnnualReportTable = ({
     columns,
     searchedData,
     sortKey,
+    userCertainAnnualReportAccess,
+    setUserCertainAnnualReportAccess
 }: props) => {
     const history = useHistory();
     const [annualReport, setAnnualReport] = useState(Object);
@@ -42,9 +47,6 @@ export const CityAnnualReportTable = ({
     const [count, setCount] = useState<number>(0);
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
-    const [isAdmin, setIsAdmin] = useState<boolean>();
-    const [isCityAdmin, setIsCityAdmin] = useState<boolean>();
-    const [canView, setCanView] = useState<boolean>();
     const [currentSearchedData, setCurrentSearchedData] = useState<string>();
     const [showUnconfirmedDropdown, setShowUnconfirmedDropdown] = useState<boolean>(false);
     const [showConfirmedDropdown, setShowConfirmedDropdown] = useState<boolean>(false);
@@ -57,7 +59,6 @@ export const CityAnnualReportTable = ({
             setCurrentSearchedData(searchedData);
             setPage(1);
         }
-        checkAccessToManage();
         fetchAnnualReports();
     }, [searchedData, page, pageSize, sortKey, authReport]);
 
@@ -94,18 +95,6 @@ export const CityAnnualReportTable = ({
         setShowSavedDropdown(false);
     };
 
-    const checkAccessToManage = () => {
-        let roles = UserApi.getActiveUserRoles();
-        setIsAdmin(roles.includes(Roles.Admin));
-        setIsCityAdmin(roles.includes(Roles.CityHead));
-        setCanView(
-            roles.includes(Roles.CityHead) ||
-            roles.includes(Roles.CityHeadDeputy) ||
-            roles.includes(Roles.OkrugaHead) ||
-            roles.includes(Roles.OkrugaHeadDeputy) ||
-            roles.includes(Roles.Admin)
-        );
-    };
 
     const showDropdown = (annualReportStatus: number) => {
         switch (annualReportStatus) {
@@ -235,7 +224,7 @@ export const CityAnnualReportTable = ({
                 <p>
                     {count ? "Знайдено " + count + "/" + total + " результатів" : ""}
                 </p>
-                {isCityAdmin && !isAdmin ? (
+                {userCertainAnnualReportAccess?.CanSubmitCityReport && !userCertainAnnualReportAccess?.IsSuperAdmin ? (
                     <div className={"AuthReport"}>
                         <Tooltip
                             placement="topLeft"
@@ -268,7 +257,7 @@ export const CityAnnualReportTable = ({
                 columns={columns}
                 scroll={{ x: 1300 }}
                 dataSource={annualReports.map((item: any) => {
-                    if (item.canManage && !isAdmin)
+                    if (item.canManage && !userCertainAnnualReportAccess?.IsSuperAdmin)
                         return {
                             ...item,
                             idView: (
@@ -290,22 +279,24 @@ export const CityAnnualReportTable = ({
                 onRow={(record) => {
                     return {
                         onDoubleClick: (event) => {
-                            if (record.id && canView)
+                            if (record.id && userCertainAnnualReportAccess?.CanSubmitCityReport)
                                 history.push(`/annualreport/cityAnnualReport/${record.id}`);
                         },
                         onClick: () => {
                             hideDropdowns();
                         },
-                        onContextMenu: (event) => {
+                        onContextMenu: async (event) => {
                             event.preventDefault();
-                            if (canView) {
-                                showDropdown(record.status);
-                                setAnnualReport(record);
-                                setX(event.pageX);
-                                setY(event.pageY - 200);
-                            } else {
-                                hideDropdowns();
-                            }
+                            setX(event.pageX)
+                            setY(event.pageY)
+                            userCertainAnnualReportAccess.CanEditReport = userCertainAnnualReportAccess?.IsSuperAdmin;
+                            setAnnualReport(record);
+                            setUserCertainAnnualReportAccess(
+                                await (await AnnualReportApi.getUserCertainAnnualReportAccess(
+                                    UserApi.getActiveUserId(), ReportType.City, record.id
+                                )).data
+                            )
+                            showDropdown(record.status);
                         },
                     };
                 }}
@@ -336,7 +327,7 @@ export const CityAnnualReportTable = ({
                     record={annualReport}
                     pageX={x}
                     pageY={y}
-                    canManage={isAdmin!}
+                    userAnnualReportAccess={userCertainAnnualReportAccess}
                     onView={handleView}
                     onViewPDF={handleViewPDF}
                     onEdit={handleEdit}
@@ -348,7 +339,7 @@ export const CityAnnualReportTable = ({
                     record={annualReport}
                     pageX={x}
                     pageY={y}
-                    canManage={isAdmin!}
+                    userAnnualReportAccess={userCertainAnnualReportAccess}
                     onView={handleView}
                     onViewPDF={handleViewPDF}
                     onCancel={handleCancel}
@@ -358,6 +349,7 @@ export const CityAnnualReportTable = ({
                     record={annualReport}
                     pageX={x}
                     pageY={y}
+                    userAnnualReportAccess={userCertainAnnualReportAccess}
                     onView={handleView}
                     onViewPDF={handleViewPDF}
                 />
