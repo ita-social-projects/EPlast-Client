@@ -12,7 +12,7 @@ import kadrasApi from "../../api/KadraVykhovnykivApi";
 import notificationLogic from "../../components/Notifications/Notification";
 import moment, { Moment } from "moment";
 import KadraVykhovnykivApi from "../../api/KadraVykhovnykivApi";
-
+import {getOnlyNums } from "../../models/GllobalValidations/DescriptionValidation";
 import{
   emptyInput,
   maxNumber,
@@ -79,9 +79,6 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
       setDate(event._i);
     }
   };
-  const getOnlyNums = (text: string) => {
-    return text.replace(/\D/g, "");
-  };
 
   return (
     <div>
@@ -128,18 +125,14 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                       message: maxNumber(99999),
                     },
                     {
-                      validator: async (_ : object, value: any) =>
-                      value ?
-                        !isNaN(value) ?
-                          value < 1
-                              ? Promise.reject(minNumber(1)) 
-                              : await KadraVykhovnykivApi
-                                  .doesRegisterNumberExist(value)
-                                  .then(response => response.data === false)
-                                  ? Promise.resolve()
-                                  : Promise.reject('Цей номер уже зайнятий')
-                                  : Promise.reject()
-                                  : Promise.reject()
+                      validator: async (_ : object, value: number) =>
+                        value && !isNaN(value) 
+                          ? await KadraVykhovnykivApi
+                            .doesRegisterNumberExist(value)
+                            .then(response => response.data === false)
+                              ? Promise.resolve()
+                                : Promise.reject('Цей номер уже зайнятий')
+                                : Promise.reject()
                     }
                   ]}
               >

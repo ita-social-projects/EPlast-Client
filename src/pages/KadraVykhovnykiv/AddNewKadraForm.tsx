@@ -13,6 +13,7 @@ import kadrasApi from "../../api/KadraVykhovnykivApi";
 import adminApi from "../../api/adminApi";
 import notificationLogic from '../../components/Notifications/Notification';
 import NotificationBoxApi from '../../api/NotificationBoxApi';
+import {getOnlyNums } from "../../models/GllobalValidations/DescriptionValidation";
 import{
   emptyInput,
   maxNumber,
@@ -149,10 +150,6 @@ type FormAddKadraProps = {
     fetchData();
   }, []);
 
-  const getOnlyNums = (text: string) => {
-    return text.replace(/\D/g, "");
-  };
-
   return (
     <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
       <Row justify="start" gutter={[12, 0]}>
@@ -264,17 +261,13 @@ type FormAddKadraProps = {
                 },
                 {
                   validator: async (_ : object, value: number) =>
-                  value ?
-                    !isNaN(value) ?
-                      value < 1
-                          ? Promise.reject(minNumber(1)) 
-                          : await KadraVykhovnykivApi
-                              .doesRegisterNumberExist(value)
-                              .then(response => response.data === false)
+                  value && !isNaN(value) 
+                          ? await KadraVykhovnykivApi
+                            .doesRegisterNumberExist(value)
+                            .then(response => response.data === false)
                               ? Promise.resolve()
-                              : Promise.reject('Цей номер уже зайнятий')
-                              : Promise.reject()
-                              : Promise.reject()
+                                : Promise.reject('Цей номер уже зайнятий')
+                                : Promise.reject()
                 }
               ]}>
             <Input
