@@ -13,7 +13,6 @@ import UserDistinction from "../Interfaces/UserDistinction";
 import distinctionApi from "../../../api/distinctionApi";
 import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import getOnlyNums from "../../../components/OnlyNumbers";
 import {
   emptyInput,
   maxNumber,
@@ -21,7 +20,7 @@ import {
   incorrectData
 } from "../../../components/Notifications/Messages"
 import precautionApi from "../../../api/precautionApi";
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
 
 type FormAddDistinctionProps = {
   setVisibleModal: (visibleModal: boolean) => void;

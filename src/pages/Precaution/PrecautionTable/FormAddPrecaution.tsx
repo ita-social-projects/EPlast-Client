@@ -13,7 +13,6 @@ import UserPrecaution from "../Interfaces/UserPrecaution";
 import precautionApi from "../../../api/precautionApi";
 import adminApi from "../../../api/adminApi";
 import formclasses from "./Form.module.css";
-import getOnlyNums from "../../../components/OnlyNumbers";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
@@ -21,7 +20,7 @@ import {
   minNumber
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
 
 type FormAddPrecautionProps = {
   setVisibleModal: (visibleModal: boolean) => void;

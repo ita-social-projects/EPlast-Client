@@ -14,7 +14,6 @@ import UserPrecaution from "../Interfaces/UserPrecaution";
 import formclasses from "./Form.module.css";
 import adminApi from "../../../api/adminApi";
 import Precaution from "../Interfaces/Precaution";
-import getOnlyNums from "../../../components/OnlyNumbers";
 import {
   emptyInput,
   failEditAction,
@@ -23,7 +22,7 @@ import {
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
 moment.locale("uk-ua");
 
 interface Props {
@@ -72,13 +71,6 @@ const FormEditPrecaution = ({
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
   const [distValue, setDistValue] = useState<any>();
   const [userValue, setUserValue] = useState<any>();
-  const openNotification = (message: string) => {
-    notification.error({
-      message: failEditAction(`пересторогу`),
-      description: `${message}`,
-      placement: "topLeft",
-    });
-  };
   const dateFormat = "DD.MM.YYYY";
 
   useEffect(() => {

@@ -12,7 +12,6 @@ import {
 import distinctionApi from "../../../api/distinctionApi";
 import UserDistinction from "../Interfaces/UserDistinction";
 import formclasses from "./Form.module.css";
-import getOnlyNums from "../../../components/OnlyNumbers";
 import precautionApi from "../../../api/precautionApi";
 import Distinction from "../Interfaces/Distinction";
 import{
@@ -23,7 +22,7 @@ import{
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
 moment.locale("uk-ua");
 
 interface Props {
@@ -69,13 +68,6 @@ const FormEditDistinction = ({
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
   const [distValue, setDistValue] = useState<any>();
   const [userValue, setUserValue] = useState<any>();
-  const openNotification = (message: string) => {
-    notification.error({
-      message: failEditAction(`відзначення`),
-      description: `${message}`,
-      placement: "topLeft",
-    });
-  };
   const dateFormat = "DD.MM.YYYY";
 
   useEffect(() => {

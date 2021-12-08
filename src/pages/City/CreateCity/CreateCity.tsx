@@ -45,13 +45,14 @@ import {
   failCreateAction,
   failUpdateAction,
 } from "../../../components/Notifications/Messages"
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
 import RegionFollower from "../../../models/Region/RegionFollower";
 import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 const CreateCity = () => {
+  const [form] = Form.useForm();
   const { id } = useParams();
   const history = useHistory();
   const location = useLocation();
@@ -65,7 +66,6 @@ const CreateCity = () => {
   const [applicant, setApplicant] = useState<User>({} as User);
   const [activeUser, setActiveUser] = useState<User>({} as User);
   const [isFollowerPath, setIsFollowerPath] = useState<boolean>(location.pathname.includes(followerPath));
-  const [form] = Form.useForm();
 
   useEffect(() => {
     if (isFollowerPath) {
@@ -274,10 +274,6 @@ const CreateCity = () => {
     CreateCity(newCity, regionFollower.id);
   };
 
-  const getOnlyNums = (text: string) => {
-    return text.replace(/\D/g, "");
-  };
-
   const CreateCity = async (newCity: CityProfile, regionFollowerId: number) => {
     const responsePromise = createCity(JSON.stringify(newCity));
     const response = await responsePromise;
@@ -381,7 +377,7 @@ const CreateCity = () => {
         ) : (
           <Title level={2}>Створення станиці</Title>
         )}
-        <Form onFinish={(values) => {handleSubmit(values); setLoadingButton(true)}}>
+        <Form form={form} onFinish={(values) => {handleSubmit(values); setLoadingButton(true)}}>
           <Form.Item name="logo" initialValue={isFollowerPath ? regionFollower.logo : city.logo}>
             <Upload
               name="avatar"
@@ -574,9 +570,14 @@ const CreateCity = () => {
                 rules={descriptionValidation.postIndex}
               >
                 <Input
-                  type="number"
-                  value={isFollowerPath ? regionFollower.postIndex : city.postIndex} 
+                  onChange={(e) => {
+                    form.setFieldsValue({
+                      postIndex: getOnlyNums(e.target.value),
+                    });
+                  }}
                   autoComplete = "off"
+                  value={isFollowerPath ? regionFollower.postIndex : city.postIndex} 
+                  maxLength={5}
                 />
               </Form.Item>
             </Col>
