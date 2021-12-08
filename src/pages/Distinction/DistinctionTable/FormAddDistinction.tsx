@@ -13,6 +13,7 @@ import UserDistinction from "../Interfaces/UserDistinction";
 import distinctionApi from "../../../api/distinctionApi";
 import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import getOnlyNums from "../../../components/OnlyNumbers";
 import {
   emptyInput,
   maxNumber,
@@ -116,10 +117,6 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     await createNotifications(newDistinction);
   };
 
-  const getOnlyNums = (text: string) => {
-    return text.replace(/\D/g, "");
-  };
-
   return (
     <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
       <Row justify="start" gutter={[12, 0]}>
@@ -140,17 +137,13 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                 },
                 {
                   validator: async (_ : object, value: number) =>
-                  value  
-                   ? !isNaN(value)
-                     ? value < 1
-                          ? Promise.reject(minNumber(1)) 
-                          : await distinctionApi
-                              .checkNumberExisting(value)
-                              .then(response => response.data === false)
-                              ? Promise.resolve()
+                  value && !isNaN(value)
+                      ? await distinctionApi
+                          .checkNumberExisting(value)
+                          .then(response => response.data === false)
+                            ? Promise.resolve()
                               : Promise.reject('Цей номер уже зайнятий') 
-                              : Promise.reject()
-                              : Promise.reject()
+                              : Promise.reject()                              
                 }
               ]}
           >

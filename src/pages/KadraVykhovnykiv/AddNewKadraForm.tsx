@@ -263,7 +263,7 @@ type FormAddKadraProps = {
                   message: maxNumber(99999),
                 },
                 {
-                  validator: async (_ : object, value: any) =>
+                  validator: async (_ : object, value: number) =>
                   value ?
                     !isNaN(value) ?
                       value < 1

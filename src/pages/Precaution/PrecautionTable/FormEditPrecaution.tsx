@@ -14,6 +14,7 @@ import UserPrecaution from "../Interfaces/UserPrecaution";
 import formclasses from "./Form.module.css";
 import adminApi from "../../../api/adminApi";
 import Precaution from "../Interfaces/Precaution";
+import getOnlyNums from "../../../components/OnlyNumbers";
 import {
   emptyInput,
   failEditAction,
@@ -134,12 +135,7 @@ const FormEditPrecaution = ({
       reason: dist?.reason,
       number: dist?.number,
     };
-    if (
-      dist.number === Precaution.number ||
-      (await precautionApi
-        .checkNumberExisting(newPrecaution.number)
-        .then((response) => response.data === false))
-    ) {
+    
       await precautionApi.editUserPrecaution(newPrecaution);
       setShowModal(false);
       form.resetFields();
@@ -156,10 +152,6 @@ const FormEditPrecaution = ({
         newPrecaution.user,
         newPrecaution.user.id
       );
-    } else {
-      openNotification(`Номер ${dist.number} вже зайнятий`);
-      form.resetFields(["number"]);
-    }
   };
 
   return (
@@ -180,24 +172,33 @@ const FormEditPrecaution = ({
                       message: emptyInput(),
                     },
                     {
-                      validator: (_ : object, value: number) => 
-                          value > 99999
-                              ? Promise.reject(maxNumber(99999)) 
-                              : Promise.resolve()
+                      max: 5,
+                      message: maxNumber(99999),
                     },
                     {
-                      validator: (_ : object, value: number) => 
-                          value < 1
-                              ? Promise.reject(minNumber(1)) 
-                              : Promise.resolve()
+                      validator: async (_ : object, value: number) => 
+                      value && !isNaN(value)
+                          ? value == Precaution.number || 
+                          await precautionApi
+                            .checkNumberExisting(value)
+                            .then(response => response.data === false)
+                              ? Promise.resolve()
+                                : Promise.reject("Цей номер уже зайнятий")
+                                : Promise.reject()
                     }
                   ]}
               >
                 <Input
-                  type="number"
+                  onChange={(e) => {
+                    form.setFieldsValue({
+                      number: getOnlyNums(e.target.value),
+                    });
+                  }}
+                  autoComplete = "off"
                   min={1}
                   className={formclasses.inputField}
                   max={99999}
+                  maxLength={7}
                 />
               </Form.Item>
             </Col>

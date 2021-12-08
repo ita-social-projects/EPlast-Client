@@ -12,7 +12,7 @@ import {
 import distinctionApi from "../../../api/distinctionApi";
 import UserDistinction from "../Interfaces/UserDistinction";
 import formclasses from "./Form.module.css";
-import adminApi from "../../../api/adminApi";
+import getOnlyNums from "../../../components/OnlyNumbers";
 import precautionApi from "../../../api/precautionApi";
 import Distinction from "../Interfaces/Distinction";
 import{
@@ -129,12 +129,7 @@ const FormEditDistinction = ({
       reporter: dist?.reporter,
       number: dist?.number,
     };
-    if (
-      dist.number === distinction.number ||
-      (await distinctionApi
-        .checkNumberExisting(newDistinction.number)
-        .then((response) => response.data === false))
-    ) {
+
       await distinctionApi.editUserDistinction(newDistinction);
       setShowModal(false);
       form.resetFields();
@@ -148,14 +143,6 @@ const FormEditDistinction = ({
         newDistinction.user,
         newDistinction.user.id
       );
-    } else {
-      openNotification(`Номер ${dist.number} вже зайнятий`);
-      form.resetFields(["number"]);
-    }
-  };
-
-  const getOnlyNums = (text: string) => {
-    return text.replace(/\D/g, "");
   };  
 
   return (
@@ -171,29 +158,26 @@ const FormEditDistinction = ({
                 labelCol={{ span: 24 }}
                 name="number"
                 rules={[
-                    {
-                      required: true,
-                      message: emptyInput(),
-                    },
-                    {
-                      max: 5,
-                      message: maxNumber(99999),
-                    },
-                    {
-                      validator: async (_ : object, value: number) =>
-                        value  
-                           ? !isNaN(value)
-                            ? value < 1
-                              ? Promise.reject(minNumber(1)) 
-                                : await distinctionApi
-                                .checkNumberExisting(value)
-                                .then(response => response.data === false)
-                                ? Promise.resolve()
-                                : Promise.reject('Цей номер уже зайнятий') 
+                  {
+                    required: true,
+                    message: emptyInput(),
+                  },
+                  {
+                    max: 5,
+                    message: maxNumber(99999),
+                  },
+                  {
+                    validator: async (_ : object, value: number) => 
+                      value && !isNaN(value)
+                          ? value == distinction.number || 
+                          await distinctionApi
+                            .checkNumberExisting(value)
+                            .then(response => response.data === false)
+                              ? Promise.resolve()
+                                : Promise.reject("Цей номер уже зайнятий")
                                 : Promise.reject()
-                                : Promise.reject()
-                    }
-                  ]}>
+                  }
+                ]}>
                 <Input
                 onChange={(e) => {
                   form.setFieldsValue({

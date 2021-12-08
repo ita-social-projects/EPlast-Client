@@ -13,6 +13,7 @@ import UserPrecaution from "../Interfaces/UserPrecaution";
 import precautionApi from "../../../api/precautionApi";
 import adminApi from "../../../api/adminApi";
 import formclasses from "./Form.module.css";
+import getOnlyNums from "../../../components/OnlyNumbers";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
@@ -100,10 +101,6 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
       });
   }
 
-  const getOnlyNums = (text: string) => {
-    return text.replace(/\D/g, "");
-  };
-
   const handleSubmit = async (values: any) => {
     const newPrecaution: UserPrecaution = {
       id: 0,
@@ -146,17 +143,13 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
                 },
                 {
                   validator: async (_ : object, value: number) =>
-                  value  
-                  ? !isNaN(value)
-                    ? value < 1
-                      ? Promise.reject(minNumber(1)) 
-                        : await precautionApi
-                          .checkNumberExisting(value)
-                          .then(response => response.data === false)
+                    value && !isNaN(value)
+                      ? await precautionApi
+                        .checkNumberExisting(value)
+                        .then(response => response.data === false)
                           ? Promise.resolve()
-                          : Promise.reject('Цей номер уже зайнятий')
-                          : Promise.reject()
-                          : Promise.reject()
+                            : Promise.reject('Цей номер уже зайнятий')
+                            : Promise.reject()
                 }
               ]}>
             <Input
