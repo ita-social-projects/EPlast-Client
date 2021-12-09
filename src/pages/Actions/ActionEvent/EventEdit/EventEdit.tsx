@@ -53,7 +53,6 @@ export default function ({ id, statusId, onEdit, setShowEventEditDrawer }: Props
     }, []);
 
     useEffect(() => {
-        debugger;
         const fetchEvent = async () => {
             await eventUserApi.getEditedEvent(id).then(async response => {
                 setEvent(response.data);
