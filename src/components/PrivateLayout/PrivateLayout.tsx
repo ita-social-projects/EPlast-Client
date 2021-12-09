@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { Avatar, Layout, Menu, Button } from "antd";
-import { BankOutlined, BookOutlined, RollbackOutlined } from "@ant-design/icons";
+import { BankOutlined, BookOutlined, RollbackOutlined, AlignLeftOutlined } from "@ant-design/icons";
 import {
   SolutionOutlined,
   SnippetsOutlined,
@@ -259,6 +259,17 @@ const PrivateLayout = ({ children }: any) => {
                 Про Базу
               </Menu.Item>
             ) : (<> </>)
+            }
+            {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+                <Menu.Item 
+                  onClick={() => { handleClickAway(); history.push('/terms'); }} 
+                  key="18"
+                  title=""
+                >
+                  <AlignLeftOutlined />
+                    Політика конфіденційності
+                </Menu.Item>
+                ) : (<> </>)
             }
           </Menu>
         </Sider>
