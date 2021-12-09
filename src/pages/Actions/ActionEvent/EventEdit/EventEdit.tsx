@@ -26,11 +26,12 @@ const classes = require('./EventEdit.module.css');
 
 interface Props {
     id: number;
+    statusId: number;
     onEdit: () => void;
     setShowEventEditDrawer: (visibleDrawer: boolean) => void;
 }
 
-export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
+export default function ({ id, statusId, onEdit, setShowEventEditDrawer }: Props) {
     const [form] = Form.useForm();
     const [doneLoading, setDoneLoading] = useState(false);
     const [selectedUsers, setSelectedUsers] = useState<string[]>(['', '', '', '']);
@@ -100,7 +101,7 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
                 eventlocation: values.Eventlocation,
                 eventTypeID: values.EventTypeID,
                 eventCategoryID: values.EventCategoryID,
-                eventStatusID: values.EventStatusID,
+                eventStatusID: statusId,
                 formOfHolding: values.FormOfHolding,
                 forWhom: values.ForWhom,
                 numberOfPartisipants: values.NumberOfPartisipants,
@@ -120,7 +121,6 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
         }
         await eventUserApi.put(newEvent).then(response => {
             notificationLogic('success', successfulEditAction('Подію', values.EventName));
-
             NotificationBoxApi.createNotifications(
                 [values.commandantId, values.alternateId, values.bunchuzhnyiId, values.pysarId],
                 "Подія, в якій ви є адміністратором, змінена: ",
@@ -136,7 +136,6 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
         setShowEventEditDrawer(false);
         setDoneLoading(false);
         onEdit();
-        form.resetFields();
     }
 
     function disabledDate(current: any) {

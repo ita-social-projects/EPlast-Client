@@ -33,6 +33,32 @@
     margin-left: 170px;
 }
 
+@media (min-width: 250px) and (max-width: 290px) { 
+    .button{       
+            margin-left: 45px; 
+    }
+ }
+@media (min-width: 300px) and (max-width: 320px) { 
+    .button{       
+            margin-left: 65px; 
+    }
+ }
+ @media (min-width: 325px) and (max-width: 370px) { 
+    .button{       
+            margin-left: 80px; 
+    }
+ }
+ @media (min-width: 370px) and (max-width: 400px) { 
+    .button{       
+            margin-left: 90px; 
+    }
+ }
+ @media (min-width: 400px) and (max-width: 420px) { 
+    .button{       
+            margin-left: 110px; 
+    }
+ }
+ 
 .button:hover {
     border: none;
     outline: none;

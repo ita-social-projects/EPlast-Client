@@ -11,6 +11,8 @@ export const incorrectStartTime = "Час початку події не мож�
 
 export const incorrectEndTime = "Час завершення події не може бути раніше часу початку!";
 
+export const eventTypeIsNotChosen = "Оберіть тип події спочатку!";
+
 export const incorrectSlogan = wrongFormat + ". Гасло не повинно починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
 
 export const incorrectAppeal = wrongFormat + ". Заява не повинна починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
@@ -78,7 +80,7 @@ export const successfulConfirmedAction = (name:string, itemName?:string)=>{
 }; 
 
 export const successfulCancelAction = (name:string, itemName?:string)=>{
-    return itemName ? `${name} ${itemName} скасовано` : `${name} скасовано`;
+    return itemName ? `${name} ${itemName} скасовано` : `${name} успішно скасовано`;
 }; 
 
 export const successfulArchiveAction = (name:string)=>{

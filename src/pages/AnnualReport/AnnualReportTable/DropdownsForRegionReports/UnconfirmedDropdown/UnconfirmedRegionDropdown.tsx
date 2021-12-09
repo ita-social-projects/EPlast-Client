@@ -15,7 +15,7 @@ const UnconfirmedRegionDropdown = (props: Props) => {
         pageX,
         pageY,
         showDropdown,
-        canManage,
+        userAnnualReportAccess,
         onView,
         onEdit,
         onConfirm,
@@ -25,24 +25,23 @@ const UnconfirmedRegionDropdown = (props: Props) => {
     const handleClick = (item: any) => {
         switch (item.key) {
             case "1":
-                onView(
-                    regionRecord.id,
-                    new Date(regionRecord.date).getFullYear()
-                );
+                if (userAnnualReportAccess?.CanViewAnnualReportsTable ||
+                    userAnnualReportAccess?.CanSubmitRegionReport) {
+                    onView(regionRecord.id, new Date(regionRecord.date).getFullYear());
+                }
                 break;
             case "2":
-                onEdit(
-                    regionRecord.id,
-                    new Date(regionRecord.date).getFullYear()
-                );
+                if (userAnnualReportAccess?.CanEditReport) {
+                    onEdit(regionRecord.id, new Date(regionRecord.date).getFullYear());
+                }
                 break;
             case "3":
-                if (canManage) {
+                if (userAnnualReportAccess?.CanChangeReportStatus) {
                     onConfirm(regionRecord.id);
                 }
                 break;
             case "4":
-                if (canManage) {
+                if (userAnnualReportAccess?.CanDeleteReport) {
                     onRemove(regionRecord.id);
                 }
                 break;
@@ -53,41 +52,45 @@ const UnconfirmedRegionDropdown = (props: Props) => {
 
     return (
         <>
-            <Menu
-                theme="dark"
-                onClick={handleClick}
-                className={showDropdown ? styles.menu : styles.menuHidden}
-                style={{
-                    top: pageY,
-                    left:
-                        window.innerWidth - (pageX + 170) < 0
-                            ? window.innerWidth - 220
-                            : pageX,
-                }}
-            >
-                <Menu.Item key="1">
-                    <FileSearchOutlined />
-                    Переглянути
-                </Menu.Item>
-                {regionRecord.canManage ? (
-                    <Menu.Item key="2">
-                        <FileSyncOutlined />
-                        Редагувати
+            {userAnnualReportAccess?.CanViewEveryAnnualReport ||
+                userAnnualReportAccess?.CanSubmitRegionReport ? (
+                <Menu
+                    theme="dark"
+                    onClick={handleClick}
+                    selectedKeys={[]}
+                    className={showDropdown ? styles.menu : styles.menuHidden}
+                    style={{
+                        top: pageY,
+                        left:
+                            window.innerWidth - (pageX + 170) < 0
+                                ? window.innerWidth - 220
+                                : pageX,
+                    }}
+                >
+                    <Menu.Item key="1">
+                        <FileSearchOutlined />
+                        Переглянути
                     </Menu.Item>
-                ) : null}
-                {canManage ? (
-                    <Menu.Item key="3">
-                        <FileDoneOutlined />
-                        Підтвердити
-                    </Menu.Item>
-                ) : null}
-                {canManage ? (
-                    <Menu.Item key="4">
-                        <DeleteOutlined />
-                        Видалити
-                    </Menu.Item>
-                ) : null}
-            </Menu>
+                    {userAnnualReportAccess?.CanEditReport ? (
+                        <Menu.Item key="2">
+                            <FileSyncOutlined />
+                            Редагувати
+                        </Menu.Item>
+                    ) : null}
+                    {userAnnualReportAccess?.CanChangeReportStatus ? (
+                        <Menu.Item key="3">
+                            <FileDoneOutlined />
+                            Підтвердити
+                        </Menu.Item>
+                    ) : null}
+                    {userAnnualReportAccess?.CanDeleteReport ? (
+                        <Menu.Item key="4">
+                            <DeleteOutlined />
+                            Видалити
+                        </Menu.Item>
+                    ) : null}
+                </Menu>
+            ) : null}
         </>
     );
 };

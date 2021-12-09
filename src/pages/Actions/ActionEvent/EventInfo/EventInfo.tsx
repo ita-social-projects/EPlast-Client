@@ -102,6 +102,7 @@ const EventInfo = () => {
   const [baseData] = useState(rawData);
   // @ts-ignore
   const [event, setEvent] = useState<EventDetails>({});
+  const [eventStatusID, setEventStatusID] = useState<number>();
   const { id } = useParams();
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [approvedEvent, setApprovedEvent] = useState(false);
@@ -112,12 +113,20 @@ const EventInfo = () => {
     const fetchData = async () => {
       const response = await eventsApi.getEventInfo(id);
       setEvent(response.data);
+      getEventStatusId(response.data.event.eventStatus);
       setLoading(true);
     };
     fetchData();
     getUserAccessesForEvents(id);
   }, [visibleDrawer, approvedEvent, render]);
 
+  const getEventStatusId = async (eventStatus: string) => {
+    await eventsApi.getEventStatusId(eventStatus).then(
+      response => {
+        setEventStatusID(response.data);
+      }
+    );
+  }
 
   const getUserAccessesForEvents = async (id: number) => {
     let user: any = jwt(AuthStore.getToken() as string);
@@ -177,6 +186,7 @@ const EventInfo = () => {
           <SortedEventInfo
             userAccesses={userAccesses}
             event={event}
+            eventStatusId={eventStatusID!}
             setApprovedEvent={setApprovedEvent}
             setVisibleDrawer={setVisibleDrawer}
             visibleDrawer={visibleDrawer}
@@ -206,7 +216,7 @@ const EventInfo = () => {
           <div className="participantsTable">
             <div key={"2"}>
               <Title level={2} className={classes.userTableTitle}>
-                Таблиця користувачів
+                Таблиця учасників
               </Title>
               <Row>
                 <Input.Search
@@ -222,6 +232,7 @@ const EventInfo = () => {
                 userAccesses={userAccesses}
                 isEventFinished={event.isEventFinished}
                 participants={setParticipantsInTable()}
+                eventName={event.event.eventName}
                 key={event.event?.eventId}
                 setRender={setRender}
               />
