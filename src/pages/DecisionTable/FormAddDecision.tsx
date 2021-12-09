@@ -38,9 +38,6 @@ import {
   fileIsEmpty,
 } from "../../components/Notifications/Messages"
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
-
-
-
 import moment, { Moment } from "moment";
 
 type FormAddDecisionProps = {
