@@ -77,8 +77,8 @@ import EditGoverningBodySector from "./pages/GoverningBody/Sector/EditSector";
 import GoverningBodySectorDocuments from "./pages/GoverningBody/Sector/SectorDocuments";
 import GoverningBodySectorAdministration from "./pages/GoverningBody/Sector/SectorAdministration";
 import Announcements from "./pages/GoverningBody/Announcement/Announcement";
-import TermsOfUse from "./pages/TermsOfUse/TermsOfUse"
-import TermsEdit from "./pages/TermsOfUse/TermsEdit"
+import TermsOfUse from "./pages/TermsOfUse/TermsOfUse";
+import TermsEdit from "./pages/TermsOfUse/TermsEdit";
 
 const App: FC = () => (
   <div className="App">
