@@ -20,7 +20,7 @@ import {
   minNumber
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
 
 type FormAddPrecautionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -142,21 +142,26 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
                 },
                 {
                   validator: async (_ : object, value: number) =>
-                      value < 1
-                          ? Promise.reject(minNumber(1)) 
-                          : await precautionApi
-                              .checkNumberExisting(value)
-                              .then(response => response.data === false)
-                              ? Promise.resolve()
-                              : Promise.reject('Цей номер уже зайнятий')
+                    value && !isNaN(value)
+                      ? await precautionApi
+                        .checkNumberExisting(value)
+                        .then(response => response.data === false)
+                          ? Promise.resolve()
+                            : Promise.reject('Цей номер уже зайнятий')
+                            : Promise.reject()
                 }
-              ]}
-          >
+              ]}>
             <Input
-              type="number"
               min={1}
               className={formclasses.inputField}
               max={99999}
+              maxLength = {7}
+              autoComplete = "off"
+              onChange={(e) => {
+                form.setFieldsValue({
+                  number: getOnlyNums(e.target.value),
+                });
+              }}
             />
           </Form.Item>
         </Col>
