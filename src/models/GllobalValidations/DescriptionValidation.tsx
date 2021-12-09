@@ -1,3 +1,4 @@
+import { message } from "antd";
 import{
     emptyInput,
     maxLength,
@@ -13,6 +14,7 @@ import{
     incorrectAppeal,
     inputOnlyWhiteSpaces,
     incorrectName,
+    maxNumber,
 } from "../../components/Notifications/Messages"
   
 export const descriptionValidation = ({
@@ -180,7 +182,8 @@ export const descriptionValidation = ({
             message: emptyInput()
         },
         {
-            validator: (_ : object, value : string) => 
+            
+            validator: (_ : object, value : number) => 
             value == undefined || String(value).length == 0
                 ? Promise.resolve()
                 : String(value).length == 5
@@ -188,16 +191,6 @@ export const descriptionValidation = ({
                     : Promise.reject(
                         "Довжина поштового індексу - 5 символів!"
                         )
-        },
-        {
-            validator: (_ : object, value : string) => 
-            parseInt(value) >= 0 ||
-                value == null ||
-                String(value).length == 0
-                ? Promise.resolve()
-                : Promise.reject(
-                    onlyPositiveNumber
-                    )
         },
     ],
     Required: {
@@ -335,3 +328,7 @@ export const sameNameValidator = (org:string, array: string[]) => {
                 : Promise.reject(org + ' з назвою \"' + String(foundString).trim() + '\" вже існує')
     } 
 }
+
+export const getOnlyNums = (text: string) => {
+    return text.replace(/\D/g, "");
+  };

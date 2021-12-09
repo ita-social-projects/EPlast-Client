@@ -12,7 +12,7 @@ import {
 import distinctionApi from "../../../api/distinctionApi";
 import UserDistinction from "../Interfaces/UserDistinction";
 import formclasses from "./Form.module.css";
-import adminApi from "../../../api/adminApi";
+import precautionApi from "../../../api/precautionApi";
 import Distinction from "../Interfaces/Distinction";
 import{
   emptyInput,
@@ -22,7 +22,7 @@ import{
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import "moment/locale/uk";
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
 moment.locale("uk-ua");
 
 interface Props {
@@ -68,13 +68,6 @@ const FormEditDistinction = ({
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
   const [distValue, setDistValue] = useState<any>();
   const [userValue, setUserValue] = useState<any>();
-  const openNotification = (message: string) => {
-    notification.error({
-      message: failEditAction(`відзначення`),
-      description: `${message}`,
-      placement: "topLeft",
-    });
-  };
   const dateFormat = "DD.MM.YYYY";
 
   useEffect(() => {
@@ -87,10 +80,10 @@ const FormEditDistinction = ({
         setDistData(response.data);
       });
       setLoadingUserStatus(true);
-      await adminApi.getUsersForTable().then((response) => {
-        setUserData(response.data);
+      await precautionApi.getUsersWithoutPrecautions().then((response) => {
+        setUserData(response);
+        setLoadingUserStatus(false);
       });
-      setLoadingUserStatus(false);
     };
     fetchData();
     setLoading(false);
@@ -128,12 +121,7 @@ const FormEditDistinction = ({
       reporter: dist?.reporter,
       number: dist?.number,
     };
-    if (
-      dist.number === distinction.number ||
-      (await distinctionApi
-        .checkNumberExisting(newDistinction.number)
-        .then((response) => response.data === false))
-    ) {
+
       await distinctionApi.editUserDistinction(newDistinction);
       setShowModal(false);
       form.resetFields();
@@ -147,11 +135,7 @@ const FormEditDistinction = ({
         newDistinction.user,
         newDistinction.user.id
       );
-    } else {
-      openNotification(`Номер ${dist.number} вже зайнятий`);
-      form.resetFields(["number"]);
-    }
-  };
+  };  
 
   return (
     <div>
@@ -166,29 +150,37 @@ const FormEditDistinction = ({
                 labelCol={{ span: 24 }}
                 name="number"
                 rules={[
-                    {
-                      required: true,
-                      message: emptyInput(),
-                    },
-                    {
-                      validator: (_ : object, value: number) => 
-                          value > 99999
-                              ? Promise.reject(maxNumber(99999)) 
-                              : Promise.resolve()
-                    },
-                    {
-                      validator: (_ : object, value: number) => 
-                          value < 1
-                              ? Promise.reject(minNumber(1)) 
-                              : Promise.resolve()
-                    }
-                  ]}
-              >
+                  {
+                    required: true,
+                    message: emptyInput(),
+                  },
+                  {
+                    max: 5,
+                    message: maxNumber(99999),
+                  },
+                  {
+                    validator: async (_ : object, value: number) => 
+                      value && !isNaN(value)
+                          ? value == distinction.number || 
+                          await distinctionApi
+                            .checkNumberExisting(value)
+                            .then(response => response.data === false)
+                              ? Promise.resolve()
+                                : Promise.reject("Цей номер уже зайнятий")
+                                : Promise.reject()
+                  }
+                ]}>
                 <Input
-                  type="number"
-                  min={1}
-                  className={formclasses.inputField}
-                  max={99999}
+                onChange={(e) => {
+                  form.setFieldsValue({
+                    number: getOnlyNums(e.target.value),
+                  });
+                }}
+                autoComplete = "off"
+                min={1}
+                className={formclasses.inputField}
+                max={99999}
+                maxLength={7}
                 />
               </Form.Item>
             </Col>
