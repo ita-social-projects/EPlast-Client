@@ -81,6 +81,15 @@ const findUserByEduStaff = async (EduStaffId:number)=>{
     return response;
     }
 
+  const getEducatorsStaffForTable = async (kadraType: number, searchedData: string, page: number, pageSize: number) => {
+      return (await Api.get("EducatorsStaff/EducatorsStaffForTable",
+      {
+          kadraType: kadraType,
+          searchedData: searchedData,
+          page: page,
+          pageSize: pageSize,
+      })).data;
+  }
 
   export default {
     GetStaffById,
@@ -95,6 +104,7 @@ const findUserByEduStaff = async (EduStaffId:number)=>{
     getAllKVsOfGivenUser,
     getAllKVswithGivenTypes,
     getAllKVTypes,
-     getAllKVs
+    getAllKVs,
+    getEducatorsStaffForTable
   };
   

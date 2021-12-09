@@ -381,11 +381,11 @@ const EventUser = () => {
                                             >
                                                 {setEventTypeName(item.eventTypeID)}
                                             </Tag>
-                                            <Tooltip title="Затверджено">
+                                            <Tooltip title="Завершено">
                                                 <FlagTwoTone
                                                     className={classes.icon}
                                                     twoToneColor={newLocal}
-                                                    key="approved"
+                                                    key="finished"
                                                 />
                                             </Tooltip>
                                         </div>
@@ -409,8 +409,21 @@ const EventUser = () => {
                                     >
                                         Деталі
                                     </Button>
-                                    {item.eventStatusID !== 1 && userToken.nameid === userId &&
-                                        !(roles == [Roles.Supporter] || roles == [Roles.RegisteredUser] || roles == [Roles.Supporter, Roles.RegisteredUser]) &&
+                                    {item.eventStatusID !== 3 && userToken.nameid === userId &&
+                                        (
+                                            <Button
+                                                type="primary"
+                                                className={classes.buttonSmall}
+                                                onClick={() => {
+                                                    setShowEventEditDrawer(true);
+                                                    setEventId(item.id);
+                                                    setEventStatus(item.eventStatusID);
+                                                }}
+                                            >
+                                                Редагувати
+                                            </Button>
+                                        )}
+                                    {item.eventStatusID === 3 && userToken.nameid === userId && (roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead)) &&
                                         (
                                             <Button
                                                 type="primary"

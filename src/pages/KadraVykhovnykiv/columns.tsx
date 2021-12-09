@@ -19,11 +19,9 @@ const columns = [
   },
   {
     title: 'Користувач',
-    dataIndex: 'user',
-    render: (user: CityUser) => {
-      return user.firstName + " " + user.lastName
-    },
-    sorter: (a: any, b: any) => a.user.firstName.localeCompare(b.user.firstName),
+    dataIndex: 'userName',
+    
+    sorter: (a: any, b: any) => a.userName.localeCompare(b.userName),
     sortDirections: ['ascend', 'descend'] as SortOrder[],
   },
   {

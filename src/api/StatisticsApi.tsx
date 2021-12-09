@@ -2,6 +2,7 @@ import Api from "./api";
 import { AxiosError } from "axios";
 import CitiesStatisticsParameters from "../pages/Statistics/Interfaces/CitiesStatisticsParameters";
 import RegionsStatisticsParameters from "../pages/Statistics/Interfaces/RegionsStatisticsParameters";
+import api from "./api";
 
 const getCitiesStatistics = async (data: CitiesStatisticsParameters) => {
     /* overriding axios serialization method due to issue with it returning url string with [] brackets.
@@ -31,7 +32,15 @@ const getRegionsStatistics = async (data: RegionsStatisticsParameters) => {
         });
 }
 
+const getUserStatisticsAccess = async (userId: string) => {
+    return await api.get(`UserAccess/GetUserStatisticsAccess/${userId}`)
+        .catch(error => {
+            throw new Error(error.response?.dara);
+        });
+}
+
 export default {
     getCitiesStatistics,
-    getRegionsStatistics
+    getRegionsStatistics,
+    getUserStatisticsAccess
 }
