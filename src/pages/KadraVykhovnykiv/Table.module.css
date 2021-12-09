@@ -2,7 +2,9 @@
     text-align: center;
     margin-bottom: 15px;
 }
-
+.textCenter{
+    text-align:center !important;
+ }
 .searchContainer {
     display: flex;
     align-items: baseline;
@@ -77,3 +79,4 @@
         justify-content: center;
     }
 }
+ 
