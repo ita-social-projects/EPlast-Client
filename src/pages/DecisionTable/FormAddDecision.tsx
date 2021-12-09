@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import ReactDOM from "react-dom";
 import {
   Form,
@@ -53,7 +53,10 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     FileName: null,
   });
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
+  const [tip, setTip] = useState<string>('Введіть  ім\`я користувача');
+  const [tipOnNotFound, setTipOnNotFound] = useState<string>('Введіть  ім\`я користувача');
   const [userData, setUserData] = useState<any[]>([]);
+ 
   const [search, setSearch] = useState<string>('');
   const { Option } = Mentions;
   const [form] = Form.useForm();
@@ -65,13 +68,29 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     }
     return e && e.fileList;
   };
-
+ 
   const onSearch = async (search: string) => {
-    if (search !== "" && search !== null) {
+    setTipOnNotFound("") 
+    setUserData([]);
+    const removeElements = (elms:NodeListOf<any>) => elms.forEach(el => el.remove());
+    removeElements( document.querySelectorAll(".mentionOption") );
+    
+    var trigger = search,
+    regexp = new RegExp('^[\\\\./]'),
+    test = regexp.test(trigger); 
+  
+    if (search !== "" && search !== null && test != true) {
       await adminApi.getShortUserInfo(search).then((response) => {
         setUserData(response.data);
+        setTip("")
+        setTipOnNotFound("Даних не знайдено")
         setLoadingUserStatus(false);
       });
+    }
+    else{ 
+      setTipOnNotFound('Введіть  ім\`я користувача');
+      setTip('Введіть  ім\`я користувача');
+      setLoadingUserStatus(false);
     }
   };
 
@@ -80,8 +99,8 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     setMentionedUsers(old => [...old, user]);
   };
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => [onSearch(search), setLoadingUserStatus(true)], 1000);
+ useEffect(() => {
+    const timeoutId = setTimeout(() => [onSearch(search)], 10);
     return () => clearTimeout(timeoutId);
   }, [search]);
 
@@ -197,6 +216,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     };
     fetchData();
   }, []);
+
   return (
     <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{ position: 'relative' }}>
       <Row justify="start" gutter={[12, 0]}>
@@ -297,18 +317,22 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             rules={descriptionValidation.Description}
           >
             <Mentions
+              onChange = {()=>{if(search!=''){setLoadingUserStatus(true)}}}
+              notFoundContent = {<h5>{tipOnNotFound}</h5>}
               loading={loadingUserStatus}
               onSearch={(s => setSearch(s))}
               rows={5}
               onSelect={onSelect}
               className={formclasses.formField}
             >
+
+           <Option value=""  disabled >{tip}</Option> 
               {userData?.map((u) =>
-                <Option
+                <Option className="mentionOption"
                   key={u.id}
                   value={u.firstName + ' ' + u.lastName}
                 >
-                  {u.firstName + ' ' + u.lastName}
+                  {u.firstName + ' ' + u.lastName + ' ' + u.email}
                 </Option>)}
             </Mentions>
           </Form.Item>
