@@ -53,6 +53,7 @@ export default function ({ id, statusId, onEdit, setShowEventEditDrawer }: Props
     }, []);
 
     useEffect(() => {
+        debugger;
         const fetchEvent = async () => {
             await eventUserApi.getEditedEvent(id).then(async response => {
                 setEvent(response.data);
@@ -63,8 +64,8 @@ export default function ({ id, statusId, onEdit, setShowEventEditDrawer }: Props
                     Questions: response.data.event.questions,
                     EventTypeID: response.data.event.eventTypeID,
                     EventCategoryID: response.data.event.eventCategoryID,
-                    EventDateStart: moment.utc(response.data.event.eventDateStart).local(),
-                    EventDateEnd: moment.utc(response.data.event.eventDateEnd).local(),
+                    EventDateStart: moment(response.data.event.eventDateStart),
+                    EventDateEnd: moment(response.data.event.eventDateEnd),
                     FormOfHolding: response.data.event.formOfHolding,
                     Eventlocation: response.data.event.eventlocation,
                     ForWhom: response.data.event.forWhom,
@@ -96,8 +97,8 @@ export default function ({ id, statusId, onEdit, setShowEventEditDrawer }: Props
                 eventName: values.EventName,
                 description: values.Description,
                 questions: values.Questions,
-                eventDateStart: moment.utc(values.EventDateStart).local(),
-                eventDateEnd: moment.utc(values.EventDateEnd).local(),
+                eventDateStart: moment(values.EventDateStart).format('YYYY-MM-DD HH:mm:ss'),
+                eventDateEnd: moment(values.EventDateEnd).format('YYYY-MM-DD HH:mm:ss'),
                 eventlocation: values.Eventlocation,
                 eventTypeID: values.EventTypeID,
                 eventCategoryID: values.EventCategoryID,

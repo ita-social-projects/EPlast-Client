@@ -70,16 +70,13 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
 
   const handleFinish = async (values: any) => {
     setLoading(true);
-    console.log(moment.utc(values.EventDateStart).local());
-    console.log(values.EventDateStart);
-    debugger;
     const newEvent = {
       event: {
         eventName: values.EventName,
         description: values.Description,
         questions: values.Questions,
-        eventDateStart: moment.utc(values.EventDateStart).local(),
-        eventDateEnd: moment.utc(values.EventDateEnd).local(),
+        eventDateStart: moment(values.EventDateStart).format('YYYY-MM-DD HH:mm:ss'),
+        eventDateEnd:  moment(values.EventDateEnd).format('YYYY-MM-DD HH:mm:ss'),
         eventlocation: values.Eventlocation,
         eventTypeID: values.EventTypeID,
         eventCategoryID: values.EventCategoryID,
