@@ -14,7 +14,7 @@ const ConfirmedDropdown = (props: Props) => {
         pageX,
         pageY,
         showDropdown,
-        canManage,
+        userAnnualReportAccess,
         onView,
         onViewPDF,
         onCancel,
@@ -29,7 +29,7 @@ const ConfirmedDropdown = (props: Props) => {
                 onViewPDF(record.id);
                 break;
             case "3":
-                if (canManage) {
+                if (userAnnualReportAccess?.CanChangeReportStatus) {
                     onCancel(record.id);
                 }
                 break;
@@ -40,33 +40,34 @@ const ConfirmedDropdown = (props: Props) => {
 
     return (
         <>
-            <Menu
-                theme="dark"
-                onClick={handleClick}
-                className={showDropdown ? styles.menu : styles.menuHidden}
-                style={{
-                    top: pageY,
-                    left:
-                        window.innerWidth - (pageX + 170) < 0
-                            ? window.innerWidth - 220
-                            : pageX,
-                }}
-            >
-                <Menu.Item key="1">
-                    <FileSearchOutlined />
-                    Переглянути
-                </Menu.Item>
-                <Menu.Item key="2">
-                    <FilePdfOutlined />
-                    Переглянути у форматі PDF
-                </Menu.Item>
-                {canManage ? (
-                    <Menu.Item key="3">
-                        <FileExcelOutlined />
-                        Скасувати
+            {userAnnualReportAccess?.CanViewEveryAnnualReport ||
+                userAnnualReportAccess?.CanSubmitCityReport ? (
+                <Menu
+                    theme="dark"
+                    onClick={handleClick}
+                    selectedKeys={[]}
+                    className={showDropdown ? styles.menu : styles.menuHidden}
+                    style={{
+                        top: pageY - 185,
+                        left: pageX - 36,
+                    }}
+                >
+                    <Menu.Item key="1">
+                        <FileSearchOutlined />
+                        Переглянути
                     </Menu.Item>
-                ) : null}
-            </Menu>
+                    <Menu.Item key="2">
+                        <FilePdfOutlined />
+                        Переглянути у форматі PDF
+                    </Menu.Item>
+                    {userAnnualReportAccess?.CanChangeReportStatus ? (
+                        <Menu.Item key="3">
+                            <FileExcelOutlined />
+                            Скасувати
+                        </Menu.Item>
+                    ) : null}
+                </Menu>
+            ) : null}
         </>
     );
 };

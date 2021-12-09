@@ -22,11 +22,11 @@ import eventUserApi from '../../../../api/eventUserApi';
 import CreatedEvents from '../../../../models/EventUser/CreatedEvents';
 import EventsUser from '../../../../models/EventUser/EventUser';
 import userApi from "../../../../api/UserApi";
-import { Roles } from '../../../../models/Roles/Roles';
 
 interface Props {
     userAccesses: { [key: string]: boolean };
     event: EventDetails;
+    eventStatusId: number;
     visibleDrawer: boolean;
     setApprovedEvent: (visible: boolean) => void;
     setVisibleDrawer: (visible: boolean) => void;
@@ -74,11 +74,13 @@ const RenderEventIcons = (userAccesses: { [key: string]: boolean }, { event, isU
                     <CheckCircleTwoTone twoToneColor="#73bd79" className="icon" key="participant" />
                 </Tooltip>)
             }
+
             if (isUserUndeterminedParticipant) {
                 eventIcons.push(<Tooltip placement="bottom" title="Ваша заявка розглядається" key="underReview">
                     <QuestionCircleTwoTone twoToneColor="#FF8C00" className="icon" key="underReview" />
                 </Tooltip>)
             }
+
             eventIcons.push(<Tooltip placement="bottom" title="Відписатися від події" key="unsubscribe">
                 <UserDeleteOutlined
                     onClick={() => showUnsubscribeConfirm({
@@ -93,80 +95,48 @@ const RenderEventIcons = (userAccesses: { [key: string]: boolean }, { event, isU
                     className="icon" key="unsubscribe" />
             </Tooltip>)
         }
-
-
     }
 
     if (isUserParticipant && !isEventFinished) {
         TrackStatus();
     }
+
     else if (!isEventFinished && userAccesses["SubscribeOnEvent"]) {
         SubscribeToEvent();
     }
-        if (event.eventStatus === "Не затверджені") {
 
-            if (userAccesses["ApproveEvent"]) {
-                eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
-                    <SettingTwoTone twoToneColor="#3c5438" onClick={() => showApproveConfirm({
-                        eventId: event?.eventId,
-                        eventName: event?.eventName,
-                        eventStatusId: event?.eventStatus,
-                        eventAdmins: event.eventAdmins,
-                        setApprovedEvent: setApprovedEvent
-                    })} className="icon" key="setting" />
-                </Tooltip>)
-            }
-            if (userAccesses["EditEvent"] && userAccesses["DeleteEvent"]) {
-                eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
-                    <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
-                        onClick={() => setVisibleDrawer(true)} />
-                </Tooltip>)
-                eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
-                    <DeleteTwoTone twoToneColor="#8B0000"
-                        onClick={() => showDeleteConfirmForSingleEvent({
-                            eventId: event?.eventId,
-                            eventName: event?.eventName,
-                            eventTypeId: event?.eventTypeId,
-                            eventCategoryId: event?.eventCategoryId,
-                            eventAdmins: event.eventAdmins
-                        })}
-                        className="icon" key="delete" />
-                </Tooltip>)
-            }
+    if (userAccesses["ApproveEvent"] && event.eventStatus === "Не затверджено") {
+        eventIcons.push(<Tooltip placement="bottom" title="Ви можете затвердити подію!" key="setting">
+            <SettingTwoTone twoToneColor="#3c5438" onClick={() => showApproveConfirm({
+                eventId: event?.eventId,
+                eventName: event?.eventName,
+                eventStatusId: event?.eventStatus,
+                eventAdmins: event.eventAdmins,
+                setApprovedEvent: setApprovedEvent
+            })} className="icon" key="setting" />
+        </Tooltip>)
+    }
 
-        }
-        else if (event.eventStatus === "Завершено" && (roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead))) {
-            eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
-                <DeleteTwoTone twoToneColor="#8B0000"
-                    onClick={() => showDeleteConfirmForSingleEvent({
-                        eventId: event?.eventId,
-                        eventName: event?.eventName,
-                        eventTypeId: event?.eventTypeId,
-                        eventCategoryId: event?.eventCategoryId,
-                        eventAdmins: event.eventAdmins
-                    })}
-                    className="icon" key="delete" />
-            </Tooltip>)
-        }
-        else if (event.eventStatus === "Затверджено" && (roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead))) {
-            eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
-                <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
-                    onClick={() => setVisibleDrawer(true)} />
-            </Tooltip>)
-            eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
-                <DeleteTwoTone twoToneColor="#8B0000"
-                    onClick={() => showDeleteConfirmForSingleEvent({
-                        eventId: event?.eventId,
-                        eventName: event?.eventName,
-                        eventTypeId: event?.eventTypeId,
-                        eventCategoryId: event?.eventCategoryId,
-                        eventAdmins: event.eventAdmins
-                    })}
-                    className="icon" key="delete" />
-            </Tooltip>)
-        }
+    if (userAccesses["EditEvent"]) {
+        eventIcons.push(<Tooltip placement="bottom" title="Редагувати" key="edit" >
+            <EditTwoTone twoToneColor="#3c5438" className="icon" key="edit"
+                onClick={() => setVisibleDrawer(true)} />
+        </Tooltip>)
+    }
 
-    
+    if (userAccesses["DeleteEvent"]) {
+        eventIcons.push(<Tooltip placement="bottom" title="Видалити" key="delete">
+            <DeleteTwoTone twoToneColor="#8B0000"
+                onClick={() => showDeleteConfirmForSingleEvent({
+                    eventId: event?.eventId,
+                    eventName: event?.eventName,
+                    eventTypeId: event?.eventTypeId,
+                    eventCategoryId: event?.eventCategoryId,
+                    eventAdmins: event.eventAdmins
+                })}
+                className="icon" key="delete" />
+        </Tooltip>)
+    }
 
     eventIcons.push(<Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
         <IdcardOutlined style={{ color: "#3c5438", fontSize: "30px" }} className="icon"
@@ -208,8 +178,9 @@ const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any) => {
                     hoverable
                     title={item.adminType}
                     cover={<img alt="example" src={EventAdminLogo} />}
+                    onClick={() => history.push(`/userpage/main/${item.userId}`)}
                 >
-                    <div onClick={() => history.push(`/userpage/main/${item.userId}`)}>
+                    <div>
                         {item.fullName}
                     </div>
                 </Card>
@@ -218,7 +189,7 @@ const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any) => {
     />
 }
 
-const SortedEventInfo = ({ userAccesses, event, setApprovedEvent, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer, setVisibleDrawer }: Props) => {
+const SortedEventInfo = ({ userAccesses, event, eventStatusId, setApprovedEvent, subscribeOnEvent, unSubscribeOnEvent, visibleDrawer, setVisibleDrawer }: Props) => {
     const [adminsVisible, setAdminsVisibility] = useState(false);
     const { id } = useParams();
     const { userId } = useParams();
@@ -270,6 +241,7 @@ const SortedEventInfo = ({ userAccesses, event, setApprovedEvent, subscribeOnEve
         </Modal>
         <EventEditDrawer
             id={id}
+            statusId={eventStatusId}
             visibleEventEditDrawer={visibleDrawer}
             setShowEventEditDrawer={setVisibleDrawer}
             onEdit={fetchData}
