@@ -55,12 +55,9 @@ export default function () {
     ],
   };
 
-  const CheckTerms = async () => {
-    fetchTermsData();
-    setVisible(true);
-  };
-  
   const handleSubmit = async (values: any) => {
+    setVisible(true);
+    fetchTermsData();
     setAvailabe(false);
     await authService.register(values);
     setAvailabe(true);
@@ -82,7 +79,7 @@ export default function () {
         name="SignUpForm"
         initialValues={initialValues}
         form={form}
-        onFinish={CheckTerms}
+        onFinish={handleSubmit}
       >
         <Form.Item name="Email" rules={validationSchema.Email}>
           <Input className={styles.MyInput} placeholder="Електронна пошта" />
@@ -126,8 +123,8 @@ export default function () {
             okText='Погоджуюсь'
             style={{textAlign:"center"}}
             visible={visible}
-            onOk={handleSubmit}
-            onCancel={() => setVisible(false)}
+            onOk={()=>setVisible(false)}
+            onCancel={() =>setVisible(true) }
             width={1000}
           >
           <Markup
