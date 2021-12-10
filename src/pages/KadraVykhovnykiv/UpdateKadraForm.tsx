@@ -11,6 +11,8 @@ import {
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import notificationLogic from "../../components/Notifications/Notification";
 import moment, { Moment } from "moment";
+import KadraVykhovnykivApi from "../../api/KadraVykhovnykivApi";
+import {getOnlyNums } from "../../models/GllobalValidations/DescriptionValidation";
 import{
   emptyInput,
   maxNumber,
@@ -119,24 +121,32 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                       message: emptyInput(),
                     },
                     {
-                      validator: (_ : object, value: number) => 
-                          value > 99999
-                              ? Promise.reject(maxNumber(99999)) 
-                              : Promise.resolve()
+                      max: 5,
+                      message: maxNumber(99999),
                     },
                     {
-                      validator: (_ : object, value: number) => 
-                          value < 1
-                              ? Promise.reject(minNumber(1)) 
-                              : Promise.resolve()
+                      validator: async (_ : object, value: number) =>
+                        value && !isNaN(value) 
+                          ? await KadraVykhovnykivApi
+                            .doesRegisterNumberExist(value)
+                            .then(response => response.data === false)
+                              ? Promise.resolve()
+                                : Promise.reject('Цей номер уже зайнятий')
+                                : Promise.reject()
                     }
                   ]}
               >
                 <Input
-                  type="number"
+                  onChange={(e) => {
+                    form.setFieldsValue({
+                      numberInRegister: getOnlyNums(e.target.value),
+                    });
+                  }}
+                  autoComplete = "off"
                   min={1}
-                  max={999999}
+                  max={99999}
                   className={classes.inputField}
+                  maxLength = {7}
                 />
               </Form.Item>
             </Col>
