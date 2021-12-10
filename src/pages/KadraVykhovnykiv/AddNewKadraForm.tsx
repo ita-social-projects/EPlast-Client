@@ -13,6 +13,7 @@ import kadrasApi from "../../api/KadraVykhovnykivApi";
 import adminApi from "../../api/adminApi";
 import notificationLogic from '../../components/Notifications/Notification';
 import NotificationBoxApi from '../../api/NotificationBoxApi';
+import {getOnlyNums } from "../../models/GllobalValidations/DescriptionValidation";
 import{
   emptyInput,
   maxNumber,
@@ -260,21 +261,26 @@ type FormAddKadraProps = {
                 },
                 {
                   validator: async (_ : object, value: number) =>
-                      value < 1
-                          ? Promise.reject(minNumber(1)) 
-                          : await KadraVykhovnykivApi
-                              .doesRegisterNumberExist(value)
-                              .then(response => response.data === false)
+                  value && !isNaN(value) 
+                          ? await KadraVykhovnykivApi
+                            .doesRegisterNumberExist(value)
+                            .then(response => response.data === false)
                               ? Promise.resolve()
-                              : Promise.reject('Цей номер уже зайнятий')
+                                : Promise.reject('Цей номер уже зайнятий')
+                                : Promise.reject()
                 }
-              ]}
-          >
+              ]}>
             <Input
-              type="number"
+              onChange={(e) => {
+                form.setFieldsValue({
+                  numberInRegister: getOnlyNums(e.target.value),
+                });
+              }}
+              autoComplete = "off"
               min={1}
-              max={999999}
+              max={99999}
               className={classes.inputField}
+              maxLength = {7}
             />
           </Form.Item>
         </Col>
