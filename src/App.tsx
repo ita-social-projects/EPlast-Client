@@ -306,7 +306,6 @@ const App: FC = () => (
             path="/clubs/new"
             component={CreateClub}
           />
-
           <RouteWithLayout
             layout={PrivateLayout}
             exact
