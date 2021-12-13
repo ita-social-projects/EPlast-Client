@@ -96,7 +96,7 @@ const Club = () => {
   const classes = require('./Modal.module.css');
 
   const changeApproveStatus = async (memberId: number) => {
-    if(isLoadingPlus == false)
+    if(!isLoadingPlus)
     {
       notificationLogic("warning", failApproveAction());
       return;
