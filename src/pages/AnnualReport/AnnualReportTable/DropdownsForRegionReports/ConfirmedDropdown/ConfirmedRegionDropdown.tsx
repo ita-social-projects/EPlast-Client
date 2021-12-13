@@ -10,7 +10,7 @@ const ConfirmedRegionDropdown = (props: Props) => {
         pageX,
         pageY,
         showDropdown,
-        canManage,
+        userAnnualReportAccess,
         onView,
         onCancel,
     } = props;
@@ -24,7 +24,7 @@ const ConfirmedRegionDropdown = (props: Props) => {
                 );
                 break;
             case "2":
-                if (canManage) {
+                if (userAnnualReportAccess?.CanChangeReportStatus) {
                     onCancel(regionRecord.id);
                 }
                 break;
@@ -34,30 +34,35 @@ const ConfirmedRegionDropdown = (props: Props) => {
     };
 
     return (
-        <Menu
-            theme="dark"
-            onClick={handleClick}
-            selectedKeys={[]}
-            className={showDropdown ? styles.menu : styles.menuHidden}
-            style={{
-                top: pageY,
-                left:
-                    window.innerWidth - (pageX + 170) < 0
-                        ? window.innerWidth - 220
-                        : pageX,
-            }}
-        >
-            <Menu.Item key="1">
-                <FileSearchOutlined />
-                Переглянути
-            </Menu.Item>
-            {canManage ? (
-                <Menu.Item key="2">
-                    <FileExcelOutlined />
-                    Скасувати
-                </Menu.Item>
+        <>
+            {userAnnualReportAccess?.CanViewAnnualReportsTable ||
+                userAnnualReportAccess?.CanSubmitRegionReport ? (
+                <Menu
+                    theme="dark"
+                    onClick={handleClick}
+                    selectedKeys={[]}
+                    className={showDropdown ? styles.menu : styles.menuHidden}
+                    style={{
+                        top: pageY,
+                        left:
+                            window.innerWidth - (pageX + 170) < 0
+                                ? window.innerWidth - 220
+                                : pageX,
+                    }}
+                >
+                    <Menu.Item key="1">
+                        <FileSearchOutlined />
+                        Переглянути
+                    </Menu.Item>
+                    {userAnnualReportAccess?.CanChangeReportStatus ? (
+                        <Menu.Item key="2">
+                            <FileExcelOutlined />
+                            Скасувати
+                        </Menu.Item>
+                    ) : null}
+                </Menu>
             ) : null}
-        </Menu>
+        </>
     );
 };
 
