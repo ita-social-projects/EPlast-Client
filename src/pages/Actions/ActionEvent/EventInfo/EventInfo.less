@@ -25,13 +25,14 @@
 }
 
 .eventActions{
-  @media (max-width: 768px)and (min-width: 541px) {
+  @media (max-width: 768px)and (min-width: 280px) {
     margin-right: 5px;
+    text-size-adjust: scale(0.5);
   }
 }
 
 .event-info-wrapper {
-  width: 100%;
+  width: 90%;
   margin: 0 auto;
 }
 
@@ -41,10 +42,30 @@
   padding: 20px 20px 20px 20px;
   box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
-  display: flex;
-  text-align: center;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;  
+  justify-content: center;
+  font-size: 10vw;  
+}
+
+.upploadButton{
+  @media (max-width: 280px) {
+    margin-left: -37px;
+    transform: scale(0.8);
+  }
+  @media (max-width: 320px) and (min-width:290px){
+    margin-left: -30px;
+    transform: scale(0.9);
+  }
+}
+
+.picturesWall{
+  @media (max-width: 280px) {
+    width: 150px;
+  }
+  @media (max-width: 320px) and (min-width:290px){
+    width: 170px;
+  }
 }
 
 .participantsTable{
@@ -138,15 +159,84 @@ td {
 }
 
 .homeSlider {
-  @media (max-width: 767px) {
+  @media(max-width: 280px) {
+    padding-left: 8px;
+    padding-right: 8px;
+      }
+  @media (max-width: 376px) and (min-width:319px) {
     width: 100%;
     height: 300px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  @media (max-width: 540px) and (min-width:411px) {
+    width: 100%;
+    height: 300px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  @media (max-width: 540px) and (min-width:412px) {
+    width: 100%;
+    height: 300px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  @media (max-width: 767px) and (min-width:541px) {
+    width: 100%;
+    height: 300px;
+
   }
   @media (min-width: 768px) {
-    width: 60%;
+    width: 80%;
+    padding-left: 45px;
+    padding-right: 45px;
   }
   margin: 0px auto 10px;
+
   overflow: hidden;
+  scrollbar-arrow-color: lightcoral;
+}
+.ant-carousel .slick-prev,
+.ant-carousel .slick-prev:hover,
+.ant-carousel .slick-prev:focus {
+  left: 10px;
+  z-index: 2;
+  color: #3c5438;
+  font-size: 20px;
+  height: 90px;
+  @media(max-width: 540px) and (min-width:411px){
+    left:-4px;
+      }
+  @media(max-width: 376px) and (min-width:319px){
+    left:-7px;
+    font-size: 14px;
+      }
+  @media(max-width: 280px) {
+    left:-7px;
+    font-size: 14px;
+      }
+
+}
+
+.ant-carousel .slick-next,
+.ant-carousel .slick-next:hover,
+.ant-carousel .slick-next:focus {
+  right: 10px;
+  z-index: 2;
+  color: #3c5438;
+  font-size: 20px;
+  height: 30px;
+  @media(max-width: 540px) and (min-width:411px){
+    right:-4px;
+      }
+  @media(max-width: 376px) and (min-width:319px){
+    right:-7px;
+    font-size: 14px;
+      }
+  @media(max-width: 280px) {
+    right:-7px;
+    font-size: 14px;
+      }
 }
 
 @media (max-width: 767px) {
@@ -197,7 +287,7 @@ td {
     font-size: 16px;
     color: black;
     text-align: center;
-
+    
     &:hover {
       color: @plast-color;
       text-decoration: underline;
