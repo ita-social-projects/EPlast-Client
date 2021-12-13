@@ -28,7 +28,8 @@ import {
    addAdministrator,
    editAdministrator,
    getUserClubAccess,
-   getAllAdmins
+   getAllAdmins,
+   isUserApproved
   } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
@@ -195,7 +196,7 @@ const Club = () => {
     setAdminsAll(response.data.administration)
   }
 
-  function seeArchiveModal() {
+  function showArchiveModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете заархівувати даний курінь?",
       icon: <ExclamationCircleOutlined />,
@@ -211,7 +212,7 @@ const Club = () => {
     });
   }
 
-  function seeUnArchiveModal() {
+  function showUnArchiveModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете розархівувати даний курінь?",
       icon: <ExclamationCircleOutlined />,
@@ -225,7 +226,7 @@ const Club = () => {
     });
   }
 
-  function seeDeleteModal() {
+  function showDeleteModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити даний курінь?",
       icon: <ExclamationCircleOutlined />,
@@ -239,7 +240,7 @@ const Club = () => {
     });
   }
 
-  function seeJoinModal() {
+  function showJoinModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете доєднатися до даного куреня?",
       icon: <ExclamationCircleOutlined />,
@@ -251,7 +252,10 @@ const Club = () => {
     });
   }
 
-  function seeSkipModal(followerID: number) {
+  async function showSkipModal(followerID: number) {
+    const isApproved = await isUserApproved(followerID);
+    if(!isApproved.data)
+    {
     return Modal.confirm({
       title: "Ви впевнені, що хочете покинути даний курінь?",
       icon: <ExclamationCircleOutlined />,
@@ -261,6 +265,17 @@ const Club = () => {
       maskClosable: true,
       onOk() { removeMember(followerID) }
     });
+    }
+    else
+    {
+      return Modal.info({
+        title: "Ви не можете покинути даний курінь, оскільки є його членом!",
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Зрозуміло',
+        okType: 'primary',
+        maskClosable: true
+    });
+  }
   }
   const getClub = async () => {
     setLoading(true);
@@ -530,7 +545,7 @@ const Club = () => {
               <Crumb
                 current={club.name}
                 first="/"
-                second={url.replace(`/${id}`, "")}
+                second={url.replace(`/${id}`, "/page/1")}
                 second_name="Курені"
               />
               {isActiveClub ? null : (
@@ -714,7 +729,7 @@ const Club = () => {
                           <Tooltip title="Архівувати курінь">
                             <ContainerOutlined
                               className="clubInfoIconDelete"
-                              onClick={() => seeArchiveModal()}
+                              onClick={() => showArchiveModal()}
                             />
                           </Tooltip>
                         </Col>) : (
@@ -723,7 +738,7 @@ const Club = () => {
                             <Tooltip title="Видалити курінь">
                               <DeleteOutlined
                                 className="clubInfoIconDelete"
-                                onClick={() => seeDeleteModal()}
+                                onClick={() => showDeleteModal()}
                               />
                             </Tooltip>
                           </Col>
@@ -731,7 +746,7 @@ const Club = () => {
                             <Tooltip title="Розархівувати курінь">
                               <ContainerOutlined
                                 className="clubInfoIcon"
-                                onClick={() => seeUnArchiveModal()}
+                                onClick={() => showUnArchiveModal()}
                               />
                             </Tooltip>
                           </Col>
@@ -935,7 +950,7 @@ const Club = () => {
                   className="clubMemberItem"
                   xs={12}
                   sm={8}
-                  onClick={() => seeJoinModal()}
+                  onClick={() => showJoinModal()}
                 >
                   <div>
                     <Avatar
@@ -980,7 +995,7 @@ const Club = () => {
                         <Tooltip placement={"bottom"} title={"Покинути курінь"}>
                           <MinusOutlined
                             className="approveIcon"
-                            onClick={() => seeSkipModal(followers.id)}
+                            onClick={() => showSkipModal(followers.id)}
                           />
                         </Tooltip>) : !isLoadingPlus && isLoadingMemberId === followers.id ? (
                           <Tooltip placement={"bottom"} title={"Зачекайте"}>

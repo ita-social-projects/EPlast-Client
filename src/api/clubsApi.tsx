@@ -28,6 +28,12 @@ export const getClubMembersInfo = async (id: number) => {
   return await api.get(`Club/ClubMembersInfo/${id}`, id).catch((error)=>{throw new Error(error);});
 }
 
+export const isUserApproved = async(id: number) =>{
+  return api.get(`Club/IsUserApproved/${id}`).catch((error)=>{
+    throw new Error(error)
+  });
+};
+
 export const createClubAnnualReport = async (data: any) => {
   return await api.post(`Club/CreateClubAnnualReport`,JSON.stringify(data)) .catch((error: AxiosError) => {
     throw error;

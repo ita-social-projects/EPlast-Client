@@ -59,7 +59,10 @@ const DecisionTable = () => {
     setClubAdmDeputy(roles.includes(Roles.KurinHeadDeputy));
   };
   const handleDelete = () => {
-    fetchData();
+    if(page != 1 && data.length == 1)
+      setPage(page-1);
+    else
+      fetchData();
   }
   const handleEdit = (id: number, name: string, description: string) => {
     /* eslint no-param-reassign: "error" */
