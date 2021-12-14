@@ -90,6 +90,11 @@ const removePicture = async (id: number) => {
     return response;
 };
 
+const getEventStatusId = async (eventStatus: string) => {
+    const response = await Api.get(`Events/${eventStatus}/statusId`);
+    return response;
+}
+
 export default {
     getEventsByStatuses,
     getTypes,
@@ -108,5 +113,6 @@ export default {
     underReviewParticipant,
     rejectParticipant,
     uploadPictures,
-    removePicture
+    removePicture,
+    getEventStatusId
 };

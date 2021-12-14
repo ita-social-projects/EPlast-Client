@@ -23,6 +23,11 @@ import { descriptionValidation } from '../../../../models/GllobalValidations/Des
 import { PlusOutlined } from '@ant-design/icons';
 import EventSections from '../../../../models/EventCreate/EventSections';
 
+import {notification, Spin} from "antd";
+import{
+    successfulUpdateAction,
+  } from "../../../../components/Notifications/Messages"
+
 const classes = require('./EventCreate.module.css');
 
 interface Props {
@@ -39,7 +44,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
   const [categories, setCategories] = useState<EventCategories[]>([]);
   const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
   const [eventSections, setEventSections] = useState<EventSections[]>([]);
-  const [administators, setAdministators] = useState<Users[]>([]);
+  const [administrators, setAdministrators] = useState<Users[]>([]);
   const [visibleEndDatePicker, setVisibleEndDatePicker] = useState<boolean>(true);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [StartDate, setStartDate] = useState<Date>();
@@ -48,14 +53,12 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
   const [eventType, setEventType] = useState();
   const [eventSection, setEventSection] = useState();
 
-
-
   useEffect(() => {
     const fetchData = async () => {
       await eventUserApi.getDataForNewEvent().then(async response => {
         const { users, eventTypes } = response.data;
         setEventTypes(eventTypes);
-        setAdministators(users);
+        setAdministrators(users);
       })
     }
     fetchData();
@@ -72,8 +75,8 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         eventName: values.EventName,
         description: values.Description,
         questions: values.Questions,
-        eventDateStart: moment.utc(values.EventDateStart).local(),
-        eventDateEnd: moment.utc(values.EventDateEnd).local(),
+        eventDateStart: moment(values.EventDateStart).format('YYYY-MM-DD HH:mm:ss'),
+        eventDateEnd:  moment(values.EventDateEnd).format('YYYY-MM-DD HH:mm:ss'),
         eventlocation: values.Eventlocation,
         eventTypeID: values.EventTypeID,
         eventCategoryID: values.EventCategoryID,
@@ -114,6 +117,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       onCreate();
     }
     form.resetFields();
+    setSelectedUsers(['', '', '', '']);
     setLoading(false);
     setShowEventCreateDrawer(false);
   }
@@ -202,14 +206,14 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
   }
 
   function resetUsers(): void {
-    const updatedUsers: any[] = administators;
+    const updatedUsers: any[] = administrators;
 
     updatedUsers.forEach(user => {
       const userId = user.id;
       user.isSelected = selectedUsers.some(selectedUserId => selectedUserId === userId);
     });
 
-    setAdministators([...updatedUsers]);
+    setAdministrators([...updatedUsers]);
   }
 
   const handleCancel = () => {
@@ -218,7 +222,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
   };
 
   function warning() {
-    message.warning('Спочатку оберіть тип події.');
+    notificationLogic("warning", "Спочатку оберіть тип події.");
   }
 
   return (
@@ -296,7 +300,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         <Col md={24} xs={24}>
           <Form.Item label="Комендант" name="commandantId" className={classes.formItem} rules={[{ required: true, message: emptyInput() }]}>
             <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(0, e)} getPopupContainer={(triggerNode) => triggerNode.parentNode}>
-              {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.id} value={item.id}> {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
+              {administrators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.id} value={item.id}> {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
             </Select>
           </Form.Item>
         </Col>
@@ -305,7 +309,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         <Col md={24} xs={24}>
           <Form.Item label="Заступник коменданта" name="alternateId" className={classes.formItem} rules={[{ required: true, message: emptyInput() }]}>
             <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(1, e)} getPopupContainer={(triggerNode) => triggerNode.parentNode} >
-              {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id}> {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
+              {administrators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id}> {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
             </Select>
           </Form.Item>
         </Col>
@@ -314,7 +318,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         <Col md={24} xs={24}>
           <Form.Item label="Бунчужний" name="bunchuzhnyiId" className={classes.formItem} rules={[{ required: true, message: emptyInput() }]}>
             <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(2, e)} getPopupContainer={(triggerNode) => triggerNode.parentNode}>
-              {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id}> {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
+              {administrators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id}> {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
             </Select>
           </Form.Item>
         </Col>
@@ -323,7 +327,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         <Col md={24} xs={24}>
           <Form.Item label="Писар" name="pysarId" className={classes.formItem} rules={[{ required: true, message: emptyInput() }]}>
             <Select showSearch optionFilterProp="children" onChange={(e: any) => handleSelectChange(3, e)} getPopupContainer={(triggerNode) => triggerNode.parentNode}>
-              {administators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id}> {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
+              {administrators.map((item: any) => (<Select.Option disabled={item.isSelected} key={item.value} value={item.id}> {item.firstName} {item.lastName} <br /> {item.userName}</Select.Option>))}
             </Select>
           </Form.Item>
         </Col>

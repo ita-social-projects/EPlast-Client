@@ -56,6 +56,7 @@ const EventUser = () => {
     const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
     const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
     const [eventId, setEventId] = useState<number>();
+    const [eventStatus, setEventStatus] = useState<number>();
     const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({})
     const [userToken, setUserToken] = useState<any>([
         {
@@ -227,8 +228,7 @@ const EventUser = () => {
                             footer={[
                                 <Button
                                     type="primary"
-                                    className={classes.buttonSmall}
-                                    style={{ marginRight: "110px", marginLeft: "110px" }}
+                                    className={classes.buttonCancell}     
                                     onClick={() => setVisitedEventsModal(false)}
                                 >
                                     Закрити
@@ -241,14 +241,12 @@ const EventUser = () => {
                                     <h2>
                                         {" "}
                                         Дата початку:{" "}
-                                        {moment.utc(item.eventDateStart).local().format(
-                                            "DD.MM.YYYY HH:mm"
-                                        )}{" "}
+                                        {moment(item.eventDateStart).format("DD.MM.YYYY HH:mm")}{" "}
                                     </h2>
                                     <h2>
                                         {" "}
                                         Дата завершення:{" "}
-                                        {moment.utc(item.eventDateEnd).local().format("DD.MM.YYYY HH:mm")}{" "}
+                                        {moment(item.eventDateEnd).format("DD.MM.YYYY HH:mm")}{" "}
                                     </h2>
                                     <Button
                                         type="primary"
@@ -321,8 +319,7 @@ const EventUser = () => {
                                 <div className={classes.Modal}>
                                     <Button
                                         type="primary"
-                                        className={classes.buttonSmall}
-                                        style={{ marginRight: "110px", marginLeft: "110px" }}
+                                        className={classes.buttonCancell}
                                         onClick={() => setCreatedEventsModal(false)}
                                     >
                                         Закрити
@@ -382,11 +379,11 @@ const EventUser = () => {
                                             >
                                                 {setEventTypeName(item.eventTypeID)}
                                             </Tag>
-                                            <Tooltip title="Затверджено">
+                                            <Tooltip title="Завершено">
                                                 <FlagTwoTone
                                                     className={classes.icon}
                                                     twoToneColor={newLocal}
-                                                    key="approved"
+                                                    key="finished"
                                                 />
                                             </Tooltip>
                                         </div>
@@ -394,14 +391,12 @@ const EventUser = () => {
                                     <h2>
                                         {" "}
                                         Дата початку:{" "}
-                                        {moment.utc(item.eventDateStart).local().format(
-                                            "DD.MM.YYYY HH:mm"
-                                        )}{" "}
+                                        {moment(item.eventDateStart).format("DD.MM.YYYY HH:mm")}{" "}
                                     </h2>
                                     <h2>
                                         {" "}
                                         Дата завершення:{" "}
-                                        {moment.utc(item.eventDateEnd).local().format("DD.MM.YYYY HH:mm")}{" "}
+                                        {moment(item.eventDateEnd).format("DD.MM.YYYY HH:mm")}{" "}
                                     </h2>
                                     <Button
                                         type="primary"
@@ -410,8 +405,7 @@ const EventUser = () => {
                                     >
                                         Деталі
                                     </Button>
-                                    {item.eventStatusID !== 1 && userToken.nameid === userId &&
-                                        !(roles == [Roles.Supporter] || roles == [Roles.RegisteredUser] || roles == [Roles.Supporter, Roles.RegisteredUser]) &&
+                                    {item.eventStatusID !== 3 && userToken.nameid === userId &&
                                         (
                                             <Button
                                                 type="primary"
@@ -419,6 +413,21 @@ const EventUser = () => {
                                                 onClick={() => {
                                                     setShowEventEditDrawer(true);
                                                     setEventId(item.id);
+                                                    setEventStatus(item.eventStatusID);
+                                                }}
+                                            >
+                                                Редагувати
+                                            </Button>
+                                        )}
+                                    {item.eventStatusID === 3 && userToken.nameid === userId && (roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead)) &&
+                                        (
+                                            <Button
+                                                type="primary"
+                                                className={classes.buttonSmall}
+                                                onClick={() => {
+                                                    setShowEventEditDrawer(true);
+                                                    setEventId(item.id);
+                                                    setEventStatus(item.eventStatusID);
                                                 }}
                                             >
                                                 Редагувати
@@ -429,6 +438,7 @@ const EventUser = () => {
                             ))}
                             <EventEditDrawer
                                 id={eventId!}
+                                statusId={eventStatus!}
                                 visibleEventEditDrawer={showEventEditDrawer}
                                 setShowEventEditDrawer={setShowEventEditDrawer}
                                 onEdit={fetchData}
@@ -496,8 +506,7 @@ const EventUser = () => {
                                 </Button>,
                                 <Button
                                     type="primary"
-                                    className={classes.buttonSmall}
-                                    style={{ marginRight: "110px", marginLeft: "110px" }}
+                                    className={classes.buttonCancell}
                                     onClick={() => setPlannedEventsModal(false)}
                                 >
                                     Закрити
@@ -510,14 +519,12 @@ const EventUser = () => {
                                     <h2>
                                         {" "}
                                         Дата початку:{" "}
-                                        {moment.utc(item.eventDateStart).local().format(
-                                            "DD.MM.YYYY HH:mm"
-                                        )}{" "}
+                                        {moment(item.eventDateStart).format("DD.MM.YYYY HH:mm")}{" "}
                                     </h2>
                                     <h2>
                                         {" "}
                                         Дата завершення:{" "}
-                                        {moment.utc(item.eventDateEnd).local().format("DD.MM.YYYY HH:mm")}{" "}
+                                        {moment(item.eventDateEnd).format("DD.MM.YYYY HH:mm")}{" "}
                                     </h2>
                                     <Button
                                         type="primary"

@@ -20,7 +20,7 @@ import {
   incorrectData
 } from "../../../components/Notifications/Messages"
 import precautionApi from "../../../api/precautionApi";
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
 
 type FormAddDistinctionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -115,6 +115,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     onAdd();
     await createNotifications(newDistinction);
   };
+
   return (
     <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
       <Row justify="start" gutter={[12, 0]}>
@@ -135,21 +136,27 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                 },
                 {
                   validator: async (_ : object, value: number) =>
-                      value < 1
-                          ? Promise.reject(minNumber(1)) 
-                          : await distinctionApi
-                              .checkNumberExisting(value)
-                              .then(response => response.data === false)
-                              ? Promise.resolve()
-                              : Promise.reject('Цей номер уже зайнятий')
+                  value && !isNaN(value)
+                      ? await distinctionApi
+                          .checkNumberExisting(value)
+                          .then(response => response.data === false)
+                            ? Promise.resolve()
+                              : Promise.reject('Цей номер уже зайнятий') 
+                              : Promise.reject()                              
                 }
               ]}
           >
             <Input
-              type="number"
+              onChange={(e) => {
+                form.setFieldsValue({
+                  number: getOnlyNums(e.target.value),
+                });
+              }}
+              autoComplete = "off"
               min={1}
               className={formclasses.inputField}
               max={99999}
+              maxLength = {7}
             />
           </Form.Item>
         </Col>

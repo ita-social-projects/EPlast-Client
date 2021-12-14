@@ -40,7 +40,8 @@ import {
   getCheckPlastMember,
   toggleMemberStatus,
   removeFollower,
-  getAllAdmins
+  getAllAdmins,
+  isUserApproved
 } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
@@ -88,7 +89,7 @@ const City = () => {
   const [followersCount, setFollowersCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
   const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
-  const [visible, setvisible] = useState<boolean>(false);
+  const [visibleAddModal, setvisibleAddModal] = useState<boolean>(false);
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
@@ -169,7 +170,7 @@ const City = () => {
         await createNotification(ad.userId,
           `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
       });
-      history.push("/cities");
+      history.push("/cities/page/1");
     } catch {
       notificationLogic("error", failArchiveAction(city.name));
     }
@@ -179,14 +180,14 @@ const City = () => {
     await removeCity(city.id);
     notificationLogic("success", successfulDeleteAction("Станицю"));
 
-    history.push("/cities");
+    history.push("/cities/page/1");
   };
 
   const UnArchiveCity = async () => {
     await unArchiveCity(city.id)
     notificationLogic("success", successfulUnarchiveAction("Станицю"));
 
-    history.push("/cities");
+    history.push("/cities/page/1");
   };
 
   const setPhotos = async (members: CityMember[], logo: string) => {
@@ -215,7 +216,7 @@ const City = () => {
     notificationLogic("success", fileIsAdded());
   };
 
-  function seeArchiveModal() {
+  function showArchiveModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете архівувати дану станицю?",
       icon: <ExclamationCircleOutlined />,
@@ -231,7 +232,7 @@ const City = () => {
     });
   }
 
-  function seeUnArchiveModal() {
+  function showUnArchiveModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете розархівувати дану станицю?",
       icon: <ExclamationCircleOutlined />,
@@ -245,7 +246,7 @@ const City = () => {
     });
   }
 
-  function seeDeleteModal() {
+  function showDeleteModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити дану станицю?",
       icon: <ExclamationCircleOutlined />,
@@ -259,7 +260,7 @@ const City = () => {
     });
   }
 
-  function seeJoinModal() {
+  function showJoinModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете доєднатися до даної станиці? При доєднанні до нової станиці всі попередні ролі будуть скасовані.",
       icon: <ExclamationCircleOutlined />,
@@ -268,8 +269,8 @@ const City = () => {
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
+        setCanJoin(false)
         addMember();
-        setLoading(true)
       },
     });
   }
@@ -278,17 +279,31 @@ const City = () => {
     setAdminsAll(response.data.administration)
   }
 
-  function seeSkipModal(followerID: number) {
-    return Modal.confirm({
-      title: "Ви впевнені, що хочете покинути дану станицю?",
-      icon: <ExclamationCircleOutlined />,
-      okText: 'Так, покинути',
-      okType: 'primary',
-      cancelText: 'Скасувати',
-      maskClosable: true,
-      onOk() { removeMember(followerID) }
+  async function showSkipModal(followerID: number) {
+    const isApproved = await isUserApproved(followerID);
+    if(!isApproved.data)
+    {
+      return Modal.confirm({
+        title: "Ви впевнені, що хочете покинути дану станицю?",
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Так, покинути',
+        okType: 'primary',
+        cancelText: 'Скасувати',
+        maskClosable: true,
+        onOk() { removeMember(followerID) }
+      });
+    }
+    else
+    {
+      return Modal.info({
+        title: "Ви не можете покинути дану станицю, оскільки є її членом!",
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Зрозуміло',
+        okType: 'primary',
+        maskClosable: true
     });
   }
+}
 
   const getCity = async () => {
     setLoading(true);
@@ -466,6 +481,8 @@ const City = () => {
           const check = await getCheckPlastMember(admin.userId);
           if(check.data){
             await addCityAdmin(admin);
+            admins.push(admin);
+            setAdmins(admins);
           }
           else {
             showPlastMemberDisable(admin);
@@ -475,10 +492,10 @@ const City = () => {
           showConfirm(admin, existingAdmin);
         }
         else {
-          await addCityAdmin(admin);
+          await addCityAdmin(admin).then(() => { admins.push(admin); setAdmins(admins); });
         }
       } finally {
-        setvisible(false);
+        setvisibleAddModal(false);
       }
     }
     else{
@@ -507,7 +524,7 @@ const City = () => {
   }
 
   const handleClose = async () => {
-    setvisible(false);
+    setvisibleAddModal(false);
   };
 
   const handleConfirm = async () => {
@@ -556,7 +573,7 @@ const City = () => {
               <Crumb
                 current={city.name}
                 first="/"
-                second={url.replace(`/${id}`, "")}
+                second={url.replace(`/${id}`, "/page/1")}
                 second_name="Станиці"
               />
               {isActiveCity ? null : (
@@ -711,7 +728,7 @@ const City = () => {
                           <Tooltip title="Архівувати станицю">
                             <ContainerOutlined
                               className="cityInfoIconDelete"
-                              onClick={() => seeArchiveModal()}
+                              onClick={() => showArchiveModal()}
                             />
                           </Tooltip>
                         </Col>) : (
@@ -720,7 +737,7 @@ const City = () => {
                             <Tooltip title="Видалити станицю">
                               <DeleteOutlined
                                 className="cityInfoIconDelete"
-                                onClick={() => seeDeleteModal()}
+                                onClick={() => showDeleteModal()}
                               />
                             </Tooltip>
                           </Col>
@@ -729,7 +746,7 @@ const City = () => {
                               <ContainerOutlined
                                 className="cityInfoIcon"
                                 color="green"
-                                onClick={() => seeUnArchiveModal()}
+                                onClick={() => showUnArchiveModal()}
                               />
                             </Tooltip>
                           </Col>
@@ -839,7 +856,7 @@ const City = () => {
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
-                  onClick={() => setvisible(true)}
+                  onClick={() => setvisibleAddModal(true)}
                 />) : null) : null}
               <Button
                 type="primary"
@@ -935,7 +952,7 @@ const City = () => {
                   className="cityMemberItem"
                   xs={12}
                   sm={8}
-                  onClick={() => seeJoinModal()}
+                  onClick={() => showJoinModal()}
                 >
                   <div>
                     <Avatar
@@ -981,7 +998,7 @@ const City = () => {
                         <Tooltip placement={"bottom"} title={"Покинути станицю"}>
                           <MinusOutlined
                             className="approveIcon"
-                            onClick={() => seeSkipModal(followers.id)}
+                            onClick={() => showSkipModal(followers.id)}
                           />
                         </Tooltip>) : !isLoadingPlus && isLoadingMemberId === followers.id ? (
                           <Tooltip placement={"bottom"} title={"Зачекайте"}>
@@ -1015,7 +1032,7 @@ const City = () => {
       ></CityDetailDrawer>
       <Modal
         title="Додати діловода"
-        visible={visible}
+        visible={visibleAddModal}
         onCancel={handleClose}
         footer={null}
       >
@@ -1024,7 +1041,7 @@ const City = () => {
           cityId={+id}
           head={city.head}
           headDeputy={city.headDeputy}
-          visibleModal={visible}>
+          visibleModal={visibleAddModal}>
         </AddCitiesNewSecretaryForm>
       </Modal>
 

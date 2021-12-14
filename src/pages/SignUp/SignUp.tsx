@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import { Form, Input, Button} from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Button, Modal} from 'antd';
 import styles from './SignUp.module.css';
 import Switcher from './Switcher/Switcher';
 import { checkEmail, checkNameSurName, checkPassword } from './verification';
 import AuthorizeApi from '../../api/authorizeApi';
 import { useHistory } from 'react-router-dom';
 import{incorrectEmail, emptyInput, incorrectPhone, minLength} from "../../components/Notifications/Messages"
+import TermsOfUseModel from "../../models/TermsOfUse/TermsOfUseModel";
+import termsApi from '../../api/termsApi';
+import { Markup } from 'interweave';
+import Spinner from "../Spinner/Spinner";
 
 let authService = new AuthorizeApi();
 
@@ -13,8 +17,26 @@ export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
   const [available, setAvailabe] = useState(true);
+  const [visible, setVisible] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [agree, setAgree] = useState(false);
+  const [terms, setTerms] = useState<TermsOfUseModel>({
+    termsId: 0,
+    termsTitle: '',
+    termsText: 'Немає даних',
+    datePublication: new Date()
+  });
 
+  const fetchTermsData = async () => {
+    setLoading(true);
+    const termsData:TermsOfUseModel = await termsApi.getTerms();
+    setTerms(termsData)
+    setLoading(false); 
+  };
 
+  useEffect(() => {
+    fetchTermsData();
+  }, [])
 
   const validationSchema = {
     Email: [
@@ -39,6 +61,16 @@ export default function () {
     ],
   };
 
+  const confirmTerms = async () => {
+    setAgree(true);
+    setVisible(false);
+  };
+
+  const cancelTerms = async () => {
+    history.push("/signin");
+    setVisible(false);
+  };
+  
   const handleSubmit = async (values: any) => {
     setAvailabe(false);
     await authService.register(values);
@@ -54,7 +86,7 @@ export default function () {
     ConfirmPassword: '',
   };
 
-  return (
+  return agree ? (
     <div className={styles.mainContainerSignUp}>
       <Switcher page="SignUp" />
       <Form
@@ -102,5 +134,21 @@ export default function () {
         </Form.Item>
       </Form>
     </div>
-  );
+  ) : (loading ? (
+  <Spinner/> 
+  ) : (<Modal
+    title={terms.termsTitle}
+    centered
+    okText='Погоджуюсь'
+    style={{textAlign:"center"}}
+    visible={visible}
+    onOk={confirmTerms}
+    onCancel={cancelTerms}
+    width={1000}
+  >
+  <Markup
+    className="markupText"
+    content={terms.termsText}
+  />
+  </Modal>))
 }

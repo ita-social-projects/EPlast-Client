@@ -12,6 +12,7 @@ import activeMembershipApi from "../../api/activeMembershipApi";
 import moment from "moment";
 import{ emptyInput } from "../../components/Notifications/Messages";
 import { Roles } from "../../models/Roles/Roles";
+import { displayPartsToString } from "typescript";
 
 interface Props {
   record: string;
@@ -68,13 +69,6 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
     );
   };
 
-  const handleDisabled = () => {
-    if(user.userRoles === Roles.FormerPlastMember) {
-      return true
-    }
-    return false
-  }
-
   return (
     <div>
       <Form name="basic" onFinish={handleFinish} form={form}>
@@ -88,15 +82,30 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
             },
           ]}
         >
+
       <Select onChange={handleChange}>
-        <Option value={Roles.Supporter} disabled={handleDisabled()}>Прихильник</Option>
-        <Option value={Roles.PlastMember} disabled={handleDisabled()}>
-          Дійсний член організації
-        </Option>
-        <Option value={Roles.FormerPlastMember} disabled={handleDisabled()}>Колишній член Пласту</Option>
-        <Option value={Roles.RegisteredUser} disabled={disabled}>Зареєстрований користувач</Option>
-        
+      { user.userRoles === Roles.RegisteredUser ? (
+        <Option value={Roles.Supporter}>Прихильник</Option>
+        ):
+        <Option value={0}> </Option>
+        }
+        { user.userRoles === Roles.Supporter ? (
+        <Option value={Roles.PlastMember}>Дійсний член організації</Option>
+        ):
+        null
+        }
+        { user.userRoles === Roles.Supporter || user.userRoles === Roles.PlastMember ? (
+        <Option value={Roles.FormerPlastMember}>Колишній член Пласту</Option>
+        ): 
+        null
+        }
+        { user.userRoles === Roles.FormerPlastMember ? (
+        <Option value={Roles.RegisteredUser}>Зареєстрований користувач</Option>
+        ): 
+        null
+        }
       </Select>
+      
         </Form.Item>
         <Form.Item className="cancelConfirmButtons">
           <Row justify="end">

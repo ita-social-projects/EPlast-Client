@@ -8,12 +8,11 @@ import AuthStore from "../../../stores/AuthStore";
 import jwt from 'jwt-decode';
 import AdminType from "../../../models/Admin/AdminType";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
-import ClubMember from "../../../models/Club/ClubMember";
 import "./AddClubsSecretaryForm.less";
 import { Roles } from "../../../models/Roles/Roles";
 import { useParams } from "react-router-dom";
 import ClubUser from "../../../models/Club/ClubUser";
-
+import {descriptionValidation} from "../../../models/GllobalValidations/DescriptionValidation"
 
 type AddClubsNewSecretaryForm = {
   visibleModal: boolean;
@@ -93,7 +92,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
   }, [props]);
 
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form} className="formAddSecretaryModal">
+    <Form name="basic" onFinish={(values) => {handleSubmit(values); setLoading(true)}} form={form} className="formAddSecretaryModal">
       <Form.Item
         className={classes.formField}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
@@ -122,16 +121,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
           props.admin === undefined ? "" : props.admin.adminType.adminTypeName
         }
         name="AdminType"
-        rules={[
-          {
-            required: true,
-            message: <div className="formItemExplain">{emptyInput()}</div>,
-          },
-          {
-            pattern: /^\s*\S.*$/,
-            message: <div className="formItemExplain">{inputOnlyWhiteSpaces()}</div>,
-          },
-        ]}
+        rules={descriptionValidation.AdminType}
       >
         <AutoComplete
           className={classes.inputField}
@@ -185,7 +175,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item style={{ textAlign: "right" }}>
-        <Button type="primary" loading = {loading} onClick = {() => {setLoading(true); handleSubmit(form.getFieldsValue());}}>
+        <Button type="primary" htmlType="submit" loading = {loading}>
           Опублікувати
         </Button>
       </Form.Item>

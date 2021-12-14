@@ -18,7 +18,7 @@ import { DeleteOutlined, ExclamationCircleOutlined, PlusOutlined } from "@ant-de
 import { useHistory } from "react-router-dom";
 import ReactInputMask from "react-input-mask";
 import Title from "antd/lib/typography/Title";
-import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, getOnlyNums } from "../../models/GllobalValidations/DescriptionValidation";
 import {
   fileIsUpload,
   fileIsNotUpload,
@@ -62,7 +62,7 @@ const AddNewRegionFormPage = () => {
           await createRegion(newRegion);
           form.resetFields();  
           notificationLogic("success", successfulCreateAction("Округу"));
-          history.push("/regions");  
+          history.push("/regions/page/1");  
     }
     catch (error) {
       notificationLogic("error", failCreateAction("округу"));
@@ -255,7 +255,15 @@ const AddNewRegionFormPage = () => {
                   name="postIndex"
                   rules={descriptionValidation.postIndex}
                 >
-                  <Input type="number" />
+                  <Input 
+                  onChange={(e) => {
+                    form.setFieldsValue({
+                      postIndex: getOnlyNums(e.target.value),
+                    });
+                  }}
+                  autoComplete = "off"
+                  maxLength={5}
+                  />
                 </Form.Item>
               </Col>
             </Row>

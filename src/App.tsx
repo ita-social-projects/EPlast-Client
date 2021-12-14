@@ -25,6 +25,7 @@ import UserProfile from "./pages/userPage/personalData/PersonalData";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import ChangePassword from "./pages/ChangePassword/ChangePassword";
+import UserRenewal from "./pages/UserRenewal/UserRenewal";
 import ActionClubs from "./pages/Club/Clubs/ActionClubs";
 import Club from "./pages/Club/Club/Club";
 import CreateClub from "./pages/Club/CreateClub/CreateClub";
@@ -77,6 +78,9 @@ import EditGoverningBodySector from "./pages/GoverningBody/Sector/EditSector";
 import GoverningBodySectorDocuments from "./pages/GoverningBody/Sector/SectorDocuments";
 import GoverningBodySectorAdministration from "./pages/GoverningBody/Sector/SectorAdministration";
 import Announcements from "./pages/GoverningBody/Announcement/Announcement";
+import UserRenewalTable from "./pages/UserRenewal/UserRenewalTable/UserRenewalTable";
+import TermsOfUse from "./pages/Terms/TermsOfUse";
+import TermsEdit from "./pages/Terms/TermsEdit";
 
 const App: FC = () => (
   <div className="App">
@@ -91,6 +95,7 @@ const App: FC = () => (
           <Route path="/forgotpassword" component={ForgotPassword} />
           <Route path="/resetPassword" component={ResetPassword} />
           <Route path="/changePassword" component={ChangePassword} />
+          <Route path="/userRenewal" component={UserRenewal} />
           <Route path="/chat" component={Demo} />
           <RouteWithLayout
             layout={PrivateLayout}
@@ -105,7 +110,7 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/cities"
+            path="/cities/page/:p"
             component={ActionCities}
           />
           <RouteWithLayout
@@ -247,7 +252,7 @@ const App: FC = () => (
             path="/annualreport/region/create/:regionId/:year"
             component={RegionAnnualReportCreate}
           />
-           <RouteWithLayout
+          <RouteWithLayout
             layout={PrivateLayout}
             exact
             path="/annualreport/region/edit/:annualreportId/:year"
@@ -292,7 +297,7 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/clubs"
+            path="/clubs/page/:p"
             component={ActionClubs}
           />
           <RouteWithLayout
@@ -317,7 +322,7 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/regions"
+            path="/regions/page/:p"
             component={Regions}
           />
           <RouteWithLayout
@@ -454,6 +459,18 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+            path="/terms"
+            component={TermsOfUse}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/terms/edit"
+            component={TermsEdit}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/annualreport/create/:cityId"
             component={AnnualReportCreate}
           />
@@ -492,6 +509,12 @@ const App: FC = () => (
             exact
             path="/precautions"
             component={PrecautionTable}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/renewals"
+            component={UserRenewalTable}
           />
           <RouteWithLayout
             layout={PrivateLayout}

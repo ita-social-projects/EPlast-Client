@@ -37,12 +37,32 @@ const DecisionTable = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
+  const rolesUrl: string = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
   
-  const handleDelete = (id: number) => {
-    const filteredData = data.filter(d => d.id !== id);
-    setData([...filteredData]);
-    setTotal(total-1);
-    setCount(count-1);
+  const fetchData = async () => {
+    let jwt = AuthStore.getToken() as string;
+    let decodedJwt = jwt_decode(jwt) as any;
+    let roles = decodedJwt[rolesUrl] as string[];
+    setLoading(true);
+    const res: DecisionTableInfo[] = await decisionsApi.getAllDecisionsForTable(searchedData, page, pageSize);
+    setTotal(res[0]?.total);
+    setCount(res[0]?.count);
+    setData(res);
+    setLoading(false);
+    setUser(roles);
+    setCanEdit(roles.includes(Roles.Admin));
+    setRegionAdm(roles.includes(Roles.OkrugaHead));
+    setRegionAdmDeputy(roles.includes(Roles.OkrugaHeadDeputy));
+    setCityAdm(roles.includes(Roles.CityHead));
+    setCityAdmDeputy(roles.includes(Roles.CityHeadDeputy));
+    setClubAdm(roles.includes(Roles.KurinHead));
+    setClubAdmDeputy(roles.includes(Roles.KurinHeadDeputy));
+  };
+  const handleDelete = () => {
+    if(page != 1 && data.length == 1)
+      setPage(page-1);
+    else
+      fetchData();
   }
   const handleEdit = (id: number, name: string, description: string) => {
     /* eslint no-param-reassign: "error" */
@@ -57,50 +77,15 @@ const DecisionTable = () => {
     setData([...filteredData]);
   }
   const handleAdd = async () => {
-    const lastId = data[data.length - 1].id;
-    let user: any;
-    let curToken = AuthStore.getToken() as string;
-    user = jwt_decode(curToken);
-    await decisionsApi.getById(lastId + 1).then(res => {
-      const dec: DecisionTableInfo = {
-        id: res.id,
-        name: res.name,
-        governingBody: res.governingBody.governingBodyName,
-        decisionStatusType: statusTypeGetParser(res.decisionStatusType),
-        decisionTarget: res.decisionTarget.targetName,
-        description: res.description,
-        fileName: res.fileName,
-        userId: user.nameid,
-        date: res.date,
-        total: total + 1,
-        count: count + 1
-      };
-      setTotal(total + 1);
-      setCount(count + 1);
-      setData([...data, dec]);
-    });
+    if(page != 1){
+    setPage(1);
+    } 
+    else {
+      fetchData();
+    }
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      let jwt = AuthStore.getToken() as string;
-      let decodedJwt = jwt_decode(jwt) as any;
-      let roles = decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[];
-      setLoading(true);
-      const res: DecisionTableInfo[] = await decisionsApi.getAllDecisionsForTable(searchedData, page, pageSize);
-      setTotal(res[0]?.total);
-      setCount(res[0]?.count);
-      setData(res);
-      setLoading(false);
-      setUser(roles);
-      setCanEdit(roles.includes(Roles.Admin));
-      setRegionAdm(roles.includes(Roles.OkrugaHead));
-      setRegionAdmDeputy(roles.includes(Roles.OkrugaHeadDeputy));
-      setCityAdm(roles.includes(Roles.CityHead));
-      setCityAdmDeputy(roles.includes(Roles.CityHeadDeputy));
-      setClubAdm(roles.includes(Roles.KurinHead));
-      setClubAdmDeputy(roles.includes(Roles.KurinHeadDeputy));
-    };
     fetchData();
   }, [searchedData, page, pageSize]);
 

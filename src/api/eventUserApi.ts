@@ -61,9 +61,9 @@ const getEventToApprove = async (eventId: number) => {
 }
 
 export const getUserEventAccess = async (userId: string, eventId?: number) => {
-    const response = await Api.get(`UserAccess/GetEventUserAccess/${userId}${eventId? "/"+eventId : ""}`);
+    const response = await Api.get(`UserAccess/GetEventUserAccess/${userId}${eventId ? "/" + eventId : ""}`);
     return response;
-  }
+}   
 
 export default {
     getEventsUser,

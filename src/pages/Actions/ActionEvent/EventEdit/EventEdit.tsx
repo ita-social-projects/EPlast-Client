@@ -26,11 +26,12 @@ const classes = require('./EventEdit.module.css');
 
 interface Props {
     id: number;
+    statusId: number;
     onEdit: () => void;
     setShowEventEditDrawer: (visibleDrawer: boolean) => void;
 }
 
-export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
+export default function ({ id, statusId, onEdit, setShowEventEditDrawer }: Props) {
     const [form] = Form.useForm();
     const [doneLoading, setDoneLoading] = useState(false);
     const [selectedUsers, setSelectedUsers] = useState<string[]>(['', '', '', '']);
@@ -62,8 +63,8 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
                     Questions: response.data.event.questions,
                     EventTypeID: response.data.event.eventTypeID,
                     EventCategoryID: response.data.event.eventCategoryID,
-                    EventDateStart: moment.utc(response.data.event.eventDateStart).local(),
-                    EventDateEnd: moment.utc(response.data.event.eventDateEnd).local(),
+                    EventDateStart: moment(response.data.event.eventDateStart),
+                    EventDateEnd: moment(response.data.event.eventDateEnd),
                     FormOfHolding: response.data.event.formOfHolding,
                     Eventlocation: response.data.event.eventlocation,
                     ForWhom: response.data.event.forWhom,
@@ -95,12 +96,12 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
                 eventName: values.EventName,
                 description: values.Description,
                 questions: values.Questions,
-                eventDateStart: moment.utc(values.EventDateStart).local(),
-                eventDateEnd: moment.utc(values.EventDateEnd).local(),
+                eventDateStart: moment(values.EventDateStart).format('YYYY-MM-DD HH:mm:ss'),
+                eventDateEnd: moment(values.EventDateEnd).format('YYYY-MM-DD HH:mm:ss'),
                 eventlocation: values.Eventlocation,
                 eventTypeID: values.EventTypeID,
                 eventCategoryID: values.EventCategoryID,
-                eventStatusID: values.EventStatusID,
+                eventStatusID: statusId,
                 formOfHolding: values.FormOfHolding,
                 forWhom: values.ForWhom,
                 numberOfPartisipants: values.NumberOfPartisipants,
@@ -120,7 +121,6 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
         }
         await eventUserApi.put(newEvent).then(response => {
             notificationLogic('success', successfulEditAction('Подію', values.EventName));
-
             NotificationBoxApi.createNotifications(
                 [values.commandantId, values.alternateId, values.bunchuzhnyiId, values.pysarId],
                 "Подія, в якій ви є адміністратором, змінена: ",
@@ -136,7 +136,6 @@ export default function ({ id, onEdit, setShowEventEditDrawer }: Props) {
         setShowEventEditDrawer(false);
         setDoneLoading(false);
         onEdit();
-        form.resetFields();
     }
 
     function disabledDate(current: any) {

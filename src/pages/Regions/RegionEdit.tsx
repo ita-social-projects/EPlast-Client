@@ -21,7 +21,7 @@ import { useHistory } from "react-router-dom";
 import Spinner from "../Spinner/Spinner";
 import Title from "antd/lib/typography/Title";
 import RegionProfile from "../../models/Region/RegionProfile";
-import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, getOnlyNums } from "../../models/GllobalValidations/DescriptionValidation";
 import {
   fileIsUpload,
   fileIsNotUpload,
@@ -283,7 +283,14 @@ const RegionEditFormPage = () => {
                   initialValue={chosenRegion.postIndex}
                   rules={descriptionValidation.postIndex}
                 >
-                  <Input type="number"
+                  <Input
+                    onChange={(e) => {
+                      form.setFieldsValue({
+                        postIndex: getOnlyNums(e.target.value),
+                      });
+                    }}
+                    autoComplete = "off"
+                    maxLength={5}
                     value={chosenRegion.postIndex} />
                 </Form.Item>
               </Col>

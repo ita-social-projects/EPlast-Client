@@ -4,7 +4,7 @@ import {EventGallery} from "./EventInfo";
 import eventsApi from "../../../../api/eventsApi";
 import FormAddPictures from "./FormAddPictures";
 import PicturesWall from "./PicturesWall";
-
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import './EventInfo.less';
 
 const {Title} = Typography;
@@ -17,7 +17,7 @@ interface Props {
 const GallerySpinner = () => (
     <div>
         <Title level={2} style={{color: '#3c5438'}}>Галерея</Title>
-        <Carousel autoplay={false} className="homeSlider"
+        <Carousel autoplay={false} className="homeSlider" 
         >
             <Spin tip="Завантаження...">
                 <Alert
@@ -33,7 +33,7 @@ const FillGallery = (pictures: EventGallery[]) => {
     if (pictures.length === 0) {
         return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='Галерея події порожня'/>
     }
-    return (<Carousel autoplay={true} className="homeSlider"
+    return (<Carousel autoplay={true} className="homeSlider" arrows prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}
     >
         {
             pictures.map(picture => {
@@ -50,14 +50,16 @@ const Gallery = ({eventId, userAccesses}: Props) => {
 
     const addPictures = (uploadedPictures: EventGallery[]) => setPictures(pictures.concat(uploadedPictures));
     const removePicture = (pictureId: number) => setPictures(pictures.filter(picture => picture.galleryId !== pictureId))
-    const GalleryAdministration = (): React.ReactNode[] => {
+    const GalleryAdministration  = (): React.ReactNode[] => {
         if (userAccesses["AddPhotos"]) {
             return [
-                <Title level={2} style={{color: '#3c5438'}} key='spinnerTitle'>Адміністрування галереї</Title>,
-                <FormAddPictures eventId={eventId} updateGallery={addPictures} picturesCount={pictures.length}
-                                 key='addPictures'/>,
+                <div>      
+                <Title level={3} style={{color: '#3c5438' , display:'flex', alignItems:'center',justifyContent:'center'}} key='spinnerTitle'>Адміністрування галереї</Title>
+                <FormAddPictures eventId={eventId} updateGallery={addPictures} picturesCount={pictures.length} 
+                     key='addPictures'/>
                 <PicturesWall pictures={pictures} removePicture={removePicture} key='removePictures'/>
-            ];
+                </div>
+            ]; 
         } else return [];
     }
 

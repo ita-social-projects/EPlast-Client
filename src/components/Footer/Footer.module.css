@@ -1,6 +1,7 @@
 .footerContainer{
     text-align: center;
     padding: 10px 0px 10px;
+    user-select: none;
 }
 .footerContacts{
     display: flex;

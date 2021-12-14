@@ -17,7 +17,7 @@ const ActionRegion = () => {
     }
 
     const onChange = () => {
-            setSwitchValue(!SwitchValue);
+        setSwitchValue(!SwitchValue);
       }
 
     useEffect(()=>{
@@ -27,7 +27,7 @@ const ActionRegion = () => {
     return (
         <div>
             {isAdmin ? ( 
-            <p className={classes.swapper}> Показати не активні округи: <Switch onChange={onChange}/></p> 
+            <p className={classes.swapper}> Показати неактивні округи: <Switch onChange={onChange}/></p> 
             ): null }
             <div className={classes.actionsWrapper}>
                 <SortedRegions switcher={SwitchValue} />
