@@ -5,7 +5,7 @@ import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import { getActiveClubByPage, getNotActiveClubByPage, getLogo } from "../../../api/clubsApi";
 import "./Clubs.less";
-import ClubProfile from "../../../models/Club/ClubProfile";
+import ClubByPage from "../../../models/Club/ClubByPage";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import Search from "antd/lib/input/Search";
@@ -21,7 +21,7 @@ const SortedClubs = ( {switcher}: Props) => {
   const history = useHistory();
   const { url } = useRouteMatch();
 
-  const [clubs, setClubs] = useState<ClubProfile[]>([]);
+  const [clubs, setClubs] = useState<ClubByPage[]>([]);
   const [canCreate, setCanCreate] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -32,7 +32,7 @@ const SortedClubs = ( {switcher}: Props) => {
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
 
-  const setPhotos = async (clubs: ClubProfile[]) => {
+  const setPhotos = async (clubs: ClubByPage[]) => {
     try {
       for await (const club of clubs) {
         if (club.logo === null) {
@@ -63,7 +63,7 @@ const SortedClubs = ( {switcher}: Props) => {
       setClubs(response.data.clubs);
       setCanCreate(response.data.canCreate);
       setActiveCanCreate(response.data.canCreate);
-      setTotal(response.data.total);
+      setTotal(response.data.rows);
     } finally {
       setLoading(false);
     }
@@ -103,10 +103,10 @@ const SortedClubs = ( {switcher}: Props) => {
     setSearchedData(event);
   };
 
-  const renderCity = (arr: ClubProfile[]) => {
+  const renderCity = (arr: ClubByPage[]) => {
     if (arr) {
         // eslint-disable-next-line react/no-array-index-key
-        return  arr.map((club: ClubProfile) =>(
+        return  arr.map((club: ClubByPage) =>(
           <Link to={`${url}/${club.id}`}>
               <Card
                 key={club.id}
