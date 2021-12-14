@@ -37,7 +37,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
     const newKadra: any = {
       id: record.id,
 
-      dateOfGranting: moment.utc(date).local().format(dateFormat),
+      dateOfGranting: moment(date).format("YYYY-MM-DD HH:mm:ss"),
 
       numberInRegister: values.numberInRegister,
 
@@ -90,7 +90,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 label="Дата вручення"
                 labelCol={{ span: 24 }}
                 name="dateOfGranting"
-                initialValue={moment.utc(record.dateOfGranting).local()}
+                initialValue={moment.utc(record.dateOfGranting)}
                 rules={[
                   {
                     required: true,
