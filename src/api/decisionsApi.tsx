@@ -9,7 +9,7 @@ export type Decision = {
   decisionStatusType: string;
   decisionTarget: string;
   description: string;
-  date: string; 
+  date: string;
   userId: string;
   fileName: string | null;
 }
