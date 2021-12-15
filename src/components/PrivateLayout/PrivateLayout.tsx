@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { Avatar, Layout, Menu, Button } from "antd";
-import { BankOutlined, BookOutlined, RollbackOutlined, AlignLeftOutlined } from "@ant-design/icons";
+import { BankOutlined, BookOutlined, RollbackOutlined, AlignLeftOutlined, QuestionOutlined } from "@ant-design/icons";
 import {
   SolutionOutlined,
   SnippetsOutlined,
@@ -256,6 +256,7 @@ const PrivateLayout = ({ children }: any) => {
                 key="17"
                 title=""
               >
+                <QuestionOutlined />
                 Про Базу
               </Menu.Item>
             ) : (<> </>)
