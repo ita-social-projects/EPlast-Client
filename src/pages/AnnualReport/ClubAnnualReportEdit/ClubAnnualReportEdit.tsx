@@ -18,23 +18,21 @@ import moment from "moment";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Spinner from "../../Spinner/Spinner";
 import { CloseCircleOutlined } from "@ant-design/icons";
-import AuthStore from "../../../stores/AuthStore";
-import jwt from "jwt-decode";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
 import ClubMember from "../../../models/Club/ClubMember";
 import ClubAnnualReportForm from "../ClubAnnualReportForm/ClubAnnualReportForm";
 import UserApi from "../../../api/UserApi";
 import ClubProfile from "../../../models/Club/ClubProfile";
-import { Roles } from "../../../models/Roles/Roles";
+import AnnualReportApi from "../../../api/AnnualReportApi";
+import { ReportType } from "../../../models/AnnualReport/ReportType";
+import { ReportStatus } from "../../../models/AnnualReport/ReportStatus";
 
 const { Title } = Typography;
 
 const ClubAnnualReportEdit = () => {
     const { id } = useParams();
     const history = useHistory();
-    const [clubAnnualReport, setClubAnnualReport] = useState<
-        ClubAnnualReport
-    >();
+    const [clubAnnualReport, setClubAnnualReport] = useState<ClubAnnualReport>();
     const [admins, setAdmins] = useState<ClubAdmin[]>([]);
     const [members, setClubMembers] = useState<ClubMember[]>([]);
     const [followers, setFollowers] = useState<ClubMember[]>([]);
@@ -56,36 +54,30 @@ const ClubAnnualReportEdit = () => {
     const fetchClubAnnualReport = async () => {
         setIsLoading(true);
         try {
-            let token = AuthStore.getToken() as string;
-            let roles = UserApi.getActiveUserRoles();
+            let userAccess = await (
+                await AnnualReportApi.getUserCertainAnnualReportAccess(
+                    UserApi.getActiveUserId(),
+                    ReportType.Club,
+                    id
+                )
+            ).data;
             let response = await getClubAnnualReportById(id);
-            let clubInfo = await getClubMembersInfo(
-                response.data.annualreport.clubId
-            );
+            let clubInfo = await getClubMembersInfo(response.data.annualreport.clubId);
 
-            setClub(clubInfo.data.club)
-            setClubHead(response.data.annualreport.head)
+            setClub(clubInfo.data.club);
+            setClubHead(response.data.annualreport.head);
             setAdmins(clubInfo.data.admins.filter((a: any) => a !== null));
             setClubMembers(clubInfo.data.members);
             setFollowers(clubInfo.data.followers);
 
-            const user: any = jwt(token);
-            if (
-                !(
-                    (roles.includes(Roles.Admin) ||
-                        (roles.includes(Roles.KurinHead) &&
-                            clubInfo.data.head?.userId == user.nameid)) &&
-                    response.data.annualreport.status == 0
-                )
-            ) {
-                showError("Немає доступу до редагування звіту.");
-            } else {
+            if (userAccess?.CanEditReport && response.data.annualreport.status == ReportStatus.Unconfirmed) {
                 setClubAnnualReport(response.data.annualreport);
                 form.setFieldsValue(response.data.annualreport);
+            } else {
+                showError("Немає доступу до редагування звіту.");
             }
         } catch (error) {
             notificationLogic("error", tryAgain);
-            history.goBack();
         } finally {
             setIsLoading(false);
         }
