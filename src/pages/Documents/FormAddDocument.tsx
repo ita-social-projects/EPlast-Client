@@ -117,7 +117,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
         description: values.description,
         date:
           /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ 
-          moment.utc(values.datepicker.i).local().toDate(),
+          moment(values.datepicker).format("YYYY-MM-DD HH:mm:ss"),
         fileName: fileData.FileName,
       },
       fileAsBase64: fileData.FileAsBase64,
