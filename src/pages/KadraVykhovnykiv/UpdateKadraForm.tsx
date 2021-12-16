@@ -29,7 +29,6 @@ type FormUpdateKadraProps = {
 
 const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
   const { onAdd, record, onEdit, showModal } = props;
-  const [date, setDate] = useState<Moment>();
   const [form] = Form.useForm();
   const dateFormat = "DD.MM.YYYY";
 
@@ -37,7 +36,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
     const newKadra: any = {
       id: record.id,
 
-      dateOfGranting: moment.utc(date).local().format(dateFormat),
+      dateOfGranting: moment(values.dateOfGranting).format("YYYY-MM-DD HH:mm:ss"),
 
       numberInRegister: values.numberInRegister,
 
@@ -72,14 +71,6 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
     showModal(false);
   };
 
-  const handleOnChangeDateOfGranting = (event: any, value: any) => {
-    if (value === "") {
-      setDate(undefined);
-    } else {
-      setDate(event._i);
-    }
-  };
-
   return (
     <div>
         <Form name="basic" onFinish={handleSubmit} form={form}>
@@ -90,7 +81,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 label="Дата вручення"
                 labelCol={{ span: 24 }}
                 name="dateOfGranting"
-                initialValue={moment.utc(record.dateOfGranting).local()}
+                initialValue={moment(record.dateOfGranting)}
                 rules={[
                   {
                     required: true,
@@ -101,8 +92,6 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 <DatePicker 
                   className={classes.selectField} 
                   format={dateFormat}
-                  value={date}
-                  onChange={handleOnChangeDateOfGranting}
                 />
               </Form.Item>
             </Col>
