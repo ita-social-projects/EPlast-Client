@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Modal, Spin} from 'antd';
+import { Form, Input, Button, Modal} from 'antd';
 import styles from './SignUp.module.css';
 import Switcher from './Switcher/Switcher';
 import { checkEmail, checkNameSurName, checkPassword } from './verification';
@@ -9,7 +9,6 @@ import{incorrectEmail, emptyInput, incorrectPhone, minLength} from "../../compon
 import TermsOfUseModel from "../../models/TermsOfUse/TermsOfUseModel";
 import termsApi from '../../api/termsApi';
 import { Markup } from 'interweave';
-import Spinner from "../Spinner/Spinner";
 
 let authService = new AuthorizeApi();
 
@@ -18,7 +17,6 @@ export default function () {
   const history = useHistory();
   const [available, setAvailabe] = useState(true);
   const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [terms, setTerms] = useState<TermsOfUseModel>({
     termsId: 0,
     termsTitle: '',
@@ -28,10 +26,8 @@ export default function () {
   const[model, setModel] = useState();
 
   const fetchTermsData = async () => {
-    setLoading(true);
     const termsData:TermsOfUseModel = await termsApi.getTerms();
     setTerms(termsData)
-    setLoading(false); 
   };
 
   const validationSchema = {
