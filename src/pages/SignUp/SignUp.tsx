@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Modal} from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Form, Input, Button, Modal, Spin} from 'antd';
 import styles from './SignUp.module.css';
 import Switcher from './Switcher/Switcher';
 import { checkEmail, checkNameSurName, checkPassword } from './verification';
@@ -57,9 +57,12 @@ export default function () {
     ],
   };
 
+  useEffect(()=>{
+    fetchTermsData();
+  },[])
+
   const handleSubmit = async (values: any) => {
     setModel(values);
-    fetchTermsData();
     setVisible(true);
   };
 
@@ -83,7 +86,7 @@ export default function () {
     ConfirmPassword: '',
   };
 
-  return !loading ? (
+  return (
     <div className={styles.mainContainerSignUp}>
       <Switcher page="SignUp" />
       <Form
@@ -147,7 +150,5 @@ export default function () {
         </Modal>
       </Form>
     </div>
-    ) : (
-      <Spinner />
   );
 };
