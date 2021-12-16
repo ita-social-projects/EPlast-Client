@@ -51,14 +51,12 @@ export const KVTable = ({ current, searchData }: props) => {
         });
  } 
   
-  const handleDelete = (id: number) => {
-    const filteredData = data.filter((d: { id: number; }) => d.id !== id);
-    const DeletedKadra = data.find((d: { id: number; }) => d.id === id);
-    setData([...filteredData]);
-    DeletedKadra &&
-    createNotifications(DeletedKadra.userId);
-   
-  }
+ const handleDelete = () => {
+  if(page != 1 && data.length == 1)
+    setPage(page-1);
+  else
+    fetchData();
+}
 
   const onEdit = () => {
     fetchData()
