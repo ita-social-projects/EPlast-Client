@@ -59,8 +59,8 @@ const PicturesWall = ({pictures, removePicture}: Props) => {
     }
 
     return (
-        <Row justify="center" style={{marginBottom:'15px'}}>
-            <Col span={16} style={{maxHeight: '400px', overflow: 'auto'}}>
+        <Row  className='picturesWall' justify="center" style={{marginBottom:'15px'}}>
+            <Col span={16} style={{maxHeight: '400px', overflow: 'auto',overflowX:'hidden'}}>
                 <Row justify="center" gutter={[16, 8]}>
                     {
                         pictures.map(picture => <Col xs={24} md={12} lg={6} key={picture.galleryId}>

@@ -33,8 +33,8 @@ const SavedRegionDropdown = (props: Props) => {
                     className={showDropdown ? styles.menu : styles.menuHidden}
                     style={{
                         position: "absolute",
-                        top: pageY,
-                        left: pageX,
+                        top: pageY - 185,
+                        left: pageX - 36,
                     }}
                 >
                     <Menu.Item key="1">
