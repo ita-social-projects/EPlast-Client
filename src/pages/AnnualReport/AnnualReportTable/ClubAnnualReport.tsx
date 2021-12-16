@@ -286,8 +286,8 @@ export const ClubAnnualReportTable = ({
                         },
                         onContextMenu: async (event) => {
                             event.preventDefault();
-                            setX(event.pageX);
-                            setY(event.pageY - 200);
+                            event.pageX + 277 > window.innerWidth ? setX(window.innerWidth - 280) : setX(event.pageX)
+                            setY(event.pageY);
                             userCertainAnnualReportAccess.CanEditReport = userCertainAnnualReportAccess?.IsSuperAdmin;
                             setClubAnnualReport(record);
                             setUserCertainAnnualReportAccess(

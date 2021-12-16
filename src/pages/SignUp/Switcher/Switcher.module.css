@@ -160,23 +160,23 @@
     }
 }
 
-@media(max-width: 380px){
+@media(max-width: 410px){
     .loginText{
-        font-size:13px;
+        font-size: 13px;
         margin-top: 12px;
         margin-left: 5px;
     }
     .registerText{
-        font-size:13px;
+        font-size: 13px;
         margin-top: 12px;
         margin-right: 5px;
     }
     .orSwitcher{
-        font-size:25px;
-        margin-bottom: 5px;
+        font-size:24px;
+        margin-bottom: 7px;
     }
     .loginCircle{
-        width: 60px;
+        width: 58px;
     }
 }
 
