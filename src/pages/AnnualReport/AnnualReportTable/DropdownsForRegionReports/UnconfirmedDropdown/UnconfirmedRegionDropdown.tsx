@@ -60,11 +60,8 @@ const UnconfirmedRegionDropdown = (props: Props) => {
                     selectedKeys={[]}
                     className={showDropdown ? styles.menu : styles.menuHidden}
                     style={{
-                        top: pageY,
-                        left:
-                            window.innerWidth - (pageX + 170) < 0
-                                ? window.innerWidth - 220
-                                : pageX,
+                        top: pageY - 185,
+                        left: pageX - 36,
                     }}
                 >
                     <Menu.Item key="1">
