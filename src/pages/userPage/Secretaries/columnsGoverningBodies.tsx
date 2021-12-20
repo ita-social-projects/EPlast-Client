@@ -1,5 +1,6 @@
-import GoverningBodyUser from "../../../models/GoverningBody/GoverningBodyUser";
 import moment from "moment";
+
+const minDate = '01.01.0001';
 
 const columns = [
   {
@@ -8,16 +9,16 @@ const columns = [
   },
   {
     title: "Користувач",
-    dataIndex: "user",
-    render: (user: GoverningBodyUser) => {
-      return user.firstName + " " + user.lastName;
+    dataIndex: "userName",
+    render: (userName: string) => {
+      return userName;
     },
   },
   {
     title: "Тип адміністрування",
     dataIndex: "adminType",
-    render: (adminType: any) => {
-      return adminType.adminTypeName;
+    render: (adminType: string) => {
+      return adminType;
     },
   },
   {
@@ -31,17 +32,19 @@ const columns = [
     title: "Кінець каденції",
     dataIndex: "endDate",
     render: (endDate: Date) => {
-      return moment.utc(endDate).local().format("DD.MM.YYYY") === "Invalid date"
-        ? " Не закінчена "
-        : moment.utc(endDate).local().format("DD.MM.YYYY");
+      const instanceDate = moment.utc(endDate).local().format("DD.MM.YYYY")
+      return instanceDate === minDate
+          ? " Не закінчена "
+          : instanceDate;
     },
   },
   {
     title: "Край",
-    dataIndex: "governingBody",
-    render: (governingBody: any) => {
-      return governingBody.governingBodyName;
+    dataIndex: "governBodyName",
+    render: (governBodyName: string) => {
+      return governBodyName;
     },
   },
 ];
+
 export default columns;

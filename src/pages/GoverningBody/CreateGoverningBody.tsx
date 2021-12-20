@@ -48,10 +48,10 @@ const CreateGoverningBody = () => {
   const { id } = useParams();
   const history = useHistory();
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(new GoverningBodyProfile());
   const [governingBodyNames, setGoverningBodyNames] = useState<string[]>([]);
-  const orgName: string = 'Керівний орган'
+  const orgName: string = 'Керівний орган';
   
   const getGoverningBodyNames = async () => {
     let governingBodies = (await getGoverningBodiesList() as any[])
@@ -124,10 +124,11 @@ const CreateGoverningBody = () => {
     if (+id) {
       getGoverningBody();
     }
-    getGoverningBodyNames()
+    getGoverningBodyNames();
   }, [id]);
 
   const handleSubmit = async (values: any) => {
+    setLoading(true);
     const newGoverningBody: GoverningBodyProfile = {
       id: governingBody.id,
       description: values.description,
@@ -144,6 +145,7 @@ const CreateGoverningBody = () => {
     } else {
       EditGoverningBody(newGoverningBody);
     }
+    setLoading(false);
   };
 
   const CreateGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
@@ -209,9 +211,9 @@ const CreateGoverningBody = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={governingBody.governingBodyName}
-                rules={[...descriptionValidation.Name, sameNameValidator(orgName,governingBodyNames)]}
+                rules={[...descriptionValidation.GoverningBodyName, sameNameValidator(orgName,governingBodyNames)]}
               >
-                <Input value={governingBody.governingBodyName} maxLength={51} />
+                <Input value={governingBody.governingBodyName} maxLength={101} />
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
