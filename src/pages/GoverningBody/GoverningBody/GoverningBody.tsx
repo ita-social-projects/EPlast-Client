@@ -145,8 +145,7 @@ const GoverningBody = () => {
     try {
       let userAccesses = await getUserAccesses();
       if(userAccesses.data["ViewAnnouncements"]){
-        const res: GoverningBodyAnnouncement[]  = (await getAllAnnouncements()).data
-        console.log(res)
+        const res: GoverningBodyAnnouncement[]  = (await getAllAnnouncements()).data;
         let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];
         for(let i = 0; i < res.length && i < 3; i++) {
           res[i].text = res[i].text.substring(0,40) + (res[i].text.length > 40? "...": "")

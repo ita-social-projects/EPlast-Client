@@ -16,21 +16,21 @@ import {
 import moment from "moment";
 import{getCheckPlastMember} from "../../../api/citiesApi";
 import {
-   addFollower, 
-   getClubById,
-   getLogo, 
-   removeClub, 
-   unArchiveClub, 
-   archiveClub, 
-   toggleMemberStatus, 
-   clubNameOfApprovedMember, 
-   removeFollower,
-   addAdministrator,
-   editAdministrator,
-   getUserClubAccess,
-   getAllAdmins,
-   isUserApproved
-  } from "../../../api/clubsApi";
+  addFollower, 
+  getClubById,
+  getLogo, 
+  removeClub, 
+  unArchiveClub, 
+  archiveClub, 
+  toggleMemberStatus, 
+  clubNameOfApprovedMember, 
+  removeFollower,
+  addAdministrator,
+  editAdministrator,
+  getUserClubAccess,
+  getAllAdmins,
+  isUserApproved
+} from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import "./Club.less";
 import ClubDefaultLogo from "../../../assets/images/default_club_image.jpg";
@@ -48,7 +48,14 @@ import Spinner from "../../Spinner/Spinner";
 import ClubDetailDrawer from "../ClubDetailDrawer/ClubDetailDrawer";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import notificationLogic from "../../../components/Notifications/Notification";
-import { successfulArchiveAction, successfulDeleteAction, successfulEditAction, successfulUnarchiveAction, failArchiveAction } from "../../../components/Notifications/Messages";
+import {
+  successfulArchiveAction, 
+  successfulDeleteAction, 
+  successfulEditAction, 
+  successfulUnarchiveAction, 
+  failArchiveAction, 
+  failApproveAction 
+} from "../../../components/Notifications/Messages";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
@@ -89,6 +96,11 @@ const Club = () => {
   const classes = require('./Modal.module.css');
 
   const changeApproveStatus = async (memberId: number) => {
+    if(!isLoadingPlus)
+    {
+      notificationLogic("warning", failApproveAction());
+      return;
+    }
     setIsLoadingMemberId(memberId)
     setIsLoadingPlus(false)
     const member = await toggleMemberStatus(memberId);
@@ -988,7 +1000,7 @@ const Club = () => {
                         <Tooltip placement={"bottom"} title={"Додати до членів"}>
                           <PlusOutlined
                             className="approveIcon"
-                            onClick={() => changeApproveStatus(followers.id)}
+                            onClick={async () => await changeApproveStatus(followers.id)}
                           />
                         </Tooltip>
                       ) : (followers.userId === activeUserID) ? (
