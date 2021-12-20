@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Data } from "../Interface/Interface";
-import userApi from '../../../api/UserApi';
 import notificationLogic from '../../../components/Notifications/Notification';
 import { getDocumentByUserId, removeDocument, getFile, getAllAchievementDocumentsByUserId, openBiographyFile, getExtractFromUPUByUserId, removeExtractFromUPUDocument, getExtractFromUPUFile, openExtractFromUPUFile, openGenerationFile } from "../../../api/blankApi";
 import { Badge, Button, Col, Form, Popconfirm, Skeleton, Tooltip } from "antd";
@@ -16,10 +14,7 @@ import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import ListOfAchievementsModal from "./UserAchievements/ListOfAchievementsModal";
 import AddExtractFromUPUModal from "./UserExtractFromUPU/AddExtractFromUPUModal";
-import {
-    successfulDeleteAction,
-    tryAgain
-} from "../../../components/Notifications/Messages"
+import { successfulDeleteAction } from "../../../components/Notifications/Messages"
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 import { Roles } from "../../../models/Roles/Roles";
 import { PersonalDataContext } from "../personalData/PersonalData";
@@ -29,7 +24,7 @@ const fileNameMaxLength = 50;
 
 export const Blanks = () => {
     const { userId } = useParams<{ userId: string }>();
-    const { fullUserProfile, activeUserRoles, UpdateData } = useContext(PersonalDataContext);
+    const { fullUserProfile, activeUserRoles, userProfileAccess } = useContext(PersonalDataContext);
     const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
     const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
     const [extractUPU, setExtractUPU] = useState<BlankDocument>(new BlankDocument);
@@ -128,8 +123,7 @@ export const Blanks = () => {
             userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead) || userRoles?.includes(Roles.PlastMember);
     };
     const DoesUserHasAccessToDeleteBlanks = (userRoles: Array<string>): boolean => {
-        return (
-            userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead));
+        return (userRoles?.includes(Roles.Admin) || userRoles?.includes(Roles.GoverningBodyHead));
     };
 
     return loading === false ? (
@@ -222,7 +216,7 @@ export const Blanks = () => {
                                                 onClick={() => openDocument(document.blobName, document.fileName)} />
                                         </Tooltip>
                                         : null}
-                                    {(userToken.nameid === userId || DoesUserHasAccessToManageBlanks(activeUserRoles)) ?
+                                    {(userToken.nameid === userId || userProfileAccess["EditDeleteUserBiography"]) ?
                                         <Tooltip title="Видалити">
                                             <Popconfirm
                                                 title="Видалити цей документ?"
