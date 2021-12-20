@@ -34,7 +34,7 @@ const Assignments = () => {
   const [data, setData] = useState<ApproversData>();
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
-  const { userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData } = useContext(PersonalDataContext);
+  const { userProfile, activeUserRoles, UpdateData, userProfileAccess } = useContext(PersonalDataContext);
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
   const fetchData = async () => {
@@ -150,7 +150,7 @@ const Assignments = () => {
         <h1 className="approversCard">Поручення дійсних членів</h1>
         <div className="approversCard">
           {data?.confirmedUsers.map(p => {
-            if (p.approver.userID == data?.currentUserId || activeUserRoles.includes(Roles.Admin)) {
+            if (p.approver.userID == data?.currentUserId || activeUserRoles.includes(Roles.Admin) || activeUserRoles.includes(Roles.GoverningBodyHead)) {
               return (
                 <div key={p.id}>
                   <Card
@@ -193,7 +193,7 @@ const Assignments = () => {
           }
           )}
           <div>
-            {(data?.canApprovePlastMember && AccessToManage(activeUserRoles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser || activeUserRoles.includes(Roles.Admin)))) ? (
+            {(data?.canApprovePlastMember && userProfileAccess["CanApproveUser"]) ? (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
@@ -271,7 +271,7 @@ const Assignments = () => {
                   </Card>
                 )}
             </div>
-          ) : ( data?.canApproveClubMember ?
+          ) : ( userProfileAccess["CanApproveAsClubHead"] ?
             (
               <div>
                 <Tooltip
@@ -350,17 +350,17 @@ const Assignments = () => {
               )}
 
             </div>
-          ) : ((data?.cityApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || activeUserRoles.includes(Roles.Admin)) && (data?.isUserHeadOfCity || activeUserRoles.includes(Roles.Admin))) ?
+          ) : ((data?.cityApprover == null && userProfileAccess["CanApproveAsCityHead"]) ?
             (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
                   placement="rightBottom">
                   <Spin spinning={approveAsCityHeadLoading}>
-                    <Link to="#" onClick={() => approveClick(data?.user.id, false, activeUserRoles.includes(Roles.CityHead) || activeUserRoles.includes(Roles.Admin))}>
+                    <Link to="#" onClick={() => approveClick(data?.user.id, false, userProfileAccess["CanApproveAsCityHead"])}>
                       <Card
                         hoverable
-                        className="cardStyles"
+                        className="cardStyles"  
                         cover={
                           <Avatar src={AddUser}
                             alt="example" size={168}
