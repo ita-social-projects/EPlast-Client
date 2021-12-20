@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Form, Input, Button, Modal} from 'antd';
 import styles from './SignUp.module.css';
 import Switcher from './Switcher/Switcher';
@@ -17,15 +17,15 @@ export default function () {
   const [form] = Form.useForm();
   const history = useHistory();
   const [available, setAvailabe] = useState(true);
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [agree, setAgree] = useState(false);
   const [terms, setTerms] = useState<TermsOfUseModel>({
     termsId: 0,
     termsTitle: '',
     termsText: 'Немає даних',
     datePublication: new Date()
   });
+  const[model, setModel] = useState();
 
   const fetchTermsData = async () => {
     setLoading(true);
@@ -33,10 +33,6 @@ export default function () {
     setTerms(termsData)
     setLoading(false); 
   };
-
-  useEffect(() => {
-    fetchTermsData();
-  }, [])
 
   const validationSchema = {
     Email: [
@@ -61,21 +57,22 @@ export default function () {
     ],
   };
 
+  const handleSubmit = async (values: any) => {
+    setModel(values);
+    fetchTermsData();
+    setVisible(true);
+  };
+
   const confirmTerms = async () => {
-    setAgree(true);
     setVisible(false);
+    setAvailabe(false);
+    await authService.register(model);
+    setAvailabe(true);
+    history.push("/signin");
   };
 
   const cancelTerms = async () => {
-    history.push("/signin");
     setVisible(false);
-  };
-  
-  const handleSubmit = async (values: any) => {
-    setAvailabe(false);
-    await authService.register(values);
-    setAvailabe(true);
-    history.push('/signin')
   };
 
   const initialValues = {
@@ -86,7 +83,7 @@ export default function () {
     ConfirmPassword: '',
   };
 
-  return agree ? (
+  return !loading ? (
     <div className={styles.mainContainerSignUp}>
       <Switcher page="SignUp" />
       <Form
@@ -132,23 +129,25 @@ export default function () {
             Зареєструватись
           </Button>
         </Form.Item>
+        <Modal
+          className='modalTerms'
+          title={terms.termsTitle}
+          centered
+          okText='Погоджуюсь'
+          style={{textAlign:"center"}}
+          visible={visible}
+          onOk={confirmTerms}
+          onCancel={cancelTerms}
+          width={1000}
+        >
+        <Markup
+          className="markupText"
+          content={terms.termsText}
+        />
+        </Modal>
       </Form>
     </div>
-  ) : (loading ? (
-  <Spinner/> 
-  ) : (<Modal
-    title={terms.termsTitle}
-    centered
-    okText='Погоджуюсь'
-    style={{textAlign:"center"}}
-    visible={visible}
-    onOk={confirmTerms}
-    onCancel={cancelTerms}
-    width={1000}
-  >
-  <Markup
-    className="markupText"
-    content={terms.termsText}
-  />
-  </Modal>))
-}
+    ) : (
+      <Spinner />
+  );
+};

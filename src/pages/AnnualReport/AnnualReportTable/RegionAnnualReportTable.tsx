@@ -287,7 +287,7 @@ export const RegionAnnualReportTable = ({
                         },
                         onContextMenu: async (event) => {
                             event.preventDefault();
-                            setX(event.pageX)
+                            event.pageX + 180 > window.innerWidth ? setX(window.innerWidth - 180) : setX(event.pageX)
                             setY(event.pageY)
                             userCertainAnnualReportAccess.CanEditReport = userCertainAnnualReportAccess?.IsSuperAdmin;
                             setRegionAnnualReport(regionRecord);
