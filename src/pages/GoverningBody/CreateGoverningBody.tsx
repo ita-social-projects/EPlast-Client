@@ -211,9 +211,9 @@ const CreateGoverningBody = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={governingBody.governingBodyName}
-                rules={[...descriptionValidation.Name, sameNameValidator(orgName,governingBodyNames)]}
+                rules={[...descriptionValidation.GoverningBodyName, sameNameValidator(orgName,governingBodyNames)]}
               >
-                <Input value={governingBody.governingBodyName} maxLength={51} />
+                <Input value={governingBody.governingBodyName} maxLength={101} />
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
