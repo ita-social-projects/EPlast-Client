@@ -421,7 +421,7 @@ export default function () {
         notificationLogic("error", fileIsNotUpload("фото"));
       });
     setPhotoName(defaultPhotoName);
-    if(UpdateData) UpdateData();
+    if (UpdateData) UpdateData();
   };
 
 
@@ -507,51 +507,51 @@ export default function () {
         onFinish={handleSubmit}
       >
         <div className="wrapperContainer">
-        <div className="avatarWrapperUserFields">
-        <StickyContainer className="kadraWrapper">
-            <Avatar src={userAvatar} className="img" />
-            <div className={styles.buttonsImage}>
-              <ImgCrop
-                shape='round'
-                rotate={true}
-                modalTitle='Редагувати фото'
-              >
-                <Upload
-                  name="avatar"
-                  className={styles.changeAvatar}
-                  showUploadList={false}
-                  accept=".jpeg,.jpg,.png"
-                  customRequest={handleUpload}
+          <div className="avatarWrapperUserFields">
+            <StickyContainer className="kadraWrapper">
+              <Avatar src={userAvatar} className="img" />
+              <div className={styles.buttonsImage}>
+                <ImgCrop
+                  shape='round'
+                  rotate={true}
+                  modalTitle='Редагувати фото'
                 >
-                  <Tooltip placement={"bottom"}
-                    title={"Ви можете завантажити файл розміром не більше 3Мб. Пам'ятайте: Вашу фотографію будуть бачити інші пластуни!"}>
-                    <Button className={styles.changeAvatarBtn}>
-                      <UploadOutlined /> Вибрати
-                    </Button>
-                  </Tooltip>
-                </Upload>
-              </ImgCrop>
-              {photoName !== defaultPhotoName ?
-                <Tooltip title="Видалити">
-                  <Popconfirm
-                    title="Видалити фото?"
-                    placement="bottom"
-                    icon={false}
-                    onConfirm={() => handleDeletePhoto()}
-                    okText="Так"
-                    cancelText="Ні">
-                    <DeleteOutlined
-                      className={styles.deleteIcon}
-                      key="close"
-                    />
-                  </Popconfirm>
-                </Tooltip> : null}
-            </div>
-          </StickyContainer>
-        </div>
+                  <Upload
+                    name="avatar"
+                    className={styles.changeAvatar}
+                    showUploadList={false}
+                    accept=".jpeg,.jpg,.png"
+                    customRequest={handleUpload}
+                  >
+                    <Tooltip placement={"bottom"}
+                      title={"Ви можете завантажити файл розміром не більше 3Мб. Пам'ятайте: Вашу фотографію будуть бачити інші пластуни!"}>
+                      <Button className={styles.changeAvatarBtn}>
+                        <UploadOutlined /> Вибрати
+                      </Button>
+                    </Tooltip>
+                  </Upload>
+                </ImgCrop>
+                {photoName !== defaultPhotoName ?
+                  <Tooltip title="Видалити">
+                    <Popconfirm
+                      title="Видалити фото?"
+                      placement="bottom"
+                      icon={false}
+                      onConfirm={() => handleDeletePhoto()}
+                      okText="Так"
+                      cancelText="Ні">
+                      <DeleteOutlined
+                        className={styles.deleteIcon}
+                        key="close"
+                      />
+                    </Popconfirm>
+                  </Tooltip> : null}
+              </div>
+            </StickyContainer>
+          </div>
         </div>
         <div className="allFields">
-        <div className={styles.rowBlock}>
+          <div className={styles.rowBlock}>
             <Form.Item
               label="Ім'я"
               name="firstName"

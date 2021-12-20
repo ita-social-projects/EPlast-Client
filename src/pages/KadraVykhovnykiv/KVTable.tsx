@@ -26,6 +26,8 @@ export const KVTable = ({ current, searchData }: props) => {
   const [isLoading, setLoading] = useState(false);
   const [count, setCount] = useState<number>(0);
   const [data, setData] = useState<KadraTableInfo[]>(Array<KadraTableInfo>());
+  const [firstPage, setFirstPage] = useState(1);
+  const [lastElement, setLastElement] = useState(1);
 
   const createNotifications = async (userId : string) => {
     await NotificationBoxApi.createNotifications(
@@ -51,14 +53,12 @@ export const KVTable = ({ current, searchData }: props) => {
         });
  } 
   
-  const handleDelete = (id: number) => {
-    const filteredData = data.filter((d: { id: number; }) => d.id !== id);
-    const DeletedKadra = data.find((d: { id: number; }) => d.id === id);
-    setData([...filteredData]);
-    DeletedKadra &&
-    createNotifications(DeletedKadra.userId);
-   
-  }
+ const handleDelete = () => {
+  if(page != firstPage && data.length == lastElement)
+    setPage(page-1);
+  else
+    fetchData();
+}
 
   const onEdit = () => {
     fetchData()
