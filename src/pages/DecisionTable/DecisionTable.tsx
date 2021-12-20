@@ -34,6 +34,8 @@ const DecisionTable = () => {
   const [clubAdm, setClubAdm] = useState(false);
   const [clubAdmDeputy, setClubAdmDeputy] = useState(false);
   const [page, setPage] = useState(1);
+  const [firstPage, setFirstPage] = useState(1);
+  const [lastElement, setLastElement] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
@@ -59,7 +61,7 @@ const DecisionTable = () => {
     setClubAdmDeputy(roles.includes(Roles.KurinHeadDeputy));
   };
   const handleDelete = () => {
-    if(page != 1 && data.length == 1)
+    if(page != firstPage && data.length == lastElement )
       setPage(page-1);
     else
       fetchData();
