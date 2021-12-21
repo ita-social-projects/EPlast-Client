@@ -40,7 +40,7 @@ const SortedCities = ( {switcher}: Props) => {
   };
   const getActiveCities = async (page: number = 1) => {
     setLoading(true);
-
+    
     try {
       const response = await getActiveCitiesByPage(
         page,
@@ -53,6 +53,7 @@ const SortedCities = ( {switcher}: Props) => {
       setPhotos(response.data.cities);
       setCities(response.data.cities);
       setTotal(response.data.total);
+      console.log(response.data)
     } finally {
       setLoading(false);
     }
@@ -67,12 +68,13 @@ const SortedCities = ( {switcher}: Props) => {
         pageSize,
         searchedData.trim()
       );
-
+      console.log(searchedData.trim()+'1')
       setPhotosLoading(true);
       setActiveUserRoles(userApi.getActiveUserRoles);
       setPhotos(response.data.cities);
       setCities(response.data.cities);
       setTotal(response.data.total);
+      console.log(response.data)
     } finally {
       setLoading(false);
     }
@@ -83,11 +85,12 @@ const SortedCities = ( {switcher}: Props) => {
     setPage(page);
   };
 
-  const handleSizeChange = (page: number, pageSize: number = 10) => {
+  const handleSizeChange = (pageSize: number = 10) => {
     setPageSize(pageSize);
   };
 
   const handleSearch = (event: any) => {
+    setPage(1);
     setSearchedData(event);
   };
 
@@ -192,7 +195,7 @@ const SortedCities = ( {switcher}: Props) => {
                 responsive
                 showSizeChanger={total >= 20}
                 onChange={(page) => handleChange(page)}
-                onShowSizeChange={(page, size) => handleSizeChange(page, size)}
+                onShowSizeChange={(size) => handleSizeChange(size)}
               />
             </div>
           </div>

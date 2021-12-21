@@ -176,7 +176,7 @@ const SortedRegions = ({switcher}: Props) => {
                 responsive
                 showSizeChanger={total >= 20}
                 onChange={(page) => handleChange(page)}
-                onShowSizeChange={(page, size) => handleSizeChange(size)}
+                onShowSizeChange={(size) => handleSizeChange(size)}
               />
             </div>
           </div>
