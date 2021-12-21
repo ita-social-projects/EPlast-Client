@@ -198,3 +198,14 @@ export const getAllUserId = async () => {
       throw new Error(error);
     });
 }
+
+export const getGoverningBodyAdminsForTable = async (userId: string, isActive: boolean, 
+  pageNumber: number, pageSize: number) => {
+    return (await api.get('GoverningBodies/GetUserAdminsForTable',
+    {
+      userId: userId,
+      isActive: isActive,
+      pageNumber: pageNumber,
+      pageSize: pageSize
+    })).data;
+}

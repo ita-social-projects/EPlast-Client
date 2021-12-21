@@ -60,7 +60,15 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUnarchiveAction, successfulArchiveAction, failArchiveAction } from "../../../components/Notifications/Messages";
+import { 
+  successfulDeleteAction,
+  fileIsAdded, 
+  successfulEditAction, 
+  successfulUnarchiveAction, 
+  successfulArchiveAction, 
+  failArchiveAction, 
+  failApproveAction 
+} from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
@@ -106,6 +114,11 @@ const City = () => {
   const classes = require('./Modal.module.css');
 
   const changeApproveStatus = async (memberId: number) => {
+    if(!isLoadingPlus)
+    {
+      notificationLogic("warning", failApproveAction());
+      return;
+    }
     setIsLoadingMemberId(memberId)
     setIsLoadingPlus(false)
     const member = await toggleMemberStatus(memberId);
@@ -128,7 +141,7 @@ const City = () => {
       setMembers([...members, member.data]);
     }
     setFollowers(followers.filter((f) => f.id !== memberId));
-    setIsLoadingPlus(true)
+    setIsLoadingPlus(true);
   };
 
   const removeMember = async (followerID: number) => {
@@ -991,7 +1004,7 @@ const City = () => {
                         <Tooltip placement={"bottom"} title={"Додати до членів"}>
                           <PlusOutlined
                             className="approveIcon"
-                            onClick={() => changeApproveStatus(followers.id)}
+                            onClick={async () => await changeApproveStatus(followers.id)}
                           />
                         </Tooltip>
                       ) : (followers.userId === activeUserID) ? (
