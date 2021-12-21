@@ -68,13 +68,12 @@ const SortedCities = ( {switcher}: Props) => {
         pageSize,
         searchedData.trim()
       );
-      console.log(searchedData.trim()+'1')
+
       setPhotosLoading(true);
       setActiveUserRoles(userApi.getActiveUserRoles);
       setPhotos(response.data.cities);
       setCities(response.data.cities);
       setTotal(response.data.total);
-      console.log(response.data)
     } finally {
       setLoading(false);
     }
