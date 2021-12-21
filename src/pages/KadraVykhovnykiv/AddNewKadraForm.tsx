@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import classes from "./Form.module.css";
+import ButtonCollapse from "../../components/ButtonCollapse/ButtonCollapse";
 import {
   Form,
   Input,
@@ -130,7 +131,11 @@ type FormAddKadraProps = {
   const backgroundColor = (user: any) => {
     return user.isInLowerRole ? { backgroundColor : '#D3D3D3' } : { backgroundColor : 'white' };
   }
-   
+
+  const handleClose = () => {
+   showModal(false);
+  };
+
   const handleCancel = () => {
     form.resetFields();
     showModal(false);
@@ -150,7 +155,8 @@ type FormAddKadraProps = {
     fetchData();
   }, []);
 
-  return (
+  return (<>
+    <ButtonCollapse handleClose={handleClose}/>
     <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
@@ -300,6 +306,7 @@ type FormAddKadraProps = {
         </Col>
       </Row>
     </Form>
+  </>
   );
 };
 
