@@ -40,7 +40,7 @@ const SortedCities = ( {switcher}: Props) => {
   };
   const getActiveCities = async (page: number = 1) => {
     setLoading(true);
-    
+
     try {
       const response = await getActiveCitiesByPage(
         page,
