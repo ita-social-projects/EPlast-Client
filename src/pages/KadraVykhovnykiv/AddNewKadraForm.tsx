@@ -94,7 +94,7 @@ type FormAddKadraProps = {
 
             KadraVykhovnykivTypeId:JSON.parse(values.KadraVykhovnykivType).id,
 
-            dateOfGranting: moment.utc(values.dateOfGranting.i).local().toDate(),
+            dateOfGranting: moment(values.dateOfGranting).format("YYYY-MM-DD HH:mm:ss"),
 
             numberInRegister: values.numberInRegister,
         }

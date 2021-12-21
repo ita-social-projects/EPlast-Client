@@ -287,7 +287,7 @@ export const CityAnnualReportTable = ({
                         },
                         onContextMenu: async (event) => {
                             event.preventDefault();
-                            setX(event.pageX)
+                            event.pageX + 280 > window.innerWidth ? setX(window.innerWidth - 280) : setX(event.pageX)
                             setY(event.pageY)
                             userCertainAnnualReportAccess.CanEditReport = userCertainAnnualReportAccess?.IsSuperAdmin;
                             setAnnualReport(record);
