@@ -45,21 +45,21 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
       link: record.link,
     };
 
-    await kadrasApi
+    /*await kadrasApi
       .doesRegisterNumberExistEdit(newKadra.numberInRegister, newKadra.id)
       .then(async (responce) => {
-        if (responce.data == false) {
+        if (responce.data == false) {*/
           await kadrasApi.putUpdateKadra(newKadra);
           form.resetFields();
           onAdd();
           onEdit();
           notificationLogic("success", successfulEditAction("Відзнаку"));
-        } else {
+        /*} else {
           notificationLogic("error", "Номер реєстру вже зайнятий");
           form.resetFields();
           onAdd();
         }
-      });
+      });*/
   };
 
   useEffect(() => {
@@ -110,13 +110,16 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                       message: emptyInput(),
                     },
                     {
-                      max: 5,
-                      message: maxNumber(99999),
+                      validator: (_ : object, value: number) => 
+                      value > 99999
+                          ? Promise.reject(maxNumber(99999)) 
+                          : Promise.resolve()
                     },
                     {
                       validator: async (_ : object, value: number) =>
-                        value && !isNaN(value) 
-                          ? await KadraVykhovnykivApi
+                        value && !isNaN(value)
+                        ? value == record.numberInRegister || 
+                           await KadraVykhovnykivApi
                             .doesRegisterNumberExist(value)
                             .then(response => response.data === false)
                               ? Promise.resolve()
