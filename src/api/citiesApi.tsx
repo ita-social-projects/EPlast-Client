@@ -21,17 +21,17 @@ export const getCityById = async (id: number) => {
   });
 };
 
-export const getActiveCitiesByPage = async (page: number, pageSize: number, cityName: string | null = null) => {
+export const getActiveCitiesByPage = async (page: number, pageSize: number, name: string | null = null) => {
   return await api
-    .get(`Cities/Profiles/Active/${page}`, { page, pageSize, cityName })
+    .get(`Cities/Profiles/Active/${page}`, { page, pageSize, name })
     .catch((error) => {
       throw new Error(error);
     });
 };
 
-export const getNotActiveCitiesByPage = async (page: number, pageSize: number, cityName: string | null = null) => {
+export const getNotActiveCitiesByPage = async (page: number, pageSize: number, name: string | null = null) => {
   return await api
-    .get(`Cities/Profiles/NotActive/${page}`, { page, pageSize, cityName })
+    .get(`Cities/Profiles/NotActive/${page}`, { page, pageSize, name })
     .catch((error) => {
       throw new Error(error);
     });
