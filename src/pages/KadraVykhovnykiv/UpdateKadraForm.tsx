@@ -45,21 +45,11 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
       link: record.link,
     };
 
-    /*await kadrasApi
-      .doesRegisterNumberExistEdit(newKadra.numberInRegister, newKadra.id)
-      .then(async (responce) => {
-        if (responce.data == false) {*/
-          await kadrasApi.putUpdateKadra(newKadra);
-          form.resetFields();
-          onAdd();
-          onEdit();
-          notificationLogic("success", successfulEditAction("Відзнаку"));
-        /*} else {
-          notificationLogic("error", "Номер реєстру вже зайнятий");
-          form.resetFields();
-          onAdd();
-        }
-      });*/
+    await kadrasApi.putUpdateKadra(newKadra);
+    form.resetFields();
+    onAdd();
+    onEdit();
+    notificationLogic("success", successfulEditAction("Відзнаку"));
   };
 
   useEffect(() => {
