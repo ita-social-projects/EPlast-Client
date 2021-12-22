@@ -21,6 +21,7 @@ import {
 } from "../../../components/Notifications/Messages"
 import moment from "moment";
 import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
+import { Roles } from "../../../models/Roles/Roles";
 
 type FormAddPrecautionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -59,7 +60,16 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
         setDistData(response.data);
       });
       setLoadingUserStatus(true);
-      await adminApi.getUsersForTable().then((response) => {
+      await adminApi.getUsersByAnyRole([
+        [
+          Roles.CityHead, Roles.CityHeadDeputy, Roles.CitySecretary, Roles.EventAdministrator,
+          Roles.GoverningBodyHead, Roles.GoverningBodySecretary, Roles.GoverningBodySectorHead, Roles.GoverningBodySectorSecretary,
+          Roles.KurinHead, Roles.KurinHeadDeputy, Roles.KurinSecretary, 
+          Roles.OkrugaHead, Roles.OkrugaHeadDeputy, Roles.OkrugaSecretary,
+          Roles.PlastHead, Roles.PlastMember, Roles.RegionBoardHead, Roles.RegisteredUser, Roles.Supporter
+        ]
+      ],true).then((response) => {
+        console.log(response.data)
         setUserData(response.data);
         setLoadingUserStatus(false);
       });
