@@ -1,49 +1,66 @@
-import React, {useEffect, useState} from 'react';
-import {Table, Empty} from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Table, Empty } from 'antd';
 import columns from './columnsSectors';
-import {
-    getUsersAdministrations,
-    getUsersPreviousAdministrations
-} from "../../../api/governingBodySectorsApi";
-
+import { getSectorAdminsForTable } from "../../../api/governingBodySectorsApi";
 import Modal from "antd/lib/modal";
-import SecretaryModel from './SecretaryModel';
+import SectorModelForTable from './SectorModelForTable';
 
 interface props {
     UserId: string;
 }
 
-export const UserSectorSecretaryTable = ({UserId}: props) => {
+export const UserSectorSecretaryTable = ({ UserId }: props) => {
     const [isLoadingActive, setIsLoadingActive] = useState<boolean>(true);
     const [isLoadingPrev, setIsLoadingPrev] = useState<boolean>(true);
+    const [sectorAdmins, setSectorAdmins] = useState<SectorModelForTable[]>([]);
+    const [pageNumber, setPageNumber] = useState<number>(1);
 
-    const [sectorAdmins, setSectorAdmins] = useState<SecretaryModel[]>();
-    const [prevSectorAdmins, setPrevSectorAdmins] = useState<SecretaryModel[]>();
+    /*  setPageSize like the whole functionality of the UseState here is redundant.
+    Nevertheless, you should probably leave it like this in case if somebody 
+    would want to change paginagion options in future.  */
+    const [pageSize, setPageSize] = useState<number>(3);
+    const [rowCount, setRowCount] = useState<number>(0);
 
-    const fetchData = async () => {
+    const [prevSectorAdmins, setPrevSectorAdmins] = useState<SectorModelForTable[]>([]);
+    const [pageNumberPrev, setPageNumberPrev] = useState<number>(1);
+
+    /*  setPageSizePrev like the whole functionality of the UseState here is redundant.
+    Nevertheless, you should probably leave it like this in case if somebody 
+    would want to change paginagion options in future.  */
+    const [pageSizePrev, setPageSizePrev] = useState<number>(3);
+    const [rowCountPrev, setRowCountPrev] = useState<number>(0);
+
+    const getSectorAdmins = async () => {
         setIsLoadingActive(true);
         try {
-            await getUsersAdministrations(UserId).then(response => {
-                console.log(response)
-                setSectorAdmins(response.data);
-            })
-        } catch (error) {
-            showError(error.message);
-        } finally {
+            const data =
+                await getSectorAdminsForTable(UserId, true, pageNumber, pageSize);
+            setSectorAdmins(data.admins);
+            setRowCount(data.rowCount);
+        }
+        catch {
+            showError("Помилка при отриманні даних діловодств");
+        }
+        finally {
             setIsLoadingActive(false);
         }
+    };
 
+    const getPrevSectorAdmins = async () => {
         setIsLoadingPrev(true);
         try {
-            await getUsersPreviousAdministrations(UserId).then(response => {
-                setPrevSectorAdmins(response.data)
-            })
-        } catch (error) {
-            showError(error.message);
-        } finally {
+            const data =
+                await getSectorAdminsForTable(UserId, false, pageNumber, pageSize);
+            setPrevSectorAdmins(data.admins);
+            setRowCountPrev(data.rowCount);
+        }
+        catch {
+            showError("Помилка при отриманні даних колишніх діловодств");
+        }
+        finally {
             setIsLoadingPrev(false);
         }
-    }
+    };
 
     const showError = (message: string) => {
         Modal.error({
@@ -53,50 +70,65 @@ export const UserSectorSecretaryTable = ({UserId}: props) => {
     };
 
     useEffect(() => {
-        fetchData();
-    }, [])
+        getSectorAdmins();
+    }, [pageNumber, pageSize])
+
+    useEffect(() => {
+        getPrevSectorAdmins();
+    }, [pageNumberPrev, pageSizePrev])
+
+    const handlePageChange = (page: number) => {
+        setPageNumber(page);
+    };
+
+    const handlePageChangePrev = (page: number) => {
+        setPageNumberPrev(page);
+    };
 
     return (
         <div>
             <h1>Дійсні діловодства напряму</h1>
-            <br/>
-            <Table 
-                {...{loading:isLoadingActive}}
+            <br />
+            <Table
+                loading={isLoadingActive}
                 locale={{
-                    emptyText: (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Немає дійсних діловодств"/>)
+                    emptyText: (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Немає дійсних діловодств" />)
                 }}
                 columns={columns}
                 dataSource={sectorAdmins}
-                scroll={{x: 655}}
+                scroll={{ x: 655 }}
                 pagination={
                     {
-                      showLessItems: true,
-                      responsive:true,
-                      pageSize: 3
+                        current: pageNumber,
+                        pageSize: pageSize,
+                        total: rowCount,
+                        showLessItems: true,
+                        responsive: true,
+                        onChange: (page) => handlePageChange(page),
                     }
-                  }
+                }
             />
-
-             <h1>Колишні діловодства напряму</h1>
-            <br/>
+            <h1>Колишні діловодства напряму</h1>
+            <br />
             <Table
-                {...{loading:isLoadingPrev}}
+                loading={isLoadingPrev}
                 locale={{
-                    emptyText: (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Немає колишніх діловодств"/>)
+                    emptyText: (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Немає колишніх діловодств" />)
                 }}
                 columns={columns}
                 dataSource={prevSectorAdmins}
-                scroll={{x: 655}}
+                scroll={{ x: 655 }}
                 pagination={
                     {
-                      showLessItems: true,
-                      responsive:true,
-                      pageSize: 3
+                        current: pageNumberPrev,
+                        pageSize: pageSizePrev,
+                        total: rowCountPrev,
+                        showLessItems: true,
+                        responsive: true,
+                        onChange: (page) => handlePageChangePrev(page),
                     }
-                  }
-            /> 
-
+                }
+            />
         </div>
-
     )
 }
