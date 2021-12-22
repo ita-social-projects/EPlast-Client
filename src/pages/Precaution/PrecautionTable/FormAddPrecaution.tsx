@@ -69,7 +69,6 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
           Roles.PlastHead, Roles.PlastMember, Roles.RegionBoardHead, Roles.RegisteredUser, Roles.Supporter
         ]
       ],true).then((response) => {
-        console.log(response.data)
         setUserData(response.data);
         setLoadingUserStatus(false);
       });
