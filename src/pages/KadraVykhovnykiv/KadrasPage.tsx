@@ -41,7 +41,6 @@ export const KadrasTable = () => {
           setidType2(response.data[1].id);
           setidType3(response.data[2].id);
           setidType4(response.data[3].id);
-          console.log(response.data[0].id);
         })
     }
 
