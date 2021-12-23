@@ -25,8 +25,8 @@ const UnconfirmedRegionDropdown = (props: Props) => {
     const handleClick = (item: any) => {
         switch (item.key) {
             case "1":
-                if (userAnnualReportAccess?.CanViewAnnualReportsTable ||
-                    userAnnualReportAccess?.CanSubmitRegionReport) {
+                if (userAnnualReportAccess?.CanViewRegionReportsTable &&
+                    userAnnualReportAccess?.CanViewReportDetails) {
                     onView(regionRecord.id, new Date(regionRecord.date).getFullYear());
                 }
                 break;
@@ -52,8 +52,8 @@ const UnconfirmedRegionDropdown = (props: Props) => {
 
     return (
         <>
-            {userAnnualReportAccess?.CanViewEveryAnnualReport ||
-                userAnnualReportAccess?.CanSubmitRegionReport ? (
+            {userAnnualReportAccess?.CanViewRegionReportsTable && 
+                userAnnualReportAccess?.CanViewReportDetails ? (
                 <Menu
                     theme="dark"
                     onClick={handleClick}
