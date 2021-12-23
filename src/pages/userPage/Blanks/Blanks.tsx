@@ -216,7 +216,7 @@ export const Blanks = () => {
                                                 onClick={() => openDocument(document.blobName, document.fileName)} />
                                         </Tooltip>
                                         : null}
-                                    {(userToken.nameid === userId || userProfileAccess["EditDeleteUserBiography"]) ?
+                                    {(userToken.nameid === userId || userProfileAccess["CanEditDeleteUserBiography"]) ?
                                         <Tooltip title="Видалити">
                                             <Popconfirm
                                                 title="Видалити цей документ?"
