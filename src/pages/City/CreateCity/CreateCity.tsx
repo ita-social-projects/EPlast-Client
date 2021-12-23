@@ -77,7 +77,7 @@ const CreateCity = () => {
       getRegions();
     } else {
       if (+id) {
-        getCity().then(() => getRegions()); 
+        getCity().then(() => getRegions());
       } else {
         getRegions();
       }
