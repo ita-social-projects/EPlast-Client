@@ -50,6 +50,31 @@ const tabList = [
     {
         key: "country",
         tab: "Річні звіти округ",
+    }
+];
+
+const tabCity = [
+    {
+        key: "city",
+        tab: "Річні звіти станиць",
+    }
+];
+
+const tabClub = [
+    {
+        key: "hovel",
+        tab: "Річні звіти куренів",
+    }
+];
+
+const tabRegionCity = [
+    {
+        key: "country",
+        tab: "Річні звіти округ",
+    },
+    {
+        key: "city",
+        tab: "Річні звіти станиць",
     },
 ];
 
@@ -441,6 +466,7 @@ const AnnualReportTable = () => {
                 </Col>
             </Row>
             <Row>
+            {userAnnualReportAccess?.CanDeleteReport ? (
                 <Card
                     className="AnnualReportTableTabs"
                     tabList={tabList}
@@ -451,6 +477,41 @@ const AnnualReportTable = () => {
                 >
                     {contentList[noTitleKey]}
                 </Card>
+            ) : null}
+            {userAnnualReportAccess?.CanSubmitCityReport && !userAnnualReportAccess?.CanDeleteReport ? (
+                <Card
+                    className="AnnualReportTableTabs"
+                    tabList={tabCity}
+                    activeTabKey={noTitleKey}
+                    onTabChange={(key) => {
+                        onTabChange(key);
+                    }}
+                >
+                    {contentList[noTitleKey]}
+                </Card>
+            ) : null}
+            {userAnnualReportAccess?.CanSubmitClubReport && !userAnnualReportAccess?.CanDeleteReport ? (
+                <Card
+                    className="AnnualReportTableTabs"
+                    tabList={tabClub}
+                    onTabChange={(key) => {
+                        onTabChange(key);
+                    }}
+                >
+                    {contentList[noTitleKey]}
+                </Card>
+            ) : null}
+            {userAnnualReportAccess?.CanSubmitRegionReport && !userAnnualReportAccess?.CanDeleteReport ? (
+                <Card
+                    className="AnnualReportTableTabs"
+                    tabList={tabRegionCity}
+                    onTabChange={(key) => {
+                        onTabChange(key);
+                    }}
+                >
+                    {contentList[noTitleKey]}
+                </Card>
+            ) : null}
             </Row>
             {userAnnualReportAccess?.CanSubmitRegionReport ? (
 
