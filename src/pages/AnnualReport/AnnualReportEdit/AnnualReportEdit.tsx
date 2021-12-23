@@ -143,6 +143,7 @@ const AnnualReportEdit = () => {
                                     title={title}
                                     cityMembers={cityMembers}
                                     cityLegalStatuses={cityLegalStatuses}
+                                    formHook={form}
                                 />
                                 <Row justify="center">
                                     <Col>

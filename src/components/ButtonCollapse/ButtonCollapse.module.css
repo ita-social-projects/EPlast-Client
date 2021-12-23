@@ -1,0 +1,13 @@
+.ButtonCollapse{
+ position: absolute !important;
+ top: 0;
+ right: 0;
+ padding: 20px !important;
+ padding-top: 15px !important;
+ width: 56px;
+ height: 54px !important;
+ border: 0 !important;
+ background: none !important;
+ color: #949996 !important;
+ font-weight: bold !important;
+}

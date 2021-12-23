@@ -46,6 +46,20 @@ export const descriptionValidation = ({
             message: emptyInput(),
         },   
     ],
+    GoverningBodyName: [
+        {
+            pattern: /^\S*((?=(\S+))\2\s?)+$/,
+            message: incorrectName
+        },
+        {
+            max: 100,
+            message: maxLength(100),
+        },    
+        {
+            required: true,
+            message: emptyInput(),
+        },   
+    ],
     CityName: [
         {
             pattern: /^(([А-ЯҐЄІЇ][а-яґєії]*'?[а-яґєії]*){1}(?:[\s\-])?)*$/,
