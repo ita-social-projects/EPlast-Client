@@ -61,7 +61,7 @@ const CreateCity = () => {
   const [loadingButton, setLoadingButton] = useState(false);
   const [appealRegion, setAppealRegion] = useState<RegionProfile>(new RegionProfile());
   const [regionFollower, setRegionFollower] = useState<RegionFollower>({} as RegionFollower);
-  const [city, setCity] = useState<CityProfile>(new CityProfile());
+  const [city, setCity] = useState<CityProfile>({} as CityProfile);
   const [regions, setRegions] = useState<RegionProfile[]>([]);
   const [applicant, setApplicant] = useState<User>({} as User);
   const [activeUser, setActiveUser] = useState<User>({} as User);
@@ -154,7 +154,7 @@ const CreateCity = () => {
   const getCity = async () => {
     try {
       setLoading(true);
-      let response = await getCityById(+id);
+      const response = await getCityById(+id);
 
       if (response.data.logo !== null) {
         const logo = await getLogo(response.data.logo);
