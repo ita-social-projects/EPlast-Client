@@ -306,7 +306,6 @@ const App: FC = () => (
             path="/clubs/new"
             component={CreateClub}
           />
-
           <RouteWithLayout
             layout={PrivateLayout}
             exact
@@ -540,7 +539,6 @@ const App: FC = () => (
             path="*"
             component={NotFound}
           />
-
         </Switch>
       </div>
       <FooterContainer />

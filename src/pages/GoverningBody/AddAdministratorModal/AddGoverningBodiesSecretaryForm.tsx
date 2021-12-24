@@ -5,8 +5,7 @@ import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
   addAdministrator,
-  editAdministrator,
-  getAllAdmins,
+  editAdministrator
 } from "../../../api/governingBodiesApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import userApi from "../../../api/UserApi";
@@ -22,6 +21,7 @@ import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
 import "./AddAdministrationModal.less"
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
+import Spinner from "../../Spinner/Spinner";
 
 const confirm = Modal.confirm;
 
@@ -31,6 +31,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   const [startDate, setStartDate] = useState<any>();
   const [usersLoading, setUsersLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<ShortUserInfo[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [workEmail, setWorkEmail] = useState<string>("");
 
   const disabledEndDate = (current: any) => {
@@ -70,7 +71,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       `цьому керівному органі`);
   };
 
-
   const showConfirm = (newAdmin: GoverningBodyAdmin, existingAdmin: GoverningBodyAdmin) => {
     confirm({
       title: "Призначити даного користувача на цю посаду?",
@@ -101,6 +101,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   };
 
   const handleSubmit = async (values: any) => {
+    if(loading) return;
+    setLoading(true);
     const newAdmin: GoverningBodyAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
       userId: props.admin === undefined
@@ -136,6 +138,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     } else {
       editGoverningBodyAdmin(newAdmin);
     }
+    setLoading(false);
   };
 
   const onUserSelect = (value: any) => {
@@ -144,31 +147,31 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     form.setFieldsValue({workEmail: email});
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setUsersLoading(true);
-      await adminApi.getUsersByExactRoles(
-        [
-          [Roles.PlastMember],
-          [Roles.PlastMember, Roles.KurinHead],
-          [Roles.PlastMember, Roles.KurinHeadDeputy]
-        ],
-        true)
-      .then((response) => {
-        setUsers(response.data)
-        setUsersLoading(false);
-      });
-    };
-    fetchData();
-  }, []);
+  const fetchData = async () => {
+    setUsersLoading(true);
+    await adminApi.getUsersByExactRoles(
+      [
+        [Roles.PlastMember],
+        [Roles.PlastMember, Roles.KurinHead],
+        [Roles.PlastMember, Roles.KurinHeadDeputy]
+      ],
+      true)
+    .then((response) => {
+      setUsers(response.data)
+      setUsersLoading(false);
+    });
+  }
 
   useEffect(() => {
+    fetchData();
     if (props.visibleModal) {
       form.resetFields();
     }
   }, [props]);
 
-  return (
+  return loading ? (
+    <Spinner/>
+  ):(
     <Form name="basic" onFinish={handleSubmit} form={form}>
       <Form.Item
         className={classes.formField}
