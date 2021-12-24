@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {Avatar, Button, Card, Layout, Modal, Skeleton} from 'antd';
 import {SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
-import { getAllAdmins, removeAdministrator} from "../../../api/citiesApi";
+import { getAllAdmins, getUserCityAccess, removeAdministrator} from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
 import CityAdmin from '../../../models/City/CityAdmin';
@@ -14,6 +14,8 @@ import Spinner from '../../Spinner/Spinner';
 import NotificationBoxApi from '../../../api/NotificationBoxApi';
 import { Roles } from '../../../models/Roles/Roles';
 import extendedTitleTooltip, { parameterMaxLength } from '../../../components/Tooltip';
+import AuthStore from '../../../stores/AuthStore';
+import jwt from 'jwt-decode';
 moment.locale("uk-ua");
 
 const adminTypeNameMaxLength = 23;
@@ -29,8 +31,18 @@ const CityAdministration = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [cityName, setCityName] = useState<string>("");
     const [reload, setReload] = useState<boolean>(false);
+    const [userCityAccesses, setUserCityAccesses] = useState<{[key: string] : boolean}>({});
     const [isActiveUserCityAdmin, setIsActiveUserCityAdmin] = useState<boolean>(false);
     const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+
+    const getUserAccessesForCities = async () => {
+      let user: any = jwt(AuthStore.getToken() as string);
+      await getUserCityAccess(+id, user.nameid).then(
+        response => {
+          setUserCityAccesses(response.data);
+        }
+      );
+    }  
 
     const setIsCityAdmin = (admin: any[], userId: string) => {
       for (let i = 0; i < admin.length; i++){
@@ -43,6 +55,7 @@ const CityAdministration = () => {
     const fetchData = async () => {
         setLoading(true);
         const responseAdmins = await getAllAdmins(id);
+        await getUserAccessesForCities();
         setIsCityAdmin([...responseAdmins.data.administration], userApi.getActiveUserId())
         setPhotosLoading(true);
         setPhotos([...responseAdmins.data.administration].filter(a => a != null));
@@ -126,9 +139,7 @@ const CityAdministration = () => {
                   }
                   headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                   actions={
-                    canEdit 
-                    || ((activeUserRoles.includes(Roles.CityHead) 
-                    || activeUserRoles.includes(Roles.CityHeadDeputy)) &&  isActiveUserCityAdmin) 
+                    userCityAccesses["EditCity"] && (userCityAccesses["AddCityHead"] || member.adminType.adminTypeName !== Roles.CityHead)
                       ? [
                           <SettingOutlined onClick={() => showModal(member)} />,
                           <CloseOutlined onClick={() => seeDeleteModal(member)} />,

@@ -73,15 +73,15 @@ const CityFollowers = () => {
     }
 
     const addMember = async (follower: CityMember) => {
+        setFollowers(followers.filter(u => u.id !== follower.id));
         await toggleMemberStatus (follower.id);
         await createNotification(follower.userId, "Вітаємо, вас зараховано до членів станиці");
-        setFollowers(followers.filter(u => u.id !== follower.id));
     }
 
     const removeMember = async (follower: CityMember) => {
+        setFollowers(followers.filter(u => u.id !== follower.id));
         await removeFollower(follower.id);
         await createNotification(follower.userId, "На жаль, ви були виключені з прихильників станиці");
-        setFollowers(followers.filter(u => u.id !== follower.id));
     }
 
     const setPhotos = async (members: CityMember[]) => {
@@ -112,16 +112,16 @@ const CityFollowers = () => {
                     canEdit ?
                       [
                         <PlusOutlined
-                          onClick={() => addMember(follower)}
+                          onClick = {() => addMember(follower)}
                         />,
                         <CloseOutlined
-                          onClick={() => seeDeleteModal(follower)}
+                          onClick = {() => seeDeleteModal(follower)}
                         />,
                       ]
                       : (follower.userId === activeUserID) ?
                         [
                           <CloseOutlined
-                            onClick={() => seeSkipModal(follower)}
+                            onClick = {() => seeSkipModal(follower)}
                           />
                         ] : undefined
                   }
