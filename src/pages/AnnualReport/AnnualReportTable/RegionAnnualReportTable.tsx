@@ -278,7 +278,7 @@ export const RegionAnnualReportTable = ({
                 onRow={(regionRecord) => {
                     return {
                         onDoubleClick: (event) => {
-                            if (regionRecord.id && userCertainAnnualReportAccess?.CanViewRegionReportsTable && userCertainAnnualReportAccess?.CanViewReportDetails)
+                            if (regionRecord.id && userCertainAnnualReportAccess?.CanViewReportDetails)
                                 history.push(`/annualreport/region/${regionRecord.id}
                                 /${new Date(regionRecord.date).getFullYear()}`);
                         },

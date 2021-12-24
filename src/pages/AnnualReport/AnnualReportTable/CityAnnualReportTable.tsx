@@ -279,7 +279,7 @@ export const CityAnnualReportTable = ({
                 onRow={(record) => {
                     return {
                         onDoubleClick: (event) => {
-                            if (record.id && userCertainAnnualReportAccess?.CanViewReportDetails && userCertainAnnualReportAccess?.CanViewCityReportsTable)
+                            if (record.id && userCertainAnnualReportAccess?.CanViewReportDetails)
                                 history.push(`/annualreport/cityAnnualReport/${record.id}`);
                         },
                         onClick: () => {

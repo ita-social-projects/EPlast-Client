@@ -278,7 +278,7 @@ export const ClubAnnualReportTable = ({
                 onRow={(record) => {
                     return {
                         onDoubleClick: (event) => {
-                            if (record.id && userCertainAnnualReportAccess?.CanViewReportDetails && userCertainAnnualReportAccess?.CanViewClubReportsTable)
+                            if (record.id && userCertainAnnualReportAccess?.CanViewReportDetails)
                                 history.push(`/annualreport/clubAnnualReport/${record.id}`);
                         },
                         onClick: () => {
