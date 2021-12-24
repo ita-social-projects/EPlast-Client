@@ -86,22 +86,22 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
         >
 
       <Select onChange={handleChange}>
-      { user.userRoles === Roles.RegisteredUser ? (
+      { roles.includes(Roles.RegisteredUser)? (
         <Option value={Roles.Supporter}>Прихильник</Option>
         ):
-        <Option value={0}> </Option>
+        null
         }
-        { user.userRoles === Roles.Supporter ? (
+        { roles.includes(Roles.Supporter) ? (
         <Option value={Roles.PlastMember}>Дійсний член організації</Option>
         ):
         null
         }
-        { user.userRoles === Roles.Supporter || user.userRoles === Roles.PlastMember ? (
+        { roles.includes(Roles.Supporter) || roles.includes(Roles.PlastMember) ? (
         <Option value={Roles.FormerPlastMember}>Колишній член Пласту</Option>
         ): 
         null
         }
-        { user.userRoles === Roles.FormerPlastMember ? (
+        { roles.includes(Roles.FormerPlastMember) ? (
         <Option value={Roles.RegisteredUser}>Зареєстрований користувач</Option>
         ): 
         null
