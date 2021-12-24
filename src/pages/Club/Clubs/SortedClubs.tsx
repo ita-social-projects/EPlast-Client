@@ -29,7 +29,7 @@ const SortedClubs = ( {switcher}: Props) => {
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
   const {p} = useParams();
-  const [page, setPage] = useState(Number(p));
+  const [page, setPage] = useState(+p);
 
   const setPhotos = async (clubs: ClubByPage[]) => {
     try {
@@ -131,6 +131,10 @@ const SortedClubs = ( {switcher}: Props) => {
     }
     return null;
 };
+
+  useEffect(() => {
+    setPage(+p);
+  });
 
   useEffect(() => {
     switcher ? (getNotActiveClubs(page)):(getActiveClubs(page)) 
