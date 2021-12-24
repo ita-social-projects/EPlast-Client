@@ -39,6 +39,7 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
   };
 
   const handleCancel = () => {
+    form.resetFields();
     setShowModal(false);
   };
 
@@ -60,6 +61,7 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
     }
 
     onChange(userId, value.userRole);
+    form.resetFields();
     setShowModal(false);
 
     await NotificationBoxApi.createNotifications(

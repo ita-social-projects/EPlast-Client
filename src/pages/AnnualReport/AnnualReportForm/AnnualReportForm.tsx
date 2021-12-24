@@ -7,6 +7,7 @@ import {
     maxLength,
     shouldContain,
 } from "../../../components/Notifications/Messages";
+import { getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -40,10 +41,6 @@ const AnnualReportForm = (props: Props) => {
                         : Promise.reject(maxLength(10)),
             },
         ],
-    };
-
-    const getOnlyNums = (text: string) => {
-        return text.replace(/\D/g, "");
     };
 
     return (
