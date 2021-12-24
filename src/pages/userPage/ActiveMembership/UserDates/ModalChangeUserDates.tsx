@@ -28,8 +28,8 @@ const ModalChangeUserDates = ({
   const [form] = Form.useForm();
 
   const handleCancel = () => {
-    form.resetFields();
     setDatesVisibleModal(false);
+    form.resetFields();
   }
 
   const [OathDate, setOathDate] = useState<any>();
