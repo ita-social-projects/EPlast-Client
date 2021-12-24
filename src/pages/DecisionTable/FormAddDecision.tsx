@@ -1,4 +1,5 @@
 import React, { useEffect, useState,useRef } from "react";
+import ButtonCollapse from "../../components/ButtonCollapse/ButtonCollapse";
 import ReactDOM from "react-dom";
 import {
   Form,
@@ -122,7 +123,9 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     setFileData({ FileAsBase64: null, FileName: null });
     setVisibleModal(false);
   };
-
+  const handleClose = () => {
+    setVisibleModal(false);
+  };
   const handleUpload = (info: any) => {
     if (info.file !== null) {
       if (info.file.size <= 3145728) {
@@ -217,7 +220,8 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     fetchData();
   }, []);
 
-  return (
+  return (<>
+    <ButtonCollapse handleClose={handleClose}/>
     <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{ position: 'relative' }}>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
@@ -317,6 +321,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             rules={descriptionValidation.Description}
           >
             <Mentions
+              getPopupContainer={() => document.getElementById('area')! as HTMLElement}
               onChange = {()=>{if(search!=''){setLoadingUserStatus(true)}}}
               notFoundContent = {<h5>{tipOnNotFound}</h5>}
               loading={loadingUserStatus}
@@ -439,6 +444,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
         </Col>
       </Row>
     </Form>
+    </>
   );
 };
 

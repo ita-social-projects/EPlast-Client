@@ -22,7 +22,7 @@ interface Props {
   pageX: number;
   pageY: number;
   setShowDropdown: (view: boolean) => void;
-  onDelete: (id: number) => void;
+  onDelete: () => void;
   showDropdown: boolean;
   onEdit: () => void;
 }
