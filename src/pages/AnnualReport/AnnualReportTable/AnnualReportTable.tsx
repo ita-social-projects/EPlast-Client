@@ -40,6 +40,10 @@ const setTagColor = (status: number) => {
 
 const tabList = [
     {
+        key: "country",
+        tab: "Річні звіти округ",
+    },
+    {
         key: "city",
         tab: "Річні звіти станиць",
     },
@@ -47,10 +51,6 @@ const tabList = [
         key: "hovel",
         tab: "Річні звіти куренів",
     },
-    {
-        key: "country",
-        tab: "Річні звіти округ",
-    }
 ];
 
 const tabCity = [
