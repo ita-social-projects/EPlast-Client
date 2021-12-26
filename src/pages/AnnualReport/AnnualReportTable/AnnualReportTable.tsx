@@ -53,31 +53,6 @@ const tabList = [
     },
 ];
 
-const tabCity = [
-    {
-        key: "city",
-        tab: "Річні звіти станиць",
-    }
-];
-
-const tabClub = [
-    {
-        key: "hovel",
-        tab: "Річні звіти куренів",
-    }
-];
-
-const tabRegionCity = [
-    {
-        key: "country",
-        tab: "Річні звіти округ",
-    },
-    {
-        key: "city",
-        tab: "Річні звіти станиць",
-    },
-];
-
 const AnnualReportTable = () => {
     const { noTitleKey } = useParams();
     const [reportStatusNames, setReportStatusNames] = useState<any[]>(Array());
@@ -466,7 +441,10 @@ const AnnualReportTable = () => {
                 </Col>
             </Row>
             <Row>
-            {userAnnualReportAccess?.CanDeleteReport ? (
+            {userAnnualReportAccess?.IsSuperAdmin || 
+                (userAnnualReportAccess?.CanViewRegionReportsTable && 
+                    userAnnualReportAccess?.CanViewClubReportsTable && 
+                        userAnnualReportAccess?.CanViewCityReportsTable) ? (
                 <Card
                     className="AnnualReportTableTabs"
                     tabList={tabList}
@@ -478,10 +456,12 @@ const AnnualReportTable = () => {
                     {contentList[noTitleKey]}
                 </Card>
             ) : null}
-            {userAnnualReportAccess?.CanSubmitCityReport && !userAnnualReportAccess?.CanDeleteReport ? (
+            {userAnnualReportAccess?.CanViewCityReportsTable && 
+                userAnnualReportAccess?.CanViewClubReportsTable && 
+                !userAnnualReportAccess?.CanViewRegionReportsTable ? (
                 <Card
                     className="AnnualReportTableTabs"
-                    tabList={tabCity}
+                    tabList={[tabList[1],tabList[2]]}
                     activeTabKey={noTitleKey}
                     onTabChange={(key) => {
                         onTabChange(key);
@@ -490,10 +470,13 @@ const AnnualReportTable = () => {
                     {contentList[noTitleKey]}
                 </Card>
             ) : null}
-            {userAnnualReportAccess?.CanSubmitClubReport && !userAnnualReportAccess?.CanDeleteReport ? (
+            {userAnnualReportAccess?.CanViewCityReportsTable && 
+                !userAnnualReportAccess?.CanViewClubReportsTable && 
+                !userAnnualReportAccess?.CanViewRegionReportsTable ? (
                 <Card
                     className="AnnualReportTableTabs"
-                    tabList={tabClub}
+                    tabList={[tabList[1]]}
+                    activeTabKey={noTitleKey}
                     onTabChange={(key) => {
                         onTabChange(key);
                     }}
@@ -501,10 +484,25 @@ const AnnualReportTable = () => {
                     {contentList[noTitleKey]}
                 </Card>
             ) : null}
-            {userAnnualReportAccess?.CanSubmitRegionReport && !userAnnualReportAccess?.CanDeleteReport ? (
+            {userAnnualReportAccess?.CanViewClubReportsTable && 
+                !userAnnualReportAccess?.CanViewCityReportsTable ? (
                 <Card
                     className="AnnualReportTableTabs"
-                    tabList={tabRegionCity}
+                    tabList={[tabList[2]]}
+                    activeTabKey={noTitleKey}
+                    onTabChange={(key) => {
+                        onTabChange(key);
+                    }}
+                >
+                    {contentList[noTitleKey]}
+                </Card>
+            ) : null}
+            {userAnnualReportAccess?.CanViewRegionReportsTable && 
+                !userAnnualReportAccess?.CanViewClubReportsTable ? (
+                <Card
+                    className="AnnualReportTableTabs"
+                    tabList={[tabList[0],tabList[1]]}
+                    activeTabKey={noTitleKey}
                     onTabChange={(key) => {
                         onTabChange(key);
                     }}
