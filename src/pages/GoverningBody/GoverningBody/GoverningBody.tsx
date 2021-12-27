@@ -25,7 +25,8 @@ import {
   getGoverningBodyById,
   getGoverningBodyLogo,
   getUserAccess,
-  removeGoverningBody
+  removeGoverningBody, 
+  addAnnouncement
 } from "../../../api/governingBodiesApi";
 import "./GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -49,6 +50,11 @@ import GoverningBodyDocument from "../../../models/GoverningBody/GoverningBodyDo
 import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
 import { getSectorLogo } from "../../../api/governingBodySectorsApi";
+import AddAnnouncementModal from "../Announcement/AddAnnouncementModal";
+import { getUsersByAllRoles } from "../../../api/adminApi";
+import { Roles } from '../../../models/Roles/Roles';
+import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 const GoverningBody = () => {
   const history = useHistory();
@@ -71,6 +77,7 @@ const GoverningBody = () => {
   const [sectors, setSectors] = useState<SectorProfile[]>([]);
   const [sectorsPhotosLoading, setSectorsPhotosLoading] = useState<boolean>(false);
   const [announcements, setAnnouncements] = useState<GoverningBodyAnnouncement[]>([]);
+  const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
 
   const deleteGoverningBody = async () => {
     await removeGoverningBody(governingBody.id);
@@ -114,6 +121,41 @@ const GoverningBody = () => {
     setDocumentsCount(documentsCount + 1);
   };
 
+  const getUsers = async () => {
+    let result: any
+    await getUsersByAllRoles(
+      [
+        [Roles.RegisteredUser]
+      ],
+      false)
+    .then(
+      response => {
+      result = response
+    });
+    return result;
+  }
+
+  const  newAnnouncementNotification = async() =>
+  {
+    let usersId = ((await getUsers()).data as ShortUserInfo[]).map(x => x.id)
+    await NotificationBoxApi.createNotifications(
+      usersId,
+      "Додане нове оголошення.",
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/announcements`,
+      `Переглянути`
+    );
+  }
+
+  const onAnnouncementAdd = async (str: string) => {
+    setVisibleAddModal(false);
+    setLoading(true);
+    newAnnouncementNotification();
+    await addAnnouncement(str);
+    setLoading(false);
+    notificationLogic("success", "Оголошення опубліковано");
+  }
+
   function seeDeleteModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити даний керівний орган?",
@@ -133,7 +175,7 @@ const GoverningBody = () => {
     let result :any
     await getUserAccess(user.nameid).then(
       response => {
-        result = response
+        result = response;
         setUserAccesses(response.data);
       }
     );
@@ -491,6 +533,14 @@ const GoverningBody = () => {
                 >
                   Більше
                 </Button>
+                {userAccesses["AddAnnouncement"] ? (
+                <PlusSquareFilled
+                  type="primary"
+                  className="addReportIcon"
+                  onClick={() => setVisibleAddModal(true)}
+                />
+                ) : null
+              }
               </div>
             : null}
           </Card>
@@ -559,6 +609,11 @@ const GoverningBody = () => {
         governingBody={governingBody}
         setVisibleDrawer={setVisibleDrawer}
         visibleDrawer={visibleDrawer}
+      />        
+      <AddAnnouncementModal
+          setVisibleModal={setVisibleAddModal}
+          visibleModal={visibleAddModal}
+          onAdd={onAnnouncementAdd}
       />
       <Modal
         title="Додати діловода"
