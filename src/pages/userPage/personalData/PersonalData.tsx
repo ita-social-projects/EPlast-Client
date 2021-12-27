@@ -12,8 +12,6 @@ import { Blanks } from "../Blanks/Blanks";
 import UserApi from "../../../api/UserApi";
 import { Data, IPersonalDataContext, User } from "../Interface/Interface";
 import notificationLogic from '../../../components/Notifications/Notification';
-import { string } from "yup";
-import { off } from "process";
 
 const DefaultState: IPersonalDataContext = {
   userProfile: undefined,
