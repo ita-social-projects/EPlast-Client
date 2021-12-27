@@ -321,6 +321,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             rules={descriptionValidation.Description}
           >
             <Mentions
+              getPopupContainer={() => document.getElementById('area')! as HTMLElement}
               onChange = {()=>{if(search!=''){setLoadingUserStatus(true)}}}
               notFoundContent = {<h5>{tipOnNotFound}</h5>}
               loading={loadingUserStatus}

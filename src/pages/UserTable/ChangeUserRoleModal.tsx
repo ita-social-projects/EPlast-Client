@@ -1,6 +1,7 @@
 import React from "react";
 import { Modal } from "antd";
 import ChangeUserRoleForm from "./ChangeUserRoleForm";
+import Form from "antd/lib/form/Form";
 
 interface Props {
   record: string;
@@ -23,6 +24,7 @@ const ChangeUserRoleModal = ({
       centered
       footer={null}
       onCancel={() => setShowModal(false)}
+      destroyOnClose={true}
     >
       <ChangeUserRoleForm
         record={record}

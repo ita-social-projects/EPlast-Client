@@ -226,11 +226,18 @@ const PrivateLayout = ({ children }: any) => {
                 : (<> </>)
               }
             </SubMenu>
-            {userAnnualReportAccess?.CanViewAnnualReportsTable && userStatisticsAccess?.CanCityStatisticsFormReport ? (
+            {userAnnualReportAccess?.CanViewReportsPage && userStatisticsAccess?.CanCityStatisticsFormReport ? (
               <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
-                <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="9">
-                  Річні звіти
-                </Menu.Item>
+                {(userAnnualReportAccess?.CanViewRegionReportsTable && (
+                  <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/country`); }} key="9">
+                    Річні звіти
+                  </Menu.Item>
+                )) ||
+                (userAnnualReportAccess?.CanViewCityReportsTable && (
+                  <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="9">
+                    Річні звіти
+                  </Menu.Item>
+                )) } 
                 <SubMenu
                   key="sub2.1"
                   icon={<PieChartOutlined />}
@@ -244,8 +251,8 @@ const PrivateLayout = ({ children }: any) => {
                 </SubMenu>
               </SubMenu>
             ) :
-              (userAnnualReportAccess?.CanViewAnnualReportsTable ? (
-                <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="16">
+              (userAnnualReportAccess?.CanViewClubReportsTable ? (
+                <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/hovel`); }} key="16">
                   Річні звіти
                 </Menu.Item>
               ) : (<> </>))
