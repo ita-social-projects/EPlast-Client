@@ -52,8 +52,8 @@ const UnconfirmedDropdown = (props: Props) => {
 
     return (
         <>
-            {userAnnualReportAccess?.CanSubmitClubReport ||
-                userAnnualReportAccess?.CanViewEveryAnnualReport ? (
+            {userAnnualReportAccess?.CanViewReportDetails &&
+                userAnnualReportAccess?.CanViewClubReportsTable ? (
                 <Menu
                     theme="dark"
                     onClick={handleClick}

@@ -111,7 +111,7 @@ const FormEditDecision = ({
   return (
     <div>
       {!loading && (
-        <Form name="basic" onFinish={handleFinish} form={form}>
+        <Form name="basic" onFinish={handleFinish} id='area' form={form}>
           <Row justify="start" gutter={[12, 0]}>
             <Col md={24} xs={24}>
               <Form.Item
@@ -133,25 +133,25 @@ const FormEditDecision = ({
                 name="description"
                 rules={descriptionValidation.Description}
               >
-                 <Mentions
-              onChange = {()=>{if(search!=''){setLoadingUserStatus(true)}}}
-              notFoundContent = {<h5>{tipOnNotFound}</h5>}
-              loading={loadingUserStatus}
-              onSearch={(s => setSearch(s))}
-              rows={5}
-              onSelect={onSelect}
-              className={formclasses.formField}
-            >
-
-           <Option value=""  disabled >{tip}</Option> 
-              {userData?.map((u) =>
-                <Option className="mentionOption"
-                  key={u.id}
-                  value={u.firstName + ' ' + u.lastName}
+                <Mentions
+                  getPopupContainer={() => document.getElementById('area')! as HTMLElement}
+                  onChange = {()=>{if(search!=''){setLoadingUserStatus(true)}}}
+                  notFoundContent = {<h5>{tipOnNotFound}</h5>}
+                  loading={loadingUserStatus}
+                  onSearch={(s => setSearch(s))}
+                  rows={5}
+                  onSelect={onSelect}
+                  className={formclasses.formField}
                 >
-                  {u.firstName + ' ' + u.lastName + ' ' + u.email}
-                </Option>)}
-            </Mentions>
+                  <Option value=""  disabled >{tip}</Option> 
+                      {userData?.map((u) =>
+                        <Option className="mentionOption"
+                          key={u.id}
+                          value={u.firstName + ' ' + u.lastName}
+                        >
+                          {u.firstName + ' ' + u.lastName + ' ' + u.email}
+                  </Option>)}
+                </Mentions>
               </Form.Item>
             </Col>
           </Row>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
 import { Form, DatePicker, AutoComplete, Select, Button } from "antd";
 import {
-  getCityUsers,
+  getCityUsers, getUserCityAccess,
 } from "../../../api/citiesApi";
 import moment from "moment";
 import {
@@ -15,6 +15,9 @@ import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
 import CityUser from "../../../models/City/CityUser";
 import {descriptionValidation} from "../../../models/GllobalValidations/DescriptionValidation"
+import AuthStore from "../../../stores/AuthStore";
+import jwt from 'jwt-decode';
+import { useParams } from "react-router-dom";
 
 type AddCitiesNewSecretaryForm = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -27,12 +30,22 @@ type AddCitiesNewSecretaryForm = {
   headDeputy?: CityAdmin;
 };
 const AddCitiesNewSecretaryForm = (props: any) => {
+  const { id } = useParams();
   const { onAdd, onCancel } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [members, setMembers] = useState<CityUser[]>([]);
-  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+  const [userCityAccesses, setUserCityAccesses] = useState<{[key: string] : boolean}>({});
   const [loading, setLoading] = useState<boolean>(false);
+
+  const getUserAccessesForCities = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    await getUserCityAccess(+id, user.nameid).then(
+      response => {
+        setUserCityAccesses(response.data);
+      }
+    );
+  }  
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -68,6 +81,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   const fetchData = async () => {
     if (props.cityId !== undefined)
     {
+    await getUserAccessesForCities();
     await getCityUsers(props.cityId).then((response) => { 
       setMembers(response.data);
     });
@@ -117,8 +131,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: Roles.CityHead, disabled: (activeUserRoles.includes(Roles.CityHeadDeputy)
-            && activeUserRoles.includes(Roles.Admin)) },
+            { value: Roles.CityHead, disabled: !userCityAccesses["AddCityHead"] },
             { value: Roles.CityHeadDeputy},
             { value: "Голова СПР" },
             { value: "Писар" },

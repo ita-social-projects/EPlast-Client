@@ -82,15 +82,15 @@ const ClubFollowers = () => {
     }
 
     const addMember = async (follower: ClubMember) => {
+        setFollowers(followers.filter(u => u.id !== follower.id));
         await toggleMemberStatus (follower.id);
         await createNotification(follower.userId, "Вітаємо, вас зараховано до членів куреня");
-        setFollowers(followers.filter(u => u.id !== follower.id));
     }
 
     const removeMember = async (follower: ClubMember) => {
+        setFollowers(followers.filter(u => u.id !== follower.id));
         await removeFollower(follower.id);
         await createNotification(follower.userId, "На жаль, ви були виключені з прихильників куреня");
-        setFollowers(followers.filter(u => u.id !== follower.id));
     }
 
     const setPhotos = async (members: ClubMember[]) => {

@@ -26,7 +26,8 @@ const SavedRegionDropdown = (props: Props) => {
 
     return (
         <>
-            {userAnnualReportAccess?.CanViewEveryAnnualReport || userAnnualReportAccess?.CanSubmitRegionReport ? (
+            {userAnnualReportAccess?.CanViewRegionReportsTable && 
+                userAnnualReportAccess?.CanViewReportDetails ? (
                 <Menu
                     theme="dark"
                     onClick={handleClick}

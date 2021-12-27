@@ -1,9 +1,11 @@
 export default interface IUserAnnualReportAccess {
     IsSuperAdmin: boolean;
     IsAdmin: boolean;
-    CanViewAnnualReportsTable: boolean;
-    CanFindEveryAnnualReportInSearch: boolean;
-    CanViewEveryAnnualReport: boolean;
+    CanViewReportsPage: boolean;
+    CanViewCityReportsTable: boolean;
+    CanViewClubReportsTable: boolean;
+    CanViewRegionReportsTable: boolean;
+    CanViewReportDetails: boolean;
     CanSubmitCityReport: boolean;
     CanSubmitClubReport: boolean;
     CanSubmitRegionReport: boolean;
