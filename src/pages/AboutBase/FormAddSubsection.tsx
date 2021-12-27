@@ -23,7 +23,6 @@ type FormAddSubsectionProps = {
 };
 
 const normFile = (e: any) => {
-    debugger;
     if (Array.isArray(e)) {
         return e;
     }
