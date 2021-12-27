@@ -45,13 +45,14 @@ import {
   failCreateAction,
   failUpdateAction,
 } from "../../../components/Notifications/Messages"
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
 import RegionFollower from "../../../models/Region/RegionFollower";
 import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 const CreateCity = () => {
+  const [form] = Form.useForm();
   const { id } = useParams();
   const history = useHistory();
   const location = useLocation();
@@ -60,7 +61,7 @@ const CreateCity = () => {
   const [loadingButton, setLoadingButton] = useState(false);
   const [appealRegion, setAppealRegion] = useState<RegionProfile>(new RegionProfile());
   const [regionFollower, setRegionFollower] = useState<RegionFollower>({} as RegionFollower);
-  const [city, setCity] = useState<CityProfile>(new CityProfile());
+  const [city, setCity] = useState<CityProfile>({} as CityProfile);
   const [regions, setRegions] = useState<RegionProfile[]>([]);
   const [applicant, setApplicant] = useState<User>({} as User);
   const [activeUser, setActiveUser] = useState<User>({} as User);
@@ -153,7 +154,7 @@ const CreateCity = () => {
   const getCity = async () => {
     try {
       setLoading(true);
-      let response = await getCityById(+id);
+      const response = await getCityById(+id);
 
       if (response.data.logo !== null) {
         const logo = await getLogo(response.data.logo);
@@ -376,7 +377,7 @@ const CreateCity = () => {
         ) : (
           <Title level={2}>Створення станиці</Title>
         )}
-        <Form onFinish={(values) => {handleSubmit(values); setLoadingButton(true)}}>
+        <Form form={form} onFinish={(values) => {handleSubmit(values); setLoadingButton(true)}}>
           <Form.Item name="logo" initialValue={isFollowerPath ? regionFollower.logo : city.logo}>
             <Upload
               name="avatar"
@@ -562,13 +563,22 @@ const CreateCity = () => {
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
               <Form.Item
-                name="postIndex"
                 label="Поштовий індекс"
                 labelCol={{ span: 24 }}
                 initialValue={isFollowerPath ? regionFollower.postIndex : city.postIndex}
+                name="postIndex"
                 rules={descriptionValidation.postIndex}
               >
-                <Input value={isFollowerPath ? regionFollower.postIndex : city.postIndex} maxLength={5} />
+                <Input
+                  onChange={(e) => {
+                    form.setFieldsValue({
+                      postIndex: getOnlyNums(e.target.value),
+                    });
+                  }}
+                  autoComplete = "off"
+                  value={isFollowerPath ? regionFollower.postIndex : city.postIndex} 
+                  maxLength={5}
+                />
               </Form.Item>
             </Col>
           </Row>

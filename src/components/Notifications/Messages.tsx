@@ -80,7 +80,7 @@ export const successfulConfirmedAction = (name:string, itemName?:string)=>{
 }; 
 
 export const successfulCancelAction = (name:string, itemName?:string)=>{
-    return itemName ? `${name} ${itemName} скасовано` : `${name} скасовано`;
+    return itemName ? `${name} ${itemName} скасовано` : `${name} успішно скасовано`;
 }; 
 
 export const successfulArchiveAction = (name:string)=>{
@@ -101,6 +101,10 @@ export const successfulDeleteDegree = ()=>{
 
 export const failArchiveAction = (name: string) => {
     return `Не вдалось архівувати ${name} `
+};
+
+export const failApproveAction = () => {
+    return `Будь ласка, зачекайте`
 };
 
 export const failCreateAction = (name:string)=>{

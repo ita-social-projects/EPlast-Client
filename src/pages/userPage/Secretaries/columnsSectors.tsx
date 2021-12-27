@@ -1,5 +1,6 @@
-import SectorUser from "../../../models/GoverningBody/Sector/SectorUser";
 import moment from "moment";
+
+const minDate = '01.01.0001';
 
 const columns = [
   {
@@ -8,40 +9,42 @@ const columns = [
   },
   {
     title: "Користувач",
-    dataIndex: "user",
-    render: (user: SectorUser) => {
-      return user.firstName + " " + user.lastName;
+    dataIndex: "userName",
+    render: (userName: string) => {
+      return userName;
     },
   },
   {
     title: "Тип адміністрування",
     dataIndex: "adminType",
-    render: (adminType: any) => {
-      return adminType.adminTypeName;
+    render: (adminType: string) => {
+      return adminType;
     },
   },
   {
     title: "Початок каденції",
     dataIndex: "startDate",
     render: (startDate: Date) => {
-      return moment(startDate).format("DD.MM.YYYY");
+      return moment.utc(startDate).local().format("DD.MM.YYYY");
     },
   },
   {
     title: "Кінець каденції",
     dataIndex: "endDate",
     render: (endDate: Date) => {
-      return moment(endDate).format("DD.MM.YYYY") === "Invalid date"
-        ? " Не закінчена "
-        : moment(endDate).format("DD.MM.YYYY");
+      const instanceDate = moment.utc(endDate).local().format("DD.MM.YYYY")
+      return instanceDate === minDate
+          ? " Не закінчена "
+          : instanceDate;
     },
   },
   {
     title: "Напрям",
-    dataIndex: "sector",
-    render: (sector: any) => {
-      return sector.name;
+    dataIndex: "sectorName",
+    render: (sectorName: string) => {
+      return sectorName;
     },
   },
 ];
+
 export default columns;

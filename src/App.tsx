@@ -79,6 +79,8 @@ import GoverningBodySectorDocuments from "./pages/GoverningBody/Sector/SectorDoc
 import GoverningBodySectorAdministration from "./pages/GoverningBody/Sector/SectorAdministration";
 import Announcements from "./pages/GoverningBody/Announcement/Announcement";
 import UserRenewalTable from "./pages/UserRenewal/UserRenewalTable/UserRenewalTable";
+import TermsOfUse from "./pages/Terms/TermsOfUse";
+import TermsEdit from "./pages/Terms/TermsEdit";
 
 const App: FC = () => (
   <div className="App">
@@ -304,7 +306,6 @@ const App: FC = () => (
             path="/clubs/new"
             component={CreateClub}
           />
-
           <RouteWithLayout
             layout={PrivateLayout}
             exact
@@ -457,6 +458,18 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
+            path="/terms"
+            component={TermsOfUse}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/terms/edit"
+            component={TermsEdit}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
             path="/annualreport/create/:cityId"
             component={AnnualReportCreate}
           />
@@ -526,7 +539,6 @@ const App: FC = () => (
             path="*"
             component={NotFound}
           />
-
         </Switch>
       </div>
       <FooterContainer />

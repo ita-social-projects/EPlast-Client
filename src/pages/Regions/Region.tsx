@@ -585,7 +585,7 @@ const Region = () => {
                 <Crumb
                   current={region.regionName}
                   first="/"
-                  second={url.replace(`/${id}`, "")}
+                  second={url.replace(`/${id}`, "/page/1")}
                   second_name="Округи"
                 />
                   {isActiveRegion ? null : (
