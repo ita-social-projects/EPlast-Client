@@ -43,7 +43,6 @@ const addAboutBaseSubsection = async (data:Subsection)=>{
 };
 
 const uploadSubsectionPictures = async (subsectionId: number, data: any) => {
-    debugger;
     return await api.post(`AboutBase/${subsectionId}/subsectionPictures`, data)
 }
 
