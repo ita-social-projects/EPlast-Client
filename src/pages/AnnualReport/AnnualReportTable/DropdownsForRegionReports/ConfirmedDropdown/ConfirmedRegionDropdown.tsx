@@ -35,8 +35,8 @@ const ConfirmedRegionDropdown = (props: Props) => {
 
     return (
         <>
-            {userAnnualReportAccess?.CanViewAnnualReportsTable ||
-                userAnnualReportAccess?.CanSubmitRegionReport ? (
+            {userAnnualReportAccess?.CanViewReportDetails && 
+                userAnnualReportAccess?.CanViewRegionReportsTable ? (
                 <Menu
                     theme="dark"
                     onClick={handleClick}
