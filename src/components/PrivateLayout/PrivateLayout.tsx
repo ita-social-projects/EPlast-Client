@@ -226,17 +226,17 @@ const PrivateLayout = ({ children }: any) => {
                 : (<> </>)
               }
             </SubMenu>
-            {userAnnualReportAccess?.CanViewAnnualReportsTable && userStatisticsAccess?.CanCityStatisticsFormReport ? (
+            {userAnnualReportAccess?.CanViewReportsPage && userStatisticsAccess?.CanCityStatisticsFormReport ? (
               <SubMenu key="sub2" icon={<SnippetsOutlined />} title="Звітування та Статистика">
-                {(userAnnualReportAccess?.CanSubmitCityReport && (
-                <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="9">
-                  Річні звіти
-                </Menu.Item>
-                )) ||
-                (userAnnualReportAccess?.CanSubmitRegionReport && (
+                {(userAnnualReportAccess?.CanViewRegionReportsTable && (
                   <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/country`); }} key="9">
-                  Річні звіти
-                </Menu.Item>
+                    Річні звіти
+                  </Menu.Item>
+                )) ||
+                (userAnnualReportAccess?.CanViewCityReportsTable && (
+                  <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/city`); }} key="9">
+                    Річні звіти
+                  </Menu.Item>
                 )) } 
                 <SubMenu
                   key="sub2.1"
@@ -251,7 +251,7 @@ const PrivateLayout = ({ children }: any) => {
                 </SubMenu>
               </SubMenu>
             ) :
-              (userAnnualReportAccess?.CanViewAnnualReportsTable && userAnnualReportAccess?.CanSubmitClubReport ? (
+              (userAnnualReportAccess?.CanViewClubReportsTable ? (
                 <Menu.Item icon={<FileTextOutlined />} onClick={() => { handleClickAway(); history.push(`/annualreport/table/hovel`); }} key="16">
                   Річні звіти
                 </Menu.Item>
