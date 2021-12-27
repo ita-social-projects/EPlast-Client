@@ -53,8 +53,8 @@ const UnconfirmedDropdown = (props: Props) => {
 
     return (
         <>
-            {userAnnualReportAccess?.CanViewEveryAnnualReport ||
-                userAnnualReportAccess?.CanSubmitCityReport ? (
+            {userAnnualReportAccess?.CanViewCityReportsTable && 
+                userAnnualReportAccess?.CanViewReportDetails ? (
                 <Menu
                     theme="dark"
                     onClick={handleClick}
@@ -73,7 +73,7 @@ const UnconfirmedDropdown = (props: Props) => {
                         <FilePdfOutlined />
                         Переглянути у форматі PDF
                     </Menu.Item>
-                    {userAnnualReportAccess?.CanEditReport ? (
+                    {userAnnualReportAccess?.CanEditReport && userAnnualReportAccess?.CanSubmitCityReport ? (
                         <Menu.Item key="3">
                             <FileSyncOutlined />
                             Редагувати

@@ -24,7 +24,7 @@ const SortedCities = ( {switcher}: Props) => {
   const [searchedData, setSearchedData] = useState("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const {p} = useParams();
-  const [page, setPage] = useState(Number(p));
+  const [page, setPage] = useState(+p);
 
   const setPhotos = async (cities: CityProfile[]) => {
     try {
@@ -117,6 +117,10 @@ const SortedCities = ( {switcher}: Props) => {
 };
 
   useEffect(() => {
+    setPage(+p);
+  });
+
+  useEffect(() => {
     switcher ? (getNotActiveCities(page)):(getActiveCities(page)) 
   }, [page, pageSize, searchedData]);
 
@@ -124,7 +128,6 @@ const SortedCities = ( {switcher}: Props) => {
     if (cities.length !== 0) {
       switcher ? (getNotActiveCities()) :(getActiveCities())
     }
-    
   },[switcher])
 
   return (
