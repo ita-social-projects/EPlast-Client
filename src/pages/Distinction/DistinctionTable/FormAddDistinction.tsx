@@ -21,6 +21,7 @@ import {
 } from "../../../components/Notifications/Messages"
 import precautionApi from "../../../api/precautionApi";
 import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
+import moment from "moment";
 
 type FormAddDistinctionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -115,6 +116,10 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     onAdd();
     await createNotifications(newDistinction);
   };
+
+  function disabledDate(currentDate : any) {
+    return currentDate && currentDate < moment("01-01-1900", "DD-MM-YYYY");
+  }
 
   return (
     <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
@@ -255,6 +260,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             ]}
           >
             <DatePicker
+              disabledDate = {disabledDate}
               format={dateFormat}
               className={formclasses.selectField}
               getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
