@@ -40,12 +40,15 @@ const ModalChangeUserDates = ({
   }, [])
 
   const setDates = () => {
-    setEntryDate(dates.dateEntry);
-    setOathDate(dates.dateOath);
+    dates.dateEntry ? setEntryDate(dates.dateEntry) : setEntryDate(defaultDate);
+    dates.dateOath ? setOathDate(dates.dateOath) : setOathDate(undefined);
   }
 
   const disabledEntryDate = (current: any) => {
-    return current < moment(minAvailableDate) || current > OathDate;
+    if (OathDate) {
+      return current < moment(minAvailableDate) || current > moment(OathDate).local();
+    }
+    return current < moment(minAvailableDate) || current > moment();
   };
 
   const disabledOathDate = (current: any) => {
@@ -72,6 +75,12 @@ const ModalChangeUserDates = ({
     }
   };
 
+  //Set default values for the Form
+  const UserInitialDates = {
+    datepickerEntry: EntryDate ? moment(EntryDate) : undefined,
+    datepickerOath: OathDate ? moment(OathDate) : undefined
+  }
+
   const handleFinish = async (info: any) => {
     const userEntryAndOathDatesChange: UserEntryAndOathDates = {
       userId: userId,
@@ -87,15 +96,19 @@ const ModalChangeUserDates = ({
     <Modal
       visible={datesVisibleModal}
       onCancel={handleCancel}
-      destroyOnClose = {true}
+      destroyOnClose={true}
       title="Зміна даних користувача"
       footer={null}
     >
-      <Form name="basic" onFinish={handleFinish} form={form}>
+      <Form name="basic" onFinish={handleFinish} form={form} initialValues={UserInitialDates}>
         <label htmlFor="datepickerEntry" className={classes.formLabel}>
           Дата вступу
         </label>
-        <Form.Item className={classes.formField} name="datepickerEntry">
+        <Form.Item
+          className={classes.formField}
+          name="datepickerEntry"
+          rules={[{ required: true, message: 'Внесіть дату вступу!' }]}
+        >
           <DatePicker
             format="DD.MM.YYYY"
             disabledDate={disabledEntryDate}
