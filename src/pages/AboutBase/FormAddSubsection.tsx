@@ -93,9 +93,6 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
                 .then(async (response) => {
                     form.resetFields();
                 })
-                .catch((error) => {
-                    console.log(error);
-                })
         }
         setVisibleModal(false);
         form.resetFields();
