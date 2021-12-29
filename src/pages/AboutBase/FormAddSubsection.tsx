@@ -22,7 +22,7 @@ type FormAddSubsectionProps = {
     fetchSubData: Function
 };
 
-const normFile = (e: any) => {
+const addFileToUpload = (e: any) => {
     if (Array.isArray(e)) {
         return e;
     }
@@ -184,7 +184,7 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
                     <Form.Item
                         name="upload"
                         valuePropName="fileList"
-                        getValueFromEvent={normFile}
+                        getValueFromEvent={addFileToUpload}
                     >
                         <Upload
                             listType="picture-card"
