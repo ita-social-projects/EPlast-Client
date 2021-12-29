@@ -13,8 +13,6 @@ import {
   possibleFileExtensions,
   fileIsTooBig,
   successfulDeleteAction,
-  emptyInput,
-  maxLength,
   fileIsEmpty,
 } from "../../components/Notifications/Messages";
 import "moment/locale/uk";
@@ -76,20 +74,11 @@ const AddDocumentModal = (props: Props) => {
       if (checkFile(info.file.size, info.file.name)) {
         getBase64(info.file, (base64: string) => {
           props.setDocument({ ...props.document, blobName: base64 });
-
-          if (fileName != "") {
-            let extension: string = getExtension(fileName);
-            let fileNameWithoutExtension: string = fileName.replace(extension, '');
-
-            let newExtension: string = getExtension(info.file.name);
-            setFileName(fileNameWithoutExtension + newExtension);
-
-            setDisabled(false);
-          } else {
-            setFileName(info.file.name);
-            setDisabled(true);
-          }
-
+          let extension: string = getExtension(fileName);
+          let fileNameWithoutExtension: string = fileName.replace(extension, '');
+          let newExtension: string = getExtension(info.file.name);
+          setFileName(fileNameWithoutExtension + newExtension);
+          setDisabled(false);
           setFileUploaded(true);
         });
         notificationLogic("success", fileIsUpload());
@@ -146,7 +135,6 @@ const AddDocumentModal = (props: Props) => {
 
   const removeFile = () => {
     props.setDocument({ ...props.document, blobName: "" });
-    setFileName("");
     setDisabled(true);
   };
 
