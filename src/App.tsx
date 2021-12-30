@@ -101,7 +101,6 @@ const App: FC = () => (
           <Route path="/chat" component={Demo} />
           <RouteWithLayout
             layout={PrivateLayout}
-            exact
             path="/userpage/:specify/:userId"
             component={UserProfile}
           />
