@@ -81,10 +81,12 @@ import Announcements from "./pages/GoverningBody/Announcement/Announcement";
 import UserRenewalTable from "./pages/UserRenewal/UserRenewalTable/UserRenewalTable";
 import TermsOfUse from "./pages/Terms/TermsOfUse";
 import TermsEdit from "./pages/Terms/TermsEdit";
+import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 
 const App: FC = () => (
   <div className="App">
     <Router>
+      <ScrollToTop/>
       <HeaderContainer />
       <div className="mainContent">
         <Switch>
@@ -99,6 +101,7 @@ const App: FC = () => (
           <Route path="/chat" component={Demo} />
           <RouteWithLayout
             layout={PrivateLayout}
+            exact
             path="/userpage/:specify/:userId"
             component={UserProfile}
           />
