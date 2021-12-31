@@ -21,6 +21,7 @@ import {
   LockOutlined
 } from "@ant-design/icons";
 import {
+  getAnnouncementsById,
   getAllAnnouncements,
   getGoverningBodyById,
   getGoverningBodyLogo,
@@ -79,6 +80,8 @@ const GoverningBody = () => {
   const [announcements, setAnnouncements] = useState<GoverningBodyAnnouncement[]>([]);
   const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
 
+  const announcementsQuantity = 3;
+
   const deleteGoverningBody = async () => {
     await removeGoverningBody(governingBody.id);
     notificationLogic("success", successfulDeleteAction("Керівний орган"));
@@ -135,7 +138,7 @@ const GoverningBody = () => {
     return result;
   }
 
-  const  newAnnouncementNotification = async() =>
+  const newAnnouncementNotification = async() =>
   {
     let usersId = ((await getUsers()).data as ShortUserInfo[]).map(x => x.id)
     await NotificationBoxApi.createNotifications(
@@ -151,7 +154,12 @@ const GoverningBody = () => {
     setVisibleAddModal(false);
     setLoading(true);
     newAnnouncementNotification();
-    await addAnnouncement(str);
+    const announcementId = (await addAnnouncement(str)).data;
+    let newAnnouncement: GoverningBodyAnnouncement = (await getAnnouncementsById(announcementId)).data;
+    let newAnnouncements: GoverningBodyAnnouncement[] = announcements;
+    newAnnouncements.unshift(newAnnouncement);
+    newAnnouncements.pop();
+    setAnnouncements(newAnnouncements);
     setLoading(false);
     notificationLogic("success", "Оголошення опубліковано");
   }
@@ -189,7 +197,7 @@ const GoverningBody = () => {
       if(userAccesses.data["ViewAnnouncements"]){
         const res: GoverningBodyAnnouncement[]  = (await getAllAnnouncements()).data;
         let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];
-        for(let i = 0; i < res.length && i < 3; i++) {
+        for(let i = 0; i < res.length && i < announcementsQuantity; i++) {
           res[i].text = res[i].text.substring(0,40) + (res[i].text.length > 40? "...": "")
           shortListedAnnoncements = [...shortListedAnnoncements, res[i]]
         }
