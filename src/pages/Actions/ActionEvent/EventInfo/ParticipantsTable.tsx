@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tag, Space, Button, Divider, Typography } from "antd";
+import { Table, Tag, Space, Button, Divider, Typography, Modal } from "antd";
 import { ColumnsType } from "antd/es/table";
 import {
   UserAddOutlined,
   UserDeleteOutlined,
   QuestionOutlined,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons/lib";
 import { showError } from "../../EventsModals";
 // eslint-disable-next-line import/no-cycle
@@ -127,6 +128,20 @@ const ParticipantsTable = ({
       eventName
     );
   };
+  
+  function showRejectModal(participantId: number, userId: string) {
+    return Modal.confirm({
+      title: "Ви дійсно хочете відмовити цьому користувачу в участі у події?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, відмовити",
+      okType: "danger",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        changeStatusToRejected(participantId, userId);
+      },
+    });
+  }
 
   const columns: ColumnsType<EventParticipant> = [
     {
@@ -194,7 +209,7 @@ const ParticipantsTable = ({
             icon={<UserDeleteOutlined className="iconParticipant" />}
             size="small"
             onClick={() => {
-              changeStatusToRejected(record.participantId, record.userId);
+              showRejectModal(record.participantId, record.userId);
               setRender(true);
             }}
           />
