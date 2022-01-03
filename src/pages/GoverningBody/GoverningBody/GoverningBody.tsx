@@ -11,6 +11,7 @@ import {
   Tooltip,
   Badge,
   Avatar,
+  Drawer,
 } from "antd";
 import {
   EditOutlined,
@@ -623,11 +624,11 @@ const GoverningBody = () => {
           visibleModal={visibleAddModal}
           onAdd={onAnnouncementAdd}
       />
-      <Modal
+      <Drawer
         title="Додати діловода"
         visible={visible}
-        onOk={handleAdminAdd}
-        onCancel={() => setVisible(false)}
+        width="auto"
+        onClose={() => setVisible(false)}
         footer={null}
       >
         <AddGoverningBodiesSecretaryForm
@@ -637,7 +638,7 @@ const GoverningBody = () => {
           setGoverningBodyHead={setGoverningBodyHead}
           governingBodyId={+id}>
         </AddGoverningBodiesSecretaryForm>
-      </Modal>
+      </Drawer>
       {userAccesses["ManipulateDocument"] ? (
         <AddDocumentModal
           governingBodyId={+id}
