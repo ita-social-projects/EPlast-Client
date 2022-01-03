@@ -182,8 +182,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     <Spinner/>
   ):(
     <Form name="basic" onFinish={handleSubmit} form={form}>
-            <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
       <Form.Item
         className={formclasses.formField}
         labelCol={{ span: 24 }}
@@ -210,8 +208,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           ))}
         </Select>
       </Form.Item>
-      </Col>
-      </Row>
+
       <Form.Item
         className={formclasses.formField}
         labelCol={{ span: 24 }}
@@ -269,26 +266,23 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         />
       </Form.Item>
 
-
-        <Form.Item
-          className={formclasses.formField}
-          labelCol={{span:12}}
-          labelAlign="left"
-          label="Дата початку"
-          name="startDate"
-          initialValue={
-            props.admin === undefined ? undefined : moment.utc(props.admin.startDate).local()
-          }
+      <Form.Item
+        className={formclasses.formField}
+        labelCol={{span:12}}
+        labelAlign="left"
+        label="Дата початку"
+        name="startDate"
+        initialValue={
+          props.admin === undefined ? undefined : moment.utc(props.admin.startDate).local()
+        }
         >
-
-          <DatePicker
-            className={formclasses.inputField}
-            disabledDate={disabledStartDate}
-            onChange={(e) => setStartDate(e)}
-            format="DD.MM.YYYY"
-          />
-
-        </Form.Item>
+        <DatePicker
+          className={formclasses.inputField}
+          disabledDate={disabledStartDate}
+          onChange={(e) => setStartDate(e)}
+          format="DD.MM.YYYY"
+        />
+      </Form.Item>
 
       <Form.Item
         className={formclasses.formField}
