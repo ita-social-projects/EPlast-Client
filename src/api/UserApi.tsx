@@ -18,6 +18,11 @@ const getImage = async (imageName: string | undefined) => {
 
     return response;
 };
+const getProfileImage = async (userId: string) => {
+    const response = await axios.get(`${`${BASE_URL}User/getProfileImage`}/${userId}`);
+
+    return response;
+}
 const edit = async (id: string) => {
     const response = await axios.get(`${`${BASE_URL}User/edit`}/${id}`);
 
@@ -28,7 +33,6 @@ const put = async (data: any) => {
 
     return response;
 };
-
 const getUserProfileAccess = async (userid: string, focusUserId: string) => {
     const response = await axios.get(`${`${BASE_URL}UserAccess/GetUserProfileAccess/${userid}/${focusUserId}`}`)
     .catch(error => {
@@ -36,8 +40,7 @@ const getUserProfileAccess = async (userid: string, focusUserId: string) => {
     });
     
     return response;
-}
-
+};
 const getApprovers = async (userId: string, approverId: string) => {
     const response = await axios.get(`${`${BASE_URL}User/approvers/${userId}/${approverId}`}`);
 
@@ -71,7 +74,7 @@ const getActiveUserRoles = (): string[] => {
 const getActiveUserId = () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt_decode(token);
-
+    
     return user.nameid as string;
 };
 
@@ -96,5 +99,6 @@ export default {
     getActiveUserId,
     getActiveUserProfile,
     updateProfileImage,
-    getUserProfileAccess
+    getUserProfileAccess,
+    getProfileImage
 };

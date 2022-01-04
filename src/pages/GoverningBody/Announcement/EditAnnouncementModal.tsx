@@ -23,7 +23,6 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
   const [text, setText] = useState<string>("");
   useEffect(() => {
     getAnnouncement(id);
-    console.log(id)
   }, [id])
 
   const getAnnouncement = async(id: number) => {
@@ -51,6 +50,7 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
       firstName: announcement.user.firstName,
       lastName: announcement.user.lastName,
       userId: announcement.userId,
+      profileImage: announcement.profileImageBase64
     };
     onEdit(id,updatedAnnouncement);
   };

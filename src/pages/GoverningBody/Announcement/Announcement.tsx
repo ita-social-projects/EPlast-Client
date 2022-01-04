@@ -1,4 +1,4 @@
-import { Button, Layout, List } from "antd";
+import { Button, Avatar, Layout, List } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { addAnnouncement, editAnnouncement, getAllAnnouncements } from "../../../api/governingBodiesApi";
@@ -16,18 +16,20 @@ import { Roles } from '../../../models/Roles/Roles';
 import jwt from 'jwt-decode';
 import AuthStore from "../../../stores/AuthStore";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
+import UserApi from "../../../api/UserApi";
 
 const { Content } = Layout;
 
 const Announcements = () => {
-  const [loading, setLoading] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [imageBase64, setImageBase64] = useState<string>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [data, setData] = useState<Array<Announcement>>([]);
   const [recordObj, setRecordObj] = useState<number>(0);
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
-  const [visibleAddModal, setVisibleAddModal] = useState(false);
-  const [visibleEditModal, setVisibleEditModal] = useState(false);
+  const [x, setX] = useState<number>(0);
+  const [y, setY] = useState<number>(0);
+  const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
+  const [visibleEditModal, setVisibleEditModal] = useState<boolean>(false);
   const classes = require("./Announcement.module.css");
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
 
@@ -35,6 +37,7 @@ const Announcements = () => {
     setLoading(true);
     await getAllAnnouncements()
     .then((res) => {
+
       var announcements: Announcement[] = [];
       for (var value of res.data) {
         var ann: Announcement = {
@@ -44,6 +47,7 @@ const Announcements = () => {
           firstName: value.user.firstName,
           lastName: value.user.lastName,
           userId: value.userId,
+          profileImage: value.profileImageBase64
         };
         announcements.push(ann);
       }
@@ -51,6 +55,7 @@ const Announcements = () => {
       setLoading(false);
     });
   };
+
 
   const getUserAccesses = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
@@ -123,6 +128,17 @@ const Announcements = () => {
     setData([...filteredData]);
   };
 
+  const getImageBase64ById = async (id: string) => {
+    
+    await UserApi.getProfileImage(id)
+    .then((response: { data: any; }) => {
+      setImageBase64(response.data);
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
+
   return (
     <Layout>
       <Content
@@ -145,7 +161,10 @@ const Announcements = () => {
           <List
             itemLayout="horizontal"
             dataSource={data}
-            renderItem={(item) => (
+            grid={{gutter:16, column:3}}
+            renderItem={(item) => {
+              getImageBase64ById(item.userId);
+              return (
               <List.Item
               style={{overflow:"hidden", wordBreak:"break-word"}}
                 className={classes.listItem}
@@ -160,13 +179,14 @@ const Announcements = () => {
                   setY(event.pageY);
                 }}
               >
-                <List.Item.Meta
+                <List.Item.Meta   
                   title={item.firstName + " " + item.lastName}
                   description={item.date.toString().substring(0, 10)}
+                  avatar={<Avatar src={item.profileImage} />}
                 />
                 {item.text}
               </List.Item>
-            )}
+            )}}
             pagination={{
               showLessItems: true,
               responsive: true,
