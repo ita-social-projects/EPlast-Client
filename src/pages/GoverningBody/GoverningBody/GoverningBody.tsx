@@ -146,7 +146,7 @@ const GoverningBody = () => {
       usersId,
       "Додане нове оголошення.",
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/announcements`,
+      `/announcements/page/1`,
       `Переглянути`
     );
   }
@@ -538,7 +538,7 @@ const GoverningBody = () => {
                 <Button
                   type="primary"
                   className="governingBodyInfoButton"
-                  onClick={() => history.push(`/announcements`)}
+                  onClick={() => history.push(`/announcements/page/1`)}
                 >
                   Більше
                 </Button>

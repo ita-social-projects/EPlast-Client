@@ -1,6 +1,7 @@
 import { Button, Avatar, Layout, List } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import { addAnnouncement, editAnnouncement, getAllAnnouncements } from "../../../api/governingBodiesApi";
 import { getUsersByAllRoles } from "../../../api/adminApi";
 import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
@@ -21,6 +22,8 @@ import UserApi from "../../../api/UserApi";
 const { Content } = Layout;
 
 const Announcements = () => {
+  const path: string  = "/announcements";
+  const history = useHistory();
   const [imageBase64, setImageBase64] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
@@ -32,6 +35,9 @@ const Announcements = () => {
   const [visibleEditModal, setVisibleEditModal] = useState<boolean>(false);
   const classes = require("./Announcement.module.css");
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
+  const {p} = useParams();
+  const [pageSize, setPageSize] = useState(18);
+  const [page, setPage] = useState(+p);
 
   const getAnnouncements = async () => {
     setLoading(true);
@@ -56,6 +62,18 @@ const Announcements = () => {
     });
   };
 
+  const handleChange = (page: number) => {
+    history.push(`${path}/page/${page}`);
+    setPage(page);
+  };
+
+  const handleSizeChange = (pageSize: number = 10) => {
+    setPageSize(pageSize);
+  };
+
+  useEffect(() => {
+    setPage(+p);
+  });
 
   const getUserAccesses = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
@@ -97,7 +115,7 @@ const Announcements = () => {
       usersId,
       "Додане нове оголошення.",
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/announcements`,
+      `/announcements/page/1`,
       `Переглянути`
     );
   };
@@ -128,17 +146,6 @@ const Announcements = () => {
     setData([...filteredData]);
   };
 
-  const getImageBase64ById = async (id: string) => {
-    
-    await UserApi.getProfileImage(id)
-    .then((response: { data: any; }) => {
-      setImageBase64(response.data);
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-  }
-
   return (
     <Layout>
       <Content
@@ -163,7 +170,6 @@ const Announcements = () => {
             dataSource={data}
             grid={{gutter:16, column:3}}
             renderItem={(item) => {
-              getImageBase64ById(item.userId);
               return (
               <List.Item
               style={{overflow:"hidden", wordBreak:"break-word"}}
@@ -188,9 +194,12 @@ const Announcements = () => {
               </List.Item>
             )}}
             pagination={{
-              showLessItems: true,
+              current: page,
+              pageSize:pageSize,
               responsive: true,
-              showSizeChanger: true,
+              pageSizeOptions: ['18','27','36','45'],
+              onChange: (page) => handleChange(page),
+              onShowSizeChange:(page, size) => handleSizeChange(size)
             }}
           />
         )}

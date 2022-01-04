@@ -399,7 +399,7 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/announcements"
+            path="/announcements/page/:p"
             component={Announcements}
           />
           <RouteWithLayout

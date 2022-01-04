@@ -18,11 +18,6 @@ const getImage = async (imageName: string | undefined) => {
 
     return response;
 };
-const getProfileImage = async (userId: string) => {
-    const response = await axios.get(`${`${BASE_URL}User/getProfileImage`}/${userId}`);
-
-    return response;
-}
 const edit = async (id: string) => {
     const response = await axios.get(`${`${BASE_URL}User/edit`}/${id}`);
 
@@ -100,5 +95,4 @@ export default {
     getActiveUserProfile,
     updateProfileImage,
     getUserProfileAccess,
-    getProfileImage
 };
