@@ -164,6 +164,13 @@ export const getAllAnnouncements = async () => {
     });
 }
 
+export const getAnnouncementsByPage = async (pageNumber: number, pageSize: number) =>{
+  return await api.get(`GoverningBodies/GetAnnouncementsByPage/${pageNumber}`, { pageNumber, pageSize})
+  .catch((error) => {
+    throw new Error(error);
+  });
+}
+
 export const addAnnouncement = (text: string) => {
     return api.post(`GoverningBodies/AddAnnouncement/${text}`, text)
       .catch(error => {

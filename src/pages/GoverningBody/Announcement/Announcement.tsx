@@ -2,7 +2,7 @@ import { Button, Avatar, Layout, List } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { addAnnouncement, editAnnouncement, getAllAnnouncements } from "../../../api/governingBodiesApi";
+import { addAnnouncement, editAnnouncement, getAllAnnouncements, getAnnouncementsByPage } from "../../../api/governingBodiesApi";
 import { getUsersByAllRoles } from "../../../api/adminApi";
 import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
 import AddAnnouncementModal from "./AddAnnouncementModal";
@@ -24,7 +24,6 @@ const { Content } = Layout;
 const Announcements = () => {
   const path: string  = "/announcements";
   const history = useHistory();
-  const [imageBase64, setImageBase64] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [data, setData] = useState<Array<Announcement>>([]);
@@ -38,33 +37,39 @@ const Announcements = () => {
   const {p} = useParams();
   const [pageSize, setPageSize] = useState(18);
   const [page, setPage] = useState(+p);
+  const [totalSize, setTotalSize] = useState<number>(0);
 
-  const getAnnouncements = async () => {
+  const getAnnouncements = async() => {
     setLoading(true);
-    await getAllAnnouncements()
-    .then((res) => {
-
+    await getAnnouncementsByPage(p, pageSize)
+    .then(async (res) => {
+      setTotalSize(res.data.item2);
       var announcements: Announcement[] = [];
-      for (var value of res.data) {
-        var ann: Announcement = {
+      for (var value of res.data.item1) {
+        
+        await UserApi.getImage(value.user.imagePath)
+        .then((image) =>
+        {
+          var ann: Announcement = {
           id: value.id,
           text: value.text,
           date: value.date,
           firstName: value.user.firstName,
           lastName: value.user.lastName,
           userId: value.userId,
-          profileImage: value.profileImageBase64
+          profileImage: image.data
         };
         announcements.push(ann);
+        });
+      
       }
       setData(announcements);
       setLoading(false);
     });
   };
 
-  const handleChange = (page: number) => {
+  const handleChange = async (page: number) => {
     history.push(`${path}/page/${page}`);
-    setPage(page);
   };
 
   const handleSizeChange = (pageSize: number = 10) => {
@@ -73,7 +78,8 @@ const Announcements = () => {
 
   useEffect(() => {
     setPage(+p);
-  });
+    getAnnouncements();
+  }, [p, pageSize]);
 
   const getUserAccesses = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
@@ -102,8 +108,7 @@ const Announcements = () => {
   }
   useEffect(() => {
     getUserAccesses();
-    getAnnouncements();
-  }, []);
+  });
 
   const handleClickAway = () => {
     setShowDropdown(false);
@@ -115,7 +120,7 @@ const Announcements = () => {
       usersId,
       "Додане нове оголошення.",
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/announcements/page/1`,
+      `${path}/page/1`,
       `Переглянути`
     );
   };
@@ -197,8 +202,9 @@ const Announcements = () => {
               current: page,
               pageSize:pageSize,
               responsive: true,
+              total: totalSize,
               pageSizeOptions: ['18','27','36','45'],
-              onChange: (page) => handleChange(page),
+              onChange: async (page) => await handleChange(page),
               onShowSizeChange:(page, size) => handleSizeChange(size)
             }}
           />
