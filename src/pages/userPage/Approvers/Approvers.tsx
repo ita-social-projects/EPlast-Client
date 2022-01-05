@@ -27,23 +27,23 @@ import { PersonalDataContext } from '../personalData/PersonalData';
 const Assignments = () => {
   const history = useHistory();
   const { userId } = useParams();
-  const [loading, setLoading] = useState(false);
+  const [loadingApprovers, setLoadingApprovers] = useState<boolean>(false);
   const [approveAsMemberLoading, setApproveAsMemberLoading] = useState(false);
   const [approveAsHovelHeadLoading, setApproveAsHovelHeadLoading] = useState(false);
   const [approveAsCityHeadLoading, setApproveAsCityHeadLoading] = useState(false);
   const [data, setData] = useState<ApproversData>();
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
-  const { userProfile, activeUserRoles, UpdateData, userProfileAccess } = useContext(PersonalDataContext);
+  const { userProfile, activeUserRoles, UpdateData, loading, userProfileAccess } = useContext(PersonalDataContext);
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
   const fetchData = async () => {
-    if (UpdateData) UpdateData();
+    setLoadingApprovers(false);
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
     await userApi.getApprovers(userId, user.nameid).then(response => {
       setData(response.data);
-      setLoading(true);
+      setLoadingApprovers(true);
     }).catch(() => { notificationLogic('error', fileIsNotUpload("даних")) });
     fetchApproverName(user.nameid);
   };
@@ -114,7 +114,7 @@ const Assignments = () => {
   }
 
   const { Meta } = Card;
-  return loading === false ? (
+  return (loading && loadingApprovers) === false ? (
     <div className="kadraWrapper">
       <Skeleton.Avatar
         size={220}
@@ -328,7 +328,7 @@ const Assignments = () => {
                     </Link>
                   </Tooltip>
                   <Meta title={moment.utc(data.cityApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
-                  { !userProfile?.isUserPlastun && (<DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove}/>)}
+                  { !userProfile?.isUserPlastun && loadingApprovers && (<DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove}/>)}
                 </Card>
               ) : (
                 <Card
