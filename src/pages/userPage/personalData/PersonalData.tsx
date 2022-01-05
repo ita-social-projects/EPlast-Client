@@ -12,6 +12,7 @@ import { Blanks } from "../Blanks/Blanks";
 import UserApi from "../../../api/UserApi";
 import { Data, IPersonalDataContext, User } from "../Interface/Interface";
 import notificationLogic from '../../../components/Notifications/Notification';
+import ScrollToTop from "../../../components/ScrollToTop/ScrollToTop";
 
 const DefaultState: IPersonalDataContext = {
   userProfile: undefined,
@@ -93,6 +94,7 @@ export default function ({
   }
 
   return (
+
     <PersonalDataContext.Provider value={{
       userProfile,
       fullUserProfile,
@@ -105,6 +107,7 @@ export default function ({
       ChangeUserProfile,
       UpdateData
     }}>
+      <ScrollToTop />
       <div className="mainContainer">
         <Menu id={userId} />
         {specify === "main" ? (
