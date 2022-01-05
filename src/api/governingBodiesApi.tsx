@@ -185,8 +185,8 @@ export const getAnnouncementsById = (id: number) => {
     });
 }
 
-export const editAnnouncement = async (id: number, data: Announcement) => {
-  return api.put(`GoverningBodies/EditAnnouncement/${id}`, data)
+export const editAnnouncement = async (id: number, text: string) => {
+  return api.patch(`GoverningBodies/EditAnnouncement/${id}`, {id, text})
     .catch((error) => {
       throw new Error(error);
     });

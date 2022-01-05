@@ -79,6 +79,7 @@ const Announcements = () => {
   useEffect(() => {
     setPage(+p);
     getAnnouncements();
+    getUserAccesses();
   }, [p, pageSize]);
 
   const getUserAccesses = async () => {
@@ -107,7 +108,7 @@ const Announcements = () => {
     return result;
   }
   useEffect(() => {
-    getUserAccesses();
+   
   });
 
   const handleClickAway = () => {
@@ -129,11 +130,14 @@ const Announcements = () => {
     setVisibleAddModal(true);
   };
 
-  const handleEdit = async (id: number, ann: Announcement) => {
+  const handleEdit = async (id: number, newText: string) => {
     setVisibleAddModal(false);
     setLoading(true);
-    await editAnnouncement(id,ann);
-    setData(data.map(x => x.id == id ? ann: x))
+    console.log(newText);
+    await editAnnouncement(id,newText);
+    setData(data.map(x => x.id === id ? 
+      {...x, text: newText}
+      : x))
     setLoading(false);
   }
   const handleAdd = async (str: string) => {
@@ -193,7 +197,7 @@ const Announcements = () => {
                 <List.Item.Meta   
                   title={item.firstName + " " + item.lastName}
                   description={item.date.toString().substring(0, 10)}
-                  avatar={<Avatar src={item.profileImage} />}
+                  avatar={<Avatar size={40} className={classes.avatar} src={item.profileImage} />}
                 />
                 {item.text}
               </List.Item>

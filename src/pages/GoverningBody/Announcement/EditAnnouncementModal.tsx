@@ -14,7 +14,7 @@ interface Props {
   visibleModal: boolean;
   id: number;
   setVisibleModal: (visibleModal: boolean) => void;
-  onEdit: (id: number, ann: Announcement) => void;
+  onEdit: (id: number, text: string) => void;
 }  
 
 const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Props) => {
@@ -43,16 +43,8 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
   const handleSubmit = (values: any) => {
     setVisibleModal(false);
     form.resetFields();
-    var updatedAnnouncement: Announcement = {
-      id: announcement.id,
-      text: text,
-      date: announcement.date,
-      firstName: announcement.user.firstName,
-      lastName: announcement.user.lastName,
-      userId: announcement.userId,
-      profileImage: announcement.profileImageBase64
-    };
-    onEdit(id,updatedAnnouncement);
+    console.log(text);
+    onEdit(id,text);
   };
   
   return (
