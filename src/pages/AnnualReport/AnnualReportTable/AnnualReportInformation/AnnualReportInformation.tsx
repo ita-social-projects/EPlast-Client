@@ -20,6 +20,8 @@ import {
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import UserApi from "../../../../api/UserApi";
 import { Roles } from "../../../../models/Roles/Roles";
+import CityAnnualReportLayout from "../../../../models/PDF/AnnualReport/CityAnnualReportLayout";
+import pdfMake from "pdfmake/build/pdfmake";
 
 const { Title, Text } = Typography;
 
@@ -144,8 +146,11 @@ const AnnualReportInformation = () => {
 
     const handleViewPDF = async (id: number) => {
         try {
-            const pdf = await AnnualReportApi.getPdf(id);
-            window.open(pdf);
+            let annualReport = await (await AnnualReportApi.getById(id)).data.annualReport;
+
+            let cityStatuses = await (await AnnualReportApi.getCityLegalStatuses()).data.legalStatuses;
+
+            pdfMake.createPdf(CityAnnualReportLayout(annualReport, cityStatuses)).open();
         } catch (error) {
             notificationLogic("error", tryAgain);
         }
