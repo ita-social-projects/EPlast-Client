@@ -6,7 +6,7 @@ export default function CityAnnualReportLayout(
     cityLegalStatuses: string[]
 ) {
     var adminFirstLastName = `${annualReport.newCityAdmin?.firstName ?? ""} ${annualReport.newCityAdmin?.lastName ?? ""}`;
-    adminFirstLastName = adminFirstLastName.replace(" ", "").length > 0
+    adminFirstLastName = adminFirstLastName.replace(/ /g, '').length > 0
         ? adminFirstLastName
         : "Інформацію не знайдено";
 
