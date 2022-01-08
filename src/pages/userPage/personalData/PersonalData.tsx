@@ -94,7 +94,6 @@ export default function ({
   }
 
   return (
-
     <PersonalDataContext.Provider value={{
       userProfile,
       fullUserProfile,

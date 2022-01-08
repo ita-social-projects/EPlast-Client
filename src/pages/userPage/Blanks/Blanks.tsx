@@ -395,7 +395,7 @@ export const Blanks = () => {
                 setVisibleModal={setVisibleListAchievementModal}
                 achievementDoc={achievementDoc}
                 hasAccess={userProfileAccess["CanSeeUserDistinction"] || userToken.nameid === userId}
-                hasAccessToSeeAndDownload={userProfileAccess["CanDownloadUserDistinction"]  || userToken.nameid === userId}
+                hasAccessToSeeAndDownload={userProfileAccess["CanDownloadUserDistinction"] || userToken.nameid === userId}
                 hasAccessToDelete={userProfileAccess["CanDeleteUserDistinction"] || userToken.nameid === userId}
                 setAchievementDoc={setAchievementDoc} />
 
