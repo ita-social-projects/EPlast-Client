@@ -60,25 +60,6 @@ const getById = async (id: number) => {
         });
 }
 
-const getPdf = async (id: number) => {
-    const data = await (await Api.get(`AnnualReport/createPdf/${id}`)).data;
-    const binaryString = window.atob(data);
-    console.log(binaryString);
-    const binaryLen = binaryString.length;
-    const bytes = new Uint8Array(binaryLen);
-    for (let i = 0; i < binaryLen; i += 1) {
-        const ascii = binaryString.charCodeAt(i);
-        if (71 <= i && i <= 83) {
-            console.log(i, binaryString[i], ascii);
-        }
-        bytes[i] = ascii;
-    };
-    const blob = new Blob([bytes], { type: "application/pdf" });
-    console.log(binaryString)
-    const link = window.URL.createObjectURL(blob);
-    return link;
-};
-
 const getAnnualReportEditFormById = async (id: number) => {
     return await Api.get(`AnnualReport/EditCityAnnualReportForm/${id}`).then((response) => {
         return response
@@ -153,5 +134,5 @@ const getUserCertainAnnualReportAccess = async (userId: string, reportType: Repo
 
 export default {
     getCitiesOptions, getCities, getCityInfo, getCityLegalStatuses, getAnnualReportStatuses, checkCreated,
-    getById, getPdf, getAll, create, edit, confirm, cancel, remove, getAnnualReportEditFormById, getCityMembers, getUserAnnualReportAccess, getUserCertainAnnualReportAccess
+    getById, getAll, create, edit, confirm, cancel, remove, getAnnualReportEditFormById, getCityMembers, getUserAnnualReportAccess, getUserCertainAnnualReportAccess
 };
