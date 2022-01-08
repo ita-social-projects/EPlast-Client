@@ -1,8 +1,8 @@
-import { Button, Avatar, Layout, List, Row } from "antd";
+import { Button, Avatar, Layout, List, Modal } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { addAnnouncement, editAnnouncement, getAllAnnouncements, getAnnouncementsByPage } from "../../../api/governingBodiesApi";
+import { addAnnouncement, editAnnouncement, getAnnouncementsByPage, getAnnouncementsById } from "../../../api/governingBodiesApi";
 import { getUsersByAllRoles } from "../../../api/adminApi";
 import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
 import AddAnnouncementModal from "./AddAnnouncementModal";
@@ -18,8 +18,6 @@ import jwt from 'jwt-decode';
 import AuthStore from "../../../stores/AuthStore";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import UserApi from "../../../api/UserApi";
-import Modal from "antd/lib/modal/Modal";
-import Title from "antd/lib/typography/Title";
 import { DownCircleOutlined } from "@ant-design/icons";
 
 const { Content } = Layout;
@@ -38,9 +36,11 @@ const Announcements = () => {
   const classes = require("./Announcement.module.css");
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
   const {p} = useParams();
-  const [pageSize, setPageSize] = useState(18);
+  const [pageSize, setPageSize] = useState(12);
   const [page, setPage] = useState(+p);
   const [totalSize, setTotalSize] = useState<number>(0);
+
+  const maxTextLength = 50;
 
   const getAnnouncements = async() => {
     setLoading(true);
@@ -110,9 +110,6 @@ const Announcements = () => {
     });
     return result;
   }
-  useEffect(() => {
-   
-  });
 
   const handleClickAway = () => {
     setShowDropdown(false);
@@ -133,12 +130,27 @@ const Announcements = () => {
     setVisibleAddModal(true);
   };
 
-  const showFullAnnouncement = (annId: number) => {
-    return <Modal>
-      hello
-    </Modal>
+  const showFullAnnouncement = async (annId: number) => {
+    console.log(annId);
+    let ann: Announcement;
+    ann = data.find(a=>a.id===annId)!;
+    return (
+      Modal.info({
+          title: <div>
+                  {ann.firstName} {ann.lastName} 
+                  <div className={classes.announcementDate}>
+                    {ann.date.toString().substring(0, 10)}
+                  </div>
+                </div>,
+          content: (
+              <div>
+              {ann.text}
+              </div>
+          ),
+          icon: <Avatar src={ann.profileImage} />,
+          maskClosable: true
+      }));
   };
-  
 
   const handleEdit = async (id: number, newText: string) => {
     setVisibleAddModal(false);
@@ -149,7 +161,8 @@ const Announcements = () => {
       {...x, text: newText}
       : x))
     setLoading(false);
-  }
+  };
+
   const handleAdd = async (str: string) => {
     setVisibleAddModal(false);
     setLoading(true);
@@ -184,7 +197,6 @@ const Announcements = () => {
         {loading ? (
           <Spinner />
         ) : (
-          <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <List
             itemLayout="horizontal"
             dataSource={data}
@@ -194,8 +206,8 @@ const Announcements = () => {
               sm: 2,
               md: 3,
               lg: 3,
-              xl: 4,
-              xxl: 5,
+              xl: 3,
+              xxl: 4,
             }}
             renderItem={(item) => {
               return (
@@ -218,10 +230,10 @@ const Announcements = () => {
                   description={item.date.toString().substring(0, 10)}
                   avatar={<Avatar size={40} className={classes.avatar} src={item.profileImage} />}
                 />
-                {item.text.length<100 ?
+                {item.text.length<maxTextLength ?
                 item.text :
-                <div>{item.text.toString().substring(0, 70)}...
-                  <Title><Button type="text" icon={<DownCircleOutlined style={{fontSize:"24px"}}/>}></Button></Title>
+                <div>{item.text.toString().substring(0, maxTextLength)}...
+                  <Button type="text" size="small" icon={<DownCircleOutlined style={{fontSize:"20px"}} onClick={()=>showFullAnnouncement(item.id)}/>}/>
                 </div>}
               </List.Item>
             )}}
@@ -230,11 +242,11 @@ const Announcements = () => {
               pageSize:pageSize,
               responsive: true,
               total: totalSize,
-              pageSizeOptions: ['18','27','36','45'],
+              pageSizeOptions: ['12','24','36','48'],
               onChange: async (page) => await handleChange(page),
               onShowSizeChange:(page, size) => handleSizeChange(size)
             }}
-          /></Row>
+          />
         )}
         <ClickAwayListener onClickAway={handleClickAway}>
           <DropDown

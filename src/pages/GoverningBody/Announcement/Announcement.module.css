@@ -25,3 +25,8 @@
 .avatar{
   margin-top: 15%;
 }
+
+.announcementDate{
+  text-align: right;
+  color:rgb(134, 134, 134);
+}
