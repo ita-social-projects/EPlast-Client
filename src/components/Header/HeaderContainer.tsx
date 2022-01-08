@@ -23,8 +23,7 @@ const HeaderContainer = () => {
   const [name, setName] = useState<string>();
   const [id, setId] = useState<string>("");
   const token = AuthStore.getToken() as string;
-  const signedIn = AuthorizeApi.isSignedIn();
-  const userState = useRef(signedIn);
+  const [signedIn, setSignedIn] = useState<boolean>(false);
   const [notificationTypes, setNotificationTypes] = useState<Array<NotificationType>>([]);
   const [notifications, setNotifications] = useState<Array<UserNotification>>([]);
   const [visibleDrawer, setVisibleDrawer] = useState<boolean>(false);
@@ -36,9 +35,6 @@ const HeaderContainer = () => {
       const user: any = jwt(token);
       await userApi.getById(user.nameid).then(async response => {
         setName(response.data.user.firstName);
-        if (name !== undefined) {
-          userState.current = true;
-        }
         setId(response.data.user.id);
 
         if (response.data.user.id !== undefined) {
@@ -58,6 +54,11 @@ const HeaderContainer = () => {
     }
   };
   const userHistory: string[] = sessionStorage.getItem(`${name}`) !== null ? JSON.parse(sessionStorage[`${name}`]) : [];
+
+  useEffect(() => {
+    setSignedIn(AuthorizeApi.isSignedIn());
+  },[token])
+
   useEffect(() => {
     if (!userHistory.includes(location) && location !== "/signin") {
       userHistory.push(location)
@@ -106,15 +107,16 @@ const HeaderContainer = () => {
   }
 
   useEffect(() => {
-    if((location.includes("signin") || location.includes("signup")) && signedIn){
+    if ((location.includes("signin") || location.includes("signup")) && signedIn) {
       onLogoutClick();
     }
     fetchData();
+
   }, [location]);
 
   const onLogoutClick = async () => {
     await authService.logout();
-    userState.current = false;
+    setSignedIn(false);
   }
 
   const primaryMenu = (
@@ -168,7 +170,7 @@ const HeaderContainer = () => {
           </div>
         </Menu.Item>
       </Menu>
-      {signedIn && userState.current ? (
+      {signedIn && user ? (
         <>
           <Menu mode="horizontal" className={classes.headerMenu + " " + classes.MenuWidth}>
             <Button ghost
@@ -192,7 +194,7 @@ const HeaderContainer = () => {
                     size={36}
                     src={imageBase64}
                     alt="User"
-                    style={{ marginRight: "10px", marginTop: "-5px"  }}
+                    style={{ marginRight: "10px", marginTop: "-5px" }}
                   />
                   Привіт, {name !== undefined ? (name?.length > 12 ? name.slice(0, 10) + "..." : name) : ""}
                 </NavLink>
@@ -225,28 +227,28 @@ const HeaderContainer = () => {
           ></HistoryDrawer>
         </>
       ) : (
-          <Menu mode="horizontal" className={classes.headerMenu} theme="light">
-            <Menu.Item className={classes.headerItem} key="2">
-              <NavLink
-                to="/contacts"
-                className={classes.headerLink}
-                activeClassName={classes.activeLink}
-              >
-                Контакти
+        <Menu mode="horizontal" className={classes.headerMenu} theme="light">
+          <Menu.Item className={classes.headerItem} key="2">
+            <NavLink
+              to="/contacts"
+              className={classes.headerLink}
+              activeClassName={classes.activeLink}
+            >
+              Контакти
             </NavLink>
-            </Menu.Item>
-            <Menu.Item className={classes.headerItem} key="3">
-              <NavLink
-                to="/signin"
-                className={classes.headerLink}
-                activeClassName={classes.activeLink}
-              >
-                Увійти
+          </Menu.Item>
+          <Menu.Item className={classes.headerItem} key="3">
+            <NavLink
+              to="/signin"
+              className={classes.headerLink}
+              activeClassName={classes.activeLink}
+            >
+              Увійти
               <LoginOutlined className={classes.headerIcon} />
-              </NavLink>
-            </Menu.Item>
-          </Menu>
-        )}
+            </NavLink>
+          </Menu.Item>
+        </Menu>
+      )}
     </Layout.Header>
   );
 };

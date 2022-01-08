@@ -47,7 +47,6 @@ export default function () {
     const token = AuthStore.getToken() as string;
     user = jwt(token);
     history.push(`/userpage/main/${user.nameid}`);
-    window.location.reload();
   };
 
   const handleGoogleResponse = async (response: any) => {
@@ -55,7 +54,6 @@ export default function () {
     const token = AuthStore.getToken() as string;
     user = jwt(token);
     history.push(`/userpage/main/${user.nameid}`);
-    window.location.reload();
   }
 
   const handleFacebookResponse = async (response: FacebookData) => {
@@ -63,7 +61,6 @@ export default function () {
     const token = AuthStore.getToken() as string;
     user = jwt(token);
     history.push(`/userpage/main/${user.nameid}`);
-    window.location.reload();
   }
 
   const getId = async () => {
