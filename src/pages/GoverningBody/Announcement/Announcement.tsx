@@ -1,4 +1,4 @@
-import { Button, Avatar, Layout, List } from "antd";
+import { Button, Avatar, Layout, List, Row } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -18,6 +18,9 @@ import jwt from 'jwt-decode';
 import AuthStore from "../../../stores/AuthStore";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import UserApi from "../../../api/UserApi";
+import Modal from "antd/lib/modal/Modal";
+import Title from "antd/lib/typography/Title";
+import { DownCircleOutlined } from "@ant-design/icons";
 
 const { Content } = Layout;
 
@@ -130,6 +133,13 @@ const Announcements = () => {
     setVisibleAddModal(true);
   };
 
+  const showFullAnnouncement = (annId: number) => {
+    return <Modal>
+      hello
+    </Modal>
+  };
+  
+
   const handleEdit = async (id: number, newText: string) => {
     setVisibleAddModal(false);
     setLoading(true);
@@ -174,14 +184,23 @@ const Announcements = () => {
         {loading ? (
           <Spinner />
         ) : (
+          <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <List
             itemLayout="horizontal"
             dataSource={data}
-            grid={{gutter:16, column:3}}
+            grid={{
+              gutter: 16,
+              xs: 1,
+              sm: 2,
+              md: 3,
+              lg: 3,
+              xl: 4,
+              xxl: 5,
+            }}
             renderItem={(item) => {
               return (
               <List.Item
-              style={{overflow:"hidden", wordBreak:"break-word"}}
+                style={{overflow:"hidden", wordBreak:"break-word"}}
                 className={classes.listItem}
                 onClick={() => {
                   setShowDropdown(false);
@@ -199,7 +218,11 @@ const Announcements = () => {
                   description={item.date.toString().substring(0, 10)}
                   avatar={<Avatar size={40} className={classes.avatar} src={item.profileImage} />}
                 />
-                {item.text}
+                {item.text.length<100 ?
+                item.text :
+                <div>{item.text.toString().substring(0, 70)}...
+                  <Title><Button type="text" icon={<DownCircleOutlined style={{fontSize:"24px"}}/>}></Button></Title>
+                </div>}
               </List.Item>
             )}}
             pagination={{
@@ -211,7 +234,7 @@ const Announcements = () => {
               onChange: async (page) => await handleChange(page),
               onShowSizeChange:(page, size) => handleSizeChange(size)
             }}
-          />
+          /></Row>
         )}
         <ClickAwayListener onClickAway={handleClickAway}>
           <DropDown
