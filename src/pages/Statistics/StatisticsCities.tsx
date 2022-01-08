@@ -279,6 +279,17 @@ const onClick = (value: Array<Number>) => {
   }
 }
 
+const onClickReset = () => {
+  form.resetFields();
+  setShowTable(false);
+  setSelectableSeigneurPart(true);
+  setSelectableSeigneurZahalom(true);
+  setSelectableSeniorPart(true);
+  setSelectableSeniorZahalom(true);
+  setSelectableUnatstvaPart(true);
+  setSelectableUnatstvaZahalom(true);
+}
+
   return (
     <Layout.Content >
       <div className = "background">
@@ -290,7 +301,7 @@ const onClick = (value: Array<Number>) => {
               onFinish={onSubmit}>
                 <Row style={{float: "right", marginRight: "20px", marginTop: "-50px"}}>
                   <AntTooltip title="Очистити">
-                    <ClearOutlined onClick={()=>form.resetFields()} style={{
+                    <ClearOutlined onClick={onClickReset} style={{
                                     fontSize: "x-large",
                                     cursor: "pointer",
                                 }} />

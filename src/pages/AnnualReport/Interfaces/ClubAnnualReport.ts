@@ -1,4 +1,6 @@
 import Club from "../../../models/Club/Club";
+import ClubAdmin from "../../../models/Club/ClubAdmin";
+import ClubMember from "../../../models/Club/ClubMember";
 
 interface ClubAnnualReport {
     id: number;
@@ -19,6 +21,12 @@ interface ClubAnnualReport {
     clubMembersSummary: string;
     clubAdminContacts: string;
     clubName: string;
+    email?: string;
+    phoneNumber?: string;
+    head?: ClubAdmin;
+    members?: ClubMember[];
+    admins?: ClubAdmin[];
+    followers?: ClubMember[];
 }
 
 export default ClubAnnualReport;

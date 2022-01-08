@@ -8,6 +8,7 @@ interface Props {
     showDropdown: boolean;
     userAnnualReportAccess: IUserAnnualReportAccess;
     onView: (id: number) => Promise<void>;
+    onViewPDF: (id: number) => Promise<void>;
     onCancel: (id: number) => Promise<void>;
 }
 

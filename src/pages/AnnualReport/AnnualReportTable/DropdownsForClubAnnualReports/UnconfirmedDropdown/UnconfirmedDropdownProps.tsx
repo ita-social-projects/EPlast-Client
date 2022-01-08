@@ -14,6 +14,7 @@ interface Props {
     showDropdown: boolean;
     userAnnualReportAccess: IUserAnnualReportAccess;
     onView: (id: number) => Promise<void>;
+    onViewPDF: (id: number) => Promise<void>;
     onEdit: (id: number) => void;
     onConfirm: (id: number) => Promise<void>;
     onRemove: (id: number) => Promise<void>;
