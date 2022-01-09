@@ -5,13 +5,7 @@ import {
   emptyInput,
   maxLength,
 } from "../../../components/Notifications/Messages";
-import {
-  addAnnouncement,
-  getAllAnnouncements,
-  getAllUserId,
-} from "../../../api/governingBodiesApi";
-import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import ReactQuill from "react-quill";
 
 type FormAddAnnouncementProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -23,22 +17,8 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 ) => {
   const { setVisibleModal, onAdd } = props;
   const [form] = Form.useForm();
-  const [submitLoading, setSubmitLoading] = useState(false);
-  const [distData, setDistData] = useState<Announcement[]>(
-    Array<Announcement>()
-  );
-  const [loadingUserStatus, setLoadingUserStatus] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await getAllAnnouncements().then((response) => {
-        setDistData(response.data);
-      });
-     
-      setLoadingUserStatus(true);
-    };
-    fetchData();
-  }, []);
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+  const [data, setData] = useState<string>();
 
   const handleCancel = () => {
     form.resetFields();
@@ -65,6 +45,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
         <Col md={24} xs={24}>
           <Form.Item
             className={formclasses.formField}
+            initialValue={''}
             label="Текст оголошення"
             labelCol={{ span: 24 }}
             name="text"
@@ -76,14 +57,10 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
               },
             ]}
           >
-            <Input.TextArea
-              allowClear
-              autoSize={{
-                minRows: 2,
-                maxRows: 15,
-              }}
-              className={formclasses.inputField}
-              maxLength={1001}
+            <ReactQuill 
+              className="iputFortText"
+              theme="snow"
+              placeholder="Введіть текст..."
             />
           </Form.Item>
         </Col>

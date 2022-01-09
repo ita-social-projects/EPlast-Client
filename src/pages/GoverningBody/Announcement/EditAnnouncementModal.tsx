@@ -8,7 +8,7 @@ import {
 import {
   getAnnouncementsById
 } from "../../../api/governingBodiesApi";
-import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
+import ReactQuill from "react-quill";
 
 interface Props {
   visibleModal: boolean;
@@ -43,7 +43,6 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
   const handleSubmit = (values: any) => {
     setVisibleModal(false);
     form.resetFields();
-    console.log(text);
     onEdit(id,text);
   };
   
@@ -52,7 +51,6 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
       title="Редагувати оголошення"
       placement="right"
       width="auto"
-      height={1000}
       visible={visibleModal}
       onClose={handleCancel}
       footer={null}
@@ -81,17 +79,11 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
              initialValue={text}
           >
             <p></p>
-            <Input.TextArea
-              name="text-area"
-              value = {text}
-              onChange={(e) => {setText(e.target.value)}}
-              allowClear
-              autoSize={{
-                minRows: 2,
-                maxRows: 15,
-              }}
-              className={formclasses.inputField}
-              maxLength={1001}
+            <ReactQuill 
+              className="iputFortText"
+              theme="snow"
+              placeholder="Введіть текст..."
+              value={text}
             />
           </Form.Item>
         </Col>

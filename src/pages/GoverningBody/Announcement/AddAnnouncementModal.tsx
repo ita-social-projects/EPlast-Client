@@ -21,7 +21,6 @@ const AddAnnouncementModal = ({
       title="Додати оголошення"
       placement="right"
       width="auto"
-      height={1000}
       visible={visibleModal}
       onClose={handleCancel}
       footer={null}

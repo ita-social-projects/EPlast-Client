@@ -19,6 +19,7 @@ import AuthStore from "../../../stores/AuthStore";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import UserApi from "../../../api/UserApi";
 import { DownCircleOutlined } from "@ant-design/icons";
+import { Markup } from "interweave";
 
 const { Content } = Layout;
 
@@ -136,16 +137,16 @@ const Announcements = () => {
     ann = data.find(a=>a.id===annId)!;
     return (
       Modal.info({
-          title: <div>
-                  {ann.firstName} {ann.lastName} 
-                  <div className={classes.announcementDate}>
-                    {ann.date.toString().substring(0, 10)}
-                  </div>
-                </div>,
+          title: 
+          <div>
+            {ann.firstName} {ann.lastName} 
+            <div className={classes.announcementDate}>
+              {ann.date.toString().substring(0, 10)}
+            </div>
+          </div>,
           content: (
-              <div>
-              {ann.text}
-              </div>
+            <Markup
+            content={ann.text}/>
           ),
           icon: <Avatar src={ann.profileImage} />,
           maskClosable: true
@@ -155,7 +156,6 @@ const Announcements = () => {
   const handleEdit = async (id: number, newText: string) => {
     setVisibleAddModal(false);
     setLoading(true);
-    console.log(newText);
     await editAnnouncement(id,newText);
     setData(data.map(x => x.id === id ? 
       {...x, text: newText}
@@ -164,10 +164,11 @@ const Announcements = () => {
   };
 
   const handleAdd = async (str: string) => {
+    console.log(str);
     setVisibleAddModal(false);
     setLoading(true);
     newNotification();
-    await addAnnouncement(str)
+    await addAnnouncement(str);
     await getAnnouncements();
     setLoading(false);
     notificationLogic("success", "Оголошення опубліковано");
@@ -230,11 +231,17 @@ const Announcements = () => {
                   description={item.date.toString().substring(0, 10)}
                   avatar={<Avatar size={40} className={classes.avatar} src={item.profileImage} />}
                 />
-                {item.text.length<maxTextLength ?
+                <Markup
+                content={
+                item.text.length<maxTextLength ?
                 item.text :
-                <div>{item.text.toString().substring(0, maxTextLength)}...
-                  <Button type="text" size="small" icon={<DownCircleOutlined style={{fontSize:"20px"}} onClick={()=>showFullAnnouncement(item.id)}/>}/>
-                </div>}
+                item.text.toString().substring(0, maxTextLength)}/>
+
+                {item.text.length>=maxTextLength ?
+                <Button type="text" size="small" icon={<DownCircleOutlined style={{fontSize:"20px"}} onClick={()=>showFullAnnouncement(item.id)}/>}/>
+                : null}
+                
+              
               </List.Item>
             )}}
             pagination={{

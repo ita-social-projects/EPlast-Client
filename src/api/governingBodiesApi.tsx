@@ -172,7 +172,7 @@ export const getAnnouncementsByPage = async (pageNumber: number, pageSize: numbe
 }
 
 export const addAnnouncement = (text: string) => {
-    return api.post(`GoverningBodies/AddAnnouncement/${text}`, text)
+    return api.post(`GoverningBodies/AddAnnouncement`, `"${text}"`)
       .catch(error => {
         throw new Error(error);
       });
