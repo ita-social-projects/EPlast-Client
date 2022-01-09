@@ -44,12 +44,17 @@ const PrecautionTable = () => {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [searchedData, setSearchedData] = useState("");
   const [canEdit] = useState(roles.includes(Roles.Admin));
+
+  const [searchedData, setSearchedData] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
+  const [statusSorter, setStatusSorter] = useState([]);
+  const [precautionNameSorter, setPrecautionNameSorter] = useState([]);
+  const [dateSorter, setDateSorter] = useState([]);
+  const [sortByOrder, setSortByOrder] = useState<string[]>([]);
   const [precautions, setPrecautions] = useState<UserPrecautionTableInfo[]>([
     {
       count: 0,
@@ -71,14 +76,14 @@ const PrecautionTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(searchedData, page, pageSize);
-      setTotal(res[0]?.total);
-      setCount(res[0]?.count);
+      const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(sortByOrder, statusSorter, precautionNameSorter, dateSorter, searchedData, page, pageSize);
       setPrecautions(res);
       setLoading(false);
+      setTotal(res[0]?.total);
+      setCount(res[0]?.total);//count
     };
     fetchData();
-  }, [searchedData, page, pageSize]);
+  }, [sortByOrder ,statusSorter, precautionNameSorter, dateSorter, searchedData, page, pageSize]);
 
   const handleSearch = (event: any) => {
     setPage(1);
@@ -96,10 +101,10 @@ const PrecautionTable = () => {
   const handleAdd = async () => {
     setVisibleModal(false);
     setLoading(true);
-    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(searchedData, page, pageSize);
+    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(sortByOrder ,statusSorter, precautionNameSorter, dateSorter, searchedData, page, pageSize);
     setPrecautions(res);
     setTotal(res[0]?.total);
-    setCount(res[0]?.count);
+    setCount(res[0]?.total);//count
     notificationLogic("success", successfulCreateAction("Пересторогу"));
     setLoading(false);
   };
@@ -112,14 +117,14 @@ const PrecautionTable = () => {
     setShowDropdown(false);
   };
 
-  const handlePageChange = (page: number) => {
+  /*const handlePageChange = (page: number) => {
     setPage(page);
   };
 
   const handleSizeChange = (page: number, pageSize: number = 10) => {
     setPage(page);
     setPageSize(pageSize);
-  };
+  };*/
 
   const CreateDeleteNotification = (id: number) => {
     const userPrecaution = precautions.find(
@@ -214,6 +219,30 @@ const PrecautionTable = () => {
     notificationLogic("success", successfulUpdateAction("Пересторогу"));
     CreateEditNotification(userId, precaution.name);
   };
+  const aaa = (res: any) =>{
+    console.log("//////////")
+    console.log(res)    
+    console.log(res[0].current);
+    console.log(res[0].pageSize);
+    console.log(res[1].status);
+    console.log(res[1].precautionName);
+    console.log(res[1].date);
+    if (res[2].order === undefined)
+      console.log([res[2].field, null]);
+    else
+      console.log([res[2].field, res[2].order]);
+
+    setPage(res[0].current);
+    setPageSize(res[0].pageSize);    
+    setStatusSorter(res[1].status)
+    setPrecautionNameSorter(res[1].precautionName)
+    setDateSorter(res[1].date)
+    if (res[2].order === undefined)
+      setSortByOrder([res[2].field, null]);
+    else
+      setSortByOrder([res[2].field, res[2].order])
+  }
+
   return (
     <Layout>
       <Content
@@ -222,7 +251,6 @@ const PrecautionTable = () => {
         }}
       >
         <h1 className={classes.titleTable}>Перестороги</h1>
-
         <>
           <Row gutter={[6, 12]} className={classes.buttonsSearchField}>
             <Col>
@@ -247,7 +275,8 @@ const PrecautionTable = () => {
               />
             </Col>
           </Row>
-          {loading ? (<Spinner />) : (<div>
+          {///*loading ? (<Spinner />) : (
+            <div> 
             <Table
               className={classes.table}
               dataSource={precautions}
@@ -276,13 +305,15 @@ const PrecautionTable = () => {
                 showLessItems: true,
                 responsive: true,
                 showSizeChanger: true,
-                onChange: (page) => handlePageChange(page),
-                onShowSizeChange: (page, size) => handleSizeChange(page, size),
+                //onChange: (page) => handlePageChange(page),
+                //onShowSizeChange: (page, size) => handleSizeChange(page, size),
               }}
+              onChange={(...args) => aaa(args)}
+              loading={loading}
               bordered
-              rowKey="id"
+              rowKey="id" //)
             />
-          </div>)}
+          </div>}
           <ClickAwayListener onClickAway={handleClickAway}>
             <DropDownPrecautionTable
               showDropdown={showDropdown}
