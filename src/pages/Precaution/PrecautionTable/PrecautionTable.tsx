@@ -10,6 +10,7 @@ import EditPrecautionTypesModal from "./EditPrecautionTypesModal";
 import UserPrecautionTableInfo from "../Interfaces/UserPrecauctionTableInfo";
 import ClickAwayListener from "react-click-away-listener";
 import Precaution from "../Interfaces/Precaution";
+import PrecautionTableSettings from "../../../models/Precaution/PrecautionTableSettings";
 import Spinner from "../../Spinner/Spinner";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
@@ -54,7 +55,7 @@ const PrecautionTable = () => {
   const [statusSorter, setStatusSorter] = useState([]);
   const [precautionNameSorter, setPrecautionNameSorter] = useState([]);
   const [dateSorter, setDateSorter] = useState([]);
-  const [sortByOrder, setSortByOrder] = useState<string[]>([]);
+  const [sortByOrder, setSortByOrder] = useState<string[]>(["number","ascend"]);
   const [precautions, setPrecautions] = useState<UserPrecautionTableInfo[]>([
     {
       count: 0,
@@ -74,9 +75,19 @@ const PrecautionTable = () => {
   ]);
 
   useEffect(() => {
+    const NewTableSettings: PrecautionTableSettings = {
+      sortByOrder: sortByOrder,
+      statusSorter: statusSorter,
+      precautionNameSorter: precautionNameSorter,
+      dateSorter: dateSorter,
+      searchedData: searchedData,
+      page: page,
+      pageSize: pageSize
+    };
     const fetchData = async () => {
       setLoading(true);
-      const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(sortByOrder, statusSorter, precautionNameSorter, dateSorter, searchedData, page, pageSize);
+      const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(NewTableSettings);
+      console.log(NewTableSettings, "1")
       setPrecautions(res);
       setLoading(false);
       setTotal(res[0]?.total);
@@ -99,9 +110,19 @@ const PrecautionTable = () => {
   };
 
   const handleAdd = async () => {
+    const NewTableSettings: PrecautionTableSettings = {
+      sortByOrder: sortByOrder,
+      statusSorter: statusSorter,
+      precautionNameSorter: precautionNameSorter,
+      dateSorter: dateSorter,
+      searchedData: searchedData,
+      page: page,
+      pageSize: pageSize
+    };
     setVisibleModal(false);
     setLoading(true);
-    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(sortByOrder ,statusSorter, precautionNameSorter, dateSorter, searchedData, page, pageSize);
+    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(NewTableSettings);
+    console.log(NewTableSettings, "2")
     setPrecautions(res);
     setTotal(res[0]?.total);
     setCount(res[0]?.total);//count
