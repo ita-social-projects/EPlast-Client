@@ -52,10 +52,10 @@ const PrecautionTable = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
-  const [statusSorter, setStatusSorter] = useState([]);
-  const [precautionNameSorter, setPrecautionNameSorter] = useState([]);
-  const [dateSorter, setDateSorter] = useState([]);
-  const [sortByOrder, setSortByOrder] = useState<string[]>(["number","ascend"]);
+  const [statusSorter, setStatusSorter] = useState<any[]>([]);
+  const [precautionNameSorter, setPrecautionNameSorter] = useState<any[]>([]);
+  const [dateSorter, setDateSorter] = useState<any[]>([]);
+  const [sortByOrder, setSortByOrder] = useState<any[]>(["number","ascend"]);
   const [precautions, setPrecautions] = useState<UserPrecautionTableInfo[]>([
     {
       count: 0,
@@ -84,10 +84,10 @@ const PrecautionTable = () => {
       page: page,
       pageSize: pageSize
     };
+    console.log(NewTableSettings, "1")
     const fetchData = async () => {
       setLoading(true);
       const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(NewTableSettings);
-      console.log(NewTableSettings, "1")
       setPrecautions(res);
       setLoading(false);
       setTotal(res[0]?.total);
@@ -241,23 +241,36 @@ const PrecautionTable = () => {
     CreateEditNotification(userId, precaution.name);
   };
   const aaa = (res: any) =>{
-    console.log("//////////")
+    /*console.log("//////////")
     console.log(res)    
     console.log(res[0].current);
     console.log(res[0].pageSize);
-    console.log(res[1].status);
-    console.log(res[1].precautionName);
-    console.log(res[1].date);
+    console.log(res[1].status === null);
+    console.log(res[1].precautionName === null);
+    console.log(res[1].date === null);
     if (res[2].order === undefined)
       console.log([res[2].field, null]);
     else
-      console.log([res[2].field, res[2].order]);
+      console.log([res[2].field, res[2].order]);*/
 
     setPage(res[0].current);
     setPageSize(res[0].pageSize);    
-    setStatusSorter(res[1].status)
-    setPrecautionNameSorter(res[1].precautionName)
-    setDateSorter(res[1].date)
+    
+    if (res[1].status === null)
+      setStatusSorter([]);
+    else
+      setStatusSorter(res[1].status);
+
+    if(res[1].precautionName === null)
+      setPrecautionNameSorter([])
+    else
+      setPrecautionNameSorter(res[1].precautionName)
+
+    if(res[1].date === null)
+      setDateSorter([])        
+    else
+      setDateSorter(res[1].date)        
+
     if (res[2].order === undefined)
       setSortByOrder([res[2].field, null]);
     else
