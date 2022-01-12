@@ -14,6 +14,10 @@ import precautionApi from "../../../api/precautionApi";
 import adminApi from "../../../api/adminApi";
 import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import notificationLogic from "../../../components/Notifications/Notification";
+import {
+  failCreateAction
+} from "../../../components/Notifications/Messages"
 import {
   emptyInput,
   maxNumber,
@@ -108,7 +112,19 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
           })
       });
   }
+  const AddPrecaution = async (newPrecaution: UserPrecaution) => {
+    await precautionApi.addUserPrecaution(newPrecaution);
+    setVisibleModal(false);
+    form.resetFields();
+    onAdd();
+    await createNotifications(newPrecaution);
+  }
 
+  const activePrecautionNofication = async (newPrecaution: UserPrecaution) => {
+    await precautionApi.getUserActivePrecautionEndDate(newPrecaution.userId, newPrecaution.precaution.name).then(response =>{
+      notificationLogic("error", failCreateAction("пересторогу! Користувач має активну до " + response.data + "!"));
+    })
+  }
   const handleSubmit = async (values: any) => {
     const newPrecaution: UserPrecaution = {
       id: 0,
@@ -125,11 +141,16 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
       number: values.number,
     };
 
-    await precautionApi.addUserPrecaution(newPrecaution);
-    setVisibleModal(false);
-    form.resetFields();
-    onAdd();
-    await createNotifications(newPrecaution);
+    await precautionApi.checkUserPrecautionsType(newPrecaution.userId, newPrecaution.precaution.name)
+    .then(response=> {
+        if(response.data){
+          activePrecautionNofication(newPrecaution);
+        }
+        else {
+          AddPrecaution(newPrecaution);
+        }
+        
+    });
   };
   return (
     <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>

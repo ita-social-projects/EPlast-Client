@@ -55,8 +55,15 @@ const checkNumberExisting = async (number: number) => {
 const getUsersWithoutPrecautions = async () => {
     return (await api.get(`Precaution/usersWithoutPrecautions`)).data;
 };
-
+const checkUserPrecautionsType = async (userId: string, type: string) => {
+    return await api.get(`Precaution/checkUserPrecautionsType/${userId}`, {userId, type});
+};
+const getUserActivePrecautionEndDate = async (userId: string, type: string) => {
+    return await api.get(`Precaution/getUserActivePrecautionEndDate/${userId}`, {userId, type});
+};
 export default {
+    getUserActivePrecautionEndDate,
+    checkUserPrecautionsType,
     getUserPrecautionById,
     getUserPrecautions,
     getAllUsersPrecautions,
