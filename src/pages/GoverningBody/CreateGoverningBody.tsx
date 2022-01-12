@@ -162,7 +162,6 @@ const CreateGoverningBody = () => {
   };
 
   const EditGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
-    
     return updateGoverningBody(governingBody.id, JSON.stringify(newGoverningBody))
       .then(() => {
         notificationLogic("success", successfulUpdateAction("Керівний орган"));

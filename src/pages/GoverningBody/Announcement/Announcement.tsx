@@ -1,12 +1,12 @@
 import { Button, Layout, List } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { addAnnouncement, editAnnouncement, getAllAnnouncements, getAllUserId } from "../../../api/governingBodiesApi";
-import { getUsersByAnyRole, getUsersByAllRoles } from "../../../api/adminApi";
+import { addAnnouncement, editAnnouncement, getAllAnnouncements } from "../../../api/governingBodiesApi";
+import { getUsersByAllRoles } from "../../../api/adminApi";
 import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
 import AddAnnouncementModal from "./AddAnnouncementModal";
 import Spinner from "../../Spinner/Spinner";
-import { AnnouncementForAdd } from "../../../models/GoverningBody/Announcement/AnnouncementForAdd";
+import notificationLogic from "../../../components/Notifications/Notification";
 import DropDown from "./DropDownAnnouncement";
 import ClickAwayListener from "react-click-away-listener";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
@@ -17,22 +17,17 @@ import jwt from 'jwt-decode';
 import AuthStore from "../../../stores/AuthStore";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 
-
 const { Content } = Layout;
 
 const Announcements = () => {
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
   const [showDropdown, setShowDropdown] = useState(false);
   const [data, setData] = useState<Array<Announcement>>([]);
-  const [newData, setNewData] = useState<Array<Announcement>>([]);
   const [recordObj, setRecordObj] = useState<number>(0);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [visibleAddModal, setVisibleAddModal] = useState(false);
   const [visibleEditModal, setVisibleEditModal] = useState(false);
-  const [activeUserId, setActiveUserId] = useState<string>("");
   const classes = require("./Announcement.module.css");
   const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
 
@@ -120,6 +115,7 @@ const Announcements = () => {
     await addAnnouncement(str)
     await getAnnouncements();
     setLoading(false);
+    notificationLogic("success", "Оголошення опубліковано");
   };
 
   const handleDelete = (id: number) => {

@@ -22,6 +22,13 @@ import {
 import IUserAnnualReportAccess from "../../../models/UserAccess/IUserAccess";
 import UserApi from "../../../api/UserApi";
 import { ReportType } from "../../../models/AnnualReport/ReportType";
+import CityAnnualReportLayout from "../../../models/PDF/AnnualReport/CityAnnualReportLayout";
+import { fonts } from "../../../models/PDF/fonts";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfVFS from "../../../assets/VFS/vfs";
+
+pdfMake.vfs = pdfVFS;
+pdfMake.fonts = fonts;
 
 interface props {
     columns: any;
@@ -200,8 +207,11 @@ export const CityAnnualReportTable = ({
     const handleViewPDF = async (id: number) => {
         hideDropdowns();
         try {
-            const pdf = await AnnualReportApi.getPdf(id);
-            window.open(pdf);
+            let annualReport = await (await AnnualReportApi.getById(id)).data.annualReport;
+
+            let cityStatuses = await (await AnnualReportApi.getCityLegalStatuses()).data.legalStatuses;
+
+            pdfMake.createPdf(CityAnnualReportLayout(annualReport, cityStatuses)).open();
         } catch (error) {
             notificationLogic("error", tryAgain);
         }
@@ -279,7 +289,7 @@ export const CityAnnualReportTable = ({
                 onRow={(record) => {
                     return {
                         onDoubleClick: (event) => {
-                            if (record.id && userCertainAnnualReportAccess?.CanSubmitCityReport)
+                            if (record.id && userCertainAnnualReportAccess?.CanViewReportDetails)
                                 history.push(`/annualreport/cityAnnualReport/${record.id}`);
                         },
                         onClick: () => {

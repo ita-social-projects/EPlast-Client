@@ -18,6 +18,7 @@ const UnconfirmedDropdown = (props: Props) => {
         showDropdown,
         userAnnualReportAccess,
         onView,
+        onViewPDF,
         onEdit,
         onConfirm,
         onRemove,
@@ -29,6 +30,7 @@ const UnconfirmedDropdown = (props: Props) => {
                 onView(record.id);
                 break;
             case "2":
+                onViewPDF(record.id);
                 break;
             case "3":
                 if (userAnnualReportAccess?.CanEditReport) {
@@ -52,8 +54,8 @@ const UnconfirmedDropdown = (props: Props) => {
 
     return (
         <>
-            {userAnnualReportAccess?.CanSubmitClubReport ||
-                userAnnualReportAccess?.CanViewEveryAnnualReport ? (
+            {userAnnualReportAccess?.CanViewReportDetails &&
+                userAnnualReportAccess?.CanViewClubReportsTable ? (
                 <Menu
                     theme="dark"
                     onClick={handleClick}

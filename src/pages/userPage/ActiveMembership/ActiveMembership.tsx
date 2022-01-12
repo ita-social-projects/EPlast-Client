@@ -28,7 +28,7 @@ const ActiveMembership = () => {
   const { userId } = useParams();
   const [accessLevels, setAccessLevels] = useState([]);
   const [dates, setDates] = useState<UserDates>();
-  const { userProfile, activeUserRoles, fullUserProfile, activeUserProfile, UpdateData } = useContext(PersonalDataContext);
+  const { userProfile, activeUserRoles, fullUserProfile, activeUserProfile, loading, UpdateData } = useContext(PersonalDataContext);
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
   const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
@@ -88,9 +88,9 @@ const ActiveMembership = () => {
       setLoadInfo(true);
     }).catch(() => {
       SetDefaultDates();
-      notificationLogic("error", "Не вдалося завантажити дати дійсного членства");
       setLoadInfo(true);
-    });;
+      notificationLogic("error", "Не вдалося завантажити дати дійсного членства");
+    });
 
     await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
       setUserPlastDegree(response);
@@ -114,7 +114,7 @@ const ActiveMembership = () => {
       setDates(response);
       setLoadInfo(true);
     });
-
+    
     await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
       setUserPlastDegree(response);
     });
@@ -199,7 +199,7 @@ const ActiveMembership = () => {
   useEffect(() => {
     InitialFetchData();
   }, []);
-  return LoadInfo === false ? (
+  return (loading && LoadInfo) === false ? (
     <div className="kadraWrapper">
       <Skeleton.Avatar
         size={220}
@@ -240,7 +240,7 @@ const ActiveMembership = () => {
           <div className={classes.wrapperGeneralInfo}>
             <Title level={2}> Загальна інформація </Title>
             <div className={classes.textBlock}>
-              {LoadInfo ? (
+              {LoadInfo && loading ? (
                 <>
                   <ul className={classes.textList}>
                     <li className={classes.textListItem} key={1}>

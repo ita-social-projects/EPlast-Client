@@ -3,6 +3,7 @@ import { Empty, Modal, Table, Tooltip } from "antd";
 import {
     cancelClubAnnualReport,
     confirmClubAnnualReport,
+    getClubAnnualReportById,
     getSearchedClubAnnualReports,
     removeClubAnnualReport,
 } from "../../../api/clubsApi";
@@ -27,6 +28,14 @@ import IUserAnnualReportAccess from "../../../models/UserAccess/IUserAccess";
 import UserApi from "../../../api/UserApi";
 import { ReportType } from "../../../models/AnnualReport/ReportType";
 import AnnualReportApi from "../../../api/AnnualReportApi";
+import ClubAnnualReportLayout from "../../../models/PDF/AnnualReport/ClubAnnualReportLayout";
+import { fonts } from "../../../models/PDF/fonts";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfVFS from "../../../assets/VFS/vfs";
+
+pdfMake.vfs = pdfVFS;
+pdfMake.fonts = fonts;
+
 
 interface props {
     columns: any;
@@ -122,6 +131,16 @@ export const ClubAnnualReportTable = ({
     const handleView = async (id: number) => {
         hideDropdowns();
         history.push(`/annualreport/clubAnnualReport/${id}`);
+    };
+    const handleViewPDF = async (id: number) => {
+        hideDropdowns();
+        try {
+            let annualReport = await (await getClubAnnualReportById(id)).data.annualreport;
+
+            pdfMake.createPdf(ClubAnnualReportLayout(annualReport)).open();
+        } catch (error) {
+            notificationLogic("error", tryAgain);
+        }
     };
 
     const handleCancel = async (id: number) => {
@@ -278,7 +297,7 @@ export const ClubAnnualReportTable = ({
                 onRow={(record) => {
                     return {
                         onDoubleClick: (event) => {
-                            if (record.id && (userCertainAnnualReportAccess?.CanViewEveryAnnualReport || userCertainAnnualReportAccess?.CanSubmitClubReport))
+                            if (record.id && userCertainAnnualReportAccess?.CanViewReportDetails)
                                 history.push(`/annualreport/clubAnnualReport/${record.id}`);
                         },
                         onClick: () => {
@@ -328,6 +347,7 @@ export const ClubAnnualReportTable = ({
                     pageY={y}
                     userAnnualReportAccess={userCertainAnnualReportAccess}
                     onView={handleView}
+                    onViewPDF={handleViewPDF}
                     onEdit={handleEdit}
                     onConfirm={handleConfirm}
                     onRemove={handleRemove}
@@ -339,6 +359,7 @@ export const ClubAnnualReportTable = ({
                     pageY={y}
                     userAnnualReportAccess={userCertainAnnualReportAccess}
                     onView={handleView}
+                    onViewPDF={handleViewPDF}
                     onCancel={handleCancel}
                 />
                 <SavedDropdown
@@ -348,6 +369,7 @@ export const ClubAnnualReportTable = ({
                     pageY={y}
                     userAnnualReportAccess={userCertainAnnualReportAccess}
                     onView={handleView}
+                    onViewPDF={handleViewPDF}
                 />
             </ClickAwayListener>
         </div>

@@ -12,8 +12,6 @@ import { Blanks } from "../Blanks/Blanks";
 import UserApi from "../../../api/UserApi";
 import { Data, IPersonalDataContext, User } from "../Interface/Interface";
 import notificationLogic from '../../../components/Notifications/Notification';
-import { string } from "yup";
-import { off } from "process";
 
 const DefaultState: IPersonalDataContext = {
   userProfile: undefined,
@@ -46,7 +44,7 @@ export default function ({
   const [loading, setLoading] = useState(false);
   const [imageBase64, setImageBase64] = useState<string>("");
   const [fullUserProfile, setFullUserProfile] = useState<Data>();
-  const [userProfileAccess, setUserProfileAccess] = useState<{[key: string]:boolean}>({})
+  const [userProfileAccess, setUserProfileAccess] = useState<{ [key: string]: boolean }>({})
 
   const [userProfile, SetUserProfile] = useState<Data>();
   const ChangeUserProfile = (user: Data) => {
@@ -96,15 +94,15 @@ export default function ({
 
   return (
     <PersonalDataContext.Provider value={{
-      userProfile, 
-      fullUserProfile, 
-      activeUserRoles, 
-      activeUserId, 
-      activeUserProfile, 
-      userProfileAccess, 
-      loading, 
-      imageBase64, 
-      ChangeUserProfile, 
+      userProfile,
+      fullUserProfile,
+      activeUserRoles,
+      activeUserId,
+      activeUserProfile,
+      userProfileAccess,
+      loading,
+      imageBase64,
+      ChangeUserProfile,
       UpdateData
     }}>
       <div className="mainContainer">

@@ -12,7 +12,6 @@ import {
 } from "antd";
 import {
   DeleteOutlined,
-  LoadingOutlined,
   PlusOutlined,
 } from "@ant-design/icons/lib";
 import ReactInputMask from "react-input-mask";

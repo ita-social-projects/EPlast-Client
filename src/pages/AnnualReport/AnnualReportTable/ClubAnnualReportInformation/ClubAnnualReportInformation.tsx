@@ -26,12 +26,20 @@ import {
     successfulCancelAction,
     successfulConfirmedAction,
     successfulDeleteAction,
+    tryAgain,
 } from "../../../../components/Notifications/Messages";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import AuthStore from "../../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import UserApi from "../../../../api/UserApi";
 import { Roles } from "../../../../models/Roles/Roles";
+import ClubAnnualReportLayout from "../../../../models/PDF/AnnualReport/ClubAnnualReportLayout";
+import { fonts } from "../../../../models/PDF/fonts";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfVFS from "../../../../assets/VFS/vfs";
+
+pdfMake.vfs = pdfVFS;
+pdfMake.fonts = fonts;
 
 const { Title, Text } = Typography;
 
@@ -94,6 +102,15 @@ const ClubAnnualReportInformation = () => {
         }
     };
 
+    const handleViewPDF = async (id: number) => {
+        try {
+            let annualReport = await (await getClubAnnualReportById(id)).data.annualreport;
+
+            pdfMake.createPdf(ClubAnnualReportLayout(annualReport)).open();
+        } catch (error) {
+            notificationLogic("error", tryAgain);
+        }
+    };
     const handleEdit = (id: number) => {
         history.push(`/club/editClubAnnualReport/${id}`);
     };
@@ -161,6 +178,7 @@ const ClubAnnualReportInformation = () => {
                         ViewPDF={true}
                         status={status!}
                         setStatus={setStatus}
+                        handleViewPDF={handleViewPDF}
                         handleEdit={handleEdit}
                         handleConfirm={handleConfirm}
                         handleCancel={handleCancel}

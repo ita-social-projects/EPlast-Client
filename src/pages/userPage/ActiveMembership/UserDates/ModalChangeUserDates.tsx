@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Form, DatePicker, Button } from "antd";
 import activeMembershipApi, {
-  UserOathDate,
+  UserEntryAndOathDates,
 } from "../../../../api/activeMembershipApi";
 import classes from "./ModalChangeUserDates.module.css";
 import moment from "moment";
@@ -16,6 +16,7 @@ type props = {
 };
 
 const defaultDate = "0001-01-01T00:00:00";
+const minAvailableDate = "01.01.1900";
 
 const ModalChangeUserDates = ({
   userId,
@@ -25,22 +26,40 @@ const ModalChangeUserDates = ({
   handleChangeDates,
 }: props) => {
   const [form] = Form.useForm();
-  const handleCancel = () => setDatesVisibleModal(false);
 
-  const [StartDate, setStartDate] = useState<any>();
+  const handleCancel = () => {
+    setDatesVisibleModal(false);
+    form.resetFields();
+  }
 
-  const disabledStartDate = (current: any) => {
+  const [OathDate, setOathDate] = useState<any>();
+  const [EntryDate, setEntryDate] = useState<any>();
+
+  useEffect(() => {
+    setDates();
+  }, [])
+
+  const setDates = () => {
+    dates.dateEntry ? setEntryDate(dates.dateEntry) : setEntryDate(defaultDate);
+    dates.dateOath ? setOathDate(dates.dateOath) : setOathDate(undefined);
+  }
+
+  const disabledEntryDate = (current: any) => {
+    if (OathDate) {
+      return current < moment(minAvailableDate) || current > moment(OathDate).local();
+    }
+    return current < moment(minAvailableDate) || current > moment();
+  };
+
+  const disabledOathDate = (current: any) => {
     if (dates.dateEntry === "" || dates.dateEntry === null) {
       return current && current < moment();
     } else {
       //Check if dateEnd is not null or empty
       if (dates.dateEnd) {
-        return !(
-          moment.utc(dates.dateEnd).local().subtract(1, "d").isAfter(current) &&
-          moment.utc(dates.dateEntry).local().isSameOrBefore(current)
-        );
+        return current > moment(dates.dateEnd) || current < moment.utc(dates.dateEntry).local();
       } else {
-        return current && current < moment.utc(dates.dateEntry).local();
+        return current > moment() || current < moment.utc(EntryDate).local();
       }
     }
   };
@@ -56,13 +75,20 @@ const ModalChangeUserDates = ({
     }
   };
 
+  //Set default values for the Form
+  const UserInitialDates = {
+    datepickerEntry: EntryDate ? moment(EntryDate) : undefined,
+    datepickerOath: OathDate ? moment(OathDate) : undefined
+  }
+
   const handleFinish = async (info: any) => {
-    const userOathDateChange: UserOathDate = {
+    const userEntryAndOathDatesChange: UserEntryAndOathDates = {
       userId: userId,
+      dateEntry: SetDate(info.datepickerEntry, dates.dateEntry),
       dateOath: SetDate(info.datepickerOath, dates.dateOath)
     };
     setDatesVisibleModal(false);
-    await activeMembershipApi.postUserOathDate(userOathDateChange);
+    await activeMembershipApi.postUserEntryAndOathDates(userEntryAndOathDatesChange);
     handleChangeDates();
   };
 
@@ -70,18 +96,40 @@ const ModalChangeUserDates = ({
     <Modal
       visible={datesVisibleModal}
       onCancel={handleCancel}
+      destroyOnClose={true}
       title="Зміна даних користувача"
       footer={null}
     >
-      <Form name="basic" onFinish={handleFinish} form={form}>
+      <Form name="basic" onFinish={handleFinish} form={form} initialValues={UserInitialDates}>
+        <label htmlFor="datepickerEntry" className={classes.formLabel}>
+          Дата вступу
+        </label>
+        <Form.Item
+          className={classes.formField}
+          name="datepickerEntry"
+          rules={[{ required: true, message: 'Внесіть дату вступу!' }]}
+        >
+          <DatePicker
+            format="DD.MM.YYYY"
+            disabledDate={disabledEntryDate}
+            onChange={(e) => setEntryDate(e)}
+            defaultValue={
+              dates.dateEntry !== ""
+                ? moment.utc(dates.dateEntry, "YYYY-MM-DD").local()
+                : undefined
+            }
+            className={classes.selectField}
+            placeholder="Дата вступу"
+          />
+        </Form.Item>
         <label htmlFor="datepickerOath" className={classes.formLabel}>
           Дата присяги
         </label>
         <Form.Item className={classes.formField} name="datepickerOath">
           <DatePicker
             format="DD.MM.YYYY"
-            disabledDate={disabledStartDate}
-            onChange={(e) => setStartDate(e)}
+            disabledDate={disabledOathDate}
+            onChange={(e) => setOathDate(e)}
             defaultValue={
               dates.dateOath !== ""
                 ? moment.utc(dates.dateOath, "YYYY-MM-DD").local()
