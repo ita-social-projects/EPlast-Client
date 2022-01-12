@@ -14,10 +14,8 @@ const getAllUsersPrecautions = async (NewTableSettings: PrecautionTableSettings)
     return (await api.get(`Precaution/UsersPrecautionsForTable`, NewTableSettings, (params:any)=> {
       return Object.entries(params).map(([key, value]) => {
         if (Array.isArray(value) && value){
-            console.log(value.map(it => `${key}=${it}`).join('&'))
             return value.map(it => `${key}=${it}`).join('&');
         }
-        console.log(`${key}=${value}`)
         return `${key}=${value}`;
       }).join('&');
     })
