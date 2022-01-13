@@ -1,8 +1,8 @@
-import { Button, Avatar, Layout, List, Modal } from "antd";
+import { Button, Avatar, Layout, List, Modal, Carousel } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { addAnnouncement, editAnnouncement, getAnnouncementsByPage, getAnnouncementsById } from "../../../api/governingBodiesApi";
+import { addAnnouncement, editAnnouncement, getAnnouncementsById, getAnnouncementsByPage } from "../../../api/governingBodiesApi";
 import { getUsersByAllRoles } from "../../../api/adminApi";
 import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
 import AddAnnouncementModal from "./AddAnnouncementModal";
@@ -18,8 +18,9 @@ import jwt from 'jwt-decode';
 import AuthStore from "../../../stores/AuthStore";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import UserApi from "../../../api/UserApi";
-import { DownCircleOutlined } from "@ant-design/icons";
 import { Markup } from "interweave";
+import Title from "antd/lib/typography/Title";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 
 const { Content } = Layout;
 
@@ -61,7 +62,8 @@ const Announcements = () => {
           firstName: value.user.firstName,
           lastName: value.user.lastName,
           userId: value.userId,
-          profileImage: image.data
+          profileImage: image.data,
+          strippedString: value.text.replace(/<[^>]+>/g, '')
         };
         announcements.push(ann);
         });
@@ -131,44 +133,55 @@ const Announcements = () => {
     setVisibleAddModal(true);
   };
 
-  const showFullAnnouncement = async (annId: number) => {
-    console.log(annId);
-    let ann: Announcement;
-    ann = data.find(a=>a.id===annId)!;
-    return (
-      Modal.info({
-          title: 
+const showFullAnnouncement = async (annId: number) => {
+  
+  let current = data.find(a=>a.id===annId)!;
+  await getAnnouncementsById(annId).then(response =>
+    {
+      return (
+    Modal.info({
+        title: 
+        <div>
+          {current.firstName} {current.lastName} 
+          <div className={classes.announcementDate}>
+            {response.data.date.toString().substring(0, 10)}
+          </div>
+        </div>,
+        content: (
           <div>
-            {ann.firstName} {ann.lastName} 
-            <div className={classes.announcementDate}>
-              {ann.date.toString().substring(0, 10)}
-            </div>
-          </div>,
-          content: (
             <Markup
-            content={ann.text}/>
-          ),
-          icon: <Avatar src={ann.profileImage} />,
-          maskClosable: true
+            content={response.data.text}
+            />
+            <Carousel className={classes.homeSlider} arrows prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}>
+              {response.data.images.map((image: any) => 
+              <div>
+                <Avatar shape="square" size={350} src={image.imageBase64}/>
+              </div>
+              )}
+            </Carousel>
+          </div>
+        ),
+        icon: <Avatar src={current.profileImage} />,
+        maskClosable: true
       }));
-  };
+    });
+};
 
-  const handleEdit = async (id: number, newText: string) => {
+  const handleEdit = async (id: number, newText: string, newImages: string[]) => {
     setVisibleAddModal(false);
     setLoading(true);
-    await editAnnouncement(id,newText);
+    await editAnnouncement(id,newText, newImages);
     setData(data.map(x => x.id === id ? 
       {...x, text: newText}
       : x))
     setLoading(false);
   };
 
-  const handleAdd = async (str: string) => {
-    console.log(str);
+  const handleAdd = async (text: string, images: string[]) => {
     setVisibleAddModal(false);
     setLoading(true);
     newNotification();
-    await addAnnouncement(str);
+    await addAnnouncement(text, images);
     await getAnnouncements();
     setLoading(false);
     notificationLogic("success", "Оголошення опубліковано");
@@ -199,7 +212,7 @@ const Announcements = () => {
           <Spinner />
         ) : (
           <List
-            itemLayout="horizontal"
+            itemLayout="vertical"
             dataSource={data}
             grid={{
               gutter: 16,
@@ -226,22 +239,27 @@ const Announcements = () => {
                   setY(event.pageY);
                 }}
               >
-                <List.Item.Meta   
-                  title={item.firstName + " " + item.lastName}
-                  description={item.date.toString().substring(0, 10)}
-                  avatar={<Avatar size={40} className={classes.avatar} src={item.profileImage} />}
-                />
+                <div className={classes.metaWrapper}>
+                  <List.Item.Meta 
+                    className={classes.listItemMeta}
+                    title={item.firstName + " " + item.lastName}
+                    description={item.date.toString().substring(0, 10)}
+                    avatar={<Avatar size={40} className={classes.avatar} src={item.profileImage} />}
+                  />
+                </div>
                 <Markup
                 content={
-                item.text.length<maxTextLength ?
+                item.strippedString.length<maxTextLength ?
                 item.text :
-                item.text.toString().substring(0, maxTextLength)}/>
+                `${item.text.toString().substring(0, maxTextLength+(item.text.length-item.strippedString.length)/2)}...`}/>
 
-                {item.text.length>=maxTextLength ?
-                <Button type="text" size="small" icon={<DownCircleOutlined style={{fontSize:"20px"}} onClick={()=>showFullAnnouncement(item.id)}/>}/>
+                {item.strippedString.length>=maxTextLength ? 
+                <Title>
+                  <Button type="text" onClick={()=>showFullAnnouncement(item.id)}>
+                    Показати більше
+                  </Button>
+                </Title>
                 : null}
-                
-              
               </List.Item>
             )}}
             pagination={{

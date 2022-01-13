@@ -5,13 +5,13 @@ import FormAddAnnouncement from "./FormAddAnnouncement";
 interface Props {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: (str:string) => void;
+  onAdd: (text: string, images: string[]) => void;
 }
 
 const AddAnnouncementModal = ({
   visibleModal,
   setVisibleModal,
-  onAdd,
+  onAdd
 }: Props) => {
   const handleCancel = () => {
     setVisibleModal(false);

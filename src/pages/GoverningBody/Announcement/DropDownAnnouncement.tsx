@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Menu } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
-  FilePdfOutlined,
 } from "@ant-design/icons";
-import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
 import classes from "./Announcement.module.css";
 import "../../../api/governingBodiesApi";
-import { getAllAnnouncements } from "../../../api/governingBodiesApi";
 import DeleteConfirm from "./DeleteConfirm";
 
 interface Props {

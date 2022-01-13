@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Row, Col, Drawer } from "antd";
+import { Form, Button, Row, Col, Drawer, Upload } from "antd";
 import formclasses from "./Form.module.css";
 import {
   emptyInput,
@@ -14,36 +14,58 @@ interface Props {
   visibleModal: boolean;
   id: number;
   setVisibleModal: (visibleModal: boolean) => void;
-  onEdit: (id: number, text: string) => void;
+  onEdit: (id: number, text: string, images: string[]) => void;
 }  
 
 const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Props) => {
   const [form] = Form.useForm();
-  const [announcement, setAnnouncement] = useState<any>()
   const [text, setText] = useState<string>("");
+  const [uploadImages, setUploadImages] = useState<any[]>([]);
+
   useEffect(() => {
     getAnnouncement(id);
   }, [id])
 
+  function getUid() {
+    return (new Date()).getTime();
+  }
+  
   const getAnnouncement = async(id: number) => {
     await getAnnouncementsById(id)
     .then(response => {
-      setAnnouncement(response.data)
-      setText(response.data.text)
+      setText(response.data.text);
+      response.data.images.map((image:any) => 
+        {
+          setUploadImages(uploadImages=>[...uploadImages, {
+            url: image.imageBase64,
+            uid: getUid(),
+            type:"image/jpg"
+          }]);
+        });
+      // Замінити тип сплітом
     })
     .catch((err) => {
-      console.log(err)
+      console.log(err);
     })
-  }
+  };    
 
   const handleCancel = () => {
+    setUploadImages([]);
     setVisibleModal(false);
   };
 
-  const handleSubmit = (values: any) => {
+  const handleUpload = (images: any) => {
+    setUploadImages(images.fileList);
+  };
+
+  const handleSubmit = (values: any) => {    
     setVisibleModal(false);
     form.resetFields();
-    onEdit(id,text);
+    let imgs = uploadImages.map((image: any)=>
+    {
+      return image.url || image.thumbUrl;
+    })
+    onEdit(id, text, imgs);
   };
   
   return (
@@ -69,24 +91,30 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
             label="Текст оголошення"
             labelCol={{ span: 24 }}
             name="text"
-            rules={[
-              { required: true, message: emptyInput() },
-              {
-                max: 1000,
-                message: maxLength(1000),
-              },
-            ]}
-             initialValue={text}
+            initialValue={text}
           >
             <p></p>
             <ReactQuill 
               className="iputFortText"
+              // замінити клас
               theme="snow"
               placeholder="Введіть текст..."
               value={text}
+              onChange={str=>{setText(str)}}
             />
           </Form.Item>
         </Col>
+      </Row>
+      <Row>
+        <Upload
+          listType="picture-card"
+          accept=".jpeg,.jpg,.png"
+          fileList={uploadImages}
+          onChange={handleUpload}
+          beforeUpload={() => false}
+        >
+          {'Upload'}
+        </Upload>
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
@@ -116,3 +144,4 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
 };
 
 export default EditAnnouncementModal;
+

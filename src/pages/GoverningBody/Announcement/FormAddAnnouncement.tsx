@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Row, Col } from "antd";
+import React, { useState } from "react";
+import { Form, Button, Row, Col, Upload } from "antd";
 import formclasses from "./Form.module.css";
 import {
   emptyInput,
   maxLength,
 } from "../../../components/Notifications/Messages";
 import ReactQuill from "react-quill";
+import { UploadFile } from "antd/lib/upload/interface";
 
 type FormAddAnnouncementProps = {
   setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: (arg0: string) => void;
+  onAdd: (text: string, images: string[]) => void;
 };
 
 const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
@@ -18,7 +19,8 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const { setVisibleModal, onAdd } = props;
   const [form] = Form.useForm();
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
-  const [data, setData] = useState<string>();
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const handleCancel = () => {
     form.resetFields();
@@ -29,8 +31,22 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     setSubmitLoading(true);
     setVisibleModal(false);
     form.resetFields();
-    onAdd(values.text);
+    onAdd(values.text, photos);
     setSubmitLoading(false);
+  };
+
+  const getBase64 = (img: Blob, callback: Function) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
+  const handleUpload = ( images: any ) => {
+    setFileList(images.fileList);
+    if (images.fileList.length === 0) return;
+    getBase64(images.file, (base64: string) => {
+      setPhotos([...photos, base64]);
+    });
   };
 
   return (
@@ -64,6 +80,17 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
             />
           </Form.Item>
         </Col>
+      </Row>
+      <Row>
+        <Upload
+          listType="picture-card"
+          accept=".jpeg,.jpg,.png"
+          fileList={fileList}
+          onChange={handleUpload}
+          beforeUpload={() => false}
+        >
+          {'Upload'}
+        </Upload>
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>

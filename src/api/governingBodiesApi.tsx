@@ -1,7 +1,6 @@
 import axios from "axios";
 import api from "./api";
 import BASE_URL from '../config';
-import { Announcement } from "../models/GoverningBody/Announcement/Announcement";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
   const arr = dataurl.split(",");
@@ -171,8 +170,8 @@ export const getAnnouncementsByPage = async (pageNumber: number, pageSize: numbe
   });
 }
 
-export const addAnnouncement = (text: string) => {
-    return api.post(`GoverningBodies/AddAnnouncement`, `"${text}"`)
+export const addAnnouncement = (text: string, ImagesBase64: string[]) => {
+    return api.post(`GoverningBodies/AddAnnouncement`, {text, ImagesBase64})
       .catch(error => {
         throw new Error(error);
       });
@@ -185,8 +184,8 @@ export const getAnnouncementsById = (id: number) => {
     });
 }
 
-export const editAnnouncement = async (id: number, text: string) => {
-  return api.patch(`GoverningBodies/EditAnnouncement/${id}`, {id, text})
+export const editAnnouncement = async (id: number, text: string, imagesBase64: string[]) => {
+  return api.put(`GoverningBodies/EditAnnouncement/${id}`, {id, text, imagesBase64})
     .catch((error) => {
       throw new Error(error);
     });

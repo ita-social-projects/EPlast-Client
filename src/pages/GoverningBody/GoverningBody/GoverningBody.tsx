@@ -57,6 +57,7 @@ import { getUsersByAllRoles } from "../../../api/adminApi";
 import { Roles } from '../../../models/Roles/Roles';
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import { Markup } from "interweave";
 
 const GoverningBody = () => {
   const history = useHistory();
@@ -151,11 +152,11 @@ const GoverningBody = () => {
     );
   }
 
-  const onAnnouncementAdd = async (str: string) => {
+  const onAnnouncementAdd = async (text: string, images: string[]) => {
     setVisibleAddModal(false);
     setLoading(true);
     newAnnouncementNotification();
-    const announcementId = (await addAnnouncement(str)).data;
+    const announcementId = (await addAnnouncement(text, images)).data;
     let newAnnouncement: GoverningBodyAnnouncement = (await getAnnouncementsById(announcementId)).data;
     let newAnnouncements: GoverningBodyAnnouncement[] = announcements;
     newAnnouncements.unshift(newAnnouncement);
@@ -519,7 +520,11 @@ const GoverningBody = () => {
                       style={{padding: "0.3rem"}}
                     >
                       <Paragraph><strong>{announcement.user.firstName}</strong></Paragraph>
-                      <Paragraph style={{overflow:"hidden",textOverflow:"ellipsis", wordBreak:"break-word"}}>{announcement.text}</Paragraph>
+                      <Paragraph style={{overflow:"hidden",textOverflow:"ellipsis", wordBreak:"break-word"}}>
+                        <Markup
+                          content={announcement.text}
+                        />
+                        </Paragraph>
                       <Paragraph>{moment.utc(announcement.date).local().format("DD.MM.YYYY")}</Paragraph>
                     </Col>
                     )) 

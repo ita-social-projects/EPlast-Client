@@ -13,8 +13,19 @@
 .listItem {
   display: block;
   outline: 1px solid rgb(211, 208, 208);
+  height: 150px;
   padding-left: 28px;
-  margin-top: 10px;
+}
+
+.listItemMeta{
+  margin-left: 5%;
+}
+
+.metaWrapper{
+  outline: 1px solid rgb(208, 211, 211);
+  background-image:linear-gradient(70deg, rgb(199, 233, 155), rgb(106, 199, 114));
+  margin-left:-6.5%;
+  width:inherit;
 }
 
 .menu {
@@ -23,10 +34,91 @@
 }
 
 .avatar{
-  margin-top: 15%;
+  margin-top: 18%;
 }
 
 .announcementDate{
   text-align: right;
   color:rgb(134, 134, 134);
+}
+
+.homeSlider {
+  @media(max-width: 280px) {
+    padding-left: 8px;
+    padding-right: 8px;
+      }
+  @media (max-width: 376px) and (min-width:319px) {
+    width: 100%;
+    height: 300px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  @media (max-width: 540px) and (min-width:411px) {
+    width: 100%;
+    height: 300px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  @media (max-width: 540px) and (min-width:412px) {
+    width: 100%;
+    height: 300px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  @media (max-width: 767px) and (min-width:541px) {
+    width: 100%;
+    height: 300px;
+
+  }
+  @media (min-width: 768px) {
+    width: 80%;
+    padding-left: 45px;
+    padding-right: 45px;
+  }
+  margin: 0px auto 10px;
+
+  overflow: hidden;
+  scrollbar-arrow-color: lightcoral;
+}
+.ant-carousel .slick-prev,
+.ant-carousel .slick-prev:hover,
+.ant-carousel .slick-prev:focus {
+  left: 10px;
+  z-index: 2;
+  color: #3c5438;
+  font-size: 20px;
+  height: 90px;
+  @media(max-width: 540px) and (min-width:411px){
+    left:-4px;
+      }
+  @media(max-width: 376px) and (min-width:319px){
+    left:-7px;
+    font-size: 14px;
+      }
+  @media(max-width: 280px) {
+    left:-7px;
+    font-size: 14px;
+      }
+
+}
+
+.ant-carousel .slick-next,
+.ant-carousel .slick-next:hover,
+.ant-carousel .slick-next:focus {
+  right: 10px;
+  z-index: 2;
+  color: #3c5438;
+  font-size: 20px;
+  height: 30px;
+  @media(max-width: 540px) and (min-width:411px){
+    right:-4px;
+      }
+  @media(max-width: 376px) and (min-width:319px){
+    right:-7px;
+    font-size: 14px;
+      }
+  @media(max-width: 280px) {
+    right:-7px;
+    font-size: 14px;
+      }
 }

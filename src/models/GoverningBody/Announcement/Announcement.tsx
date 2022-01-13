@@ -6,4 +6,6 @@ export type Announcement = {
     lastName: string;
     userId: string;
     profileImage: string;
+    strippedString: string;
+    images?: string;
 }
