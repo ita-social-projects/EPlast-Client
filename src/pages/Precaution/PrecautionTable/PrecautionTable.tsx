@@ -73,8 +73,7 @@ const PrecautionTable = () => {
       isActive: false,
     },
   ]);
-
-  useEffect(() => {
+  const fetchData = async () => {
     const NewTableSettings: PrecautionTableSettings = {
       sortByOrder: sortByOrder,
       statusSorter: statusSorter,
@@ -84,15 +83,14 @@ const PrecautionTable = () => {
       page: page,
       pageSize: pageSize
     };
-    console.log(NewTableSettings, "1")
-    const fetchData = async () => {
-      setLoading(true);
-      const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(NewTableSettings);
-      setPrecautions(res);
-      setLoading(false);
-      setTotal(res[0]?.total);
-      setCount(res[0]?.total);//count
-    };
+
+    setLoading(true);
+    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(NewTableSettings);
+    setPrecautions(res);
+    setLoading(false);
+    setTotal(res[0]?.total);
+  }
+  useEffect(() => {
     fetchData();
   }, [sortByOrder ,statusSorter, precautionNameSorter, dateSorter, searchedData, page, pageSize]);
 
@@ -110,24 +108,8 @@ const PrecautionTable = () => {
   };
 
   const handleAdd = async () => {
-    const NewTableSettings: PrecautionTableSettings = {
-      sortByOrder: sortByOrder,
-      statusSorter: statusSorter,
-      precautionNameSorter: precautionNameSorter,
-      dateSorter: dateSorter,
-      searchedData: searchedData,
-      page: page,
-      pageSize: pageSize
-    };
     setVisibleModal(false);
-    setLoading(true);
-    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(NewTableSettings);
-    console.log(NewTableSettings, "2")
-    setPrecautions(res);
-    setTotal(res[0]?.total);
-    setCount(res[0]?.total);//count
-    notificationLogic("success", successfulCreateAction("Пересторогу"));
-    setLoading(false);
+    fetchData();
   };
 
   const showModalEditTypes = () => {
@@ -137,15 +119,6 @@ const PrecautionTable = () => {
   const handleClickAway = () => {
     setShowDropdown(false);
   };
-
-  /*const handlePageChange = (page: number) => {
-    setPage(page);
-  };
-
-  const handleSizeChange = (page: number, pageSize: number = 10) => {
-    setPage(page);
-    setPageSize(pageSize);
-  };*/
 
   const CreateDeleteNotification = (id: number) => {
     const userPrecaution = precautions.find(
@@ -200,9 +173,12 @@ const PrecautionTable = () => {
     const filteredData = precautions.filter(
       (d: { id: number }) => d.id !== id
     );
-    setPrecautions([...filteredData]);
+    setPrecautions([...filteredData]);    
+    
+    if(page != 1 && precautions.length == 1)
+      setPage(page-1);
+    
     setTotal(total - 1);
-    setCount(count - 1);
     notificationLogic("success", successfulDeleteAction("Пересторогу"));
     CreateDeleteNotification(id);
   };
@@ -241,18 +217,7 @@ const PrecautionTable = () => {
     CreateEditNotification(userId, precaution.name);
   };
   const aaa = (res: any) =>{
-    /*console.log("//////////")
-    console.log(res)    
-    console.log(res[0].current);
-    console.log(res[0].pageSize);
-    console.log(res[1].status === null);
-    console.log(res[1].precautionName === null);
-    console.log(res[1].date === null);
-    if (res[2].order === undefined)
-      console.log([res[2].field, null]);
-    else
-      console.log([res[2].field, res[2].order]);*/
-
+    
     setPage(res[0].current);
     setPageSize(res[0].pageSize);    
     
@@ -309,7 +274,7 @@ const PrecautionTable = () => {
               />
             </Col>
           </Row>
-          {///*loading ? (<Spinner />) : (
+          {
             <div> 
             <Table
               className={classes.table}
@@ -335,17 +300,15 @@ const PrecautionTable = () => {
               pagination={{
                 current: page,
                 pageSize: pageSize,
-                total: count,
+                total: total,
                 showLessItems: true,
                 responsive: true,
                 showSizeChanger: true,
-                //onChange: (page) => handlePageChange(page),
-                //onShowSizeChange: (page, size) => handleSizeChange(page, size),
               }}
               onChange={(...args) => aaa(args)}
               loading={loading}
               bordered
-              rowKey="id" //)
+              rowKey="id"
             />
           </div>}
           <ClickAwayListener onClickAway={handleClickAway}>
