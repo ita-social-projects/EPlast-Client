@@ -22,6 +22,13 @@ type FormAddSubsectionProps = {
     fetchSubData: Function
 };
 
+const addFileToUpload = (e: any) => {
+    if (Array.isArray(e)) {
+        return e;
+    }
+    return e && e.fileList;
+};
+
 const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
     const { setVisibleModal, sectId, fetchSubData } = props;
     const [form] = Form.useForm();
@@ -33,7 +40,6 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
         description: ""
     };
 
-    const [count, setCount] = useState(0);
     const [subsectData, setSubsectData] = useState<SubSectionModel[]>([defaultSubSect]);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -57,7 +63,9 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
         setVisibleModal(false);
     };
 
-    const handleSubmit = async () => {
+    let subsectId = 0;
+
+    const handleSubmit = async (values: any) => {
         const newSubSection: SubSectionModel = {
             id: 0,
             sectionId: sectId,
@@ -72,12 +80,27 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
             setDescription("");
             setFileList([]);
             notificationLogic("success", "Підрозділ додано!");
+            subsectId = res[res.length - 1].id;
         } else {
             notificationLogic("error", "Хибні дані");
+        }
+        if (fileList) {
+            const data = new FormData();
+            fileList.forEach((element: any) => {
+                data.append('files', element.originFileObj);
+            });
+            addPictures(data)
+                .then(async (response) => {
+                    form.resetFields();
+                })
         }
         setVisibleModal(false);
         form.resetFields();
         fetchSubData();
+    };
+
+    const addPictures = async (data: FormData) => {
+        return await aboutBase.uploadSubsectionPictures(subsectId, data);
     };
 
     const getBase64 = (file: any) => {
@@ -90,14 +113,13 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
     }
 
     const handleCancelImg = () => {
-        setPreviewVisible(false)
+        setPreviewVisible(false);
     };
 
     const handleUpload = ({ file, onSuccess }: any) => {
         setTimeout(() => {
             onSuccess("ok");
-        }, 0); 
-        setCount(count+1);
+        }, 0);
     };
 
     const handlePreview = async (file: any) => {
@@ -110,7 +132,7 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
     };
 
     const handleChange = (fileList: any) => {
-        setFileList(fileList);
+        setFileList(fileList.fileList);
     };
 
     return (
@@ -159,23 +181,31 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
             </Row>
             <Row justify="start" gutter={[12, 0]}>
                 <Col md={24} xs={24}>
-                    <Upload
-                        listType="picture-card"
-                        accept=".jpeg,.jpg,.png"
-                        customRequest={handleUpload}
-                        onPreview={handlePreview}
-                        onChange={handleChange}
+                    <Form.Item
+                        name="upload"
+                        valuePropName="fileList"
+                        getValueFromEvent={addFileToUpload}
                     >
-                        {count >= 5 ? null : uploadButton}
-                    </Upload>
-                    <Modal
-                        visible={previewVisible}
-                        title={previewTitle}
-                        footer={null}
-                        onCancel={handleCancelImg}
-                    >
-                        <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                    </Modal>
+                        <Upload
+                            listType="picture-card"
+                            accept=".jpeg,.jpg,.png"
+                            customRequest={handleUpload}
+                            onPreview={handlePreview}
+                            onChange={handleChange}
+                        >
+                            {fileList.length >= 3 ? null : uploadButton}
+                        </Upload>
+                    </Form.Item>
+                    <Form.Item>
+                        <Modal
+                            visible={previewVisible}
+                            title={previewTitle}
+                            footer={null}
+                            onCancel={handleCancelImg}
+                        >
+                            <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                        </Modal>
+                    </Form.Item>
                 </Col>
             </Row>
             <Row justify="start" gutter={[12, 0]}>

@@ -12,6 +12,7 @@ const ConfirmedDropdown = (props: Props) => {
         userAnnualReportAccess,
         showDropdown,
         onView,
+        onViewPDF
     } = props;
 
     const handleClick = (item: any) => {
@@ -20,6 +21,7 @@ const ConfirmedDropdown = (props: Props) => {
                 onView(record.id);
                 break;
             case "2":
+                onViewPDF(record.id);
                 break;
             default:
                 break;
