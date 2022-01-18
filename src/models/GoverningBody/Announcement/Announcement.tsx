@@ -8,4 +8,5 @@ export type Announcement = {
     profileImage: string;
     strippedString: string;
     images?: string;
+    imagesPresent?: boolean;
 }

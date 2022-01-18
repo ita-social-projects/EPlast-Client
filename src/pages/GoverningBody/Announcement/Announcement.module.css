@@ -13,19 +13,28 @@
 .listItem {
   display: block;
   outline: 1px solid rgb(211, 208, 208);
-  height: 150px;
+  height: 175px;
   padding-left: 28px;
 }
 
-.listItemMeta{
+.isImagePresentIcon {
+  font-size: 26px;
+  float: right;
+  margin-right: 3%;
+  margin-top: 3%;
+}
+
+.listItemMeta {
   margin-left: 5%;
 }
 
-.metaWrapper{
-  outline: 1px solid rgb(208, 211, 211);
+.metaWrapper {
+  display: block;
+  position: relative;
+
   background-image:linear-gradient(70deg, rgb(199, 233, 155), rgb(106, 199, 114));
-  margin-left:-6.5%;
-  width:inherit;
+  margin-left:-30px;
+  width:auto;
 }
 
 .menu {

@@ -9,6 +9,8 @@ import {
   getAnnouncementsById
 } from "../../../api/governingBodiesApi";
 import ReactQuill from "react-quill";
+import Spinner from "../../Spinner/Spinner";
+import { useHistory } from "react-router-dom";
 
 interface Props {
   visibleModal: boolean;
@@ -21,6 +23,8 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
   const [form] = Form.useForm();
   const [text, setText] = useState<string>("");
   const [uploadImages, setUploadImages] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const history = useHistory();
 
   useEffect(() => {
     getAnnouncement(id);
@@ -31,6 +35,7 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
   }
   
   const getAnnouncement = async(id: number) => {
+    setLoading(true);
     await getAnnouncementsById(id)
     .then(response => {
       setText(response.data.text);
@@ -39,19 +44,25 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
           setUploadImages(uploadImages=>[...uploadImages, {
             url: image.imageBase64,
             uid: getUid(),
-            type:"image/jpg"
+            type:"image/"+image.imageBase64.substring(
+              image.imageBase64.indexOf(".") + 1, 
+              image.imageBase64.indexOf(";")
+            )
           }]);
         });
-      // Замінити тип сплітом
+      
     })
     .catch((err) => {
       console.log(err);
     })
+    setLoading(false);
   };    
 
   const handleCancel = () => {
-    setUploadImages([]);
+    setLoading(true);
     setVisibleModal(false);
+    setUploadImages([]);
+    setLoading(false);
   };
 
   const handleUpload = (images: any) => {
@@ -59,6 +70,7 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
   };
 
   const handleSubmit = (values: any) => {    
+    setLoading(true);
     setVisibleModal(false);
     form.resetFields();
     let imgs = uploadImages.map((image: any)=>
@@ -66,6 +78,7 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
       return image.url || image.thumbUrl;
     })
     onEdit(id, text, imgs);
+    setLoading(false);
   };
   
   return (
@@ -77,6 +90,8 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
       onClose={handleCancel}
       footer={null}
     >
+      {loading ?
+      <Spinner/>:
       <Form
         name="basic"
         onFinish={handleSubmit}
@@ -95,8 +110,6 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
           >
             <p></p>
             <ReactQuill 
-              className="iputFortText"
-              // замінити клас
               theme="snow"
               placeholder="Введіть текст..."
               value={text}
@@ -139,6 +152,7 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
         </Col>
       </Row>
     </Form>
+}
   </Drawer>
   );
 };

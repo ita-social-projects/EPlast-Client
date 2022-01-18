@@ -1,4 +1,4 @@
-import { Button, Avatar, Layout, List, Modal, Carousel } from "antd";
+import { Button, Avatar, Layout, List, Modal, Carousel, Tooltip } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -20,7 +20,7 @@ import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import UserApi from "../../../api/UserApi";
 import { Markup } from "interweave";
 import Title from "antd/lib/typography/Title";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { FileImageOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 
 const { Content } = Layout;
 
@@ -63,11 +63,11 @@ const Announcements = () => {
           lastName: value.user.lastName,
           userId: value.userId,
           profileImage: image.data,
-          strippedString: value.text.replace(/<[^>]+>/g, '')
+          strippedString: value.text.replace(/<[^>]+>/g, ''),
+          imagesPresent: value.imagesPresent
         };
         announcements.push(ann);
         });
-      
       }
       setData(announcements);
       setLoading(false);
@@ -134,7 +134,7 @@ const Announcements = () => {
   };
 
 const showFullAnnouncement = async (annId: number) => {
-  
+  setLoading(true);
   let current = data.find(a=>a.id===annId)!;
   await getAnnouncementsById(annId).then(response =>
     {
@@ -165,6 +165,7 @@ const showFullAnnouncement = async (annId: number) => {
         maskClosable: true
       }));
     });
+    setLoading(false);
 };
 
   const handleEdit = async (id: number, newText: string, newImages: string[]) => {
@@ -174,6 +175,8 @@ const showFullAnnouncement = async (annId: number) => {
     setData(data.map(x => x.id === id ? 
       {...x, text: newText}
       : x))
+    
+    await getAnnouncements();
     setLoading(false);
   };
 
@@ -239,13 +242,22 @@ const showFullAnnouncement = async (annId: number) => {
                   setY(event.pageY);
                 }}
               >
-                <div className={classes.metaWrapper}>
+                <div className={classes.metaWrapper}> 
+                {item.imagesPresent ? 
+                  <div>
+                    <Tooltip title='Натисніть "Показати більше" щоб побачити вкладені фото'>
+                    <FileImageOutlined className={classes.isImagePresentIcon}/>
+                    </Tooltip>                  
+                  </div> 
+                  : null    
+                } 
                   <List.Item.Meta 
                     className={classes.listItemMeta}
                     title={item.firstName + " " + item.lastName}
                     description={item.date.toString().substring(0, 10)}
                     avatar={<Avatar size={40} className={classes.avatar} src={item.profileImage} />}
-                  />
+                  /> 
+        
                 </div>
                 <Markup
                 content={
@@ -253,9 +265,9 @@ const showFullAnnouncement = async (annId: number) => {
                 item.text :
                 `${item.text.toString().substring(0, maxTextLength+(item.text.length-item.strippedString.length)/2)}...`}/>
 
-                {item.strippedString.length>=maxTextLength ? 
-                <Title>
-                  <Button type="text" onClick={()=>showFullAnnouncement(item.id)}>
+                {item.strippedString.length>=maxTextLength || item.imagesPresent ? 
+                <Title >
+                  <Button  type="text" onClick={()=>showFullAnnouncement(item.id)}>
                     Показати більше
                   </Button>
                 </Title>

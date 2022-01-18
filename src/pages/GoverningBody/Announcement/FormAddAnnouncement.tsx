@@ -74,7 +74,6 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
             ]}
           >
             <ReactQuill 
-              className="iputFortText"
               theme="snow"
               placeholder="Введіть текст..."
             />
