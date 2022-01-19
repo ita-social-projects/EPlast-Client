@@ -216,7 +216,7 @@ const PrecautionTable = () => {
     notificationLogic("success", successfulUpdateAction("Пересторогу"));
     CreateEditNotification(userId, precaution.name);
   };
-  const aaa = (res: any) =>{
+  const tableSettings = (res: any) =>{
     
     setPage(res[0].current);
     setPageSize(res[0].pageSize);    
@@ -305,7 +305,7 @@ const PrecautionTable = () => {
                 responsive: true,
                 showSizeChanger: true,
               }}
-              onChange={(...args) => aaa(args)}
+              onChange={(...args) => tableSettings(args)}
               loading={loading}
               bordered
               rowKey="id"
