@@ -11,7 +11,7 @@ import UserPrecautionTableInfo from "../Interfaces/UserPrecauctionTableInfo";
 import ClickAwayListener from "react-click-away-listener";
 import Precaution from "../Interfaces/Precaution";
 import PrecautionTableSettings from "../../../models/Precaution/PrecautionTableSettings";
-import Spinner from "../../Spinner/Spinner";
+//import Spinner from "../../Spinner/Spinner";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
@@ -51,7 +51,7 @@ const PrecautionTable = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);
-  const [count, setCount] = useState<number>(0);
+  //const [count, setCount] = useState<number>(0);
   const [statusSorter, setStatusSorter] = useState<any[]>([]);
   const [precautionNameSorter, setPrecautionNameSorter] = useState<any[]>([]);
   const [dateSorter, setDateSorter] = useState<any[]>([]);
@@ -76,9 +76,9 @@ const PrecautionTable = () => {
   const fetchData = async () => {
     const NewTableSettings: PrecautionTableSettings = {
       sortByOrder: sortByOrder,
-      statusSorter: statusSorter,
-      precautionNameSorter: precautionNameSorter,
-      dateSorter: dateSorter,
+      statusFilter: statusSorter,
+      precautionNameFilter: precautionNameSorter,
+      dateFilter: dateSorter,
       searchedData: searchedData,
       page: page,
       pageSize: pageSize
@@ -109,7 +109,10 @@ const PrecautionTable = () => {
 
   const handleAdd = async () => {
     setVisibleModal(false);
+    setLoading(true);
     fetchData();
+    notificationLogic("success", successfulCreateAction("Догану"));
+    setLoading(false);
   };
 
   const showModalEditTypes = () => {
