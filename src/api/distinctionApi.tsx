@@ -17,14 +17,6 @@ const getUserDistinctions = async () => {
   return (await api.get(`Distinction/UserDistinctions`)).data;
 };
 
-/*const getAllUsersDistinctions = async (searchedData: string, page: number, pageSize: number) => {
-  return (await api.get('Distinction/UsersDistinctionsForTable',
-    {
-      searchedData: searchedData,
-      page: page,
-      pageSize: pageSize,
-    })).data;
-}*/
 const getAllUsersDistinctions = async (NewTableSettings: DistinctionTableSettings) => {
   return (await api.get(`Distinction/UsersDistinctionsForTable`, NewTableSettings, (params:any)=> {
     return Object.entries(params).map(([key, value]) => {
