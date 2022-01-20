@@ -13,30 +13,31 @@ const columns = [
     fixed: true,
     title: 'ID',
     dataIndex: 'id',
-    defaultSortOrder: 'ascend' as SortOrder,
-      sorter: (a: any, b: any) => a.id - b.id,
-
+      sorter: true,
+      sortDirections: ['ascend', 'descend'] as SortOrder[],
   },
   {
     title: 'Користувач',
     dataIndex: 'userName',
-    
-    sorter: (a: any, b: any) => a.userName.localeCompare(b.userName),
+    render: (userName: string) => {
+      return userName
+    },
+    sorter: true,
     sortDirections: ['ascend', 'descend'] as SortOrder[],
   },
   {
     title: 'Дата надання',
     dataIndex: 'dateOfGranting',
     render:(dateOfGranting:Date)=>{
-        return moment(dateOfGranting).format("DD.MM.YYYY")
+     return moment.utc(dateOfGranting.toLocaleString()).local().format('DD.MM.YYYY');
     },
-    sorter: (a: any, b: any) => a.dateOfGranting.localeCompare(b.dateOfGranting),
+    sorter:true,
       sortDirections: ['ascend', 'descend'] as SortOrder[],
   },
   {
     title: 'Номер в реєстрі',
     dataIndex: 'numberInRegister',
-    sorter: (a: any, b: any) => a.numberInRegister - b.numberInRegister,
+    sorter: true,
     sortDirections: ['ascend', 'descend'] as SortOrder[],
   },
     

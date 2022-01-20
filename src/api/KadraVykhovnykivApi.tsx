@@ -1,5 +1,6 @@
 import Api from "./api";
-
+import { KadraTableSettings } from '../pages/KadraVykhovnykiv/Interfaces/KadraTableSettings';
+import { KadraTableInfo } from "../pages/KadraVykhovnykiv/Interfaces/KadraTableInfo";
 
 const getAllKVs = async () => {
     const response = await Api.get("EducatorsStaff/kadras");
@@ -81,13 +82,18 @@ const findUserByEduStaff = async (EduStaffId:number)=>{
     return response;
     }
 
-  const getEducatorsStaffForTable = async (kadraType: number, searchedData: string, page: number, pageSize: number) => {
-      return (await Api.get("EducatorsStaff/EducatorsStaffForTable",
-      {
-          kadraType: kadraType,
-          searchedData: searchedData,
-          page: page,
-          pageSize: pageSize,
+  const getEducatorsStaffForTable = async (newTableSettings: KadraTableSettings) => {
+      return (await Api.get(`EducatorsStaff/EducatorsStaffForTable`,newTableSettings, (params:any) =>{
+        console.log(params);
+        return Object.entries(params).map(([key, value])=>{
+          if(Array.isArray(value) && value){
+            return value.map(it => `${key}=${it}`).join('&');
+          }
+          return `${key}=${value}`;
+        }).join('&');
+      })
+      .catch((error)=>{
+        throw new Error(error);
       })).data;
   }
 

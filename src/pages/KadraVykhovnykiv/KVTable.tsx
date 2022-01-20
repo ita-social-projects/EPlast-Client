@@ -1,11 +1,13 @@
-import React, { useEffect, useState, PropsWithRef } from 'react';
+import React, { useEffect, useState, PropsWithRef, useRef } from 'react';
 import { Table, Spin, Input, Layout } from 'antd';
 import columns from './columns';
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import DropDown from './KadraDropDown';
 import ClickAwayListener from 'react-click-away-listener';
 import { KadraTableInfo } from './Interfaces/KadraTableInfo';
+import { KadraTableSettings } from './Interfaces/KadraTableSettings';
 import NotificationBoxApi from '../../api/NotificationBoxApi';
+import { UnderlineOutlined } from '@ant-design/icons';
 
 
 const classes = require('./Table.module.css');
@@ -27,7 +29,13 @@ export const KVTable = ({ current, searchData }: props) => {
   const [count, setCount] = useState<number>(0);
   const [data, setData] = useState<KadraTableInfo[]>(Array<KadraTableInfo>());
   const [firstPage, setFirstPage] = useState(1);
+  const [sorting] = useState(2);
   const [lastElement, setLastElement] = useState(1);
+  //const [sortByOrder, setSortByOrder] = useState<any[]>(["",""]);
+  //const [sortColumn, setSortByColumn] = useState<string>("id");
+  //const [sortByOrder, setSortByOrder] = useState<string>("descend");
+  const [sortByOrder, setSortByOrder] = useState<any[]>(["id","ascend"]);
+
 
   const createNotifications = async (userId : string) => {
     await NotificationBoxApi.createNotifications(
@@ -68,21 +76,45 @@ export const KVTable = ({ current, searchData }: props) => {
     setShowDropdown(false);
   }
 
-
-
+  const tableSettings = (res: any) => {
+    console.log(res);
+    debugger;
+    setPage(res[0].current);
+    setPageSize(res[0].pageSize);
+    if(res[sorting].order !== undefined){
+      setSortByOrder([res[sorting].field, res[sorting].order]);
+     // fetchData([res[sorting].field, null])
+     // setSortByColumn(res[sorting].field)
+     // setSortByOrder([res[sorting].field, null]);
+     // console.log(res);
+    } 
+    console.log(1);
+  }
   const fetchData = async () => {
+    console.log('fetch');
     setLoading(true);
-    
-    await kadrasApi.getEducatorsStaffForTable(current, searchData, page, pageSize).then(response => {
-      setCount(response[0]?.subtotal);
+   console.log(sortByOrder);
+    const newTableSettings : KadraTableSettings ={
+      SearchedData: searchData,
+      Page: page,
+      PageSize: pageSize,
+      KadraTypeId:current,
+      SortByOrder:sortByOrder,
+    }
+    console.log(newTableSettings);
+    await kadrasApi.getEducatorsStaffForTable(newTableSettings).then(response => {
+      setCount(response[0]?.total);
       setData(response)
     })
     setLoading(false);
   }
 
   useEffect(() => {
-    fetchData();
-  }, [current, searchData, page, pageSize])
+    setLoading(true);
+    if(current){
+      fetchData();
+    }
+  }, [current, searchData, page, pageSize, sortByOrder])
 
  const handlePageChange = (page: number) => {
   setPage(page);
@@ -117,15 +149,17 @@ const handleSizeChange = (page: number, pageSize: number = 10) => {
               },
             };
           }}
-          onChange={(pagination) => {
-            if (pagination) {
-              window.scrollTo({
-                left: 0,
-                top: 0,
-                behavior: 'smooth',
-              });
-            }
-          }}
+          // onChange={(pagination) => {
+          //   if (pagination) {
+          //     window.scrollTo({
+          //       left: 0,
+          //       top: 0,
+          //       behavior: 'smooth',
+          //     });
+          //   }
+          // }}
+          
+          
           pagination={
             {
               current: page,
@@ -134,10 +168,11 @@ const handleSizeChange = (page: number, pageSize: number = 10) => {
                 showLessItems: true,
                 responsive: true,
                 showSizeChanger: true,
-                onChange: (page) => handlePageChange(page),
-                onShowSizeChange: (page, size) => handleSizeChange(page, size),
+                // onChange: (page) => handlePageChange(page),
+                // onShowSizeChange: (page, size) => handleSizeChange(page, size),
             }
           }
+          onChange={ (...args)=>tableSettings(args)}
           bordered
           rowKey="id"
         />
