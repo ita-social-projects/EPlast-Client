@@ -23,12 +23,12 @@ import {
 } from "@ant-design/icons";
 import {
   getAnnouncementsById,
-  getAllAnnouncements,
   getGoverningBodyById,
   getGoverningBodyLogo,
   getUserAccess,
   removeGoverningBody, 
-  addAnnouncement
+  addAnnouncement,
+  getAnnouncementsByPage
 } from "../../../api/governingBodiesApi";
 import "./GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -197,11 +197,11 @@ const GoverningBody = () => {
     try {
       let userAccesses = await getUserAccesses();
       if(userAccesses.data["ViewAnnouncements"]){
-        const res: GoverningBodyAnnouncement[]  = (await getAllAnnouncements()).data;
+        const res: any  = (await getAnnouncementsByPage(1, 3)).data;
         let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];
-        for(let i = 0; i < res.length && i < announcementsQuantity; i++) {
-          res[i].text = res[i].text.substring(0,40) + (res[i].text.length > 40? "...": "")
-          shortListedAnnoncements = [...shortListedAnnoncements, res[i]]
+        for(let i = 0; i < announcementsQuantity; i++) {
+          res.item1[i].text = res.item1[i].text.substring(0,40) + (res.item1[i].text.length > 40? "...": "")
+          shortListedAnnoncements = [...shortListedAnnoncements, res.item1[i]]
         }
         setAnnouncements(shortListedAnnoncements)
       }
