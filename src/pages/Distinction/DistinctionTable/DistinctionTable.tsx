@@ -250,7 +250,7 @@ const DistinctionTable = () => {
               />
             </Col>
           </Row>
-          {//loading ? (<Spinner />) : (
+          {
             <div>
             <Table
               className={classes.table}
@@ -279,8 +279,6 @@ const DistinctionTable = () => {
                 showLessItems: true,
                 responsive: true,
                 showSizeChanger: true,
-                //onChange: (page) => handlePageChange(page),
-                //onShowSizeChange: (page, size) => handleSizeChange(page, size),
               }}
               onChange={(...args) => tableSettings(args)}
               bordered
