@@ -130,19 +130,18 @@ export default function () {
         </Form.Item>
         <Modal
           className='modalTerms'
-          title={terms.termsTitle}
           centered
           okText='Погоджуюсь'
-          style={{textAlign:"center"}}
           visible={visible}
           onOk={confirmTerms}
           onCancel={cancelTerms}
           width={1000}
         >
-        <Markup
-          className="markupText"
-          content={terms.termsText}
-        />
+          <h1>{terms.termsTitle}</h1>
+          <Markup
+            className="markupText"
+            content={terms.termsText}
+          />
         </Modal>
       </Form>
     </div>

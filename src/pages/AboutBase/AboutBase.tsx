@@ -18,6 +18,7 @@ import AddSubsectionModal from './AddSubsectionModal';
 import EditSubsectionModal from './EditSubsectionModal';
 import DeleteSectConfirm from "./DeleteSectConfirm";
 import DeleteSubsectConfirm from './DeleteSubsectConfirm';
+import PicturesWall from './PicturesWall';
 
 const { Panel } = Collapse;
 
@@ -228,6 +229,7 @@ const AboutBase = () => {
                   ]}
                 >
                   <p>{subitem.description}</p>
+                  <PicturesWall subsectionId={subitem.id}/>
                 </Panel>
               </Collapse>
             ))}
