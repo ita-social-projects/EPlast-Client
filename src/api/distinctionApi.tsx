@@ -1,6 +1,7 @@
 import api from "./api";
 import UserDistinction from "../pages/Distinction/Interfaces/UserDistinction";
 import Distinction from "../pages/Distinction/Interfaces/Distinction";
+import DistinctionTableSettings from "../models/Distinction/DistinctionTableSettings";
 
 const getUserDistinctionAccess = async (userId: string) => {
   return await api.get(`UserAccess/GetUserDistinctionAccess/${userId}`)
@@ -16,13 +17,26 @@ const getUserDistinctions = async () => {
   return (await api.get(`Distinction/UserDistinctions`)).data;
 };
 
-const getAllUsersDistinctions = async (searchedData: string, page: number, pageSize: number) => {
+/*const getAllUsersDistinctions = async (searchedData: string, page: number, pageSize: number) => {
   return (await api.get('Distinction/UsersDistinctionsForTable',
     {
       searchedData: searchedData,
       page: page,
       pageSize: pageSize,
     })).data;
+}*/
+const getAllUsersDistinctions = async (NewTableSettings: DistinctionTableSettings) => {
+  return (await api.get(`Distinction/UsersDistinctionsForTable`, NewTableSettings, (params:any)=> {
+    return Object.entries(params).map(([key, value]) => {
+      if (Array.isArray(value) && value){
+          return value.map(it => `${key}=${it}`).join('&');
+      }
+      return `${key}=${value}`;
+    }).join('&');
+  })
+  .catch((error) => {
+    throw new Error(error);
+  })).data;
 }
 
 const getDistinctionById = async (id: number) => {
