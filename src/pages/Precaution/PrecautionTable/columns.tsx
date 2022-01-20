@@ -25,8 +25,7 @@ const columns = [
     width: 75,
     fixed: true,
     defaultSortOrder: 'ascend' as SortOrder,
-    sorter: (a: any, b: any) => a.number - b.number,
-    
+    sorter: true,
   },
   {
     title: 'Перестороги',
@@ -43,7 +42,6 @@ const columns = [
       text: "Догана із загрозою виключення з Пласту",
       value: "Догана із загрозою виключення з Пласту",
     }],
-    onFilter: (value: any, record: any) => record.precautionName == value,
     render: (precautionName: Precaution) => {
       return precautionName
     },
@@ -54,14 +52,13 @@ const columns = [
     render: (userName: string) => {
       return userName
     },
-    sorter: (a: any, b: any) => a.userName.localeCompare(b.userName),
+    sorter: true,
     sortDirections: ['ascend', 'descend'] as SortOrder[],
   },
   {
     title: 'Дата затвердження',
     dataIndex: 'date',
     filters: years,
-    onFilter: (value: any, record: any) => record.date.includes(value),
     render: (date: Date) => {
       return moment.utc(date.toLocaleString()).local().format('DD.MM.YYYY');
     },
@@ -72,7 +69,7 @@ const columns = [
     render: (endDate: Date, record: any) => {
       return record.isActive === true ? moment.utc(endDate.toLocaleString()).local().format('DD.MM.YYYY') : "не активна";
     },
-    sorter: (a: any, b: any) => a.endDate.localeCompare(b.endDate),
+    sorter: true,
     sortDirections: ['ascend', 'descend'] as SortOrder[],
   },
   {
@@ -117,7 +114,6 @@ const columns = [
       text: "Скасовано",
       value: "Скасовано",
     }],
-    onFilter: (value: any, record: any) => record.status.includes(value),
     render: (status: any) => (
       <Tooltip placement="topRight" title={status}>
         {status}
