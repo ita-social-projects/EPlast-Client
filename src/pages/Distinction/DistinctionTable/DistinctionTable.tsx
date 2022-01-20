@@ -11,7 +11,6 @@ import UserDistinctionTableInfo from "../Interfaces/UserDistinctionTableInfo";
 import ClickAwayListener from "react-click-away-listener";
 import Distinction from "../Interfaces/Distinction";
 import DistionctionTableSettings from "../../../models/Distinction/DistinctionTableSettings";
-//import Spinner from "../../Spinner/Spinner";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
@@ -47,7 +46,6 @@ const DistinctionTable = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);
-  //const [count, setCount] = useState<number>(0);
   const [sortByOrder, setSortByOrder] = useState<any[]>(["number","ascend"]);
   const [distinctions, setDistinctions] = useState<UserDistinctionTableInfo[]>([
     {
@@ -109,10 +107,6 @@ const DistinctionTable = () => {
 
   const handleAdd = async () => {
     setVisibleModal(false);
-    /*const res: UserDistinctionTableInfo[] = await distinctionApi.getAllUsersDistinctions(searchedData, page, pageSize);
-    setDistinctions(res);
-    setTotal(res[0]?.total);
-    //setCount(res[0]?.count);*/
     fetchData();
     notificationLogic("success", successfulCreateAction("Відзначення"));
   };
@@ -124,15 +118,6 @@ const DistinctionTable = () => {
   const handleClickAway = () => {
     setShowDropdown(false);
   };
-
-  /*const handlePageChange = (page: number) => {
-    setPage(page);
-  };
-
-  const handleSizeChange = (page: number, pageSize: number = 10) => {
-    setPage(page);
-    setPageSize(pageSize);
-  };*/
 
   const CreateDeleteNotification = (id: number) => {
     const userDistinction = distinctions.find(
