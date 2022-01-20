@@ -82,7 +82,6 @@ const DistinctionTable = () => {
     setLoading(true);
     const res: UserDistinctionTableInfo[] = await distinctionApi.getAllUsersDistinctions(NewTableSettings);    
     setTotal(res[0]?.total);
-    //setCount(res[0]?.count);
     setDistinctions(res);
     setLoading(false);
     getUserAccessesForDistinctions();
@@ -174,7 +173,6 @@ const DistinctionTable = () => {
     );
     setDistinctions([...filteredData]);
     setTotal(total - 1);
-    //setCount(count - 1);
     notificationLogic("success", successfulDeleteAction("Відзначення"));
     CreateDeleteNotification(id);
   };
@@ -274,15 +272,6 @@ const DistinctionTable = () => {
                   },
                 };
               }}
-              /*onChange={(pagination) => {
-                if (pagination) {
-                  window.scrollTo({
-                    left: 0,
-                    top: 0,
-                    behavior: "smooth",
-                  });
-                }
-              }}*/
               pagination={{
                 current: page,
                 pageSize: pageSize,
