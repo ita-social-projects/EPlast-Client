@@ -78,7 +78,6 @@ export const KVTable = ({ current, searchData }: props) => {
 
   const tableSettings = (res: any) => {
     console.log(res);
-    debugger;
     setPage(res[0].current);
     setPageSize(res[0].pageSize);
     if(res[sorting].order !== undefined){
