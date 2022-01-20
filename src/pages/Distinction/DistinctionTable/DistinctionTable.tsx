@@ -11,7 +11,6 @@ import UserDistinctionTableInfo from "../Interfaces/UserDistinctionTableInfo";
 import ClickAwayListener from "react-click-away-listener";
 import Distinction from "../Interfaces/Distinction";
 import DistionctionTableSettings from "../../../models/Distinction/DistinctionTableSettings";
-//import Spinner from "../../Spinner/Spinner";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
@@ -47,7 +46,6 @@ const DistinctionTable = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);
-  //const [count, setCount] = useState<number>(0);
   const [sortByOrder, setSortByOrder] = useState<any[]>(["number","ascend"]);
   const [distinctions, setDistinctions] = useState<UserDistinctionTableInfo[]>([
     {
@@ -84,7 +82,6 @@ const DistinctionTable = () => {
     setLoading(true);
     const res: UserDistinctionTableInfo[] = await distinctionApi.getAllUsersDistinctions(NewTableSettings);    
     setTotal(res[0]?.total);
-    //setCount(res[0]?.count);
     setDistinctions(res);
     setLoading(false);
     getUserAccessesForDistinctions();
@@ -109,10 +106,6 @@ const DistinctionTable = () => {
 
   const handleAdd = async () => {
     setVisibleModal(false);
-    /*const res: UserDistinctionTableInfo[] = await distinctionApi.getAllUsersDistinctions(searchedData, page, pageSize);
-    setDistinctions(res);
-    setTotal(res[0]?.total);
-    //setCount(res[0]?.count);*/
     fetchData();
     notificationLogic("success", successfulCreateAction("Відзначення"));
   };
@@ -124,15 +117,6 @@ const DistinctionTable = () => {
   const handleClickAway = () => {
     setShowDropdown(false);
   };
-
-  /*const handlePageChange = (page: number) => {
-    setPage(page);
-  };
-
-  const handleSizeChange = (page: number, pageSize: number = 10) => {
-    setPage(page);
-    setPageSize(pageSize);
-  };*/
 
   const CreateDeleteNotification = (id: number) => {
     const userDistinction = distinctions.find(
@@ -189,7 +173,6 @@ const DistinctionTable = () => {
     );
     setDistinctions([...filteredData]);
     setTotal(total - 1);
-    //setCount(count - 1);
     notificationLogic("success", successfulDeleteAction("Відзначення"));
     CreateDeleteNotification(id);
   };
@@ -267,7 +250,7 @@ const DistinctionTable = () => {
               />
             </Col>
           </Row>
-          {//loading ? (<Spinner />) : (
+          {
             <div>
             <Table
               className={classes.table}
@@ -289,15 +272,6 @@ const DistinctionTable = () => {
                   },
                 };
               }}
-              /*onChange={(pagination) => {
-                if (pagination) {
-                  window.scrollTo({
-                    left: 0,
-                    top: 0,
-                    behavior: "smooth",
-                  });
-                }
-              }}*/
               pagination={{
                 current: page,
                 pageSize: pageSize,
@@ -305,8 +279,6 @@ const DistinctionTable = () => {
                 showLessItems: true,
                 responsive: true,
                 showSizeChanger: true,
-                //onChange: (page) => handlePageChange(page),
-                //onShowSizeChange: (page, size) => handleSizeChange(page, size),
               }}
               onChange={(...args) => tableSettings(args)}
               bordered
