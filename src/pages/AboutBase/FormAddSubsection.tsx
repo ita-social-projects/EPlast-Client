@@ -22,8 +22,7 @@ type FormAddSubsectionProps = {
     fetchSubData: Function
 };
 
-const normFile = (e: any) => {
-    debugger;
+const addFileToUpload = (e: any) => {
     if (Array.isArray(e)) {
         return e;
     }
@@ -47,7 +46,7 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
     const [previewVisible, setPreviewVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
-    const [fileList, setFileList] = useState([]);
+    const [pictures, setPictures] = useState([]);
     const uploadButton = (
         <div>
             <PlusOutlined />
@@ -79,23 +78,20 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
             setSubsectData(res);
             setTitle("");
             setDescription("");
-            setFileList([]);
+            setPictures([]);
             notificationLogic("success", "Підрозділ додано!");
             subsectId = res[res.length - 1].id;
         } else {
             notificationLogic("error", "Хибні дані");
         }
-        if (fileList) {
+        if (pictures) {
             const data = new FormData();
-            fileList.forEach((element: any) => {
+            pictures.forEach((element: any) => {
                 data.append('files', element.originFileObj);
             });
             addPictures(data)
                 .then(async (response) => {
                     form.resetFields();
-                })
-                .catch((error) => {
-                    console.log(error);
                 })
         }
         setVisibleModal(false);
@@ -135,8 +131,8 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
 
-    const handleChange = (fileList: any) => {
-        setFileList(fileList.fileList);
+    const handleChange = (pictures: any) => {
+        setPictures(pictures.pictures);
     };
 
     return (
@@ -188,7 +184,7 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
                     <Form.Item
                         name="upload"
                         valuePropName="fileList"
-                        getValueFromEvent={normFile}
+                        getValueFromEvent={addFileToUpload}
                     >
                         <Upload
                             listType="picture-card"
@@ -197,7 +193,7 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
                             onPreview={handlePreview}
                             onChange={handleChange}
                         >
-                            {fileList.length >= 3 ? null : uploadButton}
+                            {pictures.length >= 3 ? null : uploadButton}
                         </Upload>
                     </Form.Item>
                     <Form.Item>
