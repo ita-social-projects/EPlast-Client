@@ -173,3 +173,14 @@ export const getUsersPreviousAdministrations = async(UserId:string)=>{
     throw new Error(error);
   })
 }
+
+export const getSectorAdminsForTable = async (userId: string, isActive: boolean, 
+  pageNumber: number, pageSize: number) => {
+    return (await api.get('GoverningBodies/Sectors/GetUserAdminsForTable',
+    {
+      userId: userId,
+      isActive: isActive,
+      pageNumber: pageNumber,
+      pageSize: pageSize
+    })).data;
+}

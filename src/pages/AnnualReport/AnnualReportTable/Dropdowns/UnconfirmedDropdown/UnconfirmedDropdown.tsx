@@ -16,7 +16,7 @@ const UnconfirmedDropdown = (props: Props) => {
         pageX,
         pageY,
         showDropdown,
-        canManage,
+        userAnnualReportAccess,
         onView,
         onViewPDF,
         onEdit,
@@ -32,17 +32,17 @@ const UnconfirmedDropdown = (props: Props) => {
                 onViewPDF(record.id);
                 break;
             case "3":
-                if (record.canManage) {
+                if (userAnnualReportAccess?.CanEditReport) {
                     onEdit(record.id);
                 }
                 break;
             case "4":
-                if (canManage) {
+                if (userAnnualReportAccess?.CanChangeReportStatus) {
                     onConfirm(record.id);
                 }
                 break;
             case "5":
-                if (canManage) {
+                if (userAnnualReportAccess?.CanDeleteReport) {
                     onRemove(record.id);
                 }
                 break;
@@ -53,46 +53,46 @@ const UnconfirmedDropdown = (props: Props) => {
 
     return (
         <>
-            <Menu
-                theme="dark"
-                onClick={handleClick}
-                selectedKeys={[]}
-                className={showDropdown ? styles.menu : styles.menuHidden}
-                style={{
-                    top: pageY,
-                    left:
-                        window.innerWidth - (pageX + 170) < 0
-                            ? window.innerWidth - 220
-                            : pageX,
-                }}
-            >
-                <Menu.Item key="1">
-                    <FileSearchOutlined />
-                    Переглянути
-                </Menu.Item>
-                <Menu.Item key="2">
-                    <FilePdfOutlined />
-                    Переглянути у форматі PDF
-                </Menu.Item>
-                {record.canManage ? (
-                    <Menu.Item key="3">
-                        <FileSyncOutlined />
-                        Редагувати
+            {userAnnualReportAccess?.CanViewCityReportsTable && 
+                userAnnualReportAccess?.CanViewReportDetails ? (
+                <Menu
+                    theme="dark"
+                    onClick={handleClick}
+                    selectedKeys={[]}
+                    className={showDropdown ? styles.menu : styles.menuHidden}
+                    style={{
+                        top: pageY - 185,
+                        left: pageX - 36,
+                    }}
+                >
+                    <Menu.Item key="1">
+                        <FileSearchOutlined />
+                        Переглянути
                     </Menu.Item>
-                ) : null}
-                {canManage ? (
-                    <Menu.Item key="4">
-                        <FileDoneOutlined />
-                        Підтвердити
+                    <Menu.Item key="2">
+                        <FilePdfOutlined />
+                        Переглянути у форматі PDF
                     </Menu.Item>
-                ) : null}
-                {canManage ? (
-                    <Menu.Item key="5">
-                        <DeleteOutlined />
-                        Видалити
-                    </Menu.Item>
-                ) : null}
-            </Menu>
+                    {userAnnualReportAccess?.CanEditReport && userAnnualReportAccess?.CanSubmitCityReport ? (
+                        <Menu.Item key="3">
+                            <FileSyncOutlined />
+                            Редагувати
+                        </Menu.Item>
+                    ) : null}
+                    {userAnnualReportAccess?.CanChangeReportStatus ? (
+                        <Menu.Item key="4">
+                            <FileDoneOutlined />
+                            Підтвердити
+                        </Menu.Item>
+                    ) : null}
+                    {userAnnualReportAccess?.CanDeleteReport ? (
+                        <Menu.Item key="5">
+                            <DeleteOutlined />
+                            Видалити
+                        </Menu.Item>
+                    ) : null}
+                </Menu>
+            ) : null}
         </>
     );
 };

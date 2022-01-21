@@ -40,7 +40,8 @@ import {
   getCheckPlastMember,
   toggleMemberStatus,
   removeFollower,
-  getAllAdmins
+  getAllAdmins,
+  isUserApproved
 } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
@@ -59,7 +60,15 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulDeleteAction, fileIsAdded, successfulEditAction, successfulUnarchiveAction, successfulArchiveAction, failArchiveAction } from "../../../components/Notifications/Messages";
+import { 
+  successfulDeleteAction,
+  fileIsAdded, 
+  successfulEditAction, 
+  successfulUnarchiveAction, 
+  successfulArchiveAction, 
+  failArchiveAction, 
+  failApproveAction 
+} from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
@@ -105,6 +114,11 @@ const City = () => {
   const classes = require('./Modal.module.css');
 
   const changeApproveStatus = async (memberId: number) => {
+    if(!isLoadingPlus)
+    {
+      notificationLogic("warning", failApproveAction());
+      return;
+    }
     setIsLoadingMemberId(memberId)
     setIsLoadingPlus(false)
     const member = await toggleMemberStatus(memberId);
@@ -127,7 +141,7 @@ const City = () => {
       setMembers([...members, member.data]);
     }
     setFollowers(followers.filter((f) => f.id !== memberId));
-    setIsLoadingPlus(true)
+    setIsLoadingPlus(true);
   };
 
   const removeMember = async (followerID: number) => {
@@ -215,7 +229,7 @@ const City = () => {
     notificationLogic("success", fileIsAdded());
   };
 
-  function seeArchiveModal() {
+  function showArchiveModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете архівувати дану станицю?",
       icon: <ExclamationCircleOutlined />,
@@ -231,7 +245,7 @@ const City = () => {
     });
   }
 
-  function seeUnArchiveModal() {
+  function showUnArchiveModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете розархівувати дану станицю?",
       icon: <ExclamationCircleOutlined />,
@@ -245,7 +259,7 @@ const City = () => {
     });
   }
 
-  function seeDeleteModal() {
+  function showDeleteModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете видалити дану станицю?",
       icon: <ExclamationCircleOutlined />,
@@ -259,7 +273,7 @@ const City = () => {
     });
   }
 
-  function seeJoinModal() {
+  function showJoinModal() {
     return Modal.confirm({
       title: "Ви впевнені, що хочете доєднатися до даної станиці? При доєднанні до нової станиці всі попередні ролі будуть скасовані.",
       icon: <ExclamationCircleOutlined />,
@@ -278,17 +292,31 @@ const City = () => {
     setAdminsAll(response.data.administration)
   }
 
-  function seeSkipModal(followerID: number) {
-    return Modal.confirm({
-      title: "Ви впевнені, що хочете покинути дану станицю?",
-      icon: <ExclamationCircleOutlined />,
-      okText: 'Так, покинути',
-      okType: 'primary',
-      cancelText: 'Скасувати',
-      maskClosable: true,
-      onOk() { removeMember(followerID) }
+  async function showSkipModal(followerID: number) {
+    const isApproved = await isUserApproved(followerID);
+    if(!isApproved.data)
+    {
+      return Modal.confirm({
+        title: "Ви впевнені, що хочете покинути дану станицю?",
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Так, покинути',
+        okType: 'primary',
+        cancelText: 'Скасувати',
+        maskClosable: true,
+        onOk() { removeMember(followerID) }
+      });
+    }
+    else
+    {
+      return Modal.info({
+        title: "Ви не можете покинути дану станицю, оскільки є її членом!",
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Зрозуміло',
+        okType: 'primary',
+        maskClosable: true
     });
   }
+}
 
   const getCity = async () => {
     setLoading(true);
@@ -558,7 +586,7 @@ const City = () => {
               <Crumb
                 current={city.name}
                 first="/"
-                second={url.replace(`/${id}`, "")}
+                second={url.replace(`/${id}`, "/page/1")}
                 second_name="Станиці"
               />
               {isActiveCity ? null : (
@@ -713,7 +741,7 @@ const City = () => {
                           <Tooltip title="Архівувати станицю">
                             <ContainerOutlined
                               className="cityInfoIconDelete"
-                              onClick={() => seeArchiveModal()}
+                              onClick={() => showArchiveModal()}
                             />
                           </Tooltip>
                         </Col>) : (
@@ -722,7 +750,7 @@ const City = () => {
                             <Tooltip title="Видалити станицю">
                               <DeleteOutlined
                                 className="cityInfoIconDelete"
-                                onClick={() => seeDeleteModal()}
+                                onClick={() => showDeleteModal()}
                               />
                             </Tooltip>
                           </Col>
@@ -731,7 +759,7 @@ const City = () => {
                               <ContainerOutlined
                                 className="cityInfoIcon"
                                 color="green"
-                                onClick={() => seeUnArchiveModal()}
+                                onClick={() => showUnArchiveModal()}
                               />
                             </Tooltip>
                           </Col>
@@ -937,7 +965,7 @@ const City = () => {
                   className="cityMemberItem"
                   xs={12}
                   sm={8}
-                  onClick={() => seeJoinModal()}
+                  onClick={() => showJoinModal()}
                 >
                   <div>
                     <Avatar
@@ -976,14 +1004,14 @@ const City = () => {
                         <Tooltip placement={"bottom"} title={"Додати до членів"}>
                           <PlusOutlined
                             className="approveIcon"
-                            onClick={() => changeApproveStatus(followers.id)}
+                            onClick={async () => await changeApproveStatus(followers.id)}
                           />
                         </Tooltip>
                       ) : (followers.userId === activeUserID) ? (
                         <Tooltip placement={"bottom"} title={"Покинути станицю"}>
                           <MinusOutlined
                             className="approveIcon"
-                            onClick={() => seeSkipModal(followers.id)}
+                            onClick={() => showSkipModal(followers.id)}
                           />
                         </Tooltip>) : !isLoadingPlus && isLoadingMemberId === followers.id ? (
                           <Tooltip placement={"bottom"} title={"Зачекайте"}>

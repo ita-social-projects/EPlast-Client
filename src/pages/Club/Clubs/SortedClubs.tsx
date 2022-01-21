@@ -5,7 +5,7 @@ import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import { getActiveClubByPage, getNotActiveClubByPage, getLogo } from "../../../api/clubsApi";
 import "./Clubs.less";
-import ClubProfile from "../../../models/Club/ClubProfile";
+import ClubByPage from "../../../models/Club/ClubByPage";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import Search from "antd/lib/input/Search";
@@ -15,10 +15,11 @@ import Props from "../../Interfaces/SwitcherProps";
 
 const nameMaxLength = 23;
 
+
 const SortedClubs = ( {switcher}: Props) => { 
   const path: string  = "/clubs";
   const history = useHistory();
-  const [clubs, setClubs] = useState<ClubProfile[]>([]);
+  const [clubs, setClubs] = useState<ClubByPage[]>([]);
   const [canCreate, setCanCreate] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
@@ -28,9 +29,9 @@ const SortedClubs = ( {switcher}: Props) => {
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
   const {p} = useParams();
-  const [page, setPage] = useState(Number(p));
+  const [page, setPage] = useState(+p);
 
-  const setPhotos = async (clubs: ClubProfile[]) => {
+  const setPhotos = async (clubs: ClubByPage[]) => {
     try {
       for await (const club of clubs) {
         if (club.logo === null) {
@@ -61,7 +62,7 @@ const SortedClubs = ( {switcher}: Props) => {
       setClubs(response.data.clubs);
       setCanCreate(response.data.canCreate);
       setActiveCanCreate(response.data.canCreate);
-      setTotal(response.data.total);
+      setTotal(response.data.rows);
     } finally {
       setLoading(false);
     }
@@ -100,10 +101,10 @@ const SortedClubs = ( {switcher}: Props) => {
     setSearchedData(event);
   };
 
-  const renderCity = (arr: ClubProfile[]) => {
+  const renderCity = (arr: ClubByPage[]) => {
     if (arr) {
         // eslint-disable-next-line react/no-array-index-key
-        return  arr.map((club: ClubProfile) =>(
+        return  arr.map((club: ClubByPage) =>(
           <Link to={`${path}/${club.id}`}>
               <Card
                 key={club.id}
@@ -130,6 +131,10 @@ const SortedClubs = ( {switcher}: Props) => {
     }
     return null;
 };
+
+  useEffect(() => {
+    setPage(+p);
+  });
 
   useEffect(() => {
     switcher ? (getNotActiveClubs(page)):(getActiveClubs(page)) 

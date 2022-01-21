@@ -27,23 +27,23 @@ import { PersonalDataContext } from '../personalData/PersonalData';
 const Assignments = () => {
   const history = useHistory();
   const { userId } = useParams();
-  const [loading, setLoading] = useState(false);
+  const [loadingApprovers, setLoadingApprovers] = useState<boolean>(false);
   const [approveAsMemberLoading, setApproveAsMemberLoading] = useState(false);
   const [approveAsHovelHeadLoading, setApproveAsHovelHeadLoading] = useState(false);
   const [approveAsCityHeadLoading, setApproveAsCityHeadLoading] = useState(false);
   const [data, setData] = useState<ApproversData>();
   const [approverName, setApproverName] = useState<string>();
   const [userGender, setuserGender] = useState<string>();
-  const { userProfile, activeUserRoles, activeUserId, activeUserProfile, ChangeUserProfile, UpdateData } = useContext(PersonalDataContext);
+  const { userProfile, activeUserRoles, UpdateData, loading, userProfileAccess } = useContext(PersonalDataContext);
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
   const fetchData = async () => {
-    if (UpdateData) UpdateData();
+    setLoadingApprovers(false);
     const token = AuthStore.getToken() as string;
     const user: any = jwt(token);
     await userApi.getApprovers(userId, user.nameid).then(response => {
       setData(response.data);
-      setLoading(true);
+      setLoadingApprovers(true);
     }).catch(() => { notificationLogic('error', fileIsNotUpload("даних")) });
     fetchApproverName(user.nameid);
   };
@@ -114,7 +114,7 @@ const Assignments = () => {
   }
 
   const { Meta } = Card;
-  return loading === false ? (
+  return (loading && loadingApprovers) === false ? (
     <div className="kadraWrapper">
       <Skeleton.Avatar
         size={220}
@@ -150,7 +150,7 @@ const Assignments = () => {
         <h1 className="approversCard">Поручення дійсних членів</h1>
         <div className="approversCard">
           {data?.confirmedUsers.map(p => {
-            if (p.approver.userID == data?.currentUserId || activeUserRoles.includes(Roles.Admin)) {
+            if (p.approver.userID == data?.currentUserId || activeUserRoles.includes(Roles.Admin) || activeUserRoles.includes(Roles.GoverningBodyHead)) {
               return (
                 <div key={p.id}>
                   <Card
@@ -193,7 +193,7 @@ const Assignments = () => {
           }
           )}
           <div>
-            {(data?.canApprovePlastMember && AccessToManage(activeUserRoles.filter(r => r != Roles.Supporter && r != Roles.RegisteredUser || activeUserRoles.includes(Roles.Admin)))) ? (
+            {(data?.canApprovePlastMember && userProfileAccess["CanApproveUser"]) ? (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
@@ -271,7 +271,7 @@ const Assignments = () => {
                   </Card>
                 )}
             </div>
-          ) : ( data?.canApproveClubMember ?
+          ) : ( userProfileAccess["CanApproveAsClubHead"] ?
             (
               <div>
                 <Tooltip
@@ -328,7 +328,7 @@ const Assignments = () => {
                     </Link>
                   </Tooltip>
                   <Meta title={moment.utc(data.cityApprover.confirmDate).local().format("DD.MM.YYYY")} className="title-not-link" />
-                  { !userProfile?.isUserPlastun && (<DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove}/>)}
+                  { !userProfile?.isUserPlastun && loadingApprovers && (<DeleteApproveButton approverId={data.cityApprover.id} deleteApprove={deleteApprove}/>)}
                 </Card>
               ) : (
                 <Card
@@ -350,17 +350,17 @@ const Assignments = () => {
               )}
 
             </div>
-          ) : ((data?.cityApprover == null && data?.canApprove && (data?.currentUserId != data?.user.id || activeUserRoles.includes(Roles.Admin)) && (data?.isUserHeadOfCity || activeUserRoles.includes(Roles.Admin))) ?
+          ) : ((data?.cityApprover == null && userProfileAccess["CanApproveAsCityHead"]) ?
             (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"
                   placement="rightBottom">
                   <Spin spinning={approveAsCityHeadLoading}>
-                    <Link to="#" onClick={() => approveClick(data?.user.id, false, activeUserRoles.includes(Roles.CityHead) || activeUserRoles.includes(Roles.Admin))}>
+                    <Link to="#" onClick={() => approveClick(data?.user.id, false, userProfileAccess["CanApproveAsCityHead"])}>
                       <Card
                         hoverable
-                        className="cardStyles"
+                        className="cardStyles"  
                         cover={
                           <Avatar src={AddUser}
                             alt="example" size={168}

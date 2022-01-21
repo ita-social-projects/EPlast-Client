@@ -9,7 +9,6 @@ const classes = require('./ActionCities.module.css');
 
 const ActionCities = () => {
 
-    const [activeUserRoles, setActiveUserRoles] = useState<string[]>();
     const [SwitchValue, setSwitchValue]= useState<boolean>(false);
     const [isAdmin, setIsAdmin] = useState<boolean>();
     

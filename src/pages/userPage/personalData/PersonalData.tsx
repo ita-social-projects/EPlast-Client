@@ -12,8 +12,7 @@ import { Blanks } from "../Blanks/Blanks";
 import UserApi from "../../../api/UserApi";
 import { Data, IPersonalDataContext, User } from "../Interface/Interface";
 import notificationLogic from '../../../components/Notifications/Notification';
-import { string } from "yup";
-import { off } from "process";
+import ScrollToTop from "../../../components/ScrollToTop/ScrollToTop";
 
 const DefaultState: IPersonalDataContext = {
   userProfile: undefined,
@@ -22,7 +21,8 @@ const DefaultState: IPersonalDataContext = {
   activeUserId: "",
   loading: false,
   imageBase64: "",
-  activeUserProfile: undefined
+  activeUserProfile: undefined,
+  userProfileAccess: {}
 }
 
 export const PersonalDataContext = React.createContext<IPersonalDataContext>(DefaultState);
@@ -45,6 +45,7 @@ export default function ({
   const [loading, setLoading] = useState(false);
   const [imageBase64, setImageBase64] = useState<string>("");
   const [fullUserProfile, setFullUserProfile] = useState<Data>();
+  const [userProfileAccess, setUserProfileAccess] = useState<{ [key: string]: boolean }>({})
 
   const [userProfile, SetUserProfile] = useState<Data>();
   const ChangeUserProfile = (user: Data) => {
@@ -60,7 +61,9 @@ export default function ({
     let userRoles = UserApi.getActiveUserRoles();
     setActiveUserRoles(userRoles);
     let currentUserId = UserApi.getActiveUserId();
-    setActiveUserId(userId);
+    let UserProfileAccess = UserApi.getUserProfileAccess(currentUserId, userId);
+    setUserProfileAccess((await UserProfileAccess).data);
+    setActiveUserId(currentUserId);
     let userProfile = await UserApi.getActiveUserProfile();
     setActiveUserProfile(userProfile);
     await UserApi.getById(userId).then(async (response) => {
@@ -92,8 +95,18 @@ export default function ({
 
   return (
     <PersonalDataContext.Provider value={{
-      userProfile, fullUserProfile, activeUserRoles, activeUserId, activeUserProfile, loading, imageBase64, ChangeUserProfile, UpdateData
+      userProfile,
+      fullUserProfile,
+      activeUserRoles,
+      activeUserId,
+      activeUserProfile,
+      userProfileAccess,
+      loading,
+      imageBase64,
+      ChangeUserProfile,
+      UpdateData
     }}>
+      <ScrollToTop />
       <div className="mainContainer">
         <Menu id={userId} />
         {specify === "main" ? (

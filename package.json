@@ -28,8 +28,10 @@
     "formik": "^2.1.4",
     "from-antd-datepicker": "^0.2.10",
     "fullcalendar": "^5.1.0",
+    "interweave": "^12.9.0",
     "jwt-decode": "^2.2.0",
     "moment": "^2.27.0",
+    "pdfmake": "^0.2.4",
     "react": "^16.13.1",
     "react-chat-window": "^1.2.1",
     "react-click-away-listener": "^1.3.0",
@@ -43,6 +45,7 @@
     "react-infinite-scroller": "^1.2.4",
     "react-input-mask": "^2.0.4",
     "react-messenger-customer-chat": "^0.8.0",
+    "react-quill": "^1.3.5",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
     "react-sticky": "^6.0.3",
@@ -79,6 +82,7 @@
     ]
   },
   "devDependencies": {
+    "@types/pdfmake": "^0.1.19",
     "@types/react-infinite-scroller": "^1.2.1",
     "@types/react-input-mask": "^2.0.5",
     "@types/react-sticky": "^6.0.3",

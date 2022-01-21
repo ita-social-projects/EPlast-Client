@@ -4,7 +4,7 @@ import columns from './columns';
 import kadrasApi from "../../api/KadraVykhovnykivApi";
 import DropDown from './KadraDropDown';
 import ClickAwayListener from 'react-click-away-listener';
-import moment from 'moment';
+import { KadraTableInfo } from './Interfaces/KadraTableInfo';
 import NotificationBoxApi from '../../api/NotificationBoxApi';
 
 
@@ -17,18 +17,17 @@ interface props {
 }
 
 export const KVTable = ({ current, searchData }: props) => {
-  const [recordObj, setRecordObj] = useState<number>(0);
+  const [recordObj, setRecordObj] = useState<KadraTableInfo>();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
-  const [loading, setLoading] = useState(false);
-
-  const [data, setData] = useState<any[]>([{
-    id: '',
-    user: '',
-    dateOfGranting: '',
-    numberInRegister: '',
-  }]);
+  const [isLoading, setLoading] = useState(false);
+  const [count, setCount] = useState<number>(0);
+  const [data, setData] = useState<KadraTableInfo[]>(Array<KadraTableInfo>());
+  const [firstPage, setFirstPage] = useState(1);
+  const [lastElement, setLastElement] = useState(1);
 
   const createNotifications = async (userId : string) => {
     await NotificationBoxApi.createNotifications(
@@ -54,14 +53,12 @@ export const KVTable = ({ current, searchData }: props) => {
         });
  } 
   
-  const handleDelete = (id: number) => {
-    const filteredData = data.filter((d: { id: number; }) => d.id !== id);
-    const DeletedKadra = data.find((d: { id: number; }) => d.id === id);
-    setData([...filteredData]);
-    DeletedKadra &&
-    createNotifications(DeletedKadra.userId);
-   
-  }
+ const handleDelete = () => {
+  if(page != firstPage && data.length == lastElement)
+    setPage(page-1);
+  else
+    fetchData();
+}
 
   const onEdit = () => {
     fetchData()
@@ -75,53 +72,38 @@ export const KVTable = ({ current, searchData }: props) => {
 
   const fetchData = async () => {
     setLoading(true);
-    await kadrasApi.getAllKVswithGivenTypes(current).then(response => {
-
-      setData(response.data);
+    
+    await kadrasApi.getEducatorsStaffForTable(current, searchData, page, pageSize).then(response => {
+      setCount(response[0]?.subtotal);
+      setData(response)
     })
     setLoading(false);
   }
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, [current, searchData, page, pageSize])
 
+ const handlePageChange = (page: number) => {
+  setPage(page);
+};
 
-  let filteredData = searchData
-  ? data.filter((item) => {
-      return Object.values([
-        item.numberInRegister,
-        moment.utc(item.dateOfGranting.toLocaleString()).local().format("DD.MM.YYYY"),
-      ]).find((element) => {
-        return String(element).toLowerCase().includes(searchData);
-      });
-    })
-  : data;
-
-
-  filteredData = filteredData.concat(
-    data.filter(
-      (item) =>
-        ( item.user.firstName?.toLowerCase()?.includes(searchData.toLowerCase()) ||
-          item.user.lastName?.toLowerCase()?.includes(searchData.toLowerCase())||
-          (item.user.firstName + ' ' + item.user.lastName)?.toLowerCase()?.includes(searchData.toLowerCase())||
-          (item.user.lastName + ' ' + item.user.firstName)?.toLowerCase()?.includes(searchData.toLowerCase())) &&
-        !filteredData.includes(item)
-    )
-  );
-
+const handleSizeChange = (page: number, pageSize: number = 10) => {
+  setPage(page);
+  setPageSize(pageSize);
+};
 
 
   return (
-    <div>
+    <div className={classes.textCenter}>
+      {!isLoading ?
       <Layout.Content onClick={() => { setShowDropdown(false); }}>
         <Table
           className={classes.table}
-          loading={loading}
           columns={columns}
-          dataSource={filteredData}
+          dataSource={data}
           scroll={{ x: 1300 }}
-          onRow={(record) => {
+          onRow={(record : KadraTableInfo) => {
             return {
               onClick: () => {
                 setShowDropdown(false);
@@ -135,11 +117,25 @@ export const KVTable = ({ current, searchData }: props) => {
               },
             };
           }}
+          onChange={(pagination) => {
+            if (pagination) {
+              window.scrollTo({
+                left: 0,
+                top: 0,
+                behavior: 'smooth',
+              });
+            }
+          }}
           pagination={
             {
-              showLessItems: true,
-              responsive:true,
-              showSizeChanger: true,
+              current: page,
+                pageSize: pageSize,
+                total: count,
+                showLessItems: true,
+                responsive: true,
+                showSizeChanger: true,
+                onChange: (page) => handlePageChange(page),
+                onShowSizeChange: (page, size) => handleSizeChange(page, size),
             }
           }
           bordered
@@ -156,9 +152,8 @@ export const KVTable = ({ current, searchData }: props) => {
             onEdit={onEdit}
           />
         </ClickAwayListener>
-      </Layout.Content>
-    </div>
-
-
+      </Layout.Content> :  <Spin/>
+}
+    </div> 
   )
 }

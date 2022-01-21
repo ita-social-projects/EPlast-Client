@@ -1,3 +1,4 @@
+import IUserAnnualReportAccess from "../../../../../models/UserAccess/IUserAccess";
 import AnnualReport from "../../../Interfaces/AnnualReport";
 
 interface Props {
@@ -5,7 +6,7 @@ interface Props {
     pageX: number;
     pageY: number;
     showDropdown: boolean;
-    canManage: boolean;
+    userAnnualReportAccess: IUserAnnualReportAccess;
     onView: (id: number) => Promise<void>;
     onViewPDF: (id: number) => Promise<void>;
     onCancel: (id: number) => Promise<void>;

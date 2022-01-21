@@ -5,7 +5,15 @@ import Props from "./SavedDropdownProps";
 import styles from "../Dropdown.module.css";
 
 const ConfirmedDropdown = (props: Props) => {
-    const { record, pageX, pageY, showDropdown, onView } = props;
+    const {
+        record,
+        pageX,
+        pageY,
+        userAnnualReportAccess,
+        showDropdown,
+        onView,
+        onViewPDF
+    } = props;
 
     const handleClick = (item: any) => {
         switch (item.key) {
@@ -13,6 +21,7 @@ const ConfirmedDropdown = (props: Props) => {
                 onView(record.id);
                 break;
             case "2":
+                onViewPDF(record.id);
                 break;
             default:
                 break;
@@ -21,25 +30,28 @@ const ConfirmedDropdown = (props: Props) => {
 
     return (
         <>
-            <Menu
-                theme="dark"
-                onClick={handleClick}
-                className={showDropdown ? styles.menu : styles.menuHidden}
-                style={{
-                    position: "absolute",
-                    top: pageY,
-                    left: pageX,
-                }}
-            >
-                <Menu.Item key="1">
-                    <FileSearchOutlined />
-                    Переглянути
-                </Menu.Item>
-                <Menu.Item key="2">
-                    <FilePdfOutlined />
-                    Переглянути у форматі PDF
-                </Menu.Item>
-            </Menu>
+            {userAnnualReportAccess?.CanViewReportDetails &&
+                userAnnualReportAccess?.CanViewClubReportsTable ? (
+                <Menu
+                    theme="dark"
+                    onClick={handleClick}
+                    className={showDropdown ? styles.menu : styles.menuHidden}
+                    style={{
+                        position: "absolute",
+                        top: pageY - 185,
+                        left: pageX - 36,
+                    }}
+                >
+                    <Menu.Item key="1">
+                        <FileSearchOutlined />
+                        Переглянути
+                    </Menu.Item>
+                    <Menu.Item key="2">
+                        <FilePdfOutlined />
+                        Переглянути у форматі PDF
+                    </Menu.Item>
+                </Menu>
+            ) : null}
         </>
     );
 };

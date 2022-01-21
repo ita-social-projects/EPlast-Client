@@ -14,7 +14,7 @@ import {
     emptyPhotoListNotification,
     limitNotification
 } from "./GalleryNotifications";
-
+import './EventInfo.less';
 interface Props {
     eventId: number;
     updateGallery: (uploadedPictures: EventGallery[]) => void;
@@ -92,33 +92,35 @@ const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
             }}
             form={form}
             onFinish={handleSubmit}
+            style={{display:'block' , textAlign:'center', alignItems:'center'}}
         >
 
-            <Form.Item wrapperCol={{  }}
+            <Form.Item 
                 name="upload"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
-                style={{ maxHeight: '400px', overflow: 'auto' }}
-            >
-                <Upload
-                    name="gallery"
-                    listType="picture"
-                    multiple={true}
-                    accept=".jpg,.jpeg,.png"
-                    customRequest={dummyRequest}
-                >
-                    <Tooltip placement="right" title={`Ліміт завантаження: до ${MaxPicturesCount} зображень.`}>
-                        <Button>
-                            <UploadOutlined /> Додати фотографії
-                        </Button>
-                    </Tooltip>
-                </Upload>
-            </Form.Item>
-
-            <Form.Item wrapperCol={{}}>
+                style={{ maxHeight: '400px', overflow: 'auto',justifyContent:'center',overflowX:'hidden' }}      
+            >       
+                     <Upload
+                     name="gallery"
+                     listType="picture"
+                     multiple={true}
+                     accept=".jpg,.jpeg,.png"
+                     customRequest={dummyRequest}
+                     >                      
+                         <Tooltip placement="right" title={`Ліміт завантаження: до ${MaxPicturesCount} зображень.`}>                                      
+                                 <Button className="upploadButton">
+                                 <UploadOutlined /> Додати фотографії
+                                </Button>                             
+                          </Tooltip>                         
+                     </Upload>          
+            </Form.Item>       
+            
+            <Form.Item 
+             style={{justifyContent:'center' }}>               
                 <Button type="primary" htmlType="submit">
                     Завантажити
-                </Button>
+                </Button>               
             </Form.Item>
         </Form>
     );

@@ -17,26 +17,21 @@ const SortedCities = ( {switcher}: Props) => {
   const path: string  = "/cities";
   const history = useHistory();
   const [cities, setCities] = useState<CityProfile[]>([]);
-  const [canCreate, setCanCreate] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
   const {p} = useParams();
-  const [page, setPage] = useState(Number(p));
+  const [page, setPage] = useState(+p);
 
   const setPhotos = async (cities: CityProfile[]) => {
     try {
       for await (const city of cities) {
         if (city.logo === null) {
           city.logo = CityDefaultLogo;
-        } else {
-          const logo = await getLogo(city.logo);
-          city.logo = logo.data;
-        }
+        } 
       }
     } finally {
       setPhotosLoading(false);
@@ -57,8 +52,6 @@ const SortedCities = ( {switcher}: Props) => {
       setActiveUserRoles(userApi.getActiveUserRoles);
       setPhotos(response.data.cities);
       setCities(response.data.cities);
-      setCanCreate(response.data.canCreate);
-      setActiveCanCreate(response.data.canCreate);
       setTotal(response.data.total);
     } finally {
       setLoading(false);
@@ -124,15 +117,17 @@ const SortedCities = ( {switcher}: Props) => {
 };
 
   useEffect(() => {
+    setPage(+p);
+  });
+
+  useEffect(() => {
     switcher ? (getNotActiveCities(page)):(getActiveCities(page)) 
   }, [page, pageSize, searchedData]);
 
   useEffect(()=> {
     if (cities.length !== 0) {
       switcher ? (getNotActiveCities()) :(getActiveCities())
-      setCanCreate(switcher ? false : activeCanCreate);
     }
-    
   },[switcher])
 
   return (

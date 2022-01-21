@@ -12,6 +12,15 @@ import EditDecisionModal from './EditDecisionModal';
 import deleteConfirm from './DeleteConfirm';
 import decisionsApi, { DecisionPost } from '../../api/decisionsApi';
 import { Roles } from '../../models/Roles/Roles';
+import notificationLogic from "../../components/Notifications/Notification";
+import {tryAgain} from "../../components/Notifications/Messages";
+import DecisionLayout from "../../models/PDF/Decision/DecisionLayout";
+import { fonts } from "../../models/PDF/fonts";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfVFS from "../../assets/VFS/vfs";
+
+pdfMake.vfs = pdfVFS;
+pdfMake.fonts = fonts;
 
 interface Props {
   record: number;
@@ -43,7 +52,7 @@ const DropDown = (props: Props) => {
     governingBody: {id : 0, description: "", phoneNumber: "", email: "" ,governingBodyName: "", logo: ""},
     decisionTarget: {id : 0 ,targetName : ""},
     description: "",
-    date: new Date(),
+    date: "",
     userId: "",
     fileName: null,
 });
@@ -77,7 +86,15 @@ const fetchData = async () =>{
     fetchUser();
   }
   ,[]);
-  
+  const handleViewPDF = async (id: number) => {
+    try {
+        let decision = await decisionsApi.getById(id);
+
+        pdfMake.createPdf(DecisionLayout(decision)).open();
+    } catch (error) {
+        notificationLogic("error", tryAgain);
+    }
+};
   /* eslint no-param-reassign: "error" */
   const handleItemClick =async (item: any) => {
     switch (item.key) {
@@ -85,8 +102,7 @@ const fetchData = async () =>{
         setShowEditModal(true);
         break;
       case '2':{
-        const pdf = await decisionsApi.getPdf(record);
-        window.open(pdf);
+        handleViewPDF(record);
         break;
       }
       case '3':

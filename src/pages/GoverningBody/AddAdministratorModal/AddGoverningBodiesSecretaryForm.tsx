@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
-import classes from "../../Regions/Form.module.css";
-import { Form, DatePicker, AutoComplete, Select, Modal, Button, Input } from "antd";
+import formclasses from "../../../pages/DecisionTable/FormAddDecision.module.css";
+import { 
+  Form, 
+  DatePicker, 
+  AutoComplete, 
+  Select, 
+  Modal, 
+  Button, 
+  Input, 
+  Row,
+  Col } from "antd";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
   addAdministrator,
-  editAdministrator,
-  getAllAdmins,
+  editAdministrator
 } from "../../../api/governingBodiesApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import userApi from "../../../api/UserApi";
@@ -22,6 +30,7 @@ import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
 import "./AddAdministrationModal.less"
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
+import Spinner from "../../Spinner/Spinner";
 
 const confirm = Modal.confirm;
 
@@ -31,6 +40,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   const [startDate, setStartDate] = useState<any>();
   const [usersLoading, setUsersLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<ShortUserInfo[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [workEmail, setWorkEmail] = useState<string>("");
 
   const disabledEndDate = (current: any) => {
@@ -70,7 +80,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       `цьому керівному органі`);
   };
 
-
   const showConfirm = (newAdmin: GoverningBodyAdmin, existingAdmin: GoverningBodyAdmin) => {
     confirm({
       title: "Призначити даного користувача на цю посаду?",
@@ -101,6 +110,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   };
 
   const handleSubmit = async (values: any) => {
+    if(loading) return;
+    setLoading(true);
     const newAdmin: GoverningBodyAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
       userId: props.admin === undefined
@@ -136,6 +147,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     } else {
       editGoverningBodyAdmin(newAdmin);
     }
+    setLoading(false);
   };
 
   const onUserSelect = (value: any) => {
@@ -144,34 +156,35 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     form.setFieldsValue({workEmail: email});
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setUsersLoading(true);
-      await adminApi.getUsersByExactRoles(
-        [
-          [Roles.PlastMember],
-          [Roles.PlastMember, Roles.KurinHead],
-          [Roles.PlastMember, Roles.KurinHeadDeputy]
-        ],
-        true)
-      .then((response) => {
-        setUsers(response.data)
-        setUsersLoading(false);
-      });
-    };
-    fetchData();
-  }, []);
+  const fetchData = async () => {
+    setUsersLoading(true);
+    await adminApi.getUsersByExactRoles(
+      [
+        [Roles.PlastMember],
+        [Roles.PlastMember, Roles.KurinHead],
+        [Roles.PlastMember, Roles.KurinHeadDeputy]
+      ],
+      true)
+    .then((response) => {
+      setUsers(response.data)
+      setUsersLoading(false);
+    });
+  }
 
   useEffect(() => {
+    fetchData();
     if (props.visibleModal) {
       form.resetFields();
     }
   }, [props]);
 
-  return (
+  return loading ? (
+    <Spinner/>
+  ):(
     <Form name="basic" onFinish={handleSubmit} form={form}>
       <Form.Item
-        className={classes.formField}
+        className={formclasses.formField}
+        labelCol={{ span: 24 }}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
         label="Користувач"
         name="userId"
@@ -185,7 +198,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         <Select
           showSearch
           loading={usersLoading}
-          className={classes.inputField}
+          className={formclasses.inputField}
           onChange={value => onUserSelect(value)}
         >
           {users?.map((o) => (
@@ -197,7 +210,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+        className={formclasses.formField}
+        labelCol={{ span: 24 }}
         label="Тип адміністрування"
         initialValue={
           props.admin === undefined ? "" : props.admin.adminType.adminTypeName
@@ -211,7 +225,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         ]}
       >
         <AutoComplete
-          className={classes.inputField}
+          className={formclasses.inputField}
           options={[
             { value: Roles.GoverningBodyHead },
             { value: "Голова КПР" },
@@ -226,7 +240,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
 
       <Form.Item
         name="workEmail"
-        className={classes.formField}
+        className={formclasses.formField}
+        labelCol={{ span: 24 }}
         label="Електронна пошта"
         rules={[
             {
@@ -245,22 +260,24 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       >
         <Input
           placeholder="Електронна пошта"
-          className={classes.inputField}
+          className={formclasses.inputField}
           value={workEmail}
           onChange={e => setWorkEmail(e.target.value)}
         />
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+        className={formclasses.formField}
+        labelCol={{span:12}}
+        labelAlign="left"
         label="Дата початку"
         name="startDate"
         initialValue={
           props.admin === undefined ? undefined : moment.utc(props.admin.startDate).local()
         }
-      >
+        >
         <DatePicker
-          className={classes.inputField}
+          className={formclasses.inputField}
           disabledDate={disabledStartDate}
           onChange={(e) => setStartDate(e)}
           format="DD.MM.YYYY"
@@ -268,7 +285,9 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+        className={formclasses.formField}
+        labelCol={{span:12}}
+        labelAlign="left"
         label="Дата кінця"
         name="endDate"
         initialValue={
@@ -280,7 +299,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         }
       >
         <DatePicker
-          className={classes.inputField}
+          className={formclasses.inputField}
           disabledDate={disabledEndDate}
           format="DD.MM.YYYY"
         />

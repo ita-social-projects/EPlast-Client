@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
+import ButtonCollapse from "../../components/ButtonCollapse/ButtonCollapse";
 import ReactDOM from "react-dom";
 import {
   Form,
@@ -53,7 +54,10 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     FileName: null,
   });
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
+  const [tip, setTip] = useState<string>('Введіть  ім\`я користувача');
+  const [tipOnNotFound, setTipOnNotFound] = useState<string>('Введіть  ім\`я користувача');
   const [userData, setUserData] = useState<any[]>([]);
+ 
   const [search, setSearch] = useState<string>('');
   const { Option } = Mentions;
   const [form] = Form.useForm();
@@ -65,13 +69,29 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     }
     return e && e.fileList;
   };
-
+ 
   const onSearch = async (search: string) => {
-    if (search !== "" && search !== null) {
+    setTipOnNotFound("") 
+    setUserData([]);
+    const removeElements = (elms:NodeListOf<any>) => elms.forEach(el => el.remove());
+    removeElements( document.querySelectorAll(".mentionOption") );
+    
+    var trigger = search,
+    regexp = new RegExp('^[\\\\./]'),
+    test = regexp.test(trigger); 
+  
+    if (search !== "" && search !== null && test != true) {
       await adminApi.getShortUserInfo(search).then((response) => {
         setUserData(response.data);
+        setTip("")
+        setTipOnNotFound("Даних не знайдено")
         setLoadingUserStatus(false);
       });
+    }
+    else{ 
+      setTipOnNotFound('Введіть  ім\`я користувача');
+      setTip('Введіть  ім\`я користувача');
+      setLoadingUserStatus(false);
     }
   };
 
@@ -80,8 +100,8 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     setMentionedUsers(old => [...old, user]);
   };
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => [onSearch(search), setLoadingUserStatus(true)], 1000);
+ useEffect(() => {
+    const timeoutId = setTimeout(() => [onSearch(search)], 10);
     return () => clearTimeout(timeoutId);
   }, [search]);
 
@@ -103,7 +123,9 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     setFileData({ FileAsBase64: null, FileName: null });
     setVisibleModal(false);
   };
-
+  const handleClose = () => {
+    setVisibleModal(false);
+  };
   const handleUpload = (info: any) => {
     if (info.file !== null) {
       if (info.file.size <= 3145728) {
@@ -169,7 +191,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
         description: values.description,
         date:
           /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ 
-          moment.utc(values.datepicker.i).local().toDate(),
+          moment(values.datepicker).format("YYYY-MM-DD HH:mm:ss"),
         fileName: fileData.FileName,
         userId: user.nameid,
       },
@@ -197,7 +219,9 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     };
     fetchData();
   }, []);
-  return (
+
+  return (<>
+    <ButtonCollapse handleClose={handleClose}/>
     <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{ position: 'relative' }}>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
@@ -297,18 +321,23 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             rules={descriptionValidation.Description}
           >
             <Mentions
+              getPopupContainer={() => document.getElementById('area')! as HTMLElement}
+              onChange = {()=>{if(search!=''){setLoadingUserStatus(true)}}}
+              notFoundContent = {<h5>{tipOnNotFound}</h5>}
               loading={loadingUserStatus}
               onSearch={(s => setSearch(s))}
               rows={5}
               onSelect={onSelect}
               className={formclasses.formField}
             >
+
+           <Option value=""  disabled >{tip}</Option> 
               {userData?.map((u) =>
-                <Option
+                <Option className="mentionOption"
                   key={u.id}
                   value={u.firstName + ' ' + u.lastName}
                 >
-                  {u.firstName + ' ' + u.lastName}
+                  {u.firstName + ' ' + u.lastName + ' ' + u.email}
                 </Option>)}
             </Mentions>
           </Form.Item>
@@ -415,6 +444,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
         </Col>
       </Row>
     </Form>
+    </>
   );
 };
 

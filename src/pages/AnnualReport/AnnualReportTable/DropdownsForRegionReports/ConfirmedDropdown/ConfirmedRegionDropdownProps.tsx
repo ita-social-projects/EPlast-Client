@@ -1,3 +1,5 @@
+import IUserAnnualReportAccess from "../../../../../models/UserAccess/IUserAccess";
+
 interface Props {
     regionRecord: {
         count: number;
@@ -10,7 +12,7 @@ interface Props {
     pageX: number;
     pageY: number;
     showDropdown: boolean;
-    canManage: boolean;
+    userAnnualReportAccess: IUserAnnualReportAccess;
     onView: (id: number, year: number) => Promise<void>;
     onCancel: (id: number) => Promise<void>;
 }

@@ -8,7 +8,6 @@ import {
     Tag,
     Tooltip,
     Col,
-    Space,
 } from "antd";
 import moment from "moment";
 import AnnualReportApi from "../../../api/AnnualReportApi";
@@ -24,7 +23,7 @@ import { CaretUpOutlined, CaretDownOutlined } from "@ant-design/icons";
 import RegionSelectModal from "./RegionSelectModal/RegionSelectModal";
 import { useHistory, useParams } from "react-router-dom";
 import UserApi from "../../../api/UserApi";
-import { Roles } from "../../../models/Roles/Roles";
+import IUserAnnualReportAccess from "../../../models/UserAccess/IUserAccess";
 
 const { Title } = Typography;
 
@@ -41,16 +40,16 @@ const setTagColor = (status: number) => {
 
 const tabList = [
     {
+        key: "country",
+        tab: "Річні звіти округ",
+    },
+    {
         key: "city",
         tab: "Річні звіти станиць",
     },
     {
         key: "hovel",
         tab: "Річні звіти куренів",
-    },
-    {
-        key: "country",
-        tab: "Річні звіти округ",
     },
 ];
 
@@ -62,13 +61,11 @@ const AnnualReportTable = () => {
     const [showCitySelectModal, setShowCitySelectModal] = useState<boolean>(false);
     const [showClubSelectModal, setShowClubSelectModal] = useState<boolean>(false);
     const [sortKey, setSortKey] = useState<number>(1);
-    const [cityManager, setCityManager] = useState<boolean>(false);
-    const [clubManager, setClubManager] = useState<boolean>(false);
-    const [regionManager, setRegionManager] = useState<boolean>(false);
+    const [userAnnualReportAccess, setUserAnnualReportAccess] = useState<IUserAnnualReportAccess>();
     const history = useHistory();
 
     useEffect(() => {
-        checkAccessToManage();
+        getUserAccess();
         fetchAnnualReportStatuses();
         setSearchedData(searchedData);
     }, [searchedData, sortKey]);
@@ -82,22 +79,13 @@ const AnnualReportTable = () => {
         }
     };
 
-    const checkAccessToManage = () => {
-        let roles = UserApi.getActiveUserRoles();
-        setCityManager(
-            roles.includes(Roles.Admin) ||
-            roles.includes(Roles.CityHead) ||
-            roles.includes(Roles.CityHeadDeputy)
-        );
-        setClubManager(
-            roles.includes(Roles.Admin) ||
-            roles.includes(Roles.KurinHead) ||
-            roles.includes(Roles.KurinHeadDeputy)
-        );
-        setRegionManager(
-            roles.includes(Roles.Admin) ||
-            roles.includes(Roles.OkrugaHead) ||
-            roles.includes(Roles.OkrugaHeadDeputy)
+    const getUserAccess = async () => {
+        setUserAnnualReportAccess(
+            await (
+                await AnnualReportApi.getUserAnnualReportAccess(
+                    UserApi.getActiveUserId()
+                )
+            ).data
         );
     };
 
@@ -367,6 +355,8 @@ const AnnualReportTable = () => {
                     columns={columns}
                     searchedData={searchedData}
                     sortKey={sortKey}
+                    userCertainAnnualReportAccess={userAnnualReportAccess!}
+                    setUserCertainAnnualReportAccess={setUserAnnualReportAccess}
                 />
             </div>
         ),
@@ -376,6 +366,8 @@ const AnnualReportTable = () => {
                     columns={columnsClub}
                     searchedData={searchedData}
                     sortKey={sortKey}
+                    userCertainAnnualReportAccess={userAnnualReportAccess!}
+                    setUserCertainAnnualReportAccess={setUserAnnualReportAccess}
                 />
             </div>
         ),
@@ -385,6 +377,8 @@ const AnnualReportTable = () => {
                     columns={columnsRegion}
                     searchedData={searchedData}
                     sortKey={sortKey}
+                    userCertainAnnualReportAccess={userAnnualReportAccess!}
+                    setUserCertainAnnualReportAccess={setUserAnnualReportAccess}
                 />
             </div>
         ),
@@ -407,7 +401,7 @@ const AnnualReportTable = () => {
                 className="AnnualReportTableButtonsSearchField"
             >
                 <Col className="AnnualReportTableButtons">
-                    {cityManager ? (
+                    {userAnnualReportAccess?.CanSubmitCityReport ? (
                         <Button
                             type="primary"
                             onClick={() => setShowCitySelectModal(true)}
@@ -417,7 +411,7 @@ const AnnualReportTable = () => {
                     ) : null}
                 </Col>
                 <Col>
-                    {clubManager ? (
+                    {userAnnualReportAccess?.CanSubmitClubReport ? (
                         <Button
                             type="primary"
                             onClick={() => setShowClubSelectModal(true)}
@@ -427,7 +421,7 @@ const AnnualReportTable = () => {
                     ) : null}
                 </Col>
                 <Col>
-                    {regionManager ? (
+                    {userAnnualReportAccess?.CanSubmitRegionReport ? (
                         <Button
                             type="primary"
                             onClick={() => setShowRegionAnnualReports(true)}
@@ -447,6 +441,10 @@ const AnnualReportTable = () => {
                 </Col>
             </Row>
             <Row>
+            {userAnnualReportAccess?.IsSuperAdmin || 
+                (userAnnualReportAccess?.CanViewRegionReportsTable && 
+                    userAnnualReportAccess?.CanViewClubReportsTable && 
+                        userAnnualReportAccess?.CanViewCityReportsTable) ? (
                 <Card
                     className="AnnualReportTableTabs"
                     tabList={tabList}
@@ -457,20 +455,76 @@ const AnnualReportTable = () => {
                 >
                     {contentList[noTitleKey]}
                 </Card>
+            ) : null}
+            {userAnnualReportAccess?.CanViewCityReportsTable && 
+                userAnnualReportAccess?.CanViewClubReportsTable && 
+                !userAnnualReportAccess?.CanViewRegionReportsTable ? (
+                <Card
+                    className="AnnualReportTableTabs"
+                    tabList={[tabList[1],tabList[2]]}
+                    activeTabKey={noTitleKey}
+                    onTabChange={(key) => {
+                        onTabChange(key);
+                    }}
+                >
+                    {contentList[noTitleKey]}
+                </Card>
+            ) : null}
+            {userAnnualReportAccess?.CanViewCityReportsTable && 
+                !userAnnualReportAccess?.CanViewClubReportsTable && 
+                !userAnnualReportAccess?.CanViewRegionReportsTable ? (
+                <Card
+                    className="AnnualReportTableTabs"
+                    tabList={[tabList[1]]}
+                    activeTabKey={noTitleKey}
+                    onTabChange={(key) => {
+                        onTabChange(key);
+                    }}
+                >
+                    {contentList[noTitleKey]}
+                </Card>
+            ) : null}
+            {userAnnualReportAccess?.CanViewClubReportsTable && 
+                !userAnnualReportAccess?.CanViewCityReportsTable ? (
+                <Card
+                    className="AnnualReportTableTabs"
+                    tabList={[tabList[2]]}
+                    activeTabKey={noTitleKey}
+                    onTabChange={(key) => {
+                        onTabChange(key);
+                    }}
+                >
+                    {contentList[noTitleKey]}
+                </Card>
+            ) : null}
+            {userAnnualReportAccess?.CanViewRegionReportsTable && 
+                !userAnnualReportAccess?.CanViewClubReportsTable ? (
+                <Card
+                    className="AnnualReportTableTabs"
+                    tabList={[tabList[0],tabList[1]]}
+                    activeTabKey={noTitleKey}
+                    onTabChange={(key) => {
+                        onTabChange(key);
+                    }}
+                >
+                    {contentList[noTitleKey]}
+                </Card>
+            ) : null}
             </Row>
-            {regionManager ? (
+            {userAnnualReportAccess?.CanSubmitRegionReport ? (
+
                 <RegionSelectModal
                     visibleModal={showRegionAnnualReports}
                     handleOk={() => setShowRegionAnnualReports(false)}
                 />
             ) : null}
-            {cityManager ? (
+            {userAnnualReportAccess?.CanSubmitCityReport ? (
                 <CitySelectModal
                     visibleModal={showCitySelectModal}
                     handleOk={() => setShowCitySelectModal(false)}
                 />
             ) : null}
-            {clubManager ? (
+            {userAnnualReportAccess?.CanSubmitClubReport ? (
                 <ClubSelectModal
                     visibleModal={showClubSelectModal}
                     handleOk={() => setShowClubSelectModal(false)}
