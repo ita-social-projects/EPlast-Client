@@ -42,7 +42,7 @@ const addAboutBaseSubsection = async (data:Subsection)=>{
     return await api.post(`AboutBase/AboutBaseSubsection/Create`,data);
 };
 
-const uploadSubsectionPictures = async (subsectionId: number, data: any) => {
+const uploadSubsectionPictures = async (subsectionId: number, data: any) =>{
     return await api.post(`AboutBase/${subsectionId}/subsectionPictures`, data)
 }
 

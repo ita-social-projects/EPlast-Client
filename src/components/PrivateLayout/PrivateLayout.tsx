@@ -27,16 +27,6 @@ const { SubMenu } = Menu;
 const PrivateLayout = ({ children }: any) => {
   const [collapsed, setCollapsed] = useState(true);
   const history = useHistory();
-  const [activeUserRoles, setActiveUserRoles] = useState<string[]>();
-  const [canEdit, setCanEdit] = useState(false);
-  const [canSee, setCanSee] = useState(false);
-  const [canAccess, setCanAccess] = useState(false);
-  const [regionAdm, setRegionAdm] = useState(false);
-  const [regionAdmDeputy, setRegionAdmDeputy] = useState(false);
-  const [cityAdm, setCityAdm] = useState(false);
-  const [cityAdmDeputy, setCityAdmDeputy] = useState(false);
-  const [clubAdm, setClubAdm] = useState(false);
-  const [clubAdmDeputy, setClubAdmDeputy] = useState(false);
   const [id, setId] = useState<string>("");
   const [onlyRegistered, setOnlyRegistered] = useState(false);
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
@@ -45,6 +35,8 @@ const PrivateLayout = ({ children }: any) => {
   const ref = useRef(null)
   const [userAnnualReportAccess, setUserAnnualReportAccess] = useState<IUserAnnualReportAccess>();
   const [userStatisticsAccess, setUserStatisticsAccess] = useState<IUserStatisticsAccess>();
+
+  const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({});
 
   const handleClickOutside = () => {
     setCollapsed(true);
@@ -61,9 +53,19 @@ const PrivateLayout = ({ children }: any) => {
     setCollapsed(true);
   };
 
+  const getUserAccessesForMenu = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    await UserApi.getUserMenuAccess(user.nameid).then(
+      response => {
+        setUserAccesses(response.data);
+      }
+    );
+  }
+
   const [imageBase64, setImageBase64] = useState<string>();
   const fetchData = async () => {
     const token = AuthStore.getToken() as string;
+    getUserAccessesForMenu();
     if (token == null) {
       const str = window.location.pathname
       if (str !== "/signin") {
@@ -84,16 +86,6 @@ const PrivateLayout = ({ children }: any) => {
 
   const fetchUser = async () => {
     let roles = UserApi.getActiveUserRoles();
-    setActiveUserRoles(roles);
-    setCanEdit(roles.includes(Roles.Admin));
-    setRegionAdm(roles.includes(Roles.OkrugaHead));
-    setRegionAdmDeputy(roles.includes(Roles.OkrugaHeadDeputy));
-    setCityAdm(roles.includes(Roles.CityHead));
-    setCityAdmDeputy(roles.includes(Roles.CityHeadDeputy));
-    setClubAdm(roles.includes(Roles.KurinHead));
-    setClubAdmDeputy(roles.includes(Roles.KurinHeadDeputy));
-    setCanSee(roles.includes(Roles.PlastMember));
-    setCanAccess(roles.includes(Roles.Supporter));
     setOnlyRegistered(roles.includes(Roles.RegisteredUser));
     setPlastMember(roles.includes(Roles.PlastMember));
     let userProfile = await UserApi.getActiveUserProfile();
@@ -141,7 +133,7 @@ const PrivateLayout = ({ children }: any) => {
               /></Link>
           </div>
           <Menu theme="dark" mode="inline" className={classes.leftMenu}>
-            {(canEdit || canSee || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy) ? (
+            {userAccesses["decisions"] ? (
               <Menu.Item
                 key="0"
                 icon={<SolutionOutlined />}
@@ -165,7 +157,7 @@ const PrivateLayout = ({ children }: any) => {
             }
 
             <SubMenu key="sub1" icon={<BookOutlined />} title="Довідник">
-              {(canEdit || canSee || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy || plastMember) ? (
+              {userAccesses["userTable"] ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/user/table"); }} key="2">
                   Таблиця користувачів
                 </Menu.Item>
@@ -180,7 +172,7 @@ const PrivateLayout = ({ children }: any) => {
               <Menu.Item onClick={() => { handleClickAway(); history.push("/cities/page/1"); }} key="4">
                 Станиці
               </Menu.Item>
-              {(canEdit || canSee || canAccess || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy) ? (
+              {userAccesses["clubs"] ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/clubs/page/1'); }} key="5">
                   Курені
                 </Menu.Item>
@@ -192,13 +184,13 @@ const PrivateLayout = ({ children }: any) => {
                 </Menu.Item>
               ) : (<> </>)
               }
-              {(canEdit || canSee || canAccess || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy) ? (
+              {userAccesses["distinctions"] ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/distinctions'); }} key="7">
                   Відзначення
                 </Menu.Item>
               ) : (<> </>)
               }
-              {(canEdit || canSee || canAccess || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy) ? (
+              {userAccesses["precaution"] ? (
                 <Menu.Item onClick={() => {
                   handleClickAway();
                   history.push('/precautions');
@@ -207,19 +199,19 @@ const PrivateLayout = ({ children }: any) => {
                 </Menu.Item>
               ) : (<> </>)
               }
-              {(canEdit || canSee || canAccess || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy) ? (
+              {userAccesses["kadra"] ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/kadra'); }} key="8">
                   Кадра виховників
                 </Menu.Item>)
                 : (<> </>)
               }
-              {(canEdit || canSee || canAccess || regionAdm || regionAdmDeputy || cityAdm || cityAdmDeputy || clubAdm || clubAdmDeputy) ? (
+              {userAccesses["renewals"] ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/renewals'); }} key="18">
                   Відновлення статусу
                 </Menu.Item>)
                 : (<> </>)
               }
-              {(canEdit || canSee || canAccess || regionAdm || cityAdm || clubAdm || activeUserProfile?.city) ? (
+              {userAccesses["legislation"] ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/legislation'); }} key="14">
                   Репозитарій
                 </Menu.Item>)
@@ -257,7 +249,7 @@ const PrivateLayout = ({ children }: any) => {
                 </Menu.Item>
               ) : (<> </>))
             }
-            {(canEdit || canSee || canAccess || regionAdm || cityAdm || clubAdm) ? (
+            {userAccesses["aboutBase"] ? (
               <Menu.Item
                 onClick={() => { handleClickAway(); history.push('/aboutBase'); }}
                 key="17"
@@ -268,7 +260,7 @@ const PrivateLayout = ({ children }: any) => {
               </Menu.Item>
             ) : (<> </>)
             }
-            {(canEdit === true || canSee === true || canAccess === true || regionAdm === true || cityAdm === true || clubAdm === true) ? (
+            {userAccesses["terms"] ? (
                 <Menu.Item 
                   onClick={() => { handleClickAway(); history.push('/terms'); }} 
                   key="18"
