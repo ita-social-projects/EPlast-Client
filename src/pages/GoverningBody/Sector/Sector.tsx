@@ -420,7 +420,7 @@ const Sector = () => {
                 <Button
                   type="primary"
                   className="governingBodyInfoButton"
-                  onClick={() => history.push(`/announcements`)}
+                  onClick={() => history.push(`/announcements/page/1`)}
                 >
                   Більше
                 </Button>

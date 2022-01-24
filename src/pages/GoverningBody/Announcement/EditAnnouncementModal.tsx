@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Row, Col, Drawer } from "antd";
+import { Form, Button, Row, Col, Drawer, Upload } from "antd";
 import formclasses from "./Form.module.css";
 import {
   emptyInput,
@@ -8,51 +8,77 @@ import {
 import {
   getAnnouncementsById
 } from "../../../api/governingBodiesApi";
-import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
+import ReactQuill from "react-quill";
+import Spinner from "../../Spinner/Spinner";
+import { useHistory } from "react-router-dom";
 
 interface Props {
   visibleModal: boolean;
   id: number;
   setVisibleModal: (visibleModal: boolean) => void;
-  onEdit: (id: number, ann: Announcement) => void;
+  onEdit: (id: number, text: string, images: string[]) => void;
 }  
 
 const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Props) => {
   const [form] = Form.useForm();
-  const [announcement, setAnnouncement] = useState<any>()
   const [text, setText] = useState<string>("");
+  const [uploadImages, setUploadImages] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const history = useHistory();
+
   useEffect(() => {
     getAnnouncement(id);
-    console.log(id)
   }, [id])
 
+  function getUid() {
+    return (new Date()).getTime();
+  }
+  
   const getAnnouncement = async(id: number) => {
+    setLoading(true);
     await getAnnouncementsById(id)
     .then(response => {
-      setAnnouncement(response.data)
-      setText(response.data.text)
+      setText(response.data.text);
+      response.data.images.map((image:any) => 
+        {
+          setUploadImages(uploadImages=>[...uploadImages, {
+            url: image.imageBase64,
+            uid: getUid(),
+            type:"image/"+image.imageBase64.substring(
+              image.imageBase64.indexOf(".") + 1, 
+              image.imageBase64.indexOf(";")
+            )
+          }]);
+        });
+      
     })
     .catch((err) => {
-      console.log(err)
+      console.log(err);
     })
-  }
+    setLoading(false);
+  };    
 
   const handleCancel = () => {
+    setLoading(true);
     setVisibleModal(false);
+    setUploadImages([]);
+    setLoading(false);
   };
 
-  const handleSubmit = (values: any) => {
+  const handleUpload = (images: any) => {
+    setUploadImages(images.fileList);
+  };
+
+  const handleSubmit = (values: any) => {    
+    setLoading(true);
     setVisibleModal(false);
     form.resetFields();
-    var updatedAnnouncement: Announcement = {
-      id: announcement.id,
-      text: text,
-      date: announcement.date,
-      firstName: announcement.user.firstName,
-      lastName: announcement.user.lastName,
-      userId: announcement.userId,
-    };
-    onEdit(id,updatedAnnouncement);
+    let imgs = uploadImages.map((image: any)=>
+    {
+      return image.url || image.thumbUrl;
+    })
+    onEdit(id, text, imgs);
+    setLoading(false);
   };
   
   return (
@@ -60,11 +86,12 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
       title="Редагувати оголошення"
       placement="right"
       width="auto"
-      height={1000}
       visible={visibleModal}
       onClose={handleCancel}
       footer={null}
     >
+      {loading ?
+      <Spinner/>:
       <Form
         name="basic"
         onFinish={handleSubmit}
@@ -79,30 +106,28 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
             label="Текст оголошення"
             labelCol={{ span: 24 }}
             name="text"
-            rules={[
-              { required: true, message: emptyInput() },
-              {
-                max: 1000,
-                message: maxLength(1000),
-              },
-            ]}
-             initialValue={text}
+            initialValue={text}
           >
             <p></p>
-            <Input.TextArea
-              name="text-area"
-              value = {text}
-              onChange={(e) => {setText(e.target.value)}}
-              allowClear
-              autoSize={{
-                minRows: 2,
-                maxRows: 15,
-              }}
-              className={formclasses.inputField}
-              maxLength={1001}
+            <ReactQuill 
+              theme="snow"
+              placeholder="Введіть текст..."
+              value={text}
+              onChange={str=>{setText(str)}}
             />
           </Form.Item>
         </Col>
+      </Row>
+      <Row>
+        <Upload
+          listType="picture-card"
+          accept=".jpeg,.jpg,.png"
+          fileList={uploadImages}
+          onChange={handleUpload}
+          beforeUpload={() => false}
+        >
+          {'Upload'}
+        </Upload>
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
@@ -127,8 +152,10 @@ const EditAnnouncementModal = ({visibleModal, setVisibleModal, onEdit, id}: Prop
         </Col>
       </Row>
     </Form>
+}
   </Drawer>
   );
 };
 
 export default EditAnnouncementModal;
+

@@ -23,12 +23,12 @@ import {
 } from "@ant-design/icons";
 import {
   getAnnouncementsById,
-  getAllAnnouncements,
   getGoverningBodyById,
   getGoverningBodyLogo,
   getUserAccess,
   removeGoverningBody, 
-  addAnnouncement
+  addAnnouncement,
+  getAnnouncementsByPage
 } from "../../../api/governingBodiesApi";
 import "./GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -57,6 +57,7 @@ import { getUsersByAllRoles } from "../../../api/adminApi";
 import { Roles } from '../../../models/Roles/Roles';
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import { Markup } from "interweave";
 
 const GoverningBody = () => {
   const history = useHistory();
@@ -146,16 +147,16 @@ const GoverningBody = () => {
       usersId,
       "Додане нове оголошення.",
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/announcements`,
+      `/announcements/page/1`,
       `Переглянути`
     );
   }
 
-  const onAnnouncementAdd = async (str: string) => {
+  const onAnnouncementAdd = async (text: string, images: string[]) => {
     setVisibleAddModal(false);
     setLoading(true);
     newAnnouncementNotification();
-    const announcementId = (await addAnnouncement(str)).data;
+    const announcementId = (await addAnnouncement(text, images)).data;
     let newAnnouncement: GoverningBodyAnnouncement = (await getAnnouncementsById(announcementId)).data;
     let newAnnouncements: GoverningBodyAnnouncement[] = announcements;
     newAnnouncements.unshift(newAnnouncement);
@@ -196,11 +197,11 @@ const GoverningBody = () => {
     try {
       let userAccesses = await getUserAccesses();
       if(userAccesses.data["ViewAnnouncements"]){
-        const res: GoverningBodyAnnouncement[]  = (await getAllAnnouncements()).data;
+        const res: any  = (await getAnnouncementsByPage(1, 3)).data;
         let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];
-        for(let i = 0; i < res.length && i < announcementsQuantity; i++) {
-          res[i].text = res[i].text.substring(0,40) + (res[i].text.length > 40? "...": "")
-          shortListedAnnoncements = [...shortListedAnnoncements, res[i]]
+        for(let i = 0; i < announcementsQuantity; i++) {
+          res.item1[i].text = res.item1[i].text.substring(0,40) + (res.item1[i].text.length > 40? "...": "")
+          shortListedAnnoncements = [...shortListedAnnoncements, res.item1[i]]
         }
         setAnnouncements(shortListedAnnoncements)
       }
@@ -519,7 +520,11 @@ const GoverningBody = () => {
                       style={{padding: "0.3rem"}}
                     >
                       <Paragraph><strong>{announcement.user.firstName}</strong></Paragraph>
-                      <Paragraph style={{overflow:"hidden",textOverflow:"ellipsis", wordBreak:"break-word"}}>{announcement.text}</Paragraph>
+                      <Paragraph style={{overflow:"hidden",textOverflow:"ellipsis", wordBreak:"break-word"}}>
+                        <Markup
+                          content={announcement.text}
+                        />
+                        </Paragraph>
                       <Paragraph>{moment.utc(announcement.date).local().format("DD.MM.YYYY")}</Paragraph>
                     </Col>
                     )) 
@@ -538,7 +543,7 @@ const GoverningBody = () => {
                 <Button
                   type="primary"
                   className="governingBodyInfoButton"
-                  onClick={() => history.push(`/announcements`)}
+                  onClick={() => history.push(`/announcements/page/1`)}
                 >
                   Більше
                 </Button>
