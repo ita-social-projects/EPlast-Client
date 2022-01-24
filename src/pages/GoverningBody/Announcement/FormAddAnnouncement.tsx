@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Row, Col } from "antd";
+import React, { useState } from "react";
+import { Form, Button, Row, Col, Upload } from "antd";
 import formclasses from "./Form.module.css";
 import {
   emptyInput,
   maxLength,
 } from "../../../components/Notifications/Messages";
-import {
-  addAnnouncement,
-  getAllAnnouncements,
-  getAllUserId,
-} from "../../../api/governingBodiesApi";
-import { Announcement } from "../../../models/GoverningBody/Announcement/Announcement";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import ReactQuill from "react-quill";
+import { UploadFile } from "antd/lib/upload/interface";
 
 type FormAddAnnouncementProps = {
   setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: (arg0: string) => void;
+  onAdd: (text: string, images: string[]) => void;
 };
 
 const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
@@ -23,22 +18,9 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 ) => {
   const { setVisibleModal, onAdd } = props;
   const [form] = Form.useForm();
-  const [submitLoading, setSubmitLoading] = useState(false);
-  const [distData, setDistData] = useState<Announcement[]>(
-    Array<Announcement>()
-  );
-  const [loadingUserStatus, setLoadingUserStatus] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await getAllAnnouncements().then((response) => {
-        setDistData(response.data);
-      });
-     
-      setLoadingUserStatus(true);
-    };
-    fetchData();
-  }, []);
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const handleCancel = () => {
     form.resetFields();
@@ -49,8 +31,22 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     setSubmitLoading(true);
     setVisibleModal(false);
     form.resetFields();
-    onAdd(values.text);
+    onAdd(values.text, photos);
     setSubmitLoading(false);
+  };
+
+  const getBase64 = (img: Blob, callback: Function) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
+  const handleUpload = ( images: any ) => {
+    setFileList(images.fileList);
+    if (images.fileList.length === 0) return;
+    getBase64(images.file, (base64: string) => {
+      setPhotos([...photos, base64]);
+    });
   };
 
   return (
@@ -65,6 +61,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
         <Col md={24} xs={24}>
           <Form.Item
             className={formclasses.formField}
+            initialValue={''}
             label="Текст оголошення"
             labelCol={{ span: 24 }}
             name="text"
@@ -76,17 +73,23 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
               },
             ]}
           >
-            <Input.TextArea
-              allowClear
-              autoSize={{
-                minRows: 2,
-                maxRows: 15,
-              }}
-              className={formclasses.inputField}
-              maxLength={1001}
+            <ReactQuill 
+              theme="snow"
+              placeholder="Введіть текст..."
             />
           </Form.Item>
         </Col>
+      </Row>
+      <Row>
+        <Upload
+          listType="picture-card"
+          accept=".jpeg,.jpg,.png"
+          fileList={fileList}
+          onChange={handleUpload}
+          beforeUpload={() => false}
+        >
+          {'Upload'}
+        </Upload>
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
