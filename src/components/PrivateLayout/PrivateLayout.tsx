@@ -144,7 +144,7 @@ const PrivateLayout = ({ children }: any) => {
               </Menu.Item>
             ) : (<> </>)
             }
-            {activeUserProfile?.city ? (
+            {userAccesses["regionBoard"] ? (
               <Menu.Item
                 key="1"
                 icon={<BankOutlined />}
@@ -163,7 +163,7 @@ const PrivateLayout = ({ children }: any) => {
                 </Menu.Item>
               ) : (<> </>)
               }
-              {activeUserProfile?.city ? (
+              {userAccesses["regions"] ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/regions/page/1"); }} key="3" >
                   Округи
                 </Menu.Item>
@@ -178,7 +178,7 @@ const PrivateLayout = ({ children }: any) => {
                 </Menu.Item>
               ) : (<> </>)
               }
-              {activeUserProfile?.city ? (
+              {userAccesses["events"] ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push('/events/types'); }} key="6">
                   Події
                 </Menu.Item>
