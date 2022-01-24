@@ -132,7 +132,7 @@ const FormAddSubsection: React.FC<FormAddSubsectionProps> = (props: any) => {
     };
 
     const handleChange = (pictures: any) => {
-        setPictures(pictures.pictures);
+        setPictures(pictures.fileList);
     };
 
     return (
