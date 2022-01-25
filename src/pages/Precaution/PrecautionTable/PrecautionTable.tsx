@@ -220,25 +220,13 @@ const PrecautionTable = () => {
     setPage(res[0].current);
     setPageSize(res[0].pageSize);    
     
-    if (res[1].status === null)
-      setStatusSorter([]);
-    else
-      setStatusSorter(res[1].status);
+    res[1].status === null ? setStatusSorter([]) : setStatusSorter(res[1].status);
 
-    if(res[1].precautionName === null)
-      setPrecautionNameSorter([])
-    else
-      setPrecautionNameSorter(res[1].precautionName)
+    res[1].precautionName === null ? setPrecautionNameSorter([]) : setPrecautionNameSorter(res[1].precautionName)
 
-    if(res[1].date === null)
-      setDateSorter([])        
-    else
-      setDateSorter(res[1].date)        
+    res[1].date === null ? setDateSorter([]) : setDateSorter(res[1].date)        
 
-    if (res[2].order === undefined)
-      setSortByOrder([res[2].field, null]);
-    else
-      setSortByOrder([res[2].field, res[2].order])
+    res[2].order === undefined ? setSortByOrder([res[2].field, null]) : setSortByOrder([res[2].field, res[2].order])
   }
 
   return (
