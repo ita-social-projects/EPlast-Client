@@ -1,5 +1,6 @@
 import { Alignment, Margins } from 'pdfmake/interfaces';
 import { DecisionPost, statusTypeGetParser } from '../../../api/decisionsApi';
+import moment from 'moment';
 export default function DecisionLayout(decisionInfo: DecisionPost) {
     return {
         info: {
@@ -16,7 +17,7 @@ export default function DecisionLayout(decisionInfo: DecisionPost) {
                 margin: [-40, -40, 0, 0] as Margins,
             },
             {
-                text: `${decisionInfo.name} від ${new Date(decisionInfo.date).toLocaleDateString()}`,
+                text: `${decisionInfo.name} від ${moment.utc(decisionInfo.date.toLocaleString()).local().format('DD.MM.YYYY')}`,
                 style: 'secondHeader',
                 margin: [0, 0, 0, 40] as Margins,
             },
