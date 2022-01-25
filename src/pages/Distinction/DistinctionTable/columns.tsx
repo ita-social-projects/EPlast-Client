@@ -13,7 +13,7 @@ const columns = [
         width: 75,
         fixed: true,
         defaultSortOrder: 'ascend' as SortOrder,
-        sorter: (a: any, b: any) => a.number - b.number,
+        sorter: true,              
     },
     {
         title: 'Відзначення',
@@ -25,7 +25,7 @@ const columns = [
             </Tooltip>
           : distinctionName)
         },
-        sorter: (a: any, b: any) => a.distinctionName.localeCompare(b.distinctionName),
+        sorter: true,
         sortDirections: ['ascend', 'descend'] as SortOrder[],   
     },
     {
@@ -34,7 +34,7 @@ const columns = [
         render: (userName: string) => {
             return userName
         },
-        sorter: (a: any, b: any) => a.userName.localeCompare(b.userName),
+        sorter: true,
         sortDirections: ['ascend', 'descend'] as SortOrder[],
     },
     {
@@ -43,7 +43,7 @@ const columns = [
         render: (date: Date) => {
             return moment.utc(date.toLocaleString()).local().format('DD.MM.YYYY');
         },
-        sorter:(a: any, b: any)  => a.date.localeCompare(b.date),
+        sorter: true,
         sortDirections: ['ascend', 'descend'] as SortOrder[],
     },
     {

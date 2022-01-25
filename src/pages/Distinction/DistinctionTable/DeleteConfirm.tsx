@@ -5,18 +5,23 @@ import distinctionApi from "../../../api/distinctionApi";
 
 const { confirm } = Modal;
 
+const remove = async (id: number) => {
+  await distinctionApi.deleteUserDistinction(id);
+};
+
 const DeleteConfirm = (id: number, onDelete: any) => {
   return confirm({
     title: "Ви справді хочете видалити відзначення цього користувача?",
     icon: <ExclamationCircleOutlined style={{ color: "#3c5438" }} />,
     okText: "Так",
     cancelText: "Ні",
-    onOk() {
-      const remove = async () => {
-        await distinctionApi.deleteUserDistinction(id);
-      };
-      remove();
-      onDelete(id);
+    async onOk() {
+      try{
+        await remove(id);
+      }      
+      finally{
+        onDelete(id);
+      }
     },
   });
 };
