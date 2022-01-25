@@ -172,6 +172,10 @@ const DistinctionTable = () => {
       (d: { id: number }) => d.id !== id
     );
     setDistinctions([...filteredData]);
+
+    if(page != 1 && distinctions.length == 1)
+      setPage(page-1);
+
     setTotal(total - 1);
     notificationLogic("success", successfulDeleteAction("Відзначення"));
     CreateDeleteNotification(id);
