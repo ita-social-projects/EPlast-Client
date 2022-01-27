@@ -6,12 +6,11 @@ import DropDown from './KadraDropDown';
 import ClickAwayListener from 'react-click-away-listener';
 import { KadraTableInfo } from './Interfaces/KadraTableInfo';
 import NotificationBoxApi from '../../api/NotificationBoxApi';
-
+import { KadraTableSettings } from './Interfaces/KadraTableSettings';
 
 const classes = require('./Table.module.css');
 
 interface props {
-
   current: number;
   searchData: any;
 }
@@ -28,6 +27,8 @@ export const KVTable = ({ current, searchData }: props) => {
   const [data, setData] = useState<KadraTableInfo[]>(Array<KadraTableInfo>());
   const [firstPage, setFirstPage] = useState(1);
   const [lastElement, setLastElement] = useState(1);
+  const [sortKey, setSortKey] = useState<number>(1);
+
 
   const createNotifications = async (userId : string) => {
     await NotificationBoxApi.createNotifications(
@@ -68,21 +69,46 @@ export const KVTable = ({ current, searchData }: props) => {
     setShowDropdown(false);
   }
 
-
-
   const fetchData = async () => {
+   const dir: string = (sortKey > 0)? 'ascend' : 'descend';
+   var col = 'id';
+   switch (sortKey) {
+     case 2:
+     case -2:
+       col = 'userName'
+       break;
+     case 3:
+     case -3:
+       col = 'dateOfGranting'
+       break;
+     case 4:
+     case -4:
+       col = 'numberInRegister'
+       break;
+     default:
+      col = 'id'
+       break;
+   }
+    const newTableSettings : KadraTableSettings ={
+      SearchedData: searchData,
+      Page: page,
+      PageSize: pageSize,
+      KadraTypeId:current,
+      SortByOrder:[col,dir],
+    }
     setLoading(true);
-    
-    await kadrasApi.getEducatorsStaffForTable(current, searchData, page, pageSize).then(response => {
-      setCount(response[0]?.subtotal);
-      setData(response)
-    })
+    const res: KadraTableInfo[] = await kadrasApi.getEducatorsStaffForTable(newTableSettings);
+      setCount(res[0]?.total);
+      setData(res)    
     setLoading(false);
   }
 
   useEffect(() => {
-    fetchData();
-  }, [current, searchData, page, pageSize])
+    setLoading(true);
+    if(current){
+      fetchData();
+    }
+  }, [current, searchData, page, pageSize, sortKey])
 
  const handlePageChange = (page: number) => {
   setPage(page);
@@ -100,7 +126,10 @@ const handleSizeChange = (page: number, pageSize: number = 10) => {
       <Layout.Content onClick={() => { setShowDropdown(false); }}>
         <Table
           className={classes.table}
-          columns={columns}
+          columns={columns({
+            sortKey: sortKey,
+            setSortKey: setSortKey,
+          })}
           dataSource={data}
           scroll={{ x: 1300 }}
           onRow={(record : KadraTableInfo) => {
