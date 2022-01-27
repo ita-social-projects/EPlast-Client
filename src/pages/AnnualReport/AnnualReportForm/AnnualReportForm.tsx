@@ -48,10 +48,9 @@ const AnnualReportForm = (props: Props) => {
             <Title>{title}</Title>
             <Row gutter={16} align="bottom">
                 <Col xs={24} sm={12} md={12} lg={12} className="container">
-                    <Text strong={true}>
-                        Голова новообраної Старшини
-                    </Text>
-                    <Form.Item name="newCityAdminId" className="w100">
+                    <Form.Item name="newCityAdminId" className="w100" 
+                        label="Голова новообраної Старшини"
+                            labelCol={{span: 24}}>
                         <Select
                             showSearch
                             filterOption={(input, option) =>
@@ -64,12 +63,11 @@ const AnnualReportForm = (props: Props) => {
                     </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={12} className="container">
-                    <Text strong={true}>
-                        Правовий статус осередку
-                    </Text>
                     <Form.Item
                         className="w100"
                         name="newCityLegalStatusType"
+                        label="Правовий статус осередку"
+                        labelCol={{span: 24}}
                         rules={validationSchema.cityLegalStatus}
                     >
                         <Select
@@ -91,10 +89,11 @@ const AnnualReportForm = (props: Props) => {
                     </Text>
                     <Row gutter={16} align="bottom">
                         <Col xs={24} sm={12} md={24} lg={12}>
-                            <Text>Кількість гніздечок пташат</Text>
                             <Form.Item
                                 className="w100"
                                 name="numberOfSeatsPtashat"
+                                label="Кількість гніздечок пташат"
+                                labelCol={{span: 24}}
                                 rules={validationSchema.number}
                             >
                                 <Input
@@ -108,10 +107,11 @@ const AnnualReportForm = (props: Props) => {
                             </Form.Item>
                         </Col>
                         <Col xs={24} sm={12} md={24} lg={12}>
-                            <Text>Кількість пташат</Text>
                             <Form.Item
                                 className="w100"
                                 name={["membersStatistic", "numberOfPtashata"]}
+                                label="Кількість пташат"
+                                labelCol={{span: 24}}
                                 rules={validationSchema.number}
                             >
                                 <Input
@@ -134,10 +134,11 @@ const AnnualReportForm = (props: Props) => {
                     </Text>
                     <Row gutter={16} align="bottom">
                         <Col xs={24} sm={12} md={24} lg={12}>
-                            <Text>Кількість самостійних роїв</Text>
                             <Form.Item
                                 className="w100"
                                 name="numberOfIndependentRiy"
+                                label="Кількість самостійних роїв"
+                                labelCol={{span: 24}}
                                 rules={validationSchema.number}
                             >
                                 <Input
@@ -151,10 +152,11 @@ const AnnualReportForm = (props: Props) => {
                             </Form.Item>
                         </Col>
                         <Col xs={24} sm={12} md={24} lg={12}>
-                            <Text>Кількість новацтва</Text>
                             <Form.Item
                                 className="w100"
                                 name={["membersStatistic", "numberOfNovatstva"]}
+                                label="Кількість новацтва"
+                                labelCol={{span: 24}}
                                 rules={validationSchema.number}
                             >
                                 <Input
@@ -178,10 +180,12 @@ const AnnualReportForm = (props: Props) => {
                 </Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={12} lg={8}>
-                        <Text>Кількість куренів у станиці/паланці (окрузі/регіоні)</Text>
+
                         <Form.Item
                             className="w100"
                             name="numberOfClubs"
+                            label="Кількість куренів у станиці/паланці (окрузі/регіоні)"
+                            labelCol={{span: 24}}
                             rules={validationSchema.number}
                         >
                             <Input
@@ -195,10 +199,11 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={8}>
-                        <Text>Кількість самостійних гуртків</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfIndependentGroups"
+                            label="Кількість самостійних гуртків"
+                            labelCol={{span: 24}}
                             rules={validationSchema.number}
                         >
                             <Input
@@ -212,13 +217,14 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={8}>
-                        <Text>Кількість неіменованих разом</Text>
                         <Form.Item
                             className="w100"
                             name={[
                                 "membersStatistic",
                                 "numberOfUnatstvaNoname",
                             ]}
+                            label="Кількість неіменованих разом"
+                            labelCol={{span: 24}}
                             rules={validationSchema.number}
                         >
                             <Input
@@ -234,13 +240,14 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={6}>
-                        <Text>Кількість прихильників/ць</Text>
                         <Form.Item
                             className="w100"
                             name={[
                                 "membersStatistic",
                                 "numberOfUnatstvaSupporters",
                             ]}
+                            label="Кількість прихильників/ць"
+                            labelCol={{span: 24}}
                             rules={validationSchema.number}
                         >
                             <Input
@@ -256,13 +263,14 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={8} lg={6}>
-                        <Text>Кількість учасників/ць</Text>
                         <Form.Item
                             className="w100"
                             name={[
                                 "membersStatistic",
                                 "numberOfUnatstvaMembers",
                             ]}
+                            label="Кількість учасників/ць"
+                            labelCol={{span: 24}}
                             rules={validationSchema.number}
                         >
                             <Input
@@ -278,13 +286,14 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={8} lg={6}>
-                        <Text>Кількість розвідувачів</Text>
                         <Form.Item
                             className="w100"
                             name={[
                                 "membersStatistic",
                                 "numberOfUnatstvaProspectors",
                             ]}
+                            label="Кількість розвідувачів"
+                            labelCol={{span: 24}}
                             rules={validationSchema.number}
                         >
                             <Input
@@ -300,13 +309,14 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={8} lg={6}>
-                        <Text>Кількість скобів/вірлиць</Text>
                         <Form.Item
                             className="w100"
                             name={[
                                 "membersStatistic",
                                 "numberOfUnatstvaSkobVirlyts",
                             ]}
+                            label="Кількість скобів/вірлиць"
+                            labelCol={{span: 24}}
                             rules={validationSchema.number}
                         >
                             <Input
@@ -330,13 +340,14 @@ const AnnualReportForm = (props: Props) => {
                     </Text>
                     <Row gutter={16} align="bottom">
                         <Col xs={24} sm={12} md={24} lg={12}>
-                            <Text>Кількість старших пластунів прихильників</Text>
                             <Form.Item
                                 className="w100"
                                 name={[
                                     "membersStatistic",
                                     "numberOfSeniorPlastynSupporters",
                                 ]}
+                                label="Кількість старших пластунів прихильників"
+                                labelCol={{span: 24}}
                                 rules={validationSchema.number}
                             >
                                 <Input
@@ -352,13 +363,14 @@ const AnnualReportForm = (props: Props) => {
                             </Form.Item>
                         </Col>
                         <Col xs={24} sm={12} md={24} lg={12}>
-                            <Text>Кількість старших пластунів</Text>
                             <Form.Item
                                 className="w100"
                                 name={[
                                     "membersStatistic",
                                     "numberOfSeniorPlastynMembers",
                                 ]}
+                                label="Кількість старших пластунів"
+                                labelCol={{span: 24}}
                                 rules={validationSchema.number}
                             >
                                 <Input
@@ -381,13 +393,14 @@ const AnnualReportForm = (props: Props) => {
                     </Text>
                     <Row gutter={16} align="bottom">
                         <Col xs={24} sm={12} md={24} lg={12}>
-                            <Text>Кількість сеньйорів пластунів прихильників</Text>
                             <Form.Item
                                 className="w100"
                                 name={[
                                     "membersStatistic",
                                     "numberOfSeigneurSupporters",
                                 ]}
+                                label="Кількість сеньйорів пластунів прихильників"
+                                labelCol={{span: 24}}
                                 rules={validationSchema.number}
                             >
                                 <Input
@@ -403,13 +416,14 @@ const AnnualReportForm = (props: Props) => {
                             </Form.Item>
                         </Col>
                         <Col xs={24} sm={12} md={24} lg={12}>
-                            <Text>Кількість сеньйорів пластунів</Text>
                             <Form.Item
                                 className="w100"
                                 name={[
                                     "membersStatistic",
                                     "numberOfSeigneurMembers",
                                 ]}
+                                label="Кількість сеньйорів пластунів"
+                                labelCol={{span: 24}}
                                 rules={validationSchema.number}
                             >
                                 <Input
@@ -433,10 +447,11 @@ const AnnualReportForm = (props: Props) => {
                 </Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>Кількість діючих виховників (з усіх членів УСП, УПС)</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfTeachers"
+                            label="Кількість діючих виховників (з усіх членів УСП, УПС)"
+                            labelCol={{span: 24}}
                             rules={validationSchema.number}
                         >
                             <Input
@@ -450,10 +465,11 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>Кількість адміністраторів (в проводах будь-якого рівня)</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfAdministrators"
+                            label="Кількість адміністраторів (в проводах будь-якого рівня)"
+                            labelCol={{span: 24}}
                             rules={validationSchema.number}
                         >
                             <Input
@@ -467,10 +483,11 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>Кількість тих, хто поєднує виховництво та адміністрування</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfTeacherAdministrators"
+                            label="Кількість тих, хто поєднує виховництво та адміністрування"
+                            labelCol={{span: 24}}
                             rules={validationSchema.number}
                         >
                             <Input
@@ -491,10 +508,11 @@ const AnnualReportForm = (props: Props) => {
                 </Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>Кількість пільговиків</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfBeneficiaries"
+                            label="Кількість пільговиків"
+                            labelCol={{span: 24}}
                             rules={validationSchema.number}
                         >
                             <Input
@@ -508,10 +526,11 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>Кількість членів Пластприяту</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfPlastpryiatMembers"
+                            label="Кількість членів Пластприяту"
+                            labelCol={{span: 24}}
                             rules={validationSchema.number}
                         >
                             <Input
@@ -525,10 +544,11 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={8} lg={8}>
-                        <Text>Кількість почесних членів</Text>
                         <Form.Item
                             className="w100"
                             name="numberOfHonoraryMembers"
+                            label="Кількість почесних членів"
+                            labelCol={{span: 24}}
                             rules={validationSchema.number}
                         >
                             <Input
@@ -549,10 +569,11 @@ const AnnualReportForm = (props: Props) => {
                 </Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={12} lg={6}>
-                        <Text>Державні кошти</Text>
                         <Form.Item
                             className="w100"
                             name="publicFunds"
+                            label="Державні кошти"
+                            labelCol={{span: 24}}
                             rules={validationSchema.money}
                         >
                             <Input
@@ -566,10 +587,11 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={6}>
-                        <Text>Внески</Text>
                         <Form.Item
                             className="w100"
                             name="contributionFunds"
+                            label="Внески"
+                            labelCol={{span: 24}}
                             rules={validationSchema.money}
                         >
                             <Input
@@ -583,10 +605,11 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={6}>
-                        <Text>Пластовий заробіток</Text>
                         <Form.Item
                             className="w100"
                             name="plastSalary"
+                            label="Пластовий заробіток"
+                            labelCol={{span: 24}}
                             rules={validationSchema.money}
                         >
                             <Input
@@ -600,10 +623,11 @@ const AnnualReportForm = (props: Props) => {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={6}>
-                        <Text>Спонсорські кошти</Text>
                         <Form.Item
                             className="w100"
                             name="sponsorshipFunds"
+                            label="Спонсорські кошти"
+                            labelCol={{span: 24}}
                             rules={validationSchema.money}
                         >
                             <Input
@@ -624,20 +648,22 @@ const AnnualReportForm = (props: Props) => {
                 </Text>
                 <Row gutter={16} align="bottom">
                     <Col xs={24} sm={24} md={12} lg={12}>
-                        <Text>Вкажіть, що вам допоможе ефективніше залучати волонтерів та створювати виховні частини (гнізда, курені)</Text>
                         <Form.Item
                             className="w100"
                             name="listProperty"
+                            label="Вкажіть, що вам допоможе ефективніше залучати волонтерів та створювати виховні частини (гнізда, курені)"
+                            labelCol={{span: 24}}
                             rules={validationSchema.textarea}
                         >
                             <TextArea />
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={12}>
-                        <Text>Вкажіть перелік майна, що є в станиці</Text>
                         <Form.Item
                             className="w100"
                             name="improvementNeeds"
+                            label="Вкажіть перелік майна, що є в станиці"
+                            labelCol={{span: 24}}
                             rules={validationSchema.textarea}
                         >
                             <TextArea />
