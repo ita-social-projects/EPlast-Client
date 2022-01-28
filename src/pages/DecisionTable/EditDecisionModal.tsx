@@ -8,7 +8,7 @@ interface Props {
   decision: DecisionPost;
   showModal: boolean;
   setShowModal: (showModal: boolean) => void;
-  onEdit :(id: number, name: string, description: string) => void;
+  onEdit :(id: number, name: string, description: string, statusType: string) => void;
 }
 const EditDecisionModal = ({ record, showModal, setShowModal, onEdit, decision }: Props) => {
 
