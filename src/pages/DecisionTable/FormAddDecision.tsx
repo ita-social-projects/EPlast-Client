@@ -290,30 +290,19 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             name="decisionTarget"
             rules={descriptionValidation.DecisionTarget}
           >
-            {/* <Select
-              className={formclasses.selectField}
-              getPopupContainer={(triggerNode) => triggerNode.parentNode}
-              showSearch
-              mode = "tags"
-            >
-              {data?.decisionTargets.slice(0, 9).map((dt) => (
-                <Select.Option key={dt.id} value={dt.targetName} >
-                  {dt.targetName}
-                </Select.Option>
-              ))}
-            </Select> */}
+           
             <AutoComplete
-     className={formclasses.selectField}
-     getPopupContainer={(triggerNode) => triggerNode.parentNode}
-     onSearch={(s => setSearchTopic(s))}
-    >
-    {targetData.map((dt) => (
-    <AutoComplete.Option key={dt.id} value={dt.targetName} >
-    {dt.targetName}
-  </AutoComplete.Option>
-   ))}
-   
-  </AutoComplete>
+            className={formclasses.selectField}
+            getPopupContainer={(triggerNode) => triggerNode.parentNode}
+            onSearch={(s => setSearchTopic(s))}
+            >
+            {targetData.map((dt) => (
+            <AutoComplete.Option key={dt.id} value={dt.targetName} >
+            {dt.targetName}
+            </AutoComplete.Option>
+          ))}
+          
+          </AutoComplete>
           </Form.Item>
         </Col>
       </Row>
