@@ -59,3 +59,14 @@
     display: flex;
     justify-content: space-between;
 }
+.divWrapper {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: auto;
+  }
+  
+  .tagText {
+    max-width: 100%;  
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
