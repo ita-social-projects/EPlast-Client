@@ -36,7 +36,6 @@ export type decisionStatusType = {
 export type DecisionOnCreateData = {
   governingBodies: GoverningBody[];
   decisionStatusTypeListItems: decisionStatusType[];
-  decisionTargets: decisionTarget[];
 }
 export type DecisionWrapper = {
   decision: DecisionPost;
@@ -56,6 +55,11 @@ export type DecisionPost = {
 export const statusTypePostParser = (statusType: decisionStatusType): number => {
   if (statusType.value === "InReview") return 0;
   if (statusType.value === "Confirmed") return 1;
+  return 2;
+};
+export const statusTypeFromStringParser = (statusType: string): number => {
+  if (statusType === "У розгляді") return 0;
+  if (statusType === "Потверджено") return 1;
   return 2;
 };
 export const statusTypeGetParser = (statusType: number): string => {
@@ -168,4 +172,9 @@ const remove = async (id: number) => {
   return response;
 };
 
-export default { getById, getAll, getAllDecisionsForTable, getOnCreate, getPdf, getFileAsBase64, post, postForCheckFile, put, remove };
+const getTargetList = async (search:string) => {
+  const response = await (await Api.get(`Decisions/targetList/${search}`)).data;
+  return response;
+};
+
+export default { getById, getAll, getAllDecisionsForTable, getOnCreate, getPdf, getFileAsBase64, post, postForCheckFile, put, remove, getTargetList };

@@ -66,12 +66,13 @@ const DecisionTable = () => {
     else
       fetchData();
   }
-  const handleEdit = (id: number, name: string, description: string) => {
+  const handleEdit = (id: number, name: string, description: string, statusType: string) => {
     /* eslint no-param-reassign: "error" */
     const filteredData = data.filter(d => {
       if (d.id === id) {
         d.name = name;
         d.description = description;
+        d.decisionStatusType = statusType;
       }
       return d;
     }

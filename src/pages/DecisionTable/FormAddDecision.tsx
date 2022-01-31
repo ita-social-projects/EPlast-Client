@@ -10,7 +10,8 @@ import {
   Button,
   Row,
   Col,
-  Mentions
+  Mentions,
+  AutoComplete
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import AuthStore from "../../stores/AuthStore";
@@ -57,8 +58,9 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
   const [tip, setTip] = useState<string>('Введіть  ім\`я користувача');
   const [tipOnNotFound, setTipOnNotFound] = useState<string>('Введіть  ім\`я користувача');
   const [userData, setUserData] = useState<any[]>([]);
- 
+  const [targetData, setTargetData] = useState<any[]>([]);
   const [search, setSearch] = useState<string>('');
+  const [searchTopic, setSearchTopic] = useState<string>('');
   const { Option } = Mentions;
   const [form] = Form.useForm();
   const [mentionedUsers, setMentionedUsers] = useState<any[]>([]);
@@ -104,8 +106,23 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     const timeoutId = setTimeout(() => [onSearch(search)], 10);
     return () => clearTimeout(timeoutId);
   }, [search]);
+  useEffect(() => {
+    const timeoutId = setTimeout(() => [onSearchTopic(searchTopic)], 10);
+    return () => clearTimeout(timeoutId);
+  }, [searchTopic]);
 
-
+  const onSearchTopic = async (search: string) => {
+    var trigger = search,
+    regexp = new RegExp('^[\\\\./]'),
+    test = regexp.test(trigger); 
+  
+    if (search !== "" && search !== null && test != true) {
+      await decisionsApi.getTargetList(search).then((response) => {
+        setTargetData(response);
+      });
+    }
+   
+  };
   const notifyMentionedUsers = async (description: string, title: string) => {
     let usersToNotify = (mentionedUsers.filter(u => description.includes(u.firstName + ' ' + u.lastName)));
     let uniqueUsersIds = Array.from(new Set(usersToNotify.map(u => u.id)));
@@ -208,8 +225,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
 
   const [data, setData] = useState<DecisionOnCreateData>({
     governingBodies: Array<GoverningBody>(),
-    decisionStatusTypeListItems: Array<decisionStatusType>(),
-    decisionTargets: Array<decisionTarget>(),
+    decisionStatusTypeListItems: Array<decisionStatusType>()
   });
   useEffect(() => {
     const fetchData = async () => {
@@ -274,17 +290,19 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
             name="decisionTarget"
             rules={descriptionValidation.DecisionTarget}
           >
-            <Select
-              className={formclasses.selectField}
-              getPopupContainer={(triggerNode) => triggerNode.parentNode}
-              showSearch
+           
+            <AutoComplete
+            className={formclasses.selectField}
+            getPopupContainer={(triggerNode) => triggerNode.parentNode}
+            onSearch={(s => setSearchTopic(s))}
             >
-              {data?.decisionTargets.slice(0, 9).map((dt) => (
-                <Select.Option key={dt.id} value={dt.targetName} >
-                  {dt.targetName}
-                </Select.Option>
-              ))}
-            </Select>
+            {targetData.map((dt) => (
+            <AutoComplete.Option key={dt.id} value={dt.targetName} >
+            {dt.targetName}
+            </AutoComplete.Option>
+          ))}
+          
+          </AutoComplete>
           </Form.Item>
         </Col>
       </Row>

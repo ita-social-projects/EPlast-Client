@@ -29,7 +29,7 @@ interface Props {
   pageY: number;
   showDropdown: boolean;
   onDelete :(id: number)=> void;
-  onEdit :(id: number, name: string, description: string) => void;
+  onEdit :(id: number, name: string, description: string, statusType: string) => void;
 }
 
 const DropDown = (props: Props) => {
