@@ -189,7 +189,7 @@ export default function ({ id, statusId, onEdit, setShowEventEditDrawer }: Props
     };
 
     return (
-        <Form name="basic" form={form} onFinish={handleFinish} initialValues={editedEvent}>
+        <Form name="basic" form={form} onFinish={handleFinish} initialValues={editedEvent} id='area' style={{ position: 'relative' }}>
             <Row justify="start" gutter={[0, 0]}>
                 <Col md={0} xs={0}>
                     <Form.Item name="ID">
@@ -260,14 +260,16 @@ export default function ({ id, statusId, onEdit, setShowEventEditDrawer }: Props
             </Row>
             <Row justify="start" gutter={[12, 0]}>
                 <Col md={24} xs={24}>
-                    <Form.Item label="Дата початку" name="EventDateStart" className={classes.formItem} rules={[{ required: true, message: emptyInput() }]}>
+                    <Form.Item label="Дата початку" name="EventDateStart" style={{ position: 'relative' }} className={classes.formItem} rules={[{ required: true, message: emptyInput() }]}>                       
                         <DatePicker
                             showTime
                             disabledDate={disabledDate}
                             placeholder="Оберіть дату початку"
                             format={dateFormat}
                             className={classes.select}
-                        />
+                            popupStyle={{ position: 'absolute' }}
+                            getPopupContainer={() => document.getElementById('area')! as HTMLElement}
+                        />                    
                     </Form.Item>
                 </Col>
             </Row>
@@ -280,6 +282,8 @@ export default function ({ id, statusId, onEdit, setShowEventEditDrawer }: Props
                             placeholder="Оберіть дату завершення"
                             format={dateFormat}
                             className={classes.select}
+                            popupStyle={{ position: 'absolute' }}
+                            getPopupContainer={() => document.getElementById('area')! as HTMLElement}
                         />
                     </Form.Item>
                 </Col>
