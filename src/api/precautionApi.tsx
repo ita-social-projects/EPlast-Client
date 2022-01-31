@@ -1,6 +1,7 @@
 import api from "./api";
 import UserPrecaution from "../pages/Precaution/Interfaces/UserPrecaution";
 import Precaution from "../pages/Precaution/Interfaces/Precaution";
+import PrecautionTableSettings from "../models/Precaution/PrecautionTableSettings"
 
 const getUserPrecautionById = async (id: number) => {
     return await api.get(`Precaution/UserPrecaution/${id}`, id);
@@ -9,13 +10,18 @@ const getUserPrecautions = async () => {
     return (await api.get(`Precaution/UserPrecautions`)).data;
 };
 
-const getAllUsersPrecautions = async (searchedData: string, page: number, pageSize: number) => {
-    return (await api.get('Precaution/UsersPrecautionsForTable',
-        {
-            searchedData: searchedData,
-            page: page,
-            pageSize: pageSize,
-        })).data;
+const getAllUsersPrecautions = async (NewTableSettings: PrecautionTableSettings) => {
+    return (await api.get(`Precaution/UsersPrecautionsForTable`, NewTableSettings, (params:any)=> {
+      return Object.entries(params).map(([key, value]) => {
+        if (Array.isArray(value) && value){
+            return value.map(it => `${key}=${it}`).join('&');
+        }
+        return `${key}=${value}`;
+      }).join('&');
+    })
+    .catch((error) => {
+      throw new Error(error);
+    })).data;
 }
 
 const getPrecautionById = async (id: number) => {
@@ -55,8 +61,15 @@ const checkNumberExisting = async (number: number) => {
 const getUsersWithoutPrecautions = async () => {
     return (await api.get(`Precaution/usersWithoutPrecautions`)).data;
 };
-
+const checkUserPrecautionsType = async (userId: string, type: string) => {
+    return await api.get(`Precaution/checkUserPrecautionsType/${userId}`, {userId, type});
+};
+const getUserActivePrecautionEndDate = async (userId: string, type: string) => {
+    return await api.get(`Precaution/getUserActivePrecautionEndDate/${userId}`, {userId, type});
+};
 export default {
+    getUserActivePrecautionEndDate,
+    checkUserPrecautionsType,
     getUserPrecautionById,
     getUserPrecautions,
     getAllUsersPrecautions,

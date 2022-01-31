@@ -10,7 +10,7 @@ import EditPrecautionTypesModal from "./EditPrecautionTypesModal";
 import UserPrecautionTableInfo from "../Interfaces/UserPrecauctionTableInfo";
 import ClickAwayListener from "react-click-away-listener";
 import Precaution from "../Interfaces/Precaution";
-import Spinner from "../../Spinner/Spinner";
+import PrecautionTableSettings from "../../../models/Precaution/PrecautionTableSettings";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
@@ -44,12 +44,16 @@ const PrecautionTable = () => {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [searchedData, setSearchedData] = useState("");
   const [canEdit] = useState(roles.includes(Roles.Admin));
+
+  const [searchedData, setSearchedData] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);
-  const [count, setCount] = useState<number>(0);
+  const [statusSorter, setStatusSorter] = useState<any[]>([]);
+  const [precautionNameSorter, setPrecautionNameSorter] = useState<any[]>([]);
+  const [dateSorter, setDateSorter] = useState<any[]>([]);
+  const [sortByOrder, setSortByOrder] = useState<any[]>(["number","ascend"]);
   const [precautions, setPrecautions] = useState<UserPrecautionTableInfo[]>([
     {
       count: 0,
@@ -67,18 +71,26 @@ const PrecautionTable = () => {
       isActive: false,
     },
   ]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(searchedData, page, pageSize);
-      setTotal(res[0]?.total);
-      setCount(res[0]?.count);
-      setPrecautions(res);
-      setLoading(false);
+  const fetchData = async () => {
+    const NewTableSettings: PrecautionTableSettings = {
+      sortByOrder: sortByOrder,
+      statusFilter: statusSorter,
+      precautionNameFilter: precautionNameSorter,
+      dateFilter: dateSorter,
+      searchedData: searchedData,
+      page: page,
+      pageSize: pageSize
     };
+
+    setLoading(true);
+    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(NewTableSettings);
+    setPrecautions(res);
+    setLoading(false);
+    setTotal(res[0]?.total);
+  }
+  useEffect(() => {
     fetchData();
-  }, [searchedData, page, pageSize]);
+  }, [sortByOrder ,statusSorter, precautionNameSorter, dateSorter, searchedData, page, pageSize]);
 
   const handleSearch = (event: any) => {
     setPage(1);
@@ -95,13 +107,8 @@ const PrecautionTable = () => {
 
   const handleAdd = async () => {
     setVisibleModal(false);
-    setLoading(true);
-    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(searchedData, page, pageSize);
-    setPrecautions(res);
-    setTotal(res[0]?.total);
-    setCount(res[0]?.count);
-    notificationLogic("success", successfulCreateAction("Пересторогу"));
-    setLoading(false);
+    fetchData();
+    notificationLogic("success", successfulCreateAction("Догану"));
   };
 
   const showModalEditTypes = () => {
@@ -110,15 +117,6 @@ const PrecautionTable = () => {
 
   const handleClickAway = () => {
     setShowDropdown(false);
-  };
-
-  const handlePageChange = (page: number) => {
-    setPage(page);
-  };
-
-  const handleSizeChange = (page: number, pageSize: number = 10) => {
-    setPage(page);
-    setPageSize(pageSize);
   };
 
   const CreateDeleteNotification = (id: number) => {
@@ -174,9 +172,12 @@ const PrecautionTable = () => {
     const filteredData = precautions.filter(
       (d: { id: number }) => d.id !== id
     );
-    setPrecautions([...filteredData]);
+    setPrecautions([...filteredData]);    
+    
+    if(page != 1 && precautions.length == 1)
+      setPage(page-1);
+    
     setTotal(total - 1);
-    setCount(count - 1);
     notificationLogic("success", successfulDeleteAction("Пересторогу"));
     CreateDeleteNotification(id);
   };
@@ -214,6 +215,20 @@ const PrecautionTable = () => {
     notificationLogic("success", successfulUpdateAction("Пересторогу"));
     CreateEditNotification(userId, precaution.name);
   };
+  const tableSettings = (res: any) =>{
+    
+    setPage(res[0].current);
+    setPageSize(res[0].pageSize);    
+    
+    res[1].status === null ? setStatusSorter([]) : setStatusSorter(res[1].status);
+
+    res[1].precautionName === null ? setPrecautionNameSorter([]) : setPrecautionNameSorter(res[1].precautionName)
+
+    res[1].date === null ? setDateSorter([]) : setDateSorter(res[1].date)        
+
+    res[2].order === undefined ? setSortByOrder([res[2].field, null]) : setSortByOrder([res[2].field, res[2].order])
+  }
+
   return (
     <Layout>
       <Content
@@ -222,7 +237,6 @@ const PrecautionTable = () => {
         }}
       >
         <h1 className={classes.titleTable}>Перестороги</h1>
-
         <>
           <Row gutter={[6, 12]} className={classes.buttonsSearchField}>
             <Col>
@@ -247,7 +261,8 @@ const PrecautionTable = () => {
               />
             </Col>
           </Row>
-          {loading ? (<Spinner />) : (<div>
+          {
+            <div> 
             <Table
               className={classes.table}
               dataSource={precautions}
@@ -272,17 +287,17 @@ const PrecautionTable = () => {
               pagination={{
                 current: page,
                 pageSize: pageSize,
-                total: count,
+                total: total,
                 showLessItems: true,
                 responsive: true,
                 showSizeChanger: true,
-                onChange: (page) => handlePageChange(page),
-                onShowSizeChange: (page, size) => handleSizeChange(page, size),
               }}
+              onChange={(...args) => tableSettings(args)}
+              loading={loading}
               bordered
               rowKey="id"
             />
-          </div>)}
+          </div>}
           <ClickAwayListener onClickAway={handleClickAway}>
             <DropDownPrecautionTable
               showDropdown={showDropdown}

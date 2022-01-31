@@ -2,6 +2,7 @@ import axios from 'axios';
 import BASE_URL from '../config';
 import AuthStore from '../stores/AuthStore';
 import jwt_decode from 'jwt-decode';
+import api from './api';
 
 const getById = async (id: string | undefined) => {
     const response = await axios.get(`${`${BASE_URL}User/`}${id}`);
@@ -28,9 +29,17 @@ const put = async (data: any) => {
 
     return response;
 };
-
 const getUserProfileAccess = async (userid: string, focusUserId: string) => {
     const response = await axios.get(`${`${BASE_URL}UserAccess/GetUserProfileAccess/${userid}/${focusUserId}`}`)
+    .catch(error => {
+        throw error;
+    });
+    
+    return response;
+};
+
+const getUserMenuAccess = async (userid: string) => {
+    const response = await api.get(`UserAccess/GetUserMenuAccess/${userid}`)
     .catch(error => {
         throw error;
     });
@@ -71,7 +80,7 @@ const getActiveUserRoles = (): string[] => {
 const getActiveUserId = () => {
     const token = AuthStore.getToken() as string;
     const user: any = jwt_decode(token);
-
+    
     return user.nameid as string;
 };
 
@@ -96,5 +105,6 @@ export default {
     getActiveUserId,
     getActiveUserProfile,
     updateProfileImage,
-    getUserProfileAccess
+    getUserProfileAccess,
+    getUserMenuAccess
 };

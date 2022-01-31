@@ -18,6 +18,9 @@ import AddSubsectionModal from './AddSubsectionModal';
 import EditSubsectionModal from './EditSubsectionModal';
 import DeleteSectConfirm from "./DeleteSectConfirm";
 import DeleteSubsectConfirm from './DeleteSubsectConfirm';
+import PicturesWall from './PicturesWall';
+import { Roles } from '../../models/Roles/Roles';
+import userApi from '../../api/UserApi';
 
 const { Panel } = Collapse;
 
@@ -55,9 +58,12 @@ const AboutBase = () => {
   const [subId, setSubId] = useState(0);
   const [subTitle, setSubTitle] = useState("");
   const [subDescription, setSubDescription] = useState("");
+  const [role, setRole] = useState(userApi.getActiveUserRoles());
+  const [elementsvisible, setElementsVisible] = useState(false);
   const showModalAsk = () => setVisibleModalAsk(true);
   const showModalSubAdd = () => setVisibleModalSubAdd(true);
   const showModalSubEdit = () => setVisibleModalSubEdit(true);
+  const [editKey, setEditKey] = useState(0);
 
   const fetchSectData = async () => {
     const sectData = (await aboutBase.getAboutBaseSections()).data;
@@ -131,8 +137,17 @@ const AboutBase = () => {
     }
   }
 
+  const elementsVisibility = () => {
+    role.forEach(r => {
+      if (r == Roles.Admin || r == Roles.RegionBoardHead) {
+        setElementsVisible(true);
+      }
+    });
+  }
+
   useEffect(() => {
     setLoading(true);
+    elementsVisibility();
     fetchSectData();
     fetchSubData();
     setLoading(false);
@@ -186,7 +201,7 @@ const AboutBase = () => {
               sectitem.title
             )}
             key={sectitem.id}
-            extra={[
+            extra={elementsvisible ? [
               <Space>
                 <Tooltip title="Редагувати розділ">
                   <EditOutlined
@@ -201,7 +216,7 @@ const AboutBase = () => {
                   />
                 </Tooltip>
               </Space>
-            ]}
+            ] : <></>}
           >
             {subsectData.filter(subitem => subitem.sectionId === sectitem.id).map((subitem) => (
               <Collapse
@@ -210,7 +225,7 @@ const AboutBase = () => {
                 <Panel
                   header={subitem.title}
                   key={subitem.id}
-                  extra={[
+                  extra={elementsvisible ? [
                     <Space>
                       <Tooltip title="Редагувати підрозділ">
                         <EditOutlined
@@ -225,15 +240,18 @@ const AboutBase = () => {
                         />
                       </Tooltip>
                     </Space>
-                  ]}
+                  ] : <></>}
                 >
                   <p>{subitem.description}</p>
+                  <PicturesWall subsectionId={subitem.id} key={editKey} />
                 </Panel>
               </Collapse>
             ))}
-            <div className="addSubSection">
-              <Button type="primary" onClick={(e) => { setSectId(sectitem.id); showModalSubAdd() }}>Додати підрозділ</Button>
-            </div>
+            {elementsvisible ?
+              <div className="addSubSection">
+                <Button type="primary" onClick={(e) => { setSectId(sectitem.id); showModalSubAdd() }}>Додати підрозділ</Button>
+              </div>
+            :<></>}
           </Panel>
         </Collapse>
       ))}
@@ -255,16 +273,21 @@ const AboutBase = () => {
         title={subTitle}
         description={subDescription}
         fetchSubData={fetchSubData}
+        editKey={editKey}
+        setEditKey={setEditKey}
       />
 
-      <div className="addSection">
-        <Input placeholder=" Додати розділ" type="text" maxLength={50}
-          value={title}
-          onChange={(event) => {
-            setTitle(event.target.value);
-          }} />
-        <Button type="primary" onClick={handleAdd}>Додати</Button>
-      </div>
+      {elementsvisible ?
+        <div className="addSection">
+          <Input placeholder=" Додати розділ" type="text" maxLength={50}
+            value={title}
+            onChange={(event) => {
+              setTitle(event.target.value);
+            }} />
+          <Button type="primary" onClick={handleAdd}>Додати</Button>
+        </div>
+        : <></>}
+
     </Layout.Content>
   ) : (
     <Spinner />

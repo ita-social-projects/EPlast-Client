@@ -9,7 +9,9 @@ interface Props {
     sectId: number;
     title: string;
     description: string;
-    fetchSubData: Function
+    fetchSubData: Function;
+    editKey: number;
+    setEditKey: any;
 }
 
 const EditSubsectionModal = ({
@@ -19,7 +21,9 @@ const EditSubsectionModal = ({
     sectId,
     title,
     description,
-    fetchSubData
+    fetchSubData,
+    editKey,
+    setEditKey
 }: Props) => {
     const handleCancel = () => {
         setVisibleModal(false);
@@ -32,7 +36,7 @@ const EditSubsectionModal = ({
             onClose={handleCancel}
             footer={null}
         >
-            <FormEditSubsection setVisibleModal={setVisibleModal} id={id} sectId={sectId} title={title} description={description} fetchSubData={fetchSubData}/>
+            <FormEditSubsection setVisibleModal={setVisibleModal} id={id} sectId={sectId} title={title} description={description} fetchSubData={fetchSubData} editKey={editKey} setEditKey={setEditKey}/>
         </Drawer>
     );
 };

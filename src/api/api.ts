@@ -81,6 +81,16 @@ const put = async (url: string, data?: any): Promise<HttpResponse> => {
   return response;
 };
 
+const patch = async (url: string, data?: any): Promise<HttpResponse> => {
+  const response = await axios.patch(BASE_URL + url, data, {
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    },
+  });
+  return response;
+};
+
 const remove = async (url: string, data?: any, options: any = {}): Promise<HttpResponse> => {
   const response = await axios.delete(BASE_URL + url, {
     ...options,
@@ -89,4 +99,4 @@ const remove = async (url: string, data?: any, options: any = {}): Promise<HttpR
   return response;
 
 };
-export default { get, post, put, remove };
+export default { get, post, put, patch, remove };

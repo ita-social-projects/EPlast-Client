@@ -31,16 +31,20 @@ const ChangeUserCityModal = ({
     cityId: cityId,
   };
 
-  const handleChange = (id: string, userRole: string) => {
-    onChange(id, userRole);
-    user.clubName &&
-      NotificationBoxApi.createNotifications(
-        [id],
-        `Вам була присвоєна нова роль: '${userRole}' в станиці: `,
-        NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/city/${cityId}`,user.cityName
-      );
+  const onAdd = async (newAdmin: CityAdmin = new CityAdmin()) => {
+    await createNotification(newAdmin.userId, `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`);
   };
+
+  const createNotification = async(userId : string, message : string) => {
+    await NotificationBoxApi.createNotifications(
+      [userId],
+      message + ": ",
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/cities/${newAdmin.cityId}`,
+      user.cityName
+      );
+  }
+
   const handleClick = async () => {
     setShowModal(false);
   };
@@ -59,7 +63,7 @@ const ChangeUserCityModal = ({
         setVisibleModal={setShowModal}
         cityId={cityId}
         cityName={user.cityName}
-        onChange={handleChange}
+        onAdd={onAdd}
       ></AddAdministratorModal>
       ):
       (

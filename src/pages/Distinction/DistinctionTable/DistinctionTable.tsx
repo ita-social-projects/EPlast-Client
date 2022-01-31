@@ -10,7 +10,7 @@ import EditDistinctionTypesModal from "./EditDistinctionTypesModal";
 import UserDistinctionTableInfo from "../Interfaces/UserDistinctionTableInfo";
 import ClickAwayListener from "react-click-away-listener";
 import Distinction from "../Interfaces/Distinction";
-import Spinner from "../../Spinner/Spinner";
+import DistionctionTableSettings from "../../../models/Distinction/DistinctionTableSettings";
 import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
@@ -46,7 +46,7 @@ const DistinctionTable = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);
-  const [count, setCount] = useState<number>(0);
+  const [sortByOrder, setSortByOrder] = useState<any[]>(["number","ascend"]);
   const [distinctions, setDistinctions] = useState<UserDistinctionTableInfo[]>([
     {
       count: 0,
@@ -71,19 +71,25 @@ const DistinctionTable = () => {
     );
   }
 
-  const fetchData = async () => {   
-    const res: UserDistinctionTableInfo[] = await distinctionApi.getAllUsersDistinctions(searchedData, page, pageSize);
+  const fetchData = async () => { 
+    const NewTableSettings: DistionctionTableSettings = {
+      sortByOrder: sortByOrder,
+      searchedData: searchedData,
+      page: page,
+      pageSize: pageSize
+    };
+
+    setLoading(true);
+    const res: UserDistinctionTableInfo[] = await distinctionApi.getAllUsersDistinctions(NewTableSettings);    
     setTotal(res[0]?.total);
-    setCount(res[0]?.count);
     setDistinctions(res);
+    setLoading(false);
     getUserAccessesForDistinctions();
   };
 
-  useEffect(() => {
-    setLoading(true);
-    fetchData();
-    setLoading(false);
-  }, []);
+  useEffect(() => {    
+    fetchData();    
+  }, [sortByOrder, searchedData, page, pageSize]);
 
   const handleSearch = (event: any) => {
     setPage(1);
@@ -100,13 +106,8 @@ const DistinctionTable = () => {
 
   const handleAdd = async () => {
     setVisibleModal(false);
-    setLoading(true);
-    const res: UserDistinctionTableInfo[] = await distinctionApi.getAllUsersDistinctions(searchedData, page, pageSize);
-    setDistinctions(res);
-    setTotal(res[0]?.total);
-    setCount(res[0]?.count);
+    fetchData();
     notificationLogic("success", successfulCreateAction("Відзначення"));
-    setLoading(false);
   };
 
   const showModalEditTypes = () => {
@@ -115,15 +116,6 @@ const DistinctionTable = () => {
 
   const handleClickAway = () => {
     setShowDropdown(false);
-  };
-
-  const handlePageChange = (page: number) => {
-    setPage(page);
-  };
-
-  const handleSizeChange = (page: number, pageSize: number = 10) => {
-    setPage(page);
-    setPageSize(pageSize);
   };
 
   const CreateDeleteNotification = (id: number) => {
@@ -180,8 +172,11 @@ const DistinctionTable = () => {
       (d: { id: number }) => d.id !== id
     );
     setDistinctions([...filteredData]);
+
+    if(page != 1 && distinctions.length == 1)
+      setPage(page-1);
+
     setTotal(total - 1);
-    setCount(count - 1);
     notificationLogic("success", successfulDeleteAction("Відзначення"));
     CreateDeleteNotification(id);
   };
@@ -213,6 +208,16 @@ const DistinctionTable = () => {
     notificationLogic("success", successfulUpdateAction("Відзначення"));
     CreateEditNotification(userId, distinction.name);
   };
+
+  const tableSettings = (res: any) =>{   
+    setPage(res[0].current);
+    setPageSize(res[0].pageSize);           
+
+    if (res[2].order === undefined)
+      setSortByOrder([res[2].field, null]);
+    else
+      setSortByOrder([res[2].field, res[2].order])
+  }
 
   return (
     <Layout>
@@ -249,7 +254,8 @@ const DistinctionTable = () => {
               />
             </Col>
           </Row>
-          {loading ? (<Spinner />) : (<div>
+          {
+            <div>
             <Table
               className={classes.table}
               dataSource={distinctions}
@@ -270,29 +276,20 @@ const DistinctionTable = () => {
                   },
                 };
               }}
-              onChange={(pagination) => {
-                if (pagination) {
-                  window.scrollTo({
-                    left: 0,
-                    top: 0,
-                    behavior: "smooth",
-                  });
-                }
-              }}
               pagination={{
                 current: page,
                 pageSize: pageSize,
-                total: count,
+                total: total,
                 showLessItems: true,
                 responsive: true,
                 showSizeChanger: true,
-                onChange: (page) => handlePageChange(page),
-                onShowSizeChange: (page, size) => handleSizeChange(page, size),
               }}
+              onChange={(...args) => tableSettings(args)}
               bordered
               rowKey="id"
             />
-          </div>)}
+          </div>
+          }
           <ClickAwayListener onClickAway={handleClickAway}>
             <DropDownDistinctionTable
               showDropdown={showDropdown}
