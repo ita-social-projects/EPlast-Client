@@ -41,6 +41,7 @@ const StatisticsCities = () => {
   const [columns, setColumns] = useState(Array());
   const [dataChart, setDataChart] = useState(Array());
   const [dataFromRow, setDataFromRow] = useState<DataFromResponse>();
+  const [dataChartShow, setShowDataChart] = useState<boolean>(true);
   const [arrayOfInindicators, setArrayOfIndicators] = useState<any[]>(Array());
   const [title, setTitle] = useState<DataFromResponse>();
   const [selectableUnatstvaPart, setSelectableUnatstvaPart] = useState<boolean>(true);
@@ -281,6 +282,7 @@ const onClick = (value: Array<Number>) => {
 
 const onClickReset = () => {
   form.resetFields();
+  setShowDataChart(false);
   setShowTable(false);
   setSelectableSeigneurPart(true);
   setSelectableSeigneurZahalom(true);
@@ -392,7 +394,7 @@ const onClickReset = () => {
       </Form>
       </div>
       <br/>
-      {sumOfIndicators === 0 || title === undefined || onClickRow === null ? '': 
+      {sumOfIndicators === 0 || !dataChartShow || title === undefined || onClickRow === null ? '': 
       <div className = "chart">         
         <h1>{title.cityName}, {title.year}</h1>
         <Chart height={400} data={dataChart} justify="center" autoFit>
@@ -428,7 +430,8 @@ const onClickReset = () => {
           scroll={{ x: 1000 }}
           onRow={(cityRecord, index) => {
             return {              
-              onClick: async () => {              
+              onClick: async () => {      
+                setShowDataChart(true);        
                 setDataFromRow(cityRecord);
                 setOnClickRow(index);
               },
