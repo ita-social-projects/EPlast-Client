@@ -29,7 +29,7 @@ import {
   Coordinate,
   Interaction
 } from "bizcharts";
-import { ClearOutlined, LoadingOutlined } from "@ant-design/icons";
+import { ClearOutlined, InfoCircleOutlined, LoadingOutlined } from "@ant-design/icons";
 
 const StatisticsCities = () => {
 
@@ -414,6 +414,21 @@ const StatisticsCities = () => {
           }
         </div>
         {showTable === false ? "" :
+        <Form>
+          <Form.Item>
+            <Row style={{fontSize: '20px'}} gutter={[5, 0]}>
+              <Col>
+                <AntTooltip title="Для того, щоб сформувати діаграму даних округи клацніть один раз на рядок в таблиці тієї округи. 
+                                  Діаграму не можливо сформувати, якщо немає даних!">
+                  <InfoCircleOutlined/>
+                </AntTooltip>   
+              </Col>
+              <Col>
+                <label style={{fontSize: '15px'}}>Як сформувати діаграму?</label>
+              </Col>
+            </Row>
+          </Form.Item>
+          <Form.Item>
             <Table
               bordered
               rowClassName={(record, index) => index === onClickRow ? "onClickRow" : "" }
@@ -439,7 +454,8 @@ const StatisticsCities = () => {
                 showSizeChanger: true,
               }}
             />
-          }
+          </Form.Item>
+        </Form>}   
       </div>
     </Layout.Content>
   )
