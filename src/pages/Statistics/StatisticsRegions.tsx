@@ -416,7 +416,7 @@ const StatisticsCities = () => {
         {showTable === false ? "" :
         <Form>
           <Form.Item>
-            <Row style={{fontSize: '20px'}} gutter={[5, 0]}>
+            <Row id="rowIcon" gutter={[5, 0]}>
               <Col>
                 <AntTooltip title="Для того, щоб сформувати діаграму даних округи клацніть один раз на рядок в таблиці тієї округи. 
                                   Діаграму не можливо сформувати, якщо немає даних!">
@@ -424,7 +424,7 @@ const StatisticsCities = () => {
                 </AntTooltip>   
               </Col>
               <Col>
-                <label style={{fontSize: '15px'}}>Як сформувати діаграму?</label>
+                <label id="label">Як сформувати діаграму?</label>
               </Col>
             </Row>
           </Form.Item>
