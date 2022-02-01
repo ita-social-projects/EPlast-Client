@@ -28,7 +28,7 @@ import {
 } from "bizcharts";
 import "./StatisticsCities.less";
 import{ shouldContain } from "../../components/Notifications/Messages"
-import { ClearOutlined, LoadingOutlined } from '@ant-design/icons';
+import { ClearOutlined, InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import City from "./Interfaces/City";
 
 const StatisticsCities = () => {
@@ -421,33 +421,50 @@ const onClickReset = () => {
       </div>
       <br/>
       {!showTable ? "" :
-        <Table
-          bordered 
-          rowClassName={(record, index) => index === onClickRow ? "onClickRow" : "" }
-          rowKey="id"
-          columns={columns}
-          dataSource={dataForTable}
-          scroll={{ x: 1000 }}
-          onRow={(cityRecord, index) => {
-            return {              
-              onClick: async () => {      
-                setShowDataChart(true);        
-                setDataFromRow(cityRecord);
-                setOnClickRow(index);
-              },
-              onDoubleClick: async () => {                
-                setOnClickRow(null);
-              }
-            };
-          }}
-          pagination={{
-            showLessItems: true,
-            responsive: true,
-            showSizeChanger: true,
-          }}
-        />}        
-      </div>
-    </Layout.Content>
+      <Form>
+        <Form.Item>
+          <Row id="rowIcon" gutter={[5, 0]}>
+            <Col>
+              <AntTooltip title="Для того, щоб сформувати діаграму даних станиці клацніть один раз на рядок в таблиці тієї станиці. 
+                                    Діаграму не можливо сформувати, якщо немає даних!">
+                <InfoCircleOutlined/>
+              </AntTooltip>   
+            </Col>
+            <Col>
+              <label id="label">Як сформувати діаграму?</label>
+            </Col>
+          </Row>
+        </Form.Item>
+        <Form.Item>
+          <Table
+            bordered 
+            rowClassName={(record, index) => index === onClickRow ? "onClickRow" : "" }
+            rowKey="id"
+            columns={columns}
+            dataSource={dataForTable}
+            scroll={{ x: 1000 }}
+            onRow={(cityRecord, index) => {
+              return {              
+                onClick: async () => {      
+                  setShowDataChart(true);        
+                  setDataFromRow(cityRecord);
+                  setOnClickRow(index);
+                },
+                onDoubleClick: async () => {                
+                  setOnClickRow(null);
+                }
+              };
+            }}
+            pagination={{
+              showLessItems: true,
+              responsive: true,
+              showSizeChanger: true,
+            }}
+          />
+        </Form.Item>
+      </Form>}        
+    </div>
+  </Layout.Content>
   )
 }
 export default StatisticsCities;
