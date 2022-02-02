@@ -181,7 +181,7 @@ const EventInfo = () => {
   ) : (
     <div className="event-info-background">
       {CheckEventForEstimation(event)}
-      <Row>
+      <Row className="event-info-header">
         <Col xs={24} sm={24} md={24} lg={8}>
           <SortedEventInfo
             userAccesses={userAccesses}
