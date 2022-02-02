@@ -35,7 +35,6 @@ const PrivateLayout = ({ children }: any) => {
   const ref = useRef(null)
   const [userAnnualReportAccess, setUserAnnualReportAccess] = useState<IUserAnnualReportAccess>();
   const [userStatisticsAccess, setUserStatisticsAccess] = useState<IUserStatisticsAccess>();
-  
 
   const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({});
 
