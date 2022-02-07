@@ -327,7 +327,11 @@ export const descriptionValidation = ({
         {
             required: true,
             message: emptyInput(),
-        },    
+        },  
+        {
+            pattern: /^\s*\S.*$/,
+            message: inputOnlyWhiteSpaces(),
+        },  
     ],
 });
 
