@@ -88,7 +88,6 @@ export const ClubAnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    type="number"
                                     min="0"
                                     value={members.length}
                                 />
@@ -111,7 +110,6 @@ export const ClubAnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    type="number"
                                     min="0"
                                     value={followers.length}
                                 />
@@ -134,7 +132,6 @@ export const ClubAnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    type="number"
                                     min="0"
                                     value={countUsersPerYear}
                                 />
@@ -157,7 +154,6 @@ export const ClubAnnualReportForm = (props: Props) => {
                                 rules={validationSchema.number}
                             >
                                 <Input
-                                    type="number"
                                     min="0"
                                     value={countdeletedUsersPerYear}
                                 />
