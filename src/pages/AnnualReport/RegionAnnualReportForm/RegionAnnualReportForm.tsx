@@ -5,6 +5,7 @@ import Props from "./RegionAnnualReportFormProps";
 import "./RegionAnnualReportForm.less";
 import {
     emptyInput,
+    inputOnlyWhiteSpaces,
     maxLength,
 } from "../../../components/Notifications/Messages";
 import RegionMembersTable from "../AnnualReportTable/RegionMembersTable/RegionMembersTable";
@@ -26,6 +27,7 @@ const RegionAnnualReportForm = (props: Props) => {
                         rules={[
                             { required: true, message: emptyInput() },
                             { max: 500, message: maxLength(500) },
+                            { pattern: /^\s*\S.*$/, message: inputOnlyWhiteSpaces()},
                         ]}
                     >
                         <TextArea
@@ -43,6 +45,7 @@ const RegionAnnualReportForm = (props: Props) => {
                         rules={[
                             { required: true, message: emptyInput() },
                             { max: 500, message: maxLength(500) },
+                            { pattern: /^\s*\S.*$/, message: inputOnlyWhiteSpaces()},
                         ]}
                     >
                         <TextArea
@@ -62,6 +65,7 @@ const RegionAnnualReportForm = (props: Props) => {
                         rules={[
                             { required: true, message: emptyInput() },
                             { max: 500, message: maxLength(500) },
+                            { pattern: /^\s*\S.*$/, message: inputOnlyWhiteSpaces()},
                         ]}
                     >
                         <TextArea
@@ -79,6 +83,7 @@ const RegionAnnualReportForm = (props: Props) => {
                         rules={[
                             { required: true, message: emptyInput() },
                             { max: 500, message: maxLength(500) },
+                            { pattern: /^\s*\S.*$/, message: inputOnlyWhiteSpaces()},
                         ]}
                     >
                         <TextArea
@@ -98,6 +103,7 @@ const RegionAnnualReportForm = (props: Props) => {
                         rules={[
                             { required: true, message: emptyInput() },
                             { max: 500, message: maxLength(500) },
+                            { pattern: /^\s*\S.*$/, message: inputOnlyWhiteSpaces()},
                         ]}
                     >
                         <TextArea
@@ -115,6 +121,7 @@ const RegionAnnualReportForm = (props: Props) => {
                         rules={[
                             { required: true, message: emptyInput() },
                             { max: 500, message: maxLength(500) },
+                            { pattern: /^\s*\S.*$/, message: inputOnlyWhiteSpaces()},
                         ]}
                     >
                         <TextArea
@@ -134,6 +141,7 @@ const RegionAnnualReportForm = (props: Props) => {
                         rules={[
                             { required: true, message: emptyInput() },
                             { max: 500, message: maxLength(500) },
+                            { pattern: /^\s*\S.*$/, message: inputOnlyWhiteSpaces()},
                         ]}
                     >
                         <TextArea
@@ -151,6 +159,7 @@ const RegionAnnualReportForm = (props: Props) => {
                         rules={[
                             { required: true, message: emptyInput() },
                             { max: 500, message: maxLength(500) },
+                            { pattern: /^\s*\S.*$/, message: inputOnlyWhiteSpaces()},
                         ]}
                     >
                         <TextArea
@@ -170,6 +179,7 @@ const RegionAnnualReportForm = (props: Props) => {
                         rules={[
                             { required: true, message: emptyInput() },
                             { max: 500, message: maxLength(500) },
+                            { pattern: /^\s*\S.*$/, message: inputOnlyWhiteSpaces()},
                         ]}
                     >
                         <TextArea
@@ -187,6 +197,7 @@ const RegionAnnualReportForm = (props: Props) => {
                         rules={[
                             { required: true, message: emptyInput() },
                             { max: 500, message: maxLength(500) },
+                            { pattern: /^\s*\S.*$/, message: inputOnlyWhiteSpaces()},
                         ]}
                     >
                         <TextArea
@@ -206,6 +217,7 @@ const RegionAnnualReportForm = (props: Props) => {
                         rules={[
                             { required: true, message: emptyInput() },
                             { max: 500, message: maxLength(500) },
+                            { pattern: /^\s*\S.*$/, message: inputOnlyWhiteSpaces()},
                         ]}
                     >
                         <TextArea
@@ -223,6 +235,7 @@ const RegionAnnualReportForm = (props: Props) => {
                         rules={[
                             { required: true, message: emptyInput() },
                             { max: 500, message: maxLength(500) },
+                            { pattern: /^\s*\S.*$/, message: inputOnlyWhiteSpaces()},
                         ]}
                     >
                         <TextArea
