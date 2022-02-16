@@ -35,7 +35,6 @@ const PrivateLayout = ({ children }: any) => {
   const ref = useRef(null)
   const [userAnnualReportAccess, setUserAnnualReportAccess] = useState<IUserAnnualReportAccess>();
   const [userStatisticsAccess, setUserStatisticsAccess] = useState<IUserStatisticsAccess>();
-
   const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({});
 
   const handleClickOutside = () => {
@@ -163,7 +162,7 @@ const PrivateLayout = ({ children }: any) => {
                 </Menu.Item>
               ) : (<> </>)
               }
-              {userAccesses["regions"] ? (
+              {userAccesses["regions"] || activeUserProfile?.region ? (
                 <Menu.Item onClick={() => { handleClickAway(); history.push("/regions/page/1"); }} key="3" >
                   Округи
                 </Menu.Item>

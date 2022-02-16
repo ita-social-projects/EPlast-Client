@@ -79,6 +79,10 @@ const putCurrentRole = async (userId: string, role: string) => {
   return response;
 };
 
+const isCityMember = async (userId: string) => {
+  const response = await Api.get(`Admin/IsCityMember/${userId}`);
+  return response.data;
+};
 export default {
   getUsersByAnyRole,
   getUsersByAllRoles,
@@ -91,4 +95,5 @@ export default {
   putEditedRoles,
   putExpiredRole,
   putCurrentRole,
+  isCityMember,
 };

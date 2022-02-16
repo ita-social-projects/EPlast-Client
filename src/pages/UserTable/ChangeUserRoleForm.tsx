@@ -8,6 +8,7 @@ import {
 } from "antd";
 import adminApi from "../../api/adminApi";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
+import notificationLogic from "../../components/Notifications/Notification";
 import activeMembershipApi from "../../api/activeMembershipApi";
 import moment from "moment";
 import{ emptyInput } from "../../components/Notifications/Messages";
@@ -52,14 +53,18 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
   }
 
   const handleFinish = async (value: any) => {
+    if(value.userRole == Roles.Supporter && !(await adminApi.isCityMember(userId)))
+    {
+      notificationLogic("error", "Користувач не є членом станиці!");
+    } else {
     await adminApi.putCurrentRole(userId, value.userRole);
-
+    
     if (value.userRole === Roles.FormerPlastMember) {
       await addEndDate(false);
     } else if (roles.includes(Roles.FormerPlastMember)) {
       await addEndDate(true);
     }
-
+    
     onChange(userId, value.userRole);
     form.resetFields();
     setShowModal(false);
@@ -69,6 +74,7 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
       `Вам надано нову роль: '${value.userRole}'`,
       NotificationBoxApi.NotificationTypes.UserNotifications
     );
+    }
   };
 
   return (
