@@ -16,8 +16,6 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
   maxNumber,
-  minNumber,
-  incorrectData
 } from "../../../components/Notifications/Messages"
 import precautionApi from "../../../api/precautionApi";
 import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
@@ -141,13 +139,19 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                 },
                 {
                   validator: async (_ : object, value: number) =>
-                  value && !isNaN(value)
+                  value && !isNaN(value) && value > 0
                       ? await distinctionApi
                           .checkNumberExisting(value)
                           .then(response => response.data === false)
                             ? Promise.resolve()
                               : Promise.reject('Цей номер уже зайнятий') 
                               : Promise.reject()                              
+                },
+                {
+                  validator: async (_ : object, value: number) =>
+                  value == 0 && value && !isNaN(value)                 
+                    ? Promise.reject('Номер не може бути 0')                              
+                      : Promise.resolve()                              
                 }
               ]}
           >
@@ -186,8 +190,10 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
               {distData?.map((o) => (
-                <Select.Option key={o.id} value={JSON.stringify(o)}>
-                  {o.name}
+                <Select.Option 
+                key={o.id} 
+                value={JSON.stringify(o)}
+                >{o.name}
                 </Select.Option>
               ))}
             </Select>
