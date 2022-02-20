@@ -634,11 +634,10 @@ const GoverningBody = () => {
           visibleModal={visibleAddModal}
           onAdd={onAnnouncementAdd}
       />
-      <Drawer
+      <Modal
         title="Додати діловода"
         visible={visible}
-        width="auto"
-        onClose={() => setVisible(false)}
+        onCancel={() => setVisible(false)}
         footer={null}
       >
         <AddGoverningBodiesSecretaryForm
@@ -648,7 +647,7 @@ const GoverningBody = () => {
           setGoverningBodyHead={setGoverningBodyHead}
           governingBodyId={+id}>
         </AddGoverningBodiesSecretaryForm>
-      </Drawer>
+      </Modal>
       {userAccesses["ManipulateDocument"] ? (
         <AddDocumentModal
           governingBodyId={+id}
