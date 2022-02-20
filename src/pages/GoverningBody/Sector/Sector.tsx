@@ -46,7 +46,8 @@ import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument"
 import AddDocumentModal from "./AddDocumentModal";
 import AddSectorAdminForm from "./AddSectorAdminForm";
 import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
-import { getAllAnnouncements } from "../../../api/governingBodiesApi";
+import { getAnnouncementsByPage } from "../../../api/governingBodiesApi";
+import { Markup } from "interweave";
 
 const Sector = () => {
   const history = useHistory();
@@ -67,6 +68,8 @@ const Sector = () => {
   const [admins, setAdmins] = useState<SectorAdmin[]>([]);
   const [sectorHead, setSectorHead] = useState<SectorAdmin>();
   const [announcements, setAnnouncements] = useState<GoverningBodyAnnouncement[]>([]);
+
+  const announcementsQuantity = 3;
 
   const deleteSector = async () => {
     await removeSector(sector.id);
@@ -131,11 +134,13 @@ const Sector = () => {
       const sectorViewModel = response.data.sectorViewModel
       let userAccesses = await getUserAccesses();
       if(userAccesses.data["ViewAnnouncements"]){
-        const res = (await getAllAnnouncements()).data
+        const res = (await await getAnnouncementsByPage(1, 3)).data
         let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];
-        for(let i = 0; i < res.length && i < 3; i++) {
-          res[i].text = res[i].text.substring(0,40) + (res[i].text.length > 40? "...": "")
-          shortListedAnnoncements = [...shortListedAnnoncements, res[i]]
+        for(let i = 0; i < announcementsQuantity; i++) {
+          if (res.item1[i]){
+            res.item1[i].text = res.item1[i].text.substring(0,40) + (res.item1[i].text.length > 40? "...": "")
+            shortListedAnnoncements = [...shortListedAnnoncements, res.item1[i]]
+          }
         }
         setAnnouncements(shortListedAnnoncements)
       }
@@ -392,7 +397,7 @@ const Sector = () => {
             <Row className="governingBodyItems" justify="center" gutter={[0, 16]}>
               {userAccesses["ViewAnnouncements"] ?  
                 announcements.length > 0?
-                  announcements.map((announcement, index) => (
+                  announcements.map((announcement) => (
                     <Col
                       className="cityMemberItem"
                       xs={12}
@@ -401,7 +406,11 @@ const Sector = () => {
                       style={{padding: "0.3rem"}}
                     >
                       <Paragraph><strong>{announcement.user.firstName}</strong></Paragraph>
-                      <Paragraph style={{overflow:"hidden",textOverflow:"ellipsis", wordBreak:"break-word"}}>{announcement.text}</Paragraph>
+                      <Paragraph style={{overflow:"hidden",textOverflow:"ellipsis", wordBreak:"break-word"}}>
+                        <Markup
+                          content={announcement.text}
+                        />
+                        </Paragraph>
                       <Paragraph>{moment.utc(announcement.date).local().format("DD.MM.YYYY")}</Paragraph>
                     </Col>
                     )) 
