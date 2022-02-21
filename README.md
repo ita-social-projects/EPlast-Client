@@ -13,7 +13,7 @@ In order to run this project, you’ll need to have on your local development ma
 2. npm 6.x.x or later. 
 
 ### Warning
-Don't name your local folder with symbols like #, $, ^ and others or with cyrylic letters. It may cause errors during launching your program to the server.
+Don't name your local folder with symbols like #, $, ^ and others or with cyrylic letters. It may cause errors during launching your program to the server. 
 
 ### Installing
 
