@@ -499,7 +499,6 @@ const EventUser = () => {
                                 <Button
                                     type="primary"
                                     className={classes.buttonSmall}
-                                    style={{ marginRight: "110px", marginLeft: "110px" }}
                                     onClick={() => history.push("/events/types")}
                                 >
                                     Зголоситись на подію

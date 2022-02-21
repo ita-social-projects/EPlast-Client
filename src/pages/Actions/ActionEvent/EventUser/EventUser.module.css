@@ -58,6 +58,7 @@
     margin-bottom: 5px;
     margin-left: 125px;
     background: #3C5438;
+    display: flex;
     justify-content: center;
     color: white;
     border: none;
