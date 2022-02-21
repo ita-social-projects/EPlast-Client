@@ -199,7 +199,6 @@ const GoverningBody = () => {
     setLoading(true);
     try {
       let userAccesses = await getUserAccesses();
-      console.log(userAccesses);
       if(userAccesses.data["ViewAnnouncements"]){
         const res: any  = (await getAnnouncementsByPage(1, 3)).data;
         let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];

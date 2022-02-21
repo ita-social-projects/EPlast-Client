@@ -143,7 +143,6 @@ const Sector = () => {
       const response = await getSectorById(+sectorId);
       const sectorViewModel = response.data.sectorViewModel
       let userAccesses = await getUserAccesses();
-      console.log(userAccesses);
       if(userAccesses.data["ViewAnnouncements"]){
         const res = (await await getAnnouncementsByPage(1, 3)).data
         let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];
