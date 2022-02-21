@@ -113,7 +113,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
 
   const onSearchTopic = async (search: string) => {
     var trigger = search,
-    regexp = new RegExp('^[\\\\./]'),
+    regexp = new RegExp('^[\\\\./ ]'),
     test = regexp.test(trigger); 
   
     if (search !== "" && search !== null && test != true) {

@@ -80,7 +80,7 @@ const putCurrentRole = async (userId: string, role: string) => {
 };
 
 const isCityMember = async (userId: string) => {
-  const response = await Api.put(`Admin/IsCityMember/${userId}`);
+  const response = await Api.get(`Admin/IsCityMember/${userId}`);
   return response.data;
 };
 export default {
