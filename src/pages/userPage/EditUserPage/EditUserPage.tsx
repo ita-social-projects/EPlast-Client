@@ -515,6 +515,7 @@ export default function () {
                   shape='round'
                   rotate={true}
                   modalTitle='Редагувати фото'
+                  beforeCrop={(e) => checkFile(e.size, e.name)}
                 >
                   <Upload
                     name="avatar"
