@@ -13,9 +13,10 @@ const classes = require('./Table.module.css');
 interface props {
   current: number;
   searchData: any;
+  searchPage: number;
 }
 
-export const KVTable = ({ current, searchData }: props) => {
+export const KVTable = ({ current, searchData, searchPage }: props) => {
   const [recordObj, setRecordObj] = useState<KadraTableInfo>();
   const [showDropdown, setShowDropdown] = useState(false);
   const [page, setPage] = useState(1);
@@ -70,6 +71,8 @@ export const KVTable = ({ current, searchData }: props) => {
   }
 
   const fetchData = async () => {
+    if (searchPage != 0)
+    setPage(searchPage);
    const dir: string = (sortKey > 0)? 'ascend' : 'descend';
    var col = 'id';
    switch (sortKey) {
