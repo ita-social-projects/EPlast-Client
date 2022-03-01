@@ -448,7 +448,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item label="Опис події" name="Description" className={classes.formItem} rules={descriptionValidation.DescriptionAndQuestions}>
-            <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} />
+            <TextArea className={classes.input} autoSize={{ minRows: 3, maxRows: 5 }} maxLength = {201} />
           </Form.Item>
         </Col>
       </Row>

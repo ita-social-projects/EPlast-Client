@@ -247,7 +247,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             name="description"
             rules={descriptionValidation.DescriptionAndQuestions}
           >
-            <Input.TextArea allowClear className={formclasses.inputField} />
+            <Input.TextArea allowClear className={formclasses.inputField} maxLength = {201} />
           </Form.Item>
         </Col>
       </Row>
