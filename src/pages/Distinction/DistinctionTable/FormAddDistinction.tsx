@@ -7,17 +7,21 @@ import {
   Button,
   Row,
   Col,
+  Tooltip
 } from "antd";
+import {
+  EditOutlined
+} from "@ant-design/icons";
 import Distinction from "../Interfaces/Distinction";
+import classes from "./FormEdit.module.css";
 import UserDistinction from "../Interfaces/UserDistinction";
 import distinctionApi from "../../../api/distinctionApi";
 import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import EditDistinctionTypesModal from "./EditDistinctionTypesModal";
 import {
   emptyInput,
-  maxNumber,
-  minNumber,
-  incorrectData
+  maxNumber
 } from "../../../components/Notifications/Messages"
 import precautionApi from "../../../api/precautionApi";
 import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
@@ -48,21 +52,27 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
   ]);
   const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
+  const [visibleModalEditDist, setVisibleModalEditDist] = useState(false);
   const dateFormat = "DD.MM.YYYY";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await distinctionApi.getDistinctions().then((response) => {
-        setDistData(response.data);
-      });
-      setLoadingUserStatus(true);
-      await precautionApi.getUsersWithoutPrecautions().then((response) => {
-        setUserData(response);
-        setLoadingUserStatus(false);
-      });
-    };
+  useEffect(() => {    
+    precautionApi.getUsersWithoutPrecautions().then((response) => {
+      setUserData(response);
+      setLoadingUserStatus(false);
+    });
     fetchData();
   }, []);
+
+  useEffect(() => {     
+    fetchData();
+  }, [visibleModalEditDist]);
+
+  const fetchData = async () => {
+    await distinctionApi.getDistinctions().then((response) => {
+      setDistData(response.data);
+    });
+    setLoadingUserStatus(true);    
+  };
 
   const handleCancel = () => {
     form.resetFields();
@@ -96,6 +106,10 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
           })
       });
   }
+
+  const showModalEditTypes = () => {
+    setVisibleModalEditDist(true);
+  };
 
   const handleSubmit = async (values: any) => {
     const newDistinction: UserDistinction = {
@@ -199,6 +213,14 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             </Select>
           </Form.Item>
         </Col>
+        <Col lg={2} span={2}>
+            <Tooltip title="Редагувати відзначення">
+              <EditOutlined
+                className={classes.editIcon}
+                onClick={showModalEditTypes}
+              />
+            </Tooltip>
+        </Col>
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
@@ -232,7 +254,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               ))}
             </Select>
           </Form.Item>
-        </Col>
+        </Col>        
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
@@ -310,6 +332,10 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
           </Form.Item>
         </Col>
       </Row>
+      <EditDistinctionTypesModal
+            setVisibleModal={setVisibleModalEditDist}
+            visibleModal={visibleModalEditDist}
+          />
     </Form>
   );
 };
