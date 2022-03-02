@@ -371,7 +371,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
               {
                 validator: (_: object, value: Date) => {
                   return (
-                    value < StartDate!
+                    value <= StartDate!
                       ? Promise.reject(incorrectEndTime)
                       : Promise.resolve())
                 }
