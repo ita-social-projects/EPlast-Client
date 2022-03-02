@@ -106,7 +106,7 @@ const RegionAdministration = () => {
   }
 
   const removeAdministrator = async (admin: CityAdmin) => {
-    await removeAdmin(admin.id); 
+    await editAdminStatus(admin.id);
     await createNotification(admin.userId,
       `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в окрузі`);
     setAdministration(administration.filter((u) => u.id !== admin.id));
