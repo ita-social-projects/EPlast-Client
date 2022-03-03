@@ -102,7 +102,8 @@ const ChangeUserRoleForm = ({ record, setShowModal, onChange, user }: Props) => 
         ):
         null
         }
-        { roles.includes(Roles.Supporter) || roles.includes(Roles.PlastMember) ? (
+        { roles.includes(Roles.Supporter) || roles.includes(Roles.PlastMember) || roles.includes(Roles.CitySecretary)||
+         roles.includes(Roles.KurinSecretary) || roles.includes(Roles.OkrugaSecretary) || roles.includes(Roles.GoverningBodySecretary)|| roles.includes(Roles.GoverningBodySectorSecretary)? (
         <Option value={Roles.FormerPlastMember}>Колишній член Пласту</Option>
         ): 
         null
