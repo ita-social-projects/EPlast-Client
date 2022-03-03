@@ -90,7 +90,7 @@ const AnnualReportTable = () => {
     };
 
     const handleSearch = (event: any) => {
-        setSearchedData(event);
+        setSearchedData(event.trim().replace(/^[0]+/g,""));
     };
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

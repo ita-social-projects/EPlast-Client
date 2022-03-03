@@ -350,3 +350,7 @@ export const sameNameValidator = (org:string, array: string[]) => {
 export const getOnlyNums = (text: string) => {
     return text.replace(/\D/g, "");
   };
+
+export const getDecimalNums = (text: string) => {
+    return text.replace(/[^0-9.]/g, "");
+};
