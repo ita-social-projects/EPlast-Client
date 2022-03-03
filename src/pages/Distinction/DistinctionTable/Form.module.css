@@ -17,12 +17,25 @@
     min-width: 370px;
   }
 
+  .selectTypeDistField {
+    max-width: 325px;
+    min-width: 325px;
+  }
+
+  .editTypeDistPosition{
+    padding: 35px 0 0 0;
+  }
+
 @media(max-width: 400px) {
   .formField{ 
     max-width: 100%;
     min-width: 100%;
   }
   .selectField {
+    max-width: 100%;
+    min-width: 100%;
+  }
+  .selectTypeDistField {
     max-width: 100%;
     min-width: 100%;
   }

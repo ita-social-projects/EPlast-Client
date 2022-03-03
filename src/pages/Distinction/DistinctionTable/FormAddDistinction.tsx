@@ -55,7 +55,8 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
   const [visibleModalEditDist, setVisibleModalEditDist] = useState(false);
   const dateFormat = "DD.MM.YYYY";
 
-  useEffect(() => {    
+  useEffect(() => {  
+    setLoadingUserStatus(true);   
     precautionApi.getUsersWithoutPrecautions().then((response) => {
       setUserData(response);
       setLoadingUserStatus(false);
@@ -70,8 +71,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
   const fetchData = async () => {
     await distinctionApi.getDistinctions().then((response) => {
       setDistData(response.data);
-    });
-    setLoadingUserStatus(true);    
+    });    
   };
 
   const handleCancel = () => {
@@ -187,7 +187,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
         </Col>
       </Row>
       <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
+        <Col span={21}>
           <Form.Item
             className={formclasses.formField}
             label="Відзначення"
@@ -200,8 +200,8 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               },
             ]}
           >
-            <Select 
-              className={formclasses.selectField} 
+            <Select               
+              className={formclasses.selectTypeDistField}               
               showSearch
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
@@ -210,16 +210,16 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                   {o.name}
                 </Select.Option>
               ))}
-            </Select>
-          </Form.Item>
-        </Col>
-        <Col lg={2} span={2}>
-            <Tooltip title="Редагувати відзначення">
-              <EditOutlined
-                className={classes.editIcon}
-                onClick={showModalEditTypes}
-              />
-            </Tooltip>
+            </Select>                             
+          </Form.Item>           
+        </Col>  
+        <Col span={3}>
+          <Tooltip title="Редагувати відзначення" className={formclasses.editTypeDistPosition}>
+            <EditOutlined
+              className={classes.editIcon}
+              onClick={showModalEditTypes}
+            />
+          </Tooltip>            
         </Col>
       </Row>
       <Row justify="start" gutter={[12, 0]}>

@@ -236,11 +236,6 @@ const DistinctionTable = () => {
                     Додати відзначення
                   </Button>
                 </Col>
-                <Col>
-                  <Button type="primary" onClick={showModalEditTypes}>
-                    Редагування типів відзначень
-                  </Button>
-                </Col>
               </>
             ) : (null)}
             <Col>
@@ -307,10 +302,6 @@ const DistinctionTable = () => {
             setVisibleModal={setVisibleModal}
             visibleModal={visibleModal}
             onAdd={handleAdd}
-          />
-          <EditDistinctionTypesModal
-            setVisibleModal={setVisibleModalEditDist}
-            visibleModal={visibleModalEditDist}
           />
         </>
       </Content>
