@@ -6,7 +6,6 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import DropDownDistinctionTable from "./DropDownDistinctionTable";
 import distinctionApi from "../../../api/distinctionApi";
 import AddDistinctionModal from "../DistinctionTable/AddDistinctionModal";
-import EditDistinctionTypesModal from "./EditDistinctionTypesModal";
 import UserDistinctionTableInfo from "../Interfaces/UserDistinctionTableInfo";
 import ClickAwayListener from "react-click-away-listener";
 import Distinction from "../Interfaces/Distinction";
@@ -37,7 +36,6 @@ const DistinctionTable = () => {
   const [userId, setUserId] = useState<any>(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
-  const [visibleModalEditDist, setVisibleModalEditDist] = useState(false);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -108,10 +106,6 @@ const DistinctionTable = () => {
     setVisibleModal(false);
     fetchData();
     notificationLogic("success", successfulCreateAction("Відзначення"));
-  };
-
-  const showModalEditTypes = () => {
-    setVisibleModalEditDist(true);
   };
 
   const handleClickAway = () => {
@@ -213,10 +207,7 @@ const DistinctionTable = () => {
     setPage(res[0].current);
     setPageSize(res[0].pageSize);           
 
-    if (res[2].order === undefined)
-      setSortByOrder([res[2].field, null]);
-    else
-      setSortByOrder([res[2].field, res[2].order])
+    res[2].order === undefined ? setSortByOrder([res[2].field, null]) : setSortByOrder([res[2].field, res[2].order]);
   }
 
   return (
@@ -302,6 +293,7 @@ const DistinctionTable = () => {
             setVisibleModal={setVisibleModal}
             visibleModal={visibleModal}
             onAdd={handleAdd}
+            onDelete={fetchData}
           />
         </>
       </Content>

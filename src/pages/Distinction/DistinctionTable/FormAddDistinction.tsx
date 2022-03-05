@@ -30,10 +30,11 @@ import moment from "moment";
 type FormAddDistinctionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: () => void;
+  onDelete: () => void;
 };
 
 const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
-  const { setVisibleModal, onAdd } = props;
+  const { setVisibleModal, onAdd, onDelete } = props;
   const [form] = Form.useForm();
   const [userData, setUserData] = useState<any[]>([
     {
@@ -64,7 +65,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     fetchData();
   }, []);
 
-  useEffect(() => {     
+  useEffect(() => {  
     fetchData();
   }, [visibleModalEditDist]);
 
@@ -108,8 +109,9 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
   }
 
   const showModalEditTypes = () => {
+    setVisibleModal(false);   
     setVisibleModalEditDist(true);
-  };
+    };
 
   const handleSubmit = async (values: any) => {
     const newDistinction: UserDistinction = {
@@ -333,8 +335,10 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
         </Col>
       </Row>
       <EditDistinctionTypesModal
-            setVisibleModal={setVisibleModalEditDist}
-            visibleModal={visibleModalEditDist}
+            setVisibleModalAddDist={setVisibleModal}
+            setVisibleModalEditDist={setVisibleModalEditDist}
+            visibleModalEdit={visibleModalEditDist}
+            onDelete={onDelete}
           />
     </Form>
   );
