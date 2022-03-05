@@ -7,7 +7,7 @@ import {
     maxLength,
     shouldContain,
 } from "../../../components/Notifications/Messages";
-import { getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
+import { getDecimalNums, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -33,7 +33,7 @@ const AnnualReportForm = (props: Props) => {
         textarea: [{ max: 2000, message: maxLength(2000) }],
         money: [
             { required: true, message: emptyInput() },
-            { pattern: /^\d+$/, message: shouldContain("додатні цілі числа") },
+            { pattern: /\d+$/, message: shouldContain("додатні числа") },
             {
                 validator: (_: object, value: string) =>
                     String(value).length <= 10
@@ -88,7 +88,7 @@ const AnnualReportForm = (props: Props) => {
                         УПП
                     </Text>
                     <Row gutter={16} align="bottom">
-                        <Col xs={24} sm={12} md={24} lg={12}>
+                        <Col xs={24} sm={12} md={24} lg={12} className="column">
                             <Form.Item
                                 className="w100"
                                 name="numberOfSeatsPtashat"
@@ -106,7 +106,7 @@ const AnnualReportForm = (props: Props) => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col xs={24} sm={12} md={24} lg={12}>
+                        <Col xs={24} sm={12} md={24} lg={12} className="column">
                             <Form.Item
                                 className="w100"
                                 name={["membersStatistic", "numberOfPtashata"]}
@@ -132,8 +132,8 @@ const AnnualReportForm = (props: Props) => {
                     <Text strong={true}>
                         УПН
                     </Text>
-                    <Row gutter={16} align="bottom">
-                        <Col xs={24} sm={12} md={24} lg={12}>
+                    <Row gutter={16} align="top">
+                        <Col xs={24} sm={12} md={24} lg={12} className="column">
                             <Form.Item
                                 className="w100"
                                 name="numberOfIndependentRiy"
@@ -151,7 +151,7 @@ const AnnualReportForm = (props: Props) => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col xs={24} sm={12} md={24} lg={12}>
+                        <Col xs={24} sm={12} md={24} lg={12} className="column">
                             <Form.Item
                                 className="w100"
                                 name={["membersStatistic", "numberOfNovatstva"]}
@@ -179,7 +179,7 @@ const AnnualReportForm = (props: Props) => {
                     УПЮ
                 </Text>
                 <Row gutter={16} align="bottom">
-                    <Col xs={24} sm={24} md={12} lg={8}>
+                    <Col xs={24} sm={24} md={12} lg={8} className="column">
 
                         <Form.Item
                             className="w100"
@@ -198,7 +198,7 @@ const AnnualReportForm = (props: Props) => {
                             />
                         </Form.Item>
                     </Col>
-                    <Col xs={24} sm={24} md={12} lg={8}>
+                    <Col xs={24} sm={24} md={12} lg={8} className="column">
                         <Form.Item
                             className="w100"
                             name="numberOfIndependentGroups"
@@ -216,7 +216,7 @@ const AnnualReportForm = (props: Props) => {
                             />
                         </Form.Item>
                     </Col>
-                    <Col xs={24} sm={24} md={12} lg={8}>
+                    <Col xs={24} sm={24} md={12} lg={8} className="column">
                         <Form.Item
                             className="w100"
                             name={[
@@ -239,7 +239,7 @@ const AnnualReportForm = (props: Props) => {
                             />
                         </Form.Item>
                     </Col>
-                    <Col xs={24} sm={24} md={12} lg={6}>
+                    <Col xs={24} sm={24} md={12} lg={6} className="column">
                         <Form.Item
                             className="w100"
                             name={[
@@ -262,7 +262,7 @@ const AnnualReportForm = (props: Props) => {
                             />
                         </Form.Item>
                     </Col>
-                    <Col xs={24} sm={24} md={8} lg={6}>
+                    <Col xs={24} sm={24} md={8} lg={6} className="column">
                         <Form.Item
                             className="w100"
                             name={[
@@ -285,7 +285,7 @@ const AnnualReportForm = (props: Props) => {
                             />
                         </Form.Item>
                     </Col>
-                    <Col xs={24} sm={24} md={8} lg={6}>
+                    <Col xs={24} sm={24} md={8} lg={6} className="column">
                         <Form.Item
                             className="w100"
                             name={[
@@ -308,7 +308,7 @@ const AnnualReportForm = (props: Props) => {
                             />
                         </Form.Item>
                     </Col>
-                    <Col xs={24} sm={24} md={8} lg={6}>
+                    <Col xs={24} sm={24} md={8} lg={6} className="column">
                         <Form.Item
                             className="w100"
                             name={[
@@ -339,7 +339,7 @@ const AnnualReportForm = (props: Props) => {
                         УСП
                     </Text>
                     <Row gutter={16} align="bottom">
-                        <Col xs={24} sm={12} md={24} lg={12}>
+                        <Col xs={24} sm={12} md={24} lg={12} className="column">
                             <Form.Item
                                 className="w100"
                                 name={[
@@ -362,7 +362,7 @@ const AnnualReportForm = (props: Props) => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col xs={24} sm={12} md={24} lg={12}>
+                        <Col xs={24} sm={12} md={24} lg={12} className="column">
                             <Form.Item
                                 className="w100"
                                 name={[
@@ -392,7 +392,7 @@ const AnnualReportForm = (props: Props) => {
                         УПС
                     </Text>
                     <Row gutter={16} align="bottom">
-                        <Col xs={24} sm={12} md={24} lg={12}>
+                        <Col xs={24} sm={12} md={24} lg={12} className="column">
                             <Form.Item
                                 className="w100"
                                 name={[
@@ -415,7 +415,7 @@ const AnnualReportForm = (props: Props) => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col xs={24} sm={12} md={24} lg={12}>
+                        <Col xs={24} sm={12} md={24} lg={12} className="column">
                             <Form.Item
                                 className="w100"
                                 name={[
@@ -446,7 +446,7 @@ const AnnualReportForm = (props: Props) => {
                     Адміністрування та виховництво
                 </Text>
                 <Row gutter={16} align="bottom">
-                    <Col xs={24} sm={24} md={8} lg={8}>
+                    <Col xs={24} sm={24} md={8} lg={8} className="column">
                         <Form.Item
                             className="w100"
                             name="numberOfTeachers"
@@ -464,7 +464,7 @@ const AnnualReportForm = (props: Props) => {
                             />
                         </Form.Item>
                     </Col>
-                    <Col xs={24} sm={24} md={8} lg={8}>
+                    <Col xs={24} sm={24} md={8} lg={8} className="column">
                         <Form.Item
                             className="w100"
                             name="numberOfAdministrators"
@@ -482,7 +482,7 @@ const AnnualReportForm = (props: Props) => {
                             />
                         </Form.Item>
                     </Col>
-                    <Col xs={24} sm={24} md={8} lg={8}>
+                    <Col xs={24} sm={24} md={8} lg={8} className="column">
                         <Form.Item
                             className="w100"
                             name="numberOfTeacherAdministrators"
@@ -507,7 +507,7 @@ const AnnualReportForm = (props: Props) => {
                     Пластприят
                 </Text>
                 <Row gutter={16} align="bottom">
-                    <Col xs={24} sm={24} md={8} lg={8}>
+                    <Col xs={24} sm={24} md={8} lg={8} className="column">
                         <Form.Item
                             className="w100"
                             name="numberOfBeneficiaries"
@@ -525,7 +525,7 @@ const AnnualReportForm = (props: Props) => {
                             />
                         </Form.Item>
                     </Col>
-                    <Col xs={24} sm={24} md={8} lg={8}>
+                    <Col xs={24} sm={24} md={8} lg={8} className="column">
                         <Form.Item
                             className="w100"
                             name="numberOfPlastpryiatMembers"
@@ -543,7 +543,7 @@ const AnnualReportForm = (props: Props) => {
                             />
                         </Form.Item>
                     </Col>
-                    <Col xs={24} sm={24} md={8} lg={8}>
+                    <Col xs={24} sm={24} md={8} lg={8} className="column">
                         <Form.Item
                             className="w100"
                             name="numberOfHonoraryMembers"
@@ -580,7 +580,7 @@ const AnnualReportForm = (props: Props) => {
                                 maxLength={moneyMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
-                                        publicFunds: getOnlyNums(e.target.value),
+                                        publicFunds: getDecimalNums(e.target.value),
                                     });
                                 }}
                             />
@@ -598,7 +598,7 @@ const AnnualReportForm = (props: Props) => {
                                 maxLength={moneyMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
-                                        contributionFunds: getOnlyNums(e.target.value),
+                                        contributionFunds: getDecimalNums(e.target.value),
                                     });
                                 }}
                             />
@@ -616,7 +616,7 @@ const AnnualReportForm = (props: Props) => {
                                 maxLength={moneyMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
-                                        plastSalary: getOnlyNums(e.target.value),
+                                        plastSalary: getDecimalNums(e.target.value),
                                     });
                                 }}
                             />
@@ -634,7 +634,7 @@ const AnnualReportForm = (props: Props) => {
                                 maxLength={moneyMaxAmountDigit}
                                 onChange={(e) => {
                                     formHook.setFieldsValue({
-                                        sponsorshipFunds: getOnlyNums(e.target.value),
+                                        sponsorshipFunds: getDecimalNums(e.target.value),
                                     });
                                 }}
                             />
