@@ -1,4 +1,4 @@
-import ClubAdmin from './ClubAdmin';
+import ClubAdmin from "./ClubAdmin";
 
 export default class ClubProfile {
   id: number;

@@ -1,18 +1,18 @@
 import { Button, Col, Form, Modal, Row, Upload } from "antd";
 import React from "react";
-import {useState } from "react";
-import notificationLogic from '../../../../components/Notifications/Notification';
+import { useState } from "react";
+import notificationLogic from "../../../../components/Notifications/Notification";
 import { addAchievementDocuments } from "../../../../api/blankApi";
 import BlankDocument from "../../../../models/Blank/BlankDocument";
 import { getBase64 } from "../../EditUserPage/Services";
 import { InboxOutlined } from "@ant-design/icons";
-import{
+import {
   fileIsUpload,
-  fileIsNotUpload, 
-  possibleFileExtensions, 
-  fileIsTooBig, 
+  fileIsNotUpload,
+  possibleFileExtensions,
+  fileIsTooBig,
   successfulDeleteAction,
-} from "../../../../components/Notifications/Messages"
+} from "../../../../components/Notifications/Messages";
 
 const { Dragger } = Upload;
 
@@ -22,13 +22,11 @@ interface Props {
   userId: string;
 }
 const AddAchievementsModal = (props: Props) => {
-
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [files, setFiles] = useState<BlankDocument[]>([]);
   const [disabled, setDisabled] = useState(true);
   const [buttonLoading, setButtonLoading] = useState(false);
-
 
   const handleUpload = (info: any) => {
     if (info.file !== null) {
@@ -38,7 +36,7 @@ const AddAchievementsModal = (props: Props) => {
             id: 0,
             blobName: base64,
             fileName: info.file.name,
-            userId: props.userId
+            userId: props.userId,
           };
           files.push(newDocument);
           setFiles([...files]);
@@ -52,7 +50,7 @@ const AddAchievementsModal = (props: Props) => {
     form.resetFields();
   };
 
-  const checkFile = (fileName: string, fileSize:number): boolean => {
+  const checkFile = (fileName: string, fileSize: number): boolean => {
     const extension = fileName.split(".").reverse()[0].toLowerCase();
     const isCorrectExtension =
       extension.indexOf("pdf") !== -1 ||
@@ -62,16 +60,19 @@ const AddAchievementsModal = (props: Props) => {
       extension.indexOf("docx") !== -1 ||
       extension.indexOf("doc") !== -1;
     if (!isCorrectExtension) {
-      notificationLogic("error", possibleFileExtensions("pdf, docx, doc, jpg, jpeg, png"));
+      notificationLogic(
+        "error",
+        possibleFileExtensions("pdf, docx, doc, jpg, jpeg, png")
+      );
       return isCorrectExtension;
     }
-    const isSmaller3mb =  fileSize < 3145728;
+    const isSmaller3mb = fileSize < 3145728;
     if (!isSmaller3mb) {
       notificationLogic("error", fileIsTooBig(3));
       return isSmaller3mb;
     }
     return isCorrectExtension && isSmaller3mb;
-  }
+  };
 
   const handleSubmit = async () => {
     setButtonLoading(true);
@@ -118,10 +119,11 @@ const AddAchievementsModal = (props: Props) => {
             </p>
             <p className="ant-upload-hint">
               Клікніть або перетягніть файл для завантаження
-                </p>
-            {files.length !== 0 && files.map(file => (
-              <div style={{wordBreak:'break-word'}}> {file.fileName} </div>
-            ))}
+            </p>
+            {files.length !== 0 &&
+              files.map((file) => (
+                <div style={{ wordBreak: "break-word" }}> {file.fileName} </div>
+              ))}
           </Dragger>
           {files.length !== 0 ? (
             <div>
@@ -132,30 +134,32 @@ const AddAchievementsModal = (props: Props) => {
                   notificationLogic("success", successfulDeleteAction("Файл"));
                 }}
               >
-                {files.length > 1 &&
-                  <p>Видалити файли</p>
-                }
-                {files.length === 1 &&
-                  <p>Видалити файл</p>
-                }
+                {files.length > 1 && <p>Видалити файли</p>}
+                {files.length === 1 && <p>Видалити файл</p>}
               </Button>
             </div>
           ) : null}
         </Form.Item>
-          <Row justify="end">
-            <Col md={24} xs={24}>
-              <Form.Item style={{ textAlign: "right" }}>
-                <Button key="back" onClick={handleCancel}>
-                  Відмінити
-                </Button>
-                <Button  style={{ marginLeft: "7px" }} type="primary" htmlType="submit" loading={buttonLoading} disabled={disabled}>
-                  Опублікувати
-                </Button>
-              </Form.Item>
-            </Col>
-          </Row>
+        <Row justify="end">
+          <Col md={24} xs={24}>
+            <Form.Item style={{ textAlign: "right" }}>
+              <Button key="back" onClick={handleCancel}>
+                Відмінити
+              </Button>
+              <Button
+                style={{ marginLeft: "7px" }}
+                type="primary"
+                htmlType="submit"
+                loading={buttonLoading}
+                disabled={disabled}
+              >
+                Опублікувати
+              </Button>
+            </Form.Item>
+          </Col>
+        </Row>
       </Form>
     </Modal>
   );
-}
+};
 export default AddAchievementsModal;

@@ -30,23 +30,25 @@ const ModalChangeUserDates = ({
   const handleCancel = () => {
     setDatesVisibleModal(false);
     form.resetFields();
-  }
+  };
 
   const [OathDate, setOathDate] = useState<any>();
   const [EntryDate, setEntryDate] = useState<any>();
 
   useEffect(() => {
     setDates();
-  }, [])
+  }, []);
 
   const setDates = () => {
     dates.dateEntry ? setEntryDate(dates.dateEntry) : setEntryDate(defaultDate);
     dates.dateOath ? setOathDate(dates.dateOath) : setOathDate(undefined);
-  }
+  };
 
   const disabledEntryDate = (current: any) => {
     if (OathDate) {
-      return current < moment(minAvailableDate) || current > moment(OathDate).local();
+      return (
+        current < moment(minAvailableDate) || current > moment(OathDate).local()
+      );
     }
     return current < moment(minAvailableDate) || current > moment();
   };
@@ -57,7 +59,10 @@ const ModalChangeUserDates = ({
     } else {
       //Check if dateEnd is not null or empty
       if (dates.dateEnd) {
-        return current > moment(dates.dateEnd) || current < moment.utc(dates.dateEntry).local();
+        return (
+          current > moment(dates.dateEnd) ||
+          current < moment.utc(dates.dateEntry).local()
+        );
       } else {
         return current > moment() || current < moment.utc(EntryDate).local();
       }
@@ -78,17 +83,19 @@ const ModalChangeUserDates = ({
   //Set default values for the Form
   const UserInitialDates = {
     datepickerEntry: EntryDate ? moment(EntryDate) : undefined,
-    datepickerOath: OathDate ? moment(OathDate) : undefined
-  }
+    datepickerOath: OathDate ? moment(OathDate) : undefined,
+  };
 
   const handleFinish = async (info: any) => {
     const userEntryAndOathDatesChange: UserEntryAndOathDates = {
       userId: userId,
       dateEntry: SetDate(info.datepickerEntry, dates.dateEntry),
-      dateOath: SetDate(info.datepickerOath, dates.dateOath)
+      dateOath: SetDate(info.datepickerOath, dates.dateOath),
     };
     setDatesVisibleModal(false);
-    await activeMembershipApi.postUserEntryAndOathDates(userEntryAndOathDatesChange);
+    await activeMembershipApi.postUserEntryAndOathDates(
+      userEntryAndOathDatesChange
+    );
     handleChangeDates();
   };
 
@@ -100,14 +107,19 @@ const ModalChangeUserDates = ({
       title="Зміна даних користувача"
       footer={null}
     >
-      <Form name="basic" onFinish={handleFinish} form={form} initialValues={UserInitialDates}>
+      <Form
+        name="basic"
+        onFinish={handleFinish}
+        form={form}
+        initialValues={UserInitialDates}
+      >
         <label htmlFor="datepickerEntry" className={classes.formLabel}>
           Дата вступу
         </label>
         <Form.Item
           className={classes.formField}
           name="datepickerEntry"
-          rules={[{ required: true, message: 'Внесіть дату вступу!' }]}
+          rules={[{ required: true, message: "Внесіть дату вступу!" }]}
         >
           <DatePicker
             format="DD.MM.YYYY"

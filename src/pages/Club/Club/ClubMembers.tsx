@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal, Skeleton, } from "antd";
-import { SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus, getUserClubAccess } from "../../../api/clubsApi";
+import { Avatar, Button, Card, Layout, Modal, Skeleton } from "antd";
+import {
+  SettingOutlined,
+  CloseOutlined,
+  RollbackOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
+import {
+  removeAdministrator,
+  getAllAdmins,
+  getAllMembers,
+  toggleMemberStatus,
+  getUserClubAccess,
+} from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
 import AuthStore from "../../../stores/AuthStore";
-import jwt from 'jwt-decode';
+import jwt from "jwt-decode";
 import "./Club.less";
 import ClubMember from "../../../models/Club/ClubMember";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
@@ -15,11 +26,13 @@ import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import extendedTitleTooltip, { parameterMaxLength } from "../../../components/Tooltip";
+import extendedTitleTooltip, {
+  parameterMaxLength,
+} from "../../../components/Tooltip";
 moment.locale("uk-ua");
 
 const ClubMembers = () => {
-  const {id} = useParams();
+  const { id } = useParams();
   const history = useHistory();
 
   const [members, setMembers] = useState<ClubMember[]>([]);
@@ -30,8 +43,10 @@ const ClubMembers = () => {
   const [admin, setAdmin] = useState<ClubAdmin>(new ClubAdmin());
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
-  
+  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+
   const getMembers = async () => {
     setLoading(true);
     await getUserAccessesForClubs();
@@ -50,23 +65,22 @@ const ClubMembers = () => {
 
   const getUserAccessesForClubs = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
-    await getUserClubAccess(id,user.nameid).then(
-      response => {
-        setUserAccesses(response.data);
-      }
-    );
-  }
+    await getUserClubAccess(id, user.nameid).then((response) => {
+      setUserAccesses(response.data);
+    });
+  };
 
   function seeDeleteModal(admin: ClubMember) {
     return Modal.confirm({
-      title: "Ви впевнені, що хочете видалити даного користувача із членів Куреня?",
+      title:
+        "Ви впевнені, що хочете видалити даного користувача із членів Куреня?",
       icon: <ExclamationCircleOutlined />,
       okText: "Так, видалити",
       okType: "primary",
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
-         removeMember(admin);
+        removeMember(admin);
       },
     });
   }
@@ -77,44 +91,52 @@ const ClubMembers = () => {
     const existingAdmin = [head, ...admins].filter(
       (a) =>
         a?.userId === member.userId &&
-        (moment.utc(a?.endDate).local().isAfter(moment()) || a?.endDate === null)
+        (moment.utc(a?.endDate).local().isAfter(moment()) ||
+          a?.endDate === null)
     );
 
     for (let i of existingAdmin) {
       await removeAdministrator(i.id);
     }
-    await createNotification([member.userId], "На жаль, ви були виключені з членів куреня");
+    await createNotification(
+      [member.userId],
+      "На жаль, ви були виключені з членів куреня"
+    );
     setMembers(members.filter((u) => u.id !== member.id));
   };
 
-  const createNotification = async(userId : Array<string>, message : string) => {
+  const createNotification = async (userId: Array<string>, message: string) => {
     await NotificationBoxApi.createNotifications(
       userId,
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/clubs/${id}`,
       clubName
-      );
-  }
+    );
+  };
 
-  const onAdd = async (admin? : ClubAdmin) => {
+  const onAdd = async (admin?: ClubAdmin) => {
     const responseAdmins = await getAllAdmins(id);
     setAdmins(responseAdmins.data.administration);
     setHead(responseAdmins.data.head);
-    if(admin){
-      await createNotification([admin.userId], `Вам була присвоєна нова роль: '${admin.adminType.adminTypeName}' в курені`);
+    if (admin) {
+      await createNotification(
+        [admin.userId],
+        `Вам була присвоєна нова роль: '${admin.adminType.adminTypeName}' в курені`
+      );
     }
-  }
+  };
 
-  const showModal = (member: ClubMember) => {    
-    const existingAdmin = [head, ...admins].find((a) => a?.userId === member.userId);
-    
+  const showModal = (member: ClubMember) => {
+    const existingAdmin = [head, ...admins].find(
+      (a) => a?.userId === member.userId
+    );
+
     if (existingAdmin !== undefined) {
       setAdmin(existingAdmin);
-    }
-    else {
+    } else {
       setAdmin({
-        ...(new ClubAdmin()),
+        ...new ClubAdmin(),
         userId: member.user.id,
         clubId: member.ClubId,
       });
@@ -137,55 +159,59 @@ const ClubMembers = () => {
 
   return (
     <Layout.Content>
-      <Title level={2}>
-        Члени куреня
-      </Title>
+      <Title level={2}>Члени куреня</Title>
       {loading ? (
-          <Spinner />
-        ) : (
-      <div className="clubMoreItems">
-        {members.length > 0 ? (
-          members.map((member: ClubMember) => (
-            <Card
-              key={member.id}
-              className="detailsCard"
-              actions={
-                userAccesses["EditClub"] && (member?.user?.id !== head?.user?.id || userAccesses["AddClubHead"])
-                  ? [
-                      <SettingOutlined onClick={() => showModal(member)} />,
-                      <CloseOutlined onClick={() => seeDeleteModal(member)} />,
-                    ]
-                  : undefined
-              }
-            >
-              <div
-                onClick={() => history.push(`/userpage/main/${member.userId}`)}
-                className="clubMember"
+        <Spinner />
+      ) : (
+        <div className="clubMoreItems">
+          {members.length > 0 ? (
+            members.map((member: ClubMember) => (
+              <Card
+                key={member.id}
+                className="detailsCard"
+                actions={
+                  userAccesses["EditClub"] &&
+                  (member?.user?.id !== head?.user?.id ||
+                    userAccesses["AddClubHead"])
+                    ? [
+                        <SettingOutlined onClick={() => showModal(member)} />,
+                        <CloseOutlined
+                          onClick={() => seeDeleteModal(member)}
+                        />,
+                      ]
+                    : undefined
+                }
               >
-                {photosLoading ? (
-                  <Skeleton.Avatar active size={86}></Skeleton.Avatar>
-                ) : (
-                  <Avatar
-                    size={86}
-                    src={member.user.imagePath}
-                    className="detailsIcon"
-                  />
-                )}
-                <Card.Meta
-                  className="detailsMeta"
-                  title={
-                    extendedTitleTooltip(parameterMaxLength, `${member.user.firstName} ${member.user.lastName}`)
+                <div
+                  onClick={() =>
+                    history.push(`/userpage/main/${member.userId}`)
                   }
-                />
-              </div>
-            </Card>
-          ))
-        ) : (
-          <Title level={4}>
-            Ще немає членів куреня
-          </Title>
-        )}
-      </div>)}
+                  className="clubMember"
+                >
+                  {photosLoading ? (
+                    <Skeleton.Avatar active size={86}></Skeleton.Avatar>
+                  ) : (
+                    <Avatar
+                      size={86}
+                      src={member.user.imagePath}
+                      className="detailsIcon"
+                    />
+                  )}
+                  <Card.Meta
+                    className="detailsMeta"
+                    title={extendedTitleTooltip(
+                      parameterMaxLength,
+                      `${member.user.firstName} ${member.user.lastName}`
+                    )}
+                  />
+                </div>
+              </Card>
+            ))
+          ) : (
+            <Title level={4}>Ще немає членів куреня</Title>
+          )}
+        </div>
+      )}
       <div className="clubMoreItems">
         <Button
           className="backButton"

@@ -12,7 +12,9 @@ interface Props {
 const RegionDetailDrawer = (props: Props) => {
   return (
     <Drawer
-      title={`Деталі округи ${props.region.regionName?.length > 0 ? props.region.regionName : ""}`}
+      title={`Деталі округи ${
+        props.region.regionName?.length > 0 ? props.region.regionName : ""
+      }`}
       onClose={() => props.setVisibleDrawer(false)}
       visible={props.visibleDrawer}
       footer={null}
@@ -74,7 +76,9 @@ const RegionDetailDrawer = (props: Props) => {
               }
             >
               <Input
-                value={props.region.email?.length > 0 ? props.region.email : "---"}
+                value={
+                  props.region.email?.length > 0 ? props.region.email : "---"
+                }
                 disabled
               />
             </Form.Item>
@@ -89,7 +93,9 @@ const RegionDetailDrawer = (props: Props) => {
               }
             >
               <Input
-                value={props.region.city?.length > 0 ? props.region.city : "---"}
+                value={
+                  props.region.city?.length > 0 ? props.region.city : "---"
+                }
                 disabled
               />
             </Form.Item>

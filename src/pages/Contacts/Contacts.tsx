@@ -1,15 +1,20 @@
 import React, { useState } from "react";
 import { Button, Form, Input, Layout, List, Select } from "antd";
-import { EnvironmentOutlined, PhoneOutlined, MailOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import {
+  EnvironmentOutlined,
+  PhoneOutlined,
+  MailOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
 import styles from "./Contacts.module.css";
 import AuthorizeApi from "../../api/authorizeApi";
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 import ReactInputMask from "react-input-mask";
-import{
+import {
   emptyInput,
   incorrectEmail,
   incorrectPhone,
-} from "../../components/Notifications/Messages"
+} from "../../components/Notifications/Messages";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 
 let authService = new AuthorizeApi();
@@ -20,31 +25,24 @@ export default function () {
 
   const data = [
     {
-      avatar: (
-        <EnvironmentOutlined id={styles.environmentOutlined} />
-      ),
+      avatar: <EnvironmentOutlined id={styles.environmentOutlined} />,
       title: "Україна",
     },
     {
-      avatar: (
-        <PhoneOutlined id={styles.environmentOutlined} />
-      ),
+      avatar: <PhoneOutlined id={styles.environmentOutlined} />,
       title: "+38 (099)-999-99-99",
     },
     {
-      avatar: (
-        <MailOutlined id={styles.environmentOutlined} />
-      ),
+      avatar: <MailOutlined id={styles.environmentOutlined} />,
       title: "info@plast.org.ua",
     },
   ];
 
   const handleSubmit = async (values: any) => {
-    if(values.PhoneNumber === "")
-    {
+    if (values.PhoneNumber === "") {
       values.PhoneNumber = undefined;
     }
-    
+
     await authService.sendQuestionAdmin(values);
     history.push("/contacts");
     form.resetFields();
@@ -71,7 +69,7 @@ export default function () {
       <section className={styles.contactsList}>
         <h1>
           <InfoCircleOutlined id={styles.InfoOut} />
-           Контакти
+          Контакти
         </h1>
         <List
           itemLayout="horizontal"
@@ -87,7 +85,7 @@ export default function () {
         className={styles.contactsForm}
         layout="vertical"
         initialValues={{ prefix: "+380" }}
-        form={form} 
+        form={form}
         validateMessages={validateMessages}
         onFinish={handleSubmit}
       >
@@ -108,13 +106,10 @@ export default function () {
         <Form.Item
           name="PhoneNumber"
           label="Вкажіть Ваш номер телефону"
-          rules={[{min:18, message:incorrectPhone}]}
-          >
-          <ReactInputMask
-            mask="+380(99)-999-99-99"
-            maskChar={null}
-          >
-            {(inputProps: any) => <Input  {...inputProps} type="tel" />}
+          rules={[{ min: 18, message: incorrectPhone }]}
+        >
+          <ReactInputMask mask="+380(99)-999-99-99" maskChar={null}>
+            {(inputProps: any) => <Input {...inputProps} type="tel" />}
           </ReactInputMask>
         </Form.Item>
         <Form.Item

@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Form,
-  DatePicker,
-  Select,
-  Input,
-  Button,
-  Row,
-  Col,
-} from "antd";
+import { Form, DatePicker, Select, Input, Button, Row, Col } from "antd";
 import Distinction from "../Interfaces/Distinction";
 import UserDistinction from "../Interfaces/UserDistinction";
 import distinctionApi from "../../../api/distinctionApi";
@@ -17,10 +9,13 @@ import {
   emptyInput,
   maxNumber,
   minNumber,
-  incorrectData
-} from "../../../components/Notifications/Messages"
+  incorrectData,
+} from "../../../components/Notifications/Messages";
 import precautionApi from "../../../api/precautionApi";
-import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
+import {
+  descriptionValidation,
+  getOnlyNums,
+} from "../../../models/GllobalValidations/DescriptionValidation";
 import moment from "moment";
 
 type FormAddDistinctionProps = {
@@ -70,8 +65,10 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
   };
 
   const backgroundColor = (user: any) => {
-    return user.isInLowerRole ? { backgroundColor : '#D3D3D3' } : { backgroundColor : 'white' };
-  }
+    return user.isInLowerRole
+      ? { backgroundColor: "#D3D3D3" }
+      : { backgroundColor: "white" };
+  };
 
   const createNotifications = async (userDistinction: UserDistinction) => {
     await NotificationBoxApi.createNotifications(
@@ -82,20 +79,21 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       `Переглянути`
     );
 
-    await NotificationBoxApi.getCitiesForUserAdmins(userDistinction.userId)
-      .then(res => {
-        res.cityRegionAdmins.length !== 0 &&
-          res.cityRegionAdmins.forEach(async (cra) => {
-            await NotificationBoxApi.createNotifications(
-              [cra.cityAdminId, cra.regionAdminId],
-              `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав нове відзначення: '${userDistinction.distinction.name}' від ${userDistinction.reporter}. `,
-              NotificationBoxApi.NotificationTypes.UserNotifications,
-              `/distinctions`,
-              `Переглянути`
-            );
-          })
-      });
-  }
+    await NotificationBoxApi.getCitiesForUserAdmins(
+      userDistinction.userId
+    ).then((res) => {
+      res.cityRegionAdmins.length !== 0 &&
+        res.cityRegionAdmins.forEach(async (cra) => {
+          await NotificationBoxApi.createNotifications(
+            [cra.cityAdminId, cra.regionAdminId],
+            `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав нове відзначення: '${userDistinction.distinction.name}' від ${userDistinction.reporter}. `,
+            NotificationBoxApi.NotificationTypes.UserNotifications,
+            `/distinctions`,
+            `Переглянути`
+          );
+        });
+    });
+  };
 
   const handleSubmit = async (values: any) => {
     const newDistinction: UserDistinction = {
@@ -117,12 +115,18 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     await createNotifications(newDistinction);
   };
 
-  function disabledDate(currentDate : any) {
+  function disabledDate(currentDate: any) {
     return currentDate && currentDate < moment("01-01-1900", "DD-MM-YYYY");
   }
 
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
+    <Form
+      name="basic"
+      onFinish={handleSubmit}
+      form={form}
+      id="area"
+      style={{ position: "relative" }}
+    >
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
@@ -131,25 +135,25 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             labelCol={{ span: 24 }}
             name="number"
             rules={[
-                {
-                  required: true,
-                  message: emptyInput(),
-                },
-                {
-                  max: 5,
-                  message: maxNumber(99999),
-                },
-                {
-                  validator: async (_ : object, value: number) =>
+              {
+                required: true,
+                message: emptyInput(),
+              },
+              {
+                max: 5,
+                message: maxNumber(99999),
+              },
+              {
+                validator: async (_: object, value: number) =>
                   value && !isNaN(value)
-                      ? await distinctionApi
-                          .checkNumberExisting(value)
-                          .then(response => response.data === false)
-                            ? Promise.resolve()
-                              : Promise.reject('Цей номер уже зайнятий') 
-                              : Promise.reject()                              
-                }
-              ]}
+                    ? (await distinctionApi
+                        .checkNumberExisting(value)
+                        .then((response) => response.data === false))
+                      ? Promise.resolve()
+                      : Promise.reject("Цей номер уже зайнятий")
+                    : Promise.reject(),
+              },
+            ]}
           >
             <Input
               onChange={(e) => {
@@ -157,11 +161,11 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                   number: getOnlyNums(e.target.value),
                 });
               }}
-              autoComplete = "off"
+              autoComplete="off"
               min={1}
               className={formclasses.inputField}
               max={99999}
-              maxLength = {7}
+              maxLength={7}
             />
           </Form.Item>
         </Col>
@@ -180,8 +184,8 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               },
             ]}
           >
-            <Select 
-              className={formclasses.selectField} 
+            <Select
+              className={formclasses.selectField}
               showSearch
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
@@ -202,10 +206,10 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             name="user"
             labelCol={{ span: 24 }}
             rules={[
-              { 
-                required: true, 
-                message: emptyInput() 
-              }
+              {
+                required: true,
+                message: emptyInput(),
+              },
             ]}
           >
             <Select
@@ -215,12 +219,12 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
               {userData?.map((o) => (
-                <Select.Option 
-                    key={o.id} 
-                    value={JSON.stringify(o)} 
-                    style={backgroundColor(o)}
-                    disabled={o.isInLowerRole}
-                    >
+                <Select.Option
+                  key={o.id}
+                  value={JSON.stringify(o)}
+                  style={backgroundColor(o)}
+                  disabled={o.isInLowerRole}
+                >
                   {o.firstName + " " + o.lastName}
                 </Select.Option>
               ))}
@@ -253,18 +257,20 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             label="Дата затвердження"
             labelCol={{ span: 24 }}
             rules={[
-              { 
-                required: true, 
-                message: emptyInput()  
-              }
+              {
+                required: true,
+                message: emptyInput(),
+              },
             ]}
           >
             <DatePicker
-              disabledDate = {disabledDate}
+              disabledDate={disabledDate}
               format={dateFormat}
               className={formclasses.selectField}
-              getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
-              popupStyle={{position: 'absolute'}}
+              getPopupContainer={() =>
+                document.getElementById("area")! as HTMLElement
+              }
+              popupStyle={{ position: "absolute" }}
             />
           </Form.Item>
         </Col>
@@ -294,10 +300,18 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
         <Col md={24} xs={24}>
           <Form.Item>
             <div className={formclasses.cardButton}>
-              <Button key="back" onClick={handleCancel} className={formclasses.buttons}>
+              <Button
+                key="back"
+                onClick={handleCancel}
+                className={formclasses.buttons}
+              >
                 Відмінити
               </Button>
-              <Button type="primary" htmlType="submit" className={formclasses.buttons}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className={formclasses.buttons}
+              >
                 Опублікувати
               </Button>
             </div>

@@ -56,7 +56,7 @@ import NotAuthorizedPage from "./pages/Error/NotAuthorized";
 import { ClubAnnualReportCreate } from "./pages/AnnualReport/ClubAnnualReportCreate/ClubAnnualReportCreate";
 import ClubAnnualReportEdit from "./pages/AnnualReport/ClubAnnualReportEdit/ClubAnnualReportEdit";
 import DocumentsTable from "./pages/Documents/DocumentsTable";
-import PrecautionTable from "./pages/Precaution/PrecautionTable/PrecautionTable"
+import PrecautionTable from "./pages/Precaution/PrecautionTable/PrecautionTable";
 import RegionBoard from "./pages/RegionsBoard/RegionBoard";
 import RegionBoardEdit from "./pages/RegionsBoard/RegionBoardEdit";
 import RegionBoardAdministration from "./pages/RegionsBoard/RegionBoardAdministration";
@@ -86,11 +86,16 @@ import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 const App: FC = () => (
   <div className="App">
     <Router>
-      <ScrollToTop/>
+      <ScrollToTop />
       <HeaderContainer />
       <div className="mainContent">
         <Switch>
-          <RouteWithLayout exact path="/" component={Home} layout={PrivateLayout} />
+          <RouteWithLayout
+            exact
+            path="/"
+            component={Home}
+            layout={PrivateLayout}
+          />
           <Route path="/contacts" component={Contacts} />
           <Route path="/signin" component={SignIn} />
           <Route path="/signup" component={SignUp} />

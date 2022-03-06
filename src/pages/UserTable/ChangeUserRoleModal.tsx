@@ -8,14 +8,14 @@ interface Props {
   showModal: boolean;
   setShowModal: (showModal: any) => void;
   onChange: (id: string, userRoles: string) => void;
-  user:any;
+  user: any;
 }
 const ChangeUserRoleModal = ({
   record,
   showModal,
   setShowModal,
   onChange,
-  user
+  user,
 }: Props) => {
   return (
     <Modal

@@ -7,12 +7,12 @@ import {
   RollbackOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import jwt from 'jwt-decode';
-import { 
-  getRegionAdministration, 
-  getRegionById, 
-  getUserRegionAccess, 
-  removeAdmin, 
+import jwt from "jwt-decode";
+import {
+  getRegionAdministration,
+  getRegionById,
+  getUserRegionAccess,
+  removeAdmin,
 } from "../../api/regionsApi";
 import userApi from "../../api/UserApi";
 import "./Region.less";
@@ -25,7 +25,9 @@ import NotificationBoxApi from "../../api/NotificationBoxApi";
 import AddAdministratorModal from "./AddAdministratorModal";
 import { Roles } from "../../models/Roles/Roles";
 import RegionAdmin from "../../models/Region/RegionAdmin";
-import extendedTitleTooltip, { parameterMaxLength } from "../../components/Tooltip";
+import extendedTitleTooltip, {
+  parameterMaxLength,
+} from "../../components/Tooltip";
 import AuthStore from "../../stores/AuthStore";
 moment.locale("uk-ua");
 
@@ -55,26 +57,28 @@ const RegionAdministration = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [reload, setReload] = useState(false);
   const [regionName, setRegionName] = useState<string>("");
-  const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({})
+  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
+    {}
+  );
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
+  const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<
+    boolean
+  >(false);
 
   const setIsRegionAdmin = (admin: any[], userId: string) => {
-    for(let i = 0; i < admin.length; i++){
-      if(admin[i].userId == userId){
+    for (let i = 0; i < admin.length; i++) {
+      if (admin[i].userId == userId) {
         setIsActiveUserRegionAdmin(true);
       }
     }
-  }
+  };
 
   const getUserAccessesForRegion = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
-    await getUserRegionAccess(+id, user.nameid).then(
-      response => {
-        setUserAccesses(response.data);
-      }
-    );
-  }
+    await getUserRegionAccess(+id, user.nameid).then((response) => {
+      setUserAccesses(response.data);
+    });
+  };
 
   const getAdministration = async () => {
     setLoading(true);
@@ -85,9 +89,14 @@ const RegionAdministration = () => {
     setRegion(regionResponse.data);
     setRegionName(regionResponse.data.name);
     setPhotos([...administrationResponse.data].filter((a) => a != null));
-    setAdministration([...administrationResponse.data].filter((a) => a != null));
+    setAdministration(
+      [...administrationResponse.data].filter((a) => a != null)
+    );
     setActiveUserRoles(userApi.getActiveUserRoles());
-    setIsRegionAdmin([...administrationResponse.data].filter((a) => a != null), userApi.getActiveUserId());
+    setIsRegionAdmin(
+      [...administrationResponse.data].filter((a) => a != null),
+      userApi.getActiveUserId()
+    );
     setLoading(false);
   };
 
@@ -107,8 +116,10 @@ const RegionAdministration = () => {
 
   const removeAdministrator = async (admin: CityAdmin) => {
     await removeAdmin(admin.id);
-    await createNotification(admin.userId,
-      `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в окрузі`);
+    await createNotification(
+      admin.userId,
+      `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в окрузі`
+    );
     setAdministration(administration.filter((u) => u.id !== admin.id));
   };
 
@@ -120,7 +131,10 @@ const RegionAdministration = () => {
   const onAdd = async (newAdmin: RegionAdmin = new RegionAdmin()) => {
     const index = administration.findIndex((a) => a.id === admin.id);
     administration[index] = newAdmin;
-    await createNotification(newAdmin.userId, `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`);
+    await createNotification(
+      newAdmin.userId,
+      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`
+    );
     setAdministration(administration);
     setReload(!reload);
   };
@@ -133,7 +147,7 @@ const RegionAdministration = () => {
     setPhotosLoading(false);
   };
 
-  const createNotification = async(userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
@@ -141,7 +155,7 @@ const RegionAdministration = () => {
       `/regions/${id}`,
       regionName
     );
-  }
+  };
 
   useEffect(() => {
     getAdministration();
@@ -159,25 +173,27 @@ const RegionAdministration = () => {
               <Card
                 key={member.id}
                 className="detailsCard"
-                title={
-                  extendedTitleTooltip(adminTypeNameMaxLength, `${member.adminType.adminTypeName}`)
-                }
-                headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}          
+                title={extendedTitleTooltip(
+                  adminTypeNameMaxLength,
+                  `${member.adminType.adminTypeName}`
+                )}
+                headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                 actions={
                   userAccesses["EditRegion"]
-                  ?
-                  [
-                  <SettingOutlined onClick={() => showModal(member)} />,
-                  <CloseOutlined onClick={() => seeDeleteModal(member)} />,
-                  ]
-                  : undefined
+                    ? [
+                        <SettingOutlined onClick={() => showModal(member)} />,
+                        <CloseOutlined
+                          onClick={() => seeDeleteModal(member)}
+                        />,
+                      ]
+                    : undefined
                 }
               >
                 <div
                   onClick={() =>
                     !activeUserRoles.includes(Roles.RegisteredUser)
-                    ? history.push(`/userpage/main/${member.userId}`)
-                    : undefined 
+                      ? history.push(`/userpage/main/${member.userId}`)
+                      : undefined
                   }
                   className="cityMember"
                 >
@@ -189,9 +205,10 @@ const RegionAdministration = () => {
                     )}
                     <Card.Meta
                       className="detailsMeta"
-                      title={
-                        extendedTitleTooltip(parameterMaxLength, `${member.user.firstName} ${member.user.lastName}`)
-                      }
+                      title={extendedTitleTooltip(
+                        parameterMaxLength,
+                        `${member.user.firstName} ${member.user.lastName}`
+                      )}
                     />
                   </div>
                 </div>
@@ -214,15 +231,15 @@ const RegionAdministration = () => {
         </Button>
       </div>
 
-          <AddAdministratorModal
-            admin={admin}
-            setAdmin={setAdmin}
-            visibleModal={visibleModal}
-            setVisibleModal={setVisibleModal}
-            regionId={+id}
-            regionName={region}
-            onAdd={onAdd}
-          />
+      <AddAdministratorModal
+        admin={admin}
+        setAdmin={setAdmin}
+        visibleModal={visibleModal}
+        setVisibleModal={setVisibleModal}
+        regionId={+id}
+        regionName={region}
+        onAdd={onAdd}
+      />
     </Layout.Content>
   );
 };

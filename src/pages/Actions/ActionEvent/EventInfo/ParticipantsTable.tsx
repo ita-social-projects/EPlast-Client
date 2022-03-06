@@ -13,12 +13,12 @@ import { EventParticipant } from "./EventInfo";
 import eventsApi from "../../../../api/eventsApi";
 import "./ParticipantsTable.less";
 import { useHistory, useParams } from "react-router-dom";
-import NotificationBoxApi from '../../../../api/NotificationBoxApi';
+import NotificationBoxApi from "../../../../api/NotificationBoxApi";
 
 const { Text } = Typography;
 
 interface Props {
-  userAccesses: { [key: string]: boolean; }
+  userAccesses: { [key: string]: boolean };
   isEventFinished: boolean;
   participants: EventParticipant[];
   eventName: string;
@@ -38,7 +38,6 @@ const ParticipantsTable = ({
   eventName,
   setRender,
 }: Props) => {
-
   const { id } = useParams();
   const [Participants, setParticipant] = useState<EventParticipant[]>(
     participants
@@ -93,7 +92,10 @@ const ParticipantsTable = ({
     );
   };
 
-  const changeStatusToUnderReviewed = (participantId: number, userId: string) => {
+  const changeStatusToUnderReviewed = (
+    participantId: number,
+    userId: string
+  ) => {
     const underReviewedParticipant = async () => {
       await eventsApi.underReviewParticipant(participantId);
     };
@@ -128,7 +130,7 @@ const ParticipantsTable = ({
       eventName
     );
   };
-  
+
   function showRejectModal(participantId: number, userId: string) {
     return Modal.confirm({
       title: "Ви дійсно хочете відмовити цьому користувачу в участі у події?",

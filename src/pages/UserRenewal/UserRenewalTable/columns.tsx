@@ -1,10 +1,9 @@
 import "./Filter.less";
-import { FormLabelAlign } from 'antd/lib/form/interface';
-import { SortOrder } from 'antd/lib/table/interface';
-import { Tag } from 'antd';
-import moment from 'moment';
-import React from 'react';
-
+import { FormLabelAlign } from "antd/lib/form/interface";
+import { SortOrder } from "antd/lib/table/interface";
+import { Tag } from "antd";
+import moment from "moment";
+import React from "react";
 
 const fetchYears = () => {
   const arrayOfYears = [];
@@ -14,78 +13,85 @@ const fetchYears = () => {
     arrayOfYears.push({ text: i.toString(), value: i });
   }
   return arrayOfYears;
-}
+};
 const years = fetchYears();
-const approval: {text: string; value: boolean}[] = [{text: "погоджено", value: true}, {text: "на розгляді", value: false}];
+const approval: { text: string; value: boolean }[] = [
+  { text: "погоджено", value: true },
+  { text: "на розгляді", value: false },
+];
 const columns = [
   {
-    align: 'center' as FormLabelAlign,
-    title: '№',
-    dataIndex: 'id',
+    align: "center" as FormLabelAlign,
+    title: "№",
+    dataIndex: "id",
     width: 75,
     fixed: true,
     sorter: (a: any, b: any) => a.id - b.id,
   },
   {
-    title: 'Ім\'я',
-    dataIndex: 'userName',
+    title: "Ім'я",
+    dataIndex: "userName",
     render: (userName: string) => {
-      return userName
+      return userName;
     },
     sorter: (a: any, b: any) => a.userName.localeCompare(b.userName),
-    sortDirections: ['ascend', 'descend'] as SortOrder[],
+    sortDirections: ["ascend", "descend"] as SortOrder[],
   },
   {
-    title: 'Станиця',
-    dataIndex: 'cityName',
+    title: "Станиця",
+    dataIndex: "cityName",
     render: (cityName: string) => {
-      return cityName
+      return cityName;
     },
     sorter: (a: any, b: any) => a.cityName.localeCompare(b.cityName),
-    sortDirections: ['ascend', 'descend'] as SortOrder[],
+    sortDirections: ["ascend", "descend"] as SortOrder[],
   },
   {
-    title: 'Округа',
-    dataIndex: 'regionName',
+    title: "Округа",
+    dataIndex: "regionName",
     render: (regionName: string) => {
-      return regionName
+      return regionName;
     },
     sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
-    sortDirections: ['ascend', 'descend'] as SortOrder[],
+    sortDirections: ["ascend", "descend"] as SortOrder[],
   },
   {
-    title: 'Дата запиту',
-    dataIndex: 'requestDate',
+    title: "Дата запиту",
+    dataIndex: "requestDate",
     filters: years,
     onFilter: (value: any, record: any) => record.requestDate.includes(value),
     render: (requestDate: Date) => {
-      return moment.utc(requestDate.toLocaleString()).local().format('DD.MM.YYYY');
+      return moment
+        .utc(requestDate.toLocaleString())
+        .local()
+        .format("DD.MM.YYYY");
     },
   },
   {
-    title: 'E-mail',
-    dataIndex: 'email',
+    title: "E-mail",
+    dataIndex: "email",
     render: (email: string) => {
-      return email
+      return email;
     },
     sorter: (a: any, b: any) => a.email.localeCompare(b.email),
-    sortDirections: ['ascend', 'descend'] as SortOrder[],
+    sortDirections: ["ascend", "descend"] as SortOrder[],
   },
   {
-    title: 'Статус',
-    dataIndex: 'approved',
+    title: "Статус",
+    dataIndex: "approved",
     filters: approval,
-    onFilter: (value: any, record: any) => record.approved===value,
+    onFilter: (value: any, record: any) => record.approved === value,
     render: (approved: boolean) => {
       return (
         <div>
-          {approved === true ? 
-          <Tag color='green'>погоджено</Tag> 
-          : 
-          <Tag color='geekblue'>на розгляді</Tag>}
+          {approved === true ? (
+            <Tag color="green">погоджено</Tag>
+          ) : (
+            <Tag color="geekblue">на розгляді</Tag>
+          )}
         </div>
-      )
-    }
+      );
+    },
   },
 ];
 export default columns;
