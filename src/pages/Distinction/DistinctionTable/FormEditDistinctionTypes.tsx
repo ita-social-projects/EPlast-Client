@@ -20,6 +20,7 @@ import Text from "antd/lib/typography/Text";
 
 type FormEditDistinctionTypesProps = {
   setVisibleModal: (visibleModal: boolean) => void;
+  onDelete: () => void;
 };
 
 let defaultDist: Distinction = {
@@ -28,7 +29,8 @@ let defaultDist: Distinction = {
 };
 const typeMaxLength = 200;
 
-const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => {
+const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = (props: any) => {
+  const {onDelete} = props;
   const [distData, setDistData] = useState<Distinction[]>([defaultDist]);
   const [title, setTitle] = useState("");
   const [curDist, setCurDist] = useState<Distinction>(defaultDist);
@@ -49,7 +51,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
 
   const handleDelete = (id: number) => {
     const filteredData = distData.filter((d: { id: number }) => d.id !== id);
-    setDistData([...filteredData]);
+    setDistData([...filteredData]);    
     setEditVisible(false);
     notificationLogic("success", "Тип відзначення успішно видалено!");
   };
@@ -114,7 +116,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
               <Tooltip title="Видалити відзначення">
                 <DeleteOutlined
                   className={classes.deleteIcon}
-                  onClick={() => DeleteTypeConfirm(item.id, handleDelete)}
+                  onClick={() => DeleteTypeConfirm(item.id, handleDelete, props.onDelete)}
                 />
               </Tooltip>,
             ]}
