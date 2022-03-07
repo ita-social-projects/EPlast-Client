@@ -35,18 +35,18 @@ export const KadrasTable = () => {
     const [idType3, setidType3] = useState<number>();
     const [idType4, setidType4] = useState<number>();
 
-    const typesId = async()=>{
+    const typesId = async () => {
         await kadrasApi.getAllKVTypes().then(response => {
-          setidType1(response.data[0].id);
-          setidType2(response.data[1].id);
-          setidType3(response.data[2].id);
-          setidType4(response.data[3].id);
+            setidType1(response.data[0].id);
+            setidType2(response.data[1].id);
+            setidType3(response.data[2].id);
+            setidType4(response.data[3].id);
         })
     }
 
     useEffect(() => {
-       typesId();
-      },[])
+        typesId();
+    }, [])
 
     let user: any;
     let curToken = AuthStore.getToken() as string;
@@ -64,9 +64,9 @@ export const KadrasTable = () => {
 
     const contentListNoTitle: { [key: string]: any } = {
         KV1N: <div key='1'><KVTable current={idType1!} searchData={searchedData} searchPage={searchPage} /></div>,
-        KV1U: <div key='2'><KVTable current={idType2!} searchData={searchedData} searchPage={searchPage}/></div>,
-        KV2N: <div key='3'><KVTable current={idType3!} searchData={searchedData} searchPage={searchPage}/></div>,
-        KV2U: <div key='4'><KVTable current={idType4!} searchData={searchedData} searchPage={searchPage}/></div>
+        KV1U: <div key='2'><KVTable current={idType2!} searchData={searchedData} searchPage={searchPage} /></div>,
+        KV2N: <div key='3'><KVTable current={idType3!} searchData={searchedData} searchPage={searchPage} /></div>,
+        KV2U: <div key='4'><KVTable current={idType4!} searchData={searchedData} searchPage={searchPage} /></div>
     };
 
     const [visible, setvisible] = useState<boolean>(false);
@@ -79,10 +79,10 @@ export const KadrasTable = () => {
     };
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.value.toLowerCase() === ''){ 
+        if (event.target.value.toLowerCase() === '') {
             setSearchPage(0);
             setSearchedData('');
-    }
+        }
     }
 
     const showModal = () => {
@@ -146,7 +146,7 @@ export const KadrasTable = () => {
                 {contentListNoTitle[noTitleKey]}
             </Card>
             <Drawer
-                closable = {false}
+                closable={false}
                 width="auto"
                 title="Надати кадру виховників"
                 visible={visible}
