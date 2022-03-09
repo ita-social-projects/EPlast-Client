@@ -60,26 +60,43 @@ export const KadrasTable = () => {
       : [""];
 
   const [searchedData, setSearchedData] = useState("");
+  const [searchPage, setSearchPage] = useState(0);
 
   const contentListNoTitle: { [key: string]: any } = {
     KV1N: (
       <div key="1">
-        <KVTable current={idType1!} searchData={searchedData} />
+        <KVTable
+          current={idType1!}
+          searchData={searchedData}
+          searchPage={searchPage}
+        />
       </div>
     ),
     KV1U: (
       <div key="2">
-        <KVTable current={idType2!} searchData={searchedData} />
+        <KVTable
+          current={idType2!}
+          searchData={searchedData}
+          searchPage={searchPage}
+        />
       </div>
     ),
     KV2N: (
       <div key="3">
-        <KVTable current={idType3!} searchData={searchedData} />
+        <KVTable
+          current={idType3!}
+          searchData={searchedData}
+          searchPage={searchPage}
+        />
       </div>
     ),
     KV2U: (
       <div key="4">
-        <KVTable current={idType4!} searchData={searchedData} />
+        <KVTable
+          current={idType4!}
+          searchData={searchedData}
+          searchPage={searchPage}
+        />
       </div>
     ),
   };
@@ -89,11 +106,15 @@ export const KadrasTable = () => {
   const [canEdit] = useState(roles.includes(Roles.Admin));
 
   const handleSearch = (event: any) => {
+    setSearchPage(1);
     setSearchedData(event);
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.toLowerCase() === "") setSearchedData("");
+    if (event.target.value.toLowerCase() === "") {
+      setSearchPage(0);
+      setSearchedData("");
+    }
   };
 
   const showModal = () => {

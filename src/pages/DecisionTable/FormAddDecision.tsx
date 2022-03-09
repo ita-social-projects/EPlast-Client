@@ -367,6 +367,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
                 rows={5}
                 onSelect={onSelect}
                 className={formclasses.formField}
+                maxLength={1001}
               >
                 <Option value="" disabled>
                   {tip}

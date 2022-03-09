@@ -699,6 +699,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
             <TextArea
               className={classes.input}
               autoSize={{ minRows: 3, maxRows: 5 }}
+              maxLength={201}
             />
           </Form.Item>
         </Col>
