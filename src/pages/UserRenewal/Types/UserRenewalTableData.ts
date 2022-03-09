@@ -1,15 +1,15 @@
 type UserRenewalTableData = {
-    id: number;
-    subtotal: number;
-    total: number;
-    userId: string;
-    userName: string;
-    cityId: number;
-    cityName: string;
-    regionName: string;
-    requestDate: Date;
-    email: string;
-    approved: boolean;
-}
+  id: number;
+  subtotal: number;
+  total: number;
+  userId: string;
+  userName: string;
+  cityId: number;
+  cityName: string;
+  regionName: string;
+  requestDate: Date;
+  email: string;
+  approved: boolean;
+};
 
 export default UserRenewalTableData;

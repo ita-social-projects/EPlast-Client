@@ -15,7 +15,7 @@ const AddDistinctionModal = ({
 }: Props) => {
   const handleCancel = () => {
     setVisibleModal(false);
-  }
+  };
   return (
     <Drawer
       title="Додати відзначення"

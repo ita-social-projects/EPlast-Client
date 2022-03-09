@@ -11,7 +11,7 @@ import {
   Card,
   Tooltip,
   Badge,
-  Tag
+  Tag,
 } from "antd";
 import {
   FileTextOutlined,
@@ -23,7 +23,7 @@ import {
   ExclamationCircleOutlined,
   DeleteOutlined,
   MinusOutlined,
-  LoadingOutlined
+  LoadingOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import {
@@ -41,7 +41,7 @@ import {
   toggleMemberStatus,
   removeFollower,
   getAllAdmins,
-  isUserApproved
+  isUserApproved,
 } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
@@ -52,7 +52,7 @@ import CityAdmin from "../../../models/City/CityAdmin";
 import CityDocument from "../../../models/City/CityDocument";
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
 import CheckActiveMembersForm from "./CheckActiveMembersForm";
-import jwt from 'jwt-decode';
+import jwt from "jwt-decode";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
@@ -60,14 +60,14 @@ import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { 
+import {
   successfulDeleteAction,
-  fileIsAdded, 
-  successfulEditAction, 
-  successfulUnarchiveAction, 
-  successfulArchiveAction, 
-  failArchiveAction, 
-  failApproveAction 
+  fileIsAdded,
+  successfulEditAction,
+  successfulUnarchiveAction,
+  successfulArchiveAction,
+  failArchiveAction,
+  failApproveAction,
 } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
@@ -84,7 +84,9 @@ const City = () => {
   const [cityLogo64, setCityLogo64] = useState<string>("");
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
-  const [userAccesses, setUserAccesses] = useState<{[key: string]:boolean}>({})
+  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
+    {}
+  );
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
   const [adminsAll, setAdminsAll] = useState<CityAdmin[]>([]);
   const [members, setMembers] = useState<CityMember[]>([]);
@@ -101,7 +103,9 @@ const City = () => {
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
-  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
+  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(
+    false
+  );
   const [isActiveCity, setIsActiveCity] = useState<boolean>(true);
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
@@ -111,24 +115,30 @@ const City = () => {
   const membersToShow = 9;
   const followersToShow = 5;
   const followersToShowOnAdd = 6;
-  const classes = require('./Modal.module.css');
+  const classes = require("./Modal.module.css");
 
   const changeApproveStatus = async (memberId: number) => {
-    if(!isLoadingPlus)
-    {
+    if (!isLoadingPlus) {
       notificationLogic("warning", failApproveAction());
       return;
     }
-    setIsLoadingMemberId(memberId)
-    setIsLoadingPlus(false)
+    setIsLoadingMemberId(memberId);
+    setIsLoadingPlus(false);
     const member = await toggleMemberStatus(memberId);
     moment.locale("uk-ua");
 
-    await createNotification(member.data.userId,
-      "Вітаємо, вас зараховано до членів станиці", true);
+    await createNotification(
+      member.data.userId,
+      "Вітаємо, вас зараховано до членів станиці",
+      true
+    );
 
     if (member.data.wasInRegisteredUserRole) {
-      await createNotification(member.data.userId, "Тобі надано нову роль: 'Прихильник' в станиці", true);
+      await createNotification(
+        member.data.userId,
+        "Тобі надано нову роль: 'Прихильник' в станиці",
+        true
+      );
     }
 
     member.data.user.imagePath = (
@@ -146,23 +156,33 @@ const City = () => {
 
   const removeMember = async (followerID: number) => {
     await removeFollower(followerID);
-    await createNotification(activeUserID as string, "На жаль, ви були виключені із прихильників станиці", true);
+    await createNotification(
+      activeUserID as string,
+      "На жаль, ви були виключені із прихильників станиці",
+      true
+    );
     const response = await getCityById(+id);
     setFollowersCount(response.data.followerCount);
     setFollowers(followers.filter((f) => f.id !== followerID));
     setCanJoin(true);
-  }
+  };
 
   const addMember = async () => {
     const follower = await addFollower(+id);
 
     if (city.head !== null) {
-      await createNotification(city.head.userId,
-        `Новий прихильник ${follower.data.user.firstName} ${follower.data.user.lastName} приєднався до вашої станиці`, true);
+      await createNotification(
+        city.head.userId,
+        `Новий прихильник ${follower.data.user.firstName} ${follower.data.user.lastName} приєднався до вашої станиці`,
+        true
+      );
     }
     if (city.headDeputy !== null) {
-      await createNotification(city.headDeputy.userId,
-        `Новий прихильник ${follower.data.user.firstName} ${follower.data.user.lastName} приєднався до вашої станиці`, true);
+      await createNotification(
+        city.headDeputy.userId,
+        `Новий прихильник ${follower.data.user.firstName} ${follower.data.user.lastName} приєднався до вашої станиці`,
+        true
+      );
     }
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
@@ -180,8 +200,11 @@ const City = () => {
       await archiveCity(city.id);
       notificationLogic("success", successfulArchiveAction("Станицю"));
       admins.map(async (ad) => {
-        await createNotification(ad.userId,
-          `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`, false);
+        await createNotification(
+          ad.userId,
+          `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`,
+          false
+        );
       });
       history.push("/cities/page/1");
     } catch {
@@ -197,7 +220,7 @@ const City = () => {
   };
 
   const UnArchiveCity = async () => {
-    await unArchiveCity(city.id)
+    await unArchiveCity(city.id);
     notificationLogic("success", successfulUnarchiveAction("Станицю"));
 
     history.push("/cities/page/1");
@@ -275,48 +298,48 @@ const City = () => {
 
   function showJoinModal() {
     return Modal.confirm({
-      title: "Ви впевнені, що хочете доєднатися до даної станиці? При доєднанні до нової станиці всі попередні ролі будуть скасовані.",
+      title:
+        "Ви впевнені, що хочете доєднатися до даної станиці? При доєднанні до нової станиці всі попередні ролі будуть скасовані.",
       icon: <ExclamationCircleOutlined />,
       okText: "Так, доєднатися",
       okType: "primary",
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
-        setCanJoin(false)
+        setCanJoin(false);
         addMember();
       },
     });
   }
-  async function SetAdmins(id: number){
+  async function SetAdmins(id: number) {
     const response = await getAllAdmins(id);
-    setAdminsAll(response.data.administration)
+    setAdminsAll(response.data.administration);
   }
 
   async function showSkipModal(followerID: number) {
     const isApproved = await isUserApproved(followerID);
-    if(!isApproved.data)
-    {
+    if (!isApproved.data) {
       return Modal.confirm({
         title: "Ви впевнені, що хочете покинути дану станицю?",
         icon: <ExclamationCircleOutlined />,
-        okText: 'Так, покинути',
-        okType: 'primary',
-        cancelText: 'Скасувати',
+        okText: "Так, покинути",
+        okType: "primary",
+        cancelText: "Скасувати",
         maskClosable: true,
-        onOk() { removeMember(followerID) }
+        onOk() {
+          removeMember(followerID);
+        },
       });
-    }
-    else
-    {
+    } else {
       return Modal.info({
         title: "Ви не можете покинути дану станицю, оскільки є її членом!",
         icon: <ExclamationCircleOutlined />,
-        okText: 'Зрозуміло',
-        okType: 'primary',
-        maskClosable: true
-    });
+        okText: "Зрозуміло",
+        okType: "primary",
+        maskClosable: true,
+      });
+    }
   }
-}
 
   const getCity = async () => {
     setLoading(true);
@@ -324,13 +347,19 @@ const City = () => {
       await getUserAccessesForCities();
       const response = await getCityById(+id);
       setActiveUserID(userApi.getActiveUserId());
-      const responce1 = await cityNameOfApprovedMember(userApi.getActiveUserId());
+      const responce1 = await cityNameOfApprovedMember(
+        userApi.getActiveUserId()
+      );
       setCity(response.data);
       setActiveUserCity(responce1.data);
       setPhotosLoading(true);
       setCityLogoLoading(true);
       setPhotos(
-        [...response.data.administration, ...response.data.members, ...response.data.followers],
+        [
+          ...response.data.administration,
+          ...response.data.members,
+          ...response.data.followers,
+        ],
         response.data.logo
       );
       setAdmins(response.data.administration);
@@ -345,8 +374,7 @@ const City = () => {
       setDocumentsCount(response.data.documentsCount);
       setActiveUserRoles(userApi.getActiveUserRoles);
       await SetAdmins(+id);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -358,7 +386,7 @@ const City = () => {
     setAdmins(response.data.administration);
     setPhotosLoading(true);
     setPhotos([...response.data.administration], response.data.logo);
-  }
+  };
 
   const addCityAdmin = async (newAdmin: CityAdmin) => {
     let previousAdmin: CityAdmin = new CityAdmin();
@@ -370,20 +398,29 @@ const City = () => {
     await addAdministrator(newAdmin.cityId, newAdmin);
     await updateAdmins();
     if (previousAdmin.adminType.adminTypeName != "") {
-      await createNotification(previousAdmin.userId,
-        `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в станиці`, true);
+      await createNotification(
+        previousAdmin.userId,
+        `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в станиці`,
+        true
+      );
     }
-    await createNotification(newAdmin.userId,
-      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`, true);
-      notificationLogic("success", "Користувач успішно доданий в провід");
+    await createNotification(
+      newAdmin.userId,
+      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`,
+      true
+    );
+    notificationLogic("success", "Користувач успішно доданий в провід");
   };
 
   const editCityAdmin = async (admin: CityAdmin) => {
     await editAdministrator(id, admin);
     await updateAdmins();
     notificationLogic("success", successfulEditAction("Адміністратора"));
-    await createNotification(admin.userId,
-      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в станиці`, true);
+    await createNotification(
+      admin.userId,
+      `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в станиці`,
+      true
+    );
   };
 
   const showConfirm = (newAdmin: CityAdmin, existingAdmin: CityAdmin) => {
@@ -394,25 +431,34 @@ const City = () => {
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління
+          закінчується{" "}
           <b>
-            {moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY") ===
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
-      ),    
-      onCancel() { },
+      ),
+      onCancel() {},
       onOk() {
         if (newAdmin.id === 0) {
           addCityAdmin(newAdmin);
-          setAdmins((admins as CityAdmin[]).map(x => x.userId === existingAdmin?.userId && x.adminType.adminTypeName === existingAdmin?.adminType?.adminTypeName ?
-             newAdmin : x));
+          setAdmins(
+            (admins as CityAdmin[]).map((x) =>
+              x.userId === existingAdmin?.userId &&
+              x.adminType.adminTypeName ===
+                existingAdmin?.adminType?.adminTypeName
+                ? newAdmin
+                : x
+            )
+          );
         } else {
           editCityAdmin(newAdmin);
         }
-      }
+      },
     });
   };
 
@@ -426,14 +472,15 @@ const City = () => {
           </b>{" "}
           є Головою Станиці, час правління закінчується{" "}
           <b>
-            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {}
+      onOk() {},
     });
   };
 
@@ -445,16 +492,17 @@ const City = () => {
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
-            вже має таку роль, час правління закінчується{" "}
+          вже має таку роль, час правління закінчується{" "}
           <b>
-            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {}
+      onOk() {},
     });
   };
 
@@ -466,75 +514,76 @@ const City = () => {
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
-            не є членом Пласту.
+          не є членом Пласту.
         </div>
       ),
-      onOk() {}
+      onOk() {},
     });
   };
 
-  const handleOk = async(admin: CityAdmin) => {
+  const handleOk = async (admin: CityAdmin) => {
     if (admin.id === 0) {
-      const head = (admins as CityAdmin[])
-        .find(x => x.adminType.adminTypeName === Roles.CityHead)
-      if(admin !== undefined){
-        admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
+      const head = (admins as CityAdmin[]).find(
+        (x) => x.adminType.adminTypeName === Roles.CityHead
+      );
+      if (admin !== undefined) {
+        admin.adminType.adminTypeName =
+          admin.adminType.adminTypeName[0].toUpperCase() +
+          admin.adminType.adminTypeName.slice(1);
       }
-      const existingAdmin  = (adminsAll as CityAdmin[])
-        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)
-      try {     
-        if (head?.userId === admin.userId){
-          showDisableModal(head)
-        }
-        else if(existingAdmin?.userId === admin.userId){
-          showDisable(admin)
-        }
-        else if(admin.adminType.adminTypeName === "Голова СПР" ||
-          admin.adminType.adminTypeName === "Член СПР"){
+      const existingAdmin = (adminsAll as CityAdmin[]).find(
+        (x) => x.adminType.adminTypeName === admin.adminType.adminTypeName
+      );
+      try {
+        if (head?.userId === admin.userId) {
+          showDisableModal(head);
+        } else if (existingAdmin?.userId === admin.userId) {
+          showDisable(admin);
+        } else if (
+          admin.adminType.adminTypeName === "Голова СПР" ||
+          admin.adminType.adminTypeName === "Член СПР"
+        ) {
           const check = await getCheckPlastMember(admin.userId);
-          if(check.data){
+          if (check.data) {
             await addCityAdmin(admin);
             admins.push(admin);
             setAdmins(admins);
-          }
-          else {
+          } else {
             showPlastMemberDisable(admin);
           }
-        }
-        else if(existingAdmin !== undefined) {
+        } else if (existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);
-        }
-        else {
-          await addCityAdmin(admin).then(() => { admins.push(admin); setAdmins(admins); });
+        } else {
+          await addCityAdmin(admin).then(() => {
+            admins.push(admin);
+            setAdmins(admins);
+          });
         }
       } finally {
         setvisibleAddModal(false);
       }
-    }
-    else{
-      if(admin.adminType.adminTypeName === "Голова СПР" ||
-        admin.adminType.adminTypeName === "Член СПР"){
-        if(await getCheckPlastMember(admin.userId)){
+    } else {
+      if (
+        admin.adminType.adminTypeName === "Голова СПР" ||
+        admin.adminType.adminTypeName === "Член СПР"
+      ) {
+        if (await getCheckPlastMember(admin.userId)) {
           await editCityAdmin(admin);
-        }
-        else {
+        } else {
           showPlastMemberDisable(admin);
         }
-      }
-      else{
+      } else {
         await editCityAdmin(admin);
       }
     }
-  }
+  };
 
   const getUserAccessesForCities = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
-    await getUserCityAccess(+id, user.nameid).then(
-      response => {
-        setUserAccesses(response.data);
-      }
-    );
-  }
+    await getUserCityAccess(+id, user.nameid).then((response) => {
+      setUserAccesses(response.data);
+    });
+  };
 
   const handleClose = async () => {
     setvisibleAddModal(false);
@@ -544,7 +593,11 @@ const City = () => {
     setActiveMemberVisibility(false);
   };
 
-  const createNotification = async (userId: string, message: string, cityExist: boolean) => {
+  const createNotification = async (
+    userId: string,
+    message: string,
+    cityExist: boolean
+  ) => {
     if (cityExist) {
       await NotificationBoxApi.createNotifications(
         [userId],
@@ -560,17 +613,20 @@ const City = () => {
         NotificationBoxApi.NotificationTypes.UserNotifications
       );
     }
-  }
+  };
 
   useEffect(() => {
     getCity();
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (city.name.length != 0) {
-      PsevdonimCreator.setPseudonimLocation(`cities/${city.name}`, `cities/${id}`);
+      PsevdonimCreator.setPseudonimLocation(
+        `cities/${city.name}`,
+        `cities/${id}`
+      );
     }
-  },[city])
+  }, [city]);
 
   return loading ? (
     <Spinner />
@@ -624,13 +680,23 @@ const City = () => {
                     {city.head.endDate ? (
                       <Paragraph>
                         <b>Час правління:</b>{" "}
-                        {moment.utc(city.head.startDate).local().format("DD.MM.YYYY")}{" - "}
-                        {moment.utc(city.head.endDate).local().format("DD.MM.YYYY")}
+                        {moment
+                          .utc(city.head.startDate)
+                          .local()
+                          .format("DD.MM.YYYY")}
+                        {" - "}
+                        {moment
+                          .utc(city.head.endDate)
+                          .local()
+                          .format("DD.MM.YYYY")}
                       </Paragraph>
                     ) : (
                       <Paragraph>
                         <b>Початок правління:</b>{" "}
-                        {moment.utc(city.head.startDate).local().format("DD.MM.YYYY")}
+                        {moment
+                          .utc(city.head.startDate)
+                          .local()
+                          .format("DD.MM.YYYY")}
                       </Paragraph>
                     )}
                   </div>
@@ -643,19 +709,30 @@ const City = () => {
                 {city.headDeputy ? (
                   <div>
                     <Paragraph>
-                      <b>Заступник Голови Станиці:</b> {city.headDeputy.user.firstName}{" "}
+                      <b>Заступник Голови Станиці:</b>{" "}
+                      {city.headDeputy.user.firstName}{" "}
                       {city.headDeputy.user.lastName}
                     </Paragraph>
                     {city.headDeputy.endDate ? (
                       <Paragraph>
                         <b>Час правління:</b>{" "}
-                        {moment.utc(city.headDeputy.startDate).local().format("DD.MM.YYYY")}{" - "}
-                        {moment.utc(city.headDeputy.endDate).local().format("DD.MM.YYYY")}
+                        {moment
+                          .utc(city.headDeputy.startDate)
+                          .local()
+                          .format("DD.MM.YYYY")}
+                        {" - "}
+                        {moment
+                          .utc(city.headDeputy.endDate)
+                          .local()
+                          .format("DD.MM.YYYY")}
                       </Paragraph>
                     ) : (
                       <Paragraph>
                         <b>Початок правління:</b>{" "}
-                        {moment.utc(city.headDeputy.startDate).local().format("DD.MM.YYYY")}
+                        {moment
+                          .utc(city.headDeputy.startDate)
+                          .local()
+                          .format("DD.MM.YYYY")}
                       </Paragraph>
                     )}
                   </div>
@@ -744,7 +821,8 @@ const City = () => {
                               onClick={() => showArchiveModal()}
                             />
                           </Tooltip>
-                        </Col>) : (
+                        </Col>
+                      ) : (
                         <React.Fragment>
                           <Col offset={1}>
                             <Tooltip title="Видалити станицю">
@@ -763,7 +841,8 @@ const City = () => {
                               />
                             </Tooltip>
                           </Col>
-                        </React.Fragment>)
+                        </React.Fragment>
+                      )
                     ) : null}
                   </Row>
                 </Col>
@@ -774,16 +853,22 @@ const City = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={4}>Члени станиці <a onClick={() => history.push(`/cities/members/${city.id}`)}>
-              {membersCount !== 0 ?
-                <Badge
-                  count={membersCount}
-                  style={{ backgroundColor: "#3c5438" }}
-                /> : null
-              }
-            </a>
+            <Title level={4}>
+              Члени станиці{" "}
+              <a onClick={() => history.push(`/cities/members/${city.id}`)}>
+                {membersCount !== 0 ? (
+                  <Badge
+                    count={membersCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  />
+                ) : null}
+              </a>
             </Title>
-            <Row className={members.length >= 4 ? "cityItems1" : "cityItems"} justify="center" gutter={[0, 16]}>
+            <Row
+              className={members.length >= 4 ? "cityItems1" : "cityItems"}
+              justify="center"
+              gutter={[0, 16]}
+            >
               {members.length !== 0 ? (
                 members.slice(0, membersToShow).map((member) => (
                   <Col
@@ -793,9 +878,12 @@ const City = () => {
                     sm={8}
                   >
                     <div
-                      onClick={() => userAccesses["EditCity"] || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
-                        ? history.push(`/userpage/main/${member.userId}`)
-                        : undefined
+                      onClick={() =>
+                        userAccesses["EditCity"] ||
+                        activeUserRoles.includes(Roles.Supporter) ||
+                        activeUserRoles.includes(Roles.PlastMember)
+                          ? history.push(`/userpage/main/${member.userId}`)
+                          : undefined
                       }
                     >
                       {photosLoading ? (
@@ -831,23 +919,32 @@ const City = () => {
           xs={24}
         >
           <Card hoverable className="cityCard">
-            <Title level={4}>Провід станиці <a onClick={() => history.push(`/cities/administration/${city.id}`)}>
-              {adminsCount !== 0 ?
-                <Badge
-                  count={adminsCount}
-                  style={{ backgroundColor: "#3c5438" }}
-                /> : null
-              }
-            </a>
+            <Title level={4}>
+              Провід станиці{" "}
+              <a
+                onClick={() =>
+                  history.push(`/cities/administration/${city.id}`)
+                }
+              >
+                {adminsCount !== 0 ? (
+                  <Badge
+                    count={adminsCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  />
+                ) : null}
+              </a>
             </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {admins.length !== 0 ? (
                 admins.slice(0, adminsToShow).map((admin) => (
                   <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
                     <div
-                      onClick={() => userAccesses["EditCity"] || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
-                        ? history.push(`/userpage/main/${admin.userId}`)
-                        : undefined
+                      onClick={() =>
+                        userAccesses["EditCity"] ||
+                        activeUserRoles.includes(Roles.Supporter) ||
+                        activeUserRoles.includes(Roles.PlastMember)
+                          ? history.push(`/userpage/main/${admin.userId}`)
+                          : undefined
                       }
                     >
                       {photosLoading ? (
@@ -865,12 +962,15 @@ const City = () => {
               )}
             </Row>
             <div className="cityMoreButton">
-              {isActiveCity ? (userAccesses["EditCity"] ? (
-                <PlusSquareFilled
-                  type="primary"
-                  className="addReportIcon"
-                  onClick={() => setvisibleAddModal(true)}
-                />) : null) : null}
+              {isActiveCity ? (
+                userAccesses["EditCity"] ? (
+                  <PlusSquareFilled
+                    type="primary"
+                    className="addReportIcon"
+                    onClick={() => setvisibleAddModal(true)}
+                  />
+                ) : null
+              ) : null}
               <Button
                 type="primary"
                 className="cityInfoButton"
@@ -886,19 +986,24 @@ const City = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={4}>Документообіг станиці <a onClick={() =>
-              userAccesses["IsAdmin"] || (userAccesses["DownloadDocument"] && city.name == activeUserCity)
-                ?
-                history.push(`/cities/documents/${city.id}`)
-                : undefined
-            }>
-              {documentsCount !== 0 ?
-                <Badge
-                  count={documentsCount}
-                  style={{ backgroundColor: "#3c5438" }}
-                /> : null
-              }
-            </a>
+            <Title level={4}>
+              Документообіг станиці{" "}
+              <a
+                onClick={() =>
+                  userAccesses["IsAdmin"] ||
+                  (userAccesses["DownloadDocument"] &&
+                    city.name == activeUserCity)
+                    ? history.push(`/cities/documents/${city.id}`)
+                    : undefined
+                }
+              >
+                {documentsCount !== 0 ? (
+                  <Badge
+                    count={documentsCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  />
+                ) : null}
+              </a>
             </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
@@ -922,23 +1027,25 @@ const City = () => {
               )}
             </Row>
             <div className="cityMoreButton">
-              {userAccesses["IsAdmin"] || (userAccesses["DownloadDocument"] && city.name == activeUserCity)
-                ? (
-                  <Button
-                    type="primary"
-                    className="cityInfoButton"
-                    onClick={() => history.push(`/cities/documents/${city.id}`)}
-                  >
-                    Більше
-                  </Button>
+              {userAccesses["IsAdmin"] ||
+              (userAccesses["DownloadDocument"] &&
+                city.name == activeUserCity) ? (
+                <Button
+                  type="primary"
+                  className="cityInfoButton"
+                  onClick={() => history.push(`/cities/documents/${city.id}`)}
+                >
+                  Більше
+                </Button>
+              ) : null}
+              {isActiveCity ? (
+                userAccesses["EditCity"] ? (
+                  <PlusSquareFilled
+                    className="addReportIcon"
+                    onClick={() => setVisibleModal(true)}
+                  />
                 ) : null
-              }
-              {isActiveCity ? (userAccesses["EditCity"] ? (
-                <PlusSquareFilled
-                  className="addReportIcon"
-                  onClick={() => setVisibleModal(true)}
-                />
-              ) : null) : null}
+              ) : null}
             </div>
           </Card>
         </Col>
@@ -950,78 +1057,102 @@ const City = () => {
           xs={24}
         >
           <Card hoverable className="cityCard">
-            <Title level={4}>Прихильники станиці <a onClick={() => history.push(`/cities/followers/${city.id}`)}>
-              {followersCount !== 0 ?
-                <Badge
-                  count={followersCount}
-                  style={{ backgroundColor: "#3c5438" }}
-                /> : null
-              }
-            </a>
+            <Title level={4}>
+              Прихильники станиці{" "}
+              <a onClick={() => history.push(`/cities/followers/${city.id}`)}>
+                {followersCount !== 0 ? (
+                  <Badge
+                    count={followersCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  />
+                ) : null}
+              </a>
             </Title>
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
-              {isActiveCity ? (canJoin ? (
-                <Col
-                  className="cityMemberItem"
-                  xs={12}
-                  sm={8}
-                  onClick={() => showJoinModal()}
-                >
-                  <div>
-                    <Avatar
-                      className="addFollower"
-                      size={64}
-                      icon={<UserAddOutlined />}
-                    />
-                    <p>Доєднатися</p>
-                  </div>
-                </Col>
-              ) : null) : <Paragraph>Ще немає прихильників станиці</Paragraph>}
-              {followers.length !== 0 ? (
-                followers.slice(0, canJoin ? followersToShow : followersToShowOnAdd).map((followers) => (
+              {isActiveCity ? (
+                canJoin ? (
                   <Col
                     className="cityMemberItem"
                     xs={12}
                     sm={8}
-                    key={followers.id}
+                    onClick={() => showJoinModal()}
                   >
                     <div>
-                      <div
-                        onClick={() => userAccesses["EditCity"] || activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)
-                          ? history.push(`/userpage/main/${followers.userId}`)
-                          : undefined
-                        }
-                      >
-                        {photosLoading ? (
-                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
-                        ) : (
-                          <Avatar size={64} src={followers.user.imagePath} />
-                        )}
-                        <p className="userName">{followers.user.firstName}</p>
-                        <p className="userName">{followers.user.lastName}</p>
-                      </div>
-                      {(userAccesses["EditCity"] && isLoadingPlus) || (isLoadingMemberId !== followers.id && !isLoadingPlus) ? (
-                        <Tooltip placement={"bottom"} title={"Додати до членів"}>
-                          <PlusOutlined
-                            className="approveIcon"
-                            onClick={async () => await changeApproveStatus(followers.id)}
-                          />
-                        </Tooltip>
-                      ) : (followers.userId === activeUserID) ? (
-                        <Tooltip placement={"bottom"} title={"Покинути станицю"}>
-                          <MinusOutlined
-                            className="approveIcon"
-                            onClick={() => showSkipModal(followers.id)}
-                          />
-                        </Tooltip>) : !isLoadingPlus && isLoadingMemberId === followers.id ? (
+                      <Avatar
+                        className="addFollower"
+                        size={64}
+                        icon={<UserAddOutlined />}
+                      />
+                      <p>Доєднатися</p>
+                    </div>
+                  </Col>
+                ) : null
+              ) : (
+                <Paragraph>Ще немає прихильників станиці</Paragraph>
+              )}
+              {followers.length !== 0 ? (
+                followers
+                  .slice(0, canJoin ? followersToShow : followersToShowOnAdd)
+                  .map((followers) => (
+                    <Col
+                      className="cityMemberItem"
+                      xs={12}
+                      sm={8}
+                      key={followers.id}
+                    >
+                      <div>
+                        <div
+                          onClick={() =>
+                            userAccesses["EditCity"] ||
+                            activeUserRoles.includes(Roles.Supporter) ||
+                            activeUserRoles.includes(Roles.PlastMember)
+                              ? history.push(
+                                  `/userpage/main/${followers.userId}`
+                                )
+                              : undefined
+                          }
+                        >
+                          {photosLoading ? (
+                            <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                          ) : (
+                            <Avatar size={64} src={followers.user.imagePath} />
+                          )}
+                          <p className="userName">{followers.user.firstName}</p>
+                          <p className="userName">{followers.user.lastName}</p>
+                        </div>
+                        {(userAccesses["EditCity"] && isLoadingPlus) ||
+                        (isLoadingMemberId !== followers.id &&
+                          !isLoadingPlus) ? (
+                          <Tooltip
+                            placement={"bottom"}
+                            title={"Додати до членів"}
+                          >
+                            <PlusOutlined
+                              className="approveIcon"
+                              onClick={async () =>
+                                await changeApproveStatus(followers.id)
+                              }
+                            />
+                          </Tooltip>
+                        ) : followers.userId === activeUserID ? (
+                          <Tooltip
+                            placement={"bottom"}
+                            title={"Покинути станицю"}
+                          >
+                            <MinusOutlined
+                              className="approveIcon"
+                              onClick={() => showSkipModal(followers.id)}
+                            />
+                          </Tooltip>
+                        ) : !isLoadingPlus &&
+                          isLoadingMemberId === followers.id ? (
                           <Tooltip placement={"bottom"} title={"Зачекайте"}>
                             <LoadingOutlined className="approveIcon" />
                           </Tooltip>
-                        ) : null
-                      }
-                    </div>
-                  </Col>
-                ))
+                        ) : null}
+                      </div>
+                    </Col>
+                  ))
               ) : canJoin ? null : (
                 <Paragraph>Ще немає прихильників станиці</Paragraph>
               )}
@@ -1054,8 +1185,8 @@ const City = () => {
           cityId={+id}
           head={city.head}
           headDeputy={city.headDeputy}
-          visibleModal={visibleAddModal}>
-        </AddCitiesNewSecretaryForm>
+          visibleModal={visibleAddModal}
+        ></AddCitiesNewSecretaryForm>
       </Modal>
 
       <Modal
@@ -1065,7 +1196,12 @@ const City = () => {
         onCancel={handleConfirm}
         footer={null}
       >
-        <CheckActiveMembersForm members={members} followers={followers} admins={admins} onAdd={handleConfirm} />
+        <CheckActiveMembersForm
+          members={members}
+          followers={followers}
+          admins={admins}
+          onAdd={handleConfirm}
+        />
       </Modal>
 
       {userAccesses["EditCity"] ? (

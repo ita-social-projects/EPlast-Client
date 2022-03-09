@@ -20,30 +20,28 @@ export default function () {
   }
   let query = useQuery();
 
-    const validationSchema = {
-        Email: [
-            { required: true, message: incorrectEmail },
-            { validator: checkEmail },
-        ],
-        Password: [
-            { required: true, message: emptyInput() },
-            { validator: checkPassword },
-        ],
-        ConfirmPassword: [
-            { required: true, message: emptyInput() },
-        ]
-    };
+  const validationSchema = {
+    Email: [
+      { required: true, message: incorrectEmail },
+      { validator: checkEmail },
+    ],
+    Password: [
+      { required: true, message: emptyInput() },
+      { validator: checkPassword },
+    ],
+    ConfirmPassword: [{ required: true, message: emptyInput() }],
+  };
 
-    const handleSubmit = async (values: any) => {
-        const newPassword = {
-            email: values.Email,
-            password: values.Password,
-            confirmPassword: values.ConfirmPassword,
-            code: query.get("token"),
-        }
-        await authService.resetPassword(newPassword);
-        history.push("/signin");
+  const handleSubmit = async (values: any) => {
+    const newPassword = {
+      email: values.Email,
+      password: values.Password,
+      confirmPassword: values.ConfirmPassword,
+      code: query.get("token"),
     };
+    await authService.resetPassword(newPassword);
+    history.push("/signin");
+  };
 
   const initialValues = {
     Email: "",
@@ -64,20 +62,14 @@ export default function () {
           <p>Скидання пароля. Введіть електронну пошту</p>
         </div>
 
-        <Form.Item 
-          name="Email" 
-          rules={validationSchema.Email}
-        >
+        <Form.Item name="Email" rules={validationSchema.Email}>
           <Input
             className={styles.ResetPasswordInput}
             placeholder="Електронна пошта"
           />
         </Form.Item>
 
-        <Form.Item 
-          name="Password" 
-          rules={validationSchema.Password}
-        >
+        <Form.Item name="Password" rules={validationSchema.Password}>
           <Input.Password
             visibilityToggle={true}
             className={styles.ResetPasswordInput}

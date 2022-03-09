@@ -14,11 +14,18 @@ import "./CreateRegion.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import notificationLogic from "../../components/Notifications/Notification";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";
-import { DeleteOutlined, ExclamationCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import ReactInputMask from "react-input-mask";
 import Title from "antd/lib/typography/Title";
-import { descriptionValidation, getOnlyNums } from "../../models/GllobalValidations/DescriptionValidation";
+import {
+  descriptionValidation,
+  getOnlyNums,
+} from "../../models/GllobalValidations/DescriptionValidation";
 import {
   fileIsUpload,
   fileIsNotUpload,
@@ -26,8 +33,8 @@ import {
   fileIsTooBig,
   successfulDeleteAction,
   successfulCreateAction,
-  failCreateAction
-} from "../../components/Notifications/Messages"
+  failCreateAction,
+} from "../../components/Notifications/Messages";
 import { checkIfNameExists, createRegion } from "../../api/regionsApi";
 import Spinner from "../Spinner/Spinner";
 import RegionProfile from "../../models/Region/RegionProfile";
@@ -43,28 +50,27 @@ const AddNewRegionFormPage = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      setLoading(true);     
-          const newRegion: RegionProfile = {
-            id: 0,
-            regionName: values.regionName,
-            description: values.description,
-            phoneNumber: values.phoneNumber,
-            email: values.email,
-            link: values.link,
-            logo: logo,
-            street: values.street,
-            houseNumber: values.houseNumber,
-            officeNumber: values.officeNumber,
-            postIndex: values.postIndex,
-            city: values.city,
-            isActive: true
-          };
-          await createRegion(newRegion);
-          form.resetFields();  
-          notificationLogic("success", successfulCreateAction("Округу"));
-          history.push("/regions/page/1");  
-    }
-    catch (error) {
+      setLoading(true);
+      const newRegion: RegionProfile = {
+        id: 0,
+        regionName: values.regionName,
+        description: values.description,
+        phoneNumber: values.phoneNumber,
+        email: values.email,
+        link: values.link,
+        logo: logo,
+        street: values.street,
+        houseNumber: values.houseNumber,
+        officeNumber: values.officeNumber,
+        postIndex: values.postIndex,
+        city: values.city,
+        isActive: true,
+      };
+      await createRegion(newRegion);
+      form.resetFields();
+      notificationLogic("success", successfulCreateAction("Округу"));
+      history.push("/regions/page/1");
+    } catch (error) {
       notificationLogic("error", failCreateAction("округу"));
     }
   };
@@ -118,11 +124,17 @@ const AddNewRegionFormPage = () => {
     <Layout.Content className="createCity">
       <Card hoverable className="createCityCard">
         <Title level={2}>Створення округи</Title>
-        {
-          loading ? (
-            <Spinner/>
-          ) : (
-            <Form name="basic" onFinish={(values) => {handleSubmit(values); setLoadingButton(true)}} form={form}>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <Form
+            name="basic"
+            onFinish={(values) => {
+              handleSubmit(values);
+              setLoadingButton(true);
+            }}
+            form={form}
+          >
             <Form.Item name="logo">
               <Upload
                 name="avatar"
@@ -143,7 +155,7 @@ const AddNewRegionFormPage = () => {
                 />
               </Upload>
             </Form.Item>
-  
+
             <Row justify="center">
               <Col md={11} xs={24}>
                 <Form.Item
@@ -165,23 +177,23 @@ const AddNewRegionFormPage = () => {
                   <Input maxLength={1001} />
                 </Form.Item>
               </Col>
-  
+
               <Col md={11} xs={24}>
                 <Form.Item
                   name="phoneNumber"
                   label="Номер телефону"
                   labelCol={{ span: 24 }}
-                  rules={[descriptionValidation.Phone, descriptionValidation.Required]}
+                  rules={[
+                    descriptionValidation.Phone,
+                    descriptionValidation.Required,
+                  ]}
                 >
-                  <ReactInputMask
-                    mask="+380(99)-999-99-99"
-                    maskChar={null}
-                  >
+                  <ReactInputMask mask="+380(99)-999-99-99" maskChar={null}>
                     {(inputProps: any) => <Input {...inputProps} />}
                   </ReactInputMask>
                 </Form.Item>
               </Col>
-  
+
               <Col md={{ span: 11, offset: 2 }} xs={24}>
                 <Form.Item
                   label="Електронна пошта"
@@ -192,7 +204,7 @@ const AddNewRegionFormPage = () => {
                   <Input maxLength={51} />
                 </Form.Item>
               </Col>
-  
+
               <Col md={11} xs={24}>
                 <Form.Item
                   label="Посилання"
@@ -203,7 +215,7 @@ const AddNewRegionFormPage = () => {
                   <Input maxLength={257} />
                 </Form.Item>
               </Col>
-  
+
               <Col md={{ span: 11, offset: 2 }} xs={24}>
                 <Form.Item
                   label="Місто"
@@ -214,7 +226,7 @@ const AddNewRegionFormPage = () => {
                   <Input maxLength={51} />
                 </Form.Item>
               </Col>
-  
+
               <Col md={11} xs={24}>
                 <Form.Item
                   labelCol={{ span: 24 }}
@@ -225,7 +237,7 @@ const AddNewRegionFormPage = () => {
                   <Input maxLength={51} />
                 </Form.Item>
               </Col>
-  
+
               <Col md={{ span: 11, offset: 2 }} xs={24}>
                 <Form.Item
                   labelCol={{ span: 24 }}
@@ -236,7 +248,7 @@ const AddNewRegionFormPage = () => {
                   <Input maxLength={6} />
                 </Form.Item>
               </Col>
-  
+
               <Col md={11} xs={24}>
                 <Form.Item
                   labelCol={{ span: 24 }}
@@ -247,7 +259,7 @@ const AddNewRegionFormPage = () => {
                   <Input maxLength={6} />
                 </Form.Item>
               </Col>
-  
+
               <Col md={{ span: 11, offset: 2 }} xs={24}>
                 <Form.Item
                   labelCol={{ span: 24 }}
@@ -255,19 +267,19 @@ const AddNewRegionFormPage = () => {
                   name="postIndex"
                   rules={descriptionValidation.postIndex}
                 >
-                  <Input 
-                  onChange={(e) => {
-                    form.setFieldsValue({
-                      postIndex: getOnlyNums(e.target.value),
-                    });
-                  }}
-                  autoComplete = "off"
-                  maxLength={5}
+                  <Input
+                    onChange={(e) => {
+                      form.setFieldsValue({
+                        postIndex: getOnlyNums(e.target.value),
+                      });
+                    }}
+                    autoComplete="off"
+                    maxLength={5}
                   />
                 </Form.Item>
               </Col>
             </Row>
-  
+
             <Row className="cityButtons" justify="center" gutter={[0, 6]}>
               <Col xs={24} sm={12}>
                 <Button
@@ -279,14 +291,17 @@ const AddNewRegionFormPage = () => {
                 </Button>
               </Col>
               <Col xs={24} sm={12}>
-                <Button htmlType="submit" loading={loadingButton} type="primary">
+                <Button
+                  htmlType="submit"
+                  loading={loadingButton}
+                  type="primary"
+                >
                   Підтвердити
                 </Button>
               </Col>
             </Row>
-          </Form>  
-          )
-        }
+          </Form>
+        )}
       </Card>
     </Layout.Content>
   );

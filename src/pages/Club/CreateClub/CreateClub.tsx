@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import {
-  Button,
-  Form,
-  Input,
-  Layout,
-  Upload,
-  Row,
-  Col,
-  Card,
-} from "antd";
+import { Button, Form, Input, Layout, Upload, Row, Col, Card } from "antd";
 import {
   DeleteOutlined,
   LoadingOutlined,
@@ -39,8 +30,8 @@ import {
   successfulUpdateAction,
   failCreateAction,
   failUpdateAction,
-  successfulDeleteAction
-} from "../../../components/Notifications/Messages"
+  successfulDeleteAction,
+} from "../../../components/Notifications/Messages";
 
 const nameMaxLength = 201;
 const descriptionMaxLength = 1001;
@@ -131,7 +122,7 @@ const CreateClub = () => {
       name: values.name,
       phoneNumber: values.phoneNumber,
       slogan: values.slogan,
-      isActive: club.isActive
+      isActive: club.isActive,
     };
     if (!club.id) {
       CreateClub(newClub);
@@ -146,14 +137,15 @@ const CreateClub = () => {
       club.id = response.data;
       notificationLogic("success", successfulCreateAction("Курінь"));
       history.push(`/clubs/${club.id}`);
-    }
-    catch (error) {
-      notificationLogic("error", failCreateAction("курінь. Можливо курінь з даною назвою уже існує"));
+    } catch (error) {
+      notificationLogic(
+        "error",
+        failCreateAction("курінь. Можливо курінь з даною назвою уже існує")
+      );
     }
   };
 
   const EditClub = async (newClub: ClubProfile) => {
-
     return updateClub(club.id, JSON.stringify(newClub))
       .then(() => {
         notificationLogic("success", successfulUpdateAction("Курінь"));
@@ -174,7 +166,12 @@ const CreateClub = () => {
         ) : (
           <Title level={2}>Створення Куреня</Title>
         )}
-        <Form onFinish={(values) => {handleSubmit(values); setLoadingButton(true)}}>
+        <Form
+          onFinish={(values) => {
+            handleSubmit(values);
+            setLoadingButton(true);
+          }}
+        >
           <Form.Item name="logo" initialValue={club.logo}>
             <Upload
               name="avatar"
@@ -215,7 +212,10 @@ const CreateClub = () => {
                 initialValue={club.description}
                 rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
               >
-                <Input value={club.description} maxLength={descriptionMaxLength} />
+                <Input
+                  value={club.description}
+                  maxLength={descriptionMaxLength}
+                />
               </Form.Item>
             </Col>
             <Col md={10} xs={24}>
@@ -280,7 +280,7 @@ const CreateClub = () => {
               </Button>
             </Col>
             <Col xs={24} sm={12}>
-              <Button htmlType="submit" loading = {loadingButton} type="primary">
+              <Button htmlType="submit" loading={loadingButton} type="primary">
                 Підтвердити
               </Button>
             </Col>

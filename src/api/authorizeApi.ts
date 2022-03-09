@@ -145,7 +145,7 @@ export default class AuthorizeApi {
           showUserRenewalModal();
         } else if (error.response.status === 400) {
           notificationLogic("error", error.response.data.value);
-        }  
+        }
       });
     return respon;
   };

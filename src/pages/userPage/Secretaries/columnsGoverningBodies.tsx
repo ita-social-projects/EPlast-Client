@@ -1,6 +1,6 @@
 import moment from "moment";
 
-const minDate = '01.01.0001';
+const minDate = "01.01.0001";
 
 const columns = [
   {
@@ -32,10 +32,8 @@ const columns = [
     title: "Кінець каденції",
     dataIndex: "endDate",
     render: (endDate: Date) => {
-      const instanceDate = moment.utc(endDate).local().format("DD.MM.YYYY")
-      return instanceDate === minDate
-          ? " Не закінчена "
-          : instanceDate;
+      const instanceDate = moment.utc(endDate).local().format("DD.MM.YYYY");
+      return instanceDate === minDate ? " Не закінчена " : instanceDate;
     },
   },
   {

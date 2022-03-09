@@ -13,7 +13,9 @@ interface Props {
 const SectorDetailDrawer = (props: Props) => {
   return (
     <Drawer
-      title={`Деталі напряму керівного органу ${props.sector.name?.length > 0 ? props.sector.name : ""}`}
+      title={`Деталі напряму керівного органу ${
+        props.sector.name?.length > 0 ? props.sector.name : ""
+      }`}
       onClose={() => props.setVisibleDrawer(false)}
       visible={props.visibleDrawer}
       footer={null}
@@ -56,14 +58,14 @@ const SectorDetailDrawer = (props: Props) => {
               }
             >
               <Input
-                value={props.sector.email?.length > 0 ? props.sector.email : "---"}
+                value={
+                  props.sector.email?.length > 0 ? props.sector.email : "---"
+                }
                 disabled
               />
             </Form.Item>
           </Col>
-
         </Row>
-
 
         <Row justify="center" gutter={[12, 0]}>
           <Col md={24} xs={24}>
@@ -78,13 +80,10 @@ const SectorDetailDrawer = (props: Props) => {
               }
             >
               <TextArea
-                autoSize =
-                  {
-                    {
-                      minRows: 1,
-                      maxRows: 9
-                    }
-                  }
+                autoSize={{
+                  minRows: 1,
+                  maxRows: 9,
+                }}
                 value={
                   props.sector.description?.length > 0
                     ? props.sector.description

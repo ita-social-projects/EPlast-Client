@@ -8,7 +8,7 @@ import {
   CheckOutlined,
   SaveOutlined,
   PlusOutlined,
-  HighlightOutlined
+  HighlightOutlined,
 } from "@ant-design/icons";
 import notificationLogic from "../../../components/Notifications/Notification";
 import classes from "./FormEdit.module.css";
@@ -16,7 +16,6 @@ import Item from "antd/lib/list/Item";
 import DeleteTypeConfirm from "./DeleteTypeConfirm";
 import Search from "antd/lib/input/Search";
 import Text from "antd/lib/typography/Text";
-
 
 type FormEditDistinctionTypesProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -75,8 +74,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
     setCurDist(distinction);
     if (curDist.id != id) {
       setEditVisible(true);
-    }
-    else {
+    } else {
       setEditVisible(false);
       setCurDist(defaultDist);
     }
@@ -89,8 +87,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
       fetchData();
       setCurDist(defaultDist);
       setEditVisible(false);
-    } else
-      notificationLogic("error", "Хибна назва");
+    } else notificationLogic("error", "Хибна назва");
   };
 
   return (
@@ -137,15 +134,17 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
               name="inputName"
               value={title}
               onChange={(event) => {
-                if (event.target.value.length < typeMaxLength && ((/^(\s*\S+\s*)$/).test(event.target.value)) || ((/^$/).test(event.target.value))) {
+                if (
+                  (event.target.value.length < typeMaxLength &&
+                    /^(\s*\S+\s*)$/.test(event.target.value)) ||
+                  /^$/.test(event.target.value)
+                ) {
                   setTitle(event.target.value);
                   setVisRule(false);
                   setVisRuleFirstSpace(false);
-                }
-                else if (!(/^(\s*\S+\s*)$/).test(event.target.value)) {
+                } else if (!/^(\s*\S+\s*)$/.test(event.target.value)) {
                   setVisRuleFirstSpace(true);
-                }
-                else if (event.target.value.length >= typeMaxLength)
+                } else if (event.target.value.length >= typeMaxLength)
                   setVisRule(true);
               }}
               placeholder="Додати відзначення"
@@ -153,26 +152,26 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
               onPressEnter={handleAdd}
               enterButton={<CheckOutlined onClick={handleAdd} />}
             />
-
           </Item>
-          {visRule ?
+          {visRule ? (
             <div>
               <Text type="danger">
                 Поле не повинно містити більше {typeMaxLength} символів!
               </Text>
             </div>
-            : <></>
-          }
-          {visRuleFirstSpace ?
+          ) : (
+            <></>
+          )}
+          {visRuleFirstSpace ? (
             <div>
               <Text type="danger">
                 Поле не може починатися з порожнього символу
               </Text>
             </div>
-            : <></>
-          }
+          ) : (
+            <></>
+          )}
         </div>
-
       ) : (
         <></>
       )}

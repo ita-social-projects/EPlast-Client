@@ -81,7 +81,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     regionId,
     cityMemberIsApproved,
     clubMemberIsApproved,
-    showPrecautions
+    showPrecautions,
   } = props;
 
   const { imageBase64, userProfile } = useContext(PersonalDataContext);
@@ -146,9 +146,11 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
         });
 
       if (showPrecautions) {
-        await precautionApi.getPrecautionOfGivenUser(userId).then((response) => {
-          setPrecaution(response.data);
-        });
+        await precautionApi
+          .getPrecautionOfGivenUser(userId)
+          .then((response) => {
+            setPrecaution(response.data);
+          });
       }
       setLoading(true);
     };
@@ -268,7 +270,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
                 (100 -
                   ((time === undefined ? 0 : time) * 100) / 365 +
                   Number.EPSILON) *
-                10
+                  10
               ) / 10
             }
           />
@@ -288,20 +290,24 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           </Tooltip>
         </div>
       ))}
-      {showPrecautions && UserPrecaution.map((dist) =>
-        dist.status !== "Скасовано" ? (
-          <div className="precautions">
-            <Tooltip title={dist?.reason}>
-              <h2>
-                {dist.precaution.name} №{dist.number} термін дії до:{" "}
-                {moment.utc(dist.endDate.toLocaleString()).local().format("DD.MM.YYYY")}
-              </h2>
-            </Tooltip>
-          </div>
-        ) : (
-          ""
-        )
-      )}
+      {showPrecautions &&
+        UserPrecaution.map((dist) =>
+          dist.status !== "Скасовано" ? (
+            <div className="precautions">
+              <Tooltip title={dist?.reason}>
+                <h2>
+                  {dist.precaution.name} №{dist.number} термін дії до:{" "}
+                  {moment
+                    .utc(dist.endDate.toLocaleString())
+                    .local()
+                    .format("DD.MM.YYYY")}
+                </h2>
+              </Tooltip>
+            </div>
+          ) : (
+            ""
+          )
+        )}
     </div>
   );
 };

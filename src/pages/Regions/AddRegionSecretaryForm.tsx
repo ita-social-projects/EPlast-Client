@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import classes from "./Form.module.css";
-import {Form, DatePicker, AutoComplete, Select, Button } from "antd";
+import { Form, DatePicker, AutoComplete, Select, Button } from "antd";
 import regionsApi from "../../api/regionsApi";
 import userApi from "../../api/UserApi";
 import moment from "moment";
 import {
-  emptyInput, inputOnlyWhiteSpaces,
-} from "../../components/Notifications/Messages"
+  emptyInput,
+  inputOnlyWhiteSpaces,
+} from "../../components/Notifications/Messages";
 import AdminType from "../../models/Admin/AdminType";
 import RegionUser from "../../models/Region/RegionUser";
 import "./AddRegionSecretaryForm.less";
 import { Roles } from "../../models/Roles/Roles";
-import {descriptionValidation} from "../../models/GllobalValidations/DescriptionValidation"
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 
 type AddNewSecretaryForm = {
   visibleModal: boolean;
@@ -49,7 +50,7 @@ const AddNewSecretaryForm = (props: any) => {
     return current && current > moment();
   };
 
-  const SetAdmin = async  (property: any, value: any) => {
+  const SetAdmin = async (property: any, value: any) => {
     let admin: any = {
       id: property === undefined ? 0 : property.id,
       adminType: {
@@ -60,31 +61,29 @@ const AddNewSecretaryForm = (props: any) => {
       AdminTypeId: await (
         await regionsApi.getAdminTypeIdByName(value.AdminType)
       ).data,
-      userId: property === undefined
-        ? JSON.parse(value.userId).id
-        : property.userId,
+      userId:
+        property === undefined ? JSON.parse(value.userId).id : property.userId,
       user: JSON.parse(value.userId),
       endDate: value.endDate,
       startDate: value.startDate,
     };
     return admin;
-  }
+  };
 
   const handleSubmit = async (values: any) => {
-    console.log("success... Somehow(")
-      const newAdmin = await SetAdmin(props.admin, values);
-      onAdd(newAdmin);
+    console.log("success... Somehow(");
+    const newAdmin = await SetAdmin(props.admin, values);
+    onAdd(newAdmin);
   };
 
   const fetchData = async () => {
-    if (props.regionId !== undefined)
-    {
-    await regionsApi.getRegionUsers(props.regionId).then((response) => { 
-      setUsers(response.data);
-    });
+    if (props.regionId !== undefined) {
+      await regionsApi.getRegionUsers(props.regionId).then((response) => {
+        setUsers(response.data);
+      });
     }
   };
-  
+
   useEffect(() => {
     if (props.visibleModal) {
       form.resetFields();
@@ -95,11 +94,19 @@ const AddNewSecretaryForm = (props: any) => {
 
   useEffect(() => {
     const userRoles = userApi.getActiveUserRoles();
-      setActiveUserRoles(userRoles);
+    setActiveUserRoles(userRoles);
   }, [props]);
 
   return (
-    <Form name="basic" onFinish={(values) => {handleSubmit(values); setLoading(true)}} form={form} className="formAddSecretaryModal">
+    <Form
+      name="basic"
+      onFinish={(values) => {
+        handleSubmit(values);
+        setLoading(true);
+      }}
+      form={form}
+      className="formAddSecretaryModal"
+    >
       <Form.Item
         className={classes.formField}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
@@ -129,14 +136,17 @@ const AddNewSecretaryForm = (props: any) => {
         }
         name="AdminType"
         rules={descriptionValidation.AdminType}
-        
       >
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: Roles.OkrugaHead,  disabled: (activeUserRoles.includes(Roles.OkrugaHeadDeputy) 
-              && !activeUserRoles.includes(Roles.Admin)) },
-            { value: Roles.OkrugaHeadDeputy},
+            {
+              value: Roles.OkrugaHead,
+              disabled:
+                activeUserRoles.includes(Roles.OkrugaHeadDeputy) &&
+                !activeUserRoles.includes(Roles.Admin),
+            },
+            { value: Roles.OkrugaHeadDeputy },
             { value: "Писар" },
             { value: "Бунчужний" },
             { value: "Скарбник" },
@@ -153,7 +163,9 @@ const AddNewSecretaryForm = (props: any) => {
         label="Дата початку"
         name="startDate"
         initialValue={
-          props.admin === undefined ? undefined : moment.utc(props.admin.startDate).local()
+          props.admin === undefined
+            ? undefined
+            : moment.utc(props.admin.startDate).local()
         }
       >
         <DatePicker
@@ -172,8 +184,8 @@ const AddNewSecretaryForm = (props: any) => {
           props.admin === undefined
             ? undefined
             : props.admin.endDate === null
-              ? undefined
-              : moment.utc(props.admin.endDate).local()
+            ? undefined
+            : moment.utc(props.admin.endDate).local()
         }
       >
         <DatePicker
@@ -184,7 +196,7 @@ const AddNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item style={{ textAlign: "right" }}>
-        <Button type="primary" htmlType="submit" loading = {loading}>
+        <Button type="primary" htmlType="submit" loading={loading}>
           Опублікувати
         </Button>
       </Form.Item>
