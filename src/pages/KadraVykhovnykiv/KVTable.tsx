@@ -1,14 +1,14 @@
-import React, { useEffect, useState, PropsWithRef } from 'react';
-import { Table, Spin, Input, Layout } from 'antd';
-import columns from './columns';
+import React, { useEffect, useState, PropsWithRef } from "react";
+import { Table, Spin, Input, Layout } from "antd";
+import columns from "./columns";
 import kadrasApi from "../../api/KadraVykhovnykivApi";
-import DropDown from './KadraDropDown';
-import ClickAwayListener from 'react-click-away-listener';
-import { KadraTableInfo } from './Interfaces/KadraTableInfo';
-import NotificationBoxApi from '../../api/NotificationBoxApi';
-import { KadraTableSettings } from './Interfaces/KadraTableSettings';
+import DropDown from "./KadraDropDown";
+import ClickAwayListener from "react-click-away-listener";
+import { KadraTableInfo } from "./Interfaces/KadraTableInfo";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
+import { KadraTableSettings } from "./Interfaces/KadraTableSettings";
 
-const classes = require('./Table.module.css');
+const classes = require("./Table.module.css");
 
 interface props {
   current: number;
@@ -30,7 +30,6 @@ export const KVTable = ({ current, searchData, searchPage }: props) => {
   const [lastElement, setLastElement] = useState(1);
   const [sortKey, setSortKey] = useState<number>(1);
 
-
   const createNotifications = async (userId: string) => {
     await NotificationBoxApi.createNotifications(
       [userId],
@@ -40,55 +39,52 @@ export const KVTable = ({ current, searchData, searchPage }: props) => {
       `Переглянути`
     );
 
-    await NotificationBoxApi.getCitiesForUserAdmins(userId)
-      .then(res => {
-        res.cityRegionAdmins.length !== 0 &&
-          res.cityRegionAdmins.forEach(async (cra) => {
-            await NotificationBoxApi.createNotifications(
-              [cra.cityAdminId, cra.regionAdminId],
-              `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' був видалений з кадри виховників. `,
-              NotificationBoxApi.NotificationTypes.UserNotifications,
-              `/kadra`,
-              `Переглянути`
-            );
-          })
-      });
-  }
+    await NotificationBoxApi.getCitiesForUserAdmins(userId).then((res) => {
+      res.cityRegionAdmins.length !== 0 &&
+        res.cityRegionAdmins.forEach(async (cra) => {
+          await NotificationBoxApi.createNotifications(
+            [cra.cityAdminId, cra.regionAdminId],
+            `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' був видалений з кадри виховників. `,
+            NotificationBoxApi.NotificationTypes.UserNotifications,
+            `/kadra`,
+            `Переглянути`
+          );
+        });
+    });
+  };
 
   const handleDelete = () => {
-    if (page != firstPage && data.length == lastElement)
-      setPage(page - 1);
-    else
-      fetchData();
-  }
+    if (page != firstPage && data.length == lastElement) setPage(page - 1);
+    else fetchData();
+  };
 
   const onEdit = () => {
-    fetchData()
-  }
+    fetchData();
+  };
 
   const handleClickAway = () => {
     setShowDropdown(false);
-  }
+  };
 
   const fetchData = async () => {
     if (searchPage != 0) {
       setPage(searchPage);
     }
 
-    const dir: string = (sortKey > 0) ? 'ascend' : 'descend';
-    var col = 'id';
-    switch(Math.abs(sortKey)) {
+    const dir: string = sortKey > 0 ? "ascend" : "descend";
+    var col = "id";
+    switch (Math.abs(sortKey)) {
       case 2:
-        col = 'userName'
+        col = "userName";
         break;
       case 3:
-        col = 'dateOfGranting'
+        col = "dateOfGranting";
         break;
       case 4:
-        col = 'numberInRegister'
+        col = "numberInRegister";
         break;
       default:
-        col = 'id'
+        col = "id";
         break;
     }
     const newTableSettings: KadraTableSettings = {
@@ -97,20 +93,22 @@ export const KVTable = ({ current, searchData, searchPage }: props) => {
       PageSize: pageSize,
       KadraTypeId: current,
       SortByOrder: [col, dir],
-    }
+    };
     setLoading(true);
-    const res: KadraTableInfo[] = await kadrasApi.getEducatorsStaffForTable(newTableSettings);
+    const res: KadraTableInfo[] = await kadrasApi.getEducatorsStaffForTable(
+      newTableSettings
+    );
     setCount(res[0]?.total);
-    setData(res)
+    setData(res);
     setLoading(false);
-  }
+  };
 
   useEffect(() => {
     setLoading(true);
     if (current) {
       fetchData();
     }
-  }, [current, searchData, page, pageSize, sortKey])
+  }, [current, searchData, page, pageSize, sortKey]);
 
   const handlePageChange = (page: number) => {
     setPage(page);
@@ -121,11 +119,14 @@ export const KVTable = ({ current, searchData, searchPage }: props) => {
     setPageSize(pageSize);
   };
 
-
   return (
     <div className={classes.textCenter}>
-      {!isLoading ?
-        <Layout.Content onClick={() => { setShowDropdown(false); }}>
+      {!isLoading ? (
+        <Layout.Content
+          onClick={() => {
+            setShowDropdown(false);
+          }}
+        >
           <Table
             className={classes.table}
             columns={columns({
@@ -153,22 +154,20 @@ export const KVTable = ({ current, searchData, searchPage }: props) => {
                 window.scrollTo({
                   left: 0,
                   top: 0,
-                  behavior: 'smooth',
+                  behavior: "smooth",
                 });
               }
             }}
-            pagination={
-              {
-                current: page,
-                pageSize: pageSize,
-                total: count,
-                showLessItems: true,
-                responsive: true,
-                showSizeChanger: true,
-                onChange: (page) => handlePageChange(page),
-                onShowSizeChange: (page, size) => handleSizeChange(page, size),
-              }
-            }
+            pagination={{
+              current: page,
+              pageSize: pageSize,
+              total: count,
+              showLessItems: true,
+              responsive: true,
+              showSizeChanger: true,
+              onChange: (page) => handlePageChange(page),
+              onShowSizeChange: (page, size) => handleSizeChange(page, size),
+            }}
             bordered
             rowKey="id"
           />
@@ -183,8 +182,10 @@ export const KVTable = ({ current, searchData, searchPage }: props) => {
               onEdit={onEdit}
             />
           </ClickAwayListener>
-        </Layout.Content> : <Spin />
-      }
+        </Layout.Content>
+      ) : (
+        <Spin />
+      )}
     </div>
-  )
-}
+  );
+};
