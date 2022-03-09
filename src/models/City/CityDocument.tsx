@@ -1,4 +1,4 @@
-import CityDocumentType from './CityDocumentType';
+import CityDocumentType from "./CityDocumentType";
 
 export default class CityDocument {
   id: number;

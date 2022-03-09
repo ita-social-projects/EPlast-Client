@@ -54,7 +54,7 @@ const DropDown = (props: Props) => {
     selectedUser,
     selectedUserRoles,
     currentUser,
-    canView
+    canView,
   } = props;
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -65,84 +65,109 @@ const DropDown = (props: Props) => {
 
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
   const [governingBodyHead, setGoverningBodyHead] = useState<boolean>(true);
-  const [currentUserAdminRoles, setCurrentUserAdminRoles] = useState<Array<AdminRole>>([]);
+  const [currentUserAdminRoles, setCurrentUserAdminRoles] = useState<
+    Array<AdminRole>
+  >([]);
   const [canViewProfile, setCanViewProfile] = useState<boolean>(false);
   const [canDelete, setCanDelete] = useState<boolean>(false);
-  const [canChangeCityAdministration, setCanChangeCityAdministration] = useState<boolean>(false);
-  const [canChangeClubAdministration, setCanChangeClubAdministration] = useState<boolean>(false);
-  const [canChangeRegionAdministration, setCanChangeRegionAdministration] = useState<boolean>(false);
-  const [canChangeGoverningBodyAdministration, setCanChangeGoverningBodyAdministration] = useState<boolean>(false);
-  const [canChangeUserAccess, setCanChangeUserAccess] = useState<boolean>(false);
+  const [
+    canChangeCityAdministration,
+    setCanChangeCityAdministration,
+  ] = useState<boolean>(false);
+  const [
+    canChangeClubAdministration,
+    setCanChangeClubAdministration,
+  ] = useState<boolean>(false);
+  const [
+    canChangeRegionAdministration,
+    setCanChangeRegionAdministration,
+  ] = useState<boolean>(false);
+  const [
+    canChangeGoverningBodyAdministration,
+    setCanChangeGoverningBodyAdministration,
+  ] = useState<boolean>(false);
+  const [canChangeUserAccess, setCanChangeUserAccess] = useState<boolean>(
+    false
+  );
   const [canAddDegree, setCanAddDegree] = useState<boolean>(false);
 
-  const [chainOfAccessibility, setChainOfAccessibility] = useState<IDropdownItem>();
-  
+  const [chainOfAccessibility, setChainOfAccessibility] = useState<
+    IDropdownItem
+  >();
+
   //Some megamind function, taken from StackOverflow to convert enum string value to appropriate key
   //I have no idea what's going on here
-  function getEnumKeyByEnumValue<T extends {[index:string]:string}>(myEnum:T, enumValue:string):keyof T|null {
-    let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
+  function getEnumKeyByEnumValue<T extends { [index: string]: string }>(
+    myEnum: T,
+    enumValue: string
+  ): keyof T | null {
+    let keys = Object.keys(myEnum).filter((x) => myEnum[x] == enumValue);
     return keys.length > 0 ? keys[0] : null;
   }
 
-  //Takes only those roles, which can access User Table and 
+  //Takes only those roles, which can access User Table and
   //writes them in array in descending order (as in AdminRole enum)
   const setUserAdminRoles = (allUserRoles: Array<string>): Array<AdminRole> => {
-
     //All possible AdminRole keys are converted to string array
     const allAdminRolesAsEnumKeys: Array<string> = new Array<string>();
-    for(var key in AdminRole) {
+    for (var key in AdminRole) {
       allAdminRolesAsEnumKeys.push(AdminRole[key]);
     }
 
     //Current user roles as strings (values) are converted to corresponding
     //Roles enum keys, which are also saved as array of string
     const userRolesAsEnumKeys: Array<string> = new Array<string>();
-    allUserRoles?.forEach(role => {
+    allUserRoles?.forEach((role) => {
       let result = getEnumKeyByEnumValue(Roles, role);
       if (result !== null) {
         userRolesAsEnumKeys.push(result);
       }
     });
-    
-    //Intersection of possible Admin roles and current admin roles
-    const userAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(role => userRolesAsEnumKeys.includes(role));
 
-    //Roles are converted  to AdminRole enum  
+    //Intersection of possible Admin roles and current admin roles
+    const userAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(
+      (role) => userRolesAsEnumKeys.includes(role)
+    );
+
+    //Roles are converted  to AdminRole enum
     const currentUserAdminRoles = new Array<AdminRole>();
-    userAdminRolesAsEnumKeys.forEach(role => {
+    userAdminRolesAsEnumKeys.forEach((role) => {
       currentUserAdminRoles.push(AdminRole[role as keyof typeof AdminRole]);
-    })
+    });
 
     return currentUserAdminRoles;
   };
 
   //Takes user Plast roles, writes them in array in descending order (as in NonAdminRole enum)
-  const setUserNonAdminRoles = (allUserRoles: Array<string>): Array<NonAdminRole> => {
-
+  const setUserNonAdminRoles = (
+    allUserRoles: Array<string>
+  ): Array<NonAdminRole> => {
     //All possible NonAdminRole keys are converted to string array
     const allAdminRolesAsEnumKeys: Array<string> = new Array<string>();
-    for(var key in NonAdminRole) {
+    for (var key in NonAdminRole) {
       allAdminRolesAsEnumKeys.push(NonAdminRole[key]);
     }
 
     //Current user roles as strings (values) are converted to corresponding
     //Roles enum keys, which are also saved as array of string
     const userRolesAsEnumKeys: Array<string> = new Array<string>();
-    allUserRoles?.forEach(role => {
+    allUserRoles?.forEach((role) => {
       let result = getEnumKeyByEnumValue(Roles, role);
       if (result !== null) {
         userRolesAsEnumKeys.push(result);
       }
     });
-    
-    //Intersection of possible NonAdmin roles and current admin roles
-    const userNonAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(role => userRolesAsEnumKeys.includes(role));
 
-    //Roles are converted to NonAdminRole enum  
+    //Intersection of possible NonAdmin roles and current admin roles
+    const userNonAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(
+      (role) => userRolesAsEnumKeys.includes(role)
+    );
+
+    //Roles are converted to NonAdminRole enum
     const userNonAdminRoles = new Array<NonAdminRole>();
-    userNonAdminRolesAsEnumKeys.forEach(role => {
+    userNonAdminRolesAsEnumKeys.forEach((role) => {
       userNonAdminRoles.push(NonAdminRole[role as keyof typeof NonAdminRole]);
-    })
+    });
 
     return userNonAdminRoles;
   };
@@ -158,34 +183,45 @@ const DropDown = (props: Props) => {
   }, []);
 
   const lookThroughChain = async () => {
-    chainOfAccessibility?.handle(currentUser, setUserAdminRoles(roles), selectedUser, 
-      setUserAdminRoles(selectedUserRoles), setUserNonAdminRoles(selectedUserRoles));
+    chainOfAccessibility?.handle(
+      currentUser,
+      setUserAdminRoles(roles),
+      selectedUser,
+      setUserAdminRoles(selectedUserRoles),
+      setUserNonAdminRoles(selectedUserRoles)
+    );
 
     return chainOfAccessibility?.getHandlersResults();
-  }
+  };
 
   const fetchUser = async () => {
-
-    const result: Map<DropdownFunc, any> | undefined | null = await lookThroughChain();
+    const result:
+      | Map<DropdownFunc, any>
+      | undefined
+      | null = await lookThroughChain();
 
     //To make changes in user access for context menu look in DropdownItem.tsx
-    
+
     setCanViewProfile(result?.get(DropdownFunc.CheckProfile) ?? false);
 
     setCanDelete(result?.get(DropdownFunc.Delete) ?? false);
-    
-    setCanChangeRegionAdministration(result?.get(DropdownFunc.EditRegion) ?? false);
+
+    setCanChangeRegionAdministration(
+      result?.get(DropdownFunc.EditRegion) ?? false
+    );
 
     setCanChangeCityAdministration(result?.get(DropdownFunc.EditCity) ?? false);
 
     setCanChangeClubAdministration(result?.get(DropdownFunc.EditClub) ?? false);
-      
+
     setCanChangeUserAccess(result?.get(DropdownFunc.EditRole) ?? false);
 
     setCanAddDegree(result?.get(DropdownFunc.AddDegree) ?? false);
 
     setSuperAdmin(currentUserAdminRoles.includes(AdminRole.Admin));
-    setGoverningBodyHead(currentUserAdminRoles.includes(AdminRole.GoverningBodyHead));
+    setGoverningBodyHead(
+      currentUserAdminRoles.includes(AdminRole.GoverningBodyHead)
+    );
   };
 
   useEffect(() => {
@@ -229,118 +265,120 @@ const DropDown = (props: Props) => {
 
   return (
     <>
-      {canView ? <Menu
-        theme="dark"
-        className={classes.menu}
-        onClick={handleItemClick}
-        style={{
-          top: pageY,
-          left:
-            window.innerWidth - (pageX + 223) < 0
-              ? window.innerWidth - 266
-              : pageX,
-          display: showDropdown ? "block" : "none",
-        }}
-      >
-        {props.inActiveTab === false && canViewProfile ? (
-          <Menu.Item key="1">
-            <FileSearchOutlined />
-            Переглянути профіль
-          </Menu.Item>
-        ) : (
-          <> </>
-        )}
-        {props.inActiveTab === false && canDelete ? (
-          <Menu.Item key="2">
-            <DeleteOutlined />
-            Видалити
-          </Menu.Item>
-        ) : (
-          <> </>
-        )}
-        {props.inActiveTab === false && canChangeRegionAdministration ? (
-          <Menu.Item key="3">
-            <EditOutlined />
-            Провід округи
-          </Menu.Item>
-        ) : (
-          <> </>
-        )}
-        {props.inActiveTab === false && canChangeCityAdministration ? (
-          <Menu.Item key="4">
-            <EditOutlined />
-            Провід станиці
-          </Menu.Item>
-        ) : (
-          <> </>
-        )}
-        {props.inActiveTab === false && canChangeClubAdministration ? (
-          <Menu.Item key="5" >
-            <EditOutlined />
-            Провід куреня
-          </Menu.Item>
-        ) : (
-          <> </>
-        )}
-        {props.inActiveTab === false && canChangeUserAccess ? (
-          <Menu.Item key="6">
-            <EditOutlined />
-            Поточний стан користувача
-          </Menu.Item>
-        ) : (
-          <> </>
-        )}
-        {props.inActiveTab === false && canAddDegree ? (
-          <Menu.Item key="7">
-            <PlusCircleOutlined />
-            Додати ступінь
-          </Menu.Item>
-        ) : (
-          <> </>
-        )}
-        {props.inActiveTab === false && superAdmin ? (
-          <Menu.Item key="9">
-            <MailOutlined />
-            Активувати
-          </Menu.Item>
-        ) : (
-          <> </>
-        )}
-        <ChangeUserRoleModal
-          record={record}
-          showModal={showEditModal}
-          setShowModal={setShowEditModal}
-          onChange={onChange}
-          user={selectedUser}
-        />
-        <ChangeUserCityModal
-          record={record}
-          showModal={showCityModal}
-          setShowModal={setShowCityModal}
-          user={selectedUser}
-          onChange={onChange}
-        />
-        <ChangeUserRegionModal
-          record={record}
-          showModal={showRegionModal}
-          setShowModal={setShowRegionModal}
-          onChange={onChange}
-          user={selectedUser}
-        />
-        <ChangeUserClubModal
-          record={record}
-          showModal={showClubModal}
-          user={selectedUser}
-          setShowModal={setShowClubModal}
-          onChange={onChange}
-        />
-        <ModalAddPlastDegree
-          handleAddDegree={() => { }}
-          userId={record}
-          visibleModal={visibleModalDegree}
-          setVisibleModal={setVisibleModalDegree}
-        />
-      </Menu> : null}
+      {canView ? (
+        <Menu
+          theme="dark"
+          className={classes.menu}
+          onClick={handleItemClick}
+          style={{
+            top: pageY,
+            left:
+              window.innerWidth - (pageX + 223) < 0
+                ? window.innerWidth - 266
+                : pageX,
+            display: showDropdown ? "block" : "none",
+          }}
+        >
+          {props.inActiveTab === false && canViewProfile ? (
+            <Menu.Item key="1">
+              <FileSearchOutlined />
+              Переглянути профіль
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {props.inActiveTab === false && canDelete ? (
+            <Menu.Item key="2">
+              <DeleteOutlined />
+              Видалити
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {props.inActiveTab === false && canChangeRegionAdministration ? (
+            <Menu.Item key="3">
+              <EditOutlined />
+              Провід округи
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {props.inActiveTab === false && canChangeCityAdministration ? (
+            <Menu.Item key="4">
+              <EditOutlined />
+              Провід станиці
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {props.inActiveTab === false && canChangeClubAdministration ? (
+            <Menu.Item key="5">
+              <EditOutlined />
+              Провід куреня
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {props.inActiveTab === false && canChangeUserAccess ? (
+            <Menu.Item key="6">
+              <EditOutlined />
+              Поточний стан користувача
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {props.inActiveTab === false && canAddDegree ? (
+            <Menu.Item key="7">
+              <PlusCircleOutlined />
+              Додати ступінь
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {props.inActiveTab === false && superAdmin ? (
+            <Menu.Item key="9">
+              <MailOutlined />
+              Активувати
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          <ChangeUserRoleModal
+            record={record}
+            showModal={showEditModal}
+            setShowModal={setShowEditModal}
+            onChange={onChange}
+            user={selectedUser}
+          />
+          <ChangeUserCityModal
+            record={record}
+            showModal={showCityModal}
+            setShowModal={setShowCityModal}
+            user={selectedUser}
+            onChange={onChange}
+          />
+          <ChangeUserRegionModal
+            record={record}
+            showModal={showRegionModal}
+            setShowModal={setShowRegionModal}
+            onChange={onChange}
+            user={selectedUser}
+          />
+          <ChangeUserClubModal
+            record={record}
+            showModal={showClubModal}
+            user={selectedUser}
+            setShowModal={setShowClubModal}
+            onChange={onChange}
+          />
+          <ModalAddPlastDegree
+            handleAddDegree={() => {}}
+            userId={record}
+            visibleModal={visibleModalDegree}
+            setVisibleModal={setVisibleModalDegree}
+          />
+        </Menu>
+      ) : null}
     </>
   );
 };

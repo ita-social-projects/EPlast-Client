@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import moment from 'moment';
-import CityUser from '../../../models/City/CityUser';
+import React, { useState } from "react";
+import moment from "moment";
+import CityUser from "../../../models/City/CityUser";
 import Precaution from "../Interfaces/Precaution";
-import { DatePicker, Tooltip } from 'antd';
-import { SortOrder } from 'antd/lib/table/interface';
-import { FormLabelAlign } from 'antd/lib/form/interface';
+import { DatePicker, Tooltip } from "antd";
+import { SortOrder } from "antd/lib/table/interface";
+import { FormLabelAlign } from "antd/lib/form/interface";
 import "./Filter.less";
-
 
 const fetchYears = () => {
   const arrayOfYears = [];
@@ -15,66 +14,70 @@ const fetchYears = () => {
     arrayOfYears.push({ text: i.toString(), value: i });
   }
   return arrayOfYears;
-}
+};
 const years = fetchYears();
 const columns = [
   {
-    align: 'right' as FormLabelAlign,
-    title: '№',
-    dataIndex: 'number',
+    align: "right" as FormLabelAlign,
+    title: "№",
+    dataIndex: "number",
     width: 75,
     fixed: true,
-    defaultSortOrder: 'ascend' as SortOrder,
+    defaultSortOrder: "ascend" as SortOrder,
     sorter: true,
   },
   {
-    title: 'Перестороги',
-    dataIndex: 'precautionName',
-    filters: [{
-      text: "Догана",
-      value: "Догана",
-    },
-    {
-      text: "Сувора догана",
-      value: "Сувора догана",
-    },
-    {
-      text: "Догана із загрозою виключення з Пласту",
-      value: "Догана із загрозою виключення з Пласту",
-    }],
+    title: "Перестороги",
+    dataIndex: "precautionName",
+    filters: [
+      {
+        text: "Догана",
+        value: "Догана",
+      },
+      {
+        text: "Сувора догана",
+        value: "Сувора догана",
+      },
+      {
+        text: "Догана із загрозою виключення з Пласту",
+        value: "Догана із загрозою виключення з Пласту",
+      },
+    ],
     render: (precautionName: Precaution) => {
-      return precautionName
+      return precautionName;
     },
   },
   {
-    title: 'Ім\'я',
-    dataIndex: 'userName',
+    title: "Ім'я",
+    dataIndex: "userName",
     render: (userName: string) => {
-      return userName
+      return userName;
     },
     sorter: true,
-    sortDirections: ['ascend', 'descend'] as SortOrder[],
+    sortDirections: ["ascend", "descend"] as SortOrder[],
   },
   {
-    title: 'Дата затвердження',
-    dataIndex: 'date',
+    title: "Дата затвердження",
+    dataIndex: "date",
     filters: years,
     render: (date: Date) => {
-      return moment.utc(date.toLocaleString()).local().format('DD.MM.YYYY');
+      return moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY");
     },
   },
   {
-    title: 'Дата завершення',
-    dataIndex: 'endDate',
+    title: "Дата завершення",
+    dataIndex: "endDate",
     render: (endDate: Date, record: any) => {
-      return record.isActive === true ? moment.utc(endDate.toLocaleString()).local().format('DD.MM.YYYY') : "не активна";
+      return record.isActive === true
+        ? moment.utc(endDate.toLocaleString()).local().format("DD.MM.YYYY")
+        : "не активна";
     },
     sorter: true,
-    sortDirections: ['ascend', 'descend'] as SortOrder[],
+    sortDirections: ["ascend", "descend"] as SortOrder[],
   },
   {
-    title: 'Подання від',
-    dataIndex: 'reporter',
+    title: "Подання від",
+    dataIndex: "reporter",
     ellipsis: {
       showTitle: false,
     },
@@ -85,8 +88,8 @@ const columns = [
     ),
   },
   {
-    title: 'Обгрунтування',
-    dataIndex: 'reason',
+    title: "Обгрунтування",
+    dataIndex: "reason",
     ellipsis: {
       showTitle: false,
     },
@@ -97,29 +100,30 @@ const columns = [
     ),
   },
   {
-    title: 'Статус',
-    dataIndex: 'status',
+    title: "Статус",
+    dataIndex: "status",
     ellipsis: {
       showTitle: false,
     },
-    filters: [{
-      text: "Прийнято",
-      value: "Прийнято",
-    },
-    {
-      text: "Потверджено",
-      value: "Потверджено",
-    },
-    {
-      text: "Скасовано",
-      value: "Скасовано",
-    }],
+    filters: [
+      {
+        text: "Прийнято",
+        value: "Прийнято",
+      },
+      {
+        text: "Потверджено",
+        value: "Потверджено",
+      },
+      {
+        text: "Скасовано",
+        value: "Скасовано",
+      },
+    ],
     render: (status: any) => (
       <Tooltip placement="topRight" title={status}>
         {status}
       </Tooltip>
     ),
   },
-
 ];
 export default columns;

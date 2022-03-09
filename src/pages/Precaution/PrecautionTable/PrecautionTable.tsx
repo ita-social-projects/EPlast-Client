@@ -17,8 +17,8 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   successfulCreateAction,
   successfulDeleteAction,
-  successfulUpdateAction
-} from "../../../components/Notifications/Messages"
+  successfulUpdateAction,
+} from "../../../components/Notifications/Messages";
 import { Roles } from "../../../models/Roles/Roles";
 import "./Filter.less";
 const { Content } = Layout;
@@ -32,8 +32,8 @@ const PrecautionTable = () => {
   roles =
     curToken !== null
       ? (user[
-        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-      ] as string[])
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ] as string[])
       : [""];
   const [recordObj, setRecordObj] = useState<any>(0);
   const [isRecordActive, setIsRecordActive] = useState<boolean>(false);
@@ -53,7 +53,7 @@ const PrecautionTable = () => {
   const [statusSorter, setStatusSorter] = useState<any[]>([]);
   const [precautionNameSorter, setPrecautionNameSorter] = useState<any[]>([]);
   const [dateSorter, setDateSorter] = useState<any[]>([]);
-  const [sortByOrder, setSortByOrder] = useState<any[]>(["number","ascend"]);
+  const [sortByOrder, setSortByOrder] = useState<any[]>(["number", "ascend"]);
   const [precautions, setPrecautions] = useState<UserPrecautionTableInfo[]>([
     {
       count: 0,
@@ -79,18 +79,28 @@ const PrecautionTable = () => {
       dateFilter: dateSorter,
       searchedData: searchedData,
       page: page,
-      pageSize: pageSize
+      pageSize: pageSize,
     };
 
     setLoading(true);
-    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(NewTableSettings);
+    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(
+      NewTableSettings
+    );
     setPrecautions(res);
     setLoading(false);
     setTotal(res[0]?.total);
-  }
+  };
   useEffect(() => {
     fetchData();
-  }, [sortByOrder ,statusSorter, precautionNameSorter, dateSorter, searchedData, page, pageSize]);
+  }, [
+    sortByOrder,
+    statusSorter,
+    precautionNameSorter,
+    dateSorter,
+    searchedData,
+    page,
+    pageSize,
+  ]);
 
   const handleSearch = (event: any) => {
     setPage(1);
@@ -98,8 +108,8 @@ const PrecautionTable = () => {
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.toLowerCase() === '') setSearchedData('');
-  }
+    if (event.target.value.toLowerCase() === "") setSearchedData("");
+  };
 
   const showModal = () => {
     setVisibleModal(true);
@@ -120,17 +130,15 @@ const PrecautionTable = () => {
   };
 
   const CreateDeleteNotification = (id: number) => {
-    const userPrecaution = precautions.find(
-      (d: { id: number }) => d.id === id
-    );
+    const userPrecaution = precautions.find((d: { id: number }) => d.id === id);
     if (userPrecaution) {
       NotificationBoxApi.createNotifications(
         [userPrecaution.userId],
         `Вашу пересторогу: '${userPrecaution.precautionName}' було видалено.`,
         NotificationBoxApi.NotificationTypes.UserNotifications
       );
-      NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId)
-        .then(res => {
+      NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId).then(
+        (res) => {
           res.cityRegionAdmins.length !== 0 &&
             res.cityRegionAdmins.forEach(async (cra) => {
               await NotificationBoxApi.createNotifications(
@@ -138,10 +146,11 @@ const PrecautionTable = () => {
                 `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' було знято пересторогу: '${userPrecaution.precautionName}'. `,
                 NotificationBoxApi.NotificationTypes.UserNotifications
               );
-            })
-        });
+            });
+        }
+      );
     }
-  }
+  };
 
   const CreateEditNotification = (userId: string, name: string) => {
     if (userId !== "" && name !== "") {
@@ -152,31 +161,27 @@ const PrecautionTable = () => {
         `/precautions`,
         `Переглянути`
       );
-      NotificationBoxApi.getCitiesForUserAdmins(userId)
-        .then(res => {
-          res.cityRegionAdmins.length !== 0 &&
-            res.cityRegionAdmins.forEach(async (cra) => {
-              await NotificationBoxApi.createNotifications(
-                [cra.cityAdminId, cra.regionAdminId],
-                `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінену пересторогу: '${name}'. `,
-                NotificationBoxApi.NotificationTypes.UserNotifications,
-                `/precautions`,
-                `Переглянути`
-              );
-            })
-        });
+      NotificationBoxApi.getCitiesForUserAdmins(userId).then((res) => {
+        res.cityRegionAdmins.length !== 0 &&
+          res.cityRegionAdmins.forEach(async (cra) => {
+            await NotificationBoxApi.createNotifications(
+              [cra.cityAdminId, cra.regionAdminId],
+              `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінену пересторогу: '${name}'. `,
+              NotificationBoxApi.NotificationTypes.UserNotifications,
+              `/precautions`,
+              `Переглянути`
+            );
+          });
+      });
     }
-  }
+  };
 
   const handleDelete = (id: number) => {
-    const filteredData = precautions.filter(
-      (d: { id: number }) => d.id !== id
-    );
-    setPrecautions([...filteredData]);    
-    
-    if(page != 1 && precautions.length == 1)
-      setPage(page-1);
-    
+    const filteredData = precautions.filter((d: { id: number }) => d.id !== id);
+    setPrecautions([...filteredData]);
+
+    if (page != 1 && precautions.length == 1) setPage(page - 1);
+
     setTotal(total - 1);
     notificationLogic("success", successfulDeleteAction("Пересторогу"));
     CreateDeleteNotification(id);
@@ -207,7 +212,7 @@ const PrecautionTable = () => {
         d.status = status;
         d.number = number;
         d.userId = userId;
-        d.userName = user.firstName + ' ' + user.lastName;
+        d.userName = user.firstName + " " + user.lastName;
       }
       return d;
     });
@@ -215,19 +220,24 @@ const PrecautionTable = () => {
     notificationLogic("success", successfulUpdateAction("Пересторогу"));
     CreateEditNotification(userId, precaution.name);
   };
-  const tableSettings = (res: any) =>{
-    
+  const tableSettings = (res: any) => {
     setPage(res[0].current);
-    setPageSize(res[0].pageSize);    
-    
-    res[1].status === null ? setStatusSorter([]) : setStatusSorter(res[1].status);
+    setPageSize(res[0].pageSize);
 
-    res[1].precautionName === null ? setPrecautionNameSorter([]) : setPrecautionNameSorter(res[1].precautionName)
+    res[1].status === null
+      ? setStatusSorter([])
+      : setStatusSorter(res[1].status);
 
-    res[1].date === null ? setDateSorter([]) : setDateSorter(res[1].date)        
+    res[1].precautionName === null
+      ? setPrecautionNameSorter([])
+      : setPrecautionNameSorter(res[1].precautionName);
 
-    res[2].order === undefined ? setSortByOrder([res[2].field, null]) : setSortByOrder([res[2].field, res[2].order])
-  }
+    res[1].date === null ? setDateSorter([]) : setDateSorter(res[1].date);
+
+    res[2].order === undefined
+      ? setSortByOrder([res[2].field, null])
+      : setSortByOrder([res[2].field, res[2].order]);
+  };
 
   return (
     <Layout>
@@ -242,14 +252,11 @@ const PrecautionTable = () => {
             <Col>
               {canEdit === true ? (
                 <>
-                  <Button
-                    type="primary"
-                    onClick={showModal}
-                  >
+                  <Button type="primary" onClick={showModal}>
                     Додати пересторогу
                   </Button>
                 </>
-              ) : (null)}
+              ) : null}
             </Col>
             <Col>
               <Search
@@ -262,42 +269,43 @@ const PrecautionTable = () => {
             </Col>
           </Row>
           {
-            <div> 
-            <Table
-              className={classes.table}
-              dataSource={precautions}
-              columns={columns}
-              scroll={{ x: 1300 }}
-              onRow={(record) => {
-                return {
-                  onClick: () => {
-                    setShowDropdown(false);
-                  },
-                  onContextMenu: (event) => {
-                    event.preventDefault();
-                    setShowDropdown(true);
-                    setRecordObj(record.id);
-                    setIsRecordActive(record.isActive);
-                    setUserId(record.userId);
-                    setX(event.pageX);
-                    setY(event.pageY);
-                  },
-                };
-              }}
-              pagination={{
-                current: page,
-                pageSize: pageSize,
-                total: total,
-                showLessItems: true,
-                responsive: true,
-                showSizeChanger: true,
-              }}
-              onChange={(...args) => tableSettings(args)}
-              loading={loading}
-              bordered
-              rowKey="id"
-            />
-          </div>}
+            <div>
+              <Table
+                className={classes.table}
+                dataSource={precautions}
+                columns={columns}
+                scroll={{ x: 1300 }}
+                onRow={(record) => {
+                  return {
+                    onClick: () => {
+                      setShowDropdown(false);
+                    },
+                    onContextMenu: (event) => {
+                      event.preventDefault();
+                      setShowDropdown(true);
+                      setRecordObj(record.id);
+                      setIsRecordActive(record.isActive);
+                      setUserId(record.userId);
+                      setX(event.pageX);
+                      setY(event.pageY);
+                    },
+                  };
+                }}
+                pagination={{
+                  current: page,
+                  pageSize: pageSize,
+                  total: total,
+                  showLessItems: true,
+                  responsive: true,
+                  showSizeChanger: true,
+                }}
+                onChange={(...args) => tableSettings(args)}
+                loading={loading}
+                bordered
+                rowKey="id"
+              />
+            </div>
+          }
           <ClickAwayListener onClickAway={handleClickAway}>
             <DropDownPrecautionTable
               showDropdown={showDropdown}

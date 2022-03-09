@@ -1,11 +1,23 @@
 import React, { useEffect, useState } from "react";
-import '../AddDocumentModal/AddDocumentModal.less';
-import { Button, Col, DatePicker, Form, Modal, Row, Select, Upload } from "antd";
-import { getBase64 } from '../../userPage/EditUserPage/Services';
-import notificationLogic from '../../../components/Notifications/Notification';
-import SectorDocument from '../../../models/GoverningBody/Sector/SectorDocument';
-import { addDocument, getDocumentTypes } from "../../../api/governingBodySectorsApi";
-import SectorDocumentType from '../../../models/GoverningBody/Sector/SectorDocumentType';
+import "../AddDocumentModal/AddDocumentModal.less";
+import {
+  Button,
+  Col,
+  DatePicker,
+  Form,
+  Modal,
+  Row,
+  Select,
+  Upload,
+} from "antd";
+import { getBase64 } from "../../userPage/EditUserPage/Services";
+import notificationLogic from "../../../components/Notifications/Notification";
+import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument";
+import {
+  addDocument,
+  getDocumentTypes,
+} from "../../../api/governingBodySectorsApi";
+import SectorDocumentType from "../../../models/GoverningBody/Sector/SectorDocumentType";
 import { InboxOutlined } from "@ant-design/icons";
 import moment from "moment";
 import "moment/locale/uk";
@@ -16,8 +28,8 @@ import {
   possibleFileExtensions,
   fileIsTooBig,
   successfulDeleteAction,
-  fileIsEmpty
-} from "../../../components/Notifications/Messages"
+  fileIsEmpty,
+} from "../../../components/Notifications/Messages";
 moment.locale("uk-ua");
 
 interface Props {
@@ -34,13 +46,13 @@ const AddDocumentModal = (props: Props) => {
   const [documentTypes, setDocumentTypes] = useState<SectorDocumentType[]>([]);
   const [fileName, setFileName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [disabled,setDisabled] = useState<boolean>(true);
+  const [disabled, setDisabled] = useState<boolean>(true);
   const [buttonLoading, setButtonLoading] = useState(false);
 
   const getAllDocumentTypes = async () => {
     const response = await getDocumentTypes();
     setDocumentTypes(response.data);
-  }
+  };
 
   const normFile = (e: { fileList: any }) => {
     if (Array.isArray(e)) {
@@ -54,7 +66,7 @@ const AddDocumentModal = (props: Props) => {
     if (info.file !== null) {
       if (checkFile(info.file.size, info.file.name)) {
         getBase64(info.file, (base64: string) => {
-          props.setDocument({...props.document, blobName: base64});
+          props.setDocument({ ...props.document, blobName: base64 });
           setFileName(info.file.name);
         });
         notificationLogic("success", fileIsUpload());
@@ -105,7 +117,7 @@ const AddDocumentModal = (props: Props) => {
         name: values.documentType,
       },
       submitDate: values.datepicker?._d,
-      sectorId: props.sectorId
+      sectorId: props.sectorId,
     };
 
     console.log(newDocument);
@@ -133,8 +145,7 @@ const AddDocumentModal = (props: Props) => {
     setDisabled(true);
   };
 
-  const onSearch = (val: any) => {
-  }
+  const onSearch = (val: any) => {};
 
   useEffect(() => {
     getAllDocumentTypes();
@@ -154,9 +165,7 @@ const AddDocumentModal = (props: Props) => {
           <Form.Item
             label="Тип документу"
             name="documentType"
-            rules={[
-              { required: true, message: emptyInput() },
-            ]}
+            rules={[{ required: true, message: emptyInput() }]}
           >
             <Select
               showSearch
@@ -196,7 +205,9 @@ const AddDocumentModal = (props: Props) => {
             <p className="ant-upload-hint">
               Клікніть або перетягніть файл для завантаження
             </p>
-            {props.document.blobName !== null && <div style={{wordBreak:'break-word'}}> {fileName} </div>}
+            {props.document.blobName !== null && (
+              <div style={{ wordBreak: "break-word" }}> {fileName} </div>
+            )}
           </Upload.Dragger>
 
           {props.document.blobName ? (
@@ -215,12 +226,18 @@ const AddDocumentModal = (props: Props) => {
         </Form.Item>
 
         <Row justify="end">
-          <Col md={24} xs={24} >
+          <Col md={24} xs={24}>
             <Form.Item style={{ textAlign: "right" }}>
               <Button key="back" onClick={handleCancel}>
                 Відмінити
               </Button>
-              <Button  style={{ marginLeft: "7px" }} type="primary" loading={buttonLoading} disabled={disabled} htmlType="submit">
+              <Button
+                style={{ marginLeft: "7px" }}
+                type="primary"
+                loading={buttonLoading}
+                disabled={disabled}
+                htmlType="submit"
+              >
                 Опублікувати
               </Button>
             </Form.Item>
@@ -229,6 +246,6 @@ const AddDocumentModal = (props: Props) => {
       </Form>
     </Modal>
   );
-}
+};
 
 export default AddDocumentModal;

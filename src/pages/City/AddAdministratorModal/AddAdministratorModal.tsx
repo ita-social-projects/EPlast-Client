@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from "react";
 import "./AddAdministrationModal.less";
 import { AutoComplete, Button, Col, DatePicker, Form, Modal, Row } from "antd";
-import { ExclamationCircleOutlined} from '@ant-design/icons';
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import CityAdmin from "./../../../models/City/CityAdmin";
 import AdminType from "./../../../models/Admin/AdminType";
 import {
   addAdministrator,
   editAdministrator,
   getCheckPlastMember,
-  getCityAdministration
+  getCityAdministration,
 } from "../../../api/citiesApi";
 import notificationLogic from "./../../../components/Notifications/Notification";
 import moment from "moment";
 import "moment/locale/uk";
 import userApi from "../../../api/UserApi";
-import{emptyInput, inputOnlyWhiteSpaces} from "../../../components/Notifications/Messages"
+import {
+  emptyInput,
+  inputOnlyWhiteSpaces,
+} from "../../../components/Notifications/Messages";
 import { Roles } from "../../../models/Roles/Roles";
 moment.locale("uk-ua");
 
@@ -41,18 +44,20 @@ const AddAdministratorModal = (props: Props) => {
   const [headDeputy, setHeadDeputy] = useState<CityAdmin>();
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const classes = require('../City/Modal.module.css');
+  const classes = require("../City/Modal.module.css");
 
   const getCityAdmins = async () => {
     setLoading(true);
     if (props.cityId !== 0) {
-      const responseAdmins = await getCityAdministration(props.cityId)
-      setAdmins(responseAdmins.data)
-      const Head = (responseAdmins.data as CityAdmin[])
-        .find(x => x.adminType.adminTypeName === Roles.CityHead) 
+      const responseAdmins = await getCityAdministration(props.cityId);
+      setAdmins(responseAdmins.data);
+      const Head = (responseAdmins.data as CityAdmin[]).find(
+        (x) => x.adminType.adminTypeName === Roles.CityHead
+      );
       setHead(Head);
-      const HeadDeputy = (responseAdmins.data as CityAdmin[])
-      .find(x => x.adminType.adminTypeName === Roles.CityHeadDeputy) 
+      const HeadDeputy = (responseAdmins.data as CityAdmin[]).find(
+        (x) => x.adminType.adminTypeName === Roles.CityHeadDeputy
+      );
       setHeadDeputy(HeadDeputy);
       setLoading(false);
     }
@@ -75,7 +80,7 @@ const AddAdministratorModal = (props: Props) => {
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
-         addCityAdmin(admin);
+        addCityAdmin(admin);
       },
     });
   }
@@ -90,14 +95,15 @@ const AddAdministratorModal = (props: Props) => {
           </b>{" "}
           є Головою Станиці, час правління закінчується{" "}
           <b>
-            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") ===
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {}
+      onOk() {},
     });
   };
 
@@ -109,23 +115,25 @@ const AddAdministratorModal = (props: Props) => {
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління
+          закінчується{" "}
           <b>
-            {moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY") ===
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
-      ),    
-      onCancel() { },
+      ),
+      onCancel() {},
       onOk() {
         if (newAdmin.id === 0) {
           addCityAdmin(newAdmin);
         } else {
           editCityAdmin(newAdmin);
         }
-      }
+      },
     });
   };
 
@@ -137,16 +145,17 @@ const AddAdministratorModal = (props: Props) => {
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
-            вже має таку роль, час правління закінчується{" "}
+          вже має таку роль, час правління закінчується{" "}
           <b>
-            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {}
+      onOk() {},
     });
   };
 
@@ -158,10 +167,10 @@ const AddAdministratorModal = (props: Props) => {
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
-            не є членом Пласту.
+          не є членом Пласту.
         </div>
       ),
-      onOk() {}
+      onOk() {},
     });
   };
 
@@ -182,21 +191,20 @@ const AddAdministratorModal = (props: Props) => {
   const checkAdminId = async (admin: CityAdmin) => {
     if (admin.id === 0) {
       await addCityAdmin(admin);
-    } 
-    else if (admin.adminType.adminTypeName === "Голова СПР" ||
-      admin.adminType.adminTypeName === "Член СПР"){
-        const check = await getCheckPlastMember(admin.userId);
-        if(check.data){
-          await editCityAdmin(admin);
-        }
-        else{
-          showPlastMemberDisable(admin);
-        }
-    }
-    else{
+    } else if (
+      admin.adminType.adminTypeName === "Голова СПР" ||
+      admin.adminType.adminTypeName === "Член СПР"
+    ) {
+      const check = await getCheckPlastMember(admin.userId);
+      if (check.data) {
+        await editCityAdmin(admin);
+      } else {
+        showPlastMemberDisable(admin);
+      }
+    } else {
       await editCityAdmin(admin);
     }
-  }
+  };
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
@@ -214,38 +222,41 @@ const AddAdministratorModal = (props: Props) => {
       startDate: values.startDate?._d,
     };
     try {
-      const head = (admins as CityAdmin[])
-        .find(x => x.adminType.adminTypeName === Roles.CityHead)
-      if(admin !== undefined){
-          const adminToUpper = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
-          admin.adminType.adminTypeName = adminToUpper
+      const head = (admins as CityAdmin[]).find(
+        (x) => x.adminType.adminTypeName === Roles.CityHead
+      );
+      if (admin !== undefined) {
+        const adminToUpper =
+          admin.adminType.adminTypeName[0].toUpperCase() +
+          admin.adminType.adminTypeName.slice(1);
+        admin.adminType.adminTypeName = adminToUpper;
+      }
+      const existingAdmin = (admins as CityAdmin[]).find(
+        (x) => x.adminType.adminTypeName === admin.adminType.adminTypeName
+      );
+      if (head?.userId === admin.userId) {
+        showDisableModal(head);
+      } else if (
+        existingAdmin?.userId === admin.userId &&
+        existingAdmin?.endDate === admin.endDate
+      ) {
+        showDisable(admin);
+      } else if (
+        admin.adminType.adminTypeName === "Голова СПР" ||
+        admin.adminType.adminTypeName === "Член СПР"
+      ) {
+        const check = await getCheckPlastMember(admin.userId);
+        if (check.data) {
+          await addCityAdmin(admin);
+        } else {
+          showPlastMemberDisable(admin);
         }
-      const existingAdmin  = (admins as CityAdmin[])
-        .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)   
-        if (head?.userId === admin.userId){
-          showDisableModal(head)
-        }
-        else if(existingAdmin?.userId === admin.userId && existingAdmin?.endDate === admin.endDate){
-          showDisable(admin)
-        }
-        else if(admin.adminType.adminTypeName === "Голова СПР" ||
-          admin.adminType.adminTypeName === "Член СПР"){
-          const check = await getCheckPlastMember(admin.userId);
-          if(check.data){
-            await addCityAdmin(admin);
-          }
-          else {
-            showPlastMemberDisable(admin);
-          }
-        }
-        else if(existingAdmin !== undefined) {
-          showConfirm(admin, existingAdmin);
-        }
-        else {
-          await checkAdminId(admin);
-        }
-    }
-    finally {
+      } else if (existingAdmin !== undefined) {
+        showConfirm(admin, existingAdmin);
+      } else {
+        await checkAdminId(admin);
+      }
+    } finally {
       props.setVisibleModal(false);
       setLoading(false);
     }
@@ -258,7 +269,7 @@ const AddAdministratorModal = (props: Props) => {
   useEffect(() => {
     if (props.visibleModal) {
       form.resetFields();
-      setLoadingButton(false)
+      setLoadingButton(false);
     }
     getCityAdmins();
     const userRoles = userApi.getActiveUserRoles();
@@ -286,22 +297,26 @@ const AddAdministratorModal = (props: Props) => {
           labelCol={{ span: 24 }}
           initialValue={props.admin.adminType.adminTypeName}
           rules={[
-            { 
-              required: true, 
-              message: emptyInput() 
+            {
+              required: true,
+              message: emptyInput(),
             },
             {
               pattern: /^\s*\S.*$/,
-              message: inputOnlyWhiteSpaces()
+              message: inputOnlyWhiteSpaces(),
             },
           ]}
         >
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: Roles.CityHead, disabled: (activeUserRoles.includes(Roles.CityHeadDeputy) 
-              && !activeUserRoles.includes(Roles.Admin)) },
-              { value: Roles.CityHeadDeputy},
+              {
+                value: Roles.CityHead,
+                disabled:
+                  activeUserRoles.includes(Roles.CityHeadDeputy) &&
+                  !activeUserRoles.includes(Roles.Admin),
+              },
+              { value: Roles.CityHeadDeputy },
               { value: "Голова СПР" },
               { value: "Писар" },
               { value: "Скарбник" },
@@ -344,7 +359,9 @@ const AddAdministratorModal = (props: Props) => {
               label="Час кінця"
               labelCol={{ span: 24 }}
               initialValue={
-                props.admin.endDate ? moment.utc(props.admin.endDate).local() : undefined
+                props.admin.endDate
+                  ? moment.utc(props.admin.endDate).local()
+                  : undefined
               }
             >
               <DatePicker
@@ -352,7 +369,9 @@ const AddAdministratorModal = (props: Props) => {
                 disabledDate={disabledEndDate}
                 format="DD.MM.YYYY"
                 value={
-                  props.admin.endDate ? moment.utc(props.admin.endDate).local() : undefined
+                  props.admin.endDate
+                    ? moment.utc(props.admin.endDate).local()
+                    : undefined
                 }
                 onChange={(e) => setEndDate(e)}
               />
@@ -372,7 +391,14 @@ const AddAdministratorModal = (props: Props) => {
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" loading = {loadingButton} onClick = {() => {setLoadingButton(true); handleSubmit(form.getFieldsValue());}}>
+              <Button
+                type="primary"
+                loading={loadingButton}
+                onClick={() => {
+                  setLoadingButton(true);
+                  handleSubmit(form.getFieldsValue());
+                }}
+              >
                 Опублікувати
               </Button>
             </Col>

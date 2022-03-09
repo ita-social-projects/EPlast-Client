@@ -6,24 +6,23 @@ import AddAdministratorModal from "../Club/AddAdministratorModal/AddAdministrato
 import ClubUser from "../../models/Club/ClubUser";
 import AdminType from "../../models/Admin/AdminType";
 
-
 interface Props {
   record: string;
   showModal: boolean;
   setShowModal: (showModal: any) => void;
   onChange: (id: string, userRoles: string) => void;
-  user: any
+  user: any;
 }
 const ChangeUserClubModal = ({
   record,
   showModal,
   setShowModal,
   onChange,
-  user
+  user,
 }: Props) => {
   const [admin, setAdmin] = useState<ClubAdmin>(new ClubAdmin());
- 
-  let clubId =user?.clubId;
+
+  let clubId = user?.clubId;
   const newAdmin: ClubAdmin = {
     id: 0,
     userId: record,
@@ -39,20 +38,20 @@ const ChangeUserClubModal = ({
         [id],
         `Вам була присвоєна нова роль: '${userRole}' в курені: `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/clubs/${clubId}`,user.clubName
+        `/clubs/${clubId}`,
+        user.clubName
       );
   };
 
   const handleClick = async () => {
     setShowModal(false);
   };
-  if(!showModal)
-  {
-    return(<div></div>)
+  if (!showModal) {
+    return <div></div>;
   }
   return (
     <div>
-      {clubId!== null ? (
+      {clubId !== null ? (
         <AddAdministratorModal
           admin={newAdmin}
           setAdmin={setAdmin}
@@ -62,16 +61,25 @@ const ChangeUserClubModal = ({
           clubName={user.clubName}
           onChange={handleChange}
         ></AddAdministratorModal>
-        ):
-        (
-          <Modal title="Попередження"
-            visible={showModal}
-            onOk={handleClick}
-            onCancel={handleClick}>
-            <p> Користувач  <b>{user.firstName} {user.lastName} </b>не є членом куреня!{" "}</p>
-            <p>В провід куреня можна додати тільки дійсного члена!</p>
-          </Modal>  
-        )};
+      ) : (
+        <Modal
+          title="Попередження"
+          visible={showModal}
+          onOk={handleClick}
+          onCancel={handleClick}
+        >
+          <p>
+            {" "}
+            Користувач{" "}
+            <b>
+              {user.firstName} {user.lastName}{" "}
+            </b>
+            не є членом куреня!{" "}
+          </p>
+          <p>В провід куреня можна додати тільки дійсного члена!</p>
+        </Modal>
+      )}
+      ;
     </div>
   );
 };

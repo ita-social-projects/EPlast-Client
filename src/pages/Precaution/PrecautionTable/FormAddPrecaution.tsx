@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Form,
-  DatePicker,
-  Select,
-  Input,
-  Button,
-  Row,
-  Col,
-} from "antd";
+import { Form, DatePicker, Select, Input, Button, Row, Col } from "antd";
 import Precaution from "../Interfaces/Precaution";
 import UserPrecaution from "../Interfaces/UserPrecaution";
 import precautionApi from "../../../api/precautionApi";
@@ -15,16 +7,17 @@ import adminApi from "../../../api/adminApi";
 import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import notificationLogic from "../../../components/Notifications/Notification";
-import {
-  failCreateAction
-} from "../../../components/Notifications/Messages"
+import { failCreateAction } from "../../../components/Notifications/Messages";
 import {
   emptyInput,
   maxNumber,
-  minNumber
-} from "../../../components/Notifications/Messages"
+  minNumber,
+} from "../../../components/Notifications/Messages";
 import moment from "moment";
-import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
+import {
+  descriptionValidation,
+  getOnlyNums,
+} from "../../../models/GllobalValidations/DescriptionValidation";
 import { Roles } from "../../../models/Roles/Roles";
 
 type FormAddPrecautionProps = {
@@ -57,32 +50,53 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
   const disabledStartDate = (current: any) => {
     return current && current > moment();
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       await precautionApi.getPrecautions().then((response) => {
         setDistData(response.data);
       });
       setLoadingUserStatus(true);
-      await adminApi.getUsersByAnyRole([
-        [
-          Roles.CityHead, Roles.CityHeadDeputy, Roles.CitySecretary, Roles.EventAdministrator,
-          Roles.GoverningBodyHead, Roles.GoverningBodySecretary, Roles.GoverningBodySectorHead, Roles.GoverningBodySectorSecretary,
-          Roles.KurinHead, Roles.KurinHeadDeputy, Roles.KurinSecretary, 
-          Roles.OkrugaHead, Roles.OkrugaHeadDeputy, Roles.OkrugaSecretary,
-          Roles.PlastHead, Roles.PlastMember, Roles.RegionBoardHead, Roles.RegisteredUser, Roles.Supporter
-        ]
-      ],true).then((response) => {
-        setUserData(response.data);
-        setLoadingUserStatus(false);
-      });
+      await adminApi
+        .getUsersByAnyRole(
+          [
+            [
+              Roles.CityHead,
+              Roles.CityHeadDeputy,
+              Roles.CitySecretary,
+              Roles.EventAdministrator,
+              Roles.GoverningBodyHead,
+              Roles.GoverningBodySecretary,
+              Roles.GoverningBodySectorHead,
+              Roles.GoverningBodySectorSecretary,
+              Roles.KurinHead,
+              Roles.KurinHeadDeputy,
+              Roles.KurinSecretary,
+              Roles.OkrugaHead,
+              Roles.OkrugaHeadDeputy,
+              Roles.OkrugaSecretary,
+              Roles.PlastHead,
+              Roles.PlastMember,
+              Roles.RegionBoardHead,
+              Roles.RegisteredUser,
+              Roles.Supporter,
+            ],
+          ],
+          true
+        )
+        .then((response) => {
+          setUserData(response.data);
+          setLoadingUserStatus(false);
+        });
     };
     fetchData();
   }, []);
 
   const backgroundColor = (user: any) => {
-    return user.isInLowerRole ? { backgroundColor : '#D3D3D3' } : { backgroundColor : 'white' };
-  }    
+    return user.isInLowerRole
+      ? { backgroundColor: "#D3D3D3" }
+      : { backgroundColor: "white" };
+  };
 
   const handleCancel = () => {
     form.resetFields();
@@ -98,8 +112,8 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
       `Переглянути`
     );
 
-    await NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId)
-      .then(res => {
+    await NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId).then(
+      (res) => {
         res.cityRegionAdmins.length !== 0 &&
           res.cityRegionAdmins.forEach(async (cra) => {
             await NotificationBoxApi.createNotifications(
@@ -109,22 +123,33 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               `/Precautions`,
               `Переглянути`
             );
-          })
-      });
-  }
+          });
+      }
+    );
+  };
   const AddPrecaution = async (newPrecaution: UserPrecaution) => {
     await precautionApi.addUserPrecaution(newPrecaution);
     setVisibleModal(false);
     form.resetFields();
     onAdd();
     await createNotifications(newPrecaution);
-  }
+  };
 
   const activePrecautionNofication = async (newPrecaution: UserPrecaution) => {
-    await precautionApi.getUserActivePrecautionEndDate(newPrecaution.userId, newPrecaution.precaution.name).then(response =>{
-      notificationLogic("error", failCreateAction("пересторогу! Користувач має активну до " + response.data + "!"));
-    })
-  }
+    await precautionApi
+      .getUserActivePrecautionEndDate(
+        newPrecaution.userId,
+        newPrecaution.precaution.name
+      )
+      .then((response) => {
+        notificationLogic(
+          "error",
+          failCreateAction(
+            "пересторогу! Користувач має активну до " + response.data + "!"
+          )
+        );
+      });
+  };
   const handleSubmit = async (values: any) => {
     const newPrecaution: UserPrecaution = {
       id: 0,
@@ -141,19 +166,27 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
       number: values.number,
     };
 
-    await precautionApi.checkUserPrecautionsType(newPrecaution.userId, newPrecaution.precaution.name)
-    .then(response=> {
-        if(response.data){
+    await precautionApi
+      .checkUserPrecautionsType(
+        newPrecaution.userId,
+        newPrecaution.precaution.name
+      )
+      .then((response) => {
+        if (response.data) {
           activePrecautionNofication(newPrecaution);
-        }
-        else {
+        } else {
           AddPrecaution(newPrecaution);
         }
-        
-    });
+      });
   };
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
+    <Form
+      name="basic"
+      onFinish={handleSubmit}
+      form={form}
+      id="area"
+      style={{ position: "relative" }}
+    >
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
@@ -162,31 +195,32 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             labelCol={{ span: 24 }}
             name="number"
             rules={[
-                {
-                  required: true,
-                  message: emptyInput(),
-                },
-                {
-                  max: 5,
-                  message: maxNumber(99999),
-                },
-                {
-                  validator: async (_ : object, value: number) =>
-                    value && !isNaN(value)
-                      ? await precautionApi
+              {
+                required: true,
+                message: emptyInput(),
+              },
+              {
+                max: 5,
+                message: maxNumber(99999),
+              },
+              {
+                validator: async (_: object, value: number) =>
+                  value && !isNaN(value)
+                    ? (await precautionApi
                         .checkNumberExisting(value)
-                        .then(response => response.data === false)
-                          ? Promise.resolve()
-                            : Promise.reject('Цей номер уже зайнятий')
-                            : Promise.reject()
-                }
-              ]}>
+                        .then((response) => response.data === false))
+                      ? Promise.resolve()
+                      : Promise.reject("Цей номер уже зайнятий")
+                    : Promise.reject(),
+              },
+            ]}
+          >
             <Input
               min={1}
               className={formclasses.inputField}
               max={99999}
-              maxLength = {7}
-              autoComplete = "off"
+              maxLength={7}
+              autoComplete="off"
               onChange={(e) => {
                 form.setFieldsValue({
                   number: getOnlyNums(e.target.value),
@@ -210,8 +244,8 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               },
             ]}
           >
-            <Select 
-              className={formclasses.selectField} 
+            <Select
+              className={formclasses.selectField}
               showSearch
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
@@ -232,10 +266,10 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             name="user"
             labelCol={{ span: 24 }}
             rules={[
-              { 
-                required: true, 
-                message: emptyInput() 
-              }
+              {
+                required: true,
+                message: emptyInput(),
+              },
             ]}
           >
             <Select
@@ -245,12 +279,12 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
               {userData?.map((o) => (
-                <Select.Option 
-                    key={o.id} 
-                    value={JSON.stringify(o)} 
-                    style={backgroundColor(o)}
-                    disabled={o.isInLowerRole}
-                    >
+                <Select.Option
+                  key={o.id}
+                  value={JSON.stringify(o)}
+                  style={backgroundColor(o)}
+                  disabled={o.isInLowerRole}
+                >
                   {o.firstName + " " + o.lastName}
                 </Select.Option>
               ))}
@@ -283,18 +317,20 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             label="Дата затвердження"
             labelCol={{ span: 24 }}
             rules={[
-              { 
-                required: true, 
-                message: emptyInput() 
-              }
+              {
+                required: true,
+                message: emptyInput(),
+              },
             ]}
           >
             <DatePicker
               format={dateFormat}
               className={formclasses.selectField}
               disabledDate={disabledStartDate}
-              getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
-              popupStyle={{position: 'absolute'}}
+              getPopupContainer={() =>
+                document.getElementById("area")! as HTMLElement
+              }
+              popupStyle={{ position: "absolute" }}
             />
           </Form.Item>
         </Col>
@@ -334,14 +370,20 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               },
             ]}
           >
-            <Select 
-              className={formclasses.selectField} 
+            <Select
+              className={formclasses.selectField}
               showSearch
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
-              <Select.Option key="9" value="Прийнято">Прийнято</Select.Option>
-              <Select.Option key="10" value="Потверджено">Потверджено</Select.Option>
-              <Select.Option key="11" value="Скасовано">Скасовано</Select.Option>
+              <Select.Option key="9" value="Прийнято">
+                Прийнято
+              </Select.Option>
+              <Select.Option key="10" value="Потверджено">
+                Потверджено
+              </Select.Option>
+              <Select.Option key="11" value="Скасовано">
+                Скасовано
+              </Select.Option>
             </Select>
           </Form.Item>
         </Col>
@@ -350,10 +392,18 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
         <Col md={24} xs={24}>
           <Form.Item>
             <div className={formclasses.cardButton}>
-              <Button key="back" onClick={handleCancel} className={formclasses.buttons}>
+              <Button
+                key="back"
+                onClick={handleCancel}
+                className={formclasses.buttons}
+              >
                 Відмінити
               </Button>
-              <Button type="primary" htmlType="submit" className={formclasses.buttons}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className={formclasses.buttons}
+              >
                 Опублікувати
               </Button>
             </div>

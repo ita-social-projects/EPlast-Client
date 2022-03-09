@@ -1,7 +1,7 @@
 export default class Pysar {
-    userId: string;
+  userId: string;
 
-    constructor() {
-        this.userId = '';
-    }
+  constructor() {
+    this.userId = "";
+  }
 }

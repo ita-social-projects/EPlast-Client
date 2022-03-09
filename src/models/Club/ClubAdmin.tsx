@@ -1,5 +1,5 @@
-import AdminType from '../Admin/AdminType';
-import ClubUser from './ClubUser';
+import AdminType from "../Admin/AdminType";
+import ClubUser from "./ClubUser";
 
 export default class ClubAdmin {
   id: number;

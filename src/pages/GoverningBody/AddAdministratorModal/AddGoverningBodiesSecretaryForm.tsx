@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
 import formclasses from "../../../pages/DecisionTable/FormAddDecision.module.css";
-import { 
-  Form, 
-  DatePicker, 
-  AutoComplete, 
-  Select, 
-  Modal, 
-  Button, 
-  Input, 
+import {
+  Form,
+  DatePicker,
+  AutoComplete,
+  Select,
+  Modal,
+  Button,
+  Input,
   Row,
-  Col } from "antd";
+  Col,
+} from "antd";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
   addAdministrator,
-  editAdministrator
+  editAdministrator,
 } from "../../../api/governingBodiesApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import userApi from "../../../api/UserApi";
@@ -24,11 +25,11 @@ import {
   incorrectEmail,
   maxLength,
   successfulEditAction,
-} from "../../../components/Notifications/Messages"
+} from "../../../components/Notifications/Messages";
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
-import "./AddAdministrationModal.less"
+import "./AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import Spinner from "../../Spinner/Spinner";
 
@@ -54,9 +55,9 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   const addGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
     await addAdministrator(admin.governingBodyId, admin);
     if (admin.adminType.adminTypeName == Roles.GoverningBodyHead) {
-      setGoverningBodyHead(admin);        
+      setGoverningBodyHead(admin);
     }
-    setUsers(users.filter(x => x.id !== admin.userId));
+    setUsers(users.filter((x) => x.id !== admin.userId));
     notificationLogic("success", "Користувач успішно доданий в провід");
     form.resetFields();
     await NotificationBoxApi.createNotifications(
@@ -77,10 +78,14 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/governingBodies/${props.governingBodyId}`,
-      `цьому керівному органі`);
+      `цьому керівному органі`
+    );
   };
 
-  const showConfirm = (newAdmin: GoverningBodyAdmin, existingAdmin: GoverningBodyAdmin) => {
+  const showConfirm = (
+    newAdmin: GoverningBodyAdmin,
+    existingAdmin: GoverningBodyAdmin
+  ) => {
     confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
@@ -88,20 +93,26 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління
+          закінчується{" "}
           <b>
-            {existingAdmin.endDate === null || existingAdmin.endDate === undefined
+            {existingAdmin.endDate === null ||
+            existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() { },
+      onCancel() {},
       onOk() {
         if (newAdmin.id === 0) {
           addGoverningBodyAdmin(newAdmin);
-          setAdmins((admins as GoverningBodyAdmin[]).map(x => x.userId === existingAdmin?.userId ? newAdmin : x));
+          setAdmins(
+            (admins as GoverningBodyAdmin[]).map((x) =>
+              x.userId === existingAdmin?.userId ? newAdmin : x
+            )
+          );
         } else {
           editGoverningBodyAdmin(newAdmin);
         }
@@ -110,13 +121,14 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   };
 
   const handleSubmit = async (values: any) => {
-    if(loading) return;
+    if (loading) return;
     setLoading(true);
     const newAdmin: GoverningBodyAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
-      userId: props.admin === undefined
-        ? JSON.parse(values.userId).id
-        : props.admin.userId,
+      userId:
+        props.admin === undefined
+          ? JSON.parse(values.userId).id
+          : props.admin.userId,
       user: JSON.parse(values.userId),
       adminType: {
         ...new AdminType(),
@@ -125,19 +137,19 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       governingBodyId: props.governingBodyId,
       startDate: values.startDate,
       endDate: values.endDate,
-      workEmail: workEmail
+      workEmail: workEmail,
     };
-    newAdmin.user.imagePath =  (
+    newAdmin.user.imagePath = (
       await userApi.getImage(newAdmin.user.imagePath)
-    ).data; 
+    ).data;
     if (newAdmin.id === 0) {
       try {
-        const existingAdmin  = (admins as GoverningBodyAdmin[])
-        .find(x => x.adminType.adminTypeName === newAdmin.adminType.adminTypeName)
-        if(existingAdmin !== undefined) {
+        const existingAdmin = (admins as GoverningBodyAdmin[]).find(
+          (x) => x.adminType.adminTypeName === newAdmin.adminType.adminTypeName
+        );
+        if (existingAdmin !== undefined) {
           showConfirm(newAdmin, existingAdmin);
-        }
-        else {
+        } else {
           addGoverningBodyAdmin(newAdmin);
           setAdmins((old: GoverningBodyAdmin[]) => [...old, newAdmin]);
         }
@@ -153,23 +165,25 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   const onUserSelect = (value: any) => {
     const email: string = JSON.parse(value.toString()).email;
     setWorkEmail(email);
-    form.setFieldsValue({workEmail: email});
-  }
+    form.setFieldsValue({ workEmail: email });
+  };
 
   const fetchData = async () => {
     setUsersLoading(true);
-    await adminApi.getUsersByExactRoles(
-      [
-        [Roles.PlastMember],
-        [Roles.PlastMember, Roles.KurinHead],
-        [Roles.PlastMember, Roles.KurinHeadDeputy]
-      ],
-      true)
-    .then((response) => {
-      setUsers(response.data)
-      setUsersLoading(false);
-    });
-  }
+    await adminApi
+      .getUsersByExactRoles(
+        [
+          [Roles.PlastMember],
+          [Roles.PlastMember, Roles.KurinHead],
+          [Roles.PlastMember, Roles.KurinHeadDeputy],
+        ],
+        true
+      )
+      .then((response) => {
+        setUsers(response.data);
+        setUsersLoading(false);
+      });
+  };
 
   useEffect(() => {
     fetchData();
@@ -179,8 +193,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   }, [props]);
 
   return loading ? (
-    <Spinner/>
-  ):(
+    <Spinner />
+  ) : (
     <Form name="basic" onFinish={handleSubmit} form={form}>
       <Form.Item
         className={formclasses.formField}
@@ -199,7 +213,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           showSearch
           loading={usersLoading}
           className={formclasses.inputField}
-          onChange={value => onUserSelect(value)}
+          onChange={(value) => onUserSelect(value)}
         >
           {users?.map((o) => (
             <Select.Option key={o.id} value={JSON.stringify(o)}>
@@ -244,38 +258,40 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         labelCol={{ span: 24 }}
         label="Електронна пошта"
         rules={[
-            {
-              pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-              message: <div className="formItemExplain">{incorrectEmail}</div>,
-            },
-            {
-              max: 50,
-              message: <div className="formItemExplain">{maxLength(50)}</div>,
-            },
-            {
-              required: true,
-              message: <div className="formItemExplain">{emptyInput()}</div>,
-            }
+          {
+            pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
+            message: <div className="formItemExplain">{incorrectEmail}</div>,
+          },
+          {
+            max: 50,
+            message: <div className="formItemExplain">{maxLength(50)}</div>,
+          },
+          {
+            required: true,
+            message: <div className="formItemExplain">{emptyInput()}</div>,
+          },
         ]}
       >
         <Input
           placeholder="Електронна пошта"
           className={formclasses.inputField}
           value={workEmail}
-          onChange={e => setWorkEmail(e.target.value)}
+          onChange={(e) => setWorkEmail(e.target.value)}
         />
       </Form.Item>
 
       <Form.Item
         className={formclasses.formField}
-        labelCol={{span:12}}
+        labelCol={{ span: 12 }}
         labelAlign="left"
         label="Дата початку"
         name="startDate"
         initialValue={
-          props.admin === undefined ? undefined : moment.utc(props.admin.startDate).local()
+          props.admin === undefined
+            ? undefined
+            : moment.utc(props.admin.startDate).local()
         }
-        >
+      >
         <DatePicker
           className={formclasses.inputField}
           disabledDate={disabledStartDate}
@@ -286,7 +302,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
 
       <Form.Item
         className={formclasses.formField}
-        labelCol={{span:12}}
+        labelCol={{ span: 12 }}
         labelAlign="left"
         label="Дата кінця"
         name="endDate"
@@ -294,8 +310,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           props.admin === undefined
             ? undefined
             : props.admin.endDate === null
-              ? undefined
-              : moment.utc(props.admin.endDate).local()
+            ? undefined
+            : moment.utc(props.admin.endDate).local()
         }
       >
         <DatePicker

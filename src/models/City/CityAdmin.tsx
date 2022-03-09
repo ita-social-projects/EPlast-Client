@@ -1,5 +1,5 @@
-import AdminType from '../Admin/AdminType';
-import CityUser from './CityUser';
+import AdminType from "../Admin/AdminType";
+import CityUser from "./CityUser";
 
 export default class CityAdmin {
   id: number;
