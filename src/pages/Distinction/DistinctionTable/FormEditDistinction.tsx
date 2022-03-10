@@ -104,10 +104,15 @@ const FormEditDistinction = ({
     dist = JSON.parse(dist);
     setDistValue(dist);
   };
+  
   const userChange = (user: any) => {
     user = JSON.parse(user);
     setUserValue(user);
   };
+
+  function disabledDate(currentDate : any) {
+    return currentDate && currentDate < moment("01-01-1900", "DD-MM-YYYY");
+  }
 
   const handleFinish = async (dist: any) => {
     const newDistinction: any = {
@@ -140,7 +145,7 @@ const FormEditDistinction = ({
   return (
     <div>
       {!loading && (
-        <Form name="basic" onFinish={handleFinish} form={form} id='area' style={{position: 'relative'}}>
+        <Form name="basic" onFinish={handleFinish} form={form} id='editArea' style={{position: 'relative'}}>
           <Row justify="start" gutter={[12, 0]}>
             <Col md={24} xs={24}>
               <Form.Item
@@ -295,9 +300,10 @@ const FormEditDistinction = ({
                 ]}
               >
                 <DatePicker
+                  disabledDate = {disabledDate}
                   format={dateFormat}
-                  className={formclasses.selectField}
-                  getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
+                  className={formclasses.selectField}                  
+                  getPopupContainer = {() => document.getElementById("editArea")! as HTMLElement}
                   popupStyle={{position: 'absolute'}}
                 />
               </Form.Item>
