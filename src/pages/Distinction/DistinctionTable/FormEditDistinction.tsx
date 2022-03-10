@@ -14,15 +14,18 @@ import UserDistinction from "../Interfaces/UserDistinction";
 import formclasses from "./Form.module.css";
 import precautionApi from "../../../api/precautionApi";
 import Distinction from "../Interfaces/Distinction";
-import{
+import {
   emptyInput,
   failEditAction,
   maxNumber,
-  minNumber
-} from "../../../components/Notifications/Messages"
+  minNumber,
+} from "../../../components/Notifications/Messages";
 import moment from "moment";
 import "moment/locale/uk";
-import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
+import {
+  descriptionValidation,
+  getOnlyNums,
+} from "../../../models/GllobalValidations/DescriptionValidation";
 moment.locale("uk-ua");
 
 interface Props {
@@ -92,8 +95,10 @@ const FormEditDistinction = ({
   }, [distinction]);
 
   const backgroundColor = (user: any) => {
-    return user.isInLowerRole ? { backgroundColor : '#D3D3D3' } : { backgroundColor : 'white' };
-  }    
+    return user.isInLowerRole
+      ? { backgroundColor: "#D3D3D3" }
+      : { backgroundColor: "white" };
+  };
 
   const handleCancel = () => {
     form.resetFields();
@@ -122,25 +127,31 @@ const FormEditDistinction = ({
       number: dist?.number,
     };
 
-      await distinctionApi.editUserDistinction(newDistinction);
-      setShowModal(false);
-      form.resetFields();
-      onEdit(
-        newDistinction.id,
-        newDistinction.distinction,
-        newDistinction.date,
-        newDistinction.reason,
-        newDistinction.reporter,
-        newDistinction.number,
-        newDistinction.user,
-        newDistinction.user.id
-      );
-  };  
+    await distinctionApi.editUserDistinction(newDistinction);
+    setShowModal(false);
+    form.resetFields();
+    onEdit(
+      newDistinction.id,
+      newDistinction.distinction,
+      newDistinction.date,
+      newDistinction.reason,
+      newDistinction.reporter,
+      newDistinction.number,
+      newDistinction.user,
+      newDistinction.user.id
+    );
+  };
 
   return (
     <div>
       {!loading && (
-        <Form name="basic" onFinish={handleFinish} form={form} id='area' style={{position: 'relative'}}>
+        <Form
+          name="basic"
+          onFinish={handleFinish}
+          form={form}
+          id="area"
+          style={{ position: "relative" }}
+        >
           <Row justify="start" gutter={[12, 0]}>
             <Col md={24} xs={24}>
               <Form.Item
@@ -155,40 +166,41 @@ const FormEditDistinction = ({
                     message: emptyInput(),
                   },
                   {
-                    validator: (_ : object, value: number) => 
-                          value > 99999
-                              ? Promise.reject(maxNumber(99999)) 
-                              : Promise.resolve()
+                    validator: (_: object, value: number) =>
+                      value > 99999
+                        ? Promise.reject(maxNumber(99999))
+                        : Promise.resolve(),
                   },
                   {
-                    validator: async (_ : object, value: number) => 
+                    validator: async (_: object, value: number) =>
                       value && !isNaN(value) && value > 0
-                          ? value == distinction.number || 
-                          await distinctionApi
+                        ? value == distinction.number ||
+                          (await distinctionApi
                             .checkNumberExisting(value)
-                            .then(response => response.data === false)
-                              ? Promise.resolve()
-                                : Promise.reject("Цей номер уже зайнятий")
-                                : Promise.reject()
+                            .then((response) => response.data === false))
+                          ? Promise.resolve()
+                          : Promise.reject("Цей номер уже зайнятий")
+                        : Promise.reject(),
                   },
                   {
-                    validator: async (_ : object, value: number) =>
-                    value == 0 && value && !isNaN(value)                 
-                      ? Promise.reject('Номер не може бути 0')                              
-                        : Promise.resolve()                              
-                  }
-                ]}>
+                    validator: async (_: object, value: number) =>
+                      value == 0 && value && !isNaN(value)
+                        ? Promise.reject("Номер не може бути 0")
+                        : Promise.resolve(),
+                  },
+                ]}
+              >
                 <Input
-                onChange={(e) => {
-                  form.setFieldsValue({
-                    number: getOnlyNums(e.target.value),
-                  });
-                }}
-                autoComplete = "off"
-                min={1}
-                className={formclasses.inputField}
-                max={99999}
-                maxLength={7}
+                  onChange={(e) => {
+                    form.setFieldsValue({
+                      number: getOnlyNums(e.target.value),
+                    });
+                  }}
+                  autoComplete="off"
+                  min={1}
+                  className={formclasses.inputField}
+                  max={99999}
+                  maxLength={7}
                 />
               </Form.Item>
             </Col>
@@ -234,9 +246,9 @@ const FormEditDistinction = ({
                   distinction.user.firstName + " " + distinction.user.lastName
                 }
                 rules={[
-                  { 
-                    required: true, 
-                    message: emptyInput() 
+                  {
+                    required: true,
+                    message: emptyInput(),
                   },
                 ]}
               >
@@ -248,14 +260,14 @@ const FormEditDistinction = ({
                   getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
                   {userData?.map((o) => (
-                      <Select.Option 
-                          key={o.id} 
-                          value={JSON.stringify(o)} 
-                          style={backgroundColor(o)}
-                          disabled={o.isInLowerRole}
-                          >
+                    <Select.Option
+                      key={o.id}
+                      value={JSON.stringify(o)}
+                      style={backgroundColor(o)}
+                      disabled={o.isInLowerRole}
+                    >
                       {o.firstName + " " + o.lastName}
-                      </Select.Option>
+                    </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
@@ -288,17 +300,19 @@ const FormEditDistinction = ({
                 labelCol={{ span: 24 }}
                 initialValue={moment.utc(distinction.date).local()}
                 rules={[
-                  { 
-                    required: true, 
-                    message: emptyInput() 
+                  {
+                    required: true,
+                    message: emptyInput(),
                   },
                 ]}
               >
                 <DatePicker
                   format={dateFormat}
                   className={formclasses.selectField}
-                  getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
-                  popupStyle={{position: 'absolute'}}
+                  getPopupContainer={() =>
+                    document.getElementById("area")! as HTMLElement
+                  }
+                  popupStyle={{ position: "absolute" }}
                 />
               </Form.Item>
             </Col>
@@ -327,10 +341,18 @@ const FormEditDistinction = ({
           </Row>
           <Form.Item>
             <div className={formclasses.cardButton}>
-              <Button key="back" onClick={handleCancel} className={formclasses.buttons}>
+              <Button
+                key="back"
+                onClick={handleCancel}
+                className={formclasses.buttons}
+              >
                 Відмінити
               </Button>
-              <Button type="primary" htmlType="submit" className={formclasses.buttons}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className={formclasses.buttons}
+              >
                 Зберегти
               </Button>
             </div>
