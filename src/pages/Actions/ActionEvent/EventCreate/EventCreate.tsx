@@ -440,9 +440,10 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
             label="Заступник коменданта"
             name="alternateId"
             className={classes.formItem}
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[{ required: false, message: emptyInput() }]}
           >
             <Select
+              allowClear
               showSearch
               optionFilterProp="children"
               onChange={(e: any) => handleSelectChange(1, e)}
