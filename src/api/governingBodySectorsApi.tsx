@@ -1,6 +1,6 @@
 import axios from "axios";
 import api from "./api";
-import BASE_URL from '../config';
+import BASE_URL from "../config";
 
 const dataURLtoFile = (dataUrl: string, fileName: string) => {
   const arr = dataUrl.split(",");
@@ -17,15 +17,22 @@ const dataURLtoFile = (dataUrl: string, fileName: string) => {
   return new File([u8arr], fileName, { type: mime });
 };
 
-export const getSectorsListByGoverningBodyId = async (governingBodyId: number) => {
-  const { data } = await api.get('GoverningBodies/Sectors/' + governingBodyId, governingBodyId);
+export const getSectorsListByGoverningBodyId = async (
+  governingBodyId: number
+) => {
+  const { data } = await api.get(
+    "GoverningBodies/Sectors/" + governingBodyId,
+    governingBodyId
+  );
   return data;
 };
 
 export const getSectorById = async (id: number) => {
-  return await api.get(`GoverningBodies/Sectors/Profile/${id}`, id).catch((error) => {
-    throw new Error(error);
-  });
+  return await api
+    .get(`GoverningBodies/Sectors/Profile/${id}`, id)
+    .catch((error) => {
+      throw new Error(error);
+    });
 };
 
 export const getSectorsByPage = async (
@@ -71,31 +78,33 @@ export const removeSector = async (id: number) => {
 
 export const getSectorLogo = async (logoName: string | null) => {
   return await axios
-    .get(BASE_URL + 'GoverningBodies/Sectors/LogoBase64/' + logoName, { params: logoName })
+    .get(BASE_URL + "GoverningBodies/Sectors/LogoBase64/" + logoName, {
+      params: logoName,
+    })
     .catch((error) => {
-    throw new Error(error);
-  });
+      throw new Error(error);
+    });
 };
 
 export const getAllAdmins = async (sectorId: number) => {
   return api
-    .get('GoverningBodies/Sectors/Admins/' + sectorId, sectorId)
+    .get("GoverningBodies/Sectors/Admins/" + sectorId, sectorId)
     .catch((error) => {
-    throw new Error(error);
-  });
+      throw new Error(error);
+    });
 };
 
 export const getAllDocuments = async (sectorId: number) => {
   return api
     .get(`GoverningBodies/Sectors/Documents/${sectorId}`)
     .catch((error) => {
-    throw new Error(error);
-  });
+      throw new Error(error);
+    });
 };
 
 export const addAdministrator = async (sectorId: number, data: any) => {
   return api
-    .post('GoverningBodies/Sectors/AddAdmin/' + sectorId, data)
+    .post("GoverningBodies/Sectors/AddAdmin/" + sectorId, data)
     .catch((error) => {
       throw new Error(error);
     });
@@ -149,38 +158,43 @@ export const getFile = async (fileBlob: string, fileName: string) => {
 };
 
 export const getDocumentTypes = async () => {
-  return api
-    .get(`GoverningBodies/Sectors/GetDocumentTypes`)
-    .catch((error) => {
-      throw new Error(error);
-    });
+  return api.get(`GoverningBodies/Sectors/GetDocumentTypes`).catch((error) => {
+    throw new Error(error);
+  });
 };
 
 export const getUserAccess = async (userId: string) => {
   return await api
     .get(`GoverningBodies/Sectors/GetUserAccesses/${userId}`, userId)
-    .catch( error => {
-        throw error;
+    .catch((error) => {
+      throw error;
     });
-}
+};
 
 export const getUsersAdministrations = async (UserId: string) => {
   return api.get(`GoverningBodies/Sectors/GetUserAdmins/${UserId}`);
 };
 
-export const getUsersPreviousAdministrations = async(UserId:string)=>{
-  return await api.get(`GoverningBodies/Sectors/GetUserPreviousAdmins/${UserId}`).catch((error)=>{
-    throw new Error(error);
-  })
-}
+export const getUsersPreviousAdministrations = async (UserId: string) => {
+  return await api
+    .get(`GoverningBodies/Sectors/GetUserPreviousAdmins/${UserId}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
 
-export const getSectorAdminsForTable = async (userId: string, isActive: boolean, 
-  pageNumber: number, pageSize: number) => {
-    return (await api.get('GoverningBodies/Sectors/GetUserAdminsForTable',
-    {
+export const getSectorAdminsForTable = async (
+  userId: string,
+  isActive: boolean,
+  pageNumber: number,
+  pageSize: number
+) => {
+  return (
+    await api.get("GoverningBodies/Sectors/GetUserAdminsForTable", {
       userId: userId,
       isActive: isActive,
       pageNumber: pageNumber,
-      pageSize: pageSize
-    })).data;
-}
+      pageSize: pageSize,
+    })
+  ).data;
+};

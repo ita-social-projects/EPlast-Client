@@ -2,13 +2,13 @@ import IUserAnnualReportAccess from "../../../../../models/UserAccess/IUserAcces
 import ClubAnnualReport from "../../../Interfaces/ClubAnnualReport";
 
 interface Props {
-    record: ClubAnnualReport;
-    pageX: number;
-    pageY: number;
-    userAnnualReportAccess: IUserAnnualReportAccess;
-    showDropdown: boolean;
-    onView: (id: number) => Promise<void>;
-    onViewPDF: (id: number) => Promise<void>;
+  record: ClubAnnualReport;
+  pageX: number;
+  pageY: number;
+  userAnnualReportAccess: IUserAnnualReportAccess;
+  showDropdown: boolean;
+  onView: (id: number) => Promise<void>;
+  onViewPDF: (id: number) => Promise<void>;
 }
 
 export default Props;

@@ -1,4 +1,4 @@
-import SectorAdmin from './SectorAdmin';
+import SectorAdmin from "./SectorAdmin";
 
 export default class SectorProfile {
   id: number;

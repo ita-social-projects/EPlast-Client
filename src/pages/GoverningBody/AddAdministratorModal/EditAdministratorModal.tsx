@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "./AddAdministrationModal.less";
-import {AutoComplete, Button, Col, DatePicker, Form, Input, Modal, Row} from "antd";
+import {
+  AutoComplete,
+  Button,
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Row,
+} from "antd";
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import {
@@ -10,9 +19,9 @@ import {
 } from "../../../api/governingBodiesApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import moment from "moment";
-import{emptyInput} from "../../../components/Notifications/Messages"
+import { emptyInput } from "../../../components/Notifications/Messages";
 import { Roles } from "../../../models/Roles/Roles";
-import {descriptionValidation} from "../../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 const confirm = Modal.confirm;
 
@@ -60,7 +69,8 @@ const EditAdministratorModal = (props: Props) => {
           </b>{" "}
           є Головою Керівного Органу, час правління закінчується{" "}
           <b>
-            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") ===
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
           </b>
@@ -106,7 +116,7 @@ const EditAdministratorModal = (props: Props) => {
       userId: props.admin.userId,
       endDate: values.endDate?._d,
       startDate: values.startDate?._d,
-      workEmail: values.workEmail
+      workEmail: values.workEmail,
     };
 
     try {
@@ -219,7 +229,9 @@ const EditAdministratorModal = (props: Props) => {
               label="Час кінця"
               labelCol={{ span: 24 }}
               initialValue={
-                props.admin.endDate ? moment.utc(props.admin.endDate).local() : undefined
+                props.admin.endDate
+                  ? moment.utc(props.admin.endDate).local()
+                  : undefined
               }
             >
               <DatePicker
@@ -227,7 +239,9 @@ const EditAdministratorModal = (props: Props) => {
                 disabledDate={disabledEndDate}
                 format="DD.MM.YYYY"
                 value={
-                  props.admin.endDate ? moment.utc(props.admin.endDate).local() : undefined
+                  props.admin.endDate
+                    ? moment.utc(props.admin.endDate).local()
+                    : undefined
                 }
                 onChange={(e) => setEndDate(e)}
               />

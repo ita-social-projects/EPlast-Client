@@ -41,9 +41,9 @@ const columns = [
   {
     title: "Станиця",
     dataIndex: "city",
-    render: (city: any) =>{
+    render: (city: any) => {
       return city.name;
-    }
+    },
   },
 ];
 export default columns;

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Modal } from "antd";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import CityAdmin from "../../models/City/CityAdmin";
@@ -32,50 +32,64 @@ const ChangeUserCityModal = ({
   };
 
   const onAdd = async (newAdmin: CityAdmin = new CityAdmin()) => {
-    await createNotification(newAdmin.userId, `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`);
+    await createNotification(
+      newAdmin.userId,
+      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`
+    );
   };
 
-  const createNotification = async(userId : string, message : string) => {
+  const createNotification = async (userId: string, message: string) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/cities/${newAdmin.cityId}`,
       user.cityName
-      );
-  }
+    );
+  };
 
   const handleClick = async () => {
     setShowModal(false);
   };
-  if(!showModal)
-  {
-    return(<div></div>)
+  if (!showModal) {
+    return <div></div>;
   }
 
   return (
     <div>
-    {cityId!== null ? (
-      <AddAdministratorModal
-        admin={newAdmin}
-        setAdmin={setAdmin}
-        visibleModal={showModal}
-        setVisibleModal={setShowModal}
-        cityId={cityId}
-        cityName={user.cityName}
-        onAdd={onAdd}
-      ></AddAdministratorModal>
-      ):
-      (
-        <Modal title="Попередження"
+      {cityId !== null ? (
+        <AddAdministratorModal
+          admin={newAdmin}
+          setAdmin={setAdmin}
+          visibleModal={showModal}
+          setVisibleModal={setShowModal}
+          cityId={cityId}
+          cityName={user.cityName}
+          onAdd={onAdd}
+        ></AddAdministratorModal>
+      ) : (
+        <Modal
+          title="Попередження"
           visible={showModal}
           onOk={handleClick}
-          onCancel={handleClick}>
-          <p> Користувач  <b>{user.firstName} {user.lastName} </b>не є членом станиці!{" "}</p>
-          <p>В провід станиці можна додати лише користувача, який є хоча б прихильником!</p>
-        </Modal>  
-      )};
-  </div>
+          onCancel={handleClick}
+        >
+          <p>
+            {" "}
+            Користувач{" "}
+            <b>
+              {user.firstName} {user.lastName}{" "}
+            </b>
+            не є членом станиці!{" "}
+          </p>
+          <p>
+            В провід станиці можна додати лише користувача, який є хоча б
+            прихильником!
+          </p>
+        </Modal>
+      )}
+      ;
+    </div>
   );
 };
 

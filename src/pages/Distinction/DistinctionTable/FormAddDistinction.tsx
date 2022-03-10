@@ -8,6 +8,8 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   emptyInput,
   maxNumber,
+  minNumber,
+  incorrectData,
 } from "../../../components/Notifications/Messages";
 import precautionApi from "../../../api/precautionApi";
 import {
