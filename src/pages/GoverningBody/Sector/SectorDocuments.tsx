@@ -1,16 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { Avatar, Button, Card, Layout, Modal } from 'antd';
-import { FileTextOutlined, CloseOutlined, RollbackOutlined, DownloadOutlined } from '@ant-design/icons';
-import { getAllDocuments, getFile, removeDocument, getUserAccess } from "../../../api/governingBodySectorsApi";
+import React, { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import { Avatar, Button, Card, Layout, Modal } from "antd";
+import {
+  FileTextOutlined,
+  CloseOutlined,
+  RollbackOutlined,
+  DownloadOutlined,
+} from "@ant-design/icons";
+import {
+  getAllDocuments,
+  getFile,
+  removeDocument,
+  getUserAccess,
+} from "../../../api/governingBodySectorsApi";
 import "../../City/City/City.less";
-import SectorDocument from '../../../models/GoverningBody/Sector/SectorDocument';
-import Title from 'antd/lib/typography/Title';
+import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument";
+import Title from "antd/lib/typography/Title";
 import moment from "moment";
-import Spinner from '../../Spinner/Spinner';
-import AuthStore from '../../../stores/AuthStore';
-import jwt from 'jwt-decode';
-import extendedTitleTooltip, {parameterMaxLength} from '../../../components/Tooltip';
+import Spinner from "../../Spinner/Spinner";
+import AuthStore from "../../../stores/AuthStore";
+import jwt from "jwt-decode";
+import extendedTitleTooltip, {
+  parameterMaxLength,
+} from "../../../components/Tooltip";
 
 const SectorDocuments = () => {
   const confirm = Modal.confirm;
@@ -19,7 +31,9 @@ const SectorDocuments = () => {
 
   const [documents, setDocuments] = useState<SectorDocument[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [userAccesses, setUserAccesses] = useState<{[key: string] : boolean}>({});
+  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
+    {}
+  );
 
   const getDocuments = async () => {
     setLoading(true);
@@ -31,24 +45,23 @@ const SectorDocuments = () => {
 
   const getUserAccesses = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
-    await getUserAccess(user.nameid).then(
-      response => {
-        setUserAccesses(response.data);
-      }
-    );
-  }
+    await getUserAccess(user.nameid).then((response) => {
+      setUserAccesses(response.data);
+    });
+  };
 
   const downloadDocument = async (fileBlob: string, fileName: string) => {
     await getFile(fileBlob, fileName);
-  }
+  };
 
   const deleteDocument = async (document: SectorDocument) => {
     confirm({
-      title: "Ви впевнені, що хочете видалити даний документ із документообігу?",
+      title:
+        "Ви впевнені, що хочете видалити даний документ із документообігу?",
       okText: "Так, видалити",
       okType: "primary",
       cancelText: "Скасувати",
-      onCancel() { },
+      onCancel() {},
       async onOk() {
         await removeDocument(document.id);
         setDocuments(documents.filter((d) => d.id !== document.id));
@@ -74,50 +87,57 @@ const SectorDocuments = () => {
                 className="detailsCard"
                 title={
                   document.submitDate
-                    ? moment.utc(document.submitDate).local().format("DD.MM.YYYY")
+                    ? moment
+                        .utc(document.submitDate)
+                        .local()
+                        .format("DD.MM.YYYY")
                     : "Немає дати"
                 }
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                 actions={
-                  userAccesses["ManipulateDocument"] ? [
-                      <DownloadOutlined
-                        key="download"
-                        onClick={() =>
-                          downloadDocument(
-                            document.blobName,
-                            document.fileName
-                          )
-                        }
-                      />,
-                      <CloseOutlined
-                        key="close"
-                        onClick={() => deleteDocument(document)}
-                      />,
-                    ]
+                  userAccesses["ManipulateDocument"]
+                    ? [
+                        <DownloadOutlined
+                          key="download"
+                          onClick={() =>
+                            downloadDocument(
+                              document.blobName,
+                              document.fileName
+                            )
+                          }
+                        />,
+                        <CloseOutlined
+                          key="close"
+                          onClick={() => deleteDocument(document)}
+                        />,
+                      ]
                     : [
-                      <DownloadOutlined
-                        key="download"
-                        onClick={() =>
-                          downloadDocument(
-                            document.blobName,
-                            document.fileName
-                          )
-                        }
-                      />,
-                    ]
+                        <DownloadOutlined
+                          key="download"
+                          onClick={() =>
+                            downloadDocument(
+                              document.blobName,
+                              document.fileName
+                            )
+                          }
+                        />,
+                      ]
                 }
               >
                 <Avatar size={86} icon={<FileTextOutlined />} />
                 <Card.Meta
                   className="detailsMeta"
-                  title={
-                    extendedTitleTooltip(parameterMaxLength, document.sectorDocumentType.name)
-                  }
+                  title={extendedTitleTooltip(
+                    parameterMaxLength,
+                    document.sectorDocumentType.name
+                  )}
                 />
               </Card>
             ))
           ) : (
-            <Title level={4}>Ще немає документів Напряму Керівного Органу</Title>
+            <Title level={4}>
+              Ще немає документів Напряму Керівного Органу
+            </Title>
           )}
         </div>
       )}

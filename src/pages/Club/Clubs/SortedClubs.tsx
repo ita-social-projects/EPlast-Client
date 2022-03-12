@@ -3,7 +3,11 @@ import { useHistory, useParams, Link } from "react-router-dom";
 import { Card, Layout, Pagination, Result, Skeleton, Tooltip } from "antd";
 import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
-import { getActiveClubByPage, getNotActiveClubByPage, getLogo } from "../../../api/clubsApi";
+import {
+  getActiveClubByPage,
+  getNotActiveClubByPage,
+  getLogo,
+} from "../../../api/clubsApi";
 import "./Clubs.less";
 import ClubByPage from "../../../models/Club/ClubByPage";
 import Title from "antd/lib/typography/Title";
@@ -15,9 +19,8 @@ import Props from "../../Interfaces/SwitcherProps";
 
 const nameMaxLength = 23;
 
-
-const SortedClubs = ( {switcher}: Props) => { 
-  const path: string  = "/clubs";
+const SortedClubs = ({ switcher }: Props) => {
+  const path: string = "/clubs";
   const history = useHistory();
   const [clubs, setClubs] = useState<ClubByPage[]>([]);
   const [canCreate, setCanCreate] = useState(false);
@@ -28,7 +31,7 @@ const SortedClubs = ( {switcher}: Props) => {
   const [searchedData, setSearchedData] = useState("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
-  const {p} = useParams();
+  const { p } = useParams();
   const [page, setPage] = useState(+p);
 
   const setPhotos = async (clubs: ClubByPage[]) => {
@@ -44,7 +47,6 @@ const SortedClubs = ( {switcher}: Props) => {
     } finally {
       setPhotosLoading(false);
     }
-    
   };
   const getActiveClubs = async (page: number = 1) => {
     setLoading(true);
@@ -103,54 +105,58 @@ const SortedClubs = ( {switcher}: Props) => {
 
   const renderCity = (arr: ClubByPage[]) => {
     if (arr) {
-        // eslint-disable-next-line react/no-array-index-key
-        return  arr.map((club: ClubByPage) =>(
-          <Link to={`${path}/${club.id}`}>
-              <Card
-                key={club.id}
-                hoverable
-                className="cardStyles"
-                cover={
-                    photosLoading ? (
-                    <Skeleton.Avatar shape="square" active />
-                    ) : (
-                        <img src={club.logo || undefined} alt="Club" />
-                    )
-                }
-                >
-                  {(club.name?.length > nameMaxLength) ?
-                    <Tooltip title={club.name}>
-                      <Card.Meta title={club.name.slice(0, 22) + "..."} className="titleText"/>
-                    </Tooltip>
-                    : 
-                    <Card.Meta title={club.name} className="titleText"/>
-                  }
-              </Card>
-          </Link>
-        ))   
+      // eslint-disable-next-line react/no-array-index-key
+      return arr.map((club: ClubByPage) => (
+        <Link to={`${path}/${club.id}`}>
+          <Card
+            key={club.id}
+            hoverable
+            className="cardStyles"
+            cover={
+              photosLoading ? (
+                <Skeleton.Avatar shape="square" active />
+              ) : (
+                <img src={club.logo || undefined} alt="Club" />
+              )
+            }
+          >
+            {club.name?.length > nameMaxLength ? (
+              <Tooltip title={club.name}>
+                <Card.Meta
+                  title={club.name.slice(0, 22) + "..."}
+                  className="titleText"
+                />
+              </Tooltip>
+            ) : (
+              <Card.Meta title={club.name} className="titleText" />
+            )}
+          </Card>
+        </Link>
+      ));
     }
     return null;
-};
+  };
 
   useEffect(() => {
     setPage(+p);
   });
 
   useEffect(() => {
-    switcher ? (getNotActiveClubs(page)):(getActiveClubs(page)) 
+    switcher ? getNotActiveClubs(page) : getActiveClubs(page);
   }, [page, pageSize, searchedData]);
 
-  useEffect(()=> {
-    if (clubs.length !== 0){
-      switcher ? (getNotActiveClubs()) :(getActiveClubs())
+  useEffect(() => {
+    if (clubs.length !== 0) {
+      switcher ? getNotActiveClubs() : getActiveClubs();
       setCanCreate(switcher ? false : activeCanCreate);
     }
-  },[switcher])
+  }, [switcher]);
 
   return (
     <Layout.Content className="cities">
       {switcher ? (
-        <Title level={1}>Неактивні курені</Title>) : (
+        <Title level={1}>Неактивні курені</Title>
+      ) : (
         <Title level={1}>Курені</Title>
       )}
       <div className="searchContainer">
@@ -166,43 +172,43 @@ const SortedClubs = ( {switcher}: Props) => {
       {loading ? (
         <Spinner />
       ) : (
-        
-          <div>
-            <div className="cityWrapper">
-              { switcher ? (null) : (
-              activeUserRoles.includes(Roles.Admin) && page === 1 && searchedData.length === 0 ? (
-                <Card
-                  hoverable
-                  className="cardStyles addCity"
-                  cover={<img src={Add} alt="AddCity" />}
-                  onClick={() => history.push(`${path}/new`)}
-                >
-                  <Card.Meta
-                    className="titleText"
-                    title="Створити новий курінь"
-                  />
-                </Card>
-              ) : null ) }
-              {clubs.length === 0 ? (
-                <div>
-                  <Result status="404" title="Курінь не знайдено" />
-                </div>
-              ) : (
-                  renderCity(clubs)
-                )}
-            </div>
-            <div className="pagination">
-              <Pagination
-                current={page}
-                pageSize={pageSize}
-                total={total}
-                responsive
-                showSizeChanger={total >= 20}
-                onChange={(page) => handleChange(page)}
-                onShowSizeChange={(page, size) => handleSizeChange(size)}
-              />
-            </div>
+        <div>
+          <div className="cityWrapper">
+            {switcher ? null : activeUserRoles.includes(Roles.Admin) &&
+              page === 1 &&
+              searchedData.length === 0 ? (
+              <Card
+                hoverable
+                className="cardStyles addCity"
+                cover={<img src={Add} alt="AddCity" />}
+                onClick={() => history.push(`${path}/new`)}
+              >
+                <Card.Meta
+                  className="titleText"
+                  title="Створити новий курінь"
+                />
+              </Card>
+            ) : null}
+            {clubs.length === 0 ? (
+              <div>
+                <Result status="404" title="Курінь не знайдено" />
+              </div>
+            ) : (
+              renderCity(clubs)
+            )}
           </div>
+          <div className="pagination">
+            <Pagination
+              current={page}
+              pageSize={pageSize}
+              total={total}
+              responsive
+              showSizeChanger={total >= 20}
+              onChange={(page) => handleChange(page)}
+              onShowSizeChange={(page, size) => handleSizeChange(size)}
+            />
+          </div>
+        </div>
       )}
     </Layout.Content>
   );

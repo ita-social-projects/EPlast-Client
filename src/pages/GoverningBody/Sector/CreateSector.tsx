@@ -1,25 +1,13 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import {
-  Button,
-  Form,
-  Input,
-  Layout,
-  Upload,
-  Row,
-  Col,
-  Card,
-} from "antd";
-import {
-  DeleteOutlined,
-  PlusOutlined,
-} from "@ant-design/icons/lib";
+import { Button, Form, Input, Layout, Upload, Row, Col, Card } from "antd";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons/lib";
 import ReactInputMask from "react-input-mask";
 import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 import DefaultLogo from "../../../assets/images/default_city_image.jpg";
 import {
   createSector,
-  getSectorsListByGoverningBodyId
+  getSectorsListByGoverningBodyId,
 } from "../../../api/governingBodySectorsApi";
 import "../../City/CreateCity/CreateCity.less";
 import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
@@ -34,8 +22,11 @@ import {
   successfulDeleteAction,
   successfulCreateAction,
   failCreateAction,
-} from "../../../components/Notifications/Messages"
-import { descriptionValidation, sameNameValidator } from "../../../models/GllobalValidations/DescriptionValidation";
+} from "../../../components/Notifications/Messages";
+import {
+  descriptionValidation,
+  sameNameValidator,
+} from "../../../models/GllobalValidations/DescriptionValidation";
 
 const CreateSector = () => {
   const { governingBodyId } = useParams();
@@ -44,16 +35,19 @@ const CreateSector = () => {
   const [loading, setLoading] = useState(false);
   const [sector, setSector] = useState<SectorProfile>(new SectorProfile());
   const [sectorNames, setSectorNames] = useState<string[]>([]);
-  const orgName: string = 'Сектор'
+  const orgName: string = "Сектор";
 
-  useEffect(() => 
-  {
+  useEffect(() => {
     getSectorNames();
-  },[]);
+  }, []);
 
   const getSectorNames = async () => {
-    setSectorNames((await getSectorsListByGoverningBodyId(governingBodyId) as any[]).map(x => x.name));
-  }
+    setSectorNames(
+      ((await getSectorsListByGoverningBodyId(governingBodyId)) as any[]).map(
+        (x) => x.name
+      )
+    );
+  };
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -108,7 +102,7 @@ const CreateSector = () => {
       logo: sector.logo?.length === 0 ? null : sector.logo,
       phoneNumber: values.phoneNumber,
       head: sector.head,
-      isActive: true
+      isActive: true,
     };
 
     await CreateSector(newSector);
@@ -116,15 +110,18 @@ const CreateSector = () => {
 
   const CreateSector = async (newSector: SectorProfile) => {
     createSector(JSON.stringify(newSector))
-    .then((response) => {
-      sector.id = response.data;
-      notificationLogic("success", successfulCreateAction("Напрям керівного органу"));
-      history.push(`${sector.id}`);
-    })
-    .catch(() => {
-      getSectorNames()
-      notificationLogic("error", failCreateAction("напрям керівного органу"));
-    });
+      .then((response) => {
+        sector.id = response.data;
+        notificationLogic(
+          "success",
+          successfulCreateAction("Напрям керівного органу")
+        );
+        history.push(`${sector.id}`);
+      })
+      .catch(() => {
+        getSectorNames();
+        notificationLogic("error", failCreateAction("напрям керівного органу"));
+      });
   };
 
   return loading && sector ? (
@@ -161,7 +158,10 @@ const CreateSector = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={sector.name}
-                rules={[...descriptionValidation.Name, sameNameValidator(orgName,sectorNames)]}
+                rules={[
+                  ...descriptionValidation.Name,
+                  sameNameValidator(orgName, sectorNames),
+                ]}
               >
                 <Input value={sector.name} maxLength={51} />
               </Form.Item>

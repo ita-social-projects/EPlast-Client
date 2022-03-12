@@ -3,16 +3,19 @@ import classes from "../../Regions/Form.module.css";
 import { Form, DatePicker, AutoComplete, Select, Button } from "antd";
 import { getClubUsers, getUserClubAccess } from "../../../api/clubsApi";
 import moment from "moment";
-import {emptyInput, inputOnlyWhiteSpaces,} from "../../../components/Notifications/Messages"
+import {
+  emptyInput,
+  inputOnlyWhiteSpaces,
+} from "../../../components/Notifications/Messages";
 import AuthStore from "../../../stores/AuthStore";
-import jwt from 'jwt-decode';
+import jwt from "jwt-decode";
 import AdminType from "../../../models/Admin/AdminType";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
 import "./AddClubsSecretaryForm.less";
 import { Roles } from "../../../models/Roles/Roles";
 import { useParams } from "react-router-dom";
 import ClubUser from "../../../models/Club/ClubUser";
-import {descriptionValidation} from "../../../models/GllobalValidations/DescriptionValidation"
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 type AddClubsNewSecretaryForm = {
   visibleModal: boolean;
@@ -30,17 +33,17 @@ const AddClubsNewSecretaryForm = (props: any) => {
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [members, setMembers] = useState<ClubUser[]>([]);
-  const [userClubAccesses, setUserClubAccesses] = useState<{[key: string] : boolean}>({});
+  const [userClubAccesses, setUserClubAccesses] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [loading, setLoading] = useState<boolean>(false);
 
   const getUserAccessesForClubs = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
-    await getUserClubAccess(+id, user.nameid).then(
-      response => {
-        setUserClubAccesses(response.data);
-      }
-    );
-  }  
+    await getUserClubAccess(+id, user.nameid).then((response) => {
+      setUserClubAccesses(response.data);
+    });
+  };
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -58,41 +61,47 @@ const AddClubsNewSecretaryForm = (props: any) => {
         adminTypeName: value.AdminType,
       },
       clubId: props.clubId,
-      userId: property === undefined
-        ? JSON.parse(value.userId).id
-        : property.userId,
+      userId:
+        property === undefined ? JSON.parse(value.userId).id : property.userId,
       user: JSON.parse(value.userId),
       endDate: value.endDate,
       startDate: value.startDate,
     };
     return admin;
-  }
+  };
 
   const handleSubmit = async (values: any) => {
-      const newAdmin = SetAdmin(props.admin, values);
-      onAdd(newAdmin);   
+    const newAdmin = SetAdmin(props.admin, values);
+    onAdd(newAdmin);
   };
 
   const fetchData = async () => {
-    if (props.clubId !== undefined)
-    {
-    await getUserAccessesForClubs();
-    await getClubUsers(props.clubId).then((response) => { 
-      setMembers(response.data);
-    });
+    if (props.clubId !== undefined) {
+      await getUserAccessesForClubs();
+      await getClubUsers(props.clubId).then((response) => {
+        setMembers(response.data);
+      });
     }
   };
 
   useEffect(() => {
     if (props.visibleModal) {
       form.resetFields();
-      setLoading(false)
+      setLoading(false);
     }
     fetchData();
   }, [props]);
 
   return (
-    <Form name="basic" onFinish={(values) => {handleSubmit(values); setLoading(true)}} form={form} className="formAddSecretaryModal">
+    <Form
+      name="basic"
+      onFinish={(values) => {
+        handleSubmit(values);
+        setLoading(true);
+      }}
+      form={form}
+      className="formAddSecretaryModal"
+    >
       <Form.Item
         className={classes.formField}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
@@ -126,7 +135,10 @@ const AddClubsNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: Roles.KurinHead, disabled: !userClubAccesses["AddClubHead"] },
+            {
+              value: Roles.KurinHead,
+              disabled: !userClubAccesses["AddClubHead"],
+            },
             { value: Roles.KurinHeadDeputy },
             { value: "Голова КПР" },
             { value: "Фотограф" },
@@ -144,7 +156,9 @@ const AddClubsNewSecretaryForm = (props: any) => {
         label="Дата початку"
         name="startDate"
         initialValue={
-          props.admin === undefined ? undefined : moment.utc(props.admin.startDate).local()
+          props.admin === undefined
+            ? undefined
+            : moment.utc(props.admin.startDate).local()
         }
       >
         <DatePicker
@@ -163,8 +177,8 @@ const AddClubsNewSecretaryForm = (props: any) => {
           props.admin === undefined
             ? undefined
             : props.admin.endDate === null
-              ? undefined
-              : moment.utc(props.admin.endDate).local()
+            ? undefined
+            : moment.utc(props.admin.endDate).local()
         }
       >
         <DatePicker
@@ -175,7 +189,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item style={{ textAlign: "right" }}>
-        <Button type="primary" htmlType="submit" loading = {loading}>
+        <Button type="primary" htmlType="submit" loading={loading}>
           Опублікувати
         </Button>
       </Form.Item>

@@ -9,148 +9,152 @@ import Spinner from "../../Spinner/Spinner";
 import { CloseCircleOutlined } from "@ant-design/icons";
 
 export const AnnualReportCreate = () => {
-    const { cityId } = useParams();
-    const history = useHistory();
-    const [title, setTitle] = useState<string>("Річний звіт станиці");
-    const [id, setId] = useState<number>();
-    const [cityMembers, setCityMembers] = useState<any>();
-    const [cityLegalStatuses, setCityLegalStatuses] = useState<any>();
-    const [isLoading, setIsLoading] = useState(false);
-    const [isLoadingSave, setIsLoadingSave] = useState(false);
-    const [form] = Form.useForm();
+  const { cityId } = useParams();
+  const history = useHistory();
+  const [title, setTitle] = useState<string>("Річний звіт станиці");
+  const [id, setId] = useState<number>();
+  const [cityMembers, setCityMembers] = useState<any>();
+  const [cityLegalStatuses, setCityLegalStatuses] = useState<any>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingSave, setIsLoadingSave] = useState(false);
+  const [form] = Form.useForm();
 
-    useEffect(() => {
-        fetchData(cityId);
-    }, []);
+  useEffect(() => {
+    fetchData(cityId);
+  }, []);
 
-    const fetchData = async (id: number) => {
-        setIsLoading(true);
-        try {
-            await fetchCityInfo(id);
-            await fetchLegalStatuses();
-        } catch (error) {
-            showError(error.message);
-        } finally {
-            setId(cityId);
-            setIsLoading(false);
-        }
-    };
+  const fetchData = async (id: number) => {
+    setIsLoading(true);
+    try {
+      await fetchCityInfo(id);
+      await fetchLegalStatuses();
+    } catch (error) {
+      showError(error.message);
+    } finally {
+      setId(cityId);
+      setIsLoading(false);
+    }
+  };
 
-    const fetchCityInfo = async (id: number) => {
-        try {
-            let created = await AnnualReportApi.checkCreated(id);
-            if (created.data.hasCreated === true) {
-                showError(created.data.message);
-            } else {
-                let response = await AnnualReportApi.getCityMembers(id);
-                let cityName = response.data.name;
-                setTitle(title.concat(" ", cityName));
-                setCityMembers(
-                    response.data.cityMembers.map((item: any) => {
-                        return {
-                            label: String.prototype.concat(item.user.firstName, " ", item.user.lastName),
-                            value: item.user.id,
-                        };
-                    })
-                );
-            }
-        } catch (error) {
-            showError(error.message);
-        }
-    };
+  const fetchCityInfo = async (id: number) => {
+    try {
+      let created = await AnnualReportApi.checkCreated(id);
+      if (created.data.hasCreated === true) {
+        showError(created.data.message);
+      } else {
+        let response = await AnnualReportApi.getCityMembers(id);
+        let cityName = response.data.name;
+        setTitle(title.concat(" ", cityName));
+        setCityMembers(
+          response.data.cityMembers.map((item: any) => {
+            return {
+              label: String.prototype.concat(
+                item.user.firstName,
+                " ",
+                item.user.lastName
+              ),
+              value: item.user.id,
+            };
+          })
+        );
+      }
+    } catch (error) {
+      showError(error.message);
+    }
+  };
 
-    const fetchLegalStatuses = async () => {
-        try {
-            let response = await AnnualReportApi.getCityLegalStatuses();
-            setCityLegalStatuses(
-                (response.data.legalStatuses as []).map((item, index) => {
-                    return {
-                        label: item,
-                        value: index,
-                    };
-                })
-            );
-        } catch (error) {
-            showError(error.message);
-        }
-    };
+  const fetchLegalStatuses = async () => {
+    try {
+      let response = await AnnualReportApi.getCityLegalStatuses();
+      setCityLegalStatuses(
+        (response.data.legalStatuses as []).map((item, index) => {
+          return {
+            label: item,
+            value: index,
+          };
+        })
+      );
+    } catch (error) {
+      showError(error.message);
+    }
+  };
 
-    const handleFinish = async (obj: any) => {
-        setIsLoadingSave(true);
-        obj.cityId = id;
-        try {
-            let response = await AnnualReportApi.create(obj);
-            form.resetFields();
-            showSuccess(response.data.message);
-        } catch (error) {
-            showError(error.message);
-        } finally {
-            setIsLoadingSave(false);
-        }
-    };
+  const handleFinish = async (obj: any) => {
+    setIsLoadingSave(true);
+    obj.cityId = id;
+    try {
+      let response = await AnnualReportApi.create(obj);
+      form.resetFields();
+      showSuccess(response.data.message);
+    } catch (error) {
+      showError(error.message);
+    } finally {
+      setIsLoadingSave(false);
+    }
+  };
 
-    const showSuccess = (message: string) => {
-        Modal.success({
-            content: message,
-            onOk: () => {
-                history.goBack();
-            },
-        });
-    };
+  const showSuccess = (message: string) => {
+    Modal.success({
+      content: message,
+      onOk: () => {
+        history.goBack();
+      },
+    });
+  };
 
-    const showError = (message: string) => {
-        Modal.error({
-            title: "Помилка!",
-            content: message,
-            onOk: () => {
-                history.goBack();
-            },
-        });
-    };
+  const showError = (message: string) => {
+    Modal.error({
+      title: "Помилка!",
+      content: message,
+      onOk: () => {
+        history.goBack();
+      },
+    });
+  };
 
-    return (
+  return (
+    <>
+      {isLoading ? (
+        <Spinner />
+      ) : (
         <>
-            {isLoading ? (
-                <Spinner />
-            ) : (
-                <>
-                    <div className="report-menu">
-                        <Tooltip title="Скасувати створення звіту">
-                            <div
-                                className="report-menu-item"
-                                onClick={() => history.goBack()}
-                            >
-                                <CloseCircleOutlined />
-                            </div>
-                        </Tooltip>
-                    </div>
-                    <Form
-                        onFinish={handleFinish}
-                        className="annualreport-form"
-                        form={form}
-                    >
-                        <AnnualReportForm
-                            title={title}
-                            cityMembers={cityMembers}
-                            cityLegalStatuses={cityLegalStatuses}
-                            formHook={form}
-                        />
-                        <Row justify="center">
-                            <Col>
-                                <Button
-                                    loading={isLoadingSave}
-                                    type="primary"
-                                    htmlType="submit"
-                                >
-                                    Подати річний звіт
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Form>
-                </>
-            )}
+          <div className="report-menu">
+            <Tooltip title="Скасувати створення звіту">
+              <div
+                className="report-menu-item"
+                onClick={() => history.goBack()}
+              >
+                <CloseCircleOutlined />
+              </div>
+            </Tooltip>
+          </div>
+          <Form
+            onFinish={handleFinish}
+            className="annualreport-form"
+            form={form}
+          >
+            <AnnualReportForm
+              title={title}
+              cityMembers={cityMembers}
+              cityLegalStatuses={cityLegalStatuses}
+              formHook={form}
+            />
+            <Row justify="center">
+              <Col>
+                <Button
+                  loading={isLoadingSave}
+                  type="primary"
+                  htmlType="submit"
+                >
+                  Подати річний звіт
+                </Button>
+              </Col>
+            </Row>
+          </Form>
         </>
-    );
+      )}
+    </>
+  );
 };
 
 export default AnnualReportCreate;

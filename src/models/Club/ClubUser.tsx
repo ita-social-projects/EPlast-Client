@@ -6,12 +6,12 @@ export default class ClubUser {
   lastName: string;
   imagePath: string;
   email: string;
-  phoneNumber:string;
+  phoneNumber: string;
   userRole: string;
   cityName: string;
-  userPlastDegrees:any;
+  userPlastDegrees: any;
   cityMembers: any;
-  clubReportCities:any;
+  clubReportCities: any;
   clubReportPlastDegrees: any;
 
   constructor() {
@@ -21,19 +21,19 @@ export default class ClubUser {
     this.imagePath = "";
     this.email = "";
     this.phoneNumber = "";
-    this.userRole = '';
-    this.cityName = '';
-    this.userPlastDegrees={
-      plastDegree: {id: -1, name:''}
-    }
-    this.cityMembers={
-      city: {id: -1, name:''}
-    }
-    this.userPlastDegrees={
-      plastDegree: {id: -1, name:''}
-    }
-    this.userPlastDegrees={
-      plastDegree: {id: -1, name:''}
-    }
+    this.userRole = "";
+    this.cityName = "";
+    this.userPlastDegrees = {
+      plastDegree: { id: -1, name: "" },
+    };
+    this.cityMembers = {
+      city: { id: -1, name: "" },
+    };
+    this.userPlastDegrees = {
+      plastDegree: { id: -1, name: "" },
+    };
+    this.userPlastDegrees = {
+      plastDegree: { id: -1, name: "" },
+    };
   }
 }

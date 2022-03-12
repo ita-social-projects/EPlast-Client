@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Modal } from "antd";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import RegionAdmin from "../../models/Region/RegionAdmin";
@@ -17,11 +17,11 @@ const ChangeUserRegionModal = ({
   showModal,
   setShowModal,
   onChange,
-  user
+  user,
 }: Props) => {
   const [admin, setAdmin] = useState<RegionAdmin>(new RegionAdmin());
- 
-  let regionId =user?.regionId;
+
+  let regionId = user?.regionId;
   let cityId = user?.cityId;
   const newAdmin: any = {
     id: 0,
@@ -38,20 +38,20 @@ const ChangeUserRegionModal = ({
         [id],
         `Вам була присвоєна нова роль: '${userRole}' в окрузі: `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/regions/${regionId}`,user.regionName
+        `/regions/${regionId}`,
+        user.regionName
       );
   };
 
   const handleClick = async () => {
     setShowModal(false);
   };
-  if(!showModal)
-  {
-    return(<div></div>)
+  if (!showModal) {
+    return <div></div>;
   }
   return (
     <div>
-      {regionId!== null ? (
+      {regionId !== null ? (
         <AddAdministratorModal
           admin={newAdmin}
           setAdmin={setAdmin}
@@ -61,16 +61,28 @@ const ChangeUserRegionModal = ({
           regionName={user.regionName}
           onChange={handleChange}
         ></AddAdministratorModal>
-        ):
-        (
-          <Modal title="Попередження"
-            visible={showModal}
-            onOk={handleClick}
-            onCancel={handleClick}>
-            <p> Користувач  <b>{user.firstName} {user.lastName} </b>не є членом округи!{" "}</p>
-            <p>В провід округи можна додати лише користувача, який є хоча б прихильником!</p>
-          </Modal>  
-        )};
+      ) : (
+        <Modal
+          title="Попередження"
+          visible={showModal}
+          onOk={handleClick}
+          onCancel={handleClick}
+        >
+          <p>
+            {" "}
+            Користувач{" "}
+            <b>
+              {user.firstName} {user.lastName}{" "}
+            </b>
+            не є членом округи!{" "}
+          </p>
+          <p>
+            В провід округи можна додати лише користувача, який є хоча б
+            прихильником!
+          </p>
+        </Modal>
+      )}
+      ;
     </div>
   );
 };

@@ -1,5 +1,5 @@
 export enum ReportStatus {
-    Unconfirmed,
-    Confirmed,
-    Saved,
+  Unconfirmed,
+  Confirmed,
+  Saved,
 }
