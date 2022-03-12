@@ -169,7 +169,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               },
               {
                 validator: async (_: object, value: number) =>
-                  value && !isNaN(value)
+                  value && !isNaN(value) && value > 0
                     ? (await distinctionApi
                         .checkNumberExisting(value)
                         .then((response) => response.data === false))
