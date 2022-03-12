@@ -13,10 +13,10 @@ const EditDistinctionTypesModal = ({
   visibleModalEdit,
   setVisibleModalAddDist,
   setVisibleModalEditDist,
-  onDelete
+  onDelete,
 }: Props) => {
-  const handleCancel = () => {  
-    setVisibleModalEditDist(false); 
+  const handleCancel = () => {
+    setVisibleModalEditDist(false);
     setVisibleModalAddDist(true);
   };
 
@@ -31,9 +31,10 @@ const EditDistinctionTypesModal = ({
       footer={null}
     >
       <FormEditDistinctionTypes
-        setVisibleModal={setVisibleModalEditDist} onDelete={onDelete}
-      />     
-    </Drawer>    
+        setVisibleModal={setVisibleModalEditDist}
+        onDelete={onDelete}
+      />
+    </Drawer>
   );
 };
 

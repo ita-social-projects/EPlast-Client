@@ -13,7 +13,7 @@ const AddDistinctionModal = ({
   visibleModal,
   setVisibleModal,
   onAdd,
-  onDelete
+  onDelete,
 }: Props) => {
   const handleCancel = () => {
     setVisibleModal(false);
@@ -28,7 +28,11 @@ const AddDistinctionModal = ({
       onClose={handleCancel}
       footer={null}
     >
-      <FormAddDistinction setVisibleModal={setVisibleModal} onAdd={onAdd} onDelete={onDelete} />
+      <FormAddDistinction
+        setVisibleModal={setVisibleModal}
+        onAdd={onAdd}
+        onDelete={onDelete}
+      />
     </Drawer>
   );
 };
