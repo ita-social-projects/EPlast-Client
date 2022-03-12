@@ -119,11 +119,6 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     setVisibleModalEditDist(true);
   };
 
-  const showModalEditTypes = () => {
-    setVisibleModal(false);
-    setVisibleModalEditDist(true);
-  };
-
   const handleSubmit = async (values: any) => {
     const newDistinction: UserDistinction = {
       id: 0,
