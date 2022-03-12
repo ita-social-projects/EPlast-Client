@@ -207,8 +207,8 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
                 validator: async (_: object, value: number) =>
                   value && !isNaN(value) && value > 0
                     ? (await precautionApi
-                        .checkNumberExisting(value)
-                        .then((response) => response.data === false))
+                      .checkNumberExisting(value)
+                      .then((response) => response.data === false))
                       ? Promise.resolve()
                       : Promise.reject("Цей номер уже зайнятий")
                     : Promise.reject(),

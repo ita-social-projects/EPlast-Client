@@ -119,6 +119,11 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     setVisibleModalEditDist(true);
   };
 
+  const showModalEditTypes = () => {
+    setVisibleModal(false);
+    setVisibleModalEditDist(true);
+  };
+
   const handleSubmit = async (values: any) => {
     const newDistinction: UserDistinction = {
       id: 0,
@@ -171,8 +176,8 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                 validator: async (_: object, value: number) =>
                   value && !isNaN(value) && value > 0
                     ? (await distinctionApi
-                        .checkNumberExisting(value)
-                        .then((response) => response.data === false))
+                      .checkNumberExisting(value)
+                      .then((response) => response.data === false))
                       ? Promise.resolve()
                       : Promise.reject("Цей номер уже зайнятий")
                     : Promise.reject(),
@@ -226,6 +231,14 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               ))}
             </Select>
           </Form.Item>
+        </Col>
+        <Col span={3}>
+          <Tooltip title="Редагувати відзначення" className={formclasses.editTypeDistPosition}>
+            <EditOutlined
+              className={classes.editIcon}
+              onClick={showModalEditTypes}
+            />
+          </Tooltip>
         </Col>
         <Col span={3}>
           <Tooltip

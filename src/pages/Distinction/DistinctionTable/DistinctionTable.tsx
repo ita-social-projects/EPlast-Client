@@ -29,8 +29,8 @@ const DistinctionTable = () => {
   roles =
     curToken !== null
       ? (user[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] as string[])
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ] as string[])
       : [""];
   const [recordObj, setRecordObj] = useState<any>(0);
   const [userId, setUserId] = useState<any>(0);
