@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
-import { 
-  Form, 
-  DatePicker, 
-  AutoComplete, 
-  Select, 
-  Modal, 
-  Button, 
-  Input, 
+import {
+  Form,
+  DatePicker,
+  AutoComplete,
+  Select,
+  Modal,
+  Button,
+  Input,
   Tooltip,
   Row,
   Col,
- } from "antd";
+} from "antd";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
@@ -38,7 +38,13 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 const confirm = Modal.confirm;
 
 const AddGoverningBodiesSecretaryForm = (props: any) => {
-  const { onAdd, setAdmins, admins, setGoverningBodyHead, visibleModal } = props;
+  const {
+    onAdd,
+    setAdmins,
+    admins,
+    setGoverningBodyHead,
+    visibleModal,
+  } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [usersLoading, setUsersLoading] = useState<boolean>(false);
@@ -57,7 +63,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   const addGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
     await addAdministrator(admin.governingBodyId, admin);
     if (admin.adminType.adminTypeName == Roles.GoverningBodyHead) {
-      setGoverningBodyHead(admin);        
+      setGoverningBodyHead(admin);
     }
     setUsers(users.filter((x) => x.id !== admin.userId));
     notificationLogic("success", "Користувач успішно доданий в провід");
@@ -81,13 +87,13 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/governingBodies/${props.governingBodyId}`,
       `цьому керівному органі`
-      );
+    );
   };
 
   const showConfirm = (
-    newAdmin: GoverningBodyAdmin, 
+    newAdmin: GoverningBodyAdmin,
     existingAdmin: GoverningBodyAdmin
-    ) => {
+  ) => {
     confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
@@ -95,10 +101,10 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління 
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління
           закінчується{" "}
           <b>
-            {existingAdmin.endDate === null || 
+            {existingAdmin.endDate === null ||
             existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
@@ -111,7 +117,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         if (newAdmin.id === 0) {
           addGoverningBodyAdmin(newAdmin);
           setAdmins(
-            (admins as GoverningBodyAdmin[]).map((x) => 
+            (admins as GoverningBodyAdmin[]).map((x) =>
               x.userId === existingAdmin?.userId ? newAdmin : x
             )
           );
@@ -127,7 +133,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     setLoading(true);
     const newAdmin: GoverningBodyAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
-      userId: 
+      userId:
         props.admin === undefined
           ? JSON.parse(values.userId).id
           : props.admin.userId,
@@ -143,12 +149,12 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     };
     newAdmin.user.imagePath = (
       await userApi.getImage(newAdmin.user.imagePath)
-    ).data; 
+    ).data;
     if (newAdmin.id === 0) {
       try {
         const existingAdmin = (admins as GoverningBodyAdmin[]).find(
           (x) => x.adminType.adminTypeName === newAdmin.adminType.adminTypeName
-          );
+        );
         if (existingAdmin !== undefined) {
           showConfirm(newAdmin, existingAdmin);
         } else {
@@ -173,23 +179,22 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   const fetchData = async () => {
     setUsersLoading(true);
     try {
-      const responseUsers = await adminApi.getUsersForGoverningBodies()
+      const responseUsers = await adminApi.getUsersForGoverningBodies();
       setUsers(responseUsers.data);
+    } finally {
+      setUsersLoading(false);
     }
-  finally {
-    setUsersLoading(false);
-  }
-}
+  };
 
-useEffect(() => {
-  fetchData();
-}, []);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-useEffect(() => {
-  if (props.visibleModal) {
-    form.resetFields();
-  }
-}, [props]);
+  useEffect(() => {
+    if (props.visibleModal) {
+      form.resetFields();
+    }
+  }, [props]);
 
   return loading ? (
     <Spinner />
@@ -213,20 +218,22 @@ useEffect(() => {
           className={classes.inputField}
           onChange={(value) => onUserSelect(value)}
         >
-          {users?.map((o) => ( o.isInDeputyRole ?
-          <Select.Option key={o.id} value={JSON.stringify(o)}>
-            <div className={classes.formOption}>
-              {o.firstName + " " + o.lastName}
-              <Tooltip title="Уже є адміністратором">
-                <InfoCircleOutlined />
-              </Tooltip>
-            </div>
-          </Select.Option>
-          : 
-          <Select.Option key={o.id} value={JSON.stringify(o)}>
-            {o.firstName + " " + o.lastName}
-          </Select.Option>
-          ))}
+          {users?.map((o) =>
+            o.isInDeputyRole ? (
+              <Select.Option key={o.id} value={JSON.stringify(o)}>
+                <div className={classes.formOption}>
+                  {o.firstName + " " + o.lastName}
+                  <Tooltip title="Уже є адміністратором">
+                    <InfoCircleOutlined />
+                  </Tooltip>
+                </div>
+              </Select.Option>
+            ) : (
+              <Select.Option key={o.id} value={JSON.stringify(o)}>
+                {o.firstName + " " + o.lastName}
+              </Select.Option>
+            )
+          )}
         </Select>
       </Form.Item>
 
@@ -294,7 +301,7 @@ useEffect(() => {
             ? undefined
             : moment.utc(props.admin.startDate).local()
         }
-        >
+      >
         <DatePicker
           style={{ width: "100%" }}
           className={classes.inputField}
@@ -312,8 +319,8 @@ useEffect(() => {
           props.admin === undefined
             ? undefined
             : props.admin.endDate === null
-              ? undefined
-              : moment.utc(props.admin.endDate).local()
+            ? undefined
+            : moment.utc(props.admin.endDate).local()
         }
       >
         <DatePicker
