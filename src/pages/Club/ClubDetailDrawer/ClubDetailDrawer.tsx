@@ -13,7 +13,9 @@ interface Props {
 const ClubDetailDrawer = (props: Props) => {
   return (
     <Drawer
-      title={`Деталі куреня ${props.Club.name?.length > 0 ? props.Club.name : ""}`}
+      title={`Деталі куреня ${
+        props.Club.name?.length > 0 ? props.Club.name : ""
+      }`}
       onClose={() => props.setVisibleDrawer(false)}
       visible={props.visibleDrawer}
       footer={null}
@@ -66,7 +68,7 @@ const ClubDetailDrawer = (props: Props) => {
         </Row>
         <Row justify="center" gutter={[12, 0]}>
           <Col md={12} xs={24}>
-          <Form.Item
+            <Form.Item
               name="email"
               label="Електронна пошта"
               labelCol={{ span: 24 }}
@@ -81,7 +83,7 @@ const ClubDetailDrawer = (props: Props) => {
             </Form.Item>
           </Col>
           <Col md={12} xs={24}>
-          <Form.Item
+            <Form.Item
               name="slogan"
               label="Гасло"
               labelCol={{ span: 24 }}

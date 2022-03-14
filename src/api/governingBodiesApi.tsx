@@ -1,6 +1,6 @@
 import axios from "axios";
 import api from "./api";
-import BASE_URL from '../config';
+import BASE_URL from "../config";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
   const arr = dataurl.split(",");
@@ -33,7 +33,8 @@ export const getGoverningBodiesByPage = async (
   pageSize: number,
   governingBodyName: string | null = null
 ) => {
-  return api.get(`GoverningBodies/Profiles/${page}`, {
+  return api
+    .get(`GoverningBodies/Profiles/${page}`, {
       page,
       pageSize,
       governingBodyName,
@@ -44,30 +45,35 @@ export const getGoverningBodiesByPage = async (
 };
 
 export const createGoverningBody = async (data: any) => {
-  return api.post("GoverningBodies/CreateGoverningBody", data)
+  return api
+    .post("GoverningBodies/CreateGoverningBody", data)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const updateGoverningBody = async (id: number, data: any) => {
-  return api.put(`GoverningBodies/EditGoverningBody/${id}`, data)
+  return api
+    .put(`GoverningBodies/EditGoverningBody/${id}`, data)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const removeGoverningBody = async (id: number) => {
-  return api.remove(`GoverningBodies/RemoveGoverningBody/${id}`, id)
+  return api
+    .remove(`GoverningBodies/RemoveGoverningBody/${id}`, id)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const getGoverningBodyLogo = async (logoName: string) => {
-  return await axios.get(`${`${BASE_URL}GoverningBodies/LogoBase64/${logoName}`}`).catch((error) => {
-    throw new Error(error);
-  });
+  return await axios
+    .get(`${`${BASE_URL}GoverningBodies/LogoBase64/${logoName}`}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
 };
 
 export const getAllAdmins = async (id: number) => {
@@ -83,35 +89,40 @@ export const getAllDocuments = async (id: number) => {
 };
 
 export const addAdministrator = async (governingBodyId: number, data: any) => {
-  return api.post(`GoverningBodies/AddAdmin/${governingBodyId}`, data)
+  return api
+    .post(`GoverningBodies/AddAdmin/${governingBodyId}`, data)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const removeAdministrator = async (adminId: number) => {
-  return api.put(`GoverningBodies/RemoveAdmin/${adminId}`, adminId)
+  return api
+    .put(`GoverningBodies/RemoveAdmin/${adminId}`, adminId)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const editAdministrator = async (adminId: number, data: any) => {
-  return api.put(`GoverningBodies/EditAdmin/${adminId}`, data)
+  return api
+    .put(`GoverningBodies/EditAdmin/${adminId}`, data)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const addDocument = async (governingBodyId: number, data: any) => {
-  return api.post(`GoverningBodies/AddDocument/${governingBodyId}`, data)
+  return api
+    .post(`GoverningBodies/AddDocument/${governingBodyId}`, data)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const removeDocument = async (documentId: number) => {
-  return api.remove(`GoverningBodies/RemoveDocument/${documentId}`, documentId)
+  return api
+    .remove(`GoverningBodies/RemoveDocument/${documentId}`, documentId)
     .catch((error) => {
       throw new Error(error);
     });
@@ -139,79 +150,97 @@ export const getDocumentTypes = async () => {
 };
 
 export const getUserAccess = async (userId: string) => {
-  return await api.get(`GoverningBodies/GetUserAccesses/${userId}`, userId)
-  .catch( error => {
-       throw error;
-       } 
-  );
-}  
+  return await api
+    .get(`GoverningBodies/GetUserAccesses/${userId}`, userId)
+    .catch((error) => {
+      throw error;
+    });
+};
 
 export const getUsersAdministrations = async (UserId: string) => {
   return api.get(`GoverningBodies/GetUserAdmins/${UserId}`);
 };
 
-export const getUsersPreviousAdministrations = async(UserId:string)=>{
-  return await api.get(`GoverningBodies/GetUserPreviousAdmins/${UserId}`).catch((error)=>{
-    throw new Error(error);
-  })
-}
+export const getUsersPreviousAdministrations = async (UserId: string) => {
+  return await api
+    .get(`GoverningBodies/GetUserPreviousAdmins/${UserId}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
 
 export const getAllAnnouncements = async () => {
-  return await api.get('GoverningBodies/GetAllAnnouncements')
-    .catch((error) => {
-      throw new Error(error);
-    });
-}
-
-export const getAnnouncementsByPage = async (pageNumber: number, pageSize: number) =>{
-  return await api.get(`GoverningBodies/GetAnnouncementsByPage/${pageNumber}`, { pageNumber, pageSize})
-  .catch((error) => {
+  return await api.get("GoverningBodies/GetAllAnnouncements").catch((error) => {
     throw new Error(error);
   });
-}
+};
 
-export const addAnnouncement = (text: string, ImagesBase64: string[]) => {
-    return api.post(`GoverningBodies/AddAnnouncement`, {text, ImagesBase64})
-      .catch(error => {
-        throw new Error(error);
-      });
-}
-
-export const getAnnouncementsById = (id: number) => {
-  return api.get(`GoverningBodies/GetAnnouncement/${id}`, id)
+export const getAnnouncementsByPage = async (
+  pageNumber: number,
+  pageSize: number
+) => {
+  return await api
+    .get(`GoverningBodies/GetAnnouncementsByPage/${pageNumber}`, {
+      pageNumber,
+      pageSize,
+    })
     .catch((error) => {
       throw new Error(error);
     });
-}
+};
 
-export const editAnnouncement = async (id: number, text: string, imagesBase64: string[]) => {
-  return api.put(`GoverningBodies/EditAnnouncement/${id}`, {id, text, imagesBase64})
+export const addAnnouncement = (text: string, ImagesBase64: string[]) => {
+  return api
+    .post(`GoverningBodies/AddAnnouncement`, { text, ImagesBase64 })
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const getAnnouncementsById = (id: number) => {
+  return api.get(`GoverningBodies/GetAnnouncement/${id}`, id).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const editAnnouncement = async (
+  id: number,
+  text: string,
+  imagesBase64: string[]
+) => {
+  return api
+    .put(`GoverningBodies/EditAnnouncement/${id}`, { id, text, imagesBase64 })
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const deleteAnnouncement = async (id: number) => {
-  return api.remove(`GoverningBodies/DeleteAnnouncement/${id}`, id)
+  return api
+    .remove(`GoverningBodies/DeleteAnnouncement/${id}`, id)
     .catch((error) => {
       throw new Error(error);
     });
 };
 
 export const getAllUserId = async () => {
-  return await api.get('GoverningBodies/GetAllUsersId')
-    .catch((error) => {
-      throw new Error(error);
-    });
-}
+  return await api.get("GoverningBodies/GetAllUsersId").catch((error) => {
+    throw new Error(error);
+  });
+};
 
-export const getGoverningBodyAdminsForTable = async (userId: string, isActive: boolean, 
-  pageNumber: number, pageSize: number) => {
-    return (await api.get('GoverningBodies/GetUserAdminsForTable',
-    {
+export const getGoverningBodyAdminsForTable = async (
+  userId: string,
+  isActive: boolean,
+  pageNumber: number,
+  pageSize: number
+) => {
+  return (
+    await api.get("GoverningBodies/GetUserAdminsForTable", {
       userId: userId,
       isActive: isActive,
       pageNumber: pageNumber,
-      pageSize: pageSize
-    })).data;
-}
+      pageSize: pageSize,
+    })
+  ).data;
+};

@@ -41,7 +41,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     reader.readAsDataURL(img);
   };
 
-  const handleUpload = ( images: any ) => {
+  const handleUpload = (images: any) => {
     setFileList(images.fileList);
     if (images.fileList.length === 0) return;
     getBase64(images.file, (base64: string) => {
@@ -61,7 +61,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
         <Col md={24} xs={24}>
           <Form.Item
             className={formclasses.formField}
-            initialValue={''}
+            initialValue={""}
             label="Текст оголошення"
             labelCol={{ span: 24 }}
             name="text"
@@ -73,10 +73,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
               },
             ]}
           >
-            <ReactQuill 
-              theme="snow"
-              placeholder="Введіть текст..."
-            />
+            <ReactQuill theme="snow" placeholder="Введіть текст..." />
           </Form.Item>
         </Col>
       </Row>
@@ -88,7 +85,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
           onChange={handleUpload}
           beforeUpload={() => false}
         >
-          {'Upload'}
+          {"Upload"}
         </Upload>
       </Row>
       <Row justify="start" gutter={[12, 0]}>

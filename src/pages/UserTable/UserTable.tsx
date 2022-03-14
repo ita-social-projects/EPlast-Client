@@ -9,7 +9,7 @@ import {
   TreeSelect,
   Modal,
   Form,
-  Card
+  Card,
 } from "antd";
 import "./Filter.less";
 import { getUsersForTableByPage } from "../../api/adminApi";
@@ -30,7 +30,7 @@ import Region from "../Statistics/Interfaces/Region";
 import Club from "../AnnualReport/Interfaces/Club";
 import { shouldContain } from "../../components/Notifications/Messages";
 import classes from "./UserTable.module.css";
-import citiesApi from "../../api/citiesApi"
+import citiesApi from "../../api/citiesApi";
 import userApi from "../../api/UserApi";
 import User from "../Distinction/Interfaces/User";
 import AuthStore from "../../stores/AuthStore";
@@ -75,7 +75,17 @@ const UsersTable = () => {
 
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, updatedUser, searchData, sortKey, filter, userArhive, currentTabName, clearFilter]);
+  }, [
+    page,
+    pageSize,
+    updatedUser,
+    searchData,
+    sortKey,
+    filter,
+    userArhive,
+    currentTabName,
+    clearFilter,
+  ]);
 
   useEffect(() => {
     fetchCities();
@@ -91,12 +101,14 @@ const UsersTable = () => {
     try {
       let response = await citiesApi.getCities();
       let cities = response.data as City[];
-      setCities(cities.map((item) => {
-        return {
-          label: item.name,
-          value: item.id,
-        };
-      }))
+      setCities(
+        cities.map((item) => {
+          return {
+            label: item.name,
+            value: item.id,
+          };
+        })
+      );
     } catch (error) {
       //don't set value type, check on github will fail
       showError(error.message);
@@ -174,18 +186,26 @@ const UsersTable = () => {
         Tab: currentTabName,
         SortKey: sortKey,
         FilterRoles: filter,
-        SearchData: searchData
+        SearchData: searchData,
       });
       let jwt = AuthStore.getToken() as string;
       let user = jwt_decode(jwt) as any;
-      setCurrentUser((await userApi.getUserProfileById(user.nameid, user.nameid)).data.user);
+      setCurrentUser(
+        (await userApi.getUserProfileById(user.nameid, user.nameid)).data.user
+      );
       let roles = userApi.getActiveUserRoles();
-      setCanView(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyHead)
-        || roles.includes(Roles.OkrugaHead) || roles.includes(Roles.OkrugaHeadDeputy)
-        || roles.includes(Roles.CityHead) || roles.includes(Roles.CityHeadDeputy)
-        || roles.includes(Roles.KurinHead) || roles.includes(Roles.KurinHeadDeputy)
-        || roles.includes(Roles.PlastMember)
-        || roles.includes(Roles.Supporter));
+      setCanView(
+        roles.includes(Roles.Admin) ||
+          roles.includes(Roles.GoverningBodyHead) ||
+          roles.includes(Roles.OkrugaHead) ||
+          roles.includes(Roles.OkrugaHeadDeputy) ||
+          roles.includes(Roles.CityHead) ||
+          roles.includes(Roles.CityHeadDeputy) ||
+          roles.includes(Roles.KurinHead) ||
+          roles.includes(Roles.KurinHeadDeputy) ||
+          roles.includes(Roles.PlastMember) ||
+          roles.includes(Roles.Supporter)
+      );
       setUsers(response.data.users);
       setTotal(response.data.total);
     } catch (error) {
@@ -197,14 +217,14 @@ const UsersTable = () => {
   };
 
   const handleSearch = (e: any) => {
-    setPage(1)
+    setPage(1);
     setSearchData(e);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.toLowerCase() === '') {
-      setSearchData('')
-    };
+    if (e.target.value.toLowerCase() === "") {
+      setSearchData("");
+    }
   };
 
   const onSelect = (selectedKeys: any, e: any) => {
@@ -217,13 +237,13 @@ const UsersTable = () => {
     } else if (e.value == 3) {
       setDynamicDegrees([-3]);
     } else if (e.value.startsWith("value1")) {
-      setDynamicCities([...dynamicCities, e.value.split(' ')[1] as number]);
+      setDynamicCities([...dynamicCities, e.value.split(" ")[1] as number]);
     } else if (e.value.startsWith("value2")) {
-      setDynamicRegions([...dynamicRegions, e.value.split(' ')[1] as number]);
+      setDynamicRegions([...dynamicRegions, e.value.split(" ")[1] as number]);
     } else if (e.value.startsWith("value3")) {
-      setDynamicDegrees([...dynamicDegrees, e.value.split(' ')[1] as number]);
+      setDynamicDegrees([...dynamicDegrees, e.value.split(" ")[1] as number]);
     } else if (e.value.startsWith("value4")) {
-      setDynamicClubs([...dynamicClubs, e.value.split(' ')[1] as number]);
+      setDynamicClubs([...dynamicClubs, e.value.split(" ")[1] as number]);
     }
   };
 
@@ -237,20 +257,30 @@ const UsersTable = () => {
     } else if (e.value == 3) {
       setDynamicDegrees((prev) => prev.filter((item) => item !== -3));
     } else if (e.value.includes("value1")) {
-      setDynamicCities((prev) => prev.filter((item) => item !== e.value.split(' ')[1] as number));
+      setDynamicCities((prev) =>
+        prev.filter((item) => item !== (e.value.split(" ")[1] as number))
+      );
     } else if (e.value.includes("value2")) {
-      setDynamicRegions((prev) => prev.filter((item) => item !== e.value.split(' ')[1] as number));
+      setDynamicRegions((prev) =>
+        prev.filter((item) => item !== (e.value.split(" ")[1] as number))
+      );
     } else if (e.value.includes("value3")) {
-      setDynamicDegrees((prev) => prev.filter((item) => item !== e.value.split(' ')[1] as number));
+      setDynamicDegrees((prev) =>
+        prev.filter((item) => item !== (e.value.split(" ")[1] as number))
+      );
     } else if (e.value.includes("value4")) {
-      setDynamicClubs((prev) => prev.filter((item) => item !== e.value.split(' ')[1] as number));
+      setDynamicClubs((prev) =>
+        prev.filter((item) => item !== (e.value.split(" ")[1] as number))
+      );
     }
   };
 
   const getDynamicCities = () => {
     var results = [];
     for (let x = 0; x < cities?.length; x++) {
-      results.push(<TreeNode value={"value1 " + cities[x].value} title={cities[x].label} />);
+      results.push(
+        <TreeNode value={"value1 " + cities[x].value} title={cities[x].label} />
+      );
     }
     return results;
   };
@@ -259,7 +289,12 @@ const UsersTable = () => {
     var results = [];
 
     for (let x = 0; x < regions?.length; x++) {
-      results.push(<TreeNode value={"value2 " + regions[x].value} title={regions[x].label} />);
+      results.push(
+        <TreeNode
+          value={"value2 " + regions[x].value}
+          title={regions[x].label}
+        />
+      );
     }
     return results;
   };
@@ -267,7 +302,12 @@ const UsersTable = () => {
   const getDynamicDegrees = () => {
     var results = [];
     for (let x = 0; x < degrees?.length; x++) {
-      results.push(<TreeNode value={"value3 " + degrees[x].value} title={degrees[x].label} />);
+      results.push(
+        <TreeNode
+          value={"value3 " + degrees[x].value}
+          title={degrees[x].label}
+        />
+      );
     }
     return results;
   };
@@ -276,7 +316,9 @@ const UsersTable = () => {
     var results = [];
 
     for (let x = 0; x < clubs?.length; x++) {
-      results.push(<TreeNode value={"value4 " + clubs[x].value} title={clubs[x].label} />);
+      results.push(
+        <TreeNode value={"value4 " + clubs[x].value} title={clubs[x].label} />
+      );
     }
     return results;
   };
@@ -336,7 +378,7 @@ const UsersTable = () => {
           Tab: currentTabName,
           SortKey: sortKey,
           FilterRoles: filter,
-          SearchData: searchData
+          SearchData: searchData,
         });
         setUsers(response.data.users);
         setTotal(response.data.total);
@@ -371,13 +413,23 @@ const UsersTable = () => {
   };
 
   const parseUserRolesString = (roles: string) => {
-    return roles !== null ? roles.split(', ') : roles;
-  }
- 
+    return roles !== null ? roles.split(", ") : roles;
+  };
+
   return (
-    <Layout.Content onClick={() => { setShowDropdown(false); }}>
+    <Layout.Content
+      onClick={() => {
+        setShowDropdown(false);
+      }}
+    >
       <Title level={2}>Таблиця користувачів</Title>
-      <Title level={4} style={{ textAlign: "left", margin: 10 }} underline={true}>Загальна кількість користувачів: {total}</Title>
+      <Title
+        level={4}
+        style={{ textAlign: "left", margin: 10 }}
+        underline={true}
+      >
+        Загальна кількість користувачів: {total}
+      </Title>
       <div className={classes.searchContainer}>
         <div className={classes.filterContainer}>
           <Form form={form} onFinish={handleFilter}>
@@ -447,7 +499,8 @@ const UsersTable = () => {
           </Form>
         </div>
         <div className={classes.searchArea}>
-          <Search placeholder="Пошук"
+          <Search
+            placeholder="Пошук"
             allowClear
             enterButton
             maxLength={searchFieldMaxLength}
@@ -471,19 +524,19 @@ const UsersTable = () => {
           bordered
           rowKey="id"
           scroll={{ x: 1450 }}
-          columns={ColumnsForUserTable(
-            {
-              sortKey: sortKey,
-              setSortKey: setSortKey,
-              setFilter: setFilter,
-              setPage: setPage,
-              filterRole: filter,
-            })}
+          columns={ColumnsForUserTable({
+            sortKey: sortKey,
+            setSortKey: setSortKey,
+            setFilter: setFilter,
+            setPage: setPage,
+            filterRole: filter,
+          })}
           dataSource={users}
           onRow={(record) => {
             return {
               onDoubleClick: () => {
-                if (record.id && canView) window.open(`/userpage/main/${record.id}`);
+                if (record.id && canView)
+                  window.open(`/userpage/main/${record.id}`);
               },
               onContextMenu: (event) => {
                 event.preventDefault();
@@ -492,7 +545,7 @@ const UsersTable = () => {
                   setRecordObj(record.id);
                   setRecordRoles(parseUserRolesString(record.userRoles));
                   setCurrentUserRoles(record.userRoles);
-                  setUser(users.find(x => x.id == record.id));
+                  setUser(users.find((x) => x.id == record.id));
                   setX(event.pageX);
                   setY(event.pageY);
                   setShowDropdown(true);

@@ -9,7 +9,7 @@ const NotAuthorizedPage = () => {
       title="403"
       subTitle="Вибачте, у вас немає доступу до цієї сторінки."
       extra={
-        <Button href="/" style={{padding:"4px"}} className={classes.button}>
+        <Button href="/" style={{ padding: "4px" }} className={classes.button}>
           На головну
         </Button>
       }

@@ -1,5 +1,5 @@
-import AdminType from '../../Admin/AdminType';
-import SectorUser from './SectorUser';
+import AdminType from "../../Admin/AdminType";
+import SectorUser from "./SectorUser";
 
 export default class SectorAdmin {
   id: number;

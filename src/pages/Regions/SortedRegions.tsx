@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch, Link, useParams } from "react-router-dom";
-import { Card, Layout, Pagination, Result, Skeleton} from "antd";
+import { Card, Layout, Pagination, Result, Skeleton } from "antd";
 import Add from "../../assets/images/add.png";
 import RegionDefaultLogo from "../../assets/images/default_city_image.jpg";
-import { getActiveRegionsByPage, getNotActiveRegionsByPage} from "../../api/regionsApi";
+import {
+  getActiveRegionsByPage,
+  getNotActiveRegionsByPage,
+} from "../../api/regionsApi";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
 import Search from "antd/lib/input/Search";
-import RegionProfile from '../../models/Region/RegionProfile' 
+import RegionProfile from "../../models/Region/RegionProfile";
 import Props from "../Interfaces/SwitcherProps";
 
-const classes = require('./ActionRegion.module.css');
+const classes = require("./ActionRegion.module.css");
 
-const SortedRegions = ({switcher}: Props) => {
+const SortedRegions = ({ switcher }: Props) => {
   const path: string = "/regions";
   const history = useHistory();
   const [regions, setRegions] = useState<RegionProfile[]>([]);
@@ -23,14 +26,14 @@ const SortedRegions = ({switcher}: Props) => {
   const [searchedData, setSearchedData] = useState("");
   const [canCreate, setCanCreate] = useState<boolean>(false);
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
-  const {p} = useParams();
+  const { p } = useParams();
   const [page, setPage] = useState(p);
 
   const setPhotos = async (regions: any[]) => {
     for await (const region of regions) {
       if (region.logo === null) {
         region.logo = RegionDefaultLogo;
-      } 
+      }
     }
 
     setPhotosLoading(false);
@@ -40,18 +43,18 @@ const SortedRegions = ({switcher}: Props) => {
     setLoading(true);
 
     try {
-      const response = await getActiveRegionsByPage(page,
+      const response = await getActiveRegionsByPage(
+        page,
         pageSize,
         searchedData.trim()
       );
       setPhotosLoading(true);
       setPhotos(response.data.regions);
       setActiveCanCreate(response.data.canCreate);
-      setCanCreate(response.data.canCreate)
+      setCanCreate(response.data.canCreate);
       setRegions(response.data.regions);
       setTotal(response.data.total);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -59,7 +62,8 @@ const SortedRegions = ({switcher}: Props) => {
   const getNotActiveRegions = async (page: number = 1) => {
     setLoading(true);
     try {
-      const response = await getNotActiveRegionsByPage(page,
+      const response = await getNotActiveRegionsByPage(
+        page,
         pageSize,
         searchedData.trim()
       );
@@ -67,9 +71,7 @@ const SortedRegions = ({switcher}: Props) => {
       setPhotos(response.data.regions);
       setRegions(response.data.regions);
       setTotal(response.data.total);
-      
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -90,48 +92,49 @@ const SortedRegions = ({switcher}: Props) => {
 
   const renderRegion = (arr: RegionProfile[]) => {
     if (arr) {
-        return  arr.map((region: RegionProfile) =>(
-          <Link to={`${path}/${region.id}`}>
-              <Card
-                key={region.id}
-                hoverable
-                className="cardStyles"
-                cover={
-                  photosLoading ? (
-                  <Skeleton.Avatar shape="square" active />
-                  ) : (
-                      <img src={region.logo || undefined} alt="RegionDefault" />
-                  )
-                }
-              >
-                  <Card.Meta title={region.regionName} className="titleText" />
-              </Card>
+      return arr.map((region: RegionProfile) => (
+        <Link to={`${path}/${region.id}`}>
+          <Card
+            key={region.id}
+            hoverable
+            className="cardStyles"
+            cover={
+              photosLoading ? (
+                <Skeleton.Avatar shape="square" active />
+              ) : (
+                <img src={region.logo || undefined} alt="RegionDefault" />
+              )
+            }
+          >
+            <Card.Meta title={region.regionName} className="titleText" />
+          </Card>
         </Link>
-          ))   
+      ));
     }
     return null;
-};
+  };
 
   useEffect(() => {
     setPage(+p);
   });
 
   useEffect(() => {
-      switcher ? (getNotActiveRegions(page)) :(getActiveRegions(page))
+    switcher ? getNotActiveRegions(page) : getActiveRegions(page);
   }, [page, pageSize, searchedData]);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (regions.length !== 0) {
-      switcher ? (getNotActiveRegions()) :(getActiveRegions())
+      switcher ? getNotActiveRegions() : getActiveRegions();
       setCanCreate(switcher ? false : activeCanCreate);
     }
-  },[switcher])
+  }, [switcher]);
 
   return (
     <Layout.Content className="cities">
       {switcher ? (
-      <Title level={1}>Не активні округи</Title>) : (
-      <Title level={1}>Округи</Title>
+        <Title level={1}>Не активні округи</Title>
+      ) : (
+        <Title level={1}>Округи</Title>
       )}
 
       <div className="searchContainer">
@@ -144,50 +147,47 @@ const SortedRegions = ({switcher}: Props) => {
           allowClear={true}
         />
       </div>
-      
+
       {loading ? (
         <Spinner />
       ) : (
-          <div>
-            <div className="cityWrapper">
-              {switcher ? (null) : (canCreate && page === 1 && searchedData.length === 0 ? (
-                < Card
-                  hoverable
-                  className="cardStyles addCity"
-                  cover={<img src={Add} alt="AddCity" />}
-                  onClick={() => history.push(`${path}/new`)}
-                >
-                  <Card.Meta
-                  className="titleText"
-                  title="Створити нову округу"
-                  />
-                </Card>
-              ) : null)}
+        <div>
+          <div className="cityWrapper">
+            {switcher ? null : canCreate &&
+              page === 1 &&
+              searchedData.length === 0 ? (
+              <Card
+                hoverable
+                className="cardStyles addCity"
+                cover={<img src={Add} alt="AddCity" />}
+                onClick={() => history.push(`${path}/new`)}
+              >
+                <Card.Meta className="titleText" title="Створити нову округу" />
+              </Card>
+            ) : null}
 
-              {regions.length === 0 ? (
-                <div>
-                  <Result status="404" title="Округу не знайдено" />
-                </div>) : (
-                  renderRegion(regions)
-                )
-              }
-            </div>
-            <div className="pagination">
-              <Pagination
-                current={page}
-                pageSize={pageSize}
-                total={total}
-                responsive
-                showSizeChanger={total >= 20}
-                onChange={(page) => handleChange(page)}
-                onShowSizeChange={(page, size) => handleSizeChange(size)}
-              />
-            </div>
+            {regions.length === 0 ? (
+              <div>
+                <Result status="404" title="Округу не знайдено" />
+              </div>
+            ) : (
+              renderRegion(regions)
+            )}
           </div>
-        )
-      }
-    </Layout.Content >
-
+          <div className="pagination">
+            <Pagination
+              current={page}
+              pageSize={pageSize}
+              total={total}
+              responsive
+              showSizeChanger={total >= 20}
+              onChange={(page) => handleChange(page)}
+              onShowSizeChange={(page, size) => handleSizeChange(size)}
+            />
+          </div>
+        </div>
+      )}
+    </Layout.Content>
   );
 };
 export default SortedRegions;

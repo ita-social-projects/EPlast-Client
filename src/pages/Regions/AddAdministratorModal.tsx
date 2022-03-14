@@ -1,22 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { 
-    Button, 
-    Modal, 
-    Form, 
-    AutoComplete,
-    Row,
-    Col,
-    DatePicker
-} from "antd";
+import { Button, Modal, Form, AutoComplete, Row, Col, DatePicker } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import{getCheckPlastMember} from "../../api/citiesApi";
-import { emptyInput, inputOnlyWhiteSpaces } from "../../components/Notifications/Messages"
-import { 
-  getHead, 
-  getHeadDeputy, 
+import { getCheckPlastMember } from "../../api/citiesApi";
+import {
+  emptyInput,
+  inputOnlyWhiteSpaces,
+} from "../../components/Notifications/Messages";
+import {
+  getHead,
+  getHeadDeputy,
   AddAdmin,
   EditAdmin,
-  getRegionAdministration
+  getRegionAdministration,
 } from "../../api/regionsApi";
 import userApi from "../../api/UserApi";
 import "./Region.less";
@@ -50,7 +45,7 @@ const AddAdministratorModal = (props: Props) => {
   const [headDeputy, setHeadDeputy] = useState<any>();
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
-  const classes = require('./Modal.module.css');
+  const classes = require("./Modal.module.css");
   const [admins, setAdmins] = useState<RegionAdmin[]>([]);
 
   const disabledEndDate = (current: any) => {
@@ -81,7 +76,7 @@ const AddAdministratorModal = (props: Props) => {
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
-         editRegionAdmin(admin);
+        editRegionAdmin(admin);
       },
     });
   }
@@ -96,14 +91,15 @@ const AddAdministratorModal = (props: Props) => {
           </b>{" "}
           є Головою Округи, час правління закінчується{" "}
           <b>
-            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(head?.endDate).local().format("DD.MM.YYYY") ===
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {}
+      onOk() {},
     });
   };
 
@@ -115,23 +111,25 @@ const AddAdministratorModal = (props: Props) => {
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління
+          закінчується{" "}
           <b>
-            {moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY") ===
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
-      ),    
-      onCancel() { },
+      ),
+      onCancel() {},
       onOk() {
         if (newAdmin.id === 0) {
           addRegionAdmin(newAdmin);
         } else {
           editRegionAdmin(newAdmin);
         }
-      }
+      },
     });
   };
 
@@ -143,16 +141,17 @@ const AddAdministratorModal = (props: Props) => {
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
-            вже має таку роль, час правління закінчується{" "}
+          вже має таку роль, час правління закінчується{" "}
           <b>
-            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") === "Invalid date"
+            {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {}
+      onOk() {},
     });
   };
 
@@ -164,15 +163,14 @@ const AddAdministratorModal = (props: Props) => {
           <b>
             {admin.user.firstName} {admin.user.lastName}
           </b>{" "}
-            не є членом Пласту.
+          не є членом Пласту.
         </div>
       ),
-      onOk() {}
+      onOk() {},
     });
   };
-  
+
   const addRegionAdmin = async (admin: RegionAdmin) => {
-    
     await AddAdmin(admin);
     notificationLogic("success", "Користувач успішно доданий в провід");
     props.onChange?.(props.admin.userId, admin.adminType.adminTypeName);
@@ -189,21 +187,23 @@ const AddAdministratorModal = (props: Props) => {
   const getAdministration = async () => {
     setLoading(true);
     const responseHead = await getHead(props.regionId);
-    const responseAdministration = await getRegionAdministration(props.regionId);
+    const responseAdministration = await getRegionAdministration(
+      props.regionId
+    );
     const responseHeadDeputy = await getHeadDeputy(props.regionId);
-    setAdmins(responseAdministration.data)
+    setAdmins(responseAdministration.data);
     setHead(responseHead.data);
     setHeadDeputy(responseHeadDeputy.data);
     setLoading(false);
   };
 
-  const checkAdminId = async (admin: RegionAdmin)=> {
+  const checkAdminId = async (admin: RegionAdmin) => {
     if (admin.id === 0) {
       await addRegionAdmin(admin);
     } else {
       await editRegionAdmin(admin);
     }
-  }
+  };
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
@@ -222,37 +222,39 @@ const AddAdministratorModal = (props: Props) => {
     };
 
     try {
-      if(admin !== undefined){
-          admin.adminType.adminTypeName = admin.adminType.adminTypeName[0].toUpperCase() + admin.adminType.adminTypeName.slice(1);
-        }
-        const existingAdmin  = (admins as RegionAdmin[])
-          .find(x => x.adminType.adminTypeName === admin.adminType.adminTypeName)   
-        if (head?.userId === admin.userId){
-          showDisableModal(head)
-        }
-        else if(existingAdmin?.userId === admin.userId && existingAdmin?.endDate === admin.endDate){
-          showDisable(admin)
-        }
-        else if(admin.adminType.adminTypeName === "Голова КПР" ||
-          admin.adminType.adminTypeName === "Член КПР" ||
-          admin.adminType.adminTypeName === Roles.OkrugaHead ||
-          admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy){
-          const check = await getCheckPlastMember(admin.userId);
-          if(check.data){
-            await checkAdminId(admin);
-          }
-          else {
-            showPlastMemberDisable(admin);
-          }
-        }
-        else if(existingAdmin !== undefined) {
-          showConfirm(admin, existingAdmin);
-        }
-        else {
+      if (admin !== undefined) {
+        admin.adminType.adminTypeName =
+          admin.adminType.adminTypeName[0].toUpperCase() +
+          admin.adminType.adminTypeName.slice(1);
+      }
+      const existingAdmin = (admins as RegionAdmin[]).find(
+        (x) => x.adminType.adminTypeName === admin.adminType.adminTypeName
+      );
+      if (head?.userId === admin.userId) {
+        showDisableModal(head);
+      } else if (
+        existingAdmin?.userId === admin.userId &&
+        existingAdmin?.endDate === admin.endDate
+      ) {
+        showDisable(admin);
+      } else if (
+        admin.adminType.adminTypeName === "Голова КПР" ||
+        admin.adminType.adminTypeName === "Член КПР" ||
+        admin.adminType.adminTypeName === Roles.OkrugaHead ||
+        admin.adminType.adminTypeName === Roles.OkrugaHeadDeputy
+      ) {
+        const check = await getCheckPlastMember(admin.userId);
+        if (check.data) {
           await checkAdminId(admin);
+        } else {
+          showPlastMemberDisable(admin);
         }
-    }
-    finally {
+      } else if (existingAdmin !== undefined) {
+        showConfirm(admin, existingAdmin);
+      } else {
+        await checkAdminId(admin);
+      }
+    } finally {
       props.setVisibleModal(false);
       setLoading(false);
     }
@@ -270,7 +272,7 @@ const AddAdministratorModal = (props: Props) => {
     getAdministration();
     getRegionAdmins();
     const userRoles = userApi.getActiveUserRoles();
-      setActiveUserRoles(userRoles);
+    setActiveUserRoles(userRoles);
   }, [props]);
 
   return (
@@ -294,21 +296,25 @@ const AddAdministratorModal = (props: Props) => {
           labelCol={{ span: 24 }}
           initialValue={props.admin.adminType.adminTypeName}
           rules={[
-            { 
-              required: true, 
-              message: emptyInput() 
+            {
+              required: true,
+              message: emptyInput(),
             },
             {
               pattern: /^\s*\S.*$/,
-              message: inputOnlyWhiteSpaces()
+              message: inputOnlyWhiteSpaces(),
             },
           ]}
         >
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: Roles.OkrugaHead, disabled: (activeUserRoles.includes(Roles.OkrugaHeadDeputy) 
-              && !activeUserRoles.includes(Roles.Admin)) },
+              {
+                value: Roles.OkrugaHead,
+                disabled:
+                  activeUserRoles.includes(Roles.OkrugaHeadDeputy) &&
+                  !activeUserRoles.includes(Roles.Admin),
+              },
               { value: Roles.OkrugaHeadDeputy },
               { value: "Голова СПС" },
               { value: "Фотограф" },
@@ -352,7 +358,9 @@ const AddAdministratorModal = (props: Props) => {
               label="Час кінця"
               labelCol={{ span: 24 }}
               initialValue={
-                props.admin.endDate ? moment.utc(props.admin.endDate).local() : undefined
+                props.admin.endDate
+                  ? moment.utc(props.admin.endDate).local()
+                  : undefined
               }
             >
               <DatePicker
@@ -360,7 +368,9 @@ const AddAdministratorModal = (props: Props) => {
                 disabledDate={disabledEndDate}
                 format="DD.MM.YYYY"
                 value={
-                  props.admin.endDate ? moment.utc(props.admin.endDate).local() : undefined
+                  props.admin.endDate
+                    ? moment.utc(props.admin.endDate).local()
+                    : undefined
                 }
                 onChange={(e) => setEndDate(e)}
               />
@@ -380,7 +390,14 @@ const AddAdministratorModal = (props: Props) => {
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" loading = {loadingButton} onClick = {() => {setLoadingButton(true); handleSubmit(form.getFieldsValue());}}>
+              <Button
+                type="primary"
+                loading={loadingButton}
+                onClick={() => {
+                  setLoadingButton(true);
+                  handleSubmit(form.getFieldsValue());
+                }}
+              >
                 Опублікувати
               </Button>
             </Col>

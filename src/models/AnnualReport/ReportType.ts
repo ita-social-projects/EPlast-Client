@@ -1,5 +1,5 @@
 export enum ReportType {
-    City,
-    Club,
-    Region,
+  City,
+  Club,
+  Region,
 }
