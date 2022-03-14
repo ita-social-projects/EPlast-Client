@@ -1,6 +1,7 @@
 import axios from "axios";
 import BASE_URL from "../config";
 import AuthStore from "../stores/AuthStore";
+import CityDefaultLogo from "../assets/images/default_city_image.jpg";
 import jwt_decode from "jwt-decode";
 import api from "./api";
 
@@ -20,9 +21,11 @@ const getUserProfileById = async (
   return response;
 };
 const getImage = async (imageName: string | undefined) => {
-  const response = await axios.get(
-    `${`${BASE_URL}User/getImage`}/${imageName}`
-  );
+  const response: any = await axios
+    .get(`${`${BASE_URL}User/getImage`}/${imageName}`)
+    .catch((error) => {
+      return CityDefaultLogo;
+    });
 
   return response;
 };

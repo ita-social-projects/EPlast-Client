@@ -263,18 +263,18 @@ useEffect(() => {
         className={classes.formField}
         label="Електронна пошта"
         rules={[
-            {
-              pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-              message: <div>{incorrectEmail}</div>,
-            },
-            {
-              max: 50,
-              message: <div>{maxLength(50)}</div>,
-            },
-            {
-              required: true,
-              message: emptyInput(),
-            }
+          {
+            pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
+            message: <div className="">{incorrectEmail}</div>,
+          },
+          {
+            max: 50,
+            message: <div className="">{maxLength(50)}</div>,
+          },
+          {
+            required: true,
+            message: emptyInput(),
+          },
         ]}
       >
         <Input
@@ -296,7 +296,7 @@ useEffect(() => {
         }
         >
         <DatePicker
-          style={{width:'100%'}}
+          style={{ width: "100%" }}
           className={classes.inputField}
           disabledDate={disabledStartDate}
           onChange={(e) => setStartDate(e)}

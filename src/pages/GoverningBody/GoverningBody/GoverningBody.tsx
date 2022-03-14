@@ -32,6 +32,7 @@ import {
 } from "../../../api/governingBodiesApi";
 import "./GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
+import UserDefaultLogo from "../../../assets/images/no-avatar.png";
 import GoverningBodyProfile from "../../../models/GoverningBody/GoverningBodyProfile";
 import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
 import Title from "antd/lib/typography/Title";
@@ -61,7 +62,7 @@ import { Markup } from "interweave";
 
 const GoverningBody = () => {
   const history = useHistory();
-  const { id } = useParams();
+  const { id }: any = useParams();
   const { url } = useRouteMatch();
   const [loading, setLoading] = useState(false);
   const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(
@@ -116,9 +117,11 @@ const GoverningBody = () => {
       members[i].user.imagePath = (
         await userApi.getImage(members[i].user.imagePath)
       ).data;
+      if (members[i].user.imagePath === undefined) {
+        members[i].user.imagePath = UserDefaultLogo;
+      }
     }
     setAdminsPhotosLoading(false);
-
     if (logo === null) {
       setGoverningBodyLogo64(CityDefaultLogo);
     } else {
@@ -212,21 +215,24 @@ const GoverningBody = () => {
         const res: any = (await getAnnouncementsByPage(1, 3)).data;
         let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];
         for (let i = 0; i < announcementsQuantity; i++) {
-          res.item1[i].text =
-            res.item1[i].text.substring(0, 40) +
-            (res.item1[i].text.length > 40 ? "..." : "");
-          shortListedAnnoncements = [...shortListedAnnoncements, res.item1[i]];
+          if (res.item1[i]) {
+            res.item1[i].text =
+              res.item1[i].text.substring(0, 40) +
+              (res.item1[i].text.length > 40 ? "..." : "");
+            shortListedAnnoncements = [
+              ...shortListedAnnoncements,
+              res.item1[i],
+            ];
+          }
         }
         setAnnouncements(shortListedAnnoncements);
       }
       const response = await getGoverningBodyById(+id);
       const governingBodyViewModel = response.data.governingBodyViewModel;
-
       const admins = [
-        ...governingBodyViewModel.administration,
         governingBodyViewModel.head,
+        ...governingBodyViewModel.administration,
       ].filter((a) => a !== null);
-
       const responseSectors = governingBodyViewModel.sectors;
 
       setGoverningBodyLogoLoading(true);
@@ -238,8 +244,9 @@ const GoverningBody = () => {
       );
 
       setGoverningBody(governingBodyViewModel);
-      setAdmins(admins);
       setGoverningBodyHead(governingBodyViewModel.head);
+      setAdmins(admins);
+
       setDocuments(governingBodyViewModel.documents);
       setDocumentsCount(response.data.documentsCount);
       setSectors(governingBodyViewModel.sectors);
@@ -737,11 +744,10 @@ const GoverningBody = () => {
         visibleModal={visibleAddModal}
         onAdd={onAnnouncementAdd}
       />
-      <Drawer
+      <Modal
         title="Додати діловода"
         visible={visible}
-        width="auto"
-        onClose={() => setVisible(false)}
+        onCancel={() => setVisible(false)}
         footer={null}
       >
         <AddGoverningBodiesSecretaryForm
@@ -752,7 +758,7 @@ const GoverningBody = () => {
           setGoverningBodyHead={setGoverningBodyHead}
           governingBodyId={+id}
         ></AddGoverningBodiesSecretaryForm>
-      </Drawer>
+      </Modal>
       {userAccesses["ManipulateDocument"] ? (
         <AddDocumentModal
           governingBodyId={+id}
