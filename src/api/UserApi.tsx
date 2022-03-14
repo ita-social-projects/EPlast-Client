@@ -1,11 +1,9 @@
-
-import axios from 'axios';
-import BASE_URL from '../config';
-import AuthStore from '../stores/AuthStore';
+import axios from "axios";
+import BASE_URL from "../config";
+import AuthStore from "../stores/AuthStore";
 import CityDefaultLogo from "../assets/images/default_city_image.jpg";
-import jwt_decode from 'jwt-decode';
-import api from './api';
-
+import jwt_decode from "jwt-decode";
+import api from "./api";
 
 const getById = async (id: string | undefined) => {
   const response = await axios.get(`${`${BASE_URL}User/`}${id}`);
@@ -23,12 +21,13 @@ const getUserProfileById = async (
   return response;
 };
 const getImage = async (imageName: string | undefined) => {
-    const response : any = await axios.get(`${`${BASE_URL}User/getImage`}/${imageName}`)
-    .catch(error => {
-        return CityDefaultLogo;
+  const response: any = await axios
+    .get(`${`${BASE_URL}User/getImage`}/${imageName}`)
+    .catch((error) => {
+      return CityDefaultLogo;
     });
-  
-    return response;
+
+  return response;
 };
 const edit = async (id: string) => {
   const response = await axios.get(`${`${BASE_URL}User/edit`}/${id}`);

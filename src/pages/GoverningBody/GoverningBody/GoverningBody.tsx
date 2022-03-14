@@ -114,12 +114,12 @@ const GoverningBody = () => {
     sectors: SectorProfile[]
   ) => {
     for (let i = 0; i < members.length; ++i) {
-        members[i].user.imagePath = (
-          await userApi.getImage(members[i].user.imagePath)
-        ).data;
-        if (members[i].user.imagePath === undefined){
-          members[i].user.imagePath = UserDefaultLogo;
-        }
+      members[i].user.imagePath = (
+        await userApi.getImage(members[i].user.imagePath)
+      ).data;
+      if (members[i].user.imagePath === undefined) {
+        members[i].user.imagePath = UserDefaultLogo;
+      }
     }
     setAdminsPhotosLoading(false);
     if (logo === null) {
@@ -214,10 +214,15 @@ const GoverningBody = () => {
       if (userAccesses.data["ViewAnnouncements"]) {
         const res: any = (await getAnnouncementsByPage(1, 3)).data;
         let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];
-        for(let i = 0; i < announcementsQuantity; i++) {
-          if (res.item1[i]){
-            res.item1[i].text = res.item1[i].text.substring(0,40) + (res.item1[i].text.length > 40? "...": "")
-            shortListedAnnoncements = [...shortListedAnnoncements, res.item1[i]]
+        for (let i = 0; i < announcementsQuantity; i++) {
+          if (res.item1[i]) {
+            res.item1[i].text =
+              res.item1[i].text.substring(0, 40) +
+              (res.item1[i].text.length > 40 ? "..." : "");
+            shortListedAnnoncements = [
+              ...shortListedAnnoncements,
+              res.item1[i],
+            ];
           }
         }
         setAnnouncements(shortListedAnnoncements);
@@ -226,8 +231,8 @@ const GoverningBody = () => {
       const governingBodyViewModel = response.data.governingBodyViewModel;
       const admins = [
         governingBodyViewModel.head,
-        ...governingBodyViewModel.administration
-      ].filter(a => a !== null);
+        ...governingBodyViewModel.administration,
+      ].filter((a) => a !== null);
       const responseSectors = governingBodyViewModel.sectors;
 
       setGoverningBodyLogoLoading(true);
@@ -239,9 +244,9 @@ const GoverningBody = () => {
       );
 
       setGoverningBody(governingBodyViewModel);
-      setGoverningBodyHead(governingBodyViewModel.head)
+      setGoverningBodyHead(governingBodyViewModel.head);
       setAdmins(admins);
-     
+
       setDocuments(governingBodyViewModel.documents);
       setDocumentsCount(response.data.documentsCount);
       setSectors(governingBodyViewModel.sectors);
@@ -643,15 +648,14 @@ const GoverningBody = () => {
                   Більше
                 </Button>
                 {userAccesses["AddAnnouncement"] ? (
-                <PlusSquareFilled
-                  type="primary"
-                  className="addReportIcon"
-                  onClick={() => setVisibleAddModal(true)}
-                />
-                ) : null
-              }
-              </div> )
-            : null}
+                  <PlusSquareFilled
+                    type="primary"
+                    className="addReportIcon"
+                    onClick={() => setVisibleAddModal(true)}
+                  />
+                ) : null}
+              </div>
+            ) : null}
           </Card>
         </Col>
 
@@ -751,8 +755,8 @@ const GoverningBody = () => {
           admins={admins}
           setAdmins={setAdmins}
           setGoverningBodyHead={setGoverningBodyHead}
-          governingBodyId={+id}>
-        </AddGoverningBodiesSecretaryForm>
+          governingBodyId={+id}
+        ></AddGoverningBodiesSecretaryForm>
       </Modal>
       {userAccesses["ManipulateDocument"] ? (
         <AddDocumentModal
