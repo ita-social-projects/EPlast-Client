@@ -509,12 +509,11 @@ const Sector = () => {
                         </Paragraph>
                       <Paragraph>{moment.utc(announcement.date).local().format("DD.MM.YYYY")}</Paragraph>
                     </Col>
-                  ))
+                  )
                 ) : (
                   <Col>
                     <Paragraph>Ще немає оголошень</Paragraph>
                   </Col>
-                )
               ) : (
                 <Col>
                   <Paragraph strong>

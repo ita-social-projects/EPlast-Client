@@ -650,7 +650,7 @@ const GoverningBody = () => {
                 />
                 ) : null
               }
-              </div> 
+              </div> )
             : null}
           </Card>
         </Col>
