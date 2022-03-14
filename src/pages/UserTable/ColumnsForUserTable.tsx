@@ -47,6 +47,10 @@ const options = [
   { label: Roles.KurinHead, value: Roles.KurinHead },
   { label: Roles.KurinSecretary, value: Roles.KurinSecretary },
   { label: Roles.RegisteredUser, value: Roles.RegisteredUser },
+  { label: Roles.GoverningBodyHead, value: Roles.GoverningBodyHead},
+  { label: Roles.GoverningBodySecretary, value: Roles.GoverningBodySecretary },
+  { label: Roles.GoverningBodySectorHead, value: Roles.GoverningBodySectorHead },
+  { label: Roles.GoverningBodySectorSecretary, value: Roles.GoverningBodySectorSecretary},
 ];
 
 interface Props {
