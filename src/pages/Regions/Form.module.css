@@ -22,7 +22,12 @@
    
   }
   
-  
+  .formOption {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   .formField {
     width: 100%;
   }

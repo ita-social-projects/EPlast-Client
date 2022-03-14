@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
-import formclasses from "../../../pages/DecisionTable/FormAddDecision.module.css";
-import {
-  Form,
-  DatePicker,
-  AutoComplete,
-  Select,
-  Modal,
-  Button,
-  Input,
+import classes from "../../Regions/Form.module.css";
+import { 
+  Form, 
+  DatePicker, 
+  AutoComplete, 
+  Select, 
+  Modal, 
+  Button, 
+  Input, 
+  Tooltip,
   Row,
   Col,
-} from "antd";
+ } from "antd";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
@@ -32,11 +33,12 @@ import { Roles } from "../../../models/Roles/Roles";
 import "./AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import Spinner from "../../Spinner/Spinner";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 const confirm = Modal.confirm;
 
 const AddGoverningBodiesSecretaryForm = (props: any) => {
-  const { onAdd, setAdmins, admins, setGoverningBodyHead } = props;
+  const { onAdd, setAdmins, admins, setGoverningBodyHead, visibleModal } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [usersLoading, setUsersLoading] = useState<boolean>(false);
@@ -55,7 +57,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   const addGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
     await addAdministrator(admin.governingBodyId, admin);
     if (admin.adminType.adminTypeName == Roles.GoverningBodyHead) {
-      setGoverningBodyHead(admin);
+      setGoverningBodyHead(admin);        
     }
     setUsers(users.filter((x) => x.id !== admin.userId));
     notificationLogic("success", "Користувач успішно доданий в провід");
@@ -79,13 +81,13 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/governingBodies/${props.governingBodyId}`,
       `цьому керівному органі`
-    );
+      );
   };
 
   const showConfirm = (
-    newAdmin: GoverningBodyAdmin,
+    newAdmin: GoverningBodyAdmin, 
     existingAdmin: GoverningBodyAdmin
-  ) => {
+    ) => {
     confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
@@ -93,10 +95,10 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління 
           закінчується{" "}
           <b>
-            {existingAdmin.endDate === null ||
+            {existingAdmin.endDate === null || 
             existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
@@ -109,7 +111,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         if (newAdmin.id === 0) {
           addGoverningBodyAdmin(newAdmin);
           setAdmins(
-            (admins as GoverningBodyAdmin[]).map((x) =>
+            (admins as GoverningBodyAdmin[]).map((x) => 
               x.userId === existingAdmin?.userId ? newAdmin : x
             )
           );
@@ -125,7 +127,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     setLoading(true);
     const newAdmin: GoverningBodyAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
-      userId:
+      userId: 
         props.admin === undefined
           ? JSON.parse(values.userId).id
           : props.admin.userId,
@@ -141,12 +143,12 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     };
     newAdmin.user.imagePath = (
       await userApi.getImage(newAdmin.user.imagePath)
-    ).data;
+    ).data; 
     if (newAdmin.id === 0) {
       try {
         const existingAdmin = (admins as GoverningBodyAdmin[]).find(
           (x) => x.adminType.adminTypeName === newAdmin.adminType.adminTypeName
-        );
+          );
         if (existingAdmin !== undefined) {
           showConfirm(newAdmin, existingAdmin);
         } else {
@@ -170,62 +172,66 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
 
   const fetchData = async () => {
     setUsersLoading(true);
-    await adminApi
-      .getUsersByExactRoles(
-        [
-          [Roles.PlastMember],
-          [Roles.PlastMember, Roles.KurinHead],
-          [Roles.PlastMember, Roles.KurinHeadDeputy],
-        ],
-        true
-      )
-      .then((response) => {
-        setUsers(response.data);
-        setUsersLoading(false);
-      });
-  };
-
-  useEffect(() => {
-    fetchData();
-    if (props.visibleModal) {
-      form.resetFields();
+    try {
+      const responseUsers = await adminApi.getUsersForGoverningBodies()
+      setUsers(responseUsers.data);
     }
-  }, [props]);
+  finally {
+    setUsersLoading(false);
+  }
+}
+
+useEffect(() => {
+  fetchData();
+}, []);
+
+useEffect(() => {
+  if (props.visibleModal) {
+    form.resetFields();
+  }
+}, [props]);
 
   return loading ? (
     <Spinner />
   ) : (
     <Form name="basic" onFinish={handleSubmit} form={form}>
       <Form.Item
-        className={formclasses.formField}
-        labelCol={{ span: 24 }}
+        className={classes.formField}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
         label="Користувач"
         name="userId"
         rules={[
           {
             required: props.admin === undefined,
-            message: <div className="formItemExplain">{emptyInput()}</div>,
+            message: emptyInput(),
           },
         ]}
       >
         <Select
           showSearch
           loading={usersLoading}
-          className={formclasses.inputField}
+          className={classes.inputField}
           onChange={(value) => onUserSelect(value)}
         >
-          {users?.map((o) => (
-            <Select.Option key={o.id} value={JSON.stringify(o)}>
+          {users?.map((o) => ( o.isInDeputyRole ?
+          <Select.Option key={o.id} value={JSON.stringify(o)}>
+            <div className={classes.formOption}>
               {o.firstName + " " + o.lastName}
-            </Select.Option>
+              <Tooltip title="Уже є адміністратором">
+                <InfoCircleOutlined />
+              </Tooltip>
+            </div>
+          </Select.Option>
+          : 
+          <Select.Option key={o.id} value={JSON.stringify(o)}>
+            {o.firstName + " " + o.lastName}
+          </Select.Option>
           ))}
         </Select>
       </Form.Item>
 
       <Form.Item
-        className={formclasses.formField}
-        labelCol={{ span: 24 }}
+        className={classes.formField}
         label="Тип адміністрування"
         initialValue={
           props.admin === undefined ? "" : props.admin.adminType.adminTypeName
@@ -239,7 +245,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         ]}
       >
         <AutoComplete
-          className={formclasses.inputField}
+          className={classes.inputField}
           options={[
             { value: Roles.GoverningBodyHead },
             { value: "Голова КПР" },
@@ -254,36 +260,33 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
 
       <Form.Item
         name="workEmail"
-        className={formclasses.formField}
-        labelCol={{ span: 24 }}
+        className={classes.formField}
         label="Електронна пошта"
         rules={[
-          {
-            pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-            message: <div className="formItemExplain">{incorrectEmail}</div>,
-          },
-          {
-            max: 50,
-            message: <div className="formItemExplain">{maxLength(50)}</div>,
-          },
-          {
-            required: true,
-            message: <div className="formItemExplain">{emptyInput()}</div>,
-          },
+            {
+              pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
+              message: <div>{incorrectEmail}</div>,
+            },
+            {
+              max: 50,
+              message: <div>{maxLength(50)}</div>,
+            },
+            {
+              required: true,
+              message: emptyInput(),
+            }
         ]}
       >
         <Input
           placeholder="Електронна пошта"
-          className={formclasses.inputField}
+          className={classes.inputField}
           value={workEmail}
           onChange={(e) => setWorkEmail(e.target.value)}
         />
       </Form.Item>
 
       <Form.Item
-        className={formclasses.formField}
-        labelCol={{ span: 12 }}
-        labelAlign="left"
+        className={classes.formField}
         label="Дата початку"
         name="startDate"
         initialValue={
@@ -291,9 +294,10 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
             ? undefined
             : moment.utc(props.admin.startDate).local()
         }
-      >
+        >
         <DatePicker
-          className={formclasses.inputField}
+          style={{width:'100%'}}
+          className={classes.inputField}
           disabledDate={disabledStartDate}
           onChange={(e) => setStartDate(e)}
           format="DD.MM.YYYY"
@@ -301,21 +305,19 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={formclasses.formField}
-        labelCol={{ span: 12 }}
-        labelAlign="left"
+        className={classes.formField}
         label="Дата кінця"
         name="endDate"
         initialValue={
           props.admin === undefined
             ? undefined
             : props.admin.endDate === null
-            ? undefined
-            : moment.utc(props.admin.endDate).local()
+              ? undefined
+              : moment.utc(props.admin.endDate).local()
         }
       >
         <DatePicker
-          className={formclasses.inputField}
+          className={classes.inputField}
           disabledDate={disabledEndDate}
           format="DD.MM.YYYY"
         />

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
-import {
+import { 
   Form,
-  DatePicker,
-  AutoComplete,
-  Select,
-  Modal,
-  Button,
-  Input,
+  DatePicker, 
+  AutoComplete, 
+  Select, 
+  Modal, 
+  Button, 
+  Input, 
+  Tooltip 
 } from "antd";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
@@ -30,11 +31,12 @@ import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
 import "../AddAdministratorModal/AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 const confirm = Modal.confirm;
 
 const AddSectorAdminForm = (props: any) => {
-  const { onAdd, setAdmins, admins, setSectorHead } = props;
+  const { onAdd, setAdmins, admins, setSectorHead, visibleModal } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [usersLoading, setUsersLoading] = useState<boolean>(false);
@@ -76,7 +78,7 @@ const AddSectorAdminForm = (props: any) => {
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
       `цьому напрямі керівного органу`
-    );
+      );
   };
 
   const showConfirm = (newAdmin: SectorAdmin, existingAdmin: SectorAdmin) => {
@@ -87,10 +89,10 @@ const AddSectorAdminForm = (props: any) => {
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління 
           закінчується{" "}
           <b>
-            {existingAdmin.endDate === null ||
+            {existingAdmin.endDate === null || 
             existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
@@ -103,7 +105,7 @@ const AddSectorAdminForm = (props: any) => {
         if (newAdmin.id === 0) {
           addSectorAdmin(newAdmin);
           setAdmins(
-            (admins as SectorAdmin[]).map((x) =>
+            (admins as SectorAdmin[]).map((x) => 
               x.userId === existingAdmin?.userId ? newAdmin : x
             )
           );
@@ -159,25 +161,20 @@ const AddSectorAdminForm = (props: any) => {
     form.setFieldsValue({ workEmail: email });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setUsersLoading(true);
-      await adminApi
-        .getUsersByExactRoles(
-          [
-            [Roles.PlastMember],
-            [Roles.PlastMember, Roles.KurinHead],
-            [Roles.PlastMember, Roles.KurinHeadDeputy],
-          ],
-          true
-        )
-        .then((response) => {
-          setUsers(response.data);
-          setUsersLoading(false);
-        });
-    };
+ const fetchData = async () => {
+    setUsersLoading(true);
+    try {
+      const responseUsers = await adminApi.getUsersForGoverningBodies()
+      setUsers(responseUsers.data);
+    }
+  finally {
+    setUsersLoading(false);
+  }
+}
+
+useEffect(() => {
     fetchData();
-  }, []);
+}, []);
 
   useEffect(() => {
     if (props.visibleModal) {
@@ -203,9 +200,18 @@ const AddSectorAdminForm = (props: any) => {
           showSearch
           loading={usersLoading}
           className={classes.inputField}
-          onChange={(value) => onUserSelect(value)}
+          onChange={value => onUserSelect(value)}
         >
-          {users?.map((o) => (
+          {users?.map((o) => (o.isInDeputyRole ? 
+          <Select.Option key={o.id} value={JSON.stringify(o)}>
+          <div className={classes.formOption}>
+            {o.firstName + " " + o.lastName}
+            <Tooltip title="Уже є адміністратором">
+              <InfoCircleOutlined />
+            </Tooltip>
+          </div>
+          </Select.Option>
+          :
             <Select.Option key={o.id} value={JSON.stringify(o)}>
               {o.firstName + " " + o.lastName}
             </Select.Option>
@@ -273,9 +279,9 @@ const AddSectorAdminForm = (props: any) => {
         label="Дата початку"
         name="startDate"
         initialValue={
-          props.admin === undefined
-            ? undefined
-            : moment.utc(props.admin.startDate).local()
+          props.admin === undefined 
+          ? undefined 
+          : moment.utc(props.admin.startDate).local()
         }
       >
         <DatePicker
