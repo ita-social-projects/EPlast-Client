@@ -96,7 +96,7 @@ const FormAddPlastDegree = ({
           onChange={(value) => handleOnChange(value)}
           placeholder={"Оберіть Улад"}
         >
-          {!isCityAdmin &&
+          {
             availablePlastDegree.find((item) => item.name === "Пластприят") && (
               <Select.Option value="Пластприят">Пластприят</Select.Option>
             )}
@@ -121,7 +121,6 @@ const FormAddPlastDegree = ({
         >
           <Select placeholder={"Оберіть ступінь"}>
             {filtredDegrees.map((apd) => {
-              if ((isCityAdmin && (apd.id == 1 || apd.id == 7)) || !isCityAdmin)
                 return (
                   <Select.Option key={apd.id} value={apd.id}>
                     {apd.name}
