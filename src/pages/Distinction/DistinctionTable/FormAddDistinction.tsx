@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Form, DatePicker, Select, Input, Button, Row, Col } from "antd";
+import {
+  Form,
+  DatePicker,
+  Select,
+  Input,
+  Button,
+  Row,
+  Col,
+  Tooltip,
+} from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import Distinction from "../Interfaces/Distinction";
+import classes from "./FormEdit.module.css";
 import UserDistinction from "../Interfaces/UserDistinction";
 import distinctionApi from "../../../api/distinctionApi";
 import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import EditDistinctionTypesModal from "./EditDistinctionTypesModal";
 import {
   emptyInput,
   maxNumber,
@@ -21,10 +33,11 @@ import moment from "moment";
 type FormAddDistinctionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: () => void;
+  onDelete: () => void;
 };
 
 const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
-  const { setVisibleModal, onAdd } = props;
+  const { setVisibleModal, onAdd, onDelete } = props;
   const [form] = Form.useForm();
   const [userData, setUserData] = useState<any[]>([
     {
@@ -43,21 +56,27 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
   ]);
   const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
+  const [visibleModalEditDist, setVisibleModalEditDist] = useState(false);
   const dateFormat = "DD.MM.YYYY";
 
   useEffect(() => {
-    const fetchData = async () => {
-      await distinctionApi.getDistinctions().then((response) => {
-        setDistData(response.data);
-      });
-      setLoadingUserStatus(true);
-      await precautionApi.getUsersWithoutPrecautions().then((response) => {
-        setUserData(response);
-        setLoadingUserStatus(false);
-      });
-    };
+    setLoadingUserStatus(true);
+    precautionApi.getUsersWithoutPrecautions().then((response) => {
+      setUserData(response);
+      setLoadingUserStatus(false);
+    });
     fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [visibleModalEditDist]);
+
+  const fetchData = async () => {
+    await distinctionApi.getDistinctions().then((response) => {
+      setDistData(response.data);
+    });
+  };
 
   const handleCancel = () => {
     form.resetFields();
@@ -95,6 +114,11 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
     });
   };
 
+  const showModalEditTypes = () => {
+    setVisibleModal(false);
+    setVisibleModalEditDist(true);
+  };
+
   const handleSubmit = async (values: any) => {
     const newDistinction: UserDistinction = {
       id: 0,
@@ -124,7 +148,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       name="basic"
       onFinish={handleSubmit}
       form={form}
-      id="area"
+      id="addArea"
       style={{ position: "relative" }}
     >
       <Row justify="start" gutter={[12, 0]}>
@@ -145,13 +169,19 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               },
               {
                 validator: async (_: object, value: number) =>
-                  value && !isNaN(value)
+                  value && !isNaN(value) && value > 0
                     ? (await distinctionApi
                         .checkNumberExisting(value)
                         .then((response) => response.data === false))
                       ? Promise.resolve()
                       : Promise.reject("Цей номер уже зайнятий")
                     : Promise.reject(),
+              },
+              {
+                validator: async (_: object, value: number) =>
+                  value == 0 && value && !isNaN(value)
+                    ? Promise.reject("Номер не може бути 0")
+                    : Promise.resolve(),
               },
             ]}
           >
@@ -171,7 +201,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
         </Col>
       </Row>
       <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
+        <Col span={21}>
           <Form.Item
             className={formclasses.formField}
             label="Відзначення"
@@ -185,7 +215,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             ]}
           >
             <Select
-              className={formclasses.selectField}
+              className={formclasses.selectTypeDistField}
               showSearch
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
@@ -196,6 +226,28 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               ))}
             </Select>
           </Form.Item>
+        </Col>
+        <Col span={3}>
+          <Tooltip
+            title="Редагувати відзначення"
+            className={formclasses.editTypeDistPosition}
+          >
+            <EditOutlined
+              className={classes.editIcon}
+              onClick={showModalEditTypes}
+            />
+          </Tooltip>
+        </Col>
+        <Col span={3}>
+          <Tooltip
+            title="Редагувати відзначення"
+            className={formclasses.editTypeDistPosition}
+          >
+            <EditOutlined
+              className={classes.editIcon}
+              onClick={showModalEditTypes}
+            />
+          </Tooltip>
         </Col>
       </Row>
       <Row justify="start" gutter={[12, 0]}>
@@ -268,7 +320,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               format={dateFormat}
               className={formclasses.selectField}
               getPopupContainer={() =>
-                document.getElementById("area")! as HTMLElement
+                document.getElementById("addArea")! as HTMLElement
               }
               popupStyle={{ position: "absolute" }}
             />
@@ -318,6 +370,12 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
           </Form.Item>
         </Col>
       </Row>
+      <EditDistinctionTypesModal
+        setVisibleModalAddDist={setVisibleModal}
+        setVisibleModalEditDist={setVisibleModalEditDist}
+        visibleModalEdit={visibleModalEditDist}
+        onDelete={onDelete}
+      />
     </Form>
   );
 };
