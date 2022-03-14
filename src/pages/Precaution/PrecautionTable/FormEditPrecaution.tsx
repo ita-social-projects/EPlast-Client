@@ -182,7 +182,7 @@ const FormEditPrecaution = ({
                   },
                   {
                     validator: async (_: object, value: number) =>
-                      value && !isNaN(value)
+                      value && !isNaN(value) && value > 0
                         ? value == Precaution.number ||
                           (await precautionApi
                             .checkNumberExisting(value)
@@ -190,6 +190,12 @@ const FormEditPrecaution = ({
                           ? Promise.resolve()
                           : Promise.reject("Цей номер уже зайнятий")
                         : Promise.reject(),
+                  },
+                  {
+                    validator: async (_: object, value: number) =>
+                      value == 0 && value && !isNaN(value)
+                        ? Promise.reject("Номер не може бути 0")
+                        : Promise.resolve(),
                   },
                 ]}
               >
