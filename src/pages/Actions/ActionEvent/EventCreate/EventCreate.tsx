@@ -31,10 +31,12 @@ import {
   minNumber,
   incorrectStartTime,
   incorrectEndTime,
+  inputOnlyWhiteSpaces,
 } from "../../../../components/Notifications/Messages";
 import { descriptionValidation } from "../../../../models/GllobalValidations/DescriptionValidation";
 import { PlusOutlined } from "@ant-design/icons";
 import EventSections from "../../../../models/EventCreate/EventSections";
+import ButtonCollapse from "../../../../components/ButtonCollapse/ButtonCollapse";
 
 import { notification, Spin } from "antd";
 import { successfulUpdateAction } from "../../../../components/Notifications/Messages";
@@ -259,12 +261,18 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
     setShowEventCreateDrawer(false);
   };
 
+  const handleClose = () => {
+    setShowEventCreateDrawer(false);
+  };
+
   function warning() {
     notificationLogic("warning", "Спочатку оберіть тип події.");
   }
 
   return (
-    <Form
+    <>
+      <ButtonCollapse handleClose={handleClose} />
+      <Form
       name="basic"
       form={form}
       onFinish={handleFinish}
@@ -680,7 +688,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
             label="Питання / побажання до булави"
             className={classes.formItem}
             name="Questions"
-            rules={descriptionValidation.DescriptionAndQuestions}
+            rules={descriptionValidation.DescriptionAndQuestionsNotRequired}
           >
             <TextArea
               className={classes.input}
@@ -729,5 +737,6 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         </Col>
       </Row>
     </Form>
+    </>
   );
 }
