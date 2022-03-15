@@ -31,10 +31,12 @@ import {
   minNumber,
   incorrectStartTime,
   incorrectEndTime,
+  inputOnlyWhiteSpaces,
 } from "../../../../components/Notifications/Messages";
 import { descriptionValidation } from "../../../../models/GllobalValidations/DescriptionValidation";
 import { PlusOutlined } from "@ant-design/icons";
 import EventSections from "../../../../models/EventCreate/EventSections";
+import ButtonCollapse from "../../../../components/ButtonCollapse/ButtonCollapse";
 
 import { notification, Spin } from "antd";
 import { successfulUpdateAction } from "../../../../components/Notifications/Messages";
@@ -259,475 +261,484 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
     setShowEventCreateDrawer(false);
   };
 
+  const handleClose = () => {
+    setShowEventCreateDrawer(false);
+  };
+
   function warning() {
     notificationLogic("warning", "Спочатку оберіть тип події.");
   }
 
   return (
-    <Form
-      name="basic"
-      form={form}
-      onFinish={handleFinish}
-      id="area"
-      style={{ position: "relative" }}
-    >
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Тип події"
-            name="EventTypeID"
-            rules={[{ required: true, message: isNotChosen("Тип події") }]}
-            className={classes.radio}
-          >
-            <Radio.Group
-              buttonStyle="solid"
-              className={classes.eventTypeGroup}
-              onChange={onChange}
-              value={categories}
+    <>
+      <ButtonCollapse handleClose={handleClose} />
+      <Form
+        name="basic"
+        form={form}
+        onFinish={handleFinish}
+        id="area"
+        style={{ position: "relative" }}
+      >
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Тип події"
+              name="EventTypeID"
+              rules={[{ required: true, message: isNotChosen("Тип події") }]}
+              className={classes.radio}
             >
-              {eventTypes.map((item: any) => (
-                <Radio.Button key={item.id} value={item.id}>
-                  {" "}
-                  {item.eventTypeName}
-                </Radio.Button>
-              ))}
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            name="EventCategoryID"
-            className={classes.formItem}
-            label="Категорія"
-            rules={[{ required: true, message: emptyInput() }]}
-          >
-            <Select
-              notFoundContent="Спочатку оберіть тип події"
-              showSearch
-              optionFilterProp="children"
-              getPopupContainer={(triggerNode) => triggerNode.parentNode}
-              dropdownRender={(menu) => (
-                <div>
-                  {menu}
-                  <Divider style={{ margin: "4px 0" }} />
+              <Radio.Group
+                buttonStyle="solid"
+                className={classes.eventTypeGroup}
+                onChange={onChange}
+                value={categories}
+              >
+                {eventTypes.map((item: any) => (
+                  <Radio.Button key={item.id} value={item.id}>
+                    {" "}
+                    {item.eventTypeName}
+                  </Radio.Button>
+                ))}
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              name="EventCategoryID"
+              className={classes.formItem}
+              label="Категорія"
+              rules={[{ required: true, message: emptyInput() }]}
+            >
+              <Select
+                notFoundContent="Спочатку оберіть тип події"
+                showSearch
+                optionFilterProp="children"
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                dropdownRender={(menu) => (
                   <div>
-                    <a
-                      style={{
-                        flex: "none",
-                        padding: "8px",
-                        display: "block",
-                        cursor: "pointer",
-                      }}
-                      onClick={eventType ? showModal : warning}
-                    >
-                      <PlusOutlined /> Додати нову категорію
-                    </a>
-                    <Modal
-                      visible={visibleModal}
-                      title="Додати нову категорію"
-                      onOk={addCategory}
-                      onCancel={handleCancelModal}
-                      footer={[
-                        <Button key="back" onClick={handleCancelModal}>
-                          Відмінити
-                        </Button>,
-                        <Button
-                          key="submit"
-                          type="primary"
-                          onClick={addCategory}
-                          disabled={!categoryName || !eventSection}
-                        >
-                          Додати
-                        </Button>,
-                      ]}
-                    >
-                      <div
+                    {menu}
+                    <Divider style={{ margin: "4px 0" }} />
+                    <div>
+                      <a
                         style={{
-                          display: "flex",
-                          flexWrap: "nowrap",
-                          padding: 8,
+                          flex: "none",
+                          padding: "8px",
+                          display: "block",
+                          cursor: "pointer",
                         }}
+                        onClick={eventType ? showModal : warning}
                       >
-                        <Input
-                          style={{ flex: "auto" }}
-                          placeholder="Назва категорії"
-                          value={categoryName}
-                          onChange={onCategoryNameChange}
-                        />
-                        <Select
-                          placeholder="Секція"
-                          value={eventSection}
-                          onChange={onEventSectionChange}
-                          style={{ paddingLeft: 9 }}
+                        <PlusOutlined /> Додати нову категорію
+                      </a>
+                      <Modal
+                        visible={visibleModal}
+                        title="Додати нову категорію"
+                        onOk={addCategory}
+                        onCancel={handleCancelModal}
+                        footer={[
+                          <Button key="back" onClick={handleCancelModal}>
+                            Відмінити
+                          </Button>,
+                          <Button
+                            key="submit"
+                            type="primary"
+                            onClick={addCategory}
+                            disabled={!categoryName || !eventSection}
+                          >
+                            Додати
+                          </Button>,
+                        ]}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            flexWrap: "nowrap",
+                            padding: 8,
+                          }}
                         >
-                          {eventSections.map((item: any) => (
-                            <Select.Option
-                              key={item.eventSectionId}
-                              value={item.eventSectionId}
-                            >
-                              {" "}
-                              {item.eventSectionName}{" "}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      </div>
-                    </Modal>
+                          <Input
+                            style={{ flex: "auto" }}
+                            placeholder="Назва категорії"
+                            value={categoryName}
+                            onChange={onCategoryNameChange}
+                          />
+                          <Select
+                            placeholder="Секція"
+                            value={eventSection}
+                            onChange={onEventSectionChange}
+                            style={{ paddingLeft: 9 }}
+                          >
+                            {eventSections.map((item: any) => (
+                              <Select.Option
+                                key={item.eventSectionId}
+                                value={item.eventSectionId}
+                              >
+                                {" "}
+                                {item.eventSectionName}{" "}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </div>
+                      </Modal>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              >
+                {categories.map((item: any) => (
+                  <Select.Option
+                    key={item.eventCategoryId}
+                    value={item.EventCategoryId}
+                  >
+                    {" "}
+                    {item.eventCategoryName}{" "}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Назва події"
+              name="EventName"
+              className={classes.formItem}
+              rules={descriptionValidation.Inputs}
             >
-              {categories.map((item: any) => (
-                <Select.Option
-                  key={item.eventCategoryId}
-                  value={item.EventCategoryId}
-                >
-                  {" "}
-                  {item.eventCategoryName}{" "}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Назва події"
-            name="EventName"
-            className={classes.formItem}
-            rules={descriptionValidation.Inputs}
-          >
-            <TextArea
-              className={classes.input}
-              autoSize={{ minRows: 2, maxRows: 3 }}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Комендант"
-            name="commandantId"
-            className={classes.formItem}
-            rules={[{ required: true, message: emptyInput() }]}
-          >
-            <Select
-              showSearch
-              optionFilterProp="children"
-              onChange={(e: any) => handleSelectChange(0, e)}
-              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              <TextArea
+                className={classes.input}
+                autoSize={{ minRows: 2, maxRows: 3 }}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Комендант"
+              name="commandantId"
+              className={classes.formItem}
+              rules={[{ required: true, message: emptyInput() }]}
             >
-              {administrators.map((item: any) => (
-                <Select.Option
-                  disabled={item.isSelected}
-                  key={item.id}
-                  value={item.id}
-                >
-                  {" "}
-                  {item.firstName} {item.lastName} <br /> {item.userName}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Заступник коменданта"
-            name="alternateId"
-            className={classes.formItem}
-            rules={[{ required: false, message: emptyInput() }]}
-          >
-            <Select
-              allowClear
-              showSearch
-              optionFilterProp="children"
-              onChange={(e: any) => handleSelectChange(1, e)}
-              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              <Select
+                showSearch
+                optionFilterProp="children"
+                onChange={(e: any) => handleSelectChange(0, e)}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              >
+                {administrators.map((item: any) => (
+                  <Select.Option
+                    disabled={item.isSelected}
+                    key={item.id}
+                    value={item.id}
+                  >
+                    {" "}
+                    {item.firstName} {item.lastName} <br /> {item.userName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Заступник коменданта"
+              name="alternateId"
+              className={classes.formItem}
+              rules={[{ required: false, message: emptyInput() }]}
             >
-              {administrators.map((item: any) => (
-                <Select.Option
-                  disabled={item.isSelected}
-                  key={item.value}
-                  value={item.id}
-                >
-                  {" "}
-                  {item.firstName} {item.lastName} <br /> {item.userName}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Бунчужний"
-            name="bunchuzhnyiId"
-            className={classes.formItem}
-            rules={[{ required: true, message: emptyInput() }]}
-          >
-            <Select
-              showSearch
-              optionFilterProp="children"
-              onChange={(e: any) => handleSelectChange(2, e)}
-              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              <Select
+                allowClear
+                showSearch
+                optionFilterProp="children"
+                onChange={(e: any) => handleSelectChange(1, e)}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              >
+                {administrators.map((item: any) => (
+                  <Select.Option
+                    disabled={item.isSelected}
+                    key={item.value}
+                    value={item.id}
+                  >
+                    {" "}
+                    {item.firstName} {item.lastName} <br /> {item.userName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Бунчужний"
+              name="bunchuzhnyiId"
+              className={classes.formItem}
+              rules={[{ required: true, message: emptyInput() }]}
             >
-              {administrators.map((item: any) => (
-                <Select.Option
-                  disabled={item.isSelected}
-                  key={item.value}
-                  value={item.id}
-                >
-                  {" "}
-                  {item.firstName} {item.lastName} <br /> {item.userName}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Писар"
-            name="pysarId"
-            className={classes.formItem}
-            rules={[{ required: true, message: emptyInput() }]}
-          >
-            <Select
-              showSearch
-              optionFilterProp="children"
-              onChange={(e: any) => handleSelectChange(3, e)}
-              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              <Select
+                showSearch
+                optionFilterProp="children"
+                onChange={(e: any) => handleSelectChange(2, e)}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              >
+                {administrators.map((item: any) => (
+                  <Select.Option
+                    disabled={item.isSelected}
+                    key={item.value}
+                    value={item.id}
+                  >
+                    {" "}
+                    {item.firstName} {item.lastName} <br /> {item.userName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Писар"
+              name="pysarId"
+              className={classes.formItem}
+              rules={[{ required: true, message: emptyInput() }]}
             >
-              {administrators.map((item: any) => (
-                <Select.Option
-                  disabled={item.isSelected}
-                  key={item.value}
-                  value={item.id}
-                >
-                  {" "}
-                  {item.firstName} {item.lastName} <br /> {item.userName}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Дата початку"
-            name="EventDateStart"
-            className={classes.formItem}
-            rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-              {
-                validator: (_: object, value: Date) => {
-                  return value < new Date()
-                    ? Promise.reject(incorrectStartTime)
-                    : Promise.resolve();
+              <Select
+                showSearch
+                optionFilterProp="children"
+                onChange={(e: any) => handleSelectChange(3, e)}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              >
+                {administrators.map((item: any) => (
+                  <Select.Option
+                    disabled={item.isSelected}
+                    key={item.value}
+                    value={item.id}
+                  >
+                    {" "}
+                    {item.firstName} {item.lastName} <br /> {item.userName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Дата початку"
+              name="EventDateStart"
+              className={classes.formItem}
+              rules={[
+                {
+                  required: true,
+                  message: emptyInput(),
                 },
-              },
-            ]}
-          >
-            <DatePicker
-              showTime
-              disabledDate={disabledDate}
-              placeholder="Оберіть дату початку"
-              format={dateFormat}
-              className={classes.select}
-              onChange={onEventDateStartChange}
-              getPopupContainer={() =>
-                document.getElementById("area")! as HTMLElement
-              }
-              popupStyle={{ position: "absolute" }}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Дата завершення"
-            name="EventDateEnd"
-            className={classes.formItem}
-            rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-              {
-                validator: (_: object, value: Date) => {
-                  return value <= StartDate!
-                    ? Promise.reject(incorrectEndTime)
-                    : Promise.resolve();
+                {
+                  validator: (_: object, value: Date) => {
+                    return value < new Date()
+                      ? Promise.reject(incorrectStartTime)
+                      : Promise.resolve();
+                  },
                 },
-              },
-            ]}
-          >
-            <DatePicker
-              showTime
-              disabled={visibleEndDatePicker}
-              defaultPickerValue={moment(StartDate)}
-              disabledDate={disabledEndDate}
-              placeholder="Оберіть дату завершення"
-              format={dateFormat}
-              className={classes.select}
-              getPopupContainer={() =>
-                document.getElementById("area")! as HTMLElement
-              }
-              popupStyle={{ position: "absolute" }}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Форма проведення"
-            name="FormOfHolding"
-            className={classes.formItem}
-            rules={descriptionValidation.Inputs}
-          >
-            <TextArea
-              className={classes.input}
-              autoSize={{ minRows: 2, maxRows: 3 }}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Локація"
-            name="Eventlocation"
-            className={classes.formItem}
-            rules={descriptionValidation.Inputs}
-          >
-            <TextArea
-              className={classes.input}
-              autoSize={{ minRows: 2, maxRows: 3 }}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Призначена для"
-            name="ForWhom"
-            className={classes.formItem}
-            rules={descriptionValidation.Inputs}
-          >
-            <TextArea
-              className={classes.input}
-              autoSize={{ minRows: 2, maxRows: 3 }}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Приблизна кількість учасників"
-            name="NumberOfPartisipants"
-            className={classes.formItem}
-            rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-              {
-                validator: (_: object, value: number) =>
-                  value > 100
-                    ? Promise.reject(maxNumber(100))
-                    : Promise.resolve(),
-              },
-              {
-                validator: (_: object, value: number) =>
-                  value < 2 ? Promise.reject(minNumber(2)) : Promise.resolve(),
-              },
-            ]}
-          >
-            <Input
-              className={classes.input}
-              type="number"
-              onKeyDown={(e) =>
-                (e.keyCode === 69 ||
-                  e.keyCode === 190 ||
-                  e.keyCode === 187 ||
-                  e.keyCode === 189) &&
-                e.preventDefault()
-              }
-              min="2"
-              max="100"
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Питання / побажання до булави"
-            className={classes.formItem}
-            name="Questions"
-            rules={descriptionValidation.DescriptionAndQuestions}
-          >
-            <TextArea
-              className={classes.input}
-              autoSize={{ minRows: 3, maxRows: 5 }}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            label="Опис події"
-            name="Description"
-            className={classes.formItem}
-            rules={descriptionValidation.DescriptionAndQuestions}
-          >
-            <TextArea
-              className={classes.input}
-              autoSize={{ minRows: 3, maxRows: 5 }}
-              maxLength={201}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item className={classes.formItem}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              className={classes.button}
-              loading={loading}
+              ]}
             >
-              Зберегти подію
-            </Button>
-            <Button
-              key="back"
-              style={{ marginRight: "7px" }}
-              onClick={handleCancel}
-              className={classes.button}
-              loading={loading}
+              <DatePicker
+                showTime
+                disabledDate={disabledDate}
+                placeholder="Оберіть дату початку"
+                format={dateFormat}
+                className={classes.select}
+                onChange={onEventDateStartChange}
+                getPopupContainer={() =>
+                  document.getElementById("area")! as HTMLElement
+                }
+                popupStyle={{ position: "absolute" }}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Дата завершення"
+              name="EventDateEnd"
+              className={classes.formItem}
+              rules={[
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+                {
+                  validator: (_: object, value: Date) => {
+                    return value <= StartDate!
+                      ? Promise.reject(incorrectEndTime)
+                      : Promise.resolve();
+                  },
+                },
+              ]}
             >
-              Відмінити
-            </Button>
-          </Form.Item>
-        </Col>
-      </Row>
-    </Form>
+              <DatePicker
+                showTime
+                disabled={visibleEndDatePicker}
+                defaultPickerValue={moment(StartDate)}
+                disabledDate={disabledEndDate}
+                placeholder="Оберіть дату завершення"
+                format={dateFormat}
+                className={classes.select}
+                getPopupContainer={() =>
+                  document.getElementById("area")! as HTMLElement
+                }
+                popupStyle={{ position: "absolute" }}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Форма проведення"
+              name="FormOfHolding"
+              className={classes.formItem}
+              rules={descriptionValidation.Inputs}
+            >
+              <TextArea
+                className={classes.input}
+                autoSize={{ minRows: 2, maxRows: 3 }}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Локація"
+              name="Eventlocation"
+              className={classes.formItem}
+              rules={descriptionValidation.Inputs}
+            >
+              <TextArea
+                className={classes.input}
+                autoSize={{ minRows: 2, maxRows: 3 }}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Призначена для"
+              name="ForWhom"
+              className={classes.formItem}
+              rules={descriptionValidation.Inputs}
+            >
+              <TextArea
+                className={classes.input}
+                autoSize={{ minRows: 2, maxRows: 3 }}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Приблизна кількість учасників"
+              name="NumberOfPartisipants"
+              className={classes.formItem}
+              rules={[
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+                {
+                  validator: (_: object, value: number) =>
+                    value > 100
+                      ? Promise.reject(maxNumber(100))
+                      : Promise.resolve(),
+                },
+                {
+                  validator: (_: object, value: number) =>
+                    value < 2
+                      ? Promise.reject(minNumber(2))
+                      : Promise.resolve(),
+                },
+              ]}
+            >
+              <Input
+                className={classes.input}
+                type="number"
+                onKeyDown={(e) =>
+                  (e.keyCode === 69 ||
+                    e.keyCode === 190 ||
+                    e.keyCode === 187 ||
+                    e.keyCode === 189) &&
+                  e.preventDefault()
+                }
+                min="2"
+                max="100"
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Питання / побажання до булави"
+              className={classes.formItem}
+              name="Questions"
+              rules={descriptionValidation.DescriptionAndQuestionsNotRequired}
+            >
+              <TextArea
+                className={classes.input}
+                autoSize={{ minRows: 3, maxRows: 5 }}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              label="Опис події"
+              name="Description"
+              className={classes.formItem}
+              rules={descriptionValidation.DescriptionAndQuestions}
+            >
+              <TextArea
+                className={classes.input}
+                autoSize={{ minRows: 3, maxRows: 5 }}
+                maxLength={201}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item className={classes.formItem}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className={classes.button}
+                loading={loading}
+              >
+                Зберегти подію
+              </Button>
+              <Button
+                key="back"
+                style={{ marginRight: "7px" }}
+                onClick={handleCancel}
+                className={classes.button}
+                loading={loading}
+              >
+                Відмінити
+              </Button>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+    </>
   );
 }
