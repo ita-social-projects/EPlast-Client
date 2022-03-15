@@ -7,6 +7,7 @@ import {
 } from "../../../components/Notifications/Messages";
 import ReactQuill from "react-quill";
 import { UploadFile } from "antd/lib/upload/interface";
+import ButtonCollapse from "../../../components/ButtonCollapse/ButtonCollapse";
 
 type FormAddAnnouncementProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -21,6 +22,10 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const handleClose = () => {
+    setVisibleModal(false);
+  };
 
   const handleCancel = () => {
     form.resetFields();
@@ -50,67 +55,70 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   };
 
   return (
-    <Form
-      name="basic"
-      onFinish={handleSubmit}
-      form={form}
-      id="area"
-      style={{ position: "relative" }}
-    >
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            className={formclasses.formField}
-            initialValue={""}
-            label="Текст оголошення"
-            labelCol={{ span: 24 }}
-            name="text"
-            rules={[
-              { required: true, message: emptyInput() },
-              {
-                max: 1000,
-                message: maxLength(1000),
-              },
-            ]}
+    <>
+      <ButtonCollapse handleClose={handleClose} />
+      <Form
+        name="basic"
+        onFinish={handleSubmit}
+        form={form}
+        id="area"
+        style={{ position: "relative" }}
+      >
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              className={formclasses.formField}
+              initialValue={""}
+              label="Текст оголошення"
+              labelCol={{ span: 24 }}
+              name="text"
+              rules={[
+                { required: true, message: emptyInput() },
+                {
+                  max: 1000,
+                  message: maxLength(1000),
+                },
+              ]}
+            >
+              <ReactQuill theme="snow" placeholder="Введіть текст..." />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Upload
+            listType="picture-card"
+            accept=".jpeg,.jpg,.png"
+            fileList={fileList}
+            onChange={handleUpload}
+            beforeUpload={() => false}
           >
-            <ReactQuill theme="snow" placeholder="Введіть текст..." />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row>
-        <Upload
-          listType="picture-card"
-          accept=".jpeg,.jpg,.png"
-          fileList={fileList}
-          onChange={handleUpload}
-          beforeUpload={() => false}
-        >
-          {"Upload"}
-        </Upload>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item>
-            <div className={formclasses.cardButton}>
-              <Button
-                key="back"
-                onClick={handleCancel}
-                className={formclasses.buttons}
-              >
-                Відмінити
-              </Button>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className={formclasses.buttons}
-              >
-                Опублікувати
-              </Button>
-            </div>
-          </Form.Item>
-        </Col>
-      </Row>
-    </Form>
+            {"Upload"}
+          </Upload>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item>
+              <div className={formclasses.cardButton}>
+                <Button
+                  key="back"
+                  onClick={handleCancel}
+                  className={formclasses.buttons}
+                >
+                  Відмінити
+                </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className={formclasses.buttons}
+                >
+                  Опублікувати
+                </Button>
+              </div>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+    </>
   );
 };
 

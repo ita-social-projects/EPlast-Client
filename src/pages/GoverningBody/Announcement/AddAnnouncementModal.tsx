@@ -1,6 +1,7 @@
 import React from "react";
 import { Drawer } from "antd";
 import FormAddAnnouncement from "./FormAddAnnouncement";
+import ButtonCollapse from "../../../components/ButtonCollapse/ButtonCollapse";
 
 interface Props {
   visibleModal: boolean;
@@ -18,15 +19,15 @@ const AddAnnouncementModal = ({
   };
   return (
     <Drawer
-      title="Додати оголошення"
-      placement="right"
-      width="auto"
-      visible={visibleModal}
-      onClose={handleCancel}
-      footer={null}
-    >
-      <FormAddAnnouncement setVisibleModal={setVisibleModal} onAdd={onAdd} />
-    </Drawer>
+        closable={false}
+        width="auto"
+        title="Додати оголошення"
+        visible={visibleModal}
+        onClose={handleCancel}
+        footer={null}
+      >
+         <FormAddAnnouncement setVisibleModal={setVisibleModal} onAdd={onAdd} />
+      </Drawer>
   );
 };
 
