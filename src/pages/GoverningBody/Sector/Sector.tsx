@@ -26,6 +26,10 @@ import {
   getUserAccess,
   removeSector,
 } from "../../../api/governingBodySectorsApi";
+import {
+  getAnnouncementsById,
+  addAnnouncement,
+} from "../../../api/governingBodiesApi";
 import "../GoverningBody/GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
@@ -46,7 +50,13 @@ import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument"
 import AddDocumentModal from "./AddDocumentModal";
 import AddSectorAdminForm from "./AddSectorAdminForm";
 import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
-import { getAllAnnouncements } from "../../../api/governingBodiesApi";
+import { getAnnouncementsByPage } from "../../../api/governingBodiesApi";
+import AddAnnouncementModal from "../Announcement/AddAnnouncementModal";
+import { getUsersByAllRoles } from "../../../api/adminApi";
+import { Markup } from "interweave";
+import { Roles } from "../../../models/Roles/Roles";
+import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
+import NotificationBoxApi from "../../../api/NotificationBoxApi";
 
 const Sector = () => {
   const history = useHistory();
@@ -73,6 +83,9 @@ const Sector = () => {
   const [announcements, setAnnouncements] = useState<
     GoverningBodyAnnouncement[]
   >([]);
+  const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
+
+  const announcementsQuantity = 3;
 
   const deleteSector = async () => {
     await removeSector(sector.id);
@@ -138,13 +151,18 @@ const Sector = () => {
       const sectorViewModel = response.data.sectorViewModel;
       let userAccesses = await getUserAccesses();
       if (userAccesses.data["ViewAnnouncements"]) {
-        const res = (await getAllAnnouncements()).data;
+        const res = (await await getAnnouncementsByPage(1, 3)).data;
         let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];
-        for (let i = 0; i < res.length && i < 3; i++) {
-          res[i].text =
-            res[i].text.substring(0, 40) +
-            (res[i].text.length > 40 ? "..." : "");
-          shortListedAnnoncements = [...shortListedAnnoncements, res[i]];
+        for (let i = 0; i < announcementsQuantity; i++) {
+          if (res.item1[i]) {
+            res.item1[i].text =
+              res.item1[i].text.substring(0, 40) +
+              (res.item1[i].text.length > 40 ? "..." : "");
+            shortListedAnnoncements = [
+              ...shortListedAnnoncements,
+              res.item1[i],
+            ];
+          }
         }
         setAnnouncements(shortListedAnnoncements);
       }
@@ -165,6 +183,42 @@ const Sector = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getUsers = async () => {
+    let result: any;
+    await getUsersByAllRoles([[Roles.RegisteredUser]], false).then(
+      (response) => {
+        result = response;
+      }
+    );
+    return result;
+  };
+  const newAnnouncementNotification = async () => {
+    let usersId = ((await getUsers()).data as ShortUserInfo[]).map((x) => x.id);
+    await NotificationBoxApi.createNotifications(
+      usersId,
+      "Додане нове оголошення.",
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/announcements/page/1`,
+      `Переглянути`
+    );
+  };
+
+  const onAnnouncementAdd = async (text: string, images: string[]) => {
+    setVisibleAddModal(false);
+    setLoading(true);
+    newAnnouncementNotification();
+    const announcementId = (await addAnnouncement(text, images)).data;
+    let newAnnouncement: GoverningBodyAnnouncement = (
+      await getAnnouncementsById(announcementId)
+    ).data;
+    let newAnnouncements: GoverningBodyAnnouncement[] = announcements;
+    newAnnouncements.unshift(newAnnouncement);
+    newAnnouncements.pop();
+    setAnnouncements(newAnnouncements);
+    setLoading(false);
+    notificationLogic("success", "Оголошення опубліковано");
   };
 
   const handleAdminAdd = () => {
@@ -447,7 +501,7 @@ const Sector = () => {
             >
               {userAccesses["ViewAnnouncements"] ? (
                 announcements.length > 0 ? (
-                  announcements.map((announcement, index) => (
+                  announcements.map((announcement) => (
                     <Col
                       className="cityMemberItem"
                       xs={12}
@@ -465,7 +519,7 @@ const Sector = () => {
                           wordBreak: "break-word",
                         }}
                       >
-                        {announcement.text}
+                        <Markup content={announcement.text} />
                       </Paragraph>
                       <Paragraph>
                         {moment
@@ -498,6 +552,13 @@ const Sector = () => {
                 >
                   Більше
                 </Button>
+                {userAccesses["AddAnnouncement"] ? (
+                  <PlusSquareFilled
+                    type="primary"
+                    className="addReportIcon"
+                    onClick={() => setVisibleAddModal(true)}
+                  />
+                ) : null}
               </div>
             ) : null}
           </Card>
@@ -582,6 +643,11 @@ const Sector = () => {
         setVisibleDrawer={setVisibleDrawer}
         visibleDrawer={visibleDrawer}
         sector={sector}
+      />
+      <AddAnnouncementModal
+        setVisibleModal={setVisibleAddModal}
+        visibleModal={visibleAddModal}
+        onAdd={onAnnouncementAdd}
       />
       <Modal
         title="Додати діловода"

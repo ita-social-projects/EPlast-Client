@@ -109,10 +109,15 @@ const FormEditDistinction = ({
     dist = JSON.parse(dist);
     setDistValue(dist);
   };
+
   const userChange = (user: any) => {
     user = JSON.parse(user);
     setUserValue(user);
   };
+
+  function disabledDate(currentDate: any) {
+    return currentDate && currentDate < moment("01-01-1900", "DD-MM-YYYY");
+  }
 
   const handleFinish = async (dist: any) => {
     const newDistinction: any = {
@@ -149,7 +154,7 @@ const FormEditDistinction = ({
           name="basic"
           onFinish={handleFinish}
           form={form}
-          id="area"
+          id="editArea"
           style={{ position: "relative" }}
         >
           <Row justify="start" gutter={[12, 0]}>
@@ -173,7 +178,7 @@ const FormEditDistinction = ({
                   },
                   {
                     validator: async (_: object, value: number) =>
-                      value && !isNaN(value)
+                      value && !isNaN(value) && value > 0
                         ? value == distinction.number ||
                           (await distinctionApi
                             .checkNumberExisting(value)
@@ -181,6 +186,12 @@ const FormEditDistinction = ({
                           ? Promise.resolve()
                           : Promise.reject("Цей номер уже зайнятий")
                         : Promise.reject(),
+                  },
+                  {
+                    validator: async (_: object, value: number) =>
+                      value == 0 && value && !isNaN(value)
+                        ? Promise.reject("Номер не може бути 0")
+                        : Promise.resolve(),
                   },
                 ]}
               >
@@ -301,10 +312,11 @@ const FormEditDistinction = ({
                 ]}
               >
                 <DatePicker
+                  disabledDate={disabledDate}
                   format={dateFormat}
                   className={formclasses.selectField}
                   getPopupContainer={() =>
-                    document.getElementById("area")! as HTMLElement
+                    document.getElementById("editArea")! as HTMLElement
                   }
                   popupStyle={{ position: "absolute" }}
                 />
