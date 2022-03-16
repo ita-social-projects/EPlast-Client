@@ -147,7 +147,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       name="basic"
       onFinish={handleSubmit}
       form={form}
-      id="area"
+      id="addArea"
       style={{ position: "relative" }}
     >
       <Row justify="start" gutter={[12, 0]}>
@@ -308,7 +308,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               format={dateFormat}
               className={formclasses.selectField}
               getPopupContainer={() =>
-                document.getElementById("area")! as HTMLElement
+                document.getElementById("addArea")! as HTMLElement
               }
               popupStyle={{ position: "absolute" }}
             />
