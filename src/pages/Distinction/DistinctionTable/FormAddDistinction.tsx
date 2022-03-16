@@ -20,9 +20,8 @@ import EditDistinctionTypesModal from "./EditDistinctionTypesModal";
 import {
   emptyInput,
   maxNumber,
-  minNumber,
-  incorrectData,
 } from "../../../components/Notifications/Messages";
+
 import precautionApi from "../../../api/precautionApi";
 import {
   descriptionValidation,
@@ -238,17 +237,6 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             />
           </Tooltip>
         </Col>
-        <Col span={3}>
-          <Tooltip
-            title="Редагувати відзначення"
-            className={formclasses.editTypeDistPosition}
-          >
-            <EditOutlined
-              className={classes.editIcon}
-              onClick={showModalEditTypes}
-            />
-          </Tooltip>
-        </Col>
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
@@ -277,7 +265,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                   style={backgroundColor(o)}
                   disabled={o.isInLowerRole}
                 >
-                  {o.firstName + " " + o.lastName}
+                  {o.firstName + " " + o.lastName + " (" + o.email + ")"}
                 </Select.Option>
               ))}
             </Select>

@@ -271,7 +271,7 @@ const FormEditDistinction = ({
                       style={backgroundColor(o)}
                       disabled={o.isInLowerRole}
                     >
-                      {o.firstName + " " + o.lastName}
+                      {o.firstName + " " + o.lastName + " (" + o.email + ")"}
                     </Select.Option>
                   ))}
                 </Select>
