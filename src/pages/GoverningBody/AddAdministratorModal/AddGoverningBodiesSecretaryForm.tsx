@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import formclasses from "../../../pages/DecisionTable/FormAddDecision.module.css";
+import classes from "../../Regions/Form.module.css";
 import {
   Form,
   DatePicker,
@@ -197,22 +197,21 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   ) : (
     <Form name="basic" onFinish={handleSubmit} form={form}>
       <Form.Item
-        className={formclasses.formField}
-        labelCol={{ span: 24 }}
+        className={classes.formField}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
         label="Користувач"
         name="userId"
         rules={[
           {
             required: props.admin === undefined,
-            message: <div className="formItemExplain">{emptyInput()}</div>,
+            message: emptyInput(),
           },
         ]}
       >
         <Select
           showSearch
           loading={usersLoading}
-          className={formclasses.inputField}
+          className={classes.inputField}
           onChange={(value) => onUserSelect(value)}
         >
           {users?.map((o) => (
@@ -224,8 +223,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={formclasses.formField}
-        labelCol={{ span: 24 }}
+        className={classes.formField}
         label="Тип адміністрування"
         initialValue={
           props.admin === undefined ? "" : props.admin.adminType.adminTypeName
@@ -239,7 +237,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         ]}
       >
         <AutoComplete
-          className={formclasses.inputField}
+          className={classes.inputField}
           options={[
             { value: Roles.GoverningBodyHead },
             { value: "Голова КПР" },
@@ -254,36 +252,33 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
 
       <Form.Item
         name="workEmail"
-        className={formclasses.formField}
-        labelCol={{ span: 24 }}
+        className={classes.formField}
         label="Електронна пошта"
         rules={[
           {
             pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/,
-            message: <div className="formItemExplain">{incorrectEmail}</div>,
+            message: <div className="">{incorrectEmail}</div>,
           },
           {
             max: 50,
-            message: <div className="formItemExplain">{maxLength(50)}</div>,
+            message: <div className="">{maxLength(50)}</div>,
           },
           {
             required: true,
-            message: <div className="formItemExplain">{emptyInput()}</div>,
+            message: emptyInput(),
           },
         ]}
       >
         <Input
           placeholder="Електронна пошта"
-          className={formclasses.inputField}
+          className={classes.inputField}
           value={workEmail}
           onChange={(e) => setWorkEmail(e.target.value)}
         />
       </Form.Item>
 
       <Form.Item
-        className={formclasses.formField}
-        labelCol={{ span: 12 }}
-        labelAlign="left"
+        className={classes.formField}
         label="Дата початку"
         name="startDate"
         initialValue={
@@ -293,7 +288,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         }
       >
         <DatePicker
-          className={formclasses.inputField}
+          style={{ width: "100%" }}
+          className={classes.inputField}
           disabledDate={disabledStartDate}
           onChange={(e) => setStartDate(e)}
           format="DD.MM.YYYY"
@@ -301,9 +297,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={formclasses.formField}
-        labelCol={{ span: 12 }}
-        labelAlign="left"
+        className={classes.formField}
         label="Дата кінця"
         name="endDate"
         initialValue={
@@ -315,7 +309,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         }
       >
         <DatePicker
-          className={formclasses.inputField}
+          className={classes.inputField}
           disabledDate={disabledEndDate}
           format="DD.MM.YYYY"
         />
