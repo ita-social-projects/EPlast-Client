@@ -96,10 +96,9 @@ const FormAddPlastDegree = ({
           onChange={(value) => handleOnChange(value)}
           placeholder={"Оберіть Улад"}
         >
-          {
-            availablePlastDegree.find((item) => item.name === "Пластприят") && (
-              <Select.Option value="Пластприят">Пластприят</Select.Option>
-            )}
+          {availablePlastDegree.find((item) => item.name === "Пластприят") && (
+            <Select.Option value="Пластприят">Пластприят</Select.Option>
+          )}
           {availablePlastDegree.find((item) => item.name.includes("Старш")) && (
             <Select.Option value="Улад Старшого Пластунства">
               Улад Старшого Пластунства
@@ -121,11 +120,11 @@ const FormAddPlastDegree = ({
         >
           <Select placeholder={"Оберіть ступінь"}>
             {filtredDegrees.map((apd) => {
-                return (
-                  <Select.Option key={apd.id} value={apd.id}>
-                    {apd.name}
-                  </Select.Option>
-                );
+              return (
+                <Select.Option key={apd.id} value={apd.id}>
+                  {apd.name}
+                </Select.Option>
+              );
             })}
           </Select>
         </Form.Item>
