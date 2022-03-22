@@ -28,6 +28,7 @@ import {
   getOnlyNums,
 } from "../../../models/GllobalValidations/DescriptionValidation";
 import moment from "moment";
+import FormItem from "antd/lib/form/FormItem";
 
 type FormAddDistinctionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -130,7 +131,6 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       reason: values.reason,
       number: values.number,
     };
-
     await distinctionApi.addUserDistinction(newDistinction);
     setVisibleModal(false);
     form.resetFields();
@@ -200,43 +200,47 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
         </Col>
       </Row>
       <Row justify="start" gutter={[12, 0]}>
-        <Col span={21}>
-          <Form.Item
-            className={formclasses.formField}
-            label="Відзначення"
-            labelCol={{ span: 24 }}
-            name="distinction"
-            rules={[
-              {
-                required: true,
-                message: emptyInput(),
-              },
-            ]}
-          >
-            <Select
-              className={formclasses.selectTypeDistField}
-              showSearch
-              getPopupContainer={(triggerNode) => triggerNode.parentNode}
-            >
-              {distData?.map((o) => (
-                <Select.Option key={o.id} value={JSON.stringify(o)}>
-                  {o.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Col>
-        <Col span={3}>
-          <Tooltip
-            title="Редагувати відзначення"
-            className={formclasses.editTypeDistPosition}
-          >
-            <EditOutlined
-              className={classes.editIcon}
-              onClick={showModalEditTypes}
-            />
-          </Tooltip>
-        </Col>
+        <Col md={24} xs={24}>
+          <Row>
+            <Col span={21}>
+            <Form.Item
+              className={formclasses.formField}
+              label="Відзначення"
+              labelCol={{ span: 24 }}
+              name="distinction"              
+              rules={[
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+              ]}
+            >            
+             <Select               
+                  className={formclasses.selectTypeDistField}               
+                  showSearch
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  >
+                    {distData?.map((o) => (
+                      <Select.Option key={o.id} value={JSON.stringify(o)}>
+                        {o.name}
+                     </Select.Option>
+                    ))}
+                </Select>                                 
+            </Form.Item>  
+          </Col>
+          <Col span={3}>
+            <Tooltip 
+                    title="Редагувати відзначення" 
+                    className={formclasses.editTypeDistPosition}
+                 >
+                    <EditOutlined
+                      className={classes.editIcon}
+                      onClick={showModalEditTypes}
+                    />
+              </Tooltip>  
+            </Col>
+          </Row>             
+        </Col>                                             
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>

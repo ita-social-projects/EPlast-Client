@@ -98,7 +98,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = (
     <div>
       <List
         className={classes.list}
-        header={null}
+        header={null} 
         footer={null}
         bordered
         rowKey="id"
