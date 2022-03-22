@@ -22,7 +22,7 @@ const AddDistinctionModal = ({
     <Drawer
       title="Додати відзначення"
       placement="right"
-      width="auto"
+      width={417}
       height={1000}
       visible={visibleModal}
       onClose={handleCancel}

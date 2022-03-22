@@ -24,7 +24,7 @@ const EditDistinctionTypesModal = ({
     <Drawer
       title="Редагування типів відзначень"
       placement="right"
-      width="auto"
+      width={420}
       height={1000}
       visible={visibleModalEdit}
       onClose={handleCancel}
