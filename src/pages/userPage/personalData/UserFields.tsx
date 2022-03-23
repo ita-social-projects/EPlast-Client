@@ -13,7 +13,13 @@ import { PersonalDataContext } from "./PersonalData";
 export default function () {
   const { userId } = useParams<{ userId: string }>();
   const history = useHistory();
-  const {userProfile, activeUserRoles, activeUserId, activeUserProfile, loading} = useContext(PersonalDataContext);
+  const {
+    userProfile,
+    activeUserRoles,
+    activeUserId,
+    activeUserProfile,
+    loading,
+  } = useContext(PersonalDataContext);
 
   return loading === false ? (
     <div className="kadraWrapper">
@@ -65,7 +71,7 @@ export default function () {
                 governingBodyId={userProfile?.user.governingBodyId}
                 cityMemberIsApproved={userProfile?.user.cityMemberIsApproved}
                 clubMemberIsApproved={userProfile?.user.clubMemberIsApproved}
-                showPrecautions = {userProfile?.shortUser === null}
+                showPrecautions={userProfile?.shortUser === null}
               />
             </StickyContainer>
           </div>
@@ -74,7 +80,8 @@ export default function () {
         <div className="allFields">
           <div className="rowBlock">
             <Form.Item label="Ім`я" className="formItem">
-              {userProfile?.user.firstName !== null && userProfile?.user.firstName !== "" ? (
+              {userProfile?.user.firstName !== null &&
+              userProfile?.user.firstName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -85,7 +92,8 @@ export default function () {
               )}
             </Form.Item>
             <Form.Item label="Прізвище" className="formItem">
-              {userProfile?.user.lastName !== null && userProfile?.user.lastName !== "" ? (
+              {userProfile?.user.lastName !== null &&
+              userProfile?.user.lastName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -126,7 +134,8 @@ export default function () {
 
           <div className="rowBlock">
             <Form.Item label="Псевдо" className="formItem">
-              {userProfile?.user.pseudo !== null && userProfile?.user.pseudo !== "" ? (
+              {userProfile?.user.pseudo !== null &&
+              userProfile?.user.pseudo !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -137,7 +146,8 @@ export default function () {
               )}
             </Form.Item>
             <Form.Item label="Пошта" className="formItem">
-              {userProfile?.user.email !== null && userProfile?.user.email !== "" ? (
+              {userProfile?.user.email !== null &&
+              userProfile?.user.email !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -152,11 +162,15 @@ export default function () {
           <div className="rowBlock">
             <Form.Item label="Дата народження" className="formItem">
               {userProfile?.user.birthday !== null &&
-              userProfile?.user.birthday.toString() !== "0001-01-01T00:00:00" ? (
+              userProfile?.user.birthday.toString() !==
+                "0001-01-01T00:00:00" ? (
                 <Input
                   readOnly
                   className="dataInput"
-                  value={moment.utc(userProfile?.user.birthday).local().format("DD.MM.YYYY")}
+                  value={moment
+                    .utc(userProfile?.user.birthday)
+                    .local()
+                    .format("DD.MM.YYYY")}
                 />
               ) : (
                 <Input readOnly className="dataInput" value="-" />
@@ -271,7 +285,8 @@ export default function () {
               )}
             </Form.Item>
             <Form.Item label="Адреса проживання" className="formItem">
-              {userProfile?.user.address !== null && userProfile?.user.address !== "" ? (
+              {userProfile?.user.address !== null &&
+              userProfile?.user.address !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -334,7 +349,7 @@ export default function () {
                     value="пластун учасник"
                   />
                 ) : (
-                  <Tooltip title = "пластун учасник/пластунка учасниця">
+                  <Tooltip title="пластун учасник/пластунка учасниця">
                     <Input
                       readOnly
                       className="dataInput"
@@ -356,7 +371,7 @@ export default function () {
                     value="пластун розвідувач"
                   />
                 ) : (
-                  <Tooltip title = "пластун розвідувач/пластунка розвідувачка">
+                  <Tooltip title="пластун розвідувач/пластунка розвідувачка">
                     <Input
                       readOnly
                       className="dataInput"
@@ -374,7 +389,7 @@ export default function () {
                 ) : userProfile?.user.gender.id === 1 ? (
                   <Input readOnly className="dataInput" value="пластун скоб" />
                 ) : (
-                  <Tooltip title = "пластун скоб/пластунка вірлиця">
+                  <Tooltip title="пластун скоб/пластунка вірлиця">
                     <Input
                       readOnly
                       className="dataInput"
@@ -391,19 +406,31 @@ export default function () {
           <div className="links">
             {userProfile?.user.facebookLink !== null &&
             userProfile?.user.facebookLink !== "" ? (
-              <a href={"https://www.facebook.com/" + userProfile?.user.facebookLink}>
+              <a
+                href={
+                  "https://www.facebook.com/" + userProfile?.user.facebookLink
+                }
+              >
                 <img src={Facebook} alt="Facebook" />
               </a>
             ) : null}
             {userProfile?.user.twitterLink !== null &&
             userProfile?.user.twitterLink !== "" ? (
-              <a href={"https://www.twitter.com/" + userProfile?.user.twitterLink}>
+              <a
+                href={
+                  "https://www.twitter.com/" + userProfile?.user.twitterLink
+                }
+              >
                 <img src={Twitter} alt="Twitter" />
               </a>
             ) : null}
             {userProfile?.user.instagramLink !== null &&
             userProfile?.user.instagramLink !== "" ? (
-              <a href={"https://www.instagram.com/" + userProfile?.user.instagramLink}>
+              <a
+                href={
+                  "https://www.instagram.com/" + userProfile?.user.instagramLink
+                }
+              >
                 <img src={Instagram} alt="Instagram" />
               </a>
             ) : null}
@@ -478,7 +505,7 @@ export default function () {
             clubId={userProfile?.shortUser.clubId}
             cityMemberIsApproved={userProfile?.shortUser.cityMemberIsApproved}
             clubMemberIsApproved={userProfile?.shortUser.clubMemberIsApproved}
-            showPrecautions = { userProfile.shortUser === null }
+            showPrecautions={userProfile.shortUser === null}
           />
         </div>
         <div className="shortAllFields">
@@ -560,7 +587,8 @@ export default function () {
             userProfile?.shortUser.facebookLink !== "" ? (
               <a
                 href={
-                  "https://www.facebook.com/" + userProfile?.shortUser.facebookLink
+                  "https://www.facebook.com/" +
+                  userProfile?.shortUser.facebookLink
                 }
               >
                 <img src={Facebook} alt="Facebook" />
@@ -569,7 +597,10 @@ export default function () {
             {userProfile?.shortUser.twitterLink !== null &&
             userProfile?.shortUser.twitterLink !== "" ? (
               <a
-                href={"https://www.twitter.com/" + userProfile?.shortUser.twitterLink}
+                href={
+                  "https://www.twitter.com/" +
+                  userProfile?.shortUser.twitterLink
+                }
               >
                 <img src={Twitter} alt="Twitter" />
               </a>
@@ -578,7 +609,8 @@ export default function () {
             userProfile?.shortUser.instagramLink !== "" ? (
               <a
                 href={
-                  "https://www.instagram.com/" + userProfile?.shortUser.instagramLink
+                  "https://www.instagram.com/" +
+                  userProfile?.shortUser.instagramLink
                 }
               >
                 <img src={Instagram} alt="Instagram" />
@@ -592,4 +624,3 @@ export default function () {
     <> </>
   );
 }
-

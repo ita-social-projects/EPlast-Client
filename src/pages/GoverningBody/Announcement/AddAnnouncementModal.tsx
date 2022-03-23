@@ -11,7 +11,7 @@ interface Props {
 const AddAnnouncementModal = ({
   visibleModal,
   setVisibleModal,
-  onAdd
+  onAdd,
 }: Props) => {
   const handleCancel = () => {
     setVisibleModal(false);

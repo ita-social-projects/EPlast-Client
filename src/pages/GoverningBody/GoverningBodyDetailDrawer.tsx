@@ -13,7 +13,11 @@ interface Props {
 const GoverningBodyDetailDrawer = (props: Props) => {
   return (
     <Drawer
-      title={`Деталі керівного органу ${props.governingBody.governingBodyName?.length > 0 ? props.governingBody.governingBodyName : ""}`}
+      title={`Деталі керівного органу ${
+        props.governingBody.governingBodyName?.length > 0
+          ? props.governingBody.governingBodyName
+          : ""
+      }`}
       onClose={() => props.setVisibleDrawer(false)}
       visible={props.visibleDrawer}
       footer={null}
@@ -52,19 +56,23 @@ const GoverningBodyDetailDrawer = (props: Props) => {
               label="Електронна пошта"
               labelCol={{ span: 24 }}
               initialValue={
-                props.governingBody.email?.length > 0 ? props.governingBody.email : "---"
+                props.governingBody.email?.length > 0
+                  ? props.governingBody.email
+                  : "---"
               }
             >
               <Input
-                value={props.governingBody.email?.length > 0 ? props.governingBody.email : "---"}
+                value={
+                  props.governingBody.email?.length > 0
+                    ? props.governingBody.email
+                    : "---"
+                }
                 disabled
               />
             </Form.Item>
           </Col>
-
         </Row>
 
-       
         <Row justify="center" gutter={[12, 0]}>
           <Col md={24} xs={24}>
             <Form.Item
@@ -78,13 +86,10 @@ const GoverningBodyDetailDrawer = (props: Props) => {
               }
             >
               <TextArea
-                autoSize =
-                {
-                  {
-                    minRows: 1,
-                    maxRows: 9
-                  }
-                }
+                autoSize={{
+                  minRows: 1,
+                  maxRows: 9,
+                }}
                 value={
                   props.governingBody.description?.length > 0
                     ? props.governingBody.description

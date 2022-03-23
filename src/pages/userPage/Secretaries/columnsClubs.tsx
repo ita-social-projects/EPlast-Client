@@ -41,9 +41,9 @@ const columns = [
   {
     title: "Курінь",
     dataIndex: "club",
-    render: (club: any) =>{
-      return(extendedTitleTooltip(clubNameMaxLength, club.name))
-    }
+    render: (club: any) => {
+      return extendedTitleTooltip(clubNameMaxLength, club.name);
+    },
   },
 ];
 export default columns;

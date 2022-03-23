@@ -1,4 +1,4 @@
-import GoverningBodyAdmin from './GoverningBodyAdmin';
+import GoverningBodyAdmin from "./GoverningBodyAdmin";
 
 export default class GoverningBodyProfile {
   id: number;

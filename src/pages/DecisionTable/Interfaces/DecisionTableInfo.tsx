@@ -5,9 +5,9 @@ export type DecisionTableInfo = {
   name: string;
   governingBody: string;
   decisionStatusType: string;
-  decisionTarget : string;
+  decisionTarget: string;
   description: string;
-  date : string;
+  date: string;
   userId: string;
   fileName: string | null;
-}
+};

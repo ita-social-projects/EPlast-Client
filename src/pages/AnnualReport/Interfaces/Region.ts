@@ -1,6 +1,6 @@
 interface Region {
-    id: number;
-    regionName: string;
+  id: number;
+  regionName: string;
 }
 
 export default Region;

@@ -15,7 +15,7 @@ const AddPrecautionModal = ({
 }: Props) => {
   const handleCancel = () => {
     setVisibleModal(false);
-  }
+  };
   return (
     <Drawer
       title="Додати пересторогу"

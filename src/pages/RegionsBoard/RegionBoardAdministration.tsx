@@ -7,10 +7,15 @@ import moment from "moment";
 import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
-import { getGoverningBodiesList, getGoverningBodyLogo } from "../../api/governingBodiesApi";
+import {
+  getGoverningBodiesList,
+  getGoverningBodyLogo,
+} from "../../api/governingBodiesApi";
 import { GoverningBody } from "../../api/decisionsApi";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
-import extendedTitleTooltip, {parameterMaxLength} from "../../components/Tooltip";
+import extendedTitleTooltip, {
+  parameterMaxLength,
+} from "../../components/Tooltip";
 moment.locale("uk-ua");
 
 const RegionBoardAdministration = () => {
@@ -28,7 +33,7 @@ const RegionBoardAdministration = () => {
         await getGoverningBodyLogo(governingBodies[i].logo!)
       ).data;
     }
- 
+
     setPhotosLoading(false);
   };
 
@@ -61,23 +66,31 @@ const RegionBoardAdministration = () => {
               <Card
                 key={governingBody.id}
                 className="detailsCard"
-                title={
-                  extendedTitleTooltip(parameterMaxLength, `${governingBody.governingBodyName}`)
-                }
+                title={extendedTitleTooltip(
+                  parameterMaxLength,
+                  `${governingBody.governingBodyName}`
+                )}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
               >
                 <div className="cityMember">
-                  <div 
-                    onClick={() => history.push(`/governingBodies/${governingBody.id}`)}
+                  <div
+                    onClick={() =>
+                      history.push(`/governingBodies/${governingBody.id}`)
+                    }
                   >
                     {photosLoading ? (
                       <Skeleton.Avatar active size={86} />
                     ) : (
-                      <Avatar size={86} src={governingBody.logo == undefined ? CityDefaultLogo : governingBody.logo} />
+                      <Avatar
+                        size={86}
+                        src={
+                          governingBody.logo == undefined
+                            ? CityDefaultLogo
+                            : governingBody.logo
+                        }
+                      />
                     )}
-                    <Card.Meta
-                      className="detailsMeta"
-                    />
+                    <Card.Meta className="detailsMeta" />
                   </div>
                 </div>
               </Card>

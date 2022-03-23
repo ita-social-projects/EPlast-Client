@@ -60,22 +60,29 @@ export const getRegionById = async (regionId: number) => {
   return await api.get(`Regions/Profile/${regionId}`);
 };
 
-export const getRegionMembersInfo = async (regionId: number, year: number, page: number, pageSize: number) => {
-  return await api.get(`Regions/MembersInfo/${regionId}/${year}`, {
-    page: page,
-    pageSize: pageSize,
-  }).catch((error) => {
-    throw new Error(error);
-  });
+export const getRegionMembersInfo = async (
+  regionId: number,
+  year: number,
+  page: number,
+  pageSize: number
+) => {
+  return await api
+    .get(`Regions/MembersInfo/${regionId}/${year}`, {
+      page: page,
+      pageSize: pageSize,
+    })
+    .catch((error) => {
+      throw new Error(error);
+    });
 };
 
 export const getUserRegionAccess = async (regionId: number, userId: string) => {
-  return await api.get(`UserAccess/GetUserRegionAccess/${regionId}/${userId}`)
-  .catch( error => {
-       throw error;
-       } 
-  );
-}
+  return await api
+    .get(`UserAccess/GetUserRegionAccess/${regionId}/${userId}`)
+    .catch((error) => {
+      throw error;
+    });
+};
 
 export const getRegionLogo = async (logoName: string) => {
   return api.get("Regions/LogoBase64", { logoName }).catch((error) => {
@@ -117,6 +124,12 @@ export const removeAdmin = async (id: number) => {
     throw new Error(error);
   });
 };
+
+export const editAdminStatus = async (id: number) => {
+  return api.put(`Regions/ChangeStatusAdministration/${id}`, id).catch((error) => {
+    throw new Error(error);
+  });
+}; 
 
 export const getFile = async (fileBlob: string, fileName: string) => {
   const response = await (
@@ -184,24 +197,21 @@ export const removeDocument = async (documentId: number) => {
 };
 
 export const getRegions = async () => {
-  return api.get(`Regions/Regions`)
-    .catch((error) => {
-      throw new Error(error);
-    });
+  return api.get(`Regions/Regions`).catch((error) => {
+    throw new Error(error);
+  });
 };
 
 export const getRegionsNames = async () => {
-  return api.get(`Regions/RegionsNames`)
-    .catch((error) => {
-      throw new Error(error);
-    });
+  return api.get(`Regions/RegionsNames`).catch((error) => {
+    throw new Error(error);
+  });
 };
 
 export const getAccessableRegions = async () => {
-  return api.get(`Regions/RegionOptions`)
-    .catch((error) => {
-      throw new Error(error);
-    });
+  return api.get(`Regions/RegionOptions`).catch((error) => {
+    throw new Error(error);
+  });
 };
 
 export const redirectCities = async (prevRegId: number, nextRegId: number) => {
@@ -212,68 +222,81 @@ export const redirectCities = async (prevRegId: number, nextRegId: number) => {
     });
 };
 
-export const createRegionAnnualReport = async (id: number, year: number, data: RegionAnnualReportQuestions) => {
-  return api.post(`Regions/CreateRegionAnnualReportById/${id}/${year}`, JSON.stringify(data))
+export const createRegionAnnualReport = async (
+  id: number,
+  year: number,
+  data: RegionAnnualReportQuestions
+) => {
+  return api
+    .post(
+      `Regions/CreateRegionAnnualReportById/${id}/${year}`,
+      JSON.stringify(data)
+    )
     .catch((error) => {
       throw error;
-    })
-}
+    });
+};
 
 export const getReportById = async (id: number, year: number) => {
-  return api.get(`Regions/GetReportById/${id}/${year}`)
-    .catch((error) => {
-      throw new Error(error);
-    })
-}
+  return api.get(`Regions/GetReportById/${id}/${year}`).catch((error) => {
+    throw new Error(error);
+  });
+};
 
 export const getAllRegionsReports = async () => {
-  return api.get(`Regions/GetAllRegionsReports`)
-    .catch((error) => {
-      throw new Error(error);
-    })
-}
+  return api.get(`Regions/GetAllRegionsReports`).catch((error) => {
+    throw new Error(error);
+  });
+};
 
-export const getSearchedRegionsReports = async (searchedData: string, page: number, pageSize: number, sortKey: number, authReport: boolean) => {
-  return api.get(`Regions/RegionsAnnualReports`,
-    {
+export const getSearchedRegionsReports = async (
+  searchedData: string,
+  page: number,
+  pageSize: number,
+  sortKey: number,
+  authReport: boolean
+) => {
+  return api
+    .get(`Regions/RegionsAnnualReports`, {
       searchedData: searchedData,
       page: page,
       pageSize: pageSize,
       sortKey: sortKey,
-      auth: authReport
+      auth: authReport,
     })
     .catch((error) => {
       throw new Error(error);
-    })
-}
+    });
+};
 
 const confirm = async (id: number) => {
-  return await api.put(`Regions/confirmReport/${id}`)
-    .catch((error) => {
-      throw new Error(error);
-    });
-}
+  return await api.put(`Regions/confirmReport/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+};
 
 const cancel = async (id: number) => {
-  return await api.put(`Regions/cancel/${id}`)
+  return await api.put(`Regions/cancel/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
+const editReport = async (
+  reportId: number,
+  data: RegionAnnualReportQuestions
+) => {
+  return await api
+    .put(`Regions/editReport/${reportId}`, data)
     .catch((error) => {
       throw new Error(error);
     });
-}
-
-const editReport = async (reportId: number, data: RegionAnnualReportQuestions) => {
-  return await api.put(`Regions/editReport/${reportId}`, data)
-      .catch((error) => {
-        throw new Error(error);
-      });
-}
+};
 
 const removeAnnualReport = async (id: number) => {
-  return await api.remove(`Regions/${id}`)
-    .catch((error) => {
-      throw new Error(error);
-    });
-}
+  return await api.remove(`Regions/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+};
 
 export const getActiveRegionsByPage = async (
   page: number,
@@ -333,11 +356,11 @@ export const removeFollower = async (followerId: number) => {
   return api.remove(`Regions/RemoveFollower/${followerId}`).catch((error) => {
     throw new Error(error);
   });
-}
+};
 
 export const checkIfNameExists = async (name: string) => {
-  return api.get(`Regions/CheckIfRegionNameExists/${name}`, name)
-}
+  return api.get(`Regions/CheckIfRegionNameExists/${name}`, name);
+};
 
 export default {
   editReport,
@@ -376,5 +399,5 @@ export default {
   getRegionFollowerById,
   createRegionFollower,
   removeFollower,
-  checkIfNameExists 
+  checkIfNameExists,
 };

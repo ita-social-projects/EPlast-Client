@@ -7,7 +7,8 @@ import {
   DeleteOutlined,
   CheckOutlined,
   SaveOutlined,
-  PlusOutlined, HighlightOutlined
+  PlusOutlined,
+  HighlightOutlined,
 } from "@ant-design/icons";
 import notificationLogic from "../../../components/Notifications/Notification";
 import classes from "./FormEdit.module.css";
@@ -15,7 +16,6 @@ import Item from "antd/lib/list/Item";
 import DeleteTypeConfirm from "./DeleteTypeConfirm";
 import Search from "antd/lib/input/Search";
 import Text from "antd/lib/typography/Text";
-
 
 type FormEditPrecautionTypesProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -72,8 +72,7 @@ const FormEditPrecautionTypes: React.FC<FormEditPrecautionTypesProps> = () => {
     setCurDist(Precaution);
     if (curDist.id != id) {
       setEditVisible(true);
-    }
-    else {
+    } else {
       setEditVisible(false);
       setCurDist(defaultDist);
     }
@@ -86,8 +85,7 @@ const FormEditPrecautionTypes: React.FC<FormEditPrecautionTypesProps> = () => {
       fetchData();
       setCurDist(defaultDist);
       setEditVisible(false);
-    } else
-      notificationLogic("error", "Хибна назва");
+    } else notificationLogic("error", "Хибна назва");
   };
 
   return (
@@ -137,30 +135,27 @@ const FormEditPrecautionTypes: React.FC<FormEditPrecautionTypesProps> = () => {
                 if (event.target.value.length < 250) {
                   setTitle(event.target.value);
                   setVisRule(false);
-                }
-                else
-                  setVisRule(true);
+                } else setVisRule(true);
               }}
               placeholder="Додати пересторогу"
               maxLength={250}
               onPressEnter={handleAdd}
               enterButton={<CheckOutlined onClick={handleAdd} />}
             />
-
           </Item>
-          {visRule ?
+          {visRule ? (
             <div>
               <Text type="danger">
                 Поле не повинно містити більше 250 символів!
-                </Text>
+              </Text>
             </div>
-            : <></>
-          }
+          ) : (
+            <></>
+          )}
         </div>
-
       ) : (
-          <></>
-        )}
+        <></>
+      )}
       {editVisible ? (
         <Item>
           <Search
@@ -183,8 +178,8 @@ const FormEditPrecautionTypes: React.FC<FormEditPrecautionTypesProps> = () => {
           />
         </Item>
       ) : (
-          <></>
-        )}
+        <></>
+      )}
     </div>
   );
 };

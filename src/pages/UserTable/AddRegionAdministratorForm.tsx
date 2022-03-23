@@ -6,7 +6,7 @@ import notificationLogic from "../../components/Notifications/Notification";
 import ConfirmRegionAdminModal from "./ConfirmRegionAdministrationModal";
 import moment from "moment";
 import userApi from "../../api/UserApi";
-import{ emptyInput } from "../../components/Notifications/Messages"
+import { emptyInput } from "../../components/Notifications/Messages";
 import { Roles } from "../../models/Roles/Roles";
 
 interface Props {
@@ -109,7 +109,7 @@ const AddNewAdministratorForm = ({
     getAdministration();
     fetchData();
     const userRoles = userApi.getActiveUserRoles();
-      setActiveUserRoles(userRoles);
+    setActiveUserRoles(userRoles);
   }, []);
 
   return (
@@ -130,8 +130,11 @@ const AddNewAdministratorForm = ({
             className={classes.inputField}
             onChange={handleClick}
             options={[
-              { value: Roles.OkrugaHead, disabled: activeUserRoles.includes(Roles.OkrugaHeadDeputy) },
-              { value: Roles.OkrugaHeadDeputy},
+              {
+                value: Roles.OkrugaHead,
+                disabled: activeUserRoles.includes(Roles.OkrugaHeadDeputy),
+              },
+              { value: Roles.OkrugaHeadDeputy },
               { value: "Писар" },
               { value: "Бунчужний" },
               { value: "Скарбник" },
