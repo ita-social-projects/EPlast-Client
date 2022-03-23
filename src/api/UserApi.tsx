@@ -21,7 +21,6 @@ const getImage = async (imageName: string | undefined) => {
 };
 const edit = async (id: string) => {
     const response = await axios.get(`${`${BASE_URL}User/edit`}/${id}`);
-
     return response;
 };
 const put = async (data: any) => {

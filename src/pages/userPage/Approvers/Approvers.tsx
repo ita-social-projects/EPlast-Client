@@ -193,7 +193,7 @@ const Assignments = () => {
           }
           )}
           <div>
-            {(data?.canApprovePlastMember && userProfileAccess["CanApproveUser"]) ? (
+            {(data?.canApprovePlastMember && userProfileAccess["CanApproveUser"] && !data?.isUserPlastun) ? (
               <div>
                 <Tooltip
                   title="Поручитися за користувача"

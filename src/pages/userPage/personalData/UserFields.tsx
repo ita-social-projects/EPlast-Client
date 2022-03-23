@@ -422,7 +422,8 @@ export default function () {
               hidden={
                 !(
                   activeUserId === userId ||
-                  activeUserRoles.includes(Roles.Admin)
+                  activeUserRoles.includes(Roles.Admin) ||
+                  activeUserRoles.includes(Roles.OkrugaHead)
                 )
               }
               onClick={() => history.push(`/userpage/edit/${userId}`)}
