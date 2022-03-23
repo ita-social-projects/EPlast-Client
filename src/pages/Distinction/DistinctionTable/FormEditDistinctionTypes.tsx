@@ -8,7 +8,7 @@ import {
   CheckOutlined,
   SaveOutlined,
   PlusOutlined,
-  HighlightOutlined
+  HighlightOutlined,
 } from "@ant-design/icons";
 import notificationLogic from "../../../components/Notifications/Notification";
 import classes from "./FormEdit.module.css";
@@ -17,9 +17,9 @@ import DeleteTypeConfirm from "./DeleteTypeConfirm";
 import Search from "antd/lib/input/Search";
 import Text from "antd/lib/typography/Text";
 
-
 type FormEditDistinctionTypesProps = {
   setVisibleModal: (visibleModal: boolean) => void;
+  onDelete: () => void;
 };
 
 let defaultDist: Distinction = {
@@ -28,7 +28,10 @@ let defaultDist: Distinction = {
 };
 const typeMaxLength = 200;
 
-const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => {
+const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = (
+  props: any
+) => {
+  const { onDelete } = props;
   const [distData, setDistData] = useState<Distinction[]>([defaultDist]);
   const [title, setTitle] = useState("");
   const [curDist, setCurDist] = useState<Distinction>(defaultDist);
@@ -75,8 +78,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
     setCurDist(distinction);
     if (curDist.id != id) {
       setEditVisible(true);
-    }
-    else {
+    } else {
       setEditVisible(false);
       setCurDist(defaultDist);
     }
@@ -89,8 +91,7 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
       fetchData();
       setCurDist(defaultDist);
       setEditVisible(false);
-    } else
-      notificationLogic("error", "Хибна назва");
+    } else notificationLogic("error", "Хибна назва");
   };
 
   return (
@@ -114,7 +115,9 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
               <Tooltip title="Видалити відзначення">
                 <DeleteOutlined
                   className={classes.deleteIcon}
-                  onClick={() => DeleteTypeConfirm(item.id, handleDelete)}
+                  onClick={() =>
+                    DeleteTypeConfirm(item.id, handleDelete, props.onDelete)
+                  }
                 />
               </Tooltip>,
             ]}
@@ -137,15 +140,17 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
               name="inputName"
               value={title}
               onChange={(event) => {
-                if (event.target.value.length < typeMaxLength && ((/^(\s*\S+\s*)$/).test(event.target.value)) || ((/^$/).test(event.target.value))) {
+                if (
+                  (event.target.value.length < typeMaxLength &&
+                    /^(\s*\S+\s*)$/.test(event.target.value)) ||
+                  /^$/.test(event.target.value)
+                ) {
                   setTitle(event.target.value);
                   setVisRule(false);
                   setVisRuleFirstSpace(false);
-                }
-                else if (!(/^(\s*\S+\s*)$/).test(event.target.value)) {
+                } else if (!/^(\s*\S+\s*)$/.test(event.target.value)) {
                   setVisRuleFirstSpace(true);
-                }
-                else if (event.target.value.length >= typeMaxLength)
+                } else if (event.target.value.length >= typeMaxLength)
                   setVisRule(true);
               }}
               placeholder="Додати відзначення"
@@ -153,26 +158,26 @@ const FormEditDistinctionTypes: React.FC<FormEditDistinctionTypesProps> = () => 
               onPressEnter={handleAdd}
               enterButton={<CheckOutlined onClick={handleAdd} />}
             />
-
           </Item>
-          {visRule ?
+          {visRule ? (
             <div>
               <Text type="danger">
                 Поле не повинно містити більше {typeMaxLength} символів!
               </Text>
             </div>
-            : <></>
-          }
-          {visRuleFirstSpace ?
+          ) : (
+            <></>
+          )}
+          {visRuleFirstSpace ? (
             <div>
               <Text type="danger">
                 Поле не може починатися з порожнього символу
               </Text>
             </div>
-            : <></>
-          }
+          ) : (
+            <></>
+          )}
         </div>
-
       ) : (
         <></>
       )}

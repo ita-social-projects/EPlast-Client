@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import {
-  Button,
-  Form,
-  Input,
-  Layout,
-  Upload,
-  Row,
-  Col,
-  Card,
-} from "antd";
+import { Button, Form, Input, Layout, Upload, Row, Col, Card } from "antd";
 import {
   ConsoleSqlOutlined,
   DeleteOutlined,
@@ -24,7 +15,7 @@ import {
   getGoverningBodyById,
   getGoverningBodyLogo,
   updateGoverningBody,
-  getGoverningBodiesList
+  getGoverningBodiesList,
 } from "../../api/governingBodiesApi";
 import "../City/CreateCity/CreateCity.less";
 import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfile";
@@ -41,27 +32,36 @@ import {
   successfulUpdateAction,
   failCreateAction,
   failUpdateAction,
-} from "../../components/Notifications/Messages"
-import { descriptionValidation, sameNameValidator} from "../../models/GllobalValidations/DescriptionValidation";
+} from "../../components/Notifications/Messages";
+import {
+  descriptionValidation,
+  sameNameValidator,
+} from "../../models/GllobalValidations/DescriptionValidation";
 
 const CreateGoverningBody = () => {
   const { id } = useParams();
   const history = useHistory();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(new GoverningBodyProfile());
+  const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(
+    new GoverningBodyProfile()
+  );
   const [governingBodyNames, setGoverningBodyNames] = useState<string[]>([]);
-  const orgName: string = 'Керівний орган';
-  
+  const orgName: string = "Керівний орган";
+
   const getGoverningBodyNames = async () => {
-    let governingBodies = (await getGoverningBodiesList() as any[])
-    if(+id){
-      let currentName = (await getGoverningBodyById(+id)).data.governingBodyViewModel.governingBodyName;
-      setGoverningBodyNames(governingBodies.map(x => x.governingBodyName).filter(x => x !== currentName))
-    }
-    else
-      setGoverningBodyNames(governingBodies.map(x => x.governingBodyName));
-  }
+    let governingBodies = (await getGoverningBodiesList()) as any[];
+    if (+id) {
+      let currentName = (await getGoverningBodyById(+id)).data
+        .governingBodyViewModel.governingBodyName;
+      setGoverningBodyNames(
+        governingBodies
+          .map((x) => x.governingBodyName)
+          .filter((x) => x !== currentName)
+      );
+    } else
+      setGoverningBodyNames(governingBodies.map((x) => x.governingBodyName));
+  };
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -109,8 +109,9 @@ const CreateGoverningBody = () => {
   const getGoverningBody = async () => {
     try {
       setLoading(true);
-      let response = (await getGoverningBodyById(+id)).data.governingBodyViewModel;
-      if (response.logo !== null && response.logo !== '') {
+      let response = (await getGoverningBodyById(+id)).data
+        .governingBodyViewModel;
+      if (response.logo !== null && response.logo !== "") {
         const logo = await getGoverningBodyLogo(response.logo);
         response.logo = logo.data;
       }
@@ -137,7 +138,7 @@ const CreateGoverningBody = () => {
       logo: governingBody.logo?.length === 0 ? null : governingBody.logo,
       phoneNumber: values.phoneNumber,
       head: governingBody.head,
-      isActive: true
+      isActive: true,
     };
 
     if (!governingBody.id) {
@@ -148,21 +149,26 @@ const CreateGoverningBody = () => {
     setLoading(false);
   };
 
-  const CreateGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
+  const CreateGoverningBody = async (
+    newGoverningBody: GoverningBodyProfile
+  ) => {
     createGoverningBody(JSON.stringify(newGoverningBody))
-    .then((response) => {
-      governingBody.id = response.data;
-      notificationLogic("success", successfulCreateAction("Керівний орган"));
-      history.replace(`/governingBodies/${governingBody.id}`);
-    })
-    .catch(() => {
-      getGoverningBodyNames()
-      notificationLogic("error", failCreateAction("керівний орган"));
-    });
+      .then((response) => {
+        governingBody.id = response.data;
+        notificationLogic("success", successfulCreateAction("Керівний орган"));
+        history.replace(`/governingBodies/${governingBody.id}`);
+      })
+      .catch(() => {
+        getGoverningBodyNames();
+        notificationLogic("error", failCreateAction("керівний орган"));
+      });
   };
 
   const EditGoverningBody = async (newGoverningBody: GoverningBodyProfile) => {
-    return updateGoverningBody(governingBody.id, JSON.stringify(newGoverningBody))
+    return updateGoverningBody(
+      governingBody.id,
+      JSON.stringify(newGoverningBody)
+    )
       .then(() => {
         notificationLogic("success", successfulUpdateAction("Керівний орган"));
         history.goBack();
@@ -197,7 +203,11 @@ const CreateGoverningBody = () => {
                 <PlusOutlined />
               )}
               <img
-                src={governingBody?.logo ? governingBody.logo : GoverningBodyDefaultLogo}
+                src={
+                  governingBody?.logo
+                    ? governingBody.logo
+                    : GoverningBodyDefaultLogo
+                }
                 alt="GoverningBody"
                 className="cityLogo"
               />
@@ -210,9 +220,15 @@ const CreateGoverningBody = () => {
                 label="Назва"
                 labelCol={{ span: 24 }}
                 initialValue={governingBody.governingBodyName}
-                rules={[...descriptionValidation.GoverningBodyName, sameNameValidator(orgName,governingBodyNames)]}
+                rules={[
+                  ...descriptionValidation.GoverningBodyName,
+                  sameNameValidator(orgName, governingBodyNames),
+                ]}
               >
-                <Input value={governingBody.governingBodyName} maxLength={101} />
+                <Input
+                  value={governingBody.governingBodyName}
+                  maxLength={101}
+                />
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>

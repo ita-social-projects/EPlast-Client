@@ -21,7 +21,11 @@ export const getCityById = async (id: number) => {
   });
 };
 
-export const getActiveCitiesByPage = async (page: number, pageSize: number, name: string | null = null) => {
+export const getActiveCitiesByPage = async (
+  page: number,
+  pageSize: number,
+  name: string | null = null
+) => {
   return await api
     .get(`Cities/Profiles/Active/${page}`, { page, pageSize, name })
     .catch((error) => {
@@ -29,7 +33,11 @@ export const getActiveCitiesByPage = async (page: number, pageSize: number, name
     });
 };
 
-export const getNotActiveCitiesByPage = async (page: number, pageSize: number, name: string | null = null) => {
+export const getNotActiveCitiesByPage = async (
+  page: number,
+  pageSize: number,
+  name: string | null = null
+) => {
   return await api
     .get(`Cities/Profiles/NotActive/${page}`, { page, pageSize, name })
     .catch((error) => {
@@ -52,12 +60,12 @@ export const createCity = async (data: any) => {
 };
 
 export const getUserCityAccess = async (cityId: number, userId: string) => {
-  return await api.get(`UserAccess/GetUserCityAccess/${cityId}/${userId}`)
-  .catch( error => {
-       throw error;
-       } 
-  );
-}
+  return await api
+    .get(`UserAccess/GetUserCityAccess/${cityId}/${userId}`)
+    .catch((error) => {
+      throw error;
+    });
+};
 
 export const updateCity = async (id: number, data: any) => {
   return api.put(`Cities/EditCity/${id}`, data).catch((error) => {
@@ -72,7 +80,7 @@ export const archiveCity = async (id: number) => {
 };
 
 export const unArchiveCity = async (id: number) => {
-  return await  api.put(`Cities/UnArchiveCity/${id}`).catch((error) => {
+  return await api.put(`Cities/UnArchiveCity/${id}`).catch((error) => {
     throw new Error(error);
   });
 };
@@ -84,7 +92,7 @@ export const removeCity = async (id: number) => {
 };
 
 export const getLogo = async (logoName: string) => {
-  return api.get("Cities/LogoBase64", { logoName })
+  return api.get("Cities/LogoBase64", { logoName });
 };
 
 export const getAllAdmins = async (id: number) => {
@@ -127,17 +135,17 @@ export const toggleMemberStatus = async (id: number) => {
   return api.put(`Cities/ChangeApproveStatus/${id}`, id).catch((error) => {
     throw new Error(error);
   });
-}
+};
 
-export const isUserApproved = async(id: number) =>{
-  return api.get(`Cities/IsUserApproved/${id}`).catch((error)=>{
-    throw new Error(error)
+export const isUserApproved = async (id: number) => {
+  return api.get(`Cities/IsUserApproved/${id}`).catch((error) => {
+    throw new Error(error);
   });
 };
 
-export const cityNameOfApprovedMember = async(id: string) =>{
-  return api.get(`Cities/CityNameOfApprovedMember/${id}`).catch((error)=>{
-    throw new Error(error)
+export const cityNameOfApprovedMember = async (id: string) => {
+  return api.get(`Cities/CityNameOfApprovedMember/${id}`).catch((error) => {
+    throw new Error(error);
   });
 };
 
@@ -145,54 +153,62 @@ export const addFollower = async (cityId: number) => {
   return api.post(`Cities/AddFollower/${cityId}`, cityId).catch((error) => {
     throw new Error(error);
   });
-}
+};
 
 export const addFollowerWithId = async (cityId: number, userId: string) => {
-  return api.post(`Cities/AddFollowerWithId/${cityId}/${userId}`).catch((error) => {
-    throw new Error(error);
-  });
-}
+  return api
+    .post(`Cities/AddFollowerWithId/${cityId}/${userId}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
 
 export const removeFollower = async (followerId: number) => {
-  return api.remove(`Cities/RemoveFollower/${followerId}`, followerId).catch((error) => {
-    throw new Error(error);
-  });
-}
+  return api
+    .remove(`Cities/RemoveFollower/${followerId}`, followerId)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
 
 export const addAdministrator = async (cityId: number, data: any) => {
   return api.post(`Cities/AddAdmin/${cityId}`, data).catch((error) => {
     throw new Error(error);
   });
-}
+};
 
 export const removeAdministrator = async (adminId: number) => {
   return api.put(`Cities/RemoveAdmin/${adminId}`, adminId).catch((error) => {
     throw new Error(error);
   });
-}
+};
 
 export const editAdministrator = async (adminId: number, data: any) => {
   return api.put(`Cities/EditAdmin/${adminId}`, data).catch((error) => {
     throw new Error(error);
   });
-}
+};
 
 export const addDocument = async (cityId: number, data: any) => {
   return api.post(`Cities/AddDocument/${cityId}`, data).catch((error) => {
     throw new Error(error);
   });
-}
+};
 
 export const removeDocument = async (documentId: number) => {
-  return api.remove(`Cities/RemoveDocument/${documentId}`, documentId).catch((error) => {
-    throw new Error(error);
-  });
-}
+  return api
+    .remove(`Cities/RemoveDocument/${documentId}`, documentId)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
 
 export const getFile = async (fileBlob: string, fileName: string) => {
-  const response = await (await api.get(`Cities/FileBase64/${fileBlob}`, fileBlob)).data;
+  const response = await (
+    await api.get(`Cities/FileBase64/${fileBlob}`, fileBlob)
+  ).data;
   const file = dataURLtoFile(response, fileBlob);
-  const anchor = window.document.createElement('a');
+  const anchor = window.document.createElement("a");
   anchor.href = window.URL.createObjectURL(file);
   anchor.download = fileName;
   document.body.appendChild(anchor);
@@ -200,33 +216,34 @@ export const getFile = async (fileBlob: string, fileName: string) => {
   document.body.removeChild(anchor);
   window.URL.revokeObjectURL(anchor.href);
   return response;
-}
+};
 
 export const getDocumentTypes = async () => {
   return api.get(`Cities/GetDocumentTypes`).catch((error) => {
     throw new Error(error);
   });
-}
+};
 
+export const getusersPreviousAdministrations = async (UserId: string) => {
+  return await api
+    .get(`Cities/GetUserPreviousAdmins/${UserId}`)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
 
-export const getusersPreviousAdministrations = async(UserId:string)=>{
-  return await api.get(`Cities/GetUserPreviousAdmins/${UserId}`).catch((error)=>{
-    throw new Error(error);
-  })
-}
+export const getUsersAdministrations = async (UserId: string) => {
+  return api.get(`Cities/GetUserAdmins/${UserId}`);
+};
 
-
-export const getUsersAdministrations = async(UserId:string)=>{
-   return api.get(`Cities/GetUserAdmins/${UserId}`);
-  
-}
-
-
-export const getCities = async ()=>{
-  return await api.get(`Cities/Cities`).catch(error => {
+export const getCities = async () => {
+  return await api.get(`Cities/Cities`).catch((error) => {
     throw new Error(error);
   });
-}
+};
 export default {
-  getCities, getUsersAdministrations, getusersPreviousAdministrations, getDocumentTypes
-}
+  getCities,
+  getUsersAdministrations,
+  getusersPreviousAdministrations,
+  getDocumentTypes,
+};

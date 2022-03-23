@@ -1,12 +1,7 @@
-import { GoverningBody } from "../../api/decisionsApi"
-import { MethodicDocumentType } from "./MethodicDocumentType"
+import { GoverningBody } from "../../api/decisionsApi";
+import { MethodicDocumentType } from "./MethodicDocumentType";
 
 export type DocumentOnCreateData = {
-    governingBodies: GoverningBody[];
-    methodicDocumentTypesItems: MethodicDocumentType[];
-}
-
-
-
-
-
+  governingBodies: GoverningBody[];
+  methodicDocumentTypesItems: MethodicDocumentType[];
+};

@@ -62,29 +62,27 @@ const ConfirmRegionAdminModal = ({
       onCancel={() => setVisibleModal(false)}
       onOk={handleSubmit}
     >
-    
-          <div style={{ margin: 10 }}>
-            {oldAdminFirstName} {oldAdminLastName} є {adminType}, термін дії
-            посади закінчується{" "}
-            {endDayOld === "Invalid date" ? "ще не скоро" : endDayOld}.
-            Призначити даного користувача на цю посаду?
-          </div>
-            <Row justify="end">
-              <Col xs={11} sm={5}>
-                <Button key="back" onClick={handleCancel}>
-                  Відмінити
-                </Button>
-              </Col>
-              <Col
-                className="publishButton"
-                xs={{ span: 11, offset: 2 }}
-                sm={{ span: 6, offset: 1 }}
-              >
-                <Button type="primary" htmlType="submit" onClick={handleSubmit}>
-                  Призначити
-                </Button>
-              </Col>
-            </Row>
+      <div style={{ margin: 10 }}>
+        {oldAdminFirstName} {oldAdminLastName} є {adminType}, термін дії посади
+        закінчується {endDayOld === "Invalid date" ? "ще не скоро" : endDayOld}.
+        Призначити даного користувача на цю посаду?
+      </div>
+      <Row justify="end">
+        <Col xs={11} sm={5}>
+          <Button key="back" onClick={handleCancel}>
+            Відмінити
+          </Button>
+        </Col>
+        <Col
+          className="publishButton"
+          xs={{ span: 11, offset: 2 }}
+          sm={{ span: 6, offset: 1 }}
+        >
+          <Button type="primary" htmlType="submit" onClick={handleSubmit}>
+            Призначити
+          </Button>
+        </Col>
+      </Row>
     </Modal>
   );
 };

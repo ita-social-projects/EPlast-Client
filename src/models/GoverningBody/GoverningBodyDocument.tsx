@@ -1,4 +1,4 @@
-import GoverningBodyDocumentType from './GoverningBodyDocumentType';
+import GoverningBodyDocumentType from "./GoverningBodyDocumentType";
 
 export default class GoverningBodyDocument {
   id: number;

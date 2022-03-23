@@ -1,4 +1,4 @@
-import CityAdmin from './CityAdmin';
+import CityAdmin from "./CityAdmin";
 
 export default class CityProfile {
   id: number;

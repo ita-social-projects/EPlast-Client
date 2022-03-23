@@ -7,10 +7,7 @@ interface Props {
   setVisibleModal: (visibleModal: boolean) => void;
 }
 
-const EditPrecautionTypesModal = ({
-  visibleModal,
-  setVisibleModal,
-}: Props) => {
+const EditPrecautionTypesModal = ({ visibleModal, setVisibleModal }: Props) => {
   const handleCancel = () => setVisibleModal(false);
 
   return (

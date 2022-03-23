@@ -14,27 +14,34 @@ import RegionsApi, { checkIfNameExists } from "../../api/regionsApi";
 import ReactInputMask from "react-input-mask";
 import "./CreateRegion.less";
 import notificationLogic from "../../components/Notifications/Notification";
-import { DeleteOutlined, ExclamationCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";
 import { useHistory } from "react-router-dom";
 import Spinner from "../Spinner/Spinner";
 import Title from "antd/lib/typography/Title";
 import RegionProfile from "../../models/Region/RegionProfile";
-import { descriptionValidation, getOnlyNums } from "../../models/GllobalValidations/DescriptionValidation";
+import {
+  descriptionValidation,
+  getOnlyNums,
+} from "../../models/GllobalValidations/DescriptionValidation";
 import {
   fileIsUpload,
   fileIsNotUpload,
   possibleFileExtensions,
   fileIsTooBig,
   successfulEditAction,
-} from "../../components/Notifications/Messages"
+} from "../../components/Notifications/Messages";
 import { showRegionNameExistsModal } from "../../components/Notifications/Modals";
 
 const RegionEditFormPage = () => {
   let currentRegion = Number(
     window.location.hash.substring(1) ||
-    window.location.pathname.split("/").pop()
+      window.location.pathname.split("/").pop()
   );
   const [form] = Form.useForm();
   const history = useHistory();
@@ -42,7 +49,9 @@ const RegionEditFormPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [logo, setLogo] = useState<any>();
 
-  const [chosenRegion, setChosenRegion] = useState<RegionProfile>(new RegionProfile());
+  const [chosenRegion, setChosenRegion] = useState<RegionProfile>(
+    new RegionProfile()
+  );
 
   useEffect(() => {
     getRegion();
@@ -103,25 +112,25 @@ const RegionEditFormPage = () => {
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
-        const newRegion: RegionProfile = {
-          id: chosenRegion.id,
-          regionName: values.regionName,
-          description: values.description,
-          phoneNumber: values.phoneNumber,
-          email: values.email,
-          link: values.link,
-          street: values.street,
-          houseNumber: values.houseNumber,
-          officeNumber: values.officeNumber,
-          postIndex: values.postIndex,
-          logo: logo,
-          city: values.city,
-          isActive: chosenRegion.isActive
-        };
-        await RegionsApi.EditRegion(currentRegion, newRegion); 
-        form.resetFields();  
-        notificationLogic("success", successfulEditAction("Дані округи"));
-        history.push(`/regions/${currentRegion}`);         
+    const newRegion: RegionProfile = {
+      id: chosenRegion.id,
+      regionName: values.regionName,
+      description: values.description,
+      phoneNumber: values.phoneNumber,
+      email: values.email,
+      link: values.link,
+      street: values.street,
+      houseNumber: values.houseNumber,
+      officeNumber: values.officeNumber,
+      postIndex: values.postIndex,
+      logo: logo,
+      city: values.city,
+      isActive: chosenRegion.isActive,
+    };
+    await RegionsApi.EditRegion(currentRegion, newRegion);
+    form.resetFields();
+    notificationLogic("success", successfulEditAction("Дані округи"));
+    history.push(`/regions/${currentRegion}`);
   };
 
   return (
@@ -130,7 +139,14 @@ const RegionEditFormPage = () => {
         {loading ? (
           <Spinner />
         ) : (
-          <Form name="basic" onFinish={(values) => {handleSubmit(values); setLoadingButton(true)}} form={form}>
+          <Form
+            name="basic"
+            onFinish={(values) => {
+              handleSubmit(values);
+              setLoadingButton(true);
+            }}
+            form={form}
+          >
             <Title level={2}>Редагування округи</Title>
             <Form.Item name="logo" initialValue={chosenRegion.logo}>
               <Upload
@@ -162,8 +178,7 @@ const RegionEditFormPage = () => {
                   labelCol={{ span: 24 }}
                   rules={descriptionValidation.RegionName}
                 >
-                  <Input
-                    value={chosenRegion.regionName} maxLength={51} />
+                  <Input value={chosenRegion.regionName} maxLength={51} />
                 </Form.Item>
               </Col>
               <Col md={{ span: 11, offset: 2 }} xs={24}>
@@ -174,8 +189,7 @@ const RegionEditFormPage = () => {
                   labelCol={{ span: 24 }}
                   rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
                 >
-                  <Input
-                    value={chosenRegion?.description} maxLength={1001} />
+                  <Input value={chosenRegion?.description} maxLength={1001} />
                 </Form.Item>
               </Col>
 
@@ -185,7 +199,10 @@ const RegionEditFormPage = () => {
                   label="Номер телефону"
                   labelCol={{ span: 24 }}
                   initialValue={chosenRegion?.phoneNumber}
-                  rules={[descriptionValidation.Phone, descriptionValidation.Required]}
+                  rules={[
+                    descriptionValidation.Phone,
+                    descriptionValidation.Required,
+                  ]}
                 >
                   <ReactInputMask
                     mask="+380(99)-999-99-99"
@@ -205,8 +222,7 @@ const RegionEditFormPage = () => {
                   initialValue={chosenRegion?.email}
                   rules={descriptionValidation.Email}
                 >
-                  <Input maxLength={51}
-                    value={chosenRegion?.email} />
+                  <Input maxLength={51} value={chosenRegion?.email} />
                 </Form.Item>
               </Col>
 
@@ -218,8 +234,7 @@ const RegionEditFormPage = () => {
                   labelCol={{ span: 24 }}
                   rules={[descriptionValidation.Link]}
                 >
-                  <Input maxLength={257}
-                    value={chosenRegion?.link} />
+                  <Input maxLength={257} value={chosenRegion?.link} />
                 </Form.Item>
               </Col>
 
@@ -231,8 +246,7 @@ const RegionEditFormPage = () => {
                   labelCol={{ span: 24 }}
                   rules={descriptionValidation.RegionName}
                 >
-                  <Input maxLength={51}
-                    value={chosenRegion?.city} />
+                  <Input maxLength={51} value={chosenRegion?.city} />
                 </Form.Item>
               </Col>
 
@@ -244,8 +258,7 @@ const RegionEditFormPage = () => {
                   initialValue={chosenRegion?.street}
                   rules={descriptionValidation.Street}
                 >
-                  <Input maxLength={51}
-                    value={chosenRegion?.street} />
+                  <Input maxLength={51} value={chosenRegion?.street} />
                 </Form.Item>
               </Col>
 
@@ -257,8 +270,7 @@ const RegionEditFormPage = () => {
                   initialValue={chosenRegion?.houseNumber}
                   rules={descriptionValidation.houseNumber}
                 >
-                  <Input maxLength={6}
-                    value={chosenRegion?.houseNumber} />
+                  <Input maxLength={6} value={chosenRegion?.houseNumber} />
                 </Form.Item>
               </Col>
 
@@ -270,8 +282,7 @@ const RegionEditFormPage = () => {
                   initialValue={chosenRegion?.officeNumber}
                   rules={descriptionValidation.officeNumber}
                 >
-                  <Input maxLength={6}
-                    value={chosenRegion?.officeNumber} />
+                  <Input maxLength={6} value={chosenRegion?.officeNumber} />
                 </Form.Item>
               </Col>
 
@@ -289,9 +300,10 @@ const RegionEditFormPage = () => {
                         postIndex: getOnlyNums(e.target.value),
                       });
                     }}
-                    autoComplete = "off"
+                    autoComplete="off"
                     maxLength={5}
-                    value={chosenRegion.postIndex} />
+                    value={chosenRegion.postIndex}
+                  />
                 </Form.Item>
               </Col>
             </Row>
@@ -307,7 +319,11 @@ const RegionEditFormPage = () => {
                 </Button>
               </Col>
               <Col xs={24} sm={12}>
-                <Button htmlType="submit" loading={loadingButton} type="primary">
+                <Button
+                  htmlType="submit"
+                  loading={loadingButton}
+                  type="primary"
+                >
                   Підтвердити
                 </Button>
               </Col>

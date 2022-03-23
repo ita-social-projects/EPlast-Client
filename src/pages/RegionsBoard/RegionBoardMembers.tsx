@@ -66,7 +66,9 @@ const RegionBoardMembers = () => {
             governingBodies.map((governingBody: any) => (
               <Card key={governingBody.id} className="detailsCard">
                 <div
-                  onClick={() => history.push(`/governingBody/${governingBody.id}`)}
+                  onClick={() =>
+                    history.push(`/governingBody/${governingBody.id}`)
+                  }
                   className="cityMember"
                 >
                   {photosLoading ? (
@@ -78,7 +80,10 @@ const RegionBoardMembers = () => {
                       className="detailsIcon"
                     />
                   )}
-                  <Card.Meta className="detailsMeta" title={`${governingBody.name}`} />
+                  <Card.Meta
+                    className="detailsMeta"
+                    title={`${governingBody.name}`}
+                  />
                 </div>
               </Card>
             ))

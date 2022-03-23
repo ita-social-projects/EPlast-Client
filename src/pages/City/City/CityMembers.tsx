@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal, Row, Skeleton, Spin, } from "antd";
-import { SettingOutlined, CloseOutlined, RollbackOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { removeAdministrator, getAllAdmins, getAllMembers, toggleMemberStatus } from "../../../api/citiesApi";
+import { Avatar, Button, Card, Layout, Modal, Row, Skeleton, Spin } from "antd";
+import {
+  SettingOutlined,
+  CloseOutlined,
+  RollbackOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
+import {
+  removeAdministrator,
+  getAllAdmins,
+  getAllMembers,
+  toggleMemberStatus,
+} from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
 import CityMember from "../../../models/City/CityMember";
@@ -14,11 +24,13 @@ import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import { Roles } from "../../../models/Roles/Roles";
-import extendedTitleTooltip, {parameterMaxLength} from "../../../components/Tooltip";
+import extendedTitleTooltip, {
+  parameterMaxLength,
+} from "../../../components/Tooltip";
 moment.locale("uk-ua");
 
 const CityMembers = () => {
-  const {id} = useParams();
+  const { id } = useParams();
   const history = useHistory();
 
   const [members, setMembers] = useState<CityMember[]>([]);
@@ -31,7 +43,7 @@ const CityMembers = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [cityName, setCityName] = useState<string>("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  
+
   const getMembers = async () => {
     setLoading(true);
     const responseMembers = await getAllMembers(id);
@@ -47,20 +59,21 @@ const CityMembers = () => {
     setAdmins(responseAdmins.data.administration);
     setHead(responseAdmins.data.head);
     const userRoles = userApi.getActiveUserRoles();
-      setActiveUserRoles(userRoles);
+    setActiveUserRoles(userRoles);
     setLoading(false);
   };
 
   function seeDeleteModal(admin: CityMember) {
     return Modal.confirm({
-      title: "Ви впевнені, що хочете видалити даного користувача із членів Станиці?",
+      title:
+        "Ви впевнені, що хочете видалити даного користувача із членів Станиці?",
       icon: <ExclamationCircleOutlined />,
       okText: "Так, видалити",
       okType: "primary",
       cancelText: "Скасувати",
       maskClosable: true,
       onOk() {
-         removeMember(admin);
+        removeMember(admin);
       },
     });
   }
@@ -71,44 +84,52 @@ const CityMembers = () => {
     const existingAdmin = [head, ...admins].filter(
       (a) =>
         a?.userId === member.userId &&
-        (moment.utc(a?.endDate).local().isAfter(moment()) || a?.endDate === null)
+        (moment.utc(a?.endDate).local().isAfter(moment()) ||
+          a?.endDate === null)
     );
 
     for (let i of existingAdmin) {
       await removeAdministrator(i.id);
     }
-    await createNotification([member.userId], "На жаль, ви були виключені з членів станиці");
+    await createNotification(
+      [member.userId],
+      "На жаль, ви були виключені з членів станиці"
+    );
     setMembers(members.filter((u) => u.id !== member.id));
   };
 
-  const createNotification = async(userId : Array<string>, message : string) => {
+  const createNotification = async (userId: Array<string>, message: string) => {
     await NotificationBoxApi.createNotifications(
       userId,
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/cities/${id}`,
       cityName
-      );
-  }
+    );
+  };
 
-  const onAdd = async (admin? : CityAdmin) => {
+  const onAdd = async (admin?: CityAdmin) => {
     const responseAdmins = await getAllAdmins(id);
     setAdmins(responseAdmins.data.administration);
-    setHead(responseAdmins.data.head); 
-    if(admin){
-      await createNotification([admin.userId], `Вам була присвоєна нова роль: '${admin.adminType.adminTypeName}' в станиці`);
+    setHead(responseAdmins.data.head);
+    if (admin) {
+      await createNotification(
+        [admin.userId],
+        `Вам була присвоєна нова роль: '${admin.adminType.adminTypeName}' в станиці`
+      );
     }
-  }
+  };
 
-  const showModal = (member: CityMember) => {    
-    const existingAdmin = [head, ...admins].find((a) => a?.userId === member.userId);
-    
+  const showModal = (member: CityMember) => {
+    const existingAdmin = [head, ...admins].find(
+      (a) => a?.userId === member.userId
+    );
+
     if (existingAdmin !== undefined) {
       setAdmin(existingAdmin);
-    }
-    else {
+    } else {
       setAdmin({
-        ...(new CityAdmin()),
+        ...new CityAdmin(),
         userId: member.user.id,
         cityId: member.cityId,
       });
@@ -131,58 +152,63 @@ const CityMembers = () => {
 
   return (
     <Layout.Content>
-      <Title level={2}>
-        Члени станиці
-      </Title>
+      <Title level={2}>Члени станиці</Title>
       {loading ? (
-          <Spinner />
-        ) : (
-      <div className="cityMoreItems">
-        {members.length > 0 ? (
-          members.map((member: CityMember) => (
-            <Card
-              key={member.id}
-              className="detailsCard"
-              actions={
-                canEdit && (member?.user.id !== head?.user.id || !activeUserRoles.includes(Roles.CityHeadDeputy))
-                  ? [
-                      <SettingOutlined onClick={() => showModal(member)} />,
-                      <CloseOutlined onClick={() => seeDeleteModal(member)} />,
-                    ]
-                  : undefined
-              }
-            >
-              <div
-                onClick={() => canEdit || (activeUserRoles.includes(Roles.Supporter) || activeUserRoles.includes(Roles.PlastMember)) 
-                  ? history.push(`/userpage/main/${member.userId}`) 
-                  : undefined
+        <Spinner />
+      ) : (
+        <div className="cityMoreItems">
+          {members.length > 0 ? (
+            members.map((member: CityMember) => (
+              <Card
+                key={member.id}
+                className="detailsCard"
+                actions={
+                  canEdit &&
+                  (member?.user.id !== head?.user.id ||
+                    !activeUserRoles.includes(Roles.CityHeadDeputy))
+                    ? [
+                        <SettingOutlined onClick={() => showModal(member)} />,
+                        <CloseOutlined
+                          onClick={() => seeDeleteModal(member)}
+                        />,
+                      ]
+                    : undefined
                 }
-                className="cityMember"
               >
-                {photosLoading ? (
-                  <Skeleton.Avatar active size={86}></Skeleton.Avatar>
-                ) : (
-                  <Avatar
-                    size={86}
-                    src={member.user.imagePath}
-                    className="detailsIcon"
-                  />
-                )}
-                <Card.Meta
-                  className="detailsMeta"
-                  title={
-                    extendedTitleTooltip(parameterMaxLength, `${member.user.firstName} ${member.user.lastName}`)
+                <div
+                  onClick={() =>
+                    canEdit ||
+                    activeUserRoles.includes(Roles.Supporter) ||
+                    activeUserRoles.includes(Roles.PlastMember)
+                      ? history.push(`/userpage/main/${member.userId}`)
+                      : undefined
                   }
-                />
-              </div>
-            </Card>
-          ))
-        ) : (
-          <Title level={4}>
-            Ще немає членів станиці
-          </Title>
-        )}
-      </div>)}
+                  className="cityMember"
+                >
+                  {photosLoading ? (
+                    <Skeleton.Avatar active size={86}></Skeleton.Avatar>
+                  ) : (
+                    <Avatar
+                      size={86}
+                      src={member.user.imagePath}
+                      className="detailsIcon"
+                    />
+                  )}
+                  <Card.Meta
+                    className="detailsMeta"
+                    title={extendedTitleTooltip(
+                      parameterMaxLength,
+                      `${member.user.firstName} ${member.user.lastName}`
+                    )}
+                  />
+                </div>
+              </Card>
+            ))
+          ) : (
+            <Title level={4}>Ще немає членів станиці</Title>
+          )}
+        </div>
+      )}
       <div className="cityMoreItems">
         <Button
           className="backButton"

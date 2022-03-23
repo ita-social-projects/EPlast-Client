@@ -11,13 +11,11 @@ module.exports = {
     "prettier",
     "prettier/@typescript-eslint",
     "prettier/react",
-    "no-useless-escape",
   ],
   rules: {
-    'no-useless-escape': 'off',
-    'react/jsx-props-no-spreading': 'off',
-    'no-nested-ternary': 'off',
-    'no-console': 'off',
-    'jsx-a11y/click-events-have-key-events': 'off'
+    "react/jsx-props-no-spreading": "off",
+    "no-nested-ternary": "off",
+    "no-console": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
   },
 };
