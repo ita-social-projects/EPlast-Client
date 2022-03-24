@@ -78,6 +78,7 @@ import EditGoverningBodySector from "./pages/GoverningBody/Sector/EditSector";
 import GoverningBodySectorDocuments from "./pages/GoverningBody/Sector/SectorDocuments";
 import GoverningBodySectorAdministration from "./pages/GoverningBody/Sector/SectorAdministration";
 import Announcements from "./pages/GoverningBody/Announcement/Announcement";
+import SectorAnnouncement from "./pages/GoverningBody/Sector/SectorAnnouncement/SectorAnnouncement";
 import UserRenewalTable from "./pages/UserRenewal/UserRenewalTable/UserRenewalTable";
 import TermsOfUse from "./pages/Terms/TermsOfUse";
 import TermsEdit from "./pages/Terms/TermsEdit";
@@ -406,8 +407,14 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/announcements/page/:p"
+            path="/governingBodies/announcements/:id/:p"
             component={Announcements}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/sector/announcements/:governingBodyId/:sectorId/:p"
+            component={SectorAnnouncement}
           />
           <RouteWithLayout
             layout={PrivateLayout}
