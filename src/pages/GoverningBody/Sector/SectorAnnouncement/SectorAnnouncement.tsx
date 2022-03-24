@@ -1,4 +1,13 @@
-import { Button, Avatar, Layout, List, Modal, Carousel, Tooltip, Divider  } from "antd";
+import {
+  Button,
+  Avatar,
+  Layout,
+  List,
+  Modal,
+  Carousel,
+  Tooltip,
+  Divider,
+} from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -31,9 +40,13 @@ import {
   RightOutlined,
 } from "@ant-design/icons";
 import GoverningBodyAnnouncement from "../../../../models/GoverningBody/GoverningBodyAnnouncement";
-import { addAnnouncement, getAnnouncementsById } from "../../../../api/governingBodiesApi";
-import PicturesWall, { AnnouncementGallery } from "../../Announcement/PicturesWallModal";
-
+import {
+  addAnnouncement,
+  getAnnouncementsById,
+} from "../../../../api/governingBodiesApi";
+import PicturesWall, {
+  AnnouncementGallery,
+} from "../../Announcement/PicturesWallModal";
 
 const { Content } = Layout;
 
@@ -60,29 +73,31 @@ const Announcements = () => {
 
   const getAnnouncements = async () => {
     setLoading(true);
-    await getSectorAnnouncementsByPage(p, pageSize, +sectorId).then(async (res) => {
-      setTotalSize(res.data.item2);
-      var announcements: Announcement[] = [];
-      for (var value of res.data.item1) {
-        await UserApi.getImage(value.user.imagePath).then((image) => {
-          var ann: Announcement = {
-            id: value.id,
-            text: value.text,
-            title: value.title,
-            date: value.date,
-            firstName: value.user.firstName,
-            lastName: value.user.lastName,
-            userId: value.userId,
-            profileImage: image.data,
-            strippedString: value.text.replace(/<[^>]+>/g, ""),
-            imagesPresent: value.imagesPresent,
-          };
-          announcements.push(ann);
-        });
+    await getSectorAnnouncementsByPage(p, pageSize, +sectorId).then(
+      async (res) => {
+        setTotalSize(res.data.item2);
+        var announcements: Announcement[] = [];
+        for (var value of res.data.item1) {
+          await UserApi.getImage(value.user.imagePath).then((image) => {
+            var ann: Announcement = {
+              id: value.id,
+              text: value.text,
+              title: value.title,
+              date: value.date,
+              firstName: value.user.firstName,
+              lastName: value.user.lastName,
+              userId: value.userId,
+              profileImage: image.data,
+              strippedString: value.text.replace(/<[^>]+>/g, ""),
+              imagesPresent: value.imagesPresent,
+            };
+            announcements.push(ann);
+          });
+        }
+        setData(announcements);
+        setLoading(false);
       }
-      setData(announcements);
-      setLoading(false);
-    });
+    );
   };
 
   const handleChange = async (page: number) => {
@@ -141,19 +156,17 @@ const Announcements = () => {
   const showFullAnnouncement = async (annId: number) => {
     let pics: AnnouncementGallery[] = [];
     await getSectorAnnouncementsById(annId).then((response) => {
-      (response.data.images).map((image: any) => {
+      response.data.images.map((image: any) => {
         pics.push({
           announcementId: image.id,
-          fileName: image.imageBase64
-        })
+          fileName: image.imageBase64,
+        });
       });
       return Modal.info({
         title: (
           <div className={classes.announcementDate}>
             {response.data.user.firstName} {response.data.user.lastName}
-            <div>
-              {response.data.date.toString().substring(0, 10)}
-            </div>
+            <div>{response.data.date.toString().substring(0, 10)}</div>
           </div>
         ),
         content: (
@@ -161,10 +174,7 @@ const Announcements = () => {
             <Markup content={response.data.title} />
             <Markup content={response.data.text} />
             <div>
-              <PicturesWall
-                pictures={pics}
-                key="removePictures"
-              />
+              <PicturesWall pictures={pics} key="removePictures" />
             </div>
           </div>
         ),
@@ -183,19 +193,28 @@ const Announcements = () => {
     setVisibleAddModal(false);
     setLoading(true);
     await editSectorAnnouncement(id, newTitle, newText, newImages);
-    setData(data.map((x) => (x.id === id ? { ...x, text: newText, title: newTitle } : x)));
+    setData(
+      data.map((x) =>
+        x.id === id ? { ...x, text: newText, title: newTitle } : x
+      )
+    );
     await getAnnouncements();
     setLoading(false);
   };
 
-  const handleAdd = async (title: string, text: string, images: string[], gvbId: number, sectorId: number) => {
+  const handleAdd = async (
+    title: string,
+    text: string,
+    images: string[],
+    gvbId: number,
+    sectorId: number
+  ) => {
     setVisibleAddModal(false);
     setLoading(true);
     newNotification();
     if (sectorId) {
       await addSectorAnnouncement(title, text, images, +sectorId);
-    }
-    else {
+    } else {
       await addAnnouncement(title, text, images, +gvbId);
     }
     getAnnouncements();
@@ -278,9 +297,7 @@ const Announcements = () => {
                       }
                     />
                   </div>
-                  <Markup
-                    content={item.title}
-                  />
+                  <Markup content={item.title} />
                   <Markup
                     content={
                       item.strippedString.length < maxTextLength

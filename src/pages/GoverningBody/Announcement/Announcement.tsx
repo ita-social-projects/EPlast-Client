@@ -24,9 +24,7 @@ import AuthStore from "../../../stores/AuthStore";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import UserApi from "../../../api/UserApi";
 import { Markup } from "interweave";
-import {
-  FileImageOutlined
-} from "@ant-design/icons";
+import { FileImageOutlined } from "@ant-design/icons";
 import PicturesWall, { AnnouncementGallery } from "./PicturesWallModal";
 import { addSectorAnnouncement } from "../../../api/governingBodySectorsApi";
 
@@ -136,19 +134,17 @@ const Announcements = () => {
   const showFullAnnouncement = async (annId: number) => {
     let pics: AnnouncementGallery[] = [];
     await getAnnouncementsById(annId).then((response) => {
-      (response.data.images).map((image: any) => {
+      response.data.images.map((image: any) => {
         pics.push({
           announcementId: image.id,
-          fileName: image.imageBase64
-        })
+          fileName: image.imageBase64,
+        });
       });
       return Modal.info({
         title: (
           <div className={classes.announcementDate}>
             {response.data.user.firstName} {response.data.user.lastName}
-            <div>
-              {response.data.date.toString().substring(0, 10)}
-            </div>
+            <div>{response.data.date.toString().substring(0, 10)}</div>
           </div>
         ),
         content: (
@@ -156,10 +152,7 @@ const Announcements = () => {
             <Markup content={response.data.title} />
             <Markup content={response.data.text} />
             <div>
-              <PicturesWall
-                pictures={pics}
-                key="removePictures"
-              />
+              <PicturesWall pictures={pics} key="removePictures" />
             </div>
           </div>
         ),
@@ -178,19 +171,28 @@ const Announcements = () => {
     setVisibleAddModal(false);
     setLoading(true);
     await editAnnouncement(id, newTitle, newText, newImages);
-    setData(data.map((x) => (x.id === id ? { ...x, text: newText, title: newTitle } : x)));
+    setData(
+      data.map((x) =>
+        x.id === id ? { ...x, text: newText, title: newTitle } : x
+      )
+    );
     await getAnnouncements();
     setLoading(false);
   };
 
-  const handleAdd = async (title: string, text: string, images: string[], gvbId: number, sectorId: number) => {
+  const handleAdd = async (
+    title: string,
+    text: string,
+    images: string[],
+    gvbId: number,
+    sectorId: number
+  ) => {
     setVisibleAddModal(false);
     setLoading(true);
     newNotification();
     if (sectorId) {
       await addSectorAnnouncement(title, text, images, +sectorId);
-    }
-    else {
+    } else {
       await addAnnouncement(title, text, images, +gvbId);
     }
     getAnnouncements();
@@ -235,7 +237,11 @@ const Announcements = () => {
             renderItem={(item) => {
               return (
                 <List.Item
-                  style={{ overflow: "hidden", wordBreak: "break-word", cursor: "pointer" }}
+                  style={{
+                    overflow: "hidden",
+                    wordBreak: "break-word",
+                    cursor: "pointer",
+                  }}
                   className={classes.listItem}
                   onClick={() => {
                     setShowDropdown(false);
@@ -272,22 +278,20 @@ const Announcements = () => {
                       }
                     />
                   </div>
-                  <Markup
-                    content={item.title}
-                  />
+                  <Markup content={item.title} />
                   <Markup
                     content={
                       item.strippedString.length < maxTextLength
                         ? item.text
                         : `${item.text
-                          .toString()
-                          .substring(
-                            0,
-                            maxTextLength +
-                            (item.text.length -
-                              item.strippedString.length) /
-                            2
-                          )}...`
+                            .toString()
+                            .substring(
+                              0,
+                              maxTextLength +
+                                (item.text.length -
+                                  item.strippedString.length) /
+                                  2
+                            )}...`
                     }
                   />
                 </List.Item>

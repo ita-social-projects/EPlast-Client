@@ -20,7 +20,7 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
   FileTextOutlined,
-  LockOutlined
+  LockOutlined,
 } from "@ant-design/icons";
 import {
   getSectorById,
@@ -58,7 +58,9 @@ import { Roles } from "../../../models/Roles/Roles";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import InfiniteScroll from "react-infinite-scroll-component";
-import PicturesWall, { AnnouncementGallery } from "../Announcement/PicturesWallModal";
+import PicturesWall, {
+  AnnouncementGallery,
+} from "../Announcement/PicturesWallModal";
 const classes = require("../Announcement/Announcement.module.css");
 
 const Sector = () => {
@@ -91,8 +93,6 @@ const Sector = () => {
   const [listLoading, setListLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-
-  const announcementsQuantity = 3;
 
   const deleteSector = async () => {
     await removeSector(sector.id);
@@ -172,7 +172,6 @@ const Sector = () => {
       setDocumentsCount(response.data.documentsCount);
       setAnnouncementsCount(response.data.announcementsCount);
       loadMoreData();
-
     } finally {
       setLoading(false);
     }
@@ -198,15 +197,24 @@ const Sector = () => {
     );
   };
 
-  const onAnnouncementAdd = async (title: string, text: string, images: string[]) => {
+  const onAnnouncementAdd = async (
+    title: string,
+    text: string,
+    images: string[]
+  ) => {
     setVisibleAddModal(false);
     setLoading(true);
     newAnnouncementNotification();
-    const announcementId = (await addSectorAnnouncement(title, text, images, +sectorId)).data;
+    const announcementId = (
+      await addSectorAnnouncement(title, text, images, +sectorId)
+    ).data;
     let newAnnouncement: GoverningBodyAnnouncement = (
       await getSectorAnnouncementsById(announcementId)
     ).data;
-    setAnnouncements((old: GoverningBodyAnnouncement[]) => [newAnnouncement, ...old]);
+    setAnnouncements((old: GoverningBodyAnnouncement[]) => [
+      newAnnouncement,
+      ...old,
+    ]);
     setLoading(false);
     notificationLogic("success", "Оголошення опубліковано");
   };
@@ -218,19 +226,17 @@ const Sector = () => {
   const showFullAnnouncement = async (annId: number) => {
     let pics: AnnouncementGallery[] = [];
     await getSectorAnnouncementsById(annId).then((response) => {
-      (response.data.images).map((image: any) => {
+      response.data.images.map((image: any) => {
         pics.push({
           announcementId: image.id,
-          fileName: image.imageBase64
-        })
+          fileName: image.imageBase64,
+        });
       });
       return Modal.info({
         title: (
           <div className={classes.announcementDate}>
             {response.data.user.firstName} {response.data.user.lastName}
-            <div>
-              {response.data.date.toString().substring(0, 10)}
-            </div>
+            <div>{response.data.date.toString().substring(0, 10)}</div>
           </div>
         ),
         content: (
@@ -238,10 +244,7 @@ const Sector = () => {
             <Markup content={response.data.title} />
             <Markup content={response.data.text} />
             <div>
-              <PicturesWall
-                pictures={pics}
-                key="removePictures"
-              />
+              <PicturesWall pictures={pics} key="removePictures" />
             </div>
           </div>
         ),
@@ -257,16 +260,19 @@ const Sector = () => {
     }
     try {
       setListLoading(true);
-      const response = await getSectorAnnouncementsByPage(page, pageSize, +sectorId);
+      const response = await getSectorAnnouncementsByPage(
+        page,
+        pageSize,
+        +sectorId
+      );
       for (let i = 0; i < response.data.item2; ++i) {
-        setAnnouncements((old) => [...old, response.data.item1[i]])
+        setAnnouncements((old) => [...old, response.data.item1[i]]);
       }
-    }
-    finally {
+    } finally {
       setListLoading(false);
       setPage(page + 1);
     }
-  }
+  };
 
   useEffect(() => {
     getSector();
@@ -443,10 +449,11 @@ const Sector = () => {
                   <div
                     id="scrollableDiv"
                     style={{
-                      width: '100%',
+                      width: "100%",
                       height: 400,
-                      overflow: 'auto'
-                    }}>
+                      overflow: "auto",
+                    }}
+                  >
                     <InfiniteScroll
                       dataLength={announcements.length}
                       next={loadMoreData}
@@ -458,15 +465,16 @@ const Sector = () => {
                         dataSource={announcements}
                         renderItem={(item) => (
                           <List.Item
-                            style={{ cursor: 'pointer' }}
+                            style={{ cursor: "pointer" }}
                             key={item.id}
                             onClick={() => showFullAnnouncement(item.id)}
                           >
                             <List.Item.Meta
                               title={<Markup content={item.title} />}
-                              description={item.date.toString().substring(0, 10)}
-                            >
-                            </List.Item.Meta>
+                              description={item.date
+                                .toString()
+                                .substring(0, 10)}
+                            ></List.Item.Meta>
                           </List.Item>
                         )}
                       />
@@ -491,7 +499,11 @@ const Sector = () => {
                 <Button
                   type="primary"
                   className="governingBodyInfoButton"
-                  onClick={() => history.push(`/sector/announcements/${governingBodyId}/${sectorId}/1`)}
+                  onClick={() =>
+                    history.push(
+                      `/sector/announcements/${governingBodyId}/${sectorId}/1`
+                    )
+                  }
                 >
                   Більше
                 </Button>
@@ -579,10 +591,10 @@ const Sector = () => {
                 onClick={() =>
                   history.push(
                     "/governingBodies/" +
-                    governingBodyId +
-                    "/sectors/" +
-                    sector.id +
-                    "/administration"
+                      governingBodyId +
+                      "/sectors/" +
+                      sector.id +
+                      "/administration"
                   )
                 }
               >
@@ -624,8 +636,8 @@ const Sector = () => {
                 onClick={() =>
                   userAccesses["ViewDocument"]
                     ? history.push(
-                      `/governingBodies/${governingBodyId}/sectors/${sector.id}/documents`
-                    )
+                        `/governingBodies/${governingBodyId}/sectors/${sector.id}/documents`
+                      )
                     : undefined
                 }
               >

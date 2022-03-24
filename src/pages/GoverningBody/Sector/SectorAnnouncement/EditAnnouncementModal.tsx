@@ -124,14 +124,14 @@ const EditAnnouncementModal = ({
                 ]}
               >
                 <p></p>
-                <ReactQuill 
-                  theme="snow" 
-                  placeholder="Введіть текст..." 
+                <ReactQuill
+                  theme="snow"
+                  placeholder="Введіть текст..."
                   value={title}
                   onChange={(str) => {
                     setTitle(str);
                   }}
-                  />
+                />
               </Form.Item>
             </Col>
           </Row>

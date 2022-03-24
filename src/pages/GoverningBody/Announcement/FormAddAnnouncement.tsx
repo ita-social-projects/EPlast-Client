@@ -7,9 +7,7 @@ import {
 } from "../../../components/Notifications/Messages";
 import ReactQuill from "react-quill";
 import { UploadFile } from "antd/lib/upload/interface";
-import {
-  getGoverningBodiesList
-} from "../../../api/governingBodiesApi";
+import { getGoverningBodiesList } from "../../../api/governingBodiesApi";
 import { GoverningBody } from "../../../api/decisionsApi";
 import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
 import { getSectorsListByGoverningBodyId } from "../../../api/governingBodySectorsApi";
@@ -17,7 +15,13 @@ import { getSectorsListByGoverningBodyId } from "../../../api/governingBodySecto
 type FormAddAnnouncementProps = {
   governingBodyId: number;
   setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: (title: string, text: string, images: string[], gvbId: number, sectorId: number) => void;
+  onAdd: (
+    title: string,
+    text: string,
+    images: string[],
+    gvbId: number,
+    sectorId: number
+  ) => void;
 };
 
 const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
@@ -29,9 +33,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const [photos, setPhotos] = useState<string[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [gvbLoading, setGvbLoading] = useState<boolean>(false);
-  const [governingBodies, setGoverningBodies] = useState<
-    GoverningBody[]
-  >([]);
+  const [governingBodies, setGoverningBodies] = useState<GoverningBody[]>([]);
   const [sectorsLoading, setSectorsLoading] = useState<boolean>(false);
   const [sectors, setSectors] = useState<SectorProfile[]>([]);
   const [selectSectorId, setSelectSectorId] = useState<any>();
@@ -46,7 +48,13 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     setSubmitLoading(true);
     setVisibleModal(false);
     form.resetFields();
-    onAdd(values.title, values.text, photos, selectGoverningBodyId, selectSectorId);
+    onAdd(
+      values.title,
+      values.text,
+      photos,
+      selectGoverningBodyId,
+      selectSectorId
+    );
     setSubmitLoading(false);
   };
 
@@ -69,11 +77,14 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     try {
       const response = await getGoverningBodiesList();
       setGoverningBodies(response);
-      form.setFieldsValue({governingBody : response.find((x: GoverningBody) => x.id === governingBodyId)?.governingBodyName});
+      form.setFieldsValue({
+        governingBody: response.find(
+          (x: GoverningBody) => x.id === governingBodyId
+        )?.governingBodyName,
+      });
       setSelectGoverningBodyId(governingBodyId);
       governingBodyChange(governingBodyId);
-    } 
-    finally {
+    } finally {
       setGvbLoading(false);
     }
   };
@@ -81,28 +92,26 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const governingBodyChange = async (id: number) => {
     const response = await getSectorsListByGoverningBodyId(id);
     setSectors(response);
-  }
+  };
 
   const onGvbSelect = async (value: any) => {
     setSectorsLoading(true);
     try {
-      form.setFieldsValue({sector : undefined});
+      form.setFieldsValue({ sector: undefined });
       const id: number = JSON.parse(value.toString()).id;
       setSelectGoverningBodyId(id);
       governingBodyChange(id);
-    }
-    finally {
+    } finally {
       setSectorsLoading(false);
     }
   };
 
   const onSectorSelect = async (value: any) => {
-    try{
+    try {
       const id: number = JSON.parse(value.toString()).id;
-      setSelectSectorId(id); 
-    }
-    catch{
-      setSelectSectorId(null); 
+      setSelectSectorId(id);
+    } catch {
+      setSelectSectorId(null);
     }
   };
 

@@ -4,10 +4,16 @@ import FormAddAnnouncement from "./FormAddAnnouncement";
 import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
 
 interface Props {
-  governingBodyId: number,
+  governingBodyId: number;
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: (title: string, text: string, images: string[], gvbId: number, sectorId: number) => void;
+  onAdd: (
+    title: string,
+    text: string,
+    images: string[],
+    gvbId: number,
+    sectorId: number
+  ) => void;
 }
 
 const AddAnnouncementModal = ({
@@ -28,11 +34,11 @@ const AddAnnouncementModal = ({
       onClose={handleCancel}
       footer={null}
     >
-      <FormAddAnnouncement 
-        setVisibleModal={setVisibleModal} 
-        onAdd={onAdd} 
+      <FormAddAnnouncement
+        setVisibleModal={setVisibleModal}
+        onAdd={onAdd}
         governingBodyId={governingBodyId}
-        />
+      />
     </Drawer>
   );
 };

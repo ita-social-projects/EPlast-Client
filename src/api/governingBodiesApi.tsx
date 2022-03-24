@@ -191,9 +191,19 @@ export const getAnnouncementsByPage = async (
     });
 };
 
-export const addAnnouncement = (title: string, text: string, ImagesBase64: string[], governingBodyId: number) => {
+export const addAnnouncement = (
+  title: string,
+  text: string,
+  ImagesBase64: string[],
+  governingBodyId: number
+) => {
   return api
-    .post(`GoverningBodies/AddAnnouncement`, { title, text, ImagesBase64, governingBodyId })
+    .post(`GoverningBodies/AddAnnouncement`, {
+      title,
+      text,
+      ImagesBase64,
+      governingBodyId,
+    })
     .catch((error) => {
       throw new Error(error);
     });
@@ -212,7 +222,12 @@ export const editAnnouncement = async (
   imagesBase64: string[]
 ) => {
   return api
-    .put(`GoverningBodies/EditAnnouncement/${id}`, { id, title, text, imagesBase64 })
+    .put(`GoverningBodies/EditAnnouncement/${id}`, {
+      id,
+      title,
+      text,
+      imagesBase64,
+    })
     .catch((error) => {
       throw new Error(error);
     });
