@@ -11,6 +11,8 @@ import {
   Tooltip,
   Badge,
   Avatar,
+  List,
+  Carousel,
 } from "antd";
 import {
   EditOutlined,
@@ -19,17 +21,17 @@ import {
   ExclamationCircleOutlined,
   FileTextOutlined,
   LockOutlined,
+  LeftOutlined,
+  RightOutlined,
 } from "@ant-design/icons";
 import {
   getSectorById,
   getSectorLogo,
   getUserAccess,
   removeSector,
+  getSectorAnnouncementsById,
+  addSectorAnnouncement,
 } from "../../../api/governingBodySectorsApi";
-import {
-  getAnnouncementsById,
-  addAnnouncement,
-} from "../../../api/governingBodiesApi";
 import "../GoverningBody/GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
@@ -50,13 +52,16 @@ import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument"
 import AddDocumentModal from "./AddDocumentModal";
 import AddSectorAdminForm from "./AddSectorAdminForm";
 import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
-import { getAnnouncementsByPage } from "../../../api/governingBodiesApi";
-import AddAnnouncementModal from "../Announcement/AddAnnouncementModal";
+import { getSectorAnnouncementsByPage } from "../../../api/governingBodySectorsApi";
+import AddAnnouncementModal from "./SectorAnnouncement/AddAnnouncementModal";
 import { getUsersByAllRoles } from "../../../api/adminApi";
 import { Markup } from "interweave";
 import { Roles } from "../../../models/Roles/Roles";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import InfiniteScroll from "react-infinite-scroll-component";
+import PicturesWall, { AnnouncementGallery } from "../Announcement/PicturesWallModal";
+const classes = require("../Announcement/Announcement.module.css");
 
 const Sector = () => {
   const history = useHistory();
@@ -83,7 +88,11 @@ const Sector = () => {
   const [announcements, setAnnouncements] = useState<
     GoverningBodyAnnouncement[]
   >([]);
+  const [announcementsCount, setAnnouncementsCount] = useState<number>(0);
   const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
+  const [listLoading, setListLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   const announcementsQuantity = 3;
 
@@ -149,23 +158,7 @@ const Sector = () => {
     try {
       const response = await getSectorById(+sectorId);
       const sectorViewModel = response.data.sectorViewModel;
-      let userAccesses = await getUserAccesses();
-      if (userAccesses.data["ViewAnnouncements"]) {
-        const res = (await await getAnnouncementsByPage(1, 3)).data;
-        let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];
-        for (let i = 0; i < announcementsQuantity; i++) {
-          if (res.item1[i]) {
-            res.item1[i].text =
-              res.item1[i].text.substring(0, 40) +
-              (res.item1[i].text.length > 40 ? "..." : "");
-            shortListedAnnoncements = [
-              ...shortListedAnnoncements,
-              res.item1[i],
-            ];
-          }
-        }
-        setAnnouncements(shortListedAnnoncements);
-      }
+      await getUserAccesses();
 
       setSectorLogoLoading(true);
       const admins = [
@@ -174,12 +167,14 @@ const Sector = () => {
       ].filter((a) => a !== null);
 
       await setPhotos([...admins], sectorViewModel.logo);
-
       setSector(sectorViewModel);
       setAdmins(admins);
       setSectorHead(sectorViewModel.head);
       setDocuments(sectorViewModel.documents);
       setDocumentsCount(response.data.documentsCount);
+      setAnnouncementsCount(response.data.announcementsCount);
+      loadMoreData();
+
     } finally {
       setLoading(false);
     }
@@ -200,23 +195,20 @@ const Sector = () => {
       usersId,
       "Додане нове оголошення.",
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/announcements/page/1`,
+      `/sector/announcements/${governingBodyId}/${sectorId}/1`,
       `Переглянути`
     );
   };
 
-  const onAnnouncementAdd = async (text: string, images: string[]) => {
+  const onAnnouncementAdd = async (title: string, text: string, images: string[]) => {
     setVisibleAddModal(false);
     setLoading(true);
     newAnnouncementNotification();
-    const announcementId = (await addAnnouncement(text, images)).data;
+    const announcementId = (await addSectorAnnouncement(title, text, images, +sectorId)).data;
     let newAnnouncement: GoverningBodyAnnouncement = (
-      await getAnnouncementsById(announcementId)
+      await getSectorAnnouncementsById(announcementId)
     ).data;
-    let newAnnouncements: GoverningBodyAnnouncement[] = announcements;
-    newAnnouncements.unshift(newAnnouncement);
-    newAnnouncements.pop();
-    setAnnouncements(newAnnouncements);
+    setAnnouncements((old: GoverningBodyAnnouncement[]) => [newAnnouncement, ...old]);
     setLoading(false);
     notificationLogic("success", "Оголошення опубліковано");
   };
@@ -224,6 +216,59 @@ const Sector = () => {
   const handleAdminAdd = () => {
     setVisible(false);
   };
+
+  const showFullAnnouncement = async (annId: number) => {
+    let pics: AnnouncementGallery[] = [];
+    await getSectorAnnouncementsById(annId).then((response) => {
+      (response.data.images).map((image: any) => {
+        pics.push({
+          announcementId: image.id,
+          fileName: image.imageBase64
+        })
+      });
+      return Modal.info({
+        title: (
+          <div className={classes.announcementDate}>
+            {response.data.user.firstName} {response.data.user.lastName}
+            <div>
+              {response.data.date.toString().substring(0, 10)}
+            </div>
+          </div>
+        ),
+        content: (
+          <div>
+            <Markup content={response.data.title} />
+            <Markup content={response.data.text} />
+            <div>
+              <PicturesWall
+                pictures={pics}
+                key="removePictures"
+              />
+            </div>
+          </div>
+        ),
+        maskClosable: true,
+        icon: null,
+      });
+    });
+  };
+
+  const loadMoreData = async () => {
+    if (listLoading) {
+      return;
+    }
+    try {
+      setListLoading(true);
+      const response = await getSectorAnnouncementsByPage(page, pageSize, +sectorId);
+      for (let i = 0; i < response.data.item2; ++i) {
+        setAnnouncements((old) => [...old, response.data.item1[i]])
+      }
+    }
+    finally {
+      setListLoading(false);
+      setPage(page + 1);
+    }
+  }
 
   useEffect(() => {
     getSector();
@@ -389,20 +434,78 @@ const Sector = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
-            <Title level={3}>Опис</Title>
+            <Title level={4}>Оголошення</Title>
             <Row
               className="governingBodyItems"
               justify="center"
-              gutter={[0, 12]}
+              gutter={[0, 16]}
             >
-              <div style={{ wordBreak: "break-word" }}>
-                <Paragraph>
-                  {sector.description !== null && sector.description.length > 0
-                    ? sector.description
-                    : "Ще немає опису Напряму"}
-                </Paragraph>
-              </div>
+              {userAccesses["ViewAnnouncements"] ? (
+                announcementsCount > 0 ? (
+                  <div
+                    id="scrollableDiv"
+                    style={{
+                      width: '100%',
+                      height: 400,
+                      overflow: 'auto'
+                    }}>
+                    <InfiniteScroll
+                      dataLength={announcements.length}
+                      next={loadMoreData}
+                      hasMore={true}
+                      loader={<></>}
+                      scrollableTarget="scrollableDiv"
+                    >
+                      <List
+                        dataSource={announcements}
+                        renderItem={(item) => (
+                          <List.Item
+                            style={{ cursor: 'pointer' }}
+                            key={item.id}
+                            onClick={() => showFullAnnouncement(item.id)}
+                          >
+                            <List.Item.Meta
+                              title={<Markup content={item.title} />}
+                              description={item.date.toString().substring(0, 10)}
+                            >
+                            </List.Item.Meta>
+                          </List.Item>
+                        )}
+                      />
+                    </InfiniteScroll>
+                  </div>
+                ) : (
+                  <Col>
+                    <Paragraph>Ще немає оголошень</Paragraph>
+                  </Col>
+                )
+              ) : (
+                <Col>
+                  <Paragraph strong>
+                    У тебе немає доступу до оголошень!
+                  </Paragraph>
+                  <LockOutlined style={{ fontSize: "150px" }} />
+                </Col>
+              )}
             </Row>
+            {userAccesses["ViewAnnouncements"] ? (
+              <div className="governingBodyMoreButton">
+                <Button
+                  type="primary"
+                  className="governingBodyInfoButton"
+                  onClick={() => history.push(`/sector/announcements/${governingBodyId}/${sectorId}/1`)}
+                >
+                  Більше
+                </Button>
+                {userAccesses["AddAnnouncement"] ? (
+                  <PlusSquareFilled
+                    type="primary"
+                    className="addReportIcon"
+                    onClick={() => setVisibleAddModal(true)}
+                  />
+                ) : null}
+              </div>
+            ) : null}
           </Card>
         </Col>
 
@@ -478,10 +581,10 @@ const Sector = () => {
                 onClick={() =>
                   history.push(
                     "/governingBodies/" +
-                      governingBodyId +
-                      "/sectors/" +
-                      sector.id +
-                      "/administration"
+                    governingBodyId +
+                    "/sectors/" +
+                    sector.id +
+                    "/administration"
                   )
                 }
               >
@@ -493,74 +596,20 @@ const Sector = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Оголошення</Title>
+            <Title level={3}>Опис</Title>
             <Row
               className="governingBodyItems"
               justify="center"
-              gutter={[0, 16]}
+              gutter={[0, 12]}
             >
-              {userAccesses["ViewAnnouncements"] ? (
-                announcements.length > 0 ? (
-                  announcements.map((announcement) => (
-                    <Col
-                      className="cityMemberItem"
-                      xs={12}
-                      sm={8}
-                      key={announcement.id}
-                      style={{ padding: "0.3rem" }}
-                    >
-                      <Paragraph>
-                        <strong>{announcement.user.firstName}</strong>
-                      </Paragraph>
-                      <Paragraph
-                        style={{
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          wordBreak: "break-word",
-                        }}
-                      >
-                        <Markup content={announcement.text} />
-                      </Paragraph>
-                      <Paragraph>
-                        {moment
-                          .utc(announcement.date)
-                          .local()
-                          .format("DD.MM.YYYY")}
-                      </Paragraph>
-                    </Col>
-                  ))
-                ) : (
-                  <Col>
-                    <Paragraph>Ще немає оголошень</Paragraph>
-                  </Col>
-                )
-              ) : (
-                <Col>
-                  <Paragraph strong>
-                    У тебе немає доступу до оголошень!
-                  </Paragraph>
-                  <LockOutlined style={{ fontSize: "150px" }} />
-                </Col>
-              )}
-            </Row>
-            {userAccesses["ViewAnnouncements"] ? (
-              <div className="governingBodyMoreButton">
-                <Button
-                  type="primary"
-                  className="governingBodyInfoButton"
-                  onClick={() => history.push(`/announcements/page/1`)}
-                >
-                  Більше
-                </Button>
-                {userAccesses["AddAnnouncement"] ? (
-                  <PlusSquareFilled
-                    type="primary"
-                    className="addReportIcon"
-                    onClick={() => setVisibleAddModal(true)}
-                  />
-                ) : null}
+              <div style={{ wordBreak: "break-word" }}>
+                <Paragraph>
+                  {sector.description !== null && sector.description.length > 0
+                    ? sector.description
+                    : "Ще немає опису Напряму"}
+                </Paragraph>
               </div>
-            ) : null}
+            </Row>
           </Card>
         </Col>
 
@@ -577,8 +626,8 @@ const Sector = () => {
                 onClick={() =>
                   userAccesses["ViewDocument"]
                     ? history.push(
-                        `/governingBodies/${governingBodyId}/sectors/${sector.id}/documents`
-                      )
+                      `/governingBodies/${governingBodyId}/sectors/${sector.id}/documents`
+                    )
                     : undefined
                 }
               >
@@ -645,6 +694,8 @@ const Sector = () => {
         sector={sector}
       />
       <AddAnnouncementModal
+        sectorId={sectorId}
+        governingBodyId={governingBodyId}
         setVisibleModal={setVisibleAddModal}
         visibleModal={visibleAddModal}
         onAdd={onAnnouncementAdd}
