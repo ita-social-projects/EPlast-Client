@@ -204,7 +204,7 @@ const AddNewKadraForm: React.FC<FormAddKadraProps> = (props: any) => {
                     style={backgroundColor(o)}
                     disabled={o.isInLowerRole}
                   >
-                    {o.firstName + " " + o.lastName}
+                    {o.firstName + " " + o.lastName + " (" + o.email + ")"}
                   </Select.Option>
                 ))}
               </Select>
