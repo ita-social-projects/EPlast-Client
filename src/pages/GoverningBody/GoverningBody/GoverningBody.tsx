@@ -12,6 +12,8 @@ import {
   Badge,
   Avatar,
   Drawer,
+  List,
+  Carousel,
 } from "antd";
 import {
   EditOutlined,
@@ -20,6 +22,8 @@ import {
   ExclamationCircleOutlined,
   FileTextOutlined,
   LockOutlined,
+  LeftOutlined,
+  RightOutlined,
 } from "@ant-design/icons";
 import {
   getAnnouncementsById,
@@ -52,13 +56,16 @@ import moment from "moment";
 import GoverningBodyDocument from "../../../models/GoverningBody/GoverningBodyDocument";
 import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
-import { getSectorLogo } from "../../../api/governingBodySectorsApi";
+import { addSectorAnnouncement, getSectorAnnouncementsById, getSectorLogo } from "../../../api/governingBodySectorsApi";
 import AddAnnouncementModal from "../Announcement/AddAnnouncementModal";
 import { getUsersByAllRoles } from "../../../api/adminApi";
 import { Roles } from "../../../models/Roles/Roles";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import { Markup } from "interweave";
+import InfiniteScroll from "react-infinite-scroll-component";
+import PicturesWall, { AnnouncementGallery } from "../Announcement/PicturesWallModal";
+const classes = require("../Announcement/Announcement.module.css");
 
 const GoverningBody = () => {
   const history = useHistory();
@@ -99,7 +106,10 @@ const GoverningBody = () => {
   >([]);
   const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
 
-  const announcementsQuantity = 3;
+  const [announcementsCount, setAnnouncementsCount] = useState<number>(0);
+  const [listLoading, setListLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   const deleteGoverningBody = async () => {
     await removeGoverningBody(governingBody.id);
@@ -167,20 +177,64 @@ const GoverningBody = () => {
     );
   };
 
-  const onAnnouncementAdd = async (text: string, images: string[]) => {
+  const onAnnouncementAdd = async (title: string, text: string, images: string[], gvbId: number, sectorId: number) => {
     setVisibleAddModal(false);
     setLoading(true);
     newAnnouncementNotification();
-    const announcementId = (await addAnnouncement(text, images)).data;
-    let newAnnouncement: GoverningBodyAnnouncement = (
-      await getAnnouncementsById(announcementId)
-    ).data;
-    let newAnnouncements: GoverningBodyAnnouncement[] = announcements;
-    newAnnouncements.unshift(newAnnouncement);
-    newAnnouncements.pop();
-    setAnnouncements(newAnnouncements);
+    let newAnnouncement: GoverningBodyAnnouncement;
+    if (sectorId) {
+      await addSectorAnnouncement(title, text, images, +sectorId);
+    }
+    else {
+      if (+id === gvbId) {
+        const announcementId = (await addAnnouncement(title, text, images, +gvbId)).data;
+        newAnnouncement = (
+          await getAnnouncementsById(announcementId)
+        ).data;
+        setAnnouncements((old: GoverningBodyAnnouncement[]) => [newAnnouncement, ...old]);
+      }
+      else {
+        await addAnnouncement(title, text, images, +gvbId)
+      }
+    }
     setLoading(false);
     notificationLogic("success", "Оголошення опубліковано");
+  };
+
+  const showFullAnnouncement = async (annId: number) => {
+    let pics: AnnouncementGallery[] = [];
+    await getAnnouncementsById(annId).then((response) => {
+      (response.data.images).map((image: any) => {
+        pics.push({
+          announcementId: image.id,
+          fileName: image.imageBase64
+        })
+      });
+      return Modal.info({
+        title: (
+          <div className={classes.announcementDate}>
+            {response.data.user.firstName} {response.data.user.lastName}
+            <div>
+              {response.data.date.toString().substring(0, 10)}
+            </div>
+          </div>
+        ),
+        content: (
+          <div>
+            <Markup content={response.data.title} />
+            <Markup content={response.data.text} />
+            <div>
+              <PicturesWall
+                pictures={pics}
+                key="removePictures"
+              />
+            </div>
+          </div>
+        ),
+        maskClosable: true,
+        icon: null,
+      });
+    });
   };
 
   function seeDeleteModal() {
@@ -210,23 +264,6 @@ const GoverningBody = () => {
   const getGoverningBody = async () => {
     setLoading(true);
     try {
-      let userAccesses = await getUserAccesses();
-      if (userAccesses.data["ViewAnnouncements"]) {
-        const res: any = (await getAnnouncementsByPage(1, 3)).data;
-        let shortListedAnnoncements: GoverningBodyAnnouncement[] = [];
-        for (let i = 0; i < announcementsQuantity; i++) {
-          if (res.item1[i]) {
-            res.item1[i].text =
-              res.item1[i].text.substring(0, 40) +
-              (res.item1[i].text.length > 40 ? "..." : "");
-            shortListedAnnoncements = [
-              ...shortListedAnnoncements,
-              res.item1[i],
-            ];
-          }
-        }
-        setAnnouncements(shortListedAnnoncements);
-      }
       const response = await getGoverningBodyById(+id);
       const governingBodyViewModel = response.data.governingBodyViewModel;
       const admins = [
@@ -243,6 +280,8 @@ const GoverningBody = () => {
         responseSectors
       );
 
+      await getUserAccesses();
+      setAnnouncementsCount(response.data.announcementsCount);
       setGoverningBody(governingBodyViewModel);
       setGoverningBodyHead(governingBodyViewModel.head);
       setAdmins(admins);
@@ -250,6 +289,7 @@ const GoverningBody = () => {
       setDocuments(governingBodyViewModel.documents);
       setDocumentsCount(response.data.documentsCount);
       setSectors(governingBodyViewModel.sectors);
+      loadMoreData();
     } finally {
       setLoading(false);
     }
@@ -258,6 +298,23 @@ const GoverningBody = () => {
   const handleAdminAdd = () => {
     setVisible(false);
   };
+
+  const loadMoreData = async () => {
+    if (listLoading) {
+      return;
+    }
+    try {
+      setListLoading(true);
+      const response = await getAnnouncementsByPage(page, pageSize, +id);
+      for (let i = 0; i < response.data.item2; ++i) {
+        setAnnouncements((old) => [...old, response.data.item1[i]])
+      }
+    }
+    finally {
+      setListLoading(false);
+      setPage(page + 1);
+    }
+  }
 
   useEffect(() => {
     getGoverningBody();
@@ -437,71 +494,77 @@ const GoverningBody = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>
-              Напрями{" "}
-              <a
-                onClick={() =>
-                  history.push(`/governingBodies/${governingBody.id}/sectors`)
-                }
-              >
-                {sectors.length !== 0 ? (
-                  <Badge
-                    count={sectors.length}
-                    style={{ backgroundColor: "#3c5438" }}
-                  />
-                ) : null}
-              </a>
-            </Title>
+            <Title level={4}>Оголошення</Title>
             <Row
               className="governingBodyItems"
               justify="center"
               gutter={[0, 16]}
             >
-              {sectors.length !== 0 ? (
-                sectors.map((sector) => (
-                  <Col
-                    className="governingBodyMemberItem"
-                    key={sector.id}
-                    xs={12}
-                    sm={8}
-                  >
-                    <div
-                      onClick={() => history.push(`${id}/sectors/${sector.id}`)}
+              {userAccesses["ViewAnnouncements"] ? (
+                announcementsCount > 0 ? (
+                  <div
+                    id="scrollableDiv"
+                    style={{
+                      width: '100%',
+                      height: 400,
+                      overflow: 'auto',
+                    }}>
+                    <InfiniteScroll
+                      dataLength={announcements.length}
+                      next={loadMoreData}
+                      hasMore={true}
+                      loader={<></>}
+                      scrollableTarget="scrollableDiv"
                     >
-                      {sectorsPhotosLoading ? (
-                        <Skeleton.Avatar active size={64} />
-                      ) : (
-                        <Avatar
-                          size={64}
-                          src={sector.logo === null ? undefined : sector.logo}
-                        />
-                      )}
-                      <p className="userName">{sector.name}</p>
-                    </div>
+                      <List
+                        dataSource={announcements}
+                        renderItem={(item) => (
+                          <List.Item
+                            key={item.id}
+                            onClick={() => showFullAnnouncement(item.id)}
+                          >
+                            <List.Item.Meta
+                              title={<Markup content={item.title} />}
+                              description={item.date.toString().substring(0, 10)}
+                            >
+                            </List.Item.Meta>
+                          </List.Item>
+                        )}
+                      />
+                    </InfiniteScroll>
+                  </div>
+                ) : (
+                  <Col>
+                    <Paragraph>Ще немає оголошень</Paragraph>
                   </Col>
-                ))
+                )
               ) : (
-                <Paragraph>Ще немає напрямів Керівного Органу</Paragraph>
+                <Col>
+                  <Paragraph strong>
+                    У тебе немає доступу до оголошень!
+                  </Paragraph>
+                  <LockOutlined style={{ fontSize: "150px" }} />
+                </Col>
               )}
             </Row>
-            <div className="governingBodyMoreButton">
-              {userAccesses["AddGBSector"] ? (
-                <PlusSquareFilled
+            {userAccesses["ViewAnnouncements"] ? (
+              <div className="governingBodyMoreButton">
+                <Button
                   type="primary"
-                  className="addReportIcon"
-                  onClick={() => history.push(id + "/sectors/new")}
-                />
-              ) : null}
-              <Button
-                type="primary"
-                className="governingBodyInfoButton"
-                onClick={() =>
-                  history.push(`/governingBodies/${governingBody.id}/sectors`)
-                }
-              >
-                Більше
-              </Button>
-            </div>
+                  className="governingBodyInfoButton"
+                  onClick={() => history.push(`/governingBodies/announcements/${governingBody.id}/1`)}
+                >
+                  Більше
+                </Button>
+                {userAccesses["AddAnnouncement"] ? (
+                  <PlusSquareFilled
+                    type="primary"
+                    className="addReportIcon"
+                    onClick={() => setVisibleAddModal(true)}
+                  />
+                ) : null}
+              </div>
+            ) : null}
           </Card>
         </Col>
 
@@ -588,74 +651,71 @@ const GoverningBody = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Оголошення</Title>
+            <Title level={4}>
+              Напрями{" "}
+              <a
+                onClick={() =>
+                  history.push(`/governingBodies/${governingBody.id}/sectors`)
+                }
+              >
+                {sectors.length !== 0 ? (
+                  <Badge
+                    count={sectors.length}
+                    style={{ backgroundColor: "#3c5438" }}
+                  />
+                ) : null}
+              </a>
+            </Title>
             <Row
               className="governingBodyItems"
               justify="center"
               gutter={[0, 16]}
             >
-              {userAccesses["ViewAnnouncements"] ? (
-                announcements.length > 0 ? (
-                  announcements.map((announcement) => (
-                    <Col
-                      className="cityMemberItem"
-                      xs={12}
-                      sm={8}
-                      key={announcement.id}
-                      style={{ padding: "0.3rem" }}
+              {sectors.length !== 0 ? (
+                sectors.map((sector) => (
+                  <Col
+                    className="governingBodyMemberItem"
+                    key={sector.id}
+                    xs={12}
+                    sm={8}
+                  >
+                    <div
+                      onClick={() => history.push(`${id}/sectors/${sector.id}`)}
                     >
-                      <Paragraph>
-                        <strong>{announcement.user.firstName}</strong>
-                      </Paragraph>
-                      <Paragraph
-                        style={{
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          wordBreak: "break-word",
-                        }}
-                      >
-                        <Markup content={announcement.text} />
-                      </Paragraph>
-                      <Paragraph>
-                        {moment
-                          .utc(announcement.date)
-                          .local()
-                          .format("DD.MM.YYYY")}
-                      </Paragraph>
-                    </Col>
-                  ))
-                ) : (
-                  <Col>
-                    <Paragraph>Ще немає оголошень</Paragraph>
+                      {sectorsPhotosLoading ? (
+                        <Skeleton.Avatar active size={64} />
+                      ) : (
+                        <Avatar
+                          size={64}
+                          src={sector.logo === null ? undefined : sector.logo}
+                        />
+                      )}
+                      <p className="userName">{sector.name}</p>
+                    </div>
                   </Col>
-                )
+                ))
               ) : (
-                <Col>
-                  <Paragraph strong>
-                    У тебе немає доступу до оголошень!
-                  </Paragraph>
-                  <LockOutlined style={{ fontSize: "150px" }} />
-                </Col>
+                <Paragraph>Ще немає напрямів Керівного Органу</Paragraph>
               )}
             </Row>
-            {userAccesses["ViewAnnouncements"] ? (
-              <div className="governingBodyMoreButton">
-                <Button
+            <div className="governingBodyMoreButton">
+              {userAccesses["AddGBSector"] ? (
+                <PlusSquareFilled
                   type="primary"
-                  className="governingBodyInfoButton"
-                  onClick={() => history.push(`/announcements/page/1`)}
-                >
-                  Більше
-                </Button>
-                {userAccesses["AddAnnouncement"] ? (
-                  <PlusSquareFilled
-                    type="primary"
-                    className="addReportIcon"
-                    onClick={() => setVisibleAddModal(true)}
-                  />
-                ) : null}
-              </div>
-            ) : null}
+                  className="addReportIcon"
+                  onClick={() => history.push(id + "/sectors/new")}
+                />
+              ) : null}
+              <Button
+                type="primary"
+                className="governingBodyInfoButton"
+                onClick={() =>
+                  history.push(`/governingBodies/${governingBody.id}/sectors`)
+                }
+              >
+                Більше
+              </Button>
+            </div>
           </Card>
         </Col>
 
@@ -672,8 +732,8 @@ const GoverningBody = () => {
                 onClick={() =>
                   userAccesses["ViewDocument"]
                     ? history.push(
-                        `/governingBodies/documents/${governingBody.id}`
-                      )
+                      `/governingBodies/documents/${governingBody.id}`
+                    )
                     : undefined
                 }
               >
@@ -740,6 +800,7 @@ const GoverningBody = () => {
         visibleDrawer={visibleDrawer}
       />
       <AddAnnouncementModal
+        governingBodyId={+id}
         setVisibleModal={setVisibleAddModal}
         visibleModal={visibleAddModal}
         onAdd={onAnnouncementAdd}

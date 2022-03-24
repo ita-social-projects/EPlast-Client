@@ -14,7 +14,7 @@ interface Props {
   visibleModal: boolean;
   id: number;
   setVisibleModal: (visibleModal: boolean) => void;
-  onEdit: (id: number, text: string, images: string[]) => void;
+  onEdit: (id: number, title: string, text: string, images: string[]) => void;
 }
 
 const EditAnnouncementModal = ({
@@ -25,6 +25,7 @@ const EditAnnouncementModal = ({
 }: Props) => {
   const [form] = Form.useForm();
   const [text, setText] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
   const [uploadImages, setUploadImages] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const history = useHistory();
@@ -41,6 +42,7 @@ const EditAnnouncementModal = ({
     setLoading(true);
     await getAnnouncementsById(id)
       .then((response) => {
+        setTitle(response.data.title);
         setText(response.data.text);
         response.data.images.map((image: any) => {
           setUploadImages((uploadImages) => [
@@ -82,7 +84,7 @@ const EditAnnouncementModal = ({
     let imgs = uploadImages.map((image: any) => {
       return image.url || image.thumbUrl;
     });
-    onEdit(id, text, imgs);
+    onEdit(id, title, text, imgs);
     setLoading(false);
   };
 
@@ -109,10 +111,45 @@ const EditAnnouncementModal = ({
             <Col md={24} xs={24}>
               <Form.Item
                 className={formclasses.formField}
+                initialValue={title}
+                label="Тема оголошення"
+                labelCol={{ span: 24 }}
+                name="title"
+                rules={[
+                  { required: true, message: emptyInput() },
+                  {
+                    max: 1000,
+                    message: maxLength(1000),
+                  },
+                ]}
+              >
+                <p></p>
+                <ReactQuill
+                  theme="snow"
+                  placeholder="Введіть текст..."
+                  value={title}
+                  onChange={(str) => {
+                    setTitle(str);
+                  }}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row justify="start" gutter={[12, 0]}>
+            <Col md={24} xs={24}>
+              <Form.Item
+                className={formclasses.formField}
                 label="Текст оголошення"
                 labelCol={{ span: 24 }}
                 name="text"
                 initialValue={text}
+                rules={[
+                  { required: true, message: emptyInput() },
+                  {
+                    max: 1000,
+                    message: maxLength(1000),
+                  },
+                ]}
               >
                 <p></p>
                 <ReactQuill

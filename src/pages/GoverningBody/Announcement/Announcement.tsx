@@ -1,4 +1,4 @@
-import { Button, Avatar, Layout, List, Modal, Carousel, Tooltip } from "antd";
+import { Button, Avatar, Layout, List, Modal, Carousel, Tooltip, Divider  } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -30,11 +30,14 @@ import {
   LeftOutlined,
   RightOutlined,
 } from "@ant-design/icons";
+import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
+import PicturesWall, { AnnouncementGallery } from "./PicturesWallModal";
+import { addSectorAnnouncement } from "../../../api/governingBodySectorsApi";
 
 const { Content } = Layout;
 
 const Announcements = () => {
-  const path: string = "/announcements";
+  const path: string = "governingBodies/announcements";
   const history = useHistory();
   const [loading, setLoading] = useState<boolean>(false);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
@@ -48,16 +51,15 @@ const Announcements = () => {
   const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
     {}
   );
-  const { p } = useParams();
+  const { id, p } = useParams();
   const [pageSize, setPageSize] = useState(12);
   const [page, setPage] = useState(+p);
   const [totalSize, setTotalSize] = useState<number>(0);
-
   const maxTextLength = 50;
 
   const getAnnouncements = async () => {
     setLoading(true);
-    await getAnnouncementsByPage(p, pageSize).then(async (res) => {
+    await getAnnouncementsByPage(p, pageSize, +id).then(async (res) => {
       setTotalSize(res.data.item2);
       var announcements: Announcement[] = [];
       for (var value of res.data.item1) {
@@ -65,6 +67,7 @@ const Announcements = () => {
           var ann: Announcement = {
             id: value.id,
             text: value.text,
+            title: value.title,
             date: value.date,
             firstName: value.user.firstName,
             lastName: value.user.lastName,
@@ -82,7 +85,7 @@ const Announcements = () => {
   };
 
   const handleChange = async (page: number) => {
-    history.push(`${path}/page/${page}`);
+    history.push(`${page}`);
   };
 
   const handleSizeChange = (pageSize: number = 10) => {
@@ -135,66 +138,69 @@ const Announcements = () => {
   };
 
   const showFullAnnouncement = async (annId: number) => {
-    setLoading(true);
-    let current = data.find((a) => a.id === annId)!;
+    let pics: AnnouncementGallery[] = [];
     await getAnnouncementsById(annId).then((response) => {
+      (response.data.images).map((image: any) => {
+        pics.push({
+          announcementId: image.id,
+          fileName: image.imageBase64
+        })
+      });
       return Modal.info({
         title: (
-          <div>
-            {current.firstName} {current.lastName}
-            <div className={classes.announcementDate}>
+          <div className={classes.announcementDate}>
+            {response.data.user.firstName} {response.data.user.lastName}
+            <div>
               {response.data.date.toString().substring(0, 10)}
             </div>
           </div>
         ),
         content: (
           <div>
+            <Markup content={response.data.title} />
             <Markup content={response.data.text} />
-            <Carousel
-              className={classes.homeSlider}
-              arrows
-              prevArrow={<LeftOutlined />}
-              nextArrow={<RightOutlined />}
-            >
-              {response.data.images.map((image: any) => (
-                <div>
-                  <Avatar shape="square" size={350} src={image.imageBase64} />
-                </div>
-              ))}
-            </Carousel>
+            <div>
+              <PicturesWall
+                pictures={pics}
+                key="removePictures"
+              />
+            </div>
           </div>
         ),
-        icon: <Avatar src={current.profileImage} />,
         maskClosable: true,
+        icon: null,
       });
     });
-    setLoading(false);
   };
 
   const handleEdit = async (
     id: number,
+    newTitle: string,
     newText: string,
     newImages: string[]
   ) => {
     setVisibleAddModal(false);
     setLoading(true);
-    await editAnnouncement(id, newText, newImages);
-    setData(data.map((x) => (x.id === id ? { ...x, text: newText } : x)));
-
+    await editAnnouncement(id, newTitle, newText, newImages);
+    setData(data.map((x) => (x.id === id ? { ...x, text: newText, title: newTitle } : x)));
     await getAnnouncements();
     setLoading(false);
   };
 
-  const handleAdd = async (text: string, images: string[]) => {
+  const handleAdd = async (title: string, text: string, images: string[], gvbId: number, sectorId: number) => {
     setVisibleAddModal(false);
     setLoading(true);
     newNotification();
-    await addAnnouncement(text, images);
-    await getAnnouncements();
+    if (sectorId) {
+      await addSectorAnnouncement(title, text, images, +sectorId);
+    }
+    else {
+      await addAnnouncement(title, text, images, +gvbId);
+    }
+    getAnnouncements();
     setLoading(false);
     notificationLogic("success", "Оголошення опубліковано");
   };
-
   const handleDelete = (id: number) => {
     const filteredData = data.filter((d) => d.id !== id);
     setData([...filteredData]);
@@ -233,10 +239,11 @@ const Announcements = () => {
             renderItem={(item) => {
               return (
                 <List.Item
-                  style={{ overflow: "hidden", wordBreak: "break-word" }}
+                  style={{ overflow: "hidden", wordBreak: "break-word", cursor: "pointer" }}
                   className={classes.listItem}
                   onClick={() => {
                     setShowDropdown(false);
+                    showFullAnnouncement(item.id);
                   }}
                   onContextMenu={(event) => {
                     event.preventDefault();
@@ -270,6 +277,9 @@ const Announcements = () => {
                     />
                   </div>
                   <Markup
+                    content={item.title}
+                  />
+                  <Markup
                     content={
                       item.strippedString.length < maxTextLength
                         ? item.text
@@ -284,18 +294,6 @@ const Announcements = () => {
                             )}...`
                     }
                   />
-
-                  {item.strippedString.length >= maxTextLength ||
-                  item.imagesPresent ? (
-                    <Title>
-                      <Button
-                        type="text"
-                        onClick={() => showFullAnnouncement(item.id)}
-                      >
-                        Показати більше
-                      </Button>
-                    </Title>
-                  ) : null}
                 </List.Item>
               );
             }}
@@ -324,6 +322,7 @@ const Announcements = () => {
           />
         </ClickAwayListener>
         <AddAnnouncementModal
+          governingBodyId={+id}
           setVisibleModal={setVisibleAddModal}
           visibleModal={visibleAddModal}
           onAdd={handleAdd}

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Form, Button, Row, Col, Upload } from "antd";
+import React, { useState, useEffect } from "react";
+import { Form, Button, Row, Col, Upload, Select } from "antd";
 import formclasses from "./Form.module.css";
 import {
   emptyInput,
@@ -7,20 +7,36 @@ import {
 } from "../../../components/Notifications/Messages";
 import ReactQuill from "react-quill";
 import { UploadFile } from "antd/lib/upload/interface";
+import classes from "../../Regions/Form.module.css";
+import {
+  getGoverningBodiesList
+} from "../../../api/governingBodiesApi";
+import { GoverningBody } from "../../../api/decisionsApi";
+import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
+import { getSectorsListByGoverningBodyId } from "../../../api/governingBodySectorsApi";
 
 type FormAddAnnouncementProps = {
+  governingBodyId: number;
   setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: (text: string, images: string[]) => void;
+  onAdd: (title: string, text: string, images: string[], gvbId: number, sectorId: number) => void;
 };
 
 const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   props: any
 ) => {
-  const { setVisibleModal, onAdd } = props;
+  const { setVisibleModal, onAdd, governingBodyId } = props;
   const [form] = Form.useForm();
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [gvbLoading, setGvbLoading] = useState<boolean>(false);
+  const [governingBodies, setGoverningBodies] = useState<
+    GoverningBody[]
+  >([]);
+  const [sectorsLoading, setSectorsLoading] = useState<boolean>(false);
+  const [sectors, setSectors] = useState<SectorProfile[]>([]);
+  const [selectSectorId, setSelectSectorId] = useState<any>();
+  const [selectGoverningBodyId, setSelectGoverningBodyId] = useState<number>();
 
   const handleCancel = () => {
     form.resetFields();
@@ -31,7 +47,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     setSubmitLoading(true);
     setVisibleModal(false);
     form.resetFields();
-    onAdd(values.text, photos);
+    onAdd(values.title, values.text, photos, selectGoverningBodyId, selectSectorId);
     setSubmitLoading(false);
   };
 
@@ -49,6 +65,55 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     });
   };
 
+  const fetchData = async () => {
+    setGvbLoading(true);
+    try {
+      const response = await getGoverningBodiesList();
+      setGoverningBodies(response);
+      form.setFieldsValue({governingBody : response.find((x: GoverningBody) => x.id === governingBodyId)?.governingBodyName});
+      setSelectGoverningBodyId(governingBodyId);
+      governingBodyChange(governingBodyId);
+    } 
+    finally {
+      setGvbLoading(false);
+    }
+  };
+
+  const governingBodyChange = async (id: number) => {
+    const response = await getSectorsListByGoverningBodyId(id);
+    setSectors(response);
+  }
+
+  const onGvbSelect = async (value: any) => {
+    setSectorsLoading(true);
+    try {
+      form.setFieldsValue({sector : undefined});
+      const id: number = JSON.parse(value.toString()).id;
+      setSelectGoverningBodyId(id);
+      governingBodyChange(id);
+    }
+    finally {
+      setSectorsLoading(false);
+    }
+  };
+
+  const onSectorSelect = async (value: any) => {
+    try{
+      const id: number = JSON.parse(value.toString()).id;
+      setSelectSectorId(id); 
+    }
+    catch{
+      setSelectSectorId(null); 
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    if (props.visibleModal) {
+      form.resetFields();
+    }
+  }, [props]);
+
   return (
     <Form
       name="basic"
@@ -57,6 +122,84 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
       id="area"
       style={{ position: "relative" }}
     >
+      <Row justify="start" gutter={[12, 0]}>
+        <Col md={24} xs={24}>
+          <Form.Item
+            className={formclasses.formField}
+            label="Орган"
+            labelCol={{ span: 24 }}
+            name="governingBody"
+            rules={[
+              {
+                required: true,
+                message: emptyInput(),
+              },
+            ]}
+          >
+            <Select
+              id="governingBodySelect"
+              showSearch
+              loading={gvbLoading}
+              onChange={(value) => onGvbSelect(value)}
+            >
+              {governingBodies?.map((o) => (
+                <Select.Option key={o.id} value={JSON.stringify(o)}>
+                  {o.governingBodyName}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row justify="start" gutter={[12, 0]}>
+        <Col md={24} xs={24}>
+          <Form.Item
+            className={formclasses.formField}
+            label="Напрям"
+            labelCol={{ span: 24 }}
+            name="sector"
+            rules={[
+              {
+                message: emptyInput(),
+              },
+            ]}
+          >
+            <Select
+              id="sectorSelect"
+              showSearch
+              allowClear
+              loading={sectorsLoading}
+              onChange={(value) => onSectorSelect(value)}
+            >
+              {sectors?.map((o) => (
+                <Select.Option key={o.id} value={JSON.stringify(o)}>
+                  {o.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row justify="start" gutter={[12, 0]}>
+        <Col md={24} xs={24}>
+          <Form.Item
+            className={formclasses.formField}
+            initialValue={""}
+            label="Тема оголошення"
+            labelCol={{ span: 24 }}
+            name="title"
+            rules={[
+              { required: true, message: emptyInput() },
+              {
+                max: 1000,
+                message: maxLength(1000),
+              },
+            ]}
+          >
+            <ReactQuill theme="snow" placeholder="Введіть текст..." />
+          </Form.Item>
+        </Col>
+      </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
