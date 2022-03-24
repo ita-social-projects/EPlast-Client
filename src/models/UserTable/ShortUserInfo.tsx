@@ -11,6 +11,7 @@ export default class ShortUserInfo {
   email: string;
   emailConfirmed: boolean;
   isInLowerRole: boolean;
+  isInDeputyRole: boolean;
 
   constructor() {
     this.id = "";
@@ -24,5 +25,6 @@ export default class ShortUserInfo {
     this.email = "";
     this.emailConfirmed = false;
     this.isInLowerRole = false;
+    this.isInDeputyRole = false;
   }
 }
