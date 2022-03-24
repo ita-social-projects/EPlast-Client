@@ -1,4 +1,4 @@
-import { Button, Avatar, Layout, List, Modal, Carousel, Tooltip, Divider  } from "antd";
+import { Button, Avatar, Layout, List, Modal, Tooltip } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -24,13 +24,9 @@ import AuthStore from "../../../stores/AuthStore";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import UserApi from "../../../api/UserApi";
 import { Markup } from "interweave";
-import Title from "antd/lib/typography/Title";
 import {
-  FileImageOutlined,
-  LeftOutlined,
-  RightOutlined,
+  FileImageOutlined
 } from "@ant-design/icons";
-import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
 import PicturesWall, { AnnouncementGallery } from "./PicturesWallModal";
 import { addSectorAnnouncement } from "../../../api/governingBodySectorsApi";
 
@@ -284,14 +280,14 @@ const Announcements = () => {
                       item.strippedString.length < maxTextLength
                         ? item.text
                         : `${item.text
-                            .toString()
-                            .substring(
-                              0,
-                              maxTextLength +
-                                (item.text.length -
-                                  item.strippedString.length) /
-                                  2
-                            )}...`
+                          .toString()
+                          .substring(
+                            0,
+                            maxTextLength +
+                            (item.text.length -
+                              item.strippedString.length) /
+                            2
+                          )}...`
                     }
                   />
                 </List.Item>

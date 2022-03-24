@@ -20,9 +20,7 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
   FileTextOutlined,
-  LockOutlined,
-  LeftOutlined,
-  RightOutlined,
+  LockOutlined
 } from "@ant-design/icons";
 import {
   getSectorById,

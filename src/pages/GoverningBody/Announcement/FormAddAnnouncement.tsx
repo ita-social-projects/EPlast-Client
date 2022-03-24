@@ -7,7 +7,6 @@ import {
 } from "../../../components/Notifications/Messages";
 import ReactQuill from "react-quill";
 import { UploadFile } from "antd/lib/upload/interface";
-import classes from "../../Regions/Form.module.css";
 import {
   getGoverningBodiesList
 } from "../../../api/governingBodiesApi";

@@ -63,7 +63,6 @@ const PicturesWall = ({ pictures }: Props) => {
                 </Col>
               ))}
               <Modal
-              style={{width: '100%' }}
                 visible={previewVisible}
                 title="Перегляд картинки"
                 footer={null}
