@@ -125,6 +125,12 @@ export const removeAdmin = async (id: number) => {
   });
 };
 
+export const editAdminStatus = async (id: number) => {
+  return api.put(`Regions/ChangeStatusAdministration/${id}`, id).catch((error) => {
+    throw new Error(error);
+  });
+}; 
+
 export const getFile = async (fileBlob: string, fileName: string) => {
   const response = await (
     await api.get(`Regions/FileBase64/${fileBlob}`, fileBlob)

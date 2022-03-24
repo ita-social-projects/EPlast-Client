@@ -264,6 +264,20 @@ export const descriptionValidation = {
       message: emptyInput(),
     },
   ],
+  DescriptionAndQuestionsNotRequired: [
+    {
+      pattern: /^(\s*\S+\s*){1,200}$/,
+      message: inputOnlyWhiteSpaces(),
+    },
+    {
+      max: 200,
+      message: maxLength(200),
+    },
+    {
+      required: false,
+      message: emptyInput(),
+    },
+  ],
   Reason: [
     {
       pattern: /^(\s*\S+\s*){1,500}$/,
