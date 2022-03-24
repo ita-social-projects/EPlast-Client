@@ -177,21 +177,23 @@ export const getAllAnnouncements = async () => {
 
 export const getAnnouncementsByPage = async (
   pageNumber: number,
-  pageSize: number
+  pageSize: number,
+  governingBodyId: number
 ) => {
   return await api
     .get(`GoverningBodies/GetAnnouncementsByPage/${pageNumber}`, {
       pageNumber,
       pageSize,
+      governingBodyId,
     })
     .catch((error) => {
       throw new Error(error);
     });
 };
 
-export const addAnnouncement = (text: string, ImagesBase64: string[]) => {
+export const addAnnouncement = (title: string, text: string, ImagesBase64: string[], governingBodyId: number) => {
   return api
-    .post(`GoverningBodies/AddAnnouncement`, { text, ImagesBase64 })
+    .post(`GoverningBodies/AddAnnouncement`, { title, text, ImagesBase64, governingBodyId })
     .catch((error) => {
       throw new Error(error);
     });
@@ -205,11 +207,12 @@ export const getAnnouncementsById = (id: number) => {
 
 export const editAnnouncement = async (
   id: number,
+  title: string,
   text: string,
   imagesBase64: string[]
 ) => {
   return api
-    .put(`GoverningBodies/EditAnnouncement/${id}`, { id, text, imagesBase64 })
+    .put(`GoverningBodies/EditAnnouncement/${id}`, { id, title, text, imagesBase64 })
     .catch((error) => {
       throw new Error(error);
     });
