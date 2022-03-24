@@ -15,13 +15,8 @@ const EventCreateDrawer = ({
   onCreate,
 }: Props) => {
   const handleCancel = () => setShowEventCreateDrawer(false);
-  const handleClose = () => {
-    setShowEventCreateDrawer(false);
-  };
 
   return (
-    <>
-      <ButtonCollapse handleClose={handleClose} />
       <Drawer
         closable={false}
         title="Створити нову подію"
@@ -33,10 +28,9 @@ const EventCreateDrawer = ({
       >
         <EventCreate
           onCreate={onCreate}
-          setShowEventCreateDrawer={handleClose}
+          setShowEventCreateDrawer={handleCancel}
         />
       </Drawer>
-    </>
   );
 };
 

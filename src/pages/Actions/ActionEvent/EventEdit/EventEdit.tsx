@@ -10,6 +10,7 @@ import EventCategories from "../../../../models/EventCreate/EventCategories";
 import EventTypes from "../../../../models/EventCreate/EventTypes";
 import Users from "../../../../models/EventCreate/Users";
 import EventEdit from "../../../../models/EventEdit/EventEdit";
+import ButtonCollapse from "../../../../components/ButtonCollapse/ButtonCollapse";
 import { descriptionValidation } from "../../../../models/GllobalValidations/DescriptionValidation";
 import NotificationBoxApi from "../../../../api/NotificationBoxApi";
 import {
@@ -50,47 +51,12 @@ export default function ({
   const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
   const [administators, setAdministators] = useState<Users[]>([]);
   const [editedEvent, setEvent] = useState<EventEdit>();
-
+  
   useEffect(() => {
-    const fetchData = async () => {
-      await eventUserApi.getDataForNewEvent().then(async (response) => {
-        const { users, eventTypes } = response.data;
-        setEventTypes(eventTypes);
-        setAdministators(users);
-      });
-    };
     fetchData();
   }, []);
 
   useEffect(() => {
-    const fetchEvent = async () => {
-      await eventUserApi.getEditedEvent(id).then(async (response) => {
-        setEvent(response.data);
-        form.setFieldsValue({
-          ID: response.data.event.id,
-          EventName: response.data.event.eventName,
-          Description: response.data.event.description,
-          Questions: response.data.event.questions,
-          EventTypeID: response.data.event.eventTypeID,
-          EventCategoryID: response.data.event.eventCategoryID,
-          EventDateStart: moment(response.data.event.eventDateStart),
-          EventDateEnd: moment(response.data.event.eventDateEnd),
-          FormOfHolding: response.data.event.formOfHolding,
-          Eventlocation: response.data.event.eventlocation,
-          ForWhom: response.data.event.forWhom,
-          NumberOfPartisipants: response.data.event.numberOfPartisipants,
-          commandantId: response.data.сommandant?.userId,
-          alternateId: response.data.alternate?.userId,
-          bunchuzhnyiId: response.data.bunchuzhnyi?.userId,
-          pysarId: response.data.pysar?.userId,
-        });
-        await eventsApi
-          .getCategories(response.data.event.eventTypeID)
-          .then(async (response) => {
-            setCategories([...response.data]);
-          });
-      });
-    };
     if (id != undefined) {
       fetchEvent();
     }
@@ -99,6 +65,50 @@ export default function ({
   useEffect(() => {
     resetUsers();
   }, selectedUsers);
+
+  const fetchData = async () => {
+    await eventUserApi.getDataForNewEvent().then(async (response) => {
+      const { users, eventTypes } = response.data;
+      setEventTypes(eventTypes);
+      setAdministators(users);
+    });
+  };
+
+  const fetchEvent = async () => {
+    await eventUserApi.getEditedEvent(id).then(async (response) => {
+      const preselectedUsers = [
+        response.data.сommandant?.userId,
+        response.data.alternate?.userId,
+        response.data.bunchuzhnyi?.userId,
+        response.data.pysar?.userId,
+     ]
+      setSelectedUsers(preselectedUsers);
+      setEvent(response.data);
+      form.setFieldsValue({
+        ID: response.data.event.id,
+        EventName: response.data.event.eventName,
+        Description: response.data.event.description,
+        Questions: response.data.event.questions,
+        EventTypeID: response.data.event.eventTypeID,
+        EventCategoryID: response.data.event.eventCategoryID,
+        EventDateStart: moment(response.data.event.eventDateStart),
+        EventDateEnd: moment(response.data.event.eventDateEnd),
+        FormOfHolding: response.data.event.formOfHolding,
+        Eventlocation: response.data.event.eventlocation,
+        ForWhom: response.data.event.forWhom,
+        NumberOfPartisipants: response.data.event.numberOfPartisipants,
+        commandantId: response.data.сommandant?.userId,
+        alternateId: response.data.alternate?.userId,
+        bunchuzhnyiId: response.data.bunchuzhnyi?.userId,
+        pysarId: response.data.pysar?.userId,
+      });
+      await eventsApi
+        .getCategories(response.data.event.eventTypeID)
+        .then(async (response) => {
+          setCategories([...response.data]);
+        });
+    });
+  };
 
   const handleFinish = async (values: any) => {
     setDoneLoading(true);
@@ -199,9 +209,22 @@ export default function ({
   const handleSelectChange = (dropdownIndex: number, selectedId: string) => {
     const tempSelectedUsers: string[] = [...selectedUsers];
     tempSelectedUsers[dropdownIndex] = selectedId;
-
     setSelectedUsers([...tempSelectedUsers]);
+    updateIsSelectedStatus(tempSelectedUsers);
   };
+
+  const updateIsSelectedStatus = (selectedUsers: string[]) => {
+    const updatedUsers: any[] = administators;
+
+    updatedUsers.forEach((user) => {
+      const userId = user.id;
+      user.isSelected = selectedUsers.some(
+        (selectedUserId) => selectedUserId === userId
+      );
+    });
+
+    setAdministators([...updatedUsers]);
+  }
 
   function resetUsers(): void {
     const updatedUsers: any[] = administators;
@@ -214,11 +237,19 @@ export default function ({
     });
     setAdministators([...updatedUsers]);
   }
+
   const handleCancel = () => {
+    fetchEvent();
+    setShowEventEditDrawer(false);
+  };
+
+  const handleClose = () => {
     setShowEventEditDrawer(false);
   };
 
   return (
+    <>
+    <ButtonCollapse handleClose={handleClose} />
     <Form
       name="basic"
       form={form}
@@ -314,6 +345,7 @@ export default function ({
               optionFilterProp="children"
               onChange={(e: any) => handleSelectChange(0, e)}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              onClick={()=>{updateIsSelectedStatus(selectedUsers)}}
             >
               {administators.map((item: any) => (
                 <Select.Option
@@ -335,13 +367,15 @@ export default function ({
             label="Заступник коменданта"
             name="alternateId"
             className={classes.formItem}
-            rules={[{ required: true, message: emptyInput() }]}
+            rules={[{ required: false, message: emptyInput() }]}
           >
             <Select
+              allowClear
               showSearch
               optionFilterProp="children"
-              onChange={(e: any) => handleSelectChange(0, e)}
+              onChange={(e: any) => handleSelectChange(1, e)}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              onClick={()=>{updateIsSelectedStatus(selectedUsers)}}
             >
               {administators.map((item: any) => (
                 <Select.Option
@@ -368,8 +402,9 @@ export default function ({
             <Select
               showSearch
               optionFilterProp="children"
-              onChange={(e: any) => handleSelectChange(0, e)}
+              onChange={(e: any) => handleSelectChange(2, e)}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              onClick={()=>{updateIsSelectedStatus(selectedUsers)}}
             >
               {administators.map((item: any) => (
                 <Select.Option
@@ -396,8 +431,9 @@ export default function ({
             <Select
               showSearch
               optionFilterProp="children"
-              onChange={(e: any) => handleSelectChange(0, e)}
+              onChange={(e: any) => handleSelectChange(3, e)}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              onClick={()=>{updateIsSelectedStatus(selectedUsers)}}
             >
               {administators.map((item: any) => (
                 <Select.Option
@@ -549,7 +585,7 @@ export default function ({
             label="Питання / побажання до булави"
             name="Questions"
             className={classes.formItem}
-            rules={descriptionValidation.DescriptionAndQuestions}
+            rules={descriptionValidation.DescriptionAndQuestionsNotRequired}
           >
             <TextArea
               className={classes.input}
@@ -597,5 +633,6 @@ export default function ({
         </Col>
       </Row>
     </Form>
+    </>
   );
 }
