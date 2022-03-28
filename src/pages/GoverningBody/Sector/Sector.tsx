@@ -718,6 +718,7 @@ const Sector = () => {
         footer={null}
       >
         <AddSectorAdminForm
+          visibleModal={visible}
           onAdd={handleAdminAdd}
           admins={admins}
           setAdmins={setAdmins}

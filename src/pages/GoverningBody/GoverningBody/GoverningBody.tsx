@@ -825,6 +825,7 @@ const GoverningBody = () => {
         footer={null}
       >
         <AddGoverningBodiesSecretaryForm
+          visibleModal={visible}
           onAdd={handleAdminAdd}
           admins={admins}
           setAdmins={setAdmins}

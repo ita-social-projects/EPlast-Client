@@ -82,6 +82,12 @@ export const getUsersByExactRoles = async (
   return response;
 };
 
+export const getUsersForGoverningBodies = async () => {
+  return await Api.get(`Admin/GetUsersForGoverningBodies`).catch((error) => {
+    throw new Error(error);
+  });
+};
+
 const putEditedRoles = async (userId: string, userRoles: any) => {
   const response = await Api.put(`Admin/editedRole/${userId}`, userRoles);
 
@@ -108,6 +114,7 @@ export default {
   getUsersByAnyRole,
   getUsersByAllRoles,
   getUsersByExactRoles,
+  getUsersForGoverningBodies,
   getCityRegionAdmins,
   getUsersForTable,
   getShortUserInfo,
