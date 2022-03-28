@@ -17,20 +17,20 @@ const EventCreateDrawer = ({
   const handleCancel = () => setShowEventCreateDrawer(false);
 
   return (
-      <Drawer
-        closable={false}
-        title="Створити нову подію"
-        width="auto"
-        onClose={handleCancel}
-        visible={visibleEventCreateDrawer}
-        footer={null}
-        forceRender={true}
-      >
-        <EventCreate
-          onCreate={onCreate}
-          setShowEventCreateDrawer={handleCancel}
-        />
-      </Drawer>
+    <Drawer
+      closable={false}
+      title="Створити нову подію"
+      width="auto"
+      onClose={handleCancel}
+      visible={visibleEventCreateDrawer}
+      footer={null}
+      forceRender={true}
+    >
+      <EventCreate
+        onCreate={onCreate}
+        setShowEventCreateDrawer={handleCancel}
+      />
+    </Drawer>
   );
 };
 
