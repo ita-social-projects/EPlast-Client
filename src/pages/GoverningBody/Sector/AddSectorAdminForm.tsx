@@ -8,6 +8,7 @@ import {
   Modal,
   Button,
   Input,
+  Tooltip,
 } from "antd";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
@@ -30,11 +31,12 @@ import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
 import "../AddAdministratorModal/AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 const confirm = Modal.confirm;
 
 const AddSectorAdminForm = (props: any) => {
-  const { onAdd, setAdmins, admins, setSectorHead } = props;
+  const { onAdd, setAdmins, admins, setSectorHead, visibleModal } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [usersLoading, setUsersLoading] = useState<boolean>(false);
@@ -159,23 +161,17 @@ const AddSectorAdminForm = (props: any) => {
     form.setFieldsValue({ workEmail: email });
   };
 
+  const fetchData = async () => {
+    setUsersLoading(true);
+    try {
+      const responseUsers = await adminApi.getUsersForGoverningBodies();
+      setUsers(responseUsers.data);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      setUsersLoading(true);
-      await adminApi
-        .getUsersByExactRoles(
-          [
-            [Roles.PlastMember],
-            [Roles.PlastMember, Roles.KurinHead],
-            [Roles.PlastMember, Roles.KurinHeadDeputy],
-          ],
-          true
-        )
-        .then((response) => {
-          setUsers(response.data);
-          setUsersLoading(false);
-        });
-    };
     fetchData();
   }, []);
 
@@ -205,11 +201,22 @@ const AddSectorAdminForm = (props: any) => {
           className={classes.inputField}
           onChange={(value) => onUserSelect(value)}
         >
-          {users?.map((o) => (
-            <Select.Option key={o.id} value={JSON.stringify(o)}>
-              {o.firstName + " " + o.lastName}
-            </Select.Option>
-          ))}
+          {users?.map((o) =>
+            o.isInDeputyRole ? (
+              <Select.Option key={o.id} value={JSON.stringify(o)}>
+                <div className={classes.formOption}>
+                  {o.firstName + " " + o.lastName}
+                  <Tooltip title="Уже є адміністратором">
+                    <InfoCircleOutlined />
+                  </Tooltip>
+                </div>
+              </Select.Option>
+            ) : (
+              <Select.Option key={o.id} value={JSON.stringify(o)}>
+                {o.firstName + " " + o.lastName}
+              </Select.Option>
+            )
+          )}
         </Select>
       </Form.Item>
 
