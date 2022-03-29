@@ -129,7 +129,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 
   return (
     <>
-      <ButtonCollapse handleClose={handleClose}/>
+      <ButtonCollapse handleClose={handleClose} />
       <Form
         name="basic"
         onFinish={handleSubmit}
