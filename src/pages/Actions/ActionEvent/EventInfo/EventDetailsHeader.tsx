@@ -67,13 +67,13 @@ const EventDetailsHeader = ({
       <Descriptions.Item label={renderLabel("Заплановано учасників")}>
         {renderContent(numberOfPartisipants.toString())}
       </Descriptions.Item>
-      <Descriptions.Item label={renderLabel("Дата початку")}>
+      <Descriptions.Item label={renderLabel("Дата і час початку")}>
         {renderContent(eventDateStart)}
       </Descriptions.Item>
       <Descriptions.Item label={renderLabel("Кількість учасників")}>
         {renderContent(eventParticipants.length.toString())}
       </Descriptions.Item>
-      <Descriptions.Item label={renderLabel("Дата завершення")}>
+      <Descriptions.Item label={renderLabel("Дата і час завершення")}>
         {renderContent(eventDateEnd)}
       </Descriptions.Item>
       <Descriptions.Item label={renderLabel("Локація")}>

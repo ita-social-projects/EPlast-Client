@@ -1,6 +1,7 @@
 import React from "react";
 import { Drawer, Button } from "antd";
 import EventEdit from "./EventEdit";
+import ButtonCollapse from "../../../../components/ButtonCollapse/ButtonCollapse";
 
 interface Props {
   visibleEventEditDrawer: boolean;
@@ -20,6 +21,7 @@ const EventEditDrawer = ({
   const handleCancel = () => setShowEventEditDrawer(false);
   return (
     <Drawer
+      closable={false}
       title="Редагувати подію"
       width="auto"
       onClose={handleCancel}
