@@ -105,7 +105,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const onGvbSelect = async (value: any) => {
     setSectorsLoading(true);
     try {
-      form.setFieldsValue({ sector: undefined });
+      form.setFieldsValue({ selectSector: undefined });
       const id: number = JSON.parse(value.toString()).id;
       setSelectGoverningBodyId(id);
       governingBodyChange(id);
