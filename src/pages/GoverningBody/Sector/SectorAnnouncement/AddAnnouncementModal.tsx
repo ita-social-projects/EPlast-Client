@@ -34,6 +34,7 @@ const AddAnnouncementModal = ({
       visible={visibleModal}
       onClose={handleCancel}
       footer={null}
+      closable={false}
     >
       <FormAddAnnouncement
         setVisibleModal={setVisibleModal}
