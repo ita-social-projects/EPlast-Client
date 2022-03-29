@@ -12,6 +12,7 @@ import SectorProfile from "../../../../models/GoverningBody/Sector/SectorProfile
 import { getGoverningBodiesList } from "../../../../api/governingBodiesApi";
 import { getSectorsListByGoverningBodyId } from "../../../../api/governingBodySectorsApi";
 import ButtonCollapse from "../../../../components/ButtonCollapse/ButtonCollapse";
+import { descriptionValidation } from "../../../../models/GllobalValidations/DescriptionValidation";
 
 type FormAddAnnouncementProps = {
   governingBodyId: number;
@@ -209,13 +210,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
               label="Тема оголошення"
               labelCol={{ span: 24 }}
               name="title"
-              rules={[
-                { required: true, message: emptyInput() },
-                {
-                  max: 1000,
-                  message: maxLength(1000),
-                },
-              ]}
+              rules={descriptionValidation.Announcements}
             >
               <ReactQuill theme="snow" placeholder="Введіть текст..." />
             </Form.Item>
@@ -229,13 +224,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
               label="Текст оголошення"
               labelCol={{ span: 24 }}
               name="text"
-              rules={[
-                { required: true, message: emptyInput() },
-                {
-                  max: 1000,
-                  message: maxLength(1000),
-                },
-              ]}
+              rules={descriptionValidation.Announcements}
             >
               <ReactQuill theme="snow" placeholder="Введіть текст..." />
             </Form.Item>
