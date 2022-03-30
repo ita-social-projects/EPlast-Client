@@ -45,8 +45,8 @@ const EditAnnouncementModal = ({
       .then((response) => {
         setTitle(response.data.title);
         setText(response.data.text);
-        form.setFieldsValue({title: response.data.title});
-        form.setFieldsValue({text: response.data.text});
+        form.setFieldsValue({ title: response.data.title });
+        form.setFieldsValue({ text: response.data.text });
         response.data.images.map((image: any) => {
           setUploadImages((uploadImages) => [
             ...uploadImages,

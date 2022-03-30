@@ -45,8 +45,8 @@ const EditAnnouncementModal = ({
       .then((response) => {
         setTitle(response.data.title);
         setText(response.data.text);
-        form.setFieldsValue({title: response.data.title});
-        form.setFieldsValue({text: response.data.text});
+        form.setFieldsValue({ title: response.data.title });
+        form.setFieldsValue({ text: response.data.text });
         response.data.images.map((image: any) => {
           setUploadImages((uploadImages) => [
             ...uploadImages,
@@ -120,10 +120,7 @@ const EditAnnouncementModal = ({
                 name="title"
                 rules={descriptionValidation.Announcements}
               >
-                <ReactQuill
-                  theme="snow"
-                  placeholder="Введіть текст..."
-                />
+                <ReactQuill theme="snow" placeholder="Введіть текст..." />
               </Form.Item>
             </Col>
           </Row>
@@ -137,10 +134,7 @@ const EditAnnouncementModal = ({
                 initialValue={text}
                 rules={descriptionValidation.Announcements}
               >
-                <ReactQuill
-                  theme="snow"
-                  placeholder="Введіть текст..."
-                />
+                <ReactQuill theme="snow" placeholder="Введіть текст..." />
               </Form.Item>
             </Col>
           </Row>

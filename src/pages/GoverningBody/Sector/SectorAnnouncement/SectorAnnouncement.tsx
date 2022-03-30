@@ -321,13 +321,13 @@ const Announcements = () => {
             }}
           />
         )}
-         <AddAnnouncementModal
-              sectorId={+sectorId}
-              governingBodyId={governingBodyId}
-              setVisibleModal={setVisibleAddModal}
-              visibleModal={visibleAddModal}
-              onAdd={handleAdd}
-            />
+        <AddAnnouncementModal
+          sectorId={+sectorId}
+          governingBodyId={governingBodyId}
+          setVisibleModal={setVisibleAddModal}
+          visibleModal={visibleAddModal}
+          onAdd={handleAdd}
+        />
         {recordObj ? (
           <>
             <ClickAwayListener onClickAway={handleClickAway}>
