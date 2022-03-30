@@ -303,14 +303,14 @@ const Announcements = () => {
                       item.strippedString.length < maxTextLength
                         ? item.text
                         : `${item.text
-                          .toString()
-                          .substring(
-                            0,
-                            maxTextLength +
-                            (item.text.length -
-                              item.strippedString.length) /
-                            2
-                          )}...`
+                            .toString()
+                            .substring(
+                              0,
+                              maxTextLength +
+                                (item.text.length -
+                                  item.strippedString.length) /
+                                  2
+                            )}...`
                     }
                   />
                 </List.Item>
@@ -356,10 +356,7 @@ const Announcements = () => {
               id={recordObj}
             />
           </>
-        ) : (
-          null)
-        }
-
+        ) : null}
       </Content>
     </Layout>
   );

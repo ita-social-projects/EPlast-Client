@@ -283,14 +283,14 @@ const Announcements = () => {
                       item.strippedString.length < maxTextLength
                         ? item.text
                         : `${item.text
-                          .toString()
-                          .substring(
-                            0,
-                            maxTextLength +
-                            (item.text.length -
-                              item.strippedString.length) /
-                            2
-                          )}...`
+                            .toString()
+                            .substring(
+                              0,
+                              maxTextLength +
+                                (item.text.length -
+                                  item.strippedString.length) /
+                                  2
+                            )}...`
                     }
                   />
                 </List.Item>
@@ -307,38 +307,35 @@ const Announcements = () => {
             }}
           />
         )}
-        {
-          recordObj ? (
-            <>
-              <ClickAwayListener onClickAway={handleClickAway}>
-                <DropDown
-                  showDropdown={showDropdown}
-                  record={recordObj}
-                  pageX={x}
-                  pageY={y}
-                  onDelete={handleDelete}
-                  onEdit={() => {
-                    setVisibleEditModal(true);
-                  }}
-                  userAccess={userAccesses}
-                />
-              </ClickAwayListener>
-              <AddAnnouncementModal
-                governingBodyId={+id}
-                setVisibleModal={setVisibleAddModal}
-                visibleModal={visibleAddModal}
-                onAdd={handleAdd}
+        {recordObj ? (
+          <>
+            <ClickAwayListener onClickAway={handleClickAway}>
+              <DropDown
+                showDropdown={showDropdown}
+                record={recordObj}
+                pageX={x}
+                pageY={y}
+                onDelete={handleDelete}
+                onEdit={() => {
+                  setVisibleEditModal(true);
+                }}
+                userAccess={userAccesses}
               />
-              <EditAnnouncementModal
-                setVisibleModal={setVisibleEditModal}
-                visibleModal={visibleEditModal}
-                onEdit={handleEdit}
-                id={recordObj}
-              />
-            </>
-          ) : (
-            null)
-        }
+            </ClickAwayListener>
+            <AddAnnouncementModal
+              governingBodyId={+id}
+              setVisibleModal={setVisibleAddModal}
+              visibleModal={visibleAddModal}
+              onAdd={handleAdd}
+            />
+            <EditAnnouncementModal
+              setVisibleModal={setVisibleEditModal}
+              visibleModal={visibleEditModal}
+              onEdit={handleEdit}
+              id={recordObj}
+            />
+          </>
+        ) : null}
       </Content>
     </Layout>
   );
