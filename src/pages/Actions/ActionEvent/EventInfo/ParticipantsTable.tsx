@@ -46,25 +46,11 @@ const ParticipantsTable = ({
   const history = useHistory();
 
   const [statusButtons, setStatusButtons] = useState<Array<boolean>>([true, false, true]);
+  const [buttonsClassNames, setButtonsClassNames] = useState<Array<string>>(["approveButton", "underReviewButton", "banButton"]);
 
   useEffect(() => {
     setParticipant(participants);
   }, [participants]);
-
-  useEffect(() => {
-    var element = document.getElementById("button1");
-    element?.classList.toggle("disabledButton");
-  }, [statusButtons]);
-
-  useEffect(() => {
-    var element = document.getElementById("button2");
-    element?.classList.toggle("disabledButton");
-  }, [statusButtons]);
-
-  useEffect(() => {
-    var element = document.getElementById("button3");
-    element?.classList.toggle("disabledButton");
-  }, [statusButtons]);
 
   const setTagColor = (status: string) => {
     let color = "";
@@ -203,6 +189,12 @@ const ParticipantsTable = ({
       buttonId == 1,
       buttonId == 2
     ])
+
+    setButtonsClassNames([
+      buttonId == 0 ? "disabledButton" : "approveButton",
+      buttonId == 1 ? "disabledButton" : "underReviewButton",
+      buttonId == 2 ? "disabledButton" : "banButton",
+    ])
   }
 
   if (userAccesses["ApproveParticipant"] && !isEventFinished) {
@@ -214,7 +206,7 @@ const ParticipantsTable = ({
         <Space size="small">
           <Button
             id="button1"
-            className="approveButton"
+            className={buttonsClassNames[0]}
             shape="round"
             icon={<UserAddOutlined className="iconParticipant" />}
             size="small"
@@ -226,12 +218,12 @@ const ParticipantsTable = ({
           <Divider type="vertical" />
           <Button
             id="button2"
-            className="underReviewButton"
+            className={buttonsClassNames[1]}
             shape="round"
             icon={<QuestionOutlined className="iconUnderReview" />}
             size="small"
             onClick={() => {
-              changeStatusToUnderReviewed(record.participantId, record.userId);
+              //changeStatusToUnderReviewed(record.participantId, record.userId);
               handleStatusChangeClick(1);
             }}
             disabled={statusButtons[1]}
@@ -239,7 +231,7 @@ const ParticipantsTable = ({
           <Divider type="vertical" />
           <Button
             id="button3"
-            className="banButton"
+            className={buttonsClassNames[2]}
             shape="round"
             icon={<UserDeleteOutlined className="iconParticipant" />}
             size="small"
