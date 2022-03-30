@@ -56,7 +56,7 @@ const Announcements = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [data, setData] = useState<Array<Announcement>>([]);
-  const [recordObj, setRecordObj] = useState<number>(0);
+  const [recordObj, setRecordObj] = useState<number>();
   const [x, setX] = useState<number>(0);
   const [y, setY] = useState<number>(0);
   const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
@@ -303,14 +303,14 @@ const Announcements = () => {
                       item.strippedString.length < maxTextLength
                         ? item.text
                         : `${item.text
-                            .toString()
-                            .substring(
-                              0,
-                              maxTextLength +
-                                (item.text.length -
-                                  item.strippedString.length) /
-                                  2
-                            )}...`
+                          .toString()
+                          .substring(
+                            0,
+                            maxTextLength +
+                            (item.text.length -
+                              item.strippedString.length) /
+                            2
+                          )}...`
                     }
                   />
                 </List.Item>
@@ -327,32 +327,39 @@ const Announcements = () => {
             }}
           />
         )}
-        <ClickAwayListener onClickAway={handleClickAway}>
-          <DropDown
-            showDropdown={showDropdown}
-            record={recordObj}
-            pageX={x}
-            pageY={y}
-            onDelete={handleDelete}
-            onEdit={() => {
-              setVisibleEditModal(true);
-            }}
-            userAccess={userAccesses}
-          />
-        </ClickAwayListener>
-        <AddAnnouncementModal
-          sectorId={+sectorId}
-          governingBodyId={governingBodyId}
-          setVisibleModal={setVisibleAddModal}
-          visibleModal={visibleAddModal}
-          onAdd={handleAdd}
-        />
-        <EditAnnouncementModal
-          setVisibleModal={setVisibleEditModal}
-          visibleModal={visibleEditModal}
-          onEdit={handleEdit}
-          id={recordObj}
-        />
+        {recordObj ? (
+          <>
+            <ClickAwayListener onClickAway={handleClickAway}>
+              <DropDown
+                showDropdown={showDropdown}
+                record={recordObj}
+                pageX={x}
+                pageY={y}
+                onDelete={handleDelete}
+                onEdit={() => {
+                  setVisibleEditModal(true);
+                }}
+                userAccess={userAccesses}
+              />
+            </ClickAwayListener>
+            <AddAnnouncementModal
+              sectorId={+sectorId}
+              governingBodyId={governingBodyId}
+              setVisibleModal={setVisibleAddModal}
+              visibleModal={visibleAddModal}
+              onAdd={handleAdd}
+            />
+            <EditAnnouncementModal
+              setVisibleModal={setVisibleEditModal}
+              visibleModal={visibleEditModal}
+              onEdit={handleEdit}
+              id={recordObj}
+            />
+          </>
+        ) : (
+          null)
+        }
+
       </Content>
     </Layout>
   );
