@@ -14,6 +14,7 @@ import eventsApi from "../../../../api/eventsApi";
 import "./ParticipantsTable.less";
 import { useHistory, useParams } from "react-router-dom";
 import NotificationBoxApi from "../../../../api/NotificationBoxApi";
+import { once } from "process";
 
 const { Text } = Typography;
 
@@ -44,9 +45,26 @@ const ParticipantsTable = ({
   );
   const history = useHistory();
 
+  const [statusButtons, setStatusButtons] = useState<Array<boolean>>([true, false, true]);
+
   useEffect(() => {
     setParticipant(participants);
   }, [participants]);
+
+  useEffect(() => {
+    var element = document.getElementById("button1");
+    element?.classList.toggle("disabledButton");
+  }, [statusButtons]);
+
+  useEffect(() => {
+    var element = document.getElementById("button2");
+    element?.classList.toggle("disabledButton");
+  }, [statusButtons]);
+
+  useEffect(() => {
+    var element = document.getElementById("button3");
+    element?.classList.toggle("disabledButton");
+  }, [statusButtons]);
 
   const setTagColor = (status: string) => {
     let color = "";
@@ -177,6 +195,15 @@ const ParticipantsTable = ({
       ),
     },
   ];
+  
+  const handleStatusChangeClick = (buttonId: number) => {
+
+    setStatusButtons([
+      buttonId == 0,
+      buttonId == 1,
+      buttonId == 2
+    ])
+  }
 
   if (userAccesses["ApproveParticipant"] && !isEventFinished) {
     columns.push({
@@ -186,34 +213,41 @@ const ParticipantsTable = ({
       render: (text, record) => (
         <Space size="small">
           <Button
+            id="button1"
             className="approveButton"
             shape="round"
             icon={<UserAddOutlined className="iconParticipant" />}
             size="small"
             onClick={() => {
-              changeStatusToApproved(record.participantId, record.userId);
+              handleStatusChangeClick(0);
             }}
+            disabled={statusButtons[0]}
           />
           <Divider type="vertical" />
           <Button
+            id="button2"
             className="underReviewButton"
             shape="round"
             icon={<QuestionOutlined className="iconUnderReview" />}
             size="small"
             onClick={() => {
               changeStatusToUnderReviewed(record.participantId, record.userId);
+              handleStatusChangeClick(1);
             }}
+            disabled={statusButtons[1]}
           />
           <Divider type="vertical" />
           <Button
+            id="button3"
             className="banButton"
             shape="round"
             icon={<UserDeleteOutlined className="iconParticipant" />}
             size="small"
             onClick={() => {
-              showRejectModal(record.participantId, record.userId);
+              handleStatusChangeClick(2);
               setRender(true);
             }}
+            disabled={statusButtons[2]}
           />
         </Space>
       ),
