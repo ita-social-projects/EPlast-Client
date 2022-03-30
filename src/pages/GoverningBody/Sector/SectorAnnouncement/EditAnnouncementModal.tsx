@@ -9,6 +9,7 @@ import { getSectorAnnouncementsById } from "../../../../api/governingBodySectors
 import ReactQuill from "react-quill";
 import Spinner from "../../../Spinner/Spinner";
 import { useHistory } from "react-router-dom";
+import { descriptionValidation } from "../../../../models/GllobalValidations/DescriptionValidation";
 
 interface Props {
   visibleModal: boolean;
@@ -44,6 +45,8 @@ const EditAnnouncementModal = ({
       .then((response) => {
         setTitle(response.data.title);
         setText(response.data.text);
+        form.setFieldsValue({title: response.data.title});
+        form.setFieldsValue({text: response.data.text});
         response.data.images.map((image: any) => {
           setUploadImages((uploadImages) => [
             ...uploadImages,
@@ -115,15 +118,8 @@ const EditAnnouncementModal = ({
                 label="Тема оголошення"
                 labelCol={{ span: 24 }}
                 name="title"
-                rules={[
-                  { required: true, message: emptyInput() },
-                  {
-                    max: 1000,
-                    message: maxLength(1000),
-                  },
-                ]}
+                rules={descriptionValidation.Announcements}
               >
-                <p></p>
                 <ReactQuill
                   theme="snow"
                   placeholder="Введіть текст..."
@@ -143,15 +139,8 @@ const EditAnnouncementModal = ({
                 labelCol={{ span: 24 }}
                 name="text"
                 initialValue={text}
-                rules={[
-                  { required: true, message: emptyInput() },
-                  {
-                    max: 1000,
-                    message: maxLength(1000),
-                  },
-                ]}
+                rules={descriptionValidation.Announcements}
               >
-                <p></p>
                 <ReactQuill
                   theme="snow"
                   placeholder="Введіть текст..."

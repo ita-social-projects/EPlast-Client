@@ -170,11 +170,6 @@ const Announcements = () => {
     setVisibleAddModal(false);
     setLoading(true);
     await editAnnouncement(id, newTitle, newText, newImages);
-    setData(
-      data.map((x) =>
-        x.id === id ? { ...x, text: newText, title: newTitle } : x
-      )
-    );
     await getAnnouncements();
     setLoading(false);
   };
@@ -307,6 +302,12 @@ const Announcements = () => {
             }}
           />
         )}
+        <AddAnnouncementModal
+              governingBodyId={+id}
+              setVisibleModal={setVisibleAddModal}
+              visibleModal={visibleAddModal}
+              onAdd={handleAdd}
+            />
         {recordObj ? (
           <>
             <ClickAwayListener onClickAway={handleClickAway}>
@@ -322,12 +323,6 @@ const Announcements = () => {
                 userAccess={userAccesses}
               />
             </ClickAwayListener>
-            <AddAnnouncementModal
-              governingBodyId={+id}
-              setVisibleModal={setVisibleAddModal}
-              visibleModal={visibleAddModal}
-              onAdd={handleAdd}
-            />
             <EditAnnouncementModal
               setVisibleModal={setVisibleEditModal}
               visibleModal={visibleEditModal}
