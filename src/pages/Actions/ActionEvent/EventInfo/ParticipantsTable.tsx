@@ -47,6 +47,17 @@ const ParticipantsTable = ({
   const [statusButtons, setStatusButtons] = useState<Array<boolean>>([false, false, false]);
   const [buttonsClassNames, setButtonsClassNames] = useState<Array<string>>(["approveButton", "underReviewButton", "banButton"]);
 
+  // useEffect(() => {
+  //   localStorage.setStatusButton('statusButtons', JSON.stringify(statusButtons));
+  // }, [statusButtons]);
+
+  useEffect(() => {
+    const statusButtons = JSON.parse(localStorage.getItem('statusButtons'));
+    if (statusButtons) {
+      setStatusButtons(statusButtons);
+    }
+  }, [false, false, false]);
+
   useEffect(() => {
     setParticipant(participants);
   }, [participants]);
