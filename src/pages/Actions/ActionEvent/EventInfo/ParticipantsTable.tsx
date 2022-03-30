@@ -8,7 +8,6 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons/lib";
 import { showError } from "../../EventsModals";
-// eslint-disable-next-line import/no-cycle
 import { EventParticipant } from "./EventInfo";
 import eventsApi from "../../../../api/eventsApi";
 import "./ParticipantsTable.less";
@@ -45,7 +44,7 @@ const ParticipantsTable = ({
   );
   const history = useHistory();
 
-  const [statusButtons, setStatusButtons] = useState<Array<boolean>>([true, false, true]);
+  const [statusButtons, setStatusButtons] = useState<Array<boolean>>([false, false, false]);
   const [buttonsClassNames, setButtonsClassNames] = useState<Array<string>>(["approveButton", "underReviewButton", "banButton"]);
 
   useEffect(() => {
@@ -70,7 +69,6 @@ const ParticipantsTable = ({
     setParticipant(
       Participants.map((participant: EventParticipant) => {
         if (participant.participantId === participantId) {
-          // eslint-disable-next-line no-param-reassign
           participant.status = newStatus;
         }
         return participant;
@@ -78,7 +76,7 @@ const ParticipantsTable = ({
     );
   };
 
-  const changeStatusToApproved = (participantId: number, userId: string) => {
+  function changeStatusToApproved(participantId: number, userId: string): void {
     const approveParticipant = async () => {
       await eventsApi.approveParticipant(participantId);
     };
@@ -94,7 +92,7 @@ const ParticipantsTable = ({
       `/events/details/${id}`,
       eventName
     );
-  };
+  }
 
   const changeStatusToUnderReviewed = (
     participantId: number,
@@ -193,7 +191,7 @@ const ParticipantsTable = ({
     setButtonsClassNames([
       buttonId == 0 ? "disabledButton" : "approveButton",
       buttonId == 1 ? "disabledButton" : "underReviewButton",
-      buttonId == 2 ? "disabledButton" : "banButton",
+      buttonId == 2 ? "disabledButton" : "banButton"
     ])
   }
 
@@ -205,37 +203,36 @@ const ParticipantsTable = ({
       render: (text, record) => (
         <Space size="small">
           <Button
-            id="button1"
             className={buttonsClassNames[0]}
             shape="round"
             icon={<UserAddOutlined className="iconParticipant" />}
             size="small"
             onClick={() => {
+              changeStatusToApproved(record.participantId, record.userId);
               handleStatusChangeClick(0);
             }}
             disabled={statusButtons[0]}
           />
           <Divider type="vertical" />
           <Button
-            id="button2"
             className={buttonsClassNames[1]}
             shape="round"
             icon={<QuestionOutlined className="iconUnderReview" />}
             size="small"
             onClick={() => {
-              //changeStatusToUnderReviewed(record.participantId, record.userId);
+              changeStatusToUnderReviewed(record.participantId, record.userId);
               handleStatusChangeClick(1);
             }}
             disabled={statusButtons[1]}
           />
           <Divider type="vertical" />
           <Button
-            id="button3"
             className={buttonsClassNames[2]}
             shape="round"
             icon={<UserDeleteOutlined className="iconParticipant" />}
             size="small"
             onClick={() => {
+              showRejectModal(record.participantId, record.userId);
               handleStatusChangeClick(2);
               setRender(true);
             }}
