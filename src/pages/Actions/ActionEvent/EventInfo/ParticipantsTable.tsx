@@ -44,20 +44,6 @@ const ParticipantsTable = ({
   );
   const history = useHistory();
 
-  const [statusButtons, setStatusButtons] = useState<Array<boolean>>([false, false, false]);
-  const [buttonsClassNames, setButtonsClassNames] = useState<Array<string>>(["approveButton", "underReviewButton", "banButton"]);
-
-  // useEffect(() => {
-  //   localStorage.setStatusButton('statusButtons', JSON.stringify(statusButtons));
-  // }, [statusButtons]);
-
-  useEffect(() => {
-    const statusButtons = JSON.parse(localStorage.getItem('statusButtons'));
-    if (statusButtons) {
-      setStatusButtons(statusButtons);
-    }
-  }, [false, false, false]);
-
   useEffect(() => {
     setParticipant(participants);
   }, [participants]);
@@ -190,21 +176,6 @@ const ParticipantsTable = ({
       ),
     },
   ];
-  
-  const handleStatusChangeClick = (buttonId: number) => {
-
-    setStatusButtons([
-      buttonId == 0,
-      buttonId == 1,
-      buttonId == 2
-    ])
-
-    setButtonsClassNames([
-      buttonId == 0 ? "disabledButton" : "approveButton",
-      buttonId == 1 ? "disabledButton" : "underReviewButton",
-      buttonId == 2 ? "disabledButton" : "banButton"
-    ])
-  }
 
   if (userAccesses["ApproveParticipant"] && !isEventFinished) {
     columns.push({
@@ -213,42 +184,77 @@ const ParticipantsTable = ({
       key: "changeStatus",
       render: (text, record) => (
         <Space size="small">
-          <Button
-            className={buttonsClassNames[0]}
-            shape="round"
-            icon={<UserAddOutlined className="iconParticipant" />}
-            size="small"
-            onClick={() => {
-              changeStatusToApproved(record.participantId, record.userId);
-              handleStatusChangeClick(0);
-            }}
-            disabled={statusButtons[0]}
-          />
+          {record.status != participantStatuses.Approved ? (
+            <Button
+              className={"approveButton"}
+              shape="round"
+              icon={<UserAddOutlined className="iconParticipant" />}
+              size="small"
+              onClick={() => {
+                changeStatusToApproved(record.participantId, record.userId);
+              }}
+            />
+          ) : (
+            <Button
+              className={"disabledButton"}
+              shape="round"
+              icon={<UserAddOutlined className="iconParticipant" />}
+              size="small"
+              onClick={() => {
+                changeStatusToApproved(record.participantId, record.userId);
+              }}
+              disabled={true}
+            />
+          )}
           <Divider type="vertical" />
-          <Button
-            className={buttonsClassNames[1]}
-            shape="round"
-            icon={<QuestionOutlined className="iconUnderReview" />}
-            size="small"
-            onClick={() => {
-              changeStatusToUnderReviewed(record.participantId, record.userId);
-              handleStatusChangeClick(1);
-            }}
-            disabled={statusButtons[1]}
-          />
+          {record.status != participantStatuses.Undetermined ? (
+            <Button
+              className={"underReviewButton"}
+              shape="round"
+              icon={<QuestionOutlined className="iconUnderReview" />}
+              size="small"
+              onClick={() => {
+                changeStatusToUnderReviewed(record.participantId, record.userId);
+              }}
+            />
+          ) : (
+            <Button
+              className={"disabledButton"}
+              shape="round"
+              icon={<QuestionOutlined className="iconUnderReview" />}
+              size="small"
+              onClick={() => {
+                changeStatusToUnderReviewed(record.participantId, record.userId);
+              }}
+              disabled={true}
+            />
+          )}
           <Divider type="vertical" />
-          <Button
-            className={buttonsClassNames[2]}
-            shape="round"
-            icon={<UserDeleteOutlined className="iconParticipant" />}
-            size="small"
-            onClick={() => {
-              showRejectModal(record.participantId, record.userId);
-              handleStatusChangeClick(2);
-              setRender(true);
-            }}
-            disabled={statusButtons[2]}
-          />
+          {record.status != participantStatuses.Rejected ? (
+            <Button
+              className={"banButton"}
+              shape="round"
+              icon={<UserDeleteOutlined className="iconParticipant" />}
+              size="small"
+              onClick={() => {
+                showRejectModal(record.participantId, record.userId);
+                setRender(true);
+              }}
+            />
+          ) : (
+            <Button
+              className={"disabledButton"}
+              shape="round"
+              icon={<UserDeleteOutlined className="iconParticipant" />}
+              size="small"
+              onClick={() => {
+                showRejectModal(record.participantId, record.userId);
+                setRender(true);
+              }}
+              disabled={true}
+            />
+          )}
+
         </Space>
       ),
     });
