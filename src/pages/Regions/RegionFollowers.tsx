@@ -18,6 +18,7 @@ import { successfulDeleteAction } from '../../components/Notifications/Messages'
 import notificationLogic from "../../components/Notifications/Notification";
 import extendedTitleTooltip, {parameterMaxLength} from '../../components/Tooltip';
 
+const AdminAndOkruga =['Admin','Голова Округи'];
 const RegionFollowers = () => {
     const {id} = useParams();
     const history = useHistory();
@@ -89,7 +90,7 @@ const RegionFollowers = () => {
 
     return (
       <Layout.Content>
-        <Title level={2}>Прихильники округи</Title>
+        <Title level={2}>Прихильники округи :</Title>
         {loading ? (
           <Spinner />
         ) : (
@@ -100,7 +101,7 @@ const RegionFollowers = () => {
                   key={follower.id}
                   className="detailsCard"
                   actions={
-                    activeUserRoles.includes(Roles.Admin)    
+                    AdminAndOkruga.some( role => activeUserRoles.includes(role))
                     ? [
                         <CloseOutlined
                           onClick={() => seeDeleteFollowerModal(follower)}
@@ -109,9 +110,9 @@ const RegionFollowers = () => {
                   }
                 >
                   <div
-                    className={activeUserRoles.includes(Roles.Admin) ? "cityMember" : undefined}
+                    className={AdminAndOkruga.some( role => activeUserRoles.includes(role)) ? "cityMember" : undefined}
                     onClick={() => 
-                        activeUserRoles.includes(Roles.Admin)
+                      AdminAndOkruga.some( role => activeUserRoles.includes(role))
                         ? history.push(`/regions/follower/edit/${follower.id}`)
                         : undefined
                     }

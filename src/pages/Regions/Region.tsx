@@ -113,6 +113,8 @@ const Region = () => {
   const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
   const [isActiveUserFromRegion, setIsActiveUserFromRegion] = useState<boolean>(false);
   const [isActiveRegion, setIsActiveRegion] = useState<boolean>(true);
+
+  const AdminAndOkruga =['Admin','Голова Округи'];
   const [head, setHead] = useState<any>({
     user: {
       firstName: "",
@@ -973,14 +975,14 @@ const Region = () => {
                 {followers.length !== 0 ? (
                   followers.slice(0, 6).map((follower) => (
                     <Col
-                      className={activeUserRoles.includes(Roles.Admin) ? "cityMemberItem" : undefined}
+                      className={AdminAndOkruga.some( role => activeUserRoles.includes(role)) ? "cityMemberItem" : undefined}
                       xs={12}
                       sm={8}
                       key={follower.id}
                     >
                     <div>
                       <div
-                        onClick={() => activeUserRoles.includes(Roles.Admin) 
+                        onClick={() => AdminAndOkruga.some( role => activeUserRoles.includes(role)) 
                           ? history.push(`/regions/follower/edit/${follower.id}`)
                           : undefined
                         }
