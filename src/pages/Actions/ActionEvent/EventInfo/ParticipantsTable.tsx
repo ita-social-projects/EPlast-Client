@@ -13,7 +13,6 @@ import eventsApi from "../../../../api/eventsApi";
 import "./ParticipantsTable.less";
 import { useHistory, useParams } from "react-router-dom";
 import NotificationBoxApi from "../../../../api/NotificationBoxApi";
-import { once } from "process";
 
 const { Text } = Typography;
 
@@ -73,7 +72,7 @@ const ParticipantsTable = ({
     );
   };
 
-  function changeStatusToApproved(participantId: number, userId: string): void {
+  const changeStatusToApproved = (participantId: number, userId: string) => {
     const approveParticipant = async () => {
       await eventsApi.approveParticipant(participantId);
     };
@@ -89,7 +88,7 @@ const ParticipantsTable = ({
       `/events/details/${id}`,
       eventName
     );
-  }
+  };
 
   const changeStatusToUnderReviewed = (
     participantId: number,
@@ -186,7 +185,7 @@ const ParticipantsTable = ({
         <Space size="small">
           {record.status != participantStatuses.Approved ? (
             <Button
-              className={"approveButton"}
+              className="approveButton"
               shape="round"
               icon={<UserAddOutlined className="iconParticipant" />}
               size="small"
@@ -196,20 +195,17 @@ const ParticipantsTable = ({
             />
           ) : (
             <Button
-              className={"disabledButton"}
+              className="disabledButton"
               shape="round"
               icon={<UserAddOutlined className="iconParticipant" />}
               size="small"
-              onClick={() => {
-                changeStatusToApproved(record.participantId, record.userId);
-              }}
               disabled={true}
             />
           )}
           <Divider type="vertical" />
           {record.status != participantStatuses.Undetermined ? (
             <Button
-              className={"underReviewButton"}
+              className="underReviewButton"
               shape="round"
               icon={<QuestionOutlined className="iconUnderReview" />}
               size="small"
@@ -219,20 +215,17 @@ const ParticipantsTable = ({
             />
           ) : (
             <Button
-              className={"disabledButton"}
+              className="disabledButton"
               shape="round"
               icon={<QuestionOutlined className="iconUnderReview" />}
               size="small"
-              onClick={() => {
-                changeStatusToUnderReviewed(record.participantId, record.userId);
-              }}
               disabled={true}
             />
           )}
           <Divider type="vertical" />
           {record.status != participantStatuses.Rejected ? (
             <Button
-              className={"banButton"}
+              className="banButton"
               shape="round"
               icon={<UserDeleteOutlined className="iconParticipant" />}
               size="small"
@@ -243,18 +236,16 @@ const ParticipantsTable = ({
             />
           ) : (
             <Button
-              className={"disabledButton"}
+              className="disabledButton"
               shape="round"
               icon={<UserDeleteOutlined className="iconParticipant" />}
               size="small"
               onClick={() => {
-                showRejectModal(record.participantId, record.userId);
                 setRender(true);
               }}
               disabled={true}
             />
           )}
-
         </Space>
       ),
     });
