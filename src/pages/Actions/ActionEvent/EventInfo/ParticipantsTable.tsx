@@ -243,9 +243,6 @@ const ParticipantsTable = ({
               shape="round"
               icon={<UserDeleteOutlined className="iconParticipant" />}
               size="small"
-              onClick={() => {
-                setRender(true);
-              }}
               disabled={true}
             />
           )}
