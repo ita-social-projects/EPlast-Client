@@ -156,6 +156,7 @@ const AddDocumentModal = (props: Props) => {
       <Form name="basic" onFinish={handleSubmit} form={form}>
         <div className="formFields">
           <Form.Item
+            style={{alignItems: "flex-start"}}
             label="Тип документу"
             name="documentType"
             rules={[{ required: true, message: emptyInput() }]}

@@ -159,6 +159,7 @@ const AddDocumentModal = (props: Props) => {
       <Form name="basic" onFinish={handleSubmit} form={form}>
         <div className="formFields">
           <Form.Item
+            style={{alignItems: "flex-start"}}
             name="documentName"
             label="Назва документу"
             rules={descriptionValidation.Name}
