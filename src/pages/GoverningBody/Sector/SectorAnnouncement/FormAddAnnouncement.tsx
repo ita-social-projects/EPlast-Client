@@ -4,18 +4,19 @@ import formclasses from "./Form.module.css";
 import {
   emptyInput,
   maxLength,
-} from "../../../components/Notifications/Messages";
+} from "../../../../components/Notifications/Messages";
 import ReactQuill from "react-quill";
 import { UploadFile } from "antd/lib/upload/interface";
-import { getGoverningBodiesList } from "../../../api/governingBodiesApi";
-import { GoverningBody } from "../../../api/decisionsApi";
-import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
-import { getSectorsListByGoverningBodyId } from "../../../api/governingBodySectorsApi";
-import ButtonCollapse from "../../../components/ButtonCollapse/ButtonCollapse";
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { GoverningBody } from "../../../../api/decisionsApi";
+import SectorProfile from "../../../../models/GoverningBody/Sector/SectorProfile";
+import { getGoverningBodiesList } from "../../../../api/governingBodiesApi";
+import { getSectorsListByGoverningBodyId } from "../../../../api/governingBodySectorsApi";
+import ButtonCollapse from "../../../../components/ButtonCollapse/ButtonCollapse";
+import { descriptionValidation } from "../../../../models/GllobalValidations/DescriptionValidation";
 
 type FormAddAnnouncementProps = {
   governingBodyId: number;
+  sectorId: number;
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: (
     title: string,
@@ -29,7 +30,7 @@ type FormAddAnnouncementProps = {
 const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   props: any
 ) => {
-  const { setVisibleModal, onAdd, governingBodyId } = props;
+  const { setVisibleModal, onAdd, sectorId, governingBodyId } = props;
   const [form] = Form.useForm();
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [photos, setPhotos] = useState<string[]>([]);
@@ -81,15 +82,22 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const fetchData = async () => {
     setGvbLoading(true);
     try {
-      const response = await getGoverningBodiesList();
-      setGoverningBodies(response);
+      const governingBodiesList = await getGoverningBodiesList();
+      setGoverningBodies(governingBodiesList);
       form.setFieldsValue({
-        governingBody: response.find(
-          (x: GoverningBody) => x.id === governingBodyId
+        selectGoverningBody: governingBodiesList.find(
+          (x: GoverningBody) => x.id == governingBodyId
         )?.governingBodyName,
       });
       setSelectGoverningBodyId(governingBodyId);
-      governingBodyChange(governingBodyId);
+      const sectorsList = await getSectorsListByGoverningBodyId(
+        governingBodyId
+      );
+      setSectors(sectorsList);
+      form.setFieldsValue({
+        selectSector: sectorsList.find((x: any) => x.id == sectorId)?.name,
+      });
+      setSelectSectorId(sectorId);
     } finally {
       setGvbLoading(false);
     }
@@ -103,7 +111,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const onGvbSelect = async (value: any) => {
     setSectorsLoading(true);
     try {
-      form.setFieldsValue({ sector: undefined });
+      form.setFieldsValue({ selectSector: undefined });
       const id: number = JSON.parse(value.toString()).id;
       setSelectGoverningBodyId(id);
       governingBodyChange(id);
@@ -144,7 +152,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
               className={formclasses.formField}
               label="Орган"
               labelCol={{ span: 24 }}
-              name="governingBody"
+              name="selectGoverningBody"
               rules={[
                 {
                   required: true,
@@ -153,7 +161,6 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
               ]}
             >
               <Select
-                id="governingBodySelect"
                 showSearch
                 loading={gvbLoading}
                 onChange={(value) => onGvbSelect(value)}
@@ -173,7 +180,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
               className={formclasses.formField}
               label="Напрям"
               labelCol={{ span: 24 }}
-              name="sector"
+              name="selectSector"
               rules={[
                 {
                   message: emptyInput(),
@@ -181,7 +188,6 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
               ]}
             >
               <Select
-                id="sectorSelect"
                 showSearch
                 allowClear
                 loading={sectorsLoading}
