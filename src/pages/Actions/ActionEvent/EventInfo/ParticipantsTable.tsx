@@ -210,7 +210,10 @@ const ParticipantsTable = ({
               icon={<QuestionOutlined className="iconUnderReview" />}
               size="small"
               onClick={() => {
-                changeStatusToUnderReviewed(record.participantId, record.userId);
+                changeStatusToUnderReviewed(
+                  record.participantId,
+                  record.userId
+                );
               }}
             />
           ) : (
