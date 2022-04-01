@@ -8,7 +8,6 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons/lib";
 import { showError } from "../../EventsModals";
-// eslint-disable-next-line import/no-cycle
 import { EventParticipant } from "./EventInfo";
 import eventsApi from "../../../../api/eventsApi";
 import "./ParticipantsTable.less";
@@ -66,7 +65,6 @@ const ParticipantsTable = ({
     setParticipant(
       Participants.map((participant: EventParticipant) => {
         if (participant.participantId === participantId) {
-          // eslint-disable-next-line no-param-reassign
           participant.status = newStatus;
         }
         return participant;
@@ -185,36 +183,69 @@ const ParticipantsTable = ({
       key: "changeStatus",
       render: (text, record) => (
         <Space size="small">
-          <Button
-            className="approveButton"
-            shape="round"
-            icon={<UserAddOutlined className="iconParticipant" />}
-            size="small"
-            onClick={() => {
-              changeStatusToApproved(record.participantId, record.userId);
-            }}
-          />
+          {record.status != participantStatuses.Approved ? (
+            <Button
+              className="approveButton"
+              shape="round"
+              icon={<UserAddOutlined className="iconParticipant" />}
+              size="small"
+              onClick={() => {
+                changeStatusToApproved(record.participantId, record.userId);
+              }}
+            />
+          ) : (
+            <Button
+              className="disabledButton"
+              shape="round"
+              icon={<UserAddOutlined className="iconParticipant" />}
+              size="small"
+              disabled={true}
+            />
+          )}
           <Divider type="vertical" />
-          <Button
-            className="underReviewButton"
-            shape="round"
-            icon={<QuestionOutlined className="iconUnderReview" />}
-            size="small"
-            onClick={() => {
-              changeStatusToUnderReviewed(record.participantId, record.userId);
-            }}
-          />
+          {record.status != participantStatuses.Undetermined ? (
+            <Button
+              className="underReviewButton"
+              shape="round"
+              icon={<QuestionOutlined className="iconParticipant" />}
+              size="small"
+              onClick={() => {
+                changeStatusToUnderReviewed(
+                  record.participantId,
+                  record.userId
+                );
+              }}
+            />
+          ) : (
+            <Button
+              className="disabledButton"
+              shape="round"
+              icon={<QuestionOutlined className="iconParticipant" />}
+              size="small"
+              disabled={true}
+            />
+          )}
           <Divider type="vertical" />
-          <Button
-            className="banButton"
-            shape="round"
-            icon={<UserDeleteOutlined className="iconParticipant" />}
-            size="small"
-            onClick={() => {
-              showRejectModal(record.participantId, record.userId);
-              setRender(true);
-            }}
-          />
+          {record.status != participantStatuses.Rejected ? (
+            <Button
+              className="banButton"
+              shape="round"
+              icon={<UserDeleteOutlined className="iconParticipant" />}
+              size="small"
+              onClick={() => {
+                showRejectModal(record.participantId, record.userId);
+                setRender(true);
+              }}
+            />
+          ) : (
+            <Button
+              className="disabledButton"
+              shape="round"
+              icon={<UserDeleteOutlined className="iconParticipant" />}
+              size="small"
+              disabled={true}
+            />
+          )}
         </Space>
       ),
     });
