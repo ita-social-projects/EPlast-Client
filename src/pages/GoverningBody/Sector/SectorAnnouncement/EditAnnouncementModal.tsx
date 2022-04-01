@@ -4,12 +4,12 @@ import formclasses from "./Form.module.css";
 import {
   emptyInput,
   maxLength,
-} from "../../../components/Notifications/Messages";
-import { getAnnouncementsById } from "../../../api/governingBodiesApi";
+} from "../../../../components/Notifications/Messages";
+import { getSectorAnnouncementsById } from "../../../../api/governingBodySectorsApi";
 import ReactQuill from "react-quill";
-import Spinner from "../../Spinner/Spinner";
+import Spinner from "../../../Spinner/Spinner";
 import { useHistory } from "react-router-dom";
-import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { descriptionValidation } from "../../../../models/GllobalValidations/DescriptionValidation";
 
 interface Props {
   visibleModal: boolean;
@@ -41,7 +41,7 @@ const EditAnnouncementModal = ({
 
   const getAnnouncement = async (id: number) => {
     setLoading(true);
-    await getAnnouncementsById(id)
+    await getSectorAnnouncementsById(id)
       .then((response) => {
         setTitle(response.data.title);
         setText(response.data.text);
@@ -87,7 +87,7 @@ const EditAnnouncementModal = ({
     let imgs = uploadImages.map((image: any) => {
       return image.url || image.thumbUrl;
     });
-    onEdit(id, values.title, values.text, imgs);
+    onEdit(id, title, text, imgs);
     setLoading(false);
   };
 
@@ -120,7 +120,14 @@ const EditAnnouncementModal = ({
                 name="title"
                 rules={descriptionValidation.Announcements}
               >
-                <ReactQuill theme="snow" placeholder="Введіть текст..." />
+                <ReactQuill
+                  theme="snow"
+                  placeholder="Введіть текст..."
+                  value={title}
+                  onChange={(str) => {
+                    setTitle(str);
+                  }}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -134,7 +141,14 @@ const EditAnnouncementModal = ({
                 initialValue={text}
                 rules={descriptionValidation.Announcements}
               >
-                <ReactQuill theme="snow" placeholder="Введіть текст..." />
+                <ReactQuill
+                  theme="snow"
+                  placeholder="Введіть текст..."
+                  value={text}
+                  onChange={(str) => {
+                    setText(str);
+                  }}
+                />
               </Form.Item>
             </Col>
           </Row>

@@ -198,3 +198,71 @@ export const getSectorAdminsForTable = async (
     })
   ).data;
 };
+
+export const getSectorAnnouncementsByPage = async (
+  pageNumber: number,
+  pageSize: number,
+  sectorId: number
+) => {
+  return await api
+    .get(`GoverningBodies/Sectors/GetAnnouncementsByPage/${pageNumber}`, {
+      pageNumber,
+      pageSize,
+      sectorId,
+    })
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const addSectorAnnouncement = (
+  title: string,
+  text: string,
+  ImagesBase64: string[],
+  sectorId: number
+) => {
+  return api
+    .post(`GoverningBodies/Sectors/AddAnnouncement`, {
+      title,
+      text,
+      ImagesBase64,
+      sectorId,
+    })
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const getSectorAnnouncementsById = (id: number) => {
+  return api
+    .get(`GoverningBodies/Sectors/GetAnnouncement/${id}`, id)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const editSectorAnnouncement = async (
+  id: number,
+  title: string,
+  text: string,
+  imagesBase64: string[]
+) => {
+  return api
+    .put(`GoverningBodies/Sectors/EditAnnouncement/${id}`, {
+      id,
+      title,
+      text,
+      imagesBase64,
+    })
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const deleteSectorAnnouncement = async (id: number) => {
+  return api
+    .remove(`GoverningBodies/Sectors/DeleteAnnouncement/${id}`, id)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
