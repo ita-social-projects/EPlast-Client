@@ -1,6 +1,7 @@
 export type Announcement = {
   id: number;
   text: string;
+  title: string;
   date: Date;
   firstName: string;
   lastName: string;

@@ -344,6 +344,25 @@ export const descriptionValidation = {
       message: inputOnlyWhiteSpaces(),
     },
   ],
+  Announcements: [
+    {
+      required: true,
+      message: emptyInput(),
+    },
+    {
+      max: 1000,
+      message: maxLength(1000),
+    },
+    {
+      validator: (rule: any, value: any, callback: any) => {
+        if (value !== "<p><br></p>") {
+          callback();
+        } else {
+          callback(emptyInput());
+        }
+      },
+    },
+  ],
 };
 
 export const sameNameValidator = (org: string, array: string[]) => {

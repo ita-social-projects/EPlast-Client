@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { Button, Form, Input, Layout, Upload, Row, Col, Card } from "antd";
-import {
-  DeleteOutlined,
-  LoadingOutlined,
-  PlusOutlined,
-} from "@ant-design/icons/lib";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons/lib";
 import ReactInputMask from "react-input-mask";
 import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 import DefaultLogo from "../../../assets/images/default_city_image.jpg";
