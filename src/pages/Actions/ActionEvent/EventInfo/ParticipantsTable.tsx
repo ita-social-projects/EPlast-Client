@@ -190,10 +190,7 @@ const ParticipantsTable = ({
               icon={<UserAddOutlined className="iconParticipant" />}
               size="small"
               onClick={() => {
-                changeStatusToApproved(
-                  record.participantId,
-                  record.userId
-                );
+                changeStatusToApproved(record.participantId, record.userId);
               }}
             />
           ) : (
@@ -236,10 +233,7 @@ const ParticipantsTable = ({
               icon={<UserDeleteOutlined className="iconParticipant" />}
               size="small"
               onClick={() => {
-                showRejectModal(
-                  record.participantId,
-                  record.userId
-                );
+                showRejectModal(record.participantId, record.userId);
                 setRender(true);
               }}
             />
