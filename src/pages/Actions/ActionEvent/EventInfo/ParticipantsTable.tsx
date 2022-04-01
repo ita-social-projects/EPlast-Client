@@ -190,7 +190,10 @@ const ParticipantsTable = ({
               icon={<UserAddOutlined className="iconParticipant" />}
               size="small"
               onClick={() => {
-                changeStatusToApproved(record.participantId, record.userId);
+                changeStatusToApproved(
+                  record.participantId,
+                  record.userId
+                );
               }}
             />
           ) : (
@@ -207,7 +210,7 @@ const ParticipantsTable = ({
             <Button
               className="underReviewButton"
               shape="round"
-              icon={<QuestionOutlined className="iconUnderReview" />}
+              icon={<QuestionOutlined className="iconParticipant" />}
               size="small"
               onClick={() => {
                 changeStatusToUnderReviewed(
@@ -220,7 +223,7 @@ const ParticipantsTable = ({
             <Button
               className="disabledButton"
               shape="round"
-              icon={<QuestionOutlined className="iconUnderReview" />}
+              icon={<QuestionOutlined className="iconParticipant" />}
               size="small"
               disabled={true}
             />
@@ -233,7 +236,10 @@ const ParticipantsTable = ({
               icon={<UserDeleteOutlined className="iconParticipant" />}
               size="small"
               onClick={() => {
-                showRejectModal(record.participantId, record.userId);
+                showRejectModal(
+                  record.participantId,
+                  record.userId
+                );
                 setRender(true);
               }}
             />
