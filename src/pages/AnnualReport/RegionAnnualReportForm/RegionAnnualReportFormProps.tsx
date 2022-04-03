@@ -1,7 +1,7 @@
 interface Props {
-    title: string;
-    regionId: number;
-    year: number;
+  title: string;
+  regionId: number;
+  year: number;
 }
 
 export default Props;

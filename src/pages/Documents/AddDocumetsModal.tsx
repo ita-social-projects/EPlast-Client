@@ -1,6 +1,6 @@
-import React from 'react';
-import { Modal, Drawer } from 'antd';
-import FormAddDocument from './FormAddDocument';
+import React from "react";
+import { Modal, Drawer } from "antd";
+import FormAddDocument from "./FormAddDocument";
 
 interface Props {
   visibleModal: boolean;
@@ -9,7 +9,6 @@ interface Props {
 }
 
 const AddDocumentsModal = ({ visibleModal, setVisibleModal, onAdd }: Props) => {
-
   const handleCancel = () => setVisibleModal(false);
 
   return (
@@ -22,9 +21,7 @@ const AddDocumentsModal = ({ visibleModal, setVisibleModal, onAdd }: Props) => {
       onClose={handleCancel}
       footer={null}
     >
-      <FormAddDocument
-        setVisibleModal={setVisibleModal}
-        onAdd={onAdd} />
+      <FormAddDocument setVisibleModal={setVisibleModal} onAdd={onAdd} />
     </Drawer>
   );
 };

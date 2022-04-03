@@ -8,23 +8,23 @@ export const getUsersForTable = async () => {
 };
 
 export const getShortUserInfo = async (search: string) => {
-    const response = await Api.get(`Admin/ShortUsersInfo/${search}`);
-    return response;
-  };
-
-export const getUsersForTableByPage = async (data: TableFilterParameters) => {
-  return await Api
-    .get(`Admin/Profiles`, data, (params:any)=> {
-      return Object.entries(params).map(([key, value]) => {
-        if (Array.isArray(value)) return value.map(it => `${key}=${it}`).join('&');
-          return `${key}=${value}`;
-      }).join('&');
-    })
-    .catch((error) => {
-      throw new Error(error);
-    });
+  const response = await Api.get(`Admin/ShortUsersInfo/${search}`);
+  return response;
 };
 
+export const getUsersForTableByPage = async (data: TableFilterParameters) => {
+  return await Api.get(`Admin/Profiles`, data, (params: any) => {
+    return Object.entries(params)
+      .map(([key, value]) => {
+        if (Array.isArray(value))
+          return value.map((it) => `${key}=${it}`).join("&");
+        return `${key}=${value}`;
+      })
+      .join("&");
+  }).catch((error) => {
+    throw new Error(error);
+  });
+};
 
 const getCityRegionAdmins = async (userId: string) => {
   const response = await Api.get(`Admin/CityRegionAdmins/${userId}`);
@@ -43,22 +43,49 @@ const getRolesForEdit = async (userId: string) => {
   return response;
 };
 
-export const getUsersByAllRoles = async (roles: string[][], include:boolean) => {
-  const response = await Api.get(`Admin/GetUsersByAllRoles/${roles.map(x => x.join(',')).join('|')}/${include}`);
+export const getUsersByAllRoles = async (
+  roles: string[][],
+  include: boolean
+) => {
+  const response = await Api.get(
+    `Admin/GetUsersByAllRoles/${roles
+      .map((x) => x.join(","))
+      .join("|")}/${include}`
+  );
 
   return response;
 };
 
-export const getUsersByAnyRole = async (roles: string[][], include:boolean) => {
-  const response = await Api.get(`Admin/GetUsersByAnyRole/${roles.map(x => x.join(',')).join('|')}/${include}`);
+export const getUsersByAnyRole = async (
+  roles: string[][],
+  include: boolean
+) => {
+  const response = await Api.get(
+    `Admin/GetUsersByAnyRole/${roles
+      .map((x) => x.join(","))
+      .join("|")}/${include}`
+  );
 
   return response;
 };
 
-export const getUsersByExactRoles = async (roles: string[][], include:boolean) => {
-  const response = await Api.get(`Admin/GetUsersByExactRoles/${roles.map(x => x.join(',')).join('|')}/${include}`);
-  
+export const getUsersByExactRoles = async (
+  roles: string[][],
+  include: boolean
+) => {
+  const response = await Api.get(
+    `Admin/GetUsersByExactRoles/${roles
+      .map((x) => x.join(","))
+      .join("|")}/${include}`
+  );
+
   return response;
+};
+
+export const getUsersForGoverningBodies = async () => {
+  return await Api.get(`Admin/GetUsersForGoverningBodies`).catch((error) => {
+    throw new Error(error);
+  });
 };
 
 const putEditedRoles = async (userId: string, userRoles: any) => {
@@ -87,6 +114,7 @@ export default {
   getUsersByAnyRole,
   getUsersByAllRoles,
   getUsersByExactRoles,
+  getUsersForGoverningBodies,
   getCityRegionAdmins,
   getUsersForTable,
   getShortUserInfo,

@@ -11,7 +11,7 @@ import Secretaries from "../Secretaries/SecretariesPage";
 import { Blanks } from "../Blanks/Blanks";
 import UserApi from "../../../api/UserApi";
 import { Data, IPersonalDataContext, User } from "../Interface/Interface";
-import notificationLogic from '../../../components/Notifications/Notification';
+import notificationLogic from "../../../components/Notifications/Notification";
 import ScrollToTop from "../../../components/ScrollToTop/ScrollToTop";
 
 const DefaultState: IPersonalDataContext = {
@@ -22,17 +22,18 @@ const DefaultState: IPersonalDataContext = {
   loading: false,
   imageBase64: "",
   activeUserProfile: undefined,
-  userProfileAccess: {}
-}
+  userProfileAccess: {},
+};
 
-export const PersonalDataContext = React.createContext<IPersonalDataContext>(DefaultState);
+export const PersonalDataContext = React.createContext<IPersonalDataContext>(
+  DefaultState
+);
 
 export default function ({
   match: {
     params: { specify },
   },
 }: any) {
-
   const { userId } = useParams<{ userId: string }>();
 
   useEffect(() => {
@@ -45,7 +46,9 @@ export default function ({
   const [loading, setLoading] = useState(false);
   const [imageBase64, setImageBase64] = useState<string>("");
   const [fullUserProfile, setFullUserProfile] = useState<Data>();
-  const [userProfileAccess, setUserProfileAccess] = useState<{ [key: string]: boolean }>({})
+  const [userProfileAccess, setUserProfileAccess] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const [userProfile, SetUserProfile] = useState<Data>();
   const ChangeUserProfile = (user: Data) => {
@@ -54,7 +57,7 @@ export default function ({
 
   const UpdateData = () => {
     fetchData();
-  }
+  };
 
   const fetchData = async () => {
     setLoading(false);
@@ -66,46 +69,53 @@ export default function ({
     setActiveUserId(currentUserId);
     let userProfile = await UserApi.getActiveUserProfile();
     setActiveUserProfile(userProfile);
-    await UserApi.getById(userId).then(async (response) => {
-      setFullUserProfile(response.data);
-    }).catch((error) => {
-      notificationLogic("error", error.message);
-    });
+    await UserApi.getById(userId)
+      .then(async (response) => {
+        setFullUserProfile(response.data);
+      })
+      .catch((error) => {
+        notificationLogic("error", error.message);
+      });
 
-    await UserApi
-      .getUserProfileById(currentUserId, userId)
+    await UserApi.getUserProfileById(currentUserId, userId)
       .then((response) => {
         SetUserProfile(response.data);
         if (response.data?.user !== null) {
-          UserApi.getImage(response.data?.user.imagePath).then((response: { data: any }) => {
-            setImageBase64(response.data);
-          });
+          UserApi.getImage(response.data?.user.imagePath).then(
+            (response: { data: any }) => {
+              setImageBase64(response.data);
+            }
+          );
         }
         if (response.data?.shortUser !== null) {
-          UserApi.getImage(response.data?.shortUser.imagePath).then((response: { data: any }) => {
-            setImageBase64(response.data);
-          });
+          UserApi.getImage(response.data?.shortUser.imagePath).then(
+            (response: { data: any }) => {
+              setImageBase64(response.data);
+            }
+          );
         }
       })
       .catch((error) => {
         notificationLogic("error", error.message);
       });
     setLoading(true);
-  }
+  };
 
   return (
-    <PersonalDataContext.Provider value={{
-      userProfile,
-      fullUserProfile,
-      activeUserRoles,
-      activeUserId,
-      activeUserProfile,
-      userProfileAccess,
-      loading,
-      imageBase64,
-      ChangeUserProfile,
-      UpdateData
-    }}>
+    <PersonalDataContext.Provider
+      value={{
+        userProfile,
+        fullUserProfile,
+        activeUserRoles,
+        activeUserId,
+        activeUserProfile,
+        userProfileAccess,
+        loading,
+        imageBase64,
+        ChangeUserProfile,
+        UpdateData,
+      }}
+    >
       <ScrollToTop />
       <div className="mainContainer">
         <Menu id={userId} />

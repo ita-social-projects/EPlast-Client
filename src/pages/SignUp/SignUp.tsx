@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Modal} from 'antd';
-import styles from './SignUp.module.css';
-import Switcher from './Switcher/Switcher';
-import { checkEmail, checkNameSurName, checkPassword } from './verification';
-import AuthorizeApi from '../../api/authorizeApi';
-import { useHistory } from 'react-router-dom';
-import{incorrectEmail, emptyInput, incorrectPhone, minLength} from "../../components/Notifications/Messages"
+import React, { useEffect, useState } from "react";
+import { Form, Input, Button, Modal } from "antd";
+import styles from "./SignUp.module.css";
+import Switcher from "./Switcher/Switcher";
+import { checkEmail, checkNameSurName, checkPassword } from "./verification";
+import AuthorizeApi from "../../api/authorizeApi";
+import { useHistory } from "react-router-dom";
+import {
+  incorrectEmail,
+  emptyInput,
+  incorrectPhone,
+  minLength,
+} from "../../components/Notifications/Messages";
 import TermsOfUseModel from "../../models/TermsOfUse/TermsOfUseModel";
-import termsApi from '../../api/termsApi';
-import { Markup } from 'interweave';
+import termsApi from "../../api/termsApi";
+import { Markup } from "interweave";
 
 let authService = new AuthorizeApi();
 
@@ -19,33 +24,33 @@ export default function () {
   const [visible, setVisible] = useState(false);
   const [terms, setTerms] = useState<TermsOfUseModel>({
     termsId: 0,
-    termsTitle: '',
-    termsText: 'Немає даних',
-    datePublication: new Date()
+    termsTitle: "",
+    termsText: "Немає даних",
+    datePublication: new Date(),
   });
-  const[model, setModel] = useState();
+  const [model, setModel] = useState();
 
   const fetchTermsData = async () => {
-    const termsData:TermsOfUseModel = await termsApi.getTerms();
-    setTerms(termsData)
+    const termsData: TermsOfUseModel = await termsApi.getTerms();
+    setTerms(termsData);
   };
 
   const validationSchema = {
     Email: [
-      { required: true, message: emptyInput() }, 
-      { validator: checkEmail }
+      { required: true, message: emptyInput() },
+      { validator: checkEmail },
     ],
     Password: [
       { required: true, message: emptyInput() },
-      { validator: checkPassword }
+      { validator: checkPassword },
     ],
     Name: [
-      { required: true, message: emptyInput() }, 
-      { validator: checkNameSurName }
+      { required: true, message: emptyInput() },
+      { validator: checkNameSurName },
     ],
     SurName: [
-      { required: true, message: emptyInput() }, 
-      { validator: checkNameSurName }
+      { required: true, message: emptyInput() },
+      { validator: checkNameSurName },
     ],
     ConfirmPassword: [
       { required: true, message: emptyInput() },
@@ -53,9 +58,9 @@ export default function () {
     ],
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchTermsData();
-  },[])
+  }, []);
 
   const handleSubmit = async (values: any) => {
     setModel(values);
@@ -75,11 +80,11 @@ export default function () {
   };
 
   const initialValues = {
-    Email: '',
-    Name: '',
-    SurName: '',
-    Password: '',
-    ConfirmPassword: '',
+    Email: "",
+    Name: "",
+    SurName: "",
+    Password: "",
+    ConfirmPassword: "",
   };
 
   return (
@@ -95,11 +100,15 @@ export default function () {
           <Input className={styles.MyInput} placeholder="Електронна пошта" />
         </Form.Item>
         <Form.Item name="Password" rules={validationSchema.Password}>
-          <Input.Password visibilityToggle={true} className={styles.MyInput} placeholder="Пароль" />
+          <Input.Password
+            visibilityToggle={true}
+            className={styles.MyInput}
+            placeholder="Пароль"
+          />
         </Form.Item>
         <Form.Item
           name="ConfirmPassword"
-          dependencies={['Password']}
+          dependencies={["Password"]}
           rules={[
             {
               required: true,
@@ -107,15 +116,19 @@ export default function () {
             },
             ({ getFieldValue }) => ({
               validator(rule, value) {
-                if (!value || getFieldValue('Password') === value) {
+                if (!value || getFieldValue("Password") === value) {
                   return Promise.resolve();
                 }
-                return Promise.reject(new Error('Паролі не співпадають'));
+                return Promise.reject(new Error("Паролі не співпадають"));
               },
             }),
           ]}
         >
-          <Input.Password visibilityToggle={true} className={styles.MyInput} placeholder="Підтвердити пароль" />
+          <Input.Password
+            visibilityToggle={true}
+            className={styles.MyInput}
+            placeholder="Підтвердити пароль"
+          />
         </Form.Item>
         <Form.Item name="Name" rules={validationSchema.Name}>
           <Input className={styles.MyInput} placeholder="Ім'я" />
@@ -124,26 +137,28 @@ export default function () {
           <Input className={styles.MyInput} placeholder="Прізвище" />
         </Form.Item>
         <Form.Item>
-          <Button htmlType="submit" id={styles.confirmButton} disabled={!available} loading={!available}>
+          <Button
+            htmlType="submit"
+            id={styles.confirmButton}
+            disabled={!available}
+            loading={!available}
+          >
             Зареєструватись
           </Button>
         </Form.Item>
         <Modal
-          className='modalTerms'
+          className="modalTerms"
           centered
-          okText='Погоджуюсь'
+          okText="Погоджуюсь"
           visible={visible}
           onOk={confirmTerms}
           onCancel={cancelTerms}
           width={1000}
         >
           <h1>{terms.termsTitle}</h1>
-          <Markup
-            className="markupText"
-            content={terms.termsText}
-          />
+          <Markup className="markupText" content={terms.termsText} />
         </Modal>
       </Form>
     </div>
   );
-};
+}

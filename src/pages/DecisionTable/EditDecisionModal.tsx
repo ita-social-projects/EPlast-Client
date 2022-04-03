@@ -1,17 +1,27 @@
-import React from 'react';
-import { Modal,Drawer} from 'antd';
-import FormEditDecision from './FormEditDecision';
-import { DecisionPost } from '../../api/decisionsApi';
+import React from "react";
+import { Modal, Drawer } from "antd";
+import FormEditDecision from "./FormEditDecision";
+import { DecisionPost } from "../../api/decisionsApi";
 
 interface Props {
   record: number;
   decision: DecisionPost;
   showModal: boolean;
   setShowModal: (showModal: boolean) => void;
-  onEdit :(id: number, name: string, description: string, statusType: string) => void;
+  onEdit: (
+    id: number,
+    name: string,
+    description: string,
+    statusType: string
+  ) => void;
 }
-const EditDecisionModal = ({ record, showModal, setShowModal, onEdit, decision }: Props) => {
-
+const EditDecisionModal = ({
+  record,
+  showModal,
+  setShowModal,
+  onEdit,
+  decision,
+}: Props) => {
   const handleCancel = () => setShowModal(false);
 
   return (
@@ -20,13 +30,14 @@ const EditDecisionModal = ({ record, showModal, setShowModal, onEdit, decision }
       title="Редагування рішення Пластового проводу"
       visible={showModal}
       onClose={handleCancel}
-      footer = {null}
+      footer={null}
     >
-      <FormEditDecision 
-      record={record} 
-      decision = {decision}
-      setShowModal = { setShowModal}
-      onEdit = {onEdit}/>
+      <FormEditDecision
+        record={record}
+        decision={decision}
+        setShowModal={setShowModal}
+        onEdit={onEdit}
+      />
     </Drawer>
   );
 };

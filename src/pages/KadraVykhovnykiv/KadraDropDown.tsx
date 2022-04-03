@@ -72,7 +72,7 @@ const DropDown = (props: Props) => {
         deleteConfirm(record.id, onDelete);
         setShowDropdown(false);
         break;
-        case "3":
+      case "3":
         await kadrasApi.findUserByEduStaff(record.id).then((response) => {
           window.open(`/userpage/main/${response.data}`);
         });
@@ -92,7 +92,10 @@ const DropDown = (props: Props) => {
         theme="dark"
         style={{
           top: pageY,
-          left: (window.innerWidth - (pageX + 194)) < 0 ? window.innerWidth - 275 : pageX ,
+          left:
+            window.innerWidth - (pageX + 194) < 0
+              ? window.innerWidth - 275
+              : pageX,
           display: showDropdown ? "block" : "none",
         }}
       >

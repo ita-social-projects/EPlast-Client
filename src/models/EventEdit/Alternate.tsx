@@ -1,7 +1,7 @@
 export default class Alternate {
-    userId: string;
+  userId: string;
 
-    constructor() {
-        this.userId = '';
-    }
+  constructor() {
+    this.userId = "";
+  }
 }

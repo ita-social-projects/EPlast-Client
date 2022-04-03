@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Col,
-  Input,
-  notification,
-  Row,
-  Typography,
-} from "antd";
+import { Col, Input, notification, Row, Typography } from "antd";
 import { useParams } from "react-router-dom";
 // eslint-disable-next-line import/no-cycle
 import SortedEventInfo from "./SortedEventInfo";
@@ -18,10 +12,10 @@ import ParticipantsTable from "./ParticipantsTable";
 import "./EventInfo.less";
 import Spinner from "../../../Spinner/Spinner";
 import AuthStore from "../../../../stores/AuthStore";
-import jwt from 'jwt-decode';
+import jwt from "jwt-decode";
 import eventUserApi from "../../../../api/eventUserApi";
 
-const classes = require('./EventInfo.module.css');
+const classes = require("./EventInfo.module.css");
 const { Title } = Typography;
 
 export interface EventDetails {
@@ -107,7 +101,9 @@ const EventInfo = () => {
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [approvedEvent, setApprovedEvent] = useState(false);
   const [render, setRender] = useState(false);
-  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>({})
+  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
+    {}
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -121,21 +117,17 @@ const EventInfo = () => {
   }, [visibleDrawer, approvedEvent, render]);
 
   const getEventStatusId = async (eventStatus: string) => {
-    await eventsApi.getEventStatusId(eventStatus).then(
-      response => {
-        setEventStatusID(response.data);
-      }
-    );
-  }
+    await eventsApi.getEventStatusId(eventStatus).then((response) => {
+      setEventStatusID(response.data);
+    });
+  };
 
   const getUserAccessesForEvents = async (id: number) => {
     let user: any = jwt(AuthStore.getToken() as string);
-    await eventUserApi.getUserEventAccess(user.nameid, +id).then(
-      response => {
-        setUserAccesses(response.data);
-      }
-    );
-  }
+    await eventUserApi.getUserEventAccess(user.nameid, +id).then((response) => {
+      setUserAccesses(response.data);
+    });
+  };
 
   const search = (value: any) => {
     const filteredTable = baseData.filter((item: any) =>
@@ -170,9 +162,10 @@ const EventInfo = () => {
   const setParticipantsInTable = () => {
     if (userAccesses["SeeUserTable"]) {
       return event.event?.eventParticipants;
-    }
-    else {
-      return event.event?.eventParticipants.filter((p: EventParticipant) => p.status == "Учасник");
+    } else {
+      return event.event?.eventParticipants.filter(
+        (p: EventParticipant) => p.status == "Учасник"
+      );
     }
   };
 
@@ -212,7 +205,7 @@ const EventInfo = () => {
             userAccesses={userAccesses}
           />
         </div>
-        {userAccesses["SeeUserTable"] || event.isUserApprovedParticipant ?
+        {userAccesses["SeeUserTable"] || event.isUserApprovedParticipant ? (
           <div className="participantsTable">
             <div key={"2"}>
               <Title level={2} className={classes.userTableTitle}>
@@ -237,7 +230,8 @@ const EventInfo = () => {
                 setRender={setRender}
               />
             </div>
-          </div> : null}
+          </div>
+        ) : null}
       </div>
     </div>
   );

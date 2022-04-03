@@ -1,4 +1,4 @@
-import ClubDocumentType from './ClubDocumentType';
+import ClubDocumentType from "./ClubDocumentType";
 
 export default class ClubDocument {
   id: number;

@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch, Link } from "react-router-dom";
 import { Card, Layout, Pagination, Result, Skeleton } from "antd";
 import GoverningBodyDefaultLogo from "../../assets/images/default_city_image.jpg";
-import { getGoverningBodiesByPage, getGoverningBodyLogo } from "../../api/governingBodiesApi";
+import {
+  getGoverningBodiesByPage,
+  getGoverningBodyLogo,
+} from "../../api/governingBodiesApi";
 import "../City/Cities/Cities.less";
 import GoverningBodyProfile from "../../models/GoverningBody/GoverningBodyProfile";
 import Title from "antd/lib/typography/Title";
@@ -13,7 +16,9 @@ const GoverningBodies = () => {
   const history = useHistory();
   const { url } = useRouteMatch();
 
-  const [governingBodies, setGoverningBodies] = useState<GoverningBodyProfile[]>([]);
+  const [governingBodies, setGoverningBodies] = useState<
+    GoverningBodyProfile[]
+  >([]);
   const [canCreate, setCanCreate] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -31,12 +36,11 @@ const GoverningBodies = () => {
         governingBody.logo = logo.data;
       }
     }
- 
+
     setPhotosLoading(false);
   };
-  
-  if(photosLoading)
-    setPhotos();
+
+  if (photosLoading) setPhotos();
 
   const getGoverningBodies = async () => {
     setLoading(true);
@@ -89,47 +93,53 @@ const GoverningBodies = () => {
       {loading ? (
         <Spinner />
       ) : (
-          <div>
-            <div className="cityWrapper">
-              {governingBodies.length === 0 && searchedData.length !== 0 ? (
-                <div>
-                  <Result status="404" title="Керівний орган не знайдено" />
-                </div>
-              ) : (
-                governingBodies.map((governingBody: GoverningBodyProfile) => (
-                    <Link to={`${url}/${governingBody.id}`}>
-                      <Card
-                        key={governingBody.id}
-                        hoverable
-                        className="cardStyles"
-                        cover={
-                          photosLoading ? (
-                            <Skeleton.Avatar shape="square" active />
-                          ) : (
-                              <img src={governingBody.logo || undefined} alt="GoverningBody" />
-                            )
-                        }
-                        onClick={() => history.push(`${url}/${governingBody.id}`)}
-                      >
-                        <Card.Meta title={governingBody.governingBodyName} className="titleText" />
-                      </Card>
-                    </Link>
-                  ))
-                )}
-            </div>
-            <div className="pagination">
-              <Pagination
-                current={page}
-                pageSize={pageSize}
-                total={total}
-                responsive
-                showLessItems
-                onChange={(page) => handleChange(page)}
-                onShowSizeChange={(page, size) => handleSizeChange(page, size)}
-              />
-            </div>
+        <div>
+          <div className="cityWrapper">
+            {governingBodies.length === 0 && searchedData.length !== 0 ? (
+              <div>
+                <Result status="404" title="Керівний орган не знайдено" />
+              </div>
+            ) : (
+              governingBodies.map((governingBody: GoverningBodyProfile) => (
+                <Link to={`${url}/${governingBody.id}`}>
+                  <Card
+                    key={governingBody.id}
+                    hoverable
+                    className="cardStyles"
+                    cover={
+                      photosLoading ? (
+                        <Skeleton.Avatar shape="square" active />
+                      ) : (
+                        <img
+                          src={governingBody.logo || undefined}
+                          alt="GoverningBody"
+                        />
+                      )
+                    }
+                    onClick={() => history.push(`${url}/${governingBody.id}`)}
+                  >
+                    <Card.Meta
+                      title={governingBody.governingBodyName}
+                      className="titleText"
+                    />
+                  </Card>
+                </Link>
+              ))
+            )}
           </div>
-        )}
+          <div className="pagination">
+            <Pagination
+              current={page}
+              pageSize={pageSize}
+              total={total}
+              responsive
+              showLessItems
+              onChange={(page) => handleChange(page)}
+              onShowSizeChange={(page, size) => handleSizeChange(page, size)}
+            />
+          </div>
+        </div>
+      )}
     </Layout.Content>
   );
 };

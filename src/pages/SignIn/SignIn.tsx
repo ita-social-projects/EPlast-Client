@@ -3,16 +3,16 @@ import { Form, Input, Button, Checkbox } from "antd";
 import Switcher from "../SignUp/Switcher/Switcher";
 import styles from "./SignIn.module.css";
 import { checkEmail } from "../SignUp/verification";
-import { Link } from 'react-router-dom';
-import AuthorizeApi from '../../api/authorizeApi';
-import { useHistory } from 'react-router-dom';
-import jwt from 'jwt-decode';
-import AuthStore from '../../stores/AuthStore';
-import GoogleLoginWrapper from '../SignIn/GoogleLoginWrapper';
-import FacebookLoginWrapper from '../SignIn/FacebookLoginWrapper';
-import FacebookData from '../SignIn/FacebookDataInterface';
-import '../SignIn/SignIn.less';
-import{emptyInput, minLength} from "../../components/Notifications/Messages"
+import { Link } from "react-router-dom";
+import AuthorizeApi from "../../api/authorizeApi";
+import { useHistory } from "react-router-dom";
+import jwt from "jwt-decode";
+import AuthStore from "../../stores/AuthStore";
+import GoogleLoginWrapper from "../SignIn/GoogleLoginWrapper";
+import FacebookLoginWrapper from "../SignIn/FacebookLoginWrapper";
+import FacebookData from "../SignIn/FacebookDataInterface";
+import "../SignIn/SignIn.less";
+import { emptyInput, minLength } from "../../components/Notifications/Messages";
 
 let authService = new AuthorizeApi();
 let user: any;
@@ -39,7 +39,7 @@ export default function () {
     Password: [
       { required: true, message: emptyInput() },
       { min: 8, message: minLength(8) },
-    ]
+    ],
   };
 
   const handleSubmit = async (values: any) => {
@@ -56,7 +56,7 @@ export default function () {
     user = jwt(token);
     history.push(`/userpage/main/${user.nameid}`);
     window.location.reload();
-  }
+  };
 
   const handleFacebookResponse = async (response: FacebookData) => {
     await authService.sendFacebookInfo(response);
@@ -64,27 +64,33 @@ export default function () {
     user = jwt(token);
     history.push(`/userpage/main/${user.nameid}`);
     window.location.reload();
-  }
+  };
 
   const getId = async () => {
-    await authService.getGoogleId().then(
-      (data) => {
+    await authService
+      .getGoogleId()
+      .then((data) => {
         setGoogleId(data.id);
-      }
-    ).catch(exc => { console.log(exc) });
+      })
+      .catch((exc) => {
+        console.log(exc);
+      });
 
     setGoogleLoading(false);
-  }
+  };
 
   const getAppId = async () => {
-    await authService.getFacebookId().then(
-      (data) => {
+    await authService
+      .getFacebookId()
+      .then((data) => {
         setFacebookAppId(data.id);
-      }
-    ).catch(exc => { console.log(exc) });
+      })
+      .catch((exc) => {
+        console.log(exc);
+      });
 
     setFacebookLoading(false);
-  }
+  };
 
   useEffect(() => {
     getId();
@@ -106,7 +112,7 @@ export default function () {
             placeholder="Електронна пошта"
           />
         </Form.Item>
-        <Form.Item name="Password" rules={validationSchema.Password} >
+        <Form.Item name="Password" rules={validationSchema.Password}>
           <Input.Password
             visibilityToggle={true}
             className={styles.SignInInput}
@@ -121,18 +127,26 @@ export default function () {
             Увійти
           </Button>
         </Form.Item>
-        <Link className={styles.forgot} to="/forgotPassword">Забули пароль?</Link>
+        <Link className={styles.forgot} to="/forgotPassword">
+          Забули пароль?
+        </Link>
         <div className={styles.GoogleFacebookLogin}>
           {googleLoading ? (
-            ''
+            ""
           ) : (
-              <GoogleLoginWrapper googleId={googleId} handleGoogleResponse={handleGoogleResponse}></GoogleLoginWrapper>
-            )}
+            <GoogleLoginWrapper
+              googleId={googleId}
+              handleGoogleResponse={handleGoogleResponse}
+            ></GoogleLoginWrapper>
+          )}
           {facebookLoading ? (
-            ''
+            ""
           ) : (
-              <FacebookLoginWrapper appId={facebookAppId} handleFacebookResponse={handleFacebookResponse}></FacebookLoginWrapper>
-            )}
+            <FacebookLoginWrapper
+              appId={facebookAppId}
+              handleFacebookResponse={handleFacebookResponse}
+            ></FacebookLoginWrapper>
+          )}
         </div>
       </Form>
     </div>

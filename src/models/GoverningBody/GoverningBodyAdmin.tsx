@@ -1,5 +1,5 @@
-import AdminType from '../Admin/AdminType';
-import GoverningBodyUser from './GoverningBodyUser';
+import AdminType from "../Admin/AdminType";
+import GoverningBodyUser from "./GoverningBodyUser";
 
 export default class GoverningBodyAdmin {
   id: number;

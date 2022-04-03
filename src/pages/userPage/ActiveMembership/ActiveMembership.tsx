@@ -1,7 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import classes from "./ActiveMembership.module.css";
-import { Typography, List, Button, Tooltip, Tag, Empty, Skeleton, Form } from "antd";
+import {
+  Typography,
+  List,
+  Button,
+  Tooltip,
+  Tag,
+  Empty,
+  Skeleton,
+  Form,
+} from "antd";
 import "../personalData/PersonalData.less";
 import activeMembershipApi, {
   UserDates,
@@ -28,9 +37,18 @@ const ActiveMembership = () => {
   const { userId } = useParams();
   const [accessLevels, setAccessLevels] = useState([]);
   const [dates, setDates] = useState<UserDates>();
-  const { userProfile, activeUserRoles, fullUserProfile, activeUserProfile, loading, UpdateData } = useContext(PersonalDataContext);
+  const {
+    userProfile,
+    activeUserRoles,
+    fullUserProfile,
+    activeUserProfile,
+    loading,
+    UpdateData,
+  } = useContext(PersonalDataContext);
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
-  const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
+  const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>(
+    {} as UserPlastDegree
+  );
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [datesVisibleModal, setDatesVisibleModal] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<any>([{ nameid: "" }]);
@@ -44,7 +62,7 @@ const ActiveMembership = () => {
     Roles.CityHeadDeputy,
     Roles.KurinHead,
     Roles.KurinHeadDeputy,
-    Roles.RegionBoardHead
+    Roles.RegionBoardHead,
   ];
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
@@ -53,10 +71,10 @@ const ActiveMembership = () => {
       dateEntry: "",
       dateOath: "",
       dateEnd: "",
-      userId: userId
-    }
+      userId: userId,
+    };
     setDates(defaultDates);
-  }
+  };
 
   const handleAddDegree = async () => {
     await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
@@ -64,9 +82,15 @@ const ActiveMembership = () => {
     });
   };
   const getAppropriateToGenderDegree = (plastDegreeName: string): string => {
-    if (userGenders[0] === fullUserProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
+    if (
+      userGenders[0] === fullUserProfile?.user.gender?.name &&
+      plastDegreeName?.includes("/")
+    ) {
       return plastDegreeName.split("/")[0];
-    } else if (userGenders[1] === fullUserProfile?.user.gender?.name && plastDegreeName?.includes("/")) {
+    } else if (
+      userGenders[1] === fullUserProfile?.user.gender?.name &&
+      plastDegreeName?.includes("/")
+    ) {
       return plastDegreeName.split("/")[1];
     } else return plastDegreeName;
   };
@@ -77,25 +101,31 @@ const ActiveMembership = () => {
 
     setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
 
-    await activeMembershipApi.getUserDates(userId).then((response) => {
-      response.dateEntry =
-        response.dateEntry === defaultDate ? "" : response.dateEntry;
-      response.dateOath =
-        response.dateOath === defaultDate ? "" : response.dateOath;
-      response.dateEnd =
-        response.dateEnd === defaultDate ? "" : response.dateEnd;
-      setDates(response);
-      setLoadInfo(true);
-    }).catch(() => {
-      SetDefaultDates();
-      setLoadInfo(true);
-      notificationLogic("error", "Не вдалося завантажити дати дійсного членства");
-    });
+    await activeMembershipApi
+      .getUserDates(userId)
+      .then((response) => {
+        response.dateEntry =
+          response.dateEntry === defaultDate ? "" : response.dateEntry;
+        response.dateOath =
+          response.dateOath === defaultDate ? "" : response.dateOath;
+        response.dateEnd =
+          response.dateEnd === defaultDate ? "" : response.dateEnd;
+        setDates(response);
+        setLoadInfo(true);
+      })
+      .catch(() => {
+        SetDefaultDates();
+        setLoadInfo(true);
+        notificationLogic(
+          "error",
+          "Не вдалося завантажити дати дійсного членства"
+        );
+      });
 
     await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
       setUserPlastDegree(response);
     });
-  }
+  };
 
   const fetchData = async () => {
     if (UpdateData) UpdateData();
@@ -114,7 +144,7 @@ const ActiveMembership = () => {
       setDates(response);
       setLoadInfo(true);
     });
-    
+
     await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
       setUserPlastDegree(response);
     });
@@ -126,19 +156,23 @@ const ActiveMembership = () => {
       (userRoles?.includes(Roles.OkrugaHead) && activeUserProfile?.regionId == fullUserProfile?.user.regionId) ||
       (userRoles?.includes(Roles.OkrugaHeadDeputy) && activeUserProfile?.regionId == fullUserProfile?.user.regionId) ||
       userRoles?.includes(Roles.RegionBoardHead) ||
-      userRoles?.includes(Roles.Admin);
+      userRoles?.includes(Roles.Admin)
+    );
   };
 
   const IsPossibleToChangeDateOfSwear = (access: Array<string>): boolean => {
     var flag = true;
-    access.map(x => {
-      if (x.includes(Roles.RegisteredUser) || x.includes(Roles.FormerPlastMember)) {
+    access.map((x) => {
+      if (
+        x.includes(Roles.RegisteredUser) ||
+        x.includes(Roles.FormerPlastMember)
+      ) {
         flag = false;
         return;
       }
-    })
+    });
     return flag;
-  }
+  };
 
   const IsUserHasAnyAdminTypeRoles = (userRoles: Array<string>): boolean => {
     let IsUserHasAnyAdminRole = false;
@@ -190,9 +224,9 @@ const ActiveMembership = () => {
   };
 
   const AppropriateButtonText = (): string => {
-    if (userPlastDegree) return "Змінити ступінь"
-    else return "Додати ступінь"
-  }
+    if (userPlastDegree) return "Змінити ступінь";
+    else return "Додати ступінь";
+  };
 
   useEffect(() => {
     InitialFetchData();
@@ -246,7 +280,10 @@ const ActiveMembership = () => {
                         <span className={classes.date}>Дата вступу: </span>
                         {dates?.dateEntry === ""
                           ? "Не задано"
-                          : moment.utc(dates?.dateEntry).local().format("DD.MM.YYYY")}
+                          : moment
+                              .utc(dates?.dateEntry)
+                              .local()
+                              .format("DD.MM.YYYY")}
                       </div>
                     </li>
                     <li className={classes.textListItem} key={2}>
@@ -254,30 +291,39 @@ const ActiveMembership = () => {
                         <span className={classes.date}>Дата присяги: </span>
                         {dates?.dateOath === ""
                           ? "Без присяги"
-                          : moment.utc(dates?.dateOath).local().format("DD.MM.YYYY")}
+                          : moment
+                              .utc(dates?.dateOath)
+                              .local()
+                              .format("DD.MM.YYYY")}
                       </div>
                     </li>
                     <li className={classes.textListItem} key={3}>
                       <div>
                         <span className={classes.date}>Дата завершення: </span>
                         {dates?.dateEnd === ""
-                          ? (dates.dateEntry === "" ? " - " : "ще у Пласті")
-                          : moment.utc(dates?.dateEnd).local().format("DD.MM.YYYY")}
+                          ? dates.dateEntry === ""
+                            ? " - "
+                            : "ще у Пласті"
+                          : moment
+                              .utc(dates?.dateEnd)
+                              .local()
+                              .format("DD.MM.YYYY")}
                       </div>
                     </li>
                   </ul>
 
-                  {(IsUserHasAccessToManageDegree(activeUserRoles) && IsPossibleToChangeDateOfSwear(accessLevels)) && (
-                    <Button
-                      type="primary"
-                      className={classes.buttonChange}
-                      onClick={() => {
-                        setDatesVisibleModal(true);
-                      }}
-                    >
-                      Змінити
-                    </Button>
-                  )}
+                  {IsUserHasAccessToManageDegree(activeUserRoles) &&
+                    IsPossibleToChangeDateOfSwear(accessLevels) && (
+                      <Button
+                        type="primary"
+                        className={classes.buttonChange}
+                        onClick={() => {
+                          setDatesVisibleModal(true);
+                        }}
+                      >
+                        Змінити
+                      </Button>
+                    )}
                 </>
               ) : (
                 <div></div>
@@ -296,15 +342,17 @@ const ActiveMembership = () => {
                       style={{ padding: "6px 0" }}
                     >
                       <Tag color={setTagColor(item)} key={index}>
-                        {(item?.length > itemMaxLength) ?
+                        {item?.length > itemMaxLength ? (
                           <Tooltip placement="topLeft" title={item}>
-                            <span>{item.slice(0, itemMaxLength - 1) + "..."}</span>
+                            <span>
+                              {item.slice(0, itemMaxLength - 1) + "..."}
+                            </span>
                           </Tooltip>
-                          :
+                        ) : (
                           <Tooltip placement="topLeft" title={item}>
                             {item}
                           </Tooltip>
-                        }
+                        )}
                       </Tag>
                     </List.Item>
                   )}
@@ -316,23 +364,38 @@ const ActiveMembership = () => {
         <div className={classes.wrapper}>
           <div className={classes.wrapperGeneralInfo}>
             <Title level={2}> Ступені користувача </Title>
-            {userPlastDegree && userPlastDegree.id ? (<React.Fragment key={userPlastDegree?.id}>
-              <div style={{ marginBottom: "7px" }}>
-                <div className={classes.textFieldsMain}>
-                  {<SafetyCertificateOutlined />}{" "}
-                  {getAppropriateToGenderDegree(userPlastDegree!.plastDegree?.name)}
-                </div>
-                <div className={classes.textFieldsOthers}>
-                  Дата початку ступеню:{" "}
-                  {moment.utc(userPlastDegree?.dateStart).local().format("DD.MM.YYYY")}
-                </div>
-                {IsUserHasAccessToManageDegree(activeUserRoles?.map((role: any) => {
-                  if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy ||
-                    role === Roles.CityHead || role === Roles.CityHeadDeputy))
-                    return role
-                })) && (
+            {userPlastDegree && userPlastDegree.id ? (
+              <React.Fragment key={userPlastDegree?.id}>
+                <div style={{ marginBottom: "7px" }}>
+                  <div className={classes.textFieldsMain}>
+                    {<SafetyCertificateOutlined />}{" "}
+                    {getAppropriateToGenderDegree(
+                      userPlastDegree!.plastDegree?.name
+                    )}
+                  </div>
+                  <div className={classes.textFieldsOthers}>
+                    Дата початку ступеню:{" "}
+                    {moment
+                      .utc(userPlastDegree?.dateStart)
+                      .local()
+                      .format("DD.MM.YYYY")}
+                  </div>
+                  {IsUserHasAccessToManageDegree(
+                    activeUserRoles?.map((role: any) => {
+                      if (
+                        !(
+                          role === Roles.KurinHead ||
+                          role === Roles.KurinHeadDeputy ||
+                          role === Roles.CityHead ||
+                          role === Roles.CityHeadDeputy
+                        )
+                      )
+                        return role;
+                    })
+                  ) && (
                     <div className={classes.buttons}>
-                      <Button type="primary"
+                      <Button
+                        type="primary"
                         className={classes.buttonChange}
                         onClick={() => {
                           DeleteDegreeConfirm(
@@ -346,34 +409,45 @@ const ActiveMembership = () => {
                       </Button>
                     </div>
                   )}
-              </div>
-            </React.Fragment>
-            )
-              : (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Без ступеня" />)
-            }
-            {IsUserHasAccessToManageDegree(activeUserRoles?.map((role: any) => {
-              if (!(role === Roles.KurinHead || role === Roles.KurinHeadDeputy))
-                return role
-            })) && (
-                <div className={classes.buttons}>
-                  <Button type="primary"
-                    className={classes.buttonChange}
-                    onClick={() =>
-                      setVisibleModal(true)
-                    }
-                  >
-                    {AppropriateButtonText()}
-                  </Button>
                 </div>
-              )}
+              </React.Fragment>
+            ) : (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description="Без ступеня"
+              />
+            )}
+            {IsUserHasAccessToManageDegree(
+              activeUserRoles?.map((role: any) => {
+                if (
+                  !(role === Roles.KurinHead || role === Roles.KurinHeadDeputy)
+                )
+                  return role;
+              })
+            ) && (
+              <div className={classes.buttons}>
+                <Button
+                  type="primary"
+                  className={classes.buttonChange}
+                  onClick={() => setVisibleModal(true)}
+                >
+                  {AppropriateButtonText()}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
       <ModalAddPlastDegree
         userId={userId}
-        isCityAdmin={!IsUserHasAnyAdminTypeRoles(activeUserRoles?.map((role: any) => {
-          if (!(role === Roles.CityHead || role === Roles.CityHeadDeputy)) return role
-        }))}
+        isCityAdmin={
+          !IsUserHasAnyAdminTypeRoles(
+            activeUserRoles?.map((role: any) => {
+              if (!(role === Roles.CityHead || role === Roles.CityHeadDeputy))
+                return role;
+            })
+          )
+        }
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
         handleAddDegree={handleAddDegree}
@@ -384,9 +458,8 @@ const ActiveMembership = () => {
         datesVisibleModal={datesVisibleModal}
         setDatesVisibleModal={setDatesVisibleModal}
         handleChangeDates={handleChangeDates}
-
       />
-   </Form >
+    </Form>
   );
 };
 export default ActiveMembership;
