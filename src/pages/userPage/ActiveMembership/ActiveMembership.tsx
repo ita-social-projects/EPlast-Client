@@ -121,9 +121,7 @@ const ActiveMembership = () => {
   };
 
   const IsUserHasAccessToManageDegree = (userRoles: Array<string>): boolean => {
-    return (userRoles?.includes(Roles.KurinHead) && activeUserProfile?.clubId == fullUserProfile?.user.clubId) ||
-      (userRoles?.includes(Roles.KurinHeadDeputy) && activeUserProfile?.clubId == fullUserProfile?.user.clubId) ||
-      (userRoles?.includes(Roles.CityHead) && activeUserProfile?.cityId == fullUserProfile?.user.cityId) ||
+    return   (userRoles?.includes(Roles.CityHead) && activeUserProfile?.cityId == fullUserProfile?.user.cityId) ||
       (userRoles?.includes(Roles.CityHeadDeputy) && activeUserProfile?.cityId == fullUserProfile?.user.cityId) ||
       (userRoles?.includes(Roles.OkrugaHead) && activeUserProfile?.regionId == fullUserProfile?.user.regionId) ||
       (userRoles?.includes(Roles.OkrugaHeadDeputy) && activeUserProfile?.regionId == fullUserProfile?.user.regionId) ||
