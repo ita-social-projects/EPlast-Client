@@ -1,7 +1,7 @@
 export default class Bunchuzhnyi {
-    userId: string;
+  userId: string;
 
-    constructor() {
-        this.userId = '';
-    }
+  constructor() {
+    this.userId = "";
+  }
 }

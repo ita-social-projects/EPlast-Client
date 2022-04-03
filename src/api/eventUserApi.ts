@@ -1,80 +1,82 @@
-import Api from './api';
+import Api from "./api";
 
 const getEventsUser = async (id: string | undefined) => {
-    const response = await Api.get(`EventsUsers/eventsUsers/${id}`);
+  const response = await Api.get(`EventsUsers/eventsUsers/${id}`);
 
-    return response;
+  return response;
 };
 
 const getDataForNewEvent = async () => {
-    const response = await Api.get(`EventsUsers/dataForNewEvent`);
+  const response = await Api.get(`EventsUsers/dataForNewEvent`);
 
-    return response;
+  return response;
 };
 
 const getEditedEvent = async (id: number) => {
-    const response = await Api.get(`EventsUsers/editedEvent/${id}`);
+  const response = await Api.get(`EventsUsers/editedEvent/${id}`);
 
-    return response;
+  return response;
 };
 
 const getDataForCalendar = async () => {
-    const response = await Api.get(`EventsCalendar/eventsForCalendar`);
+  const response = await Api.get(`EventsCalendar/eventsForCalendar`);
 
-    return response;
-}
+  return response;
+};
 
 const getActionsForCalendar = async () => {
-    const response = await Api.get(`EventsCalendar/actionsForCalendar`);
+  const response = await Api.get(`EventsCalendar/actionsForCalendar`);
 
-    return response;
-}
+  return response;
+};
 
 const getEducationsForCalendar = async () => {
-    const response = await Api.get(`EventsCalendar/educationsForCalendar`);
+  const response = await Api.get(`EventsCalendar/educationsForCalendar`);
 
-    return response;
-}
+  return response;
+};
 
 const getCampsForCalendar = async () => {
-    const response = await Api.get(`EventsCalendar/campsForCalendar`);
+  const response = await Api.get(`EventsCalendar/campsForCalendar`);
 
-    return response;
-}
+  return response;
+};
 
 const post = async (data: any) => {
-    const response = await Api.post(`EventsUsers/newEvent`, data);
+  const response = await Api.post(`EventsUsers/newEvent`, data);
 
-    return response;
+  return response;
 };
 
 const put = async (data: any) => {
-    const response = await Api.put("EventsUsers/editedEvent", data);
+  const response = await Api.put("EventsUsers/editedEvent", data);
 
-    return response;
-}
+  return response;
+};
 
 const getEventToApprove = async (eventId: number) => {
-    const response = await Api.put(`EventsUsers/approveEvent/${eventId}`);
+  const response = await Api.put(`EventsUsers/approveEvent/${eventId}`);
 
-    return response;
-}
+  return response;
+};
 
 export const getUserEventAccess = async (userId: string, eventId?: number) => {
-    const response = await Api.get(`UserAccess/GetEventUserAccess/${userId}${eventId ? "/" + eventId : ""}`);
-    return response;
-}   
+  const response = await Api.get(
+    `UserAccess/GetEventUserAccess/${userId}${eventId ? "/" + eventId : ""}`
+  );
+  return response;
+};
 
 export default {
-    getEventsUser,
-    getDataForNewEvent,
-    getEditedEvent,
-    getDataForCalendar,
-    getActionsForCalendar,
-    getEducationsForCalendar,
-    getCampsForCalendar,
-    getEventToApprove,
-    post,
-    put,
-    getUserEventAccess
+  getEventsUser,
+  getDataForNewEvent,
+  getEditedEvent,
+  getDataForCalendar,
+  getActionsForCalendar,
+  getEducationsForCalendar,
+  getCampsForCalendar,
+  getEventToApprove,
+  post,
+  put,
+  getUserEventAccess,
 };

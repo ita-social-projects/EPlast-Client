@@ -50,9 +50,9 @@ const AddDocumentModal = (props: Props) => {
   };
 
   const getExtension = (fileName: string) => {
-    let splittedFileName = fileName.split('.');
-    return '.' + splittedFileName[splittedFileName.length - 1];
-  }
+    let splittedFileName = fileName.split(".");
+    return "." + splittedFileName[splittedFileName.length - 1];
+  };
 
   const onFileNameChange = (e: any) => {
     let input = e.target.value.slice(0, maxNameLength);
@@ -67,7 +67,7 @@ const AddDocumentModal = (props: Props) => {
         setDisabled(false);
       }
     }
-  }
+  };
 
   const handleUpload = (info: any) => {
     if (info.file !== null) {
@@ -75,7 +75,10 @@ const AddDocumentModal = (props: Props) => {
         getBase64(info.file, (base64: string) => {
           props.setDocument({ ...props.document, blobName: base64 });
           let extension: string = getExtension(fileName);
-          let fileNameWithoutExtension: string = fileName.replace(extension, '');
+          let fileNameWithoutExtension: string = fileName.replace(
+            extension,
+            ""
+          );
           let newExtension: string = getExtension(info.file.name);
           setFileName(fileNameWithoutExtension + newExtension);
           setDisabled(false);
@@ -96,7 +99,7 @@ const AddDocumentModal = (props: Props) => {
       extension.indexOf("pdf") !== -1 ||
       extension.indexOf("doc") !== -1 ||
       extension.indexOf("docx") !== -1;
-      
+
     const isFileEmpty = fileSize === 0;
     if (isFileEmpty) {
       notificationLogic("error", fileIsEmpty());
@@ -160,7 +163,10 @@ const AddDocumentModal = (props: Props) => {
             label="Назва документу"
             rules={descriptionValidation.Name}
           >
-            <Input placeholder="Введіть назву документу" onChange={onFileNameChange}/>
+            <Input
+              placeholder="Введіть назву документу"
+              onChange={onFileNameChange}
+            />
           </Form.Item>
           <Form.Item name="datepicker" label="Дата документу">
             <DatePicker format="DD.MM.YYYY" className="formSelect" />
@@ -185,7 +191,12 @@ const AddDocumentModal = (props: Props) => {
             <p className="ant-upload-hint">
               Клікніть або перетягніть файл для завантаження
             </p>
-            {props.document.blobName !== null && <div style={{wordBreak:'break-word'}}> {fileUploaded ? fileName : null} </div>}
+            {props.document.blobName !== null && (
+              <div style={{ wordBreak: "break-word" }}>
+                {" "}
+                {fileUploaded ? fileName : null}{" "}
+              </div>
+            )}
           </Upload.Dragger>
 
           {props.document.blobName ? (

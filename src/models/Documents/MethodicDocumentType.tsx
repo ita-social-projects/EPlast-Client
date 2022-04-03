@@ -1,4 +1,4 @@
 export type MethodicDocumentType = {
-    text: string;
-    value: string;
-}
+  text: string;
+  value: string;
+};

@@ -1,4 +1,4 @@
-import SectorDocumentType from './SectorDocumentType';
+import SectorDocumentType from "./SectorDocumentType";
 
 export default class SectorDocument {
   id: number;

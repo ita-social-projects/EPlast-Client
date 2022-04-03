@@ -56,7 +56,7 @@ import NotAuthorizedPage from "./pages/Error/NotAuthorized";
 import { ClubAnnualReportCreate } from "./pages/AnnualReport/ClubAnnualReportCreate/ClubAnnualReportCreate";
 import ClubAnnualReportEdit from "./pages/AnnualReport/ClubAnnualReportEdit/ClubAnnualReportEdit";
 import DocumentsTable from "./pages/Documents/DocumentsTable";
-import PrecautionTable from "./pages/Precaution/PrecautionTable/PrecautionTable"
+import PrecautionTable from "./pages/Precaution/PrecautionTable/PrecautionTable";
 import RegionBoard from "./pages/RegionsBoard/RegionBoard";
 import RegionBoardEdit from "./pages/RegionsBoard/RegionBoardEdit";
 import RegionBoardAdministration from "./pages/RegionsBoard/RegionBoardAdministration";
@@ -78,6 +78,7 @@ import EditGoverningBodySector from "./pages/GoverningBody/Sector/EditSector";
 import GoverningBodySectorDocuments from "./pages/GoverningBody/Sector/SectorDocuments";
 import GoverningBodySectorAdministration from "./pages/GoverningBody/Sector/SectorAdministration";
 import Announcements from "./pages/GoverningBody/Announcement/Announcement";
+import SectorAnnouncement from "./pages/GoverningBody/Sector/SectorAnnouncement/SectorAnnouncement";
 import UserRenewalTable from "./pages/UserRenewal/UserRenewalTable/UserRenewalTable";
 import TermsOfUse from "./pages/Terms/TermsOfUse";
 import TermsEdit from "./pages/Terms/TermsEdit";
@@ -86,11 +87,16 @@ import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 const App: FC = () => (
   <div className="App">
     <Router>
-      <ScrollToTop/>
+      <ScrollToTop />
       <HeaderContainer />
       <div className="mainContent">
         <Switch>
-          <RouteWithLayout exact path="/" component={Home} layout={PrivateLayout} />
+          <RouteWithLayout
+            exact
+            path="/"
+            component={Home}
+            layout={PrivateLayout}
+          />
           <Route path="/contacts" component={Contacts} />
           <Route path="/signin" component={SignIn} />
           <Route path="/signup" component={SignUp} />
@@ -401,8 +407,14 @@ const App: FC = () => (
           <RouteWithLayout
             layout={PrivateLayout}
             exact
-            path="/announcements/page/:p"
+            path="/governingBodies/announcements/:id/:p"
             component={Announcements}
+          />
+          <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/sector/announcements/:governingBodyId/:sectorId/:p"
+            component={SectorAnnouncement}
           />
           <RouteWithLayout
             layout={PrivateLayout}

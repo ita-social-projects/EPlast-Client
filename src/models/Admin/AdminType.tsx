@@ -1,9 +1,9 @@
 export default class AdminType {
-    id: number;
-    adminTypeName: string;
+  id: number;
+  adminTypeName: string;
 
-    constructor () {
-        this.id = 0;
-        this.adminTypeName = "";
-    }
+  constructor() {
+    this.id = 0;
+    this.adminTypeName = "";
+  }
 }

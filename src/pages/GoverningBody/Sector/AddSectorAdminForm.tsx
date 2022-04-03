@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
-import { Form, DatePicker, AutoComplete, Select, Modal, Button, Input } from "antd";
+import {
+  Form,
+  DatePicker,
+  AutoComplete,
+  Select,
+  Modal,
+  Button,
+  Input,
+  Tooltip,
+} from "antd";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
@@ -16,17 +25,18 @@ import {
   incorrectEmail,
   maxLength,
   successfulEditAction,
-} from "../../../components/Notifications/Messages"
+} from "../../../components/Notifications/Messages";
 import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
 import "../AddAdministratorModal/AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 const confirm = Modal.confirm;
 
 const AddSectorAdminForm = (props: any) => {
-  const { onAdd, setAdmins, admins, setSectorHead } = props;
+  const { onAdd, setAdmins, admins, setSectorHead, visibleModal } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [usersLoading, setUsersLoading] = useState<boolean>(false);
@@ -46,7 +56,7 @@ const AddSectorAdminForm = (props: any) => {
     if (admin.adminType.adminTypeName == Roles.GoverningBodySectorHead) {
       setSectorHead(admin);
     }
-    setUsers(users.filter(x => x.id !== admin.userId));
+    setUsers(users.filter((x) => x.id !== admin.userId));
     notificationLogic("success", "Користувач успішно доданий в провід");
     form.resetFields();
     await NotificationBoxApi.createNotifications(
@@ -67,9 +77,9 @@ const AddSectorAdminForm = (props: any) => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
-      `цьому напрямі керівного органу`);
+      `цьому напрямі керівного органу`
+    );
   };
-
 
   const showConfirm = (newAdmin: SectorAdmin, existingAdmin: SectorAdmin) => {
     confirm({
@@ -79,20 +89,26 @@ const AddSectorAdminForm = (props: any) => {
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління закінчується{" "}
+          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління
+          закінчується{" "}
           <b>
-            {existingAdmin.endDate === null || existingAdmin.endDate === undefined
+            {existingAdmin.endDate === null ||
+            existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() { },
+      onCancel() {},
       onOk() {
         if (newAdmin.id === 0) {
           addSectorAdmin(newAdmin);
-          setAdmins((admins as SectorAdmin[]).map(x => x.userId === existingAdmin?.userId ? newAdmin : x));
+          setAdmins(
+            (admins as SectorAdmin[]).map((x) =>
+              x.userId === existingAdmin?.userId ? newAdmin : x
+            )
+          );
         } else {
           editSectorAdmin(newAdmin);
         }
@@ -103,9 +119,10 @@ const AddSectorAdminForm = (props: any) => {
   const handleSubmit = async (values: any) => {
     const newAdmin: SectorAdmin = {
       id: props.admin === undefined ? 0 : props.admin.id,
-      userId: props.admin === undefined
-        ? JSON.parse(values.userId).id
-        : props.admin.userId,
+      userId:
+        props.admin === undefined
+          ? JSON.parse(values.userId).id
+          : props.admin.userId,
       user: JSON.parse(values.userId),
       adminType: {
         ...new AdminType(),
@@ -114,19 +131,19 @@ const AddSectorAdminForm = (props: any) => {
       sectorId: props.sectorId,
       startDate: values.startDate,
       endDate: values.endDate,
-      workEmail: workEmail
+      workEmail: workEmail,
     };
-    newAdmin.user.imagePath =  (
+    newAdmin.user.imagePath = (
       await userApi.getImage(newAdmin.user.imagePath)
     ).data;
     if (newAdmin.id === 0) {
       try {
-        const existingAdmin  = (admins as SectorAdmin[])
-        .find(x => x.adminType.adminTypeName === newAdmin.adminType.adminTypeName)
-        if(existingAdmin !== undefined) {
+        const existingAdmin = (admins as SectorAdmin[]).find(
+          (x) => x.adminType.adminTypeName === newAdmin.adminType.adminTypeName
+        );
+        if (existingAdmin !== undefined) {
           showConfirm(newAdmin, existingAdmin);
-        }
-        else {
+        } else {
           addSectorAdmin(newAdmin);
           setAdmins((old: SectorAdmin[]) => [...old, newAdmin]);
         }
@@ -141,24 +158,20 @@ const AddSectorAdminForm = (props: any) => {
   const onUserSelect = (value: any) => {
     const email: string = JSON.parse(value.toString()).email;
     setWorkEmail(email);
-    form.setFieldsValue({workEmail: email});
-  }
+    form.setFieldsValue({ workEmail: email });
+  };
+
+  const fetchData = async () => {
+    setUsersLoading(true);
+    try {
+      const responseUsers = await adminApi.getUsersForGoverningBodies();
+      setUsers(responseUsers.data);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      setUsersLoading(true);
-      await adminApi.getUsersByExactRoles(
-        [
-          [Roles.PlastMember],
-          [Roles.PlastMember, Roles.KurinHead],
-          [Roles.PlastMember, Roles.KurinHeadDeputy]
-        ],
-        true)
-      .then((response) => {
-        setUsers(response.data)
-        setUsersLoading(false);
-      });
-    };
     fetchData();
   }, []);
 
@@ -186,13 +199,24 @@ const AddSectorAdminForm = (props: any) => {
           showSearch
           loading={usersLoading}
           className={classes.inputField}
-          onChange={value => onUserSelect(value)}
+          onChange={(value) => onUserSelect(value)}
         >
-          {users?.map((o) => (
-            <Select.Option key={o.id} value={JSON.stringify(o)}>
-              {o.firstName + " " + o.lastName}
-            </Select.Option>
-          ))}
+          {users?.map((o) =>
+            o.isInDeputyRole ? (
+              <Select.Option key={o.id} value={JSON.stringify(o)}>
+                <div className={classes.formOption}>
+                  {o.firstName + " " + o.lastName}
+                  <Tooltip title="Уже є адміністратором">
+                    <InfoCircleOutlined />
+                  </Tooltip>
+                </div>
+              </Select.Option>
+            ) : (
+              <Select.Option key={o.id} value={JSON.stringify(o)}>
+                {o.firstName + " " + o.lastName}
+              </Select.Option>
+            )
+          )}
         </Select>
       </Form.Item>
 
@@ -240,14 +264,14 @@ const AddSectorAdminForm = (props: any) => {
           {
             required: true,
             message: <div className="formItemExplain">{emptyInput()}</div>,
-          }
+          },
         ]}
       >
         <Input
           placeholder="Електронна пошта"
           className={classes.inputField}
           value={workEmail}
-          onChange={e => setWorkEmail(e.target.value)}
+          onChange={(e) => setWorkEmail(e.target.value)}
         />
       </Form.Item>
 
@@ -256,7 +280,9 @@ const AddSectorAdminForm = (props: any) => {
         label="Дата початку"
         name="startDate"
         initialValue={
-          props.admin === undefined ? undefined : moment.utc(props.admin.startDate).local()
+          props.admin === undefined
+            ? undefined
+            : moment.utc(props.admin.startDate).local()
         }
       >
         <DatePicker

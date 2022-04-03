@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ButtonCollapse from "../../components/ButtonCollapse/ButtonCollapse";
 import ReactDOM from "react-dom";
 import {
@@ -11,7 +11,7 @@ import {
   Row,
   Col,
   Mentions,
-  AutoComplete
+  AutoComplete,
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import AuthStore from "../../stores/AuthStore";
@@ -38,7 +38,7 @@ import {
   fileIsTooBig,
   successfulDeleteAction,
   fileIsEmpty,
-} from "../../components/Notifications/Messages"
+} from "../../components/Notifications/Messages";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 import moment, { Moment } from "moment";
 
@@ -55,12 +55,14 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     FileName: null,
   });
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
-  const [tip, setTip] = useState<string>('Введіть  ім\`я користувача');
-  const [tipOnNotFound, setTipOnNotFound] = useState<string>('Введіть  ім\`я користувача');
+  const [tip, setTip] = useState<string>("Введіть  ім`я користувача");
+  const [tipOnNotFound, setTipOnNotFound] = useState<string>(
+    "Введіть  ім`я користувача"
+  );
   const [userData, setUserData] = useState<any[]>([]);
   const [targetData, setTargetData] = useState<any[]>([]);
-  const [search, setSearch] = useState<string>('');
-  const [searchTopic, setSearchTopic] = useState<string>('');
+  const [search, setSearch] = useState<string>("");
+  const [searchTopic, setSearchTopic] = useState<string>("");
   const { Option } = Mentions;
   const [form] = Form.useForm();
   const [mentionedUsers, setMentionedUsers] = useState<any[]>([]);
@@ -71,38 +73,40 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     }
     return e && e.fileList;
   };
- 
+
   const onSearch = async (search: string) => {
-    setTipOnNotFound("") 
+    setTipOnNotFound("");
     setUserData([]);
-    const removeElements = (elms:NodeListOf<any>) => elms.forEach(el => el.remove());
-    removeElements( document.querySelectorAll(".mentionOption") );
-    
+    const removeElements = (elms: NodeListOf<any>) =>
+      elms.forEach((el) => el.remove());
+    removeElements(document.querySelectorAll(".mentionOption"));
+
     var trigger = search,
-    regexp = new RegExp('^[\\\\./]'),
-    test = regexp.test(trigger); 
-  
+      regexp = new RegExp("^[\\\\./]"),
+      test = regexp.test(trigger);
+
     if (search !== "" && search !== null && test != true) {
       await adminApi.getShortUserInfo(search).then((response) => {
         setUserData(response.data);
-        setTip("")
-        setTipOnNotFound("Даних не знайдено")
+        setTip("");
+        setTipOnNotFound("Даних не знайдено");
         setLoadingUserStatus(false);
       });
-    }
-    else{ 
-      setTipOnNotFound('Введіть  ім\`я користувача');
-      setTip('Введіть  ім\`я користувача');
+    } else {
+      setTipOnNotFound("Введіть  ім`я користувача");
+      setTip("Введіть  ім`я користувача");
       setLoadingUserStatus(false);
     }
   };
 
   const onSelect = async (select: any) => {
-    var user: any = userData.find(u => u.firstName + ' ' + u.lastName === select.value);
-    setMentionedUsers(old => [...old, user]);
+    var user: any = userData.find(
+      (u) => u.firstName + " " + u.lastName === select.value
+    );
+    setMentionedUsers((old) => [...old, user]);
   };
 
- useEffect(() => {
+  useEffect(() => {
     const timeoutId = setTimeout(() => [onSearch(search)], 10);
     return () => clearTimeout(timeoutId);
   }, [search]);
@@ -113,27 +117,28 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
 
   const onSearchTopic = async (search: string) => {
     var trigger = search,
-    regexp = new RegExp('^[\\\\./ ]'),
-    test = regexp.test(trigger); 
-  
+      regexp = new RegExp("^[\\\\./ ]"),
+      test = regexp.test(trigger);
+
     if (search !== "" && search !== null && test != true) {
       await decisionsApi.getTargetList(search).then((response) => {
         setTargetData(response);
       });
     }
-   
   };
   const notifyMentionedUsers = async (description: string, title: string) => {
-    let usersToNotify = (mentionedUsers.filter(u => description.includes(u.firstName + ' ' + u.lastName)));
-    let uniqueUsersIds = Array.from(new Set(usersToNotify.map(u => u.id)));
+    let usersToNotify = mentionedUsers.filter((u) =>
+      description.includes(u.firstName + " " + u.lastName)
+    );
+    let uniqueUsersIds = Array.from(new Set(usersToNotify.map((u) => u.id)));
     await NotificationBoxApi.createNotifications(
       uniqueUsersIds,
       `Тебе позначили в рішенні: ${title}.`,
       NotificationBoxApi.NotificationTypes.EventNotifications,
       `/decisions`,
-      'Перейти до рішень'
+      "Перейти до рішень"
     );
-  }
+  };
 
   const handleCancel = () => {
     form.resetFields();
@@ -180,13 +185,14 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     if (!isCorrectExtension) {
       notificationLogic(
         "error",
-        possibleFileExtensions("pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods.")
+        possibleFileExtensions(
+          "pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods."
+        )
       );
     }
 
     const isEmptyFile = fileSize !== 0;
-      if (!isEmptyFile)
-      notificationLogic("error", fileIsEmpty());
+    if (!isEmptyFile) notificationLogic("error", fileIsEmpty());
 
     return isCorrectExtension && isEmptyFile;
   };
@@ -207,7 +213,8 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
         decisionTarget: { id: 0, targetName: values.decisionTarget },
         description: values.description,
         date:
-          /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ 
+          /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */
+
           moment(values.datepicker).format("YYYY-MM-DD HH:mm:ss"),
         fileName: fileData.FileName,
         userId: user.nameid,
@@ -225,7 +232,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
 
   const [data, setData] = useState<DecisionOnCreateData>({
     governingBodies: Array<GoverningBody>(),
-    decisionStatusTypeListItems: Array<decisionStatusType>()
+    decisionStatusTypeListItems: Array<decisionStatusType>(),
   });
   useEffect(() => {
     const fetchData = async () => {
@@ -236,232 +243,258 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props: any) => {
     fetchData();
   }, []);
 
-  return (<>
-    <ButtonCollapse handleClose={handleClose}/>
-    <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{ position: 'relative' }}>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            className={formclasses.formField}
-            labelCol={{ span: 24 }}
-            label="Назва рішення"
-            name="name"
-            rules={descriptionValidation.DecisionAndDocumentName}
-          >
-            <Input className={formclasses.inputField} />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            className={formclasses.formField}
-            label="Рішення органу"
-            labelCol={{ span: 24 }}
-            name="governingBody"
-            rules={[
-              {
-                required: true,
-                message: emptyInput()
-              }
-            ]}
-          >
-            <Select
-              placeholder="Оберіть орган"
-              className={formclasses.selectField}
-              getPopupContainer={(triggerNode) => triggerNode.parentNode}
-              showSearch
-            >
-              {data?.governingBodies.map((g) => (
-                <Select.Option key={g.id} value={JSON.stringify(g)}>
-                  {g.governingBodyName}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            className={formclasses.formField}
-            label="Тема рішення"
-            labelCol={{ span: 24 }}
-            name="decisionTarget"
-            rules={descriptionValidation.DecisionTarget}
-          >
-           
-            <AutoComplete
-            className={formclasses.selectField}
-            getPopupContainer={(triggerNode) => triggerNode.parentNode}
-            onSearch={(s => setSearchTopic(s))}
-            >
-            {targetData.map((dt) => (
-            <AutoComplete.Option key={dt.id} value={dt.targetName} >
-            {dt.targetName}
-            </AutoComplete.Option>
-          ))}
-          
-          </AutoComplete>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            className={formclasses.formField}
-            name="datepicker"
-            label="Дата рішення"
-            labelCol={{ span: 24 }}
-            rules={[
-              { 
-                required: true, 
-                message: emptyInput() 
-              }
-            ]}
-          >
-            <DatePicker
-              format="DD.MM.YYYY"
-              className={formclasses.selectField}
-              getPopupContainer={() => document.getElementById('area')! as HTMLElement}
-              popupStyle={{ position: 'absolute' }}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            className={formclasses.formField}
-            label="Текст рішення"
-            labelCol={{ span: 24 }}
-            name="description"
-            rules={descriptionValidation.Description}
-          >
-            <Mentions
-              getPopupContainer={() => document.getElementById('area')! as HTMLElement}
-              onChange = {()=>{if(search!=''){setLoadingUserStatus(true)}}}
-              notFoundContent = {<h5>{tipOnNotFound}</h5>}
-              loading={loadingUserStatus}
-              onSearch={(s => setSearch(s))}
-              rows={5}
-              onSelect={onSelect}
-              className={formclasses.formField}
-            >
-
-           <Option value=""  disabled >{tip}</Option> 
-              {userData?.map((u) =>
-                <Option className="mentionOption"
-                  key={u.id}
-                  value={u.firstName + ' ' + u.lastName}
-                >
-                  {u.firstName + ' ' + u.lastName + ' ' + u.email}
-                </Option>)}
-            </Mentions>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item label="Прикріпити" labelCol={{ span: 24 }}>
+  return (
+    <>
+      <ButtonCollapse handleClose={handleClose} />
+      <Form
+        name="basic"
+        onFinish={handleSubmit}
+        form={form}
+        id="area"
+        style={{ position: "relative" }}
+      >
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
             <Form.Item
               className={formclasses.formField}
-              name="dragger"
-              valuePropName="fileList"
-              getValueFromEvent={normFile}
-              noStyle
+              labelCol={{ span: 24 }}
+              label="Назва рішення"
+              name="name"
+              rules={descriptionValidation.DecisionAndDocumentName}
             >
-              <Upload.Dragger
-                name="file"
-                customRequest={handleUpload}
-                className={formclasses.formField}
-                multiple={false}
-                showUploadList={false}
-                accept=".doc,.docx,.png,.xls,xlsx,.png,.pdf,.jpg,.jpeg,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                headers={{ authorization: "authorization-text" }}
+              <Input className={formclasses.inputField} />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              className={formclasses.formField}
+              label="Рішення органу"
+              labelCol={{ span: 24 }}
+              name="governingBody"
+              rules={[
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+              ]}
+            >
+              <Select
+                placeholder="Оберіть орган"
+                className={formclasses.selectField}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                showSearch
               >
-                <p className="ant-upload-drag-icon">
-                  <InboxOutlined style={{ color: "#3c5438" }} />
-                </p>
-                <p className="ant-upload-hint">
-                  Клікніть або перетягніть файл для завантаження
-                </p>
+                {data?.governingBodies.map((g) => (
+                  <Select.Option key={g.id} value={JSON.stringify(g)}>
+                    {g.governingBodyName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              className={formclasses.formField}
+              label="Тема рішення"
+              labelCol={{ span: 24 }}
+              name="decisionTarget"
+              rules={descriptionValidation.DecisionTarget}
+            >
+              <AutoComplete
+                className={formclasses.selectField}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                onSearch={(s) => setSearchTopic(s)}
+              >
+                {targetData.map((dt) => (
+                  <AutoComplete.Option key={dt.id} value={dt.targetName}>
+                    {dt.targetName}
+                  </AutoComplete.Option>
+                ))}
+              </AutoComplete>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              className={formclasses.formField}
+              name="datepicker"
+              label="Дата рішення"
+              labelCol={{ span: 24 }}
+              rules={[
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+              ]}
+            >
+              <DatePicker
+                format="DD.MM.YYYY"
+                className={formclasses.selectField}
+                getPopupContainer={() =>
+                  document.getElementById("area")! as HTMLElement
+                }
+                popupStyle={{ position: "absolute" }}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              className={formclasses.formField}
+              label="Текст рішення"
+              labelCol={{ span: 24 }}
+              name="description"
+              rules={descriptionValidation.Description}
+            >
+              <Mentions
+                getPopupContainer={() =>
+                  document.getElementById("area")! as HTMLElement
+                }
+                onChange={() => {
+                  if (search != "") {
+                    setLoadingUserStatus(true);
+                  }
+                }}
+                notFoundContent={<h5>{tipOnNotFound}</h5>}
+                loading={loadingUserStatus}
+                onSearch={(s) => setSearch(s)}
+                rows={5}
+                onSelect={onSelect}
+                className={formclasses.formField}
+                maxLength={1001}
+              >
+                <Option value="" disabled>
+                  {tip}
+                </Option>
+                {userData?.map((u) => (
+                  <Option
+                    className="mentionOption"
+                    key={u.id}
+                    value={u.firstName + " " + u.lastName}
+                  >
+                    {u.firstName + " " + u.lastName + " " + u.email}
+                  </Option>
+                ))}
+              </Mentions>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item label="Прикріпити" labelCol={{ span: 24 }}>
+              <Form.Item
+                className={formclasses.formField}
+                name="dragger"
+                valuePropName="fileList"
+                getValueFromEvent={normFile}
+                noStyle
+              >
+                <Upload.Dragger
+                  name="file"
+                  customRequest={handleUpload}
+                  className={formclasses.formField}
+                  multiple={false}
+                  showUploadList={false}
+                  accept=".doc,.docx,.png,.xls,xlsx,.png,.pdf,.jpg,.jpeg,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  headers={{ authorization: "authorization-text" }}
+                >
+                  <p className="ant-upload-drag-icon">
+                    <InboxOutlined style={{ color: "#3c5438" }} />
+                  </p>
+                  <p className="ant-upload-hint">
+                    Клікніть або перетягніть файл для завантаження
+                  </p>
+
+                  {fileData.FileAsBase64 !== null && (
+                    <div>
+                      <div style={{ wordBreak: "break-word" }}>
+                        {" "}
+                        {fileData.FileName}{" "}
+                      </div>{" "}
+                    </div>
+                  )}
+                </Upload.Dragger>
 
                 {fileData.FileAsBase64 !== null && (
                   <div>
-                    <div style={{ wordBreak: 'break-word' }}> {fileData.FileName} </div>{" "}
+                    <Button
+                      className={formclasses.cardButtonDocuments}
+                      onClick={() => {
+                        setFileData({ FileAsBase64: null, FileName: null });
+                        notificationLogic(
+                          "success",
+                          successfulDeleteAction("Файл")
+                        );
+                      }}
+                    >
+                      {" "}
+                      Видалити файл
+                    </Button>{" "}
                   </div>
                 )}
-              </Upload.Dragger>
-
-              {fileData.FileAsBase64 !== null && (
-                <div>
-                  <Button
-                    className={formclasses.cardButtonDocuments}
-                    onClick={() => {
-                      setFileData({ FileAsBase64: null, FileName: null });
-                      notificationLogic("success", successfulDeleteAction("Файл"));
-                    }}
-                  >
-                    {" "}
-                    Видалити файл
-                  </Button>{" "}
-                </div>
-              )}
+              </Form.Item>
             </Form.Item>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item
-            className={formclasses.formField}
-            label="Статус рішення"
-            labelCol={{ span: 24 }}
-            name="decisionStatusType"
-            rules={[
-              { 
-                required: true, 
-                message: emptyInput() 
-              }
-            ]}
-          >
-            <Select
-              placeholder="Оберіть статус"
-              className={formclasses.selectField}
-              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              className={formclasses.formField}
+              label="Статус рішення"
+              labelCol={{ span: 24 }}
+              name="decisionStatusType"
+              rules={[
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+              ]}
             >
-              {data?.decisionStatusTypeListItems.map((dst) => (
-                <Select.Option key={dst.value} value={JSON.stringify(dst)}>
-                  {dst.text}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row justify="start" gutter={[12, 0]}>
-        <Col md={24} xs={24}>
-          <Form.Item style={{ textAlign: "right" }} className={formclasses.formField}>
-            <Button
-              key="back"
-              onClick={handleCancel}
-              className={formclasses.buttons}
+              <Select
+                placeholder="Оберіть статус"
+                className={formclasses.selectField}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              >
+                {data?.decisionStatusTypeListItems.map((dst) => (
+                  <Select.Option key={dst.value} value={JSON.stringify(dst)}>
+                    {dst.text}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="start" gutter={[12, 0]}>
+          <Col md={24} xs={24}>
+            <Form.Item
+              style={{ textAlign: "right" }}
+              className={formclasses.formField}
             >
-              Відмінити
-            </Button>
-            <Button
-              type="primary"
-              htmlType="submit"
-              className={formclasses.buttons}
-              loading={submitLoading}
-            >
-              Опублікувати
-            </Button>
-          </Form.Item>
-        </Col>
-      </Row>
-    </Form>
+              <Button
+                key="back"
+                onClick={handleCancel}
+                className={formclasses.buttons}
+              >
+                Відмінити
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className={formclasses.buttons}
+                loading={submitLoading}
+              >
+                Опублікувати
+              </Button>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
     </>
   );
 };

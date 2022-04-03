@@ -37,9 +37,9 @@ import {
   tryAgain,
   shouldContain,
   emptyInput,
-  minLength
-} from "../../../components/Notifications/Messages"
-import "../EditUserPage/EditUserPage.less"
+  minLength,
+} from "../../../components/Notifications/Messages";
+import "../EditUserPage/EditUserPage.less";
 import { UpuDegree } from "../Interface/Interface";
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../../models/Roles/Roles";
@@ -69,7 +69,9 @@ export default function () {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>();
   const [photoName, setPhotoName] = useState<any>(null);
-  const [defaultPhotoName, setDefaultPhotoName] = useState<string>("default_user_image.png");
+  const [defaultPhotoName, setDefaultPhotoName] = useState<string>(
+    "default_user_image.png"
+  );
   const [upuDegree, setUpuDegree] = useState<UpuDegree>();
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const { UpdateData } = useContext(PersonalDataContext);
@@ -79,8 +81,13 @@ export default function () {
     const user: any = jwt(token);
     let decodedJwt = jwt_decode(token) as any;
     let id = user.nameid;
-    if (user.nameid != userId || (decodedJwt['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as string[]).includes(Roles.Admin))
-      id = userId
+    if (
+      user.nameid != userId ||
+      (decodedJwt[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ] as string[]).includes(Roles.Admin)
+    )
+      id = userId;
     await userApi
       .edit(id)
       .then(async (response) => {
@@ -131,9 +138,11 @@ export default function () {
         setGender(response.data.user.gender);
         setUpuDegree(response.data.user.upuDegree);
         if (response.data.user.birthday === "0001-01-01T00:00:00") {
-          form.setFieldsValue({ 'birthday': undefined });
+          form.setFieldsValue({ birthday: undefined });
         } else {
-          form.setFieldsValue({ 'birthday': moment.utc(response.data.user.birthday).local() });
+          form.setFieldsValue({
+            birthday: moment.utc(response.data.user.birthday).local(),
+          });
         }
         if (response.data.user.phoneNumber === null) {
           setPhoneNumber("");
@@ -151,8 +160,8 @@ export default function () {
   }, [form]);
 
   function disabledDate(current: moment.Moment) {
-    let date = moment().endOf('day');
-    return current && (current > date) || current.isBefore(MIN_AVAILABLE_DATE);
+    let date = moment().endOf("day");
+    return (current && current > date) || current.isBefore(MIN_AVAILABLE_DATE);
   }
 
   const validationSchema = {
@@ -173,12 +182,8 @@ export default function () {
       { min: 2, message: minLength(2) },
       { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
-    gender: [
-      { required: true, message: emptyInput() },
-    ],
-    birthday: [
-      { required: true, message: emptyInput() },
-    ],
+    gender: [{ required: true, message: emptyInput() }],
+    birthday: [{ required: true, message: emptyInput() }],
     degree: [
       { max: 50, message: maxLength(50) },
       { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
@@ -205,7 +210,7 @@ export default function () {
     ],
     position: [
       { max: 50, message: maxLength(50) },
-      { pattern: allVariantsPattern, message: wrongAllVariantsMessage }
+      { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
     ],
     address: [
       { max: 50, message: maxLength(50) },
@@ -221,13 +226,11 @@ export default function () {
       { max: 25, message: maxLength(25) },
       { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
     ],
-    upuDegree: [
-      { required: true, message: emptyInput() },
-    ],
+    upuDegree: [{ required: true, message: emptyInput() }],
   };
 
   const changeApostropheInWord = (word: string) => {
-    return word.replace(/`/g, '\'');
+    return word.replace(/`/g, "'");
   };
 
   const setFirstLettersUpperCased = (word: string) => {
@@ -237,14 +240,16 @@ export default function () {
 
     let parts = word.split(/[- ]+/);
 
-    parts = parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase());
+    parts = parts.map(
+      (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+    );
 
-    if (word.includes('-')) {
-      return parts.join('-');
-    } else if (word.includes(' ')) {
-      return parts.join(' ');
+    if (word.includes("-")) {
+      return parts.join("-");
+    } else if (word.includes(" ")) {
+      return parts.join(" ");
     } else {
-      return parts.join('');
+      return parts.join("");
     }
   };
 
@@ -301,33 +306,63 @@ export default function () {
         id: parseInt(event.key),
         name: event.value,
       });
-      form.setFieldsValue({ nationalityName: changeApostropheInWord(event.value) });
+      form.setFieldsValue({
+        nationalityName: changeApostropheInWord(event.value),
+      });
     }
   };
 
-  const handleOnChangeFirstName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue({ firstName: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
-  }
+  const handleOnChangeFirstName = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    form.setFieldsValue({
+      firstName: setFirstLettersUpperCased(
+        changeApostropheInWord(event.target.value)
+      ),
+    });
+  };
 
-  const handleOnChangeLastName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue({ lastName: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
-  }
+  const handleOnChangeLastName = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    form.setFieldsValue({
+      lastName: setFirstLettersUpperCased(
+        changeApostropheInWord(event.target.value)
+      ),
+    });
+  };
 
-  const handleOnChangeFathersName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue({ fatherName: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
-  }
+  const handleOnChangeFathersName = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    form.setFieldsValue({
+      fatherName: setFirstLettersUpperCased(
+        changeApostropheInWord(event.target.value)
+      ),
+    });
+  };
 
   const handleOnChangePseudo = (event: React.ChangeEvent<HTMLInputElement>) => {
     form.setFieldsValue({ pseudo: changeApostropheInWord(event.target.value) });
-  }
+  };
 
-  const handleOnChangePublicPoliticalActivity = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue({ publicPoliticalActivity: setFirstLettersUpperCased(changeApostropheInWord(event.target.value)) });
-  }
+  const handleOnChangePublicPoliticalActivity = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    form.setFieldsValue({
+      publicPoliticalActivity: setFirstLettersUpperCased(
+        changeApostropheInWord(event.target.value)
+      ),
+    });
+  };
 
-  const handleOnChangeAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
-    form.setFieldsValue({ address: changeApostropheInWord(event.target.value) });
-  }
+  const handleOnChangeAddress = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    form.setFieldsValue({
+      address: changeApostropheInWord(event.target.value),
+    });
+  };
 
   const handleOnChangeReligion = (value: any, event: any) => {
     if (event.key === undefined) {
@@ -341,7 +376,9 @@ export default function () {
         id: parseInt(event.key),
         name: event.value,
       });
-      form.setFieldsValue({ religionName: changeApostropheInWord(event.value) });
+      form.setFieldsValue({
+        religionName: changeApostropheInWord(event.value),
+      });
     }
   };
   const handleOnChangeDegree = (value: any, event: any) => {
@@ -424,7 +461,6 @@ export default function () {
     if (UpdateData) UpdateData();
   };
 
-
   const handleSubmit = async (values: any) => {
     const newUserProfile = {
       user: {
@@ -434,7 +470,7 @@ export default function () {
         lastName: values.lastName?.trim(),
         fatherName: values.fatherName?.trim(),
         phoneNumber: phoneNumber?.trim(),
-        birthday: form?.getFieldValue('birthday'),
+        birthday: form?.getFieldValue("birthday"),
         imagePath: photoName,
         pseudo: values.pseudo?.trim(),
         publicPoliticalActivity: values.publicPoliticalActivity?.trim(),
@@ -512,9 +548,9 @@ export default function () {
               <Avatar src={userAvatar} className="img" />
               <div className={styles.buttonsImage}>
                 <ImgCrop
-                  shape='round'
+                  shape="round"
                   rotate={true}
-                  modalTitle='Редагувати фото'
+                  modalTitle="Редагувати фото"
                   beforeCrop={(e) => checkFile(e.size, e.name)}
                 >
                   <Upload
@@ -524,15 +560,19 @@ export default function () {
                     accept=".jpeg,.jpg,.png"
                     customRequest={handleUpload}
                   >
-                    <Tooltip placement={"bottom"}
-                      title={"Ви можете завантажити файл розміром не більше 3Мб. Пам'ятайте: Вашу фотографію будуть бачити інші пластуни!"}>
+                    <Tooltip
+                      placement={"bottom"}
+                      title={
+                        "Ви можете завантажити файл розміром не більше 3Мб. Пам'ятайте: Вашу фотографію будуть бачити інші пластуни!"
+                      }
+                    >
                       <Button className={styles.changeAvatarBtn}>
                         <UploadOutlined /> Вибрати
                       </Button>
                     </Tooltip>
                   </Upload>
                 </ImgCrop>
-                {photoName !== defaultPhotoName ?
+                {photoName !== defaultPhotoName ? (
                   <Tooltip title="Видалити">
                     <Popconfirm
                       title="Видалити фото?"
@@ -540,13 +580,15 @@ export default function () {
                       icon={false}
                       onConfirm={() => handleDeletePhoto()}
                       okText="Так"
-                      cancelText="Ні">
+                      cancelText="Ні"
+                    >
                       <DeleteOutlined
                         className={styles.deleteIcon}
                         key="close"
                       />
                     </Popconfirm>
-                  </Tooltip> : null}
+                  </Tooltip>
+                ) : null}
               </div>
             </StickyContainer>
           </div>
@@ -559,7 +601,11 @@ export default function () {
               rules={validationSchema.name}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} onChange={handleOnChangeFirstName} maxLength={26} />
+              <Input
+                className={styles.dataInput}
+                onChange={handleOnChangeFirstName}
+                maxLength={26}
+              />
             </Form.Item>
             <Form.Item
               label="Прізвище"
@@ -567,7 +613,11 @@ export default function () {
               rules={validationSchema.surName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} onChange={e => handleOnChangeLastName(e)} maxLength={26} />
+              <Input
+                className={styles.dataInput}
+                onChange={(e) => handleOnChangeLastName(e)}
+                maxLength={26}
+              />
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
@@ -577,7 +627,11 @@ export default function () {
               rules={validationSchema.fatherName}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} onChange={e => handleOnChangeFathersName(e)} maxLength={26} />
+              <Input
+                className={styles.dataInput}
+                onChange={(e) => handleOnChangeFathersName(e)}
+                maxLength={26}
+              />
             </Form.Item>
             <Form.Item
               label="Стать"
@@ -604,7 +658,11 @@ export default function () {
               rules={validationSchema.pseudo}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} onChange={handleOnChangePseudo} maxLength={26} />
+              <Input
+                className={styles.dataInput}
+                onChange={handleOnChangePseudo}
+                maxLength={26}
+              />
             </Form.Item>
             <Form.Item
               label="Дата народження"
@@ -626,7 +684,10 @@ export default function () {
               label="Номер телефону"
               name="phoneNumber"
               className={styles.formItem}
-              rules={[descriptionValidation.Phone, descriptionValidation.Required]}
+              rules={[
+                descriptionValidation.Phone,
+                descriptionValidation.Required,
+              ]}
             >
               <ReactInputMask
                 mask="+380(99)-999-99-99"
@@ -668,7 +729,6 @@ export default function () {
                 className={styles.dataInputSelect}
                 filterOption={true}
                 onChange={handleOnChangeReligion}
-
               >
                 {data?.religions.map((p) => (
                   <Select.Option key={p.id} value={p.name}>
@@ -779,7 +839,11 @@ export default function () {
               rules={validationSchema.address}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} onChange={handleOnChangeAddress} maxLength={51} />
+              <Input
+                className={styles.dataInput}
+                onChange={handleOnChangeAddress}
+                maxLength={51}
+              />
             </Form.Item>
             <Form.Item
               label="Громадська, політична діяльність"
@@ -787,7 +851,11 @@ export default function () {
               rules={validationSchema.publicPoliticalActivity}
               className={styles.formItem}
             >
-              <Input className={styles.dataInput} onChange={handleOnChangePublicPoliticalActivity} maxLength={26} />
+              <Input
+                className={styles.dataInput}
+                onChange={handleOnChangePublicPoliticalActivity}
+                maxLength={26}
+              />
             </Form.Item>
           </div>
           <div className={styles.rowBlock}>
@@ -833,10 +901,14 @@ export default function () {
             </Form.Item>
           </div>
           <div className="buttons">
-            <Button className={styles.confirmBtn} htmlType="submit" >
+            <Button className={styles.confirmBtn} htmlType="submit">
               Підтвердити
             </Button>
-            <Button className={styles.confirmBtn} htmlType="submit" onClick={() => history.push(`/userpage/main/${userId}`)}>
+            <Button
+              className={styles.confirmBtn}
+              htmlType="submit"
+              onClick={() => history.push(`/userpage/main/${userId}`)}
+            >
               Відмінити
             </Button>
           </div>
@@ -845,4 +917,3 @@ export default function () {
     </div>
   );
 }
-

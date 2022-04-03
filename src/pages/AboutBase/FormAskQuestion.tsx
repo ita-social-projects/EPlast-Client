@@ -1,17 +1,17 @@
-import React from 'react';
+import React from "react";
 import { Button, Col, Form, Input, Row } from "antd";
 
-import styles from './FormAskQuestion.css';
+import styles from "./FormAskQuestion.css";
 import AuthorizeApi from "../../api/authorizeApi";
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 import ReactInputMask from "react-input-mask";
 import {
   emptyInput,
   incorrectEmail,
   incorrectPhone,
-} from "../../components/Notifications/Messages"
-import { descriptionValidation } from '../../models/GllobalValidations/DescriptionValidation';
-import TextArea from 'antd/lib/input/TextArea';
+} from "../../components/Notifications/Messages";
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
+import TextArea from "antd/lib/input/TextArea";
 
 type FormAskQuestionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -48,7 +48,7 @@ const FormAskQuestion: React.FC<FormAskQuestionProps> = (props: any) => {
       form={form}
       validateMessages={validateMessages}
       onFinish={handleSubmit}
-      id='area' 
+      id="area"
     >
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
@@ -82,11 +82,14 @@ const FormAskQuestion: React.FC<FormAskQuestionProps> = (props: any) => {
             label="Вкажіть Ваш номер телефону"
             rules={[{ min: 18, message: incorrectPhone }]}
           >
-            <ReactInputMask
-              mask="+380(99)-999-99-99"
-              maskChar={null}
-            >
-              {(inputProps: any) => <Input  {...inputProps} type="tel" className={styles.inputField} />}
+            <ReactInputMask mask="+380(99)-999-99-99" maskChar={null}>
+              {(inputProps: any) => (
+                <Input
+                  {...inputProps}
+                  type="tel"
+                  className={styles.inputField}
+                />
+              )}
             </ReactInputMask>
           </Form.Item>
         </Col>
@@ -99,18 +102,20 @@ const FormAskQuestion: React.FC<FormAskQuestionProps> = (props: any) => {
             label="Опишіть Ваше звернення"
             rules={descriptionValidation.DescriptionAndQuestions}
           >
-            <TextArea autoSize={{ minRows: 3, maxRows: 5 }} className={styles.inputField} />
+            <TextArea
+              autoSize={{ minRows: 3, maxRows: 5 }}
+              className={styles.inputField}
+            />
           </Form.Item>
         </Col>
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
-          <Form.Item style={{ textAlign: "right" }} className={styles.formField}>
-            <Button
-              htmlType="submit"
-              type="primary"
-              className={styles.buttons}
-            >
+          <Form.Item
+            style={{ textAlign: "right" }}
+            className={styles.formField}
+          >
+            <Button htmlType="submit" type="primary" className={styles.buttons}>
               Відправити
             </Button>
           </Form.Item>

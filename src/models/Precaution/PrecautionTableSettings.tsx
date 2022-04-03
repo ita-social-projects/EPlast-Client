@@ -1,11 +1,11 @@
 export default class PrecautionTableSettings {
-    sortByOrder?: Array<string>;
-    statusFilter?: Array<string>;
-    precautionNameFilter?: Array<string>;
-    dateFilter?: Array<string>;
-    searchedData: string;
-    page: number;
-    pageSize: number;
+  sortByOrder?: Array<string>;
+  statusFilter?: Array<string>;
+  precautionNameFilter?: Array<string>;
+  dateFilter?: Array<string>;
+  searchedData: string;
+  page: number;
+  pageSize: number;
 
   constructor() {
     this.sortByOrder = [];

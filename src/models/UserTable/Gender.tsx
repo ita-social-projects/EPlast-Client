@@ -1,8 +1,7 @@
-
 export default class Gender {
-    name: string;
+  name: string;
 
-    constructor() {
-        this.name = '';
-    }
+  constructor() {
+    this.name = "";
+  }
 }

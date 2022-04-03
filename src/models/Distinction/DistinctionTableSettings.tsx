@@ -1,8 +1,8 @@
 export default class DistinctionTableSettings {
-    sortByOrder?: Array<string>;
-    searchedData: string;
-    page: number;
-    pageSize: number;
+  sortByOrder?: Array<string>;
+  searchedData: string;
+  page: number;
+  pageSize: number;
 
   constructor() {
     this.sortByOrder = [];

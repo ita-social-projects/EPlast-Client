@@ -3,7 +3,11 @@ import { useHistory, useParams, Link } from "react-router-dom";
 import { Card, Layout, Pagination, Result, Skeleton } from "antd";
 import Add from "../../../assets/images/add.png";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
-import { getActiveCitiesByPage, getNotActiveCitiesByPage, getLogo } from "../../../api/citiesApi";
+import {
+  getActiveCitiesByPage,
+  getNotActiveCitiesByPage,
+  getLogo,
+} from "../../../api/citiesApi";
 import "./Cities.less";
 import CityProfile from "../../../models/City/CityProfile";
 import Title from "antd/lib/typography/Title";
@@ -13,8 +17,8 @@ import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
 import Props from "../../Interfaces/SwitcherProps";
 
-const SortedCities = ( {switcher}: Props) => {
-  const path: string  = "/cities";
+const SortedCities = ({ switcher }: Props) => {
+  const path: string = "/cities";
   const history = useHistory();
   const [cities, setCities] = useState<CityProfile[]>([]);
   const [pageSize, setPageSize] = useState(10);
@@ -23,7 +27,7 @@ const SortedCities = ( {switcher}: Props) => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const {p} = useParams();
+  const { p } = useParams();
   const [page, setPage] = useState(+p);
 
   const setPhotos = async (cities: CityProfile[]) => {
@@ -31,12 +35,11 @@ const SortedCities = ( {switcher}: Props) => {
       for await (const city of cities) {
         if (city.logo === null) {
           city.logo = CityDefaultLogo;
-        } 
+        }
       }
     } finally {
       setPhotosLoading(false);
     }
-    
   };
   const getActiveCities = async (page: number = 1) => {
     setLoading(true);
@@ -93,48 +96,49 @@ const SortedCities = ( {switcher}: Props) => {
 
   const renderCity = (arr: CityProfile[]) => {
     if (arr) {
-        // eslint-disable-next-line react/no-array-index-key
-        return  arr.map((city: CityProfile) =>(
-          <Link to={`${path}/${city.id}`}>
-              <Card
-                key={city.id}
-                hoverable
-                className="cardStyles"
-                cover={
-                    photosLoading ? (
-                    <Skeleton.Avatar shape="square" active />
-                    ) : (
-                        <img src={city.logo || undefined} alt="City" />
-                    )
-                }
-              >
-                  <Card.Meta title={city.name} className="titleText" />
-              </Card>
+      // eslint-disable-next-line react/no-array-index-key
+      return arr.map((city: CityProfile) => (
+        <Link to={`${path}/${city.id}`}>
+          <Card
+            key={city.id}
+            hoverable
+            className="cardStyles"
+            cover={
+              photosLoading ? (
+                <Skeleton.Avatar shape="square" active />
+              ) : (
+                <img src={city.logo || undefined} alt="City" />
+              )
+            }
+          >
+            <Card.Meta title={city.name} className="titleText" />
+          </Card>
         </Link>
-          ))   
+      ));
     }
     return null;
-};
+  };
 
   useEffect(() => {
     setPage(+p);
   });
 
   useEffect(() => {
-    switcher ? (getNotActiveCities(page)):(getActiveCities(page)) 
+    switcher ? getNotActiveCities(page) : getActiveCities(page);
   }, [page, pageSize, searchedData]);
 
-  useEffect(()=> {
+  useEffect(() => {
     if (cities.length !== 0) {
-      switcher ? (getNotActiveCities()) :(getActiveCities())
+      switcher ? getNotActiveCities() : getActiveCities();
     }
-  },[switcher])
+  }, [switcher]);
 
   return (
     <Layout.Content className="cities">
       {switcher ? (
-      <Title level={1}>Неактивні станиці</Title>) : (
-      <Title level={1}>Станиці</Title>
+        <Title level={1}>Неактивні станиці</Title>
+      ) : (
+        <Title level={1}>Станиці</Title>
       )}
       <div className="searchContainer">
         <Search
@@ -149,57 +153,61 @@ const SortedCities = ( {switcher}: Props) => {
       {loading ? (
         <Spinner />
       ) : (
-        
-          <div>
-            <div className="cityWrapper">
-              { switcher ? (null) : (
-              activeUserRoles.includes(Roles.Admin) && page === 1 && searchedData.length === 0 ? (
-                <Card
-                  hoverable
-                  className="cardStyles addCity"
-                  cover={<img src={Add} alt="AddCity" />}
-                  onClick={() => history.push(`${path}/new`)}
-                >
-                  <Card.Meta
-                    className="titleText"
-                    title="Створити нову станицю"
-                  />
-                </Card>
-              ) : page === 1 && searchedData.length === 0 ?(
-                <Card
-                  hoverable
-                  className="cardStyles addCity"
-                  cover={<img src={Add} alt="AddRegionFollower" />}
-                  onClick={() => history.push(`/regions/follower/new`)}
-                >
-                  <Card.Meta
-                    className="titleText"
-                    title={<div className="createFollowerTitleText">Подати заяву на створення нової станиці</div>}
-                  />
-                </Card>
-              ) : null ) }
+        <div>
+          <div className="cityWrapper">
+            {switcher ? null : activeUserRoles.includes(Roles.Admin) &&
+              page === 1 &&
+              searchedData.length === 0 ? (
+              <Card
+                hoverable
+                className="cardStyles addCity"
+                cover={<img src={Add} alt="AddCity" />}
+                onClick={() => history.push(`${path}/new`)}
+              >
+                <Card.Meta
+                  className="titleText"
+                  title="Створити нову станицю"
+                />
+              </Card>
+            ) : page === 1 && searchedData.length === 0 ? (
+              <Card
+                hoverable
+                className="cardStyles addCity"
+                cover={<img src={Add} alt="AddRegionFollower" />}
+                onClick={() => history.push(`/regions/follower/new`)}
+              >
+                <Card.Meta
+                  className="titleText"
+                  title={
+                    <div className="createFollowerTitleText">
+                      Подати заяву на створення нової станиці
+                    </div>
+                  }
+                />
+              </Card>
+            ) : null}
 
-              {cities.length === 0 ? (
-                <div>
-                  <Result status="404" title="Станицю не знайдено" />
-                </div>
-              ) : (
-                  renderCity(cities)
-                )}
-            </div>
-            <div className="pagination">
-              <Pagination
-                current={page}
-                pageSize={pageSize}
-                total={total}
-                responsive
-                showSizeChanger={total >= 20}
-                onChange={(page) => handleChange(page)}
-                onShowSizeChange={(page, size) => handleSizeChange(page, size)}
-              />
-            </div>
+            {cities.length === 0 ? (
+              <div>
+                <Result status="404" title="Станицю не знайдено" />
+              </div>
+            ) : (
+              renderCity(cities)
+            )}
           </div>
-        )}
+          <div className="pagination">
+            <Pagination
+              current={page}
+              pageSize={pageSize}
+              total={total}
+              responsive
+              showSizeChanger={total >= 20}
+              onChange={(page) => handleChange(page)}
+              onShowSizeChange={(page, size) => handleSizeChange(page, size)}
+            />
+          </div>
+        </div>
+      )}
     </Layout.Content>
   );
 };

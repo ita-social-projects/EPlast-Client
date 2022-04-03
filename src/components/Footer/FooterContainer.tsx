@@ -6,7 +6,6 @@ import Instagram from "../../assets/images/instagram.svg";
 import classes from "./Footer.module.css";
 import moment from "moment";
 
-
 const FooterContainer = () => {
   return (
     <Layout.Footer className={classes.footerContainer}>
@@ -21,7 +20,9 @@ const FooterContainer = () => {
           <img src={Instagram} alt="Instagram" />
         </a>
       </div>
-      <p className={classes.footerCopyright}>ePlast © {moment().format('YYYY')}</p>
+      <p className={classes.footerCopyright}>
+        ePlast © {moment().format("YYYY")}
+      </p>
     </Layout.Footer>
   );
 };

@@ -16,10 +16,9 @@ const DeleteConfirm = (id: number, onDelete: any) => {
     okText: "Так",
     cancelText: "Ні",
     async onOk() {
-      try{
+      try {
         await remove(id);
-      }      
-      finally{
+      } finally {
         onDelete(id);
       }
     },

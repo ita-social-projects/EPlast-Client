@@ -18,11 +18,14 @@ import {
   emptyInput,
   failEditAction,
   maxNumber,
-  minNumber
-} from "../../../components/Notifications/Messages"
+  minNumber,
+} from "../../../components/Notifications/Messages";
 import moment from "moment";
 import "moment/locale/uk";
-import { descriptionValidation, getOnlyNums } from "../../../models/GllobalValidations/DescriptionValidation";
+import {
+  descriptionValidation,
+  getOnlyNums,
+} from "../../../models/GllobalValidations/DescriptionValidation";
 moment.locale("uk-ua");
 
 interface Props {
@@ -95,8 +98,10 @@ const FormEditPrecaution = ({
   }, [Precaution]);
 
   const backgroundColor = (user: any) => {
-    return user.isInLowerRole ? { backgroundColor : '#D3D3D3' } : { backgroundColor : 'white' };
-  }    
+    return user.isInLowerRole
+      ? { backgroundColor: "#D3D3D3" }
+      : { backgroundColor: "white" };
+  };
 
   const handleCancel = () => {
     form.resetFields();
@@ -127,29 +132,35 @@ const FormEditPrecaution = ({
       reason: dist?.reason,
       number: dist?.number,
     };
-    
-      await precautionApi.editUserPrecaution(newPrecaution);
-      setShowModal(false);
-      form.resetFields();
-      onEdit(
-        newPrecaution.id,
-        newPrecaution.Precaution,
-        newPrecaution.date,
-        newPrecaution.endDate,
-        newPrecaution.isActive,
-        newPrecaution.reason,
-        newPrecaution.status,
-        newPrecaution.reporter,
-        newPrecaution.number,
-        newPrecaution.user,
-        newPrecaution.user.id
-      );
+
+    await precautionApi.editUserPrecaution(newPrecaution);
+    setShowModal(false);
+    form.resetFields();
+    onEdit(
+      newPrecaution.id,
+      newPrecaution.Precaution,
+      newPrecaution.date,
+      newPrecaution.endDate,
+      newPrecaution.isActive,
+      newPrecaution.reason,
+      newPrecaution.status,
+      newPrecaution.reporter,
+      newPrecaution.number,
+      newPrecaution.user,
+      newPrecaution.user.id
+    );
   };
 
   return (
     <div>
       {!loading && (
-        <Form name="basic" onFinish={handleFinish} form={form} id='area' style={{position: 'relative'}}>
+        <Form
+          name="basic"
+          onFinish={handleFinish}
+          form={form}
+          id="area"
+          style={{ position: "relative" }}
+        >
           <Row justify="start" gutter={[12, 0]}>
             <Col md={24} xs={24}>
               <Form.Item
@@ -159,28 +170,34 @@ const FormEditPrecaution = ({
                 labelCol={{ span: 24 }}
                 name="number"
                 rules={[
-                    {
-                      required: true,
-                      message: emptyInput(),
-                    },
-                    {
-                      validator: (_ : object, value: number) => 
+                  {
+                    required: true,
+                    message: emptyInput(),
+                  },
+                  {
+                    validator: (_: object, value: number) =>
                       value > 99999
-                          ? Promise.reject(maxNumber(99999)) 
-                          : Promise.resolve()
-                    },
-                    {
-                      validator: async (_ : object, value: number) => 
-                      value && !isNaN(value)
-                          ? value == Precaution.number || 
-                          await precautionApi
+                        ? Promise.reject(maxNumber(99999))
+                        : Promise.resolve(),
+                  },
+                  {
+                    validator: async (_: object, value: number) =>
+                      value && !isNaN(value) && value > 0
+                        ? value == Precaution.number ||
+                          (await precautionApi
                             .checkNumberExisting(value)
-                            .then(response => response.data === false)
-                              ? Promise.resolve()
-                                : Promise.reject("Цей номер уже зайнятий")
-                                : Promise.reject()
-                    }
-                  ]}
+                            .then((response) => response.data === false))
+                          ? Promise.resolve()
+                          : Promise.reject("Цей номер уже зайнятий")
+                        : Promise.reject(),
+                  },
+                  {
+                    validator: async (_: object, value: number) =>
+                      value == 0 && value && !isNaN(value)
+                        ? Promise.reject("Номер не може бути 0")
+                        : Promise.resolve(),
+                  },
+                ]}
               >
                 <Input
                   onChange={(e) => {
@@ -188,7 +205,7 @@ const FormEditPrecaution = ({
                       number: getOnlyNums(e.target.value),
                     });
                   }}
-                  autoComplete = "off"
+                  autoComplete="off"
                   min={1}
                   className={formclasses.inputField}
                   max={99999}
@@ -238,9 +255,9 @@ const FormEditPrecaution = ({
                   Precaution.user.firstName + " " + Precaution.user.lastName
                 }
                 rules={[
-                  { 
-                    required: true, 
-                    message: emptyInput() 
+                  {
+                    required: true,
+                    message: emptyInput(),
                   },
                 ]}
               >
@@ -252,14 +269,14 @@ const FormEditPrecaution = ({
                   getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
                   {userData?.map((o) => (
-                      <Select.Option 
-                          key={o.id} 
-                          value={JSON.stringify(o)} 
-                          style={backgroundColor(o)}
-                          disabled={o.isInLowerRole}
-                          >
-                      {o.firstName + " " + o.lastName}
-                      </Select.Option>
+                    <Select.Option
+                      key={o.id}
+                      value={JSON.stringify(o)}
+                      style={backgroundColor(o)}
+                      disabled={o.isInLowerRole}
+                    >
+                      {o.firstName + " " + o.lastName + " (" + o.email + ")"}
+                    </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
@@ -292,17 +309,19 @@ const FormEditPrecaution = ({
                 labelCol={{ span: 24 }}
                 initialValue={moment.utc(Precaution.date).local()}
                 rules={[
-                  { 
-                    required: true, 
-                    message: emptyInput() 
+                  {
+                    required: true,
+                    message: emptyInput(),
                   },
                 ]}
               >
                 <DatePicker
                   format={dateFormat}
                   className={formclasses.selectField}
-                  getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
-                  popupStyle={{position: 'absolute'}}
+                  getPopupContainer={() =>
+                    document.getElementById("area")! as HTMLElement
+                  }
+                  popupStyle={{ position: "absolute" }}
                 />
               </Form.Item>
             </Col>
@@ -344,28 +363,46 @@ const FormEditPrecaution = ({
                   },
                 ]}
               >
-                <Select 
-                  className={formclasses.selectField} 
+                <Select
+                  className={formclasses.selectField}
                   showSearch
                   getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
-                  <Select.Option key="9" value="Прийнято">Прийнято</Select.Option>
-                  <Select.Option key="10" value="Потверджено">Потверджено</Select.Option>
-                  <Select.Option key="11" value="Скасовано">Скасовано</Select.Option>
+                  <Select.Option key="9" value="Прийнято">
+                    Прийнято
+                  </Select.Option>
+                  <Select.Option key="10" value="Потверджено">
+                    Потверджено
+                  </Select.Option>
+                  <Select.Option key="11" value="Скасовано">
+                    Скасовано
+                  </Select.Option>
                 </Select>
               </Form.Item>
             </Col>
           </Row>
-          {Precaution.isActive ? <Form.Item>
-            <div className={formclasses.cardButton}>
-              <Button key="back" onClick={handleCancel} className={formclasses.buttons}>
-                Відмінити
-              </Button>
-              <Button type="primary" htmlType="submit" className={formclasses.buttons}>
-                Зберегти
-              </Button>
-            </div>
-          </Form.Item> : ""}
+          {Precaution.isActive ? (
+            <Form.Item>
+              <div className={formclasses.cardButton}>
+                <Button
+                  key="back"
+                  onClick={handleCancel}
+                  className={formclasses.buttons}
+                >
+                  Відмінити
+                </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className={formclasses.buttons}
+                >
+                  Зберегти
+                </Button>
+              </div>
+            </Form.Item>
+          ) : (
+            ""
+          )}
         </Form>
       )}
     </div>

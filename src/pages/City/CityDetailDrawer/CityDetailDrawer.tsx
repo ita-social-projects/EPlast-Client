@@ -13,7 +13,9 @@ interface Props {
 const CityDetailDrawer = (props: Props) => {
   return (
     <Drawer
-      title={`Деталі станиці ${props.city.name?.length > 0 ? props.city.name : ""}`}
+      title={`Деталі станиці ${
+        props.city.name?.length > 0 ? props.city.name : ""
+      }`}
       onClose={() => props.setVisibleDrawer(false)}
       visible={props.visibleDrawer}
       footer={null}
@@ -193,13 +195,10 @@ const CityDetailDrawer = (props: Props) => {
               }
             >
               <TextArea
-                autoSize =
-                {
-                  {
-                    minRows: 1,
-                    maxRows: 9
-                  }
-                }
+                autoSize={{
+                  minRows: 1,
+                  maxRows: 9,
+                }}
                 value={
                   props.city.description?.length > 0
                     ? props.city.description

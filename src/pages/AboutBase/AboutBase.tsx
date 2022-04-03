@@ -1,26 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { Input, Button, Layout, Collapse, Space, Tooltip } from 'antd';
-import Spinner from '../Spinner/Spinner';
+import React, { useEffect, useState } from "react";
+import { Input, Button, Layout, Collapse, Space, Tooltip } from "antd";
+import Spinner from "../Spinner/Spinner";
 import Search from "antd/lib/input/Search";
 import Title from "antd/lib/typography/Title";
-import AskQuestionModal from './AskQuestionModal';
-import {
-  EditOutlined,
-  DeleteOutlined,
-  SaveOutlined,
-} from "@ant-design/icons";
+import AskQuestionModal from "./AskQuestionModal";
+import { EditOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
 import "./AboutBase.less";
-import SectionModel from '../../models/AboutBase/SectionModel';
-import SubSectionModel from '../../models/AboutBase/SubsectionModel';
-import aboutBase from '../../api/aboutBase';
+import SectionModel from "../../models/AboutBase/SectionModel";
+import SubSectionModel from "../../models/AboutBase/SubsectionModel";
+import aboutBase from "../../api/aboutBase";
 import notificationLogic from "../../components/Notifications/Notification";
-import AddSubsectionModal from './AddSubsectionModal';
-import EditSubsectionModal from './EditSubsectionModal';
+import AddSubsectionModal from "./AddSubsectionModal";
+import EditSubsectionModal from "./EditSubsectionModal";
 import DeleteSectConfirm from "./DeleteSectConfirm";
-import DeleteSubsectConfirm from './DeleteSubsectConfirm';
-import PicturesWall from './PicturesWall';
-import { Roles } from '../../models/Roles/Roles';
-import userApi from '../../api/UserApi';
+import DeleteSubsectConfirm from "./DeleteSubsectConfirm";
+import PicturesWall from "./PicturesWall";
+import { Roles } from "../../models/Roles/Roles";
+import userApi from "../../api/UserApi";
 
 const { Panel } = Collapse;
 
@@ -31,15 +27,15 @@ let defaultSect: SectionModel = {
     id: 0,
     sectionId: 0,
     title: "",
-    description: ""
-  }
+    description: "",
+  },
 };
 
 let defaultSubSect: SubSectionModel = {
   id: 0,
   sectionId: 0,
   title: "",
-  description: ""
+  description: "",
 };
 
 const AboutBase = () => {
@@ -52,7 +48,9 @@ const AboutBase = () => {
   const [sectEdit, setSectEdit] = useState(0);
   const [curSect, setCurSect] = useState<SectionModel>(defaultSect);
   const [sectData, setSectData] = useState<SectionModel[]>([defaultSect]);
-  const [subsectData, setSubsectData] = useState<SubSectionModel[]>([defaultSubSect]);
+  const [subsectData, setSubsectData] = useState<SubSectionModel[]>([
+    defaultSubSect,
+  ]);
   const [title, setTitle] = useState("");
   const [sectId, setSectId] = useState(0);
   const [subId, setSubId] = useState(0);
@@ -80,23 +78,25 @@ const AboutBase = () => {
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.toLowerCase() === '') {
-      setSearchedData('');
-    };
+    if (e.target.value.toLowerCase() === "") {
+      setSearchedData("");
+    }
   };
 
   const handleDelete = (id: number) => {
     const filteredData = sectData.filter((s: { id: number }) => s.id !== id);
     setSectData([...filteredData]);
     notificationLogic("success", "Розділ успішно видалено!");
-  }
+  };
 
   const handleSubDelete = (id: number) => {
-    const filteredSubData = subsectData.filter((s: { id: number }) => s.id !== id);
+    const filteredSubData = subsectData.filter(
+      (s: { id: number }) => s.id !== id
+    );
     setSubsectData([...filteredSubData]);
     setEditVisible(false);
     notificationLogic("success", "Підозділ успішно видалено!");
-  }
+  };
 
   const showEdit = async (id: number) => {
     const section = (await aboutBase.getAboutBaseSectionById(id)).data;
@@ -111,9 +111,8 @@ const AboutBase = () => {
       fetchSectData();
       setCurSect(defaultSect);
       setEditVisible(false);
-    } else
-      notificationLogic("error", "Хибна назва");
-  }
+    } else notificationLogic("error", "Хибна назва");
+  };
 
   const handleAdd = async () => {
     const newSection: SectionModel = {
@@ -123,8 +122,8 @@ const AboutBase = () => {
         id: 0,
         sectionId: 0,
         title: "",
-        description: ""
-      }
+        description: "",
+      },
     };
     if (title.length != 0) {
       await aboutBase.addAboutBaseSection(newSection);
@@ -135,15 +134,15 @@ const AboutBase = () => {
     } else {
       notificationLogic("error", "Хибна назва");
     }
-  }
+  };
 
   const elementsVisibility = () => {
-    role.forEach(r => {
+    role.forEach((r) => {
       if (r == Roles.Admin || r == Roles.RegionBoardHead) {
         setElementsVisible(true);
       }
     });
-  }
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -170,88 +169,149 @@ const AboutBase = () => {
         />
       </div>
       {sectData.map((sectitem) => (
-        <Collapse
-          className="section" key={sectitem.id}
-        >
+        <Collapse className="section" key={sectitem.id}>
           <Panel
-            header={editVisible && sectEdit == sectitem.id ? (
-              <div>
-                <Input
-                  style={{ width: 300 }}
-                  defaultValue={sectitem.title}
-                  onClick={(e) => { e.stopPropagation() }}
-                  onChange={(event) =>
-                    setCurSect({
-                      id: curSect.id,
-                      title: event.target.value,
-                      subsection: {
-                        id: 0,
-                        sectionId: 0,
-                        title: "",
-                        description: ""
-                      }
-                    })
-                  } />
-                <Space>
-                  <Button type="primary" onClick={(e) => { e.stopPropagation(); handleEdit() }}><SaveOutlined /></Button>
-                  <Button type="primary" onClick={(e) => { e.stopPropagation(); setEditVisible(false) }}>Відмінити</Button>
-                </Space>
+            header={
+              editVisible && sectEdit == sectitem.id ? (
+                <div>
+                  <Input
+                    style={{ width: 300 }}
+                    defaultValue={sectitem.title}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                    onChange={(event) =>
+                      setCurSect({
+                        id: curSect.id,
+                        title: event.target.value,
+                        subsection: {
+                          id: 0,
+                          sectionId: 0,
+                          title: "",
+                          description: "",
+                        },
+                      })
+                    }
+                  />
+                  <Space>
+                    <Button
+                      type="primary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit();
+                      }}
+                    >
+                      <SaveOutlined />
+                    </Button>
+                    <Button
+                      type="primary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditVisible(false);
+                      }}
+                    >
+                      Відмінити
+                    </Button>
+                  </Space>
+                </div>
+              ) : (
+                sectitem.title
+              )
+            }
+            key={sectitem.id}
+            extra={
+              elementsvisible ? (
+                [
+                  <Space>
+                    <Tooltip title="Редагувати розділ">
+                      <EditOutlined
+                        className="editInfoIcon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSectEdit(sectitem.id);
+                          showEdit(sectitem.id);
+                        }}
+                      />
+                    </Tooltip>
+                    <Tooltip title="Видалити розділ">
+                      <DeleteOutlined
+                        className="deleteInfoIcon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          DeleteSectConfirm(sectitem.id, handleDelete);
+                        }}
+                      />
+                    </Tooltip>
+                  </Space>,
+                ]
+              ) : (
+                <></>
+              )
+            }
+          >
+            {subsectData
+              .filter((subitem) => subitem.sectionId === sectitem.id)
+              .map((subitem) => (
+                <Collapse className="section" key={subitem.id}>
+                  <Panel
+                    header={subitem.title}
+                    key={subitem.id}
+                    extra={
+                      elementsvisible ? (
+                        [
+                          <Space>
+                            <Tooltip title="Редагувати підрозділ">
+                              <EditOutlined
+                                className="editInfoIcon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSubId(subitem.id);
+                                  setSubTitle(subitem.title);
+                                  setSubDescription(subitem.description);
+                                  setSectId(sectitem.id);
+                                  showModalSubEdit();
+                                }}
+                              />
+                            </Tooltip>
+                            <Tooltip title="Видалити підрозділ">
+                              <DeleteOutlined
+                                className="deleteInfoIcon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  DeleteSubsectConfirm(
+                                    subitem.id,
+                                    handleSubDelete
+                                  );
+                                }}
+                              />
+                            </Tooltip>
+                          </Space>,
+                        ]
+                      ) : (
+                        <></>
+                      )
+                    }
+                  >
+                    <p>{subitem.description}</p>
+                    <PicturesWall subsectionId={subitem.id} key={editKey} />
+                  </Panel>
+                </Collapse>
+              ))}
+            {elementsvisible ? (
+              <div className="addSubSection">
+                <Button
+                  type="primary"
+                  onClick={(e) => {
+                    setSectId(sectitem.id);
+                    showModalSubAdd();
+                  }}
+                >
+                  Додати підрозділ
+                </Button>
               </div>
             ) : (
-              sectitem.title
+              <></>
             )}
-            key={sectitem.id}
-            extra={elementsvisible ? [
-              <Space>
-                <Tooltip title="Редагувати розділ">
-                  <EditOutlined
-                    className="editInfoIcon"
-                    onClick={(e) => { e.stopPropagation(); setSectEdit(sectitem.id); showEdit(sectitem.id) }}
-                  />
-                </Tooltip>
-                <Tooltip title="Видалити розділ">
-                  <DeleteOutlined
-                    className="deleteInfoIcon"
-                    onClick={(e) => { e.stopPropagation(); DeleteSectConfirm(sectitem.id, handleDelete) }}
-                  />
-                </Tooltip>
-              </Space>
-            ] : <></>}
-          >
-            {subsectData.filter(subitem => subitem.sectionId === sectitem.id).map((subitem) => (
-              <Collapse
-                className="section" key={subitem.id}
-              >
-                <Panel
-                  header={subitem.title}
-                  key={subitem.id}
-                  extra={elementsvisible ? [
-                    <Space>
-                      <Tooltip title="Редагувати підрозділ">
-                        <EditOutlined
-                          className="editInfoIcon"
-                          onClick={(e) => { e.stopPropagation(); setSubId(subitem.id); setSubTitle(subitem.title); setSubDescription(subitem.description); setSectId(sectitem.id); showModalSubEdit() }}
-                        />
-                      </Tooltip>
-                      <Tooltip title="Видалити підрозділ">
-                        <DeleteOutlined
-                          className="deleteInfoIcon"
-                          onClick={(e) => { e.stopPropagation(); DeleteSubsectConfirm(subitem.id, handleSubDelete) }}
-                        />
-                      </Tooltip>
-                    </Space>
-                  ] : <></>}
-                >
-                  <p>{subitem.description}</p>
-                  <PicturesWall subsectionId={subitem.id} key={editKey} />
-                </Panel>
-              </Collapse>
-            ))}
-            {elementsvisible ?
-              <div className="addSubSection">
-                <Button type="primary" onClick={(e) => { setSectId(sectitem.id); showModalSubAdd() }}>Додати підрозділ</Button>
-              </div>
-            :<></>}
           </Panel>
         </Collapse>
       ))}
@@ -277,17 +337,24 @@ const AboutBase = () => {
         setEditKey={setEditKey}
       />
 
-      {elementsvisible ?
+      {elementsvisible ? (
         <div className="addSection">
-          <Input placeholder=" Додати розділ" type="text" maxLength={50}
+          <Input
+            placeholder=" Додати розділ"
+            type="text"
+            maxLength={50}
             value={title}
             onChange={(event) => {
               setTitle(event.target.value);
-            }} />
-          <Button type="primary" onClick={handleAdd}>Додати</Button>
+            }}
+          />
+          <Button type="primary" onClick={handleAdd}>
+            Додати
+          </Button>
         </div>
-        : <></>}
-
+      ) : (
+        <></>
+      )}
     </Layout.Content>
   ) : (
     <Spinner />

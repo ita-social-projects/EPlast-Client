@@ -10,9 +10,7 @@ import {
   Col,
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
-import documentsApi, {
-  TypePostParser
-} from "../../api/documentsApi";
+import documentsApi, { TypePostParser } from "../../api/documentsApi";
 import { getBase64 } from "../userPage/EditUserPage/Services";
 import notificationLogic from "../../components/Notifications/Notification";
 import formclasses from "../DecisionTable/FormAddDecision.module.css";
@@ -24,9 +22,9 @@ import {
   fileIsTooBig,
   successfulDeleteAction,
   fileIsEmpty,
-} from "../../components/Notifications/Messages"
+} from "../../components/Notifications/Messages";
 import { DocumentOnCreateData } from "../../models/Documents/DocumentOnCreateData";
-import { MethodicDocumentType } from "../../models/Documents/MethodicDocumentType"
+import { MethodicDocumentType } from "../../models/Documents/MethodicDocumentType";
 import { FileWrapper, GoverningBody } from "../../api/decisionsApi";
 import { DocumentWrapper } from "../../models/Documents/DocumentWraper";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
@@ -48,7 +46,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
       return e;
     }
     return e && e.fileList;
-  };  
+  };
 
   const handleCancel = () => {
     form.resetFields();
@@ -93,13 +91,14 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
     if (!isCorrectExtension) {
       notificationLogic(
         "error",
-        possibleFileExtensions("pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods.")
+        possibleFileExtensions(
+          "pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods."
+        )
       );
     }
 
     const isEmptyFile = fileSize !== 0;
-      if (!isEmptyFile)
-      notificationLogic("error", fileIsEmpty());
+    if (!isEmptyFile) notificationLogic("error", fileIsEmpty());
 
     return isCorrectExtension && isEmptyFile;
   };
@@ -110,13 +109,12 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
       MethodicDocument: {
         id: 0,
         name: values.name,
-        type: TypePostParser(
-          JSON.parse(values.methodicDocumentType)
-        ),
+        type: TypePostParser(JSON.parse(values.methodicDocumentType)),
         governingBody: JSON.parse(values.governingBody),
         description: values.description,
         date:
-          /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */ 
+          /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */
+
           moment(values.datepicker).format("YYYY-MM-DD HH:mm:ss"),
         fileName: fileData.FileName,
       },
@@ -145,7 +143,13 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
   }, []);
 
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form} id='area' style={{position: 'relative'}}>
+    <Form
+      name="basic"
+      onFinish={handleSubmit}
+      form={form}
+      id="area"
+      style={{ position: "relative" }}
+    >
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
           <Form.Item
@@ -154,13 +158,13 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             labelCol={{ span: 24 }}
             name="methodicDocumentType"
             rules={[
-              { 
-                required: true, 
-                message: emptyInput() 
-              }
+              {
+                required: true,
+                message: emptyInput(),
+              },
             ]}
           >
-            <Select 
+            <Select
               className={formclasses.selectField}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
@@ -194,10 +198,10 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             labelCol={{ span: 24 }}
             name="governingBody"
             rules={[
-              { 
-                required: true, 
-                message: emptyInput() 
-              }
+              {
+                required: true,
+                message: emptyInput(),
+              },
             ]}
           >
             <Select
@@ -223,17 +227,19 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             label="Дата документу"
             labelCol={{ span: 24 }}
             rules={[
-              { 
-                required: true, 
-                message: emptyInput() 
-              }
+              {
+                required: true,
+                message: emptyInput(),
+              },
             ]}
           >
             <DatePicker
               format="DD.MM.YYYY"
               className={formclasses.selectField}
-              getPopupContainer = {() => document.getElementById('area')! as HTMLElement}
-              popupStyle={{position: 'absolute'}}
+              getPopupContainer={() =>
+                document.getElementById("area")! as HTMLElement
+              }
+              popupStyle={{ position: "absolute" }}
             />
           </Form.Item>
         </Col>
@@ -247,7 +253,11 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
             name="description"
             rules={descriptionValidation.DescriptionAndQuestions}
           >
-            <Input.TextArea allowClear className={formclasses.inputField} />
+            <Input.TextArea
+              allowClear
+              className={formclasses.inputField}
+              maxLength={201}
+            />
           </Form.Item>
         </Col>
       </Row>
@@ -279,7 +289,10 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
 
                 {fileData.FileAsBase64 !== null && (
                   <div>
-                    <div style={{wordBreak:'break-word'}}> {fileData.FileName} </div>{" "}
+                    <div style={{ wordBreak: "break-word" }}>
+                      {" "}
+                      {fileData.FileName}{" "}
+                    </div>{" "}
                   </div>
                 )}
               </Upload.Dragger>
@@ -290,7 +303,10 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
                     className={formclasses.cardButtonDocuments}
                     onClick={() => {
                       setFileData({ FileAsBase64: null, FileName: null });
-                      notificationLogic("success", successfulDeleteAction("Файл"));
+                      notificationLogic(
+                        "success",
+                        successfulDeleteAction("Файл")
+                      );
                     }}
                   >
                     {" "}
@@ -304,7 +320,10 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
       </Row>
       <Row justify="start" gutter={[12, 0]}>
         <Col md={24} xs={24}>
-          <Form.Item style={{ textAlign: "right" }} className={formclasses.formField}>
+          <Form.Item
+            style={{ textAlign: "right" }}
+            className={formclasses.formField}
+          >
             <Button
               key="back"
               onClick={handleCancel}

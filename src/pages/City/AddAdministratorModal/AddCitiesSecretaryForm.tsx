@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
 import { Form, DatePicker, AutoComplete, Select, Button } from "antd";
-import {
-  getCityUsers, getUserCityAccess,
-} from "../../../api/citiesApi";
+import { getCityUsers, getUserCityAccess } from "../../../api/citiesApi";
 import moment from "moment";
 import {
-  emptyInput, inputOnlyWhiteSpaces, maxLength
-} from "../../../components/Notifications/Messages"
+  emptyInput,
+  inputOnlyWhiteSpaces,
+  maxLength,
+} from "../../../components/Notifications/Messages";
 import CityAdmin from "../../../models/City/CityAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import "./AddCitiesSecretaryForm.less";
 import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
 import CityUser from "../../../models/City/CityUser";
-import {descriptionValidation} from "../../../models/GllobalValidations/DescriptionValidation"
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 import AuthStore from "../../../stores/AuthStore";
-import jwt from 'jwt-decode';
+import jwt from "jwt-decode";
 import { useParams } from "react-router-dom";
 
 type AddCitiesNewSecretaryForm = {
@@ -35,17 +35,17 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [members, setMembers] = useState<CityUser[]>([]);
-  const [userCityAccesses, setUserCityAccesses] = useState<{[key: string] : boolean}>({});
+  const [userCityAccesses, setUserCityAccesses] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [loading, setLoading] = useState<boolean>(false);
 
   const getUserAccessesForCities = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
-    await getUserCityAccess(+id, user.nameid).then(
-      response => {
-        setUserCityAccesses(response.data);
-      }
-    );
-  }  
+    await getUserCityAccess(+id, user.nameid).then((response) => {
+      setUserCityAccesses(response.data);
+    });
+  };
 
   const disabledEndDate = (current: any) => {
     return current && current < startDate;
@@ -63,28 +63,26 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         adminTypeName: value.AdminType,
       },
       cityId: props.cityId,
-      userId: property === undefined
-        ? JSON.parse(value.userId).id
-        : property.userId,
+      userId:
+        property === undefined ? JSON.parse(value.userId).id : property.userId,
       user: JSON.parse(value.userId),
       endDate: value.endDate,
       startDate: value.startDate,
     };
     return admin;
-  }
+  };
 
   const handleSubmit = async (values: any) => {
-      const newAdmin = await SetAdmin(props.admin, values);
-      onAdd(newAdmin);
+    const newAdmin = await SetAdmin(props.admin, values);
+    onAdd(newAdmin);
   };
 
   const fetchData = async () => {
-    if (props.cityId !== undefined)
-    {
-    await getUserAccessesForCities();
-    await getCityUsers(props.cityId).then((response) => { 
-      setMembers(response.data);
-    });
+    if (props.cityId !== undefined) {
+      await getUserAccessesForCities();
+      await getCityUsers(props.cityId).then((response) => {
+        setMembers(response.data);
+      });
     }
   };
 
@@ -97,7 +95,15 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   }, [props]);
 
   return (
-    <Form name="basic" onFinish={(values) => {handleSubmit(values); setLoading(true)}} form={form} className="formAddSecretaryModal">
+    <Form
+      name="basic"
+      onFinish={(values) => {
+        handleSubmit(values);
+        setLoading(true);
+      }}
+      form={form}
+      className="formAddSecretaryModal"
+    >
       <Form.Item
         className={classes.formField}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
@@ -112,7 +118,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       >
         <Select showSearch className={classes.inputField}>
           {members?.map((o) => (
-            <Select.Option key={o.id} value={JSON.stringify(o)}>            
+            <Select.Option key={o.id} value={JSON.stringify(o)}>
               {o.firstName + " " + o.lastName}
             </Select.Option>
           ))}
@@ -131,8 +137,11 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         <AutoComplete
           className={classes.inputField}
           options={[
-            { value: Roles.CityHead, disabled: !userCityAccesses["AddCityHead"] },
-            { value: Roles.CityHeadDeputy},
+            {
+              value: Roles.CityHead,
+              disabled: !userCityAccesses["AddCityHead"],
+            },
+            { value: Roles.CityHeadDeputy },
             { value: "Голова СПР" },
             { value: "Писар" },
             { value: "Скарбник" },
@@ -149,7 +158,9 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         label="Дата початку"
         name="startDate"
         initialValue={
-          props.admin === undefined ? undefined : moment.utc(props.admin.startDate).local()
+          props.admin === undefined
+            ? undefined
+            : moment.utc(props.admin.startDate).local()
         }
       >
         <DatePicker
@@ -168,8 +179,8 @@ const AddCitiesNewSecretaryForm = (props: any) => {
           props.admin === undefined
             ? undefined
             : props.admin.endDate === null
-              ? undefined
-              : moment.utc(props.admin.endDate).local()
+            ? undefined
+            : moment.utc(props.admin.endDate).local()
         }
       >
         <DatePicker
@@ -180,7 +191,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item style={{ textAlign: "right" }}>
-        <Button type="primary" htmlType="submit" loading = {loading}>
+        <Button type="primary" htmlType="submit" loading={loading}>
           Опублікувати
         </Button>
       </Form.Item>

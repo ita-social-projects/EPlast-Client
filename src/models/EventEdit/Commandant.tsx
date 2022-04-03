@@ -1,8 +1,7 @@
-
 export default class Commandant {
-    userId: string;
+  userId: string;
 
-    constructor() {
-        this.userId = '';
-    }
+  constructor() {
+    this.userId = "";
+  }
 }
