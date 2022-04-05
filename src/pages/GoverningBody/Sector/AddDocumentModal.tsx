@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import classes from "../../Regions/Form.module.css";
 import "../AddDocumentModal/AddDocumentModal.less";
 import {
   Button,
@@ -31,6 +32,7 @@ import {
   fileIsEmpty,
 } from "../../../components/Notifications/Messages";
 moment.locale("uk-ua");
+
 
 interface Props {
   visibleModal: boolean;
@@ -163,7 +165,7 @@ const AddDocumentModal = (props: Props) => {
       <Form name="basic" onFinish={handleSubmit} form={form}>
         <div className="formFields">
           <Form.Item
-            style={{alignItems: "flex-start"}}
+            className={classes.formSelectAlignCenter}
             label="Тип документу"
             name="documentType"
             rules={[{ required: true, message: emptyInput() }]}
