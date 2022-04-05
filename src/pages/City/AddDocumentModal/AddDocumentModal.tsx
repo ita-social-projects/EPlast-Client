@@ -30,7 +30,6 @@ import {
 } from "../../../components/Notifications/Messages";
 moment.locale("uk-ua");
 
-
 interface Props {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
