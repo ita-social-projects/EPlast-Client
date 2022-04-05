@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../Regions/AddDocumentModal.less";
+import classes from "../Regions/Form.module.css";
 import { Button, Col, DatePicker, Form, Modal, Row, Upload, Input } from "antd";
 import { getBase64 } from "../userPage/EditUserPage/Services";
 import notificationLogic from "../../components/Notifications/Notification";
@@ -159,6 +160,7 @@ const AddDocumentModal = (props: Props) => {
       <Form name="basic" onFinish={handleSubmit} form={form}>
         <div className="formFields">
           <Form.Item
+            className={classes.formSelectAlignCenter}
             name="documentName"
             label="Назва документу"
             rules={descriptionValidation.Name}

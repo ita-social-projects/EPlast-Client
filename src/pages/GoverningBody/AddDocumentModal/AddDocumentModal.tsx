@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import classes from "../../Regions/Form.module.css";
 import "./AddDocumentModal.less";
 import {
   Button,
@@ -157,6 +158,7 @@ const AddDocumentModal = (props: Props) => {
       <Form name="basic" onFinish={handleSubmit} form={form}>
         <div className="formFields">
           <Form.Item
+            className={classes.formSelectAlignCenter}
             label="Тип документу"
             name="documentType"
             rules={[{ required: true, message: emptyInput() }]}
