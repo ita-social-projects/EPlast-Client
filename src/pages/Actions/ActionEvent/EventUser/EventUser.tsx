@@ -235,7 +235,7 @@ const EventUser = () => {
                   onClick={() => setVisitedEventsModal(false)}
                 >
                   Закрити
-                </Button>
+                </Button>,
               ]}
             >
               {allEvents?.visitedEvents?.map((item: any) => (
@@ -336,7 +336,7 @@ const EventUser = () => {
                   >
                     Закрити
                   </Button>
-                </div>
+                </div>,
               ]}
             >
               <Input.Search
@@ -433,7 +433,6 @@ const EventUser = () => {
                       >
                         Редагувати
                       </Button>
-                      
                     )}
                     {item.eventStatusID === 3 &&
                       userToken.nameid === userId &&
@@ -451,10 +450,7 @@ const EventUser = () => {
                           Редагувати
                         </Button>
                       )}
-
-
-                    </div>
-                  
+                  </div>
 
                   <hr />
                 </div>
@@ -530,25 +526,24 @@ const EventUser = () => {
               footer={[
                 <div>
                   <div>
-                <Button
-                  type="primary"
-                  className={classes.buttonSmall}
-                  onClick={() => history.push("/events/types")}
-                >
-                  Обрати подію
-                </Button>
-                </div>
-                <div>
-                <Button
-                  type="primary"
-                  className={classes.buttonCancell}
-                  onClick={() => setPlannedEventsModal(false)}
-                >
-                  Закрити
-                </Button>
-                </div>
-                </div>
-
+                    <Button
+                      type="primary"
+                      className={classes.buttonSmall}
+                      onClick={() => history.push("/events/types")}
+                    >
+                      Обрати подію
+                    </Button>
+                  </div>
+                  <div>
+                    <Button
+                      type="primary"
+                      className={classes.buttonCancell}
+                      onClick={() => setPlannedEventsModal(false)}
+                    >
+                      Закрити
+                    </Button>
+                  </div>
+                </div>,
               ]}
             >
               {allEvents?.planedEvents?.map((item: any) => (
