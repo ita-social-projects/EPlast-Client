@@ -11,7 +11,7 @@ import {
   Card,
   Tooltip,
   Badge,
-  Tag
+  Tag,
 } from "antd";
 import {
   FileTextOutlined,
@@ -22,8 +22,10 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
-import jwt from 'jwt-decode';
-import{getCheckPlastMember} from "../../api/citiesApi";
+import jwt from "jwt-decode";
+import Title from "antd/lib/typography/Title";
+import Paragraph from "antd/lib/typography/Paragraph";
+import { getCheckPlastMember, cityNameOfApprovedMember, getLogo } from "../../api/citiesApi";
 import {
   getRegionById,
   archiveRegion,
@@ -37,24 +39,24 @@ import {
   EditAdmin,
   removeRegion,
 } from "../../api/regionsApi";
-import {
-  cityNameOfApprovedMember,
-} from "../../api/citiesApi";
 import "./Region.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
-import Title from "antd/lib/typography/Title";
-import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../Spinner/Spinner";
 import AddDocumentModal from "./AddDocModal";
 import RegionDocument from "../../models/Region/RegionDocument";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
-import userApi from "./../../api/UserApi";
-import { getLogo } from "./../../api/citiesApi";
-import CheckActiveCitiesForm from "./CheckActiveCitiesForm"
+import userApi from "../../api/UserApi";
+import CheckActiveCitiesForm from "./CheckActiveCitiesForm";
 import RegionDetailDrawer from "./RegionsDetailDrawer";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import notificationLogic from "../../components/Notifications/Notification";
-import { successfulEditAction, successfulDeleteAction, successfulArchiveAction, successfulUnarchiveAction, failArchiveAction } from "../../components/Notifications/Messages";
+import {
+  successfulEditAction,
+  successfulDeleteAction,
+  successfulArchiveAction,
+  successfulUnarchiveAction,
+  failArchiveAction,
+} from "../../components/Notifications/Messages";
 import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
