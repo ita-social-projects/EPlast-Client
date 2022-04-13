@@ -17,6 +17,7 @@ export enum Roles {
   RegisteredUser = "Зареєстрований користувач",
   Interested = "Зацікавлений",
   RegionBoardHead = "Голова Краю",
+  GoverningBodyAdmin = "Крайовий Адмін",
   GoverningBodyHead = "Голова Керівного Органу",
   GoverningBodySecretary = "Діловод Керівного Органу",
   GoverningBodySectorHead = "Голова Напряму Керівного Органу",
