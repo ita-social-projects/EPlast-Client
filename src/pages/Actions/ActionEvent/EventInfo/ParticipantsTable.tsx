@@ -67,6 +67,7 @@ const ParticipantsTable = ({
         if (participant.participantId === participantId) {
           participant.status = newStatus;
         }
+        setRender(true);
         return participant;
       })
     );
@@ -234,7 +235,7 @@ const ParticipantsTable = ({
               size="small"
               onClick={() => {
                 showRejectModal(record.participantId, record.userId);
-                setRender(true);
+                // setRender(true);
               }}
             />
           ) : (
