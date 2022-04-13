@@ -4,7 +4,6 @@ import {
   FileSearchOutlined,
   DeleteOutlined,
   EditOutlined,
-  ScissorOutlined,
   PlusCircleOutlined,
   MailOutlined,
 } from "@ant-design/icons";
@@ -23,8 +22,10 @@ import { AdminRole } from "../../models/Roles/AdminRole";
 import { NonAdminRole } from "../../models/Roles/NonAdminRole";
 import { IDropdownItem, DropdownItemCreator } from "./DropdownItem";
 import { DropdownFunc } from "../../models/UserTable/DropdownFunc";
+import ChangeUserGoverningBodyModal from "./ChangeUserGoverningBodyModal";
+import DeleteGoverningBodyAdminModal from "./DeleteGoverningBodyAdminModal";
 
-let authService = new AuthorizeApi();
+const authService = new AuthorizeApi();
 
 interface Props {
   record: string;
@@ -39,8 +40,6 @@ interface Props {
   currentUser: any;
   canView: boolean;
 }
-
-const { SubMenu } = Menu;
 
 const DropDown = (props: Props) => {
   const {
@@ -62,6 +61,8 @@ const DropDown = (props: Props) => {
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
+  const [showGoverningBodyModal, setShowGoverningBodyModal] = useState<boolean>(false);
+  const [showDeleteGoverningBodyAdminModal, setShowDeleteGoverningBodyAdminModal] = useState<boolean>(false);
 
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
   const [governingBodyHead, setGoverningBodyHead] = useState<boolean>(true);
@@ -85,6 +86,10 @@ const DropDown = (props: Props) => {
   const [
     canChangeGoverningBodyAdministration,
     setCanChangeGoverningBodyAdministration,
+  ] = useState<boolean>(false);
+  const [
+    canDeleteGoverningBodyAdministration,
+    setCanDeleteGoverningBodyAdministration,
   ] = useState<boolean>(false);
   const [canChangeUserAccess, setCanChangeUserAccess] = useState<boolean>(
     false
@@ -209,6 +214,12 @@ const DropDown = (props: Props) => {
     setCanChangeRegionAdministration(
       result?.get(DropdownFunc.EditRegion) ?? false
     );
+    setCanChangeGoverningBodyAdministration(
+      result?.get(DropdownFunc.EditGoverningBody) ?? false
+    );
+    setCanDeleteGoverningBodyAdministration(
+      result?.get(DropdownFunc.DeleteGoverningBody) ?? false
+    );
 
     setCanChangeCityAdministration(result?.get(DropdownFunc.EditCity) ?? false);
 
@@ -257,6 +268,12 @@ const DropDown = (props: Props) => {
       case "9":
         await authService.resendEmailForRegistering(record);
         break;
+      case "10":
+        await setShowGoverningBodyModal(true);
+        break;
+      case "11":
+        await setShowDeleteGoverningBodyAdminModal(true);
+        break;
       default:
         break;
     }
@@ -279,7 +296,7 @@ const DropDown = (props: Props) => {
             display: showDropdown ? "block" : "none",
           }}
         >
-          {props.inActiveTab === false && canViewProfile ? (
+          {inActiveTab === false && canViewProfile ? (
             <Menu.Item key="1">
               <FileSearchOutlined />
               Переглянути профіль
@@ -287,7 +304,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {props.inActiveTab === false && canDelete ? (
+          {inActiveTab === false && canDelete ? (
             <Menu.Item key="2">
               <DeleteOutlined />
               Видалити
@@ -295,7 +312,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {props.inActiveTab === false && canChangeRegionAdministration ? (
+          {inActiveTab === false && canChangeRegionAdministration ? (
             <Menu.Item key="3">
               <EditOutlined />
               Провід округи
@@ -303,7 +320,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {props.inActiveTab === false && canChangeCityAdministration ? (
+          {inActiveTab === false && canChangeCityAdministration ? (
             <Menu.Item key="4">
               <EditOutlined />
               Провід станиці
@@ -311,7 +328,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {props.inActiveTab === false && canChangeClubAdministration ? (
+          {inActiveTab === false && canChangeClubAdministration ? (
             <Menu.Item key="5">
               <EditOutlined />
               Провід куреня
@@ -319,7 +336,23 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {props.inActiveTab === false && canChangeUserAccess ? (
+          {inActiveTab === false && canChangeGoverningBodyAdministration ? (
+            <Menu.Item key="10">
+              <EditOutlined />
+              Провід Пласту
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {inActiveTab === false && canDeleteGoverningBodyAdministration ? (
+            <Menu.Item key="11">
+              <EditOutlined />
+              Відмінити роль Адміна
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {inActiveTab === false && canChangeUserAccess ? (
             <Menu.Item key="6">
               <EditOutlined />
               Поточний стан користувача
@@ -327,7 +360,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {props.inActiveTab === false && canAddDegree ? (
+          {inActiveTab === false && canAddDegree ? (
             <Menu.Item key="7">
               <PlusCircleOutlined />
               Додати ступінь
@@ -335,7 +368,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {props.inActiveTab === false && superAdmin ? (
+          {inActiveTab === false && superAdmin ? (
             <Menu.Item key="9">
               <MailOutlined />
               Активувати
@@ -371,8 +404,21 @@ const DropDown = (props: Props) => {
             setShowModal={setShowClubModal}
             onChange={onChange}
           />
+          <ChangeUserGoverningBodyModal
+            record={record}
+            showModal={showGoverningBodyModal}
+            user={selectedUser}
+            setShowModal={setShowGoverningBodyModal}
+            onChange={onChange}
+          />
+          <DeleteGoverningBodyAdminModal 
+            user={selectedUser}
+            showModal={showDeleteGoverningBodyAdminModal}
+            setShowModal={setShowDeleteGoverningBodyAdminModal}
+            onChange={onChange}
+          />
           <ModalAddPlastDegree
-            handleAddDegree={() => {}}
+            handleAddDegree={() => { }}
             userId={record}
             visibleModal={visibleModalDegree}
             setVisibleModal={setVisibleModalDegree}
