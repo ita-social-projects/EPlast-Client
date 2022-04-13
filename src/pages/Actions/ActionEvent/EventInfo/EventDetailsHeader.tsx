@@ -71,7 +71,11 @@ const EventDetailsHeader = ({
         {renderContent(eventDateStart)}
       </Descriptions.Item>
       <Descriptions.Item label={renderLabel("Кількість учасників")}>
-        {renderContent(eventParticipants.filter((p: EventParticipant)=> p.status == "Учасник").length.toString())}
+        {renderContent(
+          eventParticipants
+            .filter((p: EventParticipant) => p.status == "Учасник")
+            .length.toString()
+        )}
       </Descriptions.Item>
       <Descriptions.Item label={renderLabel("Дата і час завершення")}>
         {renderContent(eventDateEnd)}
