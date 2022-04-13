@@ -235,6 +235,7 @@ const ParticipantsTable = ({
               size="small"
               onClick={() => {
                 showRejectModal(record.participantId, record.userId);
+                setRender(true);
               }}
             />
           ) : (
