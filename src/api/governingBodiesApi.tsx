@@ -88,6 +88,14 @@ export const getAllDocuments = async (id: number) => {
   });
 };
 
+export const addMainAdmin = async (data: any) => {
+  return api
+    .post(`GoverningBodies/AddMainAdmin`, data)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
 export const addAdministrator = async (governingBodyId: number, data: any) => {
   return api
     .post(`GoverningBodies/AddAdmin/${governingBodyId}`, data)
@@ -99,6 +107,14 @@ export const addAdministrator = async (governingBodyId: number, data: any) => {
 export const removeAdministrator = async (adminId: number) => {
   return api
     .put(`GoverningBodies/RemoveAdmin/${adminId}`, adminId)
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
+export const removeMainAdministrator = async (userId: string) => {
+  return api
+    .put(`GoverningBodies/RemoveMainAdmin/${userId}`, userId)
     .catch((error) => {
       throw new Error(error);
     });
