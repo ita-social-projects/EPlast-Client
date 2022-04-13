@@ -196,6 +196,7 @@ const UsersTable = () => {
       let roles = userApi.getActiveUserRoles();
       setCanView(
         roles.includes(Roles.Admin) ||
+          roles.includes(Roles.GoverningBodyAdmin) ||
           roles.includes(Roles.GoverningBodyHead) ||
           roles.includes(Roles.OkrugaHead) ||
           roles.includes(Roles.OkrugaHeadDeputy) ||
