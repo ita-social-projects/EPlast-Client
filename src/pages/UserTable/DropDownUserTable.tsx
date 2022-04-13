@@ -61,8 +61,13 @@ const DropDown = (props: Props) => {
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
-  const [showGoverningBodyModal, setShowGoverningBodyModal] = useState<boolean>(false);
-  const [showDeleteGoverningBodyAdminModal, setShowDeleteGoverningBodyAdminModal] = useState<boolean>(false);
+  const [showGoverningBodyModal, setShowGoverningBodyModal] = useState<boolean>(
+    false
+  );
+  const [
+    showDeleteGoverningBodyAdminModal,
+    setShowDeleteGoverningBodyAdminModal,
+  ] = useState<boolean>(false);
 
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
   const [governingBodyHead, setGoverningBodyHead] = useState<boolean>(true);
@@ -411,14 +416,14 @@ const DropDown = (props: Props) => {
             setShowModal={setShowGoverningBodyModal}
             onChange={onChange}
           />
-          <DeleteGoverningBodyAdminModal 
+          <DeleteGoverningBodyAdminModal
             user={selectedUser}
             showModal={showDeleteGoverningBodyAdminModal}
             setShowModal={setShowDeleteGoverningBodyAdminModal}
             onChange={onChange}
           />
           <ModalAddPlastDegree
-            handleAddDegree={() => { }}
+            handleAddDegree={() => {}}
             userId={record}
             visibleModal={visibleModalDegree}
             setVisibleModal={setVisibleModalDegree}

@@ -15,7 +15,6 @@ const DeleteGoverningBodyAdminModal = ({
   setShowModal,
   onChange,
 }: Props) => {
-  
   return (
     <Modal
       title="Відмінити роль Крайового Адміна з даного користувача?"
@@ -27,11 +26,11 @@ const DeleteGoverningBodyAdminModal = ({
     >
       <DeleteGoverningBodyAdminForm
         user={user}
-        setShowModal={setShowModal}  
-        onChange={onChange} 
+        setShowModal={setShowModal}
+        onChange={onChange}
       />
     </Modal>
-  )
+  );
 };
 
 export default DeleteGoverningBodyAdminModal;

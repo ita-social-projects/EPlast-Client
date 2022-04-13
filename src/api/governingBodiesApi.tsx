@@ -89,11 +89,9 @@ export const getAllDocuments = async (id: number) => {
 };
 
 export const addMainAdmin = async (data: any) => {
-  return api
-    .post(`GoverningBodies/AddMainAdmin`, data)
-    .catch((error) => {
-      throw new Error(error);
-    });
+  return api.post(`GoverningBodies/AddMainAdmin`, data).catch((error) => {
+    throw new Error(error);
+  });
 };
 
 export const addAdministrator = async (governingBodyId: number, data: any) => {

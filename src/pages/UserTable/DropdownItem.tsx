@@ -409,8 +409,6 @@ class DeleteUserGoverningBodyItem extends DropdownItem {
   }
 }
 
-
-
 //Поточний стан користувача
 class EditUserRoleHandler extends DropdownItem {
   public handle(
@@ -556,17 +554,13 @@ class CheckCreator {
   }
 
   public rebuildChainForSettingGoverningBodiesMembers(): ICheck {
-    this.checkId
-      .setNext(this.userPlastMember)
-      ?.setNext(null);
+    this.checkId.setNext(this.userPlastMember)?.setNext(null);
 
     return this.checkId;
   }
 
   public rebuildChainForDeleteGoverningBodiesAdmins(): ICheck {
-    this.checkId
-      .setNext(this.selectedUserGovAdmin)
-      ?.setNext(null);
+    this.checkId.setNext(this.selectedUserGovAdmin)?.setNext(null);
 
     return this.checkId;
   }
@@ -796,13 +790,13 @@ class SelectedUserHasPlace extends Check {
 
     return chainContinues
       ? super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      )
+          currentUser,
+          currentUserAdminRoles,
+          selectedUser,
+          selectedUserAdminRoles,
+          selectedUserNonAdminRoles,
+          places
+        )
       : false;
   }
 }
@@ -855,7 +849,10 @@ class CurrUserIsAdminForSelectedUserCheck extends Check {
               AdminRole.GoverningBodyAdmin,
               AdminRole.GoverningBodyHead,
             ]) &&
-              this.idsAreEqual(currentUser.governingBodyId, selectedUser.governingBodyId));
+              this.idsAreEqual(
+                currentUser.governingBodyId,
+                selectedUser.governingBodyId
+              ));
           break;
         default:
           chainContinues = false;
@@ -864,13 +861,13 @@ class CurrUserIsAdminForSelectedUserCheck extends Check {
 
     return chainContinues
       ? super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      )
+          currentUser,
+          currentUserAdminRoles,
+          selectedUser,
+          selectedUserAdminRoles,
+          selectedUserNonAdminRoles,
+          places
+        )
       : false;
   }
 
@@ -882,9 +879,6 @@ class CurrUserIsAdminForSelectedUserCheck extends Check {
       ? firstId === secondId
       : false;
   }
-
-
-
 
   private checkIfUserHasRights(
     currUser: Array<AdminRole>,

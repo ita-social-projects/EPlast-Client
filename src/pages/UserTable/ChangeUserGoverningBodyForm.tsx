@@ -1,14 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Select, Row, Col, AutoComplete, DatePicker, Modal } from "antd";
+import {
+  Form,
+  Button,
+  Select,
+  Row,
+  Col,
+  AutoComplete,
+  DatePicker,
+  Modal,
+} from "antd";
 import moment from "moment";
 import classes from "../Regions/Form.module.css";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import { emptyInput } from "../../components/Notifications/Messages";
 import { Roles } from "../../models/Roles/Roles";
-import { addAdministrator, getGoverningBodiesList, getGoverningBodyById, addMainAdmin } from "../../api/governingBodiesApi";
+import {
+  addAdministrator,
+  getGoverningBodiesList,
+  getGoverningBodyById,
+  addMainAdmin,
+} from "../../api/governingBodiesApi";
 import { GoverningBody } from "../../api/decisionsApi";
 import SectorProfile from "../../models/GoverningBody/Sector/SectorProfile";
-import { getAllAdmins, getSectorsListByGoverningBodyId, addAdministrator as addSectorAdministrator } from "../../api/governingBodySectorsApi";
+import {
+  getAllAdmins,
+  getSectorsListByGoverningBodyId,
+  addAdministrator as addSectorAdministrator,
+} from "../../api/governingBodySectorsApi";
 import GoverningBodyAdmin from "../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../models/Admin/AdminType";
 import userApi from "../../api/UserApi";
@@ -35,7 +53,9 @@ const ChangeUserRoleForm = ({
 
   const [gvbLoading, setGvbLoading] = useState<boolean>(false);
   const [governingBodies, setGoverningBodies] = useState<GoverningBody[]>([]);
-  const [governingBodiesAdmins, setGoverningBodiesAdmins] = useState<GoverningBodyAdmin[]>([]);
+  const [governingBodiesAdmins, setGoverningBodiesAdmins] = useState<
+    GoverningBodyAdmin[]
+  >([]);
   const [sectorsAdmins, setSectorsAdmins] = useState<SectorAdmin[]>([]);
 
   const [hideFields, setHideFields] = useState<boolean>(false);
@@ -57,21 +77,23 @@ const ChangeUserRoleForm = ({
   };
 
   const governingBodyChange = async (id: number) => {
-    const governingBodyViewModel = (await getGoverningBodyById(id)).data.governingBodyViewModel;
-    setGoverningBodiesAdmins([
-      governingBodyViewModel.head,
-      ...governingBodyViewModel.administration,
-    ].filter((a) => a !== null));
+    const governingBodyViewModel = (await getGoverningBodyById(id)).data
+      .governingBodyViewModel;
+    setGoverningBodiesAdmins(
+      [
+        governingBodyViewModel.head,
+        ...governingBodyViewModel.administration,
+      ].filter((a) => a !== null)
+    );
     const response = await getSectorsListByGoverningBodyId(id);
     setSectors(response);
   };
 
   const sectorChange = async (id: number) => {
     const admins = await getAllAdmins(id);
-    setSectorsAdmins([
-      admins.data.head,
-      ...admins.data.admins,
-    ].filter((a) => a !== null));
+    setSectorsAdmins(
+      [admins.data.head, ...admins.data.admins].filter((a) => a !== null)
+    );
   };
 
   const onSectorSelect = async (value: any) => {
@@ -97,8 +119,6 @@ const ChangeUserRoleForm = ({
     }
   };
 
-
-
   const handleCancel = () => {
     form.resetFields();
     setShowModal(false);
@@ -116,8 +136,7 @@ const ChangeUserRoleForm = ({
         `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}'`,
         NotificationBoxApi.NotificationTypes.UserNotifications
       );
-    }
-    else {
+    } else {
       await addAdministrator(admin.governingBodyId, admin);
       notificationLogic("success", "Користувач успішно доданий в провід");
       form.resetFields();
@@ -131,9 +150,7 @@ const ChangeUserRoleForm = ({
         `цьому керівному органі`
       );
     }
-
   };
-
 
   const addSectorAdmin = async (admin: SectorAdmin) => {
     await addSectorAdministrator(admin.sectorId, admin);
@@ -150,7 +167,6 @@ const ChangeUserRoleForm = ({
     );
   };
 
-
   const showConfirm = (
     newAdmin: GoverningBodyAdmin,
     existingAdmin: GoverningBodyAdmin
@@ -166,21 +182,21 @@ const ChangeUserRoleForm = ({
           закінчується{" "}
           <b>
             {existingAdmin.endDate === null ||
-              existingAdmin.endDate === undefined
+            existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() { },
+      onCancel() {},
       onOk() {
         addGoverningBodyAdmin(newAdmin);
         setGoverningBodiesAdmins(
-          (governingBodiesAdmins.map((x) =>
+          governingBodiesAdmins.map((x) =>
             x.userId === existingAdmin?.userId ? newAdmin : x
           )
-          ));
+        );
       },
     });
   };
@@ -200,21 +216,21 @@ const ChangeUserRoleForm = ({
           закінчується{" "}
           <b>
             {existingAdmin.endDate === null ||
-              existingAdmin.endDate === undefined
+            existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() { },
+      onCancel() {},
       onOk() {
         addSectorAdmin(newAdmin);
         setSectorsAdmins(
-          (sectorsAdmins.map((x) =>
+          sectorsAdmins.map((x) =>
             x.userId === existingAdmin?.userId ? newAdmin : x
           )
-          ));
+        );
       },
     });
   };
@@ -248,8 +264,7 @@ const ChangeUserRoleForm = ({
         addSectorAdmin(newAdmin);
         setSectorsAdmins((old: SectorAdmin[]) => [...old, newAdmin]);
       }
-    }
-    else {
+    } else {
       const newAdmin: GoverningBodyAdmin = {
         id: 0,
         userId,
@@ -273,11 +288,14 @@ const ChangeUserRoleForm = ({
         showConfirm(newAdmin, existingAdmin);
       } else {
         addGoverningBodyAdmin(newAdmin);
-        setGoverningBodiesAdmins((old: GoverningBodyAdmin[]) => [...old, newAdmin]);
+        setGoverningBodiesAdmins((old: GoverningBodyAdmin[]) => [
+          ...old,
+          newAdmin,
+        ]);
       }
       setGvbLoading(false);
-    };
-  }
+    }
+  };
 
   useEffect(() => {
     fetchData();
@@ -293,12 +311,11 @@ const ChangeUserRoleForm = ({
 
   const onAdminTypeSelect = (adminType: string) => {
     if (adminType === "Крайовий Адмін") {
-      setHideFields(true)
+      setHideFields(true);
+    } else {
+      setHideFields(false);
     }
-    else {
-      setHideFields(false)
-    }
-  }
+  };
 
   return (
     <div>
@@ -380,9 +397,7 @@ const ChangeUserRoleForm = ({
               </Select>
             </Form.Item>
           </>
-        ) : (
-          null
-        )}
+        ) : null}
 
         <Form.Item
           className={classes.formField}
