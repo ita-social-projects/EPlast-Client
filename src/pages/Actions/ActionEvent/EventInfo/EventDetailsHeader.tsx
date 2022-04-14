@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import { Typography, Descriptions } from "antd";
 import "./EventDetails.less";
-import { EventInformation } from "./EventInfo";
+import { EventInformation, EventParticipant } from "./EventInfo";
 import extendedTitleTooltip from "../../../../components/Tooltip";
 import moment from "moment";
 
@@ -71,7 +71,11 @@ const EventDetailsHeader = ({
         {renderContent(eventDateStart)}
       </Descriptions.Item>
       <Descriptions.Item label={renderLabel("Кількість учасників")}>
-        {renderContent(eventParticipants.length.toString())}
+        {renderContent(
+          eventParticipants
+            .filter((p: EventParticipant) => p.status == "Учасник")
+            .length.toString()
+        )}
       </Descriptions.Item>
       <Descriptions.Item label={renderLabel("Дата і час завершення")}>
         {renderContent(eventDateEnd)}

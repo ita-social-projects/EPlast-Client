@@ -122,14 +122,16 @@ export default function () {
           className={classes.modal}
           onCancel={() => setEventModal(false)}
           footer={[
-            <Button
-              type="primary"
-              key="submit"
-              className={classes.buttonCancel}
-              onClick={() => setEventModal(false)}
-            >
-              Закрити
-            </Button>,
+            <div>
+              <Button
+                type="primary"
+                key="submit"
+                className={classes.buttonCancel}
+                onClick={() => setEventModal(false)}
+              >
+                Закрити
+              </Button>
+            </div>
           ]}
         >
           <div className={classes.title}>

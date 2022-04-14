@@ -54,9 +54,25 @@
 }
 
 .buttonSmall {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    margin-left: 125px;
+    margin: 5px auto;
+    display: block;
+    background: #3C5438;
+    justify-content: center;
+    color: white;
+    border: none;
+    width: 51%; 
+    height: 40px;
+    outline: none;
+    text-align: center;
+    cursor: pointer;
+    align-items: center;
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+}
+
+.buttonCancell{
+    margin: 5px auto;
+    display:block;
     background: #3C5438;
     justify-content: center;
     color: white;
@@ -70,50 +86,6 @@
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
-
-.buttonCancell{
-    margin-top: 5px;
-    margin-bottom: 5px;
-    margin-left: 1px;
-    background: #3C5438;
-    justify-content: center;
-    color: white;
-    border: none;
-    width: 100%;
-    height: 40px;
-    outline: none;
-    text-align: center;
-    cursor: pointer;
-    align-items: center;
-    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
-}
-
-@media (min-width: 250px) and (max-width: 290px) { 
-    .buttonSmall{       
-            margin-left: 55px; 
-    }
- }
-@media (min-width: 300px) and (max-width: 320px) { 
-    .buttonSmall{       
-            margin-left: 65px; 
-    }
- }
- @media (min-width: 325px) and (max-width: 370px) { 
-    .buttonSmall{       
-            margin-left: 80px; 
-    }
- }
- @media (min-width: 370px) and (max-width: 400px) { 
-    .buttonSmall{       
-            margin-left: 80px; 
-    }
- }
- @media (min-width: 400px) and (max-width: 420px) { 
-    .buttonSmall{       
-            margin-left: 90px; 
-    }
- }
 
 .buttonSmallCalendar {
     margin-top: 5px;
@@ -149,7 +121,7 @@
     align-items: center;
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
-}
+} 
 
 .buttonInside {
     margin-top: 10px;
