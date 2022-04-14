@@ -412,30 +412,16 @@ const EventUser = () => {
                     Дата завершення:{" "}
                     {moment(item.eventDateEnd).format("DD.MM.YYYY HH:mm")}{" "}
                   </h2>
-                  <Button
-                    type="primary"
-                    className={classes.buttonSmall}
-                    onClick={() => history.push(`/events/details/${item.id}`)}
-                  >
-                    Деталі
-                  </Button>
-                  {item.eventStatusID !== 3 && userToken.nameid === userId && (
+
+                  <div>
                     <Button
                       type="primary"
                       className={classes.buttonSmall}
-                      onClick={() => {
-                        setShowEventEditDrawer(true);
-                        setEventId(item.id);
-                        setEventStatus(item.eventStatusID);
-                      }}
+                      onClick={() => history.push(`/events/details/${item.id}`)}
                     >
-                      Редагувати
+                      Деталі
                     </Button>
-                  )}
-                  {item.eventStatusID === 3 &&
-                    userToken.nameid === userId &&
-                    (roles.includes(Roles.Admin) ||
-                      roles.includes(Roles.GoverningBodyHead)) && (
+                    {item.eventStatusID !== 3 && userToken.nameid === userId && (
                       <Button
                         type="primary"
                         className={classes.buttonSmall}
@@ -448,6 +434,24 @@ const EventUser = () => {
                         Редагувати
                       </Button>
                     )}
+                    {item.eventStatusID === 3 &&
+                      userToken.nameid === userId &&
+                      (roles.includes(Roles.Admin) ||
+                        roles.includes(Roles.GoverningBodyHead)) && (
+                        <Button
+                          type="primary"
+                          className={classes.buttonSmall}
+                          onClick={() => {
+                            setShowEventEditDrawer(true);
+                            setEventId(item.id);
+                            setEventStatus(item.eventStatusID);
+                          }}
+                        >
+                          Редагувати
+                        </Button>
+                      )}
+                  </div>
+
                   <hr />
                 </div>
               ))}
@@ -520,21 +524,26 @@ const EventUser = () => {
               className={classes.modal}
               onCancel={() => setPlannedEventsModal(false)}
               footer={[
-                <Button
-                  type="primary"
-                  className={classes.buttonSmall}
-                  style={{ marginRight: "110px", marginLeft: "110px" }}
-                  onClick={() => history.push("/events/types")}
-                >
-                  Зголоситись на подію
-                </Button>,
-                <Button
-                  type="primary"
-                  className={classes.buttonCancell}
-                  onClick={() => setPlannedEventsModal(false)}
-                >
-                  Закрити
-                </Button>,
+                <div>
+                  <div>
+                    <Button
+                      type="primary"
+                      className={classes.buttonSmall}
+                      onClick={() => history.push("/events/types")}
+                    >
+                      Обрати подію
+                    </Button>
+                  </div>
+                  <div>
+                    <Button
+                      type="primary"
+                      className={classes.buttonCancell}
+                      onClick={() => setPlannedEventsModal(false)}
+                    >
+                      Закрити
+                    </Button>
+                  </div>
+                </div>,
               ]}
             >
               {allEvents?.planedEvents?.map((item: any) => (
