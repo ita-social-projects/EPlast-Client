@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form, Button, Upload, notification, Tooltip } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import eventsApi from "../../../../api/eventsApi";
@@ -11,6 +11,11 @@ import {
   limitNotification,
 } from "./GalleryNotifications";
 import "./EventInfo.less";
+import notificationLogic from "../../../../components/Notifications/Notification";
+import {
+  possibleFileExtensions,
+  fileIsTooBig,
+} from "../../../../components/Notifications/Messages";
 interface Props {
   eventId: number;
   updateGallery: (uploadedPictures: EventGallery[]) => void;
@@ -22,24 +27,58 @@ const formItemLayout = {
   wrapperCol: { span: 14 },
 };
 
-const normFile = (e: any) => {
-  if (Array.isArray(e)) {
-    return e;
-  }
-  return e && e.fileList;
-};
-
-const dummyRequest = ({ file, onSuccess }: any) => {
-  setTimeout(() => {
-    onSuccess("ok");
-  }, 0);
-};
-
 const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
   const [form] = Form.useForm();
+  const [disabled, setDisabled] = useState(true);
   const MaxPicturesCount: number = 15;
   const addPictures = async (eventId: number, data: FormData) => {
     return await eventsApi.uploadPictures(eventId, data);
+  };
+
+  const normFile = (e: any) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    var arrayStatuses: any[] = [];
+    for (var i of e.fileList) {
+      i.status = i.originFileObj.size <= 20971520
+                  && (i.originFileObj.type === "image/jpeg"
+                  || i.originFileObj.type === "image/jpg"
+                  || i.originFileObj.type === "image/png")
+        ? "done"
+        : "error"
+        arrayStatuses.push(i.status);
+    }
+    if (arrayStatuses.includes("error")) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+    return e && e.fileList;
+  };
+
+  const checkFile = (size: number, fileName: string) => {
+    const extension = fileName.split(".").reverse()[0].toLowerCase();
+    const isCorrectExtension =
+      extension.indexOf("jpeg") !== -1 ||
+      extension.indexOf("jpg") !== -1 ||
+      extension.indexOf("png") !== -1;
+    if (!isCorrectExtension) {
+      notificationLogic("error", possibleFileExtensions("png, jpg, jpeg"));
+    }
+
+    const isSmaller20mb = size <= 20971520;
+    if (!isSmaller20mb) {
+      notificationLogic("error", fileIsTooBig(20));
+    }
+
+    return isCorrectExtension && isSmaller20mb;
+  };
+
+  const handleUpload = async ({ file, onSuccess }: any) => {
+    setTimeout(() => {
+      onSuccess("ok");
+    }, 0);
   };
 
   const handleSubmit = async (values: any) => {
@@ -61,21 +100,25 @@ const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
           );
         } else {
           loadingNotification();
-          const data = new FormData();
-          values.upload.forEach((element: any) => {
-            data.append("files", element.originFileObj);
-          });
-          addPictures(eventId, data)
-            .then(async (response) => {
-              updateGallery(response.data);
-              notification.destroy();
-              updateNotification();
-              form.resetFields();
-            })
-            .catch(() => {
-              notification.destroy();
-              failUpdatingNotification();
-            });
+
+          const picturesArray: any = [];
+          try {
+            for (var i = 0; i < values.upload.length; i++) {
+              const data = new FormData();
+              data.append("files", values.upload[i].originFileObj);
+              await addPictures(eventId, data).then(async (response) => {
+                picturesArray.push(response.data);
+              })
+            }
+            let merget = [].concat.apply([], picturesArray);
+            updateGallery(merget);
+            notification.destroy();
+            updateNotification();
+            form.resetFields();
+          } catch {
+            notification.destroy();
+            failUpdatingNotification();
+          }
         }
       }
     } else {
@@ -109,11 +152,12 @@ const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
         }}
       >
         <Upload
+          beforeUpload={(e) => checkFile(e.size, e.name)}
           name="gallery"
           listType="picture"
           multiple={true}
           accept=".jpg,.jpeg,.png"
-          customRequest={dummyRequest}
+          customRequest={handleUpload}
         >
           <Tooltip
             placement="right"
@@ -125,9 +169,12 @@ const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
           </Tooltip>
         </Upload>
       </Form.Item>
-
       <Form.Item style={{ justifyContent: "center" }}>
-        <Button type="primary" htmlType="submit">
+        <Button
+          type="primary"
+          htmlType="submit"
+          disabled={disabled}
+        >
           Завантажити
         </Button>
       </Form.Item>
