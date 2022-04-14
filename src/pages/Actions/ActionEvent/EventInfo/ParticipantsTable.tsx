@@ -67,6 +67,7 @@ const ParticipantsTable = ({
         if (participant.participantId === participantId) {
           participant.status = newStatus;
         }
+        setRender(true);
         return participant;
       })
     );

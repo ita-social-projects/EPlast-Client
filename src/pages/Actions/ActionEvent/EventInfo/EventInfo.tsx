@@ -114,7 +114,7 @@ const EventInfo = () => {
     };
     fetchData();
     getUserAccessesForEvents(id);
-  }, [visibleDrawer, approvedEvent, render]);
+  }, [visibleDrawer, approvedEvent, render, event]);
 
   const getEventStatusId = async (eventStatus: string) => {
     await eventsApi.getEventStatusId(eventStatus).then((response) => {
