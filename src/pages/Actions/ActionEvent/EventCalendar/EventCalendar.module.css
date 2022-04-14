@@ -21,44 +21,18 @@
 }
 
 .button {
-    margin-top: 10px;
+    margin: 10px auto;
+    display:block;
     background: #3C5438;
     color: white;
     border: none;
-    width: 138px;
+    width: 51%;
     height: 40px;
     outline: none;
     text-align: center;
     cursor: pointer;
-    margin-left: 170px;
 }
 
-@media (min-width: 250px) and (max-width: 290px) { 
-    .button{       
-            margin-left: 45px; 
-    }
- }
-@media (min-width: 300px) and (max-width: 320px) { 
-    .button{       
-            margin-left: 65px; 
-    }
- }
- @media (min-width: 325px) and (max-width: 370px) { 
-    .button{       
-            margin-left: 80px; 
-    }
- }
- @media (min-width: 370px) and (max-width: 400px) { 
-    .button{       
-            margin-left: 90px; 
-    }
- }
- @media (min-width: 400px) and (max-width: 420px) { 
-    .button{       
-            margin-left: 110px; 
-    }
- }
- 
 .button:hover {
     border: none;
     outline: none;
@@ -67,8 +41,10 @@
 }
 
 .buttonCancel {
-    width: auto;
+    width: 51%;
     height: 40px;
+    margin:5px auto;
+    display:block;
     outline: none;
     text-align: center;
     cursor: pointer;
