@@ -41,13 +41,14 @@ const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
     }
     var arrayStatuses: any[] = [];
     for (var i of e.fileList) {
-      i.status = i.originFileObj.size <= 20971520
-                  && (i.originFileObj.type === "image/jpeg"
-                  || i.originFileObj.type === "image/jpg"
-                  || i.originFileObj.type === "image/png")
-        ? "done"
-        : "error"
-        arrayStatuses.push(i.status);
+      i.status =
+        i.originFileObj.size <= 20971520 &&
+        (i.originFileObj.type === "image/jpeg" ||
+          i.originFileObj.type === "image/jpg" ||
+          i.originFileObj.type === "image/png")
+          ? "done"
+          : "error";
+      arrayStatuses.push(i.status);
     }
     if (arrayStatuses.includes("error")) {
       setDisabled(true);
@@ -108,7 +109,7 @@ const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
               data.append("files", values.upload[i].originFileObj);
               await addPictures(eventId, data).then(async (response) => {
                 picturesArray.push(response.data);
-              })
+              });
             }
             let merget = [].concat.apply([], picturesArray);
             updateGallery(merget);
@@ -170,11 +171,7 @@ const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
         </Upload>
       </Form.Item>
       <Form.Item style={{ justifyContent: "center" }}>
-        <Button
-          type="primary"
-          htmlType="submit"
-          disabled={disabled}
-        >
+        <Button type="primary" htmlType="submit" disabled={disabled}>
           Завантажити
         </Button>
       </Form.Item>
