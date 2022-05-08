@@ -62,7 +62,7 @@ const DecisionTable = () => {
     setData(res);
     setLoading(false);
     setUser(roles);
-    setCanEdit(roles.includes(Roles.Admin));
+    setCanEdit(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyAdmin));
     setRegionAdm(roles.includes(Roles.OkrugaHead));
     setRegionAdmDeputy(roles.includes(Roles.OkrugaHeadDeputy));
     setCityAdm(roles.includes(Roles.CityHead));
