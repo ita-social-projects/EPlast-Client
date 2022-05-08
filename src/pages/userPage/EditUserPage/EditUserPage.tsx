@@ -14,6 +14,8 @@ import {
 } from "antd";
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
+import jwt_decode from "jwt-decode";
+import { StickyContainer } from "react-sticky";
 import styles from "./EditUserPage.module.css";
 import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
@@ -39,12 +41,10 @@ import {
   emptyInput,
   minLength,
 } from "../../../components/Notifications/Messages";
-import "../EditUserPage/EditUserPage.less";
+import "./EditUserPage.less";
 import { UpuDegree } from "../Interface/Interface";
-import jwt_decode from "jwt-decode";
 import { Roles } from "../../../models/Roles/Roles";
 import { PersonalDataContext } from "../personalData/PersonalData";
-import { StickyContainer } from "react-sticky";
 
 export default function () {
   const { userId } = useParams<{ userId: string }>();
@@ -85,7 +85,10 @@ export default function () {
       user.nameid != userId ||
       (decodedJwt[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-      ] as string[]).includes(Roles.Admin)
+      ] as string[]).includes(Roles.Admin) ||
+      (decodedJwt[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ] as string[]).includes(Roles.GoverningBodyAdmin)
     )
       id = userId;
     await userApi
