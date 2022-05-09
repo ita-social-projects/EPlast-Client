@@ -16,6 +16,10 @@
     width: 100%;
   }
 
+  .submitRow{
+    flex-direction: row-reverse;
+  }
+
   @media (max-width: 576px){
     .inputField{
     width: 100%;

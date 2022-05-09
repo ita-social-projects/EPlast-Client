@@ -323,7 +323,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         />
       </Form.Item>
 
-      <Row style={{ flexDirection: "row-reverse" }}>
+      <Row className={classes.submitRow}>
         <Button type="primary" htmlType="submit">
           Опублікувати
         </Button>
