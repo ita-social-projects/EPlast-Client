@@ -34,15 +34,10 @@ import "./AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import Spinner from "../../Spinner/Spinner";
 
-const {confirm} = Modal;
+const { confirm } = Modal;
 
 const AddGoverningBodiesSecretaryForm = (props: any) => {
-  const {
-    onAdd,
-    setAdmins,
-    admins,
-    setGoverningBodyHead,
-  } = props;
+  const { onAdd, setAdmins, admins, setGoverningBodyHead } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
   const [usersLoading, setUsersLoading] = useState<boolean>(false);
@@ -303,7 +298,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         }
       >
         <DatePicker
-          style={{ width: "100%" }}
+          className={classes.datePicker}
           disabledDate={disabledStartDate}
           onChange={(e) => setStartDate(e)}
           format="DD.MM.YYYY"
@@ -322,7 +317,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         }
       >
         <DatePicker
-          style={{ width: "100%" }}
+          className={classes.datePicker}
           disabledDate={disabledEndDate}
           format="DD.MM.YYYY"
         />

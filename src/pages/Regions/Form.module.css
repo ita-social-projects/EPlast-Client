@@ -12,6 +12,10 @@
     width:320px;
   }
 
+  .datePicker { 
+    width: 100%;
+  }
+
   @media (max-width: 576px){
     .inputField{
     width: 100%;
