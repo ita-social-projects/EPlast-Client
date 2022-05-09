@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import classes from "../../Regions/Form.module.css";
 import {
   Form,
   DatePicker,
@@ -11,16 +10,17 @@ import {
   Tooltip,
   Row,
 } from "antd";
+import moment from "moment";
+import { InfoCircleOutlined } from "@ant-design/icons";
+import classes from "../../Regions/Form.module.css";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
   addAdministrator,
   editAdministrator,
-  getAllAdmins,
 } from "../../../api/governingBodySectorsApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import userApi from "../../../api/UserApi";
-import moment from "moment";
 import {
   emptyInput,
   incorrectEmail,
@@ -32,9 +32,8 @@ import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
 import "../AddAdministratorModal/AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
-import { InfoCircleOutlined } from "@ant-design/icons";
 
-const confirm = Modal.confirm;
+const { confirm } = Modal;
 
 const AddSectorAdminForm = (props: any) => {
   const { onAdd, setAdmins, admins, setSectorHead, visibleModal } = props;

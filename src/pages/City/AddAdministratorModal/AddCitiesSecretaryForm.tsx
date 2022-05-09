@@ -1,23 +1,18 @@
 import React, { useState, useEffect } from "react";
-import classes from "../../Regions/Form.module.css";
 import { Form, DatePicker, AutoComplete, Select, Button, Row } from "antd";
-import { getCityUsers, getUserCityAccess } from "../../../api/citiesApi";
 import moment from "moment";
-import {
-  emptyInput,
-  inputOnlyWhiteSpaces,
-  maxLength,
-} from "../../../components/Notifications/Messages";
+import jwt from "jwt-decode";
+import { useParams } from "react-router-dom";
+import classes from "../../Regions/Form.module.css";
+import { getCityUsers, getUserCityAccess } from "../../../api/citiesApi";
+import { emptyInput } from "../../../components/Notifications/Messages";
 import CityAdmin from "../../../models/City/CityAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import "./AddCitiesSecretaryForm.less";
-import userApi from "../../../api/UserApi";
 import { Roles } from "../../../models/Roles/Roles";
 import CityUser from "../../../models/City/CityUser";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 import AuthStore from "../../../stores/AuthStore";
-import jwt from "jwt-decode";
-import { useParams } from "react-router-dom";
 
 type AddCitiesNewSecretaryForm = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -128,7 +123,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-       className={classes.formSelectAlignCenter}
+        className={classes.formSelectAlignCenter}
         label="Тип адміністрування"
         initialValue={
           props.admin === undefined ? "" : props.admin.adminType.adminTypeName

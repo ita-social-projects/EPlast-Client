@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
-import classes from "./Form.module.css";
 import { Form, DatePicker, AutoComplete, Select, Button, Row } from "antd";
+import moment from "moment";
+import classes from "./Form.module.css";
 import regionsApi from "../../api/regionsApi";
 import userApi from "../../api/UserApi";
-import moment from "moment";
-import {
-  emptyInput,
-  inputOnlyWhiteSpaces,
-} from "../../components/Notifications/Messages";
+import { emptyInput } from "../../components/Notifications/Messages";
 import AdminType from "../../models/Admin/AdminType";
 import RegionUser from "../../models/Region/RegionUser";
 import "./AddRegionSecretaryForm.less";
