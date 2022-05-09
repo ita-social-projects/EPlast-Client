@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import classes from "../../Regions/Form.module.css";
 import {
   Form,
   DatePicker,
@@ -10,8 +9,10 @@ import {
   Input,
   Tooltip,
   Row,
-  Col,
 } from "antd";
+import moment from "moment";
+import { InfoCircleOutlined } from "@ant-design/icons";
+import classes from "../../Regions/Form.module.css";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import {
@@ -20,7 +21,6 @@ import {
 } from "../../../api/governingBodiesApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import userApi from "../../../api/UserApi";
-import moment from "moment";
 import {
   emptyInput,
   incorrectEmail,
@@ -33,9 +33,8 @@ import { Roles } from "../../../models/Roles/Roles";
 import "./AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import Spinner from "../../Spinner/Spinner";
-import { InfoCircleOutlined } from "@ant-design/icons";
 
-const confirm = Modal.confirm;
+const {confirm} = Modal;
 
 const AddGoverningBodiesSecretaryForm = (props: any) => {
   const {
@@ -43,7 +42,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
     setAdmins,
     admins,
     setGoverningBodyHead,
-    visibleModal,
   } = props;
   const [form] = Form.useForm();
   const [startDate, setStartDate] = useState<any>();
@@ -145,7 +143,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       governingBodyId: props.governingBodyId,
       startDate: values.startDate,
       endDate: values.endDate,
-      workEmail: workEmail,
+      workEmail,
     };
     newAdmin.user.imagePath = (
       await userApi.getImage(newAdmin.user.imagePath)
@@ -199,10 +197,16 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   return loading ? (
     <Spinner />
   ) : (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form
+      name="basic"
+      labelAlign="left"
+      onFinish={handleSubmit}
+      form={form}
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 16 }}
+    >
       <Form.Item
-        className={classes.formField}
-        style={{ display: props.admin === undefined ? "flex" : "none" }}
+        className={classes.formSelectAlignCenter}
         label="Користувач"
         name="userId"
         rules={[
@@ -215,7 +219,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         <Select
           showSearch
           loading={usersLoading}
-          className={classes.inputField}
           onChange={(value) => onUserSelect(value)}
         >
           {users?.map((o) =>
@@ -238,7 +241,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         label="Тип адміністрування"
         initialValue={
           props.admin === undefined ? "" : props.admin.adminType.adminTypeName
@@ -252,7 +255,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         ]}
       >
         <AutoComplete
-          className={classes.inputField}
           options={[
             { value: Roles.GoverningBodyHead },
             { value: "Голова КПР" },
@@ -261,13 +263,13 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
             { value: "Член КПР з соціального напрямку" },
             { value: "Член КПР відповідальний за зовнішні зв'язки" },
           ]}
-          placeholder={"Тип адміністрування"}
+          placeholder="Тип адміністрування"
         />
       </Form.Item>
 
       <Form.Item
+        className={classes.formSelectAlignCenter}
         name="workEmail"
-        className={classes.formField}
         label="Електронна пошта"
         rules={[
           {
@@ -286,14 +288,12 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       >
         <Input
           placeholder="Електронна пошта"
-          className={classes.inputField}
           value={workEmail}
           onChange={(e) => setWorkEmail(e.target.value)}
         />
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
         label="Дата початку"
         name="startDate"
         initialValue={
@@ -304,7 +304,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       >
         <DatePicker
           style={{ width: "100%" }}
-          className={classes.inputField}
           disabledDate={disabledStartDate}
           onChange={(e) => setStartDate(e)}
           format="DD.MM.YYYY"
@@ -312,7 +311,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
         label="Дата кінця"
         name="endDate"
         initialValue={
@@ -324,17 +322,17 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         }
       >
         <DatePicker
-          className={classes.inputField}
+          style={{ width: "100%" }}
           disabledDate={disabledEndDate}
           format="DD.MM.YYYY"
         />
       </Form.Item>
 
-      <Form.Item style={{ textAlign: "right" }}>
+      <Row style={{ flexDirection: "row-reverse" }}>
         <Button type="primary" htmlType="submit">
           Опублікувати
         </Button>
-      </Form.Item>
+      </Row>
     </Form>
   );
 };
