@@ -194,11 +194,11 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   ) : (
     <Form
       name="basic"
-      labelAlign="left"
       onFinish={handleSubmit}
       form={form}
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
+      labelAlign="left"
     >
       <Form.Item
         className={classes.formSelectAlignCenter}

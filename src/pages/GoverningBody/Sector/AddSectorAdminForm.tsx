@@ -9,6 +9,7 @@ import {
   Button,
   Input,
   Tooltip,
+  Row,
 } from "antd";
 import adminApi from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
@@ -182,9 +183,16 @@ const AddSectorAdminForm = (props: any) => {
   }, [props]);
 
   return (
-    <Form name="basic" onFinish={handleSubmit} form={form}>
+    <Form
+      name="basic"
+      onFinish={handleSubmit}
+      form={form}
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 16 }}
+      labelAlign="left"
+    >
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
         label="Користувач"
         name="userId"
@@ -198,7 +206,6 @@ const AddSectorAdminForm = (props: any) => {
         <Select
           showSearch
           loading={usersLoading}
-          className={classes.inputField}
           onChange={(value) => onUserSelect(value)}
         >
           {users?.map((o) =>
@@ -221,7 +228,7 @@ const AddSectorAdminForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         label="Тип адміністрування"
         initialValue={
           props.admin === undefined ? "" : props.admin.adminType.adminTypeName
@@ -235,7 +242,6 @@ const AddSectorAdminForm = (props: any) => {
         ]}
       >
         <AutoComplete
-          className={classes.inputField}
           options={[
             { value: Roles.GoverningBodySectorHead },
             { value: "Голова КПР" },
@@ -250,7 +256,7 @@ const AddSectorAdminForm = (props: any) => {
 
       <Form.Item
         name="workEmail"
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         label="Електронна пошта"
         rules={[
           {
@@ -269,14 +275,13 @@ const AddSectorAdminForm = (props: any) => {
       >
         <Input
           placeholder="Електронна пошта"
-          className={classes.inputField}
           value={workEmail}
           onChange={(e) => setWorkEmail(e.target.value)}
         />
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         label="Дата початку"
         name="startDate"
         initialValue={
@@ -286,7 +291,7 @@ const AddSectorAdminForm = (props: any) => {
         }
       >
         <DatePicker
-          className={classes.inputField}
+          className={classes.datePicker}
           disabledDate={disabledStartDate}
           onChange={(e) => setStartDate(e)}
           format="DD.MM.YYYY"
@@ -294,7 +299,7 @@ const AddSectorAdminForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         label="Дата кінця"
         name="endDate"
         initialValue={
@@ -306,17 +311,17 @@ const AddSectorAdminForm = (props: any) => {
         }
       >
         <DatePicker
-          className={classes.inputField}
+          className={classes.datePicker}
           disabledDate={disabledEndDate}
           format="DD.MM.YYYY"
         />
       </Form.Item>
 
-      <Form.Item style={{ textAlign: "right" }}>
+      <Row className={classes.submitRow}>
         <Button type="primary" htmlType="submit">
           Опублікувати
         </Button>
-      </Form.Item>
+      </Row>
     </Form>
   );
 };
