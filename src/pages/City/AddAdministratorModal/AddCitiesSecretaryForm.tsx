@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import classes from "../../Regions/Form.module.css";
-import { Form, DatePicker, AutoComplete, Select, Button } from "antd";
+import { Form, DatePicker, AutoComplete, Select, Button, Row } from "antd";
 import { getCityUsers, getUserCityAccess } from "../../../api/citiesApi";
 import moment from "moment";
 import {
@@ -102,10 +102,12 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         setLoading(true);
       }}
       form={form}
-      className="formAddSecretaryModal"
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 16 }}
+      labelAlign="left"
     >
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
         label="Користувач"
         name="userId"
@@ -116,7 +118,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
           },
         ]}
       >
-        <Select showSearch className={classes.inputField}>
+        <Select showSearch>
           {members?.map((o) => (
             <Select.Option key={o.id} value={JSON.stringify(o)}>
               {o.firstName + " " + o.lastName}
@@ -126,7 +128,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+       className={classes.formSelectAlignCenter}
         label="Тип адміністрування"
         initialValue={
           props.admin === undefined ? "" : props.admin.adminType.adminTypeName
@@ -135,7 +137,6 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         rules={descriptionValidation.AdminType}
       >
         <AutoComplete
-          className={classes.inputField}
           options={[
             {
               value: Roles.CityHead,
@@ -154,7 +155,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         label="Дата початку"
         name="startDate"
         initialValue={
@@ -164,7 +165,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         }
       >
         <DatePicker
-          className={classes.inputField}
+          className={classes.datePicker}
           disabledDate={disabledStartDate}
           onChange={(e) => setStartDate(e)}
           format="DD.MM.YYYY"
@@ -172,7 +173,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         label="Дата кінця"
         name="endDate"
         initialValue={
@@ -184,17 +185,17 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         }
       >
         <DatePicker
-          className={classes.inputField}
+          className={classes.datePicker}
           disabledDate={disabledEndDate}
           format="DD.MM.YYYY"
         />
       </Form.Item>
 
-      <Form.Item style={{ textAlign: "right" }}>
+      <Row className={classes.submitRow}>
         <Button type="primary" htmlType="submit" loading={loading}>
           Опублікувати
         </Button>
-      </Form.Item>
+      </Row>
     </Form>
   );
 };
