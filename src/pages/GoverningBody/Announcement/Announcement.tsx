@@ -1,7 +1,10 @@
 import { Button, Avatar, Layout, List, Modal, Tooltip } from "antd";
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import ClickAwayListener from "react-click-away-listener";
+import jwt from "jwt-decode";
+import { Markup } from "interweave";
+import { FileImageOutlined } from "@ant-design/icons";
 import {
   addAnnouncement,
   editAnnouncement,
@@ -14,17 +17,13 @@ import AddAnnouncementModal from "./AddAnnouncementModal";
 import Spinner from "../../Spinner/Spinner";
 import notificationLogic from "../../../components/Notifications/Notification";
 import DropDown from "./DropDownAnnouncement";
-import ClickAwayListener from "react-click-away-listener";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import EditAnnouncementModal from "./EditAnnouncementModal";
 import { getUserAccess } from "../../../api/regionsBoardApi";
 import { Roles } from "../../../models/Roles/Roles";
-import jwt from "jwt-decode";
 import AuthStore from "../../../stores/AuthStore";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import UserApi from "../../../api/UserApi";
-import { Markup } from "interweave";
-import { FileImageOutlined } from "@ant-design/icons";
 import PicturesWall, { AnnouncementGallery } from "./PicturesWallModal";
 import { addSectorAnnouncement } from "../../../api/governingBodySectorsApi";
 
@@ -47,7 +46,7 @@ const Announcements = () => {
   );
   const { id, p } = useParams();
   const [pageSize, setPageSize] = useState(12);
-  const [page, setPage] = useState(+p);
+  const [page] = useState(+p);
   const [totalSize, setTotalSize] = useState<number>(0);
   const maxTextLength = 50;
 
@@ -55,10 +54,10 @@ const Announcements = () => {
     setLoading(true);
     await getAnnouncementsByPage(+p, pageSize, +id).then(async (res) => {
       setTotalSize(res.data.item2);
-      var announcements: Announcement[] = [];
+      const announcements: Announcement[] = [];
       for (var value of res.data.item1) {
         await UserApi.getImage(value.user.imagePath).then((image) => {
-          var ann: Announcement = {
+          const ann: Announcement = {
             id: value.id,
             text: value.text,
             title: value.title,
@@ -86,13 +85,8 @@ const Announcements = () => {
     setPageSize(pageSize);
   };
 
-  useEffect(() => {
-    getAnnouncements();
-    getUserAccesses();
-  }, [p, pageSize]);
-
   const getUserAccesses = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    const user: any = jwt(AuthStore.getToken() as string);
     let result: any;
     await getUserAccess(user.nameid).then((response) => {
       result = response;
@@ -116,7 +110,9 @@ const Announcements = () => {
   };
 
   const newNotification = async () => {
-    let usersId = ((await getUsers()).data as ShortUserInfo[]).map((x) => x.id);
+    const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
+      (x) => x.id
+    );
     await NotificationBoxApi.createNotifications(
       usersId,
       "Додане нове оголошення.",
@@ -131,7 +127,7 @@ const Announcements = () => {
   };
 
   const showFullAnnouncement = async (annId: number) => {
-    let pics: AnnouncementGallery[] = [];
+    const pics: AnnouncementGallery[] = [];
     await getAnnouncementsById(annId).then((response) => {
       response.data.images.map((image: any) => {
         pics.push({
@@ -167,11 +163,15 @@ const Announcements = () => {
     newText: string,
     newImages: string[]
   ) => {
-    setVisibleAddModal(false);
-    setLoading(true);
-    await editAnnouncement(id, newTitle, newText, newImages);
-    await getAnnouncements();
-    setLoading(false);
+    try {
+      setVisibleAddModal(false);
+      await editAnnouncement(id, newTitle, newText, newImages);
+      await getAnnouncements();
+      notificationLogic("success", "Оголошення змінено");
+    } catch {
+      setVisibleAddModal(false);
+      notificationLogic("error", "Поля Тема і Текст оголошення обов'язкові");
+    }
   };
 
   const handleAdd = async (
@@ -193,10 +193,16 @@ const Announcements = () => {
     setLoading(false);
     notificationLogic("success", "Оголошення опубліковано");
   };
+
   const handleDelete = (id: number) => {
     const filteredData = data.filter((d) => d.id !== id);
     setData([...filteredData]);
   };
+
+  useEffect(() => {
+    getAnnouncements();
+    getUserAccesses();
+  }, [p, pageSize]);
 
   return (
     <Layout>
@@ -261,7 +267,7 @@ const Announcements = () => {
                     ) : null}
                     <List.Item.Meta
                       className={classes.listItemMeta}
-                      title={item.firstName + " " + item.lastName}
+                      title={`${item.firstName} ${item.lastName}`}
                       description={item.date.toString().substring(0, 10)}
                       avatar={
                         <Avatar
