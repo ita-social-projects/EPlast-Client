@@ -679,10 +679,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
                   e.preventDefault()
                 }
                 onKeyPress={(e) =>
-                  (
-                    e.key === '.' ||
-                    e.key === ',') &&
-                  e.preventDefault()
+                  (e.key === "." || e.key === ",") && e.preventDefault()
                 }
                 min="2"
                 max="100"
