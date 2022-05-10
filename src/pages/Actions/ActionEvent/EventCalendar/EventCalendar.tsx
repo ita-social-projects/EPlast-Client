@@ -131,7 +131,7 @@ export default function () {
               >
                 Закрити
               </Button>
-            </div>,
+            </div>
           ]}
         >
           <div className={classes.title}>
