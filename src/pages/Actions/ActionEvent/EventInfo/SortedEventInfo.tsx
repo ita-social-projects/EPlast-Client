@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col, Tooltip, Modal, Card, List, Rate } from "antd";
 import {
   IdcardOutlined,
@@ -37,6 +37,7 @@ interface Props {
   setVisibleDrawer: (visible: boolean) => void;
   subscribeOnEvent: () => void;
   unSubscribeOnEvent: () => void;
+  setRender: (visible: boolean) => void;
 }
 
 const RenderEventIcons = (
@@ -294,6 +295,7 @@ const SortedEventInfo = ({
   unSubscribeOnEvent,
   visibleDrawer,
   setVisibleDrawer,
+  setRender,
 }: Props) => {
   const [adminsVisible, setAdminsVisibility] = useState(false);
   const { id } = useParams();
@@ -318,6 +320,10 @@ const SortedEventInfo = ({
       setLoading(true);
     });
   };
+
+  useEffect(() => {
+    setRender(true);
+  }, [event]);
 
   return (
     <Row>
