@@ -295,7 +295,7 @@ const SortedEventInfo = ({
   unSubscribeOnEvent,
   visibleDrawer,
   setVisibleDrawer,
-  setRender
+  setRender,
 }: Props) => {
   const [adminsVisible, setAdminsVisibility] = useState(false);
   const { id } = useParams();
@@ -321,10 +321,9 @@ const SortedEventInfo = ({
     });
   };
 
-  
-  useEffect(()=>{
+  useEffect(() => {
     setRender(true);
-},[event])
+  }, [event]);
 
   return (
     <Row>
