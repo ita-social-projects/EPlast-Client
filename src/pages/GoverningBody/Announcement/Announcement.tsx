@@ -27,10 +27,11 @@ import UserApi from "../../../api/UserApi";
 import PicturesWall, { AnnouncementGallery } from "./PicturesWallModal";
 import { addSectorAnnouncement } from "../../../api/governingBodySectorsApi";
 
+const classes = require("./Announcement.module.css");
+
 const { Content } = Layout;
 
 const Announcements = () => {
-  const path: string = "governingBodies/announcements";
   const history = useHistory();
   const [loading, setLoading] = useState<boolean>(false);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
@@ -40,7 +41,6 @@ const Announcements = () => {
   const [y, setY] = useState<number>(0);
   const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
   const [visibleEditModal, setVisibleEditModal] = useState<boolean>(false);
-  const classes = require("./Announcement.module.css");
   const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
     {}
   );

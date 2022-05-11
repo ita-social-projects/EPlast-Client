@@ -12,7 +12,6 @@ import {
   Badge,
   Avatar,
   List,
-  Carousel,
 } from "antd";
 import {
   EditOutlined,
@@ -22,6 +21,12 @@ import {
   FileTextOutlined,
   LockOutlined,
 } from "@ant-design/icons";
+import Paragraph from "antd/lib/typography/Paragraph";
+import jwt from "jwt-decode";
+import moment from "moment";
+import Title from "antd/lib/typography/Title";
+import { Markup } from "interweave";
+import InfiniteScroll from "react-infinite-scroll-component";
 import {
   getSectorById,
   getSectorLogo,
@@ -29,11 +34,11 @@ import {
   removeSector,
   getSectorAnnouncementsById,
   addSectorAnnouncement,
+  getSectorAnnouncementsByPage,
 } from "../../../api/governingBodySectorsApi";
 import "../GoverningBody/GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
-import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import SectorDetailDrawer from "./SectorDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
@@ -41,26 +46,22 @@ import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AuthStore from "../../../stores/AuthStore";
-import jwt from "jwt-decode";
 import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
-import Paragraph from "antd/lib/typography/Paragraph";
 import userApi from "../../../api/UserApi";
-import moment from "moment";
 import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument";
 import AddDocumentModal from "./AddDocumentModal";
 import AddSectorAdminForm from "./AddSectorAdminForm";
 import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
-import { getSectorAnnouncementsByPage } from "../../../api/governingBodySectorsApi";
 import AddAnnouncementModal from "./SectorAnnouncement/AddAnnouncementModal";
 import { getUsersByAllRoles } from "../../../api/adminApi";
-import { Markup } from "interweave";
 import { Roles } from "../../../models/Roles/Roles";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import InfiniteScroll from "react-infinite-scroll-component";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../Announcement/PicturesWallModal";
+import { addAnnouncement } from "../../../api/governingBodiesApi";
+
 const classes = require("../Announcement/Announcement.module.css");
 
 const Sector = () => {
@@ -92,7 +93,7 @@ const Sector = () => {
   const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
   const [listLoading, setListLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize] = useState(5);
 
   const deleteSector = async () => {
     await removeSector(sector.id);
@@ -100,7 +101,7 @@ const Sector = () => {
       "success",
       successfulDeleteAction("Напрям керівного органу")
     );
-    history.push("/governingBodies/" + governingBodyId);
+    history.push(`/governingBodies/${governingBodyId}`);
   };
 
   const setPhotos = async (members: SectorAdmin[], logo: string) => {
@@ -142,13 +143,33 @@ const Sector = () => {
   }
 
   const getUserAccesses = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    const user: any = jwt(AuthStore.getToken() as string);
     let result: any;
     await getUserAccess(user.nameid).then((response) => {
       result = response;
       setUserAccesses(response.data);
     });
     return result;
+  };
+
+  const loadMoreData = async () => {
+    if (listLoading) {
+      return;
+    }
+    try {
+      setListLoading(true);
+      const response = await getSectorAnnouncementsByPage(
+        page,
+        pageSize,
+        +sectorId
+      );
+      for (let i = 0; i < response.data.item2; ++i) {
+        setAnnouncements((old) => [...old, response.data.item1[i]]);
+      }
+    } finally {
+      setListLoading(false);
+      setPage(page + 1);
+    }
   };
 
   const getSector = async () => {
@@ -186,37 +207,68 @@ const Sector = () => {
     );
     return result;
   };
-  const newAnnouncementNotification = async () => {
-    let usersId = ((await getUsers()).data as ShortUserInfo[]).map((x) => x.id);
-    await NotificationBoxApi.createNotifications(
-      usersId,
-      "Додане нове оголошення.",
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/sector/announcements/${governingBodyId}/${sectorId}/1`,
-      `Переглянути`
+  const newAnnouncementNotification = async (
+    governigBodyId: number,
+    sectorId?: number
+  ) => {
+    const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
+      (x) => x.id
     );
+    if (sectorId) {
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/sector/announcements/${governigBodyId}/${sectorId}/1`,
+        `Переглянути`
+      );
+    } else {
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/governingBodies/announcements/${governigBodyId}/1`,
+        `Переглянути`
+      );
+    }
   };
 
   const onAnnouncementAdd = async (
     title: string,
     text: string,
-    images: string[]
+    images: string[],
+    gvbId: number,
+    secId: number
   ) => {
-    setVisibleAddModal(false);
-    setLoading(true);
-    newAnnouncementNotification();
-    const announcementId = (
-      await addSectorAnnouncement(title, text, images, +sectorId)
-    ).data;
-    let newAnnouncement: GoverningBodyAnnouncement = (
-      await getSectorAnnouncementsById(announcementId)
-    ).data;
-    setAnnouncements((old: GoverningBodyAnnouncement[]) => [
-      newAnnouncement,
-      ...old,
-    ]);
-    setLoading(false);
-    notificationLogic("success", "Оголошення опубліковано");
+    try {
+      setVisibleAddModal(false);
+      if (secId == sectorId) {
+        const announcementId = (
+          await addSectorAnnouncement(title, text, images, +secId)
+        ).data;
+        const newAnnouncement: GoverningBodyAnnouncement = (
+          await getSectorAnnouncementsById(announcementId)
+        ).data;
+        setAnnouncements((old: GoverningBodyAnnouncement[]) => [
+          newAnnouncement,
+          ...old,
+        ]);
+        newAnnouncementNotification(gvbId, secId);
+      } else if (secId) {
+        await addSectorAnnouncement(title, text, images, +secId);
+        newAnnouncementNotification(gvbId, secId);
+      } else {
+        await addAnnouncement(title, text, images, +gvbId);
+        newAnnouncementNotification(gvbId);
+      }
+      setVisibleAddModal(false);
+      notificationLogic("success", "Оголошення опубліковано");
+      return true;
+    } catch {
+      notificationLogic("error", "Поля Тема і Текст оголошення обов'язкові");
+      setVisibleAddModal(false);
+      return false;
+    }
   };
 
   const handleAdminAdd = () => {
@@ -224,7 +276,7 @@ const Sector = () => {
   };
 
   const showFullAnnouncement = async (annId: number) => {
-    let pics: AnnouncementGallery[] = [];
+    const pics: AnnouncementGallery[] = [];
     await getSectorAnnouncementsById(annId).then((response) => {
       response.data.images.map((image: any) => {
         pics.push({
@@ -252,26 +304,6 @@ const Sector = () => {
         icon: null,
       });
     });
-  };
-
-  const loadMoreData = async () => {
-    if (listLoading) {
-      return;
-    }
-    try {
-      setListLoading(true);
-      const response = await getSectorAnnouncementsByPage(
-        page,
-        pageSize,
-        +sectorId
-      );
-      for (let i = 0; i < response.data.item2; ++i) {
-        setAnnouncements((old) => [...old, response.data.item1[i]]);
-      }
-    } finally {
-      setListLoading(false);
-      setPage(page + 1);
-    }
   };
 
   useEffect(() => {
@@ -474,7 +506,7 @@ const Sector = () => {
                               description={item.date
                                 .toString()
                                 .substring(0, 10)}
-                            ></List.Item.Meta>
+                            />
                           </List.Item>
                         )}
                       />
@@ -704,11 +736,12 @@ const Sector = () => {
         sector={sector}
       />
       <AddAnnouncementModal
-        sectorId={sectorId}
-        governingBodyId={governingBodyId}
+        selectSectorId={sectorId}
+        selectGoverningBodyId={governingBodyId}
         setVisibleModal={setVisibleAddModal}
         visibleModal={visibleAddModal}
         onAdd={onAnnouncementAdd}
+        
       />
       <Modal
         title="Додати діловода"
@@ -725,7 +758,7 @@ const Sector = () => {
           setSectorHead={setSectorHead}
           sectorId={+sectorId}
           governingBodyId={+governingBodyId}
-        ></AddSectorAdminForm>
+        />
       </Modal>
       {userAccesses["ManipulateDocument"] ? (
         <AddDocumentModal

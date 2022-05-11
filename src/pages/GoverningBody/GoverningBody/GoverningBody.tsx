@@ -66,6 +66,7 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../Announcement/PicturesWallModal";
+
 const classes = require("../Announcement/Announcement.module.css");
 
 const GoverningBody = () => {
