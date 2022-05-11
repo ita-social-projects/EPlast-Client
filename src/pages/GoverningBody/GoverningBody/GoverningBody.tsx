@@ -168,11 +168,14 @@ const GoverningBody = () => {
     return result;
   };
 
-  const newAnnouncementNotification = async (governigBodyId: number, sectorId?: number) => {
+  const newAnnouncementNotification = async (
+    governigBodyId: number,
+    sectorId?: number
+  ) => {
     const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
       (x) => x.id
     );
-    if (sectorId){
+    if (sectorId) {
       await NotificationBoxApi.createNotifications(
         usersId,
         "Додане нове оголошення.",
@@ -203,7 +206,6 @@ const GoverningBody = () => {
       if (sectorId) {
         await addSectorAnnouncement(title, text, images, +sectorId);
         newAnnouncementNotification(gvbId, sectorId);
-
       } else if (+id === gvbId) {
         const announcementId = (
           await addAnnouncement(title, text, images, +gvbId)
@@ -214,7 +216,6 @@ const GoverningBody = () => {
           newAnnouncement,
           ...old,
         ]);
-
       } else {
         await addAnnouncement(title, text, images, +gvbId);
         newAnnouncementNotification(gvbId);

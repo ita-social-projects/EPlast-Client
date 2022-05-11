@@ -108,7 +108,7 @@ const Announcements = () => {
   const handleClickAway = () => {
     setShowDropdown(false);
   };
-  
+
   const showModal = () => {
     setVisibleAddModal(true);
   };
@@ -161,11 +161,14 @@ const Announcements = () => {
     }
   };
 
-  const newAnnouncementNotification = async (governigBodyId: number, sectorId?: number) => {
+  const newAnnouncementNotification = async (
+    governigBodyId: number,
+    sectorId?: number
+  ) => {
     const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
       (x) => x.id
     );
-    if (sectorId){
+    if (sectorId) {
       await NotificationBoxApi.createNotifications(
         usersId,
         "Додане нове оголошення.",

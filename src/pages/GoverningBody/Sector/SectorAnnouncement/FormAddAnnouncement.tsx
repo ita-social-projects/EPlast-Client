@@ -3,9 +3,7 @@ import { Form, Button, Row, Col, Upload, Select } from "antd";
 import ReactQuill from "react-quill";
 import { UploadFile } from "antd/lib/upload/interface";
 import formclasses from "./Form.module.css";
-import {
-  emptyInput,
-} from "../../../../components/Notifications/Messages";
+import { emptyInput } from "../../../../components/Notifications/Messages";
 import { GoverningBody } from "../../../../api/decisionsApi";
 import SectorProfile from "../../../../models/GoverningBody/Sector/SectorProfile";
 import { getGoverningBodiesList } from "../../../../api/governingBodiesApi";
@@ -110,7 +108,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     setSectorsLoading(true);
     try {
       form.setFieldsValue({ selectSector: undefined });
-      const {id} = JSON.parse(value.toString());
+      const { id } = JSON.parse(value.toString());
       setSelectGoverningBodyId(id);
       governingBodyChange(id);
     } finally {
@@ -120,7 +118,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 
   const onSectorSelect = async (value: any) => {
     try {
-      const {id} = JSON.parse(value.toString());
+      const { id } = JSON.parse(value.toString());
       setSelectSectorId(id);
     } catch {
       setSelectSectorId(null);

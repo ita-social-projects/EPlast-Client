@@ -741,7 +741,6 @@ const Sector = () => {
         setVisibleModal={setVisibleAddModal}
         visibleModal={visibleAddModal}
         onAdd={onAnnouncementAdd}
-        
       />
       <Modal
         title="Додати діловода"
