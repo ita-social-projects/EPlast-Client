@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { Form, DatePicker, AutoComplete, Select, Button, Row } from "antd";
+import moment from "moment";
 import classes from "./Form.module.css";
-import { Form, DatePicker, AutoComplete, Select, Button } from "antd";
 import regionsApi from "../../api/regionsApi";
 import userApi from "../../api/UserApi";
-import moment from "moment";
-import {
-  emptyInput,
-  inputOnlyWhiteSpaces,
-} from "../../components/Notifications/Messages";
+import { emptyInput } from "../../components/Notifications/Messages";
 import AdminType from "../../models/Admin/AdminType";
 import RegionUser from "../../models/Region/RegionUser";
 import "./AddRegionSecretaryForm.less";
@@ -105,10 +102,12 @@ const AddNewSecretaryForm = (props: any) => {
         setLoading(true);
       }}
       form={form}
-      className="formAddSecretaryModal"
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 16 }}
+      labelAlign="left"
     >
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
         label="Користувач"
         name="userId"
@@ -129,7 +128,7 @@ const AddNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         label="Тип адміністрування"
         initialValue={
           props.admin === undefined ? "" : props.admin.adminType.adminTypeName
@@ -138,7 +137,6 @@ const AddNewSecretaryForm = (props: any) => {
         rules={descriptionValidation.AdminType}
       >
         <AutoComplete
-          className={classes.inputField}
           options={[
             {
               value: Roles.OkrugaHead,
@@ -159,7 +157,6 @@ const AddNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
         label="Дата початку"
         name="startDate"
         initialValue={
@@ -169,7 +166,7 @@ const AddNewSecretaryForm = (props: any) => {
         }
       >
         <DatePicker
-          className={classes.inputField}
+          className={classes.datePicker}
           disabledDate={disabledStartDate}
           onChange={(e) => setStartDate(e)}
           format="DD.MM.YYYY"
@@ -177,7 +174,6 @@ const AddNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
         label="Дата кінця"
         name="endDate"
         initialValue={
@@ -189,17 +185,17 @@ const AddNewSecretaryForm = (props: any) => {
         }
       >
         <DatePicker
-          className={classes.inputField}
+          className={classes.datePicker}
           disabledDate={disabledEndDate}
           format="DD.MM.YYYY"
         />
       </Form.Item>
 
-      <Form.Item style={{ textAlign: "right" }}>
-        <Button type="primary" htmlType="submit" loading={loading}>
+      <Row className={classes.submitRow}>
+        <Button type="primary" htmlType="submit">
           Опублікувати
         </Button>
-      </Form.Item>
+      </Row>
     </Form>
   );
 };
