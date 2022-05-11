@@ -108,20 +108,7 @@ const Announcements = () => {
   const handleClickAway = () => {
     setShowDropdown(false);
   };
-
-  const newNotification = async () => {
-    const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
-      (x) => x.id
-    );
-    await NotificationBoxApi.createNotifications(
-      usersId,
-      "Додане нове оголошення.",
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `${path}/page/1`,
-      `Переглянути`
-    );
-  };
-
+  
   const showModal = () => {
     setVisibleAddModal(true);
   };
@@ -174,6 +161,29 @@ const Announcements = () => {
     }
   };
 
+  const newAnnouncementNotification = async (governigBodyId: number, sectorId?: number) => {
+    const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
+      (x) => x.id
+    );
+    if (sectorId){
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/sector/announcements/${governigBodyId}/${sectorId}/1`,
+        `Переглянути`
+      );
+    } else {
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/governingBodies/announcements/${governigBodyId}/1`,
+        `Переглянути`
+      );
+    }
+  };
+
   const handleAdd = async (
     title: string,
     text: string,
@@ -181,17 +191,26 @@ const Announcements = () => {
     gvbId: number,
     sectorId: number
   ) => {
-    setVisibleAddModal(false);
-    setLoading(true);
-    newNotification();
-    if (sectorId) {
-      await addSectorAnnouncement(title, text, images, +sectorId);
-    } else {
-      await addAnnouncement(title, text, images, +gvbId);
+    try {
+      setVisibleAddModal(false);
+      setLoading(true);
+      if (sectorId) {
+        await addSectorAnnouncement(title, text, images, +sectorId);
+        newAnnouncementNotification(gvbId, sectorId);
+      } else {
+        await addAnnouncement(title, text, images, +gvbId);
+        newAnnouncementNotification(gvbId);
+      }
+      getAnnouncements();
+      notificationLogic("success", "Оголошення опубліковано");
+      return true;
+    } catch {
+      notificationLogic("error", "Поля Тема і Текст оголошення обов'язкові");
+      setVisibleAddModal(false);
+      return false;
+    } finally {
+      setLoading(false);
     }
-    getAnnouncements();
-    setLoading(false);
-    notificationLogic("success", "Оголошення опубліковано");
   };
 
   const handleDelete = (id: number) => {

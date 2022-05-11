@@ -167,17 +167,27 @@ const GoverningBody = () => {
     return result;
   };
 
-  const newAnnouncementNotification = async () => {
+  const newAnnouncementNotification = async (governigBodyId: number, sectorId?: number) => {
     const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
       (x) => x.id
     );
-    await NotificationBoxApi.createNotifications(
-      usersId,
-      "Додане нове оголошення.",
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/governingBodies/announcements/${id}/1`,
-      `Переглянути`
-    );
+    if (sectorId){
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/sector/announcements/${governigBodyId}/${sectorId}/1`,
+        `Переглянути`
+      );
+    } else {
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/governingBodies/announcements/${governigBodyId}/1`,
+        `Переглянути`
+      );
+    }
   };
 
   const onAnnouncementAdd = async (
@@ -191,14 +201,14 @@ const GoverningBody = () => {
     try {
       if (sectorId) {
         await addSectorAnnouncement(title, text, images, +sectorId);
-        newAnnouncementNotification();
+        newAnnouncementNotification(gvbId, sectorId);
 
       } else if (+id === gvbId) {
         const announcementId = (
           await addAnnouncement(title, text, images, +gvbId)
         ).data;
         newAnnouncement = (await getAnnouncementsById(announcementId)).data;
-        newAnnouncementNotification();
+        newAnnouncementNotification(gvbId);
         setAnnouncements((old: GoverningBodyAnnouncement[]) => [
           newAnnouncement,
           ...old,
@@ -206,7 +216,7 @@ const GoverningBody = () => {
 
       } else {
         await addAnnouncement(title, text, images, +gvbId);
-        newAnnouncementNotification();
+        newAnnouncementNotification(gvbId);
       }
       setVisibleAddModal(false);
       notificationLogic("success", "Оголошення опубліковано");
