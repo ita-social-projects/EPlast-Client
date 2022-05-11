@@ -1,6 +1,8 @@
 import React from "react";
 import { Drawer } from "antd";
 import FormAddPrecaution from "./FormAddPrecaution";
+import PrecautionStore from "../PrecautionTable/PrecautionStore";
+import { createHook } from "react-sweet-state";
 
 interface Props {
   visibleModal: boolean;
@@ -16,6 +18,9 @@ const AddPrecautionModal = ({
   const handleCancel = () => {
     setVisibleModal(false);
   };
+  const useStore = createHook(PrecautionStore);
+  const [state, actions] = useStore();
+
   return (
     <Drawer
       title="Додати пересторогу"
