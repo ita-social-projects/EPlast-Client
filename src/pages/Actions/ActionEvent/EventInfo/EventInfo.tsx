@@ -114,7 +114,7 @@ const EventInfo = () => {
     };
     fetchData();
     getUserAccessesForEvents(id);
-  }, [visibleDrawer, approvedEvent, render, event]);
+  }, [visibleDrawer, approvedEvent, render]);
 
   const getEventStatusId = async (eventStatus: string) => {
     await eventsApi.getEventStatusId(eventStatus).then((response) => {
@@ -186,6 +186,7 @@ const EventInfo = () => {
             subscribeOnEvent={subscribeOnEvent}
             unSubscribeOnEvent={unSubscribeOnEvent}
             key={event.event?.eventName}
+            setRender={setRender}
           />
         </Col>
         <Col
