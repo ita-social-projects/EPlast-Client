@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Upload, Select } from "antd";
-import formclasses from "./Form.module.css";
-import {
-  emptyInput,
-  maxLength,
-} from "../../../../components/Notifications/Messages";
 import ReactQuill from "react-quill";
 import { UploadFile } from "antd/lib/upload/interface";
+import formclasses from "./Form.module.css";
+import { emptyInput } from "../../../../components/Notifications/Messages";
 import { GoverningBody } from "../../../../api/decisionsApi";
 import SectorProfile from "../../../../models/GoverningBody/Sector/SectorProfile";
 import { getGoverningBodiesList } from "../../../../api/governingBodiesApi";
@@ -32,7 +29,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 ) => {
   const { setVisibleModal, onAdd, sectorId, governingBodyId } = props;
   const [form] = Form.useForm();
-  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+  const [, setSubmitLoading] = useState<boolean>(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [gvbLoading, setGvbLoading] = useState<boolean>(false);
@@ -54,14 +51,13 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const handleSubmit = (values: any) => {
     setSubmitLoading(true);
     setVisibleModal(false);
-    form.resetFields();
     onAdd(
       values.title,
       values.text,
       photos,
       selectGoverningBodyId,
       selectSectorId
-    );
+    ).then((result: any) => (result ? form.resetFields() : null));
     setSubmitLoading(false);
   };
 
@@ -112,7 +108,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     setSectorsLoading(true);
     try {
       form.setFieldsValue({ selectSector: undefined });
-      const id: number = JSON.parse(value.toString()).id;
+      const { id } = JSON.parse(value.toString());
       setSelectGoverningBodyId(id);
       governingBodyChange(id);
     } finally {
@@ -122,7 +118,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 
   const onSectorSelect = async (value: any) => {
     try {
-      const id: number = JSON.parse(value.toString()).id;
+      const { id } = JSON.parse(value.toString());
       setSelectSectorId(id);
     } catch {
       setSelectSectorId(null);
@@ -206,7 +202,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
           <Col md={24} xs={24}>
             <Form.Item
               className={formclasses.formField}
-              initialValue={""}
+              initialValue=""
               label="Тема оголошення"
               labelCol={{ span: 24 }}
               name="title"
@@ -220,7 +216,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
           <Col md={24} xs={24}>
             <Form.Item
               className={formclasses.formField}
-              initialValue={""}
+              initialValue=""
               label="Текст оголошення"
               labelCol={{ span: 24 }}
               name="text"
@@ -238,7 +234,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
             onChange={handleUpload}
             beforeUpload={() => false}
           >
-            {"Upload"}
+            Upload
           </Upload>
         </Row>
         <Row justify="start" gutter={[12, 0]}>

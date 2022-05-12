@@ -1,39 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Form, Button, Row, Col, Drawer, Upload } from "antd";
-import formclasses from "./Form.module.css";
-import {
-  emptyInput,
-  maxLength,
-} from "../../../../components/Notifications/Messages";
-import { getSectorAnnouncementsById } from "../../../../api/governingBodySectorsApi";
 import ReactQuill from "react-quill";
+import formclasses from "./Form.module.css";
+import { getSectorAnnouncementsById } from "../../../../api/governingBodySectorsApi";
 import Spinner from "../../../Spinner/Spinner";
-import { useHistory } from "react-router-dom";
 import { descriptionValidation } from "../../../../models/GllobalValidations/DescriptionValidation";
 
-interface Props {
+type FormEditAnnouncementProps = {
   visibleModal: boolean;
   id: number;
   setVisibleModal: (visibleModal: boolean) => void;
   onEdit: (id: number, title: string, text: string, images: string[]) => void;
-}
+};
 
-const EditAnnouncementModal = ({
-  visibleModal,
-  setVisibleModal,
-  onEdit,
-  id,
-}: Props) => {
+const EditAnnouncementModal: React.FC<FormEditAnnouncementProps> = (
+  props: any
+) => {
+  const { visibleModal, id, setVisibleModal, onEdit } = props;
   const [form] = Form.useForm();
   const [text, setText] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [uploadImages, setUploadImages] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const history = useHistory();
-
-  useEffect(() => {
-    getAnnouncement(id);
-  }, [id]);
 
   function getUid() {
     return new Date().getTime();
@@ -53,12 +41,10 @@ const EditAnnouncementModal = ({
             {
               url: image.imageBase64,
               uid: getUid(),
-              type:
-                "image/" +
-                image.imageBase64.substring(
-                  image.imageBase64.indexOf(".") + 1,
-                  image.imageBase64.indexOf(";")
-                ),
+              type: `image/${image.imageBase64.substring(
+                image.imageBase64.indexOf(".") + 1,
+                image.imageBase64.indexOf(";")
+              )}`,
             },
           ]);
         });
@@ -72,6 +58,7 @@ const EditAnnouncementModal = ({
   const handleCancel = () => {
     setLoading(true);
     setVisibleModal(false);
+    form.resetFields();
     setUploadImages([]);
     setLoading(false);
   };
@@ -83,13 +70,17 @@ const EditAnnouncementModal = ({
   const handleSubmit = (values: any) => {
     setLoading(true);
     setVisibleModal(false);
-    form.resetFields();
-    let imgs = uploadImages.map((image: any) => {
+    const imgs = uploadImages.map((image: any) => {
       return image.url || image.thumbUrl;
     });
-    onEdit(id, title, text, imgs);
+    onEdit(id, values.title, values.text, imgs);
+    form.resetFields();
     setLoading(false);
   };
+
+  useEffect(() => {
+    getAnnouncement(id);
+  }, [id]);
 
   return (
     <Drawer
@@ -120,14 +111,7 @@ const EditAnnouncementModal = ({
                 name="title"
                 rules={descriptionValidation.Announcements}
               >
-                <ReactQuill
-                  theme="snow"
-                  placeholder="Введіть текст..."
-                  value={title}
-                  onChange={(str) => {
-                    setTitle(str);
-                  }}
-                />
+                <ReactQuill theme="snow" placeholder="Введіть текст..." />
               </Form.Item>
             </Col>
           </Row>
@@ -141,14 +125,7 @@ const EditAnnouncementModal = ({
                 initialValue={text}
                 rules={descriptionValidation.Announcements}
               >
-                <ReactQuill
-                  theme="snow"
-                  placeholder="Введіть текст..."
-                  value={text}
-                  onChange={(str) => {
-                    setText(str);
-                  }}
-                />
+                <ReactQuill theme="snow" placeholder="Введіть текст..." />
               </Form.Item>
             </Col>
           </Row>
@@ -160,7 +137,7 @@ const EditAnnouncementModal = ({
               onChange={handleUpload}
               beforeUpload={() => false}
             >
-              {"Upload"}
+              Upload
             </Upload>
           </Row>
           <Row justify="start" gutter={[12, 0]}>

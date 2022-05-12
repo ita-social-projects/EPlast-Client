@@ -66,6 +66,7 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../Announcement/PicturesWallModal";
+
 const classes = require("../Announcement/Announcement.module.css");
 
 const GoverningBody = () => {
@@ -167,19 +168,70 @@ const GoverningBody = () => {
     return result;
   };
 
-  const newAnnouncementNotification = async () => {
-    let usersId = ((await getUsers()).data as ShortUserInfo[]).map((x) => x.id);
-    await NotificationBoxApi.createNotifications(
-      usersId,
-      "Додане нове оголошення.",
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/announcements/page/1`,
-      `Переглянути`
+  const newAnnouncementNotification = async (
+    governigBodyId: number,
+    sectorId?: number
+  ) => {
+    const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
+      (x) => x.id
     );
+    if (sectorId) {
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/sector/announcements/${governigBodyId}/${sectorId}/1`,
+        `Переглянути`
+      );
+    } else {
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/governingBodies/announcements/${governigBodyId}/1`,
+        `Переглянути`
+      );
+    }
+  };
+
+  const onAnnouncementAdd = async (
+    title: string,
+    text: string,
+    images: string[],
+    gvbId: number,
+    sectorId: number
+  ) => {
+    let newAnnouncement: GoverningBodyAnnouncement;
+    try {
+      if (sectorId) {
+        await addSectorAnnouncement(title, text, images, +sectorId);
+        newAnnouncementNotification(gvbId, sectorId);
+      } else if (+id === gvbId) {
+        const announcementId = (
+          await addAnnouncement(title, text, images, +gvbId)
+        ).data;
+        newAnnouncement = (await getAnnouncementsById(announcementId)).data;
+        newAnnouncementNotification(gvbId);
+        setAnnouncements((old: GoverningBodyAnnouncement[]) => [
+          newAnnouncement,
+          ...old,
+        ]);
+      } else {
+        await addAnnouncement(title, text, images, +gvbId);
+        newAnnouncementNotification(gvbId);
+      }
+      setVisibleAddModal(false);
+      notificationLogic("success", "Оголошення опубліковано");
+      return true;
+    } catch {
+      notificationLogic("error", "Поля Тема і Текст оголошення обов'язкові");
+      setVisibleAddModal(false);
+      return false;
+    }
   };
 
   const showFullAnnouncement = async (annId: number) => {
-    let pics: AnnouncementGallery[] = [];
+    const pics: AnnouncementGallery[] = [];
     await getAnnouncementsById(annId).then((response) => {
       response.data.images.map((image: any) => {
         pics.push({
@@ -283,36 +335,6 @@ const GoverningBody = () => {
     }
   };
 
-  const onAnnouncementAdd = async (
-    title: string,
-    text: string,
-    images: string[],
-    gvbId: number,
-    sectorId: number
-  ) => {
-    setVisibleAddModal(false);
-    setLoading(true);
-    newAnnouncementNotification();
-    let newAnnouncement: GoverningBodyAnnouncement;
-    if (sectorId) {
-      await addSectorAnnouncement(title, text, images, +sectorId);
-    } else if (+id === gvbId) {
-      const announcementId = (
-        await addAnnouncement(title, text, images, +gvbId)
-      ).data;
-      newAnnouncement = (await getAnnouncementsById(announcementId)).data;
-      setAnnouncements((old: GoverningBodyAnnouncement[]) => [
-        newAnnouncement,
-        ...old,
-      ]);
-      getGoverningBody();
-    } else {
-      await addAnnouncement(title, text, images, +gvbId);
-    }
-    setLoading(false);
-    notificationLogic("success", "Оголошення опубліковано");
-  };
-
   const handleAdminAdd = () => {
     setVisible(false);
   };
@@ -354,7 +376,7 @@ const GoverningBody = () => {
             <Row className="governingBodyPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
                 {governingBodyLogoLoading ? (
-                  <Skeleton.Avatar active shape={"square"} size={172} />
+                  <Skeleton.Avatar active shape="square" size={172} />
                 ) : (
                   <img
                     src={governingBodyLogo64}
@@ -514,7 +536,7 @@ const GoverningBody = () => {
                     <InfiniteScroll
                       dataLength={announcements.length}
                       next={loadMoreData}
-                      hasMore={true}
+                      hasMore
                       loader={<></>}
                       scrollableTarget="scrollableDiv"
                     >
@@ -530,7 +552,7 @@ const GoverningBody = () => {
                               description={item.date
                                 .toString()
                                 .substring(0, 10)}
-                            ></List.Item.Meta>
+                            />
                           </List.Item>
                         )}
                       />
@@ -825,7 +847,7 @@ const GoverningBody = () => {
           setAdmins={setAdmins}
           setGoverningBodyHead={setGoverningBodyHead}
           governingBodyId={+id}
-        ></AddGoverningBodiesSecretaryForm>
+        />
       </Modal>
       {userAccesses["ManipulateDocument"] ? (
         <AddDocumentModal
