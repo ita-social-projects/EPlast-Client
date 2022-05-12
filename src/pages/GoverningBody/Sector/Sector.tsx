@@ -12,7 +12,6 @@ import {
   Badge,
   Avatar,
   List,
-  Carousel,
 } from "antd";
 import {
   EditOutlined,
@@ -22,6 +21,12 @@ import {
   FileTextOutlined,
   LockOutlined,
 } from "@ant-design/icons";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Markup } from "interweave";
+import moment from "moment";
+import Paragraph from "antd/lib/typography/Paragraph";
+import jwt from "jwt-decode";
+import Title from "antd/lib/typography/Title";
 import {
   getSectorById,
   getSectorLogo,
@@ -33,7 +38,6 @@ import {
 import "../GoverningBody/GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
-import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import SectorDetailDrawer from "./SectorDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
@@ -41,11 +45,8 @@ import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AuthStore from "../../../stores/AuthStore";
-import jwt from "jwt-decode";
 import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
-import Paragraph from "antd/lib/typography/Paragraph";
 import userApi from "../../../api/UserApi";
-import moment from "moment";
 import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument";
 import AddDocumentModal from "./AddDocumentModal";
 import AddSectorAdminForm from "./AddSectorAdminForm";
@@ -53,11 +54,9 @@ import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBo
 import { getSectorAnnouncementsByPage } from "../../../api/governingBodySectorsApi";
 import AddAnnouncementModal from "./SectorAnnouncement/AddAnnouncementModal";
 import { getUsersByAllRoles } from "../../../api/adminApi";
-import { Markup } from "interweave";
 import { Roles } from "../../../models/Roles/Roles";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import InfiniteScroll from "react-infinite-scroll-component";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../Announcement/PicturesWallModal";
@@ -217,6 +216,7 @@ const Sector = () => {
     ]);
     setLoading(false);
     notificationLogic("success", "Оголошення опубліковано");
+    getSector();
   };
 
   const handleAdminAdd = () => {
