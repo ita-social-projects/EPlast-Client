@@ -376,7 +376,7 @@ const GoverningBody = () => {
             <Row className="governingBodyPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
                 {governingBodyLogoLoading ? (
-                  <Skeleton.Avatar active shape={"square"} size={172} />
+                  <Skeleton.Avatar active shape="square" size={172} />
                 ) : (
                   <img
                     src={governingBodyLogo64}
@@ -536,7 +536,7 @@ const GoverningBody = () => {
                     <InfiniteScroll
                       dataLength={announcements.length}
                       next={loadMoreData}
-                      hasMore={true}
+                      hasMore
                       loader={<></>}
                       scrollableTarget="scrollableDiv"
                     >

@@ -341,7 +341,7 @@ const Sector = () => {
             <Row className="governingBodyPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
                 {sectorLogoLoading ? (
-                  <Skeleton.Avatar active shape={"square"} size={172} />
+                  <Skeleton.Avatar active shape="square" size={172} />
                 ) : (
                   <img
                     src={sectorLogo64}
@@ -489,7 +489,7 @@ const Sector = () => {
                     <InfiniteScroll
                       dataLength={announcements.length}
                       next={loadMoreData}
-                      hasMore={true}
+                      hasMore
                       loader={<></>}
                       scrollableTarget="scrollableDiv"
                     >
@@ -622,11 +622,11 @@ const Sector = () => {
                 className="governingBodyInfoButton"
                 onClick={() =>
                   history.push(
-                    "/governingBodies/" +
-                      governingBodyId +
-                      "/sectors/" +
-                      sector.id +
-                      "/administration"
+                    `/governingBodies/${ 
+                      governingBodyId 
+                      }/sectors/${ 
+                      sector.id 
+                      }/administration`
                   )
                 }
               >
