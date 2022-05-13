@@ -3,8 +3,8 @@ import { Drawer } from "antd";
 import FormAddAnnouncement from "./FormAddAnnouncement";
 
 interface Props {
-  sectorId: number;
-  governingBodyId: number;
+  selectSectorId: number;
+  selectGoverningBodyId: number;
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: (
@@ -17,8 +17,8 @@ interface Props {
 }
 
 const AddAnnouncementModal = ({
-  sectorId,
-  governingBodyId,
+  selectSectorId,
+  selectGoverningBodyId,
   visibleModal,
   setVisibleModal,
   onAdd,
@@ -39,8 +39,8 @@ const AddAnnouncementModal = ({
       <FormAddAnnouncement
         setVisibleModal={setVisibleModal}
         onAdd={onAdd}
-        sectorId={sectorId}
-        governingBodyId={governingBodyId}
+        sectorId={selectSectorId}
+        governingBodyId={selectGoverningBodyId}
       />
     </Drawer>
   );

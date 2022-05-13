@@ -1,7 +1,6 @@
 import React from "react";
 import { Drawer } from "antd";
 import FormAddAnnouncement from "./FormAddAnnouncement";
-import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
 
 interface Props {
   governingBodyId: number;
