@@ -257,7 +257,11 @@ const RenderRatingSystem = ({
   }
 };
 
-const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any, canViewAdminProfiles: boolean) => {
+const RenderAdminCards = (
+  eventAdmins: EventAdmin[],
+  visibleDrawer: any,
+  canViewAdminProfiles: boolean
+) => {
   const history = useHistory();
   return (
     <List
@@ -275,10 +279,14 @@ const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any, canView
       renderItem={(item) => (
         <List.Item>
           <Card
-            hoverable = {canViewAdminProfiles}
+            hoverable={canViewAdminProfiles}
             title={item.adminType}
             cover={<img alt="example" src={EventAdminLogo} />}
-            onClick={() => canViewAdminProfiles? history.push(`/userpage/main/${item.userId}`) : null }
+            onClick={() =>
+              canViewAdminProfiles
+                ? history.push(`/userpage/main/${item.userId}`)
+                : null
+            }
             className={canViewAdminProfiles ? "" : "hovering-cardbody"}
           >
             <div>{item.fullName}</div>
@@ -288,7 +296,6 @@ const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any, canView
     />
   );
 };
-
 
 const SortedEventInfo = ({
   userAccesses,
@@ -359,7 +366,11 @@ const SortedEventInfo = ({
           setAdminsVisibility(false);
         }}
       >
-        {RenderAdminCards(event.event.eventAdmins, visibleDrawer, canViewAdminProfiles)}
+        {RenderAdminCards(
+          event.event.eventAdmins,
+          visibleDrawer,
+          canViewAdminProfiles
+        )}
       </Modal>
       <EventEditDrawer
         id={id}

@@ -133,10 +133,10 @@ const EventInfo = () => {
     });
   };
 
-  const getUserRoles = () =>{
+  const getUserRoles = () => {
     let roles = UserApi.getActiveUserRoles();
-    setUserRegisterUser(roles.includes(Roles.RegisteredUser))
-  }
+    setUserRegisterUser(roles.includes(Roles.RegisteredUser));
+  };
 
   const search = (value: any) => {
     const filteredTable = baseData.filter((item: any) =>
