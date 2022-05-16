@@ -257,8 +257,6 @@ const RenderRatingSystem = ({
   }
 };
 
-const clazz = null;
-
 const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any, canViewAdminProfiles: boolean) => {
   const history = useHistory();
   return (
