@@ -109,14 +109,18 @@ const createNotifications = async (
   let notifications: UserNotificationPost[] = [];
 
   for (let i = 0; i < userIds.length; i++) {
-    notifications.push({
+    if(userIds[i]!=null)
+    {
+      notifications.push({
       notificationTypeId:
         NotifiType !== 0 ? NotifiType : NotificationTypes.Default,
       message: message,
       ownerUserId: userIds[i],
       senderLink: senderLink ? senderLink : "",
       senderName: senderName ? senderName : "",
-    });
+      });
+    }
+    
   }
 
   await postUserNotifications(notifications);
