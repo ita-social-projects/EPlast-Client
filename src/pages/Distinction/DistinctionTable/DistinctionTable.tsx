@@ -245,42 +245,40 @@ const DistinctionTable = () => {
               />
             </Col>
           </Row>
-          {
-            <div>
-              <Table
-                className={classes.table}
-                dataSource={distinctions}
-                columns={columns}
-                scroll={{ x: 1300 }}
-                onRow={(record) => {
-                  return {
-                    onClick: () => {
-                      setShowDropdown(false);
-                    },
-                    onContextMenu: (event) => {
-                      event.preventDefault();
-                      setShowDropdown(true);
-                      setRecordObj(record.id);
-                      setUserId(record.userId);
-                      setX(event.pageX);
-                      setY(event.pageY);
-                    },
-                  };
-                }}
-                pagination={{
-                  current: page,
-                  pageSize: pageSize,
-                  total: total,
-                  showLessItems: true,
-                  responsive: true,
-                  showSizeChanger: true,
-                }}
-                onChange={(...args) => tableSettings(args)}
-                bordered
-                rowKey="id"
-              />
-            </div>
-          }
+          <div>
+            <Table
+              className={classes.table}
+              dataSource={distinctions}
+              columns={columns}
+              scroll={{ x: 1300 }}
+              onRow={(record) => {
+                return {
+                  onClick: () => {
+                    setShowDropdown(false);
+                  },
+                  onContextMenu: (event) => {
+                    event.preventDefault();
+                    setShowDropdown(true);
+                    setRecordObj(record.id);
+                    setUserId(record.userId);
+                    setX(event.pageX);
+                    setY(event.pageY);
+                  },
+                };
+              }}
+              pagination={{
+                current: page,
+                pageSize: pageSize,
+                total: total,
+                showLessItems: true,
+                responsive: true,
+                showSizeChanger: true,
+              }}
+              onChange={(...args) => tableSettings(args)}
+              bordered
+              rowKey="id"
+            />
+          </div>
           <ClickAwayListener onClickAway={handleClickAway}>
             <DropDownDistinctionTable
               showDropdown={showDropdown}
