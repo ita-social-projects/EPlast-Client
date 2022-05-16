@@ -63,7 +63,7 @@ const UsersTable = () => {
   const [dynamicDegrees, setDynamicDegrees] = useState<any[]>([]);
   const [form] = Form.useForm();
   const [canView, setCanView] = useState<boolean>(false);
-  const [tabList, setTabList] = useState<any[]>([])
+  const [tabList, setTabList] = useState<any[]>([]);
   const [, forceUpdate] = useState({});
   const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
   const [isInactive, setIsInactive] = useState(false);
@@ -208,19 +208,26 @@ const UsersTable = () => {
           roles.includes(Roles.PlastMember) ||
           roles.includes(Roles.Supporter)
       );
-      let listOfTabs = [{
-        key: "confirmed",
-        tab: "Всі користувачі",
-      },];
-      if(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyAdmin))
-      listOfTabs.push({
-        key: "interested",
-        tab: "Зацікавлені",
-      },
-      {
-        key: "unconfirmed",
-        tab: "Непідтверджені",
-      },)
+      let listOfTabs = [
+        {
+          key: "confirmed",
+          tab: "Всі користувачі",
+        },
+      ];
+      if (
+        roles.includes(Roles.Admin) ||
+        roles.includes(Roles.GoverningBodyAdmin)
+      )
+        listOfTabs.push(
+          {
+            key: "interested",
+            tab: "Зацікавлені",
+          },
+          {
+            key: "unconfirmed",
+            tab: "Непідтверджені",
+          }
+        );
       setTabList(listOfTabs);
       setUsers(response.data.users);
       setTotal(response.data.total);
@@ -406,8 +413,6 @@ const UsersTable = () => {
       }
     }
   };
-
-  
 
   const onTabChange = async (key: string) => {
     setPage(1);

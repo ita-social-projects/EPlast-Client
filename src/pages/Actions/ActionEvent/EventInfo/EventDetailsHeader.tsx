@@ -10,15 +10,19 @@ const { Text } = Typography;
 
 function convertToURL(textEntered: string) {
   const matches = textEntered.match(/\bhttps?:\/\/\S+/gi);
-  return matches? matches[0] : "";
+  return matches ? matches[0] : "";
 }
 
 export function extendedLocationTooltip(number: number, text: string) {
   return text?.length > number ? (
     <>
-    <Tooltip title={text}>
-      <span><a href={convertToURL(text)} target="_blank" className="url">{text}</a></span>
-    </Tooltip>
+      <Tooltip title={text}>
+        <span>
+          <a href={convertToURL(text)} target="_blank" className="url">
+            {text}
+          </a>
+        </span>
+      </Tooltip>
     </>
   ) : (
     text
@@ -31,13 +35,13 @@ const renderLabel = (name: string): ReactNode => (
   <Text className="eventLabel">{name}</Text>
 );
 const renderLocationContent = (text: string): ReactNode => (
-  <Text className="event-data-input"> 
+  <Text className="event-data-input">
     {extendedLocationTooltip(textMaxLength, text)}
   </Text>
 );
 
 const renderContent = (text: string): ReactNode => (
-  <Text className="event-data-input"> 
+  <Text className="event-data-input">
     {extendedTitleTooltip(textMaxLength, text)}
   </Text>
 );
