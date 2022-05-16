@@ -1,22 +1,47 @@
 import React, { ReactNode } from "react";
-import { Typography, Descriptions } from "antd";
+import { Typography, Descriptions, Tooltip } from "antd";
 import "./EventDetails.less";
 import { EventInformation, EventParticipant } from "./EventInfo";
 import extendedTitleTooltip from "../../../../components/Tooltip";
+import "./EventDetailsHeader.less";
 import moment from "moment";
 
 const { Text } = Typography;
+
+function convertToURL(textEntered: string) {
+  const matches = textEntered.match(/\bhttps?:\/\/\S+/gi);
+  return matches? matches[0] : "";
+}
+
+export function extendedLocationTooltip(number: number, text: string) {
+  return text?.length > number ? (
+    <>
+    <Tooltip title={text}>
+      <span><a href={convertToURL(text)} target="_blank" className="url">{text}</a></span>
+    </Tooltip>
+    </>
+  ) : (
+    text
+  );
+}
 
 const textMaxLength = 16;
 const textMaxLengthDesc = 200;
 const renderLabel = (name: string): ReactNode => (
   <Text className="eventLabel">{name}</Text>
 );
+const renderLocationContent = (text: string): ReactNode => (
+  <Text className="event-data-input"> 
+    {extendedLocationTooltip(textMaxLength, text)}
+  </Text>
+);
+
 const renderContent = (text: string): ReactNode => (
-  <Text className="event-data-input">
+  <Text className="event-data-input"> 
     {extendedTitleTooltip(textMaxLength, text)}
   </Text>
 );
+
 const renderContentMaxlength = (text: string): ReactNode => (
   <Text className="event-data-input">
     {extendedTitleTooltip(textMaxLengthDesc, text)}
@@ -81,7 +106,7 @@ const EventDetailsHeader = ({
         {renderContent(eventDateEnd)}
       </Descriptions.Item>
       <Descriptions.Item label={renderLabel("Локація")}>
-        {renderContent(eventLocation)}
+        {renderLocationContent(eventLocation)}
       </Descriptions.Item>
       <Descriptions.Item label={renderLabel("Призначена для")} span={3}>
         {renderContent(forWhom)}
