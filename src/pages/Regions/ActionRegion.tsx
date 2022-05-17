@@ -10,10 +10,10 @@ const classes = require("./ActionRegion.module.css");
 
 const ActionRegion = () => {
   const [SwitchValue, setSwitchValue] = useState<boolean>(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>();
+  const [canArchive, setCanArchive] = useState<boolean>();
   const checkAccessToManage = () => {
     let roles = UserApi.getActiveUserRoles();
-    setIsAdmin(roles.includes(Roles.Admin));
+    setCanArchive(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyAdmin));
   };
 
   const onChange = () => {
@@ -26,7 +26,7 @@ const ActionRegion = () => {
 
   return (
     <div>
-      {isAdmin ? (
+      {canArchive ? (
         <p className={classes.swapper}>
           {" "}
           Показати неактивні округи: <Switch onChange={onChange} />
