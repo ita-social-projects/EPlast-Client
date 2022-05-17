@@ -44,7 +44,6 @@ const FormAddPlastDegree = ({
     UpdateData
   } = useContext(PersonalDataContext);
 
-
   const handleFinish = async (info: any) => {
     const plastDegreeId = filtredDegrees.find(
       (item) => item.name === "Пластприят"
@@ -54,22 +53,21 @@ const FormAddPlastDegree = ({
       plastDegreeId: info.plastDegree,
       dateStart: info.datepickerStart._d,
       userId: userId,
-      
     };
     setVisibleModal(false);
     visiableDegree.current = false;
     visiableCities.current = false;
   
-    const cityMember1 : CityMember =  (await addFollowerWithId(info.city,userId)).data;
-    await toggleMemberStatus(cityMember1.id);
-
+    const newCityFollower : CityMember =  (await addFollowerWithId(info.city,userId)).data;
+    await toggleMemberStatus(newCityFollower.id);
     await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
     handleAddDegree();
     form.resetFields();
     resetAvailablePlastDegree();
-   
-    if( UpdateData){  await UpdateData()};
-  
+    if( UpdateData)
+    {  
+      await UpdateData()
+    };
     await NotificationBoxApi.createNotifications(
       [userId],
       `Вам було надано новий ступінь в `,
@@ -108,7 +106,6 @@ const FormAddPlastDegree = ({
       form.resetFields();
       visiableDegree.current = false;
       visiableCities.current = false;
-    
     }
   }, [cancel]);
 
