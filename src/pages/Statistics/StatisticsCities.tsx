@@ -177,7 +177,8 @@ const StatisticsCities = () => {
       let response = await AnnualReportApi.getCities();
       let cities = response.data as City[];
       setCities(
-        cities.map((item) => {
+        cities.sort((a: City, b: City) => a.name.localeCompare(b.name))
+        .map((item) => {
           return {
             label: item.name,
             value: item.id,
