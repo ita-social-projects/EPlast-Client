@@ -9,19 +9,7 @@ interface Props {
   Precaution: UserPrecaution;
   showModal: boolean;
   setShowModal: (showModal: boolean) => void;
-  onEdit: (
-    id: number,
-    Precaution: Precaution,
-    date: Date,
-    endDate: Date,
-    isActive: boolean,
-    reason: string,
-    status: string,
-    reporter: string,
-    number: number,
-    user: any,
-    userId: string
-  ) => void;
+  onEdit: (userPrecaution: UserPrecaution) => void;
 }
 const EditPrecautionModal = ({
   record,

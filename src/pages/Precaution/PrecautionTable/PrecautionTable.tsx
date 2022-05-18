@@ -21,6 +21,7 @@ import {
 } from "../../../components/Notifications/Messages";
 import { Roles } from "../../../models/Roles/Roles";
 import "./Filter.less";
+import UserPrecaution from "../Interfaces/UserPrecaution";
 const { Content } = Layout;
 
 const PrecautionTable = () => {
@@ -32,8 +33,8 @@ const PrecautionTable = () => {
   roles =
     curToken !== null
       ? (user[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] as string[])
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ] as string[])
       : [""];
   const [recordObj, setRecordObj] = useState<any>(0);
   const [isRecordActive, setIsRecordActive] = useState<boolean>(false);
@@ -188,20 +189,22 @@ const PrecautionTable = () => {
   };
 
   const handleEdit = (
-    id: number,
-    precaution: Precaution,
-    date: Date,
-    endDate: Date,
-    isActive: boolean,
-    reason: string,
-    status: string,
-    reporter: string,
-    number: number,
-    user: any,
-    userId: string
+    userPrecaution: UserPrecaution
   ) => {
     /* eslint no-param-reassign: "error" */
+    const {
+      id,
+      date,
+      precaution,
+      endDate,
+      isActive,
+      reason,
+      reporter,
+      status,
+      number } = userPrecaution;
+
     const editedData = precautions.filter((d) => {
+
       if (d.id === id) {
         d.precautionName = precaution.name;
         d.date = date;
@@ -268,44 +271,42 @@ const PrecautionTable = () => {
               />
             </Col>
           </Row>
-          {
-            <div>
-              <Table
-                className={classes.table}
-                dataSource={precautions}
-                columns={columns}
-                scroll={{ x: 1300 }}
-                onRow={(record) => {
-                  return {
-                    onClick: () => {
-                      setShowDropdown(false);
-                    },
-                    onContextMenu: (event) => {
-                      event.preventDefault();
-                      setShowDropdown(true);
-                      setRecordObj(record.id);
-                      setIsRecordActive(record.isActive);
-                      setUserId(record.userId);
-                      setX(event.pageX);
-                      setY(event.pageY);
-                    },
-                  };
-                }}
-                pagination={{
-                  current: page,
-                  pageSize: pageSize,
-                  total: total,
-                  showLessItems: true,
-                  responsive: true,
-                  showSizeChanger: true,
-                }}
-                onChange={(...args) => tableSettings(args)}
-                loading={loading}
-                bordered
-                rowKey="id"
-              />
-            </div>
-          }
+          <div>
+            <Table
+              className={classes.table}
+              dataSource={precautions}
+              columns={columns}
+              scroll={{ x: 1300 }}
+              onRow={(record) => {
+                return {
+                  onClick: () => {
+                    setShowDropdown(false);
+                  },
+                  onContextMenu: (event) => {
+                    event.preventDefault();
+                    setShowDropdown(true);
+                    setRecordObj(record.id);
+                    setIsRecordActive(record.isActive);
+                    setUserId(record.userId);
+                    setX(event.pageX);
+                    setY(event.pageY);
+                  },
+                };
+              }}
+              pagination={{
+                current: page,
+                pageSize: pageSize,
+                total: total,
+                showLessItems: true,
+                responsive: true,
+                showSizeChanger: true,
+              }}
+              onChange={(...args) => tableSettings(args)}
+              loading={loading}
+              bordered
+              rowKey="id"
+            />
+          </div>
           <ClickAwayListener onClickAway={handleClickAway}>
             <DropDownPrecautionTable
               showDropdown={showDropdown}

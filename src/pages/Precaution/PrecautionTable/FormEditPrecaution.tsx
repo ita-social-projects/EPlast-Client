@@ -32,19 +32,7 @@ interface Props {
   record: number;
   Precaution: UserPrecaution;
   setShowModal: (showModal: boolean) => void;
-  onEdit: (
-    id: number,
-    Precaution: Precaution,
-    date: Date,
-    endDate: Date,
-    isActive: boolean,
-    reason: string,
-    status: string,
-    reporter: string,
-    number: number,
-    user: any,
-    userId: string
-  ) => void;
+  onEdit: (userPrecuation: UserPrecaution) => void;
 }
 
 const FormEditPrecaution = ({
@@ -118,37 +106,28 @@ const FormEditPrecaution = ({
   };
 
   const handleFinish = async (dist: any) => {
-    const newPrecaution: any = {
+    const newPrecaution: UserPrecaution = {
       id: record,
-      PrecautionId: distValue.id,
-      Precaution: distValue,
+      precautionId: distValue.id,
+      precaution: distValue,
       user: userValue,
       userId: userValue.id,
-      status: dist?.status,
-      date: dist?.date,
+      status: dist.status,
+      date: dist.date,
       endDate: Precaution.endDate,
-      isActive: dist?.status === "Скасовано" ? false : true,
-      reporter: dist?.reporter,
-      reason: dist?.reason,
-      number: dist?.number,
+      isActive: dist.status === "Скасовано" ? false : true,
+      reporter: dist.reporter,
+      reason: dist.reason,
+      number: dist.number,
     };
 
     await precautionApi.editUserPrecaution(newPrecaution);
+    const updatedPrecaution: UserPrecaution = (await precautionApi.getUserPrecautionById(record)).data;
+
     setShowModal(false);
     form.resetFields();
-    onEdit(
-      newPrecaution.id,
-      newPrecaution.Precaution,
-      newPrecaution.date,
-      newPrecaution.endDate,
-      newPrecaution.isActive,
-      newPrecaution.reason,
-      newPrecaution.status,
-      newPrecaution.reporter,
-      newPrecaution.number,
-      newPrecaution.user,
-      newPrecaution.user.id
-    );
+
+    onEdit(updatedPrecaution);
   };
 
   return (
