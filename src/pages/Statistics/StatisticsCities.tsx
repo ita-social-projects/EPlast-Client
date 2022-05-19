@@ -30,6 +30,7 @@ import "./StatisticsCities.less";
 import { shouldContain } from "../../components/Notifications/Messages";
 import {
   ClearOutlined,
+  CloseOutlined,
   InfoCircleOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
@@ -569,12 +570,29 @@ const StatisticsCities = () => {
           !dataChartShow ||
           title === undefined ||
           onClickRow === null ? (
-            ""
+            <div className="chartPlaceholderScroll" ref={chartRef}></div> // dealing with scrolling issue
           ) : (
             <div className="chart" ref={chartRef}>
               <h1>
                 {title.cityName}, {title.year}
               </h1>
+              <Row
+                style={{
+                  float: "right",
+                  marginRight: "20px",
+                  marginTop: "-25px",
+                }}
+              >
+                <AntTooltip title="Сховати">
+                  <CloseOutlined
+                    onClick={() => setOnClickRow(null)}
+                    style={{
+                      fontSize: "large",
+                      cursor: "pointer",
+                    }}
+                  />
+                </AntTooltip>
+              </Row>
               <Chart height={400} data={dataChart} justify="center" autoFit>
                 <Coordinate type="theta" radius={0.75} />
                 <Tooltip showTitle={false} />
@@ -641,10 +659,7 @@ const StatisticsCities = () => {
                       setDataFromRow(cityRecord);
                       setOnClickRow(index);
                       chartRef.current?.scrollIntoView({behavior: "smooth", block: "center"});
-                    },
-                    onDoubleClick: async () => {
-                      setOnClickRow(null);
-                    },
+                    }
                   };
                 }}
                 pagination={{
