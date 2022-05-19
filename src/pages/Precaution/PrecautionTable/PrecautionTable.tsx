@@ -10,6 +10,8 @@ import PrecautionStore from "../PrecautionTable/PrecautionStore";
 import { Roles } from "../../../models/Roles/Roles";
 import "./Filter.less";
 import { createHook } from "react-sweet-state";
+import AddPrecautionModal from "./AddPrecautionModal";
+import EditPrecautionTypesModal from "./EditPrecautionTypesModal";
 const { Content } = Layout;
 
 const PrecautionTable = () => {
@@ -126,22 +128,13 @@ const PrecautionTable = () => {
               onEdit={actions.handleEditPrecautionTable}
             />
           </ClickAwayListener>
-
           
+          <AddPrecautionModal/>
+          <EditPrecautionTypesModal/>                    
         </>
       </Content>
     </Layout>
   );
 };
-/*
-<AddPrecautionModal
-            setVisibleModal={setVisibleModal}
-            visibleModal={visibleModal}
-            onAdd={handleAdd}
-          />
-          <EditPrecautionTypesModal
-            setVisibleModal={setVisibleModalEditDist}
-            visibleModal={visibleModalEditDist}
-          />
-*/
+
 export default PrecautionTable;

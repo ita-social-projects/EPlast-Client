@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { List, Tooltip, Typography } from "antd";
-import Precaution from "../Interfaces/Precaution";
-import precautionApi from "../../../api/precautionApi";
 import {
   EditOutlined,
   DeleteOutlined,
@@ -10,83 +8,23 @@ import {
   PlusOutlined,
   HighlightOutlined,
 } from "@ant-design/icons";
-import notificationLogic from "../../../components/Notifications/Notification";
 import classes from "./FormEdit.module.css";
 import Item from "antd/lib/list/Item";
 import DeleteTypeConfirm from "./DeleteTypeConfirm";
 import Search from "antd/lib/input/Search";
 import Text from "antd/lib/typography/Text";
+import { createHook } from "react-sweet-state";
+import PrecautionStore from "./PrecautionStore";
 
-type FormEditPrecautionTypesProps = {
-  setVisibleModal: (visibleModal: boolean) => void;
-};
-
-let defaultDist: Precaution = {
-  name: "",
-  id: 0,
-};
-
-const FormEditPrecautionTypes: React.FC<FormEditPrecautionTypesProps> = () => {
-  const [distData, setDistData] = useState<Precaution[]>([defaultDist]);
-  const [title, setTitle] = useState("");
-  const [curDist, setCurDist] = useState<Precaution>(defaultDist);
-  const [editVisible, setEditVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [visRule, setVisRule] = useState(false);
-  const fetchData = async () => {
-    const distData = (await precautionApi.getPrecautions()).data;
-    setDistData(distData);
-  };
+const FormEditPrecautionTypes = () => {
+  const useStore = createHook(PrecautionStore);
+  const [state, actions] = useStore();
 
   useEffect(() => {
-    setLoading(true);
-    fetchData();
-    setLoading(false);
+    actions.setEditLoading(true);
+    actions.editFetchData();
+    actions.setEditLoading(false);
   }, []);
-
-  const handleDelete = (id: number) => {
-    const filteredData = distData.filter((d: { id: number }) => d.id !== id);
-    setDistData([...filteredData]);
-    setEditVisible(false);
-    notificationLogic("success", "Тип перестороги успішно видалено!");
-  };
-
-  const handleAdd = async () => {
-    const newPrecaution: Precaution = {
-      id: 0,
-      name: title,
-    };
-    if (title.length != 0) {
-      await precautionApi.addPrecaution(newPrecaution);
-      const res: Precaution[] = (await precautionApi.getPrecautions()).data;
-      setDistData(res);
-      setTitle("");
-      notificationLogic("success", "Тип перестороги додано!");
-    } else {
-      notificationLogic("error", "Хибна назва");
-    }
-  };
-
-  const showEdit = async (id: number) => {
-    const Precaution = (await precautionApi.getPrecautionById(id)).data;
-    setCurDist(Precaution);
-    if (curDist.id != id) {
-      setEditVisible(true);
-    } else {
-      setEditVisible(false);
-      setCurDist(defaultDist);
-    }
-  };
-
-  const handleEdit = async () => {
-    if (curDist.name.length !== 0) {
-      await precautionApi.editPrecaution(curDist);
-      notificationLogic("success", "Тип перестороги успішно змінено!");
-      fetchData();
-      setCurDist(defaultDist);
-      setEditVisible(false);
-    } else notificationLogic("error", "Хибна назва");
-  };
 
   return (
     <div>
@@ -96,20 +34,21 @@ const FormEditPrecautionTypes: React.FC<FormEditPrecautionTypesProps> = () => {
         footer={null}
         bordered
         rowKey="id"
-        dataSource={distData}
+        loading={state.editLoading}
+        dataSource={state.editDistData}
         renderItem={(item) => (
           <List.Item
             actions={[
               <Tooltip title="Редагувати перестороги">
                 <EditOutlined
                   className={classes.editIcon}
-                  onClick={() => showEdit(item.id)}
+                  onClick={() => actions.editShowEdit(item.id)}
                 />
               </Tooltip>,
               <Tooltip title="Видалити пересторогу">
                 <DeleteOutlined
                   className={classes.deleteIcon}
-                  onClick={() => DeleteTypeConfirm(item.id, handleDelete)}
+                  onClick={() => DeleteTypeConfirm(item.id, actions.editHandleDelete)}
                 />
               </Tooltip>,
             ]}
@@ -122,7 +61,7 @@ const FormEditPrecautionTypes: React.FC<FormEditPrecautionTypesProps> = () => {
           </List.Item>
         )}
       />
-      {!editVisible ? (
+      {!state.editVisible ? (
         <div className={classes.addDiv}>
           <Item>
             <Search
@@ -130,20 +69,20 @@ const FormEditPrecautionTypes: React.FC<FormEditPrecautionTypesProps> = () => {
               size="large"
               className={classes.inputField}
               name="inputName"
-              value={title}
+              value={state.editTitle}
               onChange={(event) => {
                 if (event.target.value.length < 250) {
-                  setTitle(event.target.value);
-                  setVisRule(false);
-                } else setVisRule(true);
+                  actions.editSetTitle(event.target.value)                  
+                  actions.editSetVisRule(false);
+                } else actions.editSetVisRule(true);
               }}
               placeholder="Додати пересторогу"
               maxLength={250}
-              onPressEnter={handleAdd}
-              enterButton={<CheckOutlined onClick={handleAdd} />}
+              onPressEnter={actions.editHandleAdd}
+              enterButton={<CheckOutlined onClick={actions.editHandleAdd} />}
             />
           </Item>
-          {visRule ? (
+          {state.editVisRule ? (
             <div>
               <Text type="danger">
                 Поле не повинно містити більше 250 символів!
@@ -156,7 +95,7 @@ const FormEditPrecautionTypes: React.FC<FormEditPrecautionTypesProps> = () => {
       ) : (
         <></>
       )}
-      {editVisible ? (
+      {state.editVisible ? (
         <Item>
           <Search
             size="large"
@@ -164,17 +103,17 @@ const FormEditPrecautionTypes: React.FC<FormEditPrecautionTypesProps> = () => {
             className={classes.inputField}
             name="editName"
             placeholder="Редагувати пересторогу"
-            value={curDist?.name}
+            value={state.editCurDist?.name}
             onChange={(event) =>
-              setCurDist({
-                id: curDist.id,
+              actions.editSetCurDist({
+                id: state.editCurDist.id,
                 name: event.target.value,
               })
             }
             maxLength={250}
-            onPressEnter={handleEdit}
+            onPressEnter={actions.editHandleEdit}
             enterButton={<SaveOutlined />}
-            onSearch={handleEdit}
+            onSearch={actions.editHandleEdit}
           />
         </Item>
       ) : (

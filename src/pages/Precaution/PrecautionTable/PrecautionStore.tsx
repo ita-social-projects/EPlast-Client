@@ -1,21 +1,20 @@
-import { createStore,
-  createSubscriber,
-  createHook,
-  createContainer,
-  Action,} from 'react-sweet-state';
+import { createStore, Action} from 'react-sweet-state';
 import UserPrecautionTableInfo from '../Interfaces/UserPrecauctionTableInfo';
 import notificationLogic from "../../../components/Notifications/Notification";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { successfulCreateAction, successfulDeleteAction, successfulUpdateAction } from '../../../components/Notifications/Messages';
+import { failCreateAction, successfulCreateAction, successfulDeleteAction, successfulUpdateAction } from '../../../components/Notifications/Messages';
 import PrecautionTableSettings from '../../../models/Precaution/PrecautionTableSettings';
 import precautionApi from "../../../api/precautionApi";
 import Precaution from '../Interfaces/Precaution';
+import UserPrecaution from '../Interfaces/UserPrecaution';
+import adminApi from '../../../api/adminApi';
+import { Roles } from "../../../models/Roles/Roles";
 
 type State = {
   loading: boolean,
   showDropdown: boolean,
   visibleModal: boolean,
-  visibleModalEditDist: boolean,
+  editVisibleModal: boolean,
 
   searchedData: string,
   statusSorter:any[],
@@ -27,6 +26,17 @@ type State = {
   total: number,
 
   precautions: UserPrecautionTableInfo[],
+
+  addDistData: Precaution[],
+  loadingUserStatus: boolean,
+  userData: any[]
+
+  editDistData: Precaution[],
+  editTitle: string,
+  editCurDist: Precaution,
+  editVisible: boolean,
+  editVisRule: boolean,
+  editLoading: boolean,
 };
 
 type Actions = typeof actions;
@@ -35,7 +45,7 @@ const initialState = {
   loading: false,  
   showDropdown: false,
   visibleModal:false,
-  visibleModalEditDist:false,
+  editVisibleModal:false,
 
   searchedData:"",
   statusSorter: [],
@@ -60,63 +70,44 @@ const initialState = {
     date: new Date(),
     endDate: new Date(),
     isActive: false,
-  },]
+  }],
+
+  addDistData: Array<Precaution>(),
+  loadingUserStatus: false,
+  userData: [
+    {
+      user: {
+        id: "",
+        firstName: "",
+        lastName: "",
+        birthday: "",
+      },
+      regionName: "",
+      cityName: "",
+      clubName: "",
+      userPlastDegreeName: "",
+      userRoles: "",
+    },
+  ],
+
+  editDistData:[{
+    name: "",
+    id: 0,
+  }],
+  editTitle:"",
+  editCurDist: {
+    name: "",
+    id: 0,
+  },
+  editVisible: false,
+  editVisRule: false,
+  editLoading: false,
 };
 
-const CreateDeleteNotification = 
-  (id: number): Action<State> => 
-  ({ getState }) => {
-    const userPrecaution = getState().precautions.find((d: { id: number }) => d.id === id);
-  if (userPrecaution) {
-    NotificationBoxApi.createNotifications(
-      [userPrecaution.userId],
-      `Вашу пересторогу: '${userPrecaution.precautionName}' було видалено.`,
-      NotificationBoxApi.NotificationTypes.UserNotifications
-    );
-    NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId).then(
-      (res) => {
-        res.cityRegionAdmins.length !== 0 &&
-          res.cityRegionAdmins.forEach(async (cra) => {
-            await NotificationBoxApi.createNotifications(
-              [cra.cityAdminId, cra.regionAdminId],
-              `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' було знято пересторогу: '${userPrecaution.precautionName}'. `,
-              NotificationBoxApi.NotificationTypes.UserNotifications
-            );
-          });
-        }
-    );
-  }
-};
-
-const CreateEditNotification = 
-  (userId: string, name: string): Action<State> => 
-  () => {
-  if (userId !== "" && name !== "") {
-    NotificationBoxApi.createNotifications(
-      [userId],
-      `Вашу пересторогу: '${name}' було змінено. `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/precautions`,
-      `Переглянути`
-    );
-    NotificationBoxApi.getCitiesForUserAdmins(userId).then((res) => {
-      res.cityRegionAdmins.length !== 0 &&
-        res.cityRegionAdmins.forEach(async (cra) => {
-          await NotificationBoxApi.createNotifications(
-            [cra.cityAdminId, cra.regionAdminId],
-            `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінену пересторогу: '${name}'. `,
-            NotificationBoxApi.NotificationTypes.UserNotifications,
-            `/precautions`,
-            `Переглянути`
-          );
-        });
-    });
-  }
-};
-
-const fetchData =
+const actions = {
+  handleFetchData:
    (): Action<State> => 
-   async ({ setState, getState }) => {
+   async ({setState, getState}) => {    
     const NewTableSettings: PrecautionTableSettings = {
       sortByOrder: getState().sortByOrder,
       statusFilter: getState().statusSorter,
@@ -140,26 +131,125 @@ const fetchData =
       loading: false,
       total: res[0]?.total
     });
-  };
-
-const actions = {
-  handleFetchData:
-   (): Action<State> => 
-   async ({dispatch}) => {    
-    dispatch(fetchData());
   },
+
+  setVisibleModal:
+    (visible: boolean): Action<State> =>
+      ({setState}) => {
+        setState({
+          visibleModal: visible
+        })      
+    },
+  
+  setEditLoading:
+    (status: boolean): Action<State> =>
+      ({setState}) => {
+        setState({
+          editLoading: status
+        })      
+    },
+  
+  editHandleDelete:
+   (id: number): Action<State> =>
+   ({setState, getState}) => {
+      const filteredData = getState().editDistData.filter((d: { id: number }) => d.id !== id);
+      setState({
+        editDistData: [...filteredData],
+        editVisible: false
+      })
+      notificationLogic("success", "Тип перестороги успішно видалено!");
+    },
+
+  editHandleAdd:
+   ():Action<State> =>
+   async ({setState, getState}) => {
+      const newPrecaution: Precaution = {
+        id: 0,
+        name: getState().editTitle,
+      };
+      if (getState().editTitle.length != 0) {
+        await precautionApi.addPrecaution(newPrecaution);
+        const res: Precaution[] = (await precautionApi.getPrecautions()).data;
+        setState({
+          editDistData: res,
+          editTitle: ""
+        })
+        notificationLogic("success", "Тип перестороги додано!");
+      } else {
+        notificationLogic("error", "Хибна назва");
+      }
+    },
+
+  editSetTitle:
+   (newTitle: any):Action<State> =>
+    async ({setState}) => {
+      setState({
+        editTitle: newTitle
+      })
+    },  
+  
+  editSetVisRule:
+    (newVisRule: boolean):Action<State> =>
+     async ({setState}) => {
+       setState({
+         editVisRule: newVisRule
+       })
+     }, 
+
+  editShowEdit:
+   (id: number):Action<State> =>
+    async ({setState, getState}) => {
+      const Precaution = (await precautionApi.getPrecautionById(id)).data;
+      setState({
+        editCurDist: Precaution 
+      })
+      if (getState().editCurDist.id != id) {
+        setState({
+          editVisible: true
+        })       
+      } else {
+        setState({
+          editVisible: false,
+          editCurDist: {
+            name: "",
+            id: 0,
+          }        
+        })
+      }
+    },
+  
+  editHandleEdit:
+   ():Action<State> =>
+    async ({setState, getState}) => {
+      if (getState().editCurDist.name.length !== 0) {
+        await precautionApi.editPrecaution(getState().editCurDist);
+        notificationLogic("success", "Тип перестороги успішно змінено!");
+        actions.editFetchData();
+        setState({
+          editCurDist: {
+            name: "",
+            id: 0,
+          },
+          editVisible: false
+        })
+      } else notificationLogic("error", "Хибна назва");
+    },
+  
+  setEditVisibleModal:
+    (visible: boolean): Action<State> =>
+      ({setState}) => {
+        setState({
+          editVisibleModal: visible
+        })      
+    },  
 
   handleAdd:
    (): Action<State> => 
    async ({ setState, dispatch }) => {    
     setState({
-      visibleModal: true
-    });
-    dispatch(fetchData());
-
-    setState({
       visibleModal: false
     });
+    dispatch(actions.handleFetchData());
     notificationLogic("success", successfulCreateAction("Догану"));
   },
 
@@ -179,6 +269,23 @@ const actions = {
         page: 1
       });
     },
+  
+  editFetchData:
+  ():Action<State> =>
+  async ({setState}) => {
+      const distData = (await precautionApi.getPrecautions()).data;
+      setState({
+        editDistData: distData
+      })
+    },
+
+  editSetCurDist:
+    (newCurDist: any): Action<State> => 
+      ({ setState }) => {
+        setState({
+          editCurDist: newCurDist  
+        });      
+      },
   
   showModalPrecautionTable:
   (): Action<State> => 
@@ -215,6 +322,14 @@ const actions = {
       
       notificationLogic("success", successfulDeleteAction("Пересторогу"));  
       dispatch(CreateDeleteNotification(id)); 
+    },
+
+  showModalEditTypes:
+   (newEditVisibleModal: boolean):Action<State> =>
+   ({setState}) => {
+     setState({
+       editVisibleModal: newEditVisibleModal
+     })
     },
 
   handleEditPrecautionTable:
@@ -273,7 +388,196 @@ const actions = {
       res[2].order === undefined
         ? setState({sortByOrder: [res[2].field, null]})
         : setState({sortByOrder:[res[2].field, res[2].order]});
+    },
+
+    FormAddPrecaution:
+    (newPrecaution: UserPrecaution, form: any):Action<State> =>
+    async () => {
+      console.log("add")
+      await precautionApi.addUserPrecaution(newPrecaution);
+      actions.setVisibleModal(false);
+      form.resetFields();
+      actions.handleAdd();
+      await createNotifications(newPrecaution);
+    },
+
+    handleSubmit:
+    (values: any, form:any): Action<State> => 
+    async () => {
+      const newPrecaution: UserPrecaution = {
+        id: 0,
+        precautionId: JSON.parse(values.Precaution).id,
+        precaution: JSON.parse(values.Precaution),
+        user: JSON.parse(values.user),
+        userId: JSON.parse(values.user).id,
+        status: values.status,
+        date: values.date,
+        endDate: values.date,
+        isActive: true,
+        reporter: values.reporter,
+        reason: values.reason,
+        number: values.number,
+      };
+      console.log("Submit")
+      await precautionApi
+        .checkUserPrecautionsType(
+          newPrecaution.userId,
+          newPrecaution.precaution.name
+        )
+        .then((response) => {
+          if (response.data) {
+            activePrecautionNofication(newPrecaution);
+          } else {
+            console.log("aadd")
+            actions.FormAddPrecaution(newPrecaution, form);
+          }
+        });
+    },
+
+    handleCancel:
+    (form:any):Action<State> =>
+    () => {
+      form.resetFields();
+      actions.setVisibleModal(false);
+    },
+
+    fetchDataFormAddPrecaution:
+     (): Action<State> =>
+     async ({setState}) => {
+      await precautionApi.getPrecautions().then((response) => {
+        setState({
+          addDistData: response.data
+        })
+      });
+      setState({
+        loadingUserStatus: true
+      })
+      await adminApi
+        .getUsersByAnyRole(
+          [
+            [
+              Roles.CityHead,
+              Roles.CityHeadDeputy,
+              Roles.CitySecretary,
+              Roles.EventAdministrator,
+              Roles.GoverningBodyHead,
+              Roles.GoverningBodySecretary,
+              Roles.GoverningBodySectorHead,
+              Roles.GoverningBodySectorSecretary,
+              Roles.KurinHead,
+              Roles.KurinHeadDeputy,
+              Roles.KurinSecretary,
+              Roles.OkrugaHead,
+              Roles.OkrugaHeadDeputy,
+              Roles.OkrugaSecretary,
+              Roles.PlastHead,
+              Roles.PlastMember,
+              Roles.RegionBoardHead,
+              Roles.RegisteredUser,
+              Roles.Supporter,
+            ],
+          ],
+          true
+        )
+        .then((response) => {
+          setState({
+            userData: response.data,
+            loadingUserStatus: false
+          })
+        });
+    },
+};
+
+const activePrecautionNofication = async (newPrecaution: UserPrecaution) => {
+  await precautionApi
+    .getUserActivePrecautionEndDate(
+      newPrecaution.userId,
+      newPrecaution.precaution.name
+    )
+    .then((response) => {
+      notificationLogic(
+        "error",
+        failCreateAction(
+          "пересторогу! Користувач має активну до " + response.data + "!"
+        )
+      );
+    });
+};
+
+const CreateDeleteNotification = 
+  (id: number): Action<State> => 
+  ({ getState }) => {
+    const userPrecaution = getState().precautions.find((d: { id: number }) => d.id === id);
+  if (userPrecaution) {
+    NotificationBoxApi.createNotifications(
+      [userPrecaution.userId],
+      `Вашу пересторогу: '${userPrecaution.precautionName}' було видалено.`,
+      NotificationBoxApi.NotificationTypes.UserNotifications
+    );
+    NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId).then(
+      (res) => {
+        res.cityRegionAdmins.length !== 0 &&
+          res.cityRegionAdmins.forEach(async (cra) => {
+            await NotificationBoxApi.createNotifications(
+              [cra.cityAdminId, cra.regionAdminId],
+              `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' було знято пересторогу: '${userPrecaution.precautionName}'. `,
+              NotificationBoxApi.NotificationTypes.UserNotifications
+            );
+          });
+        }
+    );
+  }
+};
+
+const createNotifications = async (userPrecaution: UserPrecaution) => {
+  await NotificationBoxApi.createNotifications(
+    [userPrecaution.userId],
+    `Вам було надано нову пересторогу: '${userPrecaution.precaution.name}' від ${userPrecaution.reporter}. `,
+    NotificationBoxApi.NotificationTypes.UserNotifications,
+    `/Precautions`,
+    `Переглянути`
+  );
+
+  await NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId).then(
+    (res) => {
+      res.cityRegionAdmins.length !== 0 &&
+        res.cityRegionAdmins.forEach(async (cra) => {
+          await NotificationBoxApi.createNotifications(
+            [cra.cityAdminId, cra.regionAdminId],
+            `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав нову пересторогу: '${userPrecaution.precaution.name}' від ${userPrecaution.reporter}. `,
+            NotificationBoxApi.NotificationTypes.UserNotifications,
+            `/Precautions`,
+            `Переглянути`
+          );
+        });
     }
+  );
+};
+
+const CreateEditNotification = 
+  (userId: string, name: string): Action<State> => 
+  () => {
+  if (userId !== "" && name !== "") {
+    NotificationBoxApi.createNotifications(
+      [userId],
+      `Вашу пересторогу: '${name}' було змінено. `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/precautions`,
+      `Переглянути`
+    );
+    NotificationBoxApi.getCitiesForUserAdmins(userId).then((res) => {
+      res.cityRegionAdmins.length !== 0 &&
+        res.cityRegionAdmins.forEach(async (cra) => {
+          await NotificationBoxApi.createNotifications(
+            [cra.cityAdminId, cra.regionAdminId],
+            `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінену пересторогу: '${name}'. `,
+            NotificationBoxApi.NotificationTypes.UserNotifications,
+            `/precautions`,
+            `Переглянути`
+          );
+        });
+    });
+  }
 };
 
 const Store = createStore<State, Actions>({initialState, actions});

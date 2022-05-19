@@ -4,19 +4,9 @@ import FormAddPrecaution from "./FormAddPrecaution";
 import PrecautionStore from "../PrecautionTable/PrecautionStore";
 import { createHook } from "react-sweet-state";
 
-interface Props {
-  visibleModal: boolean;
-  setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: () => void;
-}
-
-const AddPrecautionModal = ({
-  visibleModal,
-  setVisibleModal,
-  onAdd,
-}: Props) => {
+const AddPrecautionModal = () => {
   const handleCancel = () => {
-    setVisibleModal(false);
+    actions.setVisibleModal(false);
   };
   const useStore = createHook(PrecautionStore);
   const [state, actions] = useStore();
@@ -27,11 +17,11 @@ const AddPrecautionModal = ({
       placement="right"
       width="auto"
       height={1000}
-      visible={visibleModal}
+      visible={state.visibleModal}
       onClose={handleCancel}
       footer={null}
     >
-      <FormAddPrecaution setVisibleModal={setVisibleModal} onAdd={onAdd} />
+      <FormAddPrecaution/>
     </Drawer>
   );
 };

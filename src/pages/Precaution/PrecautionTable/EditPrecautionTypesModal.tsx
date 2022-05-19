@@ -1,14 +1,14 @@
 import React from "react";
 import { Drawer, Modal } from "antd";
 import FormEditPrecautionTypes from "./FormEditPrecautionTypes";
+import PrecautionStore from "./PrecautionStore";
+import { createHook } from "react-sweet-state";
 
-interface Props {
-  visibleModal: boolean;
-  setVisibleModal: (visibleModal: boolean) => void;
-}
-
-const EditPrecautionTypesModal = ({ visibleModal, setVisibleModal }: Props) => {
-  const handleCancel = () => setVisibleModal(false);
+const EditPrecautionTypesModal = () => {
+  const useStore = createHook(PrecautionStore);
+  const [state, actions] = useStore();
+  
+  const handleCancel = () => actions.setVisibleModal(false);
 
   return (
     <Drawer
@@ -16,13 +16,11 @@ const EditPrecautionTypesModal = ({ visibleModal, setVisibleModal }: Props) => {
       placement="right"
       width="auto"
       height={1000}
-      visible={visibleModal}
+      visible={state.editVisibleModal}
       onClose={handleCancel}
       footer={null}
     >
-      <FormEditPrecautionTypes
-        setVisibleModal={setVisibleModal}
-      ></FormEditPrecautionTypes>
+      <FormEditPrecautionTypes/>
     </Drawer>
   );
 };
