@@ -633,7 +633,7 @@ const StatisticsCities = () => {
                 rowKey="id"
                 columns={columns}
                 dataSource={dataForTable}
-                scroll={{ x: 1000 }}
+                scroll={{ scrollToFirstRowOnChange: true }}
                 onRow={(cityRecord, index) => {
                   return {
                     onClick: async () => {
