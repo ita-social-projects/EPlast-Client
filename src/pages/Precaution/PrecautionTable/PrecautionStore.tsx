@@ -419,6 +419,7 @@ const actions = {
         number: values.number,
       };
       console.log("Submit")
+      
       await precautionApi
         .checkUserPrecautionsType(
           newPrecaution.userId,
