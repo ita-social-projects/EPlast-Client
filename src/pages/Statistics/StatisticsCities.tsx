@@ -173,6 +173,12 @@ const StatisticsCities = () => {
     fetchYears();
   }, []);
 
+  useEffect(() => {
+    if (dataChartShow) {
+      chartRef.current?.scrollIntoView({behavior: "smooth", block: "center"});
+    }
+  }, [onClickRow])
+
   const fetchCities = async () => {
     setIsLoadingCities(true);
     try {
@@ -566,12 +572,11 @@ const StatisticsCities = () => {
             </Form>
           </div>
           <br />
-          {sumOfIndicators === 0 ||
+          {
+          sumOfIndicators === 0 ||
           !dataChartShow ||
           title === undefined ||
-          onClickRow === null ? (
-            <div className="chartPlaceholderScroll" ref={chartRef}></div> // dealing with scrolling issue
-          ) : (
+          onClickRow === null ? ( "" ) : (
             <div className="chart" ref={chartRef}>
               <h1>
                 {title.cityName}, {title.year}
@@ -654,11 +659,10 @@ const StatisticsCities = () => {
                 scroll={{ scrollToFirstRowOnChange: true }}
                 onRow={(cityRecord, index) => {
                   return {
-                    onClick: async () => {
+                    onClick: () => {
                       setShowDataChart(true);
                       setDataFromRow(cityRecord);
                       setOnClickRow(index);
-                      chartRef.current?.scrollIntoView({behavior: "smooth", block: "center"});
                     }
                   };
                 }}
