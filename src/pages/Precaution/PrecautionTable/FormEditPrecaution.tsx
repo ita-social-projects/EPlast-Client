@@ -10,7 +10,7 @@ import {
   Col,
 } from "antd";
 import precautionApi from "../../../api/precautionApi";
-import UserPrecaution from "../Interfaces/UserPrecaution";
+import UserPrecaution, { UserPrecautionStatus } from "../Interfaces/UserPrecaution";
 import formclasses from "./Form.module.css";
 import adminApi from "../../../api/adminApi";
 import Precaution from "../Interfaces/Precaution";
@@ -347,13 +347,13 @@ const FormEditPrecaution = ({
                   showSearch
                   getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
-                  <Select.Option key="9" value="Прийнято">
+                  <Select.Option key="9" value={UserPrecautionStatus.Accepted}>
                     Прийнято
                   </Select.Option>
-                  <Select.Option key="10" value="Потверджено">
+                  <Select.Option key="10" value={UserPrecautionStatus.Confirmed}>
                     Потверджено
                   </Select.Option>
-                  <Select.Option key="11" value="Скасовано">
+                  <Select.Option key="11" value={UserPrecautionStatus.Canceled}>
                     Скасовано
                   </Select.Option>
                 </Select>

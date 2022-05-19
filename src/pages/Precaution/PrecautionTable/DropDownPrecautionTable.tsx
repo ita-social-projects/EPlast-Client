@@ -46,7 +46,7 @@ const DropDown = (props: Props) => {
       name: "",
     },
     precautionId: 0,
-    status: "",
+    status: undefined,
     userId: "",
     reporter: "",
     reason: "",

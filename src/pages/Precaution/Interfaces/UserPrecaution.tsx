@@ -1,12 +1,13 @@
 import Precaution from "./Precaution";
 import User from "../../Distinction/Interfaces/User";
-type UserPrecaution = {
+
+interface UserPrecaution {
   id: number;
   precautionId: number;
   precaution: Precaution;
   reporter: string;
   reason: string;
-  status: string;
+  status?: UserPrecautionStatus;
   number: number;
   date: Date;
   endDate: Date;
@@ -14,4 +15,12 @@ type UserPrecaution = {
   userId: string;
   user: User;
 };
+
+export enum UserPrecautionStatus
+{ 
+    Accepted,
+    Confirmed,  
+    Canceled
+}
+
 export default UserPrecaution;

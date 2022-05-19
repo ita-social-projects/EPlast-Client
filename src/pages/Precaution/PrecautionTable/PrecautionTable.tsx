@@ -66,7 +66,7 @@ const PrecautionTable = () => {
       userName: "",
       reporter: "",
       reason: "",
-      status: "",
+      status: undefined,
       date: new Date(),
       endDate: new Date(),
       isActive: false,

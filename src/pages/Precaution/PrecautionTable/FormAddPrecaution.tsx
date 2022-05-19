@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, DatePicker, Select, Input, Button, Row, Col } from "antd";
 import Precaution from "../Interfaces/Precaution";
-import UserPrecaution from "../Interfaces/UserPrecaution";
+import UserPrecaution, { UserPrecautionStatus } from "../Interfaces/UserPrecaution";
 import precautionApi from "../../../api/precautionApi";
 import adminApi from "../../../api/adminApi";
 import formclasses from "./Form.module.css";
@@ -381,13 +381,13 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               showSearch
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
-              <Select.Option key="9" value="Прийнято">
+              <Select.Option key="9" value={UserPrecautionStatus.Accepted}>
                 Прийнято
               </Select.Option>
-              <Select.Option key="10" value="Потверджено">
+              <Select.Option key="10" value={UserPrecautionStatus.Confirmed}>
                 Потверджено
               </Select.Option>
-              <Select.Option key="11" value="Скасовано">
+              <Select.Option key="11" value={UserPrecautionStatus.Canceled}>
                 Скасовано
               </Select.Option>
             </Select>

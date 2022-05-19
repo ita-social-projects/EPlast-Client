@@ -1,3 +1,5 @@
+import { UserPrecautionStatus } from "./UserPrecaution";
+
 type UserPrecautionTableInfo = {
   count: number;
   total: number;
@@ -8,7 +10,7 @@ type UserPrecautionTableInfo = {
   userName: string;
   reporter: string;
   reason: string;
-  status: string;
+  status?: UserPrecautionStatus;
   date: Date;
   endDate: Date;
   isActive: boolean;

@@ -12,7 +12,7 @@ import KV1YPN from "../../../assets/images/KV1YPN.png";
 import KV2YPN from "../../../assets/images/KV2YPN.png";
 import KV2YPU from "../../../assets/images/KV2YPU.png";
 import UserDistinction from "../../Distinction/Interfaces/UserDistinction";
-import UserPrecaution from "../../Precaution/Interfaces/UserPrecaution";
+import UserPrecaution, { UserPrecautionStatus } from "../../Precaution/Interfaces/UserPrecaution";
 import User from "../../../models/UserTable/User";
 import moment from "moment";
 import { PersonalDataContext } from "./PersonalData";
@@ -111,7 +111,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       precautionId: 0,
       userId: "",
       reporter: "",
-      status: "",
+      status: undefined,
       reason: "",
       number: 0,
       date: new Date(),
@@ -292,7 +292,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       ))}
       {showPrecautions &&
         UserPrecaution.map((dist) =>
-          dist.status !== "Скасовано" ? (
+          dist.status !== UserPrecautionStatus.Canceled ? (
             <div className="precautions">
               <Tooltip title={dist?.reason}>
                 <h2>
