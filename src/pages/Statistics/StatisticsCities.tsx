@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Table,
   Form,
@@ -67,6 +67,7 @@ const StatisticsCities = () => {
   >(true);
   const [onClickRow, setOnClickRow] = useState<any>();
   const [isLoadingCities, setIsLoadingCities] = useState<boolean>(false);
+  const chartRef = useRef<HTMLDivElement>(null) // using this for scrolling
 
   const constColumns = [
     {
@@ -570,7 +571,7 @@ const StatisticsCities = () => {
           onClickRow === null ? (
             ""
           ) : (
-            <div className="chart">
+            <div className="chart" ref={chartRef}>
               <h1>
                 {title.cityName}, {title.year}
               </h1>
@@ -639,6 +640,7 @@ const StatisticsCities = () => {
                       setShowDataChart(true);
                       setDataFromRow(cityRecord);
                       setOnClickRow(index);
+                      chartRef.current?.scrollIntoView({behavior: "smooth", block: "center"});
                     },
                     onDoubleClick: async () => {
                       setOnClickRow(null);
