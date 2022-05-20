@@ -78,7 +78,7 @@ const EventDetailsHeader = ({
       layout="horizontal"
       className="descriptions"
     >
-      <Descriptions.Item label={renderLabel("Назва")} span={2}>
+      <Descriptions.Item label={renderLabel("Назва")} span={3}>
         {renderContentMaxlength(eventName)}
       </Descriptions.Item>
       <Descriptions.Item label={renderLabel("Форма проведення")}>
