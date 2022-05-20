@@ -50,7 +50,9 @@ const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
           : "error";
       arrayStatuses.push(i.status);
     }
-    if (arrayStatuses.includes("error")) {
+    if (arrayStatuses.includes("error") || e.fileList.length === 0) {
+      notification.destroy();
+      emptyPhotoListNotification();
       setDisabled(true);
     } else {
       setDisabled(false);
