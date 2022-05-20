@@ -382,4 +382,5 @@ const SortedEventInfo = ({
     </Row>
   );
 };
+
 export default SortedEventInfo;
