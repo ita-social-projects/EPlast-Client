@@ -295,6 +295,7 @@ export const RegionAnnualReportTable = ({
               hideDropdowns();
             },
             onContextMenu: async (event) => {
+              hideDropdowns();
               event.preventDefault();
               event.pageX + 180 > window.innerWidth
                 ? setX(window.innerWidth - 180)
