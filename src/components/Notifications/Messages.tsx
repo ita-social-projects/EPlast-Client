@@ -77,6 +77,8 @@ export const tryAgain = "Щось пішло не так. Спробуйте щ�
 
 export const ReportAlreadyExists = "Звіт вже існує.";
 
+export const ReportNotFound = "За наданими параметрами не було знайдено жодного звіту.";
+
 export const successfulCreateAction = (name: string, itemName?: string) => {
   return (
     <div style={{ wordBreak: "break-word" }}>

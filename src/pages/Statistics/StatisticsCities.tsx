@@ -27,7 +27,7 @@ import {
   Interaction,
 } from "bizcharts";
 import "./StatisticsCities.less";
-import { shouldContain } from "../../components/Notifications/Messages";
+import { ReportNotFound, shouldContain } from "../../components/Notifications/Messages";
 import {
   ClearOutlined,
   CloseOutlined,
@@ -35,6 +35,7 @@ import {
   LoadingOutlined,
 } from "@ant-design/icons";
 import City from "./Interfaces/City";
+import openNotificationWithIcon from "../../components/Notifications/Notification";
 
 const StatisticsCities = () => {
   const [form] = Form.useForm();
@@ -230,8 +231,16 @@ const StatisticsCities = () => {
 
     // seting (for chart needs) statisticsItems indicators of the very first element
     // because they are the same for all the elements
+    let entryToSetIndicators = response.data.find((entry: any) => entry.yearStatistics.length != 0)
+    if (!entryToSetIndicators) {
+      openNotificationWithIcon("error", ReportNotFound);
+      setShowDataChart(false);
+      setShowTable(false);
+      return;
+    }
+
     setArrayOfIndicators(
-      response.data[0].yearStatistics[0].statisticsItems.map(
+      entryToSetIndicators.yearStatistics[0].statisticsItems.map(
         (it: any) => it.indicator
       )
     );
@@ -258,11 +267,7 @@ const StatisticsCities = () => {
     // reading statisticsItems indicators of the very first element
     // because they are the same for all the elements
     let statistics =
-      (response.data &&
-        response.data[0] &&
-        response.data[0].yearStatistics &&
-        response.data[0].yearStatistics[0] &&
-        response.data[0].yearStatistics[0].statisticsItems) ||
+      entryToSetIndicators.yearStatistics[0].statisticsItems ||
       [];
 
     // creating and seting columns for table
@@ -307,7 +312,7 @@ const StatisticsCities = () => {
     setDataFromRow(undefined);
   }
 
-  const onClick = (value: Array<Number>) => {
+  const onIndicatorSelection = (value: Array<Number>) => {
     if (value.includes(2)) {
       setSelectableUnatstvaPart(false);
     }
@@ -369,7 +374,7 @@ const StatisticsCities = () => {
     }
   };
 
-  const onClickReset = () => {
+  const onFormClear = () => {
     form.resetFields();
     setShowDataChart(false);
     setShowTable(false);
@@ -397,7 +402,7 @@ const StatisticsCities = () => {
               >
                 <AntTooltip title="Очистити">
                   <ClearOutlined
-                    onClick={onClickReset}
+                    onClick={onFormClear}
                     style={{
                       fontSize: "x-large",
                       cursor: "pointer",
@@ -484,7 +489,7 @@ const StatisticsCities = () => {
                       showSearch
                       allowClear
                       multiple
-                      onChange={onClick}
+                      onChange={onIndicatorSelection}
                       treeDefaultExpandAll
                       placeholder="Обрати показник"
                       filterTreeNode={(input, option) =>
