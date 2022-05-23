@@ -19,7 +19,7 @@ import { SortOrder } from "antd/lib/table/interface";
 import RegionsApi from "../../api/regionsApi";
 import Region from "./Interfaces/Region";
 import RegionStatistics from "./Interfaces/RegionStatistics";
-import { shouldContain } from "../../components/Notifications/Messages";
+import { ReportNotFound, shouldContain } from "../../components/Notifications/Messages";
 import "./StatisticsRegions.less";
 import {
   Chart,
@@ -35,6 +35,7 @@ import {
   InfoCircleOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
+import openNotificationWithIcon from "../../components/Notifications/Notification";
 
 const StatisticsCities = () => {
   const [form] = Form.useForm();
@@ -228,8 +229,16 @@ const StatisticsCities = () => {
 
     // seting (for chart needs) statisticsItems indicators of the very first element
     // because they are the same for all the elements
+    let entryToSetIndicators = response.data.find((entry: any) => entry.yearStatistics.length != 0)
+    if (!entryToSetIndicators) {
+      openNotificationWithIcon("error", ReportNotFound);
+      setShowDataChart(false);
+      setShowTable(false);
+      return;
+    }
+
     setArrayOfIndicators(
-      response.data[0].yearStatistics[0].statisticsItems.map(
+      entryToSetIndicators.yearStatistics[0].statisticsItems.map(
         (it: any) => it.indicator
       )
     );
@@ -251,11 +260,7 @@ const StatisticsCities = () => {
     // reading statisticsItems' indicators of the very first element
     // because they are the same for all the items
     let statistics =
-      (response.data &&
-        response.data[0] &&
-        response.data[0].yearStatistics &&
-        response.data[0].yearStatistics[0] &&
-        response.data[0].yearStatistics[0].statisticsItems) ||
+      entryToSetIndicators.yearStatistics[0].statisticsItems ||
       [];
 
     setShowTable(true);
