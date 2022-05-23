@@ -1,6 +1,7 @@
 import { AdminRole } from "../../models/Roles/AdminRole";
 import { DropdownFunc } from "../../models/UserTable/DropdownFunc";
 import { NonAdminRole } from "../../models/Roles/NonAdminRole";
+import { Roles } from "../../models/Roles/Roles";
 
 // WARNING: the content of this file will make you cry;
 // God bless this code, coz IDK what I wrote and why I did it
@@ -73,6 +74,7 @@ enum Place {
   Region = 0, //Округа
   City = 1, //Станиця
   Club = 2, //Курінь
+  GoverningBody = 3, //Провід Пласту
 }
 
 //Basic builder for set of dropdown items
@@ -85,6 +87,8 @@ export class DropdownItemCreator {
     const editClubItem: EditUserClubItem = new EditUserClubItem();
     const editUserRole: EditUserRoleHandler = new EditUserRoleHandler();
     const addDegreeeItem: AddUserDegreeItem = new AddUserDegreeItem();
+    const editGoverningBodyItem: EditUserGoverningBodyItem = new EditUserGoverningBodyItem();
+    const deleteGoverningBodyItem: DeleteUserGoverningBodyItem = new DeleteUserGoverningBodyItem();
 
     const checkerCreator: CheckCreator = new CheckCreator();
     DropdownItem.checkCreator = checkerCreator;
@@ -96,6 +100,8 @@ export class DropdownItemCreator {
       .setNext(editClubItem)
       .setNext(editCityItem)
       .setNext(editRegionItem)
+      .setNext(editGoverningBodyItem)
+      .setNext(deleteGoverningBodyItem)
       .setNext(addDegreeeItem)
       .setNext(editUserRole);
 
@@ -331,6 +337,78 @@ class EditUserClubItem extends DropdownItem {
   }
 }
 
+//Крайовий провід
+class EditUserGoverningBodyItem extends DropdownItem {
+  public handle(
+    currentUser: any,
+    currentUserAdminRoles: Array<AdminRole>,
+    selectedUser: any,
+    selectedUserAdminRoles: Array<AdminRole>,
+    selectedUserNonAdminRoles: Array<NonAdminRole>
+  ): void {
+    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForSettingGoverningBodiesMembers();
+
+    if (
+      DropdownItem.checker.check(
+        currentUser,
+        currentUserAdminRoles,
+        selectedUser,
+        selectedUserAdminRoles,
+        selectedUserNonAdminRoles,
+        [Place.GoverningBody]
+      )
+    ) {
+      DropdownItem.handlersResults.set(DropdownFunc.EditGoverningBody, true);
+    } else {
+      DropdownItem.handlersResults.set(DropdownFunc.EditGoverningBody, false);
+    }
+
+    super.handle(
+      currentUser,
+      currentUserAdminRoles,
+      selectedUser,
+      selectedUserAdminRoles,
+      selectedUserNonAdminRoles
+    );
+  }
+}
+
+//Видалити Крайового адміна
+class DeleteUserGoverningBodyItem extends DropdownItem {
+  public handle(
+    currentUser: any,
+    currentUserAdminRoles: Array<AdminRole>,
+    selectedUser: any,
+    selectedUserAdminRoles: Array<AdminRole>,
+    selectedUserNonAdminRoles: Array<NonAdminRole>
+  ): void {
+    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForDeleteGoverningBodiesAdmins();
+
+    if (
+      DropdownItem.checker.check(
+        currentUser,
+        currentUserAdminRoles,
+        selectedUser,
+        selectedUserAdminRoles,
+        selectedUserNonAdminRoles,
+        [Place.GoverningBody]
+      )
+    ) {
+      DropdownItem.handlersResults.set(DropdownFunc.DeleteGoverningBody, true);
+    } else {
+      DropdownItem.handlersResults.set(DropdownFunc.DeleteGoverningBody, false);
+    }
+
+    super.handle(
+      currentUser,
+      currentUserAdminRoles,
+      selectedUser,
+      selectedUserAdminRoles,
+      selectedUserNonAdminRoles
+    );
+  }
+}
+
 //Поточний стан користувача
 class EditUserRoleHandler extends DropdownItem {
   public handle(
@@ -414,6 +492,8 @@ class CheckCreator {
   private adminRightsCompare: AdminRightsCompareCheck = new AdminRightsCompareCheck();
   private userHeadAdmin: CurrUserIsHeadAdminCheck = new CurrUserIsHeadAdminCheck();
   private userGovAdmin: CurrUserIsGovAdminCheck = new CurrUserIsGovAdminCheck();
+  private selectedUserGovAdmin: SelectedUserIsGovAdminCheck = new SelectedUserIsGovAdminCheck();
+  private userPlastMember: SelectedUserIsPlastMemberCheck = new SelectedUserIsPlastMemberCheck();
   private hasPlace: SelectedUserHasPlace = new SelectedUserHasPlace();
   private placesId: CurrUserIsAdminForSelectedUserCheck = new CurrUserIsAdminForSelectedUserCheck();
   private falseCheck: FinalFalseCheck = new FinalFalseCheck();
@@ -469,6 +549,18 @@ class CheckCreator {
       ?.setNext(this.userGovAdmin)
       ?.setNext(this.placesId)
       ?.setNext(null);
+
+    return this.checkId;
+  }
+
+  public rebuildChainForSettingGoverningBodiesMembers(): ICheck {
+    this.checkId.setNext(this.userPlastMember)?.setNext(null);
+
+    return this.checkId;
+  }
+
+  public rebuildChainForDeleteGoverningBodiesAdmins(): ICheck {
+    this.checkId.setNext(this.selectedUserGovAdmin)?.setNext(null);
 
     return this.checkId;
   }
@@ -586,7 +678,7 @@ class CurrUserIsGovAdminCheck extends Check {
     selectedUserNonAdminRoles: Array<NonAdminRole>,
     places: Array<Place>
   ): boolean {
-    if (currentUserAdminRoles.includes(AdminRole.GoverningBodyHead)) {
+    if (currentUserAdminRoles.includes(AdminRole.GoverningBodyAdmin)) {
       return true;
     } else {
       return super.check(
@@ -597,6 +689,42 @@ class CurrUserIsGovAdminCheck extends Check {
         selectedUserNonAdminRoles,
         places
       );
+    }
+  }
+}
+
+//Checks if selected user is Plast Member,
+class SelectedUserIsPlastMemberCheck extends Check {
+  public check(
+    currentUser: any,
+    currentUserAdminRoles: Array<AdminRole>,
+    selectedUser: any,
+    selectedUserAdminRoles: Array<AdminRole>,
+    selectedUserNonAdminRoles: Array<NonAdminRole>,
+    places: Array<Place>
+  ): boolean {
+    if (selectedUserNonAdminRoles.includes(NonAdminRole.PlastMember)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+//Checks if selected user is Governing body Admin,
+class SelectedUserIsGovAdminCheck extends Check {
+  public check(
+    currentUser: any,
+    currentUserAdminRoles: Array<AdminRole>,
+    selectedUser: any,
+    selectedUserAdminRoles: Array<AdminRole>,
+    selectedUserNonAdminRoles: Array<NonAdminRole>,
+    places: Array<Place>
+  ): boolean {
+    if (selectedUserAdminRoles.includes(AdminRole.GoverningBodyAdmin)) {
+      return true;
+    } else {
+      return false;
     }
   }
 }
@@ -713,6 +841,18 @@ class CurrUserIsAdminForSelectedUserCheck extends Check {
               AdminRole.KurinHeadDeputy,
             ]) &&
               this.idsAreEqual(currentUser.clubId, selectedUser.clubId));
+          break;
+        case Place.GoverningBody:
+          chainContinues =
+            chainContinues ||
+            (this.checkIfUserHasRights(currentUserAdminRoles, [
+              AdminRole.GoverningBodyAdmin,
+              AdminRole.GoverningBodyHead,
+            ]) &&
+              this.idsAreEqual(
+                currentUser.governingBodyId,
+                selectedUser.governingBodyId
+              ));
           break;
         default:
           chainContinues = false;

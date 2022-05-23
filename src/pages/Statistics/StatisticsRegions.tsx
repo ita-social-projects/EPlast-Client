@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Table,
   Form,
@@ -31,6 +31,7 @@ import {
 } from "bizcharts";
 import {
   ClearOutlined,
+  CloseOutlined,
   InfoCircleOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
@@ -67,6 +68,8 @@ const StatisticsCities = () => {
   >(true);
   const [onClickRow, setOnClickRow] = useState<any>();
   const [isLoadingRegions, setIsLoadingRegions] = useState<boolean>(false);
+  
+  const chartRef = useRef<HTMLDivElement>(null) // using this for scrolling
 
   const constColumns = [
     {
@@ -166,13 +169,21 @@ const StatisticsCities = () => {
     fechYears();
   }, []);
 
+  useEffect(() => {
+    if (dataChartShow) {
+      chartRef.current?.scrollIntoView({behavior: "smooth", block: "center"});
+    }
+  }, [onClickRow])
+
   const fetchRegions = async () => {
     setIsLoadingRegions(true);
     try {
       let response = await RegionsApi.getRegions();
       let regions = response.data as Region[];
       setRegions(
-        regions.map((item) => {
+        regions
+        .sort((a: Region, b: Region) => a.regionName.localeCompare(b.regionName))
+        .map((item) => {
           return {
             label: item.regionName,
             value: item.id,
@@ -565,10 +576,27 @@ const StatisticsCities = () => {
           onClickRow === null ? (
             ""
           ) : (
-            <div className="chart">
+            <div className="chart" ref={chartRef}>
               <h1>
                 {title.regionName}, {title.year}
               </h1>
+              <Row
+                style={{
+                  float: "right",
+                  marginRight: "20px",
+                  marginTop: "-25px",
+                }}
+              >
+                <AntTooltip title="Сховати">
+                  <CloseOutlined
+                    onClick={() => setOnClickRow(null)}
+                    style={{
+                      fontSize: "large",
+                      cursor: "pointer",
+                    }}
+                  />
+                </AntTooltip>
+              </Row>
               <Chart height={400} data={dataChart} justify="center" autoFit>
                 <Coordinate type="theta" radius={0.75} />
                 <Tooltip showTitle={false} />
@@ -626,17 +654,14 @@ const StatisticsCities = () => {
                 rowKey="id"
                 columns={columns}
                 dataSource={result}
-                scroll={{ x: 1000 }}
+                scroll={{scrollToFirstRowOnChange: true}}
                 onRow={(regionRecord, index) => {
                   return {
                     onClick: async () => {
                       setShowDataChart(true);
                       setDataFromRow(regionRecord);
                       setOnClickRow(index);
-                    },
-                    onDoubleClick: async () => {
-                      setOnClickRow(null);
-                    },
+                    }
                   };
                 }}
                 pagination={{

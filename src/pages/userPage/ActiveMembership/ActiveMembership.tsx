@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
-import classes from "./ActiveMembership.module.css";
 import {
   Typography,
   List,
@@ -12,24 +11,26 @@ import {
   Form,
 } from "antd";
 import "../personalData/PersonalData.less";
+import jwt from "jwt-decode";
+import moment from "moment";
+import { SafetyCertificateOutlined } from "@ant-design/icons";
+import { StickyContainer } from "react-sticky";
 import activeMembershipApi, {
   UserDates,
   UserPlastDegree,
 } from "../../../api/activeMembershipApi";
 import AuthStore from "../../../stores/AuthStore";
-import jwt from "jwt-decode";
 import ModalAddPlastDegree from "./PlastDegree/ModalAddPlastDegree";
-import moment from "moment";
 import ModalChangeUserDates from "./UserDates/ModalChangeUserDates";
 import DeleteDegreeConfirm from "./PlastDegree/DeleteDegreeConfirm";
-import { SafetyCertificateOutlined } from "@ant-design/icons";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 import notificationLogic from "../../../components/Notifications/Notification";
 import { Roles } from "../../../models/Roles/Roles";
 import { successfulDeleteDegree } from "../../../components/Notifications/Messages";
 import { PersonalDataContext } from "../personalData/PersonalData";
-import { StickyContainer } from "react-sticky";
+import classes from "./ActiveMembership.module.css";
+
 const { Title } = Typography;
 
 const itemMaxLength = 43;
@@ -56,6 +57,7 @@ const ActiveMembership = () => {
 
   const userAdminTypeRoles = [
     Roles.Admin,
+    Roles.GoverningBodyAdmin,
     Roles.OkrugaHead,
     Roles.OkrugaHeadDeputy,
     Roles.CityHead,
@@ -152,10 +154,6 @@ const ActiveMembership = () => {
 
   const IsUserHasAccessToManageDegree = (userRoles: Array<string>): boolean => {
     return (
-      (userRoles?.includes(Roles.KurinHead) &&
-        activeUserProfile?.clubId == fullUserProfile?.user.clubId) ||
-      (userRoles?.includes(Roles.KurinHeadDeputy) &&
-        activeUserProfile?.clubId == fullUserProfile?.user.clubId) ||
       (userRoles?.includes(Roles.CityHead) &&
         activeUserProfile?.cityId == fullUserProfile?.user.cityId) ||
       (userRoles?.includes(Roles.CityHeadDeputy) &&
@@ -165,6 +163,7 @@ const ActiveMembership = () => {
       (userRoles?.includes(Roles.OkrugaHeadDeputy) &&
         activeUserProfile?.regionId == fullUserProfile?.user.regionId) ||
       userRoles?.includes(Roles.RegionBoardHead) ||
+      userRoles?.includes(Roles.GoverningBodyAdmin) ||
       userRoles?.includes(Roles.Admin)
     );
   };

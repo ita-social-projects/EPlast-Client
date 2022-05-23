@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col, Tooltip, Modal, Card, List, Rate } from "antd";
 import {
   IdcardOutlined,
@@ -33,10 +33,12 @@ interface Props {
   event: EventDetails;
   eventStatusId: number;
   visibleDrawer: boolean;
+  canViewAdminProfiles: boolean;
   setApprovedEvent: (visible: boolean) => void;
   setVisibleDrawer: (visible: boolean) => void;
   subscribeOnEvent: () => void;
   unSubscribeOnEvent: () => void;
+  setRender: (visible: boolean) => void;
 }
 
 const RenderEventIcons = (
@@ -254,7 +256,12 @@ const RenderRatingSystem = ({
     );
   }
 };
-const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any) => {
+
+const RenderAdminCards = (
+  eventAdmins: EventAdmin[],
+  visibleDrawer: any,
+  canViewAdminProfiles: boolean
+) => {
   const history = useHistory();
   return (
     <List
@@ -272,10 +279,15 @@ const RenderAdminCards = (eventAdmins: EventAdmin[], visibleDrawer: any) => {
       renderItem={(item) => (
         <List.Item>
           <Card
-            hoverable
+            hoverable={canViewAdminProfiles}
             title={item.adminType}
             cover={<img alt="example" src={EventAdminLogo} />}
-            onClick={() => history.push(`/userpage/main/${item.userId}`)}
+            onClick={() =>
+              canViewAdminProfiles
+                ? history.push(`/userpage/main/${item.userId}`)
+                : null
+            }
+            className={canViewAdminProfiles ? "" : "hovering-cardbody"}
           >
             <div>{item.fullName}</div>
           </Card>
@@ -289,11 +301,13 @@ const SortedEventInfo = ({
   userAccesses,
   event,
   eventStatusId,
+  canViewAdminProfiles,
   setApprovedEvent,
   subscribeOnEvent,
   unSubscribeOnEvent,
   visibleDrawer,
   setVisibleDrawer,
+  setRender,
 }: Props) => {
   const [adminsVisible, setAdminsVisibility] = useState(false);
   const { id } = useParams();
@@ -318,6 +332,10 @@ const SortedEventInfo = ({
       setLoading(true);
     });
   };
+
+  useEffect(() => {
+    setRender(true);
+  }, [event]);
 
   return (
     <Row>
@@ -348,7 +366,11 @@ const SortedEventInfo = ({
           setAdminsVisibility(false);
         }}
       >
-        {RenderAdminCards(event.event.eventAdmins, visibleDrawer)}
+        {RenderAdminCards(
+          event.event.eventAdmins,
+          visibleDrawer,
+          canViewAdminProfiles
+        )}
       </Modal>
       <EventEditDrawer
         id={id}
@@ -360,4 +382,5 @@ const SortedEventInfo = ({
     </Row>
   );
 };
+
 export default SortedEventInfo;

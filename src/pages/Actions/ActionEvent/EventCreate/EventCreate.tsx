@@ -619,7 +619,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
               label="Локація"
               name="Eventlocation"
               className={classes.formItem}
-              rules={descriptionValidation.Inputs}
+              rules={descriptionValidation.EventLocation}
             >
               <TextArea
                 className={classes.input}
@@ -677,6 +677,9 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
                     e.keyCode === 187 ||
                     e.keyCode === 189) &&
                   e.preventDefault()
+                }
+                onKeyPress={(e) =>
+                  (e.key === "." || e.key === ",") && e.preventDefault()
                 }
                 min="2"
                 max="100"
