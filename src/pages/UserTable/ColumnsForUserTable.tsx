@@ -149,8 +149,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col>№</Col>
-          <Col>
+          <Col className="col-title">№</Col>
+          <Col className="col-value">
             <SortDirection sort={1} />
           </Col>
         </Row>
@@ -174,8 +174,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col>Ім'я</Col>
-          <Col>
+          <Col className="col-title">Ім'я</Col>
+          <Col className="col-value">
             <SortDirection sort={2} />
           </Col>
         </Row>
@@ -198,8 +198,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col>Прізвище</Col>
-          <Col>
+          <Col className="col-title">Прізвище</Col>
+          <Col className="col-value">
             <SortDirection sort={3} />
           </Col>
         </Row>
@@ -222,8 +222,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col>Дата народження</Col>
-          <Col>
+          <Col className="col-title">Дата народження</Col>
+          <Col className="col-value">
             <SortDirection sort={4} />
           </Col>
         </Row>
@@ -288,8 +288,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col>Округа</Col>
-          <Col>
+          <Col className="col-title">Округа</Col>
+          <Col className="col-value">
             <SortDirection sort={5} />
           </Col>
         </Row>
@@ -316,8 +316,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col>Станиця</Col>
-          <Col>
+          <Col className="col-title">Станиця</Col>
+          <Col className="col-value">
             <SortDirection sort={6} />
           </Col>
         </Row>
@@ -344,8 +344,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col>Курінь</Col>
-          <Col>
+          <Col className="col-title">Курінь</Col>
+          <Col className="col-value">
             <SortDirection sort={7} />
           </Col>
         </Row>
@@ -372,8 +372,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col>Ступінь</Col>
-          <Col>
+          <Col className="col-title">Ступінь</Col>
+          <Col className="col-value">
             <SortDirection sort={8} />
           </Col>
         </Row>
@@ -460,8 +460,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col>Ступінь в УПЮ</Col>
-          <Col>
+          <Col className="col-title">Ступінь в УПЮ</Col>
+          <Col className="col-value">
             <SortDirection sort={9} />
           </Col>
         </Row>
