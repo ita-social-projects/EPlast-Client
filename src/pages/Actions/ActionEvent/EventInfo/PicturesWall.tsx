@@ -30,9 +30,17 @@ const PicturesWall = ({ pictures, removePicture }: Props) => {
       okType: "primary",
       cancelText: "Скасувати",
       maskClosable: true,
+      onCancel() {},
       onOk() {
         removePicture(photoId);
-      },
+        deletePicture(photoId)
+          .catch(() =>
+            notification.error({
+              message: failDeleteAction("зображення"),
+              duration: 3,
+            })
+          );
+      }
     });
   }
 
@@ -55,16 +63,7 @@ const PicturesWall = ({ pictures, removePicture }: Props) => {
       <DeleteOutlined
         className="deletePicture"
         key="deletePicture"
-        onClick={() =>
-          deletePicture(id)
-            .then(() => seeDeleteModal(id))
-            .catch(() =>
-              notification.error({
-                message: failDeleteAction("зображення"),
-                duration: 3,
-              })
-            )
-        }
+        onClick={() => seeDeleteModal(id)}
       />
     );
 
