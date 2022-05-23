@@ -33,14 +33,13 @@ const PicturesWall = ({ pictures, removePicture }: Props) => {
       onCancel() {},
       onOk() {
         removePicture(photoId);
-        deletePicture(photoId)
-          .catch(() =>
-            notification.error({
-              message: failDeleteAction("зображення"),
-              duration: 3,
-            })
-          );
-      }
+        deletePicture(photoId).catch(() =>
+          notification.error({
+            message: failDeleteAction("зображення"),
+            duration: 3,
+          })
+        );
+      },
     });
   }
 
