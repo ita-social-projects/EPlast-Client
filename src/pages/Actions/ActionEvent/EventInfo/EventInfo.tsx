@@ -14,6 +14,8 @@ import Spinner from "../../../Spinner/Spinner";
 import AuthStore from "../../../../stores/AuthStore";
 import jwt from "jwt-decode";
 import eventUserApi from "../../../../api/eventUserApi";
+import UserApi from "../../../../api/UserApi";
+import { Roles } from "../../../../models/Roles/Roles";
 
 const classes = require("./EventInfo.module.css");
 const { Title } = Typography;
@@ -104,6 +106,7 @@ const EventInfo = () => {
   const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
     {}
   );
+  const [isUserRegisteredUser, setUserRegisterUser] = useState<boolean>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -114,6 +117,7 @@ const EventInfo = () => {
     };
     fetchData();
     getUserAccessesForEvents(id);
+    getUserRoles();
   }, [visibleDrawer, approvedEvent, render]);
 
   const getEventStatusId = async (eventStatus: string) => {
@@ -127,6 +131,11 @@ const EventInfo = () => {
     await eventUserApi.getUserEventAccess(user.nameid, +id).then((response) => {
       setUserAccesses(response.data);
     });
+  };
+
+  const getUserRoles = () => {
+    let roles = UserApi.getActiveUserRoles();
+    setUserRegisterUser(roles.includes(Roles.RegisteredUser));
   };
 
   const search = (value: any) => {
@@ -187,6 +196,7 @@ const EventInfo = () => {
             unSubscribeOnEvent={unSubscribeOnEvent}
             key={event.event?.eventName}
             setRender={setRender}
+            canViewAdminProfiles={!isUserRegisteredUser}
           />
         </Col>
         <Col
