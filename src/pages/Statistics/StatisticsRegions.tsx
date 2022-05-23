@@ -305,7 +305,7 @@ const StatisticsCities = () => {
     setDataFromRow(undefined);
   }
 
-  const onClick = (value: Array<Number>) => {
+  const onIndicatorSelection = (value: Array<Number>) => {
     if (value.includes(2)) {
       setSelectableUnatstvaPart(false);
     }
@@ -367,7 +367,7 @@ const StatisticsCities = () => {
     }
   };
 
-  const onClickReset = () => {
+  const onFormClear = () => {
     form.resetFields();
     setShowDataChart(false);
     setShowTable(false);
@@ -395,7 +395,7 @@ const StatisticsCities = () => {
               >
                 <AntTooltip title="Очистити">
                   <ClearOutlined
-                    onClick={onClickReset}
+                    onClick={onFormClear}
                     style={{
                       fontSize: "x-large",
                       cursor: "pointer",
@@ -482,7 +482,7 @@ const StatisticsCities = () => {
                       showSearch
                       allowClear
                       multiple
-                      onChange={onClick}
+                      onChange={onIndicatorSelection}
                       treeDefaultExpandAll
                       placeholder="Обрати показник"
                       filterTreeNode={(input, option) =>
