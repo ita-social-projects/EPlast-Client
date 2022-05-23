@@ -76,11 +76,11 @@ const FormEditPrecaution = ({
     const fetchData = async () => {
       setDistData([]);
       setUserData([]);
-      await precautionApi.getPrecautions().then((response) => {
+      precautionApi.getPrecautions().then((response) => {
         setDistData(response.data);
       });
       setLoadingUserStatus(true);
-      await precautionApi.getUsersForPrecaution().then((response) => {
+      precautionApi.getUsersForPrecaution().then((response) => {
         setUserData(response.data);
       });
       setLoadingUserStatus(false);
