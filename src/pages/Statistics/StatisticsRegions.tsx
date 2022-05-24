@@ -229,7 +229,7 @@ const StatisticsCities = () => {
 
     // seting (for chart needs) statisticsItems indicators of the very first element
     // because they are the same for all the elements
-    let entryToSetIndicators = response.data.find((entry: any) => entry.yearStatistics.length != 0)
+    let entryToSetIndicators = response.data.find((entry: RegionStatistics) => entry.yearStatistics.length != 0)
     if (!entryToSetIndicators) {
       openNotificationWithIcon("error", ReportNotFound);
       setShowDataChart(false);
