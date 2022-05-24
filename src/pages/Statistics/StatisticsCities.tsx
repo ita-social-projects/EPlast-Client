@@ -68,7 +68,7 @@ const StatisticsCities = () => {
   >(true);
   const [onClickRow, setOnClickRow] = useState<any>();
   const [isLoadingCities, setIsLoadingCities] = useState<boolean>(false);
-  const chartRef = useRef<HTMLDivElement>(null) // using this for scrolling
+  const chartRef = useRef<HTMLDivElement>(null); // using this for scrolling
 
   const constColumns = [
     {
@@ -175,9 +175,9 @@ const StatisticsCities = () => {
 
   useEffect(() => {
     if (dataChartShow) {
-      chartRef.current?.scrollIntoView({behavior: "smooth", block: "center"});
+      chartRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [onClickRow])
+  }, [onClickRow]);
 
   const fetchCities = async () => {
     setIsLoadingCities(true);
@@ -185,13 +185,14 @@ const StatisticsCities = () => {
       let response = await AnnualReportApi.getCities();
       let cities = response.data as City[];
       setCities(
-        cities.sort((a: City, b: City) => a.name.localeCompare(b.name))
-        .map((item) => {
-          return {
-            label: item.name,
-            value: item.id,
-          };
-        })
+        cities
+          .sort((a: City, b: City) => a.name.localeCompare(b.name))
+          .map((item) => {
+            return {
+              label: item.name,
+              value: item.id,
+            };
+          })
       );
     } catch (error) {
       showError(error.message);
@@ -572,11 +573,12 @@ const StatisticsCities = () => {
             </Form>
           </div>
           <br />
-          {
-          sumOfIndicators === 0 ||
+          {sumOfIndicators === 0 ||
           !dataChartShow ||
           title === undefined ||
-          onClickRow === null ? ( "" ) : (
+          onClickRow === null ? (
+            ""
+          ) : (
             <div className="chart" ref={chartRef}>
               <h1>
                 {title.cityName}, {title.year}
@@ -663,7 +665,7 @@ const StatisticsCities = () => {
                       setShowDataChart(true);
                       setDataFromRow(cityRecord);
                       setOnClickRow(index);
-                    }
+                    },
                   };
                 }}
                 pagination={{
