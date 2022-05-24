@@ -68,8 +68,8 @@ const StatisticsCities = () => {
   >(true);
   const [onClickRow, setOnClickRow] = useState<any>();
   const [isLoadingRegions, setIsLoadingRegions] = useState<boolean>(false);
-  
-  const chartRef = useRef<HTMLDivElement>(null) // using this for scrolling
+
+  const chartRef = useRef<HTMLDivElement>(null); // using this for scrolling
 
   const constColumns = [
     {
@@ -171,9 +171,9 @@ const StatisticsCities = () => {
 
   useEffect(() => {
     if (dataChartShow) {
-      chartRef.current?.scrollIntoView({behavior: "smooth", block: "center"});
+      chartRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [onClickRow])
+  }, [onClickRow]);
 
   const fetchRegions = async () => {
     setIsLoadingRegions(true);
@@ -182,13 +182,15 @@ const StatisticsCities = () => {
       let regions = response.data as Region[];
       setRegions(
         regions
-        .sort((a: Region, b: Region) => a.regionName.localeCompare(b.regionName))
-        .map((item) => {
-          return {
-            label: item.regionName,
-            value: item.id,
-          };
-        })
+          .sort((a: Region, b: Region) =>
+            a.regionName.localeCompare(b.regionName)
+          )
+          .map((item) => {
+            return {
+              label: item.regionName,
+              value: item.id,
+            };
+          })
       );
     } catch (error) {
       showError(error.message);
@@ -654,14 +656,14 @@ const StatisticsCities = () => {
                 rowKey="id"
                 columns={columns}
                 dataSource={result}
-                scroll={{scrollToFirstRowOnChange: true}}
+                scroll={{ scrollToFirstRowOnChange: true }}
                 onRow={(regionRecord, index) => {
                   return {
                     onClick: async () => {
                       setShowDataChart(true);
                       setDataFromRow(regionRecord);
                       setOnClickRow(index);
-                    }
+                    },
                   };
                 }}
                 pagination={{

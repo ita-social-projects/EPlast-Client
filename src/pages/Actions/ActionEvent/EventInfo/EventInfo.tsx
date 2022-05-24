@@ -111,11 +111,11 @@ const EventInfo = () => {
       event.event.eventName
     );
   };
-  
+
   const CheckEventForEstimation = ({
     canEstimate,
     isEventFinished,
-    userId
+    userId,
   }: any) => {
     if (canEstimate && isEventFinished) {
       estimateNotification(userId);
