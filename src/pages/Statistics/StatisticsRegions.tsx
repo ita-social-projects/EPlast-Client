@@ -19,7 +19,10 @@ import { SortOrder } from "antd/lib/table/interface";
 import RegionsApi from "../../api/regionsApi";
 import Region from "./Interfaces/Region";
 import RegionStatistics from "./Interfaces/RegionStatistics";
-import { ReportNotFound, shouldContain } from "../../components/Notifications/Messages";
+import {
+  ReportNotFound,
+  shouldContain,
+} from "../../components/Notifications/Messages";
 import "./StatisticsRegions.less";
 import {
   Chart,
@@ -69,8 +72,8 @@ const StatisticsCities = () => {
   >(true);
   const [onClickRow, setOnClickRow] = useState<any>();
   const [isLoadingRegions, setIsLoadingRegions] = useState<boolean>(false);
-  
-  const chartRef = useRef<HTMLDivElement>(null) // using this for scrolling
+
+  const chartRef = useRef<HTMLDivElement>(null); // using this for scrolling
 
   const constColumns = [
     {
@@ -172,9 +175,9 @@ const StatisticsCities = () => {
 
   useEffect(() => {
     if (dataChartShow) {
-      chartRef.current?.scrollIntoView({behavior: "smooth", block: "center"});
+      chartRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [onClickRow])
+  }, [onClickRow]);
 
   const fetchRegions = async () => {
     setIsLoadingRegions(true);
@@ -183,13 +186,15 @@ const StatisticsCities = () => {
       let regions = response.data as Region[];
       setRegions(
         regions
-        .sort((a: Region, b: Region) => a.regionName.localeCompare(b.regionName))
-        .map((item) => {
-          return {
-            label: item.regionName,
-            value: item.id,
-          };
-        })
+          .sort((a: Region, b: Region) =>
+            a.regionName.localeCompare(b.regionName)
+          )
+          .map((item) => {
+            return {
+              label: item.regionName,
+              value: item.id,
+            };
+          })
       );
     } catch (error) {
       showError(error.message);
@@ -229,7 +234,9 @@ const StatisticsCities = () => {
 
     // seting (for chart needs) statisticsItems indicators of the very first element
     // because they are the same for all the elements
-    let entryToSetIndicators = response.data.find((entry: RegionStatistics) => entry.yearStatistics.length != 0)
+    let entryToSetIndicators = response.data.find(
+      (entry: RegionStatistics) => entry.yearStatistics.length != 0
+    );
     if (!entryToSetIndicators) {
       openNotificationWithIcon("error", ReportNotFound);
       setShowDataChart(false);
@@ -260,8 +267,7 @@ const StatisticsCities = () => {
     // reading statisticsItems' indicators of the very first element
     // because they are the same for all the items
     let statistics =
-      entryToSetIndicators.yearStatistics[0].statisticsItems ||
-      [];
+      entryToSetIndicators.yearStatistics[0].statisticsItems || [];
 
     setShowTable(true);
     setResult(data);
@@ -311,65 +317,18 @@ const StatisticsCities = () => {
   }
 
   const onIndicatorSelection = (value: Array<Number>) => {
-    if (value.includes(2)) {
-      setSelectableUnatstvaPart(false);
-    }
-    if (!value.includes(2)) {
-      setSelectableUnatstvaPart(true);
-    }
-    if (
-      value.includes(3) ||
-      value.includes(4) ||
-      value.includes(5) ||
-      value.includes(6) ||
-      value.includes(7)
-    ) {
-      setSelectableUnatstvaZahalom(false);
-    }
-    if (
-      !value.includes(3) &&
-      !value.includes(4) &&
-      !value.includes(5) &&
-      !value.includes(6) &&
-      !value.includes(7)
-    ) {
-      setSelectableUnatstvaZahalom(true);
-    }
-
-    if (value.includes(8)) {
-      setSelectableSeniorPart(false);
-    }
-    if (!value.includes(8)) {
-      setSelectableSeniorPart(true);
-    }
-    if (value.includes(9) || value.includes(10)) {
-      setSelectableSeniorZahalom(false);
-    }
-    if (!value.includes(9) && !value.includes(10)) {
-      setSelectableSeniorZahalom(true);
-    }
-
-    if (value.includes(11)) {
-      setSelectableSeigneurPart(false);
-    }
-    if (!value.includes(11)) {
-      setSelectableSeigneurPart(true);
-    }
-    if (value.includes(12) || value.includes(13)) {
-      setSelectableSeigneurZahalom(false);
-    }
-    if (!value.includes(12) && !value.includes(13)) {
-      setSelectableSeigneurZahalom(true);
-    }
-
-    if (value.length == 0) {
-      setSelectableUnatstvaPart(true);
-      setSelectableUnatstvaZahalom(true);
-      setSelectableSeniorPart(true);
-      setSelectableSeniorZahalom(true);
-      setSelectableSeigneurPart(true);
-      setSelectableSeigneurZahalom(true);
-    }
+    setSelectableUnatstvaPart(!value.includes(2));
+    setSelectableUnatstvaZahalom(
+      !value.some((v) => [3, 4, 5, 6, 7].includes(v.valueOf()))
+    );
+    setSelectableSeniorPart(!value.includes(8));
+    setSelectableSeniorZahalom(
+      !value.some((v) => [9, 10].includes(v.valueOf()))
+    );
+    setSelectableSeigneurPart(!value.includes(11));
+    setSelectableSeigneurZahalom(
+      !value.some((v) => [12, 13].includes(v.valueOf()))
+    );
   };
 
   const onFormClear = () => {
@@ -659,14 +618,14 @@ const StatisticsCities = () => {
                 rowKey="id"
                 columns={columns}
                 dataSource={result}
-                scroll={{scrollToFirstRowOnChange: true}}
+                scroll={{ scrollToFirstRowOnChange: true }}
                 onRow={(regionRecord, index) => {
                   return {
                     onClick: async () => {
                       setShowDataChart(true);
                       setDataFromRow(regionRecord);
                       setOnClickRow(index);
-                    }
+                    },
                   };
                 }}
                 pagination={{
