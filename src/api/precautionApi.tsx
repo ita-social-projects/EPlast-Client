@@ -86,9 +86,7 @@ const getUserActivePrecautionEndDate = async (userId: string, type: string) => {
 };
 
 const getUsersForPrecaution = async () =>{
-  return await api.get(`Precaution/getUsersForPrecaution`).catch((error)=>{
-    throw new Error(error);
-  });
+  return await api.get(`Precaution/getUsersForPrecaution`);
 } 
 
 export default {
