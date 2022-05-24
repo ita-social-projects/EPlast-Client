@@ -16,6 +16,7 @@ import jwt from "jwt-decode";
 import eventUserApi from "../../../../api/eventUserApi";
 import UserApi from "../../../../api/UserApi";
 import { Roles } from "../../../../models/Roles/Roles";
+import NotificationBoxApi from "../../../../api/NotificationBoxApi";
 
 const classes = require("./EventInfo.module.css");
 const { Title } = Typography;
@@ -72,25 +73,6 @@ export interface EventGallery {
   fileName: string;
 }
 
-const estimateNotification = () => {
-  notification.info({
-    message:
-      "Оцінювання події є доступним протягом 3 днів після її завершення!",
-    placement: "topRight",
-    duration: 7,
-    key: "estimation",
-  });
-};
-
-const CheckEventForEstimation = ({
-  canEstimate,
-  isEventFinished,
-}: EventDetails) => {
-  if (canEstimate && isEventFinished) {
-    estimateNotification();
-  }
-};
-
 const EventInfo = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
@@ -119,6 +101,26 @@ const EventInfo = () => {
     getUserAccessesForEvents(id);
     getUserRoles();
   }, [visibleDrawer, approvedEvent, render]);
+
+  const estimateNotification = (userId: string) => {
+    NotificationBoxApi.createNotifications(
+      [userId],
+      "Оцінювання події є доступним протягом 3 днів після її завершення! ",
+      NotificationBoxApi.NotificationTypes.EventNotifications,
+      `/events/details/${id}`,
+      event.event.eventName
+    );
+  };
+  
+  const CheckEventForEstimation = ({
+    canEstimate,
+    isEventFinished,
+    userId
+  }: any) => {
+    if (canEstimate && isEventFinished) {
+      estimateNotification(userId);
+    }
+  };
 
   const getEventStatusId = async (eventStatus: string) => {
     await eventsApi.getEventStatusId(eventStatus).then((response) => {
