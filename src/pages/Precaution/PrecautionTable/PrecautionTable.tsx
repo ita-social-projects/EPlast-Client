@@ -338,7 +338,6 @@ const PrecautionTable = () => {
 
           <AddPrecautionModal
             setVisibleModal={setVisibleModal}
-            canAddPrecautionToGoverningBodyAdmin={userAccess["AddPrecautionToGoverningBodyAdmin"]}
             visibleModal={visibleModal}
             onAdd={handleAdd}
           />
