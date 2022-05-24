@@ -44,7 +44,6 @@ const PrecautionTable = () => {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [canEdit] = useState(roles.includes(Roles.Admin));
 
   const [searchedData, setSearchedData] = useState("");
   const [page, setPage] = useState(1);
@@ -71,7 +70,9 @@ const PrecautionTable = () => {
       isActive: false,
     },
   ]);
-  const fetchData = async () => {
+  const [userAccess, setUserAccess] = useState<{ [key: string]: boolean }>({});
+
+  const getPrecautionTable = async () => {
     const NewTableSettings: PrecautionTableSettings = {
       sortByOrder: sortByOrder,
       statusFilter: statusSorter,
@@ -83,6 +84,7 @@ const PrecautionTable = () => {
     };
 
     setLoading(true);
+    await getUserAccesses();
     const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(
       NewTableSettings
     );
@@ -90,8 +92,19 @@ const PrecautionTable = () => {
     setLoading(false);
     setTotal(res[0]?.total);
   };
+  
+  const getUserAccesses = async () => {
+    let user: any = jwt(AuthStore.getToken() as string);
+    let result: any;
+    precautionApi.getUserAccess(user.nameid).then((response) => {
+      result = response;
+      setUserAccess(response.data);
+    });
+    return result;
+  };
+
   useEffect(() => {
-    fetchData();
+    getPrecautionTable();
   }, [
     sortByOrder,
     statusSorter,
@@ -117,7 +130,7 @@ const PrecautionTable = () => {
 
   const handleAdd = async () => {
     setVisibleModal(false);
-    fetchData();
+    getPrecautionTable();
     notificationLogic("success", successfulCreateAction("Догану"));
   };
 
@@ -250,7 +263,7 @@ const PrecautionTable = () => {
         <>
           <Row gutter={[6, 12]} className={classes.buttonsSearchField}>
             <Col>
-              {canEdit === true ? (
+              {userAccess["AddPrecaution"] === true ? (
                 <>
                   <Button type="primary" onClick={showModal}>
                     Додати пересторогу
@@ -314,7 +327,10 @@ const PrecautionTable = () => {
               isRecordActive={isRecordActive}
               pageX={x}
               pageY={y}
-              canEdit={canEdit}
+              canEditActive={userAccess["EditActivePrecaution"]}
+              canEditInactive = {userAccess["EditInactivePrecaution"]}
+              canDeleteActive = {userAccess["DeleteActivePrecaution"]}
+              canDeleteInactive = {userAccess["DeleteInactivePrecaution"]}
               onDelete={handleDelete}
               onEdit={handleEdit}
             />
@@ -322,6 +338,7 @@ const PrecautionTable = () => {
 
           <AddPrecautionModal
             setVisibleModal={setVisibleModal}
+            canAddPrecautionToGoverningBodyAdmin={userAccess["AddPrecautionToGoverningBodyAdmin"]}
             visibleModal={visibleModal}
             onAdd={handleAdd}
           />

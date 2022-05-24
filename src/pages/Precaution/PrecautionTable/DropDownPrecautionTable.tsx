@@ -11,34 +11,10 @@ import classes from "../../DecisionTable/Table.module.css";
 import UserPrecaution from "../Interfaces/UserPrecaution";
 import User from "../../../models/UserTable/User";
 import precautionApi from "../../../api/precautionApi";
-import Precaution from "../Interfaces/Precaution";
+import DropDownProps from "../Interfaces/DropDownPrecautionTableProps";
 import EditPrecautionModal from "./EditPrecautionModal";
 
-interface Props {
-  record: number;
-  userId: string;
-  isRecordActive: boolean;
-  pageX: number;
-  pageY: number;
-  showDropdown: boolean;
-  canEdit: boolean;
-  onDelete: (id: number) => void;
-  onEdit: (
-    id: number,
-    Precaution: Precaution,
-    date: Date,
-    endDate: Date,
-    isActive: boolean,
-    reason: string,
-    status: string,
-    reporter: string,
-    number: number,
-    user: any,
-    userId: string
-  ) => void;
-}
-
-const DropDown = (props: Props) => {
+const DropDown = (props: DropDownProps) => {
   const {
     record,
     userId,
@@ -46,7 +22,10 @@ const DropDown = (props: Props) => {
     pageX,
     pageY,
     showDropdown,
-    canEdit,
+    canEditActive,
+    canEditInactive,
+    canDeleteActive,
+    canDeleteInactive,
     onDelete,
     onEdit,
   } = props;
@@ -115,22 +94,31 @@ const DropDown = (props: Props) => {
           <FileSearchOutlined />
           Переглянути профіль
         </Menu.Item>
-        {canEdit && isRecordActive ? (
+        {isRecordActive && canEditActive && (
           <Menu.Item key="3">
             <EditOutlined />
             Редагувати
           </Menu.Item>
-        ) : (
-          <></>
         )}
-        {canEdit ? (
+        {!isRecordActive && canEditInactive &&(
+          <Menu.Item key="3">
+            <EditOutlined />
+            Редагувати
+          </Menu.Item>
+        )}
+        {isRecordActive && canDeleteActive && (
           <Menu.Item key="2">
             <DeleteOutlined />
             Видалити
           </Menu.Item>
-        ) : (
-          <></>
         )}
+        {!isRecordActive && canDeleteInactive && (
+          <Menu.Item key="2">
+            <DeleteOutlined />
+            Видалити
+          </Menu.Item>
+        )}
+        
       </Menu>
       <EditPrecautionModal
         record={record}
