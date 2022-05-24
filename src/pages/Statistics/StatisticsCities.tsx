@@ -190,7 +190,8 @@ const StatisticsCities = () => {
       let cities = response.data as City[];
       setCities(
         cities
-          .sort((a: City, b: City) => a.name.localeCompare(b.name))
+          .sort((a: City, b: City) =>
+            a.name.localeCompare(b.name))
           .map((item) => {
             return {
               label: item.name,
