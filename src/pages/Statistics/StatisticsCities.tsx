@@ -116,6 +116,16 @@ const StatisticsCities = () => {
     },
   ];
 
+  const totalColumn = 
+  {
+    title: "Усього",
+    dataIndex: "total",
+    key: "total",
+    fixed: "right",
+    sorter: { compare: (a: any, b: any) => a.total - b.total },
+    width: 100,
+  }
+
   const indicatorsArray = [
     { value: StatisticsItemIndicator.NumberOfPtashata, label: "Пташата" },
     { value: StatisticsItemIndicator.NumberOfNovatstva, label: "Новацтво" },
@@ -228,6 +238,7 @@ const StatisticsCities = () => {
 
   const onSubmit = async (info: any) => {
     let counter = 1;
+
     let response = await StatisticsApi.getCitiesStatistics({
       CityIds: info.citiesId,
       Years: info.years,
@@ -262,6 +273,7 @@ const StatisticsCities = () => {
             regionName: stanytsya.city.region.regionName,
             year: yearStatistic.year,
             ...yearStatistic.statisticsItems.map((it) => it.value),
+            total: yearStatistic.statisticsItems.reduce((sum, item) => sum + item.value, 0),
           };
         });
       })
@@ -287,15 +299,13 @@ const StatisticsCities = () => {
           width: 130,
         };
       }),
+      totalColumn,
     ];
     setColumns(temp);
   };
 
   // calculating for chart percentage
-  let sumOfIndicators = 0;
-  dataChart.map((indicator: any) => {
-    sumOfIndicators += indicator.count;
-  });
+  let sumOfIndicators: number = dataChart.length ? dataChart.reduce((sum: number, indicator: any) => sum + indicator.count, 0) : 0;
 
   if (dataFromRow != undefined) {
     const regex = /[0-9]/g;
@@ -312,13 +322,16 @@ const StatisticsCities = () => {
         }
       }),
     ];
-    let indicatorsForChart = allDataForChart.slice(0, columns.length - 4);
+    let indicatorsForChart = allDataForChart.slice(0, -5);
     setTitle(dataFromRow);
     setDataChart(indicatorsForChart);
     setDataFromRow(undefined);
   }
 
   const onIndicatorSelection = (value: Array<Number>) => {
+    // enables or disables dropdown options for Показники
+    // based on selected values
+    
     setSelectableUnatstvaPart(!value.includes(2));
     setSelectableUnatstvaZahalom(
       !value.some((v) => [3, 4, 5, 6, 7].includes(v.valueOf()))
