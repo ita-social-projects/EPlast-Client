@@ -23,7 +23,7 @@ import userApi from "../../../api/UserApi";
 import ReactInputMask from "react-input-mask";
 import moment, { Moment } from "moment";
 import jwt from "jwt-decode";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import { useParams } from "react-router-dom";
 import notificationLogic from "../../../components/Notifications/Notification";
 import { useHistory } from "react-router-dom";
@@ -77,7 +77,7 @@ export default function () {
   const { UpdateData } = useContext(PersonalDataContext);
 
   const fetchData = async () => {
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     const user: any = jwt(token);
     let decodedJwt = jwt_decode(token) as any;
     let id = user.nameid;

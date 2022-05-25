@@ -48,7 +48,7 @@ import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddGoverningBodiesSecretaryForm from "../AddAdministratorModal/AddGoverningBodiesSecretaryForm";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import userApi from "../../../api/UserApi";
 import GoverningBodyDocument from "../../../models/GoverningBody/GoverningBodyDocument";
@@ -276,7 +276,7 @@ const GoverningBody = () => {
   }
 
   const getUserAccesses = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     let result: any;
     await getUserAccess(user.nameid).then((response) => {
       result = response;

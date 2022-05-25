@@ -11,7 +11,7 @@ import UserPrecautionTableInfo from "../Interfaces/UserPrecauctionTableInfo";
 import ClickAwayListener from "react-click-away-listener";
 import Precaution from "../Interfaces/Precaution";
 import PrecautionTableSettings from "../../../models/Precaution/PrecautionTableSettings";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
@@ -26,7 +26,7 @@ const { Content } = Layout;
 const PrecautionTable = () => {
   const classes = require("./Table.module.css");
   let user: any;
-  let curToken = AuthStore.getToken() as string;
+  let curToken = AuthLocalStorage.getToken() as string;
   let roles: string[] = [""];
   user = curToken !== null ? (jwt(curToken) as string) : "";
   roles =

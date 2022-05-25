@@ -52,7 +52,7 @@ import ClubAdmin from "../../../models/Club/ClubAdmin";
 import ClubDocument from "../../../models/Club/ClubDocument";
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
 import CheckActiveMembersForm from "./CheckActiveMembersForm";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -358,7 +358,7 @@ const Club = () => {
   };
 
   const getUserAccessesForClubs = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await getUserClubAccess(+id, user.nameid).then((response) => {
       setUserAccesses(response.data);
     });
