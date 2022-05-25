@@ -104,6 +104,14 @@ const StatisticsCities = () => {
       sortDirections: ["ascend", "descend"] as SortOrder[],
       width: 100,
     },
+    {
+      title: "Усього",
+      dataIndex: "total",
+      key: "total",
+      fixed: "right",
+      sorter: { compare: (a: any, b: any) => a.total - b.total },
+      width: 55,
+    },
   ];
 
   const indicatorsArray = [
@@ -259,10 +267,13 @@ const StatisticsCities = () => {
             regionName: region.region.regionName,
             year: yearStatistic.year,
             ...yearStatistic.statisticsItems.map((it) => it.value),
+            total: yearStatistic.statisticsItems.reduce((sum, a) => sum + a.value, 0),
           };
         });
       })
       .flat();
+
+      console.log(data);
 
     // reading statisticsItems' indicators of the very first element
     // because they are the same for all the items
@@ -317,6 +328,9 @@ const StatisticsCities = () => {
   }
 
   const onIndicatorSelection = (value: Array<Number>) => {
+    // enables or disables dropdown options for Показники
+    // based on selected values
+
     setSelectableUnatstvaPart(!value.includes(2));
     setSelectableUnatstvaZahalom(
       !value.some((v) => [3, 4, 5, 6, 7].includes(v.valueOf()))
@@ -618,7 +632,7 @@ const StatisticsCities = () => {
                 rowKey="id"
                 columns={columns}
                 dataSource={result}
-                scroll={{ scrollToFirstRowOnChange: true }}
+                scroll={{ x: "100%", scrollToFirstRowOnChange: true }}
                 onRow={(regionRecord, index) => {
                   return {
                     onClick: async () => {
