@@ -621,7 +621,7 @@ const StatisticsCities = () => {
                 rowKey="id"
                 columns={columns}
                 dataSource={dataForTable}
-                scroll={{ scrollToFirstRowOnChange: true }}
+                scroll={{ x: "100%", scrollToFirstRowOnChange: true }}
                 onRow={(cityRecord, index) => {
                   return {
                     onClick: () => {
