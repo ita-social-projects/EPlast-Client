@@ -177,7 +177,6 @@ const Sector = () => {
   const getSector = async () => {
     setLoading(true);
     try {
-      debugger
       const response = await getSectorById(+sectorId);
       const sectorViewModel = response.data.sectorViewModel;
       await getUserAccesses();
