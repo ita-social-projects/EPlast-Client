@@ -9,7 +9,7 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import { possibleFileExtensions } from "../../../components/Notifications/Messages";
 import { getAnnouncementsById } from "../../../api/announcementsApi";
 
-interface Props {
+type Props = {
   visibleModal: boolean;
   id: number;
   setVisibleModal: (visibleModal: boolean) => void;

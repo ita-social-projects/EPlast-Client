@@ -222,6 +222,20 @@ export const descriptionValidation = {
       message: emptyInput(),
     },
   ],
+  EventLocation: [
+    {
+      pattern: /^(\s*\S+\s*){1,200}$/,
+      message: inputOnlyWhiteSpaces(),
+    },
+    {
+      max: 200,
+      message: maxLength(200),
+    },
+    {
+      required: true,
+      message: emptyInput(),
+    },
+  ],
   DecisionAndDocumentName: [
     {
       pattern: /^\s*\S.*$/,

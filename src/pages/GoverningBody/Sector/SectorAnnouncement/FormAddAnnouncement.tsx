@@ -53,7 +53,6 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 
   const handleSubmit = (values: any) => {
     setVisibleModal(false);
-    form.resetFields();
     onAdd(
       values.title,
       values.text,
@@ -111,7 +110,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     setSectorsLoading(true);
     try {
       form.setFieldsValue({ selectSector: undefined });
-      const id: number = JSON.parse(value.toString()).id;
+      const { id } = JSON.parse(value.toString());
       setSelectGoverningBodyId(id);
       governingBodyChange(id);
     } finally {
@@ -121,7 +120,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 
   const onSectorSelect = async (value: any) => {
     try {
-      const id: number = JSON.parse(value.toString()).id;
+      const { id } = JSON.parse(value.toString());
       setSelectSectorId(id);
     } catch {
       setSelectSectorId(null);
