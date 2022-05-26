@@ -249,7 +249,8 @@ export const editSectorAnnouncement = async (
   id: number,
   title: string,
   text: string,
-  imagesBase64: string[]
+  imagesBase64: string[],
+  isPined: boolean
 ) => {
   return api
     .put(`GoverningBodies/Sectors/EditAnnouncement/${id}`, {
@@ -257,6 +258,7 @@ export const editSectorAnnouncement = async (
       title,
       text,
       imagesBase64,
+      isPined
     })
     .catch((error) => {
       throw new Error(error);

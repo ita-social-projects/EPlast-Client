@@ -1,16 +1,18 @@
-import {
-  Button,
-  Avatar,
-  Layout,
-  List,
-  Modal,
-  Carousel,
-  Tooltip,
-  Divider,
-} from "antd";
-import React, { useEffect } from "react";
-import { useState } from "react";
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
+import { Button, Avatar, Layout, List, Modal, Tooltip, Row, Popconfirm } from "antd";
+import React, { useEffect, useState } from "react";
+
 import { useHistory, useParams } from "react-router-dom";
+import ClickAwayListener from "react-click-away-listener";
+import jwt from "jwt-decode";
+import { Markup } from "interweave";
+import {
+  PushpinFilled,
+  PushpinOutlined,
+} from "@ant-design/icons";
+import moment from "moment";
+import Meta from "antd/lib/card/Meta";
 import {
   addSectorAnnouncement,
   editSectorAnnouncement,
@@ -23,30 +25,20 @@ import AddAnnouncementModal from "./AddAnnouncementModal";
 import Spinner from "../../../Spinner/Spinner";
 import notificationLogic from "../../../../components/Notifications/Notification";
 import DropDown from "./DropDownAnnouncement";
-import ClickAwayListener from "react-click-away-listener";
 import NotificationBoxApi from "../../../../api/NotificationBoxApi";
 import EditAnnouncementModal from "./EditAnnouncementModal";
 import { getUserAccess } from "../../../../api/regionsBoardApi";
 import { Roles } from "../../../../models/Roles/Roles";
-import jwt from "jwt-decode";
 import AuthStore from "../../../../stores/AuthStore";
 import ShortUserInfo from "../../../../models/UserTable/ShortUserInfo";
 import UserApi from "../../../../api/UserApi";
-import { Markup } from "interweave";
-import Title from "antd/lib/typography/Title";
-import {
-  FileImageOutlined,
-  LeftOutlined,
-  RightOutlined,
-} from "@ant-design/icons";
-import GoverningBodyAnnouncement from "../../../../models/GoverningBody/GoverningBodyAnnouncement";
-import {
-  addAnnouncement,
-  getAnnouncementsById,
-} from "../../../../api/governingBodiesApi";
+import { addAnnouncement } from "../../../../api/governingBodiesApi";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../../Announcement/PicturesWallModal";
+import { pinAnnouncement } from "../../../../api/announcementsApi";
+
+const classes = require("../../Announcement/Announcement.module.css");
 
 const { Content } = Layout;
 
@@ -61,25 +53,23 @@ const Announcements = () => {
   const [y, setY] = useState<number>(0);
   const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
   const [visibleEditModal, setVisibleEditModal] = useState<boolean>(false);
-  const classes = require("./Announcement.module.css");
   const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
     {}
   );
-  const { governingBodyId, sectorId, p } = useParams();
+  const { governingBodyId, sectorId, p }: any = useParams();
   const [pageSize, setPageSize] = useState(12);
   const [page, setPage] = useState(+p);
   const [totalSize, setTotalSize] = useState<number>(0);
-  const maxTextLength = 50;
 
   const getAnnouncements = async () => {
     setLoading(true);
     await getSectorAnnouncementsByPage(p, pageSize, +sectorId).then(
       async (res) => {
         setTotalSize(res.data.item2);
-        var announcements: Announcement[] = [];
-        for (var value of res.data.item1) {
+        const announcements: Announcement[] = [];
+        for (const value of res.data.item1) {
           await UserApi.getImage(value.user.imagePath).then((image) => {
-            var ann: Announcement = {
+            const ann: Announcement = {
               id: value.id,
               text: value.text,
               title: value.title,
@@ -88,8 +78,8 @@ const Announcements = () => {
               lastName: value.user.lastName,
               userId: value.userId,
               profileImage: image.data,
-              strippedString: value.text.replace(/<[^>]+>/g, ""),
               imagesPresent: value.imagesPresent,
+              isPined: value.isPined,
             };
             announcements.push(ann);
           });
@@ -100,21 +90,16 @@ const Announcements = () => {
     );
   };
 
-  const handleChange = async (page: number) => {
-    history.push(`${page}`);
+  const handleChange = async (selectedPage: number) => {
+    history.push(`${selectedPage}`);
   };
 
-  const handleSizeChange = (pageSize: number = 10) => {
-    setPageSize(pageSize);
+  const handleSizeChange = (selectedPageSize: number = 10) => {
+    setPageSize(selectedPageSize);
   };
-
-  useEffect(() => {
-    getAnnouncements();
-    getUserAccesses();
-  }, [p, pageSize]);
 
   const getUserAccesses = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    const user: any = jwt(AuthStore.getToken() as string);
     let result: any;
     await getUserAccess(user.nameid).then((response) => {
       result = response;
@@ -138,7 +123,9 @@ const Announcements = () => {
   };
 
   const newNotification = async () => {
-    let usersId = ((await getUsers()).data as ShortUserInfo[]).map((x) => x.id);
+    const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
+      (user) => user.id
+    );
     await NotificationBoxApi.createNotifications(
       usersId,
       "Додане нове оголошення.",
@@ -153,19 +140,22 @@ const Announcements = () => {
   };
 
   const showFullAnnouncement = async (annId: number) => {
-    let pics: AnnouncementGallery[] = [];
+    const pics: AnnouncementGallery[] = [];
     await getSectorAnnouncementsById(annId).then((response) => {
       response.data.images.map((image: any) => {
         pics.push({
           announcementId: image.id,
           fileName: image.imageBase64,
         });
+        return image;
       });
       return Modal.info({
         title: (
           <div className={classes.announcementDate}>
             {response.data.user.firstName} {response.data.user.lastName}
-            <div>{response.data.date.toString().substring(0, 10)}</div>
+            <div>
+              {moment(response.data.date.toString()).format("YYYY-MM-DD HH:mm")}
+            </div>
           </div>
         ),
         content: (
@@ -187,11 +177,12 @@ const Announcements = () => {
     id: number,
     newTitle: string,
     newText: string,
-    newImages: string[]
+    newImages: string[],
+    isPined: boolean
   ) => {
     setVisibleAddModal(false);
     setLoading(true);
-    await editSectorAnnouncement(id, newTitle, newText, newImages);
+    await editSectorAnnouncement(id, newTitle, newText, newImages, isPined);
     await getAnnouncements();
     setLoading(false);
   };
@@ -200,18 +191,26 @@ const Announcements = () => {
     title: string,
     text: string,
     images: string[],
-    gvbId: number,
-    sectorId: number
+    isPined: boolean,
+    selectedGvbId: number,
+    selectedSectorId: number
   ) => {
     setVisibleAddModal(false);
     setLoading(true);
     newNotification();
     if (sectorId) {
-      await addSectorAnnouncement(title, text, images, +sectorId);
+      await addSectorAnnouncement(
+        title,
+        text,
+        images,
+        isPined,
+        selectedGvbId,
+        selectedSectorId
+      );
     } else {
-      await addAnnouncement(title, text, images, +gvbId);
+      await addAnnouncement(title, text, images, isPined, +selectedGvbId);
     }
-    getAnnouncements();
+    await getAnnouncements();
     setLoading(false);
     notificationLogic("success", "Оголошення опубліковано");
   };
@@ -221,6 +220,19 @@ const Announcements = () => {
     setData([...filteredData]);
   };
 
+  const handlePin = async (item: Announcement) => {
+    setLoading(true);
+    await pinAnnouncement(item.id);
+    await getAnnouncements();
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getAnnouncements();
+    getUserAccesses();
+    setPage(+p);
+  }, [p, pageSize]);
+
   return (
     <Layout>
       <Content
@@ -229,12 +241,16 @@ const Announcements = () => {
         }}
       >
         <h1> Оголошення </h1>
-        {userAccesses["AddAnnouncement"] ? (
-          <div className={classes.antbtn}>
-            <Button type="primary" onClick={showModal}>
+        {userAccesses.AddAnnouncement ? (
+          <Row justify="end">
+            <Button
+              type="primary"
+              className={classes.addAnnouncementButton}
+              onClick={showModal}
+            >
               Додати оголошення
             </Button>
-          </div>
+          </Row>
         ) : null}
         {loading ? (
           <Spinner />
@@ -254,12 +270,8 @@ const Announcements = () => {
             renderItem={(item) => {
               return (
                 <List.Item
-                  style={{ overflow: "hidden", wordBreak: "break-word" }}
+                  key={item.id}
                   className={classes.listItem}
-                  onClick={() => {
-                    setShowDropdown(false);
-                    showFullAnnouncement(item.id);
-                  }}
                   onContextMenu={(event) => {
                     event.preventDefault();
                     setShowDropdown(true);
@@ -269,19 +281,43 @@ const Announcements = () => {
                   }}
                 >
                   <div className={classes.metaWrapper}>
-                    {item.imagesPresent ? (
+                  {item.isPined ? (
                       <div>
-                        <Tooltip title='Натисніть "Показати більше" щоб побачити вкладені фото'>
-                          <FileImageOutlined
-                            className={classes.isImagePresentIcon}
+                        <Tooltip
+                          title="Натисніть щоб відкріпити оголошення"
+                          placement="topRight"
+                        >
+                          <Popconfirm
+                            placement="bottom"
+                            title="Відкріпити оголоення"
+                            icon={null}
+                            onConfirm={() => handlePin(item)}
+                            okText="Так"
+                            cancelText="Ні"
+                          >
+                            <PushpinFilled
+                              className={classes.titleButtonIcon}
+                            />
+                          </Popconfirm>
+                        </Tooltip>
+                      </div>
+                    ) : (
+                      <div>
+                        <Tooltip
+                          title="Натисніть щоб закріпити оголошення"
+                          placement="topRight"
+                        >
+                          <PushpinOutlined
+                            className={classes.titleButtonIcon}
+                            onClick={() => handlePin(item)}
                           />
                         </Tooltip>
                       </div>
-                    ) : null}
+                    )}
                     <List.Item.Meta
                       className={classes.listItemMeta}
-                      title={item.firstName + " " + item.lastName}
-                      description={item.date.toString().substring(0, 10)}
+                      title={`${item.firstName} ${item.lastName}`}
+                      description={moment(item.date).format("YYYY-MM-DD HH:mm")}
                       avatar={
                         <Avatar
                           size={40}
@@ -291,33 +327,43 @@ const Announcements = () => {
                       }
                     />
                   </div>
-                  <Markup content={item.title} />
-                  <Markup
-                    content={
-                      item.strippedString.length < maxTextLength
-                        ? item.text
-                        : `${item.text
-                            .toString()
-                            .substring(
-                              0,
-                              maxTextLength +
-                                (item.text.length -
-                                  item.strippedString.length) /
-                                  2
-                            )}...`
-                    }
-                  />
+                  <div
+                    className={classes.listItemContent}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => {
+                      setShowDropdown(false);
+                      showFullAnnouncement(item.id);
+                    }}
+                  >
+                   <Markup
+                      content={item.title}
+                      className={classes.truncateText}
+                    />
+                    <Markup
+                      content={item.text}
+                      className={classes.truncateText}
+                    />
+                    {item.imagesPresent ? (
+                      <Row justify="center">
+                        <Meta
+                          className={classes.moreButton}
+                          title="Переглянути вкладення"
+                        />
+                      </Row>
+                    ) : null}
+                  </div>
                 </List.Item>
               );
             }}
             pagination={{
-              current: page,
-              pageSize: pageSize,
+              current: +page,
+              pageSize,
               responsive: true,
               total: totalSize,
               pageSizeOptions: ["12", "24", "36", "48"],
-              onChange: async (page) => await handleChange(page),
-              onShowSizeChange: (page, size) => handleSizeChange(size),
+              onChange: async (selectedPage) => handleChange(selectedPage),
+              onShowSizeChange: (_selectedPage, size) => handleSizeChange(size),
             }}
           />
         )}

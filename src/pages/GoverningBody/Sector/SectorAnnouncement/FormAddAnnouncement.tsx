@@ -1,12 +1,11 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable prefer-destructuring */
 import React, { useState, useEffect } from "react";
-import { Form, Button, Row, Col, Upload, Select } from "antd";
-import formclasses from "./Form.module.css";
-import {
-  emptyInput,
-  maxLength,
-} from "../../../../components/Notifications/Messages";
+import { Form, Button, Row, Col, Upload, Select, Checkbox } from "antd";
 import ReactQuill from "react-quill";
 import { UploadFile } from "antd/lib/upload/interface";
+import formclasses from "./Form.module.css";
+import { emptyInput } from "../../../../components/Notifications/Messages";
 import { GoverningBody } from "../../../../api/decisionsApi";
 import SectorProfile from "../../../../models/GoverningBody/Sector/SectorProfile";
 import { getGoverningBodiesList } from "../../../../api/governingBodiesApi";
@@ -22,6 +21,7 @@ type FormAddAnnouncementProps = {
     title: string,
     text: string,
     images: string[],
+    isPined: boolean,
     gvbId: number,
     sectorId: number
   ) => void;
@@ -32,7 +32,6 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 ) => {
   const { setVisibleModal, onAdd, sectorId, governingBodyId } = props;
   const [form] = Form.useForm();
-  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [gvbLoading, setGvbLoading] = useState<boolean>(false);
@@ -41,6 +40,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const [sectors, setSectors] = useState<SectorProfile[]>([]);
   const [selectSectorId, setSelectSectorId] = useState<any>();
   const [selectGoverningBodyId, setSelectGoverningBodyId] = useState<number>();
+  const [isPined, setIsPined] = useState<boolean>(false);
 
   const handleCancel = () => {
     form.resetFields();
@@ -52,17 +52,16 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   };
 
   const handleSubmit = (values: any) => {
-    setSubmitLoading(true);
     setVisibleModal(false);
     form.resetFields();
     onAdd(
       values.title,
       values.text,
       photos,
+      isPined,
       selectGoverningBodyId,
       selectSectorId
     );
-    setSubmitLoading(false);
   };
 
   const getBase64 = (img: Blob, callback: Function) => {
@@ -206,7 +205,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
           <Col md={24} xs={24}>
             <Form.Item
               className={formclasses.formField}
-              initialValue={""}
+              initialValue=""
               label="Тема оголошення"
               labelCol={{ span: 24 }}
               name="title"
@@ -220,7 +219,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
           <Col md={24} xs={24}>
             <Form.Item
               className={formclasses.formField}
-              initialValue={""}
+              initialValue=""
               label="Текст оголошення"
               labelCol={{ span: 24 }}
               name="text"
@@ -238,8 +237,15 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
             onChange={handleUpload}
             beforeUpload={() => false}
           >
-            {"Upload"}
+            Upload
           </Upload>
+        </Row>
+        <Row>
+          <Form.Item name="remember" valuePropName="checked">
+            <Checkbox onChange={(e) => setIsPined(e.target.checked)}>
+              Закріпити оголошення
+            </Checkbox>
+          </Form.Item>
         </Row>
         <Row justify="start" gutter={[12, 0]}>
           <Col md={24} xs={24}>

@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import {
@@ -34,6 +35,7 @@ import {
   removeSector,
   getSectorAnnouncementsById,
   addSectorAnnouncement,
+  getSectorAnnouncementsByPage,
 } from "../../../api/governingBodySectorsApi";
 import "../GoverningBody/GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -51,7 +53,7 @@ import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument"
 import AddDocumentModal from "./AddDocumentModal";
 import AddSectorAdminForm from "./AddSectorAdminForm";
 import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
-import { getSectorAnnouncementsByPage } from "../../../api/governingBodySectorsApi";
+
 import AddAnnouncementModal from "./SectorAnnouncement/AddAnnouncementModal";
 import { getUsersByAllRoles } from "../../../api/adminApi";
 import { Roles } from "../../../models/Roles/Roles";
@@ -60,11 +62,12 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../Announcement/PicturesWallModal";
+
 const classes = require("../Announcement/Announcement.module.css");
 
 const Sector = () => {
   const history = useHistory();
-  const { governingBodyId, sectorId } = useParams();
+  const { governingBodyId, sectorId }: any = useParams();
   const { url } = useRouteMatch();
   const [loading, setLoading] = useState(false);
   const [sector, setSector] = useState<SectorProfile>(new SectorProfile());
@@ -91,7 +94,7 @@ const Sector = () => {
   const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
   const [listLoading, setListLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize] = useState(5);
 
   const deleteSector = async () => {
     await removeSector(sector.id);
@@ -99,7 +102,7 @@ const Sector = () => {
       "success",
       successfulDeleteAction("Напрям керівного органу")
     );
-    history.push("/governingBodies/" + governingBodyId);
+    history.push(`/governingBodies/${governingBodyId}`);
   };
 
   const setPhotos = async (members: SectorAdmin[], logo: string) => {
@@ -141,7 +144,7 @@ const Sector = () => {
   }
 
   const getUserAccesses = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    const user: any = jwt(AuthStore.getToken() as string);
     let result: any;
     await getUserAccess(user.nameid).then((response) => {
       result = response;
@@ -150,9 +153,31 @@ const Sector = () => {
     return result;
   };
 
+  const loadMoreData = async () => {
+    if (listLoading) {
+      return;
+    }
+    try {
+      setListLoading(true);
+      const response = await getSectorAnnouncementsByPage(
+        page,
+        pageSize,
+        +sectorId
+      );
+      for (let i = 0; i < response.data.item1.length; ++i) {
+        setAnnouncements((old) => [...old, response.data.item1[i]]);
+      }
+    } finally {
+      setListLoading(false);
+      setPage(page + 1);
+    }
+  };
+
+
   const getSector = async () => {
     setLoading(true);
     try {
+      debugger
       const response = await getSectorById(+sectorId);
       const sectorViewModel = response.data.sectorViewModel;
       await getUserAccesses();
@@ -186,7 +211,7 @@ const Sector = () => {
     return result;
   };
   const newAnnouncementNotification = async () => {
-    let usersId = ((await getUsers()).data as ShortUserInfo[]).map((x) => x.id);
+    const usersId = ((await getUsers()).data as ShortUserInfo[]).map((x) => x.id);
     await NotificationBoxApi.createNotifications(
       usersId,
       "Додане нове оголошення.",
@@ -199,15 +224,23 @@ const Sector = () => {
   const onAnnouncementAdd = async (
     title: string,
     text: string,
-    images: string[]
+    images: string[],
+    isPined: boolean
   ) => {
     setVisibleAddModal(false);
     setLoading(true);
     newAnnouncementNotification();
     const announcementId = (
-      await addSectorAnnouncement(title, text, images, +sectorId)
+      await addSectorAnnouncement(
+        title,
+        text,
+        images,
+        isPined,
+        governingBodyId,
+        sectorId
+      )
     ).data;
-    let newAnnouncement: GoverningBodyAnnouncement = (
+    const newAnnouncement: GoverningBodyAnnouncement = (
       await getSectorAnnouncementsById(announcementId)
     ).data;
     setAnnouncements((old: GoverningBodyAnnouncement[]) => [
@@ -224,13 +257,14 @@ const Sector = () => {
   };
 
   const showFullAnnouncement = async (annId: number) => {
-    let pics: AnnouncementGallery[] = [];
+    const pics: AnnouncementGallery[] = [];
     await getSectorAnnouncementsById(annId).then((response) => {
       response.data.images.map((image: any) => {
         pics.push({
           announcementId: image.id,
           fileName: image.imageBase64,
         });
+        return image;
       });
       return Modal.info({
         title: (
@@ -252,26 +286,6 @@ const Sector = () => {
         icon: null,
       });
     });
-  };
-
-  const loadMoreData = async () => {
-    if (listLoading) {
-      return;
-    }
-    try {
-      setListLoading(true);
-      const response = await getSectorAnnouncementsByPage(
-        page,
-        pageSize,
-        +sectorId
-      );
-      for (let i = 0; i < response.data.item2; ++i) {
-        setAnnouncements((old) => [...old, response.data.item1[i]]);
-      }
-    } finally {
-      setListLoading(false);
-      setPage(page + 1);
-    }
   };
 
   useEffect(() => {
@@ -725,7 +739,7 @@ const Sector = () => {
           setSectorHead={setSectorHead}
           sectorId={+sectorId}
           governingBodyId={+governingBodyId}
-        ></AddSectorAdminForm>
+        />
       </Modal>
       {userAccesses["ManipulateDocument"] ? (
         <AddDocumentModal

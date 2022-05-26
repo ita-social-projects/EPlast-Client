@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Card, Row, Col, Modal } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
+import Meta from "antd/lib/card/Meta";
 
 export interface AnnouncementGallery {
   announcementId: number;
@@ -15,51 +16,28 @@ const PicturesWall = ({ pictures }: Props) => {
   const [previewVisible, setPreviewVisibility] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
 
-  const RenderPictureWallActions = (
-    pictureInBase64: string
-  ): React.ReactNode[] => {
-    const pictureActions: React.ReactNode[] = [];
-    pictureActions.push(
-      <EyeOutlined
-        className="eyeDetails"
-        key="details"
-        onClick={() => {
-          setPreviewImage(pictureInBase64);
-          setPreviewVisibility(true);
-        }}
-      />
-    );
-    return pictureActions;
-  };
-
   return (
-    <Row
-      className="picturesWall"
-      justify="center"
-      style={{ marginBottom: "15px" }}
-    >
-      <Col
-        span={16}
-        style={{ maxHeight: "400px", overflow: "auto", overflowX: "hidden" }}
-      >
+    <Row className="picturesWall" justify="center">
+      <Col>
         <Row justify="center">
           {pictures.map((picture) => (
             <Col key={picture.announcementId}>
               <Card
-                hoverable
-                cover={
-                  <img
-                    style={{ height: "130px" }}
-                    alt="example"
-                    src={picture.fileName}
-                  />
-                }
-                actions={RenderPictureWallActions(picture.fileName)}
-                bodyStyle={{ display: "none" }}
-              ></Card>
+                style={{ textAlign: "center", cursor: "pointer" }}
+                cover={<img alt="example" src={picture.fileName} />}
+                onClick={() => {
+                  setPreviewImage(picture.fileName);
+                  setPreviewVisibility(true);
+                }}
+              >
+                <Meta
+                  title={<EyeOutlined className="eyeDetails" key="details" />}
+                />
+              </Card>
             </Col>
           ))}
           <Modal
+            width="700px"
             visible={previewVisible}
             title="Перегляд картинки"
             footer={null}

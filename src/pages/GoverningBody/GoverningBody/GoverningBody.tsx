@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import {
@@ -66,6 +67,7 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../Announcement/PicturesWallModal";
+
 const classes = require("../Announcement/Announcement.module.css");
 
 const GoverningBody = () => {
@@ -240,7 +242,7 @@ const GoverningBody = () => {
     try {
       setListLoading(true);
       const response = await getAnnouncementsByPage(page, pageSize, +id);
-      for (let i = 0; i < response.data.item2; ++i) {
+      for (let i = 0; i < response.data.item1.length; i++) {
         setAnnouncements((old) => [...old, response.data.item1[i]]);
       }
     } finally {
@@ -287,6 +289,7 @@ const GoverningBody = () => {
     title: string,
     text: string,
     images: string[],
+    isPined: boolean,
     gvbId: number,
     sectorId: number
   ) => {
@@ -295,10 +298,17 @@ const GoverningBody = () => {
     newAnnouncementNotification();
     let newAnnouncement: GoverningBodyAnnouncement;
     if (sectorId) {
-      await addSectorAnnouncement(title, text, images, +sectorId);
+      await addSectorAnnouncement(
+        title,
+        text,
+        images,
+        isPined,
+        +gvbId,
+        +sectorId
+      );
     } else if (+id === gvbId) {
       const announcementId = (
-        await addAnnouncement(title, text, images, +gvbId)
+        await addAnnouncement(title, text, images, isPined, +gvbId)
       ).data;
       newAnnouncement = (await getAnnouncementsById(announcementId)).data;
       setAnnouncements((old: GoverningBodyAnnouncement[]) => [
@@ -307,7 +317,7 @@ const GoverningBody = () => {
       ]);
       getGoverningBody();
     } else {
-      await addAnnouncement(title, text, images, +gvbId);
+      await addAnnouncement(title, text, images, isPined, +gvbId);
     }
     setLoading(false);
     notificationLogic("success", "Оголошення опубліковано");
@@ -825,7 +835,7 @@ const GoverningBody = () => {
           setAdmins={setAdmins}
           setGoverningBodyHead={setGoverningBodyHead}
           governingBodyId={+id}
-        ></AddGoverningBodiesSecretaryForm>
+        />
       </Modal>
       {userAccesses["ManipulateDocument"] ? (
         <AddDocumentModal

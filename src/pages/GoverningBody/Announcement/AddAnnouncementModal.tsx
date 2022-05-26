@@ -1,16 +1,16 @@
 import React from "react";
 import { Drawer } from "antd";
 import FormAddAnnouncement from "./FormAddAnnouncement";
-import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
 
 interface Props {
-  governingBodyId: number;
+  governingBodyId?: number;
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: (
     title: string,
     text: string,
     images: string[],
+    isPined: boolean,
     gvbId: number,
     sectorId: number
   ) => void;
