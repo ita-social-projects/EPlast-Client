@@ -162,14 +162,12 @@ const CreateClub = () => {
       title: "Ваші дані будуть не збережені.",
       content: (
         <div className={classes.Style}>
-      
           <b>
-          Відмінити створення куреня ?
+            Відмінити створення куреня ?
           </b>{" "}
-         
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         history.goBack()
       },

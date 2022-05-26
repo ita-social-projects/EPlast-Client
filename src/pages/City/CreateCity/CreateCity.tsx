@@ -390,14 +390,12 @@ const CreateCity = () => {
       title: "Ваші дані будуть не збережені.",
       content: (
         <div className={classes.Style}>
-      
           <b>
-           Відмінити створення станиці ?
+            Відмінити створення станиці ?
           </b>{" "}
-         
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         history.goBack()
       },

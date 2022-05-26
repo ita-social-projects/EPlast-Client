@@ -499,24 +499,25 @@ const Club = () => {
           не є членом Пласту.
         </div>
       ),
-      onOk() {},
+      onOk() { },
     });
   };
+
   const showConfirmAddNewHead = (newAdmin: ClubAdmin, existingAdmin?: ClubAdmin) => {
     Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
         <div className={classes.Style}>
-            <b>
-          Призначити  {newAdmin.user.firstName} {newAdmin.user.lastName} на посаду?
+          <b>
+            Призначити  {newAdmin.user.firstName} {newAdmin.user.lastName} на посаду?
           </b>{" "}
           <b>
-          Адмін  {existingAdmin?.user.firstName} {existingAdmin?.user.lastName} втратить свою посаду.
+            Адмін  {existingAdmin?.user.firstName} {existingAdmin?.user.lastName} втратить свою посаду.
           </b>{" "}
           .
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       async onOk() {
         await addClubAdmin(newAdmin);
         admins.push(newAdmin);
