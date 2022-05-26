@@ -122,7 +122,7 @@ const AddNewRegionFormPage = () => {
         <div className={classes.Style}>
       
           <b>
-          Відмінити створення куреня ?
+          Відмінити створення округи ?
           </b>{" "}
          
         </div>
