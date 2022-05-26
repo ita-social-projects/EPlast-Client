@@ -221,7 +221,7 @@ const Sector = () => {
         usersId,
         "Додане нове оголошення.",
         NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/sector/announcements/${governigBodyId}/${sectorId}/1`,
+        `/sector/announcements/${governingBodyId}/${sectorId}/1`,
         `Переглянути`
       );
     } else {
@@ -229,7 +229,7 @@ const Sector = () => {
         usersId,
         "Додане нове оголошення.",
         NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/governingBodies/announcements/${governigBodyId}/1`,
+        `/governingBodies/announcements/${governingBodyId}/1`,
         `Переглянути`
       );
     }

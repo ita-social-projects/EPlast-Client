@@ -47,9 +47,9 @@ import PicturesWall, { AnnouncementGallery } from "./PicturesWallModal";
 import { addSectorAnnouncement } from "../../../api/governingBodySectorsApi";
 import { pinAnnouncement } from "../../../api/announcementsApi";
 
-const { Content } = Layout;
-
 const classes = require("./Announcement.module.css");
+
+const { Content } = Layout;
 
 const Announcements = () => {
   const path: string = "governingBodies/announcements";
