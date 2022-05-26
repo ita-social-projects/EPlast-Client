@@ -46,9 +46,14 @@ const classes = require("./EventCreate.module.css");
 interface Props {
   onCreate?: () => void;
   setShowEventCreateDrawer: (visibleEventCreateDrawer: boolean) => void;
+  validationStartDate: Date;
 }
 
-export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
+export default function ({
+  onCreate,
+  setShowEventCreateDrawer,
+  validationStartDate,
+}: Props) {
   const [form] = Form.useForm();
   const [selectedUsers, setSelectedUsers] = useState<string[]>([
     "",
@@ -203,10 +208,12 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
   }
 
   function onEventDateStartChange(e: any) {
-    if (e > moment()) {
+    if (moment(validationStartDate).diff(e, "minute") <= 1) {
       setStartDate(e);
       setVisibleEndDatePicker(false);
       form.resetFields(["EventDateEnd"]);
+    } else {
+      setVisibleEndDatePicker(true);
     }
   }
 
@@ -276,7 +283,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
         name="basic"
         form={form}
         onFinish={handleFinish}
-        id="area"
+        id="createForm"
         style={{ position: "relative" }}
       >
         <Row justify="start" gutter={[12, 0]}>
@@ -540,7 +547,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
                 },
                 {
                   validator: (_: object, value: Date) => {
-                    return value < new Date()
+                    return moment(validationStartDate).diff(value, "minute") > 1
                       ? Promise.reject(incorrectStartTime)
                       : Promise.resolve();
                   },
@@ -555,7 +562,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
                 className={classes.select}
                 onChange={onEventDateStartChange}
                 getPopupContainer={() =>
-                  document.getElementById("area")! as HTMLElement
+                  document.getElementById("createForm")! as HTMLElement
                 }
                 popupStyle={{ position: "absolute" }}
               />
@@ -575,7 +582,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
                 },
                 {
                   validator: (_: object, value: Date) => {
-                    return value <= StartDate!
+                    return moment(value).diff(StartDate, "minute") < 1
                       ? Promise.reject(incorrectEndTime)
                       : Promise.resolve();
                   },
@@ -591,7 +598,7 @@ export default function ({ onCreate, setShowEventCreateDrawer }: Props) {
                 format={dateFormat}
                 className={classes.select}
                 getPopupContainer={() =>
-                  document.getElementById("area")! as HTMLElement
+                  document.getElementById("createForm")! as HTMLElement
                 }
                 popupStyle={{ position: "absolute" }}
               />
