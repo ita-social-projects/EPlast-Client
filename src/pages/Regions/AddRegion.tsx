@@ -40,6 +40,8 @@ import Spinner from "../Spinner/Spinner";
 import RegionProfile from "../../models/Region/RegionProfile";
 import { showRegionNameExistsModal } from "../../components/Notifications/Modals";
 
+const classes = require("../Club/Club/Modal.module.css");
+
 const AddNewRegionFormPage = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
@@ -111,6 +113,25 @@ const AddNewRegionFormPage = () => {
     } else {
       notificationLogic("error", fileIsNotUpload("фото"));
     }
+  };
+
+  const sureConfirm = () => {
+    Modal.confirm({
+      title: "Ваші дані будуть не збережені.",
+      content: (
+        <div className={classes.Style}>
+      
+          <b>
+          Відмінити створення куреня ?
+          </b>{" "}
+         
+        </div>
+      ),
+      onCancel() {},
+      onOk() {
+        history.goBack()
+      },
+    });
   };
 
   const removePhoto = (event: any) => {
@@ -285,7 +306,7 @@ const AddNewRegionFormPage = () => {
                 <Button
                   type="primary"
                   className="backButton"
-                  onClick={() => history.goBack()}
+                  onClick={() => sureConfirm()}
                 >
                   Назад
                 </Button>

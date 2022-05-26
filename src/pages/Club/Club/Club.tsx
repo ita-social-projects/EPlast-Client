@@ -26,6 +26,9 @@ import {
   LoadingOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
+import jwt from "jwt-decode";
+import Title from "antd/lib/typography/Title";
+import Paragraph from "antd/lib/typography/Paragraph";
 import { getCheckPlastMember } from "../../../api/citiesApi";
 import {
   addFollower,
@@ -53,9 +56,6 @@ import ClubDocument from "../../../models/Club/ClubDocument";
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
 import CheckActiveMembersForm from "./CheckActiveMembersForm";
 import AuthStore from "../../../stores/AuthStore";
-import jwt from "jwt-decode";
-import Title from "antd/lib/typography/Title";
-import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
 import ClubDetailDrawer from "../ClubDetailDrawer/ClubDetailDrawer";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
@@ -72,6 +72,7 @@ import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
+
 const sloganMaxLength = 38;
 
 const Club = () => {
@@ -310,7 +311,7 @@ const Club = () => {
           removeMember(followerID);
         },
       });
-    } else {
+    } 
       return Modal.info({
         title: "Ви не можете покинути даний курінь, оскільки є його членом!",
         icon: <ExclamationCircleOutlined />,
@@ -318,7 +319,7 @@ const Club = () => {
         okType: "primary",
         maskClosable: true,
       });
-    }
+    
   }
   const getClub = async () => {
     setLoading(true);
@@ -358,7 +359,7 @@ const Club = () => {
   };
 
   const getUserAccessesForClubs = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    const user: any = jwt(AuthStore.getToken() as string);
     await getUserClubAccess(+id, user.nameid).then((response) => {
       setUserAccesses(response.data);
     });
@@ -501,6 +502,52 @@ const Club = () => {
       onOk() {},
     });
   };
+  const showConfirmAddNewHead = (newAdmin: ClubAdmin, existingAdmin?: ClubAdmin) => {
+    Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (
+        <div className={classes.Style}>
+            <b>
+          Призначити  {newAdmin.user.firstName} {newAdmin.user.lastName} на посаду?
+          </b>{" "}
+          <b>
+          Адмін  {existingAdmin?.user.firstName} {existingAdmin?.user.lastName} втратить свою посаду.
+          </b>{" "}
+          .
+        </div>
+      ),
+      onCancel() {},
+      async onOk() {
+        await addClubAdmin(newAdmin);
+        admins.push(newAdmin);
+        setAdmins(admins);
+      },
+    });
+  };
+
+  const showImpossibleAddManager = async (admin?: ClubAdmin) => {
+    return Modal.warning({
+      title: "Неможливо додати нового адміна, оскільки в цей період займає посаду адмін: ",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin?.user.firstName} {admin?.user.lastName}
+          </b>{" "}
+          час правління поточного адміна  {" "}
+          <b>
+          {moment.utc(admin?.endDate).local().format("DD.MM.YYYY") ===
+            "Invalid date"
+              ? "ще не скоро"
+              : `${moment.utc(admin?.startDate).local().format("DD.MM.YYYY") }  -  ${ 
+              moment.utc(admin?.endDate).local().format("DD.MM.YYYY")}`
+              }
+          </b>
+          .
+        </div>
+      ),
+      onOk() {},
+    });
+  };
 
   const handleOk = async (admin: ClubAdmin) => {
     if (admin.id === 0) {
@@ -516,21 +563,28 @@ const Club = () => {
         (x) => x.adminType.adminTypeName === admin.adminType.adminTypeName
       );
       try {
+         const existEndDate = moment.utc(existingAdmin?.endDate).local();
+         const existStartDate = moment.utc(existingAdmin?.startDate).local();
+         const newAdminStartDate  = moment.utc(admin.startDate).local() ;
+         const newAdminEndDate  = moment.utc(admin.endDate).local();
         if (head?.userId === admin.userId) {
           showDisableModal(head);
         } else if (existingAdmin?.userId === admin.userId) {
           showDisable(admin);
-        } else if (
+        } 
+        else if (admin.endDate !== undefined && (existStartDate > newAdminStartDate  && existEndDate < newAdminEndDate ||  existEndDate > newAdminEndDate && existStartDate < newAdminStartDate || existEndDate > newAdminEndDate && newAdminEndDate > existStartDate) ) {
+          showImpossibleAddManager(existingAdmin);
+        } 
+        else if (
           admin.adminType.adminTypeName === "Голова КПР" ||
           admin.adminType.adminTypeName === "Член КПР" ||
           admin.adminType.adminTypeName === Roles.KurinHead ||
           admin.adminType.adminTypeName === Roles.KurinHeadDeputy
         ) {
           const check = await getCheckPlastMember(admin.userId);
-          if (check.data) {
-            await addClubAdmin(admin);
-            admins.push(admin);
-            setAdmins(admins);
+          if (check.data) 
+          {
+            showConfirmAddNewHead(admin,existingAdmin);
           } else {
             showPlastMemberDisable(admin);
           }
@@ -545,8 +599,7 @@ const Club = () => {
       } finally {
         setvisible(false);
       }
-    } else {
-      if (
+    } else if (
         admin.adminType.adminTypeName === "Голова КПР" ||
         admin.adminType.adminTypeName === "Член КПР" ||
         admin.adminType.adminTypeName === Roles.KurinHead ||
@@ -560,7 +613,6 @@ const Club = () => {
       } else {
         await editClubAdmin(admin);
       }
-    }
   };
 
   const handleClose = async () => {
@@ -579,7 +631,7 @@ const Club = () => {
     if (clubExist) {
       await NotificationBoxApi.createNotifications(
         [userId],
-        message + ": ",
+        `${message  }: `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/clubs/${id}`,
         club.name
@@ -621,7 +673,7 @@ const Club = () => {
                 second_name="Курені"
               />
               {isActiveClub ? null : (
-                <Tag className="status" color={"red"}>
+                <Tag className="status" color="red">
                   Заархівовано
                 </Tag>
               )}
@@ -630,7 +682,7 @@ const Club = () => {
             <Row className="clubPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
                 {clubLogoLoading ? (
-                  <Skeleton.Avatar active shape={"square"} size={172} />
+                  <Skeleton.Avatar active shape="square" size={172} />
                 ) : (
                   <img src={clubLogo64} alt="Club" className="clubLogo" />
                 )}
@@ -733,7 +785,7 @@ const Club = () => {
                         <Tooltip title={club.slogan}>
                           <Paragraph>
                             <b>Гасло:</b>{" "}
-                            {club.slogan.slice(0, sloganMaxLength - 1) + "..."}
+                            {`${club.slogan.slice(0, sloganMaxLength - 1)  }...`}
                           </Paragraph>
                         </Tooltip>
                       ) : (
@@ -762,7 +814,7 @@ const Club = () => {
                         <Tooltip title={club.email}>
                           <Paragraph>
                             <b>Пошта:</b>{" "}
-                            {club.email.slice(0, sloganMaxLength - 1) + "..."}
+                            {`${club.email.slice(0, sloganMaxLength - 1)  }...`}
                           </Paragraph>
                         </Tooltip>
                       ) : (
@@ -789,7 +841,7 @@ const Club = () => {
                   Деталі
                 </Button>
               </Col>
-              {userAccesses["EditClub"] ? (
+              {userAccesses.EditClub ? (
                 <Col>
                   <Button
                     type="primary"
@@ -800,13 +852,13 @@ const Club = () => {
                   </Button>
                 </Col>
               ) : null}
-              {userAccesses["EditClub"] ? (
+              {userAccesses.EditClub ? (
                 <Col xs={24} sm={4}>
                   <Row
                     className="clubIcons"
-                    justify={userAccesses["CreateClub"] ? "center" : "start"}
+                    justify={userAccesses.CreateClub ? "center" : "start"}
                   >
-                    {userAccesses["EditClub"] ? (
+                    {userAccesses.EditClub ? (
                       <Col>
                         <Tooltip title="Редагувати курінь">
                           <EditOutlined
@@ -818,7 +870,7 @@ const Club = () => {
                         </Tooltip>
                       </Col>
                     ) : null}
-                    {userAccesses["DeleteClub"] ? (
+                    {userAccesses.DeleteClub ? (
                       isActiveClub ? (
                         <Col offset={1}>
                           <Tooltip title="Архівувати курінь">
@@ -829,7 +881,7 @@ const Club = () => {
                           </Tooltip>
                         </Col>
                       ) : (
-                        <React.Fragment>
+                        <>
                           <Col offset={1}>
                             <Tooltip title="Видалити курінь">
                               <DeleteOutlined
@@ -846,7 +898,7 @@ const Club = () => {
                               />
                             </Tooltip>
                           </Col>
-                        </React.Fragment>
+                        </>
                       )
                     ) : null}
                   </Row>
@@ -884,7 +936,7 @@ const Club = () => {
                       }
                     >
                       {photosLoading ? (
-                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        <Skeleton.Avatar active size={64} />
                       ) : (
                         <Avatar size={64} src={member.user.imagePath} />
                       )}
@@ -939,7 +991,7 @@ const Club = () => {
                       }
                     >
                       {photosLoading ? (
-                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                        <Skeleton.Avatar active size={64} />
                       ) : (
                         <Avatar size={64} src={admin.user.imagePath} />
                       )}
@@ -954,7 +1006,7 @@ const Club = () => {
             </Row>
             <div className="clubMoreButton">
               {isActiveClub ? (
-                userAccesses["EditClub"] ? (
+                userAccesses.EditClub ? (
                   <PlusSquareFilled
                     type="primary"
                     className="addReportIcon"
@@ -979,8 +1031,8 @@ const Club = () => {
               Документообіг куреня{" "}
               <a
                 onClick={() =>
-                  userAccesses["IsAdmin"] ||
-                  (userAccesses["DownloadDocument"] &&
+                  userAccesses.IsAdmin ||
+                  (userAccesses.DownloadDocument &&
                     club.name === activeUserClub)
                     ? history.push(`/clubs/documents/${club.id}`)
                     : undefined
@@ -1016,8 +1068,8 @@ const Club = () => {
               )}
             </Row>
             <div className="clubMoreButton">
-              {userAccesses["IsAdmin"] ||
-              (userAccesses["DownloadDocument"] &&
+              {userAccesses.IsAdmin ||
+              (userAccesses.DownloadDocument &&
                 club.name === activeUserClub) ? (
                 <Button
                   type="primary"
@@ -1028,7 +1080,7 @@ const Club = () => {
                 </Button>
               ) : null}
               {isActiveClub ? (
-                userAccesses["EditClub"] ? (
+                userAccesses.EditClub ? (
                   <PlusSquareFilled
                     className="addReportIcon"
                     onClick={() => setVisibleModal(true)}
@@ -1094,18 +1146,18 @@ const Club = () => {
                         }
                       >
                         {photosLoading ? (
-                          <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                          <Skeleton.Avatar active size={64} />
                         ) : (
                           <Avatar size={64} src={followers.user.imagePath} />
                         )}
                         <p className="userName">{followers.user.firstName}</p>
                         <p className="userName">{followers.user.lastName}</p>
                       </div>
-                      {(userAccesses["EditClub"] && isLoadingPlus) ||
+                      {(userAccesses.EditClub && isLoadingPlus) ||
                       (isLoadingMemberId !== followers.id && !isLoadingPlus) ? (
                         <Tooltip
-                          placement={"bottom"}
-                          title={"Додати до членів"}
+                          placement="bottom"
+                          title="Додати до членів"
                         >
                           <PlusOutlined
                             className="approveIcon"
@@ -1115,7 +1167,7 @@ const Club = () => {
                           />
                         </Tooltip>
                       ) : followers.userId === activeUserID ? (
-                        <Tooltip placement={"bottom"} title={"Покинути курінь"}>
+                        <Tooltip placement="bottom" title="Покинути курінь">
                           <MinusOutlined
                             className="approveIcon"
                             onClick={() => showSkipModal(followers.id)}
@@ -1123,7 +1175,7 @@ const Club = () => {
                         </Tooltip>
                       ) : !isLoadingPlus &&
                         isLoadingMemberId === followers.id ? (
-                        <Tooltip placement={"bottom"} title={"Зачекайте"}>
+                        <Tooltip placement="bottom" title="Зачекайте">
                           <LoadingOutlined className="approveIcon" />
                         </Tooltip>
                       ) : null}
@@ -1158,13 +1210,13 @@ const Club = () => {
           headDeputy={club.headDeputy}
           clubId={+id}
           visibleModal={visible}
-        ></AddClubsNewSecretaryForm>
+         />
       </Modal>
       <ClubDetailDrawer
         Club={club}
         setVisibleDrawer={setVisibleDrawer}
         visibleDrawer={visibleDrawer}
-      ></ClubDetailDrawer>
+       />
 
       <Modal
         title="На жаль ви не можете архівувати зазначений курінь"
@@ -1181,7 +1233,7 @@ const Club = () => {
         />
       </Modal>
 
-      {userAccesses["EditClub"] ? (
+      {userAccesses.EditClub ? (
         <AddDocumentModal
           ClubId={+id}
           document={document}
@@ -1189,7 +1241,7 @@ const Club = () => {
           visibleModal={visibleModal}
           setVisibleModal={setVisibleModal}
           onAdd={onAdd}
-        ></AddDocumentModal>
+         />
       ) : null}
     </Layout.Content>
   ) : (

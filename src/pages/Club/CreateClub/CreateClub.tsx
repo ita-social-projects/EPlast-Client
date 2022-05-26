@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { Button, Form, Input, Layout, Upload, Row, Col, Card } from "antd";
+import { Button, Form, Input, Layout, Upload, Row, Col, Card, Modal } from "antd";
 import {
   DeleteOutlined,
   LoadingOutlined,
@@ -32,6 +32,7 @@ import {
   failUpdateAction,
   successfulDeleteAction,
 } from "../../../components/Notifications/Messages";
+const classes = require("../Club/Modal.module.css");
 
 const nameMaxLength = 201;
 const descriptionMaxLength = 1001;
@@ -156,6 +157,25 @@ const CreateClub = () => {
       });
   };
 
+  const sureConfirm = () => {
+    Modal.confirm({
+      title: "Ваші дані будуть не збережені.",
+      content: (
+        <div className={classes.Style}>
+      
+          <b>
+          Відмінити створення куреня ?
+          </b>{" "}
+         
+        </div>
+      ),
+      onCancel() {},
+      onOk() {
+        history.goBack()
+      },
+    });
+  };
+
   return loading && club ? (
     <Spinner />
   ) : (
@@ -274,7 +294,7 @@ const CreateClub = () => {
               <Button
                 type="primary"
                 className="backButton"
-                onClick={() => history.goBack()}
+                onClick={() => sureConfirm()}
               >
                 Назад
               </Button>
