@@ -7,16 +7,17 @@ import {
   RollbackOutlined,
   AlignLeftOutlined,
   QuestionOutlined,
-} from "@ant-design/icons";
-import {
+
   SolutionOutlined,
   SnippetsOutlined,
   PieChartOutlined,
   FileTextOutlined,
   BarChartOutlined,
+  InsertRowAboveOutlined,
 } from "@ant-design/icons";
-import classes from "./PrivateLayout.module.css";
+
 import jwt from "jwt-decode";
+import classes from "./PrivateLayout.module.css";
 import AuthStore from "../../stores/AuthStore";
 import { Roles } from "../../models/Roles/Roles";
 import useOnClickOutside from "./useOneClickOutside";
@@ -152,6 +153,21 @@ const PrivateLayout = ({ children }: any) => {
                 title=""
               >
                 Рішення
+              </Menu.Item>
+            ) : (
+              <> </>
+            )}
+            {userAccesses["announcements"] ? (
+              <Menu.Item
+                key="announcements"
+                icon={<InsertRowAboveOutlined />}
+                onClick={() => {
+                  handleClickAway();
+                  history.push("/announcements/1");
+                }}
+                title=""
+              >
+                Дошка оголошень
               </Menu.Item>
             ) : (
               <> </>
