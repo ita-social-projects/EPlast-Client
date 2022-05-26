@@ -219,6 +219,8 @@ export const addSectorAnnouncement = (
   title: string,
   text: string,
   ImagesBase64: string[],
+  isPined: boolean,
+  governingBodyId: number,
   sectorId: number
 ) => {
   return api
@@ -226,6 +228,8 @@ export const addSectorAnnouncement = (
       title,
       text,
       ImagesBase64,
+      isPined,
+      governingBodyId,
       sectorId,
     })
     .catch((error) => {

@@ -209,6 +209,7 @@ export const addAnnouncement = (
   title: string,
   text: string,
   ImagesBase64: string[],
+  isPined: boolean,
   governingBodyId: number
 ) => {
   return api
@@ -216,6 +217,7 @@ export const addAnnouncement = (
       title,
       text,
       ImagesBase64,
+      isPined,
       governingBodyId,
     })
     .catch((error) => {
@@ -233,7 +235,8 @@ export const editAnnouncement = async (
   id: number,
   title: string,
   text: string,
-  imagesBase64: string[]
+  imagesBase64: string[],
+  isPined: boolean
 ) => {
   return api
     .put(`GoverningBodies/EditAnnouncement/${id}`, {
@@ -241,6 +244,7 @@ export const editAnnouncement = async (
       title,
       text,
       imagesBase64,
+      isPined,
     })
     .catch((error) => {
       throw new Error(error);
