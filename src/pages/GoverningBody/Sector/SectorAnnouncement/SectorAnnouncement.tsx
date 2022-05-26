@@ -1,13 +1,25 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import { Button, Avatar, Layout, List, Modal, Tooltip, Row, Popconfirm } from "antd";
+import {
+  Button,
+  Avatar,
+  Layout,
+  List,
+  Modal,
+  Tooltip,
+  Row,
+  Popconfirm,
+  Menu,
+  Dropdown,
+} from "antd";
 import React, { useEffect, useState } from "react";
-
 import { useHistory, useParams } from "react-router-dom";
-import ClickAwayListener from "react-click-away-listener";
 import jwt from "jwt-decode";
 import { Markup } from "interweave";
 import {
+  DeleteOutlined,
+  EditOutlined,
+  EllipsisOutlined,
   PushpinFilled,
   PushpinOutlined,
 } from "@ant-design/icons";
@@ -24,7 +36,6 @@ import { Announcement } from "../../../../models/GoverningBody/Announcement/Anno
 import AddAnnouncementModal from "./AddAnnouncementModal";
 import Spinner from "../../../Spinner/Spinner";
 import notificationLogic from "../../../../components/Notifications/Notification";
-import DropDown from "./DropDownAnnouncement";
 import NotificationBoxApi from "../../../../api/NotificationBoxApi";
 import EditAnnouncementModal from "./EditAnnouncementModal";
 import { getUserAccess } from "../../../../api/regionsBoardApi";
@@ -46,11 +57,7 @@ const Announcements = () => {
   const path: string = "sector/announcements";
   const history = useHistory();
   const [loading, setLoading] = useState<boolean>(false);
-  const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [data, setData] = useState<Array<Announcement>>([]);
-  const [recordObj, setRecordObj] = useState<number>();
-  const [x, setX] = useState<number>(0);
-  const [y, setY] = useState<number>(0);
   const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
   const [visibleEditModal, setVisibleEditModal] = useState<boolean>(false);
   const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
@@ -60,6 +67,7 @@ const Announcements = () => {
   const [pageSize, setPageSize] = useState(12);
   const [page, setPage] = useState(+p);
   const [totalSize, setTotalSize] = useState<number>(0);
+  const [selectedObjectId, setSelectedObjectId] = useState<number>(0);
 
   const getAnnouncements = async () => {
     setLoading(true);
@@ -116,10 +124,6 @@ const Announcements = () => {
       }
     );
     return result;
-  };
-
-  const handleClickAway = () => {
-    setShowDropdown(false);
   };
 
   const newNotification = async () => {
@@ -233,13 +237,36 @@ const Announcements = () => {
     setPage(+p);
   }, [p, pageSize]);
 
+  const moreMenu = (
+    <Menu theme="dark" className={classes.menu}>
+      {userAccesses.DeleteAnnouncement ? (
+        <Menu.Item
+          key="1"
+          onClick={() => {
+            if (selectedObjectId) handleDelete(selectedObjectId);
+          }}
+        >
+          <DeleteOutlined />
+          Видалити
+        </Menu.Item>
+      ) : null}
+      {userAccesses.EditAnnouncement ? (
+        <Menu.Item
+          key="2"
+          onClick={() => {
+            setVisibleEditModal(true);
+          }}
+        >
+          <EditOutlined />
+          Редагувати
+        </Menu.Item>
+      ) : null}
+    </Menu>
+  );
+
   return (
     <Layout>
-      <Content
-        onClick={() => {
-          setShowDropdown(false);
-        }}
-      >
+      <Content>
         <h1> Оголошення </h1>
         {userAccesses.AddAnnouncement ? (
           <Row justify="end">
@@ -269,19 +296,29 @@ const Announcements = () => {
             }}
             renderItem={(item) => {
               return (
-                <List.Item
-                  key={item.id}
-                  className={classes.listItem}
-                  onContextMenu={(event) => {
-                    event.preventDefault();
-                    setShowDropdown(true);
-                    setRecordObj(item.id);
-                    setX(event.pageX);
-                    setY(event.pageY);
-                  }}
-                >
+                <List.Item key={item.id} className={classes.listItem}>
                   <div className={classes.metaWrapper}>
-                  {item.isPined ? (
+                    <div>
+                      <Tooltip
+                        title="Натисніть щоб показати більше дій"
+                        placement="topRight"
+                      >
+                        <Dropdown
+                          overlay={moreMenu}
+                          placement="bottomCenter"
+                          trigger={["click"]}
+                        >
+                          <EllipsisOutlined
+                            className={classes.titleButtonIcon}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setSelectedObjectId(item.id);
+                            }}
+                          />
+                        </Dropdown>
+                      </Tooltip>
+                    </div>
+                    {item.isPined ? (
                       <div>
                         <Tooltip
                           title="Натисніть щоб відкріпити оголошення"
@@ -332,11 +369,10 @@ const Announcements = () => {
                     role="button"
                     tabIndex={0}
                     onClick={() => {
-                      setShowDropdown(false);
                       showFullAnnouncement(item.id);
                     }}
                   >
-                   <Markup
+                    <Markup
                       content={item.title}
                       className={classes.truncateText}
                     />
@@ -374,29 +410,12 @@ const Announcements = () => {
           visibleModal={visibleAddModal}
           onAdd={handleAdd}
         />
-        {recordObj ? (
-          <>
-            <ClickAwayListener onClickAway={handleClickAway}>
-              <DropDown
-                showDropdown={showDropdown}
-                record={recordObj}
-                pageX={x}
-                pageY={y}
-                onDelete={handleDelete}
-                onEdit={() => {
-                  setVisibleEditModal(true);
-                }}
-                userAccess={userAccesses}
-              />
-            </ClickAwayListener>
-            <EditAnnouncementModal
-              setVisibleModal={setVisibleEditModal}
-              visibleModal={visibleEditModal}
-              onEdit={handleEdit}
-              id={recordObj}
-            />
-          </>
-        ) : null}
+        <EditAnnouncementModal
+          setVisibleModal={setVisibleEditModal}
+          visibleModal={visibleEditModal}
+          onEdit={handleEdit}
+          id={selectedObjectId}
+        />
       </Content>
     </Layout>
   );
