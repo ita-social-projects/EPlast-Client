@@ -12,7 +12,11 @@ import {
 } from "../../../../components/Notifications/Messages";
 import notificationLogic from "../../../../components/Notifications/Notification";
 import CityProfile from "../../../../models/City/CityProfile";
-import { addFollowerWithId, getCities, toggleMemberStatus } from "../../../../api/citiesApi";
+import {
+  addFollowerWithId,
+  getCities,
+  toggleMemberStatus,
+} from "../../../../api/citiesApi";
 import CityMember from "../../../../models/City/CityMember";
 import { PersonalDataContext } from "../../personalData/PersonalData";
 
@@ -40,9 +44,7 @@ const FormAddPlastDegree = ({
   const visiableCities = useRef<boolean>(false);
   const [filtredDegrees, setFiltredDegrees] = useState<Array<PlastDegree>>([]);
   const [cities, setCities] = useState<CityProfile[]>([]);
-  const {
-    UpdateData
-  } = useContext(PersonalDataContext);
+  const { UpdateData } = useContext(PersonalDataContext);
 
   const handleFinish = async (info: any) => {
     const plastDegreeId = filtredDegrees.find(
@@ -57,17 +59,18 @@ const FormAddPlastDegree = ({
     setVisibleModal(false);
     visiableDegree.current = false;
     visiableCities.current = false;
-  
-    const newCityFollower : CityMember =  (await addFollowerWithId(info.city,userId)).data;
+
+    const newCityFollower: CityMember = (
+      await addFollowerWithId(info.city, userId)
+    ).data;
     await toggleMemberStatus(newCityFollower.id);
     await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
     handleAddDegree();
     form.resetFields();
     resetAvailablePlastDegree();
-    if( UpdateData)
-    {  
-      await UpdateData()
-    };
+    if (UpdateData) {
+      await UpdateData();
+    }
     await NotificationBoxApi.createNotifications(
       [userId],
       `Вам було надано новий ступінь в `,
@@ -152,7 +155,7 @@ const FormAddPlastDegree = ({
           </Select>
         </Form.Item>
       )}
-        {visiableCities.current && (
+      {visiableCities.current && (
         <Form.Item
           name="city"
           rules={[{ required: visiableDegree.current, message: emptyInput() }]}
@@ -168,7 +171,6 @@ const FormAddPlastDegree = ({
           </Select>
         </Form.Item>
       )}
-
 
       <Form.Item
         name="datepickerStart"
