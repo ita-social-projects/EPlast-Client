@@ -53,9 +53,10 @@ export default function ({
   const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
   const [administators, setAdministators] = useState<Users[]>([]);
   const [editedEvent, setEvent] = useState<EventEdit>();
-  const [initializedStartDate, setInitializedStardDate] = useState<Date>();
   const [StartDate, setStartDate] = useState<Date>(new Date());
-  const [validationStartDate, setValidationStartDate] = useState<Date>();
+  const [validationStartDate, setValidationStartDate] = useState<Date>(
+    new Date()
+  );
 
   useEffect(() => {
     fetchData();
@@ -185,7 +186,7 @@ export default function ({
   }
 
   function onEventDateStartChange(e: any) {
-    if (moment(validationStartDate).diff(e, "minute") <= 1) {
+    if (moment(validationStartDate).diff(e, "minute") < 1) {
       setStartDate(e);
     }
   }
@@ -484,8 +485,7 @@ export default function ({
                 },
                 {
                   validator: (_: object, value: Date) => {
-                    return moment(initializedStartDate).diff(value, "minute") >
-                      1
+                    return moment(validationStartDate).diff(value, "minute") > 1
                       ? Promise.reject(incorrectStartTime)
                       : Promise.resolve();
                   },
@@ -497,7 +497,14 @@ export default function ({
                 showNow={false}
                 disabledDate={disabledDate}
                 onChange={onEventDateStartChange}
-                disabled={StartDate > new Date() ? false : true}
+                disabled={
+                  moment(form.getFieldValue("EventDateStart")).diff(
+                    validationStartDate,
+                    "minutes"
+                  ) > 3
+                    ? false
+                    : true
+                }
                 placeholder="Оберіть дату початку"
                 format={dateFormat}
                 className={classes.select}
