@@ -22,12 +22,12 @@ import {
   FileTextOutlined,
   LockOutlined,
 } from "@ant-design/icons";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { Markup } from "interweave";
-import moment from "moment";
 import Paragraph from "antd/lib/typography/Paragraph";
 import jwt from "jwt-decode";
+import moment from "moment";
 import Title from "antd/lib/typography/Title";
+import { Markup } from "interweave";
+import InfiniteScroll from "react-infinite-scroll-component";
 import {
   getSectorById,
   getSectorLogo,
@@ -53,7 +53,6 @@ import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument"
 import AddDocumentModal from "./AddDocumentModal";
 import AddSectorAdminForm from "./AddSectorAdminForm";
 import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
-
 import AddAnnouncementModal from "./SectorAnnouncement/AddAnnouncementModal";
 import { getUsersByAllRoles } from "../../../api/adminApi";
 import { Roles } from "../../../models/Roles/Roles";
@@ -173,7 +172,6 @@ const Sector = () => {
     }
   };
 
-
   const getSector = async () => {
     setLoading(true);
     try {
@@ -218,6 +216,23 @@ const Sector = () => {
       `/sector/announcements/${governingBodyId}/${sectorId}/1`,
       `Переглянути`
     );
+    if (sectorId) {
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/sector/announcements/${governingBodyId}/${sectorId}/1`,
+        `Переглянути`
+      );
+    } else {
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/governingBodies/announcements/${governingBodyId}/1`,
+        `Переглянути`
+      );
+    }
   };
 
   const onAnnouncementAdd = async (
@@ -322,7 +337,7 @@ const Sector = () => {
             <Row className="governingBodyPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
                 {sectorLogoLoading ? (
-                  <Skeleton.Avatar active shape={"square"} size={172} />
+                  <Skeleton.Avatar active shape="square" size={172} />
                 ) : (
                   <img
                     src={sectorLogo64}
@@ -470,7 +485,7 @@ const Sector = () => {
                     <InfiniteScroll
                       dataLength={announcements.length}
                       next={loadMoreData}
-                      hasMore={true}
+                      hasMore
                       loader={<></>}
                       scrollableTarget="scrollableDiv"
                     >
@@ -487,7 +502,7 @@ const Sector = () => {
                               description={item.date
                                 .toString()
                                 .substring(0, 10)}
-                            ></List.Item.Meta>
+                            />
                           </List.Item>
                         )}
                       />
@@ -603,11 +618,7 @@ const Sector = () => {
                 className="governingBodyInfoButton"
                 onClick={() =>
                   history.push(
-                    "/governingBodies/" +
-                      governingBodyId +
-                      "/sectors/" +
-                      sector.id +
-                      "/administration"
+                    `/governingBodies/${governingBodyId}/sectors/${sector.id}/administration`
                   )
                 }
               >
@@ -717,8 +728,8 @@ const Sector = () => {
         sector={sector}
       />
       <AddAnnouncementModal
-        sectorId={sectorId}
-        governingBodyId={governingBodyId}
+        selectSectorId={sectorId}
+        selectGoverningBodyId={governingBodyId}
         setVisibleModal={setVisibleAddModal}
         visibleModal={visibleAddModal}
         onAdd={onAnnouncementAdd}

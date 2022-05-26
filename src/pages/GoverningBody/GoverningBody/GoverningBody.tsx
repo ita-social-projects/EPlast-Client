@@ -169,19 +169,34 @@ const GoverningBody = () => {
     return result;
   };
 
-  const newAnnouncementNotification = async () => {
-    let usersId = ((await getUsers()).data as ShortUserInfo[]).map((x) => x.id);
-    await NotificationBoxApi.createNotifications(
-      usersId,
-      "Додане нове оголошення.",
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/announcements/page/1`,
-      `Переглянути`
+  const newAnnouncementNotification = async (
+    governigBodyId: number,
+    sectorId?: number
+  ) => {
+    const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
+      (x) => x.id
     );
+    if (sectorId) {
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/sector/announcements/${governigBodyId}/${sectorId}/1`,
+        `Переглянути`
+      );
+    } else {
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/governingBodies/announcements/${governigBodyId}/1`,
+        `Переглянути`
+      );
+    }
   };
 
   const showFullAnnouncement = async (annId: number) => {
-    let pics: AnnouncementGallery[] = [];
+    const pics: AnnouncementGallery[] = [];
     await getAnnouncementsById(annId).then((response) => {
       response.data.images.map((image: any) => {
         pics.push({
@@ -295,7 +310,6 @@ const GoverningBody = () => {
   ) => {
     setVisibleAddModal(false);
     setLoading(true);
-    newAnnouncementNotification();
     let newAnnouncement: GoverningBodyAnnouncement;
     if (sectorId) {
       await addSectorAnnouncement(
@@ -306,6 +320,7 @@ const GoverningBody = () => {
         +gvbId,
         +sectorId
       );
+      newAnnouncementNotification(gvbId, sectorId);
     } else if (+id === gvbId) {
       const announcementId = (
         await addAnnouncement(title, text, images, isPined, +gvbId)
@@ -316,8 +331,10 @@ const GoverningBody = () => {
         ...old,
       ]);
       getGoverningBody();
+      newAnnouncementNotification(gvbId);
     } else {
       await addAnnouncement(title, text, images, isPined, +gvbId);
+      newAnnouncementNotification(gvbId);
     }
     setLoading(false);
     notificationLogic("success", "Оголошення опубліковано");
@@ -364,7 +381,7 @@ const GoverningBody = () => {
             <Row className="governingBodyPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
                 {governingBodyLogoLoading ? (
-                  <Skeleton.Avatar active shape={"square"} size={172} />
+                  <Skeleton.Avatar active shape="square" size={172} />
                 ) : (
                   <img
                     src={governingBodyLogo64}
@@ -524,7 +541,7 @@ const GoverningBody = () => {
                     <InfiniteScroll
                       dataLength={announcements.length}
                       next={loadMoreData}
-                      hasMore={true}
+                      hasMore
                       loader={<></>}
                       scrollableTarget="scrollableDiv"
                     >
@@ -540,7 +557,7 @@ const GoverningBody = () => {
                               description={item.date
                                 .toString()
                                 .substring(0, 10)}
-                            ></List.Item.Meta>
+                            />
                           </List.Item>
                         )}
                       />

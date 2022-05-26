@@ -410,8 +410,8 @@ const Announcements = () => {
           />
         )}
         <AddAnnouncementModal
-          sectorId={+sectorId}
-          governingBodyId={governingBodyId}
+          selectSectorId={+sectorId}
+          selectGoverningBodyId={governingBodyId}
           setVisibleModal={setVisibleAddModal}
           visibleModal={visibleAddModal}
           onAdd={handleAdd}

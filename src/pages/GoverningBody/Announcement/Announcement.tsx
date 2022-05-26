@@ -63,7 +63,7 @@ const Announcements = () => {
   );
   const { id, p }: any = useParams();
   const [pageSize, setPageSize] = useState(12);
-  const [page, setPage] = useState(+p);
+  const [page,setPage] = useState(+p);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [selectedObjectId, setSelectedObjectId] = useState<number>(0);
 

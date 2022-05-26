@@ -523,7 +523,7 @@ export default function ({
               label="Локація"
               name="Eventlocation"
               className={classes.formItem}
-              rules={descriptionValidation.Inputs}
+              rules={descriptionValidation.EventLocation}
             >
               <TextArea
                 className={classes.input}

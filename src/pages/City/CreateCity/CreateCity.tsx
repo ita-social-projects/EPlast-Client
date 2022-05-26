@@ -60,6 +60,7 @@ import RegionFollower from "../../../models/Region/RegionFollower";
 import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+const classes = require("../../Club/Club/Modal.module.css");
 
 const CreateCity = () => {
   const [form] = Form.useForm();
@@ -383,6 +384,23 @@ const CreateCity = () => {
       },
     });
   }
+
+  const sureConfirm = () => {
+    Modal.confirm({
+      title: "Ваші дані будуть не збережені.",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            Відмінити створення станиці ?
+          </b>{" "}
+        </div>
+      ),
+      onCancel() { },
+      onOk() {
+        history.goBack()
+      },
+    });
+  };
 
   const createNotification = async (userId: string, message: string) => {
     await NotificationBoxApi.createNotifications(
@@ -713,7 +731,7 @@ const CreateCity = () => {
                 <Button
                   type="primary"
                   className="backButton"
-                  onClick={() => history.goBack()}
+                  onClick={() => sureConfirm()}
                 >
                   Назад
                 </Button>

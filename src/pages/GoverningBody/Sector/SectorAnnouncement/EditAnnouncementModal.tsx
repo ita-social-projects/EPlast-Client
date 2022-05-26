@@ -10,7 +10,7 @@ import { descriptionValidation } from "../../../../models/GllobalValidations/Des
 import notificationLogic from "../../../../components/Notifications/Notification";
 import { possibleFileExtensions } from "../../../../components/Notifications/Messages";
 
-interface Props {
+type FormEditAnnouncementProps = {
   visibleModal: boolean;
   id: number;
   setVisibleModal: (visibleModal: boolean) => void;
@@ -34,7 +34,7 @@ const EditAnnouncementModal = ({
   setVisibleModal,
   onEdit,
   id,
-}: Props) => {
+}: FormEditAnnouncementProps) => {
   const [form] = Form.useForm();
   const [text, setText] = useState<string>("");
   const [title, setTitle] = useState<string>("");
