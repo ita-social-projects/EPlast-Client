@@ -54,6 +54,7 @@ export default function ({
   const [administators, setAdministators] = useState<Users[]>([]);
   const [editedEvent, setEvent] = useState<EventEdit>();
   const [StartDate, setStartDate] = useState<Date>(new Date());
+  const [disableStartDate, setDisableStartDate] = useState<boolean>();
   const [validationStartDate, setValidationStartDate] = useState<Date>(
     new Date()
   );
@@ -110,6 +111,7 @@ export default function ({
         pysarId: response.data.pysar?.userId,
       });
       setStartDate(form.getFieldValue("EventDateStart"));
+      checkStartEvent(response.data.event.eventDateStart);
       await eventsApi
         .getCategories(response.data.event.eventTypeID)
         .then(async (response) => {
@@ -183,6 +185,11 @@ export default function ({
 
   function disabledDate(current: any) {
     return current && current < moment().startOf("day");
+  }
+  function checkStartEvent(value: Date) {
+    setDisableStartDate(
+      moment(value).diff(moment(), "minutes") < 1 ? true : false
+    );
   }
 
   function onEventDateStartChange(e: any) {
@@ -494,17 +501,9 @@ export default function ({
             >
               <DatePicker
                 showTime
-                showNow={false}
                 disabledDate={disabledDate}
                 onChange={onEventDateStartChange}
-                disabled={
-                  moment(form.getFieldValue("EventDateStart")).diff(
-                    validationStartDate,
-                    "minutes"
-                  ) > 3
-                    ? false
-                    : true
-                }
+                disabled={disableStartDate}
                 placeholder="Оберіть дату початку"
                 format={dateFormat}
                 className={classes.select}
@@ -538,7 +537,6 @@ export default function ({
             >
               <DatePicker
                 showTime
-                showNow={false}
                 disabledDate={disabledDate}
                 placeholder="Оберіть дату завершення"
                 format={dateFormat}

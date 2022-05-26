@@ -556,7 +556,6 @@ export default function ({
             >
               <DatePicker
                 showTime
-                showNow={false}
                 disabledDate={disabledDate}
                 placeholder="Оберіть дату початку"
                 format={dateFormat}
@@ -592,7 +591,6 @@ export default function ({
             >
               <DatePicker
                 showTime
-                showNow={false}
                 disabled={visibleEndDatePicker}
                 defaultPickerValue={moment(StartDate)}
                 disabledDate={disabledEndDate}
