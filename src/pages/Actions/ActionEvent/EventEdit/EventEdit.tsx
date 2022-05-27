@@ -20,6 +20,8 @@ import {
   isNotChosen,
   maxNumber,
   minNumber,
+  incorrectStartTime,
+  incorrectEndTime,
 } from "../../../../components/Notifications/Messages";
 moment.locale("uk-ua");
 
@@ -51,9 +53,15 @@ export default function ({
   const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
   const [administators, setAdministators] = useState<Users[]>([]);
   const [editedEvent, setEvent] = useState<EventEdit>();
+  const [StartDate, setStartDate] = useState<Date>(new Date());
+  const [disableStartDate, setDisableStartDate] = useState<boolean>();
+  const [validationStartDate, setValidationStartDate] = useState<Date>(
+    new Date()
+  );
 
   useEffect(() => {
     fetchData();
+    setValidationStartDate(new Date());
   }, []);
 
   useEffect(() => {
@@ -102,6 +110,8 @@ export default function ({
         bunchuzhnyiId: response.data.bunchuzhnyi?.userId,
         pysarId: response.data.pysar?.userId,
       });
+      setStartDate(form.getFieldValue("EventDateStart"));
+      checkStartEvent(response.data.event.eventDateStart);
       await eventsApi
         .getCategories(response.data.event.eventTypeID)
         .then(async (response) => {
@@ -175,6 +185,17 @@ export default function ({
 
   function disabledDate(current: any) {
     return current && current < moment().startOf("day");
+  }
+  function checkStartEvent(value: Date) {
+    setDisableStartDate(
+      moment(value).diff(moment(), "minutes") < 1 ? true : false
+    );
+  }
+
+  function onEventDateStartChange(e: any) {
+    if (moment(validationStartDate).diff(e, "minute") < 1) {
+      setStartDate(e);
+    }
   }
 
   const onChange = async (e: any) => {
@@ -255,7 +276,7 @@ export default function ({
         form={form}
         onFinish={handleFinish}
         initialValues={editedEvent}
-        id="area"
+        id="editForm"
         style={{ position: "relative" }}
       >
         <Row justify="start" gutter={[0, 0]}>
@@ -464,17 +485,31 @@ export default function ({
               name="EventDateStart"
               style={{ position: "relative" }}
               className={classes.formItem}
-              rules={[{ required: true, message: emptyInput() }]}
+              rules={[
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+                {
+                  validator: (_: object, value: Date) => {
+                    return moment(validationStartDate).diff(value, "minute") > 1
+                      ? Promise.reject(incorrectStartTime)
+                      : Promise.resolve();
+                  },
+                },
+              ]}
             >
               <DatePicker
                 showTime
                 disabledDate={disabledDate}
+                onChange={onEventDateStartChange}
+                disabled={disableStartDate}
                 placeholder="Оберіть дату початку"
                 format={dateFormat}
                 className={classes.select}
                 popupStyle={{ position: "absolute" }}
                 getPopupContainer={() =>
-                  document.getElementById("area")! as HTMLElement
+                  document.getElementById("editForm")! as HTMLElement
                 }
               />
             </Form.Item>
@@ -486,7 +521,19 @@ export default function ({
               label="Дата завершення"
               name="EventDateEnd"
               className={classes.formItem}
-              rules={[{ required: true, message: emptyInput() }]}
+              rules={[
+                {
+                  required: true,
+                  message: emptyInput(),
+                },
+                {
+                  validator: (_: object, value: Date) => {
+                    return moment(value).diff(StartDate, "minute") < 1
+                      ? Promise.reject(incorrectEndTime)
+                      : Promise.resolve();
+                  },
+                },
+              ]}
             >
               <DatePicker
                 showTime
@@ -496,7 +543,7 @@ export default function ({
                 className={classes.select}
                 popupStyle={{ position: "absolute" }}
                 getPopupContainer={() =>
-                  document.getElementById("area")! as HTMLElement
+                  document.getElementById("editForm")! as HTMLElement
                 }
               />
             </Form.Item>
