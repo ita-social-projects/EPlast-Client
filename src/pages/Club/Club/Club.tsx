@@ -283,9 +283,20 @@ const Club = () => {
     });
   }
 
-  function showJoinModal() {
+  async function showJoinModal() {
+    const roles = userApi.getActiveUserRoles();
+
+    if (roles.includes(Roles.KurinHead || Roles.KurinSecretary)) {
     return Modal.confirm({
-      title: "Ви впевнені, що хочете доєднатися до даного куреня?",
+      title: "Ви впевнені, що хочете доєднатися до даного куреня??",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            Ви втратите свою попередню посаду.
+          </b>{" "}
+         
+        </div>
+      ),
       icon: <ExclamationCircleOutlined />,
       okText: "Так, доєднатися",
       okType: "primary",
@@ -295,6 +306,18 @@ const Club = () => {
         addMember();
       },
     });
+  }
+  return Modal.confirm({
+    title: "Ви впевнені, що хочете доєднатися до даного куреня?",
+    icon: <ExclamationCircleOutlined />,
+    okText: "Так, доєднатися",
+    okType: "primary",
+    cancelText: "Скасувати",
+    maskClosable: true,
+    onOk() {
+      addMember();
+    },
+  });
   }
 
   async function showSkipModal(followerID: number) {
@@ -573,9 +596,13 @@ const Club = () => {
         } else if (existingAdmin?.userId === admin.userId) {
           showDisable(admin);
         } 
-        else if (admin.endDate !== undefined && (existStartDate > newAdminStartDate  && existEndDate < newAdminEndDate ||  existEndDate > newAdminEndDate && existStartDate < newAdminStartDate || existEndDate > newAdminEndDate && newAdminEndDate > existStartDate) ) {
+        else if (existingAdmin !== undefined && admin.endDate !== undefined &&
+          (existStartDate > newAdminStartDate && existEndDate < newAdminEndDate
+            || existEndDate > newAdminEndDate && existStartDate < newAdminStartDate
+            || existEndDate > newAdminEndDate && newAdminEndDate > existStartDate)) {
+
           showImpossibleAddManager(existingAdmin);
-        } 
+        }
         else if (
           admin.adminType.adminTypeName === "Голова КПР" ||
           admin.adminType.adminTypeName === "Член КПР" ||
