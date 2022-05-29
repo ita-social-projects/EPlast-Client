@@ -50,7 +50,7 @@ const DropDown = (props: Props) => {
     date: "",
     fileName: null,
   });
-
+ 
   const EditModal = () => setShowEditModal(true);
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const DropDown = (props: Props) => {
       setRegionAdm(roles.includes(Roles.OkrugaHead));
       setCityAdm(roles.includes(Roles.CityHead));
       setClubAdm(roles.includes(Roles.KurinHead));
-      setCanEdit(roles.includes(Roles.Admin));
+      setCanEdit(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyAdmin));
       setSupporter(roles.includes(Roles.Supporter));
       setPlastMember(roles.includes(Roles.PlastMember));
     };
