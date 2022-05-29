@@ -68,7 +68,9 @@ const CreateCity = () => {
   const history = useHistory();
   const location = useLocation();
   const followerPath = "/regions/follower/";
-  const [loading, setLoading] = useState(false);
+  const isFollowerPath = location.pathname.includes(followerPath);
+
+  const [loaded, setLoaded] = useState<boolean>(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const [appealRegion, setAppealRegion] = useState<RegionProfile>(
     new RegionProfile()
@@ -80,26 +82,29 @@ const CreateCity = () => {
   const [regions, setRegions] = useState<RegionProfile[]>([]);
   const [applicant, setApplicant] = useState<User>({} as User);
   const [activeUser, setActiveUser] = useState<User>({} as User);
-  const [isFollowerPath, setIsFollowerPath] = useState<boolean>(
-    location.pathname.includes(followerPath)
-  );
+
+  const load = async () => {
+
+    try {
+      if (isFollowerPath) {
+        if (location.pathname.startsWith(followerPath + "edit")) {
+          await getRegionFollower(id);
+        } else {
+          await getActiveUser();
+        }
+      } else {
+        if (+id) await getCity();
+      }
+
+      await getRegions();
+    } finally {
+      setLoaded(true);
+    }
+  };
 
   useEffect(() => {
-    if (isFollowerPath) {
-      if (location.pathname.startsWith(followerPath + "edit")) {
-        getRegionFollower(id);
-      } else {
-        getActiveUser();
-      }
-      getRegions();
-    } else {
-      if (+id) {
-        getCity().then(() => getRegions());
-      } else {
-        getRegions();
-      }
-    }
-  }, []);
+    if (!loaded) load();
+  }, [loaded]);
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -154,7 +159,6 @@ const CreateCity = () => {
   };
 
   const getRegionFollower = async (followerId: number) => {
-    setLoading(true);
     await getRegionFollowerById(followerId)
       .then(async (followerResponse) => {
         setRegionFollower(followerResponse.data);
@@ -169,14 +173,9 @@ const CreateCity = () => {
           }
         );
       })
-      .finally(() => {
-        setLoading(false);
-      });
   };
 
   const getCity = async () => {
-    try {
-      setLoading(true);
       const response = await getCityById(+id);
 
       if (response.data.logo !== null) {
@@ -184,29 +183,18 @@ const CreateCity = () => {
         response.data.logo = logo.data;
       }
 
-      setCity(response.data);
-    } finally {
-      setLoading(false);
-    }
+    setCity(response.data);
   };
 
   const getRegions = async () => {
-    try {
       const response = await getRegionsNames();
-      setRegions(response.data);
-    } finally {
-    }
+    setRegions(response.data);
   };
 
   const getActiveUser = async () => {
-    try {
-      setLoading(true);
       const activeUserId = UserApi.getActiveUserId();
       const response = await UserApi.getById(activeUserId);
-      setActiveUser(response.data.user);
-    } finally {
-      setLoading(false);
-    }
+    setActiveUser(response.data.user);
   };
 
   const handleSubmit = async (values: any) => {
@@ -410,7 +398,7 @@ const CreateCity = () => {
     );
   };
 
-  return loading ? (
+  return !loaded ? (
     <Spinner />
   ) : (
     <Layout.Content className="createCity">
@@ -482,12 +470,7 @@ const CreateCity = () => {
                 >
                   <Input
                     style={{ cursor: "pointer" }}
-                    readOnly
-                    value={
-                      location.pathname.startsWith(followerPath + "edit")
-                        ? applicant.firstName + " " + applicant.lastName
-                        : activeUser.firstName + " " + activeUser.lastName
-                    }
+                      readOnly
                     maxLength={51}
                     onClick={() =>
                       location.pathname.startsWith(followerPath + "edit")
