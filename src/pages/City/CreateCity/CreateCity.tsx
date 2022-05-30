@@ -19,6 +19,7 @@ import {
 } from "@ant-design/icons/lib";
 import ReactInputMask from "react-input-mask";
 import { RcCustomRequestOptions } from "antd/lib/upload/interface";
+import Title from "antd/lib/typography/Title";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import {
   createCity,
@@ -28,7 +29,6 @@ import {
 } from "../../../api/citiesApi";
 import {
   createRegionFollower,
-  GetAllRegions,
   getRegionById,
   getRegionFollowerById,
   getRegionsNames,
@@ -38,7 +38,6 @@ import "./CreateCity.less";
 import CityProfile from "../../../models/City/CityProfile";
 import RegionProfile from "../../../models/Region/RegionProfile";
 import notificationLogic from "../../../components/Notifications/Notification";
-import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import {
   emptyInput,
@@ -60,6 +59,7 @@ import RegionFollower from "../../../models/Region/RegionFollower";
 import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+
 const classes = require("../../Club/Club/Modal.module.css");
 
 const CreateCity = () => {
@@ -70,7 +70,7 @@ const CreateCity = () => {
   const followerPath = "/regions/follower/";
   const isFollowerPath = location.pathname.includes(followerPath);
 
-  const [loaded, setLoaded] = useState<boolean>(false);
+  const [isDataLoaded, setDataLoaded] = useState<boolean>(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const [appealRegion, setAppealRegion] = useState<RegionProfile>(
     new RegionProfile()
@@ -82,29 +82,6 @@ const CreateCity = () => {
   const [regions, setRegions] = useState<RegionProfile[]>([]);
   const [applicant, setApplicant] = useState<User>({} as User);
   const [activeUser, setActiveUser] = useState<User>({} as User);
-
-  const load = async () => {
-
-    try {
-      if (isFollowerPath) {
-        if (location.pathname.startsWith(followerPath + "edit")) {
-          await getRegionFollower(id);
-        } else {
-          await getActiveUser();
-        }
-      } else {
-        if (+id) await getCity();
-      }
-
-      await getRegions();
-    } finally {
-      setLoaded(true);
-    }
-  };
-
-  useEffect(() => {
-    if (!loaded) load();
-  }, [loaded]);
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -398,7 +375,28 @@ const CreateCity = () => {
     );
   };
 
-  return !loaded ? (
+  const loadData = async () => {
+
+    try {
+      if (isFollowerPath) {
+        if (location.pathname.startsWith(`${followerPath}edit`)) {
+          await getRegionFollower(id);
+        } else {
+          await getActiveUser();
+        }
+      } else if (+id) await getCity();
+
+      await getRegions();
+    } finally {
+      setDataLoaded(true);
+    }
+  };
+
+  useEffect(() => {
+    if (!isDataLoaded) loadData();
+  }, [isDataLoaded]);
+
+  return !isDataLoaded ? (
     <Spinner />
   ) : (
     <Layout.Content className="createCity">
