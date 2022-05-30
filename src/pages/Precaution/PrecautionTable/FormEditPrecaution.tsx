@@ -5,7 +5,6 @@ import {
   Button,
   Select,
   DatePicker,
-  notification,
   Row,
   Col,
 } from "antd";
@@ -26,6 +25,7 @@ import {
   descriptionValidation,
   getOnlyNums,
 } from "../../../models/GllobalValidations/DescriptionValidation";
+import AvailableUser from "../Interfaces/AvailableUser";
 moment.locale("uk-ua");
 
 interface Props {
@@ -55,20 +55,14 @@ const FormEditPrecaution = ({
 }: Props) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
-  const [userData, setUserData] = useState<any[]>([
+  const [userData, setUserData] = useState<AvailableUser[]>([
     {
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-        birthday: "",
-      },
-      regionName: "",
-      cityName: "",
-      clubName: "",
-      userPlastDegreeName: "",
-      userRoles: "",
-    },
+      id: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      isInLowerRole: false
+    }
   ]);
   const [distData, setDistData] = useState<Precaution[]>(Array<Precaution>());
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
@@ -82,11 +76,11 @@ const FormEditPrecaution = ({
     const fetchData = async () => {
       setDistData([]);
       setUserData([]);
-      await precautionApi.getPrecautions().then((response) => {
+      precautionApi.getPrecautions().then((response) => {
         setDistData(response.data);
       });
       setLoadingUserStatus(true);
-      await adminApi.getUsersForTable().then((response) => {
+      precautionApi.getUsersForPrecaution().then((response) => {
         setUserData(response.data);
       });
       setLoadingUserStatus(false);
