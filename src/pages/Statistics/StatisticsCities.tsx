@@ -274,7 +274,7 @@ const StatisticsCities = () => {
     // reading statisticsItems indicators of the very first element
     // because they are the same for all the elements
     let statistics =
-      entryToSetIndicators.yearStatistics[0].statisticsItems || [];
+      entryToSetIndicators.yearStatistics[0].statisticsItems ?? [];
 
     // creating and seting columns for table
     let temp = [
@@ -319,6 +319,9 @@ const StatisticsCities = () => {
   }
 
   const onIndicatorSelection = (value: Array<Number>) => {
+    // enables or disables dropdown options for Показники
+    // based on selected values
+
     setSelectableUnatstvaPart(!value.includes(2));
     setSelectableUnatstvaZahalom(
       !value.some((v) => [3, 4, 5, 6, 7].includes(v.valueOf()))
