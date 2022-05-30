@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Upload, Select } from "antd";
-import { UploadFile } from "antd/lib/upload/interface";
 import ReactQuill from "react-quill";
+import { UploadFile } from "antd/lib/upload/interface";
 import formclasses from "./Form.module.css";
-import { emptyInput } from "../../../components/Notifications/Messages";
+import {
+  emptyInput,
+  maxLength,
+} from "../../../components/Notifications/Messages";
 import { getGoverningBodiesList } from "../../../api/governingBodiesApi";
 import { GoverningBody } from "../../../api/decisionsApi";
 import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";

@@ -178,7 +178,6 @@ const AddAdministratorModal = (props: Props) => {
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
-
     let admin: ClubAdmin = {
       id: props.admin.id,
       adminType: {
@@ -204,7 +203,7 @@ const AddAdministratorModal = (props: Props) => {
         (x) => x.adminType.adminTypeName === admin.adminType.adminTypeName
       );
       if (head?.userId === admin.userId) {
-        showDisableModal(head);
+        showConfirm(admin,head);
       } else if (
         existingAdmin?.userId === admin.userId &&
         existingAdmin?.endDate === admin.endDate

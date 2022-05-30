@@ -287,7 +287,7 @@ const StatisticsCities = () => {
     // reading statisticsItems indicators of the very first element
     // because they are the same for all the elements
     let statistics =
-      entryToSetIndicators.yearStatistics[0].statisticsItems || [];
+      entryToSetIndicators.yearStatistics[0].statisticsItems ?? [];
 
     // creating and seting columns for table
     let temp = [

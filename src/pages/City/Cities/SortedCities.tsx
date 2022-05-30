@@ -133,6 +133,8 @@ const SortedCities = ({ switcher }: Props) => {
     }
   }, [switcher]);
 
+  const IsAdminOrGBAdmin: boolean = activeUserRoles.includes(Roles.Admin) || activeUserRoles.includes(Roles.GoverningBodyAdmin);
+
   return (
     <Layout.Content className="cities">
       {switcher ? (
@@ -147,7 +149,7 @@ const SortedCities = ({ switcher }: Props) => {
           onSearch={handleSearch}
           loading={photosLoading}
           disabled={photosLoading}
-          allowClear={true}
+          allowClear
         />
       </div>
       {loading ? (
@@ -155,10 +157,12 @@ const SortedCities = ({ switcher }: Props) => {
       ) : (
         <div>
           <div className="cityWrapper">
-            {switcher ? null : activeUserRoles.includes(Roles.Admin) &&
-              page === 1 &&
-              searchedData.length === 0 ? (
-              <Card
+              {switcher
+                ? null
+                : IsAdminOrGBAdmin
+                  && page === 1
+                  && searchedData.length === 0
+                  ? (<Card
                 hoverable
                 className="cardStyles addCity"
                 cover={<img src={Add} alt="AddCity" />}
@@ -168,9 +172,9 @@ const SortedCities = ({ switcher }: Props) => {
                   className="titleText"
                   title="Створити нову станицю"
                 />
-              </Card>
-            ) : page === 1 && searchedData.length === 0 ? (
-              <Card
+                  </Card>)
+                  : page === 1 && searchedData.length === 0
+                    ? (<Card
                 hoverable
                 className="cardStyles addCity"
                 cover={<img src={Add} alt="AddRegionFollower" />}
@@ -184,8 +188,9 @@ const SortedCities = ({ switcher }: Props) => {
                     </div>
                   }
                 />
-              </Card>
-            ) : null}
+                    </Card>)
+                    : null
+              }
 
             {cities.length === 0 ? (
               <div>
