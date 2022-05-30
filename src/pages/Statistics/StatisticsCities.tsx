@@ -116,15 +116,14 @@ const StatisticsCities = () => {
     },
   ];
 
-  const totalColumn = 
-  {
+  const totalColumn = {
     title: "Усього",
     dataIndex: "total",
     key: "total",
     fixed: "right",
     sorter: { compare: (a: any, b: any) => a.total - b.total },
     width: 100,
-  }
+  };
 
   const indicatorsArray = [
     { value: StatisticsItemIndicator.NumberOfPtashata, label: "Пташата" },
@@ -200,8 +199,7 @@ const StatisticsCities = () => {
       let cities = response.data as City[];
       setCities(
         cities
-          .sort((a: City, b: City) =>
-            a.name.localeCompare(b.name))
+          .sort((a: City, b: City) => a.name.localeCompare(b.name))
           .map((item) => {
             return {
               label: item.name,
@@ -273,7 +271,10 @@ const StatisticsCities = () => {
             regionName: stanytsya.city.region.regionName,
             year: yearStatistic.year,
             ...yearStatistic.statisticsItems.map((it) => it.value),
-            total: yearStatistic.statisticsItems.reduce((sum, item) => sum + item.value, 0),
+            total: yearStatistic.statisticsItems.reduce(
+              (sum, item) => sum + item.value,
+              0
+            ),
           };
         });
       })
@@ -305,7 +306,12 @@ const StatisticsCities = () => {
   };
 
   // calculating for chart percentage
-  let sumOfIndicators: number = dataChart.length ? dataChart.reduce((sum: number, indicator: any) => sum + indicator.count, 0) : 0;
+  let sumOfIndicators: number = dataChart.length
+    ? dataChart.reduce(
+        (sum: number, indicator: any) => sum + indicator.count,
+        0
+      )
+    : 0;
 
   if (dataFromRow != undefined) {
     const regex = /[0-9]/g;
@@ -331,7 +337,7 @@ const StatisticsCities = () => {
   const onIndicatorSelection = (value: Array<Number>) => {
     // enables or disables dropdown options for Показники
     // based on selected values
-    
+
     setSelectableUnatstvaPart(!value.includes(2));
     setSelectableUnatstvaZahalom(
       !value.some((v) => [3, 4, 5, 6, 7].includes(v.valueOf()))

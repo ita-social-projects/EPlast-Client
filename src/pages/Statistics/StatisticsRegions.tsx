@@ -106,15 +106,14 @@ const StatisticsCities = () => {
     },
   ];
 
-  const totalColumn = 
-  {
+  const totalColumn = {
     title: "Усього",
     dataIndex: "total",
     key: "total",
     fixed: "right",
     sorter: { compare: (a: any, b: any) => a.total - b.total },
     width: 100,
-  }
+  };
 
   const indicatorsArray = [
     {
@@ -269,7 +268,10 @@ const StatisticsCities = () => {
             regionName: region.region.regionName,
             year: yearStatistic.year,
             ...yearStatistic.statisticsItems.map((it) => it.value),
-            total: yearStatistic.statisticsItems.reduce((sum, a) => sum + a.value, 0),
+            total: yearStatistic.statisticsItems.reduce(
+              (sum, a) => sum + a.value,
+              0
+            ),
           };
         });
       })
@@ -302,7 +304,12 @@ const StatisticsCities = () => {
   };
 
   // calculating for chart percentage
-  let sumOfIndicators: number = dataChart.length ? dataChart.reduce((sum: number, indicator: any) => sum + indicator.count, 0) : 0;
+  let sumOfIndicators: number = dataChart.length
+    ? dataChart.reduce(
+        (sum: number, indicator: any) => sum + indicator.count,
+        0
+      )
+    : 0;
 
   if (dataFromRow != undefined) {
     const regex = /[0-9]/g;
@@ -589,7 +596,10 @@ const StatisticsCities = () => {
                     "count",
                     {
                       content: (data) => {
-                        return `${data.item}: ${(parseInt(data.percent) / sumOfIndicators * 100).toFixed(2)}%`;
+                        return `${data.item}: ${(
+                          (parseInt(data.percent) / sumOfIndicators) *
+                          100
+                        ).toFixed(2)}%`;
                       },
                     },
                   ]}
