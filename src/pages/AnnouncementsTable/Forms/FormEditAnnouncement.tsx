@@ -46,7 +46,7 @@ const FormEditAnnouncement: React.FC<FormEditAnnouncementProps> = (
         getBase64(image.originFileObj as RcFile, (base64: string) => {
           setImagesUrl((old) => [...old, base64]);
         });
-      } else{
+      } else {
         setImagesUrl((old) => [...old, image.url]);
       }
       return image;
@@ -55,31 +55,28 @@ const FormEditAnnouncement: React.FC<FormEditAnnouncementProps> = (
 
   const getAnnouncement = async (annId: number) => {
     setUploadImages([]);
-    await getAnnouncementsById(annId)
-      .then((response) => {
-        setTitle(response.data.title);
-        setText(response.data.text);
-        form.setFieldsValue({ title: response.data.title });
-        form.setFieldsValue({ text: response.data.text });
-        response.data.images.map((image: any) => {
-          setUploadImages((Images) => [
-            ...Images,
-            {
-              url: image.imageBase64,
-              uid: getUid(),
-              type: `image/${image.imageBase64.substring(
-                image.imageBase64.indexOf(".") + 1,
-                image.imageBase64.indexOf(";")
-              )}`,
-            },
-          ]);
-          return image;
-        });
-        getPhotos(uploadImages);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const responce = await getAnnouncementsById(annId);
+    form.setFieldsValue({ title: responce.data.title });
+    form.setFieldsValue({ text: responce.data.text });
+    let images: any = [];
+    responce.data.images.map((image: any, ind: number) => {
+      images = [
+        ...images,
+        {
+          url: image.imageBase64,
+          uid: getUid() + ind,
+          type: `image/${image.imageBase64.substring(
+            image.imageBase64.indexOf(".") + 1,
+            image.imageBase64.indexOf(";")
+          )}`,
+        },
+      ];
+      return image;
+    });
+    setUploadImages(images);
+    getPhotos(images);
+    setTitle(responce.data.title);
+    setText(responce.data.text);
   };
 
   const checkFile = (fileName: string) => {
@@ -96,10 +93,7 @@ const FormEditAnnouncement: React.FC<FormEditAnnouncementProps> = (
 
   const handleCancel = () => {
     props.setVisibleModal(false);
-    form.setFieldsValue({ title});
-    form.setFieldsValue({ text });
-    setImagesUrl([]);
-    setUploadImages([]);
+    getAnnouncement(state.selectedObjectId);
   };
 
   const handleClose = () => {
@@ -107,7 +101,17 @@ const FormEditAnnouncement: React.FC<FormEditAnnouncementProps> = (
   };
 
   const handleUpload = (images: any) => {
-    if (!checkFile(images.file.name)) {
+    if (images.file.name) {
+      if (!checkFile(images.file.name)) {
+        return;
+      }
+    }
+    if (images.file.status === "removed") {
+      const filteredImages = uploadImages.filter((announcement) => {
+        return announcement.uid !== images.file.uid;
+      });
+      setUploadImages(filteredImages);
+      getPhotos(filteredImages);
       return;
     }
     setUploadImages(images.fileList);

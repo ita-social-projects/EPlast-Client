@@ -54,8 +54,6 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
 
-
-
   const newNotification = async () => {
     await NotificationBoxApi.createNotifications(
       state.usersToSendNotification,
@@ -91,6 +89,9 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   };
 
   const handleCancel = () => {
+    form.resetFields();
+    setIsPined(false);
+    setUploadImages([]);
     props.setVisibleModal(false);
   };
 
@@ -110,16 +111,20 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     props.setVisibleModal(false);
     form.resetFields();
     newNotification();
-    await actions.addAnnouncement(
-      values.title,
-      values.text,
-      imagesUrl,
-      isPined,
-      selectGoverningBodyId,
-      selectSectorId
-    );
-    await actions.getAnnouncements();
-    notificationLogic("success", "Оголошення опубліковано");
+    try {
+      await actions.addAnnouncement(
+        values.title,
+        values.text,
+        imagesUrl,
+        isPined,
+        selectGoverningBodyId,
+        selectSectorId
+      );
+      await actions.getAnnouncements();
+      notificationLogic("success", "Оголошення опубліковано");
+    } catch {
+      notificationLogic("error", "Поля Тема і Текст оголошення обов'язкові");
+    }
     setIsPined(false);
     setUploadImages([]);
     setImagesUrl([]);
