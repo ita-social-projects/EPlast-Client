@@ -116,6 +116,15 @@ const StatisticsCities = () => {
     },
   ];
 
+  const totalColumn = {
+    title: "Усього",
+    dataIndex: "total",
+    key: "total",
+    fixed: "right",
+    sorter: { compare: (a: any, b: any) => a.total - b.total },
+    width: 100,
+  };
+
   const indicatorsArray = [
     { value: StatisticsItemIndicator.NumberOfPtashata, label: "Пташата" },
     { value: StatisticsItemIndicator.NumberOfNovatstva, label: "Новацтво" },
@@ -190,8 +199,7 @@ const StatisticsCities = () => {
       let cities = response.data as City[];
       setCities(
         cities
-          .sort((a: City, b: City) =>
-            a.name.localeCompare(b.name))
+          .sort((a: City, b: City) => a.name.localeCompare(b.name))
           .map((item) => {
             return {
               label: item.name,
@@ -228,6 +236,7 @@ const StatisticsCities = () => {
 
   const onSubmit = async (info: any) => {
     let counter = 1;
+
     let response = await StatisticsApi.getCitiesStatistics({
       CityIds: info.citiesId,
       Years: info.years,
@@ -262,6 +271,10 @@ const StatisticsCities = () => {
             regionName: stanytsya.city.region.regionName,
             year: yearStatistic.year,
             ...yearStatistic.statisticsItems.map((it) => it.value),
+            total: yearStatistic.statisticsItems.reduce(
+              (sum, item) => sum + item.value,
+              0
+            ),
           };
         });
       })
@@ -287,15 +300,18 @@ const StatisticsCities = () => {
           width: 130,
         };
       }),
+      totalColumn,
     ];
     setColumns(temp);
   };
 
   // calculating for chart percentage
-  let sumOfIndicators = 0;
-  dataChart.map((indicator: any) => {
-    sumOfIndicators += indicator.count;
-  });
+  let sumOfIndicators: number = dataChart.length
+    ? dataChart.reduce(
+        (sum: number, indicator: any) => sum + indicator.count,
+        0
+      )
+    : 0;
 
   if (dataFromRow != undefined) {
     const regex = /[0-9]/g;
@@ -312,7 +328,7 @@ const StatisticsCities = () => {
         }
       }),
     ];
-    let indicatorsForChart = allDataForChart.slice(0, columns.length - 4);
+    let indicatorsForChart = allDataForChart.slice(0, -5);
     setTitle(dataFromRow);
     setDataChart(indicatorsForChart);
     setDataFromRow(undefined);
@@ -624,7 +640,7 @@ const StatisticsCities = () => {
                 rowKey="id"
                 columns={columns}
                 dataSource={dataForTable}
-                scroll={{ scrollToFirstRowOnChange: true }}
+                scroll={{ x: "100%", scrollToFirstRowOnChange: true }}
                 onRow={(cityRecord, index) => {
                   return {
                     onClick: () => {

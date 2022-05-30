@@ -106,6 +106,15 @@ const StatisticsCities = () => {
     },
   ];
 
+  const totalColumn = {
+    title: "Усього",
+    dataIndex: "total",
+    key: "total",
+    fixed: "right",
+    sorter: { compare: (a: any, b: any) => a.total - b.total },
+    width: 100,
+  };
+
   const indicatorsArray = [
     {
       value: StatisticsItemIndicator.NumberOfPtashata,
@@ -259,6 +268,10 @@ const StatisticsCities = () => {
             regionName: region.region.regionName,
             year: yearStatistic.year,
             ...yearStatistic.statisticsItems.map((it) => it.value),
+            total: yearStatistic.statisticsItems.reduce(
+              (sum, a) => sum + a.value,
+              0
+            ),
           };
         });
       })
@@ -274,7 +287,7 @@ const StatisticsCities = () => {
     setOnClickRow(null);
 
     // creating and seting columns for table
-    let temp = [
+    let columnData = [
       ...constColumns,
       ...statistics.map((statisticsItem: any, index: any) => {
         return {
@@ -284,16 +297,19 @@ const StatisticsCities = () => {
           width: 130,
         };
       }),
+      totalColumn,
     ];
 
-    setColumns(temp);
+    setColumns(columnData);
   };
 
   // calculating for chart percentage
-  let sumOfIndicators = 0;
-  dataChart.map((indicator: any) => {
-    sumOfIndicators += indicator.count;
-  });
+  let sumOfIndicators: number = dataChart.length
+    ? dataChart.reduce(
+        (sum: number, indicator: any) => sum + indicator.count,
+        0
+      )
+    : 0;
 
   if (dataFromRow != undefined) {
     const regex = /[0-9]/g;
@@ -310,7 +326,7 @@ const StatisticsCities = () => {
         }
       }),
     ];
-    let indicatorsForChart = allDataForChart.slice(0, columns.length - 3);
+    let indicatorsForChart = allDataForChart.slice(0, -4);
     setTitle(dataFromRow);
     setDataChart(indicatorsForChart);
     setDataFromRow(undefined);
@@ -581,7 +597,7 @@ const StatisticsCities = () => {
                     {
                       content: (data) => {
                         return `${data.item}: ${(
-                          (data.percent / sumOfIndicators) *
+                          (parseInt(data.percent) / sumOfIndicators) *
                           100
                         ).toFixed(2)}%`;
                       },
@@ -621,7 +637,7 @@ const StatisticsCities = () => {
                 rowKey="id"
                 columns={columns}
                 dataSource={result}
-                scroll={{ scrollToFirstRowOnChange: true }}
+                scroll={{ x: "100%", scrollToFirstRowOnChange: true }}
                 onRow={(regionRecord, index) => {
                   return {
                     onClick: async () => {
