@@ -26,7 +26,6 @@ import jwt from "jwt-decode";
 import moment from "moment";
 import Title from "antd/lib/typography/Title";
 import { Markup } from "interweave";
-import InfiniteScroll from "react-infinite-scroll-component";
 import {
   getSectorById,
   getSectorLogo,
@@ -34,7 +33,6 @@ import {
   removeSector,
   getSectorAnnouncementsById,
   addSectorAnnouncement,
-  getSectorAnnouncementsByPage,
 } from "../../../api/governingBodySectorsApi";
 import "../GoverningBody/GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -91,9 +89,6 @@ const Sector = () => {
   >([]);
   const [announcementsCount, setAnnouncementsCount] = useState<number>(0);
   const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
-  const [listLoading, setListLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
 
   const deleteSector = async () => {
     await removeSector(sector.id);
@@ -152,26 +147,6 @@ const Sector = () => {
     return result;
   };
 
-  const loadMoreData = async () => {
-    if (listLoading) {
-      return;
-    }
-    try {
-      setListLoading(true);
-      const response = await getSectorAnnouncementsByPage(
-        page,
-        pageSize,
-        +sectorId
-      );
-      for (let i = 0; i < response.data.item2; ++i) {
-        setAnnouncements((old) => [...old, response.data.item1[i]]);
-      }
-    } finally {
-      setListLoading(false);
-      setPage(page + 1);
-    }
-  };
-
   const getSector = async () => {
     setLoading(true);
     try {
@@ -192,7 +167,7 @@ const Sector = () => {
       setDocuments(sectorViewModel.documents);
       setDocumentsCount(response.data.documentsCount);
       setAnnouncementsCount(response.data.announcementsCount);
-      loadMoreData();
+      setAnnouncements(sectorViewModel.announcements);
     } finally {
       setLoading(false);
     }
@@ -470,7 +445,24 @@ const Sector = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Оголошення</Title>
+            <Title level={4}>
+              Оголошення
+              <a
+                onClick={() =>
+                  history.push(
+                    `/sector/announcements/${governingBodyId}/${sectorId}/1`
+                  )
+                }
+              >
+                {announcementsCount !== 0 &&
+                userAccesses["ViewAnnouncements"] ? (
+                  <Badge
+                    count={announcementsCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  />
+                ) : null}
+              </a>
+            </Title>
             <Row
               className="governingBodyItems"
               justify="center"
@@ -483,34 +475,24 @@ const Sector = () => {
                     style={{
                       width: "100%",
                       height: 400,
-                      overflow: "auto",
+                      overflow: "hidden",
                     }}
                   >
-                    <InfiniteScroll
-                      dataLength={announcements.length}
-                      next={loadMoreData}
-                      hasMore
-                      loader={<></>}
-                      scrollableTarget="scrollableDiv"
-                    >
-                      <List
-                        dataSource={announcements}
-                        renderItem={(item) => (
-                          <List.Item
-                            style={{ cursor: "pointer" }}
-                            key={item.id}
-                            onClick={() => showFullAnnouncement(item.id)}
-                          >
-                            <List.Item.Meta
-                              title={<Markup content={item.title} />}
-                              description={item.date
-                                .toString()
-                                .substring(0, 10)}
-                            />
-                          </List.Item>
-                        )}
-                      />
-                    </InfiniteScroll>
+                    <List
+                      dataSource={announcements}
+                      renderItem={(item) => (
+                        <List.Item
+                          style={{ cursor: "pointer" }}
+                          key={item.id}
+                          onClick={() => showFullAnnouncement(item.id)}
+                        >
+                          <List.Item.Meta
+                            title={<Markup content={item.title} />}
+                            description={item.date.toString().substring(0, 10)}
+                          />
+                        </List.Item>
+                      )}
+                    />
                   </div>
                 ) : (
                   <Col>
