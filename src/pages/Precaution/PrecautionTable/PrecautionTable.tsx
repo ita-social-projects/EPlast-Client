@@ -52,8 +52,6 @@ const PrecautionTable = () => {
     date: new Date(),
     endDate: new Date(),
     isActive: false,
-    isDeletable: false,
-    isEditable: false,
   });
   const [isRecordActive, setIsRecordActive] = useState<boolean>(false);
   const [userId, setUserId] = useState<any>(0);
@@ -88,8 +86,6 @@ const PrecautionTable = () => {
         date: new Date(),
         endDate: new Date(),
         isActive: false,
-        isDeletable: false,
-        isEditable: false,
       },
     ],
   });
@@ -369,8 +365,8 @@ const PrecautionTable = () => {
               userId={userId}
               pageX={x}
               pageY={y}
-              isRecordEditable={recordObj.isEditable}
-              isRecordDeletable={recordObj.isDeletable}
+              userAccess={userAccess}
+              isActive={recordObj.isActive}
               onDelete={handleDelete}
               onEdit={handleEdit}
             />

@@ -3,7 +3,6 @@ import { Drawer } from "antd";
 import FormEditPrecaution from "./FormEditPrecaution";
 import UserPrecaution from "../Interfaces/UserPrecaution";
 import Precaution from "../Interfaces/Precaution";
-import UserPrecautionTableItem from "../Interfaces/UserPrecautionTableItem";
 
 interface Props {
   userPrecaution: UserPrecaution;

@@ -7,8 +7,8 @@ type DropDownProps = {
   pageX: number;
   pageY: number;
   showDropdown: boolean;
-  isRecordEditable: boolean;
-  isRecordDeletable: boolean;
+  userAccess: { [key: string]: boolean };
+  isActive: boolean;
   onDelete: (id: number) => void;
   onEdit: (
     id: number,

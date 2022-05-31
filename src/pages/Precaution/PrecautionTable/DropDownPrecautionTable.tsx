@@ -20,8 +20,8 @@ const DropDown = (props: DropDownProps) => {
     pageX,
     pageY,
     showDropdown,
-    isRecordEditable,
-    isRecordDeletable,
+    userAccess,
+    isActive,
     onDelete,
     onEdit,
   } = props;
@@ -91,13 +91,25 @@ const DropDown = (props: DropDownProps) => {
           <FileSearchOutlined />
           Переглянути профіль
         </Menu.Item>
-        {isRecordEditable && (
+        {isActive && userAccess["EditActivePrecaution"] && (
           <Menu.Item key="3">
             <EditOutlined />
             Редагувати
           </Menu.Item>
         )}
-        {isRecordDeletable && (
+        {!isActive && userAccess["EditInactivePrecaution"] && (
+          <Menu.Item key="3">
+            <EditOutlined />
+            Редагувати
+          </Menu.Item>
+        )}
+        {isActive && userAccess["DeleteActivePrecaution"] && (
+          <Menu.Item key="2">
+            <DeleteOutlined />
+            Видалити
+          </Menu.Item>
+        )}
+        {!isActive && userAccess["DeleteInactivePrecaution"] && (
           <Menu.Item key="2">
             <DeleteOutlined />
             Видалити

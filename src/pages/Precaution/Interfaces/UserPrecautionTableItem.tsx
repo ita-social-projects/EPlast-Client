@@ -9,8 +9,6 @@ type UserPrecautionTableItem = {
   date: Date;
   endDate: Date;
   isActive: boolean;
-  isDeletable: boolean;
-  isEditable: boolean;
   userId: string;
   userName: string;
 };
