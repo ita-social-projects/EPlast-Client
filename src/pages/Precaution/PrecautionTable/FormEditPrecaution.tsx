@@ -18,8 +18,8 @@ import {
   getOnlyNums,
 } from "../../../models/GllobalValidations/DescriptionValidation";
 import SuggestedUser from "../Interfaces/SuggestedUser";
-import User from "../../AnnualReport/Interfaces/User";
-import UserPrecautionTableItem from "../Interfaces/UserPrecautionTableItem";
+import notificationLogic from "../../../components/Notifications/Notification";
+import { dataCantBeFetched } from "../../../components/Notifications/Messages";
 moment.locale("uk-ua");
 
 interface Props {
@@ -47,17 +47,12 @@ const FormEditPrecaution = ({
 }: Props) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
-  const [userData, setUserData] = useState<SuggestedUser[]>([
-    {
-      id: "",
-      firstName: "",
-      lastName: "",
-      email: "",
-      isAvailable: false,
-    },
-  ]);
+  const [userData, setUserData] = useState<SuggestedUser[]>(
+    Array<SuggestedUser>()
+  );
   const [distData, setDistData] = useState<Precaution[]>(Array<Precaution>());
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
+  const [loadingPrecautionStatus, setLoadingPrecautionStatus] = useState(false);
   const [precaution, setPrecaution] = useState<Precaution>(
     oldUserPrecaution.precaution
   );
@@ -67,18 +62,37 @@ const FormEditPrecaution = ({
   useEffect(() => {
     setLoading(true);
     form.resetFields();
-    let mounted = false;
     const fetchData = async () => {
       setDistData([]);
       setUserData([]);
-      precautionApi.getPrecautions().then((response) => {
-        setDistData(response.data);
-      });
+
+      setLoadingPrecautionStatus(true);
+      precautionApi
+        .getPrecautions()
+        .then((response) => {
+          setDistData(response.data);
+          setLoadingPrecautionStatus(false);
+        })
+        .catch(() => {
+          notificationLogic(
+            "error",
+            dataCantBeFetched("пересторог. Спробуйте пізніше")
+          );
+        });
+
       setLoadingUserStatus(true);
-      precautionApi.getUsersForPrecaution().then((response) => {
-        setUserData(response.data);
-      });
-      setLoadingUserStatus(false);
+      precautionApi
+        .getUsersForPrecaution()
+        .then((response) => {
+          setUserData(response.data);
+          setLoadingUserStatus(false);
+        })
+        .catch(() => {
+          notificationLogic(
+            "error",
+            dataCantBeFetched("користувачів. Спробуйте пізніше")
+          );
+        });
     };
     fetchData();
     setLoading(false);
@@ -140,7 +154,7 @@ const FormEditPrecaution = ({
     );
   };
 
-  const disabledStartDate = (current: any) => {
+  const isDisabledStartDate = (current: any) => {
     return current && current > moment();
   };
 
@@ -226,6 +240,7 @@ const FormEditPrecaution = ({
                   className={formclasses.selectField}
                   showSearch
                   onSelect={precautionChange}
+                  loading={loadingPrecautionStatus}
                   getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
                   {distData?.map((o) => (
@@ -244,11 +259,7 @@ const FormEditPrecaution = ({
                 label="Ім'я"
                 labelCol={{ span: 24 }}
                 name="user"
-                initialValue={
-                  oldUserPrecaution.user.firstName +
-                  " " +
-                  oldUserPrecaution.user.lastName
-                }
+                initialValue={`${oldUserPrecaution.user.firstName} ${oldUserPrecaution.user.lastName}`}
                 rules={[
                   {
                     required: true,

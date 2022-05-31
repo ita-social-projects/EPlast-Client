@@ -1,4 +1,5 @@
 import Precaution from "./Precaution";
+import PrecautionUser from "./PrecautionUser";
 import UserPrecautionTableItem from "./UserPrecautionTableItem";
 
 type DropDownProps = {
@@ -20,8 +21,8 @@ type DropDownProps = {
     status: string,
     reporter: string,
     number: number,
-    user: any,
-    userId: string
+    userId: PrecautionUser,
+    user: any
   ) => void;
 };
 

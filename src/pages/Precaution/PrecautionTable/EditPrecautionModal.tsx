@@ -3,6 +3,7 @@ import { Drawer } from "antd";
 import FormEditPrecaution from "./FormEditPrecaution";
 import UserPrecaution from "../Interfaces/UserPrecaution";
 import Precaution from "../Interfaces/Precaution";
+import PrecautionUser from "../Interfaces/PrecautionUser";
 
 interface Props {
   userPrecaution: UserPrecaution;
@@ -18,7 +19,7 @@ interface Props {
     status: string,
     reporter: string,
     number: number,
-    user: any,
+    user: PrecautionUser,
     userId: string
   ) => void;
 }

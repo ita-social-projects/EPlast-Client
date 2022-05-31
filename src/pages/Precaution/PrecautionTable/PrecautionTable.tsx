@@ -28,18 +28,7 @@ import UserPrecautionsTableInfo from "../Interfaces/UserPrecauctionsTableInfo";
 const { Content } = Layout;
 
 const PrecautionTable = () => {
-  const classes = require("./Table.module.css");
-  let user: any;
-  let curToken = AuthStore.getToken() as string;
-  let roles: string[] = [""];
-  user = curToken !== null ? (jwt(curToken) as string) : "";
-  roles =
-    curToken !== null
-      ? (user[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] as string[])
-      : [""];
-  const [recordObj, setRecordObj] = useState<UserPrecautionTableItem>({
+  const EmptyUserPrecautionTableItem: UserPrecautionTableItem = {
     id: 0,
     number: 0,
     precautionId: 0,
@@ -52,7 +41,21 @@ const PrecautionTable = () => {
     date: new Date(),
     endDate: new Date(),
     isActive: false,
-  });
+  };
+  const classes = require("./Table.module.css");
+  let user: any;
+  let curToken = AuthStore.getToken() as string;
+  let roles: string[] = [""];
+  user = curToken !== null ? (jwt(curToken) as string) : "";
+  roles =
+    curToken !== null
+      ? (user[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ] as string[])
+      : [""];
+  const [recordObj, setRecordObj] = useState<UserPrecautionTableItem>(
+    EmptyUserPrecautionTableItem
+  );
   const [isRecordActive, setIsRecordActive] = useState<boolean>(false);
   const [userId, setUserId] = useState<any>(0);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -65,29 +68,14 @@ const PrecautionTable = () => {
   const [searchedData, setSearchedData] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [total, setTotal] = useState<number>(0);
+  const [totalItems, setTotalItems] = useState<number>(0);
   const [statusSorter, setStatusSorter] = useState<any[]>([]);
   const [precautionNameSorter, setPrecautionNameSorter] = useState<any[]>([]);
   const [dateSorter, setDateSorter] = useState<any[]>([]);
   const [sortByOrder, setSortByOrder] = useState<any[]>(["number", "ascend"]);
   const [tableData, setPrecautions] = useState<UserPrecautionsTableInfo>({
-    total: 0,
-    userPrecautions: [
-      {
-        id: 0,
-        number: 0,
-        precautionId: 0,
-        precautionName: "",
-        userId: "",
-        userName: "",
-        reporter: "",
-        reason: "",
-        status: "",
-        date: new Date(),
-        endDate: new Date(),
-        isActive: false,
-      },
-    ],
+    totalItems: 0,
+    userPrecautions: [EmptyUserPrecautionTableItem],
   });
   const [userAccess, setUserAccess] = useState<{ [key: string]: boolean }>({});
 
@@ -108,8 +96,8 @@ const PrecautionTable = () => {
       NewTableSettings
     );
     setPrecautions(result);
+    setTotalItems(result.totalItems);
     setLoading(false);
-    setTotal(result.total);
   };
 
   const getUserAccesses = async () => {
@@ -215,7 +203,7 @@ const PrecautionTable = () => {
       (d: { id: number }) => d.id !== id
     );
     const filteredInfo: UserPrecautionTableInfo = {
-      total: tableData.total,
+      totalItems: totalItems,
       userPrecautions: filteredData,
     };
     setPrecautions({
@@ -225,7 +213,7 @@ const PrecautionTable = () => {
 
     if (page != 1 && tableData.userPrecautions.length == 1) setPage(page - 1);
 
-    setTotal(total - 1);
+    setTotalItems(totalItems - 1);
     notificationLogic("success", successfulDeleteAction("Пересторогу"));
     CreateDeleteNotification(id);
   };
@@ -261,7 +249,7 @@ const PrecautionTable = () => {
     });
 
     const editedTableInfo: UserPrecautionTableInfo = {
-      total: tableData.total,
+      totalItems: tableData.totalItems,
       userPrecautions: editedData,
     };
 
@@ -346,7 +334,7 @@ const PrecautionTable = () => {
                 pagination={{
                   current: page,
                   pageSize: pageSize,
-                  total: total,
+                  total: totalItems,
                   showLessItems: true,
                   responsive: true,
                   showSizeChanger: true,

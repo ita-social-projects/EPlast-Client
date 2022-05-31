@@ -6,7 +6,10 @@ import precautionApi from "../../../api/precautionApi";
 import formclasses from "./Form.module.css";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import notificationLogic from "../../../components/Notifications/Notification";
-import { failCreateAction } from "../../../components/Notifications/Messages";
+import {
+  failCreateAction,
+  dataCantBeFetched,
+} from "../../../components/Notifications/Messages";
 import {
   emptyInput,
   maxNumber,
@@ -27,17 +30,12 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
   const { setVisibleModal, onAdd } = props;
   const [form] = Form.useForm();
 
-  const [userData, setUserData] = useState<SuggestedUser[]>([
-    {
-      id: "",
-      firstName: "",
-      lastName: "",
-      email: "",
-      isAvailable: false,
-    },
-  ]);
+  const [userData, setUserData] = useState<SuggestedUser[]>(
+    Array<SuggestedUser>()
+  );
   const [distData, setDistData] = useState<Precaution[]>(Array<Precaution>());
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
+  const [loadingPrecautionStatus, setLoadingPrecautionStatus] = useState(false);
   const dateFormat = "DD.MM.YYYY";
 
   const disabledStartDate = (current: any) => {
@@ -46,14 +44,33 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await precautionApi.getPrecautions().then((response) => {
-        setDistData(response.data);
-      });
+      setLoadingPrecautionStatus(true);
+      await precautionApi
+        .getPrecautions()
+        .then((response) => {
+          setDistData(response.data);
+          setLoadingPrecautionStatus(false);
+        })
+        .catch(() => {
+          notificationLogic(
+            "error",
+            dataCantBeFetched("пересторог. Спробуйте пізніше")
+          );
+        });
+
       setLoadingUserStatus(true);
-      await precautionApi.getUsersForPrecaution().then((response) => {
-        setUserData(response.data);
-        setLoadingUserStatus(false);
-      });
+      await precautionApi
+        .getUsersForPrecaution()
+        .then((response) => {
+          setUserData(response.data);
+          setLoadingUserStatus(false);
+        })
+        .catch(() => {
+          notificationLogic(
+            "error",
+            dataCantBeFetched("користувачів. Спробуйте пізніше")
+          );
+        });
     };
     fetchData();
   }, []);
@@ -219,6 +236,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             <Select
               className={formclasses.selectField}
               showSearch
+              loading={loadingPrecautionStatus}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
               {distData?.map((user) => (
@@ -257,12 +275,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
                   style={backgroundColor(user)}
                   disabled={!user.isAvailable}
                 >
-                  {user.firstName +
-                    " " +
-                    user.lastName +
-                    " (" +
-                    user.email +
-                    ")"}
+                  {`${user.firstName} ${user.lastName} (${user.email})`}
                 </Select.Option>
               ))}
             </Select>

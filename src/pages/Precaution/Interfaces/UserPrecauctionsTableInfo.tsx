@@ -1,7 +1,7 @@
 import UserPrecautionTableItem from "./UserPrecautionTableItem";
 
 type UserPrecautionsTableInfo = {
-  total: number;
+  totalItems: number;
   userPrecautions: UserPrecautionTableItem[];
 };
 
