@@ -305,7 +305,7 @@ const GoverningBody = () => {
     setLoading(true);
     try {
       const response = await getGoverningBodyById(+id);
-      const governingBodyViewModel = response.data.governingBodyViewModel;
+      const governingBodyViewModel = response.governingBodyViewModel;
       const admins = [
         governingBodyViewModel.head,
         ...governingBodyViewModel.administration,
@@ -321,13 +321,13 @@ const GoverningBody = () => {
       );
 
       await getUserAccesses();
-      setAnnouncementsCount(response.data.announcementsCount);
+      setAnnouncementsCount(response.announcementsCount);
       setGoverningBody(governingBodyViewModel);
       setGoverningBodyHead(governingBodyViewModel.head);
       setAdmins(admins);
 
       setDocuments(governingBodyViewModel.documents);
-      setDocumentsCount(response.data.documentsCount);
+      setDocumentsCount(response.documentsCount);
       setSectors(governingBodyViewModel.sectors);
       loadMoreData();
     } finally {

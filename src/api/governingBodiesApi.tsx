@@ -23,33 +23,28 @@ export const getGoverningBodiesList = async () => {
 };
 
 export const getGoverningBodyById = async (id: number) => {
-  return await api.get(`GoverningBodies/Profile/${id}`, id).catch((error) => {
-    throw new Error(error);
-  });
+  const { data } = await api.get(`GoverningBodies/Profile/${id}`, id);
+  return data;
 };
 
 export const getGoverningBodiesByPage = async (
   page: number,
   pageSize: number,
-  governingBodyName: string | null = null
+  nameFilter?: string
 ) => {
-  return api
-    .get(`GoverningBodies/Profiles/${page}`, {
+  const { data } = await api.get(`GoverningBodies/${page}`,
+    {
       page,
       pageSize,
-      governingBodyName,
-    })
-    .catch((error) => {
-      throw new Error(error);
-    });
+      nameFilter
+    }
+  );
+  return data;
 };
 
-export const createGoverningBody = async (data: any) => {
-  return api
-    .post("GoverningBodies/CreateGoverningBody", data)
-    .catch((error) => {
-      throw new Error(error);
-    });
+export const createGoverningBody = async (sendedData: any) => {
+  const { data } = await api.post("GoverningBodies/CreateGoverningBody", sendedData);
+  return data;
 };
 
 export const updateGoverningBody = async (id: number, data: any) => {
