@@ -16,10 +16,10 @@ import classes from "./Table.module.css";
 
 const { Content } = Layout;
 
-const DocumentsTable = () => {
+const DocumentsTable: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [recordObj, setRecordObj] = useState<any>(0);
+  const [recordId, setRecordId] = useState<number>(0);
   const [data, setData] = useState<DocumentsTableInfo[]>(
     Array<DocumentsTableInfo>()
   );
@@ -27,75 +27,36 @@ const DocumentsTable = () => {
   const [y, setY] = useState(0);
   const [searchedData, setSearchedData] = useState("");
   const [visibleModal, setVisibleModal] = useState(false);
-  const [userRole, setUser] = useState<string[]>();
-  const [canEdit, setCanEdit] = useState(false);
-  const [regionAdm, setRegionAdm] = useState(false);
-  const [regionAdmDep, setRegionAdmDep] = useState(false);
-  const [cityAdm, setCityAdm] = useState(false);
-  const [cityAdmDep, setCityAdmDep] = useState(false);
-  const [clubAdm, setClubAdm] = useState(false);
-  const [clubAdmDep, setClubAdmDep] = useState(false);
-  const [supporter, setSupporter] = useState(false);
-  const [plastMember, setPlastMember] = useState(false);
 
-  const [noTitleKey, setKey] = useState<string>("tab1");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
   const [status, setStatus] = useState<string>("legislation");
 
-  const handleDelete = (id: number) => {
-    const filteredData = data.filter((d) => d.id !== id);
-    setData([...filteredData]);
-    setTotal(total - 1);
-    setCount(count - 1);
-  };
 
-  const handleEdit = (id: number, name: string, description: string) => {
-    /* eslint no-param-reassign: "error" */
-    const filteredData = data.filter((d) => {
-      if (d.id === id) {
-        d.name = name;
-        d.description = description;
-      }
-      return d;
-    });
-    setData([...filteredData]);
-  };
+  const jwt = AuthStore.getToken() as string;
+  const decodedJwt = jwt_decode(jwt) as any;
+  const roles = decodedJwt[
+    "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+  ] as string[];
 
-  const handleAdd = async () => {
-    const lastId = data[data.length - 1].id;
-    await documentsApi
-      .getById(lastId + 1)
-      .then((res) => {
-        const dec: DocumentsTableInfo = {
-          id: res.id,
-          name: res.name,
-          governingBody: res.governingBody.governingBodyName,
-          type: TypeGetParser(res.type),
-          description: res.description,
-          fileName: res.fileName,
-          date: res.date,
-          total: total + 1,
-          count: count + 1,
-        };
-        setTotal(total + 1);
-        setCount(count + 1);
-        setData([...data, dec]);
-      })
-      .catch(() => {
-        notificationLogic("error", "Документу не існує");
-      });
-  };
+  const accesser = {
+    canEdit: roles.includes(Roles.Admin)
+      || roles.includes(Roles.GoverningBodyAdmin),
+    regionAdm: roles.includes(Roles.OkrugaHead),
+    regionAdmDep: roles.includes(Roles.OkrugaHeadDeputy),
+    cityAdm: roles.includes(Roles.CityHead),
+    cityAdmDep: roles.includes(Roles.CityHeadDeputy),
+    clubAdm: roles.includes(Roles.KurinHead),
+    clubAdmDep: roles.includes(Roles.KurinHeadDeputy),
+    supporter: roles.includes(Roles.Supporter),
+    plastMember: roles.includes(Roles.PlastMember),
+  }
 
   useEffect(() => {
     const fetchData = async () => {
-      let jwt = AuthStore.getToken() as string;
-      let decodedJwt = jwt_decode(jwt) as any;
-      let roles = decodedJwt[
-        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-      ] as string[];
+
       setLoading(true);
       const res: DocumentsTableInfo[] = await documentsApi.getAllDocuments(
         searchedData,
@@ -107,47 +68,73 @@ const DocumentsTable = () => {
       setCount(res[0]?.count);
       setData(res);
       setLoading(false);
-      setUser(roles);
-      setCanEdit(roles.includes(Roles.Admin) 
-      || roles.includes(Roles.GoverningBodyAdmin)
-      );
-      setRegionAdm(roles.includes(Roles.OkrugaHead));
-      setRegionAdmDep(roles.includes(Roles.OkrugaHeadDeputy));
-      setCityAdm(roles.includes(Roles.CityHead));
-      setCityAdmDep(roles.includes(Roles.CityHeadDeputy));
-      setClubAdm(roles.includes(Roles.KurinHead));
-      setClubAdmDep(roles.includes(Roles.KurinHeadDeputy));
-      setSupporter(roles.includes(Roles.Supporter));
-      setPlastMember(roles.includes(Roles.PlastMember));
     };
     fetchData();
   }, [searchedData, page, pageSize, status]);
 
-  const handleSearch = (event: any) => {
-    setPage(1);
-    setSearchedData(event);
-    setData(data);
-  };
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.toLowerCase() === "") setSearchedData("");
-    setData(data);
-  };
-
-  const handlePageChange = (page: number) => {
-    setPage(page);
-  };
-
-  const handleSizeChange = (page: number, pageSize: number = 10) => {
-    setPage(page);
-    setPageSize(pageSize);
-  };
-
-  const handleClickAway = () => {
-    setShowDropdown(false);
-  };
-
-  const showModal = () => setVisibleModal(true);
+  const handler = {
+    add: {
+      documentsModal: async () => {
+        const lastId = data[data.length - 1].id;
+        try {
+          const res = await documentsApi.getById(lastId + 1)
+          const dec: DocumentsTableInfo = {
+            id: res.id,
+            name: res.name,
+            governingBody: res.governingBody.governingBodyName,
+            type: TypeGetParser(res.type),
+            description: res.description,
+            fileName: res.fileName,
+            date: res.date,
+            total: total + 1,
+            count: count + 1,
+          };
+          setTotal(total + 1);
+          setCount(count + 1);
+          setData([...data, dec]);
+        } catch (error) {
+          notificationLogic("error", "Документу не існує");
+        }
+      }
+    },
+    delete: {
+      dropDown: (id: number) => {
+        const filteredData = data.filter((d) => d.id !== id);
+        setData([...filteredData]);
+        setTotal(total - 1);
+        setCount(count - 1);
+      }
+    },
+    search: {
+      searchBar: (event: any) => {
+        setPage(1);
+        setSearchedData(event);
+        setData(data);
+      }
+    },
+    change: {
+      searchBar: (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.value.toLowerCase() === "")
+          setSearchedData("");
+        setData(data);
+      },
+      table: (page: number) => {
+        setPage(page);
+      },
+      showSize: () => {
+        setPage(page);
+        setPageSize(pageSize);
+      },
+      tabCard: (key: string) => {
+        setPageSize(pageSize);
+        setStatus(key);
+      }
+    },
+    click: {
+      addBtn: () => setVisibleModal(true),
+      away: () => setShowDropdown(false)
+    }
+  }
 
   const tabList = [
     {
@@ -164,12 +151,6 @@ const DocumentsTable = () => {
     },
   ];
 
-  const onTabChange = (key: string) => {
-    setKey(key);
-    setPageSize(pageSize);
-    setStatus(key);
-  };
-
   return (
     <Layout>
       <Content
@@ -180,56 +161,54 @@ const DocumentsTable = () => {
         <h1 className={classes.titleTable}>Репозитарій</h1>
         <>
           <div className={classes.searchContainer}>
-            {canEdit == true ||
-            regionAdm == true ||
-            regionAdmDep == true ||
-            cityAdm == true ||
-            cityAdmDep == true ||
-            clubAdm == true ||
-            clubAdmDep == true ? (
-              <Button type="primary" onClick={showModal}>
+            {accesser.canEdit == true ||
+              accesser.regionAdm == true ||
+              accesser.regionAdmDep == true ||
+              accesser.cityAdm == true ||
+              accesser.cityAdmDep == true ||
+              accesser.clubAdm == true ||
+              accesser.clubAdmDep == true ? (
+              <Button type="primary" onClick={handler.click.addBtn}>
                 Додати документ
               </Button>
             ) : (
               <> </>
             )}
-            {canEdit == true ||
-            regionAdm == true ||
-            regionAdmDep == true ||
-            cityAdm == true ||
-            cityAdmDep == true ||
-            clubAdm == true ||
-            clubAdmDep == true ||
-            supporter == true ||
-            plastMember == true ? (
+            {accesser.canEdit == true ||
+              accesser.regionAdm == true ||
+              accesser.regionAdmDep == true ||
+              accesser.cityAdm == true ||
+              accesser.cityAdmDep == true ||
+              accesser.clubAdm == true ||
+              accesser.clubAdmDep == true ||
+              accesser.supporter == true ||
+              accesser.plastMember == true ? (
               <Search
                 enterButton
                 placeholder="Пошук"
                 allowClear
-                onChange={handleSearchChange}
-                onSearch={handleSearch}
+                onChange={handler.change.searchBar}
+                onSearch={handler.search.searchBar}
               />
             ) : (
               <> </>
             )}
           </div>
 
-          {canEdit == true ||
-          regionAdm == true ||
-          regionAdmDep == true ||
-          cityAdm == true ||
-          cityAdmDep == true ||
-          clubAdm == true ||
-          clubAdmDep == true ||
-          supporter == true ||
-          plastMember == true ? (
+          {accesser.canEdit == true ||
+            accesser.regionAdm == true ||
+            accesser.regionAdmDep == true ||
+            accesser.cityAdm == true ||
+            accesser.cityAdmDep == true ||
+            accesser.clubAdm == true ||
+            accesser.clubAdmDep == true ||
+            accesser.supporter == true ||
+            accesser.plastMember == true ? (
             <Card
               style={{ width: "100%" }}
               tabList={tabList}
               activeTabKey={status}
-              onTabChange={(key) => {
-                onTabChange(key);
-              }}
+              onTabChange={handler.change.tabCard}
             />
           ) : (
             <Card style={{ width: "100%" }} activeTabKey={status} />
@@ -252,7 +231,7 @@ const DocumentsTable = () => {
                   onContextMenu: (event) => {
                     event.preventDefault();
                     setShowDropdown(true);
-                    setRecordObj(record.id);
+                    setRecordId(record.id);
                     setX(event.pageX);
                     setY(event.pageY);
                   },
@@ -274,26 +253,25 @@ const DocumentsTable = () => {
                 showLessItems: true,
                 responsive: true,
                 showSizeChanger: true,
-                onChange: (page) => handlePageChange(page),
-                onShowSizeChange: (page, size) => handleSizeChange(page, size),
+                onChange: handler.change.table,
+                onShowSizeChange: handler.change.showSize,
               }}
             />
           )}
 
-          <ClickAwayListener onClickAway={handleClickAway}>
+          <ClickAwayListener onClickAway={handler.click.away}>
             <DropDown
               showDropdown={showDropdown}
-              record={recordObj}
+              record={recordId}
               pageX={x}
               pageY={y}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
+              onDelete={handler.delete.dropDown}
             />
           </ClickAwayListener>
           <AddDocumentsModal
             setVisibleModal={setVisibleModal}
             visibleModal={visibleModal}
-            onAdd={handleAdd}
+            onAdd={handler.add.documentsModal}
           />
         </>
       </Content>
