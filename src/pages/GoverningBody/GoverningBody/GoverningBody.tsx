@@ -522,7 +522,18 @@ const GoverningBody = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Оголошення</Title>
+              <Title level={4}>Оголошення
+                <a onClick={() => history.push(
+                  `/governingBodies/announcements/${governingBody.id}/1`
+                )}>
+                  {announcementsCount !== 0 ? (
+                    <Badge
+                      count={announcementsCount}
+                      style={{ backgroundColor: "#3c5438" }}
+                    />
+                  ) : null}
+                </a>
+              </Title>
             <Row
               className="governingBodyItems"
               justify="center"
@@ -530,20 +541,12 @@ const GoverningBody = () => {
             >
               {userAccesses["ViewAnnouncements"] ? (
                 announcementsCount > 0 ? (
-                  <div
-                    id="scrollableDiv"
+                    <div
                     style={{
                       width: "100%",
                       height: 400,
-                      overflow: "auto",
-                    }}
-                  >
-                    <InfiniteScroll
-                      dataLength={announcements.length}
-                      next={loadMoreData}
-                      hasMore
-                      loader={<></>}
-                      scrollableTarget="scrollableDiv"
+                        overflow: "hidden",
+                      }}
                     >
                       <List
                         dataSource={announcements}
@@ -561,7 +564,6 @@ const GoverningBody = () => {
                           </List.Item>
                         )}
                       />
-                    </InfiniteScroll>
                   </div>
                 ) : (
                   <Col>
