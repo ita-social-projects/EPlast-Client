@@ -43,7 +43,7 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
 import userApi from "../../../api/UserApi";
 import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument";
@@ -138,7 +138,7 @@ const Sector = () => {
   }
 
   const getUserAccesses = async () => {
-    const user: any = jwt(AuthStore.getToken() as string);
+    const user: any = jwt(AuthLocalStorage.getToken() as string);
     let result: any;
     await getUserAccess(user.nameid).then((response) => {
       result = response;
