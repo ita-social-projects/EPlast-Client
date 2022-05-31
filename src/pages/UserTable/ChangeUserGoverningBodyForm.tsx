@@ -77,7 +77,7 @@ const ChangeUserRoleForm = ({
   };
 
   const governingBodyChange = async (id: number) => {
-    const governingBodyViewModel = await getGoverningBodyById(id)
+    const governingBodyViewModel = (await getGoverningBodyById(id))
       .governingBodyViewModel;
     setGoverningBodiesAdmins(
       [

@@ -52,7 +52,7 @@ const CreateGoverningBody = () => {
   const getGoverningBodyNames = async () => {
     let governingBodies = (await getGoverningBodiesList()) as any[];
     if (+id) {
-      let currentName = await getGoverningBodyById(+id)
+      let currentName = (await getGoverningBodyById(+id))
         .governingBodyViewModel.governingBodyName;
       setGoverningBodyNames(
         governingBodies
@@ -109,7 +109,7 @@ const CreateGoverningBody = () => {
   const getGoverningBody = async () => {
     try {
       setLoading(true);
-      let response = await getGoverningBodyById(+id)
+      let response = (await getGoverningBodyById(+id))
         .governingBodyViewModel;
       if (response.logo !== null && response.logo !== "") {
         const logo = await getGoverningBodyLogo(response.logo);
