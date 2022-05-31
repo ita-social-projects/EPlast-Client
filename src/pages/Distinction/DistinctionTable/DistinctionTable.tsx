@@ -10,7 +10,7 @@ import UserDistinctionTableInfo from "../Interfaces/UserDistinctionTableInfo";
 import ClickAwayListener from "react-click-away-listener";
 import Distinction from "../Interfaces/Distinction";
 import DistionctionTableSettings from "../../../models/Distinction/DistinctionTableSettings";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
@@ -23,7 +23,7 @@ const { Content } = Layout;
 const DistinctionTable = () => {
   const classes = require("./Table.module.css");
   let user: any;
-  let curToken = AuthStore.getToken() as string;
+  let curToken = AuthLocalStorage.getToken() as string;
   let roles: string[] = [""];
   user = curToken !== null ? (jwt(curToken) as string) : "";
   roles =
@@ -63,7 +63,7 @@ const DistinctionTable = () => {
   ]);
 
   const getUserAccessesForDistinctions = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await distinctionApi
       .getUserDistinctionAccess(user.nameid)
       .then((response) => {

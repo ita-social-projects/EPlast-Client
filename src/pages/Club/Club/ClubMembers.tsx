@@ -15,7 +15,7 @@ import {
   getUserClubAccess,
 } from "../../../api/clubsApi";
 import userApi from "../../../api/UserApi";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import "./Club.less";
 import ClubMember from "../../../models/Club/ClubMember";
@@ -64,7 +64,7 @@ const ClubMembers = () => {
   };
 
   const getUserAccessesForClubs = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await getUserClubAccess(id, user.nameid).then((response) => {
       setUserAccesses(response.data);
     });

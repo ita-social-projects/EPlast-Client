@@ -14,7 +14,7 @@ import UpdateKadraForm from "./UpdateKadraForm";
 import ClickAwayListener from "react-click-away-listener";
 import jwt from "jwt-decode";
 import kadrasApi from "../../api/KadraVykhovnykivApi";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import { Roles } from "../../models/Roles/Roles";
 
 interface Props {
@@ -30,7 +30,7 @@ interface Props {
 const DropDown = (props: Props) => {
   const history = useHistory();
   let user: any;
-  let curToken = AuthStore.getToken() as string;
+  let curToken = AuthLocalStorage.getToken() as string;
   let roles: string[] = [""];
   user = curToken !== null ? (jwt(curToken) as string) : "";
   roles =
