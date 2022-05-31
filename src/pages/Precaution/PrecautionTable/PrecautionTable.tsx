@@ -7,7 +7,7 @@ import DropDownPrecautionTable from "./DropDownPrecautionTable";
 import precautionApi from "../../../api/precautionApi";
 import AddPrecautionModal from "../PrecautionTable/AddPrecautionModal";
 import EditPrecautionTypesModal from "./EditPrecautionTypesModal";
-import UserPrecautionTableInfo from "../Interfaces/UserPrecauctionTableInfo";
+import UserPrecautionTableInfo from "../Interfaces/UserPrecauctionsTableInfo";
 import ClickAwayListener from "react-click-away-listener";
 import Precaution from "../Interfaces/Precaution";
 import PrecautionTableSettings from "../../../models/Precaution/PrecautionTableSettings";
@@ -21,6 +21,10 @@ import {
 } from "../../../components/Notifications/Messages";
 import { Roles } from "../../../models/Roles/Roles";
 import "./Filter.less";
+import UserPrecaution from "../Interfaces/UserPrecaution";
+import UserPrecautionTableItem from "../Interfaces/UserPrecautionTableItem";
+import UserPrecautionsTableInfo from "../Interfaces/UserPrecauctionsTableInfo";
+
 const { Content } = Layout;
 
 const PrecautionTable = () => {
@@ -35,7 +39,22 @@ const PrecautionTable = () => {
           "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
         ] as string[])
       : [""];
-  const [recordObj, setRecordObj] = useState<any>(0);
+  const [recordObj, setRecordObj] = useState<UserPrecautionTableItem>({
+    id: 0,
+    number: 0,
+    precautionId: 0,
+    precautionName: "",
+    userId: "",
+    userName: "",
+    reporter: "",
+    reason: "",
+    status: "",
+    date: new Date(),
+    endDate: new Date(),
+    isActive: false,
+    isDeletable: false,
+    isEditable: false,
+  });
   const [isRecordActive, setIsRecordActive] = useState<boolean>(false);
   const [userId, setUserId] = useState<any>(0);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -53,23 +72,27 @@ const PrecautionTable = () => {
   const [precautionNameSorter, setPrecautionNameSorter] = useState<any[]>([]);
   const [dateSorter, setDateSorter] = useState<any[]>([]);
   const [sortByOrder, setSortByOrder] = useState<any[]>(["number", "ascend"]);
-  const [precautions, setPrecautions] = useState<UserPrecautionTableInfo[]>([
-    {
-      count: 0,
-      total: 0,
-      id: 0,
-      number: 0,
-      precautionName: "",
-      userId: "",
-      userName: "",
-      reporter: "",
-      reason: "",
-      status: "",
-      date: new Date(),
-      endDate: new Date(),
-      isActive: false,
-    },
-  ]);
+  const [tableData, setPrecautions] = useState<UserPrecautionsTableInfo>({
+    total: 0,
+    userPrecautions: [
+      {
+        id: 0,
+        number: 0,
+        precautionId: 0,
+        precautionName: "",
+        userId: "",
+        userName: "",
+        reporter: "",
+        reason: "",
+        status: "",
+        date: new Date(),
+        endDate: new Date(),
+        isActive: false,
+        isDeletable: false,
+        isEditable: false,
+      },
+    ],
+  });
   const [userAccess, setUserAccess] = useState<{ [key: string]: boolean }>({});
 
   const getPrecautionTable = async () => {
@@ -85,14 +108,14 @@ const PrecautionTable = () => {
 
     setLoading(true);
     await getUserAccesses();
-    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(
+    const result: UserPrecautionsTableInfo = await precautionApi.getAllUsersPrecautions(
       NewTableSettings
     );
-    setPrecautions(res);
+    setPrecautions(result);
     setLoading(false);
-    setTotal(res[0]?.total);
+    setTotal(result.total);
   };
-  
+
   const getUserAccesses = async () => {
     let user: any = jwt(AuthStore.getToken() as string);
     let result: any;
@@ -143,7 +166,9 @@ const PrecautionTable = () => {
   };
 
   const CreateDeleteNotification = (id: number) => {
-    const userPrecaution = precautions.find((d: { id: number }) => d.id === id);
+    const userPrecaution = tableData.userPrecautions.find(
+      (d: { id: number }) => d.id === id
+    );
     if (userPrecaution) {
       NotificationBoxApi.createNotifications(
         [userPrecaution.userId],
@@ -171,7 +196,7 @@ const PrecautionTable = () => {
         [userId],
         `Вашу пересторогу: '${name}' було змінено. `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/precautions`,
+        `/tableData`,
         `Переглянути`
       );
       NotificationBoxApi.getCitiesForUserAdmins(userId).then((res) => {
@@ -181,7 +206,7 @@ const PrecautionTable = () => {
               [cra.cityAdminId, cra.regionAdminId],
               `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінену пересторогу: '${name}'. `,
               NotificationBoxApi.NotificationTypes.UserNotifications,
-              `/precautions`,
+              `/tableData`,
               `Переглянути`
             );
           });
@@ -190,10 +215,19 @@ const PrecautionTable = () => {
   };
 
   const handleDelete = (id: number) => {
-    const filteredData = precautions.filter((d: { id: number }) => d.id !== id);
-    setPrecautions([...filteredData]);
+    const filteredData = tableData.userPrecautions.filter(
+      (d: { id: number }) => d.id !== id
+    );
+    const filteredInfo: UserPrecautionTableInfo = {
+      total: tableData.total,
+      userPrecautions: filteredData,
+    };
+    setPrecautions({
+      ...tableData,
+      ...filteredInfo,
+    });
 
-    if (page != 1 && precautions.length == 1) setPage(page - 1);
+    if (page != 1 && tableData.userPrecautions.length == 1) setPage(page - 1);
 
     setTotal(total - 1);
     notificationLogic("success", successfulDeleteAction("Пересторогу"));
@@ -214,7 +248,7 @@ const PrecautionTable = () => {
     userId: string
   ) => {
     /* eslint no-param-reassign: "error" */
-    const editedData = precautions.filter((d) => {
+    const editedData = tableData.userPrecautions.filter((d) => {
       if (d.id === id) {
         d.precautionName = precaution.name;
         d.date = date;
@@ -229,7 +263,16 @@ const PrecautionTable = () => {
       }
       return d;
     });
-    setPrecautions([...editedData]);
+
+    const editedTableInfo: UserPrecautionTableInfo = {
+      total: tableData.total,
+      userPrecautions: editedData,
+    };
+
+    setPrecautions({
+      ...tableData,
+      ...editedTableInfo,
+    });
     notificationLogic("success", successfulUpdateAction("Пересторогу"));
     CreateEditNotification(userId, precaution.name);
   };
@@ -285,7 +328,7 @@ const PrecautionTable = () => {
             <div>
               <Table
                 className={classes.table}
-                dataSource={precautions}
+                dataSource={tableData.userPrecautions}
                 columns={columns}
                 scroll={{ x: 1300 }}
                 onRow={(record) => {
@@ -296,7 +339,7 @@ const PrecautionTable = () => {
                     onContextMenu: (event) => {
                       event.preventDefault();
                       setShowDropdown(true);
-                      setRecordObj(record.id);
+                      setRecordObj(record);
                       setIsRecordActive(record.isActive);
                       setUserId(record.userId);
                       setX(event.pageX);
@@ -322,15 +365,12 @@ const PrecautionTable = () => {
           <ClickAwayListener onClickAway={handleClickAway}>
             <DropDownPrecautionTable
               showDropdown={showDropdown}
-              record={recordObj}
+              recordId={recordObj.id}
               userId={userId}
-              isRecordActive={isRecordActive}
               pageX={x}
               pageY={y}
-              canEditActive={userAccess["EditActivePrecaution"]}
-              canEditInactive = {userAccess["EditInactivePrecaution"]}
-              canDeleteActive = {userAccess["DeleteActivePrecaution"]}
-              canDeleteInactive = {userAccess["DeleteInactivePrecaution"]}
+              isRecordEditable={recordObj.isEditable}
+              isRecordDeletable={recordObj.isDeletable}
               onDelete={handleDelete}
               onEdit={handleEdit}
             />
@@ -338,7 +378,6 @@ const PrecautionTable = () => {
 
           <AddPrecautionModal
             setVisibleModal={setVisibleModal}
-            canAddPrecautionToGoverningBodyAdmin={userAccess["AddPrecautionToGoverningBodyAdmin"]}
             visibleModal={visibleModal}
             onAdd={handleAdd}
           />

@@ -1,9 +1,9 @@
-type AvailableUser = {
+type SuggestedUser = {
     id: string;
     firstName: string;
     lastName: string;
     email: string;
-    isInLowerRole: boolean
+    isAvailable: boolean
 }
 
-export default AvailableUser
+export default SuggestedUser

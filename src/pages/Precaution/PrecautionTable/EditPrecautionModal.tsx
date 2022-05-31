@@ -3,10 +3,10 @@ import { Drawer } from "antd";
 import FormEditPrecaution from "./FormEditPrecaution";
 import UserPrecaution from "../Interfaces/UserPrecaution";
 import Precaution from "../Interfaces/Precaution";
+import UserPrecautionTableItem from "../Interfaces/UserPrecautionTableItem";
 
 interface Props {
-  record: number;
-  Precaution: UserPrecaution;
+  userPrecaution: UserPrecaution;
   showModal: boolean;
   setShowModal: (showModal: boolean) => void;
   onEdit: (
@@ -24,11 +24,10 @@ interface Props {
   ) => void;
 }
 const EditPrecautionModal = ({
-  record,
+  userPrecaution,
   showModal,
   setShowModal,
   onEdit,
-  Precaution,
 }: Props) => {
   const handleCancel = () => setShowModal(false);
   return (
@@ -42,8 +41,7 @@ const EditPrecautionModal = ({
       footer={null}
     >
       <FormEditPrecaution
-        record={record}
-        Precaution={Precaution}
+        oldUserPrecaution={userPrecaution}
         setShowModal={setShowModal}
         onEdit={onEdit}
       />

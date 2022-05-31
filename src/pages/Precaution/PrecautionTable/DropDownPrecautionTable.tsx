@@ -5,7 +5,6 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { useHistory } from "react-router-dom";
 import deleteConfirm from "./DeleteConfirm";
 import classes from "../../DecisionTable/Table.module.css";
 import UserPrecaution from "../Interfaces/UserPrecaution";
@@ -16,21 +15,19 @@ import EditPrecautionModal from "./EditPrecautionModal";
 
 const DropDown = (props: DropDownProps) => {
   const {
-    record,
+    recordId,
     userId,
-    isRecordActive,
     pageX,
     pageY,
     showDropdown,
-    canEditActive,
-    canEditInactive,
-    canDeleteActive,
-    canDeleteInactive,
+    isRecordEditable,
+    isRecordDeletable,
     onDelete,
     onEdit,
   } = props;
   const [showEditModal, setShowEditModal] = useState(false);
-  const [UserPrecautions, setData] = useState<UserPrecaution>({
+
+  const [userPrecaution, setData] = useState<UserPrecaution>({
     id: 0,
     precaution: {
       id: 0,
@@ -52,7 +49,7 @@ const DropDown = (props: DropDownProps) => {
     if (showEditModal) {
       const fetchData = async () => {
         await precautionApi
-          .getUserPrecautionById(record)
+          .getUserPrecautionById(recordId)
           .then((res) => setData(res.data));
       };
       fetchData();
@@ -65,7 +62,7 @@ const DropDown = (props: DropDownProps) => {
         window.open(`/userpage/main/${userId}`);
         break;
       case "2":
-        deleteConfirm(record, onDelete);
+        deleteConfirm(recordId, onDelete);
         break;
       case "3":
         await setShowEditModal(true);
@@ -94,35 +91,21 @@ const DropDown = (props: DropDownProps) => {
           <FileSearchOutlined />
           Переглянути профіль
         </Menu.Item>
-        {isRecordActive && canEditActive && (
+        {isRecordEditable && (
           <Menu.Item key="3">
             <EditOutlined />
             Редагувати
           </Menu.Item>
         )}
-        {!isRecordActive && canEditInactive &&(
-          <Menu.Item key="3">
-            <EditOutlined />
-            Редагувати
-          </Menu.Item>
-        )}
-        {isRecordActive && canDeleteActive && (
+        {isRecordDeletable && (
           <Menu.Item key="2">
             <DeleteOutlined />
             Видалити
           </Menu.Item>
         )}
-        {!isRecordActive && canDeleteInactive && (
-          <Menu.Item key="2">
-            <DeleteOutlined />
-            Видалити
-          </Menu.Item>
-        )}
-        
       </Menu>
       <EditPrecautionModal
-        record={record}
-        Precaution={UserPrecautions}
+        userPrecaution={userPrecaution}
         showModal={showEditModal}
         setShowModal={setShowEditModal}
         onEdit={onEdit}

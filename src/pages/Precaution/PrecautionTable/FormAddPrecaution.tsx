@@ -16,7 +16,7 @@ import {
   descriptionValidation,
   getOnlyNums,
 } from "../../../models/GllobalValidations/DescriptionValidation";
-import AvailableUser from "../Interfaces/AvailableUser";
+import SuggestedUser from "../Interfaces/SuggestedUser";
 
 type FormAddPrecautionProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -27,14 +27,14 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
   const { setVisibleModal, onAdd } = props;
   const [form] = Form.useForm();
 
-  const [userData, setUserData] = useState<AvailableUser[]>([
+  const [userData, setUserData] = useState<SuggestedUser[]>([
     {
       id: "",
       firstName: "",
       lastName: "",
       email: "",
-      isInLowerRole: false
-    }
+      isAvailable: false,
+    },
   ]);
   const [distData, setDistData] = useState<Precaution[]>(Array<Precaution>());
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
@@ -50,12 +50,10 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
         setDistData(response.data);
       });
       setLoadingUserStatus(true);
-      await precautionApi
-        .getUsersForPrecaution()
-        .then((response) => {
-          setUserData(response.data);
-          setLoadingUserStatus(false);
-        });
+      await precautionApi.getUsersForPrecaution().then((response) => {
+        setUserData(response.data);
+        setLoadingUserStatus(false);
+      });
     };
     fetchData();
   }, []);
@@ -257,9 +255,14 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
                   key={user.id}
                   value={JSON.stringify(user)}
                   style={backgroundColor(user)}
-                  disabled={user.isInLowerRole}
+                  disabled={!user.isAvailable}
                 >
-                  {user.firstName + " " + user.lastName + " (" + user.email + ")"}
+                  {user.firstName +
+                    " " +
+                    user.lastName +
+                    " (" +
+                    user.email +
+                    ")"}
                 </Select.Option>
               ))}
             </Select>
