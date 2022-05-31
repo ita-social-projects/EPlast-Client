@@ -84,6 +84,11 @@ const getUserActivePrecautionEndDate = async (userId: string, type: string) => {
     type,
   });
 };
+
+const getUsersForPrecaution = async () =>{
+  return await api.get(`Precaution/getUsersForPrecaution`);
+} 
+
 export default {
   getUserActivePrecautionEndDate,
   checkUserPrecautionsType,
@@ -93,6 +98,7 @@ export default {
   getPrecautionById,
   getPrecautions,
   getPrecautionOfGivenUser,
+  getUsersForPrecaution,
   deletePrecaution,
   deleteUserPrecaution,
   addPrecaution,

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { Modal } from "antd";
 import activeMembershipApi, {
   PlastDegree,
   UserPlastDegree,
 } from "../../../../api/activeMembershipApi";
-import { Modal } from "antd";
 import FormAddPlastDegree from "./FormAddPlastDegree";
+
 type ModalAddPlastDegreeProps = {
   userId: string;
   visibleModal: boolean;

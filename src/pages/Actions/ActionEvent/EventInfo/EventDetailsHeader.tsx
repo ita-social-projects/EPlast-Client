@@ -14,7 +14,7 @@ function convertToURL(textEntered: string) {
 }
 
 export function extendedLocationTooltip(number: number, text: string) {
-  return text?.length > number ? (
+  return convertToURL(text) ? (
     <>
       <Tooltip title={text}>
         <span>
@@ -36,7 +36,7 @@ const renderLabel = (name: string): ReactNode => (
 );
 const renderLocationContent = (text: string): ReactNode => (
   <Text className="event-data-input">
-    {extendedLocationTooltip(textMaxLength, text)}
+    {extendedLocationTooltip(textMaxLengthDesc, text)}
   </Text>
 );
 
@@ -78,7 +78,7 @@ const EventDetailsHeader = ({
       layout="horizontal"
       className="descriptions"
     >
-      <Descriptions.Item label={renderLabel("Назва")} span={2}>
+      <Descriptions.Item label={renderLabel("Назва")} span={3}>
         {renderContentMaxlength(eventName)}
       </Descriptions.Item>
       <Descriptions.Item label={renderLabel("Форма проведення")}>
