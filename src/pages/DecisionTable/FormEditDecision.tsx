@@ -3,7 +3,7 @@ import { Form, Input, Button, Row, Col, Mentions, Select } from "antd";
 import decisionsApi, { DecisionPost } from "../../api/decisionsApi";
 import formclasses from "./FormEditDecision.module.css";
 import jwt from "jwt-decode";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 import adminApi from "../../api/adminApi";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
@@ -61,7 +61,7 @@ const FormEditDecision = ({
     setShowModal(false);
   };
   const fetchUser = async () => {
-    let jwt = AuthStore.getToken() as string;
+    let jwt = AuthLocalStorage.getToken() as string;
     let decodedJwt = jwt_decode(jwt) as any;
 
     let roles = decodedJwt[
@@ -123,7 +123,7 @@ const FormEditDecision = ({
   };
   const handleFinish = async (dec: any) => {
     let user: any;
-    let curToken = AuthStore.getToken() as string;
+    let curToken = AuthLocalStorage.getToken() as string;
     const decisionStatusType = canEdit
       ? statusTypeFromStringParser(dec.decisionStatusType)
       : decision.decisionStatusType;

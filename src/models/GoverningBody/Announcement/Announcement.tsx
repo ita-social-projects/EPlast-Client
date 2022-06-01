@@ -7,7 +7,7 @@ export type Announcement = {
   lastName: string;
   userId: string;
   profileImage: string;
-  strippedString: string;
-  images?: string;
+  images?: string[];
   imagesPresent?: boolean;
+  isPined: boolean;
 };

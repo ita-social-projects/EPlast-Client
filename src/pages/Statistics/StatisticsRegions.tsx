@@ -19,7 +19,10 @@ import { SortOrder } from "antd/lib/table/interface";
 import RegionsApi from "../../api/regionsApi";
 import Region from "./Interfaces/Region";
 import RegionStatistics from "./Interfaces/RegionStatistics";
-import { shouldContain } from "../../components/Notifications/Messages";
+import {
+  ReportNotFound,
+  shouldContain,
+} from "../../components/Notifications/Messages";
 import "./StatisticsRegions.less";
 import {
   Chart,
@@ -35,6 +38,7 @@ import {
   InfoCircleOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
+import openNotificationWithIcon from "../../components/Notifications/Notification";
 
 const StatisticsCities = () => {
   const [form] = Form.useForm();
@@ -101,6 +105,15 @@ const StatisticsCities = () => {
       width: 100,
     },
   ];
+
+  const totalColumn = {
+    title: "Усього",
+    dataIndex: "total",
+    key: "total",
+    fixed: "right",
+    sorter: { compare: (a: any, b: any) => a.total - b.total },
+    width: 100,
+  };
 
   const indicatorsArray = [
     {
@@ -230,8 +243,18 @@ const StatisticsCities = () => {
 
     // seting (for chart needs) statisticsItems indicators of the very first element
     // because they are the same for all the elements
+    let entryToSetIndicators = response.data.find(
+      (entry: RegionStatistics) => entry.yearStatistics.length != 0
+    );
+    if (!entryToSetIndicators) {
+      openNotificationWithIcon("error", ReportNotFound);
+      setShowDataChart(false);
+      setShowTable(false);
+      return;
+    }
+
     setArrayOfIndicators(
-      response.data[0].yearStatistics[0].statisticsItems.map(
+      entryToSetIndicators.yearStatistics[0].statisticsItems.map(
         (it: any) => it.indicator
       )
     );
@@ -245,6 +268,10 @@ const StatisticsCities = () => {
             regionName: region.region.regionName,
             year: yearStatistic.year,
             ...yearStatistic.statisticsItems.map((it) => it.value),
+            total: yearStatistic.statisticsItems.reduce(
+              (sum, a) => sum + a.value,
+              0
+            ),
           };
         });
       })
@@ -253,19 +280,14 @@ const StatisticsCities = () => {
     // reading statisticsItems' indicators of the very first element
     // because they are the same for all the items
     let statistics =
-      (response.data &&
-        response.data[0] &&
-        response.data[0].yearStatistics &&
-        response.data[0].yearStatistics[0] &&
-        response.data[0].yearStatistics[0].statisticsItems) ||
-      [];
+      entryToSetIndicators.yearStatistics[0].statisticsItems ?? [];
 
     setShowTable(true);
     setResult(data);
     setOnClickRow(null);
 
     // creating and seting columns for table
-    let temp = [
+    let columnData = [
       ...constColumns,
       ...statistics.map((statisticsItem: any, index: any) => {
         return {
@@ -275,16 +297,19 @@ const StatisticsCities = () => {
           width: 130,
         };
       }),
+      totalColumn,
     ];
 
-    setColumns(temp);
+    setColumns(columnData);
   };
 
   // calculating for chart percentage
-  let sumOfIndicators = 0;
-  dataChart.map((indicator: any) => {
-    sumOfIndicators += indicator.count;
-  });
+  let sumOfIndicators: number = dataChart.length
+    ? dataChart.reduce(
+        (sum: number, indicator: any) => sum + indicator.count,
+        0
+      )
+    : 0;
 
   if (dataFromRow != undefined) {
     const regex = /[0-9]/g;
@@ -301,75 +326,31 @@ const StatisticsCities = () => {
         }
       }),
     ];
-    let indicatorsForChart = allDataForChart.slice(0, columns.length - 3);
+    let indicatorsForChart = allDataForChart.slice(0, -4);
     setTitle(dataFromRow);
     setDataChart(indicatorsForChart);
     setDataFromRow(undefined);
   }
 
-  const onClick = (value: Array<Number>) => {
-    if (value.includes(2)) {
-      setSelectableUnatstvaPart(false);
-    }
-    if (!value.includes(2)) {
-      setSelectableUnatstvaPart(true);
-    }
-    if (
-      value.includes(3) ||
-      value.includes(4) ||
-      value.includes(5) ||
-      value.includes(6) ||
-      value.includes(7)
-    ) {
-      setSelectableUnatstvaZahalom(false);
-    }
-    if (
-      !value.includes(3) &&
-      !value.includes(4) &&
-      !value.includes(5) &&
-      !value.includes(6) &&
-      !value.includes(7)
-    ) {
-      setSelectableUnatstvaZahalom(true);
-    }
+  const onIndicatorSelection = (value: Array<Number>) => {
+    // enables or disables dropdown options for Показники
+    // based on selected values
 
-    if (value.includes(8)) {
-      setSelectableSeniorPart(false);
-    }
-    if (!value.includes(8)) {
-      setSelectableSeniorPart(true);
-    }
-    if (value.includes(9) || value.includes(10)) {
-      setSelectableSeniorZahalom(false);
-    }
-    if (!value.includes(9) && !value.includes(10)) {
-      setSelectableSeniorZahalom(true);
-    }
-
-    if (value.includes(11)) {
-      setSelectableSeigneurPart(false);
-    }
-    if (!value.includes(11)) {
-      setSelectableSeigneurPart(true);
-    }
-    if (value.includes(12) || value.includes(13)) {
-      setSelectableSeigneurZahalom(false);
-    }
-    if (!value.includes(12) && !value.includes(13)) {
-      setSelectableSeigneurZahalom(true);
-    }
-
-    if (value.length == 0) {
-      setSelectableUnatstvaPart(true);
-      setSelectableUnatstvaZahalom(true);
-      setSelectableSeniorPart(true);
-      setSelectableSeniorZahalom(true);
-      setSelectableSeigneurPart(true);
-      setSelectableSeigneurZahalom(true);
-    }
+    setSelectableUnatstvaPart(!value.includes(2));
+    setSelectableUnatstvaZahalom(
+      !value.some((v) => [3, 4, 5, 6, 7].includes(v.valueOf()))
+    );
+    setSelectableSeniorPart(!value.includes(8));
+    setSelectableSeniorZahalom(
+      !value.some((v) => [9, 10].includes(v.valueOf()))
+    );
+    setSelectableSeigneurPart(!value.includes(11));
+    setSelectableSeigneurZahalom(
+      !value.some((v) => [12, 13].includes(v.valueOf()))
+    );
   };
 
-  const onClickReset = () => {
+  const onFormClear = () => {
     form.resetFields();
     setShowDataChart(false);
     setShowTable(false);
@@ -397,7 +378,7 @@ const StatisticsCities = () => {
               >
                 <AntTooltip title="Очистити">
                   <ClearOutlined
-                    onClick={onClickReset}
+                    onClick={onFormClear}
                     style={{
                       fontSize: "x-large",
                       cursor: "pointer",
@@ -484,7 +465,7 @@ const StatisticsCities = () => {
                       showSearch
                       allowClear
                       multiple
-                      onChange={onClick}
+                      onChange={onIndicatorSelection}
                       treeDefaultExpandAll
                       placeholder="Обрати показник"
                       filterTreeNode={(input, option) =>
@@ -616,7 +597,7 @@ const StatisticsCities = () => {
                     {
                       content: (data) => {
                         return `${data.item}: ${(
-                          (data.percent / sumOfIndicators) *
+                          (parseInt(data.percent) / sumOfIndicators) *
                           100
                         ).toFixed(2)}%`;
                       },
@@ -656,7 +637,7 @@ const StatisticsCities = () => {
                 rowKey="id"
                 columns={columns}
                 dataSource={result}
-                scroll={{ scrollToFirstRowOnChange: true }}
+                scroll={{ x: "100%", scrollToFirstRowOnChange: true }}
                 onRow={(regionRecord, index) => {
                   return {
                     onClick: async () => {
