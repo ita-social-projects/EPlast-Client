@@ -2,11 +2,13 @@ export default class GoverningBodyAnnouncement {
   date: Date;
   id: number;
   governingBodyId?: number;
+  sectorId?: number;
   text: string;
   title: string;
   user: any;
   userId: string;
   imagesPresent: boolean;
+  isPined: boolean;
 
   constructor() {
     this.date = new Date();
@@ -16,5 +18,6 @@ export default class GoverningBodyAnnouncement {
     this.user = null;
     this.userId = "";
     this.imagesPresent = false;
+    this.isPined = false;
   }
 }

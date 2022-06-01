@@ -1,5 +1,7 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable prefer-destructuring */
 import React, { useState, useEffect } from "react";
-import { Form, Button, Row, Col, Upload, Select } from "antd";
+import { Form, Button, Row, Col, Upload, Select, Checkbox } from "antd";
 import ReactQuill from "react-quill";
 import { UploadFile } from "antd/lib/upload/interface";
 import formclasses from "./Form.module.css";
@@ -19,6 +21,7 @@ type FormAddAnnouncementProps = {
     title: string,
     text: string,
     images: string[],
+    isPined: boolean,
     gvbId: number,
     sectorId: number
   ) => void;
@@ -29,7 +32,6 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 ) => {
   const { setVisibleModal, onAdd, sectorId, governingBodyId } = props;
   const [form] = Form.useForm();
-  const [, setSubmitLoading] = useState<boolean>(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [gvbLoading, setGvbLoading] = useState<boolean>(false);
@@ -38,6 +40,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const [sectors, setSectors] = useState<SectorProfile[]>([]);
   const [selectSectorId, setSelectSectorId] = useState<any>();
   const [selectGoverningBodyId, setSelectGoverningBodyId] = useState<number>();
+  const [isPined, setIsPined] = useState<boolean>(false);
 
   const handleCancel = () => {
     form.resetFields();
@@ -49,16 +52,15 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   };
 
   const handleSubmit = (values: any) => {
-    setSubmitLoading(true);
     setVisibleModal(false);
     onAdd(
       values.title,
       values.text,
       photos,
+      isPined,
       selectGoverningBodyId,
       selectSectorId
-    ).then((result: any) => (result ? form.resetFields() : null));
-    setSubmitLoading(false);
+    );
   };
 
   const getBase64 = (img: Blob, callback: Function) => {
@@ -236,6 +238,13 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
           >
             Upload
           </Upload>
+        </Row>
+        <Row>
+          <Form.Item name="remember" valuePropName="checked">
+            <Checkbox onChange={(e) => setIsPined(e.target.checked)}>
+              Закріпити оголошення
+            </Checkbox>
+          </Form.Item>
         </Row>
         <Row justify="start" gutter={[12, 0]}>
           <Col md={24} xs={24}>

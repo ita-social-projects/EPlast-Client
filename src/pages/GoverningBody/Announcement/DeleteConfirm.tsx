@@ -2,6 +2,7 @@ import React from "react";
 import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { deleteAnnouncement } from "../../../api/governingBodiesApi";
+import notificationLogic from "../../../components/Notifications/Notification";
 
 const { confirm } = Modal;
 
@@ -17,6 +18,7 @@ const DeleteConfirm = (id: number, onDelete: any) => {
       };
       remove();
       onDelete(id);
+      notificationLogic("success", "Оголошення видалено");
     },
   });
 };

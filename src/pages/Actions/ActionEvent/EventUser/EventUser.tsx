@@ -16,7 +16,7 @@ import eventUserApi from "../../../../api/eventUserApi";
 import EventsUser from "../../../../models/EventUser/EventUser";
 import classes from "./EventUser.module.css";
 import userApi from "../../../../api/UserApi";
-import AuthStore from "../../../../stores/AuthStore";
+import AuthLocalStorage from "../../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import {
   CalendarOutlined,
@@ -70,7 +70,7 @@ const EventUser = () => {
   }, []);
 
   const initialFetchData = async () => {
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     setUserToken(jwt(token));
     await eventUserApi.getEventsUser(userId).then(async (response) => {
       setCreatedEvents(response.data);
@@ -82,7 +82,7 @@ const EventUser = () => {
   };
   const fetchData = async () => {
     if (UpdateData) UpdateData();
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     setUserToken(jwt(token));
     await eventUserApi.getEventsUser(userId).then(async (response) => {
       setCreatedEvents(response.data);
@@ -94,7 +94,7 @@ const EventUser = () => {
   };
 
   const getUserAccessesForEvents = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await eventUserApi.getUserEventAccess(user.nameid).then((response) => {
       setUserAccesses(response.data);
     });

@@ -279,7 +279,7 @@ const StatisticsCities = () => {
     // reading statisticsItems' indicators of the very first element
     // because they are the same for all the items
     let statistics =
-      entryToSetIndicators.yearStatistics[0].statisticsItems || [];
+      entryToSetIndicators.yearStatistics[0].statisticsItems ?? [];
 
     setShowTable(true);
     setResult(data);
