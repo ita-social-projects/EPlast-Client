@@ -55,11 +55,11 @@ const FormEditAnnouncement: React.FC<FormEditAnnouncementProps> = (
 
   const getAnnouncement = async (annId: number) => {
     setUploadImages([]);
-    const responce = await getAnnouncementsById(annId);
-    form.setFieldsValue({ title: responce.data.title });
-    form.setFieldsValue({ text: responce.data.text });
+    const response = await getAnnouncementsById(annId);
+    form.setFieldsValue({ title: response.data.title });
+    form.setFieldsValue({ text: response.data.text });
     let images: any = [];
-    responce.data.images.map((image: any, ind: number) => {
+    response.data.images.map((image: any, ind: number) => {
       images = [
         ...images,
         {
@@ -75,8 +75,8 @@ const FormEditAnnouncement: React.FC<FormEditAnnouncementProps> = (
     });
     setUploadImages(images);
     getPhotos(images);
-    setTitle(responce.data.title);
-    setText(responce.data.text);
+    setTitle(response.data.title);
+    setText(response.data.text);
   };
 
   const checkFile = (fileName: string) => {

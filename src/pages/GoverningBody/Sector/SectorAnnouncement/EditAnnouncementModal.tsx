@@ -63,11 +63,11 @@ const EditAnnouncementModal = ({
 
   const getAnnouncement = async (annId: number) => {
     setUploadImages([]);
-    const responce = await getSectorAnnouncementsById(annId);
-    form.setFieldsValue({ title: responce.data.title });
-    form.setFieldsValue({ text: responce.data.text });
+    const response = await getSectorAnnouncementsById(annId);
+    form.setFieldsValue({ title: response.data.title });
+    form.setFieldsValue({ text: response.data.text });
     let images: any = [];
-    responce.data.images.map((image: any) => {
+    response.data.images.map((image: any) => {
       images = [
         ...images,
         {
@@ -83,8 +83,8 @@ const EditAnnouncementModal = ({
     });
     setUploadImages(images);
     getPhotos(images);
-    setTitle(responce.data.title);
-    setText(responce.data.text);
+    setTitle(response.data.title);
+    setText(response.data.text);
   };
 
   const handleCancel = () => {
