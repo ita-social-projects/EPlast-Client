@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import {
@@ -58,13 +59,12 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../Announcement/PicturesWallModal";
-import { addAnnouncement } from "../../../api/governingBodiesApi";
 
 const classes = require("../Announcement/Announcement.module.css");
 
 const Sector = () => {
   const history = useHistory();
-  const { governingBodyId, sectorId } = useParams();
+  const { governingBodyId, sectorId }: any = useParams();
   const { url } = useRouteMatch();
   const [loading, setLoading] = useState(false);
   const [sector, setSector] = useState<SectorProfile>(new SectorProfile());
@@ -182,19 +182,21 @@ const Sector = () => {
     );
     return result;
   };
-  const newAnnouncementNotification = async (
-    governigBodyId: number,
-    sectorId?: number
-  ) => {
-    const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
-      (x) => x.id
+  const newAnnouncementNotification = async () => {
+    const usersId = ((await getUsers()).data as ShortUserInfo[]).map((x) => x.id);
+    await NotificationBoxApi.createNotifications(
+      usersId,
+      "Додане нове оголошення.",
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/sector/announcements/${governingBodyId}/${sectorId}/1`,
+      `Переглянути`
     );
     if (sectorId) {
       await NotificationBoxApi.createNotifications(
         usersId,
         "Додане нове оголошення.",
         NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/sector/announcements/${governigBodyId}/${sectorId}/1`,
+        `/sector/announcements/${governingBodyId}/${sectorId}/1`,
         `Переглянути`
       );
     } else {
@@ -202,7 +204,7 @@ const Sector = () => {
         usersId,
         "Додане нове оголошення.",
         NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/governingBodies/announcements/${governigBodyId}/1`,
+        `/governingBodies/announcements/${governingBodyId}/1`,
         `Переглянути`
       );
     }
@@ -212,38 +214,31 @@ const Sector = () => {
     title: string,
     text: string,
     images: string[],
-    gvbId: number,
-    secId: number
+    isPined: boolean
   ) => {
-    try {
-      setVisibleAddModal(false);
-      if (secId == sectorId) {
-        const announcementId = (
-          await addSectorAnnouncement(title, text, images, +secId)
-        ).data;
-        const newAnnouncement: GoverningBodyAnnouncement = (
-          await getSectorAnnouncementsById(announcementId)
-        ).data;
-        setAnnouncements((old: GoverningBodyAnnouncement[]) => [
-          newAnnouncement,
-          ...old,
-        ]);
-        newAnnouncementNotification(gvbId, secId);
-      } else if (secId) {
-        await addSectorAnnouncement(title, text, images, +secId);
-        newAnnouncementNotification(gvbId, secId);
-      } else {
-        await addAnnouncement(title, text, images, +gvbId);
-        newAnnouncementNotification(gvbId);
-      }
-      setVisibleAddModal(false);
-      notificationLogic("success", "Оголошення опубліковано");
-      return true;
-    } catch {
-      notificationLogic("error", "Поля Тема і Текст оголошення обов'язкові");
-      setVisibleAddModal(false);
-      return false;
-    }
+    setVisibleAddModal(false);
+    setLoading(true);
+    newAnnouncementNotification();
+    const announcementId = (
+      await addSectorAnnouncement(
+        title,
+        text,
+        images,
+        isPined,
+        governingBodyId,
+        sectorId
+      )
+    ).data;
+    const newAnnouncement: GoverningBodyAnnouncement = (
+      await getSectorAnnouncementsById(announcementId)
+    ).data;
+    setAnnouncements((old: GoverningBodyAnnouncement[]) => [
+      newAnnouncement,
+      ...old,
+    ]);
+    setLoading(false);
+    notificationLogic("success", "Оголошення опубліковано");
+    getSector();
   };
 
   const handleAdminAdd = () => {
@@ -258,6 +253,7 @@ const Sector = () => {
           announcementId: image.id,
           fileName: image.imageBase64,
         });
+        return image;
       });
       return Modal.info({
         title: (

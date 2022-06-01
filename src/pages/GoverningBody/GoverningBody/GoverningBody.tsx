@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import {
@@ -189,42 +190,6 @@ const GoverningBody = () => {
     }
   };
 
-  const onAnnouncementAdd = async (
-    title: string,
-    text: string,
-    images: string[],
-    gvbId: number,
-    sectorId: number
-  ) => {
-    let newAnnouncement: GoverningBodyAnnouncement;
-    try {
-      if (sectorId) {
-        await addSectorAnnouncement(title, text, images, +sectorId);
-        newAnnouncementNotification(gvbId, sectorId);
-      } else if (+id === gvbId) {
-        const announcementId = (
-          await addAnnouncement(title, text, images, +gvbId)
-        ).data;
-        newAnnouncement = (await getAnnouncementsById(announcementId)).data;
-        newAnnouncementNotification(gvbId);
-        setAnnouncements((old: GoverningBodyAnnouncement[]) => [
-          newAnnouncement,
-          ...old,
-        ]);
-      } else {
-        await addAnnouncement(title, text, images, +gvbId);
-        newAnnouncementNotification(gvbId);
-      }
-      setVisibleAddModal(false);
-      notificationLogic("success", "Оголошення опубліковано");
-      return true;
-    } catch {
-      notificationLogic("error", "Поля Тема і Текст оголошення обов'язкові");
-      setVisibleAddModal(false);
-      return false;
-    }
-  };
-
   const showFullAnnouncement = async (annId: number) => {
     const pics: AnnouncementGallery[] = [];
     await getAnnouncementsById(annId).then((response) => {
@@ -312,6 +277,46 @@ const GoverningBody = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const onAnnouncementAdd = async (
+    title: string,
+    text: string,
+    images: string[],
+    isPined: boolean,
+    gvbId: number,
+    sectorId: number
+  ) => {
+    setVisibleAddModal(false);
+    setLoading(true);
+    let newAnnouncement: GoverningBodyAnnouncement;
+    if (sectorId) {
+      await addSectorAnnouncement(
+        title,
+        text,
+        images,
+        isPined,
+        +gvbId,
+        +sectorId
+      );
+      newAnnouncementNotification(gvbId, sectorId);
+    } else if (+id === gvbId) {
+      const announcementId = (
+        await addAnnouncement(title, text, images, isPined, +gvbId)
+      ).data;
+      newAnnouncement = (await getAnnouncementsById(announcementId)).data;
+      setAnnouncements((old: GoverningBodyAnnouncement[]) => [
+        newAnnouncement,
+        ...old,
+      ]);
+      getGoverningBody();
+      newAnnouncementNotification(gvbId);
+    } else {
+      await addAnnouncement(title, text, images, isPined, +gvbId);
+      newAnnouncementNotification(gvbId);
+    }
+    setLoading(false);
+    notificationLogic("success", "Оголошення опубліковано");
   };
 
   const handleAdminAdd = () => {
