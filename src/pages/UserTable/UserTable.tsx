@@ -33,7 +33,7 @@ import classes from "./UserTable.module.css";
 import citiesApi from "../../api/citiesApi";
 import userApi from "../../api/UserApi";
 import User from "../Distinction/Interfaces/User";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../models/Roles/Roles";
 
@@ -189,7 +189,7 @@ const UsersTable = () => {
         FilterRoles: filter,
         SearchData: searchData,
       });
-      let jwt = AuthStore.getToken() as string;
+      let jwt = AuthLocalStorage.getToken() as string;
       let user = jwt_decode(jwt) as any;
       setCurrentUser(
         (await userApi.getUserProfileById(user.nameid, user.nameid)).data.user

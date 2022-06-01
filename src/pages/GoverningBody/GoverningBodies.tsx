@@ -53,9 +53,9 @@ const GoverningBodies = () => {
       );
 
       setPhotosLoading(true);
-      setGoverningBodies(response.data.governingBodies);
-      setCanCreate(response.data.canCreate);
-      setTotal(response.data.total);
+      setGoverningBodies(response.governingBodies);
+      setCanCreate(response.canCreate);
+      setTotal(response.total);
     } finally {
       setLoading(false);
     }

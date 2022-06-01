@@ -12,7 +12,7 @@ import "./AddCitiesSecretaryForm.less";
 import { Roles } from "../../../models/Roles/Roles";
 import CityUser from "../../../models/City/CityUser";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 
 type AddCitiesNewSecretaryForm = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -36,7 +36,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const getUserAccessesForCities = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await getUserCityAccess(+id, user.nameid).then((response) => {
       setUserCityAccesses(response.data);
     });

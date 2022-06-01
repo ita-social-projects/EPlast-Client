@@ -19,7 +19,7 @@ import activeMembershipApi, {
   UserDates,
   UserPlastDegree,
 } from "../../../api/activeMembershipApi";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import ModalAddPlastDegree from "./PlastDegree/ModalAddPlastDegree";
 import ModalChangeUserDates from "./UserDates/ModalChangeUserDates";
 import DeleteDegreeConfirm from "./PlastDegree/DeleteDegreeConfirm";
@@ -98,7 +98,7 @@ const ActiveMembership = () => {
   };
 
   const InitialFetchData = async () => {
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     setUserToken(jwt(token));
 
     setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));
@@ -131,7 +131,7 @@ const ActiveMembership = () => {
 
   const fetchData = async () => {
     if (UpdateData) UpdateData();
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     setUserToken(jwt(token));
 
     setAccessLevels(await activeMembershipApi.getAccessLevelById(userId));

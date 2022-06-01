@@ -40,7 +40,7 @@ import {
 } from "../../api/governingBodiesApi";
 import AddDecisionModal from "../DecisionTable/AddDecisionModal";
 import notificationLogic from "../../components/Notifications/Notification";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import jwt from "jwt-decode";
 
 const RegionBoard = () => {
@@ -125,7 +125,7 @@ const RegionBoard = () => {
   };
 
   const getUserAccesses = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     let result: any;
     await getUserAccess(user.nameid).then((response) => {
       result = response;
@@ -180,7 +180,7 @@ const RegionBoard = () => {
   const handleAdd = async () => {
     const lastId = decisions[decisions.length - 1].id;
     let user: any;
-    let curToken = AuthStore.getToken() as string;
+    let curToken = AuthLocalStorage.getToken() as string;
     user = jwt(curToken);
     await decisionsApi
       .getById(lastId + 1)

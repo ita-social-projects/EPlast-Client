@@ -12,7 +12,7 @@ import "../Regions/Region.less";
 import Title from "antd/lib/typography/Title";
 import moment from "moment";
 import Spinner from "../Spinner/Spinner";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import { getUserAccess, getDocs } from "../../api/regionsBoardApi";
 import extendedTitleTooltip, {
@@ -40,7 +40,7 @@ const RegionBoardDocuments = () => {
 
   const getUserAccesses = async () => {
     setLoading(true);
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await getUserAccess(user.nameid).then((response) => {
       setUserAccesses(response.data);
     });

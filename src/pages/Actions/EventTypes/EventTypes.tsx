@@ -6,7 +6,7 @@ import { Card } from "antd";
 import EventCreateDrawer from "../ActionEvent/EventCreate/EventCreateDrawer";
 import { useParams } from "react-router-dom";
 import Add from "../../../assets/images/add.png";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import eventUserApi from "../../../api/eventUserApi";
 import userApi from "../../../api/UserApi";
@@ -50,7 +50,7 @@ const EventTypes = () => {
   };
 
   const getUserAccessesForEvents = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await eventUserApi.getUserEventAccess(user.nameid).then((response) => {
       setUserAccesses(response.data);
     });

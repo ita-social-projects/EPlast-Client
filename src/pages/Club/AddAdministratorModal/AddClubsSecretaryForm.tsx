@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import classes from "../../Regions/Form.module.css";
 import { getClubUsers, getUserClubAccess } from "../../../api/clubsApi";
 import { emptyInput } from "../../../components/Notifications/Messages";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import AdminType from "../../../models/Admin/AdminType";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
 import "./AddClubsSecretaryForm.less";
@@ -36,7 +36,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const getUserAccessesForClubs = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await getUserClubAccess(+id, user.nameid).then((response) => {
       setUserClubAccesses(response.data);
     });
