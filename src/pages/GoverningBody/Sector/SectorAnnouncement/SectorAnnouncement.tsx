@@ -157,9 +157,7 @@ const Announcements = () => {
         title: (
           <div className={classes.announcementDate}>
             {response.data.user.firstName} {response.data.user.lastName}
-            <div>
-              {moment(response.data.date.toString()).format("YYYY-MM-DD HH:mm")}
-            </div>
+            <div>{moment(response.data.date).format("DD.MM.YYYY")}</div>
           </div>
         ),
         content: (
@@ -185,11 +183,9 @@ const Announcements = () => {
     isPined: boolean
   ) => {
     setVisibleAddModal(false);
-    setLoading(true);
     await editSectorAnnouncement(id, newTitle, newText, newImages, isPined);
     await getAnnouncements();
     notificationLogic("success", "Оголошення змінено");
-    setLoading(false);
   };
 
   const handleAdd = async (
@@ -201,7 +197,6 @@ const Announcements = () => {
     selectedSectorId: number
   ) => {
     setVisibleAddModal(false);
-    setLoading(true);
     newNotification();
     if (sectorId) {
       await addSectorAnnouncement(
@@ -216,7 +211,6 @@ const Announcements = () => {
       await addAnnouncement(title, text, images, isPined, +selectedGvbId);
     }
     await getAnnouncements();
-    setLoading(false);
     notificationLogic("success", "Оголошення опубліковано");
   };
 
@@ -226,15 +220,13 @@ const Announcements = () => {
   };
 
   const handlePin = async (item: Announcement) => {
-    setLoading(true);
     await pinAnnouncement(item.id);
     await getAnnouncements();
-    if (!item.isPined){
+    if (!item.isPined) {
       notificationLogic("success", "Оголошення закріплено");
     } else {
       notificationLogic("success", "Оголошення відкріплено");
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -360,7 +352,7 @@ const Announcements = () => {
                     <List.Item.Meta
                       className={classes.listItemMeta}
                       title={`${item.firstName} ${item.lastName}`}
-                      description={moment(item.date).format("YYYY-MM-DD HH:mm")}
+                      description={moment(item.date).format("DD.MM.YYYY")}
                       avatar={
                         <Avatar
                           size={40}
@@ -416,12 +408,14 @@ const Announcements = () => {
           visibleModal={visibleAddModal}
           onAdd={handleAdd}
         />
-        <EditAnnouncementModal
-          setVisibleModal={setVisibleEditModal}
-          visibleModal={visibleEditModal}
-          onEdit={handleEdit}
-          id={selectedObjectId}
-        />
+        {selectedObjectId ? (
+          <EditAnnouncementModal
+            setVisibleModal={setVisibleEditModal}
+            visibleModal={visibleEditModal}
+            onEdit={handleEdit}
+            id={selectedObjectId}
+          />
+        ) : null}
       </Content>
     </Layout>
   );

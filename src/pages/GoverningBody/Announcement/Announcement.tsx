@@ -63,7 +63,7 @@ const Announcements = () => {
   );
   const { id, p }: any = useParams();
   const [pageSize, setPageSize] = useState(12);
-  const [page,setPage] = useState(+p);
+  const [page, setPage] = useState(+p);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [selectedObjectId, setSelectedObjectId] = useState<number>(0);
 
@@ -153,9 +153,7 @@ const Announcements = () => {
         title: (
           <div className={classes.announcementDate}>
             {response.data.user.firstName} {response.data.user.lastName}
-            <div>
-              {moment(response.data.date.toString()).format("YYYY-MM-DD HH:mm")}
-            </div>
+            <div>{moment(response.data.date).format("DD.MM.YYYY")}</div>
           </div>
         ),
         content: (
@@ -180,18 +178,21 @@ const Announcements = () => {
     newImages: string[],
     isPined: boolean
   ) => {
-    setVisibleAddModal(false);
-    setLoading(true);
-    await editAnnouncement(
-      announcementId,
-      newTitle,
-      newText,
-      newImages,
-      isPined
-    );
-    await getAnnouncements();
-    notificationLogic("success", "Оголошення змінено");
-    setLoading(false);
+    try {
+      setVisibleAddModal(false);
+      await editAnnouncement(
+        announcementId,
+        newTitle,
+        newText,
+        newImages,
+        isPined
+      );
+      await getAnnouncements();
+      notificationLogic("success", "Оголошення змінено");
+    } catch {
+      setVisibleAddModal(false);
+      notificationLogic("error", "Поля Тема і Текст оголошення обов'язкові");
+    }
   };
 
   const handleAdd = async (
@@ -202,24 +203,27 @@ const Announcements = () => {
     gvbId: number,
     sectorId: number
   ) => {
-    setVisibleAddModal(false);
-    setLoading(true);
-    newNotification();
-    if (sectorId) {
-      await addSectorAnnouncement(
-        title,
-        text,
-        images,
-        isPined,
-        gvbId,
-        +sectorId
-      );
-    } else {
-      await addAnnouncement(title, text, images, isPined, +gvbId);
+    try {
+      setVisibleAddModal(false);
+      newNotification();
+      if (sectorId) {
+        await addSectorAnnouncement(
+          title,
+          text,
+          images,
+          isPined,
+          gvbId,
+          +sectorId
+        );
+      } else {
+        await addAnnouncement(title, text, images, isPined, +gvbId);
+      }
+      await getAnnouncements();
+      notificationLogic("success", "Оголошення опубліковано");
+    } catch {
+      notificationLogic("error", "Поля Тема і Текст оголошення обов'язкові");
+      setVisibleAddModal(false);
     }
-    await getAnnouncements();
-    setLoading(false);
-    notificationLogic("success", "Оголошення опубліковано");
   };
   const handleDelete = (announcementId: number) => {
     const filteredData = data.filter((d) => d.id !== announcementId);
@@ -227,15 +231,13 @@ const Announcements = () => {
   };
 
   const handlePin = async (item: Announcement) => {
-    setLoading(true);
     await pinAnnouncement(item.id);
     await getAnnouncements();
-    if (!item.isPined){
+    if (!item.isPined) {
       notificationLogic("success", "Оголошення закріплено");
     } else {
       notificationLogic("success", "Оголошення відкріплено");
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -361,7 +363,7 @@ const Announcements = () => {
                     <List.Item.Meta
                       className={classes.listItemMeta}
                       title={`${item.firstName} ${item.lastName}`}
-                      description={moment(item.date).format("YYYY-MM-DD HH:mm")}
+                      description={moment(item.date).format("DD.MM.YYYY")}
                       avatar={
                         <Avatar
                           size={40}
@@ -416,12 +418,14 @@ const Announcements = () => {
           visibleModal={visibleAddModal}
           onAdd={handleAdd}
         />
-        <EditAnnouncementModal
-          setVisibleModal={setVisibleEditModal}
-          visibleModal={visibleEditModal}
-          onEdit={handleEdit}
-          id={selectedObjectId}
-        />
+        {selectedObjectId ? (
+          <EditAnnouncementModal
+            setVisibleModal={setVisibleEditModal}
+            visibleModal={visibleEditModal}
+            onEdit={handleEdit}
+            id={selectedObjectId}
+          />
+        ) : null}
       </Content>
     </Layout>
   );

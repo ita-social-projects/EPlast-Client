@@ -203,7 +203,7 @@ const GoverningBody = () => {
         title: (
           <div className={classes.announcementDate}>
             {response.data.user.firstName} {response.data.user.lastName}
-            <div>{response.data.date.toString().substring(0, 10)}</div>
+            <div>{moment(response.data.date).format("DD.MM.YYYY")}</div>
           </div>
         ),
         content: (
@@ -543,7 +543,7 @@ const GoverningBody = () => {
                         >
                           <List.Item.Meta
                             title={<Markup content={item.title} />}
-                            description={item.date.toString().substring(0, 10)}
+                            description={moment(item.date).format("DD.MM.YYYY")}
                           />
                         </List.Item>
                       )}
