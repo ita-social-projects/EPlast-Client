@@ -4,12 +4,12 @@ import {
   DeleteOutlined,
   FilePdfOutlined,
 } from "@ant-design/icons";
-import AuthStore from "../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
 import classes from "./Table.module.css";
 import deleteConfirm from "./DeleteConfirm";
 import documentsApi from "../../api/documentsApi";
 import { Roles } from "../../models/Roles/Roles";
+import AuthLocalStorage from "../../AuthLocalStorage";
 
 interface DropDownProps {
   record: number;
@@ -20,7 +20,7 @@ interface DropDownProps {
 }
 
 const DropDown: React.FC<DropDownProps> = ({ record, pageX, pageY, showDropdown, onDelete }) => {
-  const token = AuthStore.getToken() as string;
+  const token = AuthLocalStorage.getToken() as string;
   const decodedJwt = jwt_decode(token) as any;
   const roles = decodedJwt[
     "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
