@@ -40,7 +40,7 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import EditAnnouncementModal from "./EditAnnouncementModal";
 import { getUserAccess } from "../../../api/regionsBoardApi";
 import { Roles } from "../../../models/Roles/Roles";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import UserApi from "../../../api/UserApi";
 import PicturesWall, { AnnouncementGallery } from "./PicturesWallModal";
@@ -103,7 +103,7 @@ const Announcements = () => {
   };
 
   const getUserAccesses = async () => {
-    const user: any = jwt(AuthStore.getToken() as string);
+    const user: any = jwt(AuthLocalStorage.getToken() as string);
     let result: any;
     await getUserAccess(user.nameid).then((response) => {
       result = response;

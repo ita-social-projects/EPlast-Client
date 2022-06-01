@@ -49,7 +49,7 @@ import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddGoverningBodiesSecretaryForm from "../AddAdministratorModal/AddGoverningBodiesSecretaryForm";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import userApi from "../../../api/UserApi";
 import GoverningBodyDocument from "../../../models/GoverningBody/GoverningBodyDocument";
@@ -241,7 +241,7 @@ const GoverningBody = () => {
   }
 
   const getUserAccesses = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     let result: any;
     await getUserAccess(user.nameid).then((response) => {
       result = response;
@@ -270,7 +270,7 @@ const GoverningBody = () => {
     setLoading(true);
     try {
       const response = await getGoverningBodyById(+id);
-      const governingBodyViewModel = response.data.governingBodyViewModel;
+      const governingBodyViewModel = response.governingBodyViewModel;
       const admins = [
         governingBodyViewModel.head,
         ...governingBodyViewModel.administration,
@@ -286,13 +286,13 @@ const GoverningBody = () => {
       );
 
       await getUserAccesses();
-      setAnnouncementsCount(response.data.announcementsCount);
+      setAnnouncementsCount(response.announcementsCount);
       setGoverningBody(governingBodyViewModel);
       setGoverningBodyHead(governingBodyViewModel.head);
       setAdmins(admins);
 
       setDocuments(governingBodyViewModel.documents);
-      setDocumentsCount(response.data.documentsCount);
+      setDocumentsCount(response.documentsCount);
       setSectors(governingBodyViewModel.sectors);
       loadMoreData();
     } finally {
