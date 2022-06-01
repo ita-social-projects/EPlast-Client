@@ -112,6 +112,11 @@ const getEventStatusId = async (eventStatus: string) => {
   return response;
 };
 
+const changePresentParicipant = async (participantId: number) => {
+  const response = await Api.put(`Events`, participantId); // переробити на патч
+  return response;
+};
+
 export default {
   getEventsByStatuses,
   getTypes,
@@ -132,4 +137,5 @@ export default {
   uploadPictures,
   removePicture,
   getEventStatusId,
+  changePresentParicipant,
 };

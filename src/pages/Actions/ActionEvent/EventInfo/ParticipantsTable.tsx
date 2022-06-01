@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tag, Space, Button, Divider, Typography, Modal } from "antd";
+import {
+  Table,
+  Tag,
+  Space,
+  Button,
+  Divider,
+  Typography,
+  Modal,
+  Checkbox,
+} from "antd";
 import { ColumnsType } from "antd/es/table";
 import {
   UserAddOutlined,
@@ -144,6 +153,19 @@ const ParticipantsTable = ({
     });
   }
 
+  // заглушка на зміну присутності
+  const changePresentofParticipant = async (participantId: number) => {
+    // await додати запит апі на бек щоб змінити статус на протилежний
+    await eventsApi
+      .changePresentParicipant(participantId)
+      .then(() => setRender(true))
+      .catch(() => {
+        showError();
+      });
+
+    // setRender(true);
+  };
+
   const columns: ColumnsType<EventParticipant> = [
     {
       title: "Користувач",
@@ -172,6 +194,22 @@ const ParticipantsTable = ({
           <Tag color={setTagColor(status)} key={status}>
             {status.toUpperCase()}
           </Tag>
+        </>
+      ),
+    },
+    {
+      // зробити це поле доступним тільки для адміністраторів  події (або перемістити тільки для доступу адміністраторів)
+      title: "Відвідав подію",
+      dataIndex: "wasPresent",
+      key: "eventParticipant",
+      align: "center",
+      render: (wasPresent: boolean, record: EventParticipant) => (
+        <>
+          <Checkbox
+            onChange={() => changePresentofParticipant(record.participantId)} // зміна стану ( що треба передавати)
+            defaultChecked={wasPresent} // мабуть рендерити це віконечко тільки тоді коли подія почалась ?
+            // disabled={userAccesses["ApproveParticipant"] ? false : true} // дивитись від того чи може редагувати користувач це
+          />
         </>
       ),
     },
