@@ -7,7 +7,6 @@ import {
   pinAnnouncement,
 } from "../../api/announcementsApi";
 import { Announcement } from "../../models/GoverningBody/Announcement/Announcement";
-import AuthStore from "../AuthStore";
 import { getUserAccess } from "../../api/regionsBoardApi";
 import { addSectorAnnouncement } from "../../api/governingBodySectorsApi";
 import {
@@ -17,6 +16,7 @@ import {
 import { getUsersByAllRoles } from "../../api/adminApi";
 import { Roles } from "../../models/Roles/Roles";
 import UserApi from "../../api/UserApi";
+import AuthLocalStorage from "../../AuthLocalStorage";
 
 type State = {
   pageNumber: number;
@@ -133,7 +133,7 @@ const actions = {
   },
 
   getUserAccesses: (): Action<State> => async ({ setState }) => {
-    const user: any = jwt(AuthStore.getToken() as string);
+    const user: any = jwt(AuthLocalStorage.getToken() as string);
     let result: any;
     await getUserAccess(user.nameid).then((response) => {
       result = response;
