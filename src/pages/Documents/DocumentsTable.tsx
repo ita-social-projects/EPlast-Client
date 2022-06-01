@@ -6,13 +6,13 @@ import documentsApi, { TypeGetParser } from "../../api/documentsApi";
 import notificationLogic from "../../components/Notifications/Notification";
 import ClickAwayListener from "react-click-away-listener";
 import Spinner from "../Spinner/Spinner";
-import AuthStore from "../../stores/AuthStore";
 import jwt_decode from "jwt-decode";
 import AddDocumentsModal from "./AddDocumetsModal";
 import { Roles } from "../../models/Roles/Roles";
 import DocumentsTableInfo from "../../models/Documents/DocumentsTableInfo";
 import Search from "antd/lib/input/Search";
 import classes from "./Table.module.css";
+import AuthLocalStorage from "../../AuthLocalStorage";
 
 const { Content } = Layout;
 
@@ -35,7 +35,7 @@ const DocumentsTable: React.FC = () => {
   const [status, setStatus] = useState<string>("legislation");
 
 
-  const jwt = AuthStore.getToken() as string;
+  const jwt = AuthLocalStorage.getToken() as string;
   const decodedJwt = jwt_decode(jwt) as any;
   const roles = decodedJwt[
     "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
