@@ -56,21 +56,33 @@ const AddAdministratorModal = (props: Props) => {
 
   const showConfirm = (newAdmin: ClubAdmin, existingAdmin: ClubAdmin) => {
     Modal.confirm({
-      title: "Призначити даного користувача на цю посаду?",
+      title: "Змінити дані користувача ?",
       content: (
         <div className={classes.Style}>
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління
-          закінчується{" "}
+          має роль "{existingAdmin.adminType.adminTypeName}", час правління
+         {" "}
           <b>
-            {moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY") ===
+          {moment.utc(existingAdmin?.endDate).local().format("DD.MM.YYYY") ===
             "Invalid date"
               ? "ще не скоро"
-              : moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY")}
-          </b>
-          .
+              : `${moment.utc(existingAdmin?.startDate).local().format("DD.MM.YYYY") }  -  ${ 
+              moment.utc(existingAdmin?.endDate).local().format("DD.MM.YYYY")}`
+              }
+          </b>.<br />
+          {" "}
+          {
+            moment.utc(existingAdmin?.endDate).local().format("DD.MM.YYYY") !==
+            moment.utc(newAdmin.endDate).local().format("DD.MM.YYYY") || 
+            moment.utc(existingAdmin?.startDate).local().format("DD.MM.YYYY") !==
+            moment.utc(newAdmin.startDate).local().format("DD.MM.YYYY") 
+              ? `Чи дійсно ви хочете змінити дату правління на  ${ moment.utc(newAdmin?.startDate).local().format("DD.MM.YYYY")} - ${moment.utc(newAdmin?.endDate).local().format("DD.MM.YYYY")}`
+              : ""
+          }
+          
+          
         </div>
       ),
       onCancel() {},
