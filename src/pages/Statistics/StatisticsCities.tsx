@@ -117,10 +117,9 @@ const StatisticsCities = () => {
   ];
 
   const totalColumn = {
-    title: "Усього",
+    title: "Загалом",
     dataIndex: "total",
     key: "total",
-    fixed: "right",
     sorter: { compare: (a: any, b: any) => a.total - b.total },
     width: 100,
   };
