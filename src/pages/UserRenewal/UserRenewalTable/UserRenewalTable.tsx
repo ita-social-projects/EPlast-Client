@@ -1,5 +1,5 @@
 import { Table, Layout } from "antd";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import ClickAwayListener from "react-click-away-listener";
 import columns from "./columns";
 import DropDownRenewalTable from "./DropDownRenewalTable";
@@ -62,7 +62,7 @@ const UserRenewalTable = () => {
   };
 
   const getUser = async () => {
-    let jwt = AuthStore.getToken() as string;
+    let jwt = AuthLocalStorage.getToken() as string;
     let user = jwt_decode(jwt) as any;
     setcurrentCityAdmin(
       (await UserApi.getUserProfileById(user.nameid, user.nameid)).data.user

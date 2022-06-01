@@ -3,7 +3,7 @@ import { Input, Button, Card, Drawer, Col, Row } from "antd";
 import { KVTable } from "./KVTable";
 import jwt from "jwt-decode";
 import AddNewKadraForm from "./AddNewKadraForm";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import { Roles } from "../../models/Roles/Roles";
 import Search from "antd/lib/input/Search";
 import kadrasApi from "../../api/KadraVykhovnykivApi";
@@ -49,7 +49,7 @@ export const KadrasTable = () => {
   }, []);
 
   let user: any;
-  let curToken = AuthStore.getToken() as string;
+  let curToken = AuthLocalStorage.getToken() as string;
   let roles: string[] = [""];
   user = curToken !== null ? (jwt(curToken) as string) : "";
   roles =

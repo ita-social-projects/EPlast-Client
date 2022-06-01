@@ -25,7 +25,7 @@ import { Roles } from "../../../models/Roles/Roles";
 import extendedTitleTooltip, {
   parameterMaxLength,
 } from "../../../components/Tooltip";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 moment.locale("uk-ua");
 
@@ -51,7 +51,7 @@ const CityAdministration = () => {
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const getUserAccessesForCities = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await getUserCityAccess(+id, user.nameid).then((response) => {
       setUserCityAccesses(response.data);
     });

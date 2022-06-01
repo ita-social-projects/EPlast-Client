@@ -5,7 +5,7 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import jwt_decode from "jwt-decode";
 import classes from "./Table.module.css";
 import EditDecisionModal from "./EditDecisionModal";
@@ -77,7 +77,7 @@ const DropDown = (props: Props) => {
     fileName: null,
   });
   const fetchUser = async () => {
-    let jwt = AuthStore.getToken() as string;
+    let jwt = AuthLocalStorage.getToken() as string;
     let decodedJwt = jwt_decode(jwt) as any;
     setUserId(decodedJwt.nameid);
     let roles = decodedJwt[
