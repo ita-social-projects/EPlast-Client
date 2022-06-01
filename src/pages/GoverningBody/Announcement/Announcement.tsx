@@ -153,9 +153,7 @@ const Announcements = () => {
         title: (
           <div className={classes.announcementDate}>
             {response.data.user.firstName} {response.data.user.lastName}
-            <div>
-              {moment(response.data.date.toString()).format("YYYY-MM-DD HH:mm")}
-            </div>
+            <div>{moment(response.data.date).format("DD.MM.YYYY")}</div>
           </div>
         ),
         content: (
@@ -365,7 +363,7 @@ const Announcements = () => {
                     <List.Item.Meta
                       className={classes.listItemMeta}
                       title={`${item.firstName} ${item.lastName}`}
-                      description={moment(item.date).format("YYYY-MM-DD HH:mm")}
+                      description={moment(item.date).format("DD.MM.YYYY")}
                       avatar={
                         <Avatar
                           size={40}
