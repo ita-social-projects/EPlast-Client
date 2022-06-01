@@ -11,7 +11,7 @@ import EventDetailsHeader from "./EventDetailsHeader";
 import ParticipantsTable from "./ParticipantsTable";
 import "./EventInfo.less";
 import Spinner from "../../../Spinner/Spinner";
-import AuthStore from "../../../../stores/AuthStore";
+import AuthLocalStorage from "../../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import eventUserApi from "../../../../api/eventUserApi";
 import UserApi from "../../../../api/UserApi";
@@ -129,7 +129,7 @@ const EventInfo = () => {
   };
 
   const getUserAccessesForEvents = async (id: number) => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await eventUserApi.getUserEventAccess(user.nameid, +id).then((response) => {
       setUserAccesses(response.data);
     });

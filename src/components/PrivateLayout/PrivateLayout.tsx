@@ -18,7 +18,7 @@ import {
 
 import jwt from "jwt-decode";
 import classes from "./PrivateLayout.module.css";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import { Roles } from "../../models/Roles/Roles";
 import useOnClickOutside from "./useOneClickOutside";
 import { User } from "../../pages/userPage/Interface/Interface";
@@ -65,7 +65,7 @@ const PrivateLayout = ({ children }: any) => {
   };
 
   const getUserAccessesForMenu = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await UserApi.getUserMenuAccess(user.nameid).then((response) => {
       setUserAccesses(response.data);
     });
@@ -73,7 +73,7 @@ const PrivateLayout = ({ children }: any) => {
 
   const [imageBase64, setImageBase64] = useState<string>();
   const fetchData = async () => {
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     getUserAccessesForMenu();
     if (token == null) {
       const str = window.location.pathname;

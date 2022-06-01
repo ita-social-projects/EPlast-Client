@@ -5,7 +5,7 @@ import {
   EditOutlined,
   FilePdfOutlined,
 } from "@ant-design/icons";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import jwt_decode from "jwt-decode";
 import classes from "./Table.module.css";
 import deleteConfirm from "./DeleteConfirm";
@@ -55,7 +55,7 @@ const DropDown = (props: Props) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      let jwt = AuthStore.getToken() as string;
+      let jwt = AuthLocalStorage.getToken() as string;
       let decodedJwt = jwt_decode(jwt) as any;
       let roles = decodedJwt[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"

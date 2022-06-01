@@ -27,7 +27,6 @@ import jwt from "jwt-decode";
 import Paragraph from "antd/lib/typography/Paragraph";
 import moment from "moment";
 import { Markup } from "interweave";
-import InfiniteScroll from "react-infinite-scroll-component";
 import {
   getAnnouncementsById,
   getGoverningBodyById,
@@ -35,7 +34,6 @@ import {
   getUserAccess,
   removeGoverningBody,
   addAnnouncement,
-  getAnnouncementsByPage,
 } from "../../../api/governingBodiesApi";
 import "./GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -49,7 +47,7 @@ import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddGoverningBodiesSecretaryForm from "../AddAdministratorModal/AddGoverningBodiesSecretaryForm";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import userApi from "../../../api/UserApi";
 import GoverningBodyDocument from "../../../models/GoverningBody/GoverningBodyDocument";
@@ -110,9 +108,6 @@ const GoverningBody = () => {
   const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
 
   const [announcementsCount, setAnnouncementsCount] = useState<number>(0);
-  const [listLoading, setListLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
 
   const deleteGoverningBody = async () => {
     await removeGoverningBody(governingBody.id);
@@ -241,7 +236,7 @@ const GoverningBody = () => {
   }
 
   const getUserAccesses = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     let result: any;
     await getUserAccess(user.nameid).then((response) => {
       result = response;
@@ -250,27 +245,11 @@ const GoverningBody = () => {
     return result;
   };
 
-  const loadMoreData = async () => {
-    if (listLoading) {
-      return;
-    }
-    try {
-      setListLoading(true);
-      const response = await getAnnouncementsByPage(page, pageSize, +id);
-      for (let i = 0; i < response.data.item1.length; i++) {
-        setAnnouncements((old) => [...old, response.data.item1[i]]);
-      }
-    } finally {
-      setListLoading(false);
-      setPage(page + 1);
-    }
-  };
-
   const getGoverningBody = async () => {
     setLoading(true);
     try {
       const response = await getGoverningBodyById(+id);
-      const governingBodyViewModel = response.data.governingBodyViewModel;
+      const governingBodyViewModel = response.governingBodyViewModel;
       const admins = [
         governingBodyViewModel.head,
         ...governingBodyViewModel.administration,
@@ -286,15 +265,15 @@ const GoverningBody = () => {
       );
 
       await getUserAccesses();
-      setAnnouncementsCount(response.data.announcementsCount);
+      setAnnouncementsCount(response.announcementsCount);
       setGoverningBody(governingBodyViewModel);
       setGoverningBodyHead(governingBodyViewModel.head);
       setAdmins(admins);
 
       setDocuments(governingBodyViewModel.documents);
-      setDocumentsCount(response.data.documentsCount);
+      setDocumentsCount(response.documentsCount);
       setSectors(governingBodyViewModel.sectors);
-      loadMoreData();
+      setAnnouncements(governingBodyViewModel.announcements);
     } finally {
       setLoading(false);
     }
@@ -522,7 +501,24 @@ const GoverningBody = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Оголошення</Title>
+            <Title level={4}>
+              Оголошення
+              <a
+                onClick={() =>
+                  history.push(
+                    `/governingBodies/announcements/${governingBody.id}/1`
+                  )
+                }
+              >
+                {announcementsCount !== 0 &&
+                userAccesses["ViewAnnouncements"] ? (
+                  <Badge
+                    count={announcementsCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  />
+                ) : null}
+              </a>
+            </Title>
             <Row
               className="governingBodyItems"
               justify="center"
@@ -531,37 +527,27 @@ const GoverningBody = () => {
               {userAccesses["ViewAnnouncements"] ? (
                 announcementsCount > 0 ? (
                   <div
-                    id="scrollableDiv"
                     style={{
                       width: "100%",
                       height: 400,
-                      overflow: "auto",
+                      overflow: "hidden",
                     }}
                   >
-                    <InfiniteScroll
-                      dataLength={announcements.length}
-                      next={loadMoreData}
-                      hasMore
-                      loader={<></>}
-                      scrollableTarget="scrollableDiv"
-                    >
-                      <List
-                        dataSource={announcements}
-                        renderItem={(item) => (
-                          <List.Item
-                            key={item.id}
-                            onClick={() => showFullAnnouncement(item.id)}
-                          >
-                            <List.Item.Meta
-                              title={<Markup content={item.title} />}
-                              description={item.date
-                                .toString()
-                                .substring(0, 10)}
-                            />
-                          </List.Item>
-                        )}
-                      />
-                    </InfiniteScroll>
+                    <List
+                      dataSource={announcements}
+                      renderItem={(item) => (
+                        <List.Item
+                          className="announcementItem"
+                          key={item.id}
+                          onClick={() => showFullAnnouncement(item.id)}
+                        >
+                          <List.Item.Meta
+                            title={<Markup content={item.title} />}
+                            description={item.date.toString().substring(0, 10)}
+                          />
+                        </List.Item>
+                      )}
+                    />
                   </div>
                 ) : (
                   <Col>
