@@ -16,7 +16,6 @@ import jwt from "jwt-decode";
 import eventUserApi from "../../../../api/eventUserApi";
 import UserApi from "../../../../api/UserApi";
 import { Roles } from "../../../../models/Roles/Roles";
-import NotificationBoxApi from "../../../../api/NotificationBoxApi";
 
 const classes = require("./EventInfo.module.css");
 const { Title } = Typography;
@@ -102,32 +101,12 @@ const EventInfo = () => {
     getUserRoles();
   }, [visibleDrawer, approvedEvent, render]);
 
-  const estimateNotification = (userId: string) => {
-    NotificationBoxApi.createNotifications(
-      [userId],
-      "Оцінювання події є доступним протягом 3 днів після її завершення! ",
-      NotificationBoxApi.NotificationTypes.EventNotifications,
-      `/events/details/${id}`,
-      event.event.eventName
-    );
-  };
-
-  const CheckEventForEstimation = ({
-    canEstimate,
-    isEventFinished,
-    userId,
-  }: any) => {
-    if (canEstimate && isEventFinished) {
-      estimateNotification(userId);
-    }
-  };
-
   const getEventStatusId = async (eventStatus: string) => {
     await eventsApi.getEventStatusId(eventStatus).then((response) => {
       setEventStatusID(response.data);
     });
   };
-
+  
   const getUserAccessesForEvents = async (id: number) => {
     let user: any = jwt(AuthStore.getToken() as string);
     await eventUserApi.getUserEventAccess(user.nameid, +id).then((response) => {
@@ -184,7 +163,6 @@ const EventInfo = () => {
     <Spinner />
   ) : (
     <div className="event-info-background">
-      {CheckEventForEstimation(event)}
       <Row className="event-info-header">
         <Col xs={24} sm={24} md={24} lg={8}>
           <SortedEventInfo
