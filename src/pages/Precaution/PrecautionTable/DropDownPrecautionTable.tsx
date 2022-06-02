@@ -5,53 +5,29 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { useHistory } from "react-router-dom";
 import deleteConfirm from "./DeleteConfirm";
 import classes from "../../DecisionTable/Table.module.css";
 import UserPrecaution from "../Interfaces/UserPrecaution";
 import User from "../../../models/UserTable/User";
 import precautionApi from "../../../api/precautionApi";
-import Precaution from "../Interfaces/Precaution";
+import DropDownProps from "../Interfaces/DropDownPrecautionTableProps";
 import EditPrecautionModal from "./EditPrecautionModal";
 
-interface Props {
-  record: number;
-  userId: string;
-  isRecordActive: boolean;
-  pageX: number;
-  pageY: number;
-  showDropdown: boolean;
-  canEdit: boolean;
-  onDelete: (id: number) => void;
-  onEdit: (
-    id: number,
-    Precaution: Precaution,
-    date: Date,
-    endDate: Date,
-    isActive: boolean,
-    reason: string,
-    status: string,
-    reporter: string,
-    number: number,
-    user: any,
-    userId: string
-  ) => void;
-}
-
-const DropDown = (props: Props) => {
+const DropDown = (props: DropDownProps) => {
   const {
-    record,
+    recordId,
     userId,
-    isRecordActive,
     pageX,
     pageY,
     showDropdown,
-    canEdit,
+    userAccess,
+    isActive,
     onDelete,
     onEdit,
   } = props;
   const [showEditModal, setShowEditModal] = useState(false);
-  const [UserPrecautions, setData] = useState<UserPrecaution>({
+
+  const [userPrecaution, setData] = useState<UserPrecaution>({
     id: 0,
     precaution: {
       id: 0,
@@ -73,7 +49,7 @@ const DropDown = (props: Props) => {
     if (showEditModal) {
       const fetchData = async () => {
         await precautionApi
-          .getUserPrecautionById(record)
+          .getUserPrecautionById(recordId)
           .then((res) => setData(res.data));
       };
       fetchData();
@@ -86,7 +62,7 @@ const DropDown = (props: Props) => {
         window.open(`/userpage/main/${userId}`);
         break;
       case "2":
-        deleteConfirm(record, onDelete);
+        deleteConfirm(recordId, onDelete);
         break;
       case "3":
         await setShowEditModal(true);
@@ -115,26 +91,33 @@ const DropDown = (props: Props) => {
           <FileSearchOutlined />
           Переглянути профіль
         </Menu.Item>
-        {canEdit && isRecordActive ? (
+        {isActive && userAccess["EditActivePrecaution"] && (
           <Menu.Item key="3">
             <EditOutlined />
             Редагувати
           </Menu.Item>
-        ) : (
-          <></>
         )}
-        {canEdit ? (
+        {!isActive && userAccess["EditInactivePrecaution"] && (
+          <Menu.Item key="3">
+            <EditOutlined />
+            Редагувати
+          </Menu.Item>
+        )}
+        {isActive && userAccess["DeleteActivePrecaution"] && (
           <Menu.Item key="2">
             <DeleteOutlined />
             Видалити
           </Menu.Item>
-        ) : (
-          <></>
+        )}
+        {!isActive && userAccess["DeleteInactivePrecaution"] && (
+          <Menu.Item key="2">
+            <DeleteOutlined />
+            Видалити
+          </Menu.Item>
         )}
       </Menu>
       <EditPrecautionModal
-        record={record}
-        Precaution={UserPrecautions}
+        userPrecaution={userPrecaution}
         showModal={showEditModal}
         setShowModal={setShowEditModal}
         onEdit={onEdit}
