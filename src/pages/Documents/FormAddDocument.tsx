@@ -28,124 +28,125 @@ import { MethodicDocumentType } from "../../models/Documents/MethodicDocumentTyp
 import { FileWrapper, GoverningBody } from "../../api/decisionsApi";
 import { DocumentWrapper } from "../../models/Documents/DocumentWraper";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
-import moment, { Moment } from "moment";
-type FormAddDocumentsProps = {
-  setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: () => void;
+import moment from "moment";
+
+const checkFile = (fileSize: number, fileName: string): boolean => {
+  const extension = fileName.split(".").reverse()[0].toLowerCase();
+  const isCorrectExtension =
+    extension.indexOf("pdf") !== -1 ||
+    extension.indexOf("jpg") !== -1 ||
+    extension.indexOf("jpeg") !== -1 ||
+    extension.indexOf("png") !== -1 ||
+    extension.indexOf("docx") !== -1 ||
+    extension.indexOf("doc") !== -1 ||
+    extension.indexOf("txt") !== -1 ||
+    extension.indexOf("csv") !== -1 ||
+    extension.indexOf("xls") !== -1 ||
+    extension.indexOf("xml") !== -1 ||
+    extension.indexOf("odt") !== -1 ||
+    extension.indexOf("ods") !== -1;
+  if (!isCorrectExtension) {
+    notificationLogic(
+      "error",
+      possibleFileExtensions(
+        "pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods."
+      )
+    );
+  }
+
+  const isEmptyFile = fileSize !== 0;
+  if (!isEmptyFile) notificationLogic("error", fileIsEmpty());
+
+  return isCorrectExtension && isEmptyFile;
 };
-const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
-  const { setVisibleModal, onAdd } = props;
-  const [submitLoading, setSubmitLoading] = useState(false);
+
+interface FormAddDocumentsProps {
+  setVisibleModal: (visibleModal: boolean) => void
+  onAdd: () => void
+};
+
+const FormAddDocument: React.FC<FormAddDocumentsProps> = ({ setVisibleModal, onAdd }) => {
+  const [loading, setLoading] = useState(false);
   const [fileData, setFileData] = useState<FileWrapper>({
     FileAsBase64: null,
     FileName: null,
   });
-  const [form] = Form.useForm();
-  const normFile = (e: { fileList: any }) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
-
-  const handleCancel = () => {
-    form.resetFields();
-    setFileData({ FileAsBase64: null, FileName: null });
-    setVisibleModal(false);
-  };
-
-  const handleUpload = (info: any) => {
-    if (info.file !== null) {
-      if (info.file.size <= 3145728) {
-        if (checkFile(info.file.size, info.file.name)) {
-          getBase64(info.file, (base64: string) => {
-            setFileData({
-              FileAsBase64: base64.split(",")[1],
-              FileName: info.file.name,
-            });
-          });
-          notificationLogic("success", fileIsUpload());
-        }
-      } else {
-        notificationLogic("error", fileIsTooBig(3));
-      }
-    } else {
-      notificationLogic("error", fileIsNotUpload());
-    }
-  };
-  const checkFile = (fileSize: number, fileName: string): boolean => {
-    const extension = fileName.split(".").reverse()[0].toLowerCase();
-    const isCorrectExtension =
-      extension.indexOf("pdf") !== -1 ||
-      extension.indexOf("jpg") !== -1 ||
-      extension.indexOf("jpeg") !== -1 ||
-      extension.indexOf("png") !== -1 ||
-      extension.indexOf("docx") !== -1 ||
-      extension.indexOf("doc") !== -1 ||
-      extension.indexOf("txt") !== -1 ||
-      extension.indexOf("csv") !== -1 ||
-      extension.indexOf("xls") !== -1 ||
-      extension.indexOf("xml") !== -1 ||
-      extension.indexOf("odt") !== -1 ||
-      extension.indexOf("ods") !== -1;
-    if (!isCorrectExtension) {
-      notificationLogic(
-        "error",
-        possibleFileExtensions(
-          "pdf, docx, doc, txt, csv, xls, xml, jpg, jpeg, png, odt, ods."
-        )
-      );
-    }
-
-    const isEmptyFile = fileSize !== 0;
-    if (!isEmptyFile) notificationLogic("error", fileIsEmpty());
-
-    return isCorrectExtension && isEmptyFile;
-  };
-
-  const handleSubmit = async (values: any) => {
-    setSubmitLoading(true);
-    const newDocument: DocumentWrapper = {
-      MethodicDocument: {
-        id: 0,
-        name: values.name,
-        type: TypePostParser(JSON.parse(values.methodicDocumentType)),
-        governingBody: JSON.parse(values.governingBody),
-        description: values.description,
-        date:
-          /* eslint no-underscore-dangle: ["error", { "allow": ["_d"] }] */
-
-          moment(values.datepicker).format("YYYY-MM-DD HH:mm:ss"),
-        fileName: fileData.FileName,
-      },
-      fileAsBase64: fileData.FileAsBase64,
-    };
-    await documentsApi.post(newDocument);
-    setVisibleModal(false);
-    onAdd();
-    form.resetFields();
-    setFileData({ FileAsBase64: null, FileName: null });
-    setSubmitLoading(false);
-  };
-
   const [data, setData] = useState<DocumentOnCreateData>({
     governingBodies: Array<GoverningBody>(),
     methodicDocumentTypesItems: Array<MethodicDocumentType>(),
   });
+  const [form] = Form.useForm();
+
+  const handler = {
+    normFileEvent: (e: { fileList: any }) => {
+      if (Array.isArray(e)) {
+        return e;
+      }
+      return e && e.fileList;
+    },
+    click: {
+      cancelBtn: () => {
+        form.resetFields();
+        setFileData({ FileAsBase64: null, FileName: null });
+        setVisibleModal(false);
+      }
+    },
+    requestUpload: (info: any) => {
+      if (info.file === null) {
+        notificationLogic("error", fileIsNotUpload());
+        return;
+      }
+      if (info.file.size > 3145728) {
+        notificationLogic("error", fileIsTooBig(3));
+        return;
+      }
+      if (checkFile(info.file.size, info.file.name)) {
+        getBase64(info.file, (base64: string) => {
+          setFileData({
+            FileAsBase64: base64.split(",")[1],
+            FileName: info.file.name,
+          });
+        });
+        notificationLogic("success", fileIsUpload());
+      }
+    },
+    finish: {
+      form: async (values: any) => {
+        setLoading(true);
+        const newDocument: DocumentWrapper = {
+          MethodicDocument: {
+            id: 0,
+            name: values.name,
+            type: TypePostParser(JSON.parse(values.methodicDocumentType)),
+            governingBody: JSON.parse(values.governingBody),
+            description: values.description,
+            date: moment(values.datepicker).format("YYYY-MM-DD HH:mm:ss"),
+            fileName: fileData.FileName,
+          },
+          fileAsBase64: fileData.FileAsBase64,
+        };
+        await documentsApi.post(newDocument);
+        setVisibleModal(false);
+        onAdd();
+        form.resetFields();
+        setFileData({ FileAsBase64: null, FileName: null });
+        setLoading(false);
+      }
+    }
+  }
 
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       await documentsApi
         .getOnCreate()
         .then((d: DocumentOnCreateData) => setData(d));
-    };
-    fetchData();
+    })()
   }, []);
 
   return (
     <Form
       name="basic"
-      onFinish={handleSubmit}
+      onFinish={handler.finish.form}
       form={form}
       id="area"
       style={{ position: "relative" }}
@@ -268,12 +269,12 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
               className={formclasses.formField}
               name="dragger"
               valuePropName="fileList"
-              getValueFromEvent={normFile}
+              getValueFromEvent={handler.normFileEvent}
               noStyle
             >
               <Upload.Dragger
                 name="file"
-                customRequest={handleUpload}
+                customRequest={handler.requestUpload}
                 className={formclasses.formField}
                 multiple={false}
                 showUploadList={false}
@@ -326,7 +327,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
           >
             <Button
               key="back"
-              onClick={handleCancel}
+              onClick={handler.click.cancelBtn}
               className={formclasses.buttons}
             >
               Відмінити
@@ -335,7 +336,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = (props: any) => {
               type="primary"
               htmlType="submit"
               className={formclasses.buttons}
-              loading={submitLoading}
+              loading={loading}
             >
               Опублікувати
             </Button>
