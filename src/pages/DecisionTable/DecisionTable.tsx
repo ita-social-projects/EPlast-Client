@@ -9,7 +9,7 @@ import decisionsApi, {
 } from "../../api/decisionsApi";
 import ClickAwayListener from "react-click-away-listener";
 import Spinner from "../Spinner/Spinner";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import jwt_decode from "jwt-decode";
 import Search from "antd/lib/input/Search";
 import { DecisionTableInfo } from "./Interfaces/DecisionTableInfo";
@@ -48,7 +48,7 @@ const DecisionTable = () => {
     "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
 
   const fetchData = async () => {
-    let jwt = AuthStore.getToken() as string;
+    let jwt = AuthLocalStorage.getToken() as string;
     let decodedJwt = jwt_decode(jwt) as any;
     let roles = decodedJwt[rolesUrl] as string[];
     setLoading(true);

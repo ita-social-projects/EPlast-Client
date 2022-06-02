@@ -1,6 +1,6 @@
 import axios, { Canceler } from "axios";
 import BASE_URL from "../config";
-import AuthStore from "../stores/AuthStore";
+import AuthLocalStorage from "../AuthLocalStorage";
 import { createBrowserHistory } from "history";
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
@@ -15,7 +15,7 @@ interface HttpResponse {
 
 axios.interceptors.request.use(
   (config) => {
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     if (token) {
       config.headers["Authorization"] = "Bearer " + token;
     }
@@ -35,7 +35,7 @@ axios.interceptors.response.use(
         cancel = c;
       });
       source.cancel();
-      AuthStore.removeToken();
+      AuthLocalStorage.removeToken();
       const str = window.location.pathname;
       if (str !== "/signin") {
         localStorage.setItem("pathName", str);

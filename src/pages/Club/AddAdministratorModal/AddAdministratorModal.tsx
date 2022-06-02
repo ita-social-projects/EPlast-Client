@@ -56,21 +56,33 @@ const AddAdministratorModal = (props: Props) => {
 
   const showConfirm = (newAdmin: ClubAdmin, existingAdmin: ClubAdmin) => {
     Modal.confirm({
-      title: "Призначити даного користувача на цю посаду?",
+      title: "Змінити дані користувача ?",
       content: (
         <div className={classes.Style}>
           <b>
             {existingAdmin.user.firstName} {existingAdmin.user.lastName}
           </b>{" "}
-          вже має роль "{existingAdmin.adminType.adminTypeName}", час правління
-          закінчується{" "}
+          має роль "{existingAdmin.adminType.adminTypeName}", час правління
+         {" "}
           <b>
-            {moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY") ===
+          {moment.utc(existingAdmin?.endDate).local().format("DD.MM.YYYY") ===
             "Invalid date"
               ? "ще не скоро"
-              : moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY")}
-          </b>
-          .
+              : `${moment.utc(existingAdmin?.startDate).local().format("DD.MM.YYYY") }  -  ${ 
+              moment.utc(existingAdmin?.endDate).local().format("DD.MM.YYYY")}`
+              }
+          </b>.<br />
+          {" "}
+          {
+            moment.utc(existingAdmin?.endDate).local().format("DD.MM.YYYY") !==
+            moment.utc(newAdmin.endDate).local().format("DD.MM.YYYY") || 
+            moment.utc(existingAdmin?.startDate).local().format("DD.MM.YYYY") !==
+            moment.utc(newAdmin.startDate).local().format("DD.MM.YYYY") 
+              ? `Чи дійсно ви хочете змінити дату правління на  ${ moment.utc(newAdmin?.startDate).local().format("DD.MM.YYYY")} - ${moment.utc(newAdmin?.endDate).local().format("DD.MM.YYYY")}`
+              : ""
+          }
+          
+          
         </div>
       ),
       onCancel() {},
@@ -143,6 +155,31 @@ const AddAdministratorModal = (props: Props) => {
     });
   };
 
+  const showImpossibleAddManager = async (admin?: ClubAdmin) => {
+    return Modal.warning({
+      title: "Неможливо додати нового адміна, оскільки в цей період займає посаду адмін: ",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            {admin?.user.firstName} {admin?.user.lastName}
+          </b>{" "}
+          час правління поточного адміна  {" "}
+          <b>
+          {moment.utc(admin?.endDate).local().format("DD.MM.YYYY") ===
+            "Invalid date"
+              ? "ще не скоро"
+              : `${moment.utc(admin?.startDate).local().format("DD.MM.YYYY") }  -  ${ 
+              moment.utc(admin?.endDate).local().format("DD.MM.YYYY")}`
+              }
+          </b>
+          .
+        </div>
+      ),
+      onOk() {},
+    });
+  };
+
+
   const addClubAdmin = async (admin: ClubAdmin) => {
     admin = (await addAdministrator(props.admin.clubId, admin)).data;
     notificationLogic("success", "Користувач успішно доданий в провід");
@@ -178,7 +215,6 @@ const AddAdministratorModal = (props: Props) => {
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
-
     let admin: ClubAdmin = {
       id: props.admin.id,
       adminType: {
@@ -203,14 +239,26 @@ const AddAdministratorModal = (props: Props) => {
       const existingAdmin = (admins as ClubAdmin[]).find(
         (x) => x.adminType.adminTypeName === admin.adminType.adminTypeName
       );
+      const existEndDate = moment.utc(existingAdmin?.endDate).local();
+      const existStartDate = moment.utc(existingAdmin?.startDate).local();
+      const newAdminStartDate = moment.utc(admin.startDate).local();
+      const newAdminEndDate = moment.utc(admin.endDate).local();
       if (head?.userId === admin.userId) {
-        showDisableModal(head);
+        showConfirm(admin, head);
       } else if (
         existingAdmin?.userId === admin.userId &&
         existingAdmin?.endDate === admin.endDate
       ) {
         showDisable(admin);
-      } else if (
+      }
+      else if (existingAdmin !== undefined && admin.endDate !== undefined &&
+        (existStartDate > newAdminStartDate && existEndDate < newAdminEndDate
+          || existEndDate > newAdminEndDate && existStartDate < newAdminStartDate
+          || existEndDate > newAdminEndDate && newAdminEndDate > existStartDate)) {
+
+        showImpossibleAddManager(existingAdmin);
+      }
+      else if (
         admin.adminType.adminTypeName === "Голова КПР" ||
         admin.adminType.adminTypeName === "Член КПР" ||
         admin.adminType.adminTypeName === Roles.KurinHead ||

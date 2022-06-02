@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Drawer, Button } from "antd";
 import EventCreate from "./EventCreate";
 import ButtonCollapse from "../../../../components/ButtonCollapse/ButtonCollapse";
@@ -15,6 +15,15 @@ const EventCreateDrawer = ({
   onCreate,
 }: Props) => {
   const handleCancel = () => setShowEventCreateDrawer(false);
+  const [validationStartDate, setValidationStartDate] = useState<Date>(
+    new Date()
+  );
+
+  useEffect(() => {
+    if (visibleEventCreateDrawer === true) {
+      setValidationStartDate(new Date());
+    }
+  }, [visibleEventCreateDrawer]);
 
   return (
     <Drawer
@@ -29,6 +38,7 @@ const EventCreateDrawer = ({
       <EventCreate
         onCreate={onCreate}
         setShowEventCreateDrawer={handleCancel}
+        validationStartDate={validationStartDate}
       />
     </Drawer>
   );
