@@ -101,7 +101,7 @@ const PrecautionTable = () => {
   };
 
   const getUserAccesses = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     let result: any;
     precautionApi.getUserAccess(user.nameid).then((response) => {
       result = response;
