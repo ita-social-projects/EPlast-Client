@@ -29,6 +29,7 @@ import { FileWrapper, GoverningBody } from "../../api/decisionsApi";
 import { DocumentWrapper } from "../../models/Documents/DocumentWraper";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 import moment from "moment";
+import { DocumentsStore } from "../../stores/DocumentsStore";
 
 const checkFile = (fileSize: number, fileName: string): boolean => {
   const extension = fileName.split(".").reverse()[0].toLowerCase();
@@ -76,6 +77,8 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = ({ setVisibleModal, onA
     methodicDocumentTypesItems: Array<MethodicDocumentType>(),
   });
   const [form] = Form.useForm();
+
+  const [state, actions] = DocumentsStore();
 
   const handler = {
     normFileEvent: (e: { fileList: any }) => {
@@ -127,6 +130,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = ({ setVisibleModal, onA
         };
         await documentsApi.post(newDocument);
         setVisibleModal(false);
+        console.log(newDocument)
         onAdd();
         form.resetFields();
         setFileData({ FileAsBase64: null, FileName: null });
