@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  Select,
-  DatePicker,
-  Row,
-  Col,
-} from "antd";
+import { Form, Input, Button, Select, DatePicker, Row, Col } from "antd";
 import precautionApi from "../../../api/precautionApi";
 import UserPrecaution from "../Interfaces/UserPrecaution";
 import formclasses from "./Form.module.css";
@@ -25,12 +17,14 @@ import {
   descriptionValidation,
   getOnlyNums,
 } from "../../../models/GllobalValidations/DescriptionValidation";
-import AvailableUser from "../Interfaces/AvailableUser";
+import SuggestedUser from "../Interfaces/SuggestedUser";
+import notificationLogic from "../../../components/Notifications/Notification";
+import { dataCantBeFetched } from "../../../components/Notifications/Messages";
+import { Store } from "antd/lib/form/interface";
 moment.locale("uk-ua");
 
 interface Props {
-  record: number;
-  Precaution: UserPrecaution;
+  oldUserPrecaution: UserPrecaution;
   setShowModal: (showModal: boolean) => void;
   onEdit: (
     id: number,
@@ -48,26 +42,22 @@ interface Props {
 }
 
 const FormEditPrecaution = ({
-  record,
+  oldUserPrecaution,
   setShowModal,
   onEdit,
-  Precaution,
 }: Props) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
-  const [userData, setUserData] = useState<AvailableUser[]>([
-    {
-      id: "",
-      firstName: "",
-      lastName: "",
-      email: "",
-      isInLowerRole: false
-    }
-  ]);
+  const [userData, setUserData] = useState<SuggestedUser[]>(
+    Array<SuggestedUser>()
+  );
   const [distData, setDistData] = useState<Precaution[]>(Array<Precaution>());
   const [loadingUserStatus, setLoadingUserStatus] = useState(false);
-  const [distValue, setDistValue] = useState<any>();
-  const [userValue, setUserValue] = useState<any>();
+  const [loadingPrecautionStatus, setLoadingPrecautionStatus] = useState(false);
+  const [precaution, setPrecaution] = useState<Precaution>(
+    oldUserPrecaution.precaution
+  );
+  const [user, setUser] = useState<any>(oldUserPrecaution.user);
   const dateFormat = "DD.MM.YYYY";
 
   useEffect(() => {
@@ -76,20 +66,40 @@ const FormEditPrecaution = ({
     const fetchData = async () => {
       setDistData([]);
       setUserData([]);
-      precautionApi.getPrecautions().then((response) => {
-        setDistData(response.data);
-      });
+
+      setLoadingPrecautionStatus(true);
+      precautionApi
+        .getPrecautions()
+        .then((response) => {
+          setDistData(response.data);
+          setLoadingPrecautionStatus(false);
+        })
+        .catch(() => {
+          notificationLogic(
+            "error",
+            dataCantBeFetched("пересторог. Спробуйте пізніше")
+          );
+        });
+
       setLoadingUserStatus(true);
-      precautionApi.getUsersForPrecaution().then((response) => {
-        setUserData(response.data);
-      });
-      setLoadingUserStatus(false);
+      precautionApi
+        .getUsersForPrecaution()
+        .then((response) => {
+          setUserData(response.data);
+          setLoadingUserStatus(false);
+        })
+        .catch(() => {
+          notificationLogic(
+            "error",
+            dataCantBeFetched("користувачів. Спробуйте пізніше")
+          );
+        });
     };
     fetchData();
     setLoading(false);
-    setDistValue(Precaution.precaution);
-    setUserValue(Precaution.user);
-  }, [Precaution]);
+    setPrecaution(oldUserPrecaution.precaution);
+    setUser(oldUserPrecaution.user);
+  }, [oldUserPrecaution]);
 
   const backgroundColor = (user: any) => {
     return user.isInLowerRole
@@ -102,29 +112,29 @@ const FormEditPrecaution = ({
     setShowModal(false);
   };
 
-  const distChange = (dist: any) => {
+  const precautionChange = (dist: any) => {
     dist = JSON.parse(dist);
-    setDistValue(dist);
+    setPrecaution(dist);
   };
   const userChange = (user: any) => {
     user = JSON.parse(user);
-    setUserValue(user);
+    setUser(user);
   };
 
-  const handleFinish = async (dist: any) => {
-    const newPrecaution: any = {
-      id: record,
-      PrecautionId: distValue.id,
-      Precaution: distValue,
-      user: userValue,
-      userId: userValue.id,
-      status: dist?.status,
-      date: dist?.date,
-      endDate: Precaution.endDate,
-      isActive: dist?.status === "Скасовано" ? false : true,
-      reporter: dist?.reporter,
-      reason: dist?.reason,
-      number: dist?.number,
+  const handleFinish = async (editedUserPrecaution: any) => {
+    const newPrecaution: UserPrecaution = {
+      id: oldUserPrecaution.id,
+      precautionId: precaution.id,
+      precaution: precaution,
+      user: user,
+      userId: user.id,
+      status: editedUserPrecaution.status,
+      date: editedUserPrecaution.date,
+      endDate: oldUserPrecaution.endDate,
+      isActive: editedUserPrecaution.status === "Скасовано" ? false : true,
+      reporter: editedUserPrecaution.reporter,
+      reason: editedUserPrecaution.reason,
+      number: editedUserPrecaution.number,
     };
 
     await precautionApi.editUserPrecaution(newPrecaution);
@@ -132,7 +142,7 @@ const FormEditPrecaution = ({
     form.resetFields();
     onEdit(
       newPrecaution.id,
-      newPrecaution.Precaution,
+      newPrecaution.precaution,
       newPrecaution.date,
       newPrecaution.endDate,
       newPrecaution.isActive,
@@ -143,6 +153,10 @@ const FormEditPrecaution = ({
       newPrecaution.user,
       newPrecaution.user.id
     );
+  };
+
+  const isDisabledStartDate = (current: any) => {
+    return current && current > moment();
   };
 
   return (
@@ -158,7 +172,7 @@ const FormEditPrecaution = ({
           <Row justify="start" gutter={[12, 0]}>
             <Col md={24} xs={24}>
               <Form.Item
-                initialValue={Precaution.number}
+                initialValue={oldUserPrecaution.number}
                 className={formclasses.formField}
                 label="Номер в реєстрі"
                 labelCol={{ span: 24 }}
@@ -177,7 +191,7 @@ const FormEditPrecaution = ({
                   {
                     validator: async (_: object, value: number) =>
                       value && !isNaN(value) && value > 0
-                        ? value == Precaution.number ||
+                        ? value == oldUserPrecaution.number ||
                           (await precautionApi
                             .checkNumberExisting(value)
                             .then((response) => response.data === false))
@@ -215,7 +229,7 @@ const FormEditPrecaution = ({
                 label="Пересторога"
                 labelCol={{ span: 24 }}
                 name="Precaution"
-                initialValue={Precaution.precaution.name}
+                initialValue={oldUserPrecaution.precaution.name}
                 rules={[
                   {
                     required: true,
@@ -226,7 +240,8 @@ const FormEditPrecaution = ({
                 <Select
                   className={formclasses.selectField}
                   showSearch
-                  onSelect={distChange}
+                  onSelect={precautionChange}
+                  loading={loadingPrecautionStatus}
                   getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
                   {distData?.map((o) => (
@@ -245,9 +260,7 @@ const FormEditPrecaution = ({
                 label="Ім'я"
                 labelCol={{ span: 24 }}
                 name="user"
-                initialValue={
-                  Precaution.user.firstName + " " + Precaution.user.lastName
-                }
+                initialValue={`${oldUserPrecaution.user.firstName} ${oldUserPrecaution.user.lastName}`}
                 rules={[
                   {
                     required: true,
@@ -267,7 +280,7 @@ const FormEditPrecaution = ({
                       key={o.id}
                       value={JSON.stringify(o)}
                       style={backgroundColor(o)}
-                      disabled={o.isInLowerRole}
+                      disabled={!o.isAvailable}
                     >
                       {o.firstName + " " + o.lastName + " (" + o.email + ")"}
                     </Select.Option>
@@ -283,7 +296,7 @@ const FormEditPrecaution = ({
                 label="Подання від"
                 labelCol={{ span: 24 }}
                 name="reporter"
-                initialValue={Precaution.reporter}
+                initialValue={oldUserPrecaution.reporter}
                 rules={descriptionValidation.Reporter}
               >
                 <Input
@@ -301,7 +314,7 @@ const FormEditPrecaution = ({
                 name="date"
                 label="Дата затвердження"
                 labelCol={{ span: 24 }}
-                initialValue={moment.utc(Precaution.date).local()}
+                initialValue={moment.utc(oldUserPrecaution.date).local()}
                 rules={[
                   {
                     required: true,
@@ -327,7 +340,7 @@ const FormEditPrecaution = ({
                 label="Обгрунтування"
                 labelCol={{ span: 24 }}
                 name="reason"
-                initialValue={Precaution.reason}
+                initialValue={oldUserPrecaution.reason}
                 rules={descriptionValidation.Reason}
               >
                 <Input.TextArea
@@ -349,7 +362,7 @@ const FormEditPrecaution = ({
                 label="Статус"
                 labelCol={{ span: 24 }}
                 name="status"
-                initialValue={Precaution.status}
+                initialValue={oldUserPrecaution.status}
                 rules={[
                   {
                     required: true,
@@ -375,28 +388,25 @@ const FormEditPrecaution = ({
               </Form.Item>
             </Col>
           </Row>
-          {Precaution.isActive ? (
-            <Form.Item>
-              <div className={formclasses.cardButton}>
-                <Button
-                  key="back"
-                  onClick={handleCancel}
-                  className={formclasses.buttons}
-                >
-                  Відмінити
-                </Button>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className={formclasses.buttons}
-                >
-                  Зберегти
-                </Button>
-              </div>
-            </Form.Item>
-          ) : (
-            ""
-          )}
+
+          <Form.Item>
+            <div className={formclasses.cardButton}>
+              <Button
+                key="back"
+                onClick={handleCancel}
+                className={formclasses.buttons}
+              >
+                Відмінити
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className={formclasses.buttons}
+              >
+                Зберегти
+              </Button>
+            </div>
+          </Form.Item>
         </Form>
       )}
     </div>
