@@ -20,6 +20,7 @@ import {
 import SuggestedUser from "../Interfaces/SuggestedUser";
 import notificationLogic from "../../../components/Notifications/Notification";
 import { dataCantBeFetched } from "../../../components/Notifications/Messages";
+import { Store } from "antd/lib/form/interface";
 moment.locale("uk-ua");
 
 interface Props {
@@ -120,11 +121,11 @@ const FormEditPrecaution = ({
     setUser(user);
   };
 
-  const handleFinish = async (editedUserPrecaution: UserPrecaution) => {
-    const newPrecaution: any = {
+  const handleFinish = async (editedUserPrecaution: any) => {
+    const newPrecaution: UserPrecaution = {
       id: oldUserPrecaution.id,
-      PrecautionId: precaution.id,
-      Precaution: precaution,
+      precautionId: precaution.id,
+      precaution: precaution,
       user: user,
       userId: user.id,
       status: editedUserPrecaution.status,
@@ -141,7 +142,7 @@ const FormEditPrecaution = ({
     form.resetFields();
     onEdit(
       newPrecaution.id,
-      newPrecaution.Precaution,
+      newPrecaution.precaution,
       newPrecaution.date,
       newPrecaution.endDate,
       newPrecaution.isActive,
