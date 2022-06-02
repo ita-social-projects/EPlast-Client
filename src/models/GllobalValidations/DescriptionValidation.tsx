@@ -182,10 +182,6 @@ export const descriptionValidation = {
       message: incorrectOficeNumber,
     },
     {
-      required: true,
-      message: emptyInput(),
-    },
-    {
       max: 5,
       message: maxLength(5),
     },
