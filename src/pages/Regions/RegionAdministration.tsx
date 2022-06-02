@@ -29,7 +29,7 @@ import RegionAdmin from "../../models/Region/RegionAdmin";
 import extendedTitleTooltip, {
   parameterMaxLength,
 } from "../../components/Tooltip";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 moment.locale("uk-ua");
 
 const adminTypeNameMaxLength = 22;
@@ -75,7 +75,7 @@ const RegionAdministration = () => {
   };
 
   const getUserAccessesForRegion = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await getUserRegionAccess(+id, user.nameid).then((response) => {
       setUserAccesses(response.data);
     });

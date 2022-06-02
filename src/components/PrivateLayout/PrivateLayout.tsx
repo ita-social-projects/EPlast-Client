@@ -7,17 +7,18 @@ import {
   RollbackOutlined,
   AlignLeftOutlined,
   QuestionOutlined,
-} from "@ant-design/icons";
-import {
+
   SolutionOutlined,
   SnippetsOutlined,
   PieChartOutlined,
   FileTextOutlined,
   BarChartOutlined,
+  InsertRowAboveOutlined,
 } from "@ant-design/icons";
-import classes from "./PrivateLayout.module.css";
+
 import jwt from "jwt-decode";
-import AuthStore from "../../stores/AuthStore";
+import classes from "./PrivateLayout.module.css";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import { Roles } from "../../models/Roles/Roles";
 import useOnClickOutside from "./useOneClickOutside";
 import { User } from "../../pages/userPage/Interface/Interface";
@@ -64,7 +65,7 @@ const PrivateLayout = ({ children }: any) => {
   };
 
   const getUserAccessesForMenu = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await UserApi.getUserMenuAccess(user.nameid).then((response) => {
       setUserAccesses(response.data);
     });
@@ -72,7 +73,7 @@ const PrivateLayout = ({ children }: any) => {
 
   const [imageBase64, setImageBase64] = useState<string>();
   const fetchData = async () => {
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     getUserAccessesForMenu();
     if (token == null) {
       const str = window.location.pathname;
@@ -152,6 +153,21 @@ const PrivateLayout = ({ children }: any) => {
                 title=""
               >
                 Рішення
+              </Menu.Item>
+            ) : (
+              <> </>
+            )}
+            {userAccesses["announcements"] ? (
+              <Menu.Item
+                key="announcements"
+                icon={<InsertRowAboveOutlined />}
+                onClick={() => {
+                  handleClickAway();
+                  history.push("/announcements/1");
+                }}
+                title=""
+              >
+                Дошка оголошень
               </Menu.Item>
             ) : (
               <> </>
