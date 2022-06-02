@@ -1,26 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Form, Button, Drawer, Upload, Modal } from "antd";
-import ReactQuill from "react-quill";
+import { Button, Form, Modal, Upload } from "antd";
 import { RcFile } from "antd/lib/upload";
 import { UploadFile } from "antd/lib/upload/interface";
+import React, { useEffect, useState } from "react";
+import ReactQuill from "react-quill";
 import { PlusOutlined } from "@ant-design/icons";
+import notificationLogic from "../../../components/Notifications/Notification";
+import { getAnnouncementsById } from "../../../api/announcementsApi";
 import formclasses from "./Form.module.css";
-import { getSectorAnnouncementsById } from "../../../../api/governingBodySectorsApi";
-import { descriptionValidation } from "../../../../models/GllobalValidations/DescriptionValidation";
-import notificationLogic from "../../../../components/Notifications/Notification";
-import { possibleFileExtensions } from "../../../../components/Notifications/Messages";
+import { possibleFileExtensions } from "../../../components/Notifications/Messages";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { AnnouncementsTableStore } from "../../../stores/AnnouncementsStore/store";
+import ButtonCollapse from "../../../components/ButtonCollapse/ButtonCollapse";
 
 type FormEditAnnouncementProps = {
-  visibleModal: boolean;
-  id: number;
   setVisibleModal: (visibleModal: boolean) => void;
-  onEdit: (
-    id: number,
-    title: string,
-    text: string,
-    images: string[],
-    isPined: boolean
-  ) => void;
 };
 
 const getBase64 = (img: Blob, callback: Function): any => {
@@ -29,23 +22,22 @@ const getBase64 = (img: Blob, callback: Function): any => {
   reader.addEventListener("load", () => callback(reader.result));
 };
 
-const EditAnnouncementModal = ({
-  visibleModal,
-  setVisibleModal,
-  onEdit,
-  id,
-}: FormEditAnnouncementProps) => {
+function getUid() {
+  return new Date().getTime();
+}
+
+const FormEditAnnouncement: React.FC<FormEditAnnouncementProps> = (
+  props: any
+) => {
+  const [state, actions] = AnnouncementsTableStore();
   const [form] = Form.useForm();
   const [text, setText] = useState<string>("");
   const [title, setTitle] = useState<string>("");
+
   const [uploadImages, setUploadImages] = useState<any[]>([]);
   const [imagesUrl, setImagesUrl] = useState<string[]>([]);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-
-  function getUid() {
-    return new Date().getTime();
-  }
 
   const getPhotos = (Images: any[]) => {
     setImagesUrl([]);
@@ -63,16 +55,16 @@ const EditAnnouncementModal = ({
 
   const getAnnouncement = async (annId: number) => {
     setUploadImages([]);
-    const response = await getSectorAnnouncementsById(annId);
+    const response = await getAnnouncementsById(annId);
     form.setFieldsValue({ title: response.data.title });
     form.setFieldsValue({ text: response.data.text });
     let images: any = [];
-    response.data.images.map((image: any) => {
+    response.data.images.map((image: any, ind: number) => {
       images = [
         ...images,
         {
           url: image.imageBase64,
-          uid: getUid(),
+          uid: getUid() + ind,
           type: `image/${image.imageBase64.substring(
             image.imageBase64.indexOf(".") + 1,
             image.imageBase64.indexOf(";")
@@ -87,11 +79,6 @@ const EditAnnouncementModal = ({
     setText(response.data.text);
   };
 
-  const handleCancel = () => {
-    setVisibleModal(false);
-    getAnnouncement(id);
-  };
-
   const checkFile = (fileName: string) => {
     const extension = fileName.split(".").reverse()[0].toLowerCase();
     const isCorrectExtension =
@@ -102,6 +89,15 @@ const EditAnnouncementModal = ({
       notificationLogic("error", possibleFileExtensions("png, jpg, jpeg"));
     }
     return isCorrectExtension;
+  };
+
+  const handleCancel = () => {
+    props.setVisibleModal(false);
+    getAnnouncement(state.selectedObjectId);
+  };
+
+  const handleClose = () => {
+    props.setVisibleModal(false);
   };
 
   const handleUpload = (images: any) => {
@@ -122,10 +118,18 @@ const EditAnnouncementModal = ({
     getPhotos(images.fileList);
   };
 
-  const handleSubmit = (values: any) => {
-    setVisibleModal(false);
+  const handleSubmit = async (values: any) => {
+    props.setVisibleModal(false);
     form.resetFields();
-    onEdit(id, values.title, values.text, imagesUrl, values.isPined);
+    await actions.editAnnouncement(
+      state.selectedObjectId,
+      values.title,
+      values.text,
+      imagesUrl,
+      values.isPined
+    );
+    await actions.getAnnouncements();
+    notificationLogic("success", "Оголошення зміненно");
     setText(values.text);
     setTitle(values.title);
   };
@@ -142,18 +146,12 @@ const EditAnnouncementModal = ({
   };
 
   useEffect(() => {
-    getAnnouncement(id);
-  }, [id]);
+    getAnnouncement(state.selectedObjectId);
+  }, [state.selectedObjectId]);
 
   return (
-    <Drawer
-      title="Редагувати оголошення"
-      placement="right"
-      width="auto"
-      visible={visibleModal}
-      onClose={handleCancel}
-      footer={null}
-    >
+    <>
+      <ButtonCollapse handleClose={handleClose} />
       <Form
         name="basic"
         onFinish={handleSubmit}
@@ -171,6 +169,7 @@ const EditAnnouncementModal = ({
         >
           <ReactQuill theme="snow" placeholder="Введіть текст..." />
         </Form.Item>
+
         <Form.Item
           className={formclasses.formField}
           label="Текст оголошення"
@@ -205,6 +204,7 @@ const EditAnnouncementModal = ({
         >
           <img alt="example" style={{ width: "100%" }} src={previewImage} />
         </Modal>
+
         <Form.Item>
           <div className={formclasses.cardButton}>
             <Button
@@ -224,8 +224,8 @@ const EditAnnouncementModal = ({
           </div>
         </Form.Item>
       </Form>
-    </Drawer>
+    </>
   );
 };
 
-export default EditAnnouncementModal;
+export default FormEditAnnouncement;

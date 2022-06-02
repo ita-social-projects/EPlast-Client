@@ -183,7 +183,9 @@ const Sector = () => {
     return result;
   };
   const newAnnouncementNotification = async () => {
-    const usersId = ((await getUsers()).data as ShortUserInfo[]).map((x) => x.id);
+    const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
+      (x) => x.id
+    );
     await NotificationBoxApi.createNotifications(
       usersId,
       "Додане нове оголошення.",
@@ -259,7 +261,7 @@ const Sector = () => {
         title: (
           <div className={classes.announcementDate}>
             {response.data.user.firstName} {response.data.user.lastName}
-            <div>{response.data.date.toString().substring(0, 10)}</div>
+            <div>{moment(response.data.date).format("DD.MM.YYYY")}</div>
           </div>
         ),
         content: (
@@ -484,7 +486,7 @@ const Sector = () => {
                         >
                           <List.Item.Meta
                             title={<Markup content={item.title} />}
-                            description={item.date.toString().substring(0, 10)}
+                            description={moment(item.date).format("DD.MM.YYYY")}
                           />
                         </List.Item>
                       )}
