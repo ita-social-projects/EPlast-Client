@@ -31,11 +31,11 @@ const columns = [
     },
   },
   {
-    title: "Рішення для",
+    title: "Тема",
     dataIndex: "decisionTarget",
   },
   {
-    title: "Рішення",
+    title: "Текст рішення",
     dataIndex: "description",
     render: (description: any) => (
       <Tooltip
