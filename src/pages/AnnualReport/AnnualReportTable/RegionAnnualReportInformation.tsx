@@ -13,7 +13,7 @@ import {
 } from "../../../components/Notifications/Messages";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import AnnualReportMenu from "../AnnualReportMenu";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import StatusStamp from "../AnnualReportStatus";
 import { Roles } from "../../../models/Roles/Roles";
@@ -51,7 +51,7 @@ const RegionAnnualReportInformation = () => {
   const checkAccessToManage = async () => {
     setIsLoading(true);
     try {
-      let token = AuthStore.getToken() as string;
+      let token = AuthLocalStorage.getToken() as string;
       let roles = userApi.getActiveUserRoles();
       setIsAdmin(roles.includes(Roles.Admin));
       setIsRegionAdmin(roles.includes(Roles.OkrugaHead));

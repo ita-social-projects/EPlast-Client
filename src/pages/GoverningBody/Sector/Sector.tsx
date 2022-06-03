@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import {
@@ -26,7 +27,6 @@ import jwt from "jwt-decode";
 import moment from "moment";
 import Title from "antd/lib/typography/Title";
 import { Markup } from "interweave";
-import InfiniteScroll from "react-infinite-scroll-component";
 import {
   getSectorById,
   getSectorLogo,
@@ -34,7 +34,6 @@ import {
   removeSector,
   getSectorAnnouncementsById,
   addSectorAnnouncement,
-  getSectorAnnouncementsByPage,
 } from "../../../api/governingBodySectorsApi";
 import "../GoverningBody/GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
@@ -45,7 +44,7 @@ import notificationLogic from "../../../components/Notifications/Notification";
 import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
 import userApi from "../../../api/UserApi";
 import SectorDocument from "../../../models/GoverningBody/Sector/SectorDocument";
@@ -60,13 +59,12 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../Announcement/PicturesWallModal";
-import { addAnnouncement } from "../../../api/governingBodiesApi";
 
 const classes = require("../Announcement/Announcement.module.css");
 
 const Sector = () => {
   const history = useHistory();
-  const { governingBodyId, sectorId } = useParams();
+  const { governingBodyId, sectorId }: any = useParams();
   const { url } = useRouteMatch();
   const [loading, setLoading] = useState(false);
   const [sector, setSector] = useState<SectorProfile>(new SectorProfile());
@@ -91,9 +89,6 @@ const Sector = () => {
   >([]);
   const [announcementsCount, setAnnouncementsCount] = useState<number>(0);
   const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
-  const [listLoading, setListLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
 
   const deleteSector = async () => {
     await removeSector(sector.id);
@@ -143,33 +138,13 @@ const Sector = () => {
   }
 
   const getUserAccesses = async () => {
-    const user: any = jwt(AuthStore.getToken() as string);
+    const user: any = jwt(AuthLocalStorage.getToken() as string);
     let result: any;
     await getUserAccess(user.nameid).then((response) => {
       result = response;
       setUserAccesses(response.data);
     });
     return result;
-  };
-
-  const loadMoreData = async () => {
-    if (listLoading) {
-      return;
-    }
-    try {
-      setListLoading(true);
-      const response = await getSectorAnnouncementsByPage(
-        page,
-        pageSize,
-        +sectorId
-      );
-      for (let i = 0; i < response.data.item2; ++i) {
-        setAnnouncements((old) => [...old, response.data.item1[i]]);
-      }
-    } finally {
-      setListLoading(false);
-      setPage(page + 1);
-    }
   };
 
   const getSector = async () => {
@@ -192,7 +167,7 @@ const Sector = () => {
       setDocuments(sectorViewModel.documents);
       setDocumentsCount(response.data.documentsCount);
       setAnnouncementsCount(response.data.announcementsCount);
-      loadMoreData();
+      setAnnouncements(sectorViewModel.announcements);
     } finally {
       setLoading(false);
     }
@@ -207,19 +182,23 @@ const Sector = () => {
     );
     return result;
   };
-  const newAnnouncementNotification = async (
-    governigBodyId: number,
-    sectorId?: number
-  ) => {
+  const newAnnouncementNotification = async () => {
     const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
       (x) => x.id
+    );
+    await NotificationBoxApi.createNotifications(
+      usersId,
+      "Додане нове оголошення.",
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/sector/announcements/${governingBodyId}/${sectorId}/1`,
+      `Переглянути`
     );
     if (sectorId) {
       await NotificationBoxApi.createNotifications(
         usersId,
         "Додане нове оголошення.",
         NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/sector/announcements/${governigBodyId}/${sectorId}/1`,
+        `/sector/announcements/${governingBodyId}/${sectorId}/1`,
         `Переглянути`
       );
     } else {
@@ -227,7 +206,7 @@ const Sector = () => {
         usersId,
         "Додане нове оголошення.",
         NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/governingBodies/announcements/${governigBodyId}/1`,
+        `/governingBodies/announcements/${governingBodyId}/1`,
         `Переглянути`
       );
     }
@@ -237,38 +216,31 @@ const Sector = () => {
     title: string,
     text: string,
     images: string[],
-    gvbId: number,
-    secId: number
+    isPined: boolean
   ) => {
-    try {
-      setVisibleAddModal(false);
-      if (secId == sectorId) {
-        const announcementId = (
-          await addSectorAnnouncement(title, text, images, +secId)
-        ).data;
-        const newAnnouncement: GoverningBodyAnnouncement = (
-          await getSectorAnnouncementsById(announcementId)
-        ).data;
-        setAnnouncements((old: GoverningBodyAnnouncement[]) => [
-          newAnnouncement,
-          ...old,
-        ]);
-        newAnnouncementNotification(gvbId, secId);
-      } else if (secId) {
-        await addSectorAnnouncement(title, text, images, +secId);
-        newAnnouncementNotification(gvbId, secId);
-      } else {
-        await addAnnouncement(title, text, images, +gvbId);
-        newAnnouncementNotification(gvbId);
-      }
-      setVisibleAddModal(false);
-      notificationLogic("success", "Оголошення опубліковано");
-      return true;
-    } catch {
-      notificationLogic("error", "Поля Тема і Текст оголошення обов'язкові");
-      setVisibleAddModal(false);
-      return false;
-    }
+    setVisibleAddModal(false);
+    setLoading(true);
+    newAnnouncementNotification();
+    const announcementId = (
+      await addSectorAnnouncement(
+        title,
+        text,
+        images,
+        isPined,
+        governingBodyId,
+        sectorId
+      )
+    ).data;
+    const newAnnouncement: GoverningBodyAnnouncement = (
+      await getSectorAnnouncementsById(announcementId)
+    ).data;
+    setAnnouncements((old: GoverningBodyAnnouncement[]) => [
+      newAnnouncement,
+      ...old,
+    ]);
+    setLoading(false);
+    notificationLogic("success", "Оголошення опубліковано");
+    getSector();
   };
 
   const handleAdminAdd = () => {
@@ -283,12 +255,13 @@ const Sector = () => {
           announcementId: image.id,
           fileName: image.imageBase64,
         });
+        return image;
       });
       return Modal.info({
         title: (
           <div className={classes.announcementDate}>
             {response.data.user.firstName} {response.data.user.lastName}
-            <div>{response.data.date.toString().substring(0, 10)}</div>
+            <div>{moment(response.data.date).format("DD.MM.YYYY")}</div>
           </div>
         ),
         content: (
@@ -470,7 +443,24 @@ const Sector = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Оголошення</Title>
+            <Title level={4}>
+              Оголошення
+              <a
+                onClick={() =>
+                  history.push(
+                    `/sector/announcements/${governingBodyId}/${sectorId}/1`
+                  )
+                }
+              >
+                {announcementsCount !== 0 &&
+                userAccesses["ViewAnnouncements"] ? (
+                  <Badge
+                    count={announcementsCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  />
+                ) : null}
+              </a>
+            </Title>
             <Row
               className="governingBodyItems"
               justify="center"
@@ -483,34 +473,24 @@ const Sector = () => {
                     style={{
                       width: "100%",
                       height: 400,
-                      overflow: "auto",
+                      overflow: "hidden",
                     }}
                   >
-                    <InfiniteScroll
-                      dataLength={announcements.length}
-                      next={loadMoreData}
-                      hasMore
-                      loader={<></>}
-                      scrollableTarget="scrollableDiv"
-                    >
-                      <List
-                        dataSource={announcements}
-                        renderItem={(item) => (
-                          <List.Item
-                            style={{ cursor: "pointer" }}
-                            key={item.id}
-                            onClick={() => showFullAnnouncement(item.id)}
-                          >
-                            <List.Item.Meta
-                              title={<Markup content={item.title} />}
-                              description={item.date
-                                .toString()
-                                .substring(0, 10)}
-                            />
-                          </List.Item>
-                        )}
-                      />
-                    </InfiniteScroll>
+                    <List
+                      dataSource={announcements}
+                      renderItem={(item) => (
+                        <List.Item
+                          style={{ cursor: "pointer" }}
+                          key={item.id}
+                          onClick={() => showFullAnnouncement(item.id)}
+                        >
+                          <List.Item.Meta
+                            title={<Markup content={item.title} />}
+                            description={moment(item.date).format("DD.MM.YYYY")}
+                          />
+                        </List.Item>
+                      )}
+                    />
                   </div>
                 ) : (
                   <Col>

@@ -191,16 +191,6 @@ const AddAdministratorModal = (props: Props) => {
   const checkAdminId = async (admin: CityAdmin) => {
     if (admin.id === 0) {
       await addCityAdmin(admin);
-    } else if (
-      admin.adminType.adminTypeName === "Голова СПР" ||
-      admin.adminType.adminTypeName === "Член СПР"
-    ) {
-      const check = await getCheckPlastMember(admin.userId);
-      if (check.data) {
-        await editCityAdmin(admin);
-      } else {
-        showPlastMemberDisable(admin);
-      }
     } else {
       await editCityAdmin(admin);
     }
@@ -208,7 +198,6 @@ const AddAdministratorModal = (props: Props) => {
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
-
     let admin: CityAdmin = {
       id: props.admin.id,
       adminType: {
@@ -226,10 +215,9 @@ const AddAdministratorModal = (props: Props) => {
         (x) => x.adminType.adminTypeName === Roles.CityHead
       );
       if (admin !== undefined) {
-        const adminToUpper =
+        admin.adminType.adminTypeName =
           admin.adminType.adminTypeName[0].toUpperCase() +
           admin.adminType.adminTypeName.slice(1);
-        admin.adminType.adminTypeName = adminToUpper;
       }
       const existingAdmin = (admins as CityAdmin[]).find(
         (x) => x.adminType.adminTypeName === admin.adminType.adminTypeName
@@ -243,11 +231,13 @@ const AddAdministratorModal = (props: Props) => {
         showDisable(admin);
       } else if (
         admin.adminType.adminTypeName === "Голова СПР" ||
-        admin.adminType.adminTypeName === "Член СПР"
+        admin.adminType.adminTypeName === "Член СПР" ||
+        admin.adminType.adminTypeName === Roles.CityHead ||
+        admin.adminType.adminTypeName === Roles.CityHeadDeputy
       ) {
         const check = await getCheckPlastMember(admin.userId);
         if (check.data) {
-          await addCityAdmin(admin);
+          await checkAdminId(admin);
         } else {
           showPlastMemberDisable(admin);
         }

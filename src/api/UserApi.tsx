@@ -1,6 +1,6 @@
 import axios from "axios";
 import BASE_URL from "../config";
-import AuthStore from "../stores/AuthStore";
+import AuthLocalStorage from "../AuthLocalStorage";
 import CityDefaultLogo from "../assets/images/default_city_image.jpg";
 import jwt_decode from "jwt-decode";
 import api from "./api";
@@ -95,7 +95,7 @@ const updateProfileImage = async (userid: string, imageName: string) => {
 };
 
 const getActiveUserRoles = (): string[] => {
-  let jwt = AuthStore.getToken() as string;
+  let jwt = AuthLocalStorage.getToken() as string;
   let decodedJwt = jwt_decode(jwt) as any;
   let roles = [].concat(
     decodedJwt["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
@@ -105,14 +105,14 @@ const getActiveUserRoles = (): string[] => {
 };
 
 const getActiveUserId = () => {
-  const token = AuthStore.getToken() as string;
+  const token = AuthLocalStorage.getToken() as string;
   const user: any = jwt_decode(token);
 
   return user.nameid as string;
 };
 
 const getActiveUserProfile = async () => {
-  let jwt = AuthStore.getToken() as string;
+  let jwt = AuthLocalStorage.getToken() as string;
   let decodedJwt = jwt_decode(jwt) as any;
 
   const res = await getById(decodedJwt.nameid);

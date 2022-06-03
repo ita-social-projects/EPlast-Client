@@ -9,7 +9,7 @@ import Spinner from "../../../Spinner/Spinner";
 import { Link, useHistory, useParams } from "react-router-dom";
 import AnnualReportMenu from "../../AnnualReportMenu";
 import StatusStamp from "../../AnnualReportStatus";
-import AuthStore from "../../../../stores/AuthStore";
+import AuthLocalStorage from "../../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import {
   successfulCancelAction,
@@ -57,7 +57,7 @@ const AnnualReportInformation = () => {
   const checkAccessToManage = async () => {
     setIsLoading(true);
     try {
-      let token = AuthStore.getToken() as string;
+      let token = AuthLocalStorage.getToken() as string;
       let roles = UserApi.getActiveUserRoles();
       setIsAdmin(roles.includes(Roles.Admin));
       setIsCityAdmin(roles.includes(Roles.CityHead));

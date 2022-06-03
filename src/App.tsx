@@ -83,6 +83,7 @@ import UserRenewalTable from "./pages/UserRenewal/UserRenewalTable/UserRenewalTa
 import TermsOfUse from "./pages/Terms/TermsOfUse";
 import TermsEdit from "./pages/Terms/TermsEdit";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
+import AnnouncementsTable from "./pages/AnnouncementsTable/AnnouncementsTable";
 
 const App: FC = () => (
   <div className="App">
@@ -114,6 +115,12 @@ const App: FC = () => (
             layout={PrivateLayout}
             path="/decisions"
             component={DecisionTable}
+          />
+           <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/announcements/:page"
+            component={AnnouncementsTable}
           />
           <RouteWithLayout
             layout={PrivateLayout}
