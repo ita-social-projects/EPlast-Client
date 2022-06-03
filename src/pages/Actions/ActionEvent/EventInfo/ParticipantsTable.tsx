@@ -153,17 +153,10 @@ const ParticipantsTable = ({
     });
   }
 
-  // заглушка на зміну присутності
   const changePresentofParticipant = async (participantId: number) => {
-    // await додати запит апі на бек щоб змінити статус на протилежний
-    await eventsApi
-      .changePresentParicipant(participantId)
-      .then(() => setRender(true))
-      .catch(() => {
-        showError();
-      });
-
-    // setRender(true);
+    await eventsApi.changePresentParicipant(participantId).catch(() => {
+      showError();
+    });
   };
 
   const columns: ColumnsType<EventParticipant> = [
@@ -197,97 +190,97 @@ const ParticipantsTable = ({
         </>
       ),
     },
-    {
-      // зробити це поле доступним тільки для адміністраторів  події (або перемістити тільки для доступу адміністраторів)
-      title: "Відвідав подію",
-      dataIndex: "wasPresent",
-      key: "eventParticipant",
-      align: "center",
-      render: (wasPresent: boolean, record: EventParticipant) => (
-        <>
-          <Checkbox
-            onChange={() => changePresentofParticipant(record.participantId)} // зміна стану ( що треба передавати)
-            defaultChecked={wasPresent} // мабуть рендерити це віконечко тільки тоді коли подія почалась ?
-            // disabled={userAccesses["ApproveParticipant"] ? false : true} // дивитись від того чи може редагувати користувач це
-          />
-        </>
-      ),
-    },
   ];
 
   if (userAccesses["ApproveParticipant"] && !isEventFinished) {
-    columns.push({
-      title: "Змінити статус",
-      dataIndex: "changeStatus",
-      key: "changeStatus",
-      render: (text, record) => (
-        <Space size="small">
-          {record.status != participantStatuses.Approved ? (
-            <Button
-              className="approveButton"
-              shape="round"
-              icon={<UserAddOutlined className="iconParticipant" />}
-              size="small"
-              onClick={() => {
-                changeStatusToApproved(record.participantId, record.userId);
-              }}
+    columns.push(
+      {
+        title: "Відвідав подію",
+        dataIndex: "wasPresent",
+        key: "eventParticipant",
+        align: "center",
+        render: (wasPresent: boolean, record: EventParticipant) => (
+          <>
+            <Checkbox
+              onChange={() => changePresentofParticipant(record.participantId)}
+              defaultChecked={wasPresent}
             />
-          ) : (
-            <Button
-              className="disabledButton"
-              shape="round"
-              icon={<UserAddOutlined className="iconParticipant" />}
-              size="small"
-              disabled={true}
-            />
-          )}
-          <Divider type="vertical" />
-          {record.status != participantStatuses.Undetermined ? (
-            <Button
-              className="underReviewButton"
-              shape="round"
-              icon={<QuestionOutlined className="iconParticipant" />}
-              size="small"
-              onClick={() => {
-                changeStatusToUnderReviewed(
-                  record.participantId,
-                  record.userId
-                );
-              }}
-            />
-          ) : (
-            <Button
-              className="disabledButton"
-              shape="round"
-              icon={<QuestionOutlined className="iconParticipant" />}
-              size="small"
-              disabled={true}
-            />
-          )}
-          <Divider type="vertical" />
-          {record.status != participantStatuses.Rejected ? (
-            <Button
-              className="banButton"
-              shape="round"
-              icon={<UserDeleteOutlined className="iconParticipant" />}
-              size="small"
-              onClick={() => {
-                showRejectModal(record.participantId, record.userId);
-                setRender(true);
-              }}
-            />
-          ) : (
-            <Button
-              className="disabledButton"
-              shape="round"
-              icon={<UserDeleteOutlined className="iconParticipant" />}
-              size="small"
-              disabled={true}
-            />
-          )}
-        </Space>
-      ),
-    });
+          </>
+        ),
+      },
+      {
+        title: "Змінити статус",
+        dataIndex: "changeStatus",
+        key: "changeStatus",
+        render: (text, record) => (
+          <Space size="small">
+            {record.status != participantStatuses.Approved ? (
+              <Button
+                className="approveButton"
+                shape="round"
+                icon={<UserAddOutlined className="iconParticipant" />}
+                size="small"
+                onClick={() => {
+                  changeStatusToApproved(record.participantId, record.userId);
+                }}
+              />
+            ) : (
+              <Button
+                className="disabledButton"
+                shape="round"
+                icon={<UserAddOutlined className="iconParticipant" />}
+                size="small"
+                disabled={true}
+              />
+            )}
+            <Divider type="vertical" />
+            {record.status != participantStatuses.Undetermined ? (
+              <Button
+                className="underReviewButton"
+                shape="round"
+                icon={<QuestionOutlined className="iconParticipant" />}
+                size="small"
+                onClick={() => {
+                  changeStatusToUnderReviewed(
+                    record.participantId,
+                    record.userId
+                  );
+                }}
+              />
+            ) : (
+              <Button
+                className="disabledButton"
+                shape="round"
+                icon={<QuestionOutlined className="iconParticipant" />}
+                size="small"
+                disabled={true}
+              />
+            )}
+            <Divider type="vertical" />
+            {record.status != participantStatuses.Rejected ? (
+              <Button
+                className="banButton"
+                shape="round"
+                icon={<UserDeleteOutlined className="iconParticipant" />}
+                size="small"
+                onClick={() => {
+                  showRejectModal(record.participantId, record.userId);
+                  setRender(true);
+                }}
+              />
+            ) : (
+              <Button
+                className="disabledButton"
+                shape="round"
+                icon={<UserDeleteOutlined className="iconParticipant" />}
+                size="small"
+                disabled={true}
+              />
+            )}
+          </Space>
+        ),
+      }
+    );
   }
 
   return <Table columns={columns} dataSource={Participants} />;

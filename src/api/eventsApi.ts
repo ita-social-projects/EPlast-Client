@@ -113,7 +113,7 @@ const getEventStatusId = async (eventStatus: string) => {
 };
 
 const changePresentParicipant = async (participantId: number) => {
-  const response = await Api.put(`Events`, participantId); // переробити на патч
+  const response = await Api.get(`Events/participant/${participantId}`);
   return response;
 };
 
