@@ -10,6 +10,7 @@ export default class GoverningBodyAdmin {
   startDate?: string;
   endDate?: string;
   workEmail?: string;
+  governingBodyAdminRole?: string
 
   constructor() {
     this.id = 0;
@@ -20,5 +21,6 @@ export default class GoverningBodyAdmin {
     this.startDate = undefined;
     this.endDate = undefined;
     this.workEmail = undefined;
+    this.governingBodyAdminRole = undefined;
   }
 }
