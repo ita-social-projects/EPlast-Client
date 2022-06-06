@@ -11,6 +11,7 @@ import { possibleFileExtensions } from "../../../components/Notifications/Messag
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 import { AnnouncementsTableStore } from "../../../stores/AnnouncementsStore/store";
 import ButtonCollapse from "../../../components/ButtonCollapse/ButtonCollapse";
+import "../../../components/Quill/FormWithQuill.css";
 
 type FormEditAnnouncementProps = {
   setVisibleModal: (visibleModal: boolean) => void;
