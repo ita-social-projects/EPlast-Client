@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Skeleton } from "antd";
-import { RollbackOutlined } from "@ant-design/icons";
+import { Avatar, Button, Card, Layout, Modal, Skeleton } from "antd";
+import {
+  CloseOutlined,
+  ExclamationCircleOutlined,
+  RollbackOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import "../Regions/Region.less";
 import moment from "moment";
 import "moment/locale/uk";
@@ -9,12 +14,14 @@ import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
 import {
   getGoverningBodiesAdmins,
+  removeMainAdministrator,
 } from "../../api/governingBodiesApi";
 import extendedTitleTooltip, {
   parameterMaxLength,
 } from "../../components/Tooltip";
 import GoverningBodyAdmin from "../../models/GoverningBody/GoverningBodyAdmin";
 import userApi from "../../api/UserApi";
+import EditAdministratorModal from "./EditAdministratorModal";
 
 moment.locale("uk-ua");
 
@@ -28,6 +35,9 @@ const RegionBoardMainAdministration = () => {
   const [visibleModal, setVisibleModal] = useState(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedAdmin, setSelectedAdmin] = useState<GoverningBodyAdmin>(
+    new GoverningBodyAdmin()
+  );
 
   const setPhotos = async (admins: GoverningBodyAdmin[]) => {
     for (let i of admins) {
@@ -39,7 +49,6 @@ const RegionBoardMainAdministration = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      debugger
       const responseAdmins = (await getGoverningBodiesAdmins()).data;
       setGoverningBodiesAdmins(responseAdmins);
       setPhotosLoading(true);
@@ -49,8 +58,28 @@ const RegionBoardMainAdministration = () => {
     }
   };
 
-  const handleOk = () => {
-    setVisibleModal(false);
+  const removeMember = async (admin: GoverningBodyAdmin) => {
+    await removeMainAdministrator(admin.userId);
+    fetchData();
+  };
+
+  function seeDeleteModal(admin: GoverningBodyAdmin) {
+    return Modal.confirm({
+      title:
+        "Ви впевнені, що хочете видалити даного користувача із адміністрації Крайового Проводу?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Так, видалити",
+      okType: "primary",
+      cancelText: "Скасувати",
+      maskClosable: true,
+      onOk() {
+        removeMember(admin);
+      },
+    });
+  }
+  const showModal = (admin: GoverningBodyAdmin) => {
+    setSelectedAdmin(admin);
+    setVisibleModal(true);
   };
 
   useEffect(() => {
@@ -71,9 +100,15 @@ const RegionBoardMainAdministration = () => {
                 className="detailsCard"
                 title={extendedTitleTooltip(
                   adminTypeNameMaxLength,
-                  `${admin.governingBodyAdminRole}`
+                  admin.governingBodyAdminRole ? 
+                  `${admin.governingBodyAdminRole}` :
+                  `${admin.adminType.adminTypeName}`
                 )}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
+                actions={[
+                  <SettingOutlined onClick={() => showModal(admin)} />,
+                  <CloseOutlined onClick={() => seeDeleteModal(admin)} />,
+                ]}
               >
                 <div className="cityMember">
                   <div
@@ -106,15 +141,18 @@ const RegionBoardMainAdministration = () => {
         <Button
           className="backButton"
           icon={<RollbackOutlined />}
-          size={"large"}
+          size="large"
           onClick={() => history.goBack()}
           type="primary"
         >
           Назад
         </Button>
       </div>
-
-      
+      <EditAdministratorModal
+        visibleModal={visibleModal}
+        setVisibleModal={setVisibleModal}
+        admin={selectedAdmin}
+      />
     </Layout.Content>
   );
 };
