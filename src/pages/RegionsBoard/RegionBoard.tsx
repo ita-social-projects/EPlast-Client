@@ -360,7 +360,7 @@ const RegionBoard = () => {
             <Title level={4}>
               Адміністрація Крайового Проводу{" "}
               <a
-                onClick={() => history.push(`/regionsBoard/administrations/1`)}
+                onClick={() => history.push(`/regionsBoard/administrations`)}
               >
                 {adminsCount !== 0 ? (
                   <Badge
@@ -403,7 +403,7 @@ const RegionBoard = () => {
               <Button
                 type="primary"
                 className="cityInfoButton"
-                onClick={() => history.push(`/regionsBoard/administrations/1`)}
+                onClick={() => history.push(`/regionsBoard/administrations`)}
               >
                 Більше
               </Button>

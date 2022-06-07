@@ -261,6 +261,13 @@ export const getAllUserId = async () => {
   });
 };
 
+
+export const getGoverningBodiesAdmins = async () => {
+  return await api.get("GoverningBodies/GoverningBodyAdmins").catch((error) => {
+    throw new Error(error);
+  });
+};
+
 export const getGoverningBodyAdminsByPage = async (
   pageNumber: number,
   pageSize: number,
