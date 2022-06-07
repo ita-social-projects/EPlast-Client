@@ -18,6 +18,7 @@ import {
   FileDoneOutlined,
   LockOutlined,
 } from "@ant-design/icons";
+import jwt from "jwt-decode";
 import { GetRegionsBoard } from "../../api/regionsApi";
 import { getUserAccess } from "../../api/regionsBoardApi";
 import "../Regions/Region.less";
@@ -36,18 +37,21 @@ import decisionsApi, {
 } from "../../api/decisionsApi";
 import {
   getGoverningBodiesList,
+  getGoverningBodyAdminsByPage,
   getGoverningBodyLogo,
 } from "../../api/governingBodiesApi";
 import AddDecisionModal from "../DecisionTable/AddDecisionModal";
 import notificationLogic from "../../components/Notifications/Notification";
 import AuthLocalStorage from "../../AuthLocalStorage";
-import jwt from "jwt-decode";
+import userApi from "../../api/UserApi";
+import GoverningBodyAdmin from "../../models/GoverningBody/GoverningBodyAdmin";
 
 const RegionBoard = () => {
   const history = useHistory();
   const [visibleModal, setVisibleModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [photoStatus, setPhotoStatus] = useState(true);
+  const [photosLoading, setPhotosLoading] = useState(true);
   const [document, setDocument] = useState<any>({
     ID: "",
     SubmitDate: "",
@@ -93,7 +97,10 @@ const RegionBoard = () => {
     },
   ]);
 
+  const [admins, setAdmins] = useState<GoverningBodyAdmin[]>([]);
+
   const [orgsCount, setOrgsCount] = useState<number>();
+  const [adminsCount, setAdminsCount] = useState<number>(0);
   const [decisionsCount, setDecisionsCount] = useState<number>();
   const [decisions, setDecisions] = useState<Decision[]>([]);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
@@ -144,6 +151,16 @@ const RegionBoard = () => {
 
     setGbPhotosAreLoading(false);
   };
+
+  const loadGbAdminsPhotos = async (members: GoverningBodyAdmin[]) => {
+    for (let i = 0; i < members.length; i++) {
+      members[i].user.imagePath = (
+        await userApi.getImage(members[i].user.imagePath)
+      ).data;
+    }
+    setPhotosLoading(false);
+  };
+
 
   const onAdd = (newDocument: CityDocument) => {
     if (documents.length < 6) {
@@ -208,8 +225,23 @@ const RegionBoard = () => {
     window.open(pdf);
   };
 
+  const getGoverningBodiesAdmins = async () => {
+    try {
+      setPhotosLoading(true);
+      const response = await getGoverningBodyAdminsByPage(1, 6);
+      setAdminsCount(response.data.item2);
+      const responseAdmins = response.data.item1;
+      await loadGbAdminsPhotos(responseAdmins);
+      setAdmins(responseAdmins);
+      console.log(response);
+    } finally {
+      setPhotosLoading(false);
+    }
+  };
+
   useEffect(() => {
     getRegion();
+    getGoverningBodiesAdmins();
   }, []);
 
   return loading ? (
@@ -325,10 +357,57 @@ const RegionBoard = () => {
         </Col>
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="cityCard">
-            <Title level={4}>Опис</Title>
-            <Row className="cityItems" justify="center" gutter={[0, 16]}>
-              <div className="regionDesc">{region.description}</div>
+            <Title level={4}>
+              Адміністрація Крайового Проводу{" "}
+              <a
+                onClick={() => history.push(`/regionsBoard/administrations/1`)}
+              >
+                {adminsCount !== 0 ? (
+                  <Badge
+                    count={adminsCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  />
+                ) : null}
+              </a>
+            </Title>
+            <Row
+              className={adminsCount >= 4 ? "cityItems1" : "cityItems"}
+              justify="center"
+              gutter={[0, 16]}
+            >
+              {adminsCount !== 0 ? (
+                admins.map((admin: GoverningBodyAdmin) => (
+                  <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
+                    <div
+                      onClick={() =>
+                        userAccesses["EditRB"]
+                          ? history.push(`/userpage/main/${admin.userId}`)
+                          : undefined
+                      }
+                    >
+                      {photosLoading ? (
+                        <Skeleton.Avatar active size={64}></Skeleton.Avatar>
+                      ) : (
+                        <Avatar size={64} src={admin.user.imagePath} />
+                      )}
+                      <p className="userName">{admin.user.firstName}</p>
+                      <p className="userName">{admin.user.lastName}</p>
+                    </div>
+                  </Col>
+                ))
+              ) : (
+                <Paragraph>Ще немає членів станиці</Paragraph>
+              )}
             </Row>
+            <div className="cityMoreButton">
+              <Button
+                type="primary"
+                className="cityInfoButton"
+                onClick={() => history.push(`/regionsBoard/administrations/1`)}
+              >
+                Більше
+              </Button>
+            </div>
           </Card>
         </Col>
         <Col
