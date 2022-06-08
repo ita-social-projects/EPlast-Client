@@ -13,7 +13,6 @@ import moment from "moment";
 import User from "../../../models/UserTable/User";
 import GoverningBodyUser from "../../../models/GoverningBody/GoverningBodyUser";
 import { getUsersForGoverningBodies } from "../../../api/adminApi";
-import RegionBoardMainAdmin from "../../../models/RegionBoard/RegionBoardMainAdmin";
 import notificationLogic from "../../../components/Notifications/Notification";
 import { getUsersForGoverningBodyAdminForm } from "../../../api/regionsBoardApi";
 
