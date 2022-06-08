@@ -74,6 +74,10 @@ import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecreta
 import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
 import AuthLocalStorage from "../../../AuthLocalStorage";
+import ModalAddPlastDegree from "../../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
+import activeMembershipApi, {
+  UserPlastDegree,
+} from "../../../api/activeMembershipApi";
 
 const City = () => {
   const history = useHistory();
@@ -110,6 +114,13 @@ const City = () => {
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [activeUserID, setActiveUserID] = useState<string>();
+  const [selectUserID, setSelectUserID] = useState<string>();
+  const [visibleAddModalDegree, setVisibleAddModalDegree] = useState<boolean>(
+    false
+  );
+  const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>(
+    {} as UserPlastDegree
+  );
   const documentsToShow = 6;
   const adminsToShow = 6;
   const membersToShow = 9;
@@ -613,6 +624,12 @@ const City = () => {
         NotificationBoxApi.NotificationTypes.UserNotifications
       );
     }
+  };
+
+  const handleAddDegree = async () => {
+    await activeMembershipApi.getUserPlastDegree(id).then((response) => {
+      setUserPlastDegree(response);
+    });
   };
 
   useEffect(() => {
@@ -1129,9 +1146,10 @@ const City = () => {
                           >
                             <PlusOutlined
                               className="approveIcon"
-                              onClick={async () =>
-                                await changeApproveStatus(followers.id)
-                              }
+                              onClick={() => {
+                                setSelectUserID(followers.userId);
+                                setVisibleAddModalDegree(true);
+                              }}
                             />
                           </Tooltip>
                         ) : followers.userId === activeUserID ? (
@@ -1203,6 +1221,15 @@ const City = () => {
           onAdd={handleConfirm}
         />
       </Modal>
+
+      {userAccesses["EditCity"] ? (
+        <ModalAddPlastDegree
+          visibleModal={visibleAddModalDegree}
+          setVisibleModal={setVisibleAddModalDegree}
+          userId={selectUserID as string}
+          handleAddDegree={handleAddDegree}
+        ></ModalAddPlastDegree>
+      ) : null}
 
       {userAccesses["EditCity"] ? (
         <AddDocumentModal

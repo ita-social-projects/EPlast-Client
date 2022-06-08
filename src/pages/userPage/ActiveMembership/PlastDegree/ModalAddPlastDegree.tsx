@@ -57,7 +57,7 @@ const ModalAddPlastDegree = ({
     <Modal
       visible={visibleModal}
       onCancel={handleCancel}
-      title="Надання Пластового ступеня"
+      title="Прийняття пластуна до"
       footer={null}
     >
       <FormAddPlastDegree

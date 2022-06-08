@@ -19,6 +19,7 @@ import {
 } from "../../../../api/citiesApi";
 import CityMember from "../../../../models/City/CityMember";
 import { PersonalDataContext } from "../../personalData/PersonalData";
+import UserApi from "../../../../api/UserApi";
 
 type FormAddPlastDegreeProps = {
   availablePlastDegree: Array<PlastDegree>;
@@ -44,9 +45,11 @@ const FormAddPlastDegree = ({
   const visiableCities = useRef<boolean>(false);
   const [filtredDegrees, setFiltredDegrees] = useState<Array<PlastDegree>>([]);
   const [cities, setCities] = useState<CityProfile[]>([]);
+  const [disabled, setDisabled] = useState<boolean>(false);
   const { UpdateData } = useContext(PersonalDataContext);
 
   const handleFinish = async (info: any) => {
+    console.log(info);
     const plastDegreeId = filtredDegrees.find(
       (item) => item.name === "Пластприят"
     )?.id;
@@ -60,8 +63,11 @@ const FormAddPlastDegree = ({
     visiableDegree.current = false;
     visiableCities.current = false;
 
+    const cityDefault = cities.find((x) => x.name == info.userCity)?.id;
+    console.log(cityDefault);
+
     const newCityFollower: CityMember = (
-      await addFollowerWithId(info.city, userId)
+      await addFollowerWithId(cityDefault as number, userId)
     ).data;
     await toggleMemberStatus(newCityFollower.id);
     await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
@@ -85,26 +91,38 @@ const FormAddPlastDegree = ({
     if (value === "Пластприят") {
       visiableCities.current = true;
       visiableDegree.current = false;
-      const response = await getCities();
-      setCities(response.data);
       setFiltredDegrees(
         availablePlastDegree.filter((item) => item.name === "Пластприят")
       );
     } else if (value === "Улад Старшого Пластунства") {
       visiableDegree.current = true;
-      visiableCities.current = false;
+      visiableCities.current = true;
       setFiltredDegrees(
         availablePlastDegree.filter((item) => item.name.includes("Старш"))
       );
     } else {
       visiableDegree.current = true;
-      visiableCities.current = false;
+      visiableCities.current = true;
       setFiltredDegrees(
         availablePlastDegree.filter((item) => item.name.includes("сеніор"))
       );
     }
   };
+
+  const fetchData = async () => {
+    const response = await getCities();
+    setCities(response.data);
+    const userInfo = await UserApi.getById(userId);
+    if (userInfo.data.user.city) {
+      setDisabled(true);
+    }
+    form.setFieldsValue({
+      userCity: userInfo.data.user.city,
+    });
+  };
+
   useEffect(() => {
+    fetchData();
     if (cancel) {
       form.resetFields();
       visiableDegree.current = false;
@@ -157,10 +175,10 @@ const FormAddPlastDegree = ({
       )}
       {visiableCities.current && (
         <Form.Item
-          name="city"
-          rules={[{ required: visiableDegree.current, message: emptyInput() }]}
+          name="userCity"
+          rules={[{ required: visiableCities.current, message: emptyInput() }]}
         >
-          <Select placeholder="Оберіть станицю">
+          <Select placeholder="Оберіть станицю" disabled={disabled}>
             {cities.map((apd) => {
               return (
                 <Select.Option key={apd.id} value={apd.id}>
