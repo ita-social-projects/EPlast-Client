@@ -23,6 +23,8 @@ import GoverningBodyAdmin from "../../models/GoverningBody/GoverningBodyAdmin";
 import userApi from "../../api/UserApi";
 import EditAdministratorModal from "./EditAdministratorModal";
 import { Roles } from "../../models/Roles/Roles";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
+import notificationLogic from "../../components/Notifications/Notification";
 
 moment.locale("uk-ua");
 
@@ -60,8 +62,26 @@ const RegionBoardMainAdministration = () => {
     }
   };
 
+  const createNotification = async (userId: Array<string>, message: string) => {
+    await NotificationBoxApi.createNotifications(
+      userId,
+      `${message}: `,
+      NotificationBoxApi.NotificationTypes.UserNotifications
+    );
+  };
+
   const removeMember = async (admin: GoverningBodyAdmin) => {
     await removeMainAdministrator(admin.userId);
+    notificationLogic("success", "Адміністратора успішно видалено");
+
+    await createNotification(
+      [admin.userId],
+      `У Вас більше немає адміністративної ролі: '${
+        admin.governingBodyAdminRole
+          ? admin.governingBodyAdminRole
+          : admin.adminType.adminTypeName
+      }' `
+    );
     fetchData();
   };
 
