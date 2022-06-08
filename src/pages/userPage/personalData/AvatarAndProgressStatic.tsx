@@ -184,7 +184,6 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
               Є прихильником округи:{" "}
               <Link
                 to={"/regions/" + regionId}
-                target="_blank"
                 className="LinkText"
               >
                 {region}
@@ -198,7 +197,6 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
               Є прихильником станиці:{" "}
               <Link
                 to={"/cities/" + cityId}
-                target="_blank"
                 className="LinkText"
               >
                 {city}
@@ -214,7 +212,6 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
             Округа:{" "}
             <Link
               to={"/regions/" + regionId}
-              target="_blank"
               className="LinkText"
             >
               {region}
@@ -222,7 +219,9 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           </p>
           <p className="statusText">
             Станиця:{" "}
-            <Link to={"/cities/" + cityId} target="_blank" className="LinkText">
+            <Link 
+            to={"/cities/" + cityId} 
+            className="LinkText">
               {city}
             </Link>
           </p>
@@ -232,7 +231,9 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
         club ? (
           <p className="statusText">
             Є прихильником куреня:{" "}
-            <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
+            <Link 
+            to={"/clubs/" + clubId} 
+            className="LinkText">
               {club}
             </Link>
           </p>
@@ -242,7 +243,9 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       ) : (
         <p className="statusText">
           Курінь:{" "}
-          <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
+          <Link 
+          to={"/clubs/" + clubId} 
+          className="LinkText">
             {club}
           </Link>
         </p>
