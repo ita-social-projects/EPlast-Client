@@ -182,11 +182,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           {region ? (
             <p className="statusText">
               Є прихильником округи:{" "}
-              <Link
-                to={"/regions/" + regionId}
-                target="_blank"
-                className="LinkText"
-              >
+              <Link to={"/regions/" + regionId} className="LinkText">
                 {region}
               </Link>
             </p>
@@ -196,11 +192,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           {city ? (
             <p className="statusText">
               Є прихильником станиці:{" "}
-              <Link
-                to={"/cities/" + cityId}
-                target="_blank"
-                className="LinkText"
-              >
+              <Link to={"/cities/" + cityId} className="LinkText">
                 {city}
               </Link>
             </p>
@@ -212,17 +204,13 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
         <div>
           <p className="statusText">
             Округа:{" "}
-            <Link
-              to={"/regions/" + regionId}
-              target="_blank"
-              className="LinkText"
-            >
+            <Link to={"/regions/" + regionId} className="LinkText">
               {region}
             </Link>
           </p>
           <p className="statusText">
             Станиця:{" "}
-            <Link to={"/cities/" + cityId} target="_blank" className="LinkText">
+            <Link to={"/cities/" + cityId} className="LinkText">
               {city}
             </Link>
           </p>
@@ -232,7 +220,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
         club ? (
           <p className="statusText">
             Є прихильником куреня:{" "}
-            <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
+            <Link to={"/clubs/" + clubId} className="LinkText">
               {club}
             </Link>
           </p>
@@ -242,7 +230,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       ) : (
         <p className="statusText">
           Курінь:{" "}
-          <Link to={"/clubs/" + clubId} target="_blank" className="LinkText">
+          <Link to={"/clubs/" + clubId} className="LinkText">
             {club}
           </Link>
         </p>
